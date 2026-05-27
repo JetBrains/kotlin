@@ -91,6 +91,7 @@ object FirWhenExhaustivenessComputer {
 
     context(c: SessionHolder)
     private fun ConeKotlinType.unwrapTypeParameterAndIntersectionTypes(): Collection<ConeKotlinType> {
+        @Suppress("SuspiciousWhenOverConeKotlinType")
         return when (this) {
             is ConeIntersectionType -> intersectedTypes
             is ConeTypeParameterType if LanguageFeature.ImprovedExhaustivenessChecksIn21.isEnabled()

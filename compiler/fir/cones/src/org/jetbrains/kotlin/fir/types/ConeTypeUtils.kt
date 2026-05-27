@@ -80,6 +80,7 @@ inline fun ConeKotlinType.forEachType(
         val next = stack.popLast().let(prepareType)
         action(next)
 
+        @Suppress("SuspiciousWhenOverConeKotlinType")
         when (next) {
             is ConeFlexibleType -> {
                 stack.add(next.lowerBound)
@@ -104,6 +105,7 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
     if (predicate(this)) return true
     visited += this
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     return when (this) {
         is ConeFlexibleType -> lowerBound.contains(predicate, visited) || !isTrivial && upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)

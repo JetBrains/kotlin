@@ -163,6 +163,7 @@ private fun prepareImplicitArgument(
         session = session
     ).let { prepareCapturedType(it, session) }
         .let {
+            @Suppress("SuspiciousWhenOverConeKotlinType")
             when (it) {
                 is ConeIntegerConstantOperatorType -> it.possibleTypes.first()
                 else -> it

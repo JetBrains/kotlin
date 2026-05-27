@@ -79,6 +79,7 @@ fun FirTypeAlias.expandedConeTypeWithEnsuredPhase(): ConeClassLikeType? {
  * @see fullyExpandedType (the first function in the file)
  * @return the expanded type or the same instance if top-level constructor is not expandable type alias
  */
+@Suppress("SuspiciousWhenOverConeKotlinType") // Not handling intersection types seems a bit suspicious but adding it breaks some tests
 fun ConeKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,
@@ -107,6 +108,7 @@ fun ConeKotlinType.fullyExpandedType(useSiteSession: FirSession): ConeKotlinType
 /**
  * @see fullyExpandedType (the first function in the file)
  */
+@Suppress("SuspiciousWhenOverConeKotlinType") // Not handling intersection types seems a bit suspicious but adding it breaks some tests
 fun ConeSimpleKotlinType.fullyExpandedType(
     useSiteSession: FirSession,
     expandedConeType: (FirTypeAlias) -> ConeClassLikeType? = FirTypeAlias::expandedConeTypeWithEnsuredPhase,

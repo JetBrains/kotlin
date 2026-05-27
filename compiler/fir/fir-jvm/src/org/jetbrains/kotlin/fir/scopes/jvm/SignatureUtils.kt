@@ -137,6 +137,7 @@ private fun StringBuilder.appendConeType(
         }
     }
 
+    @Suppress("SuspiciousWhenOverConeKotlinType")
     when (coneType) {
         is ConeErrorType -> Unit // TODO: just skipping it seems wrong
         is ConeClassLikeType -> {
