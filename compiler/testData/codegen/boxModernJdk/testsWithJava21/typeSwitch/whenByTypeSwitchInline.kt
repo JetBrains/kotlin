@@ -1,8 +1,9 @@
 // TARGET_BACKEND: JVM
+// WHEN_EXPRESSIONS: INLINE
 
 // CHECK_BYTECODE_TEXT
-// 1 INVOKEDYNAMIC typeSwitch
-// 0 INSTANCEOF
+// 0 INVOKEDYNAMIC typeSwitch
+// 2 INSTANCEOF
 
 open class Base
 class C1 : Base()
@@ -10,13 +11,10 @@ class C2 : Base()
 class C3 : Base()
 
 fun test(k: Base): Int {
-    return when {
-        k is C1 -> 1
-        k is C2 -> 2
-        true -> 0
-        true -> 1
-        k is C3 -> 3
-        else -> 10
+    return when (k) {
+        is C1 -> 1
+        is C2 -> 2
+        else -> 0
     }
 }
 
