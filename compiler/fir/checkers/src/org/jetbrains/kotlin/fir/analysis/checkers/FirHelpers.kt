@@ -9,7 +9,9 @@ import com.intellij.lang.LighterASTNode
 import org.jetbrains.kotlin.*
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ClassKind
+import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
@@ -149,10 +151,19 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
-    val primaryConstructor = asRegularClass
-        .takeIf { it.isBasicValueClass || (checkFullValueClasses && it.isFullValueClass && !isNullableType()) }
-        ?.primaryConstructorIfAny(session)
-        ?: return null
+    val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
+    // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
+    // Generally, there is no need to disallow it for Single-field value classes as well, so there is KT-86498 for that.
+    // Below we forbid recursion for all other cases
+    // Reminder: Single-field value class is basic if it has @JvmInline annotation or if the FullValueClasses feature is disabled
+    val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
+        null -> false
+        is BasicValueClassRepresentation -> true
+        is FullValueClassRepresentation if !checkFullValueClasses -> false
+        is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
+        is FullValueClassRepresentation -> true
+    }
+    if (!isSubjectForCheck) return null
 
     if (primaryConstructor.valueParameterSymbols.size > 1 && !checkMultiField) return null
     if (!visited.add(this)) return expectedRecursionType
