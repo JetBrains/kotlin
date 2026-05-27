@@ -84,6 +84,9 @@ class CodePointTest {
             assertContentEquals(charArrayOf(pair.first, pair.second), c.toCharArray())
             assertEquals(pair.first.toString() + pair.second, c.toString())
         }
+
+        assertFailsWith<IllegalArgumentException> { CodePoint.fromSurrogatePair('a', Char.MIN_LOW_SURROGATE) }
+        assertFailsWith<IllegalArgumentException> { CodePoint.fromSurrogatePair(Char.MIN_HIGH_SURROGATE, 'b') }
     }
 
     @Test
