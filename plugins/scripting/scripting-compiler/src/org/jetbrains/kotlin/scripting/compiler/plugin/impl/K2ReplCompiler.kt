@@ -52,6 +52,7 @@ import org.jetbrains.kotlin.scripting.definitions.ScriptPriorities
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
 import org.jetbrains.kotlin.scripting.resolve.getKtFile
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import java.io.File
 import java.nio.file.Path
 import kotlin.script.experimental.api.*
@@ -207,6 +208,30 @@ class K2ReplCompilationState(
     internal val scriptConfigurationsProvider: ScriptConfigurationsProvider?,
 ) {
     var lastCompiledSnippet: LinkedSnippetImpl<CompiledSnippet>? = null
+
+    /**
+     * Internal capture hook used by the **stateless** K2 REPL compiler prototype
+     * (`K2ReplStatelessCompiler`) to receive the `FirReplSnippet`, producing `FirSession`, and the
+     * JVM `GenerationState` of every successful per-snippet compile, so that a portable
+     * [SnippetArtifact] can be built from them.
+     *
+     * `null` by default — the stateful path is unaffected.
+     */
+    internal var snippetCompilationObserver:
+            ((firSnippet: org.jetbrains.kotlin.fir.declarations.FirReplSnippet,
+              session: FirSession,
+              generationState: org.jetbrains.kotlin.codegen.state.GenerationState) -> Unit)? = null
+
+    /**
+     * Internal early-capture hook fired by the stateless prototype right after the per-snippet
+     * source [FirSession] is built — *before* FIR resolution runs. This is the only way for
+     * `ArtifactBackedFirReplHistoryProvider` to learn the source session in time to materialise
+     * deserialized prior-snippet symbols via `session.symbolProvider`, since the resolve-extension
+     * invokes the history provider during resolution.
+     *
+     * `null` by default — the stateful path is unaffected.
+     */
+    internal var sourceSessionReadyObserver: ((FirSession) -> Unit)? = null
 }
 
 class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider() {
@@ -378,6 +403,12 @@ private fun compileImpl(
         isForLeafHmppModule = false,
         init = {},
     )
+
+    // Stateless-prototype early capture hook (no-op when not installed). Fires *before* FIR
+    // resolution so that an `ArtifactBackedFirReplHistoryProvider` can materialise deserialized
+    // prior-snippet symbols against this session in time for the resolve extension.
+    state.sourceSessionReadyObserver?.invoke(session)
+
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { (ktSources, otherSources) ->
         // TODO: implement LT support, similarly as for the scripting (KT-83498)
         session.buildFirFromKtFiles(ktSources.map { it.getKtFile(definition, project) }) +
@@ -410,6 +441,17 @@ private fun compileImpl(
 
     if (diagnosticsReporter.hasErrors) {
         return failure(messageCollector)
+    }
+
+    // Stateless-prototype capture hook (no-op when not installed).
+    state.snippetCompilationObserver?.let { observer ->
+        @OptIn(org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess::class)
+        val capturedFirSnippet = fir.firstNotNullOfOrNull { firFile ->
+            firFile.declarations.firstIsInstanceOrNull<org.jetbrains.kotlin.fir.declarations.FirReplSnippet>()
+        }
+        if (capturedFirSnippet != null) {
+            observer(capturedFirSnippet, session, generationState)
+        }
     }
 
     return makeCompiledScript(
