@@ -29,13 +29,13 @@ fun <F> FrontendContext.prepareJvmSessions(
     isCommonSource: (F) -> Boolean,
     isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
+    incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     val libraryList = createLibraryListForJvm(rootModuleNameAsString, configuration, friendPaths)
     val rootModuleName = Name.special("<$rootModuleNameAsString>")
     return prepareJvmSessions(
         files, rootModuleName, librariesScope, libraryList,
-        isCommonSource, isScript, fileBelongsToModule, createProviderAndScopeForIncrementalCompilation
+        isCommonSource, isScript, fileBelongsToModule, incrementalCompilationContext
     )
 }
 
@@ -48,7 +48,7 @@ fun <F> FrontendContext.prepareJvmSessions(
     isCommonSource: (F) -> Boolean,
     isScript: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
+    incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     return JvmFrontendPipelinePhase.prepareJvmSessions(
         files,
@@ -60,6 +60,6 @@ fun <F> FrontendContext.prepareJvmSessions(
         isCommonSource,
         isScript,
         fileBelongsToModule,
-        createProviderAndScopeForIncrementalCompilation,
+        incrementalCompilationContext,
     )
 }
