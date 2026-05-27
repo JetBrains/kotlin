@@ -122,6 +122,13 @@ private fun buildSidecar(
     val stateObjectFqName = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName].orEmpty()
     val resultPropertyName = scriptCompilationConfiguration[ScriptCompilationConfiguration.resultField]
     val isSynthetic = scriptCompilationConfiguration[ScriptCompilationConfiguration.repl._isSyntheticSnippet] == true
+    // For the prototype, `isImplicit` mirrors `isSynthetic`: today the only known producer of
+    // implicit snippets is the `prependSyntheticSnippets` callback (Option D, Q10 umbrella),
+    // which sets `_isSyntheticSnippet` on the compilation configuration. The flags are kept
+    // separate so that future producers (e.g. refinement-handler-injected helper cells that are
+    // *not* internally tagged synthetic) can mark snippets implicit without touching the
+    // compile-side `_isSyntheticSnippet` flag.
+    val isImplicit = isSynthetic
 
     return SnippetArtifactSidecar(
         sidecarVersion = SnippetArtifactSidecar.CURRENT_VERSION,
@@ -134,6 +141,7 @@ private fun buildSidecar(
         stateObjectFqName = stateObjectFqName,
         resultPropertyName = resultPropertyName,
         isSynthetic = isSynthetic,
+        isImplicit = isImplicit,
     )
 }
 

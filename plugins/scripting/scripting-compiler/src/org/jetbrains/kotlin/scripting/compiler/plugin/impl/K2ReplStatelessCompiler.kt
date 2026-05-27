@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
+import org.jetbrains.kotlin.cli.common.environment.setIdeaIoUseFallback
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
@@ -24,6 +25,7 @@ import kotlin.io.path.writeBytes
 import kotlin.script.experimental.api.ResultWithDiagnostics
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.SourceCode
+import kotlin.script.experimental.api.asDiagnostics
 import kotlin.script.experimental.api.asSuccess
 import kotlin.script.experimental.api.dependencies
 import kotlin.script.experimental.api.makeFailureResult
@@ -62,7 +64,7 @@ import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
  * This class is **internal** and prototype-only. The eventual stable surface lives in
  * `libraries/scripting/common` as `StatelessReplCompiler` (planned for a later step).
  */
-internal class K2ReplStatelessCompiler {
+class K2ReplStatelessCompiler {
 
     /**
      * Compiles [snippet] against the given ordered [priorSnippets].
@@ -76,6 +78,15 @@ internal class K2ReplStatelessCompiler {
      *   `repl.firReplHistoryProvider` and `repl.isReplSnippetSource` are overridden by this method.
      *   `repl.replStateObjectFqName` is validated against every prior snippet's sidecar; a
      *   mismatch causes a [ResultWithDiagnostics.Failure] return.
+     * @param parentDisposable optional caller-owned [Disposable] under which the compilation
+     *   environment will be created. When `null` (default), this call allocates a private
+     *   top-level [Disposable] and disposes it before returning — this is the right shape for
+     *   out-of-process callers where each call owns its full lifecycle. When supplied (typical in
+     *   in-process / test scenarios where another lifecycle already owns project state), the
+     *   stateless compiler attaches its per-call environment to [parentDisposable] and does *not*
+     *   trigger `Disposer.dispose` at the end, leaving cleanup to the caller. This avoids
+     *   IntelliJ-platform "Write access is allowed inside write-action only" failures that would
+     *   otherwise fire on per-call disposal inside a hosted test fixture's project lifecycle.
      * @return either a fresh [SnippetArtifact] for snippet N or a failure with diagnostics.
      */
     suspend fun compile(
@@ -83,7 +94,25 @@ internal class K2ReplStatelessCompiler {
         snippet: SourceCode,
         scriptCompilationConfiguration: ScriptCompilationConfiguration,
         hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
+        parentDisposable: Disposable? = null,
     ): ResultWithDiagnostics<SnippetArtifact> {
+        if (parentDisposable != null) {
+            // Caller-owned lifecycle: do NOT call Disposer.dispose ourselves on any path
+            // (success *or* failure), because the parent's owner manages teardown — and on
+            // failure the per-snippet result may legitimately be a `ResultWithDiagnostics.Failure`
+            // (e.g. unresolved-reference diagnostics) which would otherwise trigger a per-call
+            // disposal that violates IntelliJ-platform threading inside hosted test fixtures.
+            val messageCollector = ScriptDiagnosticsMessageCollector(parentMessageCollector = null)
+            return try {
+                setIdeaIoUseFallback()
+                compileWithCollector(
+                    priorSnippets, snippet, scriptCompilationConfiguration, hostConfiguration,
+                    messageCollector, parentDisposable,
+                )
+            } catch (ex: Throwable) {
+                failure(messageCollector, ex.asDiagnostics(path = snippet.locationId))
+            }
+        }
         return withMessageCollectorAndDisposable(snippet) { messageCollector, disposable ->
             compileWithCollector(
                 priorSnippets, snippet, scriptCompilationConfiguration, hostConfiguration,

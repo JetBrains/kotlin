@@ -145,6 +145,58 @@ open class AbstractReplViaApiEvaluationTest : AbstractReplViaApiDiagnosticsTest(
     }
 }
 
+/**
+ * Diagnostics test that drives every snippet through the **stateless** K2 REPL compiler
+ * (`K2ReplStatelessCompiler`) rather than the stateful [K2ReplCompiler][org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplCompiler].
+ *
+ * For each `// SNIPPET`-separated cell in the test data file, the previous cells' produced
+ * [SnippetArtifact][org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact]s are fed
+ * as `priorSnippets`, so the snippet is resolved against a **reconstructed** REPL history rather
+ * than a live in-memory chain. This is the read-side proof of the stateless-REPL prototype against
+ * the same diagnostics corpus as [AbstractReplViaApiDiagnosticsTest], and the empirical answer to
+ * Q5c (long-history reconstruction) plus Q10b (history-provider tagging for implicit snippets).
+ *
+ * Backed by [FirReplStatelessCompilerFacade] + [ReplCompilerDiagnosticsHandler] (the same handler
+ * the via-API test uses — the artefact shape is identical so the diagnostics path is shared).
+ */
+open class AbstractReplStatelessDiagnosticsTest : AbstractKotlinCompilerTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        with(builder) {
+            globalDefaults {
+                frontend = FrontendKinds.FIR
+                targetPlatform = JvmPlatforms.defaultJvmPlatform
+                dependencyKind = DependencyKind.Source
+            }
+
+            defaultDirectives {
+                LANGUAGE + "+EnableDfaWarningsInK2"
+                +WITH_STDLIB
+            }
+
+            enableMetaInfoHandler()
+
+            useConfigurators(
+                ::CommonEnvironmentConfigurator,
+                ::JvmEnvironmentConfigurator,
+                ::ScriptingEnvironmentConfigurator,
+            )
+
+            useAdditionalSourceProviders(
+                ::AdditionalDiagnosticsSourceFilesProvider,
+                ::CoroutineHelpersSourceFilesProvider,
+            )
+            configureFirParser(FirParser.Psi)
+            useConfigurators(
+                ::ReplConfigurator
+            )
+            facadeStep(::FirReplStatelessCompilerFacade)
+            namedHandlersStep("ReplDiagnosticHandlerStep", ReplCompilationArtifact.Kind, CompilationStage.FIRST) {
+                useHandlers(::ReplCompilerDiagnosticsHandler)
+            }
+        }
+    }
+}
+
 
 @OptIn(ExperimentalCompilerApi::class)
 private class ReplConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {

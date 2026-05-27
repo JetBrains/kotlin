@@ -35,6 +35,14 @@ fun main(args: Array<String>) {
                 )
             }
 
+            testClass<AbstractReplStatelessDiagnosticsTest> {
+                model(
+                    "testData/diagnostics/repl",
+                    extension = "kts",
+                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
+                )
+            }
+
             testClass<AbstractReplWithTestExtensionsCodegenTest> {
                 model("testData/codegen/repl", extension = "kts")
             }

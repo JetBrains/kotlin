@@ -83,6 +83,46 @@ internal class ArtifactBackedFirReplHistoryProvider(
             .firstOrNull()
     }
 
+    /**
+     * Snapshot of the `isImplicit` flag for every prior snippet, in history order.
+     *
+     * Exposed for the Q10b read path: callers that walk [getSnippets] and need to distinguish
+     * user-authored snippets from implicitly-prepended ones (e.g. JSR-223 binding cells emitted via
+     * `prependSyntheticSnippets`) can index this list by the position the corresponding symbol
+     * occupies in [getSnippets]'s output.
+     *
+     * The list is `priorSnippets.size`-long and order-aligned with `priorSnippets`, *not* with the
+     * `getSnippets()` result. If `materialize()` skipped an artifact (lookup MISS), that index is
+     * still present here — consumers wanting the [FirReplSnippetSymbol]→`isImplicit` mapping should
+     * look up the symbol's owning sidecar via [findSidecarFor] instead.
+     */
+    val implicitFlags: List<Boolean> by lazy {
+        decodedSidecars.map { it.isImplicit }
+    }
+
+    /**
+     * Returns the [SnippetArtifactSidecar] whose reconstructed symbol equals [symbol], or `null`
+     * if [symbol] does not correspond to any prior snippet known to this provider.
+     *
+     * Cheap O(N) walk — fine for the prototype because [priorSnippets] is bounded by the REPL
+     * session length per call.
+     */
+    fun findSidecarFor(symbol: FirReplSnippetSymbol): SnippetArtifactSidecar? {
+        val materialized = cached ?: return null
+        val index = materialized.indexOfFirst { it === symbol }
+        if (index < 0) return null
+        // `cached` may be shorter than `priorSnippets` (lookup misses are skipped). Recover the
+        // original sidecar by matching on the wrapper class's short name, which is unique within
+        // a REPL session.
+        val sidecarName = materialized[index].snippetClassSymbol.classId.shortClassName.asString()
+        return decodedSidecars.firstOrNull {
+            it.snippetClassInternalName.substringAfterLast('/').substringAfterLast('$') == sidecarName
+        }
+    }
+
+    /** `true` if [symbol] corresponds to a prior snippet that was implicitly prepended. */
+    fun isImplicit(symbol: FirReplSnippetSymbol): Boolean = findSidecarFor(symbol)?.isImplicit == true
+
     override fun getSnippets(): Iterable<FirReplSnippetSymbol> {
         cached?.let { return it }
         val session = sourceSessionProvider() ?: run {
