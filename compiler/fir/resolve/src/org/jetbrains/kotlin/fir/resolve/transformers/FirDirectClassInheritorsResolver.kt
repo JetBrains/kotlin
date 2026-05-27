@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.SessionHolder
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -64,6 +65,13 @@ private class DirectClassInheritorsCollector(
         if (!typeAlias.isActual) return
         val expansionClass = typeAlias.expandedTypeRef.coneType.toRegularClassSymbol(session)?.fir ?: return
         collectInheritorsOfCorrespondingExpectSealedClass(typeAlias.classId, data.computeIfAbsent(expansionClass) { mutableSetOf() })
+    }
+
+    override fun visitAnonymousObject(anonymousObject: FirAnonymousObject, data: MutableMap<FirRegularClass, MutableSet<ClassId>>) {
+        for (typeRef in anonymousObject.superTypeRefs) {
+            val parent = extractClassFromTypeRef(typeRef) ?: continue
+            parent.addDirectInheritors(anonymousObject.symbol.classId)
+        }
     }
 
     private fun collectInheritorsOfCorrespondingExpectSealedClass(expectClassId: ClassId, inheritors: MutableSet<ClassId>) {
