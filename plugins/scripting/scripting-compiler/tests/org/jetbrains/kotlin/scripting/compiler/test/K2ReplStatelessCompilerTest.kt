@@ -113,17 +113,45 @@ class K2ReplStatelessCompilerTest {
             packageFqName = "some.pkg",
             historyIndex = 7,
             replSnippetDeclarations = listOf(
+                // PROPERTY with PUBLIC visibility + a concrete return type signature — the common case.
                 SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.PROPERTY, "x", descriptor = "I"
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.PROPERTY,
+                    name = "x",
+                    descriptor = "I",
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC,
+                    returnTypeSignature = "kotlin.Int",
                 ),
+                // FUNCTION with INTERNAL visibility + a function-shaped return type signature.
                 SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.FUNCTION, "foo", descriptor = null
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.FUNCTION,
+                    name = "foo",
+                    descriptor = null,
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL,
+                    returnTypeSignature = "kotlin.Unit",
                 ),
+                // CLASS with PROTECTED visibility and *no* return type (the type *is* the declaration).
                 SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.CLASS, "Nested", descriptor = null
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.CLASS,
+                    name = "Nested",
+                    descriptor = null,
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED,
+                    returnTypeSignature = null,
                 ),
+                // TYPEALIAS with PRIVATE visibility — exercises the consumer-side filter.
                 SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS, "Alias", descriptor = null
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS,
+                    name = "Alias",
+                    descriptor = null,
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE,
+                    returnTypeSignature = null,
+                ),
+                // UNKNOWN — pre-v3 producers can omit visibility; the field defaults gracefully.
+                SnippetArtifactSidecar.MemberRef(
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.PROPERTY,
+                    name = "unknownVisibility",
+                    descriptor = null,
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN,
+                    returnTypeSignature = null,
                 ),
             ),
             imports = listOf(

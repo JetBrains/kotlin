@@ -194,6 +194,13 @@ internal class ArtifactBackedFirReplHistoryProvider(
                     tagged++
                 }
             }
+            // Note: the sidecar carries `visibility` and `returnTypeSignature` per [MemberRef] but
+            // this provider does **not** consume them at materialise time today — the resolver
+            // already sees the deserialised declarations' real visibility/return type via
+            // `.kotlin_metadata`. The fields are recorded so that *downstream* tooling (e.g. IDE
+            // inspections, debugger, or a future cross-snippet anonymous-return-type checker) can
+            // reason about prior-snippet shapes without re-loading the wrapper class. See
+            // `iterations/2026-05-27_stateless-repl-sidecar-v3.md` for the rationale.
             debug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] (${sidecar.snippetName})")
 
             result += reconstructedSymbol
