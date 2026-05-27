@@ -27,11 +27,14 @@ private val ENGINE_INTERNAL_BINDING_KEYS = setOf(
  * Returns a valid Kotlin identifier for a JSR-223 binding name, or null if the name cannot be exposed.
  * All-whitespace names are converted to underscores; all other names must pass Name.isValidIdentifier.
  */
-private fun encodeBindingNameToKotlinIdentifier(name: String): String? {
-    if (name.isEmpty()) return null
-    if (name.all { it == ' ' }) return "_".repeat(name.length)
-    return if (Name.isValidIdentifier(name)) name else null
-}
+private fun encodeBindingNameToKotlinIdentifier(name: String): String? =
+    when {
+        name.isEmpty() -> null
+        name.all { it == ' ' } -> "`" + "_".repeat(name.length) + "`"
+        Name.isValidIdentifier(name) -> name
+        name.contains("`") -> null
+        else -> "`$name`"
+    }
 
 /**
  * Returns true if [qualifiedName] is a dot-separated chain of identifiers that the Kotlin parser
