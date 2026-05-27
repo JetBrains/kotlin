@@ -604,6 +604,12 @@
       "type": "org.jetbrains.kotlin.psi.KtDelegatedSuperTypeEntry[]"
     },
     {
+      "type": "org.jetbrains.kotlin.psi.KtDestructuringDeclaration"
+    },
+    {
+      "type": "org.jetbrains.kotlin.psi.KtDestructuringDeclaration[]"
+    },
+    {
       "type": "org.jetbrains.kotlin.psi.KtDotQualifiedExpression"
     },
     {
