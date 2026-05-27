@@ -125,6 +125,7 @@ int32_t consoleReadUtf8(void* utf8, uint32_t maxSizeBytes) {
 #endif
   if (length <= 0) return -1;
   char* start = reinterpret_cast<char*>(utf8);
+  start[length] = 0;
   char* current = start + length - 1;
   bool isTrimming = true;
   while (current >= start && isTrimming) {
