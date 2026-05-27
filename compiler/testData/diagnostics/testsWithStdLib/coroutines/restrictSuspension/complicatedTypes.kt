@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: BACKEND
+// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-86467
 import kotlin.coroutines.RestrictsSuspension
 
@@ -10,7 +10,7 @@ interface Scope {
 suspend fun bar() {}
 
 suspend fun <T : Scope?> (T & Any).foo() {
-    bar()
+    <!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>bar<!>()
 }
 
 class Box<T>(val value: T)
@@ -18,11 +18,11 @@ class Box<T>(val value: T)
 interface I
 
 suspend fun bar(tl: ThreadLocal<Scope>, box: Box<out Scope>, scope: Scope?) {
-    tl.get().member()
-    box.value.member()
+    tl.get().<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
+    box.value.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
 
     if (scope is I) {
-        scope.member()
+        scope.<!ILLEGAL_RESTRICTED_SUSPENDING_FUNCTION_CALL!>member<!>()
     }
 }
 

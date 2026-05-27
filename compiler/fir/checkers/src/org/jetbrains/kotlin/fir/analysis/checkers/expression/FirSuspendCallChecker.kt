@@ -9,12 +9,14 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.InlineStatus
+import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
@@ -25,17 +27,12 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
+import kotlin.coroutines.RestrictsSuspension
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
 
@@ -205,7 +202,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
 
         val receiversInfo = expression.computeReceiversInfo(session, calledDeclarationSymbol)
         for (receiverExpression in receiversInfo.expressions) {
-            if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver(session)) continue
+            if (!receiverExpression.resolvedType.isRestrictSuspensionReceiver()) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionDispatchReceiverOwnerSymbol)) continue
             if (sameInstanceOfReceiver(receiverExpression, enclosingSuspendFunctionExtensionReceiverSymbol)) continue
             if (enclosingSuspendFunctionContextParameterSymbols.any { sameInstanceOfReceiver(receiverExpression, it) }) continue
@@ -214,8 +211,8 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         }
 
         val restrictSuspensionSymbols: List<FirBasedSymbol<*>> =
-            listOfNotNull(enclosingSuspendFunctionExtensionReceiverSymbol?.takeIf { it.resolvedType.isRestrictSuspensionReceiver(session) }) +
-                    enclosingSuspendFunctionContextParameterSymbols.filter { it.resolvedReturnType.isRestrictSuspensionReceiver(session) }
+            listOfNotNull(enclosingSuspendFunctionExtensionReceiverSymbol?.takeIf { it.resolvedType.isRestrictSuspensionReceiver() }) +
+                    enclosingSuspendFunctionContextParameterSymbols.filter { it.resolvedReturnType.isRestrictSuspensionReceiver() }
 
         val chosenRestrictSuspensionSymbol = when (restrictSuspensionSymbols.size) {
             0 -> return true
@@ -229,7 +226,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
 
         for (receiver in listOf(receiversInfo.extensionReceiver) + receiversInfo.contextParameters) {
             if (sameInstanceOfReceiver(receiver.expression, chosenRestrictSuspensionSymbol)) {
-                if (receiver.type?.isRestrictSuspensionReceiver(session) == true) {
+                if (receiver.type?.isRestrictSuspensionReceiver() == true) {
                     return true
                 }
             }
@@ -281,25 +278,35 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
         return visualValueArgumentsCount != expression.arguments.count() - 1
     }
 
-    private fun ConeKotlinType.isRestrictSuspensionReceiver(session: FirSession): Boolean {
-        when (this) {
+    context(sessionHolder: SessionHolder)
+    private fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
+        return when (this) {
             is ConeClassLikeType -> {
-                val regularClassSymbol = fullyExpandedType(session).lookupTag.toRegularClassSymbol(session) ?: return false
-                if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, session)) {
+                val regularClassSymbol = fullyExpandedType().lookupTag.toRegularClassSymbol() ?: return false
+                if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, sessionHolder.session)) {
                     return true
                 }
-                return regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver(session) }
+                regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver() }
             }
             is ConeTypeParameterType -> {
-                return lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver(session) }
+                lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
             }
-            else -> return false
+            is ConeLookupTagBasedType -> error("impossible branch")
+            is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
+            is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
+            is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true
+            is ConeIntersectionType -> intersectedTypes.any { it.isRestrictSuspensionReceiver() }
+            is ConeIntegerConstantOperatorType,
+            is ConeIntegerLiteralConstantType,
+            is ConeStubTypeForTypeVariableInSubtyping,
+            is ConeTypeVariableType,
+                -> false
         }
     }
 
     private fun sameInstanceOfReceiver(
         useSiteReceiverExpression: FirExpression?,
-        declarationSiteReceiverOwnerSymbol: FirBasedSymbol<*>?
+        declarationSiteReceiverOwnerSymbol: FirBasedSymbol<*>?,
     ): Boolean = when (val unwrappedReceiver = useSiteReceiverExpression?.unwrapSmartcastExpression()) {
         null -> false
         else if declarationSiteReceiverOwnerSymbol == null -> false
