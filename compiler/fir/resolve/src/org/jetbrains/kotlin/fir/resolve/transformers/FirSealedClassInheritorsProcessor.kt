@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.FirStatement
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassIdFromDependencies
@@ -39,7 +40,7 @@ class FirSealedClassInheritorsProcessor(
         val sealedClassInheritorsMap = mutableMapOf<FirRegularClass, MutableSet<ClassId>>()
         val inheritorsCollector = InheritorsCollector(session)
 
-        val directClassInheritorsResolver = runIf(session.languageVersionSettings.supportsFeature(LanguageFeature.DirectClassInheritors)) {
+        val directClassInheritorsResolver = runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
             FirDirectClassInheritorsResolver(session)
         }
 
@@ -52,7 +53,6 @@ class FirSealedClassInheritorsProcessor(
         files.forEach {
             withFileAnalysisExceptionWrapping(it) {
                 it.transformSingle(InheritorsTransformer(sealedClassInheritorsMap), null)
-                directClassInheritorsResolver?.storeInheritors(it)
             }
         }
     }

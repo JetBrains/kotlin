@@ -7,17 +7,20 @@ package org.jetbrains.kotlin.fir.declarations
 
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.SmartSet
 
 private object DirectClassInheritorsKey : FirDeclarationDataKey()
 
-private var FirRegularClass.directInheritorsAttr: Lazy<Set<ClassId>>? by FirDeclarationDataRegistry.data(DirectClassInheritorsKey)
+private var FirRegularClass.directInheritorsAttr: Lazy<SmartSet<ClassId>>? by FirDeclarationDataRegistry.data(DirectClassInheritorsKey)
 
-private val FirRegularClassSymbol.directInheritorsAttr: Lazy<Set<ClassId>>? by FirDeclarationDataRegistry.symbolAccessor(DirectClassInheritorsKey)
+private val FirRegularClassSymbol.directInheritorsAttr: Lazy<SmartSet<ClassId>>? by FirDeclarationDataRegistry.symbolAccessor(DirectClassInheritorsKey)
 
-fun FirRegularClass.setDirectInheritors(inheritors: Set<ClassId>) {
-    directInheritorsAttr = lazyOf(inheritors)
+fun FirRegularClass.addDirectInheritors(vararg inheritors: ClassId) {
+    directInheritorsAttr = lazyOf(directInheritorsAttr?.value?.plus(inheritors) ?: SmartSet.create<ClassId>().plus(inheritors))
 }
 
 val FirRegularClass.directInheritors: Set<ClassId> get() = directInheritorsAttr?.value ?: emptySet()
 
 val FirRegularClassSymbol.directInheritors: Set<ClassId> get() = directInheritorsAttr?.value ?: emptySet()
+
+private fun <T, C : MutableSet<T>> C.plus(others: Array<out T>): C = apply { others.forEach(this::add) }
