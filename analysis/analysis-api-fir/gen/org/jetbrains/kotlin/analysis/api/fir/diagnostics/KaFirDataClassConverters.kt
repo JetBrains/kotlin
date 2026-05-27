@@ -5500,12 +5500,6 @@ private fun KaDiagnosticConverterBuilder.addConversions122() {
             token,
         )
     }
-    add(FirErrors.SUBTYPING_BETWEEN_CONTEXT_RECEIVERS) { firDiagnostic ->
-        SubtypingBetweenContextReceiversImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
     add(FirErrors.CYCLIC_GENERIC_UPPER_BOUND) { firDiagnostic ->
         CyclicGenericUpperBoundImpl(
             firDiagnostic.a.map { firTypeParameterSymbol ->

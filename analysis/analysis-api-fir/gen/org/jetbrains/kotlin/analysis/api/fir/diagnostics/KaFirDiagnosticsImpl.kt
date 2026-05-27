@@ -2374,11 +2374,6 @@ internal class AmbiguousCallWithImplicitContextReceiverImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.AmbiguousCallWithImplicitContextReceiver
 
-internal class SubtypingBetweenContextReceiversImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.SubtypingBetweenContextReceivers
-
 internal class ContextReceiversDeprecatedImpl(
     override val message: String,
     firDiagnostic: KtPsiDiagnostic,
