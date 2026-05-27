@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.*
 import org.jetbrains.kotlin.cli.CliDiagnostics
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.konan.config.filesToCache
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -56,12 +57,14 @@ class CachedLibraries(
         val serializedInlineFunctionBodies by lazy { computeSerializedInlineFunctionBodies() }
         val serializedClassFields by lazy { computeSerializedClassFields() }
         val serializedEagerInitializedFiles by lazy { computeSerializedEagerInitializedFiles() }
+        val serializedTrivialGetters by lazy { computeSerializedTrivialGetters() }
 
         protected abstract fun computeBitcodeDependencies(): List<DependenciesTracker.UnresolvedDependency>
         protected abstract fun computeBinariesPaths(): List<String>
         protected abstract fun computeSerializedInlineFunctionBodies(): List<SerializedInlineFunctionReference>
         protected abstract fun computeSerializedClassFields(): List<SerializedClassFields>
         protected abstract fun computeSerializedEagerInitializedFiles(): List<SerializedEagerInitializedFile>
+        protected abstract fun computeSerializedTrivialGetters(): List<SerializedTrivialGetter>
 
         protected fun Kind.toCompilerOutputKind(): CompilerOutputKind = when (this) {
             Kind.DYNAMIC -> CompilerOutputKind.DYNAMIC_CACHE
@@ -96,6 +99,12 @@ class CachedLibraries(
                 val directory = File(path).absoluteFile.parentFile.parentFile
                 val data = directory.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
                 EagerInitializedPropertySerializer.deserializeTo(data, it)
+            }
+
+            override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
+                val directory = File(path).absoluteFile.parentFile.parentFile
+                val data = directory.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(TRIVIAL_GETTERS_FILE_NAME).readBytes()
+                TrivialGettersSerializer.deserializeTo(data, it)
             }
         }
 
@@ -148,6 +157,13 @@ class CachedLibraries(
                 existingFileDirs.forEach { fileDir ->
                     val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(EAGER_INITIALIZED_PROPERTIES_FILE_NAME).readBytes()
                     EagerInitializedPropertySerializer.deserializeTo(data, it)
+                }
+            }
+
+            override fun computeSerializedTrivialGetters() = mutableListOf<SerializedTrivialGetter>().also {
+                existingFileDirs.forEach { fileDir ->
+                    val data = fileDir.child(PER_FILE_CACHE_IR_LEVEL_DIR_NAME).child(TRIVIAL_GETTERS_FILE_NAME).readBytes()
+                    TrivialGettersSerializer.deserializeTo(data, it)
                 }
             }
         }
@@ -291,5 +307,6 @@ class CachedLibraries(
         const val INLINE_FUNCTION_BODIES_FILE_NAME = "inline_bodies"
         const val CLASS_FIELDS_FILE_NAME = "class_fields"
         const val EAGER_INITIALIZED_PROPERTIES_FILE_NAME = "eager_init"
+        const val TRIVIAL_GETTERS_FILE_NAME = "trivial_getters"
     }
 }

@@ -540,6 +540,31 @@ internal object ClassFieldsSerializer : IdSignatureAwareSerializer<SerializedCla
 
 class SerializedEagerInitializedFile(val file: SerializedFileReference)
 
+class SerializedTrivialGetter(
+        file: SerializedFileReference, val getterSignature: IdSignature
+) : FileAwareSerializedData(file)
+
+internal object TrivialGettersSerializer : IdSignatureAwareSerializer<SerializedTrivialGetter>() {
+    override fun signatureOf(item: SerializedTrivialGetter) = item.getterSignature
+
+    override fun ByteArrayStream.readItem(
+            stringTable: Array<String>,
+            file: SerializedFileReference,
+            signature: IdSignature,
+    ): SerializedTrivialGetter = SerializedTrivialGetter(file, signature)
+}
+
+internal class TrivialGettersDeserializer(
+        val cachedLibraries: CachedLibraries,
+        val deserializer: KonanPartialModuleDeserializer,
+) {
+    val trivialGetterSignatures: Set<IdSignature> by lazy {
+        val cache = cachedLibraries.getLibraryCache(deserializer.klib, allowIncomplete = true)
+                ?: error("No cache for ${deserializer.klib.location}")
+        cache.serializedTrivialGetters.mapTo(hashSetOf()) { it.getterSignature }
+    }
+}
+
 internal object EagerInitializedPropertySerializer {
     fun serialize(properties: List<SerializedEagerInitializedFile>): ByteArray {
         val stringTable = buildStringTable {
