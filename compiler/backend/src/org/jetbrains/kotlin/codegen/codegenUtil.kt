@@ -7,106 +7,27 @@ package org.jetbrains.kotlin.codegen
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.JvmCodegenUtil.isJvmInterface
-import org.jetbrains.kotlin.codegen.inline.ReificationArgument
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeParametersUsages
-import org.jetbrains.kotlin.codegen.intrinsics.TypeIntrinsics
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.SpecialGenericSignatures.SpecialSignatureInfo
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isSubclass
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
-import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
-import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeParameterMarker
 import org.jetbrains.org.objectweb.asm.AnnotationVisitor
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Type
-import org.jetbrains.org.objectweb.asm.commons.InstructionAdapter
 import org.jetbrains.org.objectweb.asm.tree.LabelNode
-
-fun generateIsCheck(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type
-) {
-    if (TypeUtils.isNullableType(kotlinType)) {
-        val nope = Label()
-        val end = Label()
-
-        with(v) {
-            dup()
-
-            ifnull(nope)
-
-            TypeIntrinsics.instanceOf(this, kotlinType, asmType)
-
-            goTo(end)
-
-            mark(nope)
-            pop()
-            iconst(1)
-
-            mark(end)
-        }
-    } else {
-        TypeIntrinsics.instanceOf(v, kotlinType, asmType)
-    }
-}
-
-fun generateAsCast(
-    v: InstructionAdapter,
-    kotlinType: KotlinType,
-    asmType: Type,
-    isSafe: Boolean,
-    unifiedNullChecks: Boolean,
-) {
-    if (!isSafe) {
-        if (!TypeUtils.isNullableType(kotlinType)) {
-            generateNullCheckForNonSafeAs(v, kotlinType, unifiedNullChecks)
-        }
-    } else {
-        with(v) {
-            dup()
-            TypeIntrinsics.instanceOf(v, kotlinType, asmType)
-            val ok = Label()
-            ifne(ok)
-            pop()
-            aconst(null)
-            mark(ok)
-        }
-    }
-
-    TypeIntrinsics.checkcast(v, kotlinType, asmType, isSafe)
-}
-
-private fun generateNullCheckForNonSafeAs(
-    v: InstructionAdapter,
-    type: KotlinType,
-    unifiedNullChecks: Boolean,
-) {
-    with(v) {
-        dup()
-        val nonnull = Label()
-        ifnonnull(nonnull)
-        val exceptionClass = if (unifiedNullChecks) "java/lang/NullPointerException" else "kotlin/TypeCastException"
-        AsmUtil.genThrow(
-            v,
-            exceptionClass,
-            "null cannot be cast to non-null type " + DescriptorRenderer.FQ_NAMES_IN_TYPES.renderType(type)
-        )
-        mark(nonnull)
-    }
-}
 
 fun SpecialSignatureInfo.replaceValueParametersIn(sourceSignature: String?): String? =
     valueParametersSignature?.let { sourceSignature?.replace("^\\(.*\\)".toRegex(), "($it)") }

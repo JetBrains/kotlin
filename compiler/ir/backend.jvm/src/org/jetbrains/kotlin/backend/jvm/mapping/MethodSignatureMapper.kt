@@ -506,4 +506,16 @@ class MethodSignatureMapper(private val context: JvmBackendContext, private val 
             else ->
                 Opcodes.H_INVOKEVIRTUAL
         }
+
+    fun generateSignatureString(irFun: IrFunction): String {
+        var resolved = when (irFun) {
+            is IrSimpleFunction -> irFun.collectRealOverrides().first()
+            is IrConstructor -> irFun
+        }
+        if (resolved.isSuspend) {
+            resolved = resolved.viewOfOriginalSuspendFunction ?: resolved
+        }
+        val method = mapAsmMethod(resolved)
+        return method.name + method.descriptor
+    }
 }

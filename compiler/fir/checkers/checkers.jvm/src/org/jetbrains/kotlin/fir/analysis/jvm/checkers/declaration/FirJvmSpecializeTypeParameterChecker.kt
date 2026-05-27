@@ -1,0 +1,40 @@
+/*
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
+package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
+
+import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
+import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirTypeParameterChecker
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
+import org.jetbrains.kotlin.fir.declarations.utils.isFinal
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
+import org.jetbrains.kotlin.fir.resolve.fqName
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
+import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SPECIALIZE_ANNOTATION_FQ_NAME
+
+object FirJvmSpecializeTypeParameterChecker : FirTypeParameterChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirTypeParameter) {
+        if (!declaration.isJvmSpecialized) return
+        val containingDeclaration = context.containingDeclarations.lastOrNull() ?: return
+
+        val forbid = when (containingDeclaration) {
+            is FirNamedFunctionSymbol -> containingDeclaration.isOverride || !containingDeclaration.isFinal
+            else -> true
+        }
+
+        if (forbid) {
+            reporter.reportOn(declaration.source, FirJvmErrors.JVM_SPECIALIZE_NOT_SUPPORTED_HERE)
+        }
+    }
+
+    context(context: CheckerContext)
+    private val FirTypeParameter.isJvmSpecialized: Boolean
+        get() = annotations.any { it.fqName(context.session) == JVM_SPECIALIZE_ANNOTATION_FQ_NAME }
+}

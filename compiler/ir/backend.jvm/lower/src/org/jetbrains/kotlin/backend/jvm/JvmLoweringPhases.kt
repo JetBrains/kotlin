@@ -82,6 +82,8 @@ private val jvmFilePhases = createFilePhases(
     ::JvmLocalDeclarationsLowering,
     ::JvmLocalDeclarationPopupLowering,
 
+    ::JvmSpecializationLowering,
+
     ::StaticCallableReferenceLowering,
 
     ::JvmDefaultConstructorLowering,

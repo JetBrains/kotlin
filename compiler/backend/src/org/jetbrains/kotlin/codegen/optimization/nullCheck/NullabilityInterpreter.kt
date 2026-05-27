@@ -16,8 +16,9 @@
 
 package org.jetbrains.kotlin.codegen.optimization.nullCheck
 
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
 import org.jetbrains.kotlin.codegen.inline.ReifiedTypeInliner
-import org.jetbrains.kotlin.codegen.inline.operationKind
 import org.jetbrains.kotlin.codegen.optimization.boxing.*
 import org.jetbrains.kotlin.codegen.optimization.common.OptimizationBasicInterpreter
 import org.jetbrains.kotlin.codegen.optimization.common.StrictBasicValue
@@ -73,13 +74,13 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
     private fun AbstractInsnNode.isTypeOf(): Boolean {
         val marker = previous as? MethodInsnNode ?: return false
         return ReifiedTypeInliner.isOperationReifiedMarker(previous)
-                && marker.operationKind == ReifiedTypeInliner.OperationKind.TYPE_OF
+                && marker.reifiedOperationKind == ReifiedOperationKind.TYPE_OF
     }
 
     private fun AbstractInsnNode.isReifiedSafeAs(): Boolean {
         val marker = previous as? MethodInsnNode ?: return false
         return ReifiedTypeInliner.isOperationReifiedMarker(marker)
-                && marker.operationKind == ReifiedTypeInliner.OperationKind.SAFE_AS
+                && marker.reifiedOperationKind == ReifiedOperationKind.SAFE_AS
     }
 
     override fun naryOperation(insn: AbstractInsnNode, values: List<BasicValue>): BasicValue? {
@@ -87,7 +88,7 @@ class NullabilityInterpreter(private val generationState: GenerationState) : Opt
         val resultType = defaultResult?.type
 
         return when {
-            insn.isBoxing(generationState) ->
+            insn.isNonNullBoxing(generationState) ->
                 NotNullBasicValue(resultType)
             insn.isIteratorMethodCallOfProgression(values) ->
                 ProgressionIteratorBasicValue.byProgressionClassType(insn, values[0].type)

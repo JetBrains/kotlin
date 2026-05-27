@@ -712,6 +712,48 @@ class JvmSymbols(
         }.symbol
 
     /**
+     * fun <T> `<jvm-box-marker>`(value: T): T
+     */
+    val jvmBoxMarkerIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-box-marker>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", t.defaultType)
+            returnType = t.defaultType
+        }.symbol
+
+    /**
+     * fun <T> `<jvm-unbox-marker>`(value: T): T
+     */
+    val jvmUnboxMarkerIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-unbox-marker>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", t.defaultType)
+            returnType = t.defaultType
+        }.symbol
+
+    /**
+     * fun <T> `<jvm-specialized-argument-marker>`(value: T): T
+     */
+    val jvmMaybeUnboxMarkerIntrinsic: IrSimpleFunctionSymbol =
+        irFactory.buildFun {
+            name = Name.special("<jvm-specialized-argument-marker>")
+            origin = IrDeclarationOrigin.IR_BUILTINS_STUB
+        }.apply {
+            parent = kotlinJvmInternalPackage
+            val t = addTypeParameter("T", irBuiltIns.anyNType)
+            addValueParameter("value", t.defaultType)
+            returnType = t.defaultType
+        }.symbol
+
+    /**
      * An intrinsic used to represent [MethodType] objects in bootstrap method arguments (see [jvmIndyIntrinsic] above).
      * The value argument is a raw function reference to the corresponding method (e.g., `java.lang.function.Supplier#get`).
      * The resulting method type is unsubstituted.

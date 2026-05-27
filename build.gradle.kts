@@ -222,6 +222,7 @@ val commonCompilerModules = arrayOf(
     ":kotlin-util-io",
     ":kotlin-util-klib",
     ":kotlin-util-klib-abi",
+    ":kotlin-util-jvm-inline-codegen",
     ":native:base",
     ":native:binary-options",
     ":native:kotlin-native-utils",

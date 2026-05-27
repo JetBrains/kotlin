@@ -10,6 +10,7 @@ dependencies {
     api(project(":compiler:frontend.common.jvm"))
     api(project(":compiler:serialization"))
     api(project(":compiler:backend.common.jvm"))
+    api(project(":kotlin-util-jvm-inline-codegen"))
     compileOnly(intellijCore())
     compileOnly(libs.intellij.fastutil)
     compileOnly(libs.intellij.asm)

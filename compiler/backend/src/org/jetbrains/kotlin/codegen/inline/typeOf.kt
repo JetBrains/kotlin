@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.codegen.inline
 
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.codegen.AsmUtil
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -51,7 +53,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         arrayOf(JAVA_CLASS_TYPE, *arguments)
     } else if (!isTypeParameterBound && typeParameter.isReified()) {
         val argument = ReificationArgument(typeParameter.getName().asString(), type.isMarkedNullable(), 0)
-        ReifiedTypeInliner.putReifiedOperationMarker(ReifiedTypeInliner.OperationKind.TYPE_OF, argument, v)
+        ReifiedTypeInliner.putReifiedOperationMarker(ReifiedOperationKind.TYPE_OF, argument, v)
         v.aconst(null)
         return
     } else if (typeReferencesParameterWithRecursiveBound(type)) {

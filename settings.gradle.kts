@@ -117,6 +117,7 @@ include(
     ":kotlin-util-klib",
     ":kotlin-util-klib-metadata",
     ":kotlin-util-klib-abi",
+    ":kotlin-util-jvm-inline-codegen",
     ":daemon-common",
     ":kotlin-daemon",
     ":kotlin-daemon-client",
@@ -794,6 +795,7 @@ project(":kotlin-util-io").projectDir = File("$rootDir/compiler/util-io")
 project(":kotlin-util-klib").projectDir = File("$rootDir/compiler/util-klib")
 project(":kotlin-util-klib-metadata").projectDir = File("$rootDir/compiler/util-klib-metadata")
 project(":kotlin-util-klib-abi").projectDir = File("$rootDir/compiler/util-klib-abi")
+project(":kotlin-util-jvm-inline-codegen").projectDir = File("$rootDir/compiler/util-jvm-inline-codegen")
 project(":native:kotlin-native-utils").projectDir = File("$rootDir/native/utils")
 project(":native:frontend.native").projectDir = File("$rootDir/native/frontend")
 project(":native:kotlin-klib-commonizer").projectDir = File("$rootDir/native/commonizer")

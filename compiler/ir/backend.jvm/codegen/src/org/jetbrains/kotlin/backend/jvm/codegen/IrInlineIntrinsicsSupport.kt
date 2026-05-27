@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.jvm.codegen
 
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
-import org.jetbrains.kotlin.backend.jvm.intrinsics.SignatureString
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceOwnerKClassType
 import org.jetbrains.kotlin.backend.jvm.ir.getCallableReferenceTopLevelFlag
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
@@ -90,7 +89,7 @@ class IrInlineIntrinsicsSupport(
         putClassInstance(v, declaration.parent.getCallableReferenceOwnerKClassType(classCodegen.context))
         v.aconst(declaration.name.asString())
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
-        SignatureString.generateSignatureString(v, function, classCodegen)
+        v.aconst(classCodegen.methodSignatureMapper.generateSignatureString(function))
         v.iconst(declaration.getCallableReferenceTopLevelFlag())
         val parameterTypes =
             (if (withArity) listOf(INT_TYPE) else emptyList()) +
