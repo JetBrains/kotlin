@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.tools.tests
 
 import kotlinx.validation.ExperimentalBCVApi
 import kotlinx.validation.api.klib.*
+import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.junit.Assume
 import java.io.File
 import kotlin.io.path.*
@@ -76,7 +77,7 @@ class KlibPublicAPITest {
     }
 
     private fun mergeAndCompare(apiFileBaseName: String, dump: KlibDump) {
-        val mergedDumpFile = File("klib-public-api").resolve("$apiFileBaseName.api")
+        val mergedDumpFile = ForTestCompileRuntime.getFileFromProperty("klib-public-api").resolve("$apiFileBaseName.api")
         if (!mergedDumpFile.exists()) {
             mergedDumpFile.toPath().createParentDirectories()
             dump.saveTo(mergedDumpFile)

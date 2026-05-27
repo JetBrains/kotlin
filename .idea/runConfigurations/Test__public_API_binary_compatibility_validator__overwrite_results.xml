@@ -4,7 +4,7 @@
       <option name="executionName" />
       <option name="externalProjectPath" value="$PROJECT_DIR$/libraries/tools/binary-compatibility-validator" />
       <option name="externalSystemIdString" value="GRADLE" />
-      <option name="scriptParameters" value="-Poverwrite.output=true" />
+      <option name="scriptParameters" value="-Poverwrite.output=true -Pkotlin.test.instrumentation.disable.inputs.check=true" />
       <option name="taskDescriptions">
         <list />
       </option>
