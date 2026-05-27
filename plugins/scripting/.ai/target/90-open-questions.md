@@ -135,7 +135,7 @@ Side question: should K2 actually unify provided properties + explicit call para
 | Sub | Question | Status | Owner | YT | Last touched |
 |---|---|---|---|---|---|
 | Q10a | DSL naming: settled as `prependSyntheticSnippets`. See [iterations/2026-05-17_bindings-partial.md](../iterations/2026-05-17_bindings-partial.md) | resolved | unassigned | — | 2026-05-17 |
-| Q10b | Implicit-snippet tagging in `FirReplHistoryProvider`: needs an EP "implicit" tag, or caller-side bookkeeping? | open | unassigned | — | 2026-05-16 |
+| Q10b | Implicit-snippet tagging in `FirReplHistoryProvider`: needs an EP "implicit" tag, or caller-side bookkeeping? | **in-design — sidecar-tag direction locked 2026-05-27** ([iteration](../iterations/2026-05-27_stateless-repl-diagnostics-coverage.md)): `SnippetArtifactSidecar.isImplicit: Boolean` (sidecar v2), read surface via `ArtifactBackedFirReplHistoryProvider.isImplicit(symbol)`. Closes outright once a concrete `prependSyntheticSnippets` consumer exercises the read path. | unassigned | — | 2026-05-27 |
 | Q10c | Removal semantics: when a binding name is removed, what does the next snippet emit? Shadowing marker vs delegate-throws-at-access | open — decide during prototyping | unassigned | — | 2026-05-16 |
 | Q10d | Type stability: if a binding's runtime type changes, re-emit new delegating property (shadow old) vs fail? Probably re-emit; confirm | open — decide during prototyping | unassigned | — | 2026-05-16 |
 | Q10e | Bootstrap timing: canonical `bindings` accessor emitted once on first non-empty `Bindings`; clear+rebind edge case | open — decide during impl | unassigned | — | 2026-05-16 |

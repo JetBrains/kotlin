@@ -133,6 +133,7 @@ class K2ReplStatelessCompilerTest {
             stateObjectFqName = "some.pkg.MyReplState",
             resultPropertyName = "\$\$result",
             isSynthetic = true,
+            isImplicit = true,
         )
         val bytes = SnippetArtifactJsonCodec.encode(original)
         val decoded = SnippetArtifactJsonCodec.decode(bytes)
@@ -143,6 +144,22 @@ class K2ReplStatelessCompilerTest {
         val decoded2 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(nonSynthetic))
         assertEquals(nonSynthetic, decoded2)
         assertNotEquals(decoded, decoded2)
+
+        // Round-trip `isImplicit` independently of `isSynthetic` (Q10b read-side decoupling):
+        // a user-authored snippet that the compilation flagged implicit, *without* the
+        // compile-side `_isSyntheticSnippet` flag.
+        val implicitNotSynthetic = original.copy(isSynthetic = false, isImplicit = true)
+        val decoded3 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(implicitNotSynthetic))
+        assertEquals(implicitNotSynthetic, decoded3)
+        assertTrue(decoded3.isImplicit, "isImplicit must round-trip independently of isSynthetic")
+        assertEquals(false, decoded3.isSynthetic, "isSynthetic must round-trip independently of isImplicit")
+
+        // And the inverse — a synthetic snippet that callers chose *not* to surface as implicit.
+        val syntheticNotImplicit = original.copy(isSynthetic = true, isImplicit = false)
+        val decoded4 = SnippetArtifactJsonCodec.decode(SnippetArtifactJsonCodec.encode(syntheticNotImplicit))
+        assertEquals(syntheticNotImplicit, decoded4)
+        assertEquals(false, decoded4.isImplicit)
+        assertTrue(decoded4.isSynthetic)
     }
 
     @Test

@@ -33,7 +33,7 @@ import java.nio.charset.StandardCharsets
  *   `"Snippet_1"` or `"some/pkg/Snippet_1$Nested"`).
  * @property sidecar JSON-encoded [SnippetArtifactSidecar]. See [SnippetArtifactJsonCodec].
  */
-internal data class SnippetArtifact(
+data class SnippetArtifact(
     val classFiles: Map<String, ByteArray>,
     val sidecar: ByteArray,
 ) {
@@ -67,7 +67,7 @@ internal data class SnippetArtifact(
  *
  * Field set is unstable; bumping [sidecarVersion] is mandatory on any structural change.
  */
-internal data class SnippetArtifactSidecar(
+data class SnippetArtifactSidecar(
     val sidecarVersion: Int,
     val snippetName: String,
     /** JVM internal name of the wrapper class containing `$$eval`, e.g. `"Snippet_1"`. */
@@ -80,6 +80,21 @@ internal data class SnippetArtifactSidecar(
     val stateObjectFqName: String,
     val resultPropertyName: String?,
     val isSynthetic: Boolean,
+    /**
+     * `true` when this snippet was *implicitly* prepended to the REPL history rather than directly
+     * authored by the user — e.g. a JSR-223 binding cell emitted by a `prependSyntheticSnippets`
+     * refinement-DSL callback (Option D, [target/40-jsr223-target.md](../../../.ai/target/40-jsr223-target.md)),
+     * or a refinement-handler-injected helper cell.
+     *
+     * The flag is **independent of [isSynthetic]**: `isSynthetic` records that the snippet's
+     * compilation configuration carried [kotlin.script.experimental.impl._isSyntheticSnippet]; a
+     * compiler-internal flag used during compile. `isImplicit` describes a **history-provider**
+     * fact — whether `FirReplHistoryProvider` should expose this snippet to consumers (e.g.
+     * diagnostics, scope reconstruction, UI) as user-authored or implicitly emitted. The two
+     * usually coincide today, but the resolve question (Q10b) is about the history-provider view,
+     * not the compilation flag.
+     */
+    val isImplicit: Boolean = false,
 ) {
     /**
      * Reference to a top-level member of the snippet wrapper class that originated as a
@@ -107,7 +122,15 @@ internal data class SnippetArtifactSidecar(
     )
 
     companion object {
-        const val CURRENT_VERSION: Int = 1
+        /**
+         * Bumped on every structural change to the sidecar.
+         *
+         * | Version | Change |
+         * |---------|--------|
+         * | 1       | Initial prototype shape. |
+         * | 2       | Added [isImplicit] for Q10b history-provider tagging. |
+         */
+        const val CURRENT_VERSION: Int = 2
     }
 }
 
@@ -121,7 +144,7 @@ internal data class SnippetArtifactSidecar(
  * Supports only the strict subset of JSON that this format needs: objects, string arrays, strings,
  * integers, booleans, and `null`. No whitespace tolerance beyond what the writer emits.
  */
-internal object SnippetArtifactJsonCodec {
+object SnippetArtifactJsonCodec {
 
     fun encode(sidecar: SnippetArtifactSidecar): ByteArray {
         val sb = StringBuilder()
@@ -149,7 +172,8 @@ internal object SnippetArtifactJsonCodec {
         sb.append(',')
         sb.appendField("stateObjectFqName", sidecar.stateObjectFqName); sb.append(',')
         sb.appendNullableField("resultPropertyName", sidecar.resultPropertyName); sb.append(',')
-        sb.appendField("isSynthetic", sidecar.isSynthetic)
+        sb.appendField("isSynthetic", sidecar.isSynthetic); sb.append(',')
+        sb.appendField("isImplicit", sidecar.isImplicit)
         sb.append('}')
         return sb.toString().toByteArray(StandardCharsets.UTF_8)
     }
@@ -192,6 +216,7 @@ internal object SnippetArtifactJsonCodec {
             stateObjectFqName = obj.req("stateObjectFqName") as String,
             resultPropertyName = obj["resultPropertyName"] as String?,
             isSynthetic = obj.req("isSynthetic") as Boolean,
+            isImplicit = obj.req("isImplicit") as Boolean,
         )
     }
 
@@ -380,9 +405,9 @@ private class JsonParser(private val src: String) {
 }
 
 /** Encode the given sidecar into a [SnippetArtifact] together with the supplied class files. */
-internal fun SnippetArtifactSidecar.toArtifact(classFiles: Map<String, ByteArray>): SnippetArtifact =
+fun SnippetArtifactSidecar.toArtifact(classFiles: Map<String, ByteArray>): SnippetArtifact =
     SnippetArtifact(classFiles, SnippetArtifactJsonCodec.encode(this))
 
 /** Decode this artifact's sidecar back into a [SnippetArtifactSidecar]. */
-internal fun SnippetArtifact.decodeSidecar(): SnippetArtifactSidecar =
+fun SnippetArtifact.decodeSidecar(): SnippetArtifactSidecar =
     SnippetArtifactJsonCodec.decode(sidecar)
