@@ -1,5 +1,6 @@
+@file:Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
+
 @Deprecated("")
-@Suppress("DEPRECATED_SINCE_KOTLIN_OUTSIDE_KOTLIN_SUBPACKAGE")
 @DeprecatedSinceKotlin(hiddenSince = "1.0")
 fun hidden() {}
 
@@ -13,4 +14,33 @@ class Derived : Base {
     constructor()
 
     override fun f() {}
+}
+
+@Deprecated("", level = DeprecationLevel.ERROR)
+fun notHidden1() {}
+
+@Deprecated("", level = DeprecationLevel.WARNING)
+fun notHidden2() {}
+
+@Deprecated("")
+fun notHidden3() {}
+
+@Deprecated("")
+@DeprecatedSinceKotlin(hiddenSince = "999.999")
+fun notHidden4() {}
+
+interface A {
+    @get:Deprecated("")
+    @get:DeprecatedSinceKotlin(hiddenSince = "1.0")
+    var hiddenGetter: Int
+
+    @set:Deprecated("")
+    @set:DeprecatedSinceKotlin(hiddenSince = "1.0")
+    var hiddenSetter: Int
+
+    @Deprecated("")
+    @DeprecatedSinceKotlin(hiddenSince = "999.999")
+    @get:Deprecated("")
+    @get:DeprecatedSinceKotlin(hiddenSince = "1.0")
+    var hiddenGetterButNotSetter: Int
 }

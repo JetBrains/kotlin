@@ -28,13 +28,10 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.config.*
-import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.VariableAccessorDescriptor
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
@@ -390,7 +387,7 @@ class ExpressionCodegen(
         // If the parameter is an extension receiver parameter or a captured extension receiver from enclosing,
         // then generate name accordingly.
         val name = if (param.origin == BOUND_RECEIVER_PARAMETER || param.origin == LAMBDA_EXTENSION_RECEIVER || isReceiver) {
-            getNameForReceiverParameter(irFunction.toIrBasedDescriptor(), context.config.languageVersionSettings)
+            getNameForReceiverParameter(irFunction, context.config.languageVersionSettings)
         } else {
             param.name.asString()
         }
@@ -402,14 +399,12 @@ class ExpressionCodegen(
         )
     }
 
-    private fun getNameForReceiverParameter(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): String {
+    private fun getNameForReceiverParameter(function: IrFunction, languageVersionSettings: LanguageVersionSettings): String {
         if (!languageVersionSettings.supportsFeature(LanguageFeature.NewCapturedReceiverFieldNamingConvention)) {
             return RECEIVER_PARAMETER_NAME
         }
 
-        val callableName =
-            if (descriptor is VariableAccessorDescriptor) descriptor.correspondingVariable.getName()
-            else descriptor.name
+        val callableName = (function.propertyIfAccessor as IrDeclarationWithName).name
 
         if (callableName.isSpecial) {
             return RECEIVER_PARAMETER_NAME
