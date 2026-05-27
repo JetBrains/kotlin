@@ -32,8 +32,12 @@ abstract class LLDBSessionSpec {
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
 
     protected fun sanityCheckLLDBOutput(output: String) {
-        assertFalse(PYTHON_EXCEPTION_HEADER in output) {
-            "Unhandled python exception in debugger: ${output.substring(output.indexOf(PYTHON_EXCEPTION_HEADER))}"
+        // Ideally, we should just check that stderr is empty.
+        // Tracked in KT-86532.
+        for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
+            assertFalse(prefix in output) {
+                "Unexpected output in debugger: ${output.substring(output.indexOf(prefix))}"
+            }
         }
     }
 

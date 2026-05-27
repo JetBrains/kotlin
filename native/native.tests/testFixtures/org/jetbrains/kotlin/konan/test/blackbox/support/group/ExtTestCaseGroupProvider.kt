@@ -440,7 +440,7 @@ private class ExtTestDataFile(
             else -> null
         }
         val outputMatcher = lldbSpec?.let {
-            OutputMatcher(Output.STDOUT) { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
+            OutputMatcher { output -> lldbSpec.checkLLDBOutput(output, settings.get()) }
         } ?: parseOutputRegex(structure.directives)
 
         val expectedExitCode = when (testKind) {
