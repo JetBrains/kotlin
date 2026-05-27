@@ -37,6 +37,7 @@ val buildProperties = settings.kotlinBuildProperties
 
 develocity {
     server.set(buildProperties.buildScanServer)
+    edgeDiscovery = true
     buildScan {
         capture {
             uploadInBackground.set(buildProperties.isTeamcityBuild.map { !it })

@@ -16,6 +16,7 @@ if (buildProperties.buildScanServer.isPresent) {
 develocity {
     val buildScanServer = buildProperties.buildScanServer
     server.set(buildScanServer)
+    edgeDiscovery = true
     buildScan {
         publishing {
             onlyIf { buildScanServer.isPresent }
