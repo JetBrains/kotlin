@@ -15,8 +15,11 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility as KotlinVisibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
@@ -24,6 +27,8 @@ import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.coneTypeOrNull
 import org.jetbrains.kotlin.scripting.compiler.plugin.services.firReplHistoryProvider
 import kotlin.script.experimental.api.ScriptCompilationConfiguration
 import kotlin.script.experimental.api.repl
@@ -95,16 +100,32 @@ private fun buildSidecar(
         .mapNotNull { decl ->
             when (decl) {
                 is FirProperty -> SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.PROPERTY, decl.name.asString(), descriptor = null,
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.PROPERTY,
+                    name = decl.name.asString(),
+                    descriptor = null,
+                    visibility = decl.toMemberRefVisibility(),
+                    returnTypeSignature = decl.returnTypeRef.toRenderableSignature(),
                 )
                 is FirNamedFunction -> SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.FUNCTION, decl.name.asString(), descriptor = null,
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.FUNCTION,
+                    name = decl.name.asString(),
+                    descriptor = null,
+                    visibility = decl.toMemberRefVisibility(),
+                    returnTypeSignature = decl.returnTypeRef.toRenderableSignature(),
                 )
                 is FirRegularClass -> SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.CLASS, decl.name.asString(), descriptor = null,
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.CLASS,
+                    name = decl.name.asString(),
+                    descriptor = null,
+                    visibility = decl.toMemberRefVisibility(),
+                    returnTypeSignature = null,
                 )
                 is FirTypeAlias -> SnippetArtifactSidecar.MemberRef(
-                    SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS, decl.name.asString(), descriptor = null,
+                    kind = SnippetArtifactSidecar.MemberRef.Kind.TYPEALIAS,
+                    name = decl.name.asString(),
+                    descriptor = null,
+                    visibility = decl.toMemberRefVisibility(),
+                    returnTypeSignature = null,
                 )
                 else -> null
             }
@@ -152,4 +173,35 @@ private fun buildSidecar(
  */
 internal fun ScriptingHostConfiguration.firReplHistorySizeOrZero(): Int =
     this[ScriptingHostConfiguration.repl.firReplHistoryProvider]?.getSnippetCount() ?: 0
+
+/**
+ * Project a FIR [KotlinVisibility][org.jetbrains.kotlin.descriptors.Visibility] onto the small
+ * enum carried in the sidecar.
+ *
+ * Anything outside the four well-known visibilities (i.e. `Local`, `InvisibleFake`,
+ * `Inherited`, …) is mapped to [SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN]; the consumer
+ * defaults UNKNOWN to PUBLIC, which keeps unrecognised cases from accidentally hiding real
+ * declarations from subsequent snippets.
+ */
+private fun FirMemberDeclaration.toMemberRefVisibility(): SnippetArtifactSidecar.MemberRef.Visibility {
+    val v: KotlinVisibility = status.visibility
+    return when (v) {
+        Visibilities.Public -> SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC
+        Visibilities.Internal -> SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL
+        Visibilities.Protected -> SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED
+        Visibilities.Private,
+        Visibilities.PrivateToThis -> SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE
+        else -> SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN
+    }
+}
+
+/**
+ * Render a [FirTypeRef] into the renderable string we carry on `MemberRef.returnTypeSignature`.
+ *
+ * Returns `null` when the type cannot be derived (e.g. unresolved / error type). This is a
+ * best-effort prototype signature — it is *not* a JVM descriptor; protobuf promotion will replace
+ * it with a structured type descriptor.
+ */
+private fun FirTypeRef.toRenderableSignature(): String? =
+    coneTypeOrNull?.toString()?.takeIf { it.isNotBlank() }
 

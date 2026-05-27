@@ -105,13 +105,42 @@ data class SnippetArtifactSidecar(
      * @property descriptor JVM descriptor for [Kind.PROPERTY] (field descriptor) / [Kind.FUNCTION]
      *   (method descriptor); JVM internal name for [Kind.CLASS] / [Kind.TYPEALIAS]. May be `null`
      *   when the descriptor cannot be derived in the prototype (e.g. type aliases).
+     * @property visibility source-level visibility of the declaration as seen at compile time.
+     *   Defaults to [Visibility.UNKNOWN] for compatibility with sidecars produced before v3.
+     *   Consumers (e.g. `ArtifactBackedFirReplHistoryProvider`) use this to decide whether to
+     *   re-tag the deserialised declaration as `isReplSnippetDeclaration` — private/protected
+     *   members must not be exposed to subsequent snippets via REPL-history scoping (else the
+     *   `property_visibility` diagnostic for cross-snippet private access is suppressed). See
+     *   `iterations/2026-05-27_stateless-repl-sidecar-v3.md`.
+     * @property returnTypeSignature for [Kind.PROPERTY] / [Kind.FUNCTION]: a *renderable* string
+     *   representation of the declared return type (FQ name + nullability + projected arguments,
+     *   as produced by `ConeKotlinType.toString()`). `null` for [Kind.CLASS] / [Kind.TYPEALIAS]
+     *   (the type *is* the declaration), or when the return type cannot be derived (e.g. error
+     *   type at compile time). Not consumed by `materialize()` today — the deserialised
+     *   `.kotlin_metadata` already carries the real type — but recorded so that downstream
+     *   tooling (debugger / IDE inspections / cross-snippet anonymous-object signature checks)
+     *   can reason about prior-snippet return types without re-loading the wrapper class. This
+     *   is the field that closes the schema-shaped gap behind `function_returns_anonymous_object`.
      */
     data class MemberRef(
         val kind: Kind,
         val name: String,
         val descriptor: String?,
+        val visibility: Visibility = Visibility.UNKNOWN,
+        val returnTypeSignature: String? = null,
     ) {
         enum class Kind { PROPERTY, FUNCTION, CLASS, TYPEALIAS }
+
+        /**
+         * Source-level visibility tag carried on a [MemberRef].
+         *
+         * Mirrors the subset of [org.jetbrains.kotlin.descriptors.Visibilities] that REPL
+         * declarations can plausibly use; everything else (e.g. `LocalVisibility`,
+         * `InvisibleFake`) maps to [UNKNOWN] on the producer side and is treated as PUBLIC by
+         * the consumer (safe default — extra leakage on unrecognised visibilities is preferable
+         * to dropping real declarations).
+         */
+        enum class Visibility { PUBLIC, INTERNAL, PROTECTED, PRIVATE, UNKNOWN }
     }
 
     /** A file-level `FirImport` entry of the snippet's containing file. */
@@ -129,8 +158,14 @@ data class SnippetArtifactSidecar(
          * |---------|--------|
          * | 1       | Initial prototype shape. |
          * | 2       | Added [isImplicit] for Q10b history-provider tagging. |
+         * | 3       | Added [MemberRef.visibility] + [MemberRef.returnTypeSignature]. Fixes the |
+         * |         | `property_visibility` (private members must not be re-tagged as REPL- |
+         * |         | snippet declarations on the consumer side) and unlocks the |
+         * |         | `function_returns_anonymous_object` diagnostic by carrying the function |
+         * |         | return type's renderable signature so cross-snippet anonymous return |
+         * |         | types can be reasoned about. |
          */
-        const val CURRENT_VERSION: Int = 2
+        const val CURRENT_VERSION: Int = 3
     }
 }
 
@@ -158,7 +193,9 @@ object SnippetArtifactJsonCodec {
             sb.append('{')
             sb.appendField("kind", m.kind.name); sb.append(',')
             sb.appendField("name", m.name); sb.append(',')
-            sb.appendNullableField("descriptor", m.descriptor)
+            sb.appendNullableField("descriptor", m.descriptor); sb.append(',')
+            sb.appendField("visibility", m.visibility.name); sb.append(',')
+            sb.appendNullableField("returnTypeSignature", m.returnTypeSignature)
             sb.append('}')
         }
         sb.append(',')
@@ -204,6 +241,8 @@ object SnippetArtifactJsonCodec {
                     kind = SnippetArtifactSidecar.MemberRef.Kind.valueOf(m["kind"] as String),
                     name = m["name"] as String,
                     descriptor = m["descriptor"] as String?,
+                    visibility = SnippetArtifactSidecar.MemberRef.Visibility.valueOf(m.req("visibility") as String),
+                    returnTypeSignature = m["returnTypeSignature"] as String?,
                 )
             },
             imports = (obj.req("imports") as List<Map<String, Any?>>).map { m ->
