@@ -188,7 +188,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
         )
         val groupedSources = collectSources(configuration, projectEnvironment)
 
-        if (groupedSources.isEmpty()) {
+        if (groupedSources.isEmpty() && !configuration.allowNoSourceFiles) {
             configuration.report(COMPILER_ARGUMENTS_ERROR, "No source files")
             return null
         }

@@ -117,7 +117,12 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                         kotlinScopeProvider,
                         packagePartProvider,
                         kotlinClassFinder,
-                        projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
+                        projectEnvironment.getFirJavaFacade(
+                            session,
+                            moduleDataProvider.allModuleData.firstOrNull { it.name.asString().startsWith("<regular dependencies") }
+                                ?: moduleDataProvider.allModuleData.first(),
+                            scope
+                        )
                     ),
                 )
             }
