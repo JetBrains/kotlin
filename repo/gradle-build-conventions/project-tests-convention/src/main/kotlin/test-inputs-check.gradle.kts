@@ -266,7 +266,9 @@ tasks.withType<Test>().configureEach {
                         .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
                         .replace(
                             "{{build_dir}}",
-                            """permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";"""
+                            """
+                                permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";
+                            """.trimIndent()
                         )
                         .replace("{{java_library_paths}}", javaLibraryPaths.joinToString("\n    "))
                         .replace(
