@@ -159,6 +159,7 @@ fun serializeModuleToMetadata(
         specificFeatures = mapOf(
             LanguageFeature.MultiPlatformProjects to LanguageFeature.State.ENABLED
         ),
+        analysisFlags = mapOf(AnalysisFlags.allowKotlinPackage to true)
     )
 
     configuration.targetPlatform = targetPlatform

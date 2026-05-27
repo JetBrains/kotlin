@@ -2,6 +2,7 @@
 // FULL_JDK
 // WITH_STDLIB
 // LANGUAGE: +MultiPlatformProjects
+// ALLOW_KOTLIN_PACKAGE
 // ISSUE: KT-76448
 
 // MODULE: common

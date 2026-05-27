@@ -1,3 +1,4 @@
+// ALLOW_KOTLIN_PACKAGE
 // FILE: box.kt
 
 package a

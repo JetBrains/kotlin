@@ -1,6 +1,7 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +MultiPlatformProjects -AllowExpectDeclarationsInJsExport
+// ALLOW_KOTLIN_PACKAGE
 // ISSUE: KT-64951
 
 // MODULE: m1-common
