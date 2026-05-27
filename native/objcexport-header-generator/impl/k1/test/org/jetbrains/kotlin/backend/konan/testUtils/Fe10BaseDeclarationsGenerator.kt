@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.konan.testUtils
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportProblemCollector
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCTopLevel
-import org.jetbrains.kotlin.backend.konan.tests.ObjCExportBaseDeclarationsTest
 import org.junit.jupiter.api.extension.ExtensionContext
 import org.junit.jupiter.api.extension.ParameterContext
 import org.junit.jupiter.api.extension.ParameterResolver
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.extension.ParameterResolver
 
 class Fe10BaseDeclarationsGeneratorExtension : ParameterResolver {
     override fun supportsParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Boolean {
-        return parameterContext.parameter.type == ObjCExportBaseDeclarationsTest.BaseDeclarationsGenerator::class.java
+        return parameterContext.parameter.type == BaseDeclarationsGenerator::class.java
     }
 
     override fun resolveParameter(parameterContext: ParameterContext, extensionContext: ExtensionContext): Any {
@@ -24,7 +23,7 @@ class Fe10BaseDeclarationsGeneratorExtension : ParameterResolver {
     }
 }
 
-private object Fe10BaseDeclarationsGenerator : ObjCExportBaseDeclarationsTest.BaseDeclarationsGenerator {
+private object Fe10BaseDeclarationsGenerator : BaseDeclarationsGenerator {
     override fun invoke(topLevelPrefix: String): List<ObjCTopLevel> {
         val translator = ObjCExportTranslatorImpl(
             generator = null,
