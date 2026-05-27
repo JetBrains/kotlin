@@ -292,7 +292,6 @@ enum class LanguageFeature(
     ReportTypeVarianceConflictOnQualifierArguments(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-50947"),
     ReportErrorsOnRecursiveTypeInsidePlusAssignment(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-48546"),
     ForbidExtensionCallsOnInlineFunctionalParameters(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-52502"),
-    SkipStandaloneScriptsInSourceRoots(KOTLIN_1_9, "KT-52525"),
     ModifierNonBuiltinSuspendFunError(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-49264"),
     EnumEntries(KOTLIN_1_9, sinceApiVersion = ApiVersion.KOTLIN_1_8, forcesPreReleaseBinaries = true, issue = "KT-48872"),
     ForbidSuperDelegationToAbstractFakeOverride(KOTLIN_1_9, enabledInProgressiveMode = true, "KT-49017"),

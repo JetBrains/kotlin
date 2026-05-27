@@ -183,7 +183,7 @@ val ScriptCompilationConfigurationKeys.hostConfiguration by PropertiesCollection
 
 /**
  * Should the script be always considered standalone
- * If true, it is ignored when compiled along with other sources (starting from 1.9, according to SkipStandaloneScriptsInSourceRoots language feature)
+ * If true, it is ignored when compiled along with other sources (unless the compiler option -Xallow-any-scripts-in-source-roots is used)
  * true by default
  */
 val ScriptCompilationConfigurationKeys.isStandalone by PropertiesCollection.key<Boolean>(true)

@@ -937,10 +937,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         description = "Allow compiling scripts along with regular Kotlin sources.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
-        )
-
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_20,
         )

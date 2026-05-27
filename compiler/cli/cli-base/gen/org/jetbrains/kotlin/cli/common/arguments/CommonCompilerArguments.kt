@@ -99,7 +99,6 @@ This flag partially enables functionality of `-Xexplicit-api` flag, so please do
         value = "-Xallow-any-scripts-in-source-roots",
         description = "Allow compiling scripts along with regular Kotlin sources.",
     )
-    @Disables(LanguageFeature.SkipStandaloneScriptsInSourceRoots)
     var allowAnyScriptsInSourceRoots: Boolean = false
         set(value) {
             checkFrozen()
