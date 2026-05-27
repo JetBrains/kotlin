@@ -71,6 +71,10 @@ class CacheBuilder(
     // If libA depends on libB, then dependableLibraries[libB] contains libA.
     private val dependableLibraries = mutableMapOf<KotlinLibrary, MutableList<KotlinLibrary>>()
 
+    // Absolute paths to archives produced during the last build() invocation; flushed to disk if shouldWrite… is set.
+    private val lastRebuiltArchives = mutableListOf<String>()
+    private val shouldWriteRebuiltArchivesFile = config.incrementalCacheBuildOutputFile != null
+
     private fun findAllDependable(libraries: List<KotlinLibrary>): Set<KotlinLibrary> {
         val visited = mutableSetOf<KotlinLibrary>()
 
@@ -95,6 +99,8 @@ class CacheBuilder(
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
         val icedLibraries = mutableListOf<KotlinLibrary>()
+
+        lastRebuiltArchives.clear()
 
         allLibraries.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
@@ -231,12 +237,52 @@ class CacheBuilder(
                 libraryFiles.map { filesWithFqNames[it.file]!!.filePath }
             }.orEmpty()
 
+            val isCInterop = library.isCInteropLibrary()
+
             when {
-                library in needFullRebuild -> buildLibraryCache(library, false, emptyList())
-                caches[library] == null || filesToCache.isNotEmpty() -> buildLibraryCache(library, false, filesToCache)
+                library in needFullRebuild -> {
+                    buildLibraryCache(library, false, emptyList())
+                    if (shouldWriteRebuiltArchivesFile && !isCInterop) {
+                        val cacheRoot = requireNotNull(cacheRootDirectories[library]) {
+                            "Cannot find cache root directory for library: $library"
+                        }
+                        lastRebuiltArchives.addAll(library.getCachedBinaryFilePaths(cacheRoot))
+                    }
+                }
+                caches[library] == null || filesToCache.isNotEmpty() -> {
+                    val isFirstBuild = caches[library] == null
+
+                    buildLibraryCache(library, false, filesToCache)
+
+                    if (shouldWriteRebuiltArchivesFile && !isCInterop) {
+                        cacheRootDirectories[library]?.let { cacheRoot ->
+                            // Only the files that were actually rebuilt this run
+                            val binaries = if (isFirstBuild)
+                                library.getCachedBinaryFilePaths(cacheRoot)
+                            else
+                                groupedDirtyFiles[library]?.getCachedBinaryFilePaths(cacheRoot) ?: emptyList()
+
+                            lastRebuiltArchives.addAll(binaries)
+                        }
+                    }
+                }
             }
         }
+
+        if (shouldWriteRebuiltArchivesFile) {
+            dumpLastRebuiltArchivesTo(config.incrementalCacheBuildOutputFile!!)
+        }
     }
+
+    private fun List<LibraryFile>.getCachedBinaryFilePaths(cacheRoot: String): List<String> = map {
+        "$cacheRoot/${it.file}/bin/lib${it.file}.a"
+    }
+
+    private fun KotlinLibrary.getCachedBinaryFilePaths(cacheRoot: String): List<String> = getFilesWithFqNames()
+            .map { fqnFile ->
+                val fileId = CacheSupport.cacheFileId(fqnFile.fqName, fqnFile.filePath)
+                "$cacheRoot/$fileId/bin/lib$fileId.a"
+            }
 
     private fun buildLibraryCache(library: KotlinLibrary, isExternal: Boolean, filesToCache: List<String>) {
         val dependencies = library.getAllTransitiveDependencies(uniqueNameToLibrary)
@@ -432,5 +478,14 @@ class CacheBuilder(
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache
         }
+    }
+
+    private fun dumpLastRebuiltArchivesTo(outputPath: String) {
+        val rebuiltArchivesFile = File(outputPath)
+        val fileContent = if (lastRebuiltArchives.isEmpty())
+            ""
+        else
+            lastRebuiltArchives.joinToString("\n") + "\n"
+        rebuiltArchivesFile.writeText(fileContent)
     }
 }

@@ -28,6 +28,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val AUTO_CACHEABLE_FROM by key<List<String>>("Paths to the root directories from which dependencies are to be cached automatically.")
     val AUTO_CACHE_DIR by key<String>("Path to the directory where to put caches for auto-cacheable dependencies.")
     val INCREMENTAL_CACHE_DIR by key<String>("Path to the directory where to put incremental build caches.")
+    val INCREMENTAL_CACHE_BUILD_OUTPUT_FILE by key<String>("Path to a file where the list of per-file cache archives produced by this build should be written.")
     val CACHED_LIBRARIES by key<Map<String, String>>("Mapping from library paths to cache paths.")
     val FILES_TO_CACHE by key<List<String>>("Which files should be compiled to cache.")
     val MAKE_PER_FILE_CACHE by key<Boolean>()

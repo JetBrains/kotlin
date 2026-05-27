@@ -434,6 +434,19 @@ By default caches will be placed into the kotlin-native system cache directory."
     }
 
     compilerArgument {
+        name = "Xic-build-output-file"
+        compilerName = "icBuildOutputFile"
+        description =
+            "Path to a file where the list of per-file cache archives produced by this build should be written.".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
+
+    compilerArgument {
         name = "Xcheck-dependencies"
         deprecatedName = "-check_dependencies"
         description = "Check dependencies and download the missing ones.".asReleaseDependent()

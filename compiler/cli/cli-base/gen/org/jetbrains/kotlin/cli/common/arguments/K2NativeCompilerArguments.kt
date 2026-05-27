@@ -329,6 +329,18 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xic-build-output-file",
+        valueDescription = "<path>",
+        description = "Path to a file where the list of per-file cache archives produced by this build should be written.",
+        delimiter = Argument.Delimiters.none,
+    )
+    var icBuildOutputFile: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xic-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where incremental build caches should be put.",
