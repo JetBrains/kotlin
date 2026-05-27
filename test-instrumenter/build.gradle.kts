@@ -2,6 +2,7 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     kotlin("jvm")
+    id("me.champeau.jmh") version "0.7.3"
 }
 
 dependencies {
@@ -27,6 +28,11 @@ sourceSets {
         projectDefault()
         compileClasspath += sourceSets["bootClasspath"].output
         runtimeClasspath += sourceSets["bootClasspath"].output
+    }
+
+    "jmh" {
+        java.srcDirs("jmh")
+        compileClasspath += sourceSets["bootClasspath"].output
     }
 }
 
@@ -62,3 +68,14 @@ testing.suites.withType<JvmTestSuite>().configureEach {
     useJUnitJupiter()
 }
 
+tasks.jmh {
+    jmhClasspath.from(sourceSets["bootClasspath"].output)
+    profilers = listOf("jfr")
+    javaLauncher = getToolchainLauncherFor(JdkMajorVersion.JDK_11_0)
+    warmupIterations = 5
+    iterations = 5
+    fork = 1
+    threads = 1
+
+    outputs.upToDateWhen { false }
+}
