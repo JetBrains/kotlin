@@ -148,10 +148,13 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
 
     val asRegularClass = plainRegularClass ?: leastUpperBound(session).toRegularClassSymbol(session) ?: return null
-    val primaryConstructor = asRegularClass
-        .takeIf { it.isBasicValueClass || (checkFullValueClasses && it.isFullValueClass && !isNullableType()) }
-        ?.primaryConstructorIfAny(session)
-        ?: return null
+    val primaryConstructor = asRegularClass.primaryConstructorIfAny(session) ?: return null
+    val isSubjectForCheck = when {
+        asRegularClass.isBasicValueClass -> true
+        checkFullValueClasses && asRegularClass.isFullValueClass -> !isNullableType() || primaryConstructor.valueParameterSymbols.size == 1
+        else -> false
+    }
+    if (!isSubjectForCheck) return null
 
     if (primaryConstructor.valueParameterSymbols.size > 1 && !checkMultiField) return null
     if (!visited.add(this)) return expectedRecursionType
