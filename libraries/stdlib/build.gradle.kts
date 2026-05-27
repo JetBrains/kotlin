@@ -56,7 +56,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xstdlib-compilation")
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
-    freeCompilerArgs.add("-Xname-based-destructuring=only-syntax")
+    freeCompilerArgs.add("-Xname-based-destructuring=complete")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
@@ -632,7 +632,7 @@ kotlin {
                     commonTestOptIns.forEach { optIn(it) }
                 }
             }
-            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=only-syntax")
+            compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
         }
     }
 }
