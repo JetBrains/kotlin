@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonJsAndWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.klib.CustomWebCompilerSettings
 import org.jetbrains.kotlin.js.test.klib.collectDependencies
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
@@ -48,7 +47,7 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
         private val customWebCompilerSettings: CustomWebCompilerSettings
     ) : AbstractGroupingStageTestFacade<GroupingStageInputArtifact, BinaryArtifacts.Wasm>() {
         override fun transform(inputArtifact: GroupingStageInputArtifact): BinaryArtifacts.Wasm {
-            error("Not yet implementedI")
+            error("Not Yet Implemented")
         }
 
         override val inputKind: TestArtifactKind<GroupingStageInputArtifact>
@@ -129,7 +128,6 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
                     listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument)
                 },
                 customLanguageFeatures
-                    .filterNot { LanguageFeature.valueOf(it.removePrefix("+").removePrefix("-")).testOnly }
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
             )
         }
