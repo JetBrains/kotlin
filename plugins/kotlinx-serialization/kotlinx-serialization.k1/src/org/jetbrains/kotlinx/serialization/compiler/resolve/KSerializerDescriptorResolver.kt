@@ -450,7 +450,7 @@ object KSerializerDescriptorResolver {
         )
         val serializerClass = thisClass.getClassFromSerializationPackage(SerialEntityNames.KSERIALIZER_CLASS)
 
-        val (typeArgs, args) = createKSerializerParamsForEachGenericArgument(f, serializableClass)
+        val [typeArgs, args] = createKSerializerParamsForEachGenericArgument(f, serializableClass)
 
         val newSerializableType =
             KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, serializableClass, typeArgs.map { TypeProjectionImpl(it.defaultType) })
@@ -479,7 +479,7 @@ object KSerializerDescriptorResolver {
         )
         val returnType = f.builtIns.unitType
 
-        val (typeArgs, argsKSer) = createKSerializerParamsForEachGenericArgument(f, thisClass, actualArgsOffset = 3)
+        val [typeArgs, argsKSer] = createKSerializerParamsForEachGenericArgument(f, thisClass, actualArgsOffset = 3)
 
         val args = mutableListOf<ValueParameterDescriptor>()
 

@@ -42,7 +42,7 @@ class UnusedTestOutputCheckingTest {
                     if (!testMethod.isAnnotationPresent(Test::class.java)) continue
 
                     val methodName = testMethod.name
-                    val (baseNameChunks, modificationChunk) = methodName.split('+', limit = 2).also { check(it.size == 2) }
+                    val [baseNameChunks, modificationChunk] = methodName.split('+', limit = 2).also { check(it.size == 2) }
                     val basePath = baseNameChunks.split(' ').map(String::trim).filter(String::isNotBlank).joinToString("/")
                     add(testDataPath.resolve("$basePath.$modificationChunk.txt"))
                 }

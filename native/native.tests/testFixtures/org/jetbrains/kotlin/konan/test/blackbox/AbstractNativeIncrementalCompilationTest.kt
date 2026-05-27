@@ -168,7 +168,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             }
 
         private fun takeCacheSnapshot(stepId: Int): Map<CacheKey, CacheEntry> = buildMap {
-            for ((moduleName, module) in testStructure.modules) {
+            for ([moduleName, module] in testStructure.modules) {
                 if (moduleName == MAIN_MODULE_NAME) continue
                 val expectedFiles = module.getStep(stepId)?.expectedFileStats ?: continue
                 expectedFiles.values.flatten().toSet().forEach { relativePath ->
@@ -185,9 +185,9 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
         }
 
         private fun verifyCacheExpectations(stepId: Int, previous: Map<CacheKey, CacheEntry>, current: Map<CacheKey, CacheEntry>) {
-            for ((moduleName, module) in testStructure.modules) {
+            for ([moduleName, module] in testStructure.modules) {
                 val expected = module.getStep(stepId)?.expectedFileStats ?: continue
-                for ((directive, files) in expected) {
+                for ([directive, files] in expected) {
                     val cacheExpectation = NativeCacheExpectation.byDirective.getValue(directive)
                     files.forEach { path ->
                         verifyExpectation(stepId, moduleName, path, cacheExpectation, previous, current)
@@ -274,13 +274,13 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
 
         fun hasSameContentAs(other: CacheEntry): Boolean {
             if (files.keys != other.files.keys) return false
-            val metadataIsEqual = files.all { (path, file) ->
+            val metadataIsEqual = files.all { [path, file] ->
                 val otherFile = other.files.getValue(path)
                 file.size == otherFile.size && file.lastModified == otherFile.lastModified
             }
             if (!metadataIsEqual) return false
 
-            return files.all { (path, file) -> file.hash == other.files.getValue(path).hash }
+            return files.all { [path, file] -> file.hash == other.files.getValue(path).hash }
         }
 
         companion object {

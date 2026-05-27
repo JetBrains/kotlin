@@ -170,7 +170,7 @@ internal class CallStack {
 
     // TODO save only necessary declarations
     fun storeUpValues(state: StateWithClosure) = currentFrame.copyMemoryInto(state)
-    fun loadUpValues(state: StateWithClosure) = state.upValues.forEach { (symbol, variable) -> storeState(symbol, variable) }
+    fun loadUpValues(state: StateWithClosure) = state.upValues.forEach { [symbol, variable] -> storeState(symbol, variable) }
     fun copyUpValuesFromPreviousFrame() = frames[frames.size - 2].copyMemoryInto(currentFrame)
 
     fun getStackTrace(): List<String> = frames.map { it.toString() }.filter { it != Frame.NOT_DEFINED }

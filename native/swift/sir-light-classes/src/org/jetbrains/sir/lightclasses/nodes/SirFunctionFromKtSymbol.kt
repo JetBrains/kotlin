@@ -164,7 +164,7 @@ internal open class SirFunctionFromKtSymbol(
                     val methodName = this@SirFunctionFromKtSymbol.name
                     val args = this@SirFunctionFromKtSymbol.parameters
                         .zip(paramExprs)
-                        .joinToString(", ") { (param, expr) ->
+                        .joinToString(", ") { [param, expr] ->
                             param.argumentName?.let { "$it: $expr" } ?: expr
                         }
                     val tryPrefix = if (errorType != SirType.never) "try! " else ""

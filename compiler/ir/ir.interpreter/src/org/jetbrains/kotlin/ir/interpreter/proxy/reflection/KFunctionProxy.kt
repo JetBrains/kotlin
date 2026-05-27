@@ -119,7 +119,7 @@ internal abstract class KFunctionProxy<R>(
         val statement = this.body!!.statements.single()
         val otherStatement = other.body!!.statements.single()
 
-        val (thisArg, otherArg) = when (statement) {
+        val [thisArg, otherArg] = when (statement) {
             is IrTypeOperatorCall -> {
                 if (otherStatement !is IrTypeOperatorCall) return false
                 Pair(statement.argument, otherStatement.argument)

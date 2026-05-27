@@ -265,7 +265,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                 classLikeType?.fullyExpandedClassId(session) in excludedClasses
             }
             .filter { it.callable.visibility == Visibilities.Public }
-            .map { (callable, name) ->
+            .map { (val callable, val name = columnName) ->
                 var returnType = callable.fir.returnTypeRef.resolveIfJavaType(session, JavaTypeParameterStack.EMPTY, null)
                     .coneType.upperBoundIfFlexible()
                     // result will be used to as a return type of property of a local dataframe type

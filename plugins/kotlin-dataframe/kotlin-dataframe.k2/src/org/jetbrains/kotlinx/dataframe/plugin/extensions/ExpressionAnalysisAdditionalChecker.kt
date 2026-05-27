@@ -272,7 +272,7 @@ private class Checker(
             append(indent).append("data class $name(")
             if (fields.isNotEmpty()) {
                 appendLine()
-                for ((ann, decl) in fields) {
+                for ([ann, decl] in fields) {
                     append(ann)
                     append(inner).append(decl).appendLine(",")
                 }
@@ -294,7 +294,7 @@ private class Checker(
                 append(" { }")
             } else {
                 appendLine(" {")
-                for ((ann, decl) in fields) {
+                for ([ann, decl] in fields) {
                     append(ann)
                     append(inner).appendLine(decl)
                 }

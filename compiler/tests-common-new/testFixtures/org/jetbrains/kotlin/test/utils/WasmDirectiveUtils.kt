@@ -37,7 +37,7 @@ fun wasmIgnoreForParser(raw: String): WasmIgnoreForConfig? {
         // invalid syntax
         if (splitList.size != 2) return null
 
-        val (k, v) = splitList
+        val [k, v] = splitList
         k to v
     }
 

@@ -304,7 +304,7 @@ abstract class AbstractTypeModificationDslTestBase(testDirPathString: String) : 
 
     protected fun <T : KaType> test(block: KaSession.(T) -> Any?) {
         val testMethodName = environment.testServices.testInfo.methodName
-        val (directoryName, testDataFileName, modificationName) = TEST_NAME_REGEX.matchEntire(testMethodName)?.destructured
+        val [directoryName, testDataFileName, modificationName] = TEST_NAME_REGEX.matchEntire(testMethodName)?.destructured
             ?: error("Expected test name format: 'directoryName testDataFileName +modificationName'")
 
         val mainFile = environment.mainFile ?: fail("Main file not found")
