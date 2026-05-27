@@ -174,14 +174,26 @@ private fun CompilerConfiguration.checkRedundantArguments(arguments: CommonCompi
         explicitArgument.enablesAnnotations.forEach {
             if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.ENABLED)) continue@propertiesLoop
         }
-        explicitArgument.disablesAnnotations.forEach {
-            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) continue@propertiesLoop
+
+        val renderedArgument = if (effectivePropertyValue is String) {
+            "${explicitArgument.argument.value}=$effectivePropertyValue"
+        } else {
+            explicitArgument.argument.value
         }
 
-        val argValue = if (effectivePropertyValue is String) "=$effectivePropertyValue" else ""
+        explicitArgument.disablesAnnotations.forEach {
+            if (checkNecessity(it.feature, it.ifValueIs, LanguageFeature.State.DISABLED)) {
+                this.report(
+                    CliDiagnostics.CLI_ARG_DISABLES_STABLE_FEATURE,
+                    "The argument '$renderedArgument' disables a stable language feature for the current language version $languageVersion. Future support for this mode is not guaranteed.",
+                )
+                continue@propertiesLoop
+            }
+        }
+
         this.report(
             CliDiagnostics.REDUNDANT_CLI_ARG,
-            "The argument '${explicitArgument.argument.value}${argValue}' is redundant for the current language version $languageVersion.",
+            "The argument '$renderedArgument' is redundant for the current language version $languageVersion.",
         )
     }
 }
