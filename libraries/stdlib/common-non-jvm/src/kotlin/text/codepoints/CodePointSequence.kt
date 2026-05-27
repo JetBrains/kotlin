@@ -19,7 +19,7 @@ public actual fun CharSequence.codePointAt(index: Int): CodePoint {
     val c1 = this[index]
     if (index < length - 1 && c1.isHighSurrogate()) {
         val c2 = this[index + 1]
-        if (c2.isLowSurrogate()) return CodePoint.fromSurrogatePair(c1, c2)
+        if (c2.isLowSurrogate()) return CodePoint.fromSurrogatePairUnchecked(c1, c2)
     }
     return c1.toCodePoint()
 }
@@ -30,7 +30,7 @@ public actual fun CharSequence.codePointBefore(index: Int): CodePoint {
     val c2 = this[index - 1]
     if (index > 1 && c2.isLowSurrogate()) {
         val c1 = this[index - 2]
-        if (c1.isHighSurrogate()) return CodePoint.fromSurrogatePair(c1, c2)
+        if (c1.isHighSurrogate()) return CodePoint.fromSurrogatePairUnchecked(c1, c2)
     }
     return c2.toCodePoint()
 }
@@ -41,7 +41,7 @@ public actual fun CharArray.codePointAt(index: Int): CodePoint {
     val c1 = this[index]
     if (index < size - 1 && c1.isHighSurrogate()) {
         val c2 = this[index + 1]
-        if (c2.isLowSurrogate()) return CodePoint.fromSurrogatePair(c1, c2)
+        if (c2.isLowSurrogate()) return CodePoint.fromSurrogatePairUnchecked(c1, c2)
     }
     return c1.toCodePoint()
 }
@@ -53,7 +53,7 @@ public actual fun CharArray.codePointBefore(index: Int): CodePoint {
     val c2 = this[index - 1]
     if (index > 1 && c2.isLowSurrogate()) {
         val c1 = this[index - 2]
-        if (c1.isHighSurrogate()) return CodePoint.fromSurrogatePair(c1, c2)
+        if (c1.isHighSurrogate()) return CodePoint.fromSurrogatePairUnchecked(c1, c2)
     }
     return c2.toCodePoint()
 }
