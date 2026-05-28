@@ -64,6 +64,12 @@ public class CompilerFacilityTestForComposeCompilerPluginGenerated extends Abstr
   }
 
   @Test
+  @TestMetadata("defaultInterface.kt")
+  public void testDefaultInterface() {
+    run("defaultInterface.kt");
+  }
+
+  @Test
   @TestMetadata("funInterface.kt")
   public void testFunInterface() {
     run("funInterface.kt");

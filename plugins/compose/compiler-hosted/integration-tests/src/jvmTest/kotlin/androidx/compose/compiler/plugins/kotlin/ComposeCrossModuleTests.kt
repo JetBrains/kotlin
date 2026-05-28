@@ -22,8 +22,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import kotlin.test.assertFalse
 
 class ComposeCrossModuleTests : AbstractCodegenTest() {
@@ -1267,7 +1265,10 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
                     }
                     """
                 )
-            )
+            ),
+            validate = {
+                println(it)
+            }
         )
     }
 
@@ -1453,21 +1454,12 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
                 "lib" to mapOf(
                     "lib.kt" to """
                         import androidx.compose.runtime.Composable
-    
-                        interface AssetScope {
+                        
+                        interface SettingsCard {
+                            val cardTitle: String
+                        
                             @Composable
-                            fun GraphicAsset(asset: Int, modifier: Int = 0): Int
-                        }
-            
-            
-                        class DefaultAssetScope : AssetScope {
-                            @Composable
-                            override fun GraphicAsset(asset: Int, modifier: Int) = asset
-                        }
-            
-                        @Composable
-                        fun SomeView(visualAsset: @Composable AssetScope.() -> Unit = {}) {
-                            DefaultAssetScope().visualAsset()
+                            fun CardContents(modifier: Int = 0) { }
                         }
                     """
                 ),
@@ -1475,21 +1467,20 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
                     "main.kt" to """
                         import androidx.compose.runtime.Composable
                         
-                        // in code
-                        data class Graphic(val res: Int)
-            
-                        @Composable
-                        fun Test() {
-                            val asset = Graphic(0)
-                            SomeView(
-                                visualAsset = {
-                                    GraphicAsset(asset = asset.res)
-                                }
-                            )
+                        class Card(override val cardTitle: String) : SettingsCard {
+                            @Composable
+                            override fun CardContents(modifier: Int) {
+                                println(modifier)
+                            }
+                        }
+                        
+                        @Composable fun Test(card: Card) {
+                            card.CardContents()
                         }
                     """
                 )
-            )
+            ),
+            dumpClasses = true
         )
     }
 
