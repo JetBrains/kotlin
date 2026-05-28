@@ -4,6 +4,9 @@ org.jetbrains.kotlin.analysis.api.compile.KaCodeFragmentCapturedValue.displayTex
 org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
 org.jetbrains.kotlin.analysis.api.components.KaAnalysisScopeProvider
 org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
+org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState.Explicit.isComplete
+org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState.Inherited.isAmbiguous
+org.jetbrains.kotlin.analysis.api.components.KaCallableImplementationState.Inherited.isOverridable
 org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder.arguments
 org.jetbrains.kotlin.analysis.api.components.KaCompiledFile
 org.jetbrains.kotlin.analysis.api.components.KaCompilerFacility

@@ -21,6 +21,9 @@ import org.jetbrains.kotlin.analysis.api.fir.symbols.pointers.getClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getContainingKtModule
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
+import org.jetbrains.kotlin.analysis.api.impl.base.KaCallableExplicitImplementationStateImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaCallableInheritedImplementationStateImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.KaCallableMissingImplementationStateImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.findSyntheticJavaPropertyAccessor
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -837,10 +840,10 @@ internal class KaFirSymbolRelationProvider(
 }
 
 private fun ImplementationStatus.toKaImplementationState(): KaCallableImplementationState = when (this) {
-    ImplementationStatus.NOT_IMPLEMENTED -> KaCallableImplementationState.Missing
-    ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> KaCallableImplementationState.Explicit(isComplete = false)
-    ImplementationStatus.AMBIGUOUSLY_INHERITED -> KaCallableImplementationState.Inherited(isAmbiguous = true, isOverridable = true)
-    ImplementationStatus.INHERITED_OR_SYNTHESIZED -> KaCallableImplementationState.Inherited(isAmbiguous = false, isOverridable = true)
-    ImplementationStatus.ALREADY_IMPLEMENTED -> KaCallableImplementationState.Explicit(isComplete = true)
-    ImplementationStatus.CANNOT_BE_IMPLEMENTED -> KaCallableImplementationState.Inherited(isAmbiguous = false, isOverridable = false)
+    ImplementationStatus.NOT_IMPLEMENTED -> KaCallableMissingImplementationStateImpl
+    ImplementationStatus.VAR_IMPLEMENTED_BY_VAL -> KaCallableExplicitImplementationStateImpl(isComplete = false)
+    ImplementationStatus.AMBIGUOUSLY_INHERITED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = true, isOverridable = true)
+    ImplementationStatus.INHERITED_OR_SYNTHESIZED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = true)
+    ImplementationStatus.ALREADY_IMPLEMENTED -> KaCallableExplicitImplementationStateImpl(isComplete = true)
+    ImplementationStatus.CANNOT_BE_IMPLEMENTED -> KaCallableInheritedImplementationStateImpl(isAmbiguous = false, isOverridable = false)
 }

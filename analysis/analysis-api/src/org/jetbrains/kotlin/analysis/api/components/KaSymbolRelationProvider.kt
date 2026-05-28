@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.util.ImplementationStatus
-import java.util.Objects
 
 @KaSessionComponentImplementationDetail
 @SubclassOptInRequired(KaSessionComponentImplementationDetail::class)
@@ -379,7 +378,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  * @see KaSymbolRelationProvider.implementationState
  */
 @KaExperimentalApi
-public sealed class KaCallableImplementationState {
+public sealed interface KaCallableImplementationState {
     /**
      * The declaration is directly implemented or explicitly overridden in the target class.
      *
@@ -387,20 +386,9 @@ public sealed class KaCallableImplementationState {
      * [isComplete] will be `false`.
      */
     @KaExperimentalApi
-    public class Explicit @KaImplementationDetail constructor(
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Explicit : KaCallableImplementationState {
         public val isComplete: Boolean
-    ) : KaCallableImplementationState() {
-        override fun equals(other: Any?): Boolean {
-            return this === other || (other is Explicit && other.isComplete == isComplete)
-        }
-
-        override fun hashCode(): Int {
-            return isComplete.hashCode()
-        }
-
-        override fun toString(): String {
-            return "Explicit(isComplete=$isComplete)"
-        }
     }
 
     /**
@@ -431,21 +419,10 @@ public sealed class KaCallableImplementationState {
      * in a supertype).
      */
     @KaExperimentalApi
-    public class Inherited @KaImplementationDetail constructor(
-        public val isAmbiguous: Boolean,
-        public val isOverridable: Boolean,
-    ) : KaCallableImplementationState() {
-        override fun equals(other: Any?): Boolean {
-            return this === other || (other is Inherited && other.isAmbiguous == isAmbiguous && other.isOverridable == isOverridable)
-        }
-
-        override fun hashCode(): Int {
-            return Objects.hash(isAmbiguous, isOverridable)
-        }
-
-        override fun toString(): String {
-            return "Inherited(isAmbiguous=$isAmbiguous, isOverridable=$isOverridable)"
-        }
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Inherited : KaCallableImplementationState {
+        public val isAmbiguous: Boolean
+        public val isOverridable: Boolean
     }
 
     /**
@@ -455,13 +432,12 @@ public sealed class KaCallableImplementationState {
      * can legitimately be absent.
      */
     @KaExperimentalApi
-    public object Missing : KaCallableImplementationState() {
-        override fun toString(): String = "Missing"
-    }
+    @SubclassOptInRequired(KaImplementationDetail::class)
+    public interface Missing : KaCallableImplementationState
 
     @Suppress("unused")
     @KaExperimentalApi
-    private object Unknown : KaCallableImplementationState() {
+    private object Unknown : KaCallableImplementationState {
         override fun toString(): String = "Unknown"
     }
 }
