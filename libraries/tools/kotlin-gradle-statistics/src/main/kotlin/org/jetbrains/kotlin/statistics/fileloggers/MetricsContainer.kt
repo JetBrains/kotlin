@@ -277,28 +277,38 @@ class MetricsContainer(
     override fun report(metric: StringListMetrics, value: List<String>, subprojectName: String?, weight: Long?): Boolean {
         val projectHash = getProjectHash(metric.perProject, subprojectName)
         synchronized(metricsLock) {
+
             val metricContainer =
                 stringListMetrics.getOrPut(MetricDescriptor(metric.name, projectHash)) { metric.type.newMetricContainer() }
-            metricContainer.addValue(value.map { metric.anonymization.anonymize(it, metricConcatContainerValuesSeparator) }, weight)
+
+            val anonymizedValues = value.map {
+                val anonymizedValue = anonymizeMetric(metric.anonymization, it)
+                if (forceValuesValidation && !metric.anonymization.anonymizeOnIdeSize()) {
+                    validateMetric(metric.name, metric.anonymization, anonymizedValue)
+                }
+                anonymizedValue
+            }
+
+            metricContainer.addValue(anonymizedValues, weight)
         }
         return true
     }
 
-    internal fun validateMetric(metric: StringMetrics, value: String) {
+    internal fun validateMetric(metricName: String, anonymization: StringAnonymizationPolicy, value: String) {
         if (value.contains(UNEXPECTED_VALUE) || !value.matches(
                 Regex(
-                    metric.anonymization.validationRegexp(
+                    anonymization.validationRegexp(
                         metricConcatContainerValuesSeparator
                     )
                 )
             )
         ) {
-            throw MetricValueValidationFailed("Metric ${metric.name} has value [${value}]. Validation regex: ${metric.anonymization.validationRegexp()}.")
+            throw MetricValueValidationFailed("Metric $metricName has value [${value}]. Validation regex: ${anonymization.validationRegexp()}.")
         }
     }
 
-    internal fun anonymizeMetric(metric: StringMetrics, value: String) =
-        metric.anonymization.anonymize(value, metricConcatContainerValuesSeparator)
+    internal fun anonymizeMetric(anonymization: StringAnonymizationPolicy, value: String) =
+        anonymization.anonymize(value, metricConcatContainerValuesSeparator)
 
     fun StringListOverridePolicy.newMetricContainer(): IMetricContainer<List<String>> = when (this) {
         StringListOverridePolicy.CONCAT -> ConcatMetricContainer(metricConcatContainerValuesSeparator)
@@ -325,9 +335,9 @@ class MetricsContainer(
         synchronized(metricsLock) {
             val metricContainer = stringMetrics.getOrPut(MetricDescriptor(metric.name, projectHash)) { metric.type.newMetricContainer() }
 
-            val anonymizedValue = anonymizeMetric(metric, value)
+            val anonymizedValue = anonymizeMetric(metric.anonymization, value)
             if (forceValuesValidation && !metric.anonymization.anonymizeOnIdeSize()) {
-                validateMetric(metric, anonymizedValue)
+                validateMetric(metric.name, metric.anonymization, anonymizedValue)
             }
             metricContainer.addValue(anonymizedValue, weight)
         }
@@ -377,6 +387,6 @@ class MetricsContainer(
     }
 
     fun isEmpty(): Boolean = synchronized(metricsLock) {
-        numericalMetrics.isEmpty() && booleanMetrics.isEmpty() && stringMetrics.isEmpty()
+        numericalMetrics.isEmpty() && booleanMetrics.isEmpty() && stringMetrics.isEmpty() && stringListMetrics.isEmpty()
     }
 }
