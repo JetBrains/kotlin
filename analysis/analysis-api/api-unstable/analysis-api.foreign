@@ -5,10 +5,15 @@ com/intellij/openapi/util/TextRange
 com/intellij/openapi/vfs/VirtualFile
 com/intellij/psi/PsiClass
 com/intellij/psi/PsiElement
+com/intellij/psi/PsiEnumConstant
+com/intellij/psi/PsiField
 com/intellij/psi/PsiFile
 com/intellij/psi/PsiFileSystemItem
 com/intellij/psi/PsiMember
+com/intellij/psi/PsiMethod
+com/intellij/psi/PsiParameter
 com/intellij/psi/PsiType
+com/intellij/psi/PsiTypeParameter
 com/intellij/psi/search/GlobalSearchScope
 com/intellij/psi/tree/TokenSet
 org/jetbrains/kotlin/config/LanguageVersionSettings
