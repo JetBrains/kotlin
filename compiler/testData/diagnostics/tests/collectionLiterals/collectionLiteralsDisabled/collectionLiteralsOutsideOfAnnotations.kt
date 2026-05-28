@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 
 fun takeArray(array: Array<String>) {}
 

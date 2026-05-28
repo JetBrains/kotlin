@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83537
-// LANGUAGE: +CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiterals
+// LANGUAGE_FEATURE_TOGGLED: CollectionLiteralsBasedAnnotationResolution
 // FILE: a.kt
 package a
 

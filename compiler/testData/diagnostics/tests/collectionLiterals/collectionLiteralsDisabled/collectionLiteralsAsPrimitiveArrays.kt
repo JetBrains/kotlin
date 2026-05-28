@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 // DIAGNOSTICS: -UNUSED_VARIABLE, -UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, -UNSUPPORTED, -UNSUPPORTED_FEATURE
 
 fun basicTypes() {
