@@ -1,5 +1,5 @@
 {
-    "schemaVersion": 4,
+    "schemaVersion": 5,
     "releases": [
         {
             "name": "1.0.0",
@@ -1738,6 +1738,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": true,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1781,6 +1782,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": true,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1824,6 +1826,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": false,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1867,6 +1870,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": false,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1910,6 +1914,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": false,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1953,6 +1958,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": false,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -1996,6 +2002,7 @@
                 },
                 "delimiter": null,
                 "affectsCompilationOutcome": false,
+                "restrictedToCompilerPhase": null,
                 "valueType": {
                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                     "isNullable": {
@@ -2044,6 +2051,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -2087,6 +2095,7 @@
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -2130,6 +2139,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2173,6 +2183,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -2216,6 +2227,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType",
                             "isNullable": {
@@ -2259,6 +2271,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2302,6 +2315,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2345,6 +2359,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2388,6 +2403,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2431,6 +2447,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2474,6 +2491,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2517,6 +2535,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2560,6 +2579,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2609,6 +2629,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -2652,6 +2673,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2695,6 +2717,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2738,6 +2761,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2781,6 +2805,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -2824,6 +2849,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2867,6 +2893,7 @@
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -2910,6 +2937,7 @@
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -2953,6 +2981,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -2996,6 +3025,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3039,6 +3069,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3082,6 +3113,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3125,6 +3157,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3168,6 +3201,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3211,6 +3245,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3254,6 +3289,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3297,6 +3333,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3340,6 +3377,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3383,6 +3421,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3426,6 +3465,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -3469,6 +3509,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -3512,6 +3553,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -3555,6 +3597,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3598,6 +3641,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3641,6 +3685,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinExplicitApiModeType",
                             "isNullable": {
@@ -3684,6 +3729,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3727,6 +3773,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -3770,6 +3817,7 @@
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3813,6 +3861,7 @@
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3856,6 +3905,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3899,6 +3949,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3942,6 +3993,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -3985,6 +4037,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4028,6 +4081,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinHeaderModeType",
                             "isNullable": {
@@ -4071,6 +4125,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4114,6 +4169,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4157,6 +4213,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -4200,6 +4257,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4243,6 +4301,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4286,6 +4345,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4329,6 +4389,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4372,6 +4433,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -4415,6 +4477,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4458,6 +4521,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4501,6 +4565,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -4544,6 +4609,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4587,6 +4653,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4630,6 +4697,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4673,6 +4741,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4716,6 +4785,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -4759,6 +4829,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -4802,6 +4873,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -4845,6 +4917,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -4888,6 +4961,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -4931,6 +5005,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -4974,6 +5049,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -5017,6 +5093,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -5060,6 +5137,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5103,6 +5181,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5146,6 +5225,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5189,6 +5269,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5232,6 +5313,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5275,6 +5357,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5318,6 +5401,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5361,6 +5445,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerModeType",
                             "isNullable": {
@@ -5404,6 +5489,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5447,6 +5533,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5490,6 +5577,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5533,6 +5621,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5576,6 +5665,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5619,6 +5709,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5662,6 +5753,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -5705,6 +5797,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5748,6 +5841,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5791,6 +5885,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5834,6 +5929,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5877,6 +5973,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -5920,6 +6017,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": false,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -5963,6 +6061,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -6006,6 +6105,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -6049,6 +6149,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -6092,6 +6193,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -6135,6 +6237,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -6178,6 +6281,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinVersionType",
                             "isNullable": {
@@ -6221,6 +6325,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                             "isNullable": {
@@ -6264,6 +6369,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinVersionType",
                             "isNullable": {
@@ -6307,6 +6413,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                             "defaultValue": {
@@ -6350,6 +6457,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -6393,6 +6501,7 @@
                         },
                         "delimiter": null,
                         "affectsCompilationOutcome": true,
+                        "restrictedToCompilerPhase": null,
                         "valueType": {
                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                             "isNullable": {
@@ -6441,6 +6550,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -6484,6 +6594,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -6527,6 +6638,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6570,6 +6682,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6613,6 +6726,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6656,6 +6770,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -6699,6 +6814,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": false,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                     "isNullable": {
@@ -6742,6 +6858,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -6785,6 +6902,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6828,6 +6946,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6871,6 +6990,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -6914,6 +7034,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -6957,6 +7078,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7000,6 +7122,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7043,6 +7166,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7086,6 +7210,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7129,6 +7254,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -7172,6 +7298,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7215,6 +7342,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -7258,6 +7386,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7301,6 +7430,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7344,6 +7474,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7387,6 +7518,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7430,6 +7562,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -7473,6 +7606,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -7527,6 +7661,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7576,6 +7711,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7619,6 +7755,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -7662,6 +7799,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7705,6 +7843,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7748,6 +7887,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7791,6 +7931,7 @@
                                 },
                                 "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7834,6 +7975,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7877,6 +8019,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -7920,6 +8063,7 @@
                                 },
                                 "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -7963,6 +8107,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8006,6 +8151,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8049,6 +8195,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8092,6 +8239,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8135,6 +8283,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8178,6 +8327,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8221,6 +8371,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8264,6 +8415,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8307,6 +8459,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8350,6 +8503,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -8393,6 +8547,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8442,6 +8597,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": false,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -8485,6 +8641,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -8528,6 +8685,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8571,6 +8729,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -8614,6 +8773,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -8657,6 +8817,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -8700,6 +8861,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -8743,6 +8905,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8786,6 +8949,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8829,6 +8993,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8872,6 +9037,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8915,6 +9081,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -8958,6 +9125,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9001,6 +9169,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9044,6 +9213,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9087,6 +9257,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9130,6 +9301,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9173,6 +9345,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9216,6 +9389,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9259,6 +9433,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9302,6 +9477,7 @@
                                 },
                                 "delimiter": "PathSeparator",
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9345,6 +9521,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9388,6 +9565,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9431,6 +9609,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9474,6 +9653,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9517,6 +9697,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9560,6 +9741,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9614,6 +9796,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.KotlinJvmTargetType",
                                     "isNullable": {
@@ -9657,6 +9840,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9700,6 +9884,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9743,6 +9928,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9786,6 +9972,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -9829,6 +10016,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -9879,6 +10067,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9922,6 +10111,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -9965,6 +10155,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -10008,6 +10199,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.KlibIrInlinerModeType",
                                     "isNullable": {
@@ -10051,6 +10243,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -10100,6 +10293,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -10143,6 +10337,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                     "isNullable": {
@@ -10192,6 +10387,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -10235,6 +10431,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -10284,6 +10481,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -10332,6 +10530,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10375,6 +10574,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10418,6 +10618,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10461,6 +10662,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10504,6 +10706,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10547,6 +10750,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10590,6 +10794,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10633,6 +10838,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10676,6 +10882,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10719,6 +10926,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10762,6 +10970,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -10805,6 +11014,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10854,6 +11064,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10927,6 +11138,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -10994,6 +11206,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -11037,6 +11250,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -11080,6 +11294,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11123,6 +11338,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11166,6 +11382,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11209,6 +11426,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11252,6 +11470,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -11295,6 +11514,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -11338,6 +11558,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11381,6 +11602,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11424,6 +11646,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11467,6 +11690,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -11515,6 +11739,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -11558,6 +11783,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -11601,6 +11827,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": null,
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11644,6 +11871,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11687,6 +11915,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11730,6 +11959,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11773,6 +12003,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11816,6 +12047,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11859,6 +12091,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11902,6 +12135,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11945,6 +12179,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -11988,6 +12223,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12031,6 +12267,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12074,6 +12311,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -12117,6 +12355,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12160,6 +12399,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12203,6 +12443,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12246,6 +12487,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -12295,6 +12537,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12362,6 +12605,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -12410,6 +12654,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12453,6 +12698,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12496,6 +12742,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12539,6 +12786,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12582,6 +12830,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12625,6 +12874,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12668,6 +12918,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12711,6 +12962,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12754,6 +13006,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12797,6 +13050,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12840,6 +13094,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -12883,6 +13138,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12926,6 +13182,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -12969,6 +13226,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -13012,6 +13270,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -13055,6 +13314,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -13098,6 +13358,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -13141,6 +13402,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -13184,6 +13446,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": null,
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                             "isNullable": {
@@ -13227,6 +13490,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -13270,6 +13534,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": null,
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -13313,6 +13578,7 @@
                                                         },
                                                         "delimiter": null,
                                                         "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                         "valueType": {
                                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                             "isNullable": {
@@ -13369,6 +13635,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -13412,6 +13679,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -13455,6 +13723,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": null,
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13498,6 +13767,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13541,6 +13811,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13584,6 +13855,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13627,6 +13899,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13670,6 +13943,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13713,6 +13987,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13756,6 +14031,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13799,6 +14075,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13842,6 +14119,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13885,6 +14163,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -13928,6 +14207,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -13971,6 +14251,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -14014,6 +14295,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -14057,6 +14339,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -14100,6 +14383,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "KLIB_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                                     "isNullable": {
@@ -14149,6 +14433,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -14216,6 +14501,7 @@
                                                 },
                                                 "delimiter": null,
                                                 "affectsCompilationOutcome": true,
+                                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
                                                 "valueType": {
                                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                                     "isNullable": {
@@ -14271,6 +14557,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14314,6 +14601,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14357,6 +14645,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14400,6 +14689,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14443,6 +14733,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -14486,6 +14777,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                             "isNullable": {
@@ -14529,6 +14821,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -14572,6 +14865,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14615,6 +14909,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -14658,6 +14953,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -14701,6 +14997,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -14744,6 +15041,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -14787,6 +15085,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14830,6 +15129,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                             "isNullable": {
@@ -14873,6 +15173,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -14916,6 +15217,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -14959,6 +15261,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15002,6 +15305,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15045,6 +15349,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15088,6 +15393,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15137,6 +15443,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15180,6 +15487,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15223,6 +15531,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15266,6 +15575,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15309,6 +15619,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15352,6 +15663,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15395,6 +15707,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15438,6 +15751,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15481,6 +15795,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15524,6 +15839,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15567,6 +15883,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15610,6 +15927,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15653,6 +15971,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15696,6 +16015,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15739,6 +16059,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -15782,6 +16103,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15825,6 +16147,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15868,6 +16191,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15911,6 +16235,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -15954,6 +16279,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -15997,6 +16323,7 @@
                                         },
                                         "delimiter": "Semicolon",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -16040,6 +16367,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16083,6 +16411,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16126,6 +16455,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16169,6 +16499,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16212,6 +16543,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16255,6 +16587,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16298,6 +16631,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -16341,6 +16675,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16384,6 +16719,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16427,6 +16763,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -16470,6 +16807,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16513,6 +16851,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16556,6 +16895,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16599,6 +16939,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16642,6 +16983,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16685,6 +17027,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16728,6 +17071,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16771,6 +17115,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16814,6 +17159,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16857,6 +17203,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -16900,6 +17247,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16943,6 +17291,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -16986,6 +17335,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17029,6 +17379,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17072,6 +17423,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17115,6 +17467,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17158,6 +17511,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -17201,6 +17555,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -17244,6 +17599,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17287,6 +17643,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -17330,6 +17687,7 @@
                                         },
                                         "delimiter": "Space",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -17373,6 +17731,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": false,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17416,6 +17775,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17459,6 +17819,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17502,6 +17863,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17545,6 +17907,7 @@
                                         },
                                         "delimiter": "None",
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                             "defaultValue": {
@@ -17588,6 +17951,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17631,6 +17995,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17674,6 +18039,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17717,6 +18083,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17760,6 +18127,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17803,6 +18171,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                             "isNullable": {
@@ -17846,6 +18215,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17889,6 +18259,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17932,6 +18303,7 @@
                                         },
                                         "delimiter": null,
                                         "affectsCompilationOutcome": true,
+                                        "restrictedToCompilerPhase": null,
                                         "valueType": {
                                             "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                             "isNullable": {
@@ -17985,6 +18357,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -18028,6 +18401,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
                                     "isNullable": {
@@ -18071,6 +18445,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
                                     "isNullable": {
@@ -18114,6 +18489,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -18157,6 +18533,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
                                     "defaultValue": {
@@ -18200,6 +18577,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -18243,6 +18621,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {
@@ -18286,6 +18665,7 @@
                                 },
                                 "delimiter": null,
                                 "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": null,
                                 "valueType": {
                                     "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
                                     "isNullable": {

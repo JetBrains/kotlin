@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
@@ -35,6 +36,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -52,6 +54,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             // TODO(KT-85591): Uncomment when 2.4.20 becomes the latest stable
             // removedVersion = KotlinReleaseVersion.v2_5_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -63,6 +66,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -93,6 +97,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
             introducedVersion = KotlinReleaseVersion.v2_0_20,
             deprecatedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -110,6 +115,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
     @OptIn(ExperimentalArgumentApi::class)
@@ -144,6 +150,7 @@ Note: The prefixes are applied in the same order as they are passed in this CLI 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -158,6 +165,7 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 
     compilerArgument {
@@ -181,5 +189,6 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_4_0,
         )
+        restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
 }

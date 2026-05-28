@@ -18,13 +18,17 @@ import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 
 internal class BtaApiOptionsGenerator(
-    private val targetPackage: String,
+    override val targetPackage: String,
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaOptionsGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: ClassName?): GeneratorOutputs {
+    override fun generateArgumentsForLevel(
+        level: KotlinCompilerArgumentsLevel,
+        parentClass: ClassName?,
+        additionalInterfaces: List<ClassName>
+    ): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
         val mainFile = FileSpec.builder(targetPackage, className).apply {
@@ -34,6 +38,7 @@ internal class BtaApiOptionsGenerator(
                     addAnnotation(ANNOTATION_EXPERIMENTAL)
                 }
                 parentClass?.let { addSuperinterface(it) }
+                additionalInterfaces.forEach { addSuperinterface(it) }
                 val argument =
                     generateArgumentType(
                         className,
@@ -67,6 +72,7 @@ internal class BtaApiOptionsGenerator(
                         addApplyArgumentStringsFun()
                     } else {
                         addSuperinterface(parentClass.nestedClass("Builder"))
+                        additionalInterfaces.forEach { addSuperinterface(it.nestedClass("Builder")) }
                     }
                 }
                 generateGetPutFunctions(argumentTypeName, level, deprecateSet = true)
