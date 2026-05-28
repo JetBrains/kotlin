@@ -8,7 +8,7 @@ sourceSets {
 
 dependencies {
     implementation(project(":native:swift:swift-export-standalone-integration-tests"))
-    implementation(projectTests(":native:swift:swift-export-ide"))
+    implementation(testFixtures(project(":native:swift:swift-export-ide")))
     implementation(testFixtures(project(":generators:test-generator")))
     implementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     implementation(testFixtures(project(":analysis:analysis-test-framework")))

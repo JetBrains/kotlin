@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
 }
@@ -23,10 +24,14 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
+
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesImplementation(project(":native:swift:sir"))
+    testFixturesImplementation(project(":native:swift:sir-providers"))
+    testFixturesImplementation(project(":native:swift:sir-printer"))
 }
 
 sourceSets {
@@ -35,6 +40,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
@@ -61,5 +67,3 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
-
-testsJar()
