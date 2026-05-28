@@ -28,7 +28,7 @@ public class KtSdkModuleBuilder(
 }
 
 @OptIn(ExperimentalContracts::class)
-public inline fun KtModuleContainerBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KaLibraryModule {
+public inline fun KaModuleContainerBuilder.buildKtSdkModule(init: KtSdkModuleBuilder.() -> Unit): KaLibraryModule {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }

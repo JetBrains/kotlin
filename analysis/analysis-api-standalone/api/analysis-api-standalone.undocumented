@@ -6,7 +6,7 @@ org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISession.projec
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.application
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.build()
-org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProvider(KtModuleContainerBuilder.() -> Unit)
+org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProvider(KaModuleContainerBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.buildKtModuleProviderByCompilerConfiguration(CompilerConfiguration)
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.project
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerApplicationService(Class<T>)
@@ -16,6 +16,10 @@ org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder
 org.jetbrains.kotlin.analysis.api.standalone.StandaloneAnalysisAPISessionBuilder.registerProjectService(Class<T>, T)
 org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession(Disposable, Boolean, StandaloneAnalysisAPISessionBuilder.() -> Unit)
 org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainer
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.addModule(M)
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.build()
+org.jetbrains.kotlin.analysis.project.structure.builder.KaModuleContainerBuilder.platform
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFile(VirtualFile)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtBinaryModuleBuilder.addBinaryVirtualFiles(Collection<VirtualFile>)
@@ -33,10 +37,6 @@ org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addFrien
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.addRegularDependency(KaModule)
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.build()
 org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleBuilder.platform
-org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleContainerBuilder
-org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleContainerBuilder.addModule(M)
-org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleContainerBuilder.build()
-org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleContainerBuilder.platform
 org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder
 org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder.file
 org.jetbrains.kotlin.analysis.project.structure.builder.KtScriptModuleBuilder.languageVersionSettings

@@ -14,7 +14,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-public class KtModuleContainerBuilder(
+public class KaModuleContainerBuilder(
     public val coreApplicationEnvironment: CoreApplicationEnvironment,
     public val project: Project,
 ) {
@@ -36,12 +36,12 @@ public class KtModuleContainerBuilder(
 internal inline fun buildModuleContainer(
     coreApplicationEnvironment: CoreApplicationEnvironment,
     project: Project,
-    init: KtModuleContainerBuilder.() -> Unit
+    init: KaModuleContainerBuilder.() -> Unit
 ): Pair<KaModuleContainer, TargetPlatform> {
     contract {
         callsInPlace(init, InvocationKind.EXACTLY_ONCE)
     }
 
-    val moduleContainerBuilder = KtModuleContainerBuilder(coreApplicationEnvironment, project).apply(init)
+    val moduleContainerBuilder = KaModuleContainerBuilder(coreApplicationEnvironment, project).apply(init)
     return moduleContainerBuilder.build() to moduleContainerBuilder.platform
 }
