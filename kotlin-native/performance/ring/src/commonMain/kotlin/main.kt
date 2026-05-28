@@ -62,7 +62,8 @@ class AllocationBenchmark : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class ArrayCopyBenchmark {
     val instance = org.jetbrains.ring.ArrayCopyBenchmark()
 
@@ -73,7 +74,8 @@ class ArrayCopyBenchmark {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class BunnymarkBenchmark {
     val instance = org.jetbrains.ring.BunnymarkBenchmark()
 
@@ -145,7 +147,8 @@ class Calls : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class Casts {
     val instance = CastsBenchmark()
 
@@ -465,7 +468,8 @@ class ComplexArrays : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class CoordinatesSolver {
     val instance = CoordinatesSolverBenchmark()
 
@@ -546,7 +550,9 @@ class Elvis : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+// NOTE: only problem4 is slow enough
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class Euler : SkipWhenBaseOnly() {
     val instance = EulerBenchmark()
 
@@ -761,7 +767,8 @@ class GenericArrayView : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class GraphSolver {
     val instance = GraphSolverBenchmark()
 
@@ -1193,7 +1200,8 @@ class Lambda : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class LifeHideName : SkipWhenBaseOnly() {
     val instance = LifeBenchmark()
 
@@ -1205,7 +1213,8 @@ class LifeHideName : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
     val instance = LifeWithMarkHelpersBenchmark()
 
@@ -1222,7 +1231,8 @@ class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class LinkedListWithAtomicsBenchmarkHideName {
     val instance = org.jetbrains.ring.LinkedListWithAtomicsBenchmark()
 
@@ -1391,7 +1401,8 @@ class Singleton {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class SplayHideName {
     val instance = SplayBenchmark()
 
@@ -1407,7 +1418,8 @@ class SplayHideName {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class SplayWithMarkHelpersHideName {
     val instance = SplayBenchmarkWithMarkHelpers()
 
@@ -1423,7 +1435,8 @@ class SplayWithMarkHelpersHideName {
 }
 
 @State(Scope.Benchmark)
-@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class SplayWithWorkersHideName {
     val instance = SplayBenchmarkUsingWorkers()
 
