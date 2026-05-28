@@ -71,6 +71,10 @@ suspend fun runProcessCancellable(
                 if (timeout != null) withTimeoutOrNull(timeout) { runLambda() }
                 else runLambda()
 
+            if (exitCode == null) {
+                process.kill()
+            }
+
             val result = ProcessResult(
                 command = command,
                 exitCode = exitCode ?: -1,
@@ -84,13 +88,17 @@ suspend fun runProcessCancellable(
 
             result
         } catch (e: CancellationException) {
-            process.destroy()
-            withContext(NonCancellable) {
-                delay(500.milliseconds)
-                process.destroyForcibly()
-            }
+            process.kill()
             throw e
         }
+    }
+}
+
+private suspend fun Process.kill() {
+    destroy()
+    withContext(NonCancellable) {
+        delay(500.milliseconds)
+        destroyForcibly()
     }
 }
 

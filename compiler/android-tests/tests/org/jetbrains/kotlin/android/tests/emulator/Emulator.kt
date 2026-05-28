@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.android.tests.emulator
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.util.SystemInfo
 import com.intellij.openapi.util.text.StringUtil
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withTimeout
 import org.jetbrains.kotlin.android.tests.PathManager
@@ -171,35 +172,40 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
     suspend fun waitEmulatorStart() {
         println("Waiting for emulator start...")
 
-        withTimeout(androidStartupTimeout()) {
-            runProcessCancellable(waitCommand)
+        try {
+            withTimeout(androidStartupTimeout()) {
+                runProcessCancellable(waitCommand)
 
-            val bootCheckCommand = createAdbCommand()
-            bootCheckCommand.addParameters("shell", "getprop", "sys.boot_completed")
+                val bootCheckCommand = createAdbCommand()
+                bootCheckCommand.addParameters("shell", "getprop", "sys.boot_completed")
 
-            while (true) {
-                val result = runProcessCancellable(
-                    bootCheckCommand,
-                    timeout = 30.seconds,
-                    checkExitCode = false,
-                )
-                if (result.exitCode == 0 && result.stdout.trim() == "1") break
-                delay(10.seconds)
+                while (true) {
+                    val result = runProcessCancellable(
+                        bootCheckCommand,
+                        timeout = 30.seconds,
+                        checkExitCode = false,
+                    )
+                    if (result.exitCode == 0 && result.stdout.trim() == "1") break
+                    delay(10.seconds)
+                }
+
+                println("Waiting for Package Manager...")
+                val packageManagerCheckCommand = createAdbCommand()
+                packageManagerCheckCommand.addParameters("shell", "pm", "path", "android")
+
+                while (true) {
+                    val result = runProcessCancellable(
+                        packageManagerCheckCommand,
+                        timeout = 30.seconds,
+                        checkExitCode = false,
+                    )
+                    if (result.exitCode == 0 && result.stdout.contains("package:")) break
+                    delay(10.seconds)
+                }
             }
-
-            println("Waiting for Package Manager...")
-            val packageManagerCheckCommand = createAdbCommand()
-            packageManagerCheckCommand.addParameters("shell", "pm", "path", "android")
-
-            while (true) {
-                val result = runProcessCancellable(
-                    packageManagerCheckCommand,
-                    timeout = 30.seconds,
-                    checkExitCode = false,
-                )
-                if (result.exitCode == 0 && result.stdout.contains("package:")) break
-                delay(10.seconds)
-            }
+        } catch (e: TimeoutCancellationException) {
+            dumpInstallDiagnostics("Timeout waiting for emulator start")
+            throw e
         }
     }
 
