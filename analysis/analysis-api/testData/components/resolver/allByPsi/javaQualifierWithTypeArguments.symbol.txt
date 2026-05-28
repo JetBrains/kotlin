@@ -26,7 +26,11 @@ KtDotQualifiedExpression(47,67): 'JavaClass<Int>.field'
     ]
 
 KtCallExpression(47,61): 'JavaClass<Int>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): JavaClass<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(47,56): 'JavaClass'
   isImplicitReferenceToCompanion: false
@@ -80,7 +84,11 @@ KtDotQualifiedExpression(79,103): 'JavaClass<Long>.method()'
     ]
 
 KtCallExpression(79,94): 'JavaClass<Long>'
-  null
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      <constructor>(): JavaClass<T>
+    ]
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
 
 KtNameReferenceExpression(79,88): 'JavaClass'
   isImplicitReferenceToCompanion: false

@@ -1381,7 +1381,7 @@ KtCallExpression(1092,1123): 'namedArgumentHolder(arg = prop)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
@@ -1416,7 +1416,7 @@ KtNameReferenceExpression(1092,1111): 'namedArgumentHolder'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1111,1123): '(arg = prop)'
@@ -1484,7 +1484,7 @@ KtCallExpression(1128,1164): 'namedArgumentHolder(arg = superProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
@@ -1519,7 +1519,7 @@ KtNameReferenceExpression(1128,1147): 'namedArgumentHolder'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1147,1164): '(arg = superProp)'
@@ -1765,7 +1765,7 @@ KtCallExpression(1250,1285): 'namedArgumentHolder(arg = lazyProp)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
@@ -1800,7 +1800,7 @@ KtNameReferenceExpression(1250,1269): 'namedArgumentHolder'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun namedArgumentHolder(arg: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(1269,1285): '(arg = lazyProp)'

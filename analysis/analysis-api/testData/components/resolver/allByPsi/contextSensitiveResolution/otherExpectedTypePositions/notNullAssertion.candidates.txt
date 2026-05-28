@@ -1716,8 +1716,8 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       signature = KaFunctionSignature:
-        receiverType = kotlin.collections.Map<out MyClass, V>
-        returnType = V?
+        receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+        returnType = kotlin.Int?
         symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
         valueParameters = [
           KaVariableSignature:
@@ -1731,7 +1731,8 @@ KtArrayAccessExpression(803,819): 'map[myClassProp]'
         contextParameters = []
         callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass)
+        K -> (MyClass),
+        V -> (kotlin.Int)
       }
       valueArgumentMapping = {
         myClassProp -> (KaVariableSignature:
@@ -1824,7 +1825,7 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun get(key: MyClass): Int?>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
   KaInapplicableCallCandidate:
@@ -1837,8 +1838,8 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       signature = KaFunctionSignature:
-        receiverType = kotlin.collections.Map<out MyClass, V>
-        returnType = V?
+        receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+        returnType = kotlin.Int?
         symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
         valueParameters = [
           KaVariableSignature:
@@ -1852,7 +1853,8 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
         contextParameters = []
         callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass)
+        K -> (MyClass),
+        V -> (kotlin.Int)
       }
       valueArgumentMapping = {
         stringProp -> (KaVariableSignature:
@@ -1863,7 +1865,7 @@ KtArrayAccessExpression(831,846): 'map[stringProp]'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun <K, V> Map<out K, V>.get(key: K): V?>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = false
 
 KtNameReferenceExpression(831,834): 'map'
@@ -1958,8 +1960,8 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         isSafeNavigation = false
         type = kotlin.collections.Map<MyClass, kotlin.Int>
       signature = KaFunctionSignature:
-        receiverType = kotlin.collections.Map<out MyClass, V>
-        returnType = V?
+        receiverType = kotlin.collections.Map<out MyClass, kotlin.Int>
+        returnType = kotlin.Int?
         symbol = kotlin/collections/get(<extension receiver>: kotlin.collections.Map<out K, V>, key: K): V?
         valueParameters = [
           KaVariableSignature:
@@ -1973,7 +1975,8 @@ KtArrayAccessExpression(858,878): 'map[NestedInheritor]'
         contextParameters = []
         callableId = kotlin/collections/get
       typeArgumentsMapping = {
-        K -> (MyClass)
+        K -> (MyClass),
+        V -> (kotlin.Int)
       }
       valueArgumentMapping = {
         NestedInheritor -> (KaVariableSignature:

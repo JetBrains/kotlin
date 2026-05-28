@@ -1,5 +1,5 @@
 KtNameReferenceExpression(129,133): 'post'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -13,23 +13,26 @@ KtNameReferenceExpression(129,133): 'post'
           KaVariableSignature:
             name = action
             receiverType = null
-            returnType = (T) -> kotlin.Unit
+            returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
             symbol = action: (T) -> kotlin.Unit
             contextParameters = []
             callableId = null
         ]
         contextParameters = []
         callableId = test/post
-      typeArgumentsMapping = {}
+      typeArgumentsMapping = {
+        T -> (ERROR CLASS: Cannot infer argument for type parameter T)
+      }
       valueArgumentMapping = {
         {} -> (KaVariableSignature:
           name = action
           receiverType = null
-          returnType = (T) -> kotlin.Unit
+          returnType = (ERROR CLASS: Cannot infer argument for type parameter T) -> kotlin.Unit
           symbol = action: (T) -> kotlin.Unit
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable(RESOLVED): test/post>
     isInBestCandidates = false
 
   KaApplicableCallCandidate:
