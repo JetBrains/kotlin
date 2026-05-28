@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.gradle.util.checkedReplace
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
+import org.jetbrains.kotlin.testFederation.AffectedByCompilerPlugins
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -186,6 +187,7 @@ class KaptClassLoadersCacheIT : KaptIT() {
 
 @DisplayName("Kapt base checks")
 @OtherGradlePluginTests
+@AffectedByCompilerPlugins
 open class KaptIT : KaptBaseIT() {
     @DisplayName("Kapt is skipped when no annotation processors are added")
     @GradleTest
