@@ -37,7 +37,7 @@ interface TestVersions {
         const val G_9_2 = "9.2.1"
         const val G_9_3 = "9.3.1"
         const val G_9_4 = "9.4.1"
-        const val G_9_5 = "9.5.0"
+        const val G_9_5 = "9.5.1"
 
         /**
          * Check [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.testIncompatibleGradleVersion]
