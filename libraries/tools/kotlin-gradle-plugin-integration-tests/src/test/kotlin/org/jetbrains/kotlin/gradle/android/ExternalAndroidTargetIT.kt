@@ -221,8 +221,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    // Test project's `composeApp` mixes `com.android.application` + KMP, which AGP 9 forbids.
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_811, maxVersion = TestVersions.AGP.AGP_813)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_90)
     fun `KT-81060_transform_metadata_dependencies_doesnt_fail_on_configuration_cache_deserialization`(
         gradleVersion: GradleVersion, androidVersion: String, jdkVersion: JdkVersions.ProvidedJdk,
     ) {
@@ -244,7 +243,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
                 .enableIsolatedProjects(),
             buildJdk = jdkVersion.location,
         ) {
-            subProject("composeApp").buildScriptInjection {
+            subProject("composeShared").buildScriptInjection {
                 val vs = project.providers.of(ClassLoaderHashCode::class.java) {}
                 // this will make value source part of Configuration Cache key -> it will be always executed
                 vs.get()
@@ -252,7 +251,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
         }
 
         var hashCode = ""
-        testProject.build(":composeApp:transformCommonMainDependenciesMetadata", "--dry-run") {
+        testProject.build(":composeShared:transformCommonMainDependenciesMetadata", "--dry-run") {
             hashCode = output.substringAfter("ClassLoader hash code: #").substringBefore(".")
             assertConfigurationCacheStored()
         }
@@ -263,7 +262,7 @@ class ExternalAndroidTargetIT : KGPBaseTest() {
             build("help")
         }
 
-        testProject.build(":composeApp:transformCommonMainDependenciesMetadata", "--dry-run") {
+        testProject.build(":composeShared:transformCommonMainDependenciesMetadata", "--dry-run") {
             val newHashCode = output.substringAfter("ClassLoader hash code: #").substringBefore(".")
             if (hashCode == newHashCode) {
                 fail("ClassLoader hash code is not changed. It seems that Gradle Daemon didn't drop the Classloader Cache, and Heuristic didn't work. Please find another way to verify this issue.")

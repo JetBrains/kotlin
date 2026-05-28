@@ -5,7 +5,7 @@ plugins {
 
 kotlin {
     android {
-        namespace = "org.bug.library"
+        namespace = "org.bug.replication"
         compileSdk = 36
         minSdk = 28
     }
@@ -13,4 +13,10 @@ kotlin {
     iosX64()
     iosArm64()
     iosSimulatorArm64()
+
+    sourceSets {
+        commonMain.dependencies {
+            implementation(project(":library"))
+        }
+    }
 }
