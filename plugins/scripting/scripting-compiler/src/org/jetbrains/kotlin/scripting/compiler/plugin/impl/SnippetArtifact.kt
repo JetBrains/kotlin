@@ -450,3 +450,117 @@ fun SnippetArtifactSidecar.toArtifact(classFiles: Map<String, ByteArray>): Snipp
 /** Decode this artifact's sidecar back into a [SnippetArtifactSidecar]. */
 fun SnippetArtifact.decodeSidecar(): SnippetArtifactSidecar =
     SnippetArtifactJsonCodec.decode(sidecar)
+
+/**
+ * Wire codec for a complete [SnippetArtifact] (sidecar **plus** class files), suitable for
+ * transport across an out-of-process boundary — most notably the Build Tools API
+ * `CompileReplSnippetOperation` (see `iterations/2026-05-28c_stateless-repl-bta-transport.md`).
+ *
+ * The format is a single root JSON document — the simplest envelope that makes the
+ * sidecar+payload pair self-delimited:
+ *
+ * ```json
+ * {
+ *   "artifactVersion": 1,
+ *   "sidecar": "<base64 of SnippetArtifactJsonCodec.encode(sidecar)>",
+ *   "classFiles": { "ClassName1": "<base64 of bytes>", "ClassName2": "<base64>" }
+ * }
+ * ```
+ *
+ * Design notes (answers Q5d's "envelope/framing" sub-question for the prototype):
+ *
+ *  * **Single self-delimited root.** Each artifact is one JSON object — easy to length-prefix in
+ *    any outer transport, or to drop into a `byte[]` BTA op parameter unchanged. No multi-part
+ *    framing, no resource handles, no filesystem dependency.
+ *  * **Opaque payloads.** Both the sidecar (which is *itself* JSON, but treated here as an
+ *    opaque blob) and the class-file bytes are base64-encoded. This lets the envelope evolve
+ *    independently of the inner sidecar format — the day the sidecar is promoted to a protobuf
+ *    `.kotlin_metadata` extension, only the *content* of the `sidecar` field changes, not the
+ *    envelope's wire shape.
+ *  * **Versioned.** [ARTIFACT_VERSION] is the envelope-layout version, **separate** from
+ *    [SnippetArtifactSidecar.CURRENT_VERSION] (the sidecar field set). Bumping the envelope
+ *    version covers envelope-shape changes (framing/keys), not field additions inside the
+ *    sidecar.
+ *
+ * This codec is **prototype-only** alongside [SnippetArtifactJsonCodec]. When the sidecar is
+ * promoted to protobuf-in-`.kotlin_metadata`, the BTA op should switch to a length-delimited
+ * binary envelope (`[ver][sidecar-len][sidecar][n-files][per-file: name-len, name, body-len,
+ * body]` or a protobuf root message). The single-root choice here lets the protobuf transition
+ * keep the same envelope semantics: one self-delimited message per artifact.
+ */
+object SnippetArtifactCodec {
+
+    const val ARTIFACT_VERSION: Int = 1
+
+    fun encode(artifact: SnippetArtifact): ByteArray {
+        val b64 = java.util.Base64.getEncoder()
+        val sb = StringBuilder()
+        sb.append('{')
+        appendFieldKey(sb, "artifactVersion"); sb.append(ARTIFACT_VERSION); sb.append(',')
+        appendFieldKey(sb, "sidecar"); appendJsonString(sb, b64.encodeToString(artifact.sidecar)); sb.append(',')
+        appendFieldKey(sb, "classFiles"); sb.append('{')
+        var first = true
+        // Sort keys so the encoded bytes are deterministic — useful for digests, debugging diffs,
+        // and roundtrip equality assertions that compare ByteArrays directly.
+        for (key in artifact.classFiles.keys.sorted()) {
+            if (!first) sb.append(',') else first = false
+            appendJsonString(sb, key); sb.append(':')
+            appendJsonString(sb, b64.encodeToString(artifact.classFiles.getValue(key)))
+        }
+        sb.append('}').append('}')
+        return sb.toString().toByteArray(StandardCharsets.UTF_8)
+    }
+
+    fun decode(bytes: ByteArray): SnippetArtifact {
+        val parser = JsonParser(String(bytes, StandardCharsets.UTF_8))
+        val obj = parser.parseObject()
+        parser.skipWhitespace()
+        if (!parser.eof) error("SnippetArtifactCodec: trailing content at offset ${parser.pos}")
+        val version = (obj["artifactVersion"] as? Long)?.toInt()
+            ?: error("SnippetArtifactCodec: missing 'artifactVersion'")
+        if (version != ARTIFACT_VERSION) {
+            error(
+                "SnippetArtifactCodec: unsupported artifactVersion=$version " +
+                        "(expected $ARTIFACT_VERSION). The artifact wire envelope is unstable; " +
+                        "rebuild prior snippets with the matching compiler version."
+            )
+        }
+        val b64 = java.util.Base64.getDecoder()
+        val sidecarBase64 = obj["sidecar"] as? String
+            ?: error("SnippetArtifactCodec: missing 'sidecar' field")
+        val sidecarBytes = b64.decode(sidecarBase64)
+        @Suppress("UNCHECKED_CAST")
+        val classFilesRaw = obj["classFiles"] as? Map<String, Any?>
+            ?: error("SnippetArtifactCodec: missing 'classFiles' field")
+        val classFiles = LinkedHashMap<String, ByteArray>(classFilesRaw.size)
+        for ((k, v) in classFilesRaw) {
+            val s = v as? String ?: error("SnippetArtifactCodec: classFiles['$k'] is not a string")
+            classFiles[k] = b64.decode(s)
+        }
+        return SnippetArtifact(classFiles, sidecarBytes)
+    }
+
+    private fun appendFieldKey(sb: StringBuilder, name: String) {
+        appendJsonString(sb, name); sb.append(':')
+    }
+
+    private fun appendJsonString(sb: StringBuilder, s: String) {
+        sb.append('"')
+        for (c in s) {
+            when (c) {
+                '"' -> sb.append("\\\"")
+                '\\' -> sb.append("\\\\")
+                '\n' -> sb.append("\\n")
+                '\r' -> sb.append("\\r")
+                '\t' -> sb.append("\\t")
+                else -> if (c.code < 0x20) {
+                    sb.append("\\u")
+                    val hex = c.code.toString(16)
+                    repeat(4 - hex.length) { sb.append('0') }
+                    sb.append(hex)
+                } else sb.append(c)
+            }
+        }
+        sb.append('"')
+    }
+}

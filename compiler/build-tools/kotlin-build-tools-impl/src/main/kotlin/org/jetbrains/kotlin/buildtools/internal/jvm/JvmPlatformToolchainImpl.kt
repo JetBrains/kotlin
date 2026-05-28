@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.CompileReplSnippetOperation
+import org.jetbrains.kotlin.buildtools.internal.jvm.operations.CompileReplSnippetOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.DiscoverScriptExtensionsOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmClasspathSnapshottingOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOperationImpl
@@ -50,5 +52,13 @@ internal class JvmPlatformToolchainImpl(
 
     override fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperationImpl {
         return DiscoverScriptExtensionsOperationImpl(classpath)
+    }
+
+    override fun compileReplSnippetOperationBuilder(
+        priorSnippets: List<ByteArray>,
+        snippetSource: String,
+        snippetName: String,
+    ): CompileReplSnippetOperation.Builder {
+        return CompileReplSnippetOperationImpl(priorSnippets, snippetSource, snippetName)
     }
 }

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.K2ReplStatelessCompiler
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifact
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactJsonCodec
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SnippetArtifactSidecar
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.decodeSidecar
@@ -237,6 +238,58 @@ class K2ReplStatelessCompilerTest {
             "diagnostic must name both fqs (`some.pkg.PriorState` and `some.pkg.CallerState`); was: $message"
         )
     }
+
+    @Test
+    fun testSnippetArtifactCodecRoundtrip() {
+        // Compile a real snippet to obtain a non-trivial artifact (class files + sidecar bytes)
+        // that exercises both fields of the envelope.
+        if (!isK2) return
+        val compiler = K2ReplStatelessCompiler()
+        val artifact = compileStateless(
+            compiler,
+            priorSnippets = emptyList(),
+            source = "val codecProbe = 7",
+            name = "codec_probe.repl.kts",
+        ).valueOrThrowExplained("codec probe snippet failed to compile")
+        assertTrue(artifact.classFiles.isNotEmpty(), "codec probe must produce class files")
+        assertTrue(artifact.sidecar.isNotEmpty(), "codec probe must produce sidecar bytes")
+
+        val encoded = SnippetArtifactCodec.encode(artifact)
+        val decoded = SnippetArtifactCodec.decode(encoded)
+
+        // The envelope must preserve content (per-class-file bytes and the sidecar bytes), but
+        // class-file key ordering need not survive — `SnippetArtifactCodec.encode` deliberately
+        // sorts keys for deterministic output. So compare by `equals` (which checks key set +
+        // per-key contents) rather than re-encoding bytes.
+        assertEquals(artifact, decoded, "roundtripped artifact must equal the original")
+
+        // Encoding is deterministic: re-encoding the decoded artifact must yield identical bytes.
+        val reencoded = SnippetArtifactCodec.encode(decoded)
+        assertTrue(
+            encoded.contentEquals(reencoded),
+            "SnippetArtifactCodec.encode must be deterministic across encode/decode/encode"
+        )
+
+        // Class-file content is preserved byte-for-byte (not just structurally).
+        for ((name, bytes) in artifact.classFiles) {
+            val roundtripped = decoded.classFiles[name]
+                ?: fail("decoded artifact missing class file `$name`")
+            assertTrue(
+                bytes.contentEquals(roundtripped),
+                "class file `$name` bytes must roundtrip identically"
+            )
+        }
+    }
+
+    // Note: a BTA-op end-to-end roundtrip test (driving `CompileReplSnippetOperation` through
+    // `KotlinToolchains.loadImplementation`) is intentionally **not** included here. The BTA
+    // impl module ships a shadow-jar with relocated scripting-compiler classes, so naively
+    // adding `testImplementation(":kotlin-build-tools-impl")` here would put two copies of the
+    // scripting-compiler symbols on the test classpath (the unshaded api copy + the embedded
+    // relocated copy inside the shaded impl jar). The `CompileReplSnippetOperationImpl` is also
+    // `internal`, ruling out direct construction across modules. The right home for a smoke test
+    // is `kotlin-build-tools-impl/src/test` itself — added as a follow-up iteration; see
+    // `iterations/2026-05-28c_stateless-repl-bta-transport.md` §"Follow-ups".
 
     // ----- helpers -----
 
