@@ -23,7 +23,6 @@ dependencies {
 }
 
 val kotlinTemplatesDir = (findProperty("templatesDir") as String?)?.let { file(it) } ?: rootProject.file("templates")
-val kotlin_root = rootProject.file("../../../").absoluteFile.invariantSeparatorsPath
 version = rootProject.version
 
 dokka {

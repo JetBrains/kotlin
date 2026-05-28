@@ -16,7 +16,6 @@ val kotlin_libs: String by project
 val outputDir = (findProperty("docsBuildDir") as String?)?.let{ file(it) } ?: rootProject.layout.buildDirectory.dir("doc").get().asFile
 val inputDirPrevious = file(findProperty("docsPreviousVersionsDir") as String? ?: "$outputDir/previous")
 val outputDirPartial = outputDir.resolve("partial")
-val kotlin_native_root = file("$kotlin_root/kotlin-native").absolutePath
 val kotlinTemplatesDir = (findProperty("templatesDir") as String?)?.let { file(it) } ?: rootProject.file("templates")
 
 val isLatest = (findProperty("isLatest") as String?)?.toBoolean() ?: true
