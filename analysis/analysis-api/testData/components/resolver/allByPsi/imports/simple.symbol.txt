@@ -113,14 +113,14 @@ KtNameReferenceExpression(144,152): 'toString'
   usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
-      kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String,
-      kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String,
-      kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String,
-      kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String,
       kotlin/text/toString(<extension receiver>: kotlin.Byte, radix: kotlin.Int): kotlin.String,
       kotlin/text/toString(<extension receiver>: kotlin.Short, radix: kotlin.Int): kotlin.String,
       kotlin/text/toString(<extension receiver>: kotlin.Int, radix: kotlin.Int): kotlin.String,
-      kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String
+      kotlin/text/toString(<extension receiver>: kotlin.Long, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UByte, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UShort, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.UInt, radix: kotlin.Int): kotlin.String,
+      kotlin/text/toString(<extension receiver>: kotlin.ULong, radix: kotlin.Int): kotlin.String
     ]
 
 KtImportDirective(170,196): 'import java.util.ArrayList'

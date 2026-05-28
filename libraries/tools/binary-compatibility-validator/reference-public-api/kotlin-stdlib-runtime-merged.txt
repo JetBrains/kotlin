@@ -3218,6 +3218,9 @@ public final class kotlin/coroutines/EmptyCoroutineContext : java/io/Serializabl
 	public fun toString ()Ljava/lang/String;
 }
 
+public abstract interface annotation class kotlin/coroutines/ExperimentalStdlibCoroutineSupportApi : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class kotlin/coroutines/RestrictsSuspension : java/lang/annotation/Annotation {
 }
 
@@ -3229,6 +3232,10 @@ public final class kotlin/coroutines/SafeContinuation : kotlin/coroutines/Contin
 	public fun getStackTraceElement ()Ljava/lang/StackTraceElement;
 	public fun resumeWith (Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public abstract interface class kotlin/coroutines/debug/StackTraceRecoverable {
+	public abstract fun copyForStackTraceRecovery ()Ljava/lang/Throwable;
 }
 
 public final class kotlin/coroutines/intrinsics/CoroutineSingletons : java/lang/Enum {

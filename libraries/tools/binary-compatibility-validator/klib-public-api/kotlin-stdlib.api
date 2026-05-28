@@ -41,6 +41,10 @@ open annotation class kotlin.contracts/ExperimentalExtendedContracts : kotlin/An
     constructor <init>() // kotlin.contracts/ExperimentalExtendedContracts.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.coroutines/ExperimentalStdlibCoroutineSupportApi : kotlin/Annotation { // kotlin.coroutines/ExperimentalStdlibCoroutineSupportApi|null[0]
+    constructor <init>() // kotlin.coroutines/ExperimentalStdlibCoroutineSupportApi.<init>|<init>(){}[0]
+}
+
 open annotation class kotlin.coroutines/RestrictsSuspension : kotlin/Annotation { // kotlin.coroutines/RestrictsSuspension|null[0]
     constructor <init>() // kotlin.coroutines/RestrictsSuspension.<init>|<init>(){}[0]
 }
@@ -562,6 +566,10 @@ abstract interface <#A: in kotlin/Any?> kotlin.coroutines/Continuation { // kotl
 
 abstract interface <#A: in kotlin/Any?> kotlin/Comparable { // kotlin/Comparable|null[0]
     abstract fun compareTo(#A): kotlin/Int // kotlin/Comparable.compareTo|compareTo(1:0){}[0]
+}
+
+abstract interface <#A: kotlin.coroutines.debug/StackTraceRecoverable<#A> & kotlin/Throwable> kotlin.coroutines.debug/StackTraceRecoverable { // kotlin.coroutines.debug/StackTraceRecoverable|null[0]
+    abstract fun copyForStackTraceRecovery(): #A? // kotlin.coroutines.debug/StackTraceRecoverable.copyForStackTraceRecovery|copyForStackTraceRecovery(){}[0]
 }
 
 abstract interface <#A: kotlin/Any?, #B: kotlin/Any?, #C: kotlin/Any?> kotlin.reflect/KMutableProperty2 : kotlin.reflect/KMutableProperty<#C>, kotlin.reflect/KProperty2<#A, #B, #C> { // kotlin.reflect/KMutableProperty2|null[0]
