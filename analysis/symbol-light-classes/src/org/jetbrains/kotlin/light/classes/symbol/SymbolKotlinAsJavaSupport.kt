@@ -10,8 +10,7 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.ModificationTracker
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
+import com.intellij.psi.*
 import com.intellij.psi.impl.ResolveScopeManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.concurrency.annotations.RequiresReadLock
@@ -32,6 +31,7 @@ import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProject
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.api.session.analysisScope
 import org.jetbrains.kotlin.analysis.api.session.canBeAnalysed
+import org.jetbrains.kotlin.analysis.api.session.useSiteModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.DecompiledLightClassesFactory
 import org.jetbrains.kotlin.analysis.decompiled.light.classes.KtLightClassForDecompiledDeclaration
@@ -46,6 +46,7 @@ import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.fileClasses.isJvmMultifileClassFile
 import org.jetbrains.kotlin.fileClasses.javaFileFacadeFqName
 import org.jetbrains.kotlin.light.classes.symbol.classes.*
+import org.jetbrains.kotlin.light.classes.symbol.utils.LightClassMemberUtils
 import org.jetbrains.kotlin.light.classes.symbol.classes.computeJavaMethodName as computeJavaMethodNameImpl
 import org.jetbrains.kotlin.light.classes.symbol.utils.SafeNestedNullableCaffeineCache
 import org.jetbrains.kotlin.name.ClassId
@@ -217,6 +218,18 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
+    override fun getLightFacade(
+        fileSymbol: KaFileSymbol,
+    ): PsiClass? {
+        val contextModule = useSiteModule
+            .takeIf(KaModule::isValidContextModule)
+            ?.takeIf(::facadeIsApplicable)
+            ?: return null
+        return getLightFacade(fileSymbol, contextModule)
+    }
+
+
     private fun getLightFacade(file: KaFileSymbol, module: KaModule): KtLightClassForFacade? {
         return cacheLightClass(file, module) {
             createLightFacade(file, module)
@@ -308,6 +321,16 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
+    override fun getLightFacade(
+        scriptSymbol: KaScriptSymbol,
+    ): PsiClass? {
+        val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
+        return cacheLightClass(scriptSymbol, contextModule) {
+            createLightScript(scriptSymbol, useSiteModule)
+        }
+    }
+
     //endregion
 
     // ============ LIGHT CLASSES ============
@@ -370,6 +393,14 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
         }
     }
 
+    context(session: KaSession)
+    override fun getLightClass(
+        classSymbol: KaClassSymbol,
+    ): PsiClass? {
+        val contextModule = useSiteModule.takeIf(KaModule::isValidContextModule) ?: return null
+        return getLightClass(classSymbol, contextModule)
+    }
+
     override fun getFakeLightClass(classOrObject: KtClassOrObject): KtFakeLightClass = SymbolBasedFakeLightClass(classOrObject)
 
     context(_: KaSession)
@@ -413,6 +444,31 @@ internal class SymbolKotlinAsJavaSupport(private val project: Project) : KotlinA
             }
         }
     }
+    //endregion
+
+    // ============ LIGHT ELEMENTS SEARCH ============
+    //region Light Elements Search
+
+    context(session: KaSession)
+    override fun getLightClassParameters(
+        parameterSymbol: KaParameterSymbol,
+    ): List<PsiParameter> = LightClassMemberUtils.getLightClassParameters(parameterSymbol)
+
+    context(session: KaSession)
+    override fun getLightClassTypeParameter(
+        typeParameterSymbol: KaTypeParameterSymbol,
+    ): List<PsiTypeParameter> = LightClassMemberUtils.getLightClassTypeParameter(typeParameterSymbol)
+
+    context(session: KaSession)
+    override fun getLightClassBackingField(
+        declarationSymbol: KaSymbol,
+    ): PsiField? = LightClassMemberUtils.getLightClassBackingField(declarationSymbol)
+
+    context(session: KaSession)
+    override fun getLightClassMethods(
+        functionSymbol: KaFunctionSymbol,
+    ): List<PsiMethod> = LightClassMemberUtils.getLightClassMethods(functionSymbol)
+
     //endregion
 
     // ============ KT ELEMENTS SEARCH ============
