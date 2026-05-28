@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.scripting.compiler.plugin.services
 
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.descriptors.Visibilities
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
@@ -13,12 +15,15 @@ import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirImport
+import org.jetbrains.kotlin.fir.declarations.FirMemberDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
+import org.jetbrains.kotlin.fir.toEffectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
@@ -238,14 +243,36 @@ internal class ArtifactBackedFirReplHistoryProvider(
                     fir.isReplSnippetDeclaration = true
                     fir.originalReplSnippetSymbol = reconstructedSymbol
                     tagged++
+
+                    // Restamp visibility from the sidecar onto the materialised member.
+                    //
+                    // Why: REPL snippet declarations are JVM-emitted with `public` access on the
+                    // wrapper class so that subsequent snippets can reference them at runtime via
+                    // reflection (stateful path) or direct class-file linkage (stateless path).
+                    // As a side-effect, `.kotlin_metadata` records the elevated `public`
+                    // visibility rather than the source-level visibility the user wrote. When the
+                    // stateless reader walks `classSymbol.declarationSymbols`, every member shows
+                    // up as PUBLIC — and the FIR visibility checker happily lets a subsequent
+                    // snippet reference a member the user wrote as `private`.
+                    //
+                    // The sidecar [MemberRef.visibility] is the source of truth (captured at
+                    // emit time from `FirMemberDeclaration.status.visibility` before any
+                    // metadata-level elevation). Project it back onto the materialised FIR so
+                    // the resolver's existing visibility-check path fires `INVISIBLE_REFERENCE`
+                    // cross-snippet for `private`/`protected` declarations — matching the
+                    // stateful semantics on which the golden testdata is gated. Closes the
+                    // `property_visibility` diagnostic on the stateless path.
+                    val sidecarVisibility = byName[name]?.visibility?.toFirVisibility()
+                    if (sidecarVisibility != null && fir is FirMemberDeclaration) {
+                        restampVisibility(fir, sidecarVisibility, classSymbol)
+                    }
                 }
             }
-            // Note: the sidecar carries `visibility` and `returnTypeSignature` per [MemberRef] but
-            // this provider does **not** consume them at materialise time today — the resolver
-            // already sees the deserialised declarations' real visibility/return type via
-            // `.kotlin_metadata`. The fields are recorded so that *downstream* tooling (e.g. IDE
-            // inspections, debugger, or a future cross-snippet anonymous-return-type checker) can
-            // reason about prior-snippet shapes without re-loading the wrapper class. See
+            // Note: the sidecar's [returnTypeSignature] is **not** consumed at materialise time
+            // today — the deserialised `.kotlin_metadata` already carries the real type. The
+            // field is recorded so that downstream tooling (e.g. IDE inspections, debugger,
+            // or a future cross-snippet anonymous-return-type checker) can reason about
+            // prior-snippet shapes without re-loading the wrapper class. See
             // `iterations/2026-05-27_stateless-repl-sidecar-v3.md` for the rationale.
             debug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] (${sidecar.snippetName})")
 
@@ -275,6 +302,51 @@ private fun SnippetArtifactSidecar.toClassId(): ClassId {
     }
     val relativeFq = relative.replace('$', '.')
     return ClassId(FqName(packageFqName), FqName(relativeFq), /* isLocal = */ false)
+}
+
+/**
+ * Map a sidecar [SnippetArtifactSidecar.MemberRef.Visibility] back to a FIR [Visibility].
+ *
+ * Returns `null` for [SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN] — meaning "no opinion,
+ * leave the materialised declaration's visibility alone". This mirrors the producer-side
+ * `toMemberRefVisibility()` map in `SnippetArtifactEmission.kt`.
+ */
+private fun SnippetArtifactSidecar.MemberRef.Visibility.toFirVisibility(): Visibility? = when (this) {
+    SnippetArtifactSidecar.MemberRef.Visibility.PUBLIC -> Visibilities.Public
+    SnippetArtifactSidecar.MemberRef.Visibility.INTERNAL -> Visibilities.Internal
+    SnippetArtifactSidecar.MemberRef.Visibility.PROTECTED -> Visibilities.Protected
+    SnippetArtifactSidecar.MemberRef.Visibility.PRIVATE -> Visibilities.Private
+    SnippetArtifactSidecar.MemberRef.Visibility.UNKNOWN -> null
+}
+
+/**
+ * Restamp the visibility on a deserialised REPL-snippet member with [newVisibility], preserving
+ * the existing [org.jetbrains.kotlin.descriptors.Modality] and status [flags][FirResolvedDeclarationStatusImpl].
+ *
+ * The replacement keeps the materialised declaration's identity (declaration symbols are not
+ * recreated — `replaceStatus` mutates in place); the change is visible to downstream FIR
+ * visibility checks that fire during resolution of the consumer snippet.
+ *
+ * [ownerSymbol] is the wrapper class symbol; passed to `toEffectiveVisibility` so the computed
+ * `effectiveVisibility` reflects the visibility narrowed by the wrapper class's own visibility
+ * (which, in REPL, is always `public` but the parameter exists for correctness).
+ */
+private fun restampVisibility(
+    fir: FirMemberDeclaration,
+    newVisibility: Visibility,
+    ownerSymbol: FirRegularClassSymbol,
+) {
+    val current = fir.status
+    val modality = current.modality ?: org.jetbrains.kotlin.descriptors.Modality.FINAL
+    val forClass = fir is FirRegularClass || fir is FirTypeAlias
+    val newEffective = newVisibility.toEffectiveVisibility(ownerSymbol, forClass = forClass)
+    // Use the public `resolved(...)` factory on `FirDeclarationStatusImpl`, which internally
+    // calls the package-private 4-arg `FirResolvedDeclarationStatusImpl` constructor and
+    // **preserves the existing modifier flags** (e.g. `OVERRIDE`, `OPERATOR`, `INFIX`).
+    val newStatus = (current as? org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl)
+        ?.resolved(newVisibility, modality, newEffective)
+        ?: FirResolvedDeclarationStatusImpl(newVisibility, modality, newEffective)
+    fir.replaceStatus(newStatus)
 }
 
 /**

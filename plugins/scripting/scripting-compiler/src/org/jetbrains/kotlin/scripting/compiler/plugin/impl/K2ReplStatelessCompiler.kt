@@ -216,20 +216,49 @@ class K2ReplStatelessCompiler {
             debug("compile(): driving K2ReplCompiler.compile() for snippet=${snippet.name}")
             val compiler = K2ReplCompiler(state)
             val compileResult = compiler.compile(snippet)
-            return compileResult.onSuccess<_, SnippetArtifact> {
-                val captured = capturedRef.get()
-                    ?: return@onSuccess makeFailureResult("stateless REPL: capture hook did not fire — internal error")
-                val (firSnippet, session, generationState) = captured
-                val artifact = buildSnippetArtifactFromCompile(
-                    firSnippet = firSnippet,
-                    session = session,
-                    generationState = generationState,
-                    scriptCompilationConfiguration = augmentedConfig,
-                    hostConfiguration = statelessHostConfiguration,
-                    historyIndex = priorSnippets.size,
-                )
-                debug("compile(): produced artifact with ${artifact.classFiles.size} class file(s), historyIndex=${priorSnippets.size}")
-                artifact.asSuccess()
+
+            // Build a [SnippetArtifact] from the capture hook if it fired and codegen produced
+            // at least one class file. The hook fires both on full success **and** in
+            // best-effort mode (i.e. compile returned [ResultWithDiagnostics.Failure] but
+            // codegen still emitted usable bytes) — see `compileImpl` in `K2ReplCompiler.kt`.
+            val captured = capturedRef.get()
+            val artifactOrNull: SnippetArtifact? = captured?.let { (firSnippet, session, generationState) ->
+                val classFileCount = generationState.factory.asList().size
+                if (classFileCount == 0) {
+                    debug("compile(): capture hook fired but codegen produced 0 class files — best-effort artifact unavailable")
+                    null
+                } else {
+                    buildSnippetArtifactFromCompile(
+                        firSnippet = firSnippet,
+                        session = session,
+                        generationState = generationState,
+                        scriptCompilationConfiguration = augmentedConfig,
+                        hostConfiguration = statelessHostConfiguration,
+                        historyIndex = priorSnippets.size,
+                    ).also {
+                        debug(
+                            "compile(): produced artifact with ${it.classFiles.size} class file(s), " +
+                                    "historyIndex=${priorSnippets.size}, compileStatus=${compileResult::class.simpleName}"
+                        )
+                    }
+                }
+            }
+
+            return when (compileResult) {
+                is ResultWithDiagnostics.Success ->
+                    artifactOrNull?.asSuccess()
+                        ?: makeFailureResult("stateless REPL: capture hook did not fire — internal error")
+
+                is ResultWithDiagnostics.Failure ->
+                    // Best-effort path: the snippet had FIR errors but codegen produced usable
+                    // class files. Repackage as Success(artifact, original-reports) so the caller
+                    //   (a) sees the same diagnostics on `result.reports` as before, AND
+                    //   (b) is able to add the partial artifact to a prior-snippets accumulator,
+                    //       so that subsequent snippets resolve declarations that *did* compile.
+                    // When no artifact is available, return the original Failure unchanged.
+                    if (artifactOrNull != null) {
+                        ResultWithDiagnostics.Success(artifactOrNull, compileResult.reports)
+                    } else compileResult
             }
         } finally {
             try {
