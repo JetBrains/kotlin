@@ -20,3 +20,5 @@ Another one representation is JSON-based that is bundled into a published jar as
     - Add enum types to all relevant JS and Wasm arguments that carry a finite set of String values
 - `4`:
     - Change `modeName` to `name` in `/types/explicitApiModes/values`
+- `5`:
+    - Add optional `restrictedToCompilerPhase` that may specify that an argument is only valid for a given compiler phase.  

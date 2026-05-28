@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.CancellableBuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmCompilerLinkingArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import java.nio.file.Path
 
@@ -45,7 +45,7 @@ public interface WasmLinkingOperation : BaseCompilationOperation, CancellableBui
     public operator fun <V> get(key: Option<V>): V
 
     @OptIn(ExperimentalCompilerArgument::class)
-    public val compilerArguments: WasmArguments
+    public val compilerArguments: WasmCompilerLinkingArguments
 
     /**
      * A builder for configuring and instantiating the [WasmLinkingOperation].
@@ -55,7 +55,7 @@ public interface WasmLinkingOperation : BaseCompilationOperation, CancellableBui
          * Kotlin compiler configurable options for Wasm linking.
          */
         @OptIn(ExperimentalCompilerArgument::class)
-        public override val compilerArguments: WasmArguments.Builder
+        public override val compilerArguments: WasmCompilerLinkingArguments.Builder
 
         /**
          * The input klib file.
