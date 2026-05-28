@@ -1043,6 +1043,25 @@ fun test46x(o: Any): Int {
 // CHECK-LABEL: epilogue:
 }
 
+// CHECK-LABEL: define i32 @"kfun:#test47(A;kotlin.Any){}kotlin.Int
+fun test47(a: A, o: Any): Int {
+    val s = baz(a)
+// CHECK-DEBUG: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT: {{call|call zeroext}} i1 @IsSubclassFast
+    if (s || o is A) {
+        if (!s) {
+// CHECK-DEBUG-NOT: call ptr @"kfun:kotlin.native.internal#downcast
+// CHECK-DEBUG-NOT: {{call|call zeroext}} i1 @IsSubtype
+// CHECK-OPT-NOT: {{call|call zeroext}} i1 @IsSubclassFast
+// CHECK-DEBUG: call i32 @"kfun:A#<get-x>(){}kotlin.Int
+// CHECK-OPT: getelementptr inbounds nuw %"kclassbody:A#internal
+            return (o as A).x
+        }
+    }
+    return -1
+// CHECK-LABEL: epilogue:
+}
+
 // CHECK-LABEL: define ptr @"kfun:#box(){}kotlin.String"
 fun box(): String {
     val a = A("zzz", 42, 117)
@@ -1099,5 +1118,6 @@ fun box(): String {
     println(test45(Any(), 2))
     println(test46("zzz"))
     println(test46x("zzz"))
+    println(test47(a, a))
     return "OK"
 }
