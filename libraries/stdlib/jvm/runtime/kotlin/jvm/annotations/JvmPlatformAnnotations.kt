@@ -246,4 +246,5 @@ public annotation class JvmSpecializeMetadata(
     val specializedSlots: IntArray,
     val specTypeParametersUsages: String,
     val typeParametersNames: Array<String>,
+    val specLVT: IntArray,
 )

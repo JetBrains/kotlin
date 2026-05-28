@@ -395,7 +395,7 @@ kotlin {
             dependencies {
                 api("org.jetbrains:annotations:13.0")
                 implementation(libs.intellij.asm)
-                implementation(project(":kotlin-util-jvm-inline-codegen"))
+                compileOnly(project(":kotlin-util-jvm-inline-codegen"))
             }
             val jvmSrcDirs = listOfNotNull(
                 "jvm/src",

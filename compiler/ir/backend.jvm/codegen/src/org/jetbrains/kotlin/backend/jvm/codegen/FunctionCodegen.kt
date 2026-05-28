@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.JvmSpecializeMetadataValue
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecLVTEntry
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
@@ -120,6 +121,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             }
         }
 
+        var specLVT: List<SpecLVTEntry>? = null
+
         // `$$forInline` versions of suspend functions have the same bodies as the originals, but with different
         // name/flags/annotations and with no state machine.
         val notForInline = irFunction.originalOfSuspendForInline
@@ -136,7 +139,9 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
             context.state.globalInlineContext.enterDeclaration(irFunction.suspendFunctionOriginal().toIrBasedDescriptor())
             try {
                 val adapter = InstructionAdapter(methodVisitor)
-                ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters).generate()
+                val codegen = ExpressionCodegen(irFunction, signature, frameMap, adapter, classCodegen, sourceMapper, reifiedTypeParameters)
+                codegen.generate()
+                specLVT = codegen.specLVT.filterNotNull()
                 postReifyEvaluatorGeneratedMethod(methodNode)
             } finally {
                 context.state.globalInlineContext.exitDeclaration()
@@ -150,6 +155,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 emptyList(),
                 irFunction.specTypeParametersUsages(),
                 irFunction.typeParameters.map { it.name.asString() },
+                specLVT.orEmpty(),
             )
             defaultMetadata.emitAnnotation(methodVisitor)
         }

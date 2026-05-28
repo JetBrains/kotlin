@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ClassInstance
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecLVTEntry
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -35,7 +36,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -141,6 +141,7 @@ class ExpressionCodegen(
     val classCodegen: ClassCodegen,
     val smap: SourceMapper,
     val reifiedTypeParametersUsages: ReifiedTypeParametersUsages,
+    val specLVT: MutableList<SpecLVTEntry?> = mutableListOf(),
 ) : IrVisitor<PromisedValue, BlockInfo>() {
     override fun toString(): String = signature.toString()
 
@@ -365,10 +366,24 @@ class ExpressionCodegen(
         }
     }
 
+    fun visitLocalVariable(
+        name: String,
+        descriptor: String,
+        signature: String?,
+        start: Label,
+        end: Label,
+        index: Int,
+        type: IrType?,
+    ) {
+        specLVT.add(
+            type?.asSpecTypeParameterUsage()?.let { SpecLVTEntry(index, specLVT.size, it.genericIndex, it.nullable) })
+        mv.visitLocalVariable(name, descriptor, signature, start, end, index)
+    }
+
     private fun writeParameterInLocalVariableTable(startLabel: Label, endLabel: Label) {
         if (!irFunction.isInline && irFunction.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER) return
         if (!irFunction.isStatic) {
-            mv.visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0)
+            visitLocalVariable("this", classCodegen.type.descriptor, null, startLabel, endLabel, 0, null)
         }
         for (parameter in irFunction.parameters) {
             fun writeToLVT(isReceiver: Boolean) = writeValueParameterInLocalVariableTable(parameter, startLabel, endLabel, isReceiver)
@@ -397,8 +412,8 @@ class ExpressionCodegen(
 
         val type = typeMapper.mapType(param)
         // NOTE: we expect all value parameters to be present in the frame.
-        mv.visitLocalVariable(
-            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol)
+        visitLocalVariable(
+            name, type.descriptor, null, startLabel, endLabel, findLocalIndex(param.symbol), param.type,
         )
     }
 
@@ -457,11 +472,19 @@ class ExpressionCodegen(
             if (it.declaration.isVisibleInLVT) {
                 var start = it.startLabel
                 for (gap in it.gaps) {
-                    mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, gap.start, it.index)
+                    visitLocalVariable(
+                        it.declaration.name.asString(),
+                        it.type.descriptor,
+                        null,
+                        start,
+                        gap.start,
+                        it.index,
+                        it.declaration.type
+                    )
                     start = gap.end
                 }
                 val end = it.explicitEndLabel ?: endLabel
-                mv.visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, end, it.index)
+                visitLocalVariable(it.declaration.name.asString(), it.type.descriptor, null, start, end, it.index, it.declaration.type)
             }
         }
 

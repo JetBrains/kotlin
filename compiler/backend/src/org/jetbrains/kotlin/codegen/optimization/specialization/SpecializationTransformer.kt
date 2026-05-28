@@ -40,7 +40,7 @@ class SpecializationTransformer : MethodTransformer() {
         val analyzer = Analyzer(interpreter)
         val frames = analyzer.analyze(internalClassName, methodNode)
 
-        for ((insn, genericUsage) in interpreter.specializedLoadStore) {
+        for ([insn, genericUsage] in interpreter.specializedLoadStore) {
             methodNode.instructions.insertBefore(
                 insn, MethodInsnNode(
                     Opcodes.INVOKESTATIC,
@@ -64,7 +64,7 @@ class SpecializationTransformer : MethodTransformer() {
             }
         }
         val specializedSlots = buildList {
-            for ((genericIndex, slots) in specializedSlotsMap) {
+            for ([genericIndex, slots] in specializedSlotsMap) {
                 add(genericIndex)
                 add(slots.size)
                 for (slot in slots) {

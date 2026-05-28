@@ -15,12 +15,14 @@ data class JvmSpecializeMetadataValue(
     val specializedSlots: List<Int>,
     val specTypeParametersUsages: SpecTypeParametersUsages,
     val typeParametersNames: List<String>,
+    val specLVT: List<SpecLVTEntry>,
 ) {
     companion object {
         const val ANNOTATION_DESCRIPTOR_NAME = "Lkotlin/jvm/JvmSpecializeMetadata;"
         const val SPECIALIZED_SLOTS_NAME = "specializedSlots"
         const val SPEC_TYPE_PARAMETERS_USAGE_NAME = "specTypeParametersUsages"
         const val TYPE_PARAMETERS_NAMES_NAME = "typeParametersNames"
+        const val SPEC_LVT_NAME = "specLVT"
     }
 
     fun toAnnotationNode(): AnnotationNode {
@@ -29,6 +31,7 @@ data class JvmSpecializeMetadataValue(
                 SPECIALIZED_SLOTS_NAME, specializedSlots,
                 SPEC_TYPE_PARAMETERS_USAGE_NAME, specTypeParametersUsages.encode(),
                 TYPE_PARAMETERS_NAMES_NAME, typeParametersNames,
+                SPEC_LVT_NAME, encodeSpecLocalVariables(),
             )
         }
     }
@@ -38,10 +41,29 @@ data class JvmSpecializeMetadataValue(
             av.visit(SPECIALIZED_SLOTS_NAME, specializedSlots)
             av.visit(SPEC_TYPE_PARAMETERS_USAGE_NAME, specTypeParametersUsages.encode())
             av.visit(TYPE_PARAMETERS_NAMES_NAME, typeParametersNames)
+            av.visit(SPEC_LVT_NAME, encodeSpecLocalVariables())
             av.visitEnd()
         }
     }
+
+    private fun encodeSpecLocalVariables(): List<Int> {
+        return buildList {
+            for (entry in specLVT) {
+                add(entry.index)
+                add(entry.variableIndex)
+                add(entry.typeParameterIndex)
+                add(if (entry.isNullable) 1 else 0)
+            }
+        }
+    }
 }
+
+data class SpecLVTEntry(
+    val index: Int,
+    val variableIndex: Int,
+    val typeParameterIndex: Int,
+    val isNullable: Boolean,
+)
 
 fun MethodNode.extractJvmSpecializeMetadataValue(): JvmSpecializeMetadataValue? {
     val annotation = invisibleAnnotations?.find { it.desc == JvmSpecializeMetadataValue.ANNOTATION_DESCRIPTOR_NAME } ?: return null
@@ -53,9 +75,21 @@ fun MethodNode.extractJvmSpecializeMetadataValue(): JvmSpecializeMetadataValue? 
             ?: error("invalid JvmSpecializeMetadata: missing '$valueName'")
 
     @Suppress("UNCHECKED_CAST")
+    val rawSpecLVT = getValue(JvmSpecializeMetadataValue.SPEC_LVT_NAME) as List<Int>
+    val specLVT = rawSpecLVT.chunked(4) { chunk ->
+        SpecLVTEntry(
+            chunk[0],
+            chunk[1],
+            chunk[2],
+            chunk[3] == 1,
+        )
+    }
+
+    @Suppress("UNCHECKED_CAST")
     return JvmSpecializeMetadataValue(
         getValue(JvmSpecializeMetadataValue.SPECIALIZED_SLOTS_NAME) as List<Int>,
         SpecTypeParametersUsages.decode(getValue(JvmSpecializeMetadataValue.SPEC_TYPE_PARAMETERS_USAGE_NAME) as String),
         getValue(JvmSpecializeMetadataValue.TYPE_PARAMETERS_NAMES_NAME) as List<String>,
+        specLVT,
     )
 }

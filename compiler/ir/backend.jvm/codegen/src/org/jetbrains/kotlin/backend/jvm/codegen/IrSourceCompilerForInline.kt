@@ -120,7 +120,7 @@ class IrSourceCompilerForInline(
     ) {
         ExpressionCodegen(
             codegen.irFunction, codegen.signature, codegen.frameMap, InstructionAdapter(finallyNode), codegen.classCodegen,
-            sourceMapper, codegen.reifiedTypeParametersUsages
+            sourceMapper, codegen.reifiedTypeParametersUsages, codegen.specLVT,
         ).run {
             finallyDepth = curFinallyDepth
             noLineNumberScopeWithCondition(codegen.isNoLineNumberScope) {

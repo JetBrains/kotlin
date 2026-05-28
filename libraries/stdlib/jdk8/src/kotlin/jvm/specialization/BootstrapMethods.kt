@@ -70,6 +70,8 @@ public object BootstrapMethods {
             this.version = genericClassNode.version
             this.superName = "java/lang/Object"
             this.access = Opcodes.ACC_PUBLIC + Opcodes.ACC_FINAL
+            this.sourceFile = genericClassNode.sourceFile
+            this.sourceDebug = genericClassNode.sourceDebug
         }
 
         val specializedMethodNode = MethodNode().apply {
@@ -78,6 +80,7 @@ public object BootstrapMethods {
             this.desc = specializedMethodType.toMethodDescriptorString()
             this.instructions.add(genericMethodNode.instructions)
             this.tryCatchBlocks = genericMethodNode.tryCatchBlocks
+            this.localVariables = genericMethodNode.localVariables
             this.access = Opcodes.ACC_PUBLIC + Opcodes.ACC_STATIC + Opcodes.ACC_FINAL + Opcodes.ACC_SYNTHETIC
         }
 
@@ -173,6 +176,27 @@ private val Class<*>.width: Int
         else -> 1
     }
 
+private fun adaptLVT(
+    methodNode: MethodNode,
+    typeParameters: Map<Int, LightIrType>,
+    metadata: JvmSpecializeMetadataValue,
+    widenedSlots: WidenedSlots,
+) {
+    var lvtIndex = 0
+    for ([varIndex, varNode] in methodNode.localVariables.withIndex()) {
+        varNode.index = widenedSlots.adjustIndex(varNode.index)
+
+        while (lvtIndex < metadata.specLVT.size && metadata.specLVT[lvtIndex].variableIndex < varIndex) lvtIndex++
+        if (lvtIndex < metadata.specLVT.size && metadata.specLVT[lvtIndex].variableIndex == varIndex) {
+            val specLocalVariable = metadata.specLVT[lvtIndex]
+            SpecTypeParametersUsages.Usage(specLocalVariable.typeParameterIndex, specLocalVariable.isNullable)
+                .adjustType(typeParameters)
+                ?.let { SpecializedTypeAbi.fromLightIrType(it) }
+                ?.also { abi -> varNode.desc = abi.reprDesc }
+        }
+    }
+}
+
 private fun peeholeAdapt(
     methodNode: MethodNode,
     specializedArgumentsTypes: Array<Class<*>>,
@@ -199,17 +223,18 @@ private fun peeholeAdapt(
         .runningFold(0) { acc, ty -> acc + ty.width }
         .dropLast(1)
         .withIndex()
-        .associate { (i, offset) -> offset to i }
+        .associate { [i, offset] -> offset to i }
 
     val typeParametersAbi = buildMap {
-        for ((k, v) in typeParameters) {
-            SpecializedTypeAbi.fromLightIrType(v)?.let { put(k, it) }
+        for ([k, v] in typeParameters) {
+            SpecializedTypeAbi.fromLightIrType(v)?.also { put(k, it) }
         }
     }
 
+    val instructions = methodNode.instructions
     val widenedSlots = metadata.calcWidenedSlots(typeParametersAbi)
 
-    val instructions = methodNode.instructions
+    adaptLVT(methodNode, typeParameters, metadata, widenedSlots)
 
     for (insn in instructions.toArray()) {
         when {
@@ -231,15 +256,7 @@ private fun peeholeAdapt(
             }
 
             insn is VarInsnNode -> {
-                // Adjust local variables to account for long and double types in place of specialized generics.
-                // These types occupy two slots, so the indices need to be shifted.
-                for (slotIndex in widenedSlots.indices) {
-                    if (insn.`var` > widenedSlots[slotIndex] + slotIndex) {
-                        insn.`var` += 1
-                    } else {
-                        break
-                    }
-                }
+                insn.`var` = widenedSlots.adjustIndex(insn.`var`)
 
                 if (insn.opcode == Opcodes.ALOAD || insn.opcode == Opcodes.ASTORE) {
                     insn.previous?.takeIf { it.isSpecializedTypeMarker() }?.let { prev ->
@@ -323,7 +340,22 @@ private fun peeholeAdapt(
     instructions.removeAll { it.opcode == Opcodes.NOP }
 }
 
-private fun JvmSpecializeMetadataValue.calcWidenedSlots(specializedTypeParameters: Map<Int, SpecializedTypeAbi>): List<Int> {
+@JvmInline
+private value class WidenedSlots(val slots: List<Int>) {
+    fun adjustIndex(index: Int): Int {
+        var index = index
+        for ([slotIndex, slot] in slots.withIndex()) {
+            if (index > slot + slotIndex) {
+                index += 1
+            } else {
+                break
+            }
+        }
+        return index
+    }
+}
+
+private fun JvmSpecializeMetadataValue.calcWidenedSlots(specializedTypeParameters: Map<Int, SpecializedTypeAbi>): WidenedSlots {
     val slots = TreeSet<Int>()
     var index = 0
     while (index < specializedSlots.size) {
@@ -335,5 +367,5 @@ private fun JvmSpecializeMetadataValue.calcWidenedSlots(specializedTypeParameter
             index += size
         }
     }
-    return slots.toList()
+    return WidenedSlots(slots.toList())
 }
