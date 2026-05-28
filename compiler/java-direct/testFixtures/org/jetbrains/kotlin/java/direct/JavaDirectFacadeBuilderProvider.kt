@@ -25,6 +25,7 @@ class JavaDirectFacadeBuilderProvider(@Suppress("UNUSED_PARAMETER") testServices
     override fun createBuilder(
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
+        librariesScope: AbstractProjectFileSearchScope,
     ): (AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade =
-        createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment)
+        createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
 }

@@ -101,8 +101,9 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             val projectEnvironment = VfsBasedProjectEnvironment(
                 project, configuration.extensionsStorage, VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL),
             ) { packagePartProviderFactory.invoke(it) }
-            javaFacadeBuilder = testServices.javaFacadeBuilderProvider?.createBuilder(configuration, projectEnvironment)
             val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
+            javaFacadeBuilder =
+                testServices.javaFacadeBuilderProvider?.createBuilder(configuration, projectEnvironment, librariesScope)
             FirJvmSessionFactory.Context(
                 configuration,
                 projectEnvironment,

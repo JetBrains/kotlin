@@ -26,9 +26,17 @@ import org.jetbrains.kotlin.test.services.TestServices
  * `projectEnvironment.getFirJavaFacade(...)`.
  */
 abstract class JavaFacadeBuilderProvider : TestService {
+    /**
+     * Stage 2 §6.4 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
+     * [librariesScope] is threaded through so a java-direct builder can identity-compare it
+     * against the per-call `scope` argument of the returned lambda and route source vs library
+     * sessions to different facades (source-only `JavaClassFinderOverAstImpl` vs binary-only
+     * `BinaryJavaClassFinder`).
+     */
     abstract fun createBuilder(
         configuration: CompilerConfiguration,
         projectEnvironment: VfsBasedProjectEnvironment,
+        librariesScope: AbstractProjectFileSearchScope,
     ): ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?
 }
 

@@ -476,6 +476,37 @@ After §6.2 + §6.3:
 
 `createJavaDirectSourceJavaFacadeBuilder` simplifies to a source-only facade builder.
 
+> **Update 2026-05-28 — §6.4 landed (partial, source-side only).** We jumped from §6.2 →
+> §6.4 ahead of §6.3 because the source-side slice of §6.4 is feasible *without* §6.3:
+> §6.2 narrowed `JavaSymbolProvider` to source-only probes, so the source-session facade's
+> binary half (`CombinedJavaClassFinder.binaryFinder`) became dead code on the java-direct
+> source path. `createJavaDirectSourceJavaFacadeBuilder` now takes `librariesScope` and the
+> returned lambda dispatches on `scope === librariesScope`: library scope continues to use
+> `BinaryJavaClassFinder` (unchanged), source scope drops to source-only
+> `JavaClassFinderOverAstImpl` — **no `CombinedJavaClassFinder` involvement on the source
+> path**. Pure-Kotlin compiles (no Java sources at all) fall through to the binary finder
+> for the same scope, matching today's behavior. Identity comparison `===` on
+> `AbstractProjectFileSearchScope` is the correct dispatch key: the two scopes
+> (`javaSourcesScope`, `librariesScope`) are distinct objects threaded unchanged through
+> `FirJvmSessionFactory.prepareSessions` / `FirFrontendFacade.analyze`. Binary finder
+> memoised per `(scope identityHash, enableCtSym)` exactly as before. Threaded
+> `librariesScope` through `JavaFacadeBuilderProvider.createBuilder(...)`,
+> `JavaDirectFacadeBuilderProvider`, the CLI call at `JvmFrontendPipelinePhase.kt:317`, and
+> the test fixture `FirFrontendFacade.kt` (reordered `librariesScope` construction so it
+> precedes the `createBuilder` call). Library-session branch *still* needs a
+> `BinaryJavaClassFinder` (or PSI fallback) because §6.3 is not done yet — the deserializer
+> reads binary classes through the facade until §6.3 absorbs that path. After §6.3 lands,
+> the library-session branch + the pure-Kotlin source-scope fallback both collapse, and
+> `createJavaDirectSourceJavaFacadeBuilder` simplifies to a pure source-only builder as
+> originally specified above. Validation: 2701/2701 `JavaUsingAst{Phased,Box}TestGenerated`
+> + 10787/10787 `PhasedJvmDiagnosticLightTreeTestGenerated.*` (PSI regression gate confirms
+> the non-java-direct path is unaffected — the change only touches the java-direct builder
+> lambda; PSI users keep their `createJavaClassFinder(...)` fallback in
+> `VfsBasedProjectEnvironment.getFirJavaFacade`). See
+> [`../ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) §"Stage 2 §6.4 (partial — source-side
+> only) — Drop `CombinedJavaClassFinder` from the source-session facade — 2026-05-28" for
+> the full design + key-learnings entry.
+
 ### 6.5 Delete `CombinedJavaClassFinder`, `BinaryJavaClassFinder`
 ([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
 §2.4.1 / §2.6 step 5)

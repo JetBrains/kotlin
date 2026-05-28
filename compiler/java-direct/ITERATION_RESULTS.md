@@ -2,7 +2,65 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-28 (Stage 2 §6.2 — narrow `JavaSymbolProvider`
+**Last Updated**: 2026-05-28 (Stage 2 §6.4 (partial — source-side
+only) — drop `CombinedJavaClassFinder` from the source-session facade
+on the `java-direct` path. `createJavaDirectSourceJavaFacadeBuilder`
+now takes the `librariesScope` and its returned lambda dispatches on
+`scope === librariesScope`: library scope → `BinaryJavaClassFinder`
+alone (unchanged); source scope → `FirJavaFacadeForSource(session,
+moduleData, JavaClassFinderOverAstImpl(session, roots))` — no
+`CombinedJavaClassFinder` involvement. Safe because §6.2 narrowed
+`JavaSymbolProvider` to source-only probes, so the source facade's
+`findClass` is only reached for `classId`s already gated by
+`isInSourceIndex`; binary references inside Java source signatures
+are resolved through the symbol-provider chain (deserializer /
+`JavaSymbolProvider`), not through the facade. When the project has
+no Java source roots (pure-Kotlin compile), the source-scope branch
+falls through to the binary finder too, matching today's behaviour.
+The library-side branch still constructs a `BinaryJavaClassFinder`
+(or PSI fallback in non-CLI envs) so the library deserializer reads
+through the facade until §6.3 / §6.5 absorb binary lookups inline
+into `JvmClassFileBasedSymbolProvider`. Identity comparison on
+`librariesScope` is the correct dispatch key because the two scopes
+(`javaSourcesScope`, `librariesScope`) are distinct objects threaded
+unchanged through `FirJvmSessionFactory.prepareSessions`. The binary
+finder is memoised per `(scope identityHash, enableCtSym)` exactly
+as before. Threaded `librariesScope` through three layers:
+`JavaFacadeBuilderProvider.createBuilder(configuration,
+projectEnvironment, librariesScope)` (test-fixture seam),
+`JavaDirectFacadeBuilderProvider.createBuilder(...)` (forwards), and
+the CLI call at `JvmFrontendPipelinePhase.kt:317`. The test fixture
+`FirFrontendFacade.kt` was reordered so `librariesScope` is computed
+*before* the `createBuilder` call (was line 105 → moved to 104).
+Verification: `:compiler:java-direct:test --tests
+"JavaUsingAst{Phased,Box}TestGenerated" --rerun` →
+**2701/2701 green**, 0 failures, 0 errors aggregated across
+`TEST-*JavaUsingAst*.xml`; `:compiler:fir:analysis-tests:test --tests
+"PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` →
+**10787/10787 green** (PSI regression gate — confirms the
+non-java-direct path is unaffected, as expected: the change only
+touches the java-direct builder lambda; PSI users keep their
+`createJavaClassFinder(...)` fallback in
+`VfsBasedProjectEnvironment.getFirJavaFacade`). Files:
+`compiler/java-direct/src/.../JavaDirectFacadeBuilder.kt`
+(full rewrite — +69/−~50 LoC, scope-aware dispatch + memoised binary
+finder),
+`compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt`
+(+9 LoC — `librariesScope` param + KDoc),
+`compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt`
+(+2/−1 LoC — forward `librariesScope`),
+`compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt`
+(+2/−1 LoC — reorder + pass `librariesScope`),
+`compiler/cli/cli-jvm/src/.../jvm/JvmFrontendPipelinePhase.kt`
+(+1/−1 LoC — pass `librariesScope`). Net: 5 source files, ≈+83/−54
+LoC. No public Java-model interface touched.
+`CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt` files are
+**still on disk** (deletion is §6.5); the source-session
+`CombinedJavaClassFinder` *call path* is gone — only the
+library-session branch still depends on `BinaryJavaClassFinder`,
+and that goes away in §6.3 (binary lookups inline into the
+deserializer) → §6.5 (delete both files). Previous: 2026-05-28
+(Stage 2 §6.2 — narrow `JavaSymbolProvider`
 to Java *source* classes via new source-only probes on `JavaClassFinder`
 (`isInSourceIndex`, `hasPackageInSources`, `sourceClassNamesInPackage`),
 overridden in `CombinedJavaClassFinder` to delegate to the source half
@@ -1028,6 +1086,199 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Stage 2 §6.4 (partial — source-side only) — Drop `CombinedJavaClassFinder` from the source-session facade — 2026-05-28
+
+### Overview
+
+Third sub-step of Stage 2 (= Phase 2 of
+[`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)).
+After landing §6.1 (indirect-caller audit) and §6.2 (narrow
+`JavaSymbolProvider` to source-only) earlier today, §6.3 (move binary
+lookups inline into `JvmClassFileBasedSymbolProvider`) was assessed
+as **deferrable** on the java-direct test-suite axis — the three
+§6.1 callers are OK with source-only behavior on java-direct (see
+§6.2 entry), and the §6.3 inlining is a shared-file refactor of
+`JvmClassFileBasedSymbolProvider.kt:72/139/171/180/212` that the
+PSI/LL/IDE paths also have to swallow. We jumped to **§6.4** (source-side
+slice) instead, which is achievable today without touching the
+deserializer: now that `JavaSymbolProvider` only reads through
+`isInSourceIndex` / `sourceClassNamesInPackage`, the source-session
+facade no longer needs the binary half of `CombinedJavaClassFinder`.
+
+### Design
+
+`createJavaDirectSourceJavaFacadeBuilder` is now scope-aware: it takes
+the `librariesScope` and the returned lambda inspects each `scope`
+argument:
+
+- `scope === librariesScope` (library session): construct a
+  `BinaryJavaClassFinder` (or PSI fallback in non-CLI envs) and wrap
+  it in `FirJavaFacadeForSource`. Same behavior as the pre-§6.4
+  library branch — the library deserializer still reads binary Java
+  classes through the facade until §6.3 / §6.5 absorb the lookups
+  inline.
+- Otherwise (source session): construct `JavaClassFinderOverAstImpl`
+  alone (when Java source roots are present) and wrap it in
+  `FirJavaFacadeForSource`. **No `CombinedJavaClassFinder` involvement.**
+- Source session with no Java source roots (pure-Kotlin compile):
+  fall through to the binary finder for the same `scope`, matching
+  today's behavior (a source session without Java sources still needs
+  to resolve binary Java references through its facade until §6.3
+  moves those lookups inline).
+
+Why the source-session facade no longer needs binary visibility:
+
+- The facade's `findClass(classId, ...)` is only reached for `classId`s
+  that already passed `JavaSymbolProvider.getClassLikeSymbolByClassId`'s
+  `isInSourceIndex(classId)` gate (§6.2). That gate is source-only,
+  so binary `classId`s never reach the facade in the source session.
+- Binary references *inside* Java source signatures (e.g.
+  `class Foo extends java.util.ArrayList`) are resolved through the
+  symbol-provider chain (`session.symbolProvider` →
+  `JvmClassFileBasedSymbolProvider` / `JavaSymbolProvider` / Kotlin
+  source provider / etc.), not through the source-session facade.
+- The library-session facade still has binary access via the same
+  builder lambda, so binary classes are still resolvable from the
+  composite — just not via the source-session facade.
+
+### Why identity comparison on `librariesScope` is the correct dispatch key
+
+`AbstractProjectFileSearchScope` instances are constructed in
+`FirJvmSessionFactory.prepareSessions` (and the equivalent test-fixture
+location at `FirFrontendFacade.analyze`) and threaded through unchanged.
+The two scopes (`javaSourcesScope`, `librariesScope`) are distinct
+objects with disjoint identity — `===` is correct, well-defined, and
+fastest. Using a wrapper enum would be more readable but adds an
+allocation per call and changes the existing
+`FirJvmSessionFactory.Context.javaFacadeBuilder` signature, which
+flows through many call sites; this is deferred.
+
+### Plumbing
+
+Three layers needed `librariesScope` threaded through:
+
+1. `compiler/cli/cli-jvm/.../JvmFrontendPipelinePhase.kt:317` — CLI
+   production call — already had `librariesScope` in scope as a parameter
+   of `prepareJvmSessions`, just needed to pass it to
+   `createJavaDirectSourceJavaFacadeBuilder(...)`.
+2. `compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt`
+   — test-fixture `TestService` seam — `createBuilder(configuration,
+   projectEnvironment)` → `createBuilder(configuration,
+   projectEnvironment, librariesScope)` with a KDoc note explaining
+   the §6.4 contract.
+3. `compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt`
+   — forwards `librariesScope` to the builder.
+4. `compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt`
+   — the `librariesScope = PsiBasedProjectFileSearchScope(...)`
+   construction line was *after* the `createBuilder(...)` call; moved
+   *before* and the new arg threaded through.
+
+### Memoisation
+
+The binary finder is memoised inside the closure on `(System.identityHashCode(psiSearchScope), enableCtSym)`,
+exactly as the previous shape did — so multiple builder-lambda
+invocations for the same scope share the same `BinaryJavaClassFinder`
+instance. Important because `FirJvmSessionFactory.createSourceSession`
+and `createLibrarySession` may both invoke the lambda with their
+respective scopes, and we don't want to duplicate the heavy
+`BinaryJavaClassFinder` construction on each call.
+
+### Changes
+
+- `compiler/java-direct/src/.../JavaDirectFacadeBuilder.kt` — full
+  rewrite. New `librariesScope` parameter, identity-based scope
+  dispatch, private `binaryFinderForScope` helper with memoisation
+  cache, private `BinaryFinderCacheKey` data class.
+- `compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt`
+  — `createBuilder(...)` signature gains `librariesScope:
+  AbstractProjectFileSearchScope`; KDoc explains the §6.4 contract.
+- `compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt`
+  — forwards `librariesScope` to
+  `createJavaDirectSourceJavaFacadeBuilder(...)`.
+- `compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt`
+  — `librariesScope` construction moved one line up so it's available
+  when `createBuilder(...)` is called; pass `librariesScope` to the
+  builder.
+- `compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt:317`
+  — pass `librariesScope` to `createJavaDirectSourceJavaFacadeBuilder`.
+
+### Test Results
+
+- `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"
+  --rerun` → **2701/2701 green**, 0 failures, 0 errors (aggregated
+  across `TEST-*JavaUsingAst*.xml`).
+- `:compiler:fir:analysis-tests:test --tests
+  "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` →
+  **10787/10787 green**, 0 failures, 0 errors (PSI regression gate
+  confirms the non-java-direct path is unaffected: the change only
+  touches the java-direct builder lambda; PSI users keep their
+  `createJavaClassFinder(...)` fallback in
+  `VfsBasedProjectEnvironment.getFirJavaFacade`).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/java-direct/src/.../JavaDirectFacadeBuilder.kt` | Full rewrite, +69 LoC. Scope-aware dispatch (`scope === librariesScope` → binary; else → source-only `JavaClassFinderOverAstImpl`, with pure-Kotlin fallback to binary). Private memoised `binaryFinderForScope` helper. |
+| `compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt` | +9 LoC. `createBuilder(...)` signature gains `librariesScope`; KDoc explains §6.4 contract. |
+| `compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt` | +2/−1 LoC. Forward `librariesScope`. |
+| `compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt` | +2/−1 LoC. Reorder `librariesScope` construction; pass to `createBuilder(...)`. |
+| `compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt` | +1/−1 LoC. Pass `librariesScope` to `createJavaDirectSourceJavaFacadeBuilder(...)`. |
+
+Net: 5 source files, ≈+83/−54 LoC. No public Java-model interface
+touched.
+
+### Key Learnings
+
+- **§6.2 is what made §6.4 trivially safe.** Once `JavaSymbolProvider`
+  is source-only, the source-session facade's binary access is
+  unreachable — the binary half of `CombinedJavaClassFinder` was
+  dead code on the java-direct source-session path post-§6.2 (the
+  green test result confirms it: 2701/2701 on a facade that no
+  longer has any binary class-finder visibility).
+- **Identity-keyed scope dispatch is the right MVP.** A typed enum
+  / sealed-class wrapper for "source-session" / "library-session"
+  is cleaner long-term but would require changing
+  `FirJvmSessionFactory.Context.javaFacadeBuilder`'s signature, which
+  is shared with the PSI path. The identity check is `===` on
+  `AbstractProjectFileSearchScope`, has no allocation overhead, and
+  the two scopes are guaranteed distinct objects by construction —
+  good enough until the post-§6.5 cleanup pass.
+- **Pure-Kotlin compile fallback matters.** A source session that
+  has no Java sources still goes through this builder. The fallback
+  to the binary finder for that case preserves today's behavior
+  (the source facade can still service the rare binary lookups that
+  arrive via paths other than `JavaSymbolProvider`). After §6.3 this
+  fallback can be removed entirely, because the deserializer will
+  own all binary lookups.
+
+### Follow-ups for the next iteration
+
+- **§6.3 — Move binary lookups into `JvmClassFileBasedSymbolProvider`**:
+  inline the index walks currently inside `BinaryJavaClassFinder`
+  (`hasBinaryTopLevelClass`, `binaryNamesInPackage`,
+  `hasBinaryPackage`, and direct `BinaryJavaClass(virtualFile, ...,
+  classContent = bytes)` materialization) into the deserializer at
+  `JvmClassFileBasedSymbolProvider.kt:72, 139, 171, 180, 212`. This
+  is now the largest remaining piece — touching a file shared with
+  the PSI/LL/IDE paths. Once §6.3 lands, the library-session branch
+  of `createJavaDirectSourceJavaFacadeBuilder` no longer needs a
+  `BinaryJavaClassFinder` either (the deserializer becomes
+  authoritative for binary), and the source-scope fallback for
+  pure-Kotlin compiles also collapses.
+- **§6.5 — Delete `CombinedJavaClassFinder.kt` and
+  `BinaryJavaClassFinder.kt`.** Trivial once §6.3 lands.
+- **Extend the §6.1 helper** with a session-scoped, `!classId.isLocal`
+  binary lookup against `JvmClassFileBasedSymbolProvider` to restore
+  binary-Java visibility for `FirJvmConflictsChecker` /
+  `FirDirectJavaActualDeclarationExtractor` / Lombok
+  `AbstractBuilderGenerator`. Per §6.2 entry, this is required for
+  the `FirJvmConflictsChecker` Kotlin-vs-binary-Java redeclaration
+  case (no java-direct fixture exists today; surface area is
+  primarily PSI / LL / IDE paths).
 
 ---
 
