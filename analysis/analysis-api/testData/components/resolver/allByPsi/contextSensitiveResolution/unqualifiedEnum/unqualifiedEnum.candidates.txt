@@ -630,23 +630,7 @@ KtDotQualifiedExpression(429,440): 'test.Sample'
     isInBestCandidates = false
 
 KtNameReferenceExpression(429,433): 'test'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.Sample
-        symbol = <constructor>(): test.Sample
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(434,440): 'Sample'
   KaInapplicableCallCandidate:
@@ -762,23 +746,7 @@ KtDotQualifiedExpression(504,515): 'test.Sample'
     isInBestCandidates = false
 
 KtNameReferenceExpression(504,508): 'test'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.Sample
-        symbol = <constructor>(): test.Sample
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(509,515): 'Sample'
   KaInapplicableCallCandidate:
@@ -947,23 +915,7 @@ KtDotQualifiedExpression(607,618): 'test.Sample'
     isInBestCandidates = false
 
 KtNameReferenceExpression(607,611): 'test'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.Sample
-        symbol = <constructor>(): test.Sample
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(612,618): 'Sample'
   KaInapplicableCallCandidate:

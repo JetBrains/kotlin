@@ -146,23 +146,7 @@ KtDotQualifiedExpression(94,102): 'test.Foo'
     isInBestCandidates = false
 
 KtNameReferenceExpression(94,98): 'test'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.Foo
-        symbol = <constructor>(): test.Foo
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(99,102): 'Foo'
   KaInapplicableCallCandidate:

@@ -515,23 +515,7 @@ KtDotQualifiedExpression(297,303): 'test.C'
     isInBestCandidates = false
 
 KtNameReferenceExpression(297,301): 'test'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = test.C
-        symbol = <constructor>(): test.C
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(302,303): 'C'
   KaInapplicableCallCandidate:

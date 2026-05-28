@@ -1060,23 +1060,7 @@ KtDotQualifiedExpression(748,760): 'pack.MyClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(748,752): 'pack'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.MyClass
-        symbol = <constructor>(): pack.MyClass
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(753,760): 'MyClass'
   KaInapplicableCallCandidate:
@@ -1260,23 +1244,7 @@ KtDotQualifiedExpression(868,878): 'pack.Child'
     isInBestCandidates = false
 
 KtNameReferenceExpression(868,872): 'pack'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.Child
-        symbol = <constructor>(): pack.Child
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(873,878): 'Child'
   KaInapplicableCallCandidate:
@@ -2384,25 +2352,7 @@ KtDotQualifiedExpression(1410,1433): 'pack.ClassWithType<Int>'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1410,1414): 'pack'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<T>
-        symbol = <constructor>(): pack.ClassWithType<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
-      }
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtCallExpression(1415,1433): 'ClassWithType<Int>'
   KaInapplicableCallCandidate:
@@ -2675,25 +2625,7 @@ KtDotQualifiedExpression(1479,1502): 'pack.ClassWithType<Int>'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1479,1483): 'pack'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<T>
-        symbol = <constructor>(): pack.ClassWithType<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Int)
-      }
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtCallExpression(1484,1502): 'ClassWithType<Int>'
   KaInapplicableCallCandidate:
@@ -2929,25 +2861,7 @@ KtDotQualifiedExpression(1543,1567): 'pack.ClassWithType<Long>'
     isInBestCandidates = false
 
 KtNameReferenceExpression(1543,1547): 'pack'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = pack.ClassWithType<T>
-        symbol = <constructor>(): pack.ClassWithType<T>
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {
-        T -> (kotlin.Long)
-      }
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtCallExpression(1548,1567): 'ClassWithType<Long>'
   KaInapplicableCallCandidate:
