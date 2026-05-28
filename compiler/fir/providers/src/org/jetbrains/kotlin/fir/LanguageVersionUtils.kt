@@ -41,4 +41,4 @@ fun disableCompatibilityModeForNewInference(): Boolean =
 
 context(c: SessionHolder)
 fun useArrayLiteralResolution(): Boolean =
-    LanguageFeature.CollectionLiterals.isDisabled()
+    LanguageFeature.CollectionLiterals.isDisabled() && LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isDisabled()

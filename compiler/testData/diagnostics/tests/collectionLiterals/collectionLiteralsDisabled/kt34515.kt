@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 fun main() {
     <!UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION_ERROR, UNSUPPORTED_FEATURE!>[]<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!><!UNNECESSARY_NOT_NULL_ASSERTION!>!!<!>
 }
