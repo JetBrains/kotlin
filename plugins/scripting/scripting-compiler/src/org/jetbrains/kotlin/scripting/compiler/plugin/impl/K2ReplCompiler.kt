@@ -428,31 +428,115 @@ private fun compileImpl(
 
     val frontendOutput = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
 
-    if (diagnosticsReporter.hasErrors) {
+    // Best-effort mode: when a stateless-prototype capture hook is installed, the orchestrator
+    // *wants* a (possibly partial) artifact even if the frontend produced errors, so that
+    // subsequent snippets can still resolve well-formed prior declarations. Skipping the
+    // pre-codegen short-circuit lets us reach the observer fire-point. The stateful path
+    // (`snippetCompilationObserver == null`) keeps the original strict semantics: any frontend
+    // error returns immediately. See `iterations/2026-05-28_stateless-repl-read-side-wiring.md`
+    // for the rationale (option 1: best-effort backend under FIR errors).
+    val bestEffortBackend = state.snippetCompilationObserver != null
+    if (diagnosticsReporter.hasErrors && !bestEffortBackend) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
         return failure(messageCollector)
     }
 
-    val irInput = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
-
-    val generationState = generateCodeFromIr(irInput, compilerEnvironment)
+    // Wrap IR conversion + codegen so a crash on error-laden FIR does not surface a raw
+    // exception in best-effort mode — fall back to "no artifact" (observer simply doesn't fire).
+    val (irInputOrNull, generationStateOrNull) = try {
+        val irIn = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
+        // Best-effort detour around JvmIrCodegenFactory's hardcoded short-circuit:
+        //
+        //     fun invokeCodegen(input: CodegenInput) {
+        //         fun hasErrors() = (state.diagnosticReporter as? BaseDiagnosticsCollector)?.hasErrors == true
+        //         if (hasErrors()) return
+        //         …
+        //     }
+        //
+        // (`compiler/ir/backend.jvm/entrypoint/.../JvmIrCodegenFactory.kt` ~L390). Lowerings run,
+        // but no class bytes are written when the reporter sees errors. That's the right
+        // semantic for the CLI but it blocks the stateless REPL prototype, where we *want* a
+        // partial artifact carrying the well-formed declarations so subsequent snippets can
+        // resolve them (matching the stateful path, which records snippets into the in-memory
+        // history provider before checkers fire).
+        //
+        // The minimal, non-invasive workaround: hand codegen a **clean** [DiagnosticsCollectorImpl]
+        // inside a fresh [ModuleCompilerEnvironment]. The FIR errors already collected in the
+        // main [diagnosticsReporter] are *not* discarded — they are reported via
+        // `reportToMessageCollector` below as before — they're just hidden from the codegen
+        // entry-gate. Any new errors that codegen itself raises (unbound symbol mismatch,
+        // metadata inconsistency, ...) land in the throwaway collector and are intentionally
+        // dropped: in best-effort mode they would only obscure the real user-visible FIR
+        // errors with backend internals.
+        val codegenEnv = if (bestEffortBackend && diagnosticsReporter.hasErrors) {
+            // IR pre-pass: replace each snippet `$$eval` function body that contains an
+            // `IrErrorExpression`/`IrErrorCallExpression` with an **empty block**. Rationale:
+            //   * `$$eval` carries the snippet's executable body — but cross-snippet consumers
+            //     never reference it (they only see the wrapper class's declarations like
+            //     `foo`/`bar`/`baz`); a no-op body therefore preserves the cross-snippet
+            //     contract.
+            //   * `JvmIrCodegenFactory.generateMethod` calls `FunctionCodegen.generate`, which
+            //     **throws** `RuntimeException` on `IrErrorType`/`ERROR_CALL` nodes — there is
+            //     no per-method catch, so the whole `ClassCodegen.generate` fails and no class
+            //     files are emitted. Eliding `$$eval` bodies is the minimum surgery that lets
+            //     codegen finish the wrapper class even when the user-written body has
+            //     unresolved references.
+            //   * The wrapper class's **declarations** (sibling `foo`/`bar`/`baz`/`IV`,
+            //     including their resolved return types and bodies) remain intact — only the
+            //     top-level eval driver is gutted.
+            elideErrorBodiedEvalFunctions(irIn.irModuleFragment)
+            ModuleCompilerEnvironment(state.projectEnvironment, DiagnosticsCollectorImpl())
+        } else compilerEnvironment
+        val genState = generateCodeFromIr(irIn, codegenEnv)
+        irIn to genState
+    } catch (t: Throwable) {
+        if (!bestEffortBackend) throw t
+        // In best-effort mode, treat a backend crash as "no usable artifact". Report a debug
+        // diagnostic and continue to the existing failure path below.
+        //
+        // Background: `FunctionCodegen.generate`
+        // (`compiler/ir/backend.jvm/codegen/.../FunctionCodegen.kt` ~L61) rethrows any error
+        // it encounters in a method body as a `RuntimeException`; `ClassCodegen.generateMethod`
+        // does not catch it, so a single error-bodied function fails the whole class. The
+        // common case of an error-bodied `$$eval` is handled by the
+        // [elideErrorBodiedEvalFunctions] pre-pass above. Any *remaining* crash that escapes
+        // here (e.g. a sibling member whose body is also error-laden — currently not seen in
+        // the diagnostic suite) drops the snippet's artifact entirely; subsequent snippets
+        // will report cross-references to it as unresolved, exactly as on the strict path.
+        messageCollector.report(
+            severity = CompilerMessageSeverity.LOGGING,
+            message = "stateless REPL best-effort: IR/codegen crashed on error-laden FIR — no artifact will be emitted: ${t.message}",
+        )
+        null to null
+    }
 
     diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)
+
+    // Stateless-prototype capture hook (no-op when not installed).
+    //
+    // Fired BEFORE the post-codegen short-circuit so the orchestrator can pick up a partial
+    // artifact even when `diagnosticsReporter.hasErrors`. The observer is responsible for
+    // checking `generationState.factory.asList().isNotEmpty()` before treating the capture as
+    // a usable artifact.
+    if (generationStateOrNull != null) {
+        state.snippetCompilationObserver?.let { observer ->
+            @OptIn(org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess::class)
+            val capturedFirSnippet = fir.firstNotNullOfOrNull { firFile ->
+                firFile.declarations.firstIsInstanceOrNull<org.jetbrains.kotlin.fir.declarations.FirReplSnippet>()
+            }
+            if (capturedFirSnippet != null) {
+                observer(capturedFirSnippet, session, generationStateOrNull)
+            }
+        }
+    }
 
     if (diagnosticsReporter.hasErrors) {
         return failure(messageCollector)
     }
-
-    // Stateless-prototype capture hook (no-op when not installed).
-    state.snippetCompilationObserver?.let { observer ->
-        @OptIn(org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess::class)
-        val capturedFirSnippet = fir.firstNotNullOfOrNull { firFile ->
-            firFile.declarations.firstIsInstanceOrNull<org.jetbrains.kotlin.fir.declarations.FirReplSnippet>()
-        }
-        if (capturedFirSnippet != null) {
-            observer(capturedFirSnippet, session, generationState)
-        }
-    }
+    // Past this point we are on the happy path; both must be non-null (no IR/codegen crash and
+    // no frontend errors). Reify for the strict makeCompiledScript call.
+    val irInput = irInputOrNull ?: return failure(messageCollector)
+    val generationState = generationStateOrNull ?: return failure(messageCollector)
 
     return makeCompiledScript(
         generationState,
@@ -466,6 +550,75 @@ private fun compileImpl(
         extractResultFields(irInput.irModuleFragment)
     ).onSuccess { compiledScript ->
         ResultWithDiagnostics.Success(compiledScript, messageCollector.diagnostics)
+    }
+}
+
+/**
+ * Best-effort IR pre-pass: traverses [moduleFragment] and replaces the body of every
+ * `$$eval` function whose IR subtree contains an `IrErrorExpression` or `IrErrorCallExpression`
+ * with an empty `IrBlockBody`.
+ *
+ * Invariant: only `$$eval` (the REPL snippet's evaluation driver) is touched. Sibling
+ * declarations like `foo`/`bar`/`baz`, nested classes, properties, and their initializers
+ * remain untouched — even if they themselves carry errors, those errors will surface again
+ * when codegen processes them and the per-class `try/catch` in [compileImpl] will discard the
+ * snippet's artifact as "best-effort unusable".
+ *
+ * This is intentionally narrow: the cross-snippet contract for a prior REPL snippet is its
+ * **declared shape** (members + types), not its execution body. Eliding only `$$eval` keeps
+ * downstream snippets resolvable while letting the per-snippet diagnostic stream still report
+ * the original FIR errors verbatim.
+ *
+ * Reference for the JVM-side blocker:
+ * `compiler/ir/backend.jvm/codegen/.../FunctionCodegen.kt` ~L61 — `FunctionCodegen.generate`
+ * rethrows as `RuntimeException` on any IR-error node, and `ClassCodegen.generateMethod` does
+ * not catch it.
+ */
+private fun elideErrorBodiedEvalFunctions(moduleFragment: org.jetbrains.kotlin.ir.declarations.IrModuleFragment) {
+    val evalName = "\$\$eval"
+
+    fun hasIrError(element: org.jetbrains.kotlin.ir.IrElement): Boolean {
+        var found = false
+        val visitor = object : org.jetbrains.kotlin.ir.visitors.IrVisitorVoid() {
+            override fun visitElement(element: org.jetbrains.kotlin.ir.IrElement) {
+                if (found) return
+                if (element is org.jetbrains.kotlin.ir.expressions.IrErrorExpression ||
+                    element is org.jetbrains.kotlin.ir.expressions.IrErrorCallExpression
+                ) {
+                    found = true
+                    return
+                }
+                element.acceptChildren(this, null)
+            }
+        }
+        element.acceptChildren(visitor, null)
+        return found
+    }
+
+    fun processClass(irClass: org.jetbrains.kotlin.ir.declarations.IrClass) {
+        for (member in irClass.declarations) {
+            when (member) {
+                is org.jetbrains.kotlin.ir.declarations.IrSimpleFunction -> {
+                    if (member.name.asString() == evalName) {
+                        val body = member.body
+                        if (body != null && hasIrError(body)) {
+                            member.body = member.factory.createBlockBody(
+                                org.jetbrains.kotlin.ir.UNDEFINED_OFFSET,
+                                org.jetbrains.kotlin.ir.UNDEFINED_OFFSET,
+                            )
+                        }
+                    }
+                }
+                is org.jetbrains.kotlin.ir.declarations.IrClass -> processClass(member)
+                else -> Unit
+            }
+        }
+    }
+
+    for (file in moduleFragment.files) {
+        for (decl in file.declarations) {
+            if (decl is org.jetbrains.kotlin.ir.declarations.IrClass) processClass(decl)
+        }
     }
 }
 
