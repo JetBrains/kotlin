@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.declarations.addBackingField
 import org.jetbrains.kotlin.ir.builders.declarations.addGetter
 import org.jetbrains.kotlin.ir.builders.declarations.addTypeParameter
+import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildClass
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetFieldImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.SYNTHETIC_OFFSET
@@ -159,6 +161,224 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
         withNestedFamily.declarations += withNestedFamilyCompanion
         file.declarations += withNestedFamily
         context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(withNestedFamily)
+
+        // (9) inner-no-generics inside outer-no-generics (source-declared).
+        val sopl = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceOuterPlain" }
+        if (sopl != null) {
+            val innerPlainInPlain = buildGeneratedClass(
+                sopl, "InnerPlain", isGeneric = false, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL, isInner = true,
+            )
+            sopl.declarations += innerPlainInPlain
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(innerPlainInPlain)
+        }
+
+        // (10) inner-no-generics inside outer-generic (source-declared).
+        val sogen = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceOuterGeneric" }
+        if (sogen != null) {
+            val innerPlainInGeneric = buildGeneratedClass(
+                sogen, "InnerPlain", isGeneric = false, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL, isInner = true,
+            )
+            sogen.declarations += innerPlainInGeneric
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(innerPlainInGeneric)
+        }
+
+        // (11) inner-generic inside outer-no-generics (source-declared).
+        val sopl2 = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceOuterPlain2" }
+        if (sopl2 != null) {
+            val innerGenericInPlain = buildGeneratedClass(
+                sopl2, "InnerGeneric", isGeneric = true, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL, isInner = true,
+            )
+            sopl2.declarations += innerGenericInPlain
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(innerGenericInPlain)
+        }
+
+        // (12) both inner and outer generic (source-declared outer).
+        val sopg = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceOuterGenericPaired" }
+        if (sopg != null) {
+            val innerGenericInGeneric = buildGeneratedClass(
+                sopg, "InnerGeneric", isGeneric = true, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL, isInner = true,
+            )
+            sopg.declarations += innerGenericInGeneric
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(innerGenericInGeneric)
+        }
+
+        // (13) outer is also plugin-generated, with its own inner. Register only the outer;
+        // the registrar builds the inner FIR transitively through buildFirClassRecursively's
+        // IrClass branch.
+        val withInnerFamily = buildGeneratedClass(
+            file, "WithInnerFamily", isGeneric = true, superClass = null,
+            includeXAndFoo = false, modality = Modality.OPEN,
+        )
+        val innerInGenerated = buildGeneratedClass(
+            withInnerFamily, "Inner", isGeneric = true, superClass = null,
+            includeXAndFoo = true, modality = Modality.FINAL, isInner = true,
+        )
+        withInnerFamily.declarations += innerInGenerated
+        file.declarations += withInnerFamily
+        context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(withInnerFamily)
+
+        // (14) Deep generic inner chain: WithDeepInnerFamily<A>.Inner<B>.DeeplyInner<C>, all
+        // plugin-generated. Register only the outermost; the registrar builds Inner and DeeplyInner
+        // transitively. Distinct type-parameter names (A/B/C) avoid name collisions across levels.
+        // Inner and DeeplyInner each get a `self(): <thisType>` whose return type references the
+        // inner generic class, exercising the order-sensitive `fillFromPossiblyInnerType` path so
+        // the three captured/own type parameters must be registered in the canonical order.
+        val deepOuter = buildGeneratedClass(
+            file, "WithDeepInnerFamily", isGeneric = true, superClass = null,
+            includeXAndFoo = false, modality = Modality.OPEN, typeParamName = "A",
+        )
+        val deepInner = buildGeneratedClass(
+            deepOuter, "Inner", isGeneric = true, superClass = null,
+            includeXAndFoo = false, modality = Modality.FINAL, isInner = true, typeParamName = "B",
+            includeSelf = true,
+        )
+        val deeplyInner = buildGeneratedClass(
+            deepInner, "DeeplyInner", isGeneric = true, superClass = null,
+            includeXAndFoo = true, modality = Modality.FINAL, isInner = true, typeParamName = "C",
+            includeSelf = true,
+        )
+        // Functions returning the type parameter at each level of the chain: own `C`, captured `B`
+        // from `Inner`, and captured `A` from `WithDeepInnerFamily`. Verifies that captured
+        // type-parameter references in member signatures are registered so dependent modules can
+        // call these with the correct argument/return types.
+        deeplyInner.declarations += buildIdentityFunction(deeplyInner, "idC", deeplyInner.typeParameters.single())
+        deeplyInner.declarations += buildIdentityFunction(deeplyInner, "idB", deepInner.typeParameters.single())
+        deeplyInner.declarations += buildIdentityFunction(deeplyInner, "idA", deepOuter.typeParameters.single())
+        deepInner.declarations += deeplyInner
+        deepOuter.declarations += deepInner
+        file.declarations += deepOuter
+        context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(deepOuter)
+
+        generateInnerBoxFamily(file)
+    }
+
+    /**
+     * (16) Generates `class Outer<T> { inner class InnerBox(val value: T) : Box<T> }`, where `Box`
+     * is the source-declared interface. The inner class's supertype `Box<T>` references the outer
+     * class's (captured) type parameter, so registering it exercises IR -> cone type conversion of a
+     * supertype whose argument is a captured type parameter — it must resolve to the outer class's
+     * FIR type parameter, not be dropped or mis-substituted.
+     */
+    private fun generateInnerBoxFamily(file: IrFile) {
+        val boxInterface = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "Box" } ?: return
+        val boxValueProperty = boxInterface.declarations.filterIsInstance<IrProperty>()
+            .single { it.name.identifier == "value" }
+        val boxValueGetter = boxValueProperty.getter ?: error("Box.value must have a getter")
+
+        val outer = buildGeneratedClass(
+            file, "Outer", isGeneric = true, superClass = null,
+            includeXAndFoo = false, modality = Modality.OPEN, typeParamName = "T",
+        )
+        // The captured type: the outer class's own type parameter `T`.
+        val capturedType = outer.typeParameters.single().defaultType
+
+        val innerBox = context.irFactory.buildClass {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier("InnerBox")
+            kind = ClassKind.CLASS
+            modality = Modality.FINAL
+            visibility = DescriptorVisibilities.PUBLIC
+            isInner = true
+        }.apply {
+            parent = outer
+        }
+        // : Box<T> — supertype argument is the captured outer type parameter.
+        innerBox.superTypes = listOf(boxInterface.symbol.typeWith(capturedType))
+        innerBox.thisReceiver = innerBox.buildReceiverParameter {
+            type = innerInstanceType(innerBox)
+        }
+
+        // Primary constructor `(value: T)` with the outer instance as dispatch receiver.
+        lateinit var constructorValueParameter: IrValueParameter
+        val constructor = context.irFactory.buildConstructor {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            returnType = innerBox.thisReceiver!!.type
+            isPrimary = true
+        }.apply {
+            parent = innerBox
+            parameters += buildReceiverParameter {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                kind = IrParameterKind.DispatchReceiver
+                type = outer.thisReceiver!!.type
+            }.also { it.parent = this }
+            constructorValueParameter = addValueParameter("value", capturedType)
+            val anyConstructor = context.irBuiltIns.anyClass.owner.constructors
+                .single { c -> c.parameters.none { it.kind == IrParameterKind.Regular } }
+            body = context.irFactory.createBlockBody(
+                startOffset, endOffset,
+                listOf(
+                    IrDelegatingConstructorCallImpl(
+                        startOffset, endOffset, context.irBuiltIns.unitType,
+                        anyConstructor.symbol, 0,
+                    ),
+                    IrInstanceInitializerCallImpl(
+                        startOffset, endOffset, innerBox.symbol, context.irBuiltIns.unitType,
+                    ),
+                )
+            )
+        }
+
+        // `override val value: T` backed by a field initialized from the constructor parameter.
+        val valueProperty = context.irFactory.buildProperty {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier("value")
+        }.apply {
+            parent = innerBox
+            overriddenSymbols = listOf(boxValueProperty.symbol)
+            val field = addBackingField {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                type = capturedType
+                isFinal = true
+            }
+            field.initializer = context.irFactory.createExpressionBody(
+                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, constructorValueParameter.symbol)
+            )
+            addGetter {
+                startOffset = SYNTHETIC_OFFSET
+                endOffset = SYNTHETIC_OFFSET
+                returnType = capturedType
+                origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
+            }.apply {
+                overriddenSymbols = listOf(boxValueGetter.symbol)
+                val dispatch = createDispatchReceiverParameterWithClassParent()
+                parameters += dispatch
+                body = context.irFactory.createBlockBody(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    listOf(
+                        IrReturnImpl(
+                            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                            context.irBuiltIns.nothingType,
+                            symbol,
+                            IrGetFieldImpl(
+                                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                                field.symbol, field.type,
+                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, dispatch.symbol)
+                            )
+                        )
+                    )
+                )
+            }
+        }
+
+        innerBox.declarations += constructor
+        innerBox.declarations += valueProperty
+        outer.declarations += innerBox
+        file.declarations += outer
+        context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(outer)
     }
 
     private fun buildFromCompanionFunction(klass: IrClass): IrSimpleFunction {
@@ -197,10 +417,14 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
         modality: Modality,
         classKind: ClassKind = ClassKind.CLASS,
         isCompanion: Boolean = false,
+        isInner: Boolean = false,
+        typeParamName: String? = null,
+        includeSelf: Boolean = false,
     ): IrClass {
         val classModality = modality
         val classKindValue = classKind
         val classIsCompanion = isCompanion
+        val classIsInner = isInner
         val klass = context.irFactory.buildClass {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
@@ -209,34 +433,127 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             this.modality = classModality
             visibility = DescriptorVisibilities.PUBLIC
             this.isCompanion = classIsCompanion
+            this.isInner = classIsInner
         }.apply {
             parent = parentDeclaration
         }
 
+        // IR convention (matching fir2ir's `setTypeParameters`): an inner class declares ONLY its
+        // own type parameters. Captured outer parameters are NOT copied into `typeParameters`;
+        // instead the class's instance type carries them as trailing arguments (see `innerInstanceType`).
         if (isGeneric) {
             klass.addTypeParameter {
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
-                name = Name.identifier("T")
+                // Distinct names across an inner chain (callers pass A/B/C) avoid shadowing.
+                name = Name.identifier(typeParamName ?: if (isInner) "S" else "T")
                 superTypes += context.irBuiltIns.anyNType
             }
         }
 
         klass.superTypes = listOf((superClass ?: context.irBuiltIns.anyClass.owner).defaultType)
         klass.thisReceiver = klass.buildReceiverParameter {
-            type = klass.symbol.typeWith(klass.typeParameters.map { it.defaultType })
+            type = innerInstanceType(klass)
         }
 
-        klass.declarations += buildPrimaryConstructor(klass, superClass)
+        klass.declarations += buildPrimaryConstructor(klass, superClass, isInner)
         if (includeXAndFoo) {
             klass.declarations += buildXProperty(klass)
             klass.declarations += buildFooFunction(klass)
+        }
+        if (includeSelf) {
+            klass.declarations += buildSelfFunction(klass)
         }
 
         return klass
     }
 
-    private fun buildPrimaryConstructor(klass: IrClass, superClass: IrClass?): IrConstructor {
+    /**
+     * The instance type of [klass]: the class applied to its own type parameters followed by the
+     * own type parameters of every enclosing class up the inner-class chain (nearest first). This
+     * matches the IR convention produced by fir2ir's `setThisReceiver`: an inner class's
+     * `typeParameters` are own-only, but its type carries `[own…, enclosing-own…]` arguments.
+     */
+    private fun innerInstanceType(klass: IrClass): IrType {
+        val arguments = mutableListOf<IrType>()
+        klass.typeParameters.mapTo(arguments) { it.defaultType }
+        if (klass.isInner) {
+            var outer: IrClass? = klass.parent as? IrClass
+            while (outer != null) {
+                outer.typeParameters.mapTo(arguments) { it.defaultType }
+                outer = if (outer.isInner) outer.parent as? IrClass else null
+            }
+        }
+        return klass.symbol.typeWith(arguments)
+    }
+
+    /**
+     * Builds `fun self(): <thisType>` returning the dispatch receiver. Its return type is the inner
+     * instance type (e.g. `DeeplyInner<C, B, A>`), so mapping it exercises the order-sensitive
+     * `buildPossiblyInnerType` (JVM) / `fillFromPossiblyInnerType` (metadata) paths, which require
+     * the inner class's type parameters to be modeled correctly across the whole enclosing chain.
+     */
+    /**
+     * Builds `fun <functionName>(value: T): T = value`, where `T` is [typeParameter] — which may be
+     * own to [klass] or captured from an enclosing class. Such a signature references a type
+     * parameter that belongs to a *different* class in the inner chain, exercising the cross-class
+     * type-parameter resolution that the registrar must reproduce so dependent modules can call it.
+     */
+    private fun buildIdentityFunction(klass: IrClass, functionName: String, typeParameter: IrTypeParameter): IrSimpleFunction {
+        val valueType = typeParameter.defaultType
+        return context.irFactory.buildFun {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier(functionName)
+            returnType = valueType
+            modality = Modality.FINAL
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+            parameters += createDispatchReceiverParameterWithClassParent()
+            val valueParameter = addValueParameter("value", valueType)
+            body = context.irFactory.createBlockBody(
+                startOffset, endOffset,
+                listOf(
+                    IrReturnImpl(
+                        startOffset, endOffset,
+                        context.irBuiltIns.nothingType,
+                        symbol,
+                        IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, valueParameter.symbol)
+                    )
+                )
+            )
+        }
+    }
+
+    private fun buildSelfFunction(klass: IrClass): IrSimpleFunction {
+        val selfType = klass.thisReceiver!!.type
+        return context.irFactory.buildFun {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier("self")
+            returnType = selfType
+            modality = Modality.FINAL
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+            val dispatch = createDispatchReceiverParameterWithClassParent()
+            parameters += dispatch
+            body = context.irFactory.createBlockBody(
+                startOffset, endOffset,
+                listOf(
+                    IrReturnImpl(
+                        startOffset, endOffset,
+                        context.irBuiltIns.nothingType,
+                        symbol,
+                        IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, dispatch.symbol)
+                    )
+                )
+            )
+        }
+    }
+
+    private fun buildPrimaryConstructor(klass: IrClass, superClass: IrClass?, isInner: Boolean): IrConstructor {
         val actualSuperClass = superClass ?: context.irBuiltIns.anyClass.owner
         val superConstructor = actualSuperClass.constructors
             .singleOrNull { c -> c.parameters.none { it.kind == IrParameterKind.Regular } }
@@ -245,10 +562,21 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
         return context.irFactory.buildConstructor {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
-            returnType = klass.defaultType
+            returnType = klass.thisReceiver!!.type
             isPrimary = true
         }.apply {
             parent = klass
+            if (isInner) {
+                // Inner-class constructor receives the outer instance as a dispatch receiver, typed
+                // as the outer's instance type (which itself carries any further-enclosing args).
+                val outer = klass.parent as IrClass
+                parameters += buildReceiverParameter {
+                    startOffset = SYNTHETIC_OFFSET
+                    endOffset = SYNTHETIC_OFFSET
+                    kind = IrParameterKind.DispatchReceiver
+                    type = outer.thisReceiver!!.type
+                }.also { it.parent = this }
+            }
             body = context.irFactory.createBlockBody(
                 startOffset, endOffset,
                 listOf(

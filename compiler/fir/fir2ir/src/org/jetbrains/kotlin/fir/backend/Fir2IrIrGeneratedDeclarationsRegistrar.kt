@@ -360,6 +360,18 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
 
         val firClassSymbol = FirRegularClassSymbol(irClass.classIdOrFail)
+
+        // `irClass.typeParameters` holds only the class's OWN type parameters (fir2ir convention; see
+        // `Fir2IrClassifiersGenerator.setTypeParameters`, which drops `FirOuterClassTypeParameterRef`s).
+        // For an inner class we re-append the captured outer parameters as `FirOuterClassTypeParameterRef`s,
+        // gathered recursively from the whole enclosing chain, in the canonical FIR order [own…, captured…]
+        // required by serialization (`fillFromPossiblyInnerType`) and deserialization.
+        val ownFirTypeParameters = mutableListOf<FirTypeParameter>()
+        convertTypeParameters(irClass.typeParameters, ownFirTypeParameters, firClassSymbol)
+        val capturedTypeParameterRefs = capturedOuterFirTypeParameterSymbols(irClass).map { capturedSymbol ->
+            buildOuterClassTypeParameterRef { symbol = capturedSymbol }
+        }
+
         val firClass = buildRegularClass {
             moduleData = session.moduleData
             // Use Library origin instead of Plugin(GeneratedForMetadata) because the FIR scope
@@ -387,15 +399,19 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 isFun = irClass.isFun
                 isExternal = irClass.isExternal
             }
-            convertTypeParameters(irClass.typeParameters, typeParameters, firClassSymbol)
+            // Canonical FIR order: own parameters first, then captured outer-class refs.
+            typeParameters += ownFirTypeParameters
+            typeParameters += capturedTypeParameterRefs
         }
 
         // Stash class metadata BEFORE recursing into members so per-member register methods
         // (which derive dispatchReceiverType from `parent.toFirClass()`) can find this FirClass.
         irClass.metadata = FirMetadataSource.Class(firClass)
 
-        with(TypeConverter(irClass, firClass.typeParameters)) {
-            updateBoundsAndAnnotationsForTypeParameters(irClass.typeParameters, firClass.typeParameters)
+        // `irClass.typeParameters` is own-only and aligned 1:1 with `ownFirTypeParameters`, so the
+        // index-based lookups in `TypeConverter` and the bound/annotation update line up directly.
+        with(TypeConverter(irClass, ownFirTypeParameters)) {
+            updateBoundsAndAnnotationsForTypeParameters(irClass.typeParameters, ownFirTypeParameters)
             firClass.replaceSuperTypeRefs(irClass.superTypes.map { it.toConeType().toFirResolvedTypeRef() })
             firClass.replaceAnnotations(irClass.convertAnnotations())
         }
@@ -549,6 +565,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                         // guarded by init block, so !! is safe
                         originalTypeParameterContainer -> convertedTypeParameters!![owner.index]
                         is IrClass -> {
+                            // A reference to an enclosing class's own type parameter. Both the IR list
+                            // (own-only) and the canonical FIR list (own first) agree on these indices.
                             val firClass = parent.toFirClass()
                             firClass.typeParameters[owner.index]
                         }
@@ -559,6 +577,28 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 else -> error("Unsupported IR classifier: ${owner.render()}")
             }
         }
+    }
+
+    /**
+     * Returns the [FirTypeParameterSymbol]s that an inner [irClass] captures from its enclosing
+     * classes, in canonical FIR order: the immediately-enclosing class's own type parameters first,
+     * then those of the next enclosing class, and so on up the chain. Recursing over the whole chain
+     * (rather than mirroring only the immediate outer) keeps this correct for inner classes nested to
+     * any depth and regardless of whether enclosing classes are plugin-generated or source/library.
+     */
+    private fun capturedOuterFirTypeParameterSymbols(irClass: IrClass): List<FirTypeParameterSymbol> {
+        if (!irClass.isInner) return emptyList()
+        val capturedSymbols = mutableListOf<FirTypeParameterSymbol>()
+        var outerIrClass = irClass
+
+        do {
+            outerIrClass = outerIrClass.parent as? IrClass ?: error("Inner class must have an IrClass parent: ${outerIrClass.render()}")
+            outerIrClass.toFirClass().typeParameters
+                .filterIsInstance<FirTypeParameter>()
+                .mapTo(capturedSymbols) { it.symbol }
+        } while (outerIrClass.isInner)
+
+        return capturedSymbols
     }
 
     private fun convertTypeParameters(
@@ -587,8 +627,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         firTypeParameters: List<FirTypeParameterRef>,
     ) {
         for ([firParameter, irParameter] in firTypeParameters.zip(irTypeParameters)) {
+            // Skip captured outer-class type parameters of inner classes — bounds/annotations
+            // are owned by the outer FirTypeParameter and must not be replaced here.
+            if (firParameter !is FirTypeParameter) continue
             val newBounds = irParameter.superTypes.map { it.toConeType().toFirResolvedTypeRef() }
-            require(firParameter is FirTypeParameter) { "Expected FirTypeParameter, got $firParameter" }
             firParameter.replaceBounds(newBounds)
             firParameter.replaceAnnotations(irParameter.convertAnnotations())
         }
@@ -798,3 +840,4 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
     }
 }
+
