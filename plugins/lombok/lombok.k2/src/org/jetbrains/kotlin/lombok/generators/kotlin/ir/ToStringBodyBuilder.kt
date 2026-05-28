@@ -5,13 +5,15 @@
 
 package org.jetbrains.kotlin.lombok.generators.kotlin.ir
 
-import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
-import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.IrBlockBodyBuilder
+import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irChar
+import org.jetbrains.kotlin.ir.builders.irConcat
+import org.jetbrains.kotlin.ir.builders.irReturn
+import org.jetbrains.kotlin.ir.builders.irString
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin.GeneratedByPlugin
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -25,28 +27,14 @@ import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.findDeclaration
 import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
-import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.lombok.generators.ToStringGeneratorKey
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-class LombokToStringIrBodyFiller(private val context: IrPluginContext) : IrVisitorVoid() {
-    override fun visitElement(element: IrElement) {
-        element.acceptChildrenVoid(this)
-    }
-
-    override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        val toStringGeneratorKey = (declaration.origin as? GeneratedByPlugin)?.pluginKey as? ToStringGeneratorKey
-
-        if (toStringGeneratorKey != null) {
-            declaration.body = DeclarationIrBuilder(context, declaration.symbol).irBlockBody {
-                val thisParam = declaration.dispatchReceiverParameter!!
-                +irReturn(buildToStringExpression(declaration.parent as IrClass, toStringGeneratorKey, thisParam))
-            }
-        } else {
-            declaration.acceptChildrenVoid(this)
-        }
+object ToStringBodyBuilder : IrBodyBuilder<ToStringGeneratorKey>() {
+    override fun IrBlockBodyBuilder.build(key: ToStringGeneratorKey, declaration: IrSimpleFunction) {
+        val thisParam = declaration.dispatchReceiverParameter!!
+        +irReturn(buildToStringExpression(declaration.parent as IrClass, key, thisParam))
     }
 
     private fun IrBuilderWithScope.buildToStringExpression(
