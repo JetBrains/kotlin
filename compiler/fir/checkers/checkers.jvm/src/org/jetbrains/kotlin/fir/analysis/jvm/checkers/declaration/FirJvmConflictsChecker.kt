@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
-import org.jetbrains.kotlin.fir.java.javaSymbolProvider
+import org.jetbrains.kotlin.fir.java.getJavaClassLikeSymbolByClassId
 
 object FirJvmConflictsChecker : FirClassLikeChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -34,7 +34,13 @@ object FirJvmConflictsChecker : FirClassLikeChecker(MppCheckerKind.Common) {
         if (!checkRedeclaration) {
             return
         }
-        val javaSymbol = context.session.javaSymbolProvider?.getClassLikeSymbolByClassId(declaration.classId) ?: return
+        // Stage 2 §6.1 indirect-caller audit (see compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md §6.1):
+        // decouple from `JavaSymbolProvider` directly via a thin Java-targeted lookup helper. Today it wraps
+        // `javaSymbolProvider`; after §6.2/§6.3 it transparently picks up binary `FirDeclarationOrigin.Java.Library`
+        // results emitted by `JvmClassFileBasedSymbolProvider`. The composite `session.symbolProvider` cannot be used
+        // here because its `firstNotNullOfOrNull` strategy hides the Java side when a Kotlin class shares the same
+        // `classId` (which is exactly the redeclaration case this checker detects).
+        val javaSymbol = context.session.getJavaClassLikeSymbolByClassId(declaration.classId) ?: return
         reporter.reportOn(
             declaration.source, FirErrors.CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol)
         )

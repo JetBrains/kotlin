@@ -2,7 +2,63 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-26 (Same-day later #7: reverted the iteration-40
+**Last Updated**: 2026-05-28 (Stage 2 §6.1 — indirect `javaSymbolProvider`
+call-site audit, first sub-step of Stage 2 = Phase 2 of
+[`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)).
+Three sites that called `session.javaSymbolProvider?.getClassLikeSymbolByClassId(...)`
+directly — `FirJvmConflictsChecker`, `FirDirectJavaActualDeclarationExtractor`,
+and Lombok `AbstractBuilderGenerator` (two call sites) — now route
+through a new Java-targeted lookup helper
+`FirSession.getJavaClassLikeSymbolByClassId(classId)` in
+`compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt`. The design
+doc's prescription to re-route via `session.symbolProvider` + an
+`origin is FirDeclarationOrigin.Java` filter was tried first and
+produced 12 redeclaration / actualization test failures: the composite
+`FirCompositeSymbolProvider.getClassLikeSymbolByClassId` uses
+`firstNotNullOfOrNull`, so when a Kotlin class shares the `ClassId`
+(the entire point of these diagnostics) the Kotlin source provider
+wins and the Java symbol is hidden. The helper today wraps the direct
+`javaSymbolProvider?.getClassLikeSymbolByClassId(...)` call (zero
+behavioral delta vs. baseline), and §6.3 will extend it to also
+consult the deserializer for binary `FirDeclarationOrigin.Java.Library`
+results — one place to extend, three call sites pick up the new
+behavior transparently. `FirDirectJavaActualDeclarationExtractor`
+keeps its `javaSymbolProvider != null` JVM-session gate in
+`initializeIfNeeded` (§6.2 only narrows what the provider *returns*,
+not whether it's registered) and keeps the strict `Java.Source`
+origin filter on the `extract` call (only Java source-class
+actualizations are valid; binary Java classes are not candidates).
+Verification: `:compiler:java-direct:test --tests
+"JavaUsingAst{Phased,Box}TestGenerated" --rerun` → `BUILD SUCCESSFUL`,
+**2701/2701 green on this worker**, 0 failures, 0 errors aggregated
+across `TEST-*JavaUsingAst*.xml`. `:kotlin-lombok-compiler-plugin:test
+--rerun` showed two failures
+(`FirLightTreeBlackBoxCodegenTestForLombokGenerated.test*ConstructorStatic`)
+which were **confirmed as baseline failures, not §6.1 regressions**:
+`git stash`ing the four touched source files and re-running the same
+two tests reproduced the same 2/2 failure shape. The failing fixtures
+exercise `@*ArgsConstructor(staticName=...)`, handled by
+`AbstractConstructorGeneratorPart.kt` — a Lombok class not touched
+by §6.1; failure is `INVISIBLE_REFERENCE: Cannot access
+'constructor(...)': it is private in 'ConstructorExample'`, i.e. the
+static factory generator is not emitting the `staticName` factory on
+the green tree (pre-existing on `rr/ic/direct-java`). PSI regression
+suite not re-run for this audit step — the helper introduction is
+purely additive and the three call-site rewrites inline the exact
+same `javaSymbolProvider?.getClassLikeSymbolByClassId(...)` chain;
+PSI suite will be required after §6.2 / §6.3 (those touch
+`JavaSymbolProvider` / `JvmClassFileBasedSymbolProvider` semantics).
+Files: `compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt`
+(+22 LoC, new extension fn + KDoc),
+`compiler/fir/checkers/checkers.jvm/src/.../FirJvmConflictsChecker.kt`,
+`compiler/fir/fir2ir/jvm-backend/src/.../FirDirectJavaActualDeclarationExtractor.kt`,
+`plugins/lombok/lombok.k2/src/.../AbstractBuilderGenerator.kt`. Net:
+4 source files, ≈+30/−15 LoC. No public Java-model interface touched.
+Follow-up filed in this entry: doc refresh for
+`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md` §2.4.4 and
+`DIRECT_INJECTION_STAGE_1_2026_05_20.md` §6.1 to point at the helper
+pattern (their original prescription is wrong).
+Previous: 2026-05-26 (Same-day later #7: reverted the iteration-40
 hunk in `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/structure/javaLoading.kt`.
 The `isMethodWithOneObjectParameter` fallback arm that checked
 `type.classifierQualifiedName == "java.lang.Object" || == "Object"` —
@@ -925,6 +981,140 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Stage 2 §6.1 — Indirect `javaSymbolProvider` call-site audit — 2026-05-28
+
+### Overview
+
+First sub-step of Stage 2 (= Phase 2 of
+[`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)).
+Three FIR sites today call `session.javaSymbolProvider?.getClassLikeSymbolByClassId(...)` directly
+in order to find Java declarations *despite* a Kotlin class sharing the same `ClassId` (the entire
+point of the diagnostics involved: JVM redeclaration, Kotlin-to-Java direct actualization, and
+Lombok builder discovery). These sites all rely on the fact that today's `JavaSymbolProvider` —
+backed by `CombinedJavaClassFinder` — returns *both* source and binary Java symbols.
+
+Once Stage 2 §6.2 narrows `JavaSymbolProvider` to source-only and §6.3 moves binary Java lookups
+into `JvmClassFileBasedSymbolProvider`, these three sites must continue to see binary Java
+symbols too. The natural-looking re-route `session.symbolProvider.getClassLikeSymbolByClassId(...)
++ origin filter` (as suggested by the design doc, §6.1) does **not** work, because
+`FirCompositeSymbolProvider.getClassLikeSymbolByClassId` uses `firstNotNullOfOrNull` — when a
+Kotlin class and a Java class share the same `ClassId`, the Kotlin source provider wins and the
+Java symbol is hidden. The first attempt of this iteration tried that approach and produced 12
+test failures, all on `JavaUsingAst*TestGenerated` redeclaration / actualization fixtures, which
+confirmed the trap.
+
+The right shape — and the one this iteration lands — is a small **Java-targeted lookup helper**
+that wraps the direct `javaSymbolProvider` call today and, after §6.3, will *also* consult the
+deserializer for binary `FirDeclarationOrigin.Java.Library` results. Each of the three call sites
+goes through this helper, so the §6.3 follow-up extends the helper in one place rather than
+visiting each call site again.
+
+### Changes
+
+- `compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt`:
+  - New top-level extension `fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId):
+    FirRegularClassSymbol?`, alongside the existing `javaSymbolProvider` session-component accessor.
+  - KDoc explains why `session.symbolProvider` cannot be used here, and notes the Stage 2 §6.3
+    follow-up that will extend the helper to consult the deserializer for binary results.
+  - Today's body: `javaSymbolProvider?.getClassLikeSymbolByClassId(classId)` — zero behavioral
+    delta vs. the previous direct calls.
+
+- `compiler/fir/checkers/checkers.jvm/src/.../declaration/FirJvmConflictsChecker.kt`:
+  - `session.javaSymbolProvider?.getClassLikeSymbolByClassId(declaration.classId)` →
+    `context.session.getJavaClassLikeSymbolByClassId(declaration.classId)`. Imports of
+    `javaSymbolProvider` removed; `getJavaClassLikeSymbolByClassId` added.
+  - Inline comment cites the §6.1 audit and the §6.3 follow-up.
+
+- `compiler/fir/fir2ir/jvm-backend/src/.../FirDirectJavaActualDeclarationExtractor.kt`:
+  - Constructor signature: `(JavaSymbolProvider, Fir2IrClassifierStorage)` → `(FirSession,
+    Fir2IrClassifierStorage)`. The `javaSymbolProvider != null` gate is **kept** in
+    `initializeIfNeeded` — it is the historical "is this a JVM session?" tell. Comment notes
+    that the gate survives Stage 2 (§6.2 only narrows what `JavaSymbolProvider` *returns*, not
+    whether it's registered).
+  - The body of `extract(expectIrClass)` now reads
+    `session.getJavaClassLikeSymbolByClassId(expectIrClass.classIdOrFail)?.takeIf { it.origin
+    is FirDeclarationOrigin.Java.Source }` — preserves the strict `Java.Source` filter that
+    excludes binary Java actualization (binary Java classes are not valid actualization
+    candidates).
+
+- `plugins/lombok/lombok.k2/src/.../generators/AbstractBuilderGenerator.kt`:
+  - Two call sites (lines 169, 251 — `addBuilderMethods` and `createAndInitializeBuilders`) now
+    use `session.getJavaClassLikeSymbolByClassId(...)`. Import of `javaSymbolProvider` removed;
+    `getJavaClassLikeSymbolByClassId` added.
+
+### Test Results
+
+- `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"` (with
+  `--rerun`) — **2701/2701 green** (0 failures, 0 errors). Aggregated from
+  `compiler/java-direct/build/test-results/test/TEST-*JavaUsingAst*.xml`.
+- `:kotlin-lombok-compiler-plugin:test --rerun` — 105 tests, 2 failures
+  (`testNoArgsConstructorStatic`, `testAllArgsConstructorStatic`). **Baseline failures, not
+  introduced by this iteration.** Confirmed by `git stash`-ing the four touched source files,
+  re-running the two tests via `--tests` selectors, and observing the same 2/2 failure shape.
+  The failing fixtures exercise `@*ArgsConstructor(staticName = ...)`, handled by
+  `AbstractConstructorGeneratorPart.kt` — a Lombok class **not touched** by §6.1. Both failures
+  produce `INVISIBLE_REFERENCE: Cannot access 'constructor(...)': it is private in
+  'ConstructorExample'`, i.e. the static factory generator for `@*ArgsConstructor(staticName)`
+  isn't emitting the static helper on the green tree (unrelated `AbstractConstructorGeneratorPart`
+  bug pre-existing on `rr/ic/direct-java`).
+- PSI regression suite (`PhasedJvmDiagnosticLightTreeTestGenerated.*` etc.) — **not re-run**
+  for this audit step. Rationale: the change to `JavaSymbolProvider.kt` is purely *additive*
+  (a new extension function); the changes in the three call sites inline the exact same lookup
+  chain the previous code performed (`session.javaSymbolProvider?.getClassLikeSymbolByClassId(...)`).
+  The PSI regression suite will be required after §6.2 / §6.3 land (those iterations touch shared
+  semantics on `JavaSymbolProvider` and `JvmClassFileBasedSymbolProvider`).
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/org/jetbrains/kotlin/fir/java/JavaSymbolProvider.kt` | New `FirSession.getJavaClassLikeSymbolByClassId` extension (+22 LoC including KDoc). |
+| `compiler/fir/checkers/checkers.jvm/src/org/jetbrains/kotlin/fir/analysis/jvm/checkers/declaration/FirJvmConflictsChecker.kt` | Route through helper; +5 / −5 LoC net incl. comment. |
+| `compiler/fir/fir2ir/jvm-backend/src/org/jetbrains/kotlin/fir/backend/jvm/FirDirectJavaActualDeclarationExtractor.kt` | Constructor takes `FirSession` instead of `JavaSymbolProvider`; `extract` uses helper + `Java.Source` filter; `javaSymbolProvider` JVM-session gate kept in `initializeIfNeeded`. |
+| `plugins/lombok/lombok.k2/src/org/jetbrains/kotlin/lombok/k2/generators/AbstractBuilderGenerator.kt` | Two `session.javaSymbolProvider?.getClassLikeSymbolByClassId` call sites routed through helper. |
+
+### Key Learnings
+
+- **Design-doc pitfall.** [`DIRECT_INJECTION_STAGE_1_2026_05_20.md`](implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md)
+  §6.1 and [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+  §2.4.4 both prescribe the re-route as
+  `session.symbolProvider.getClassLikeSymbolByClassId(...)` + `FirDeclarationOrigin.Java` filter.
+  **That prescription is wrong** for the redeclaration / actualization case: the composite
+  symbol provider's `firstNotNullOfOrNull` strategy hides the Java symbol the moment a Kotlin
+  class shares the `ClassId` — which is precisely the case the three sites are about to
+  diagnose / actualize. Both documents need a "Update" note pointing at the helper pattern
+  used here (filed as follow-up below).
+- **The `javaSymbolProvider != null` JVM-session gate is not §6.2 collateral.** §6.2 only
+  narrows `JavaSymbolProvider.getClassLikeSymbolByClassId` to source-only; the *registration* of
+  the provider on a JVM session remains. So all "is this a JVM session?" gates that read
+  `session.javaSymbolProvider != null` (currently the only one is in
+  `FirDirectJavaActualDeclarationExtractor.initializeIfNeeded`) survive without changes.
+- **Baseline Lombok failure on `rr/ic/direct-java`.** Two pre-existing
+  `FirLightTreeBlackBoxCodegenTestForLombokGenerated.test*ConstructorStatic` failures
+  (`INVISIBLE_REFERENCE: Cannot access 'constructor(...)': it is private in
+  'ConstructorExample'`). Unrelated to §6.1; flagged here so future iterations don't waste
+  cycles re-bisecting. Most likely a `DeclarationWithValueAnnStatusTransformer` /
+  `AbstractConstructorGeneratorPart` issue around the green-tree path's emission of the
+  `staticName` factory.
+
+### Follow-ups for the next iteration
+
+- **§6.2 — `JavaSymbolProvider` source-only narrowing.** Per the design doc:
+  `getClassLikeSymbolByClassId` gated on `javaFacade.isInSourceIndex(classId)`,
+  `hasPackage` → `hasPackageInSources`, and `symbolNamesProvider.getTopLevelClassifierNamesInPackage`
+  source-only. Union with binary names moves into the composite-symbol-names-provider layer.
+- **§6.3 — Move binary lookups into `JvmClassFileBasedSymbolProvider`** and at the same time
+  extend `FirSession.getJavaClassLikeSymbolByClassId` to also consult the deserializer for
+  binary `Java.Library` symbols.
+- **Doc refresh.** Update
+  [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+  §2.4.4 table and
+  [`DIRECT_INJECTION_STAGE_1_2026_05_20.md`](implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md)
+  §6.1 to point at the helper pattern (the original `session.symbolProvider` + origin-filter
+  prescription is wrong, see Key Learnings).
 
 ---
 

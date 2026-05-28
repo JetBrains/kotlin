@@ -78,3 +78,24 @@ open class JavaSymbolProvider(
 }
 
 val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
+
+/**
+ * Look up a class-like Java symbol (source or binary) by [classId], independent of the composite
+ * [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider] resolution order.
+ *
+ * Used by indirect callers that need to detect *Java* declarations even when a Kotlin declaration
+ * with the same [classId] exists (e.g. JVM redeclaration diagnostics, Kotlin-to-Java direct
+ * actualization, Lombok builder discovery). `session.symbolProvider` is unsuitable for this
+ * because [org.jetbrains.kotlin.fir.resolve.providers.impl.FirCompositeSymbolProvider.getClassLikeSymbolByClassId]
+ * returns the first non-null match — for shared class ids the Kotlin source provider wins and the
+ * Java symbol is hidden.
+ *
+ * Today this delegates to [javaSymbolProvider] (whose backing `CombinedJavaClassFinder` covers
+ * both source and binary Java classes). After Stage 2 §6.2 / §6.3 (see
+ * `compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`), `JavaSymbolProvider`
+ * narrows to source-only and binary Java lookups move into `JvmClassFileBasedSymbolProvider`;
+ * this helper will then also consult the deserializer for binary `FirDeclarationOrigin.Java.Library`
+ * results, transparently to its callers.
+ */
+fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
+    javaSymbolProvider?.getClassLikeSymbolByClassId(classId)

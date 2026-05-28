@@ -380,6 +380,29 @@ Re-route from `session.javaSymbolProvider.getClassLikeSymbolByClassId(...)` to
 (`KaFirJavaInteroperabilityComponent.kt:250` is LL — out of scope per
 [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) §1.6.)
 
+> **Update 2026-05-28 — §6.1 landed; prescription corrected.** The original prescription above
+> (re-route via `session.symbolProvider.getClassLikeSymbolByClassId(...)` + origin filter)
+> **does not work** for the redeclaration / actualization case. The composite symbol provider's
+> implementation (`FirCompositeSymbolProvider.getClassLikeSymbolByClassId`) uses
+> `firstNotNullOfOrNull` — when a Kotlin class shares the `ClassId` with a Java class (precisely
+> the case these three sites are diagnosing or actualizing), the Kotlin source provider wins and
+> the Java symbol is hidden. A first cut of this audit using the original prescription produced
+> 12 `JavaUsingAst*TestGenerated` regressions and was reverted.
+>
+> The actual landed shape is a thin Java-targeted lookup helper —
+> `fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol?` in
+> `compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt`. Today it wraps
+> `javaSymbolProvider?.getClassLikeSymbolByClassId(classId)` (zero behavioral delta vs baseline);
+> after §6.3 it will additionally consult the deserializer for binary
+> `FirDeclarationOrigin.Java.Library` results. The three call sites go through this helper, so
+> §6.3 extends the helper in one place rather than visiting each call site again.
+> `FirDirectJavaActualDeclarationExtractor` keeps the strict `Java.Source` origin filter on the
+> `extract` call (only Java source-class actualizations are valid; binary Java classes are not
+> candidates). Validation: 2701/2701 `JavaUsingAst{Phased,Box}TestGenerated` green; two
+> pre-existing Lombok `test*ConstructorStatic` baseline failures confirmed independent. See
+> [`../ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) §"Stage 2 §6.1 — Indirect
+> `javaSymbolProvider` call-site audit — 2026-05-28" for full details.
+
 ### 6.2 Narrow `JavaSymbolProvider` to source-only
 ([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
 §1.3 / §2.4.1 / §2.4.3)
