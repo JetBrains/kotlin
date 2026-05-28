@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -105,6 +106,108 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
+            }
+        }
+    }
+
+    @DisplayName("Check js target with binaryen with custom per-file argument")
+    @GradleTest
+    fun jsTargetWithBinaryenCustomPerFileArgument(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            jsTargetWithBinaryenCustomPerFileArgumentAction()
+        }
+    }
+
+    @DisplayName("Check js target with binaryen with custom per-file argument per-module closed world")
+    @GradleTest
+    fun jsTargetWithBinaryenCustomPerFileArgumentPerModuleClosedWorld(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildScriptInjection {
+                @OptIn(ExperimentalWasmDsl::class)
+                kotlinMultiplatform.wasmJs {
+                    binaries.executable().forEach {
+                        it.linkTask.configure {
+                            compilerOptions.freeCompilerArgs.add("-Xwasm-generate-closed-world-multimodule")
+                        }
+                    }
+                }
+            }
+
+            jsTargetWithBinaryenCustomPerFileArgumentAction()
+
+            val mappingsCount = projectPath.resolve("mappings").listDirectoryEntries().count()
+
+            assertTrue {
+                mappingsCount > 1
+            }
+        }
+    }
+
+    private fun TestProject.jsTargetWithBinaryenCustomPerFileArgumentAction() {
+        buildGradleKts.modify {
+            it.replace("<JsEngine>", "d8")
+        }
+
+        buildScriptInjection {
+            project.tasks.withType<BinaryenExec>().configureEach {
+
+                val rootDir = project.rootDir
+
+                val mappingsDir = rootDir.resolve("mappings")
+                mappingsDir.mkdirs()
+
+                val perFileArguments: Provider<Map<File, List<String>>> = it.inputFiles.elements.map { files ->
+                    files.associate { file ->
+                        file.asFile to listOf(
+                            "--symbolmap=" + rootDir
+                                .resolve("mappings")
+                                .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
+                        )
+                    }
+                }
+
+                @OptIn(ExperimentalWasmDsl::class)
+                it.perFileBinaryenArguments.putAll(perFileArguments)
+            }
+        }
+
+        build("compileProductionExecutableKotlinWasmJsOptimize") {
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+
+            val optimizedDir = projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized")
+            val wasmCount = optimizedDir.listDirectoryEntries().count { it.extension == "wasm" }
+
+            val mappingsCount = projectPath.resolve("mappings").listDirectoryEntries().count()
+
+            assertEquals(wasmCount, mappingsCount, "There should be one mapping file per wasm file")
+        }
+    }
+
+    @DisplayName("Check js target with binaryen with custom argument")
+    @GradleTest
+    fun jsTargetWithBinaryenArguments(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace("<JsEngine>", "d8")
+            }
+
+            buildScriptInjection {
+                project.tasks.withType<BinaryenExec>().configureEach {
+
+                    val rootDir = project.rootDir
+
+                    val mappings = rootDir.resolve("mappings")
+
+                    it.binaryenArguments.add("--symbolmap=" + mappings.absolutePath)
+                }
+            }
+
+            build("compileProductionExecutableKotlinWasmJsOptimize") {
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
+                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
+
+                assertFileInProjectExists("mappings")
             }
         }
     }
@@ -514,51 +617,6 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
                 assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
                 assertTasksExecuted(":wasmJsD8ProductionRun")
-            }
-        }
-    }
-
-    @DisplayName("Check js target with binaryen with custom per-file argument")
-    @GradleTest
-    fun jsTargetWithBinaryenCustomPerFileArgument(gradleVersion: GradleVersion) {
-        project("new-mpp-wasm-js", gradleVersion) {
-            buildGradleKts.modify {
-                it.replace("<JsEngine>", "d8")
-            }
-
-            buildScriptInjection {
-                project.tasks.withType<BinaryenExec>().configureEach {
-
-                    val rootDir = project.rootDir
-
-                    val mappingsDir = rootDir.resolve("mappings")
-                    mappingsDir.mkdirs()
-
-                    val perFileArguments: Provider<Map<File, List<String>>> = it.inputFiles.elements.map { files ->
-                        files.associate { file ->
-                            file.asFile to listOf(
-                                "--symbolmap=" + rootDir
-                                    .resolve("mappings")
-                                    .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
-                            )
-                        }
-                    }
-
-                    @OptIn(ExperimentalWasmDsl::class)
-                    it.perFileBinaryenArguments.putAll(perFileArguments)
-                }
-            }
-
-            build("compileProductionExecutableKotlinWasmJsOptimize") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmJs")
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmJsOptimize")
-
-                val optimizedDir = projectPath.resolve("build/compileSync/wasmJs/main/productionExecutable/optimized")
-                val wasmCount = optimizedDir.listDirectoryEntries().filter { it.extension == "wasm" }.count()
-
-                val mappingsCount = projectPath.resolve("mappings").listDirectoryEntries().count()
-
-                assertEquals(wasmCount, mappingsCount, "There should be one mapping file per wasm file")
             }
         }
     }
