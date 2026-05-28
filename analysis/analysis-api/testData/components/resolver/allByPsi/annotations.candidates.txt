@@ -1259,31 +1259,7 @@ KtDotQualifiedExpression(573,591): 'one.AnnoWithKClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(573,576): 'one'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = one.AnnoWithKClass
-        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-        valueParameters = [
-          KaVariableSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.reflect.KClass<*>
-            symbol = k: kotlin.reflect.KClass<*>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(577,591): 'AnnoWithKClass'
   KaInapplicableCallCandidate:
@@ -1530,31 +1506,7 @@ KtDotQualifiedExpression(648,666): 'one.AnnoWithKClass'
     isInBestCandidates = false
 
 KtNameReferenceExpression(648,651): 'one'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = one.AnnoWithKClass
-        symbol = <constructor>(k: kotlin.reflect.KClass<*>): one.AnnoWithKClass
-        valueParameters = [
-          KaVariableSignature:
-            name = k
-            receiverType = null
-            returnType = kotlin.reflect.KClass<*>
-            symbol = k: kotlin.reflect.KClass<*>
-            contextParameters = []
-            callableId = null
-        ]
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(652,666): 'AnnoWithKClass'
   KaInapplicableCallCandidate:
