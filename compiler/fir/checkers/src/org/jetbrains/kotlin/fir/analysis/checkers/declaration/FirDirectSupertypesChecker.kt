@@ -26,14 +26,14 @@ object FirDirectSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
     override fun check(declaration: FirClass) {
         if (LanguageFeature.DirectClassInheritors.isDisabled()) return
         if (declaration.source?.kind is KtFakeSourceElementKind) return
-        val classId = declaration.symbol.classId
+        val symbol = declaration.symbol
         for (superTypeRef in declaration.superTypeRefs) {
             if (superTypeRef.source == null || superTypeRef.source?.kind == KtFakeSourceElementKind.EnumSuperTypeRef) continue
 
             val expandedSupertype = superTypeRef.coneType.fullyExpandedType()
             val supertypeSymbol = expandedSupertype.abbreviatedTypeOrSelf.toSymbol() ?: continue
             if (supertypeSymbol is FirRegularClassSymbol) {
-                if (classId !in supertypeSymbol.directInheritors) {
+                if (symbol !in supertypeSymbol.directInheritors) {
                     reporter.reportOn(superTypeRef.source, FirErrors.MISSING_INHERITOR_FOR, supertypeSymbol)
                 }
             }
