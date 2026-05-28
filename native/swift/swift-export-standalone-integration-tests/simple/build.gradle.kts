@@ -31,10 +31,7 @@ dependencies {
 }
 
 sourceSets {
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -53,7 +50,10 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.swiftexport.standalone.test.simple.TestGeneratorKt")
+    testGenerator(
+        "org.jetbrains.kotlin.swiftexport.standalone.test.simple.TestGeneratorKt",
+        generateTestsInBuildDirectory = true,
+    )
 }
 
 testsJar()

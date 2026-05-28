@@ -37,10 +37,7 @@ dependencies {
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
 
@@ -57,7 +54,10 @@ projectTests {
         }
     }
 
-    testGenerator("org.jetbrains.kotlin.swiftexport.ide.TestGeneratorKt")
+    testGenerator(
+        "org.jetbrains.kotlin.swiftexport.ide.TestGeneratorKt",
+        generateTestsInBuildDirectory = true,
+    )
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
