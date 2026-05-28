@@ -11,6 +11,12 @@ open class SourceBase {
     val srcField: String = "src"
 }
 
+// Test (6): source-declared outer that gets a plugin-generated nested class added inside it.
+class SourceWithNested
+
+// Test (7): source-declared outer that gets a plugin-generated companion object added inside it.
+class SourceWithCompanion
+
 @GenerateClassFamily
 class Marker
 
@@ -47,6 +53,19 @@ fun box(): String {
     }
     if (tag != "a") return "FAIL sealed when: $tag"
     if (s.x != 42) return "FAIL sealed inherited x: ${s.x}"
+
+    // (6) Generated nested class for a source-declared outer.
+    val nested = SourceWithNested.Nested()
+    if (nested.x != 42) return "FAIL nested.x: ${nested.x}"
+    if (nested.foo() != "ok") return "FAIL nested.foo: ${nested.foo()}"
+
+    // (7) Generated companion object for a source-declared outer.
+    if (SourceWithCompanion.x != 42) return "FAIL companion.x: ${SourceWithCompanion.x}"
+
+    // (8) Outer class that's plugin-generated AND has its own nested + companion.
+    val inner = WithNestedFamily.Inner()
+    if (inner.x != 42) return "FAIL inner.x: ${inner.x}"
+    if (WithNestedFamily.fromCompanion() != "from-companion") return "FAIL companion fn"
 
     return "OK"
 }

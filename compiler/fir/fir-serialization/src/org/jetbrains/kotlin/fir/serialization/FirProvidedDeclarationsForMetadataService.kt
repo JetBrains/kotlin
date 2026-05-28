@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.serialization
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.packageFqName
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -65,9 +66,10 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
     abstract fun getProvidedTopLevelDeclarations(file: FirFile): List<FirDeclaration>
     abstract fun getProvidedConstructors(owner: FirClassSymbol<*>): List<FirConstructor>
     abstract fun getProvidedCallables(owner: FirClassSymbol<*>): List<FirCallableDeclaration>
+    abstract fun getProvidedNestedClasses(owner: FirClassSymbol<*>): List<FirRegularClass>
+    abstract fun getProvidedCompanionObject(owner: FirClassSymbol<*>): FirRegularClass?
 
     abstract fun registerDeclaration(declaration: FirDeclaration, containingDeclaration: FirDeclaration)
-
 }
 
 private class FirProvidedDeclarationsForMetadataServiceImpl(private val session: FirSession) : FirProvidedDeclarationsForMetadataService() {
@@ -88,7 +90,17 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
                 when (declaration) {
                     is FirConstructor -> declarations.providedConstructors += declaration
                     is FirCallableDeclaration -> declarations.providedCallables += declaration
-                    else -> error("Nested classes are not supported yet")
+                    is FirRegularClass -> {
+                        if (declaration.isCompanion) {
+                            require(declarations.providedCompanionObject == null) {
+                                "Class ${containingDeclaration.symbol.classId} already has a provided companion object; cannot register another"
+                            }
+                            declarations.providedCompanionObject = declaration
+                        } else {
+                            declarations.providedNestedClasses += declaration
+                        }
+                    }
+                    else -> error("Unsupported declaration type: ${declaration::class.simpleName}")
                 }
             }
 
@@ -112,9 +124,19 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
         return memberCache[owner]?.providedCallables ?: emptyList()
     }
 
+    override fun getProvidedNestedClasses(owner: FirClassSymbol<*>): List<FirRegularClass> {
+        return memberCache[owner]?.providedNestedClasses ?: emptyList()
+    }
+
+    override fun getProvidedCompanionObject(owner: FirClassSymbol<*>): FirRegularClass? {
+        return memberCache[owner]?.providedCompanionObject
+    }
+
     private class ClassDeclarations {
         val providedCallables: MutableList<FirCallableDeclaration> = mutableListOf()
         val providedConstructors: MutableList<FirConstructor> = mutableListOf()
+        val providedNestedClasses: MutableList<FirRegularClass> = mutableListOf()
+        var providedCompanionObject: FirRegularClass? = null
     }
 }
 

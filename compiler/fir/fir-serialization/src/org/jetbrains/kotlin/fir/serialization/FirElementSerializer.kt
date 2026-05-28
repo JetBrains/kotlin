@@ -273,6 +273,7 @@ class FirElementSerializer private constructor(
         }
 
         val companionObject = regularClass?.companionObjectSymbol?.fir
+            ?: providedDeclarationsService.getProvidedCompanionObject(classSymbol)
         if (companionObject != null) {
             builder.companionObjectName = getSimpleNameIndex(companionObject.name)
         }
@@ -435,16 +436,21 @@ class FirElementSerializer private constructor(
      * Order of nested classifiers:
      *   - declared classifiers in declaration order
      *   - generated classifiers in sorted order
+     *   - provided classifiers in sorted order
+     *   - provided companion object if present
      */
     fun computeNestedClassifiersForClass(classSymbol: FirClassSymbol<*>): List<FirClassifierSymbol<*>> {
-        val scope = session.nestedClassifierScope(classSymbol.fir) ?: return emptyList()
+        val scope = session.nestedClassifierScope(classSymbol.fir)
         return buildList {
             val indexByDeclaration = classSymbol.fir.declarations.filterIsInstance<FirClassLikeDeclaration>().mapToIndex()
-            val [declared, nonDeclared] = scope.getClassifierNames()
-                .mapNotNull { scope.getSingleClassifier(it)?.fir as FirClassLikeDeclaration? }
+            val [declared, nonDeclared] = scope?.getClassifierNames().orEmpty()
+                .mapNotNull { scope?.getSingleClassifier(it)?.fir as FirClassLikeDeclaration? }
                 .partition { it in indexByDeclaration }
             declared.sortedBy { indexByDeclaration.getValue(it) }.mapTo(this) { it.symbol }
             nonDeclared.sortedWith(FirMemberDeclarationComparator).mapTo(this) { it.symbol }
+            val providedService = session.providedDeclarationsForMetadataService
+            providedService.getProvidedNestedClasses(classSymbol).sortedWith(FirMemberDeclarationComparator).mapTo(this) { it.symbol }
+            providedService.getProvidedCompanionObject(classSymbol)?.let { add(it.symbol) }
         }
     }
 
@@ -1423,11 +1429,18 @@ class FirElementSerializer private constructor(
         ): FirElementSerializer {
             val parentClassId = klass.symbol.classId.outerClassId
             val parent = if (parentClassId != null && !klass.isLocal) {
-                val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
-                parentSerializer ?: create(
-                    session, scopeSession, parentClass, extension, null, typeApproximator,
-                    languageVersionSettings, produceHeaderKlib
-                )
+                // Lazy-evaluate the parent lookup: when a caller already supplies parentSerializer
+                // (which is the common path from ClassCodegen for nested classes, including
+                // plugin-generated nested classes whose outer is also plugin-generated and therefore
+                // NOT registered in session.symbolProvider), there's no need to resolve the outer
+                // class through the symbol provider.
+                parentSerializer ?: run {
+                    val parentClass = session.symbolProvider.getClassLikeSymbolByClassId(parentClassId)!!.fir as FirRegularClass
+                    create(
+                        session, scopeSession, parentClass, extension, parentSerializer = null, typeApproximator,
+                        languageVersionSettings, produceHeaderKlib
+                    )
+                }
             } else {
                 createTopLevel(session, scopeSession, extension, typeApproximator, languageVersionSettings, produceHeaderKlib)
             }

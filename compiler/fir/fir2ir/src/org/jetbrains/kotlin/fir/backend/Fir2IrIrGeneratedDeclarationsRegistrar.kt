@@ -358,9 +358,6 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         if (irClass.kind == ClassKind.ENUM_CLASS) {
             error("Enum classes are not supported for registerClassAsMetadataVisible: ${irClass.render()}")
         }
-        if (irClass.parent !is IrFile) {
-            TODO("Nested classes are not yet supported in registerClassAsMetadataVisible: ${irClass.render()}")
-        }
 
         val firClassSymbol = FirRegularClassSymbol(irClass.classIdOrFail)
         val firClass = buildRegularClass {
@@ -419,7 +416,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 is IrProperty -> {
                     registerPropertyAsMetadataVisible(irMember)
                 }
-                else -> {} // IrAnonymousInitializer, IrField (non-backing), nested IrClass — out of scope
+                is IrClass -> {
+                    registerClassAsMetadataVisible(irMember)
+                }
+                else -> {} // IrAnonymousInitializer, IrField (non-backing) — out of scope
             }
         }
         session.providedDeclarationsForMetadataService.registerDeclaration(

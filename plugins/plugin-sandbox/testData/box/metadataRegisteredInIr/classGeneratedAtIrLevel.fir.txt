@@ -9,6 +9,18 @@ FILE: src.kt
             public get(): R|kotlin/String|
 
     }
+    public final class SourceWithNested : R|kotlin/Any| {
+        public constructor(): R|SourceWithNested| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class SourceWithCompanion : R|kotlin/Any| {
+        public constructor(): R|SourceWithCompanion| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
     @R|org/jetbrains/kotlin/plugin/sandbox/GenerateClassFamily|() public final class Marker : R|kotlin/Any| {
         public constructor(): R|Marker| {
             super<R|kotlin/Any|>()
@@ -95,6 +107,38 @@ FILE: main.kt
         when () {
             !=(R|<local>/s|.R|/MySealed.x|, Int(42)) ->  {
                 ^box <strcat>(String(FAIL sealed inherited x: ), R|<local>/s|.R|/MySealed.x|)
+            }
+        }
+
+        lval nested: R|SourceWithNested.Nested| = Q|SourceWithNested|.R|/SourceWithNested.Nested.Nested|()
+        when () {
+            !=(R|<local>/nested|.R|/SourceWithNested.Nested.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL nested.x: ), R|<local>/nested|.R|/SourceWithNested.Nested.x|)
+            }
+        }
+
+        when () {
+            !=(R|<local>/nested|.R|/SourceWithNested.Nested.foo|(), String(ok)) ->  {
+                ^box <strcat>(String(FAIL nested.foo: ), R|<local>/nested|.R|/SourceWithNested.Nested.foo|())
+            }
+        }
+
+        when () {
+            !=(Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL companion.x: ), Q|SourceWithCompanion|.R|/SourceWithCompanion.Companion.x|)
+            }
+        }
+
+        lval inner: R|WithNestedFamily.Inner| = Q|WithNestedFamily|.R|/WithNestedFamily.Inner.Inner|()
+        when () {
+            !=(R|<local>/inner|.R|/WithNestedFamily.Inner.x|, Int(42)) ->  {
+                ^box <strcat>(String(FAIL inner.x: ), R|<local>/inner|.R|/WithNestedFamily.Inner.x|)
+            }
+        }
+
+        when () {
+            !=(Q|WithNestedFamily|.R|/WithNestedFamily.Companion.fromCompanion|(), String(from-companion)) ->  {
+                ^box String(FAIL companion fn)
             }
         }
 

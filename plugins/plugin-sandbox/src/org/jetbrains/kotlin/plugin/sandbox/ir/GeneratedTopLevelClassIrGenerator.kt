@@ -112,26 +112,105 @@ class GeneratedTopLevelClassIrGenerator(val context: IrPluginContext) : IrVisito
             file.declarations += klass
             context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(klass)
         }
+
+        // Test (6): nested class inside a source-declared outer.
+        val sourceWithNested = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceWithNested" }
+        if (sourceWithNested != null) {
+            val nested = buildGeneratedClass(
+                sourceWithNested, "Nested", isGeneric = false, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL,
+            )
+            sourceWithNested.declarations += nested
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(nested)
+        }
+
+        // Test (7): companion object inside a source-declared outer.
+        val sourceWithCompanion = file.declarations.filterIsInstance<IrClass>()
+            .firstOrNull { it.name.identifier == "SourceWithCompanion" }
+        if (sourceWithCompanion != null) {
+            val companion = buildGeneratedClass(
+                sourceWithCompanion, "Companion", isGeneric = false, superClass = null,
+                includeXAndFoo = true, modality = Modality.FINAL, classKind = ClassKind.OBJECT, isCompanion = true,
+            )
+            sourceWithCompanion.declarations += companion
+            context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(companion)
+        }
+
+        // Test (8): top-level plugin-generated class with its own nested + companion.
+        // Build outer first, then the nested + companion as children, all wired up before the
+        // single registerClassAsMetadataVisible call on the outermost. The registrar walks
+        // outer.declarations and transitively builds FIR for the inner classes.
+        val withNestedFamily = buildGeneratedClass(
+            file, "WithNestedFamily", isGeneric = false, superClass = null,
+            includeXAndFoo = false, modality = Modality.OPEN,
+        )
+        val inner = buildGeneratedClass(
+            withNestedFamily, "Inner", isGeneric = false, superClass = null,
+            includeXAndFoo = true, modality = Modality.FINAL,
+        )
+        val withNestedFamilyCompanion = buildGeneratedClass(
+            withNestedFamily, "Companion", isGeneric = false, superClass = null,
+            includeXAndFoo = false, modality = Modality.FINAL, classKind = ClassKind.OBJECT, isCompanion = true,
+        )
+        // Companion needs a `fromCompanion()` function so we can test the cross-module call.
+        withNestedFamilyCompanion.declarations += buildFromCompanionFunction(withNestedFamilyCompanion)
+        withNestedFamily.declarations += inner
+        withNestedFamily.declarations += withNestedFamilyCompanion
+        file.declarations += withNestedFamily
+        context.metadataDeclarationRegistrar.registerClassAsMetadataVisible(withNestedFamily)
+    }
+
+    private fun buildFromCompanionFunction(klass: IrClass): IrSimpleFunction {
+        return context.irFactory.buildFun {
+            startOffset = SYNTHETIC_OFFSET
+            endOffset = SYNTHETIC_OFFSET
+            name = Name.identifier("fromCompanion")
+            returnType = context.irBuiltIns.stringType
+            modality = Modality.FINAL
+            visibility = DescriptorVisibilities.PUBLIC
+        }.apply {
+            parent = klass
+            parameters += createDispatchReceiverParameterWithClassParent()
+            body = context.irFactory.createBlockBody(
+                startOffset, endOffset,
+                listOf(
+                    IrReturnImpl(
+                        startOffset, endOffset,
+                        context.irBuiltIns.nothingType,
+                        symbol,
+                        IrConstImpl.string(
+                            startOffset, endOffset, context.irBuiltIns.stringType, "from-companion"
+                        )
+                    )
+                )
+            )
+        }
     }
 
     private fun buildGeneratedClass(
-        file: IrFile,
+        parentDeclaration: IrDeclarationParent,
         className: String,
         isGeneric: Boolean,
         superClass: IrClass?,
         includeXAndFoo: Boolean,
         modality: Modality,
+        classKind: ClassKind = ClassKind.CLASS,
+        isCompanion: Boolean = false,
     ): IrClass {
         val classModality = modality
+        val classKindValue = classKind
+        val classIsCompanion = isCompanion
         val klass = context.irFactory.buildClass {
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = Name.identifier(className)
-            kind = ClassKind.CLASS
+            kind = classKindValue
             this.modality = classModality
             visibility = DescriptorVisibilities.PUBLIC
+            this.isCompanion = classIsCompanion
         }.apply {
-            parent = file
+            parent = parentDeclaration
         }
 
         if (isGeneric) {
