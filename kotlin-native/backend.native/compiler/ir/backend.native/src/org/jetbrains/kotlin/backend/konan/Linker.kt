@@ -42,10 +42,11 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-    private val config: NativeSecondStageCompilationConfig,
-    private val linkerOutput: LinkerOutputKind,
-    private val outputFiles: OutputFiles,
-    private val tempFiles: TempFiles,
+        private val config: NativeSecondStageCompilationConfig,
+        private val linkerOutput: LinkerOutputKind,
+        private val outputFiles: OutputFiles,
+        private val tempFiles: TempFiles,
+        private val extraLinkerFlags: List<String>
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -93,7 +94,7 @@ internal class Linker(
             libraryProvidedLinkerFlags: List<String>,
             caches: ResolvedCacheBinaries,
     ): List<Command> {
-        val additionalLinkerArgs: List<String>
+        val produceKindFlags: List<String>
         val executable: String
 
         when (config.produce) {
@@ -102,7 +103,7 @@ internal class Linker(
                 val name = bundleDir.name.removeSuffix(config.produce.suffix())
                 require(target.family.isAppleFamily)
                 val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
-                additionalLinkerArgs = listOf("-bundle", "-dead_strip")
+                produceKindFlags = listOf("-bundle", "-dead_strip")
                 val bundlePath = bundleDir.child(bundleRelativePath)
                 bundlePath.parentFile.mkdirs()
                 executable = bundlePath.absolutePath
@@ -117,7 +118,7 @@ internal class Linker(
                     Family.OSX -> "Versions/A/$dylibName"
                     else -> error(target)
                 }
-                additionalLinkerArgs = buildList {
+                produceKindFlags = buildList {
                     if (!config.hotReloadEnabled) add("-dead_strip")
                     add("-install_name")
                     add("@rpath/${framework.name}/$dylibRelativePath")
@@ -127,7 +128,7 @@ internal class Linker(
                 executable = dylibPath.absolutePath
             }
             else -> {
-                additionalLinkerArgs = if (target.family.isAppleFamily) {
+                produceKindFlags = if (target.family.isAppleFamily) {
                     when (config.produce) {
                         CompilerOutputKind.DYNAMIC_CACHE ->
                             listOf("-install_name", outputFiles.dynamicCacheInstallName)
@@ -143,7 +144,7 @@ internal class Linker(
         File(executable).delete()
 
         val linkerArgs = asLinkerArgs(config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)) +
-                libraryProvidedLinkerFlags + additionalLinkerArgs
+                libraryProvidedLinkerFlags + produceKindFlags + extraLinkerFlags
 
         return with(linker) {
             LinkerArguments(
