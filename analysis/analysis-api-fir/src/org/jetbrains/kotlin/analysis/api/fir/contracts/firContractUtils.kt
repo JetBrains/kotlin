@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.withSymbolAttachment
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.*
-import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.toKaContractInvocationKind
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsNotNullEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSpecificValueEffectDeclaration
 import org.jetbrains.kotlin.analysis.api.impl.base.contracts.description.KaBaseContractReturnsContractEffectDeclarations.KaBaseContractReturnsSuccessfullyEffectDeclaration
@@ -75,7 +74,6 @@ private class ConeContractDescriptionElementToAnalysisApi(
         KaBaseContractCallsInPlaceContractEffectDeclaration(
             backingValueParameterReference = callsEffect.valueParameterReference.accept(),
             backingOccurrencesRange = callsEffect.kind,
-            backingInvocationKind = callsEffect.kind.toKaContractInvocationKind(),
         )
 
     override fun visitReturnsResultOfEffectDeclaration(

@@ -18,8 +18,9 @@ import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 class KaBaseContractCallsInPlaceContractEffectDeclaration(
     private val backingValueParameterReference: KaContractParameterValue,
     private val backingOccurrencesRange: EventOccurrencesRange,
-    private val backingInvocationKind: KaContractInvocationKind,
 ) : KaContractCallsInPlaceContractEffectDeclaration {
+    private val backingInvocationKind: KaContractInvocationKind = backingOccurrencesRange.toKaContractInvocationKind()
+
     override val token: KaLifetimeToken get() = backingValueParameterReference.token
 
     override val valueParameterReference: KaContractParameterValue get() = withValidityAssertion { backingValueParameterReference }
