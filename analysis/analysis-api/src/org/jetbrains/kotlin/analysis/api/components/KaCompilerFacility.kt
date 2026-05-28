@@ -96,7 +96,7 @@ public interface KaCompilerFacility : KaSessionComponent {
      * @param init A lambda that configures the [KaCompilationOptionsBuilder] with modifications to apply.
      */
     @KaExperimentalApi
-    public fun KaCompilationOptions.copy(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions
+    public fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions
 }
 
 /**
@@ -519,9 +519,9 @@ public fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit
 @KaExperimentalApi
 @KaContextParameterApi
 context(session: KaSession)
-public fun KaCompilationOptions.copy(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions {
+public fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions {
     return with(session) {
-        copy(
+        modify(
             init = init,
         )
     }
