@@ -276,10 +276,16 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
         val typeInfoPtr: ConstPointer
         val typeInfoGlobal: StaticData.Global
 
-        val typeInfoSymbolName = if (declaration.isExported())
+        val typeInfoSymbolName = if (declaration.isExported()) {
             declaration.computeTypeInfoSymbolName()
-        else
-            "${KonanBinaryInterface.MANGLE_CLASS_PREFIX}:$internalName"
+        } else {
+            if (!context.config.producePerFileCache)
+                "${KonanBinaryInterface.MANGLE_CLASS_PREFIX}:$internalName"
+            else {
+                val containerName = (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                declaration.computePrivateTypeInfoSymbolName(containerName)
+            }
+        }
 
         if (declaration.typeInfoHasVtableAttached) {
             // Create the special global consisting of TypeInfo and vtable.
@@ -434,9 +440,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!declaration.shouldGenerateBody()) {
                 return
             }
-            val symbolName = if (!declaration.isExported()) {
-                "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
-            } else {
+            val symbolName = if (declaration.isExported()) {
                 declaration.computeSymbolName().also {
                     if (declaration.name.asString() != "main") {
                         assert(LLVMGetNamedFunction(llvm.module, it) == null) {
@@ -446,6 +450,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                         // As a workaround, allow `main` functions to clash because frontend accepts this.
                         // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
                     }
+                }
+            } else {
+                if (!context.config.producePerFileCache)
+                    "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
+                else {
+                    val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
+                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
+                    declaration.computePrivateSymbolName(containerName)
                 }
             }
 
