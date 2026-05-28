@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.test.services.TestService
@@ -38,6 +39,18 @@ abstract class JavaFacadeBuilderProvider : TestService {
         projectEnvironment: VfsBasedProjectEnvironment,
         librariesScope: AbstractProjectFileSearchScope,
     ): ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?
+
+    /**
+     * Stage 2 §6.3 (see `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`):
+     * companion seam to [createBuilder] for the deserializer-side
+     * [JvmBinaryClassFinderInputs] adapter. Test fixtures that target `java-direct` return a
+     * builder lambda; everyone else returns `null` (deserializer falls back to `FirJavaFacade`
+     * — zero-delta with pre-§6.3 behaviour).
+     */
+    open fun createBinaryClassFinderInputsBuilder(
+        configuration: CompilerConfiguration,
+        projectEnvironment: VfsBasedProjectEnvironment,
+    ): ((AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?)? = null
 }
 
 val TestServices.javaFacadeBuilderProvider: JavaFacadeBuilderProvider? by TestServices.nullableTestServiceAccessor()

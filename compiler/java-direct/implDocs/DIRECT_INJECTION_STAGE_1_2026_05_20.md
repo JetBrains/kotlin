@@ -465,6 +465,48 @@ Re-route from `session.javaSymbolProvider.getClassLikeSymbolByClassId(...)` to
 Lift the index-walk helpers from the current `BinaryJavaClassFinder` body into
 `JvmClassFileBasedSymbolProvider` (private functions or a small `internal` utility object).
 
+> **Update 2026-05-28 — §6.3 landed (refined architecture).** The literal prescription above
+> (inline `JvmDependenciesIndex` access directly in `JvmClassFileBasedSymbolProvider`) was
+> **not viable** because `compiler/fir/fir-jvm` (where the deserializer lives) does not
+> depend on `:compiler:cli-jvm` (where `JvmDependenciesIndex` lives), and adding that dep
+> would be a backwards dependency from a lower-level module to a higher-level one. The
+> landed shape is a thin adapter interface:
+>
+> - **New interface** `JvmBinaryClassFinderInputs` in
+>   `compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt` with four
+>   methods (`hasTopLevelBinaryClass`, `knownBinaryClassNamesInPackage`, `hasBinaryPackage`,
+>   `findBinaryClass`).
+> - `JvmClassFileBasedSymbolProvider` gains nullable
+>   `binaryClassFinderInputs: JvmBinaryClassFinderInputs? = null` constructor parameter; the
+>   5 binary call sites at L72/L139/L171/L180/L212 are gated `binaryClassFinderInputs?.X(...)
+>   ?: javaFacade.X(...)`. When `null` (PSI / LL / IDE / scripting / IC / jklib paths), the
+>   deserializer falls back to `FirJavaFacade` exactly as before §6.3 — zero behavioral
+>   delta.
+> - `BinaryJavaClassFinder` (java-direct) implements `JvmBinaryClassFinderInputs` directly —
+>   the 4 methods are thin wrappers over its existing `findClass` / `knownClassNamesInPackage`
+>   / `findPackage` methods. `findBinaryClass` applies the same
+>   `isFromSource || !hasMetadataAnnotation()` filter that `FirJavaFacade.findClass` does.
+> - Plumbing: new `createBinaryClassFinderInputs: (AbstractProjectEnvironment,
+>   AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? = { _, _ -> null }`
+>   parameter on `FirJvmSessionFactory.createLibrarySession` (zero-delta default → all 7
+>   existing call sites unchanged). The CLI java-direct path populates it via a new top-level
+>   `createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)` in
+>   `JavaDirectFacadeBuilder.kt`; the test fixture path populates it via a new
+>   `JavaFacadeBuilderProvider.createBinaryClassFinderInputsBuilder(...)` (defaulted `null`)
+>   overridden by `JavaDirectFacadeBuilderProvider`. `FirFrontendFacade.analyze` threads the
+>   new builder through the private `createLibrarySession` to
+>   `FirJvmSessionFactory.createLibrarySession`.
+>
+> Validation: **2701/2701** `JavaUsingAst{Phased,Box}TestGenerated` green; **10787/10787**
+> `PhasedJvmDiagnosticLightTreeTestGenerated.*` green (the PSI regression gate confirms
+> `JvmClassFileBasedSymbolProvider` is bit-for-bit identical for paths that don't supply
+> `binaryClassFinderInputs`). After §6.3 + §6.4 (source-side), the library-session facade
+> reads through `BinaryJavaClassFinder` only for `convertJavaClassToFir` at L193 — §6.5
+> (delete `CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt`) is the next and final
+> sub-step. See [`../ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) §"Stage 2 §6.3 — Move
+> binary lookups into the deserializer via `JvmBinaryClassFinderInputs` — 2026-05-28" for
+> full details.
+
 ### 6.4 Drop the source-side binary-finder dependency
 
 After §6.2 + §6.3:

@@ -2,7 +2,110 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-28 (Stage 2 §6.4 (partial — source-side
+**Last Updated**: 2026-05-28 (Stage 2 §6.3 — move binary lookups
+into the deserializer via a new `JvmBinaryClassFinderInputs` adapter
+interface. New interface
+`compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt`
+with four methods (`hasTopLevelBinaryClass`, `knownBinaryClassNamesInPackage`,
+`hasBinaryPackage`, `findBinaryClass`); `JvmClassFileBasedSymbolProvider`
+gains a nullable `binaryClassFinderInputs: JvmBinaryClassFinderInputs?
+= null` constructor parameter and the 5 facade-binary call sites
+(L72/L139/L171/L180/L212 in pre-§6.3 numbering) are gated through
+the adapter — when non-null the deserializer reads binary `.class` /
+`.sig` files via the adapter; when null it falls back to
+`FirJavaFacade` exactly as before §6.3 (so PSI / LL / IDE / scripting
+/ IC / jklib paths are zero-delta). `BinaryJavaClassFinder` (java-direct)
+now also implements `JvmBinaryClassFinderInputs` — the 4 methods are
+thin wrappers over its existing index walks: `hasTopLevelBinaryClass`
+checks `relativeClassName.asString().substringBefore(".")` membership
+in `knownClassNamesInPackage(pkg)` (mirrors
+`FirJavaFacade.hasTopLevelClassOf`); `knownBinaryClassNamesInPackage`
+delegates to `knownClassNamesInPackage`; `hasBinaryPackage` delegates
+to `findPackage(fqName) != null`; `findBinaryClass` delegates to
+`findClass(JavaClassFinder.Request(...))` *with* the
+`isFromSource || !hasMetadataAnnotation()` filter that
+`FirJavaFacade.findClass` applies (Kotlin classes carrying `@Metadata`
+must not be returned to the deserializer — the Kotlin branch of
+`extractClassMetadata` handles them). The architecture choice was
+"Inline + nullable index" refined to "single adapter interface"
+because `compiler/fir/fir-jvm` does NOT depend on `:compiler:cli-jvm`
+(where `JvmDependenciesIndex` lives) and adding that dep would be a
+large architectural smell + risk a cycle; the interface lives in
+`fir-jvm` (where the deserializer is), the concrete index-backed
+impl lives in `compiler/java-direct` (the only module with access to
+both). Plumbing: new `createBinaryClassFinderInputs:
+(AbstractProjectEnvironment, AbstractProjectFileSearchScope) ->
+JvmBinaryClassFinderInputs? = { _, _ -> null }` lambda parameter
+added to `FirJvmSessionFactory.createLibrarySession` (zero-delta
+default for the 7 existing callers — only the CLI java-direct path
+and the test-fixture java-direct path actually populate it). New
+top-level `createJavaDirectBinaryClassFinderInputsBuilder(...)` in
+`JavaDirectFacadeBuilder.kt` returns the lambda — for the CLI
+environment it constructs a `BinaryJavaClassFinder` (memoised per
+`(scope identityHash, enableCtSym)` exactly like the existing source
+builder, but with its own cache because Kotlin function-level local
+state is per-invocation; the duplication is at most one extra
+`BinaryJavaClassFinder` instance per library scope and isolated
+per-instance caches mean sharing has no correctness benefit — §6.5
+will collapse both into one when `BinaryJavaClassFinder.kt` is
+deleted), for non-CLI envs it returns `null` and the deserializer
+falls back to `FirJavaFacade`. Test fixture: `JavaFacadeBuilderProvider`
+gains an `open fun createBinaryClassFinderInputsBuilder(configuration,
+projectEnvironment)` defaulted to `null`; `JavaDirectFacadeBuilderProvider`
+overrides it to forward to `createJavaDirectBinaryClassFinderInputsBuilder`.
+`FirFrontendFacade.analyze` threads the new builder through
+`createLibrarySession` to `FirJvmSessionFactory.createLibrarySession`.
+CLI: `JvmFrontendPipelinePhase.prepareJvmSessions` constructs the
+builder once via `createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)`
+and passes it to `createLibrarySession`. Verification:
+`:compiler:java-direct:test --tests
+"JavaUsingAst{Phased,Box}TestGenerated" --rerun` →
+**2701/2701 green**, 0 failures, 0 errors aggregated across
+`TEST-*JavaUsingAst*.xml`; `:compiler:fir:analysis-tests:test
+--tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` →
+**10787/10787 green** (PSI regression gate confirms the change is
+truly a no-op on the non-java-direct path — `JvmClassFileBasedSymbolProvider`
+shared with PSI/LL/IDE/IC/scripting/jklib paths, but those all
+default `binaryClassFinderInputs = null` and fall back to
+`FirJavaFacade`). Files: `compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt`
+(NEW, +53 LoC — interface + KDoc),
+`compiler/fir/fir-jvm/src/.../deserialization/JvmClassFileBasedSymbolProvider.kt`
+(+25/−5 LoC — nullable constructor param, 2 private helpers
+`hasTopLevelBinaryClass` / `findBinaryClass`, 5 call sites gated),
+`compiler/java-direct/src/.../BinaryJavaClassFinder.kt`
+(+30/−1 LoC — implements `JvmBinaryClassFinderInputs`, 4 override
+methods, KDoc),
+`compiler/java-direct/src/.../JavaDirectFacadeBuilder.kt`
+(+45/−1 LoC — new `createJavaDirectBinaryClassFinderInputsBuilder`
+top-level function with its own memoization cache, KDoc),
+`compiler/fir/entrypoint/src/.../session/FirJvmSessionFactory.kt`
+(+15/−1 LoC — new `createBinaryClassFinderInputs` lambda parameter
+on `createLibrarySession`, KDoc, wiring to constructor),
+`compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt`
+(+7/−1 LoC — new import + builder construction + pass to
+`createLibrarySession`),
+`compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt`
+(+12/−1 LoC — new `open fun createBinaryClassFinderInputsBuilder`
+with KDoc + import),
+`compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt`
+(+14/−1 LoC — override forwarding to
+`createJavaDirectBinaryClassFinderInputsBuilder` + import + KDoc),
+`compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt`
+(+10/−1 LoC — local builder var, new param on private
+`createLibrarySession`, pass-through to
+`FirJvmSessionFactory.createLibrarySession`, import). Net: 9 files,
+≈+211/−12 LoC, 1 new file, **no public Java-model interface
+touched**. After §6.3, `JvmClassFileBasedSymbolProvider` (the
+deserializer shared with PSI/LL/IDE) no longer needs to read binary
+classes through `FirJavaFacade` on the java-direct library-session
+path — the library-session facade is **only used for
+`convertJavaClassToFir`** at L193 now (transforming the
+already-resolved `JavaClass` into a `FirJavaClass`). `BinaryJavaClassFinder.kt`
+file is **still on disk** (deletion is §6.5); §6.4's library-side
+slice — drop the `BinaryJavaClassFinder` *facade-wrapping* on the
+library session — is the next step, after which §6.5 cleanly deletes
+both `CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt`.
+Previous: 2026-05-28 (Stage 2 §6.4 (partial — source-side
 only) — drop `CombinedJavaClassFinder` from the source-session facade
 on the `java-direct` path. `createJavaDirectSourceJavaFacadeBuilder`
 now takes the `librariesScope` and its returned lambda dispatches on
@@ -1086,6 +1189,268 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Stage 2 §6.3 — Move binary lookups into the deserializer via `JvmBinaryClassFinderInputs` — 2026-05-28
+
+### Overview
+
+Fourth sub-step of Stage 2 (= Phase 2 of
+[`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)),
+landed *after* §6.4 (source-side) because §6.4 was achievable
+without §6.3. §6.3's role: route the deserializer's five binary
+lookups (the `javaFacade.{hasTopLevelClassOf, knownClassNamesInPackage,
+findClass, hasPackage}` calls at `JvmClassFileBasedSymbolProvider.kt`
+L72/L139/L171/L180/L212 in pre-§6.3 numbering) through a new
+deserializer-owned adapter instead of through `FirJavaFacade`, so
+the library-session facade can be dropped in §6.5.
+
+### Design
+
+The user-selected architecture was "**Inline + nullable index**".
+Refined during implementation to "**single adapter interface**"
+because `compiler/fir/fir-jvm` (where the deserializer lives) does
+**not** depend on `:compiler:cli-jvm` (where `JvmDependenciesIndex`
+lives), and adding that dep would be a large architectural smell
+and risk a cycle. So the literal `JvmDependenciesIndex?` constructor
+param wasn't viable — the index has to be wrapped behind a small
+thin adapter that lives inside `fir-jvm`.
+
+**New interface** `JvmBinaryClassFinderInputs` in
+`compiler/fir/fir-jvm/src/.../deserialization/`:
+
+```kotlin
+interface JvmBinaryClassFinderInputs {
+    fun hasTopLevelBinaryClass(classId: ClassId): Boolean
+    fun knownBinaryClassNamesInPackage(packageFqName: FqName): Set<String>?
+    fun hasBinaryPackage(fqName: FqName): Boolean
+    fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): JavaClass?
+}
+```
+
+**`JvmClassFileBasedSymbolProvider`** gains
+`private val binaryClassFinderInputs: JvmBinaryClassFinderInputs? = null`
+as the last constructor parameter (defaulted to `null` → zero-delta
+for all 6 existing call sites in `FirJvmSessionFactory`,
+`FirJvmIncrementalCompilationSymbolProviders`, `FirJKlibSessionFactory`,
+scripting `sessionUtils`, `LLJvmClassFileBasedSymbolProvider`,
+`LLBinaryOriginLibrarySymbolProviderFactory`).
+
+The 5 binary call sites are gated:
+
+| Pre-§6.3 line | Pre-§6.3 call | Post-§6.3 call |
+|---|---|---|
+| L72  | `if (!javaFacade.hasTopLevelClassOf(classId))` | `if (!hasTopLevelBinaryClass(classId))` |
+| L139 | `javaFacade.knownClassNamesInPackage(pkg)` | `binaryClassFinderInputs?.knownBinaryClassNamesInPackage(pkg) ?: javaFacade.knownClassNamesInPackage(pkg)` |
+| L171 | same as L72 | same as L72 |
+| L180 | `javaFacade.findClass(classId, knownContent)` | `findBinaryClass(classId, knownContent)` |
+| L212 | `javaFacade.hasPackage(fqName)` | `binaryClassFinderInputs?.hasBinaryPackage(fqName) ?: javaFacade.hasPackage(fqName)` |
+
+Where the two private helpers are:
+
+```kotlin
+private fun hasTopLevelBinaryClass(classId: ClassId): Boolean =
+    binaryClassFinderInputs?.hasTopLevelBinaryClass(classId)
+        ?: javaFacade.hasTopLevelClassOf(classId)
+
+private fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): JavaClass? =
+    binaryClassFinderInputs?.findBinaryClass(classId, knownContent)
+        ?: javaFacade.findClass(classId, knownContent)
+```
+
+### Java-direct implementation
+
+`BinaryJavaClassFinder` (the java-direct binary class finder) now
+implements `JvmBinaryClassFinderInputs` directly — the four methods
+are thin wrappers over its existing index-walk methods:
+
+```kotlin
+override fun hasTopLevelBinaryClass(classId: ClassId): Boolean {
+    val knownNames = knownClassNamesInPackage(classId.packageFqName)
+    val topLevelName = classId.relativeClassName.asString().substringBefore(".")
+    return topLevelName in knownNames
+}
+
+override fun knownBinaryClassNamesInPackage(packageFqName: FqName): Set<String> =
+    knownClassNamesInPackage(packageFqName)
+
+override fun hasBinaryPackage(fqName: FqName): Boolean =
+    findPackage(fqName, mayHaveAnnotations = false) != null
+
+override fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): JavaClass? =
+    findClass(JavaClassFinder.Request(classId, knownContent))
+        ?.takeIf { it.isFromSource || !it.hasMetadataAnnotation() }
+```
+
+The `hasTopLevelBinaryClass` body mirrors `FirJavaFacade.hasTopLevelClassOf`
+semantics (the private `FqName.topLevelName()` extension that
+`FirJavaFacade` uses is just `asString().substringBefore(".")`,
+inlined here). The `findBinaryClass` body mirrors `FirJavaFacade.findClass`'s
+`takeIf { isFromSource || !hasMetadataAnnotation() }` filter — Kotlin
+classes carrying `@Metadata` must not be returned to the deserializer
+through this entry-point (they go through the Kotlin branch of
+`extractClassMetadata` instead).
+
+### Plumbing
+
+The CLI / test-fixture wiring threads a new `createBinaryClassFinderInputs`
+lambda through the same layers as the existing `createJavaFacade`
+lambda (added in §6.4):
+
+1. **`FirJvmSessionFactory.createLibrarySession`** — new param
+   `createBinaryClassFinderInputs: (AbstractProjectEnvironment,
+   AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? =
+   { _, _ -> null }` (zero-delta default → falls back to `FirJavaFacade`
+   for everyone). Calls it once per library session and passes the
+   result to the `JvmClassFileBasedSymbolProvider` constructor.
+2. **`createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)`**
+   — new top-level function in `JavaDirectFacadeBuilder.kt` that
+   returns the lambda. Captures its own per-builder memoization cache
+   keyed on `(System.identityHashCode(psiSearchScope), enableCtSym)`.
+   For the CLI environment it returns a `BinaryJavaClassFinder` for
+   the scope (which also implements `JvmBinaryClassFinderInputs`); for
+   non-CLI envs it returns `null`. The cache is separate from
+   `createJavaDirectSourceJavaFacadeBuilder`'s cache — duplication is
+   minimal (typically one library scope per session, so at most one
+   extra `BinaryJavaClassFinder` instance) and both finders have
+   isolated per-instance caches anyway, so sharing has no correctness
+   benefit. §6.5 (deleting `BinaryJavaClassFinder.kt`) collapses both
+   into one.
+3. **CLI** (`JvmFrontendPipelinePhase.prepareJvmSessions`) — builds
+   the lambda via `createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)`
+   once at session-prep time, passes it to `createLibrarySession`.
+4. **Test fixtures** — `JavaFacadeBuilderProvider` gains an
+   `open fun createBinaryClassFinderInputsBuilder(configuration,
+   projectEnvironment)` defaulted to `null`;
+   `JavaDirectFacadeBuilderProvider` overrides it to forward to
+   `createJavaDirectBinaryClassFinderInputsBuilder`.
+   `FirFrontendFacade.analyze` queries the test service, threads the
+   result through the private `createLibrarySession` (new param) to
+   `FirJvmSessionFactory.createLibrarySession`.
+
+### Why this is PSI-safe (zero-delta on the non-java-direct path)
+
+`JvmClassFileBasedSymbolProvider.kt` is shared with the PSI / LL /
+IDE / scripting / IC / jklib paths — a regression here could explode
+the PSI regression suite (`PhasedJvmDiagnosticLightTreeTestGenerated`,
+10787 tests). The new param is **defaulted to `null`** at every layer:
+
+- `JvmClassFileBasedSymbolProvider`'s constructor parameter has
+  `= null` default.
+- `FirJvmSessionFactory.createLibrarySession`'s
+  `createBinaryClassFinderInputs` parameter has
+  `= { _, _ -> null }` default.
+- `JavaFacadeBuilderProvider.createBinaryClassFinderInputsBuilder`
+  has `= null` default.
+- `FirFrontendFacade.createLibrarySession` passes
+  `createBinaryClassFinderInputs ?: { _, _ -> null }` to the factory.
+
+So every existing call site that didn't opt in is bit-for-bit
+identical to pre-§6.3 behavior. The 5 gated call sites in the
+deserializer evaluate `binaryClassFinderInputs?.X(...) ?:
+javaFacade.X(...)`; when `binaryClassFinderInputs` is `null`, this is
+exactly the old call.
+
+This was confirmed by the PSI regression gate:
+`PhasedJvmDiagnosticLightTreeTestGenerated.*` → **10787/10787 green**.
+
+### What's still on the facade after §6.3
+
+`JvmClassFileBasedSymbolProvider.extractClassMetadata` still calls
+`javaFacade.convertJavaClassToFir(symbol, ...)` at L193 to transform
+the resolved `JavaClass` into a `FirJavaClass`. That call is **not**
+a class-finder operation — it doesn't need the `JavaClassFinder` at
+all; it just consumes the already-resolved `JavaClass`. After §6.5
+deletes the binary-finder file, the library-session facade only
+needs a "null" `JavaClassFinder` (because `convertJavaClassToFir`
+doesn't touch it), and the library-session facade can be removed
+entirely after a follow-up cleanup.
+
+### Verification
+
+- `:compiler:java-direct:test --tests
+  "JavaUsingAst{Phased,Box}TestGenerated" --rerun` → BUILD SUCCESSFUL,
+  **2701/2701 green**, 0 failures, 0 errors (aggregated across
+  `TEST-*JavaUsingAst*.xml`).
+- `:compiler:fir:analysis-tests:test --tests
+  "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` → BUILD
+  SUCCESSFUL, **10787/10787 green**, 0 failures, 0 errors — the PSI
+  regression gate confirms `JvmClassFileBasedSymbolProvider` is bit-for-bit
+  identical for PSI/LL/IC/scripting/jklib paths (where `binaryClassFinderInputs`
+  is `null`).
+- Downstream compile checks: `:analysis:low-level-api-fir:compileKotlin`,
+  `:compiler:cli-jklib:compileKotlin` — both clean.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt` | **NEW** +53 LoC. Interface with 4 methods + comprehensive KDoc. |
+| `compiler/fir/fir-jvm/src/.../deserialization/JvmClassFileBasedSymbolProvider.kt` | +25/−5 LoC. New nullable constructor param, 2 private helpers (`hasTopLevelBinaryClass`, `findBinaryClass`), 5 facade call sites gated. New `JavaClass` import. |
+| `compiler/java-direct/src/.../BinaryJavaClassFinder.kt` | +30/−1 LoC. Adds `JvmBinaryClassFinderInputs` to the interface list + 4 override methods. New `JvmBinaryClassFinderInputs` + `hasMetadataAnnotation` imports. |
+| `compiler/java-direct/src/.../JavaDirectFacadeBuilder.kt` | +45/−1 LoC. New top-level `createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)` with own memoization cache + KDoc. New `JvmBinaryClassFinderInputs` import. |
+| `compiler/fir/entrypoint/src/.../session/FirJvmSessionFactory.kt` | +15/−1 LoC. New `createBinaryClassFinderInputs` lambda parameter on `createLibrarySession` (defaulted), wired through to the `JvmClassFileBasedSymbolProvider` constructor. New `JvmBinaryClassFinderInputs` import + KDoc. |
+| `compiler/cli/cli-jvm/src/.../JvmFrontendPipelinePhase.kt` | +7/−1 LoC. New `createJavaDirectBinaryClassFinderInputsBuilder` import, local builder var, pass to `FirJvmSessionFactory.createLibrarySession`. |
+| `compiler/tests-common-new/testFixtures/.../JavaFacadeBuilderProvider.kt` | +12/−1 LoC. New `open fun createBinaryClassFinderInputsBuilder(...)` defaulted to `null` + KDoc + `JvmBinaryClassFinderInputs` import. |
+| `compiler/java-direct/testFixtures/.../JavaDirectFacadeBuilderProvider.kt` | +14/−1 LoC. Override forwarding to `createJavaDirectBinaryClassFinderInputsBuilder` + `JvmBinaryClassFinderInputs` import + KDoc. |
+| `compiler/tests-common-new/testFixtures/.../FirFrontendFacade.kt` | +10/−1 LoC. Local builder var, new param on private `createLibrarySession`, pass-through to `FirJvmSessionFactory.createLibrarySession`, `JvmBinaryClassFinderInputs` import. |
+
+Net: 9 files, ≈+211/−12 LoC, 1 new file. **No public Java-model
+interface touched.**
+
+### Key Learnings
+
+- **Module dependencies forced the design refinement.** The user
+  chose "Inline + nullable index" expecting a literal `JvmDependenciesIndex?`
+  param on the deserializer. Discovered during implementation that
+  `compiler/fir/fir-jvm` doesn't depend on `:compiler:cli-jvm` —
+  adding that dep would create a backwards dependency from a
+  lower-level module to a higher-level one. The "single adapter
+  interface" refinement put the interface in `fir-jvm` (where the
+  deserializer is) and the index-backed impl in `compiler/java-direct`
+  (the only module with access to both). This is also the right
+  long-term shape: after §6.5, the adapter is the only path the
+  deserializer has to the binary classpath.
+- **The §6.2 narrowing is what made §6.3 land cleanly.** With
+  `JavaSymbolProvider` source-only post-§6.2, the deserializer is
+  now the *only* consumer of binary lookups inside the FIR pipeline
+  on the java-direct library session. So redirecting the deserializer
+  + leaving the facade alone is a coherent slice — there's no other
+  consumer that would observe a half-migrated state.
+- **`BinaryJavaClassFinder` implementing `JvmBinaryClassFinderInputs`
+  directly is the minimal change.** All four interface methods are
+  thin wrappers over `BinaryJavaClassFinder`'s existing public/internal
+  methods. No new class needed, no extra `JavaClass` materialization
+  layer.
+- **Per-instance caches make duplicate `BinaryJavaClassFinder`
+  instances OK.** The `BinaryJavaClassFinder` from
+  `createJavaDirectSourceJavaFacadeBuilder` (wrapped in the library
+  facade) and the one from `createJavaDirectBinaryClassFinderInputsBuilder`
+  (passed to the deserializer) are independent instances with
+  independent `binaryCache`/`topLevelClassesCache`/`knownClassNamesCache`.
+  Sharing has no correctness implication — both walk the same
+  `JvmDependenciesIndex` and would arrive at identical results — and
+  saves only memory. After §6.5 collapses the facade construction,
+  the duplication goes away anyway.
+
+### Follow-ups for the next iteration
+
+- **§6.5 — Delete `CombinedJavaClassFinder.kt` and
+  `BinaryJavaClassFinder.kt`.** With §6.3 + §6.4 (source-side) landed,
+  the library-session facade reads through `BinaryJavaClassFinder`
+  *only* for the `convertJavaClassToFir` path at
+  `JvmClassFileBasedSymbolProvider.kt:193`. The library facade can be
+  collapsed to a no-op `JavaClassFinder` (since `convertJavaClassToFir`
+  doesn't actually call `findClass`/etc., it just reads the
+  `JavaClass` it was given). After that collapse, both files can be
+  deleted: `JvmBinaryClassFinderInputs` survives as the single
+  binary-side entry point, with a small `JvmBinaryClassFinderInputsOverIndex`
+  impl absorbing `BinaryJavaClassFinder`'s body.
+- **Library-side §6.4 cleanup.** Once §6.5 lands, the library branch
+  of `createJavaDirectSourceJavaFacadeBuilder` (and the
+  pure-Kotlin-compile fallback) can be deleted, and the function
+  simplifies to a pure source-only builder.
 
 ---
 

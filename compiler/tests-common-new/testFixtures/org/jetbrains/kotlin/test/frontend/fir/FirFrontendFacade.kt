@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.resolve.ImplicitIntegerCoercionModuleCapability
@@ -96,6 +97,11 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val targetPlatform = module.targetPlatform(testServices)
         var javaFacadeBuilder: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)? = null
+        // Stage 2 §6.3: deserializer-side companion builder (see
+        // `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`). On the
+        // java-direct path the test fixture supplies a non-null builder; otherwise stays null
+        // and the deserializer falls back to `FirJavaFacade` exactly as before §6.3.
+        var binaryClassFinderInputsBuilder: ((AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?)? = null
         val jvmSessionFactoryContext = runIf(targetPlatform.isCommon() || targetPlatform.isJvm()) {
             val packagePartProviderFactory = testServices.compilerConfigurationProvider.getPackagePartProviderFactory(module)
             val projectEnvironment = VfsBasedProjectEnvironment(
@@ -104,6 +110,8 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             val librariesScope = PsiBasedProjectFileSearchScope(ProjectScope.getLibrariesScope(project))
             javaFacadeBuilder =
                 testServices.javaFacadeBuilderProvider?.createBuilder(configuration, projectEnvironment, librariesScope)
+            binaryClassFinderInputsBuilder =
+                testServices.javaFacadeBuilderProvider?.createBinaryClassFinderInputsBuilder(configuration, projectEnvironment)
             FirJvmSessionFactory.Context(
                 configuration,
                 projectEnvironment,
@@ -118,6 +126,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
             extensionRegistrars,
             jvmSessionFactoryContext,
             javaFacadeBuilder,
+            binaryClassFinderInputsBuilder,
         )
 
         val firOutputPartForDependsOnModules = sortedModules.map {
@@ -178,6 +187,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
         extensionRegistrars: List<FirExtensionRegistrar>,
         jvmSessionFactoryContext: FirJvmSessionFactory.Context?,
         createJavaFacade: ((AbstractProjectEnvironment, FirSession, FirModuleData, AbstractProjectFileSearchScope) -> FirJavaFacade)?,
+        createBinaryClassFinderInputs: ((AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs?)?,
     ): FirSession {
         val languageVersionSettings = module.languageVersionSettings
         val targetPlatform = module.targetPlatform(testServices)
@@ -231,6 +241,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         languageVersionSettings,
                         jvmSessionFactoryContext,
                         createJavaFacade = createJavaFacade ?: AbstractProjectEnvironment::getFirJavaFacade,
+                        createBinaryClassFinderInputs = createBinaryClassFinderInputs ?: { _, _ -> null },
                     ).also(::registerExtraComponents)
                 }
             }

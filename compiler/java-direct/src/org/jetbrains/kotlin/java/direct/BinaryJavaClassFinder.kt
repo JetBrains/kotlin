@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtension
 import org.jetbrains.kotlin.cli.jvm.index.JavaFileExtensions
 import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
 import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndex
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
+import org.jetbrains.kotlin.fir.java.hasMetadataAnnotation
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClass
@@ -61,7 +63,7 @@ class BinaryJavaClassFinder(
     private val index: JvmDependenciesIndex,
     private val scope: GlobalSearchScope,
     private val enableSearchInCtSym: Boolean,
-) : JavaClassFinder {
+) : JavaClassFinder, JvmBinaryClassFinderInputs {
 
     private val extensions: JavaFileExtensions =
         if (enableSearchInCtSym) BINARY_CLASS_AND_SIG_EXTENSIONS else BINARY_CLASS_EXTENSIONS
@@ -198,6 +200,34 @@ class BinaryJavaClassFinder(
         }
 
     override fun canComputeKnownClassNamesInPackage(): Boolean = true
+
+    // ---- Stage 2 §6.3 — `JvmBinaryClassFinderInputs` implementation ----
+    //
+    // The deserializer (`JvmClassFileBasedSymbolProvider`) reads through this adapter when
+    // it is the java-direct library session, instead of going through `FirJavaFacade`. These
+    // four overrides mirror the facade's binary-side semantics exactly so the deserializer
+    // behaves identically to the facade-routed code path.
+
+    override fun hasTopLevelBinaryClass(classId: ClassId): Boolean {
+        // Mirrors `FirJavaFacade.hasTopLevelClassOf`: if names of the package can't be
+        // enumerated, conservatively return true; otherwise check the outermost-class name.
+        val knownNames = knownClassNamesInPackage(classId.packageFqName)
+        val topLevelName = classId.relativeClassName.asString().substringBefore(".")
+        return topLevelName in knownNames
+    }
+
+    override fun knownBinaryClassNamesInPackage(packageFqName: FqName): Set<String> =
+        knownClassNamesInPackage(packageFqName)
+
+    override fun hasBinaryPackage(fqName: FqName): Boolean =
+        findPackage(fqName, mayHaveAnnotations = false) != null
+
+    override fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): JavaClass? =
+        // Mirrors `FirJavaFacade.findClass`'s `takeIf` filter — Kotlin classes carrying
+        // `@Metadata` must not be returned to the deserializer; they are handled by the
+        // Kotlin class branch of `extractClassMetadata`.
+        findClass(JavaClassFinder.Request(classId, knownContent))
+            ?.takeIf { it.isFromSource || !it.hasMetadataAnnotation() }
 
     private fun findTopLevelClassVirtualFile(
         outerMostClassFqName: FqName,

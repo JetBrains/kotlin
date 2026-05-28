@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
+import org.jetbrains.kotlin.fir.java.deserialization.JvmBinaryClassFinderInputs
 import org.jetbrains.kotlin.fir.java.javaAnnotationProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -121,4 +122,51 @@ private fun binaryFinderForScope(
         }
     cache[key] = finder
     return finder
+}
+
+/**
+ * Stage 2 §6.3 of [`compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`]
+ * companion to [createJavaDirectSourceJavaFacadeBuilder]: produces the deserializer-side
+ * [JvmBinaryClassFinderInputs] lambda passed to
+ * [org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createLibrarySession] as
+ * `createBinaryClassFinderInputs`.
+ *
+ * For the CLI java-direct path (where `CliVirtualFileFinderFactory` is available) the lambda
+ * returns the same [BinaryJavaClassFinder] used elsewhere in this builder, which also
+ * implements [JvmBinaryClassFinderInputs]. The deserializer
+ * ([org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider]) then reads
+ * binary `.class` (and optionally `.sig`) files directly through this adapter instead of
+ * routing through `FirJavaFacade`.
+ *
+ * For non-CLI environments without a `JvmDependenciesIndex`, the lambda returns `null` and
+ * the deserializer falls back to `FirJavaFacade` — semantically equivalent to today's
+ * pre-§6.3 behavior on that path.
+ *
+ * Implementation note: this function uses its own memoization cache, independent of
+ * [createJavaDirectSourceJavaFacadeBuilder]'s cache. The duplication is minimal (typically
+ * one library scope per session, so at most one extra `BinaryJavaClassFinder` instance) and
+ * both finders have isolated per-instance caches anyway, so sharing has no correctness
+ * benefit. After §6.5 deletes `BinaryJavaClassFinder.kt` and the library-session facade is
+ * dropped, this function becomes the sole owner of the binary-inputs construction.
+ */
+@Suppress("UnstableApiUsage")
+fun createJavaDirectBinaryClassFinderInputsBuilder(
+    projectEnvironment: VfsBasedProjectEnvironment,
+): (AbstractProjectEnvironment, AbstractProjectFileSearchScope) -> JvmBinaryClassFinderInputs? {
+    val cache: MutableMap<BinaryFinderCacheKey, JvmBinaryClassFinderInputs?> = HashMap()
+    return { _, scope ->
+        val psiSearchScope: GlobalSearchScope = scope.asPsiSearchScope()
+        val vfff = VirtualFileFinderFactory.getInstance(projectEnvironment.project) as? CliVirtualFileFinderFactory
+        val key = BinaryFinderCacheKey(System.identityHashCode(psiSearchScope), vfff?.enableSearchInCtSym)
+        cache.getOrPut(key) {
+            // Only the CLI environment has a `JvmDependenciesIndex`. PSI-based non-CLI
+            // environments (scripting, REPL, IC outside CLI) don't, so the deserializer
+            // continues to route through `FirJavaFacade` exactly as before §6.3.
+            if (vfff != null) {
+                BinaryJavaClassFinder(vfff.index, psiSearchScope, vfff.enableSearchInCtSym)
+            } else {
+                null
+            }
+        }
+    }
 }

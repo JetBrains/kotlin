@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.java.direct.createJavaDirectBinaryClassFinderInputsBuilder
 import org.jetbrains.kotlin.java.direct.createJavaDirectSourceJavaFacadeBuilder
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
@@ -316,6 +317,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 //            if (configuration.languageVersionSettings.getFlag(JvmAnalysisFlags.useJavaDirect)) {
                 createJavaDirectSourceJavaFacadeBuilder(configuration, projectEnvironment, librariesScope)
 //            } else AbstractProjectEnvironment::getFirJavaFacade
+        // Stage 2 §6.3: deserializer-side adapter. On CLI java-direct, the deserializer reads
+        // binary `.class`/`.sig` files through this `JvmBinaryClassFinderInputs` adapter (the
+        // `BinaryJavaClassFinder` constructed for `librariesScope`); on non-CLI envs the lambda
+        // returns `null` and the deserializer falls back to `FirJavaFacade`.
+        val javaDirectBinaryClassFinderInputs =
+            createJavaDirectBinaryClassFinderInputsBuilder(projectEnvironment)
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -347,6 +354,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration.languageVersionSettings,
                     context,
                     createJavaFacade = javaDirectFacade,
+                    createBinaryClassFinderInputs = javaDirectBinaryClassFinderInputs,
                 )
             },
             createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->

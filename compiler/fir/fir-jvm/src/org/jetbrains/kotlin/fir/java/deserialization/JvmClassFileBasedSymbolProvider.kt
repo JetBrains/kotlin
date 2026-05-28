@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeRawType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
+import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.kotlin.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -52,7 +53,16 @@ open class JvmClassFileBasedSymbolProvider(
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
     private val javaFacade: FirJavaFacade,
-    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
+    defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library,
+    /**
+     * Stage 2 §6.3 of `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`:
+     * when non-null, the deserializer reads binary `.class` (and optionally `.sig`) files
+     * through this adapter instead of routing through [javaFacade]. The `java-direct` library
+     * session supplies a `JvmDependenciesIndex`-backed implementation; PSI / LL / IDE /
+     * scripting / IC / jklib paths pass `null` and the deserializer falls back to
+     * [javaFacade] exactly as before.
+     */
+    private val binaryClassFinderInputs: JvmBinaryClassFinderInputs? = null,
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
 ) {
@@ -69,7 +79,7 @@ open class JvmClassFileBasedSymbolProvider(
 
     private fun computePackagePartInfo(packageFqName: FqName, partName: String): PackagePartsCacheData? {
         val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
-        if (!javaFacade.hasTopLevelClassOf(classId)) return null
+        if (!hasTopLevelBinaryClass(classId)) return null
         val [kotlinClass, byteContent] =
             kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion) as? KotlinClassFinder.Result.KotlinClass ?: return null
 
@@ -136,7 +146,9 @@ open class JvmClassFileBasedSymbolProvider(
 
     override fun computePackageSetWithNonClassDeclarations(): Set<String>? = packagePartProvider.computePackageSetWithNonClassDeclarations()
 
-    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? = javaFacade.knownClassNamesInPackage(packageFqName)
+    override fun knownTopLevelClassesInPackage(packageFqName: FqName): Set<String>? =
+        binaryClassFinderInputs?.knownBinaryClassNamesInPackage(packageFqName)
+            ?: javaFacade.knownClassNamesInPackage(packageFqName)
 
     private val KotlinJvmBinaryClass.incompatibility: IncompatibleVersionErrorData<MetadataVersion>?
         get() {
@@ -168,7 +180,7 @@ open class JvmClassFileBasedSymbolProvider(
 
     override fun extractClassMetadata(classId: ClassId, parentContext: FirDeserializationContext?): ClassMetadataFindResult? {
         // Kotlin classes are annotated Java classes, so this check also looks for them.
-        if (!javaFacade.hasTopLevelClassOf(classId)) return null
+        if (!hasTopLevelBinaryClass(classId)) return null
 
         val result = kotlinClassFinder.findKotlinClassOrContent(classId, ownMetadataVersion)
         if (result !is KotlinClassFinder.Result.KotlinClass) {
@@ -177,7 +189,7 @@ open class JvmClassFileBasedSymbolProvider(
                 return null
             }
             val knownContent = (result as? KotlinClassFinder.Result.ClassFileContent)?.content
-            val javaClass = javaFacade.findClass(classId, knownContent) ?: return null
+            val javaClass = findBinaryClass(classId, knownContent) ?: return null
             return ClassMetadataFindResult.NoMetadata { symbol ->
                 javaFacade.convertJavaClassToFir(symbol, classId.outerClassId?.let(::getClass), javaClass)
             }
@@ -210,7 +222,17 @@ open class JvmClassFileBasedSymbolProvider(
         JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
     override fun hasPackage(fqName: FqName): Boolean =
-        javaFacade.hasPackage(fqName)
+        binaryClassFinderInputs?.hasBinaryPackage(fqName) ?: javaFacade.hasPackage(fqName)
+
+    // Stage 2 §6.3 (see [JvmBinaryClassFinderInputs]): on the `java-direct` library-session
+    // path the deserializer reads binary class presence / materialization through the
+    // injected [binaryClassFinderInputs] adapter; everywhere else it falls back to the
+    // [javaFacade] for zero-delta behavior.
+    private fun hasTopLevelBinaryClass(classId: ClassId): Boolean =
+        binaryClassFinderInputs?.hasTopLevelBinaryClass(classId) ?: javaFacade.hasTopLevelClassOf(classId)
+
+    private fun findBinaryClass(classId: ClassId, knownContent: ByteArray?): org.jetbrains.kotlin.load.java.structure.JavaClass? =
+        binaryClassFinderInputs?.findBinaryClass(classId, knownContent) ?: javaFacade.findClass(classId, knownContent)
 
     private fun String?.toPath(): Path? {
         return this?.let { Paths.get(it).normalize() }
