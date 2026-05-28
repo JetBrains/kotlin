@@ -4,5 +4,10 @@
         serviceInterface="org.jetbrains.kotlin.asJava.KotlinAsJavaSupport"
         serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport"
     />
+
+    <projectService
+        serviceInterface="org.jetbrains.kotlin.light.classes.symbol.KaLightClassProvider"
+        serviceImplementation="org.jetbrains.kotlin.light.classes.symbol.SymbolKotlinAsJavaSupport"
+    />
   </extensions>
 </idea-plugin>

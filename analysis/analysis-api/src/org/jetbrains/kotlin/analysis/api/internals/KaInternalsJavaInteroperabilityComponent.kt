@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.analysis.api.internals
 
-import com.intellij.psi.PsiClass
-import com.intellij.psi.PsiElement
-import com.intellij.psi.PsiMember
-import com.intellij.psi.PsiType
+import com.intellij.psi.*
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
-import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeMappingMode
 import org.jetbrains.kotlin.name.Name
@@ -33,6 +27,24 @@ public interface KaInternalsJavaInteroperabilityComponent {
     ): PsiType?
 
     public fun asKaType(psiType: PsiType, useSitePosition: PsiElement): KaType?
+
+    public fun asPsiClass(classSymbol: KaClassSymbol): PsiClass?
+
+    public fun asFacadePsiClass(fileSymbol: KaFileSymbol): PsiClass?
+
+    public fun asFacadePsiClass(scriptSymbol: KaScriptSymbol): PsiClass?
+
+    public fun asPsiMethods(functionSymbol: KaFunctionSymbol): List<PsiMethod>
+
+    public fun asPsiTypeParameters(typeParameterSymbol: KaTypeParameterSymbol): List<PsiTypeParameter>
+
+    public fun asPsiParameters(parameterSymbol: KaParameterSymbol): List<PsiParameter>
+
+    public fun asPsiField(backingFieldSymbol: KaBackingFieldSymbol): PsiField?
+
+    public fun asPsiField(classSymbol: KaClassSymbol): PsiField?
+
+    public fun asPsiField(enumEntrySymbol: KaEnumEntrySymbol): PsiEnumConstant?
 
     public fun mapToJvmTypeDescriptor(type: KaType): String
 
