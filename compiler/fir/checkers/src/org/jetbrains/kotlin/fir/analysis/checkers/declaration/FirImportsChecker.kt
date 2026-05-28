@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.useArrayLiteralResolution
 import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -247,7 +248,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
         val importedName = import.importedName ?: return
         if (!OperatorConventions.isConventionName(alias)) return
         when (alias) {
-            OperatorNameConventions.OF if LanguageFeature.CollectionLiterals.isDisabled() -> {
+            OperatorNameConventions.OF if useArrayLiteralResolution() -> {
                 return
             }
 

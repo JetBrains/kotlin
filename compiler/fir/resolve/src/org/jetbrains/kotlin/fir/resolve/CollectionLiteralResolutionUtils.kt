@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeCollectionLiteralAmbiguity
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteral
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
 import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedQualifier
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
@@ -135,6 +136,7 @@ fun BodyResolveComponents.buildCollectionLiteralCallForStdlibType(
             name = functionName
         }
         argumentList = collectionLiteral.argumentList
+        origin = FirFunctionCallOrigin.StdlibCollectionLiteral
     }
 }
 

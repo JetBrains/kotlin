@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-81141
 // RENDER_DIAGNOSTICS_FULL_TEXT
-// LANGUAGE: -CollectionLiterals
+// LANGUAGE: -CollectionLiterals -CollectionLiteralsBasedAnnotationResolution
 
 @Repeatable
 annotation class Foo(val arr: Array<String> = [])
