@@ -49,7 +49,7 @@ private sealed class LeafTerm {
 }
 
 // A complex boolean function which couldn't be reduced to simpler terms, usually an unknown function call.
-private data class ComplexTerm(val element: IrElement) : LeafTerm() {
+private class ComplexTerm(val element: IrElement, var depth: Int) : LeafTerm() {
     override fun format(inverted: Boolean) = when (element) {
         is IrValueDeclaration -> if (inverted) "!${element.name}" else "${element.name}"
         else -> "[${element::class.java.simpleName}@0x${System.identityHashCode(element).toString(16)} is ${!inverted}]"
@@ -164,13 +164,15 @@ private object Predicates {
      *
      * But it's important to do this only after all intermediate computations have been completed:
      * consider the code: if (foo(..) || x !is A) { .. } else { .. }
-     * the predicate would be (no surprise) (foo(..) | (x !is A)). If the call to foo gets optimized,
+     * the predicate would be (no surprise) (foo(..) | (x !is A)). If the call to foo gets optimized away,
      * then the predicate will just become an empty predicate (meaning no deductions have been made),
      * but then in the else clause the predicate also will be empty which is suboptimal since in reality
      * we know that x is A inside the else clause (the full predicate is (!foo(..) & (x is A))).
      * In this case the call to foo(..) can be optimized away after the full if/else clause have been handled.
+     * In order to do this correctly, we compute how far up the IR tree a particular complex term escapes
+     * (through control flow merge edges), and only optimize away the "local" ones
+     * (which do not escape from the current control flow merge point scope).
      */
-    // TODO: When it is safe to do it? KT-85621
     fun optimizeAwayComplexTerms(predicate: Predicate, complexTermsMask: CustomBitSet): Predicate {
         val conjunction = predicate as? Conjunction ?: return predicate
         val terms = conjunction.terms.filterNot { disjunction -> disjunction.terms.intersects(complexTermsMask) }
@@ -433,8 +435,10 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     }
 
     private class ControlFlowMergePointInfo(
-            // The upper level predicates' stack size.
+            // The size of the upper level predicates' stack.
             val level: Int,
+            // The depth from the IR root (only counting control flow merge points).
+            val depth: Int,
             // This is either an alias (a variable) for the result if it is the only one, or a special marker for multiple values.
             // Keeping all possible values is possible but not very useful (it's hard to build the predicates with them):
             // Consider we have a phi node w merging two variables a and b. What is the predicate for (w is A) then?
@@ -470,6 +474,8 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
         // It's convenient to think of the predicate as a stack of sub-predicates which get anded to get the result.
         val upperLevelPredicates = mutableListOf<Predicate>()
+
+        var currentDepth = 0 // Only control flow merge points are counted.
 
         val variableValueCounters = mutableMapOf<IrVariable, Int>()
         val phantomVariables = mutableMapOf<IrExpression, IrVariable>()
@@ -530,15 +536,28 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 else if (phiNodeAlias != resultVariable)
                     phiNodeAlias = multipleValuesMarker
             }
-            predicate = Predicates.or(
-                    predicate,
-                    getFullPredicate(result.predicate, false, level)
-            )
+            val currentPredicate = getFullPredicate(result.predicate, level)
+            val conjunction = currentPredicate as? Conjunction
+            val allPredicateLeafTerms = CustomBitSet()
+            if (conjunction != null) {
+                for (disjunction in conjunction.terms)
+                    allPredicateLeafTerms.or(disjunction.terms)
+            }
+            allPredicateLeafTerms.and(complexTermsMask)
+            allPredicateLeafTerms.forEachBit { bit ->
+                val termIndex = bit / 2
+                val complexTerm = leafTerms[termIndex] as? ComplexTerm
+                        ?: error("A complex term expected but was ${leafTerms[termIndex]}")
+                if (complexTerm.depth > depth)
+                    complexTerm.depth = depth
+            }
+            predicate = Predicates.or(predicate, currentPredicate)
         }
 
         inline fun mergeControlFlow(irElement: IrElement, block: (ControlFlowMergePointInfo) -> Unit): VisitorResult {
-            val cfmpInfo = ControlFlowMergePointInfo(upperLevelPredicates.size)
+            val cfmpInfo = ControlFlowMergePointInfo(upperLevelPredicates.size, ++currentDepth)
             block(cfmpInfo)
+            --currentDepth
 
             variableAliases.clear()
             for ([variable, alias] in cfmpInfo.variableAliases) {
@@ -547,8 +566,16 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 else
                     createPhantomVariable(variable, createPhantomValueAt(variable, irElement)) // This is basically a phi node.
             }
+            // Can only optimize so much: only "local" complex terms.
+            val localComplexTermsMask = CustomBitSet()
+            for (termIndex in leafTerms.indices) {
+                val complexTerm = leafTerms[termIndex] as? ComplexTerm ?: continue
+                if (complexTerm.depth < cfmpInfo.depth) continue
+                localComplexTermsMask.set((termIndex setTo true).bitIndex)
+                localComplexTermsMask.set((termIndex setTo false).bitIndex)
+            }
             return VisitorResult(
-                    cfmpInfo.predicate,
+                    Predicates.optimizeAwayComplexTerms(cfmpInfo.predicate, localComplexTermsMask),
                     cfmpInfo.phiNodeAlias.takeIf { it != multipleValuesMarker }
             )
         }
@@ -571,7 +598,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
 
         fun buildComplexTerm(element: IrElement): Int =
                 complexTermsMap.getOrPut(element) {
-                    leafTerms.add(ComplexTerm(element))
+                    leafTerms.add(ComplexTerm(element, currentDepth))
                     val termIndex = leafTerms.size - 1
                     complexTermsMask.set((termIndex setTo true).bitIndex)
                     complexTermsMask.set((termIndex setTo false).bitIndex)
@@ -629,16 +656,11 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             return Pair(initializer, safeCallResultWhen.branches[1].result)
         }
 
-        fun getFullPredicate(currentPredicate: Predicate, optimizeAwayComplexTerms: Boolean, level: Int) =
+        fun getFullPredicate(currentPredicate: Predicate, level: Int) =
                 usingUpperLevelPredicate(currentPredicate) {
                     val initialPredicate: Predicate = Predicate.True
                     upperLevelPredicates.drop(level).fold(initialPredicate) { acc, predicate ->
-                        Predicates.and(
-                                acc,
-                                if (optimizeAwayComplexTerms)
-                                    Predicates.optimizeAwayComplexTerms(predicate, complexTermsMask)
-                                else predicate
-                        )
+                        Predicates.and(acc, predicate)
                     }
                 }
 
@@ -1138,7 +1160,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 VisitorResult(handleDoWhileLoop(loop, data))
 
         fun tryOptimizeTypeCheck(expression: IrTypeOperatorCall, variable: IrValueDeclaration, predicate: Predicate) {
-            val fullPredicate = getFullPredicate(predicate, false, 0)
+            val fullPredicate = getFullPredicate(predicate, 0)
             context.logMultiple {
                 +"TYPE CHECK: ${expression.dump()}"
                 +"    ${fullPredicate.format(leafTerms)}"
@@ -1208,7 +1230,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                         val conditionBooleanPredicate = buildBooleanPredicate(branch.condition)
                         context.logMultiple {
                             +"WHEN: ${branch.condition.dump()}"
-                            +"    upperLevelPredicate = ${getFullPredicate(Predicate.True, false, 0).format(leafTerms)}"
+                            +"    upperLevelPredicate = ${getFullPredicate(Predicate.True, 0).format(leafTerms)}"
                             +"    condition = ${conditionBooleanPredicate.ifTrue.format(leafTerms)}"
                             +"    ~condition = ${conditionBooleanPredicate.ifFalse.format(leafTerms)}"
                             +"    result = ${cfmpInfo.predicate.format(leafTerms)}"
