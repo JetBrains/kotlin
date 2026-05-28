@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assumeFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import org.jetbrains.kotlin.test.utils.SteppingTestLoggedData
 import org.jetbrains.kotlin.test.utils.checkSteppingTestResult
@@ -32,6 +33,10 @@ abstract class LLDBSessionSpec {
     abstract fun checkLLDBOutput(output: String, nativeTargets: KotlinNativeTargets): Boolean
 
     protected fun sanityCheckLLDBOutput(output: String) {
+        // Workaround for KT-84923. Mute the test if the problem occurs:
+        val kt84923Message = "attached to process, but could not pause execution; attach failed"
+        assumeFalse(output.contains(kt84923Message)) { "Test skipped because of KT-84923" }
+
         // Ideally, we should just check that stderr is empty.
         // Tracked in KT-86532.
         for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
