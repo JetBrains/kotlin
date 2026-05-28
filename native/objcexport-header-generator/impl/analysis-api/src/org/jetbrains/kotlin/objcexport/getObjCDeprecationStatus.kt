@@ -25,11 +25,11 @@ internal fun KaSession.getObjCDeprecationStatus(symbol: KaSymbol): String? {
 }
 
 @KaExperimentalApi
-private fun KaDeprecation.toDeprecationAttribute(): String {
+private fun KaDeprecation.toDeprecationAttribute(): String? {
     val attribute = when (level) {
         KaDeprecationLevel.WARNING -> "deprecated"
         KaDeprecationLevel.ERROR, KaDeprecationLevel.HIDDEN -> "unavailable"
-        else -> error("Unsupported deprecation level: $level")
+        else -> return null
     }
 
     // TODO: consider avoiding code generation for unavailable.
