@@ -267,9 +267,9 @@ fun RepositoryHandler.githubCommit(ghUser: String, repo: String, groupAlias: Str
         forRepository {
             ivy {
                 name = "Github Commit: $ghUser/$repo"
-                url = URI("https://github.com/$ghUser/$repo/zipball/")
+                url = URI("https://github.com/$ghUser/$repo/archive/")
                 patternLayout {
-                    artifact("[revision]")
+                    artifact("[revision].[ext]")
                 }
                 metadataSources { artifact() }
             }
