@@ -206,6 +206,15 @@ class ManifestWritingTest : AbstractNativeSimpleTest() {
         checkPropertyAndValue(manifestProperties, KLIB_PROPERTY_MANUALLY_ENABLED_POISONING_LANGUAGE_FEATURES, poisoningFeature.name, null)
     }
 
+    @Test
+    @TestMetadata("metadata_compilation_with_companion_blocks")
+    fun testWithEnabledCompanionBlockFeature(testInfo: TestInfo) {
+        doManifestTest(
+            testInfo,
+            "-Xcompanion-blocks-and-extensions",
+        )
+    }
+
     private fun doManifestTest(testInfo: TestInfo, vararg additionalCompilerArguments: String) {
         val compilationResult = compileLibrary(
             testRunSettings,
