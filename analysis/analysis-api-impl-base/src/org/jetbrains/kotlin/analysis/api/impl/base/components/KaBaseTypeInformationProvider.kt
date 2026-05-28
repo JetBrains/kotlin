@@ -56,10 +56,9 @@ class KaBaseFunctionTypeFamily(
         typeKind.numberedClassId(arity)
 
     override fun equals(other: Any?): Boolean =
-        other is KaBaseFunctionTypeFamily && typeKind === other.typeKind
+        other is KaBaseFunctionTypeFamily && typeKind == other.typeKind
 
-    override fun hashCode(): Int =
-        System.identityHashCode(typeKind)
+    override fun hashCode(): Int = typeKind.hashCode()
 
     override fun toString(): String =
         typeKind.toString()
