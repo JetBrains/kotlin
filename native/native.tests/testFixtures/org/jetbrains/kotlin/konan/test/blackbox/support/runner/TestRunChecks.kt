@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import org.jetbrains.kotlin.utils.yieldIfNotNull
 import org.junit.jupiter.api.Assumptions
 import org.opentest4j.AssertionFailedError
+import org.opentest4j.TestAbortedException
 import org.opentest4j.ValueWrapper
 import java.io.File
 import kotlin.time.Duration
@@ -122,10 +123,11 @@ sealed interface TestRunCheck {
                     Result.Failed("Tested process output has not passed validation.")
                 } else Result.Passed
             } catch (t: Throwable) {
-                if (t is Exception || t is AssertionError) {
-                    Result.Failed("Tested process output has not passed validation: ${t.message}", t)
-                } else {
-                    throw t
+                when (t) {
+                    is TestAbortedException -> throw t // E.g., propagate `assumeFalse` instead of making it fail the test.
+                    is Exception, is AssertionError ->
+                        Result.Failed("Tested process output has not passed validation: ${t.message}", t)
+                    else -> throw t
                 }
             }
     }
