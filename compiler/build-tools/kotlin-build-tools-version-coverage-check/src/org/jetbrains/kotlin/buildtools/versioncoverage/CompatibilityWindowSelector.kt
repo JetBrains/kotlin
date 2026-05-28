@@ -10,29 +10,19 @@ internal class CompatibilityWindowSelector(private val compatibilityType: Compat
 
     fun select(all: List<KotlinToolingVersion>, current: KotlinToolingVersion): List<KotlinToolingVersion> {
         val selectedVersionsWithHighestMaturity = all
-            .groupBy { Triple(it.major, it.minor, it.patch) }
-            .filterKeys { [major, minor, patch] ->
-                val kotlinVersion = KotlinToolingVersion(major, minor, patch, null)
-                when (compatibilityType) {
-                    CompatibilityType.FORWARD -> kotlinVersion >= current
-                    CompatibilityType.BACKWARD -> kotlinVersion <= current
-                }
+            .groupBy { KotlinToolingVersion(it.major, it.minor, it.patch, null) }
+            .filterKeys { kotlinVersion ->
+                compatibilityType.comparator.compare(kotlinVersion, current) >= 0
             }
             .values.mapNotNull { it.maxOrNull() }
 
         val compatibleVersions = selectedVersionsWithHighestMaturity
-            .groupBy { it.major to it.minor }
-            .toSortedMap(getVersionComparator())
+            .groupBy { KotlinToolingVersion(it.major, it.minor, 0, null) }
+            .toSortedMap(compatibilityType.comparator)
             .values
             .take(compatibilityType.minorVersionSupportCount + 1)
             .flatten()
 
         return compatibleVersions
     }
-
-    private fun getVersionComparator() =
-        when (compatibilityType) {
-            CompatibilityType.FORWARD -> compareBy<Pair<Int, Int>> { it.first }.thenBy { it.second }
-            CompatibilityType.BACKWARD -> compareByDescending<Pair<Int, Int>> { it.first }.thenByDescending { it.second }
-        }
 }

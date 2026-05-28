@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.buildtools.versioncoverage
 
-internal enum class CompatibilityType(val minorVersionSupportCount: Int) {
-    BACKWARD(3),
-    FORWARD(1);
+import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
+
+internal enum class CompatibilityType(val minorVersionSupportCount: Int, val comparator: Comparator<KotlinToolingVersion>) {
+    BACKWARD(3, compareBy<KotlinToolingVersion> { it }.reversed()),
+    FORWARD(1, compareBy { it });
 
     companion object {
         fun fromString(string: String): CompatibilityType =

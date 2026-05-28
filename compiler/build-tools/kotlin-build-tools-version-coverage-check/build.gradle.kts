@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     application
     id("project-tests-convention")
+    id("test-inputs-check")
 }
 
 dependencies {
