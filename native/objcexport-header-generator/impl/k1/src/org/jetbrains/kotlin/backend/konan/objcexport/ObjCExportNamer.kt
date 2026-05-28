@@ -1082,8 +1082,14 @@ private class ObjCName(
 
     fun asString(forSwift: Boolean): String = swiftName.takeIf { forSwift } ?: objCName ?: kotlinName
 
-    fun asIdentifier(forSwift: Boolean, default: (String) -> String = { it.toIdentifier() }): String =
-        swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
+    fun asIdentifier(forSwift: Boolean, default: (String) -> String = { it.toIdentifier() }): String {
+        val identifier = swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
+        return if (objCMacroDefinitions.contains(identifier)) {
+            identifier + "_"
+        } else {
+            identifier
+        }
+    }
 }
 
 class ObjCEnumEntryName(

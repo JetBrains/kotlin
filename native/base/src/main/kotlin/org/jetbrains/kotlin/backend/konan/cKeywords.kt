@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+val cMacroDefinitions = setOf("NULL")
+
 @InternalKotlinNativeApi
 val cKeywords = setOf(
     // Actual C keywords.
