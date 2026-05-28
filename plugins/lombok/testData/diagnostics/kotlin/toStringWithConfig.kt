@@ -7,7 +7,7 @@ import lombok.ToString
 open class Base(val baseProp: Int)
 
 // TO_STRING_CALL_SUPER_NOT_CALLED warning: class has a non-trivial superclass and callSuper was not explicitly set
-<!TO_STRING_CALL_SUPER_NOT_CALLED!>@ToString<!>
+<!CALL_SUPER_NOT_CALLED!>@ToString<!>
 class DerivedImplicit(val ownProp: String) : Base(10)
 
 // No TO_STRING_CALL_SUPER_NOT_CALLED warning: class extends only kotlin.Any

@@ -11,9 +11,7 @@ import lombok.extern.jbosslog.JBossLog
 import lombok.extern.log4j.Log4j2
 import lombok.extern.slf4j.XSlf4j
 import lombok.ToString
-
-<!FLAG_USAGE_ERROR!>@ToString<!>
-class ToStringExampleError(val x: Int)
+import lombok.EqualsAndHashCode
 
 // Error despite the `lombok.log.javaUtilLogging.flagUsage=warning` because `lombok.log.flagUsage=error` has greater severity
 <!FLAG_USAGE_ERROR!>@Slf4j<!>
@@ -47,6 +45,12 @@ class Log4j2ExampleError
 <!FLAG_USAGE_ERROR!>@XSlf4j<!>
 class XSlf4jExampleError
 
+<!FLAG_USAGE_ERROR!>@ToString<!>
+class ToStringExampleError(val x: Int)
+
+<!FLAG_USAGE_ERROR!>@EqualsAndHashCode<!>
+class EqualsAndHashCodeExampleError(val x: Int)
+
 class NotAnnotated
 
 // FILE: lombok.config
@@ -61,3 +65,4 @@ lombok.log.jbossLog.flagUsage=warning
 lombok.log.log4j2.flagUsage=warning
 lombok.log.xslf4j.flagUsage=warning
 lombok.toString.flagUsage=error
+lombok.equalsAndHashCode.flagUsage=error

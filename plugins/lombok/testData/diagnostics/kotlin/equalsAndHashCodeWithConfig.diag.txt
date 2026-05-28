@@ -1,0 +1,1 @@
+/test.kt:11:1: warning: Generating 'equals/hashCode' implementation but without a call to superclass, even though this class does not extend 'Any'. If this is intentional, add '@EqualsAndHashCode(callSuper=false)' to your type.

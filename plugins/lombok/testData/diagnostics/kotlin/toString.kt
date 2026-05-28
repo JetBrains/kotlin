@@ -36,7 +36,7 @@ class WithNonConflictingContextualFunction {
 
 @ToString
 class WithBothIncludeAndExclude(
-    <!TO_STRING_EXCLUDE_AND_INCLUDE!>@ToString.Include<!> @ToString.Exclude val conflicting: String,
+    <!EXCLUDE_AND_INCLUDE_MUTUALLY_EXCLUSIVE!>@ToString.Include<!> @ToString.Exclude val conflicting: String,
     val normal: String,
 )
 
@@ -50,11 +50,11 @@ class WithOnlyExclude(@ToString.Exclude val excluded: String, val normal: String
 @ToString
 class Normal(val x: Int)
 
-// TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = true is Java-specific and has no effect in Kotlin
-@ToString(doNotUseGetters = <!TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
+// DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = true is Java-specific and has no effect in Kotlin
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>true<!>)
 class WithDoNotUseGettersTrue(val x: Int)
 
-// TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = false is Java-specific.
+// DO_NOT_USE_GETTERS_IRRELEVANT warning: doNotUseGetters = false is Java-specific.
 // Despite the absence of behavioral difference, report a warning because the parameter is redundant and it's discrouraged to use in Kotlin.
-@ToString(doNotUseGetters = <!TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
+@ToString(doNotUseGetters = <!DO_NOT_USE_GETTERS_IRRELEVANT!>false<!>)
 class WithDoNotUseGettersFalse(val x: Int)

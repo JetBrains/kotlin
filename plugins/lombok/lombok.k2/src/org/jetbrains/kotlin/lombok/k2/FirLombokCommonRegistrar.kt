@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.lombok.k2
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.lombok.k2.config.LombokService
+import org.jetbrains.kotlin.lombok.k2.generators.EqualsAndHashCodeGenerator
 import org.jetbrains.kotlin.lombok.k2.generators.LoggerGenerator
 import org.jetbrains.kotlin.lombok.k2.generators.LombokConstructorsGenerator
 import org.jetbrains.kotlin.lombok.k2.generators.ToStringGenerator
@@ -18,6 +19,7 @@ class FirLombokCommonRegistrar(private val lombokConfigFile: File?) : FirExtensi
         +::LoggerGenerator
         +::ToStringGenerator
         +::LombokConstructorsGenerator
+        +::EqualsAndHashCodeGenerator
 
         registerDiagnosticContainers(LombokCliDiagnostics)
     }

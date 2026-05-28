@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
+import org.jetbrains.kotlin.lombok.k2.generators.EqualsAndHashCodeGeneratorKey
 import org.jetbrains.kotlin.lombok.k2.generators.ToStringGeneratorKey
 import kotlin.reflect.KClass
 
@@ -30,6 +31,7 @@ class LombokIrGenerationExtension : IrGenerationExtension {
 class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid() {
     private val bodyBuilders: Map<KClass<out LombokDeclarationKey>, IrBodyBuilder<out LombokDeclarationKey>> = mapOf(
         ToStringGeneratorKey::class to ToStringBodyBuilder,
+        EqualsAndHashCodeGeneratorKey::class to EqualsAndHashCodeIrBodyBuilder,
     )
 
     override fun visitElement(element: IrElement) {
@@ -46,6 +48,11 @@ class IrBodyBuilderVisitor(private val context: IrPluginContext) : IrVisitorVoid
                     is ToStringBodyBuilder -> {
                         with(bodyBuilder) {
                             build(generatorKey as ToStringGeneratorKey, declaration)
+                        }
+                    }
+                    is EqualsAndHashCodeIrBodyBuilder -> {
+                        with(bodyBuilder) {
+                            build(generatorKey as EqualsAndHashCodeGeneratorKey, declaration)
                         }
                     }
                     else -> error("Unimplemented body builder type: ${bodyBuilder::class}")

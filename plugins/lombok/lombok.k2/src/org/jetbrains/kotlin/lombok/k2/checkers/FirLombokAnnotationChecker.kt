@@ -50,6 +50,19 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         this[LombokNames.NO_ARGS_CONSTRUCTOR_ID] = listOf(
             KotlinTarget.CLASS_ONLY, // Objects have empty constructor by default, so doesn't make sense to support the annotation on them.
         )
+        this[LombokNames.EQUALS_AND_HASH_CODE_ID] = listOf(
+            KotlinTarget.CLASS_ONLY,
+            KotlinTarget.OBJECT,
+            KotlinTarget.ENUM_CLASS,
+            KotlinTarget.LOCAL_CLASS,
+        )
+        this[LombokNames.EQUALS_AND_HASH_CODE_INCLUDE_ID] = listOf(
+            KotlinTarget.PROPERTY,
+            //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
+        )
+        this[LombokNames.EQUALS_AND_HASH_CODE_EXCLUDE_ID] = listOf(
+            KotlinTarget.PROPERTY,
+        )
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
