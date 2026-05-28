@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.wasm.test.klib
 
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.KotlinWasmCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.KotlinWasmCompiler
@@ -50,6 +51,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
         sourceFile: File,
         klibLocation: File,
         abiVersion: KotlinAbiVersion,
+        withCompanionBlocksAndExtensionsFeature: Boolean
     ) {
         val args = KotlinWasmCompilerArguments().apply {
             if (asFile) {
@@ -64,6 +66,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
             irModuleName = sourceFile.nameWithoutExtension
             customKlibAbiVersion = abiVersion.toString()
             freeArgs = listOf(sourceFile.absolutePath)
+            if (withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
         }
 
         val messageCollector = MessageCollectorImpl()

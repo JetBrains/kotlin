@@ -564,6 +564,24 @@ abstract class AbstractKlibLoaderTest {
             )
     }
 
+    @Test
+    fun testNewCompanionInitializationRead() {
+        val klib = generateNewKlib(
+            asFile = true,
+            fileExtension = "",
+            withCompanionBlocksAndExtensionsFeature = true,
+        )
+        val lib: Path = Paths.get(klib)
+
+        val loaded = KlibLoader {
+            libraryPaths(lib)
+        }.load()
+
+        loaded.librariesStdlibFirst.forEach {
+            assertTrue(it.newCompanionInitializationEnabled)
+        }
+    }
+
     protected abstract val ownPlatformCheckers: List<KlibPlatformChecker>
     protected abstract val alienPlatformCheckers: List<KlibPlatformChecker>
 
@@ -656,7 +674,12 @@ abstract class AbstractKlibLoaderTest {
     private inline fun <reified T : ProblemCase> KlibLoaderResult.allByCase(): List<String> =
         problematicLibraries.filter { it.problemCase is T }.map { it.libraryPath }
 
-    private fun generateNewKlib(asFile: Boolean, fileExtension: String, abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT): String {
+    private fun generateNewKlib(
+        asFile: Boolean,
+        fileExtension: String,
+        abiVersion: KotlinAbiVersion = KotlinAbiVersion.CURRENT,
+        withCompanionBlocksAndExtensionsFeature: Boolean = false,
+    ): String {
         val uid = (generatedLibsCounter++).toString().padStart(3, '0')
         val baseName = "klib-as_${if (asFile) "file" else "dir"}-ext_$fileExtension-$uid"
 
@@ -670,7 +693,8 @@ abstract class AbstractKlibLoaderTest {
             asFile = asFile,
             sourceFile = sourceFile,
             klibLocation = klibLocation,
-            abiVersion = abiVersion
+            abiVersion = abiVersion,
+            withCompanionBlocksAndExtensionsFeature = withCompanionBlocksAndExtensionsFeature,
         )
 
         // Sometimes the compiler sets file extension on its own. This needs to be fixed specifically for KLIB loader tests.
@@ -685,5 +709,11 @@ abstract class AbstractKlibLoaderTest {
         return klibLocation.path
     }
 
-    protected abstract fun compileKlib(asFile: Boolean, sourceFile: File, klibLocation: File, abiVersion: KotlinAbiVersion)
+    protected abstract fun compileKlib(
+        asFile: Boolean,
+        sourceFile: File,
+        klibLocation: File,
+        abiVersion: KotlinAbiVersion,
+        withCompanionBlocksAndExtensionsFeature: Boolean = false,
+    )
 }

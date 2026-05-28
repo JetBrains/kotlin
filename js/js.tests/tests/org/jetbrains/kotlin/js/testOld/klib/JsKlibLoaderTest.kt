@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
+import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.AbstractKlibLoaderTest
@@ -39,6 +40,7 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
         sourceFile: File,
         klibLocation: File,
         abiVersion: KotlinAbiVersion,
+        withCompanionBlocksAndExtensionsFeature: Boolean
     ) {
         runJsCompiler {
             if (asFile) {
@@ -52,6 +54,7 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
             irModuleName = sourceFile.nameWithoutExtension
             customKlibAbiVersion = abiVersion.toString()
             freeArgs = listOf(sourceFile.absolutePath)
+            if (withCompanionBlocksAndExtensionsFeature) companionBlocksAndExtensions = true
         }
     }
 }
