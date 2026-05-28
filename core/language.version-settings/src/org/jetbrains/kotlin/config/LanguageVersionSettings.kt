@@ -543,16 +543,13 @@ enum class LanguageFeature(
     InferThrowableTypeParameterToUpperBound(KOTLIN_2_5, "KT-82961"),
 
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107") {
-        fun versionCheck() {
-            sinceVersion?.let {
-                require(CallCompletionRefinementsFor25.sinceVersion != null && CallCompletionRefinementsFor25.sinceVersion <= it)
-                require(UnitConversionsOnArbitraryExpressions.sinceVersion != null && UnitConversionsOnArbitraryExpressions.sinceVersion <= it)
-                require(InferThrowableTypeParameterToUpperBound.sinceVersion != null && InferThrowableTypeParameterToUpperBound.sinceVersion <= it)
-            }
-        }
-
-        init {
-            versionCheck()
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkSinceVersionIsAtLeast(
+                CallCompletionRefinementsFor25,
+                UnitConversionsOnArbitraryExpressions,
+                InferThrowableTypeParameterToUpperBound,
+            )
         }
     },
 
@@ -628,22 +625,10 @@ enum class LanguageFeature(
 
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
     ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
-        fun companionBlocksVersionCheck() {
-            val companionBlocks = CompanionBlocksAndExtensions
-            if (companionBlocks.sinceVersion != null) {
-                require(sinceVersion != null && sinceVersion > companionBlocks.sinceVersion) {
-                    "Set $this.sinceVersion to ${companionBlocks.sinceVersion} + 1."
-                }
-            }
-            if (sinceVersion != null) {
-                require(companionBlocks.sinceVersion != null) {
-                    "Do not enable $this without $companionBlocks."
-                }
-            }
-        }
-
-        init {
-            companionBlocksVersionCheck()
+        context(context: CrossFeatureChecksResultsCollector)
+        override fun crossFeatureChecks() {
+            checkSinceVersionIsNotSetOrMoreThan(CompanionBlocksAndExtensions)
+            checkSinceVersionIsSetIfSetFor(CompanionBlocksAndExtensions)
         }
     },
 
@@ -723,6 +708,10 @@ enum class LanguageFeature(
      * Please, see [enabledInProgressiveMode] in [LanguageFeature] for more details.
      */
     val actuallyEnabledInProgressiveMode: Boolean get() = enabledInProgressiveMode && sinceVersion != null
+
+    context(context: CrossFeatureChecksResultsCollector)
+    open fun crossFeatureChecks() {
+    }
 
     companion object {
         @JvmStatic

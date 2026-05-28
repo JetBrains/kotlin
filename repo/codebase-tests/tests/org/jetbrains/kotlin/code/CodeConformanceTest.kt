@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.code
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.config.CrossFeatureChecksResultsCollector
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.repoTestFixtures.isGitIgnored
 import org.junit.jupiter.api.Test
@@ -393,6 +394,19 @@ class CodeConformanceTest {
                         "The feature $b is out of order; its sinceVersion is ${b.sinceVersion}, yet it comes after $a, whose " +
                         "sinceVersion is ${a.sinceVersion}.\n"
             )
+        }
+    }
+
+    @Test
+    fun testLanguageFeatureCrossChecks() {
+        val collector = CrossFeatureChecksResultsCollector()
+        context(collector) {
+            LanguageFeature.entries.forEach { feature ->
+                feature.crossFeatureChecks()
+            }
+        }
+        if (collector.failedChecks.isNotEmpty()) {
+            fail(collector.failedChecks.joinToString("\n") { it.message })
         }
     }
 
