@@ -115,7 +115,7 @@ internal sealed class WasmVM(
             )
     }
 
-    object NodeJs : WasmVM(property = "javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
+    object NodeJs : WasmVM(property = "wasm.javascript.engine.path.NodeJs", entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,

@@ -5,21 +5,20 @@
 
 package org.jetbrains.kotlin.build.nodejs
 
-import SystemPropertyClasspathProvider
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.extra
-import org.gradle.kotlin.dsl.newInstance
 import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsEnvSpec
 
 abstract class NodeJsExtension(
     private val project: Project,
     private val nodeJsEnvSpec: BaseNodeJsEnvSpec,
+    private val nodejsPropertyName: String,
 ) {
 
     val nodeJsExecutablePath: Provider<String> = nodeJsEnvSpec.executable.also {
-        project.extra["javascript.engine.path.NodeJs"] = it
+        project.extra[nodejsPropertyName] = it
     }
 
     fun Test.setupNodeJs(version: String) {
@@ -29,13 +28,14 @@ abstract class NodeJsExtension(
 
         nodeJsEnvSpec.version.set(version)
 
+        val nodejsPropertyName = nodejsPropertyName
         val nodeJsExecutablePath = nodeJsExecutablePath
 
-        inputs.property("propertyName", "javascript.engine.path.NodeJs")
+        inputs.property("propertyName", nodejsPropertyName)
         inputs.property("destinationPath", nodeJsExecutablePath)
 
         doFirst {
-            systemProperty("javascript.engine.path.NodeJs", nodeJsExecutablePath.get())
+            systemProperty(nodejsPropertyName, nodeJsExecutablePath.get())
         }
     }
 }

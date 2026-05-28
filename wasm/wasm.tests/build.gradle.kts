@@ -420,6 +420,11 @@ projectTests {
                 setupNodeJs(nodejsVersion)
                 dependsOn(":js:js.tests:npmInstall")
             }
+            // it is necessary for TypeScript tests
+            with(nodeJsKotlinBuild) {
+                setupNodeJs(nodejsVersion)
+                dependsOn(":js:js.tests:npmInstall")
+            }
             with(binaryenKotlinBuild) {
                 setupBinaryen()
             }

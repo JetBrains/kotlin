@@ -53,6 +53,11 @@ tasks.withType<Test>().configureEach {
         } else null
 
         @Suppress("UNCHECKED_CAST")
+        val wasmNodeJsExecutable = if (project.extra.has("wasm.javascript.engine.path.NodeJs")) {
+            project.extra["wasm.javascript.engine.path.NodeJs"] as Provider<String>
+        } else null
+
+        @Suppress("UNCHECKED_CAST")
         val binaryenExecutable = if (project.extra.has("binaryen.path")) {
             project.extra["binaryen.path"] as Provider<String>
         } else null
@@ -282,6 +287,9 @@ tasks.withType<Test>().configureEach {
                                     append("""permission java.io.FilePermission "${it.get()}", "execute";""")
                                 }
                                 nodeJsExecutable?.let {
+                                    append("""permission java.io.FilePermission "${it.get()}", "execute";""")
+                                }
+                                wasmNodeJsExecutable?.let {
                                     append("""permission java.io.FilePermission "${it.get()}", "execute";""")
                                 }
                                 binaryenExecutable?.let {
