@@ -361,101 +361,11 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     private val unitType = context.irBuiltIns.unitType
     private val nothingType = context.irBuiltIns.nothingType
 
-    private fun IrExpression.isNullConst() = this is IrConst && this.value == null
-
     private fun IrTypeOperatorCall.isCast() =
             operator == IrTypeOperator.CAST || operator == IrTypeOperator.IMPLICIT_CAST
 
     private fun IrTypeOperatorCall.isTypeCheck() =
             operator == IrTypeOperator.INSTANCEOF || operator == IrTypeOperator.NOT_INSTANCEOF
-
-    private fun IrExpression.matchAndAnd(): Pair<IrExpression, IrExpression>? = when {
-        // a && b == if (a) b else false
-        (this as? IrWhen)?.branches?.size == 2
-                && this.branches[1].isUnconditional()
-                && (this.branches[1].result as? IrConst)?.value == false
-        -> Pair(this.branches[0].condition, this.branches[0].result)
-        else -> null
-    }
-
-    private fun IrExpression.matchOrOr(): Pair<IrExpression, IrExpression>? = when {
-        // a || b == if (a) true else b
-        (this as? IrWhen)?.branches?.size == 2
-                && this.branches[1].isUnconditional()
-                && (this.branches[0].result as? IrConst)?.value == true
-        -> Pair(this.branches[0].condition, this.branches[1].result)
-        else -> null
-    }
-
-    private fun IrExpression.matchNot(): IrExpression? = when {
-        (this as? IrCall)?.symbol == not -> this.dispatchReceiver!!
-        else -> null
-    }
-
-    private fun IrSimpleFunctionSymbol.isEqualityOperator() = this == eqeq || this == eqeqeq || this in ieee754EqualsSymbols
-
-    private fun IrExpression.matchEquality(): Pair<IrExpression, IrExpression>? = when {
-        (this as? IrCall)?.symbol?.isEqualityOperator() == true ->
-            Pair(this.arguments[0]!!, this.arguments[1]!!)
-        else -> null
-    }
-
-    private fun IrExpression.matchSafeCall(): Pair<IrExpression, IrExpression>? {
-        val statements = (this as? IrBlock)?.statements?.takeIf { it.size == 2 } ?: return null
-        val safeReceiver = statements[0] as? IrVariable ?: return null
-        val initializer = safeReceiver.initializer ?: return null
-        val safeCallResultWhen = (statements[1] as? IrWhen)?.takeIf { it.branches.size == 2 } ?: return null
-        val equalityMatchResult = safeCallResultWhen.branches[0].condition.matchEquality() ?: return null
-        if ((equalityMatchResult.first as? IrGetValue)?.symbol?.owner != safeReceiver
-                || !equalityMatchResult.second.isNullConst()
-                || !safeCallResultWhen.branches[0].result.isNullConst())
-            return null
-        if (!safeCallResultWhen.branches[1].isUnconditional())
-            return null
-
-        return Pair(initializer, safeCallResultWhen.branches[1].result)
-    }
-
-    private data class BooleanPredicate(val ifTrue: Predicate, val ifFalse: Predicate) {
-        fun invert() = BooleanPredicate(ifFalse, ifTrue)
-    }
-
-    private data class NullablePredicate(val ifNull: Predicate, val ifNotNull: Predicate)
-
-    private sealed class VariableValue {
-        class BooleanPredicate(val predicate: CastsOptimization.BooleanPredicate) : VariableValue()
-        class NullablePredicate(val predicate: CastsOptimization.NullablePredicate) : VariableValue()
-    }
-
-    private class ControlFlowMergePointInfo(
-            // The upper level predicates' stack size.
-            val level: Int,
-            // This is either an alias (a variable) for the result if it is the only one, or a special marker for multiple values.
-            // Keeping all possible values is possible but not very useful (it's hard to build the predicates with them):
-            // Consider we have a phi node w merging two variables a and b. What is the predicate for (w is A) then?
-            // Is it something like (a is A) | (b is A)? It's not clear and complicates the analysis a lot, so here we just
-            // handle a simple but practical case when the phi node only has a single value.
-            var phiNodeAlias: IrValueDeclaration? = null,
-            var predicate: Predicate = Predicate.Empty,
-            val variableAliases: MutableMap<IrVariable, IrValueDeclaration> = mutableMapOf(),
-    )
-
-    private data class VisitorResult(
-            // The predicate after evaluating the current expression.
-            var predicate: Predicate = Predicate.Empty,
-            // If the result of the current expression comes from a variable
-            // (basically, IrGetValue possibly wrapped with casts/blocks etc.)
-            var variable: IrValueDeclaration? = null,
-    ) {
-        fun copyFrom(other: VisitorResult) {
-            this.predicate = other.predicate
-            this.variable = other.variable
-        }
-
-        companion object {
-            val Nothing = VisitorResult(Predicate.False, null)
-        }
-    }
 
     private enum class TypeCheckResult {
         ALWAYS_SUCCEEDS,
@@ -509,6 +419,47 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 }
             }
         })
+    }
+
+    private data class BooleanPredicate(val ifTrue: Predicate, val ifFalse: Predicate) {
+        fun invert() = BooleanPredicate(ifFalse, ifTrue)
+    }
+
+    private data class NullablePredicate(val ifNull: Predicate, val ifNotNull: Predicate)
+
+    private sealed class VariableValue {
+        class BooleanPredicate(val predicate: CastsOptimization.BooleanPredicate) : VariableValue()
+        class NullablePredicate(val predicate: CastsOptimization.NullablePredicate) : VariableValue()
+    }
+
+    private class ControlFlowMergePointInfo(
+            // The upper level predicates' stack size.
+            val level: Int,
+            // This is either an alias (a variable) for the result if it is the only one, or a special marker for multiple values.
+            // Keeping all possible values is possible but not very useful (it's hard to build the predicates with them):
+            // Consider we have a phi node w merging two variables a and b. What is the predicate for (w is A) then?
+            // Is it something like (a is A) | (b is A)? It's not clear and complicates the analysis a lot, so here we just
+            // handle a simple but practical case when the phi node only has a single value.
+            var phiNodeAlias: IrValueDeclaration? = null,
+            var predicate: Predicate = Predicate.Empty,
+            val variableAliases: MutableMap<IrVariable, IrValueDeclaration> = mutableMapOf(),
+    )
+
+    private data class VisitorResult(
+            // The predicate after evaluating the current expression.
+            var predicate: Predicate = Predicate.Empty,
+            // If the result of the current expression comes from a variable
+            // (basically, IrGetValue possibly wrapped with casts/blocks etc.)
+            var variable: IrValueDeclaration? = null,
+    ) {
+        fun copyFrom(other: VisitorResult) {
+            this.predicate = other.predicate
+            this.variable = other.variable
+        }
+
+        companion object {
+            val Nothing = VisitorResult(Predicate.False, null)
+        }
     }
 
     private inner class TypeCheckResolver(val typeCheckResults: MutableMap<IrTypeOperatorCall, TypeCheckResult>) : IrVisitor<VisitorResult, Predicate>() {
@@ -623,6 +574,57 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                     complexTermsMask.set((termIndex setTo false).bitIndex)
                     termIndex
                 }
+
+        fun IrExpression.isNullConst() = this is IrConst && this.value == null
+
+        @Suppress("IncorrectFormatting")
+        fun IrExpression.matchAndAnd(): Pair<IrExpression, IrExpression>? = when {
+            // a && b == if (a) b else false
+            (this as? IrWhen)?.branches?.size == 2
+                    && this.branches[1].isUnconditional()
+                    && (this.branches[1].result as? IrConst)?.value == false
+            -> Pair(this.branches[0].condition, this.branches[0].result)
+            else -> null
+        }
+
+        @Suppress("IncorrectFormatting")
+        fun IrExpression.matchOrOr(): Pair<IrExpression, IrExpression>? = when {
+            // a || b == if (a) true else b
+            (this as? IrWhen)?.branches?.size == 2
+                    && this.branches[1].isUnconditional()
+                    && (this.branches[0].result as? IrConst)?.value == true
+            -> Pair(this.branches[0].condition, this.branches[1].result)
+            else -> null
+        }
+
+        fun IrExpression.matchNot(): IrExpression? = when {
+            (this as? IrCall)?.symbol == not -> this.dispatchReceiver!!
+            else -> null
+        }
+
+        fun IrSimpleFunctionSymbol.isEqualityOperator() = this == eqeq || this == eqeqeq || this in ieee754EqualsSymbols
+
+        fun IrExpression.matchEquality(): Pair<IrExpression, IrExpression>? = when {
+            (this as? IrCall)?.symbol?.isEqualityOperator() == true ->
+                Pair(this.arguments[0]!!, this.arguments[1]!!)
+            else -> null
+        }
+
+        fun IrExpression.matchSafeCall(): Pair<IrExpression, IrExpression>? {
+            val statements = (this as? IrBlock)?.statements?.takeIf { it.size == 2 } ?: return null
+            val safeReceiver = statements[0] as? IrVariable ?: return null
+            val initializer = safeReceiver.initializer ?: return null
+            val safeCallResultWhen = (statements[1] as? IrWhen)?.takeIf { it.branches.size == 2 } ?: return null
+            val equalityMatchResult = safeCallResultWhen.branches[0].condition.matchEquality() ?: return null
+            if ((equalityMatchResult.first as? IrGetValue)?.symbol?.owner != safeReceiver
+                    || !equalityMatchResult.second.isNullConst()
+                    || !safeCallResultWhen.branches[0].result.isNullConst())
+                return null
+            if (!safeCallResultWhen.branches[1].isUnconditional())
+                return null
+
+            return Pair(initializer, safeCallResultWhen.branches[1].result)
+        }
 
         fun getFullPredicate(currentPredicate: Predicate, optimizeAwayComplexTerms: Boolean, level: Int) =
                 usingUpperLevelPredicate(currentPredicate) {
