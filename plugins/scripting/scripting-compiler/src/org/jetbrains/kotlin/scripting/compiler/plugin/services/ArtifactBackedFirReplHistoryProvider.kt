@@ -12,12 +12,14 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationAttributes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirReplSnippet
 import org.jetbrains.kotlin.fir.declarations.FirScriptReceiverParameter
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.declarations.builder.buildImport
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.originalReplSnippetSymbol
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
@@ -67,6 +69,18 @@ internal class ArtifactBackedFirReplHistoryProvider(
 
     @Volatile
     private var cached: List<FirReplSnippetSymbol>? = null
+
+    /**
+     * Identity-keyed mapping from a reconstructed [FirReplSnippetSymbol] back to the sidecar it
+     * was materialised from.
+     *
+     * Populated as a side-effect of [materialize] (in lock-step with [cached]); read by
+     * [getSnippetImports] to project the sidecar's `ImportEntry`s into [FirImport]s without a
+     * second `materialize`-style walk. Identity-based (`===`) because two prior snippets that
+     * happen to share a wrapper-class short name would otherwise collide; `FirReplSnippetSymbol`
+     * has no inherent identity beyond reference equality.
+     */
+    private val symbolToSidecar: MutableMap<FirReplSnippetSymbol, SnippetArtifactSidecar> = HashMap()
 
     private val decodedSidecars: List<SnippetArtifactSidecar> by lazy {
         priorSnippets.map { it.decodeSidecar() }
@@ -143,6 +157,38 @@ internal class ArtifactBackedFirReplHistoryProvider(
 
     override fun getSnippetCount(): Int = priorSnippets.size
 
+    /**
+     * Project the originating sidecar's [SnippetArtifactSidecar.ImportEntry] list into
+     * [FirImport]s.
+     *
+     * Returns `null` for symbols this provider does not own (so the resolver falls back to the
+     * default firProvider-based path), and an empty list when the sidecar carries no imports
+     * (which **asserts** "no imports", not "unknown").
+     *
+     * The synthesized `FirImport`s carry no source element (the original `.kts` is gone) and no
+     * resolution status — they are equivalent to "as-written" imports, and the regular
+     * `ImportTransformer` step will resolve them against the source session when the consumer
+     * snippet is processed. This is the read-side complement of `SnippetArtifactEmission`'s
+     * import capture and the empirical fix for the `import_visible_in_next_snippet` diagnostic
+     * in the stateless suite. See `iterations/2026-05-28_stateless-repl-read-side-wiring.md`.
+     */
+    override fun getSnippetImports(symbol: FirReplSnippetSymbol): List<FirImport>? {
+        // Force materialise so symbolToSidecar is populated when this hook fires *before* the
+        // resolver's first call to getSnippets() (it doesn't today, but defensive).
+        cached ?: getSnippets()
+        val sidecar = symbolToSidecar[symbol] ?: return null
+        return sidecar.imports.map { entry ->
+            buildImport {
+                // No source: the original .kts is not available cross-compile; the resolver
+                // treats import sources as advisory (used for diagnostics / IDE only).
+                source = null
+                importedFqName = FqName(entry.fqName)
+                isAllUnder = entry.isAllUnder
+                aliasName = entry.aliasName?.let { Name.identifier(it) }
+            }
+        }
+    }
+
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun materialize(session: FirSession): List<FirReplSnippetSymbol> {
         val result = ArrayList<FirReplSnippetSymbol>(priorSnippets.size)
@@ -203,6 +249,7 @@ internal class ArtifactBackedFirReplHistoryProvider(
             // `iterations/2026-05-27_stateless-repl-sidecar-v3.md` for the rationale.
             debug("materialize: tagged $tagged/${classSymbol.declarationSymbols.size} declarations on snippet[$index] (${sidecar.snippetName})")
 
+            symbolToSidecar[reconstructedSymbol] = sidecar
             result += reconstructedSymbol
         }
         return result

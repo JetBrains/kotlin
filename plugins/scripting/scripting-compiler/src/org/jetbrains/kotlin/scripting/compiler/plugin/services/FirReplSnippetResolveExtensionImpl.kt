@@ -61,7 +61,8 @@ class FirReplSnippetResolveExtensionImpl(
     private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
         replHistoryProvider.getSnippets().flatMap { snippet ->
             if (currentSnippet == snippet) emptyList()
-            else snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
+            else replHistoryProvider.getSnippetImports(snippet)
+                ?: snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
         }
 
     override fun getSnippetDefaultImports(sourceFile: KtSourceFile, snippet: FirReplSnippet): List<FirImport>? =
