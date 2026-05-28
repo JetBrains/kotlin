@@ -378,6 +378,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
  *
  * @see KaSymbolRelationProvider.implementationState
  */
+@KaExperimentalApi
 public sealed class KaCallableImplementationState {
     /**
      * The declaration is directly implemented or explicitly overridden in the target class.
@@ -385,6 +386,7 @@ public sealed class KaCallableImplementationState {
      * @property isComplete Whether the implementation is complete. E.g., for a `var` property implemented by `val`,
      * [isComplete] will be `false`.
      */
+    @KaExperimentalApi
     public class Explicit @KaImplementationDetail constructor(
         public val isComplete: Boolean
     ) : KaCallableImplementationState() {
@@ -428,6 +430,7 @@ public sealed class KaCallableImplementationState {
      * @property isOverridable Whether the declaration can be overridden in the target class (e.g., it is not marked as `final`
      * in a supertype).
      */
+    @KaExperimentalApi
     public class Inherited @KaImplementationDetail constructor(
         public val isAmbiguous: Boolean,
         public val isOverridable: Boolean,
@@ -451,11 +454,13 @@ public sealed class KaCallableImplementationState {
      * Note that it does not necessarily mean it is a compilation error – if the target class is `abstract`, the implementation
      * can legitimately be absent.
      */
+    @KaExperimentalApi
     public object Missing : KaCallableImplementationState() {
         override fun toString(): String = "Missing"
     }
 
     @Suppress("unused")
+    @KaExperimentalApi
     private object Unknown : KaCallableImplementationState() {
         override fun toString(): String = "Unknown"
     }

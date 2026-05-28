@@ -216,29 +216,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/components/KaBuiltinType
 	public abstract fun getUnit ()Lorg/jetbrains/kotlin/analysis/api/types/KaType;
 }
 
-public abstract class org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState {
-}
-
-public final class org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState$Explicit : org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState {
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public final fun isComplete ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState$Inherited : org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState {
-	public fun equals (Ljava/lang/Object;)Z
-	public fun hashCode ()I
-	public final fun isAmbiguous ()Z
-	public final fun isOverridable ()Z
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState$Missing : org/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState {
-	public static final field INSTANCE Lorg/jetbrains/kotlin/analysis/api/components/KaCallableImplementationState$Missing;
-	public fun toString ()Ljava/lang/String;
-}
-
 public abstract interface class org/jetbrains/kotlin/analysis/api/components/KaClassTypeBuilder : org/jetbrains/kotlin/analysis/api/components/KaTypeBuilder {
 	public abstract fun argument (Lorg/jetbrains/kotlin/analysis/api/types/KaType;Lorg/jetbrains/kotlin/types/Variance;)V
 	public abstract fun argument (Lorg/jetbrains/kotlin/analysis/api/types/KaTypeProjection;)V
