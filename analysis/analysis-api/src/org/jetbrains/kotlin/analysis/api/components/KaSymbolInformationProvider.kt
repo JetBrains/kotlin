@@ -168,7 +168,7 @@ public class KaDeprecationLevel private constructor(public val name: String) {
          *
          * Corresponds to [DeprecationLevel.WARNING].
          */
-        @JvmStatic
+        @JvmField
         public val WARNING: KaDeprecationLevel = KaDeprecationLevel("WARNING")
 
         /**
@@ -176,7 +176,7 @@ public class KaDeprecationLevel private constructor(public val name: String) {
          *
          * Corresponds to [DeprecationLevel.ERROR].
          */
-        @JvmStatic
+        @JvmField
         public val ERROR: KaDeprecationLevel = KaDeprecationLevel("ERROR")
 
         /**
@@ -185,7 +185,7 @@ public class KaDeprecationLevel private constructor(public val name: String) {
          *
          * Corresponds to [DeprecationLevel.HIDDEN].
          */
-        @JvmStatic
+        @JvmField
         public val HIDDEN: KaDeprecationLevel = KaDeprecationLevel("HIDDEN")
     }
 
