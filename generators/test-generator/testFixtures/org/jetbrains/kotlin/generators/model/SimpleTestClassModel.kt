@@ -86,8 +86,8 @@ class SimpleTestClassModel(
                 skipTestAllFilesCheck,
                 testKClass,
                 isSmokeTest,
-                smokeTestLimit
-                additionalFileFilter,
+                smokeTestLimit,
+                additionalFileFilter
             )
         }.sortedWith(BY_NAME)
     }
