@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchains
 import org.jetbrains.kotlin.buildtools.api.getToolchain
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.CompileReplSnippetOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.DiscoverScriptExtensionsOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
@@ -68,6 +69,29 @@ public interface JvmPlatformToolchain : KotlinToolchains.Toolchain {
      * @since 2.4.0
      */
     public fun discoverScriptExtensionsOperationBuilder(classpath: List<Path>): DiscoverScriptExtensionsOperation.Builder
+
+    /**
+     * Creates a builder for an operation that compiles a single K2 REPL snippet against an
+     * ordered list of prior-snippet artifact bytes, producing the new snippet's artifact bytes.
+     *
+     * This op is the BTA transport surface of the stateless K2 REPL compilation prototype.
+     * See `plugins/scripting/.ai/target/40-jsr223-target.md` §"Stateless snippet compilation"
+     * and `plugins/scripting/.ai/target/90-open-questions.md` Q5d.
+     *
+     * @param priorSnippets ordered list of prior-snippet artifacts, each as bytes produced by a
+     *   previous call to this op (or by `SnippetArtifactCodec.encode` directly).
+     * @param snippetSource source text of the new snippet (snippet N).
+     * @param snippetName human-readable name (used in diagnostics and as the basis of the wrapper
+     *   class name) — typically `"snippet_N.repl.kts"`.
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchains.BuildSession.executeOperation
+     *
+     * @since 2.4.0
+     */
+    public fun compileReplSnippetOperationBuilder(
+        priorSnippets: List<ByteArray>,
+        snippetSource: String,
+        snippetName: String,
+    ): CompileReplSnippetOperation.Builder
 
     public companion object {
         /**
@@ -136,4 +160,27 @@ public inline fun JvmPlatformToolchain.discoverScriptExtensionsOperation(
         callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
     }
     return discoverScriptExtensionsOperationBuilder(classpath).apply(builderAction).build()
+}
+
+/**
+ * Convenience function for creating a [CompileReplSnippetOperation] with options configured by
+ * [builderAction].
+ *
+ * @return an immutable `CompileReplSnippetOperation`.
+ * @see JvmPlatformToolchain.compileReplSnippetOperationBuilder
+ *
+ * @since 2.4.0
+ */
+@OptIn(ExperimentalContracts::class)
+@ExperimentalBuildToolsApi
+public inline fun JvmPlatformToolchain.compileReplSnippetOperation(
+    priorSnippets: List<ByteArray>,
+    snippetSource: String,
+    snippetName: String,
+    builderAction: CompileReplSnippetOperation.Builder.() -> Unit = {},
+): CompileReplSnippetOperation {
+    contract {
+        callsInPlace(builderAction, InvocationKind.EXACTLY_ONCE)
+    }
+    return compileReplSnippetOperationBuilder(priorSnippets, snippetSource, snippetName).apply(builderAction).build()
 }
