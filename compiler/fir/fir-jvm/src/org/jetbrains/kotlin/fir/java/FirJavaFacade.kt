@@ -89,6 +89,26 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
         return knownClassNamesInPackage.getValue(packageFqName)
     }
 
+    // ---- Source-only probes (Stage 2 §6.2 of
+    // `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
+    //
+    // Surface the new `JavaClassFinder` source-only probes through the facade so
+    // `JavaSymbolProvider` can scope itself to Java sources. For non-combined finders the
+    // defaults coincide with the combined methods above — narrowing is a no-op there. For
+    // `CombinedJavaClassFinder` these delegate to the source half only.
+
+    /** @see JavaClassFinder.isInSourceIndex */
+    fun isInSourceIndex(classId: ClassId): Boolean = classFinder.isInSourceIndex(classId)
+
+    /** @see JavaClassFinder.hasPackageInSources */
+    fun hasPackageInSources(fqName: FqName): Boolean = classFinder.hasPackageInSources(fqName)
+
+    /** @see JavaClassFinder.sourceClassNamesInPackage */
+    fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? {
+        if (!classFinder.canComputeKnownClassNamesInPackage()) return null
+        return classFinder.sourceClassNamesInPackage(packageFqName)
+    }
+
     abstract fun getModuleDataForClass(javaClass: JavaClass): FirModuleData
 
     /**

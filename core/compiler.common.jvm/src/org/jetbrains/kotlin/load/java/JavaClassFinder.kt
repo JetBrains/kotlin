@@ -42,4 +42,34 @@ interface JavaClassFinder {
      * will always return `null`.
      */
     fun canComputeKnownClassNamesInPackage(): Boolean
+
+    // ---- Source-only probes (Stage 2 §6.2 of `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
+    //
+    // These let `JavaSymbolProvider` see *only* the Java source half of a finder, leaving binary
+    // Java lookups to flow through `JvmClassFileBasedSymbolProvider`. For non-combined finders
+    // (PSI, reflect, javac, plain binary) the defaults coincide with the existing methods, since
+    // those finders are themselves a single "side" — the narrowing is a no-op for them.
+    //
+    // `CombinedJavaClassFinder` overrides these to delegate to its `sourceFinder` only.
+
+    /**
+     * Cheap (index-level) check whether [classId] could be served by the Java source half of this finder.
+     * Used by `JavaSymbolProvider.getClassLikeSymbolByClassId` as a gate so binary classes flow through
+     * `JvmClassFileBasedSymbolProvider` instead.
+     *
+     * Default = `true` (preserving current behavior for finders that have no separate "source side").
+     */
+    fun isInSourceIndex(classId: ClassId): Boolean = true
+
+    /**
+     * Whether [fqName] is a Java package known to the source half of this finder.
+     * Default = `findPackage(fqName, mayHaveAnnotations = false) != null`.
+     */
+    fun hasPackageInSources(fqName: FqName): Boolean = findPackage(fqName, mayHaveAnnotations = false) != null
+
+    /**
+     * Top-level Java class names visible to the source half of this finder, or `null` if not computable.
+     * Default = [knownClassNamesInPackage] (same as today for single-side finders).
+     */
+    fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? = knownClassNamesInPackage(packageFqName)
 }

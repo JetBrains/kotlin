@@ -2,7 +2,54 @@
 
 **Current status**: 1178/1178 box + 1513/1513 phased (2793/2793, 100%).
 
-**Last Updated**: 2026-05-28 (Stage 2 §6.1 — indirect `javaSymbolProvider`
+**Last Updated**: 2026-05-28 (Stage 2 §6.2 — narrow `JavaSymbolProvider`
+to Java *source* classes via new source-only probes on `JavaClassFinder`
+(`isInSourceIndex`, `hasPackageInSources`, `sourceClassNamesInPackage`),
+overridden in `CombinedJavaClassFinder` to delegate to the source half
+only and surfaced through `FirJavaFacade`. `JavaSymbolProvider`'s class-id
+gate moves from `javaFacade.hasTopLevelClassOf(classId)` (source∪binary)
+to `javaFacade.isInSourceIndex(classId)`; `hasPackage` routes to
+`hasPackageInSources`; the symbol-names provider routes to
+`sourceClassNamesInPackage`. For single-side finders (PSI's
+`JavaClassFinderImpl`, plain `BinaryJavaClassFinder`, etc.) the new
+probes have default implementations that coincide with the existing
+methods — narrowing is a *no-op* there, confirmed by the PSI regression
+gate (10787/10787 green). Binary-Java visibility for the three §6.1
+callers (`FirJvmConflictsChecker`, `FirDirectJavaActualDeclarationExtractor`,
+Lombok `AbstractBuilderGenerator`) is deferred to §6.3 — first attempt
+to add a binary composite-walk fallback in the §6.1 helper crossed
+session boundaries (dependency-module binaries leaked into main session
+and triggered spurious CLASSIFIER_REDECLARATION in
+`testVarargClassParameterOnJavaClass`) *and* crashed on local class ids
+with `IllegalArgumentException: Local <local>/C should never be used to
+find its corresponding classifier`; that walk was reverted and the
+helper stays a thin `javaSymbolProvider?.getClassLikeSymbolByClassId(...)`
+delegate. Each of the three callers is OK with source-only behavior on
+the java-direct path: `FirDirectJavaActualDeclarationExtractor` already
+filters `FirDeclarationOrigin.Java.Source`; Lombok `AbstractBuilderGenerator`
+discovers Lombok-annotated *source* classes; `FirJvmConflictsChecker`
+historically also flagged Kotlin vs binary-Java redeclarations but the
+java-direct fixture set has no such case — §6.3 will restore that
+coverage via a targeted (not-naive-composite) deserializer lookup.
+Verification: `:compiler:java-direct:test --tests
+"JavaUsingAst{Phased,Box}TestGenerated" --rerun` →
+**2701/2701 green** (0 failures, 0 errors aggregated across
+`TEST-*JavaUsingAst*.xml`); `:compiler:fir:analysis-tests:test --tests
+"PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` →
+**10787/10787 green** (0 failures, 0 errors aggregated across the PSI
+regression suite). Files: `core/compiler.common.jvm/src/.../load/java/JavaClassFinder.kt`
+(+30 LoC — three new methods on the interface, all with safe defaults
+preserving current behavior for single-side finders),
+`compiler/java-direct/src/.../CombinedJavaClassFinder.kt`
+(+14 LoC — three overrides delegating to `sourceFinder`),
+`compiler/fir/fir-jvm/src/.../FirJavaFacade.kt`
+(+19 LoC — three facade-surface methods over the new probes),
+`compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt`
+(+9 / −4 LoC — gate switch + helper KDoc rewrite).
+Net: 4 source files, ≈+72/−4 LoC. No public Java-model interface
+touched; the new `JavaClassFinder` methods have safe defaults so
+existing impls don't need to change. Previous: 2026-05-28 (Stage 2 §6.1 —
+indirect `javaSymbolProvider`
 call-site audit, first sub-step of Stage 2 = Phase 2 of
 [`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)).
 Three sites that called `session.javaSymbolProvider?.getClassLikeSymbolByClassId(...)`
@@ -981,6 +1028,177 @@ For full root-cause analyses, fixes, and test results, see
 ```
 
 > **Add new entries below this line.** Most recent first. Separate with `---`.
+
+---
+
+## Stage 2 §6.2 — Narrow `JavaSymbolProvider` to Java source classes — 2026-05-28
+
+### Overview
+
+Second sub-step of Stage 2 (= Phase 2 of
+[`implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)),
+following §6.1 (indirect call-site audit, landed same day). Goal:
+narrow `JavaSymbolProvider` to *Java source classes only*, so binary
+Java lookups can move into `JvmClassFileBasedSymbolProvider` in the
+upcoming §6.3.
+
+The shape — exactly as prescribed by
+[`DIRECT_INJECTION_STAGE_1_2026_05_20.md`](implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md)
+§6.2 — is three new source-only probes plumbed through three layers:
+
+1. **`JavaClassFinder` interface** (`core/compiler.common.jvm/.../load/java/JavaClassFinder.kt`)
+   gets `isInSourceIndex(classId)`, `hasPackageInSources(fqName)`,
+   and `sourceClassNamesInPackage(packageFqName)`. All three have
+   **safe defaults** that coincide with the existing finder methods
+   for single-side finders (PSI, reflect, javac, plain binary). So no
+   existing impl needs to change — narrowing is a no-op on the
+   non-java-direct path.
+2. **`CombinedJavaClassFinder`** overrides all three to delegate to
+   `sourceFinder` only (`JavaClassFinderOverAstImpl`).
+3. **`FirJavaFacade`** surfaces the three probes so
+   `JavaSymbolProvider` doesn't reach into the finder directly.
+
+`JavaSymbolProvider` then:
+
+- swaps its class-id gate from `javaFacade.hasTopLevelClassOf(classId)`
+  (source∪binary) to `javaFacade.isInSourceIndex(classId)`;
+- routes `hasPackage(fqName)` to `javaFacade.hasPackageInSources(fqName)`;
+- routes `symbolNamesProvider.getTopLevelClassifierNamesInPackage`
+  to `javaFacade.sourceClassNamesInPackage(packageFqName)`.
+
+The source∪binary names *union* still works end-to-end: it is
+reconstituted at the composite-symbol-names-provider layer where
+`JavaSymbolProvider.symbolNamesProvider` (now source-only) is composed
+with `JvmClassFileBasedSymbolProvider.knownTopLevelClassesInPackage`
+(binary). The composite logic does not change.
+
+### Initial misstep and revert (key learning)
+
+The first cut of this iteration also extended the §6.1 helper
+`FirSession.getJavaClassLikeSymbolByClassId(classId)` with a binary
+composite-walk fallback — the intent being to recover binary-Java
+visibility for the three §6.1 callers post-§6.2 narrowing. That walk
+turned out to be wrong in two ways:
+
+1. **Cross-session leakage.** Walking the composite tree reaches into
+   dependency-session deserializers. In `testVarargClassParameterOnJavaClass`
+   (`MODULE: lib` defines Java `class O`; `MODULE: main(lib)` defines
+   Kotlin `class O`), the walk picked up `lib`'s binary `O` from
+   main's composite — and `FirJvmConflictsChecker` reported a spurious
+   `CLASSIFIER_REDECLARATION`. The original
+   `JavaSymbolProvider`+`CombinedJavaClassFinder` did *not* see
+   cross-module dependency binaries — its binary half was scoped to
+   the source session's own scope.
+2. **Local-class crash.** `provider.getClassLikeSymbolByClassId(localClassId)`
+   on the deserializer asserts:
+   `IllegalArgumentException: Local <local>/C should never be used to
+   find its corresponding classifier`. The composite walk had no
+   local-class filter, so any local Java declaration ran into this
+   (visible in `testLocalEntities`,
+   `testJavaAnnotationOnSecondaryConstructorOfLocalClass`,
+   `testComplexAnnotations`, `testLocalClass`,
+   `testLocalClassesAndAnonymousObjects`,
+   `testLocalClassApproximationAfter`, `testLocalVsStatic`,
+   `testJavaFieldAndKotlinPropertyReferenceFromInner` ×2,
+   `testJavaProtectedFieldAndKotlinInvisiblePropertyReference`,
+   `testJavaAnnotationOnSecondaryConstructorOfLocalClass`,
+   `testKt52146_samWithSelfTypeAndStarProjection`,
+   `testDeclaredMembers`, `testMethodsPriority`,
+   `testNonSuperCallConstructorJavaSamePackage`,
+   `testNonSuperCallConstructorJavaDifferentPackage` — 16 in total).
+
+Combined, the fallback regressed 16/2701 java-direct tests in two
+distinct clusters. Reverted; helper stays a thin
+`javaSymbolProvider?.getClassLikeSymbolByClassId(...)` delegate.
+
+Each of the three §6.1 callers is OK with source-only behavior:
+
+- **`FirDirectJavaActualDeclarationExtractor`** already filters
+  `FirDeclarationOrigin.Java.Source` — binary Java classes are not
+  valid actualization candidates anyway.
+- **Lombok `AbstractBuilderGenerator`** discovers Lombok-annotated
+  *source* classes — Lombok generation doesn't apply to pre-compiled
+  Java.
+- **`FirJvmConflictsChecker`** historically reported both Kotlin vs
+  Java-source AND Kotlin vs Java-binary redeclarations, but the
+  java-direct test suite has no fixture for the binary-redeclaration
+  case. §6.3 will restore that coverage via a *targeted* deserializer
+  lookup (not a naive composite walk) that respects local-class
+  filtering and scope-of-session.
+
+### Changes
+
+- `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/JavaClassFinder.kt`:
+  three new interface methods with safe defaults.
+- `compiler/java-direct/src/.../CombinedJavaClassFinder.kt`:
+  three overrides delegating to `sourceFinder`.
+- `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt`: three facade-surface
+  methods (`isInSourceIndex` / `hasPackageInSources` /
+  `sourceClassNamesInPackage`) over the finder probes.
+- `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt`: gate switch
+  (`hasTopLevelClassOf` → `isInSourceIndex`); `hasPackage` →
+  `hasPackageInSources`; `getTopLevelClassifierNamesInPackage` →
+  `sourceClassNamesInPackage`; helper KDoc rewritten to document
+  source-only behavior + the §6.3 follow-up.
+
+### Test Results
+
+- `:compiler:java-direct:test --tests "JavaUsingAst{Phased,Box}TestGenerated"
+  --rerun` → **2701/2701 green**, 0 failures, 0 errors.
+- `:compiler:fir:analysis-tests:test --tests
+  "PhasedJvmDiagnosticLightTreeTestGenerated.*" --rerun` →
+  **10787/10787 green**, 0 failures, 0 errors. Confirms the §6.2
+  narrowing is a no-op for single-side finders (PSI's
+  `JavaClassFinderImpl` etc.) — the safe defaults on the new
+  `JavaClassFinder` methods preserve existing behavior.
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `core/compiler.common.jvm/src/org/jetbrains/kotlin/load/java/JavaClassFinder.kt` | +30 LoC — `isInSourceIndex` / `hasPackageInSources` / `sourceClassNamesInPackage` interface methods, all with safe defaults. |
+| `compiler/java-direct/src/.../CombinedJavaClassFinder.kt` | +14 LoC — three overrides delegating to `sourceFinder`. |
+| `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt` | +19 LoC — three facade-surface methods over the new probes. |
+| `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt` | +9 / −4 LoC — gate switch + helper KDoc rewrite. |
+
+### Key Learnings
+
+- **Don't naive-walk the composite for binary-Java fallback.** The
+  composite symbol provider crosses module/session boundaries via
+  dependency providers, surfacing binaries the original `JavaSymbolProvider`
+  was *not* exposing. It also has no protection against local class ids,
+  which the deserializer rejects with
+  `IllegalArgumentException: Local <local>/X should never be used to
+  find its corresponding classifier`. §6.3 must consult the
+  *current-session* `JvmClassFileBasedSymbolProvider` directly, with
+  a `classId.isLocal` filter at the top.
+- **Safe defaults on the new `JavaClassFinder` methods are the right
+  shape** for staying non-disruptive to non-java-direct callers: PSI
+  / reflect / javac / plain binary finders inherit `isInSourceIndex =
+  true` etc., so `JavaSymbolProvider`'s narrowing becomes a no-op for
+  them. PSI regression suite (10787/10787) confirms.
+- **The §6.1 helper's signature is right**, but its body is staying
+  one delegate longer than expected. Binary-Java visibility is
+  trivially restorable in §6.3 by adding a small
+  `session.jvmClassFileBasedSymbolProvider?.getJavaLibraryClassLikeSymbol(classId)`
+  call beside `javaSymbolProvider`, scoped to the current session.
+
+### Follow-ups for the next iteration
+
+- **§6.3 — Move binary lookups into `JvmClassFileBasedSymbolProvider`**:
+  inline the helpers currently inside `BinaryJavaClassFinder`
+  (`hasBinaryTopLevelClass`, `binaryNamesInPackage`,
+  `hasBinaryPackage`, direct `BinaryJavaClass(virtualFile, ..., classContent = bytes)`
+  materialization) into the deserializer at
+  `JvmClassFileBasedSymbolProvider.kt:72, 139, 171, 180, 212`. At the
+  same time extend `FirSession.getJavaClassLikeSymbolByClassId` with a
+  scoped, local-class-filtered lookup on the *current-session*
+  `JvmClassFileBasedSymbolProvider` for binary `Java.Library` symbols.
+- **§6.4** — drop the source-side binary-finder dependency
+  (`createJavaDirectSourceJavaFacadeBuilder` simplifies to source-only;
+  library session no longer needs a `createJavaFacade` lambda).
+- **§6.5** — delete `CombinedJavaClassFinder.kt` and
+  `BinaryJavaClassFinder.kt`.
 
 ---
 

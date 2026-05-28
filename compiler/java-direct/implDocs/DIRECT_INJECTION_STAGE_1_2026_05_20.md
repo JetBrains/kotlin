@@ -419,6 +419,35 @@ Re-route from `session.javaSymbolProvider.getClassLikeSymbolByClassId(...)` to
 `compiler/fir/fir-jvm/.../FirJavaFacade.kt`: add `isInSourceIndex`, `hasPackageInSources`,
 `sourceClassNamesInPackage`.
 
+> **Update 2026-05-28 — §6.2 landed.** Three source-only probes added to
+> `JavaClassFinder` (`isInSourceIndex`, `hasPackageInSources`, `sourceClassNamesInPackage`), all
+> with **safe defaults** that coincide with the existing finder methods for single-side finders
+> (PSI, reflect, javac, plain binary) — so narrowing is a no-op on the non-java-direct path.
+> `CombinedJavaClassFinder` overrides all three to delegate to `sourceFinder` only.
+> `FirJavaFacade` surfaces the three probes as facade-level methods; `JavaSymbolProvider` swaps
+> its gates from `hasTopLevelClassOf` / `hasPackage` / `knownClassNamesInPackage` to the
+> source-only equivalents. The source∪binary names union is reconstituted at the
+> composite-symbol-names-provider layer (no change to composite logic).
+>
+> Binary-Java visibility for the three §6.1 callers is **deferred to §6.3**. A first cut tried to
+> extend the §6.1 helper with a binary composite-walk fallback; that turned out wrong on two
+> fronts — (a) it crossed session boundaries (dependency-module binaries leaked into the main
+> session and triggered a spurious `CLASSIFIER_REDECLARATION` in `testVarargClassParameterOnJavaClass`)
+> and (b) it crashed on local class ids with `IllegalArgumentException: Local <local>/C should
+> never be used to find its corresponding classifier`. 16/2701 java-direct regressions in two
+> distinct clusters; reverted; helper stays a thin `javaSymbolProvider?.getClassLikeSymbolByClassId`
+> delegate. Each of the three §6.1 callers is OK with source-only behavior on the java-direct
+> path: `FirDirectJavaActualDeclarationExtractor` already filters `Java.Source`, Lombok
+> `AbstractBuilderGenerator` discovers Lombok-annotated *source* classes, and the
+> redeclaration-checker case has no binary-Java fixture on java-direct. §6.3 will extend the
+> helper with a *targeted* `JvmClassFileBasedSymbolProvider` lookup scoped to the current
+> session and filtered on `classId.isLocal`.
+>
+> Validation: 2701/2701 `JavaUsingAst{Phased,Box}TestGenerated` + 10787/10787
+> `PhasedJvmDiagnosticLightTreeTestGenerated.*` (PSI regression gate confirms the no-op for
+> single-side finders). See [`../ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) §"Stage 2 §6.2 —
+> Narrow `JavaSymbolProvider` to Java source classes — 2026-05-28" for full details.
+
 ### 6.3 Move binary lookups into `JvmClassFileBasedSymbolProvider`
 ([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
 §1.4 / §2.4.1 / §2.4.3)

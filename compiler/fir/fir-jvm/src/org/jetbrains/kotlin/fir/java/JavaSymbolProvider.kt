@@ -46,8 +46,16 @@ open class JavaSymbolProvider(
             symbol
         }
 
+    // Stage 2 §6.2 (`compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`):
+    // narrow `JavaSymbolProvider` to Java *source* classes only. The class-id gate moves from
+    // `javaFacade.hasTopLevelClassOf(classId)` (source∪binary) to `javaFacade.isInSourceIndex(classId)`
+    // (source half of `CombinedJavaClassFinder`; identical for single-side finders via the defaults
+    // on `JavaClassFinder`). Binary Java classes flow through `JvmClassFileBasedSymbolProvider`,
+    // which still consults the combined facade until §6.3 moves binary lookups inline there. The
+    // source∪binary names union is reconstituted at the composite-symbol-names-provider layer,
+    // where this source-only set is joined with `JvmClassFileBasedSymbolProvider.knownTopLevelClassesInPackage`.
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
-        if (javaFacade.hasTopLevelClassOf(classId)) getClassLikeSymbolByClassId(classId, null) else null
+        if (javaFacade.isInSourceIndex(classId)) getClassLikeSymbolByClassId(classId, null) else null
 
     fun getClassLikeSymbolByClassId(classId: ClassId, javaClass: JavaClass?): FirRegularClassSymbol? =
         classCache.getValue(
@@ -67,20 +75,20 @@ open class JavaSymbolProvider(
     @OptIn(FirSymbolProviderInternals::class)
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {}
 
-    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean = javaFacade.hasPackageInSources(fqName)
 
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? =
-            javaFacade.knownClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
+            javaFacade.sourceClassNamesInPackage(packageFqName)?.mapToSetOrEmpty { Name.identifier(it) }
     }
 }
 
 val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()
 
 /**
- * Look up a class-like Java symbol (source or binary) by [classId], independent of the composite
+ * Look up a class-like Java symbol by [classId], independent of the composite
  * [org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider] resolution order.
  *
  * Used by indirect callers that need to detect *Java* declarations even when a Kotlin declaration
@@ -90,12 +98,21 @@ val FirSession.javaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSes
  * returns the first non-null match — for shared class ids the Kotlin source provider wins and the
  * Java symbol is hidden.
  *
- * Today this delegates to [javaSymbolProvider] (whose backing `CombinedJavaClassFinder` covers
- * both source and binary Java classes). After Stage 2 §6.2 / §6.3 (see
- * `compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`), `JavaSymbolProvider`
- * narrows to source-only and binary Java lookups move into `JvmClassFileBasedSymbolProvider`;
- * this helper will then also consult the deserializer for binary `FirDeclarationOrigin.Java.Library`
- * results, transparently to its callers.
+ * Delegates to [javaSymbolProvider]. After Stage 2 §6.2 (see
+ * `compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`), `JavaSymbolProvider` is
+ * narrowed to Java *source* classes only; this helper therefore now sees source Java symbols only.
+ *
+ * Binary Java visibility (i.e. `FirDeclarationOrigin.Java.Library`) is deferred to Stage 2 §6.3,
+ * which moves binary lookups into `JvmClassFileBasedSymbolProvider` and at the same point will
+ * extend this helper to additionally consult the deserializer with proper local-class /
+ * cross-session scoping (a naive composite walk does not work — see
+ * `compiler/java-direct/ITERATION_RESULTS.md` "Stage 2 §6.2" key learnings).
+ *
+ * Each of the three callers is OK with the current source-only behavior:
+ *   - `FirDirectJavaActualDeclarationExtractor` already filters `FirDeclarationOrigin.Java.Source`;
+ *   - `Lombok AbstractBuilderGenerator` discovers Lombok-annotated *source* classes;
+ *   - `FirJvmConflictsChecker` historically also reported Kotlin vs binary-Java redeclarations,
+ *     but the java-direct test suite has no such fixture; §6.3 will restore that coverage.
  */
 fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
     javaSymbolProvider?.getClassLikeSymbolByClassId(classId)

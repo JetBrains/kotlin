@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.java.direct
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -74,4 +75,18 @@ class CombinedJavaClassFinder(
     override fun canComputeKnownClassNamesInPackage(): Boolean {
         return sourceFinder.canComputeKnownClassNamesInPackage() || binaryFinder.canComputeKnownClassNamesInPackage()
     }
+
+    // ---- Stage 2 §6.2 source-only probes — delegate to the source half only. -----------------
+    //
+    // `JavaSymbolProvider` uses these to scope itself to Java source classes; binary classes
+    // flow through `JvmClassFileBasedSymbolProvider` (which still consults the combined facade
+    // until Stage 2 §6.3 moves binary lookups inline there).
+
+    override fun isInSourceIndex(classId: ClassId): Boolean = sourceFinder.isClassInIndex(classId)
+
+    override fun hasPackageInSources(fqName: FqName): Boolean =
+        sourceFinder.findPackage(fqName, mayHaveAnnotations = false) != null
+
+    override fun sourceClassNamesInPackage(packageFqName: FqName): Set<String>? =
+        sourceFinder.knownClassNamesInPackage(packageFqName)
 }
