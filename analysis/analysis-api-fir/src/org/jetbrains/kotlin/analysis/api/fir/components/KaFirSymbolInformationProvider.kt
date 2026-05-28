@@ -85,25 +85,17 @@ internal class KaFirSymbolInformationProvider(
         get() = withValidityAssertion { computeDeprecationInfo() }
 
     private fun KaSymbol.computeDeprecationInfo(): DeprecationInfo? {
-        if (this is KaFirPackageSymbol || this is KaReceiverParameterSymbol) return null
-        require(this is KaFirSymbol<*>) { "${this::class}" }
-
-        // Optimization: Avoid building `firSymbol` of `KtFirPsiJavaClassSymbol` if it definitely isn't deprecated.
-        if (this is KaFirPsiJavaClassSymbol && !mayHaveDeprecation()) {
-            return null
-        }
-
-        val firSymbol = this.firSymbol
-
-        // A symbol exists for compatibility reasons and should never be referenced in user code
-        val isObsoleteSymbol = (firSymbol.fir as? FirCallableDeclaration)?.hiddenEverywhereBesideSuperCallsStatus != null
-                || (firSymbol is FirSimpleSyntheticPropertySymbol && firSymbol.noJavaOrigin)
-
-        if (isObsoleteSymbol) {
-            return OBSOLETE_SYMBOL_DEPRECATION_INFO
-        }
-
-        return firSymbol.computeDeprecationInfo()?.toDeprecationInfo()
+        val deprecation = deprecation ?: return null
+        return SimpleDeprecationInfo(
+            deprecationLevel = when (deprecation.level) {
+                KaDeprecationLevel.ERROR -> DeprecationLevelValue.ERROR
+                KaDeprecationLevel.WARNING -> DeprecationLevelValue.WARNING
+                KaDeprecationLevel.HIDDEN -> DeprecationLevelValue.HIDDEN
+                else -> error("Unexpected deprecation level: ${deprecation.level}")
+            },
+            propagatesToOverrides = deprecation.isPropagatedToOverrides,
+            message = null
+        )
     }
 
     private fun FirBasedSymbol<*>.computeDeprecationInfo(): FirDeprecationInfo? {
