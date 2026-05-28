@@ -638,7 +638,6 @@ include(
     ":native:swift:swift-export-standalone-integration-tests:simple",
     ":native:swift:swift-export-standalone-integration-tests:external",
     ":native:swift:swift-export-standalone-integration-tests:coroutines",
-    ":generators:sir-tests-generator"
 )
 
 include(":native:swift:swift-export-embeddable")

@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
 }
@@ -24,6 +25,9 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+
+    testFixturesImplementation(testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 }
 
 sourceSets {
@@ -31,6 +35,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTests {
@@ -47,6 +52,8 @@ projectTests {
             allowFlightRecorder.set(true)
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.swiftexport.standalone.test.coroutines.TestGeneratorKt")
 }
 
 testsJar()

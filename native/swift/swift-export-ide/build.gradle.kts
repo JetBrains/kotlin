@@ -24,11 +24,12 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
 
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesImplementation(project(":native:swift:sir"))
     testFixturesImplementation(project(":native:swift:sir-providers"))
     testFixturesImplementation(project(":native:swift:sir-printer"))
@@ -55,6 +56,8 @@ projectTests {
             allowFlightRecorder.set(true)
         }
     }
+
+    testGenerator("org.jetbrains.kotlin.swiftexport.ide.TestGeneratorKt")
 
     withJvmStdlibAndReflect()
     withScriptRuntime()
