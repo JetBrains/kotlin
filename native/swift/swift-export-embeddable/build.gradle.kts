@@ -168,7 +168,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
     dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils.common")))
 
-    dependencies.add(project.dependencies.project(":native:swift:swift-export-standalone-integration-tests"))
+    dependencies.add(project.dependencies.testFixtures(project(":native:swift:swift-export-standalone-integration-tests")))
 }
 
 val shadedIntransitiveTestDependenciesJar = tasks.register<ShadowJar>("shadedTestDependencies") {
