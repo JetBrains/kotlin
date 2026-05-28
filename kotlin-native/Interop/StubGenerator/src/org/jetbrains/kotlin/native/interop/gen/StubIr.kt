@@ -195,6 +195,8 @@ sealed class AnnotationStub(val classifier: Classifier) {
 
         class ExternalClass(val protocolGetter: String = "", val binaryName: String = "") :
                 ObjC(Classifier.topLevel(cinteropPackage, "ExternalObjCClass"))
+
+        object Unavailable : ObjC(Classifier.topLevel(cinteropPackage, "ObjCUnavailable"))
     }
 
     sealed class CCall(classifier: Classifier) : AnnotationStub(classifier) {

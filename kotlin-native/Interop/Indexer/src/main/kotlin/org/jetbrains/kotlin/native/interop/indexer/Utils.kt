@@ -1049,7 +1049,7 @@ fun NativeLibrary.getHeaderPaths(): NativeLibraryHeaders<String> {
     }
 }
 
-fun ObjCMethod.replaces(other: ObjCMethod): Boolean =
+fun ObjCMethodOrUnavailableMethod.replaces(other: ObjCMethodOrUnavailableMethod): Boolean =
         this.isClass == other.isClass && this.selector == other.selector
 
 fun ObjCProperty.replaces(other: ObjCProperty): Boolean =

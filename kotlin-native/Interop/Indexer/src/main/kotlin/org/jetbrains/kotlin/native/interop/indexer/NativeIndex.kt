@@ -265,6 +265,7 @@ abstract class EnumDef(val spelling: String, val baseType: Type) : TypeDeclarati
 sealed class ObjCContainer {
     abstract val protocols: List<ObjCProtocol>
     abstract val methods: List<ObjCMethod>
+    abstract val unavailableMethods: List<ObjCUnavailableMethod>
     abstract val properties: List<ObjCProperty>
 }
 
@@ -274,12 +275,30 @@ sealed class ObjCClassOrProtocol(val name: String) : ObjCContainer(), TypeDeclar
     open val swiftName: String? get() = null
 }
 
+/**
+ * An indexed Obj-C method declaration — either [ObjCMethod] (available, with full signature) or
+ * [ObjCUnavailableMethod] (selector-only record for declarations marked unavailable).
+ */
+sealed interface ObjCMethodOrUnavailableMethod {
+    val selector: String
+    val isClass: Boolean
+}
+
 data class ObjCMethod(
-        val selector: String, val encoding: String, val parameters: List<Parameter>, private val returnType: Type,
-        val isVariadic: Boolean, val isClass: Boolean, val nsConsumesSelf: Boolean, val nsReturnsRetained: Boolean,
-        val isOptional: Boolean, val isInit: Boolean, val isExplicitlyDesignatedInitializer: Boolean, val isDirect: Boolean,
-        val swiftName: String?
-) {
+        override val selector: String,
+        val encoding: String,
+        val parameters: List<Parameter>,
+        private val returnType: Type,
+        val isVariadic: Boolean,
+        override val isClass: Boolean,
+        val nsConsumesSelf: Boolean,
+        val nsReturnsRetained: Boolean,
+        val isOptional: Boolean,
+        val isInit: Boolean,
+        val isExplicitlyDesignatedInitializer: Boolean,
+        val isDirect: Boolean,
+        val swiftName: String?,
+) : ObjCMethodOrUnavailableMethod {
 
     fun containsInstancetype(): Boolean = returnType.containsInstancetype() // Clang doesn't allow parameter types to use instancetype.
 
@@ -290,6 +309,16 @@ data class ObjCMethod(
         returnType
     }
 }
+
+/**
+ * Selector-only record for an Obj-C method declared as unavailable (e.g. via `NS_UNAVAILABLE`).
+ * Kept as a distinct type from [ObjCMethod] so the index does not have to import the method's parameter
+ * and return types (those types may themselves be unavailable).
+ */
+data class ObjCUnavailableMethod(
+        override val selector: String,
+        override val isClass: Boolean,
+) : ObjCMethodOrUnavailableMethod
 
 // Clang seems to allow using instancetype only inside certain kinds of types.
 // The implementation below therefore covers only particular cases, based on the experiments with Clang and common sense.
