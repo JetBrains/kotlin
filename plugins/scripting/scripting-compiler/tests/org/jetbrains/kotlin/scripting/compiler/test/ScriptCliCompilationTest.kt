@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.test.ConfigurationKind
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.testFramework.RunAll
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
 import java.nio.file.Files
@@ -37,6 +38,7 @@ import kotlin.test.*
 
 private const val testDataPath = "plugins/scripting/scripting-compiler/testData/cliCompilation"
 
+@SmokeTest
 class ScriptCliCompilationTest {
     private val testRootDisposable: Disposable = TestDisposable("${ScriptCliCompilationTest::class.simpleName}.testRootDisposable")
 

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.scripting.compiler.plugin.getBaseCompilerArgumentsFr
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmK2CompilerIsolated
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.declaredMembers
@@ -19,6 +20,7 @@ import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.test.*
 
+@SmokeTest
 class ScriptCompilerTest {
 
     private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&

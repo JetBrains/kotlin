@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_ENV_VAR
 import org.jetbrains.kotlin.mainKts.COMPILED_SCRIPTS_CACHE_DIR_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.*
+import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import org.junit.Assert
@@ -18,6 +19,7 @@ import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 
+@SmokeTest
 class MainKtsIT {
 
     @Test
