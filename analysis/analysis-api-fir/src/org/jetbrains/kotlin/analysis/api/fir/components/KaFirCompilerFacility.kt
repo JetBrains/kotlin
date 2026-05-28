@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.compilation.CodeFragment
 import org.jetbrains.kotlin.analysis.api.impl.base.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaBaseCompiledFileForOutputFile
 import org.jetbrains.kotlin.analysis.api.impl.base.util.KaNonBoundToPsiErrorDiagnostic
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KaDanglingFileModuleImpl
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinCompilerPluginsProvider
 import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinModuleDependentsProvider
@@ -168,7 +169,7 @@ internal class KaFirCompilerFacility(
     }
 
     @OptIn(KaImplementationDetail::class)
-    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult {
+    override fun compile(file: KtFile, options: KaCompilationOptions): KaCompilationResult = withPsiValidityAssertion(file) {
         require(options is KaBaseCompilationOptions)
         require(options.target == KaCompilationTarget.JVM) {
             "Unsupported compilation target: ${options.target}, expected ${KaCompilationTarget.JVM}"
@@ -182,12 +183,12 @@ internal class KaFirCompilerFacility(
     }
 
     @OptIn(KaImplementationDetail::class)
-    override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions {
+    override fun createCompilationOptions(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptionsBuilder(token, CompilerConfiguration.create()).apply(init).build()
     }
 
     @OptIn(KaImplementationDetail::class)
-    override fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions {
+    override fun KaCompilationOptions.modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return (this as KaBaseCompilationOptions).modify(init)
     }
 

@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
+import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaJvmTarget
 import org.jetbrains.kotlin.config.*
 
@@ -58,7 +59,10 @@ class KaBaseCompilationOptions(
 }
 
 @KaImplementationDetail
-class KaBaseCompilationOptionsBuilder(val token: KaLifetimeToken, val configuration: CompilerConfiguration) : KaCompilationOptionsBuilder {
+class KaBaseCompilationOptionsBuilder(
+    override val token: KaLifetimeToken,
+    val configuration: CompilerConfiguration,
+) : KaCompilationOptionsBuilder {
     init {
         require(!configuration.isReadOnly) { "The given configuration is read-only" }
     }
@@ -81,103 +85,103 @@ class KaBaseCompilationOptionsBuilder(val token: KaLifetimeToken, val configurat
         )
     }
 
-    override fun target(value: KaCompilationTarget) {
+    override fun target(value: KaCompilationTarget) = withValidityAssertion {
         targetValue = value
     }
 
-    override fun moduleName(value: String) {
+    override fun moduleName(value: String) = withValidityAssertion {
         configuration.put(CommonConfigurationKeys.MODULE_NAME, value)
     }
 
-    override fun moduleActualizer(value: KaCompilerFacilityModuleActualizer) {
+    override fun moduleActualizer(value: KaCompilerFacilityModuleActualizer) = withValidityAssertion {
         configuration.put(MODULE_ACTUALIZER, value)
     }
 
-    override fun languageVersionSettings(value: LanguageVersionSettings) {
+    override fun languageVersionSettings(value: LanguageVersionSettings) = withValidityAssertion {
         configuration.put(CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS, value)
     }
 
-    override fun allowedErrorFilter(value: (KaDiagnostic) -> Boolean) {
+    override fun allowedErrorFilter(value: (KaDiagnostic) -> Boolean) = withValidityAssertion {
         allowedErrorFilterValue = value
     }
 
-    override fun codeFragmentClassName(value: String) {
+    override fun codeFragmentClassName(value: String) = withValidityAssertion {
         configuration.put(CODE_FRAGMENT_CLASS_NAME, value)
     }
 
-    override fun codeFragmentMethodName(value: String) {
+    override fun codeFragmentMethodName(value: String) = withValidityAssertion {
         configuration.put(CODE_FRAGMENT_METHOD_NAME, value)
     }
 
-    override fun jvmTarget(value: KaJvmTarget) {
+    override fun jvmTarget(value: KaJvmTarget) = withValidityAssertion {
         val jvmTarget = JvmTarget.fromString(value.name)
             ?: error("Unsupported JVM target: ${value.name}")
         configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
     }
 
-    override fun jvmCompiledClassHandler(value: KaCompiledClassHandler) {
+    override fun jvmCompiledClassHandler(value: KaCompiledClassHandler) = withValidityAssertion {
         compiledClassHandlerValue = value
     }
 
     @KaNonPublicApi
-    override fun jvmOutputAsmListing(value: Boolean) {
+    override fun jvmOutputAsmListing(value: Boolean) = withValidityAssertion {
         jvmOutputAsmListingValue = value
     }
 
     @KaIdeApi
-    override fun stubUnboundIrSymbols(value: Boolean) {
+    override fun stubUnboundIrSymbols(value: Boolean) = withValidityAssertion {
         configuration.put(STUB_UNBOUND_IR_SYMBOLS, value)
     }
 
     @KaIdeApi
-    override fun disableInline(value: Boolean) {
+    override fun disableInline(value: Boolean) = withValidityAssertion {
         configuration.put(CommonConfigurationKeys.DISABLE_INLINE, value)
     }
 
     @KaIdeApi
-    override fun disableCallAssertions(value: Boolean) {
+    override fun disableCallAssertions(value: Boolean) = withValidityAssertion {
         configuration.put(JVMConfigurationKeys.DISABLE_CALL_ASSERTIONS, value)
     }
 
     @KaIdeApi
-    override fun disableOptimization(value: Boolean) {
+    override fun disableOptimization(value: Boolean) = withValidityAssertion {
         configuration.put(JVMConfigurationKeys.DISABLE_OPTIMIZATION, value)
     }
 
     @KaIdeApi
-    override fun disableParameterAssertions(value: Boolean) {
+    override fun disableParameterAssertions(value: Boolean) = withValidityAssertion {
         configuration.put(JVMConfigurationKeys.DISABLE_PARAM_ASSERTIONS, value)
     }
 
     @KaIdeApi
-    override fun ignoreConstOptimizationErrors(value: Boolean) {
+    override fun ignoreConstOptimizationErrors(value: Boolean) = withValidityAssertion {
         configuration.put(CommonConfigurationKeys.IGNORE_CONST_OPTIMIZATION_ERRORS, value)
     }
 
     @KaIdeApi
-    override fun jvmExecutionStack(value: Sequence<PsiElement?>) {
+    override fun jvmExecutionStack(value: Sequence<PsiElement?>) = withValidityAssertion {
         jvmExecutionStackValue = value
     }
 
     @KaIdeApi
-    override fun jvmGenerateParameterMetadata(value: Boolean) {
+    override fun jvmGenerateParameterMetadata(value: Boolean) = withValidityAssertion {
         configuration.put(JVMConfigurationKeys.PARAMETERS_METADATA, value)
     }
 
     @KaIdeApi
-    override fun jvmUseInvokeDynamicForSamConversions(value: Boolean) {
+    override fun jvmUseInvokeDynamicForSamConversions(value: Boolean) = withValidityAssertion {
         val scheme = if (value) JvmClosureGenerationScheme.INDY else JvmClosureGenerationScheme.CLASS
         configuration.put(JVMConfigurationKeys.SAM_CONVERSIONS, scheme)
     }
 
     @KaIdeApi
-    override fun jvmUseInvokeDynamicForLambdas(value: Boolean) {
+    override fun jvmUseInvokeDynamicForLambdas(value: Boolean) = withValidityAssertion {
         val scheme = if (value) JvmClosureGenerationScheme.INDY else JvmClosureGenerationScheme.CLASS
         configuration.put(JVMConfigurationKeys.LAMBDAS, scheme)
     }
 
     @KaIdeApi
-    override fun jvmLinkViaSignatures(value: Boolean) {
+    override fun jvmLinkViaSignatures(value: Boolean) = withValidityAssertion {
         configuration.put(JVMConfigurationKeys.LINK_VIA_SIGNATURES, value)
     }
 }

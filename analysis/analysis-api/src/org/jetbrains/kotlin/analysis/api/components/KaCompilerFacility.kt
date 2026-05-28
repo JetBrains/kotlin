@@ -122,7 +122,7 @@ public interface KaCompilationOptions : KaLifetimeOwner
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCompilationOptionsBuilder {
+public interface KaCompilationOptionsBuilder : KaLifetimeOwner {
     /** Sets the target platform for compilation. Must be provided. */
     public fun target(value: KaCompilationTarget)
 
