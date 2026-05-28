@@ -16,4 +16,6 @@
 
 package org.jetbrains.structsProducedByMacrosBenchmarks
 
-expect fun macrosBenchmark()
+import kotlinx.benchmark.Blackhole
+
+expect fun macrosBenchmark(bh: Blackhole)

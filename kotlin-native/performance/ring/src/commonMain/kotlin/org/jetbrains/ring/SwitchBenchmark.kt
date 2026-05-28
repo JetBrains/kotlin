@@ -16,8 +16,10 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 val SPARSE_SWITCH_CASES = intArrayOf(11, 29, 47, 71, 103,
                                      149, 175, 227, 263, 307,
@@ -451,7 +453,7 @@ open class SwitchBenchmark {
         when(s) {
             "ABCDEFG1" -> return 1
             "ABCDEFG2" -> return 2
-            "ABCDEFG2" -> return 3
+            "ABCDEFH2" -> return 3
             "ABCDEFG3" -> return 4
             "ABCDEFG4" -> return 5
             "ABCDEFG5" -> return 6
@@ -474,44 +476,54 @@ open class SwitchBenchmark {
         }
     }
 
-    lateinit var denseIntData: IntArray
-    lateinit var sparseIntData: IntArray
+    var denseIntData: IntArray
+    var sparseIntData: IntArray
 
 
 
     //Benchmark 
-    fun testSparseIntSwitch() {
+    fun testSparseIntSwitch(bh: Blackhole) {
+        var result = 0
         for (i in sparseIntData) {
-            Blackhole.consume(sparseIntSwitch(i))
+            result += sparseIntSwitch(i)
         }
+        bh.consume(result)
     }
 
     //Benchmark 
-    fun testDenseIntSwitch() {
+    fun testDenseIntSwitch(bh: Blackhole) {
+        var result = 0
         for (i in denseIntData) {
-            Blackhole.consume(denseIntSwitch(i))
+            result += denseIntSwitch(i)
         }
+        bh.consume(result)
     }
 
     //Benchmark 
-    fun testConstSwitch() {
+    fun testConstSwitch(bh: Blackhole) {
+        var result = 0
         for (i in denseIntData) {
-            Blackhole.consume(constSwitch(i))
+            result += constSwitch(i)
         }
+        bh.consume(result)
     }
 
     //Benchmark 
-    fun testObjConstSwitch() {
+    fun testObjConstSwitch(bh: Blackhole) {
+        var result = 0
         for (i in denseIntData) {
-            Blackhole.consume(objConstSwitch(i))
+            result += objConstSwitch(i)
         }
+        bh.consume(result)
     }
 
     //Benchmark 
-    fun testVarSwitch() {
+    fun testVarSwitch(bh: Blackhole) {
+        var result = 0
         for (i in denseIntData) {
-            Blackhole.consume(varSwitch(i))
+            result += varSwitch(i)
         }
+        bh.consume(result)
     }
 
     var data : Array<String> = arrayOf()
@@ -519,11 +531,13 @@ open class SwitchBenchmark {
 
 
     //Benchmark 
-    fun testStringsSwitch() {
+    fun testStringsSwitch(bh: Blackhole) {
+        var result = 0
         val n = data.size
         for (s in data) {
-            Blackhole.consume(stringSwitch(s))
+            result += stringSwitch(s)
         }
+        bh.consume(result)
     }
 
     enum class MyEnum {
@@ -582,27 +596,31 @@ open class SwitchBenchmark {
         }
     }
 
-    lateinit var enumData : Array<MyEnum>
-    lateinit var denseEnumData : Array<MyEnum>
+    var enumData : Array<MyEnum>
+    var denseEnumData : Array<MyEnum>
 
 
 
     //Benchmark 
-    fun testEnumsSwitch() {
+    fun testEnumsSwitch(bh: Blackhole) {
         val n = enumData.size -1
         val data = enumData
+        var result = 0
         for (i in 0..n) {
-            Blackhole.consume(enumSwitch(data[i]))
+            result += enumSwitch(data[i])
         }
+        bh.consume(result)
     }
 
     //Benchmark 
-    fun testDenseEnumsSwitch() {
+    fun testDenseEnumsSwitch(bh: Blackhole) {
         val n = denseEnumData.size -1
         val data = denseEnumData
+        var result = 0
         for (i in 0..n) {
-            Blackhole.consume(denseEnumSwitch(data[i]))
+            result += denseEnumSwitch(data[i])
         }
+        bh.consume(result)
     }
 
     sealed class MySealedClass {
@@ -618,11 +636,13 @@ open class SwitchBenchmark {
         class MySealedClass10: MySealedClass()
     }
 
-    lateinit var sealedClassData: Array<MySealedClass>
+    var sealedClassData: Array<MySealedClass>
 
     init {
+        // Use the same seed for reproducibility
+        val rnd = Random(782)
         data = Array(BENCHMARK_SIZE) {
-            "ABCDEFG" + Random.nextInt(22)
+            "ABCDEFG" + rnd.nextInt(22)
         }
         enumData = Array(BENCHMARK_SIZE) {
             MyEnum.values()[it % MyEnum.values().size]
@@ -630,10 +650,10 @@ open class SwitchBenchmark {
         denseEnumData = Array(BENCHMARK_SIZE) {
             MyEnum.values()[it % 20]
         }
-        denseIntData = IntArray(BENCHMARK_SIZE) { Random.nextInt(25) - 1 }
-        sparseIntData = IntArray(BENCHMARK_SIZE) { SPARSE_SWITCH_CASES[Random.nextInt(20)] }
+        denseIntData = IntArray(BENCHMARK_SIZE) { rnd.nextInt(25) - 1 }
+        sparseIntData = IntArray(BENCHMARK_SIZE) { SPARSE_SWITCH_CASES[rnd.nextInt(20)] }
         sealedClassData = Array(BENCHMARK_SIZE) {
-            when(Random.nextInt(10)) {
+            when(rnd.nextInt(10)) {
                 0 -> MySealedClass.MySealedClass1()
                 1 -> MySealedClass.MySealedClass2()
                 2 -> MySealedClass.MySealedClass3()
@@ -665,10 +685,12 @@ open class SwitchBenchmark {
 
 
     //Benchmark 
-    fun testSealedWhenSwitch() {
+    fun testSealedWhenSwitch(bh: Blackhole) {
         val n = sealedClassData.size -1
+        var result = 0
         for (i in 0..n) {
-            Blackhole.consume(sealedWhenSwitch(sealedClassData[i]))
+            result += sealedWhenSwitch(sealedClassData[i])
         }
+        bh.consume(result)
     }
 }

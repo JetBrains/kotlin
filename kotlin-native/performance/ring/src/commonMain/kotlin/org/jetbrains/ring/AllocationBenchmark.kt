@@ -5,6 +5,10 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 1000
+
 var counter = 0
 
 open class AllocationBenchmark {
@@ -16,10 +20,11 @@ open class AllocationBenchmark {
     }
 
     //Benchmark
-    fun allocateObjects() {
+    fun allocateObjects(bh: Blackhole) {
         repeat(BENCHMARK_SIZE) {
             MyClass().inc()
         }
+        bh.consume(counter)
     }
 
 }

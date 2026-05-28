@@ -16,7 +16,10 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 var globalAddendum = 0
 
@@ -25,81 +28,83 @@ open class LambdaBenchmark {
     private fun <T> runLambdaNoInline(x: () -> T): T = x()
 
     init {
-        globalAddendum = Random.nextInt(20)
+        // Use the same seed for reproducibility
+        val rnd = Random(0)
+        globalAddendum = rnd.nextInt(20)
     }
 
     //Benchmark
-    fun noncapturingLambda(): Int {
+    fun noncapturingLambda(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambda { globalAddendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun noncapturingLambdaNoInline(): Int {
+    fun noncapturingLambdaNoInline(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambdaNoInline { globalAddendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun capturingLambda(): Int {
+    fun capturingLambda(bh: Blackhole) {
         val addendum = globalAddendum + 1
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambda { addendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun capturingLambdaNoInline(): Int {
+    fun capturingLambdaNoInline(bh: Blackhole) {
         val addendum = globalAddendum + 1
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambdaNoInline { addendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun mutatingLambda(): Int {
+    fun mutatingLambda(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             runLambda { x += globalAddendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun mutatingLambdaNoInline(): Int {
+    fun mutatingLambdaNoInline(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             runLambdaNoInline { x += globalAddendum }
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun methodReference(): Int {
+    fun methodReference(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambda(::referenced)
         }
-        return x
+        bh.consume(x)
     }
 
     //Benchmark
-    fun methodReferenceNoInline(): Int {
+    fun methodReferenceNoInline(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambdaNoInline(::referenced)
         }
-        return x
+        bh.consume(x)
     }
 }
 

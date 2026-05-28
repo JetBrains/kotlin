@@ -16,6 +16,10 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
+
 /**
  * Created by Mikhail.Glukhikh on 06/03/2015.
  *
@@ -37,16 +41,16 @@ open class AbstractMethodBenchmark {
     }
 
     //Benchmark
-    fun sortStrings(): Set<String> {
+    fun sortStrings(bh: Blackhole) {
         val res = arr.subList(0, if (BENCHMARK_SIZE < arr.size) BENCHMARK_SIZE else arr.size).toSet()
-        return res
+        bh.consume(res)
     }
 
     //Benchmark
-    fun sortStringsWithComparator(): Set<String> {
+    fun sortStringsWithComparator(bh: Blackhole) {
         val res = mutableSetOf<String>()
         res.addAll(arr.subList(0, if (BENCHMARK_SIZE < arr.size) BENCHMARK_SIZE else arr.size))
-        return res
+        bh.consume(res)
     }
 }
 

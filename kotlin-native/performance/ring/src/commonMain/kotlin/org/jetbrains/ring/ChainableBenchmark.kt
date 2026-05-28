@@ -5,8 +5,9 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
-import org.jetbrains.benchmarksLauncher.Random
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 // Benchmark from KT-46482.
 open class ChainableBenchmark {
@@ -43,7 +44,7 @@ open class ChainableBenchmark {
     val size = BENCHMARK_SIZE * 100
 
     //Benchmark
-    fun testChainable() {
+    fun testChainable(bh: Blackhole) {
         val list = IntArrayList()
         for (i in 0..size) {
             list.addChainable(i)
@@ -55,5 +56,6 @@ open class ChainableBenchmark {
         for (i in 0..size) {
             sum += list[i]
         }
+        bh.consume(sum)
     }
 }

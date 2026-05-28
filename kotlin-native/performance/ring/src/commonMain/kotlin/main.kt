@@ -22,12 +22,7 @@ import RichardsBenchmark
 import SplayBenchmark
 import SplayBenchmarkUsingWorkers
 import SplayBenchmarkWithMarkHelpers
-import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkTimeUnit
-import kotlinx.benchmark.Measurement
-import kotlinx.benchmark.Scope
-import kotlinx.benchmark.State
-import kotlinx.benchmark.TearDown
+import kotlinx.benchmark.*
 import octoTest
 import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 import org.jetbrains.ring.*
@@ -38,14 +33,14 @@ class AbstractMethod : SkipWhenBaseOnly() {
     val instance = AbstractMethodBenchmark()
 
     @Benchmark
-    fun sortStrings() {
-        instance.sortStrings()
+    fun sortStrings(bh: Blackhole) {
+        instance.sortStrings(bh)
     }
 
     @Benchmark
-    fun sortStringsWithComparator() {
+    fun sortStringsWithComparator(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.sortStrings()
+        instance.sortStrings(bh)
     }
 }
 
@@ -55,9 +50,9 @@ class AllocationBenchmark : SkipWhenBaseOnly() {
     val instance = org.jetbrains.ring.AllocationBenchmark()
 
     @Benchmark
-    fun allocateObjects() {
+    fun allocateObjects(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateObjects()
+        instance.allocateObjects(bh)
     }
 }
 
@@ -68,8 +63,8 @@ class ArrayCopyBenchmark {
     val instance = org.jetbrains.ring.ArrayCopyBenchmark()
 
     @Benchmark
-    fun copyInSameArray() {
-        instance.copyInSameArray()
+    fun copyInSameArray(bh: Blackhole) {
+        instance.copyInSameArray(bh)
     }
 }
 
@@ -80,8 +75,8 @@ class BunnymarkBenchmark {
     val instance = org.jetbrains.ring.BunnymarkBenchmark()
 
     @Benchmark
-    fun testBunnymark() {
-        instance.testBunnymark()
+    fun testBunnymark(bh: Blackhole) {
+        instance.testBunnymark(bh)
     }
 }
 
@@ -91,58 +86,58 @@ class Calls : SkipWhenBaseOnly() {
     val instance = CallsBenchmark()
 
     @Benchmark
-    fun finalMethod() {
-        instance.finalMethodCall()
+    fun finalMethod(bh: Blackhole) {
+        instance.finalMethodCall(bh)
     }
 
     @Benchmark
-    fun interfaceMethodMonomorphic() {
-        instance.interfaceMethodCall_MonomorphicCallsite()
+    fun interfaceMethodMonomorphic(bh: Blackhole) {
+        instance.interfaceMethodCall_MonomorphicCallsite(bh)
     }
 
     @Benchmark
-    fun openMethodMonomorphic() {
-        instance.classOpenMethodCall_MonomorphicCallsite()
+    fun openMethodMonomorphic(bh: Blackhole) {
+        instance.classOpenMethodCall_MonomorphicCallsite(bh)
     }
 
     @Benchmark
-    fun parameterBoxUnboxFolding() {
-        instance.parameterBoxUnboxFolding()
+    fun parameterBoxUnboxFolding(bh: Blackhole) {
+        instance.parameterBoxUnboxFolding(bh)
     }
 
     @Benchmark
-    fun returnBoxUnboxFolding() {
-        instance.returnBoxUnboxFolding()
+    fun returnBoxUnboxFolding(bh: Blackhole) {
+        instance.returnBoxUnboxFolding(bh)
     }
 
     @Benchmark
-    fun interfaceMethodBimorphic() {
+    fun interfaceMethodBimorphic(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.interfaceMethodCall_BimorphicCallsite()
+        instance.interfaceMethodCall_BimorphicCallsite(bh)
     }
 
     @Benchmark
-    fun interfaceMethodHexamorphic() {
+    fun interfaceMethodHexamorphic(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.interfaceMethodCall_HexamorphicCallsite()
+        instance.interfaceMethodCall_HexamorphicCallsite(bh)
     }
 
     @Benchmark
-    fun interfaceMethodTrimorphic() {
+    fun interfaceMethodTrimorphic(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.interfaceMethodCall_TrimorphicCallsite()
+        instance.interfaceMethodCall_TrimorphicCallsite(bh)
     }
 
     @Benchmark
-    fun openMethodBimorphic() {
+    fun openMethodBimorphic(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.classOpenMethodCall_BimorphicCallsite()
+        instance.classOpenMethodCall_BimorphicCallsite(bh)
     }
 
     @Benchmark
-    fun openMethodTrimorphic() {
+    fun openMethodTrimorphic(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.classOpenMethodCall_TrimorphicCallsite()
+        instance.classOpenMethodCall_TrimorphicCallsite(bh)
     }
 }
 
@@ -153,13 +148,13 @@ class Casts {
     val instance = CastsBenchmark()
 
     @Benchmark
-    fun classCast() {
-        instance.classCast()
+    fun classCast(bh: Blackhole) {
+        instance.classCast(bh)
     }
 
     @Benchmark
-    fun interfaceCast() {
-        instance.interfaceCast()
+    fun interfaceCast(bh: Blackhole) {
+        instance.interfaceCast(bh)
     }
 }
 
@@ -169,8 +164,8 @@ class ChainableBenchmark {
     val instance = org.jetbrains.ring.ChainableBenchmark()
 
     @Benchmark
-    fun testChainable() {
-        instance.testChainable()
+    fun testChainable(bh: Blackhole) {
+        instance.testChainable(bh)
     }
 }
 
@@ -180,60 +175,60 @@ class ClassArray : SkipWhenBaseOnly() {
     val instance = ClassArrayBenchmark()
 
     @Benchmark
-    fun copy() {
-        instance.copy()
+    fun copy(bh: Blackhole) {
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun filter() {
-        instance.filter()
+    fun filter(bh: Blackhole) {
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
-        instance.countFiltered()
+    fun countFiltered(bh: Blackhole) {
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFilteredLocal() {
+    fun countFilteredLocal(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredLocal()
+        instance.countFilteredLocal(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 }
 
@@ -243,42 +238,42 @@ class ClassBaseline : SkipWhenBaseOnly() {
     val instance = ClassBaselineBenchmark()
 
     @Benchmark
-    fun consume() {
-        instance.consume()
+    fun consume(bh: Blackhole) {
+        instance.consume(bh)
     }
 
     @Benchmark
-    fun consumeField() {
-        instance.consumeField()
+    fun consumeField(bh: Blackhole) {
+        instance.consumeField(bh)
     }
 
     @Benchmark
-    fun allocateListAndFill() {
-        instance.allocateListAndFill()
+    fun allocateListAndFill(bh: Blackhole) {
+        instance.allocateListAndFill(bh)
     }
 
     @Benchmark
-    fun allocateArray() {
+    fun allocateArray(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateArray()
+        instance.allocateArray(bh)
     }
 
     @Benchmark
-    fun allocateArrayAndFill() {
+    fun allocateArrayAndFill(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateArrayAndFill()
+        instance.allocateArrayAndFill(bh)
     }
 
     @Benchmark
-    fun allocateList() {
+    fun allocateList(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateList()
+        instance.allocateList(bh)
     }
 
     @Benchmark
-    fun allocateListAndWrite() {
+    fun allocateListAndWrite(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateListAndWrite()
+        instance.allocateListAndWrite(bh)
     }
 }
 
@@ -288,95 +283,95 @@ class ClassList : SkipWhenBaseOnly() {
     val instance = ClassListBenchmark()
 
     @Benchmark
-    fun copy() {
-        instance.copy()
+    fun copy(bh: Blackhole) {
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun mapWithLambda() {
-        instance.mapWithLambda()
+    fun mapWithLambda(bh: Blackhole) {
+        instance.mapWithLambda(bh)
     }
 
     @Benchmark
-    fun filter() {
-        instance.filter()
+    fun filter(bh: Blackhole) {
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun reduce() {
-        instance.reduce()
+    fun reduce(bh: Blackhole) {
+        instance.reduce(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun countWithLambda() {
+    fun countWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countWithLambda()
+        instance.countWithLambda(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndCountWithLambda() {
+    fun filterAndCountWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCountWithLambda()
+        instance.filterAndCountWithLambda(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterAndMapWithLambda() {
+    fun filterAndMapWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapWithLambda()
+        instance.filterAndMapWithLambda(bh)
     }
 
     @Benchmark
-    fun filterAndMapWithLambdaAsSequence() {
+    fun filterAndMapWithLambdaAsSequence(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapWithLambdaAsSequence()
+        instance.filterAndMapWithLambdaAsSequence(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 
     @Benchmark
-    fun filterWithLambda() {
+    fun filterWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterWithLambda()
+        instance.filterWithLambda(bh)
     }
 }
 
@@ -386,60 +381,60 @@ class ClassStream : SkipWhenBaseOnly() {
     val instance = ClassStreamBenchmark()
 
     @Benchmark
-    fun copy() {
-        instance.copy()
+    fun copy(bh: Blackhole) {
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun filter() {
-        instance.filter()
+    fun filter(bh: Blackhole) {
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun reduce() {
-        instance.reduce()
+    fun reduce(bh: Blackhole) {
+        instance.reduce(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 }
 
@@ -449,9 +444,9 @@ class CompanionObject : SkipWhenBaseOnly() {
     val instance = CompanionObjectBenchmark()
 
     @Benchmark
-    fun invokeRegularFunction() {
+    fun invokeRegularFunction(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeRegularFunction()
+        instance.invokeRegularFunction(bh)
     }
 }
 
@@ -461,9 +456,9 @@ class ComplexArrays : SkipWhenBaseOnly() {
     val instance = ComplexArraysBenchmark()
 
     @Benchmark
-    fun outerProduct() {
+    fun outerProduct(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.outerProduct()
+        instance.outerProduct(bh)
     }
 }
 
@@ -474,8 +469,8 @@ class CoordinatesSolver {
     val instance = CoordinatesSolverBenchmark()
 
     @Benchmark
-    fun solve() {
-        instance.solve()
+    fun solve(bh: Blackhole) {
+        instance.solve(bh)
     }
 }
 
@@ -485,39 +480,39 @@ class DefaultArgument : SkipWhenBaseOnly() {
     val instance = DefaultArgumentBenchmark()
 
     @Benchmark
-    fun testEightOfEight() {
+    fun testEightOfEight(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testEightOfEight()
+        instance.testEightOfEight(bh)
     }
 
     @Benchmark
-    fun testFourOfFour() {
+    fun testFourOfFour(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testFourOfFour()
+        instance.testFourOfFour(bh)
     }
 
     @Benchmark
-    fun testOneOfEight() {
+    fun testOneOfEight(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testOneOfEight()
+        instance.testOneOfEight(bh)
     }
 
     @Benchmark
-    fun testOneOfFour() {
+    fun testOneOfFour(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testOneOfFour()
+        instance.testOneOfFour(bh)
     }
 
     @Benchmark
-    fun testOneOfTwo() {
+    fun testOneOfTwo(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testOneOfTwo()
+        instance.testOneOfTwo(bh)
     }
 
     @Benchmark
-    fun testTwoOfTwo() {
+    fun testTwoOfTwo(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testTwoOfTwo()
+        instance.testTwoOfTwo(bh)
     }
 }
 
@@ -527,8 +522,8 @@ class DeltaBlueHideName {
     val instance = DeltaBlueBenchmark()
 
     @Benchmark
-    fun DeltaBlue() {
-        instance.deltaBlue()
+    fun DeltaBlue(bh: Blackhole) {
+        instance.deltaBlue(bh)
     }
 }
 
@@ -538,14 +533,14 @@ class Elvis : SkipWhenBaseOnly() {
     val instance = ElvisBenchmark()
 
     @Benchmark
-    fun testElvis() {
-        instance.testElvis()
+    fun testElvis(bh: Blackhole) {
+        instance.testElvis(bh)
     }
 
     @Benchmark
-    fun testCompositeElvis() {
+    fun testCompositeElvis(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testCompositeElvis()
+        instance.testCompositeElvis(bh)
     }
 }
 
@@ -557,48 +552,48 @@ class Euler : SkipWhenBaseOnly() {
     val instance = EulerBenchmark()
 
     @Benchmark
-    fun problem14() {
-        instance.problem14()
+    fun problem14(bh: Blackhole) {
+        instance.problem14(bh)
     }
 
     @Benchmark
-    fun problem1bySequence() {
-        instance.problem1bySequence()
+    fun problem1bySequence(bh: Blackhole) {
+        instance.problem1bySequence(bh)
     }
 
     @Benchmark
-    fun problem9() {
-        instance.problem9()
+    fun problem9(bh: Blackhole) {
+        instance.problem9(bh)
     }
 
     @Benchmark
-    fun problem1() {
+    fun problem1(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.problem1()
+        instance.problem1(bh)
     }
 
     @Benchmark
-    fun problem14full() {
+    fun problem14full(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.problem14full()
+        instance.problem14full(bh)
     }
 
     @Benchmark
-    fun problem2() {
+    fun problem2(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.problem2()
+        instance.problem2(bh)
     }
 
     @Benchmark
-    fun problem4() {
+    fun problem4(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.problem4()
+        instance.problem4(bh)
     }
 
     @Benchmark
-    fun problem8() {
+    fun problem8(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.problem8()
+        instance.problem8(bh)
     }
 }
 
@@ -608,25 +603,25 @@ class Fibonacci : SkipWhenBaseOnly() {
     val instance = FibonacciBenchmark()
 
     @Benchmark
-    fun calc() {
-        instance.calc()
+    fun calc(bh: Blackhole) {
+        instance.calc(bh)
     }
 
     @Benchmark
-    fun calcClassic() {
-        instance.calcClassic()
+    fun calcClassic(bh: Blackhole) {
+        instance.calcClassic(bh)
     }
 
     @Benchmark
-    fun calcSquare() {
+    fun calcSquare(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.calcSquare()
+        instance.calcSquare(bh)
     }
 
     @Benchmark
-    fun calcWithProgression() {
+    fun calcWithProgression(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.calcWithProgression()
+        instance.calcWithProgression(bh)
     }
 }
 
@@ -636,103 +631,103 @@ class ForLoops : SkipWhenBaseOnly() {
     val instance = ForLoopsBenchmark()
 
     @Benchmark
-    fun arrayIndicesLoop() {
-        instance.arrayIndicesLoop()
+    fun arrayIndicesLoop(bh: Blackhole) {
+        instance.arrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun arrayLoop() {
-        instance.arrayLoop()
+    fun arrayLoop(bh: Blackhole) {
+        instance.arrayLoop(bh)
     }
 
     @Benchmark
-    fun charArrayIndicesLoop() {
+    fun charArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.charArrayIndicesLoop()
+        instance.charArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun charArrayLoop() {
+    fun charArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.charArrayLoop()
+        instance.charArrayLoop(bh)
     }
 
     @Benchmark
-    fun floatArrayIndicesLoop() {
+    fun floatArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.floatArrayIndicesLoop()
+        instance.floatArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun floatArrayLoop() {
+    fun floatArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.floatArrayLoop()
+        instance.floatArrayLoop(bh)
     }
 
     @Benchmark
-    fun intArrayIndicesLoop() {
+    fun intArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.intArrayIndicesLoop()
+        instance.intArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun intArrayLoop() {
+    fun intArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.intArrayLoop()
+        instance.intArrayLoop(bh)
     }
 
     @Benchmark
-    fun stringArrayLoop() {
+    fun stringArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.stringArrayLoop()
+        instance.stringArrayLoop(bh)
     }
 
     @Benchmark
-    fun stringIndicesLoop() {
+    fun stringIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.stringIndicesLoop()
+        instance.stringIndicesLoop(bh)
     }
 
     @Benchmark
-    fun stringLoop() {
+    fun stringLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.stringLoop()
+        instance.stringLoop(bh)
     }
 
     @Benchmark
-    fun uIntArrayIndicesLoop() {
+    fun uIntArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uIntArrayIndicesLoop()
+        instance.uIntArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun uIntArrayLoop() {
+    fun uIntArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uIntArrayLoop()
+        instance.uIntArrayLoop(bh)
     }
 
     @Benchmark
-    fun uLongArrayIndicesLoop() {
+    fun uLongArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uLongArrayIndicesLoop()
+        instance.uLongArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun uLongArrayLoop() {
+    fun uLongArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uLongArrayLoop()
+        instance.uLongArrayLoop(bh)
     }
 
     @Benchmark
-    fun uShortArrayIndicesLoop() {
+    fun uShortArrayIndicesLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uShortArrayIndicesLoop()
+        instance.uShortArrayIndicesLoop(bh)
     }
 
     @Benchmark
-    fun uShortArrayLoop() {
+    fun uShortArrayLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.uShortArrayLoop()
+        instance.uShortArrayLoop(bh)
     }
 }
 
@@ -742,27 +737,27 @@ class GenericArrayView : SkipWhenBaseOnly() {
     val instance = GenericArrayViewBenchmark()
 
     @Benchmark
-    fun inlined() {
+    fun inlined(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.inlined()
+        instance.inlined(bh)
     }
 
     @Benchmark
-    fun manual() {
+    fun manual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.manual()
+        instance.manual(bh)
     }
 
     @Benchmark
-    fun origin() {
+    fun origin(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.origin()
+        instance.origin(bh)
     }
 
     @Benchmark
-    fun specialized() {
+    fun specialized(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.specialized()
+        instance.specialized(bh)
     }
 }
 
@@ -773,8 +768,8 @@ class GraphSolver {
     val instance = GraphSolverBenchmark()
 
     @Benchmark
-    fun solve() {
-        instance.solve()
+    fun solve(bh: Blackhole) {
+        instance.solve(bh)
     }
 }
 
@@ -784,8 +779,8 @@ class Inheritance {
     val instance = InheritanceBenchmark()
 
     @Benchmark
-    fun baseCalls() {
-        instance.baseCalls()
+    fun baseCalls(bh: Blackhole) {
+        instance.baseCalls(bh)
     }
 }
 
@@ -795,26 +790,26 @@ class Inline : SkipWhenBaseOnly() {
     val instance = InlineBenchmark()
 
     @Benchmark
-    fun calculateInline() {
-        instance.calculateInline()
+    fun calculateInline(bh: Blackhole) {
+        instance.calculateInline(bh)
     }
 
     @Benchmark
-    fun calculate() {
+    fun calculate(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.calculate()
+        instance.calculate(bh)
     }
 
     @Benchmark
-    fun calculateGeneric() {
+    fun calculateGeneric(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.calculateGeneric()
+        instance.calculateGeneric(bh)
     }
 
     @Benchmark
-    fun calculateGenericInline() {
+    fun calculateGenericInline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.calculateGenericInline()
+        instance.calculateGenericInline(bh)
     }
 }
 
@@ -824,123 +819,123 @@ class IntArray : SkipWhenBaseOnly() {
     val instance = IntArrayBenchmark()
 
     @Benchmark
-    fun copy() {
+    fun copy(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copy()
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredLocal() {
+    fun countFilteredLocal(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredLocal()
+        instance.countFilteredLocal(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun countFilteredPrime() {
+    fun countFilteredPrime(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredPrime()
+        instance.countFilteredPrime(bh)
     }
 
     @Benchmark
-    fun countFilteredPrimeManual() {
+    fun countFilteredPrimeManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredPrimeManual()
+        instance.countFilteredPrimeManual(bh)
     }
 
     @Benchmark
-    fun countFilteredSome() {
+    fun countFilteredSome(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredSome()
+        instance.countFilteredSome(bh)
     }
 
     @Benchmark
-    fun countFilteredSomeLocal() {
+    fun countFilteredSomeLocal(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredSomeLocal()
+        instance.countFilteredSomeLocal(bh)
     }
 
     @Benchmark
-    fun countFilteredSomeManual() {
+    fun countFilteredSomeManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredSomeManual()
+        instance.countFilteredSomeManual(bh)
     }
 
     @Benchmark
-    fun filter() {
+    fun filter(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filter()
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 
     @Benchmark
-    fun filterPrime() {
+    fun filterPrime(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterPrime()
+        instance.filterPrime(bh)
     }
 
     @Benchmark
-    fun filterSome() {
+    fun filterSome(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterSome()
+        instance.filterSome(bh)
     }
 
     @Benchmark
-    fun filterSomeAndCount() {
+    fun filterSomeAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterSomeAndCount()
+        instance.filterSomeAndCount(bh)
     }
 
     @Benchmark
-    fun filterSomeManual() {
+    fun filterSomeManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterSomeManual()
+        instance.filterSomeManual(bh)
     }
 
     @Benchmark
-    fun reduce() {
+    fun reduce(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.reduce()
+        instance.reduce(bh)
     }
 }
 
@@ -950,33 +945,33 @@ class IntBaseline : SkipWhenBaseOnly() {
     val instance = IntBaselineBenchmark()
 
     @Benchmark
-    fun allocateArray() {
+    fun allocateArray(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateArray()
+        instance.allocateArray(bh)
     }
 
     @Benchmark
-    fun allocateArrayAndFill() {
+    fun allocateArrayAndFill(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateArrayAndFill()
+        instance.allocateArrayAndFill(bh)
     }
 
     @Benchmark
-    fun allocateList() {
+    fun allocateList(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateList()
+        instance.allocateList(bh)
     }
 
     @Benchmark
-    fun allocateListAndFill() {
+    fun allocateListAndFill(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.allocateListAndFill()
+        instance.allocateListAndFill(bh)
     }
 
     @Benchmark
-    fun consume() {
+    fun consume(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.consume()
+        instance.consume(bh)
     }
 }
 
@@ -986,69 +981,69 @@ class IntList : SkipWhenBaseOnly() {
     val instance = IntListBenchmark()
 
     @Benchmark
-    fun copy() {
+    fun copy(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copy()
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredLocal() {
+    fun countFilteredLocal(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredLocal()
+        instance.countFilteredLocal(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun filter() {
+    fun filter(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filter()
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 
     @Benchmark
-    fun reduce() {
+    fun reduce(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.reduce()
+        instance.reduce(bh)
     }
 }
 
@@ -1058,69 +1053,69 @@ class IntStream : SkipWhenBaseOnly() {
     val instance = IntStreamBenchmark()
 
     @Benchmark
-    fun copy() {
+    fun copy(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copy()
+        instance.copy(bh)
     }
 
     @Benchmark
-    fun copyManual() {
+    fun copyManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.copyManual()
+        instance.copyManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredLocal() {
+    fun countFilteredLocal(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredLocal()
+        instance.countFilteredLocal(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun filter() {
+    fun filter(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filter()
+        instance.filter(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndMap() {
+    fun filterAndMap(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMap()
+        instance.filterAndMap(bh)
     }
 
     @Benchmark
-    fun filterAndMapManual() {
+    fun filterAndMapManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndMapManual()
+        instance.filterAndMapManual(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 
     @Benchmark
-    fun reduce() {
+    fun reduce(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.reduce()
+        instance.reduce(bh)
     }
 }
 
@@ -1130,21 +1125,21 @@ class Iterator : SkipWhenBaseOnly() {
     val instance = IteratorBenchmark()
 
     @Benchmark
-    fun abstractIterable() {
+    fun abstractIterable(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.abstractIterable()
+        instance.abstractIterable(bh)
     }
 
     @Benchmark
-    fun baseline() {
+    fun baseline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.baseline()
+        instance.baseline(bh)
     }
 
     @Benchmark
-    fun concreteIterable() {
+    fun concreteIterable(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.concreteIterable()
+        instance.concreteIterable(bh)
     }
 }
 
@@ -1154,48 +1149,48 @@ class Lambda : SkipWhenBaseOnly() {
     val instance = LambdaBenchmark()
 
     @Benchmark
-    fun capturingLambda() {
-        instance.capturingLambda()
+    fun capturingLambda(bh: Blackhole) {
+        instance.capturingLambda(bh)
     }
 
     @Benchmark
-    fun methodReference() {
-        instance.methodReference()
+    fun methodReference(bh: Blackhole) {
+        instance.methodReference(bh)
     }
 
     @Benchmark
-    fun noncapturingLambda() {
-        instance.noncapturingLambda()
+    fun noncapturingLambda(bh: Blackhole) {
+        instance.noncapturingLambda(bh)
     }
 
     @Benchmark
-    fun capturingLambdaNoInline() {
+    fun capturingLambdaNoInline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.capturingLambdaNoInline()
+        instance.capturingLambdaNoInline(bh)
     }
 
     @Benchmark
-    fun methodReferenceNoInline() {
+    fun methodReferenceNoInline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.methodReferenceNoInline()
+        instance.methodReferenceNoInline(bh)
     }
 
     @Benchmark
-    fun mutatingLambda() {
+    fun mutatingLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.mutatingLambda()
+        instance.mutatingLambda(bh)
     }
 
     @Benchmark
-    fun mutatingLambdaNoInline() {
+    fun mutatingLambdaNoInline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.mutatingLambdaNoInline()
+        instance.mutatingLambdaNoInline(bh)
     }
 
     @Benchmark
-    fun noncapturingLambdaNoInline() {
+    fun noncapturingLambdaNoInline(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.noncapturingLambdaNoInline()
+        instance.noncapturingLambdaNoInline(bh)
     }
 }
 
@@ -1206,9 +1201,9 @@ class LifeHideName : SkipWhenBaseOnly() {
     val instance = LifeBenchmark()
 
     @Benchmark
-    fun Life() {
+    fun Life(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.bench()
+        instance.bench(bh)
     }
 }
 
@@ -1219,9 +1214,9 @@ class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
     val instance = LifeWithMarkHelpersBenchmark()
 
     @Benchmark
-    fun LifeWithMarkHelpers() {
+    fun LifeWithMarkHelpers(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.bench()
+        instance.bench(bh)
     }
 
     @TearDown
@@ -1237,8 +1232,8 @@ class LinkedListWithAtomicsBenchmarkHideName {
     val instance = org.jetbrains.ring.LinkedListWithAtomicsBenchmark()
 
     @Benchmark
-    fun LinkedListWithAtomicsBenchmark() {
-        instance.ensureNext()
+    fun LinkedListWithAtomicsBenchmark(bh: Blackhole) {
+        instance.benchmark(bh)
     }
 
 }
@@ -1249,9 +1244,9 @@ class LocalObjects : SkipWhenBaseOnly() {
     val instance = LocalObjectsBenchmark()
 
     @Benchmark
-    fun localArray() {
+    fun localArray(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.localArray()
+        instance.localArray(bh)
     }
 }
 
@@ -1261,40 +1256,40 @@ class Loop : SkipWhenBaseOnly() {
     val instance = LoopBenchmark()
 
     @Benchmark
-    fun arrayForeachLoop() {
-        instance.arrayForeachLoop()
+    fun arrayForeachLoop(bh: Blackhole) {
+        instance.arrayForeachLoop(bh)
     }
 
     @Benchmark
-    fun arrayListForeachLoop() {
-        instance.arrayListForeachLoop()
+    fun arrayListForeachLoop(bh: Blackhole) {
+        instance.arrayListForeachLoop(bh)
     }
 
     @Benchmark
-    fun arrayLoop() {
-        instance.arrayLoop()
+    fun arrayLoop(bh: Blackhole) {
+        instance.arrayLoop(bh)
     }
 
     @Benchmark
-    fun arrayWhileLoop() {
-        instance.arrayWhileLoop()
+    fun arrayWhileLoop(bh: Blackhole) {
+        instance.arrayWhileLoop(bh)
     }
 
     @Benchmark
-    fun rangeLoop() {
-        instance.rangeLoop()
+    fun rangeLoop(bh: Blackhole) {
+        instance.rangeLoop(bh)
     }
 
     @Benchmark
-    fun arrayIndexLoop() {
+    fun arrayIndexLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.arrayIndexLoop()
+        instance.arrayIndexLoop(bh)
     }
 
     @Benchmark
-    fun arrayListLoop() {
+    fun arrayListLoop(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.arrayListLoop()
+        instance.arrayListLoop(bh)
     }
 }
 
@@ -1304,8 +1299,8 @@ class MatrixMap {
     val instance = MatrixMapBenchmark()
 
     @Benchmark
-    fun add() {
-        instance.add()
+    fun add(bh: Blackhole) {
+        instance.add(bh)
     }
 }
 
@@ -1313,8 +1308,8 @@ class MatrixMap {
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class OctoTestHideName {
     @Benchmark
-    fun OctoTest() {
-        octoTest()
+    fun OctoTest(bh: Blackhole) {
+        octoTest(bh)
     }
 }
 
@@ -1324,39 +1319,39 @@ class ParameterNotNull : SkipWhenBaseOnly() {
     val instance = ParameterNotNullAssertionBenchmark()
 
     @Benchmark
-    fun invokeEightArgsWithNullCheck() {
+    fun invokeEightArgsWithNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeEightArgsWithNullCheck()
+        instance.invokeEightArgsWithNullCheck(bh)
     }
 
     @Benchmark
-    fun invokeEightArgsWithoutNullCheck() {
+    fun invokeEightArgsWithoutNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeEightArgsWithoutNullCheck()
+        instance.invokeEightArgsWithoutNullCheck(bh)
     }
 
     @Benchmark
-    fun invokeOneArgWithNullCheck() {
+    fun invokeOneArgWithNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeOneArgWithNullCheck()
+        instance.invokeOneArgWithNullCheck(bh)
     }
 
     @Benchmark
-    fun invokeOneArgWithoutNullCheck() {
+    fun invokeOneArgWithoutNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeOneArgWithoutNullCheck()
+        instance.invokeOneArgWithoutNullCheck(bh)
     }
 
     @Benchmark
-    fun invokeTwoArgsWithNullCheck() {
+    fun invokeTwoArgsWithNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeTwoArgsWithNullCheck()
+        instance.invokeTwoArgsWithNullCheck(bh)
     }
 
     @Benchmark
-    fun invokeTwoArgsWithoutNullCheck() {
+    fun invokeTwoArgsWithoutNullCheck(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invokeTwoArgsWithoutNullCheck()
+        instance.invokeTwoArgsWithoutNullCheck(bh)
     }
 }
 
@@ -1366,13 +1361,13 @@ class PrimeList {
     val instance = PrimeListBenchmark()
 
     @Benchmark
-    fun calcDirect() {
-        instance.calcDirect()
+    fun calcDirect(bh: Blackhole) {
+        instance.calcDirect(bh)
     }
 
     @Benchmark
-    fun calcEratosthenes() {
-        instance.calcEratosthenes()
+    fun calcEratosthenes(bh: Blackhole) {
+        instance.calcEratosthenes(bh)
     }
 }
 
@@ -1382,8 +1377,8 @@ class RichardsHideName {
     val instance = RichardsBenchmark()
 
     @Benchmark
-    fun Richards() {
-        instance.runRichards()
+    fun Richards(bh: Blackhole) {
+        instance.runRichards(bh)
     }
 
 }
@@ -1394,8 +1389,8 @@ class Singleton {
     val instance = SingletonBenchmark()
 
     @Benchmark
-    fun access() {
-        instance.access()
+    fun access(bh: Blackhole) {
+        instance.access(bh)
     }
 
 }
@@ -1407,8 +1402,8 @@ class SplayHideName {
     val instance = SplayBenchmark()
 
     @Benchmark
-    fun Splay() {
-        instance.runSplay()
+    fun Splay(bh: Blackhole) {
+        instance.runSplay(bh)
     }
 
     @TearDown
@@ -1424,8 +1419,8 @@ class SplayWithMarkHelpersHideName {
     val instance = SplayBenchmarkWithMarkHelpers()
 
     @Benchmark
-    fun SplayWithMarkHelpers() {
-        instance.runSplayWithMarkHelpers()
+    fun SplayWithMarkHelpers(bh: Blackhole) {
+        instance.runSplayWithMarkHelpers(bh)
     }
 
     @TearDown
@@ -1441,8 +1436,8 @@ class SplayWithWorkersHideName {
     val instance = SplayBenchmarkUsingWorkers()
 
     @Benchmark
-    fun SplayWithWorkers() {
-        instance.runSplayWorkers()
+    fun SplayWithWorkers(bh: Blackhole) {
+        instance.runSplayWorkers(bh)
     }
 
     @TearDown
@@ -1457,29 +1452,29 @@ class String : SkipWhenBaseOnly() {
     val instance = StringBenchmark()
 
     @Benchmark
-    fun stringBuilderConcat() {
-        instance.stringBuilderConcat()
+    fun stringBuilderConcat(bh: Blackhole) {
+        instance.stringBuilderConcat(bh)
     }
 
     @Benchmark
-    fun stringBuilderConcatNullable() {
-        instance.stringBuilderConcatNullable()
+    fun stringBuilderConcatNullable(bh: Blackhole) {
+        instance.stringBuilderConcatNullable(bh)
     }
 
     @Benchmark
-    fun stringConcat() {
-        instance.stringConcat()
+    fun stringConcat(bh: Blackhole) {
+        instance.stringConcat(bh)
     }
 
     @Benchmark
-    fun summarizeSplittedCsv() {
-        instance.summarizeSplittedCsv()
+    fun summarizeSplittedCsv(bh: Blackhole) {
+        instance.summarizeSplittedCsv(bh)
     }
 
     @Benchmark
-    fun stringConcatNullable() {
+    fun stringConcatNullable(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.stringConcatNullable()
+        instance.stringConcatNullable(bh)
     }
 }
 
@@ -1489,57 +1484,57 @@ class SubList : SkipWhenBaseOnly() {
     val instance = SubListBenchmark()
 
     @Benchmark
-    fun concatenate() {
+    fun concatenate(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.concatenate()
+        instance.concatenate(bh)
     }
 
     @Benchmark
-    fun concatenateManual() {
+    fun concatenateManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.concatenateManual()
+        instance.concatenateManual(bh)
     }
 
     @Benchmark
-    fun countFiltered() {
+    fun countFiltered(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFiltered()
+        instance.countFiltered(bh)
     }
 
     @Benchmark
-    fun countFilteredManual() {
+    fun countFilteredManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countFilteredManual()
+        instance.countFilteredManual(bh)
     }
 
     @Benchmark
-    fun countWithLambda() {
+    fun countWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.countWithLambda()
+        instance.countWithLambda(bh)
     }
 
     @Benchmark
-    fun filterAndCount() {
+    fun filterAndCount(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCount()
+        instance.filterAndCount(bh)
     }
 
     @Benchmark
-    fun filterAndCountWithLambda() {
+    fun filterAndCountWithLambda(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterAndCountWithLambda()
+        instance.filterAndCountWithLambda(bh)
     }
 
     @Benchmark
-    fun filterManual() {
+    fun filterManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.filterManual()
+        instance.filterManual(bh)
     }
 
     @Benchmark
-    fun reduce() {
+    fun reduce(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.reduce()
+        instance.reduce(bh)
     }
 }
 
@@ -1549,54 +1544,54 @@ class Switch : SkipWhenBaseOnly() {
     val instance = SwitchBenchmark()
 
     @Benchmark
-    fun testEnumsSwitch() {
-        instance.testEnumsSwitch()
+    fun testEnumsSwitch(bh: Blackhole) {
+        instance.testEnumsSwitch(bh)
     }
 
     @Benchmark
-    fun testSealedWhenSwitch() {
-        instance.testSealedWhenSwitch()
+    fun testSealedWhenSwitch(bh: Blackhole) {
+        instance.testSealedWhenSwitch(bh)
     }
 
     @Benchmark
-    fun testStringsSwitch() {
-        instance.testStringsSwitch()
+    fun testStringsSwitch(bh: Blackhole) {
+        instance.testStringsSwitch(bh)
     }
 
     @Benchmark
-    fun testConstSwitch() {
+    fun testConstSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testConstSwitch()
+        instance.testConstSwitch(bh)
     }
 
     @Benchmark
-    fun testDenseEnumsSwitch() {
+    fun testDenseEnumsSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testDenseEnumsSwitch()
+        instance.testDenseEnumsSwitch(bh)
     }
 
     @Benchmark
-    fun testDenseIntSwitch() {
+    fun testDenseIntSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testDenseIntSwitch()
+        instance.testDenseIntSwitch(bh)
     }
 
     @Benchmark
-    fun testObjConstSwitch() {
+    fun testObjConstSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testObjConstSwitch()
+        instance.testObjConstSwitch(bh)
     }
 
     @Benchmark
-    fun testSparseIntSwitch() {
+    fun testSparseIntSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testSparseIntSwitch()
+        instance.testSparseIntSwitch(bh)
     }
 
     @Benchmark
-    fun testVarSwitch() {
+    fun testVarSwitch(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.testVarSwitch()
+        instance.testVarSwitch(bh)
     }
 }
 
@@ -1606,21 +1601,21 @@ class WeakRefBenchmark : SkipWhenBaseOnly() {
     val instance = org.jetbrains.ring.WeakRefBenchmark()
 
     @Benchmark
-    fun aliveReference() {
+    fun aliveReference(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.aliveReference()
+        instance.aliveReference(bh)
     }
 
     @Benchmark
-    fun deadReference() {
+    fun deadReference(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.deadReference()
+        instance.deadReference(bh)
     }
 
     @Benchmark
-    fun dyingReference() {
+    fun dyingReference(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.dyingReference()
+        instance.dyingReference(bh)
     }
 
     @TearDown
@@ -1635,13 +1630,13 @@ class WithIndicies : SkipWhenBaseOnly() {
     val instance = WithIndiciesBenchmark()
 
     @Benchmark
-    fun withIndicies() {
-        instance.withIndicies()
+    fun withIndicies(bh: Blackhole) {
+        instance.withIndicies(bh)
     }
 
     @Benchmark
-    fun withIndiciesManual() {
+    fun withIndiciesManual(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.withIndiciesManual()
+        instance.withIndiciesManual(bh)
     }
 }

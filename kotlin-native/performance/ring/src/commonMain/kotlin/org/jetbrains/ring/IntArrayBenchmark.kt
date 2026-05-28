@@ -16,6 +16,10 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
+
 open class IntArrayBenchmark {
     private var _data: IntArray? = null
     val data: IntArray
@@ -30,36 +34,36 @@ open class IntArrayBenchmark {
     }
 
     //Benchmark
-    fun copy(): List<Int> {
-        return data.toList()
+    fun copy(bh: Blackhole) {
+        bh.consume(data.toList())
     }
 
     //Benchmark
-    fun copyManual(): ArrayList<Int> {
+    fun copyManual(bh: Blackhole) {
         val list = ArrayList<Int>(data.size)
         for (item in data) {
             list.add(item)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filterAndCount(): Int {
-        return data.filter { filterLoad(it) }.count()
+    fun filterAndCount(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) }.count())
     }
 
     //Benchmark
-    fun filterSomeAndCount(): Int {
-        return data.filter { filterSome(it) }.count()
+    fun filterSomeAndCount(bh: Blackhole) {
+        bh.consume(data.filter { filterSome(it) }.count())
     }
 
     //Benchmark
-    fun filterAndMap(): List<String> {
-        return data.filter { filterLoad(it) }.map { mapLoad(it) }
+    fun filterAndMap(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) }.map { mapLoad(it) })
     }
 
     //Benchmark
-    fun filterAndMapManual(): ArrayList<String> {
+    fun filterAndMapManual(bh: Blackhole) {
         val list = ArrayList<String>()
         for (it in data) {
             if (filterLoad(it)) {
@@ -67,105 +71,104 @@ open class IntArrayBenchmark {
                 list.add(value)
             }
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filter(): List<Int> {
-        return data.filter { filterLoad(it) }
+    fun filter(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) })
     }
 
     //Benchmark
-    fun filterSome(): List<Int> {
-        return data.filter { filterSome(it) }
+    fun filterSome(bh: Blackhole) {
+        bh.consume(data.filter { filterSome(it) })
     }
 
     //Benchmark
-    fun filterPrime(): List<Int> {
-        return data.filter { filterPrime(it) }
+    fun filterPrime(bh: Blackhole) {
+        bh.consume(data.filter { filterPrime(it) })
     }
 
     //Benchmark
-    fun filterManual(): ArrayList<Int> {
+    fun filterManual(bh: Blackhole) {
         val list = ArrayList<Int>()
         for (it in data) {
             if (filterLoad(it))
                 list.add(it)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filterSomeManual(): ArrayList<Int> {
+    fun filterSomeManual(bh: Blackhole) {
         val list = ArrayList<Int>()
         for (it in data) {
             if (filterSome(it))
                 list.add(it)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun countFilteredManual(): Int {
+    fun countFilteredManual(bh: Blackhole) {
         var count = 0
         for (it in data) {
             if (filterLoad(it))
                 count++
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun countFilteredSomeManual(): Int {
+    fun countFilteredSomeManual(bh: Blackhole) {
         var count = 0
         for (it in data) {
             if (filterSome(it))
                 count++
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun countFilteredPrimeManual(): Int {
+    fun countFilteredPrimeManual(bh: Blackhole) {
         var count = 0
         for (it in data) {
             if (filterPrime(it))
                 count++
         }
-        return count
+        bh.consume(count)
     }
 
     
     //Benchmark
-    fun countFiltered(): Int {
-        return data.count { filterLoad(it) }
+    fun countFiltered(bh: Blackhole) {
+        bh.consume(data.count { filterLoad(it) })
     }
 
     //Benchmark
-    fun countFilteredSome(): Int {
-        return data.count { filterSome(it) }
+    fun countFilteredSome(bh: Blackhole) {
+        bh.consume(data.count { filterSome(it) })
     }
 
     //Benchmark
-    fun countFilteredPrime(): Int {
+    fun countFilteredPrime(bh: Blackhole) {
         val res = data.count { filterPrime(it) }
-        //println(res)
-        return res
+        bh.consume(res)
     }
 
     //Benchmark
-    fun countFilteredLocal(): Int {
-        return data.cnt { filterLoad(it) }
+    fun countFilteredLocal(bh: Blackhole) {
+        bh.consume(data.cnt { filterLoad(it) })
     }
 
     //Benchmark
-    fun countFilteredSomeLocal(): Int {
-        return data.cnt { filterSome(it) }
+    fun countFilteredSomeLocal(bh: Blackhole) {
+        bh.consume(data.cnt { filterSome(it) })
     }
 
     //Benchmark
-    fun reduce(): Int {
-        return data.fold(0) { acc, it -> if (filterLoad(it)) acc + 1 else acc }
+    fun reduce(bh: Blackhole) {
+        bh.consume(data.fold(0) { acc, it -> if (filterLoad(it)) acc + 1 else acc })
     }
 }
 

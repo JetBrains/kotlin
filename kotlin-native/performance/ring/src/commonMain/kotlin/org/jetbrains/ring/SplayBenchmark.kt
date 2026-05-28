@@ -41,9 +41,12 @@
 // also has to deal with a lot of changes to the large tree object
 // graph.
 
+@file:OptIn(kotlin.native.concurrent.ObsoleteWorkersApi::class)
+
 import kotlin.native.concurrent.*
 import kotlin.concurrent.*
 import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
 
 // A splay tree is a self-balancing binary search tree with the additional
 // property that recently accessed elements are quick to access again.
@@ -291,7 +294,7 @@ class SplayBenchmark {
         }
     }
 
-    fun runSplay() {
+    fun runSplay(bh: Blackhole) {
         for (i in 0 until splayTreeModifications) {
             val key = insertNewNode(splayTree, splayTreePayloadDepth)
             val greatest = splayTree.findGreatestLessThan(key)
@@ -301,6 +304,7 @@ class SplayBenchmark {
                 splayTree.remove(greatest.key)
             }
         }
+        bh.consume(splayTree)
     }
 }
 
@@ -309,8 +313,8 @@ class SplayBenchmarkUsingWorkers {
     val workers = Array(numberOfWorkers, { _ -> Worker.start() })
     val splayTrees = Array(numberOfWorkers, { _ -> SplayBenchmark() });
 
-    fun runSplayWorkers() {
-        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] }, {it.runSplay()})};
+    fun runSplayWorkers(bh: Blackhole) {
+        val futures = Array(numberOfWorkers) {i -> workers[i].execute(TransferMode.SAFE, { splayTrees[i] to bh }, { (splay, bh) -> splay.runSplay(bh)})};
         futures.forEach{it.consume {}};
     }
 
@@ -352,8 +356,8 @@ class SplayBenchmarkWithMarkHelpers {
 
     val splay = SplayBenchmark()
 
-    fun runSplayWithMarkHelpers() {
-        splay.runSplay()
+    fun runSplayWithMarkHelpers(bh: Blackhole) {
+        splay.runSplay(bh)
     }
 
     fun splayTearDownMarkHelpers() {

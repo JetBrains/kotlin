@@ -16,6 +16,10 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
+
 open class IntListBenchmark {
     private var _data: List<Int>? = null
     val data: List<Int>
@@ -29,31 +33,31 @@ open class IntListBenchmark {
     }
 
     //Benchmark
-    fun copy(): List<Int> {
-        return data.toList()
+    fun copy(bh: Blackhole) {
+        bh.consume(data.toList())
     }
 
     //Benchmark
-    fun copyManual(): List<Int> {
+    fun copyManual(bh: Blackhole) {
         val list = ArrayList<Int>(data.size)
         for (item in data) {
             list.add(item)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filterAndCount(): Int {
-        return data.filter { filterLoad(it) }.count()
+    fun filterAndCount(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) }.count())
     }
 
     //Benchmark
-    fun filterAndMap(): List<String> {
-        return data.filter { filterLoad(it) }.map { mapLoad(it) }
+    fun filterAndMap(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) }.map { mapLoad(it) })
     }
 
     //Benchmark
-    fun filterAndMapManual(): ArrayList<String> {
+    fun filterAndMapManual(bh: Blackhole) {
         val list = ArrayList<String>()
         for (it in data) {
             if (filterLoad(it)) {
@@ -61,46 +65,46 @@ open class IntListBenchmark {
                 list.add(value)
             }
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filter(): List<Int> {
-        return data.filter { filterLoad(it) }
+    fun filter(bh: Blackhole) {
+        bh.consume(data.filter { filterLoad(it) })
     }
 
     //Benchmark
-    fun filterManual(): List<Int> {
+    fun filterManual(bh: Blackhole) {
         val list = ArrayList<Int>()
         for (it in data) {
             if (filterLoad(it))
                 list.add(it)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun countFilteredManual(): Int {
+    fun countFilteredManual(bh: Blackhole) {
         var count = 0
         for (it in data) {
             if (filterLoad(it))
                 count++
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun countFiltered(): Int {
-        return data.count { filterLoad(it) }
+    fun countFiltered(bh: Blackhole) {
+        bh.consume(data.count { filterLoad(it) })
     }
 
     //Benchmark
-    fun countFilteredLocal(): Int {
-        return data.cnt { filterLoad(it) }
+    fun countFilteredLocal(bh: Blackhole) {
+        bh.consume(data.cnt { filterLoad(it) })
     }
 
     //Benchmark
-    fun reduce(): Int {
-        return data.fold(0) { acc, it -> if (filterLoad(it)) acc + 1 else acc }
+    fun reduce(bh: Blackhole) {
+        bh.consume(data.fold(0) { acc, it -> if (filterLoad(it)) acc + 1 else acc })
     }
 }

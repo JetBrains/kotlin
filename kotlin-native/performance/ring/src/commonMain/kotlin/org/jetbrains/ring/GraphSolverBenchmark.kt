@@ -1,5 +1,7 @@
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 class Graph {
     val nodes: MutableList<Node> = mutableListOf()
     val size
@@ -37,7 +39,7 @@ class Greedy(private val graph: Graph) {
         return ClosestNode(clostest.key, clostest.value)
     }
 
-    fun solve() {
+    fun solve(): Int {
         var previousNode = graph.first()
         visitedNodes.add(graph.first())
         var cost = 0
@@ -50,6 +52,7 @@ class Greedy(private val graph: Graph) {
         }
 
         cost += visitedNodes.last().neighbors[graph.first()]!!
+        return cost
     }
 }
 
@@ -1067,7 +1070,7 @@ class GraphSolverBenchmark {
 
     val graph = parseData(content)
 
-    fun solve() {
-        Greedy(graph).solve()
+    fun solve(bh: Blackhole) {
+        bh.consume(Greedy(graph).solve())
     }
 }

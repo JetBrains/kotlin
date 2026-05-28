@@ -3,38 +3,35 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the licenses/LICENSE.txt file.
  */
 
-import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkTimeUnit
-import kotlinx.benchmark.Measurement
-import kotlinx.benchmark.Scope
-import kotlinx.benchmark.State
-import org.jetbrains.benchmarksLauncher.*
+import kotlinx.benchmark.*
 
 @State(Scope.Benchmark)
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class NumericalHideName {
     @Benchmark
-    fun BellardPi() {
-        konanBellardPi()
+    fun BellardPi(bh: Blackhole) {
+        konanBellardPi(bh)
     }
 
     @Benchmark
-    fun BellardPiCinterop() {
-        clangBellardPi()
+    fun BellardPiCinterop(bh: Blackhole) {
+        clangBellardPi(bh)
     }
 }
 
-fun konanBellardPi() {
+fun konanBellardPi(bh: Blackhole) {
+    var result = 0
     for (n in 1 .. 1000 step 9) {
-        val result = pi_nth_digit(n)
-        Blackhole.consume(result)
+        result += pi_nth_digit(n)
     }
+    bh.consume(result)
 }
 
-fun clangBellardPi() {
+fun clangBellardPi(bh: Blackhole) {
+    var result = 0
     for (n in 1 .. 1000 step 9) {
         @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-        val result = cinterop.pi_nth_digit(n)
-        Blackhole.consume(result)
+        result += cinterop.pi_nth_digit(n)
     }
+    bh.consume(result)
 }

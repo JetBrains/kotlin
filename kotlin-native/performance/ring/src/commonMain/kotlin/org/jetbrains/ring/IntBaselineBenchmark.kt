@@ -16,45 +16,48 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 open class IntBaselineBenchmark {
 
     //Benchmark
-    fun consume() {
+    fun consume(bh: Blackhole) {
         for (item in 1..BENCHMARK_SIZE) {
-            Blackhole.consume(item)
+            // TODO: what does this benchmark measure? `consume` may be too expensive
+            bh.consume(item)
         }
     }
 
     //Benchmark
-    fun allocateList(): List<Int> {
+    fun allocateList(bh: Blackhole) {
         val list = ArrayList<Int>(BENCHMARK_SIZE)
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun allocateArray(): IntArray {
+    fun allocateArray(bh: Blackhole) {
         val list = IntArray(BENCHMARK_SIZE)
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun allocateListAndFill(): List<Int> {
+    fun allocateListAndFill(bh: Blackhole) {
         val list = ArrayList<Int>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
             list.add(item)
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun allocateArrayAndFill(): IntArray {
+    fun allocateArrayAndFill(bh: Blackhole) {
         var index = 0
         val list = IntArray(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
             list[index++] = item
         }
-        return list
+        bh.consume(list)
     }
 }

@@ -5,19 +5,18 @@
 
 package org.jetbrains.complexNumbers
 
-const val benchmarkSize = 10000
+import kotlinx.benchmark.Blackhole
 
 expect class ComplexNumber
 
 expect class ComplexNumbersBenchmark() {
-    @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-    fun generateNumbersSequence(): List<ComplexNumber>
-    fun sumComplex()
-    fun subComplex()
-    fun classInheritance()
-    fun categoryMethods()
-    fun stringToObjC()
-    fun stringFromObjC()
-    fun fft()
-    fun invertFft()
+    fun generateNumbersSequence(bh: Blackhole)
+    fun sumComplex(bh: Blackhole)
+    fun subComplex(bh: Blackhole)
+    fun classInheritance(bh: Blackhole)
+    fun categoryMethods(bh: Blackhole)
+    fun stringToObjC(bh: Blackhole)
+    fun stringFromObjC(bh: Blackhole)
+    fun fft(bh: Blackhole)
+    fun invertFft(bh: Blackhole)
 }

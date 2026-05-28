@@ -3,11 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkTimeUnit
-import kotlinx.benchmark.Measurement
-import kotlinx.benchmark.Scope
-import kotlinx.benchmark.State
+import kotlinx.benchmark.*
 import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 import org.jetbrains.complexNumbers.*
 
@@ -17,52 +13,52 @@ class ComplexNumbersBenchmarkHideName : SkipWhenBaseOnly() {
     private val instance = ComplexNumbersBenchmark()
 
     @Benchmark
-    fun sumComplex() {
-        instance.sumComplex()
+    fun sumComplex(bh: Blackhole) {
+        instance.sumComplex(bh)
     }
 
     @Benchmark
-    fun stringToObjC() {
-        instance.stringToObjC()
+    fun stringToObjC(bh: Blackhole) {
+        instance.stringToObjC(bh)
     }
 
     @Benchmark
-    fun stringFromObjC() {
-        instance.stringFromObjC()
+    fun stringFromObjC(bh: Blackhole) {
+        instance.stringFromObjC(bh)
     }
 
     @Benchmark
-    fun fft() {
-        instance.fft()
+    fun fft(bh: Blackhole) {
+        instance.fft(bh)
     }
 
     @Benchmark
-    fun generateNumbersSequence() {
+    fun generateNumbersSequence(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.generateNumbersSequence()
+        instance.generateNumbersSequence(bh)
     }
 
     @Benchmark
-    fun subComplex() {
+    fun subComplex(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.subComplex()
+        instance.subComplex(bh)
     }
 
     @Benchmark
-    fun classInheritance() {
+    fun classInheritance(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.classInheritance()
+        instance.classInheritance(bh)
     }
 
     @Benchmark
-    fun categoryMethods() {
+    fun categoryMethods(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.categoryMethods()
+        instance.categoryMethods(bh)
     }
 
     @Benchmark
-    fun invertFft() {
+    fun invertFft(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.invertFft()
+        instance.invertFft(bh)
     }
 }

@@ -16,6 +16,10 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
+
 class SubListBenchmark {
     private var _data: List<Value>? = null
 
@@ -34,12 +38,12 @@ class SubListBenchmark {
     }
 
     //Benchmark
-    fun concatenate(): List<Value> {
-        return getData(false) + getData(true)
+    fun concatenate(bh: Blackhole) {
+        bh.consume(getData(false) + getData(true))
     }
 
     //Benchmark
-    fun concatenateManual(): List<Value> {
+    fun concatenateManual(bh: Blackhole) {
         val list = ArrayList<Value>(2 * BENCHMARK_SIZE)
         // outer loop to ensure single call site for list and sublist
         for (data in listOf(getData(false), getData(true))) {
@@ -47,38 +51,38 @@ class SubListBenchmark {
                 list.add(item)
             }
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun filterAndCount(): Int {
+    fun filterAndCount(bh: Blackhole) {
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.filter { filterLoad(it) }.count()
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun filterAndCountWithLambda(): Int {
+    fun filterAndCountWithLambda(bh: Blackhole) {
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.filter { it.value % 2 == 0 }.count()
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun countWithLambda(): Int {
+    fun countWithLambda(bh: Blackhole) {
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.count { it.value % 2 == 0 }
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun filterManual(): List<Value> {
+    fun filterManual(bh: Blackhole) {
         val list = ArrayList<Value>()
         for (data in listOf(getData(false), getData(true))) {
             for (it in data) {
@@ -86,11 +90,11 @@ class SubListBenchmark {
                     list.add(it)
             }
         }
-        return list
+        bh.consume(list)
     }
 
     //Benchmark
-    fun countFilteredManual(): Int {
+    fun countFilteredManual(bh: Blackhole) {
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             for (it in data) {
@@ -98,24 +102,24 @@ class SubListBenchmark {
                     count++
             }
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun countFiltered(): Int {
+    fun countFiltered(bh: Blackhole) {
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.count { filterLoad(it) }
         }
-        return count
+        bh.consume(count)
     }
 
     //Benchmark
-    fun reduce(): Int {
+    fun reduce(bh: Blackhole) {
         var res = 0
         for (data in listOf(getData(false), getData(true))) {
             res = data.fold(res) { acc, it -> if (filterLoad(it)) acc + 1 else acc }
         }
-        return res
+        bh.consume(res)
     }
 }

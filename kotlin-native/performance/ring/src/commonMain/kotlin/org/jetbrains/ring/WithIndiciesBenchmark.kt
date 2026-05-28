@@ -16,7 +16,9 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 open class WithIndiciesBenchmark {
     private var _data: ArrayList<Value>? = null
@@ -31,24 +33,26 @@ open class WithIndiciesBenchmark {
     }
 
     //Benchmark
-    fun withIndicies() {
+    fun withIndicies(bh: Blackhole) {
+        var result = 0
         for ((index, value) in data.withIndex()) {
             if (filterLoad(value)) {
-                Blackhole.consume(index)
-                Blackhole.consume(value)
+                result += index + value.value
             }
         }
+        bh.consume(result)
     }
 
     //Benchmark
-    fun withIndiciesManual() {
+    fun withIndiciesManual(bh: Blackhole) {
+        var result = 0
         var index = 0
         for (value in data) {
             if (filterLoad(value)) {
-                Blackhole.consume(index)
-                Blackhole.consume(value)
+                result += index + value.value
             }
             index++
         }
+        bh.consume(result)
     }
 }

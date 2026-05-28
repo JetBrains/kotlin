@@ -16,11 +16,11 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
+import kotlinx.benchmark.Blackhole
 
 open class LocalObjectsBenchmark {
     //Benchmark
-    fun localArray(): Int {
+    fun localArray(bh: Blackhole) {
         val size = 48
         val array = IntArray(size)
         for (i in 1..size) {
@@ -30,9 +30,6 @@ open class LocalObjectsBenchmark {
         for (i in 0 until size) {
             result += array[i]
         }
-        if (result > 10) {
-            return 1
-        }
-        return 2
+        bh.consume(result)
     }
 }

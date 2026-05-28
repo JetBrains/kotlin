@@ -15,13 +15,15 @@
  */
 
 package org.jetbrains.structsBenchmarks
+
+import kotlinx.benchmark.Blackhole
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.math.sqrt
 
-const val benchmarkSize = 10000
+private const val BENCHMARK_SIZE = 10000
 
-actual fun structBenchmark() {
+actual fun structBenchmark(bh: Blackhole) {
     memScoped {
         val containsFunction = staticCFunction<CPointer<ElementS>?, CPointer<ElementS>?, Int> { first, second ->
             if (first == null || second == null) {
@@ -35,7 +37,7 @@ actual fun structBenchmark() {
         }
         val elementsList = mutableListOf<ElementS>()
         // Fill list.
-        for (i in 1..benchmarkSize) {
+        for (i in 1..BENCHMARK_SIZE) {
             val element = alloc<ElementS>()
             element.floatValue = i + sqrt(i.toDouble()).toFloat()
             element.integer = i.toLong()
@@ -47,15 +49,15 @@ actual fun structBenchmark() {
         val summary = elementsList.map { multiplyElementS(it.readValue(), (0..10).random()) }
                 .reduce { acc, it -> sumElementSPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
         val intValue = summary.useContents { integer }
-        elementsList.last().contains!!(elementsList.last().ptr, elementsList.first().ptr)
+        bh.consume(elementsList.last().contains!!(elementsList.last().ptr, elementsList.first().ptr))
     }
 }
 
-actual fun unionBenchmark() {
+actual fun unionBenchmark(bh: Blackhole) {
     memScoped {
         val elementsList = mutableListOf<ElementU>()
         // Fill list.
-        for (i in 1..benchmarkSize) {
+        for (i in 1..BENCHMARK_SIZE) {
             val element = alloc<ElementU>()
             element.integer = i.toLong()
             elementsList.add(element)
@@ -65,17 +67,16 @@ actual fun unionBenchmark() {
         }
         val summary = elementsList.map { multiplyElementU(it.readValue(), (0..10).random()) }
                 .reduce { acc, it -> sumElementUPtr(acc.ptr, it.ptr)!!.pointed.readValue() }
-        summary.useContents { integer }
+        bh.consume(summary.useContents { integer })
     }
 }
 
-actual fun enumBenchmark() {
+actual fun enumBenchmark(bh: Blackhole) {
     val days = arrayOf("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
     val enumValues = mutableListOf<WeekDay>()
-    for (i in 1..benchmarkSize) {
+    for (i in 1..BENCHMARK_SIZE) {
         enumValues.add(getWeekDay(days[(0..6).random()]))
     }
-    enumValues.forEach {
-        isWeekEnd(it)
-    }
+    val weekEnds = enumValues.count { isWeekEnd(it) == 1 }
+    bh.consume(weekEnds)
 }

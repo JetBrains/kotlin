@@ -3,11 +3,7 @@
  * that can be found in the LICENSE file.
  */
 
-import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkTimeUnit
-import kotlinx.benchmark.Measurement
-import kotlinx.benchmark.Scope
-import kotlinx.benchmark.State
+import kotlinx.benchmark.*
 import org.jetbrains.startup.*
 
 @State(Scope.Benchmark)
@@ -15,12 +11,12 @@ import org.jetbrains.startup.*
 @Measurement(time = 1, timeUnit = BenchmarkTimeUnit.NANOSECONDS)
 class Singleton {
     @Benchmark
-    fun initialize() {
-        singletonInitialize()
+    fun initialize(bh: Blackhole) {
+        singletonInitialize(bh)
     }
 
     @Benchmark
-    fun initializeNested() {
-        singletonInitializeNested()
+    fun initializeNested(bh: Blackhole) {
+        singletonInitializeNested(bh)
     }
 }

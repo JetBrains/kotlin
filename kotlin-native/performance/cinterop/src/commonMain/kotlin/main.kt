@@ -14,11 +14,7 @@
  * limitations under the License.
  */
 
-import kotlinx.benchmark.Benchmark
-import kotlinx.benchmark.BenchmarkTimeUnit
-import kotlinx.benchmark.Measurement
-import kotlinx.benchmark.Scope
-import kotlinx.benchmark.State
+import kotlinx.benchmark.*
 import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 import org.jetbrains.structsProducedByMacrosBenchmarks.*
 import org.jetbrains.structsBenchmarks.*
@@ -30,13 +26,13 @@ class StringBenchmarkHideName {
     private val instance = StringBenchmark()
 
     @Benchmark
-    fun stringToC() {
-        instance.stringToCBenchmark()
+    fun stringToC(bh: Blackhole) {
+        instance.stringToCBenchmark(bh)
     }
 
     @Benchmark
-    fun stringToKotlin() {
-        instance.stringToKotlinBenchmark()
+    fun stringToKotlin(bh: Blackhole) {
+        instance.stringToKotlinBenchmark(bh)
     }
 }
 
@@ -46,8 +42,8 @@ class IntMatrixBenchmarkHideName {
     private val instance = IntMatrixBenchmark()
 
     @Benchmark
-    fun intMatrix() {
-        instance.intMatrixBenchmark()
+    fun intMatrix(bh: Blackhole) {
+        instance.intMatrixBenchmark(bh)
     }
 }
 
@@ -55,27 +51,27 @@ class IntMatrixBenchmarkHideName {
 @Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
 class CinteropHideName : SkipWhenBaseOnly() {
     @Benchmark
-    fun macros() {
+    fun macros(bh: Blackhole) {
         skipWhenBaseOnly()
-        macrosBenchmark()
+        macrosBenchmark(bh)
     }
 
     @Benchmark
-    fun struct() {
+    fun struct(bh: Blackhole) {
         skipWhenBaseOnly()
-        structBenchmark()
+        structBenchmark(bh)
     }
 
     @Benchmark
-    fun union() {
+    fun union(bh: Blackhole) {
         skipWhenBaseOnly()
-        unionBenchmark()
+        unionBenchmark(bh)
     }
 
     @Benchmark
-    fun enum() {
+    fun enum(bh: Blackhole) {
         skipWhenBaseOnly()
-        enumBenchmark()
+        enumBenchmark(bh)
     }
 }
 
@@ -85,9 +81,9 @@ class IntBenchmarkHideName : SkipWhenBaseOnly() {
     private val instance = IntBenchmark()
 
     @Benchmark
-    fun int() {
+    fun int(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.intBenchmark()
+        instance.intBenchmark(bh)
     }
 }
 
@@ -97,9 +93,9 @@ class BoxedIntBenchmarkHideName : SkipWhenBaseOnly() {
     private val instance = BoxedIntBenchmark()
 
     @Benchmark
-    fun boxedInt() {
+    fun boxedInt(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.boxedIntBenchmark()
+        instance.boxedIntBenchmark(bh)
     }
 }
 
@@ -109,8 +105,8 @@ class PinnedArrayBenchmarkHideName : SkipWhenBaseOnly() {
     private val instance = PinnedArrayBenchmark()
 
     @Benchmark
-    fun pinnedArray() {
+    fun pinnedArray(bh: Blackhole) {
         skipWhenBaseOnly()
-        instance.pinnedArrayBenchmark()
+        instance.pinnedArrayBenchmark(bh)
     }
 }

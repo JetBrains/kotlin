@@ -16,7 +16,10 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Random
+import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
+
+private const val BENCHMARK_SIZE = 10000
 
 open class StringBenchmark {
     private var _data: ArrayList<String>? = null
@@ -25,13 +28,15 @@ open class StringBenchmark {
     var csv: String = ""
 
     init {
+        // Use the same seed for reproducibility
+        val rnd = Random(863)
         val list = ArrayList<String>(BENCHMARK_SIZE)
         for (n in stringValues(BENCHMARK_SIZE))
             list.add(n)
         _data = list
         csv = ""
         for (i in 1..BENCHMARK_SIZE-1) {
-            val elem = Random.nextDouble()
+            val elem = rnd.nextDouble()
             csv += elem
             csv += ","
         }
@@ -39,40 +44,40 @@ open class StringBenchmark {
     }
     
     //Benchmark
-    open fun stringConcat(): String? {
+    open fun stringConcat(bh: Blackhole) {
         var string: String = ""
         for (it in data) string += it
-        return string
+        bh.consume(string)
     }
     
     //Benchmark
-    open fun stringConcatNullable(): String? {
+    open fun stringConcatNullable(bh: Blackhole) {
         var string: String? = ""
         for (it in data) string += it
-        return string
+        bh.consume(string)
     }
     
     //Benchmark
-    open fun stringBuilderConcat(): String {
+    open fun stringBuilderConcat(bh: Blackhole) {
         var string : StringBuilder = StringBuilder("")
         for (it in data) string.append(it)
-        return string.toString()
+        bh.consume(string)
     }
     
     //Benchmark
-    open fun stringBuilderConcatNullable(): String {
+    open fun stringBuilderConcatNullable(bh: Blackhole) {
         var string : StringBuilder? = StringBuilder("")
         for (it in data) string?.append(it)
-        return string.toString()
+        bh.consume(string.toString())
     }
     
     //Benchmark
-    open fun summarizeSplittedCsv(): Double {
+    open fun summarizeSplittedCsv(bh: Blackhole) {
         val fields = csv.split(",")
         var sum = 0.0
         for (field in fields) {
             sum += field.toDouble()
         }
-        return sum
+        bh.consume(sum)
     }
 }

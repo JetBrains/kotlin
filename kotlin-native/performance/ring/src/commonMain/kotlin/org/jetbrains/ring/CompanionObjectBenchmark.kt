@@ -16,10 +16,12 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 open class CompanionObjectBenchmark {
     //Benchmark
-    fun invokeRegularFunction() {
-        regularCompanionObjectFunction("")
+    fun invokeRegularFunction(bh: Blackhole) {
+        bh.consume(regularCompanionObjectFunction(""))
     }
 
     companion object {

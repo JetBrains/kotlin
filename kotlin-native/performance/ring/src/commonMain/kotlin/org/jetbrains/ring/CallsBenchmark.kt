@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 private const val RUNS = 1_000_000
 
 open class CallsBenchmark {
@@ -161,35 +163,35 @@ open class CallsBenchmark {
     val i5: I = Y()
     val i6: I = Z()
 
-    fun finalMethodCall(): Int {
+    fun finalMethodCall(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val d = d
         for (i in 0 until RUNS)
             x += d.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_MonomorphicCallsite(): Int {
+    fun classOpenMethodCall_MonomorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
         for (i in 0 until RUNS)
             x += a1.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_BimorphicCallsite(): Int {
+    fun classOpenMethodCall_BimorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
         val a2 = a2
         for (i in 0 until RUNS)
             x += (if (i and 1 == 0) a1 else a2).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun classOpenMethodCall_TrimorphicCallsite(): Int {
+    fun classOpenMethodCall_TrimorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
@@ -201,29 +203,29 @@ open class CallsBenchmark {
                 2 -> a2
                 else -> a3
             }).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_MonomorphicCallsite(): Int {
+    fun interfaceMethodCall_MonomorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
         for (i in 0 until RUNS)
             x += i1.foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_BimorphicCallsite(): Int {
+    fun interfaceMethodCall_BimorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
         val i2 = i2
         for (i in 0 until RUNS)
             x += (if (i and 1 == 0) i1 else i2).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_TrimorphicCallsite(): Int {
+    fun interfaceMethodCall_TrimorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -235,10 +237,10 @@ open class CallsBenchmark {
                 2 -> i2
                 else -> i3
             }).foo()
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceMethodCall_HexamorphicCallsite(): Int {
+    fun interfaceMethodCall_HexamorphicCallsite(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -256,7 +258,7 @@ open class CallsBenchmark {
                 5 -> i5
                 else -> i6
             }).foo()
-        return x
+        bh.consume(x)
     }
 
     abstract class E {
@@ -269,13 +271,13 @@ open class CallsBenchmark {
 
     val e: E = F()
 
-    fun returnBoxUnboxFolding(): Int {
+    fun returnBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val e = e
         for (i in 0 until RUNS)
             x += e.foo() as Int
-        return x
+        bh.consume(x)
     }
 
     abstract class G<in T> {
@@ -288,14 +290,15 @@ open class CallsBenchmark {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     val g: G<Any> = H() as G<Any>
 
-    fun parameterBoxUnboxFolding(): Int {
+    fun parameterBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val g = g
         for (i in 0 until RUNS)
             x += g.foo(i)
-        return x
+        bh.consume(x)
     }
 }

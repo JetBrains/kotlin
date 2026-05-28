@@ -5,8 +5,8 @@
 
 package org.jetbrains.ring
 
-import org.jetbrains.benchmarksLauncher.Blackhole
 import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
 
 // Benchmark for KT-46425.
 open class BunnymarkBenchmark {
@@ -20,7 +20,7 @@ open class BunnymarkBenchmark {
     val containerSize = 800_000
 
     //Benchmark
-    fun testBunnymark() {
+    fun testBunnymark(bh: Blackhole) {
         val bunnys = BunnyContainer(containerSize)
 
         for (n in 0 until bunnys.maxSize) bunnys.alloc()
@@ -58,6 +58,7 @@ open class BunnymarkBenchmark {
         for (n in 0 until framesCount) {
             executeFrame()
         }
+        bh.consume(bunnys)
     }
 }
 
@@ -92,7 +93,7 @@ inline fun <T : FSprites> T.fastForEach(callback: T.(sprite: FSprite) -> Unit) {
     }
 }
 
-inline class FSprite(val id: Int) {
+value class FSprite(val id: Int) {
     inline val offset get() = id
     inline val index get() = offset / FSprites.STRIDE
 }
@@ -121,7 +122,6 @@ class Float32Buffer(val mbuffer: MemBuffer, val byteOffset: Int, val size: Int) 
 }
 val Float32Buffer.mem: MemBuffer get() = mbuffer
 val Float32Buffer.offset: Int get() = MEM_OFFSET
-val Float32Buffer.size: Int get() = MEM_SIZE
 operator fun Float32Buffer.get(index: Int): Float = mbuffer.getFloat(getByteIndex(index))
 operator fun Float32Buffer.set(index: Int, value: Float): Unit = mbuffer.setFloat(getByteIndex(index), value)
 

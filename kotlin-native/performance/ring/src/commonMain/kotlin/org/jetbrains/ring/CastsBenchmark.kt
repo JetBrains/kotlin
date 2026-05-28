@@ -5,6 +5,8 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 private const val RUNS = 2_000_000
 
 class CastsBenchmark {
@@ -59,7 +61,7 @@ class CastsBenchmark {
         return x
     }
 
-    fun classCast(): Int {
+    fun classCast(bh: Blackhole) {
         val c0: Any = C0()
         val c1: Any = C1()
         val c2: Any = C2()
@@ -84,10 +86,10 @@ class CastsBenchmark {
             x += foo_class(c8, x, i)
             x += foo_class(c9, x, i)
         }
-        return x
+        bh.consume(x)
     }
 
-    fun interfaceCast(): Int {
+    fun interfaceCast(bh: Blackhole) {
         val c0: Any = C0()
         val c1: Any = C1()
         val c2: Any = C2()
@@ -112,6 +114,6 @@ class CastsBenchmark {
             x += foo_iface(c8, x, i)
             x += foo_iface(c9, x, i)
         }
-        return x
+        bh.consume(x)
     }
 }

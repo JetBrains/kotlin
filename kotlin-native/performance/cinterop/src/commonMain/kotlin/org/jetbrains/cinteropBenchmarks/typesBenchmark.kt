@@ -16,20 +16,22 @@
 
 package org.jetbrains.typesBenchmarks
 
+import kotlinx.benchmark.Blackhole
+
 expect class StringBenchmark() {
-    fun stringToCBenchmark()
-    fun stringToKotlinBenchmark()
+    fun stringToCBenchmark(bh: Blackhole)
+    fun stringToKotlinBenchmark(bh: Blackhole)
 }
 expect class IntBenchmark() {
-    fun intBenchmark()
+    fun intBenchmark(bh: Blackhole)
 }
 expect class BoxedIntBenchmark() {
-    fun boxedIntBenchmark()
+    fun boxedIntBenchmark(bh: Blackhole)
 }
 expect class IntMatrixBenchmark() {
-    fun intMatrixBenchmark()
+    fun intMatrixBenchmark(bh: Blackhole)
 }
 
 expect class PinnedArrayBenchmark() {
-    fun pinnedArrayBenchmark()
+    fun pinnedArrayBenchmark(bh: Blackhole)
 }

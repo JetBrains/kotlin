@@ -15,7 +15,9 @@
  */
 
 package org.jetbrains.ring
-import org.jetbrains.benchmarksLauncher.Random
+
+import kotlin.random.Random
+import kotlinx.benchmark.Blackhole
 
 /**
  * Created by Mikhail.Glukhikh on 10/03/2015.
@@ -26,7 +28,9 @@ open class DefaultArgumentBenchmark {
     private var arg = 0
 
     init {
-        arg = Random.nextInt()
+        // Use the same seed for reproducibility
+        val rnd = Random(84)
+        arg = rnd.nextInt(100)
     }
 
     
@@ -47,36 +51,36 @@ open class DefaultArgumentBenchmark {
 
     
     //Benchmark
-    fun testOneOfTwo() {
-        sumTwo(arg)
+    fun testOneOfTwo(bh: Blackhole) {
+        bh.consume(sumTwo(arg))
     }
 
     
     //Benchmark
-    fun testTwoOfTwo() {
-        sumTwo(arg, arg)
+    fun testTwoOfTwo(bh: Blackhole) {
+        bh.consume(sumTwo(arg, arg))
     }
     
     //Benchmark
-    fun testOneOfFour() {
-        sumFour(arg)
-    }
-
-    
-    //Benchmark
-    fun testFourOfFour() {
-        sumFour(arg, arg, arg, arg)
+    fun testOneOfFour(bh: Blackhole) {
+        bh.consume(sumFour(arg))
     }
 
     
     //Benchmark
-    fun testOneOfEight() {
-        sumEight(arg)
+    fun testFourOfFour(bh: Blackhole) {
+        bh.consume(sumFour(arg, arg, arg, arg))
     }
 
     
     //Benchmark
-    fun testEightOfEight() {
-        sumEight(arg, arg, arg, arg, arg, arg, arg, arg)
+    fun testOneOfEight(bh: Blackhole) {
+        bh.consume(sumEight(arg))
+    }
+
+    
+    //Benchmark
+    fun testEightOfEight(bh: Blackhole) {
+        bh.consume(sumEight(arg, arg, arg, arg, arg, arg, arg, arg))
     }
 }

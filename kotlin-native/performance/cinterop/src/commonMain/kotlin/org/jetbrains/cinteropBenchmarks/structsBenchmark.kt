@@ -16,6 +16,8 @@
 
 package org.jetbrains.structsBenchmarks
 
-expect fun structBenchmark()
-expect fun unionBenchmark()
-expect fun enumBenchmark()
+import kotlinx.benchmark.Blackhole
+
+expect fun structBenchmark(bh: Blackhole)
+expect fun unionBenchmark(bh: Blackhole)
+expect fun enumBenchmark(bh: Blackhole)

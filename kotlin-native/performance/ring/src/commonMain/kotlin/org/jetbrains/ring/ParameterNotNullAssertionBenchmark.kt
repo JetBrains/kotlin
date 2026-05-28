@@ -16,6 +16,8 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 val OBJ = Any()
 
 open class ParameterNotNullAssertionBenchmark {
@@ -45,33 +47,33 @@ open class ParameterNotNullAssertionBenchmark {
     }
 
     //Benchmark
-    fun invokeOneArgWithNullCheck(): Any {
-        return methodWithOneNotnullParameter(OBJ)
+    fun invokeOneArgWithNullCheck(bh: Blackhole) {
+        bh.consume(methodWithOneNotnullParameter(OBJ))
     }
 
     //Benchmark
-    fun invokeOneArgWithoutNullCheck(): Any {
-        return privateMethodWithOneNotnullParameter(OBJ)
+    fun invokeOneArgWithoutNullCheck(bh: Blackhole) {
+        bh.consume(privateMethodWithOneNotnullParameter(OBJ))
     }
 
     //Benchmark
-    fun invokeTwoArgsWithNullCheck(): Any {
-        return methodWithTwoNotnullParameters(OBJ, OBJ)
+    fun invokeTwoArgsWithNullCheck(bh: Blackhole) {
+        bh.consume(methodWithTwoNotnullParameters(OBJ, OBJ))
     }
 
     //Benchmark
-    fun invokeTwoArgsWithoutNullCheck(): Any {
-        return privateMethodWithTwoNotnullParameters(OBJ, OBJ)
+    fun invokeTwoArgsWithoutNullCheck(bh: Blackhole) {
+        bh.consume(privateMethodWithTwoNotnullParameters(OBJ, OBJ))
     }
 
     //Benchmark
-    fun invokeEightArgsWithNullCheck(): Any {
-        return methodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ)
+    fun invokeEightArgsWithNullCheck(bh: Blackhole) {
+        bh.consume(methodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ))
     }
 
     //Benchmark
-    fun invokeEightArgsWithoutNullCheck(): Any {
-        return privateMethodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ)
+    fun invokeEightArgsWithoutNullCheck(bh: Blackhole) {
+        bh.consume(privateMethodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ))
     }
 }
 

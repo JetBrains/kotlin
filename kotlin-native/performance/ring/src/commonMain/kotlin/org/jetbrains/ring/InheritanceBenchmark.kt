@@ -5,6 +5,8 @@
 
 package org.jetbrains.ring
 
+import kotlinx.benchmark.Blackhole
+
 private const val RUNS = 1_000_000
 
 open class InheritanceBenchmark {
@@ -491,7 +493,7 @@ open class InheritanceBenchmark {
     val f = F()
     val g = G()
 
-    fun baseCalls(): Int {
+    fun baseCalls(bh: Blackhole) {
         var x = 0
         for (i in 0 until RUNS) {
             x += a.a()
@@ -503,6 +505,6 @@ open class InheritanceBenchmark {
             x += g.f10()
             x += g.g3()
         }
-        return x
+        bh.consume(x)
     }
 }

@@ -15,15 +15,16 @@
  */
 
 package org.jetbrains.structsProducedByMacrosBenchmarks
+
+import kotlinx.benchmark.Blackhole
 import kotlinx.cinterop.*
-import kotlin.math.abs
 
-const val benachmarkSize = 1000
+private const val BENCHMARK_SIZE = 10000
 
-actual fun macrosBenchmark() {
+actual fun macrosBenchmark(bh: Blackhole) {
     memScoped {
         val ints = new_list_int()
-        for (i in 1..benachmarkSize) {
+        for (i in 1..BENCHMARK_SIZE / 10) {
             list_push_front_int(ints, i)
         }
         val floats = new_list_float()
@@ -31,29 +32,22 @@ actual fun macrosBenchmark() {
         ints?.pointed?.apply {
             var current = _first
             while(current != null) {
-                list_push_front_float(floats, current?.pointed?._data?.toFloat()
-                        ?: error("Null elements in list are not expected!")
-                )
-                current = current?.pointed?._next
+                list_push_front_float(floats, current.pointed._data.toFloat())
+                current = current.pointed._next
             }
         }
         // Reverse list.
         var previous: CPointer<list_elem_float>? = null
         var current = floats?.pointed?._first
         while (current != null) {
-            val next = current?.pointed?._next
-            current?.pointed?._next = previous
+            val next = current.pointed._next
+            current.pointed._next = previous
             previous = current
             current = next
         }
         floats?.pointed?._first = previous
         free_list_int(ints)
-        try {
-            if (abs(list_front_float(floats) - benachmarkSize.toFloat()) > 0.00001) {
-                error("Wrong first element!")
-            }
-        } finally {
-            free_list_float(floats)
-        }
+        bh.consume(list_front_float(floats))
+        free_list_float(floats)
     }
 }
