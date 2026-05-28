@@ -12,7 +12,7 @@ plugins {
 description = "Kotlin-test integration tests for JS"
 
 node {
-    version.set(nodejsVersion)
+    version.set(nodejsLtsVersion)
     download.set(true)
 }
 
