@@ -19,8 +19,14 @@ fun FirRegularClass.addDirectInheritors(vararg inheritors: ClassId) {
     directInheritorsAttr = lazyOf(directInheritorsAttr?.value?.plus(inheritors) ?: SmartSet.create<ClassId>().plus(inheritors))
 }
 
+fun FirRegularClass.addDirectInheritors(inheritors: Set<ClassId>) {
+    directInheritorsAttr = lazyOf(directInheritorsAttr?.value?.plus(inheritors) ?: SmartSet.create<ClassId>().plus(inheritors))
+}
+
 val FirRegularClass.directInheritors: Set<ClassId> get() = directInheritorsAttr?.value ?: emptySet()
 
 val FirRegularClassSymbol.directInheritors: Set<ClassId> get() = directInheritorsAttr?.value ?: emptySet()
 
-private fun <T, C : MutableSet<T>> C.plus(others: Array<out T>): C = apply { others.forEach(this::add) }
+private fun <T, C : MutableCollection<T>> C.plus(others: Array<out T>): C = apply { others.forEach(this::add) }
+
+private fun <T, C : MutableCollection<T>> C.plus(others: Collection<T>): C = apply { others.forEach(this::add) }
