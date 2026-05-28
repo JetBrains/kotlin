@@ -4,7 +4,6 @@
  */
 
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.RegularFile
@@ -100,10 +99,6 @@ abstract class SystemPropertyDirectoryProvider : CommandLineArgumentProvider {
 }
 
 fun Test.addDirectoryProperty(directory: File, property: String) {
-    addDirectoryProperty(property = property) { set(directory) }
-}
-
-fun Test.addDirectoryProperty(directory: Provider<Directory>, property: String) {
     addDirectoryProperty(property = property) { set(directory) }
 }
 
