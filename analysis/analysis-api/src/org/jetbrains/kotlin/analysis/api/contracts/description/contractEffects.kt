@@ -40,6 +40,7 @@ public interface KaContractCallsInPlaceContractEffectDeclaration : KaContractEff
 /**
  * Describes how many times a callable parameter is invoked by a function with a `callsInPlace` contract.
  */
+@KaExperimentalApi
 public enum class KaContractInvocationKind {
     /** The parameter is never invoked. */
     ZERO,
