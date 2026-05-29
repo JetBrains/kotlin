@@ -36,32 +36,23 @@ import java.lang.reflect.InvocationTargetException
 import java.net.URLClassLoader
 import java.util.concurrent.ConcurrentHashMap
 
-abstract class AbstractNativeImageBlackBoxCodegenTest {
+
+abstract class AbstractNativeImageCodegenTest {
     @TempDir
     lateinit var workingDir: File
 
-    private val nativeImageDist: File by lazy { ForTestCompileRuntime.kotlinNativeImageDistForTests() }
+    protected val javaHome: String = System.getProperty("java.home")
 
-    private val nativeImageExecutable: File by lazy {
-        val launcher = when {
-            System.getProperty("os.name").startsWith("windows", ignoreCase = true) -> "kotlinc-native-image.bat"
-            else -> "kotlinc-native-image.sh"
-        }
-        nativeImageDist.resolve("bin").resolve(launcher)
-    }
-
-    private val javaHome: String = System.getProperty("java.home")
-
-    private val compilationClasspath: List<File> by lazy {
+    protected val compilationClasspath: List<File> by lazy {
         listOf(
             ForTestCompileRuntime.runtimeJarForTests(),
             ForTestCompileRuntime.kotlinTestJarForTests(),
         )
     }
 
-    private val reflectClasspath: File by lazy { ForTestCompileRuntime.reflectJarForTests() }
+    protected val reflectClasspath: File by lazy { ForTestCompileRuntime.reflectJarForTests() }
 
-    private val mockJdkRtJar: File by lazy { KtTestUtil.findMockJdkRtJar() }
+    protected val mockJdkRtJar: File by lazy { KtTestUtil.findMockJdkRtJar() }
 
     open fun runTest(filePath: String) {
         val testFile = ForTestCompileRuntime.transformTestDataPath(filePath)
@@ -77,31 +68,20 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
         val boxFile = File(workingDir, "box.kt").apply { writeText(prepareSource(source)) }
         val outDir = File(workingDir, "ni-out").apply { mkdirs() }
 
-        val [exitCode, compilerStdout] = runNativeImageCompiler(
+        val [exitCode, compilerStdout] = runCompiler(
             arguments = buildCompilerArgs(boxFile, outDir, directives, withFullJdk),
             classpath = buildClasspath(withReflect, withFullJdk),
         )
-        assertEquals(0, exitCode, "native-image compilation failed:\n$compilerStdout")
+        assertEquals(0, exitCode, "compilation failed:\n$compilerStdout")
 
         val result = invokeBox(outDir, boxClassName(source), withReflect)
         assertEquals("OK", result, "box() != 'OK'")
     }
 
-    private fun runNativeImageCompiler(
+    abstract fun runCompiler(
         arguments: List<String>,
         classpath: List<File>,
-    ): Pair<Int, String> {
-        val cmd = listOf(
-            nativeImageExecutable.absolutePath,
-            "-Dkotlinc.test.allow.testonly.language.features=true",
-            "-cp", classpath.joinToString(File.pathSeparator),
-        ) + arguments
-        val builder = ProcessBuilder(cmd).directory(workingDir).redirectErrorStream(true)
-        builder.environment().putIfAbsent("JAVA_HOME", javaHome)
-        val proc = builder.start()
-        val out = proc.inputStream.reader().use { it.readText() }
-        return proc.waitFor() to out
-    }
+    ): Pair<Int, String>
 
     private fun buildCompilerArgs(
         boxFile: File,

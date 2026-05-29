@@ -7,7 +7,16 @@
       "type": "java.io.Serializable"
     },
     {
-      "type": "java.lang.Boolean"
+      "type": "java.lang.Boolean",
+      "jniAccessible": true,
+      "methods": [
+        {
+          "name": "getBoolean",
+          "parameterTypes": [
+            "java.lang.String"
+          ]
+        }
+      ]
     },
     {
       "type": "java.lang.Byte"
@@ -897,6 +906,290 @@
       "type": "org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType"
     },
     {
+      "type": "org.jetbrains.kotlin.resolve.BindingContext",
+      "fields": [
+        {
+          "name": "ABBREVIATED_TYPE"
+        },
+        {
+          "name": "AMBIGUOUS_LABEL_TARGET"
+        },
+        {
+          "name": "AMBIGUOUS_REFERENCE_TARGET"
+        },
+        {
+          "name": "ANNOTATION"
+        },
+        {
+          "name": "AUTO_CREATED_IT"
+        },
+        {
+          "name": "BACKING_FIELD_REQUIRED"
+        },
+        {
+          "name": "BLOCK"
+        },
+        {
+          "name": "BOUND_INITIALIZER_VALUE"
+        },
+        {
+          "name": "CALL"
+        },
+        {
+          "name": "CAPTURED_IN_CLOSURE"
+        },
+        {
+          "name": "CAST_TYPE_USED_AS_EXPECTED_TYPE"
+        },
+        {
+          "name": "CLASS"
+        },
+        {
+          "name": "COLLECTION_LITERAL_CALL"
+        },
+        {
+          "name": "COMPILER_CONFIGURATION"
+        },
+        {
+          "name": "COMPILE_TIME_VALUE"
+        },
+        {
+          "name": "COMPONENT_RESOLVED_CALL"
+        },
+        {
+          "name": "CONSTRAINT_SYSTEM_COMPLETER"
+        },
+        {
+          "name": "CONSTRUCTOR"
+        },
+        {
+          "name": "CONSTRUCTOR_RESOLVED_DELEGATION_CALL"
+        },
+        {
+          "name": "CONTRACT_NOT_ALLOWED"
+        },
+        {
+          "name": "DATAFLOW_INFO_AFTER_CONDITION"
+        },
+        {
+          "name": "DATA_CLASS_COMPONENT_FUNCTION"
+        },
+        {
+          "name": "DATA_CLASS_COPY_FUNCTION"
+        },
+        {
+          "name": "DATA_FLOW_INFO_BEFORE"
+        },
+        {
+          "name": "DECLARATIONS_TO_DESCRIPTORS"
+        },
+        {
+          "name": "DECLARATION_TO_DESCRIPTOR"
+        },
+        {
+          "name": "DEFERRED_TYPE"
+        },
+        {
+          "name": "DELEGATED_PROPERTY_CALL"
+        },
+        {
+          "name": "DELEGATED_PROPERTY_RESOLVED_CALL"
+        },
+        {
+          "name": "DELEGATE_EXPRESSION_TO_PROVIDE_DELEGATE_CALL"
+        },
+        {
+          "name": "DEPRECATED_SHORT_NAME_ACCESS"
+        },
+        {
+          "name": "DESCRIPTOR_TO_CONTEXT_RECEIVER_MAP"
+        },
+        {
+          "name": "DOUBLE_COLON_LHS"
+        },
+        {
+          "name": "EMPTY"
+        },
+        {
+          "name": "EXHAUSTIVE_WHEN"
+        },
+        {
+          "name": "EXPECTED_EXPRESSION_TYPE"
+        },
+        {
+          "name": "EXPECTED_RETURN_TYPE"
+        },
+        {
+          "name": "EXPRESSION_EFFECTS"
+        },
+        {
+          "name": "EXPRESSION_TYPE_INFO"
+        },
+        {
+          "name": "FQNAME_TO_CLASS_DESCRIPTOR"
+        },
+        {
+          "name": "FUNCTION"
+        },
+        {
+          "name": "IMPLICIT_EXHAUSTIVE_WHEN"
+        },
+        {
+          "name": "IMPLICIT_RECEIVER_SMARTCAST"
+        },
+        {
+          "name": "INDEXED_LVALUE_GET"
+        },
+        {
+          "name": "INDEXED_LVALUE_SET"
+        },
+        {
+          "name": "IS_CONTRACT_DECLARATION_BLOCK"
+        },
+        {
+          "name": "IS_DEFINITELY_NOT_ASSIGNED_IN_CONSTRUCTOR"
+        },
+        {
+          "name": "IS_UNINITIALIZED"
+        },
+        {
+          "name": "LABEL_TARGET"
+        },
+        {
+          "name": "LAMBDA_INVOCATIONS"
+        },
+        {
+          "name": "LEAKING_THIS"
+        },
+        {
+          "name": "LEXICAL_SCOPE"
+        },
+        {
+          "name": "LOOP_RANGE_HAS_NEXT_RESOLVED_CALL"
+        },
+        {
+          "name": "LOOP_RANGE_ITERATOR_RESOLVED_CALL"
+        },
+        {
+          "name": "LOOP_RANGE_NEXT_RESOLVED_CALL"
+        },
+        {
+          "name": "MARKED_EQUALIY_CALL_PROPER_IN_BUILDER_INFERENCE"
+        },
+        {
+          "name": "MUST_BE_LATEINIT"
+        },
+        {
+          "name": "NEW_INFERENCE_CATCH_EXCEPTION_PARAMETER"
+        },
+        {
+          "name": "NEW_INFERENCE_IS_LAMBDA_FOR_OVERLOAD_RESOLUTION_INLINE"
+        },
+        {
+          "name": "NEW_INFERENCE_LAMBDA_INFO"
+        },
+        {
+          "name": "ONLY_RESOLVED_CALL"
+        },
+        {
+          "name": "PACKAGE_TO_FILES"
+        },
+        {
+          "name": "PARTIAL_CALL_RESOLUTION_CONTEXT"
+        },
+        {
+          "name": "PRELIMINARY_VISITOR"
+        },
+        {
+          "name": "PRIMARY_CONSTRUCTOR_PARAMETER"
+        },
+        {
+          "name": "PRIMITIVE_NUMERIC_COMPARISON_INFO"
+        },
+        {
+          "name": "PROCESSED"
+        },
+        {
+          "name": "PROPERTY_ACCESSOR"
+        },
+        {
+          "name": "PROVIDE_DELEGATE_CALL"
+        },
+        {
+          "name": "PROVIDE_DELEGATE_RESOLVED_CALL"
+        },
+        {
+          "name": "QUALIFIER"
+        },
+        {
+          "name": "REFERENCE_TARGET"
+        },
+        {
+          "name": "RESOLVED_CALL"
+        },
+        {
+          "name": "SCRIPT"
+        },
+        {
+          "name": "SCRIPT_SCOPE"
+        },
+        {
+          "name": "SHORT_REFERENCE_TO_COMPANION_OBJECT"
+        },
+        {
+          "name": "SMARTCAST"
+        },
+        {
+          "name": "SMARTCAST_NULL"
+        },
+        {
+          "name": "SUPER_EXPRESSION_FROM_ANY_MIGRATION"
+        },
+        {
+          "name": "THIS_REFERENCE_TARGET"
+        },
+        {
+          "name": "THIS_TYPE_FOR_SUPER_EXPRESSION"
+        },
+        {
+          "name": "TYPE"
+        },
+        {
+          "name": "TYPE_ALIAS"
+        },
+        {
+          "name": "TYPE_PARAMETER"
+        },
+        {
+          "name": "UNSTABLE_SMARTCAST"
+        },
+        {
+          "name": "UNUSED_MAIN_PARAMETER"
+        },
+        {
+          "name": "USED_AS_EXPRESSION"
+        },
+        {
+          "name": "USED_AS_RESULT_OF_LAMBDA"
+        },
+        {
+          "name": "VALUE_PARAMETER"
+        },
+        {
+          "name": "VALUE_PARAMETER_AS_PROPERTY"
+        },
+        {
+          "name": "VARIABLE"
+        },
+        {
+          "name": "VARIABLE_REASSIGNMENT"
+        },
+        {
+          "name": "_static_initializer"
+        }
+      ]
+    },
+    {
       "type": "org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingCommandLineProcessor",
       "methods": [
         {
@@ -969,6 +1262,15 @@
           "parameterTypes": [
             "java.nio.ByteBuffer"
           ]
+        }
+      ]
+    },
+    {
+      "type": "sun.security.provider.MD5",
+      "methods": [
+        {
+          "name": "<init>",
+          "parameterTypes": []
         }
       ]
     },

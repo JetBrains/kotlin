@@ -47,7 +47,13 @@ dist/kotlinc-native-image/bin/kotlinc-native-image.sh path/to/Foo.kt -d out/
 
 ## Tests
 
-Run the test suite with:
+For a quick sanity check, use:
+```
+./gradlew :kotlin-compiler-native-image:nativeImageSmokeTest
+```
+It compiles a "Hello World" with the native image compiler and verifies that the compilation succeeds.
+
+For the full suite, run:
 ```
 ./gradlew :kotlin-compiler-native-image:nativeImageBoxTest
 ```
@@ -76,39 +82,18 @@ GraalVM reachability metadata is stored in [prepare/compiler-native-image/resour
 Initial metadata was collected by running the Kotlin Compiler Embeddable JAR with the [GraalVM Tracing Agent](https://www.graalvm.org/latest/reference-manual/native-image/metadata/AutomaticMetadataCollection/)
 on the same set of compiler box tests [compiler/testData/codegen/box](../../compiler/testData/codegen/box).
 
-Metadata can be updated manually when necessary. You can use this script template:
-
-```bash
-#!/bin/bash
-
-GRAAL_HOME=$JAVA_HOME
-UPDATE_REACHABILITY_METADATA=false
-NATIVE_IMAGE_BIN=$GRAAL_HOME/bin/native-image
-
-echo '--- Building kotlin compiler dist ---'
-./gradlew -q :dist
-
-echo '--- Building kotlin compiler embeddable ---'
-./gradlew -q :kotlin-compiler-embeddable:embeddable
-
-EMBEDDABLE_JAR=$(find prepare/compiler-embeddable -name 'kotlin-compiler-embeddable-*.jar')
-STDLIB_JAR='dist/kotlinc/lib/kotlin-stdlib.jar'
-REFLECT_JAR='dist/kotlinc/lib/kotlin-reflect.jar'
-COROUTINES_JAR='dist/kotlinc/lib/kotlin-coroutines-core-jvm.jar'
-ANNOTATIONS_JAR=$(find dist/kotlinc/lib/ -name 'annotations-*.jar')
-
-CLASSPATH=$EMBEDDABLE_JAR:$STDLIB_JAR:$REFLECT_JAR:$COROUTINES_JAR:$ANNOTATIONS_JAR
-
-$GRAAL_HOME/bin/java \
-  --add-opens java.base/java.lang=ALL-UNNAMED \
-  --add-opens java.base/java.io=ALL-UNNAMED \
-  --add-opens java.base/java.nio=ALL-UNNAMED \
-  --add-opens java.base/sun.nio.ch=ALL-UNNAMED \
-  --add-opens java.desktop/javax.swing=ALL-UNNAMED \
-  -cp $CLASSPATH \
-  -Dkotlin.home=dist/kotlinc \
-  -Djava.home=$GRAAL_HOME \
-  -agentlib:native-image-agent=config-merge-dir=prepare/compiler-native-image/resources/META-INF/native-image/org/jetbrains/kotlin/kotlin-compiler-embeddable \
-  org.jetbrains.kotlin.cli.jvm.K2JVMCompiler \
-  $@
+Metadata can be regenerated when necessary. For a quick update, use:
 ```
+./gradlew :kotlin-compiler-native-image:generateReachabilityMetadataSmoke
+```
+It will run the reachability metadata collection on the sample "Hello World" program.
+
+For a full regeneration over all the box test data, use (takes ~3&ndash;4 hours):
+```
+./gradlew :kotlin-compiler-native-image:generateReachabilityMetadataBox
+```
+
+## IDE
+
+IDE run configurations are available both for running native image tests and 
+collecting reachability metadata. You can find them in the "Compiler Native Image" run configuration folder.
