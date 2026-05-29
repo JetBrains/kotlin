@@ -36,7 +36,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
-        FirCallableReferenceChecker,
         FirSuperReferenceChecker,
         FirSuperclassNotAccessibleFromInterfaceChecker,
         FirAbstractSuperCallChecker,
@@ -192,6 +191,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
+        FirCallableReferenceChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinExpressionChecker.CallableReference,
         FirTypeInLhsOfCallableReferenceChecker,
         FirCustomEnumEntriesMigrationReferenceChecker,
