@@ -1,5 +1,4 @@
 // ISSUE: KT-86620
-// IGNORE_BACKEND: ANY
 
 // FILE: VarargsConstructor.java
 

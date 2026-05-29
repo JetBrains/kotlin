@@ -74,20 +74,22 @@ fun List<FirFunction>.filterClashingDeclarations(classSymbol: FirClassSymbol<*>)
 }
 
 /**
- * Lombok treat functions as having the same signature by arguments count only
- * Corresponding code in lombok - https://github.com/projectlombok/lombok/blob/v1.18.20/src/core/lombok/javac/handlers/JavacHandlerUtil.java#L752
+ * Lombok treat functions as having the same signature by argument count only
  */
-private fun sameSignature(a: FirFunction, b: FirFunction): Boolean {
-    if (a is FirConstructor && b !is FirConstructor || a !is FirConstructor && b is FirConstructor) return false
-    if (a.symbol.callableId.callableName != b.symbol.callableId.callableName) return false
-    val aVararg = a.valueParameters.any { it.isVararg }
-    val bVararg = b.valueParameters.any { it.isVararg }
-    val aSize = a.valueParameters.size
-    val bSize = b.valueParameters.size
-    return aVararg && bVararg ||
-            aVararg && bSize >= (aSize - 1) ||
-            bVararg && aSize >= (bSize - 1) ||
-            aSize == bSize
+private fun sameSignature(existingFunctions: FirFunction, functionToAdd: FirFunction): Boolean {
+    if (existingFunctions is FirConstructor && functionToAdd !is FirConstructor ||
+        existingFunctions !is FirConstructor && functionToAdd is FirConstructor
+    ) {
+        return false
+    }
+
+    if (existingFunctions.symbol.callableId.callableName != functionToAdd.symbol.callableId.callableName) return false
+
+    val isExistingFunctionHasVararg = existingFunctions.valueParameters.any { it.isVararg }
+    require(functionToAdd.valueParameters.none { it.isVararg }) // Generated functions can't have vararg
+
+    // Function with vararg never cause clashing
+    return !isExistingFunctionHasVararg && existingFunctions.valueParameters.size == functionToAdd.valueParameters.size
 }
 
 fun FirClassSymbol<*>.createJavaMethod(
