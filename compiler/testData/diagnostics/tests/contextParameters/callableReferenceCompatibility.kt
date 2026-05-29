@@ -35,17 +35,17 @@ fun test() {
         ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!>
     }
 
-    ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!>
+    ::foo
 
     val ctx = ""
     with(ctx) { ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!> }
     context(ctx) { ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>foo<!> }
 
-    ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>bar<!>
+    ::bar
 
-    ::<!OVERLOAD_RESOLUTION_AMBIGUITY!>baz<!>
+    ::baz
 
-    ::<!CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION!>gau<!>
+    ::<!NO_CONTEXT_ARGUMENT!>gau<!>
 }
 
 fun String.test() {

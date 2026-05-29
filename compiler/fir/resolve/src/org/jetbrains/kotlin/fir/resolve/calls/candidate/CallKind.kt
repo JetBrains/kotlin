@@ -140,6 +140,7 @@ sealed class CallKind(
         CollectTypeVariableUsagesInfo,
         CheckDispatchReceiver,
         CheckExtensionReceiver,
+        CheckContextArguments,
         CheckShadowedImplicits,
         CheckCallableReferenceExpectedType,
         CheckLowPriorityInOverloadResolution,

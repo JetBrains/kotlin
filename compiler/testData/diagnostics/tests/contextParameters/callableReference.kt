@@ -9,10 +9,20 @@ context(_ : String) fun Int.f3() {}
 context(_ : String) val p1 get() = Unit
 context(_ : String) val Int.p3 get() = Unit
 
-fun testFunctionTypeWithContext() {
-    accept<context(String) () -> Unit>(::f1)
-    accept<context(String) (Int) -> Unit>(::f2)
-    accept<context(String) Int.() -> Unit>(Int::f3)
+fun testContextualFunctionType() {
+    accept<context(String) () -> Unit>(::<!NO_CONTEXT_ARGUMENT!>f1<!>)
+    accept<context(String) (Int) -> Unit>(::<!NO_CONTEXT_ARGUMENT!>f2<!>)
+    accept<context(String) Int.() -> Unit>(Int::<!NO_CONTEXT_ARGUMENT!>f3<!>)
+
+    accept<context(String) () -> Unit>(::<!NO_CONTEXT_ARGUMENT!>p1<!>)
+    accept<context(String) Int.() -> Unit>(Int::<!NO_CONTEXT_ARGUMENT!>p3<!>)
+}
+
+context(_: String)
+fun testContextualFunctionTypeWithContext() {
+    accept<context(String) () -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f1<!>)
+    accept<context(String) (Int) -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f2<!>)
+    accept<context(String) Int.() -> Unit>(Int::<!INAPPLICABLE_CANDIDATE!>f3<!>)
 
     accept<context(String) () -> Unit>(::<!INAPPLICABLE_CANDIDATE!>p1<!>)
     accept<context(String) Int.() -> Unit>(Int::<!INAPPLICABLE_CANDIDATE!>p3<!>)
@@ -36,10 +46,10 @@ fun String.testReceiver() {
     val x3 = Int::f3
     val x3Bound = 1::f3
 
-    accept<() -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f1<!>)
-    accept<(Int) -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f2<!>)
-    accept<Int.() -> Unit>(Int::<!INAPPLICABLE_CANDIDATE!>f3<!>)
-    accept<() -> Unit>(1::<!INAPPLICABLE_CANDIDATE!>f3<!>)
+    accept<() -> Unit>(::f1)
+    accept<(Int) -> Unit>(::f2)
+    accept<Int.() -> Unit>(Int::f3)
+    accept<() -> Unit>(1::f3)
 
     val y1 = ::p1
     val y3 = Int::p3
@@ -52,10 +62,10 @@ fun String.testReceiver() {
 
 context(_: String)
 fun testContextParameter() {
-    accept<() -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f1<!>)
-    accept<(Int) -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f2<!>)
-    accept<Int.() -> Unit>(Int::<!INAPPLICABLE_CANDIDATE!>f3<!>)
-    accept<() -> Unit>(1::<!INAPPLICABLE_CANDIDATE!>f3<!>)
+    accept<() -> Unit>(::f1)
+    accept<(Int) -> Unit>(::f2)
+    accept<Int.() -> Unit>(Int::f3)
+    accept<() -> Unit>(1::f3)
 
     accept<() -> Unit>(::p1)
     accept<Int.() -> Unit>(Int::p3)
@@ -63,14 +73,14 @@ fun testContextParameter() {
 }
 
 fun testMissingContext() {
-    accept<() -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f1<!>)
-    accept<(Int) -> Unit>(::<!INAPPLICABLE_CANDIDATE!>f2<!>)
-    accept<Int.() -> Unit>(Int::<!INAPPLICABLE_CANDIDATE!>f3<!>)
-    accept<() -> Unit>(1::<!INAPPLICABLE_CANDIDATE!>f3<!>)
+    accept<() -> Unit>(::<!NO_CONTEXT_ARGUMENT!>f1<!>)
+    accept<(Int) -> Unit>(::<!NO_CONTEXT_ARGUMENT!>f2<!>)
+    accept<Int.() -> Unit>(Int::<!NO_CONTEXT_ARGUMENT!>f3<!>)
+    accept<() -> Unit>(1::<!NO_CONTEXT_ARGUMENT!>f3<!>)
 
-    accept<() -> Unit>(::p1)
-    accept<Int.() -> Unit>(Int::p3)
-    accept<() -> Unit>(1::p3)
+    accept<() -> Unit>(::<!NO_CONTEXT_ARGUMENT!>p1<!>)
+    accept<Int.() -> Unit>(Int::<!NO_CONTEXT_ARGUMENT!>p3<!>)
+    accept<() -> Unit>(1::<!NO_CONTEXT_ARGUMENT!>p3<!>)
 }
 
 fun <T> accept(t: T) {}

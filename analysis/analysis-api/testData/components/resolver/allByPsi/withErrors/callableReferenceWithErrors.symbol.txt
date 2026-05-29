@@ -1388,32 +1388,36 @@ KtBlockExpression(1378,1506): '{'
   null
 
 KtCallableReferenceExpression(1384,1397): '::withContext'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1386,1397): 'withContext'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1402,1435): '::withContext(LoggerContext(), 1)'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1404,1415): 'withContext'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       pack/withContext(x: kotlin.Int): kotlin.Unit
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtValueArgumentList(1415,1435): '(LoggerContext(), 1)'
   null
@@ -1445,32 +1449,36 @@ KtConstantExpression(1433,1434): '1'
   null
 
 KtCallableReferenceExpression(1440,1461): '::withContextProperty'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       val withContextProperty: kotlin.Int
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1442,1461): 'withContextProperty'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       val withContextProperty: kotlin.Int
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtCallableReferenceExpression(1466,1504): '::withContextProperty(LoggerContext())'
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       val withContextProperty: kotlin.Int
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtNameReferenceExpression(1468,1487): 'withContextProperty'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       val withContextProperty: kotlin.Int
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'c: LoggerContext' found.>
 
 KtValueArgumentList(1487,1504): '(LoggerContext())'
   null
@@ -1493,4 +1501,150 @@ KtNameReferenceExpression(1488,1501): 'LoggerContext'
     ]
 
 KtValueArgumentList(1501,1503): '()'
+  null
+
+KtNamedFunction(1508,1717): 'context(c: LoggerContext)'
+  null
+
+KtDeclarationModifierList(1508,1533): 'context(c: LoggerContext)'
+  null
+
+KtContextReceiverList(1508,1533): 'context(c: LoggerContext)'
+  null
+
+KtParameter(1516,1532): 'c: LoggerContext'
+  null
+
+KtTypeReference(1519,1532): 'LoggerContext'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/LoggerContext
+    ]
+
+KtUserType(1519,1532): 'LoggerContext'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/LoggerContext
+    ]
+
+KtNameReferenceExpression(1519,1532): 'LoggerContext'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/LoggerContext
+    ]
+
+KtParameterList(1586,1588): '()'
+  null
+
+KtBlockExpression(1589,1717): '{'
+  null
+
+KtCallableReferenceExpression(1595,1608): '::withContext'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/withContext(x: kotlin.Int): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1597,1608): 'withContext'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/withContext(x: kotlin.Int): kotlin.Unit
+    ]
+
+KtCallableReferenceExpression(1613,1646): '::withContext(LoggerContext(), 1)'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/withContext(x: kotlin.Int): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(1615,1626): 'withContext'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/withContext(x: kotlin.Int): kotlin.Unit
+    ]
+
+KtValueArgumentList(1626,1646): '(LoggerContext(), 1)'
+  null
+
+KtValueArgument(1627,1642): 'LoggerContext()'
+  null
+
+KtCallExpression(1627,1642): 'LoggerContext()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.LoggerContext
+    ]
+
+KtNameReferenceExpression(1627,1640): 'LoggerContext'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/LoggerContext
+    ]
+
+KtValueArgumentList(1640,1642): '()'
+  null
+
+KtValueArgument(1644,1645): '1'
+  null
+
+KtConstantExpression(1644,1645): '1'
+  null
+
+KtCallableReferenceExpression(1651,1672): '::withContextProperty'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val withContextProperty: kotlin.Int
+    ]
+
+KtNameReferenceExpression(1653,1672): 'withContextProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val withContextProperty: kotlin.Int
+    ]
+
+KtCallableReferenceExpression(1677,1715): '::withContextProperty(LoggerContext())'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val withContextProperty: kotlin.Int
+    ]
+
+KtNameReferenceExpression(1679,1698): 'withContextProperty'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      val withContextProperty: kotlin.Int
+    ]
+
+KtValueArgumentList(1698,1715): '(LoggerContext())'
+  null
+
+KtValueArgument(1699,1714): 'LoggerContext()'
+  null
+
+KtCallExpression(1699,1714): 'LoggerContext()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      <constructor>(): pack.LoggerContext
+    ]
+
+KtNameReferenceExpression(1699,1712): 'LoggerContext'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      pack/LoggerContext
+    ]
+
+KtValueArgumentList(1712,1714): '()'
   null

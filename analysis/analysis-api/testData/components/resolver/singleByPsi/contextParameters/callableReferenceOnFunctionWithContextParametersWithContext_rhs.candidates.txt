@@ -1,14 +1,29 @@
-KtNameReferenceExpression(89,92): 'foo'
-  KaInapplicableCallCandidate:
+KtNameReferenceExpression(120,123): 'foo'
+  KaApplicableCallCandidate:
     candidate = KaCallableReferenceCall:
-      contextArguments = []
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = param1: kotlin.Int
+          type = kotlin.Int,
+        KaImplicitReceiverValue:
+          symbol = param2: kotlin.String
+          type = kotlin.String
+      ]
       dispatchReceiver = null
       extensionReceiver = null
-      signature = KaVariableSignature:
-        name = foo
+      signature = KaFunctionSignature:
         receiverType = null
-        returnType = kotlin.Boolean
-        symbol = val foo: kotlin.Boolean
+        returnType = kotlin.Unit
+        symbol = /foo(b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
         contextParameters = [
           KaVariableSignature:
             name = param1
@@ -27,5 +42,4 @@ KtNameReferenceExpression(89,92): 'foo'
         ]
         callableId = /foo
       typeArgumentsMapping = {}
-    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'param1: Int' found.>
     isInBestCandidates = true
