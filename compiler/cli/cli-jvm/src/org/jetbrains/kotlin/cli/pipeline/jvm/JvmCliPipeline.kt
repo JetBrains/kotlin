@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
 import org.jetbrains.kotlin.cli.pipeline.AbstractCliPipeline
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.FrontendFilesForPluginsGenerationPipelinePhase
@@ -44,13 +44,25 @@ class JvmCliPipeline(override val defaultPerformanceManager: PerformanceManager)
                 (script || expression != null || repl || freeArgs.isEmpty())
 
     override fun isKaptMode(arguments: K2JVMCompilerArguments): Boolean {
-        return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
+        return arguments.pluginOptions.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") }
     }
 
     override fun createPerformanceManager(
         arguments: K2JVMCompilerArguments,
         services: Services,
     ): PerformanceManager {
-        return K2JVMCompiler.createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
+        return createCustomPerformanceManagerOrNull(arguments, services) ?: defaultPerformanceManager
+    }
+
+    companion object {
+        internal fun createCustomPerformanceManagerOrNull(
+            arguments: K2JVMCompilerArguments,
+            services: Services,
+        ): PerformanceManager? {
+            val externalManager = services[PerformanceManager::class.java]
+            if (externalManager != null) return externalManager
+            val argument = arguments.profileCompilerCommand ?: return null
+            return ProfilingCompilerPerformanceManager.create(argument, arguments.detailedPerf)
+        }
     }
 }
