@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import java.nio.`file`.Path
+import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.DeprecationLevel
@@ -386,6 +387,19 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_EXPLICIT_CONTEXT_ARGUMENTS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_EXPLICIT_CONTEXT_ARGUMENTS", KotlinReleaseVersion(2, 4, 0))
+
+    /**
+     * Declare common klib incremental dependencies (results from the previous compilation) for the specific fragment.    
+     * This argument can be specified for any HMPP module except the platform leaf module: it takes incremental
+     *   dependencies from the platform specific incremental service.
+     * The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_FRAGMENT_INCREMENTAL_CLASSPATH: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_FRAGMENT_INCREMENTAL_CLASSPATH", KotlinReleaseVersion(2, 4, 20))
 
     /**
      * Enable header compilation mode.

@@ -75,6 +75,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_DEPENDENCY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_FRIEND_DEPENDENCY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_INCREMENTAL_CLASSPATH
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_REFINES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FRAGMENT_SOURCES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
@@ -236,6 +237,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
+    if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
     if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) ?: emptyArray()}
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
@@ -345,6 +347,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_EXPLICIT_CONTEXT_ARGUMENTS] = arguments.explicitContextArguments } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_DEPENDENCY] = arguments.fragmentDependencies } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_FRIEND_DEPENDENCY] = arguments.fragmentFriendDependencies } catch (_: NoSuchMethodError) {  }
+    try { this[X_FRAGMENT_INCREMENTAL_CLASSPATH] = arguments.fragmentIncrementalClasspath } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_REFINES] = arguments.fragmentRefines } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENT_SOURCES] = arguments.fragmentSources } catch (_: NoSuchMethodError) {  }
     try { this[X_FRAGMENTS] = arguments.fragments } catch (_: NoSuchMethodError) {  }
@@ -449,6 +452,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_EXPLICIT_CONTEXT_ARGUMENTS in this) { arguments.explicitContextArguments = get(X_EXPLICIT_CONTEXT_ARGUMENTS)}
     if (X_FRAGMENT_DEPENDENCY in this) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) ?: emptyArray()}
     if (X_FRAGMENT_FRIEND_DEPENDENCY in this) { arguments.fragmentFriendDependencies = get(X_FRAGMENT_FRIEND_DEPENDENCY) ?: emptyArray()}
+    if (X_FRAGMENT_INCREMENTAL_CLASSPATH in this) { arguments.fragmentIncrementalClasspath = get(X_FRAGMENT_INCREMENTAL_CLASSPATH) ?: emptyArray()}
     if (X_FRAGMENT_REFINES in this) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) ?: emptyArray()}
     if (X_FRAGMENT_SOURCES in this) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) ?: emptyArray()}
     if (X_FRAGMENTS in this) { arguments.fragments = get(X_FRAGMENTS) ?: emptyArray()}
@@ -645,6 +649,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_FRAGMENT_FRIEND_DEPENDENCY: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENT_FRIEND_DEPENDENCY")
+
+    public val X_FRAGMENT_INCREMENTAL_CLASSPATH: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_FRAGMENT_INCREMENTAL_CLASSPATH")
 
     public val X_FRAGMENT_REFINES: CommonCompilerArgument<Array<String>?> =
         CommonCompilerArgument("X_FRAGMENT_REFINES")
