@@ -24,6 +24,7 @@ abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: St
     private val ignoredTests = setOf(
         "classFunctionsAndFields", //Invalid signature //KT-84599
         "multiModuleEagerInitialization", //Eager initializer KT-83579
+        "eagerInitializationMoveBetweenModules", //Eager initializer KT-83579
     )
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
