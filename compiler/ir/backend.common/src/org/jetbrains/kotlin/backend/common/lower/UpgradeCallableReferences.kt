@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrRichPropertyReferenceImpl
@@ -70,11 +71,11 @@ open class UpgradeCallableReferences(
             }
         }
 
-        private fun IrFunction.flattenParameters(hasBoundExtensionReceiver: Boolean) {
+        private fun IrFunction.flattenParameters(isLambda: Boolean) {
             for (parameter in parameters) {
                 require(parameter.kind != IrParameterKind.DispatchReceiver) { "No dispatch receiver allowed in wrappers" }
-                if (parameter.kind == IrParameterKind.ExtensionReceiver) {
-                    parameter.origin = if (hasBoundExtensionReceiver) BOUND_RECEIVER_PARAMETER else LAMBDA_EXTENSION_RECEIVER
+                if (parameter.kind == IrParameterKind.ExtensionReceiver && isLambda) {
+                    parameter.origin = IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER
                 }
                 parameter.kind = IrParameterKind.Regular
             }
@@ -83,7 +84,7 @@ open class UpgradeCallableReferences(
         override fun visitFunctionExpression(expression: IrFunctionExpression, data: IrDeclarationParent): IrElement {
             expression.transformChildren(this, data)
             val isRestrictedSuspension = expression.function.isRestrictedSuspensionFunction()
-            expression.function.flattenParameters(hasBoundExtensionReceiver = false)
+            expression.function.flattenParameters(isLambda = true)
             return IrRichFunctionReferenceImpl(
                 startOffset = expression.startOffset,
                 endOffset = expression.endOffset,
@@ -171,11 +172,7 @@ open class UpgradeCallableReferences(
             function.isInline = false
             reference.transformChildren(this, data)
             val isRestrictedSuspension = function.isRestrictedSuspensionFunction()
-            function.flattenParameters(
-                function.parameters.any {
-                    it.kind == IrParameterKind.ExtensionReceiver && reference.arguments[it] != null
-                }
-            )
+            function.flattenParameters(isLambda = false)
             val [boundParameters, unboundParameters] = function.parameters.partition { reference.arguments[it.indexInParameters] != null }
             function.parameters = boundParameters + unboundParameters
             val reflectionTarget = reference.reflectionTarget.takeUnless { expression.origin.isLambda }
@@ -547,5 +544,3 @@ open class UpgradeCallableReferences(
         }
     }
 }
-
-val LAMBDA_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
