@@ -35,7 +35,7 @@ fun prepareIncrementalCompilationContextAndLibrariesScope(
 ): Pair<AbstractProjectFileSearchScope, IncrementalCompilationContext?> {
     val incrementalCompilationScope = createIncrementalCompilationScope(configuration, projectEnvironment, incrementalExcludesScope)
 
-    val originalLibrariesScope =projectEnvironment.getSearchScopeForProjectLibraries()
+    val originalLibrariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
     if (incrementalCompilationScope == null && previousStepsSymbolProviders.isEmpty()) return originalLibrariesScope to null
     val targetIds = configuration.modules.map(::TargetId)
     val incrementalComponents = configuration.incrementalCompilationComponents!!
