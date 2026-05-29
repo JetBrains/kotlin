@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-class SubListBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class SubList : SkipWhenBaseOnly() {
     private var _data: List<Value>? = null
 
     fun getData(subList: Boolean): List<Value> {
@@ -37,13 +40,15 @@ class SubListBenchmark {
         _data = list
     }
 
-    //Benchmark
+    @Benchmark
     fun concatenate(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(getData(false) + getData(true))
     }
 
-    //Benchmark
+    @Benchmark
     fun concatenateManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>(2 * BENCHMARK_SIZE)
         // outer loop to ensure single call site for list and sublist
         for (data in listOf(getData(false), getData(true))) {
@@ -54,8 +59,9 @@ class SubListBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndCount(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.filter { filterLoad(it) }.count()
@@ -63,8 +69,9 @@ class SubListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndCountWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.filter { it.value % 2 == 0 }.count()
@@ -72,8 +79,9 @@ class SubListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun countWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.count { it.value % 2 == 0 }
@@ -81,8 +89,9 @@ class SubListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun filterManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>()
         for (data in listOf(getData(false), getData(true))) {
             for (it in data) {
@@ -93,8 +102,9 @@ class SubListBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFilteredManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             for (it in data) {
@@ -105,8 +115,9 @@ class SubListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFiltered(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (data in listOf(getData(false), getData(true))) {
             count += data.count { filterLoad(it) }
@@ -114,8 +125,9 @@ class SubListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun reduce(bh: Blackhole) {
+        skipWhenBaseOnly()
         var res = 0
         for (data in listOf(getData(false), getData(true))) {
             res = data.fold(res) { acc, it -> if (filterLoad(it)) acc + 1 else acc }

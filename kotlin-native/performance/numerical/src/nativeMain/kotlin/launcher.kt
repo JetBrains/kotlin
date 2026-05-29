@@ -10,28 +10,20 @@ import kotlinx.benchmark.*
 class NumericalHideName {
     @Benchmark
     fun BellardPi(bh: Blackhole) {
-        konanBellardPi(bh)
+        var result = 0
+        for (n in 1 .. 1000 step 9) {
+            result += pi_nth_digit(n)
+        }
+        bh.consume(result)
     }
 
     @Benchmark
     fun BellardPiCinterop(bh: Blackhole) {
-        clangBellardPi(bh)
+        var result = 0
+        for (n in 1 .. 1000 step 9) {
+            @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
+            result += cinterop.pi_nth_digit(n)
+        }
+        bh.consume(result)
     }
-}
-
-fun konanBellardPi(bh: Blackhole) {
-    var result = 0
-    for (n in 1 .. 1000 step 9) {
-        result += pi_nth_digit(n)
-    }
-    bh.consume(result)
-}
-
-fun clangBellardPi(bh: Blackhole) {
-    var result = 0
-    for (n in 1 .. 1000 step 9) {
-        @OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
-        result += cinterop.pi_nth_digit(n)
-    }
-    bh.consume(result)
 }

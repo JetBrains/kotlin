@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -51,25 +52,31 @@ inline fun Sequence<Int>.sum(predicate: (Int) -> Boolean): Int {
  *
  * NB: all tests here work slower than Java, probably because of all these functional wrappers
  */
-open class EulerBenchmark {
-
-    //Benchmark
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+// NOTE: only problem4 is slow enough
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class Euler : SkipWhenBaseOnly() {
+    @Benchmark
     fun problem1bySequence(bh: Blackhole) {
         bh.consume((1..BENCHMARK_SIZE).asSequence().sum( { it % 3 == 0 || it % 5 == 0} ))
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun problem1(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume((1..BENCHMARK_SIZE).sum( { it % 3 == 0 || it % 5 == 0} ))
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun problem2(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(fibonacci().takeWhile { it < BENCHMARK_SIZE }.sum { it % 2 == 0 })
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun problem4(bh: Blackhole) {
+        skipWhenBaseOnly()
         val s: Long = BENCHMARK_SIZE.toLong()
         val maxLimit = (s-1)*(s-1)
         val minLimit = (s/10)*(s/10)
@@ -113,9 +120,10 @@ open class EulerBenchmark {
         71636269561882670428252483600823257530420752963450
     """
 
-    
-    //Benchmark
+
+    @Benchmark
     fun problem8(bh: Blackhole) {
+        skipWhenBaseOnly()
         val productSize = when(BENCHMARK_SIZE) {
             in 1..10 -> 4
             in 11..1000 -> 8
@@ -138,8 +146,8 @@ open class EulerBenchmark {
         bh.consume(largest)
     }
 
-    
-    //Benchmark
+
+    @Benchmark
     fun problem9(bh: Blackhole) {
         val BENCHMARK_SIZE = BENCHMARK_SIZE // Looks awful but removes all implicit getSize() calls
         for (c in BENCHMARK_SIZE/3..BENCHMARK_SIZE-3) {
@@ -161,8 +169,7 @@ open class EulerBenchmark {
     }
 
     data class Children(val left: Int, val right: Int)
-
-    //Benchmark
+    @Benchmark
     fun problem14(bh: Blackhole) {
         // Simplified problem is solved here: it's not allowed to leave the interval [0..BENCHMARK_SIZE) inside a number chain
         val BENCHMARK_SIZE = BENCHMARK_SIZE
@@ -182,9 +189,10 @@ open class EulerBenchmark {
 
     data class Way(val length: Int, val next: Int)
 
-    
-    //Benchmark
+
+    @Benchmark
     fun problem14full(bh: Blackhole) {
+        skipWhenBaseOnly()
         // Previous achievements: map (number) -> (length, next)
         val map: MutableMap<Int, Way> = HashMap()
         // Starting point

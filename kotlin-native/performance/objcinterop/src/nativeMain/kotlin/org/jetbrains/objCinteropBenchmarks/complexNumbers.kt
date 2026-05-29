@@ -6,7 +6,7 @@
 
 package org.jetbrains.complexNumbers
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
 import kotlinx.cinterop.*
 import platform.posix.*
 import kotlin.math.sqrt
@@ -14,14 +14,17 @@ import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.random.Random
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 import platform.Foundation.*
 import platform.darwin.*
 
 private const val BENCHMARK_SIZE = 1000
 
-actual typealias ComplexNumber = Complex
+typealias ComplexNumber = Complex
 
-actual class ComplexNumbersBenchmark actual constructor() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ComplexNumbersBenchmarkHideName : SkipWhenBaseOnly() {
     // Use the same seed for reproducibility
     private val rnd = Random(94)
 
@@ -37,19 +40,26 @@ actual class ComplexNumbersBenchmark actual constructor() {
         return result
     }
 
-    actual fun generateNumbersSequence(bh: Blackhole) {
+    @Benchmark
+    fun generateNumbersSequence(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(generateNumbersSequenceImpl())
     }
 
-    actual fun sumComplex(bh: Blackhole) {
+    @Benchmark
+    fun sumComplex(bh: Blackhole) {
         bh.consume(complexNumbersSequence.map { it.add(it) }.reduce { acc, it -> acc.add(it) })
     }
 
-    actual fun subComplex(bh: Blackhole) {
+    @Benchmark
+    fun subComplex(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(complexNumbersSequence.map { it.sub(it) }.reduce { acc, it -> acc.sub(it) })
     }
 
-    actual fun classInheritance(bh: Blackhole) {
+    @Benchmark
+    fun classInheritance(bh: Blackhole) {
+        skipWhenBaseOnly()
          class InvertedNumber(val value: Double) : CustomNumberProtocol, NSObject() {
             override fun add(other: CustomNumberProtocol) : CustomNumberProtocol =
                     if (other is InvertedNumber)
@@ -75,19 +85,23 @@ actual class ComplexNumbersBenchmark actual constructor() {
         bh.consume(result)
     }
 
-    actual fun categoryMethods(bh: Blackhole) {
+    @Benchmark
+    fun categoryMethods(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(complexNumbersSequence.map { it.mul(it) }.reduce { acc, it -> acc.mul(it) })
         bh.consume(complexNumbersSequence.map { it.div(it) }.reduce { acc, it -> acc.mul(it) })
     }
 
-    actual fun stringToObjC(bh: Blackhole) {
+    @Benchmark
+    fun stringToObjC(bh: Blackhole) {
         complexNumbersSequence.forEach {
             it.setFormat("%.1lf|%.1lf")
             bh.consume(it)
         }
     }
 
-    actual fun stringFromObjC(bh: Blackhole) {
+    @Benchmark
+    fun stringFromObjC(bh: Blackhole) {
         complexNumbersSequence.forEach {
             bh.consume(it.description()?.split(" "))
         }
@@ -135,11 +149,14 @@ actual class ComplexNumbersBenchmark actual constructor() {
         return sequence
     }
 
-    actual fun fft(bh: Blackhole) {
+    @Benchmark
+    fun fft(bh: Blackhole) {
         bh.consume(fftRoutine())
     }
 
-    actual fun invertFft(bh: Blackhole) {
+    @Benchmark
+    fun invertFft(bh: Blackhole) {
+        skipWhenBaseOnly()
         val sequence = fftRoutine(true)
 
         sequence.forEachIndexed { index, number ->

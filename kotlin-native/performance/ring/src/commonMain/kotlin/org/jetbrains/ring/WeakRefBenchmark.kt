@@ -9,8 +9,9 @@ package org.jetbrains.ring
 import kotlin.native.runtime.GC
 import kotlin.native.ref.WeakReference
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
 import kotlinx.cinterop.StableRef
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -54,7 +55,9 @@ private fun ReferenceWrapper.stress(): Int {
 }
 
 @OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
-open class WeakRefBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class WeakRefBenchmark : SkipWhenBaseOnly() {
     // Use the same seed for reproducibility
     private val rnd = Random(85140)
 
@@ -67,17 +70,23 @@ open class WeakRefBenchmark {
     }
 
     // Access alive reference.
+    @Benchmark
     fun aliveReference(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(aliveRef.stress())
     }
 
     // Access dead reference.
+    @Benchmark
     fun deadReference(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(deadRef.stress())
     }
 
     // Access reference that is nulled out in the middle.
+    @Benchmark
     fun dyingReference(bh: Blackhole) {
+        skipWhenBaseOnly()
         val ref = ReferenceWrapper.create(rnd)
 
         ref.dispose()
@@ -86,6 +95,7 @@ open class WeakRefBenchmark {
         bh.consume(ref.stress())
     }
 
+    @TearDown
     fun clean() {
         weight.forEach { it.dispose() }
     }

@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class ClassListBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ClassList : SkipWhenBaseOnly() {
     private var _data: ArrayList<Value>? = null
     val data: ArrayList<Value>
         get() = _data!!
@@ -32,13 +35,14 @@ open class ClassListBenchmark {
         _data = list
     }
 
-    //Benchmark
+    @Benchmark
     fun copy(bh: Blackhole) {
         bh.consume(data.toList())
     }
 
-    //Benchmark
+    @Benchmark
     fun copyManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>(data.size)
         for (item in data) {
             list.add(item)
@@ -46,48 +50,56 @@ open class ClassListBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndCount(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { filterLoad(it) }.count())
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndCountWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { it.value % 2 == 0 }.count())
     }
 
-    //Benchmark
+    @Benchmark
     fun filterWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { it.value % 2 == 0 })
     }
 
-    //Benchmark
+    @Benchmark
     fun mapWithLambda(bh: Blackhole) {
         bh.consume(data.map { it.toString() })
     }
 
-    //Benchmark
+    @Benchmark
     fun countWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.count { it.value % 2 == 0 })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMapWithLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { it.value % 2 == 0 }.map { it.toString() })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMapWithLambdaAsSequence(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().filter { it.value % 2 == 0 }.map { it.toString() }.toList())
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMap(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { filterLoad(it) }.map { mapLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMapManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<String>()
         for (it in data) {
             if (filterLoad(it)) {
@@ -98,13 +110,14 @@ open class ClassListBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun filter(bh: Blackhole) {
         bh.consume(data.filter { filterLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>()
         for (it in data) {
             if (filterLoad(it))
@@ -113,8 +126,9 @@ open class ClassListBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFilteredManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (it in data) {
             if (filterLoad(it))
@@ -123,12 +137,13 @@ open class ClassListBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFiltered(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.count { filterLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun reduce(bh: Blackhole) {
         bh.consume(data.fold(0) { acc, it -> if (filterLoad(it)) acc + 1 else acc })
     }

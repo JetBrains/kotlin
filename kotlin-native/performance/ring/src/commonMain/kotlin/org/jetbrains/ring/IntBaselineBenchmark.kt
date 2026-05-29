@@ -16,34 +16,40 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class IntBaselineBenchmark {
-
-    //Benchmark
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class IntBaseline : SkipWhenBaseOnly() {
+    @Benchmark
     fun consume(bh: Blackhole) {
+        skipWhenBaseOnly()
         for (item in 1..BENCHMARK_SIZE) {
             // TODO: what does this benchmark measure? `consume` may be too expensive
             bh.consume(item)
         }
     }
 
-    //Benchmark
+    @Benchmark
     fun allocateList(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Int>(BENCHMARK_SIZE)
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun allocateArray(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = IntArray(BENCHMARK_SIZE)
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun allocateListAndFill(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Int>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
             list.add(item)
@@ -51,8 +57,9 @@ open class IntBaselineBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun allocateArrayAndFill(bh: Blackhole) {
+        skipWhenBaseOnly()
         var index = 0
         val list = IntArray(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {

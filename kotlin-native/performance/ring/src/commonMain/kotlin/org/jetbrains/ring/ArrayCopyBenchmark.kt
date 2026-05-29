@@ -6,11 +6,15 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class ArrayCopyBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class ArrayCopyBenchmark {
     class CustomArray<T>(capacity: Int = 0) {
         private var hashes: IntArray = IntArray(capacity)
         @Suppress("UNCHECKED_CAST")
@@ -51,7 +55,7 @@ open class ArrayCopyBenchmark {
         }
     }
 
-    //Benchmark
+    @Benchmark
     fun copyInSameArray(bh: Blackhole) {
         val array = CustomArray<Int>()
         for (i in 0 until 2 * BENCHMARK_SIZE) {

@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val RUNS = 1_000_000
 
-open class CallsBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Calls : SkipWhenBaseOnly() {
 
     interface I {
         fun foo(): Int
@@ -163,7 +166,8 @@ open class CallsBenchmark {
     val i5: I = Y()
     val i6: I = Z()
 
-    fun finalMethodCall(bh: Blackhole) {
+    @Benchmark
+    fun finalMethod(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val d = d
@@ -172,7 +176,8 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun classOpenMethodCall_MonomorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun openMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
@@ -181,7 +186,9 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun classOpenMethodCall_BimorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun openMethodBimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
@@ -191,7 +198,9 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun classOpenMethodCall_TrimorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun openMethodTrimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val a1 = a1
@@ -206,7 +215,8 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun interfaceMethodCall_MonomorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun interfaceMethodMonomorphic(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -215,7 +225,9 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun interfaceMethodCall_BimorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun interfaceMethodBimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -225,7 +237,9 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun interfaceMethodCall_TrimorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun interfaceMethodTrimorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -240,7 +254,9 @@ open class CallsBenchmark {
         bh.consume(x)
     }
 
-    fun interfaceMethodCall_HexamorphicCallsite(bh: Blackhole) {
+    @Benchmark
+    fun interfaceMethodHexamorphic(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x = 0
         // TODO: optimize fields accesses
         val i1 = i1
@@ -271,6 +287,7 @@ open class CallsBenchmark {
 
     val e: E = F()
 
+    @Benchmark
     fun returnBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses
@@ -293,6 +310,7 @@ open class CallsBenchmark {
     @Suppress("UNCHECKED_CAST")
     val g: G<Any> = H() as G<Any>
 
+    @Benchmark
     fun parameterBoxUnboxFolding(bh: Blackhole) {
         var x = 0
         // TODO: optimize fields accesses

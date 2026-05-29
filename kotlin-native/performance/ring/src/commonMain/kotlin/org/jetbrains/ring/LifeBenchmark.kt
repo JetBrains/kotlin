@@ -4,7 +4,8 @@ package org.jetbrains.ring
 import kotlin.concurrent.*
 import kotlin.native.concurrent.*
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -95,16 +96,26 @@ fun run(bh: Blackhole, space: Int, time: Int) {
     bh.consume(universe)
 }
 
-open class LifeBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class LifeHideName : SkipWhenBaseOnly() {
     val spaceScale = BENCHMARK_SIZE / 40
     val timeScale = 5
 
-    fun bench(bh: Blackhole) {
+    @Benchmark
+    fun Life(bh: Blackhole) {
+        skipWhenBaseOnly()
         run(bh, spaceScale, timeScale)
     }
 }
 
-class LifeWithMarkHelpersBenchmark : LifeBenchmark() {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
+    val spaceScale = BENCHMARK_SIZE / 40
+    val timeScale = 5
     val numberOfMarkHelpers = 5;
 
     @Volatile
@@ -133,6 +144,13 @@ class LifeWithMarkHelpersBenchmark : LifeBenchmark() {
         }
     }
 
+    @Benchmark
+    fun LifeWithMarkHelpers(bh: Blackhole) {
+        skipWhenBaseOnly()
+        run(bh, spaceScale, timeScale)
+    }
+
+    @TearDown
     fun terminate() {
         done = true
         markHelperJobs.forEach { it.result }

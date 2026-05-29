@@ -30,7 +30,8 @@
 // others have been modified more aggresively to make it feel
 // more like a JavaScript program.
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 /**
  * A JavaScript implementation of the DeltaBlue constraint-solving
@@ -717,8 +718,11 @@ class Plan {
  * M a i n
  * --- */
 
-class DeltaBlueBenchmark {
-  fun deltaBlue(bh: Blackhole) {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class DeltaBlueHideName {
+  @Benchmark
+  fun DeltaBlue(bh: Blackhole) {
     chainTest(bh, 100)
     projectionTest(bh, 100)
   }

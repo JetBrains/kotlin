@@ -14,23 +14,27 @@
  * limitations under the License.
  */
 
-package org.jetbrains.ring
+package org.jetbrains.ring.stringBenchmark
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
+import org.jetbrains.ring.*
 
 private const val BENCHMARK_SIZE = 10000
 
-open class StringBenchmark {
-    private var _data: ArrayList<String>? = null
-    val data: ArrayList<String>
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class String : SkipWhenBaseOnly() {
+    private var _data: ArrayList<kotlin.String>? = null
+    val data: ArrayList<kotlin.String>
         get() = _data!!
-    var csv: String = ""
+    var csv: kotlin.String = ""
 
     init {
         // Use the same seed for reproducibility
         val rnd = Random(863)
-        val list = ArrayList<String>(BENCHMARK_SIZE)
+        val list = ArrayList<kotlin.String>(BENCHMARK_SIZE)
         for (n in stringValues(BENCHMARK_SIZE))
             list.add(n)
         _data = list
@@ -42,37 +46,38 @@ open class StringBenchmark {
         }
         csv += 0.0
     }
-    
-    //Benchmark
-    open fun stringConcat(bh: Blackhole) {
-        var string: String = ""
+
+    @Benchmark
+    fun stringConcat(bh: Blackhole) {
+        var string: kotlin.String = ""
         for (it in data) string += it
         bh.consume(string)
     }
-    
-    //Benchmark
-    open fun stringConcatNullable(bh: Blackhole) {
-        var string: String? = ""
+
+    @Benchmark
+    fun stringConcatNullable(bh: Blackhole) {
+        skipWhenBaseOnly()
+        var string: kotlin.String? = ""
         for (it in data) string += it
         bh.consume(string)
     }
-    
-    //Benchmark
-    open fun stringBuilderConcat(bh: Blackhole) {
+
+    @Benchmark
+    fun stringBuilderConcat(bh: Blackhole) {
         var string : StringBuilder = StringBuilder("")
         for (it in data) string.append(it)
         bh.consume(string)
     }
-    
-    //Benchmark
-    open fun stringBuilderConcatNullable(bh: Blackhole) {
+
+    @Benchmark
+    fun stringBuilderConcatNullable(bh: Blackhole) {
         var string : StringBuilder? = StringBuilder("")
         for (it in data) string?.append(it)
         bh.consume(string.toString())
     }
-    
-    //Benchmark
-    open fun summarizeSplittedCsv(bh: Blackhole) {
+
+    @Benchmark
+    fun summarizeSplittedCsv(bh: Blackhole) {
         val fields = csv.split(",")
         var sum = 0.0
         for (field in fields) {

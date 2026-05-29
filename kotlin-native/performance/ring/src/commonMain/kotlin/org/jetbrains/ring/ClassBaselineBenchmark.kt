@@ -16,13 +16,16 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class ClassBaselineBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ClassBaseline : SkipWhenBaseOnly() {
 
-    //Benchmark 
+    @Benchmark
     fun consume(bh: Blackhole) {
         for (item in 1..BENCHMARK_SIZE) {
             // TODO: what does this benchmark measure? `consume` may be too expensive
@@ -30,7 +33,7 @@ open class ClassBaselineBenchmark {
         }
     }
 
-    //Benchmark 
+    @Benchmark
     fun consumeField(bh: Blackhole) {
         val value = Value(0)
         for (item in 1..BENCHMARK_SIZE) {
@@ -40,19 +43,21 @@ open class ClassBaselineBenchmark {
         }
     }
 
-    //Benchmark 
+    @Benchmark
     fun allocateList(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>(BENCHMARK_SIZE)
         bh.consume(list)
     }
 
-    //Benchmark 
+    @Benchmark
     fun allocateArray(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = arrayOfNulls<Value>(BENCHMARK_SIZE)
         bh.consume(list)
     }
 
-    //Benchmark 
+    @Benchmark
     fun allocateListAndFill(bh: Blackhole) {
         val list = ArrayList<Value>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
@@ -61,8 +66,9 @@ open class ClassBaselineBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark 
+    @Benchmark
     fun allocateListAndWrite(bh: Blackhole) {
+        skipWhenBaseOnly()
         val value = Value(0)
         val list = ArrayList<Value>(BENCHMARK_SIZE)
         for (item in 1..BENCHMARK_SIZE) {
@@ -71,8 +77,9 @@ open class ClassBaselineBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark 
+    @Benchmark
     fun allocateArrayAndFill(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = arrayOfNulls<Value>(BENCHMARK_SIZE)
         var index = 0
         for (item in 1..BENCHMARK_SIZE) {

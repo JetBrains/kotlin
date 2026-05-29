@@ -6,7 +6,8 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 // Benchmark is inspired by multik library.
 
@@ -32,7 +33,9 @@ private class ComplexDoubleArray(public val size: Int) {
     }
 }
 
-open class ComplexArraysBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ComplexArrays : SkipWhenBaseOnly() {
     private val size = 1000
     private val a = ComplexDoubleArray(size)
     private val b = ComplexDoubleArray(size)
@@ -46,8 +49,9 @@ open class ComplexArraysBenchmark {
         }
     }
 
-    //Benchmark
+    @Benchmark
     fun outerProduct(bh: Blackhole) {
+        skipWhenBaseOnly()
         val result = ComplexDoubleArray(size * size)
 
         for (i in 0 until size) {

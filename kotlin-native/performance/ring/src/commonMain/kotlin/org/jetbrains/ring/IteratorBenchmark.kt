@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -31,10 +32,14 @@ internal inline fun sum(iterable: Iterable<Int>): Int {
     return sum
 }
 
-open class IteratorBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Iterator : SkipWhenBaseOnly() {
     val iterable = makeIterable()
 
+    @Benchmark
     fun baseline(bh: Blackhole) {
+        skipWhenBaseOnly()
         var sum = 0
         for (i in 0..BENCHMARK_SIZE) {
             sum += i
@@ -42,11 +47,15 @@ open class IteratorBenchmark {
         bh.consume(sum)
     }
 
+    @Benchmark
     fun concreteIterable(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sum((0..BENCHMARK_SIZE)))
     }
 
+    @Benchmark
     fun abstractIterable(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sum(iterable))
     }
 }

@@ -8,7 +8,8 @@ package org.jetbrains.ring
 
 import kotlin.concurrent.atomics.AtomicReference
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -68,7 +69,10 @@ class LinkedListOfBuffers(var head: ChunkBuffer = ChunkBuffer(0,0),
         }
 }
 
-open class LinkedListWithAtomicsBenchmark {
+@State(Scope.Benchmark)
+// Big benchmark, needs more iterations
+@Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
+class LinkedListWithAtomicsBenchmarkHideName {
     // Use the same seed for reproducibility
     private val rnd = Random(8790)
 
@@ -96,7 +100,8 @@ open class LinkedListWithAtomicsBenchmark {
         }
     }
 
-    fun benchmark(bh: Blackhole) {
+    @Benchmark
+    fun LinkedListWithAtomicsBenchmark(bh: Blackhole) {
         bh.consume(ensureNext())
     }
 }

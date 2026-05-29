@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -24,10 +25,12 @@ private const val BENCHMARK_SIZE = 10000
  * This class tests linked list performance
  * using prime number calculation algorithms
  */
-open class PrimeListBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class PrimeList {
     private var primes: MutableList<Int> = mutableListOf()
 
-    //Benchmark
+    @Benchmark
     fun calcDirect(bh: Blackhole) {
         primes.clear()
         primes.add(2)
@@ -49,7 +52,7 @@ open class PrimeListBenchmark {
         bh.consume(primes)
     }
 
-    //Benchmark
+    @Benchmark
     fun calcEratosthenes(bh: Blackhole) {
         primes.clear()
         primes.addAll(2..BENCHMARK_SIZE)

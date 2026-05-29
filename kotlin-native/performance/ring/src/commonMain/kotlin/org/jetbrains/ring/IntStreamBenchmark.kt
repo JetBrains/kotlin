@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class IntStreamBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class IntStream : SkipWhenBaseOnly() {
     private var _data: Iterable<Int>? = null
     val data: Iterable<Int>
         get() = _data!!
@@ -28,36 +31,41 @@ open class IntStreamBenchmark {
     init {
         _data = intValues(BENCHMARK_SIZE)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun copy(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().toList())
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun copyManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Int>()
         for (item in data.asSequence()) {
             list.add(item)
         }
         bh.consume(list)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun filterAndCount(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().filter { filterLoad(it) }.count())
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun filterAndMap(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (item in data.asSequence().filter { filterLoad(it) }.map { mapLoad(it) })
             result += item.length
         bh.consume(result)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun filterAndMapManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (it in data.asSequence()) {
             if (filterLoad(it)) {
@@ -66,17 +74,19 @@ open class IntStreamBenchmark {
         }
         bh.consume(result)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun filter(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (item in data.asSequence().filter { filterLoad(it) })
             result += item
         bh.consume(result)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun filterManual(bh: Blackhole){
+        skipWhenBaseOnly()
         var result = 0
         for (it in data.asSequence()) {
             if (filterLoad(it))
@@ -84,9 +94,10 @@ open class IntStreamBenchmark {
         }
         bh.consume(result)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun countFilteredManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (it in data.asSequence()) {
             if (filterLoad(it))
@@ -94,19 +105,22 @@ open class IntStreamBenchmark {
         }
         bh.consume(count)
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun countFiltered(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().count { filterLoad(it) })
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun countFilteredLocal(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().cnt { filterLoad(it) })
     }
-    
-    //Benchmark
+
+    @Benchmark
     fun reduce(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.asSequence().fold(0) {acc, it -> if (filterLoad(it)) acc + 1 else acc })
     }
 }

@@ -17,7 +17,8 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -92,7 +93,9 @@ var VV18 = 18
 var VV19 = 19
 var VV20 = 20
 
-open class SwitchBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Switch : SkipWhenBaseOnly() {
     fun sparseIntSwitch(u : Int) : Int {
         var t : Int
         when (u) {
@@ -481,8 +484,9 @@ open class SwitchBenchmark {
 
 
 
-    //Benchmark 
+    @Benchmark 
     fun testSparseIntSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in sparseIntData) {
             result += sparseIntSwitch(i)
@@ -490,8 +494,9 @@ open class SwitchBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark 
     fun testDenseIntSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in denseIntData) {
             result += denseIntSwitch(i)
@@ -499,8 +504,9 @@ open class SwitchBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark 
     fun testConstSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in denseIntData) {
             result += constSwitch(i)
@@ -508,8 +514,9 @@ open class SwitchBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark 
     fun testObjConstSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in denseIntData) {
             result += objConstSwitch(i)
@@ -517,8 +524,9 @@ open class SwitchBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark 
     fun testVarSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in denseIntData) {
             result += varSwitch(i)
@@ -530,7 +538,7 @@ open class SwitchBenchmark {
 
 
 
-    //Benchmark 
+    @Benchmark 
     fun testStringsSwitch(bh: Blackhole) {
         var result = 0
         val n = data.size
@@ -601,7 +609,7 @@ open class SwitchBenchmark {
 
 
 
-    //Benchmark 
+    @Benchmark 
     fun testEnumsSwitch(bh: Blackhole) {
         val n = enumData.size -1
         val data = enumData
@@ -612,8 +620,9 @@ open class SwitchBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark 
     fun testDenseEnumsSwitch(bh: Blackhole) {
+        skipWhenBaseOnly()
         val n = denseEnumData.size -1
         val data = denseEnumData
         var result = 0
@@ -684,7 +693,7 @@ open class SwitchBenchmark {
         }
 
 
-    //Benchmark 
+    @Benchmark 
     fun testSealedWhenSwitch(bh: Blackhole) {
         val n = sealedClassData.size -1
         var result = 0

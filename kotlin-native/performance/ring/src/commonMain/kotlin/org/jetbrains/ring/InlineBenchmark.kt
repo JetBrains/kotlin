@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -54,26 +55,31 @@ inline fun <T: Any> loadGenericInline(value: T, size: Int): Int {
     return acc
 }
 
-open class InlineBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Inline : SkipWhenBaseOnly() {
     private var value = 2138476523
 
-    //Benchmark
+    @Benchmark
     fun calculate(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(load(value, BENCHMARK_SIZE))
     }
 
-    //Benchmark
+    @Benchmark
     fun calculateInline(bh: Blackhole) {
         bh.consume(loadInline(value, BENCHMARK_SIZE))
     }
 
-    //Benchmark
+    @Benchmark
     fun calculateGeneric(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(loadGeneric(value, BENCHMARK_SIZE))
     }
 
-    //Benchmark
+    @Benchmark
     fun calculateGenericInline(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(loadGenericInline(value, BENCHMARK_SIZE))
     }
 }

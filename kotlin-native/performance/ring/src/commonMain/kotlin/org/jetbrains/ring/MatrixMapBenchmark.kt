@@ -17,7 +17,8 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -57,11 +58,13 @@ class KMatrix internal constructor(val rows: Int, val columns: Int) {
 /**
  * This class tests hash map performance
  */
-open class MatrixMapBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class MatrixMap {
     // Use the same seed for reproducibility
     private val rnd = Random(501)
 
-    //Benchmark
+    @Benchmark
     fun add(bh: Blackhole) {
         var rows = BENCHMARK_SIZE
         var cols = 1

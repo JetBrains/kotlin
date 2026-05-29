@@ -5,12 +5,15 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
 // Benchmark from KT-46482.
-open class ChainableBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ChainableBenchmark {
 
     class IntArrayList(capacity: Int = 7) {
         private var data: IntArray = IntArray(capacity)
@@ -43,7 +46,7 @@ open class ChainableBenchmark {
     }
     val size = BENCHMARK_SIZE * 100
 
-    //Benchmark
+    @Benchmark
     fun testChainable(bh: Blackhole) {
         val list = IntArrayList()
         for (i in 0..size) {

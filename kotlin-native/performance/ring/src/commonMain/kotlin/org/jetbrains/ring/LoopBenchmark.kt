@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class LoopBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Loop : SkipWhenBaseOnly() {
     var arrayList: List<Value>
     var array: Array<Value>
 
@@ -32,7 +35,7 @@ open class LoopBenchmark {
         array = list.toTypedArray()
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayLoop(bh: Blackhole) {
         var result = 0
         for (x in array) {
@@ -41,8 +44,9 @@ open class LoopBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayIndexLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in array.indices) {
             result += array[i].value
@@ -50,7 +54,7 @@ open class LoopBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun rangeLoop(bh: Blackhole) {
         var result = 0
         for (i in 0..<array.size) {
@@ -59,8 +63,9 @@ open class LoopBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayListLoop(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (x in arrayList) {
             result += x.value
@@ -68,7 +73,7 @@ open class LoopBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayWhileLoop(bh: Blackhole) {
         var result = 0
         var i = 0
@@ -80,14 +85,14 @@ open class LoopBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayForeachLoop(bh: Blackhole) {
         var result = 0
         array.forEach { result += it.value }
         bh.consume(result)
     }
 
-    //Benchmark 
+    @Benchmark
     fun arrayListForeachLoop(bh: Blackhole) {
         var result = 0
         arrayList.forEach { result += it.value }

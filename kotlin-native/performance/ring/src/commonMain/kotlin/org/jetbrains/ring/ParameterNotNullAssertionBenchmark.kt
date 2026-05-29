@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 val OBJ = Any()
 
-open class ParameterNotNullAssertionBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ParameterNotNull : SkipWhenBaseOnly() {
     
     fun methodWithOneNotnullParameter(p: Any): Any {
         return p
@@ -46,33 +49,39 @@ open class ParameterNotNullAssertionBenchmark {
         return p
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeOneArgWithNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(methodWithOneNotnullParameter(OBJ))
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeOneArgWithoutNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(privateMethodWithOneNotnullParameter(OBJ))
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeTwoArgsWithNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(methodWithTwoNotnullParameters(OBJ, OBJ))
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeTwoArgsWithoutNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(privateMethodWithTwoNotnullParameters(OBJ, OBJ))
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeEightArgsWithNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(methodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ))
     }
 
-    //Benchmark
+    @Benchmark
     fun invokeEightArgsWithoutNullCheck(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(privateMethodWithEightNotnullParameters(OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ, OBJ))
     }
 }

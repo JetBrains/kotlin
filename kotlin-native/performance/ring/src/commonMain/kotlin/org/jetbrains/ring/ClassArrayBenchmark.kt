@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class ClassArrayBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class ClassArray : SkipWhenBaseOnly() {
     private var _data: Array<Value>? = null
     val data: Array<Value>
         get() = _data!!
@@ -32,13 +35,14 @@ open class ClassArrayBenchmark {
         _data = list.toTypedArray()
     }
 
-    //Benchmark
+    @Benchmark
     fun copy(bh: Blackhole) {
         bh.consume(data.toList())
     }
 
-    //Benchmark
+    @Benchmark
     fun copyManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>(data.size)
         for (item in data) {
             list.add(item)
@@ -46,18 +50,21 @@ open class ClassArrayBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndCount(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { filterLoad(it) }.count())
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMap(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.filter { filterLoad(it) }.map { mapLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterAndMapManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<String>()
         for (it in data) {
             if (filterLoad(it)) {
@@ -68,13 +75,14 @@ open class ClassArrayBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun filter(bh: Blackhole) {
         bh.consume(data.filter { filterLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun filterManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         val list = ArrayList<Value>()
         for (it in data) {
             if (filterLoad(it))
@@ -83,8 +91,9 @@ open class ClassArrayBenchmark {
         bh.consume(list)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFilteredManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var count = 0
         for (it in data) {
             if (filterLoad(it))
@@ -93,13 +102,14 @@ open class ClassArrayBenchmark {
         bh.consume(count)
     }
 
-    //Benchmark
+    @Benchmark
     fun countFiltered(bh: Blackhole) {
         bh.consume(data.count { filterLoad(it) })
     }
 
-    //Benchmark
+    @Benchmark
     fun countFilteredLocal(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(data.cnt { filterLoad(it) })
     }
 }

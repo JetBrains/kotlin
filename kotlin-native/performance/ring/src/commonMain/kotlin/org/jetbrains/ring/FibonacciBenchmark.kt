@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -29,9 +30,10 @@ private const val BENCHMARK_SIZE = 10000
  * but when we have a progression it's used directly with its iterator and so.
  */
 
-open class FibonacciBenchmark {
-
-    //Benchmark
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Fibonacci : SkipWhenBaseOnly() {
+    @Benchmark
     fun calcClassic(bh: Blackhole) {
         var a = 1L
         var b = 2L
@@ -44,7 +46,7 @@ open class FibonacciBenchmark {
         bh.consume(b)
     }
 
-    //Benchmark
+    @Benchmark
     fun calc(bh: Blackhole) {
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
@@ -58,8 +60,9 @@ open class FibonacciBenchmark {
         bh.consume(b)
     }
 
-    //Benchmark
+    @Benchmark
     fun calcWithProgression(bh: Blackhole) {
+        skipWhenBaseOnly()
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
         var b = 2L
@@ -72,8 +75,9 @@ open class FibonacciBenchmark {
         bh.consume(b)
     }
 
-    //Benchmark
+    @Benchmark
     fun calcSquare(bh: Blackhole) {
+        skipWhenBaseOnly()
         // This test works CRITICALLY slower compared with java equivalent (05.03.2015)
         var a = 1L
         var b = 2L

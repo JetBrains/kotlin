@@ -4,7 +4,8 @@
  */
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 // Benchmark is inspired by multik library.
 
@@ -40,7 +41,9 @@ class Array2D<T>(val data: MemoryView<T>, val width: Int) where T : Number{
     }
 }
 
-open class GenericArrayViewBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class GenericArrayView : SkipWhenBaseOnly() {
     // Use the same seed for reproducibility
     private val rnd = Random(29)
 
@@ -71,8 +74,27 @@ open class GenericArrayViewBenchmark {
 
     // Bench cases:
 
-    fun origin(bh: Blackhole) { bh.consume(bench(intArr) { a, i, j -> a.getGeneric(i, j) }) }
-    fun inlined(bh: Blackhole) { bh.consume(bench(intArr) { a, i, j -> a.getGenericInlined(i, j) }) }
-    fun specialized(bh: Blackhole) { bh.consume(bench(intArr) { a, i, j -> a.getSpecializedInlined(i, j) }) }
-    fun manual(bh: Blackhole) { bh.consume(bench(intArr) { a, i, j -> a.width * i + j }) }
+    @Benchmark
+    fun origin(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getGeneric(i, j) })
+    }
+
+    @Benchmark
+    fun inlined(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getGenericInlined(i, j) })
+    }
+
+    @Benchmark
+    fun specialized(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.getSpecializedInlined(i, j) })
+    }
+
+    @Benchmark
+    fun manual(bh: Blackhole) {
+        skipWhenBaseOnly()
+        bh.consume(bench(intArr) { a, i, j -> a.width * i + j })
+    }
 }

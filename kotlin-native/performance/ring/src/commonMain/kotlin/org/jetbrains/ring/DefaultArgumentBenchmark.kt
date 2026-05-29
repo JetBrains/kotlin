@@ -17,14 +17,17 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 /**
  * Created by Mikhail.Glukhikh on 10/03/2015.
  *
  * Tests performance for function calls with default parameters
  */
-open class DefaultArgumentBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class DefaultArgument : SkipWhenBaseOnly() {
     private var arg = 0
 
     init {
@@ -49,38 +52,38 @@ open class DefaultArgumentBenchmark {
         return first + second + third + fourth + fifth + sixth + seventh + eighth
     }
 
-    
-    //Benchmark
+    @Benchmark
     fun testOneOfTwo(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumTwo(arg))
     }
 
-    
-    //Benchmark
+    @Benchmark
     fun testTwoOfTwo(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumTwo(arg, arg))
     }
-    
-    //Benchmark
+    @Benchmark
     fun testOneOfFour(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumFour(arg))
     }
 
-    
-    //Benchmark
+    @Benchmark
     fun testFourOfFour(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumFour(arg, arg, arg, arg))
     }
 
-    
-    //Benchmark
+    @Benchmark
     fun testOneOfEight(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumEight(arg))
     }
 
-    
-    //Benchmark
+    @Benchmark
     fun testEightOfEight(bh: Blackhole) {
+        skipWhenBaseOnly()
         bh.consume(sumEight(arg, arg, arg, arg, arg, arg, arg, arg))
     }
 }

@@ -16,7 +16,8 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
@@ -26,7 +27,9 @@ private const val BENCHMARK_SIZE = 10000
  * A benchmark for a single abstract method based on a string comparison
  */
 
-open class AbstractMethodBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class AbstractMethod : SkipWhenBaseOnly() {
 
     private val arr: List<String> = zdf_win
     private val sequence = "абвгдеёжзийклмнопрстуфхцчшщъыьэюя"
@@ -40,14 +43,15 @@ open class AbstractMethodBenchmark {
         }
     }
 
-    //Benchmark
+    @Benchmark
     fun sortStrings(bh: Blackhole) {
         val res = arr.subList(0, if (BENCHMARK_SIZE < arr.size) BENCHMARK_SIZE else arr.size).toSet()
         bh.consume(res)
     }
 
-    //Benchmark
+    @Benchmark
     fun sortStringsWithComparator(bh: Blackhole) {
+        skipWhenBaseOnly()
         val res = mutableSetOf<String>()
         res.addAll(arr.subList(0, if (BENCHMARK_SIZE < arr.size) BENCHMARK_SIZE else arr.size))
         bh.consume(res)

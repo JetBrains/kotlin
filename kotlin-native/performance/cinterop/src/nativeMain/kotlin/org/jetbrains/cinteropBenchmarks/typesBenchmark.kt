@@ -17,12 +17,15 @@
 package org.jetbrains.typesBenchmarks
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
 import kotlinx.cinterop.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 1000
 
-actual class StringBenchmark actual constructor() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class StringBenchmarkHideName {
     // Use the same seed for reproducibility
     private val rnd = Random(756)
 
@@ -45,7 +48,8 @@ actual class StringBenchmark actual constructor() {
                 .joinToString("")
     }
 
-    actual fun stringToCBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun stringToC(bh: Blackhole) {
         var result = 0
         for (i in 1..BENCHMARK_SIZE) {
             result += charFrequency(randomString, randomChar.code.toByte())
@@ -53,7 +57,8 @@ actual class StringBenchmark actual constructor() {
         bh.consume(result)
     }
 
-    actual fun stringToKotlinBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun stringToKotlin(bh: Blackhole) {
         memScoped {
             for (i in 1..BENCHMARK_SIZE) {
                 val pointer = findSuitableString(strings.toCStringArray(this), BENCHMARK_SIZE, "a")
@@ -64,7 +69,9 @@ actual class StringBenchmark actual constructor() {
     }
 }
 
-actual class IntMatrixBenchmark actual constructor(){
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class IntMatrixBenchmarkHideName {
     val matrixSize = 1000
     val first = generateMatrix(matrixSize)
     val second = generateMatrix(matrixSize)
@@ -79,7 +86,8 @@ actual class IntMatrixBenchmark actual constructor(){
         return matrix
     }
 
-    actual fun intMatrixBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun intMatrix(bh: Blackhole) {
         memScoped {
             val result = allocArray<CPointerVar<IntVar>>(matrixSize)
             for (i in (0 until matrixSize)) {
@@ -103,11 +111,15 @@ actual class IntMatrixBenchmark actual constructor(){
     }
 }
 
-actual class IntBenchmark actual constructor() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class IntBenchmarkHideName : SkipWhenBaseOnly() {
     val size = 20
     val array = Array<Int>(size, { (0 until size).random() })
 
-    actual fun intBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun int(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0.0
         for (i in 1..BENCHMARK_SIZE) {
             result += average(array[0], array[1], array[2], array[3], array[4], array[5], array[6], array[7], array[8],
@@ -118,7 +130,9 @@ actual class IntBenchmark actual constructor() {
     }
 }
 
-actual class BoxedIntBenchmark actual constructor() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class BoxedIntBenchmarkHideName : SkipWhenBaseOnly() {
     val size = 20
     val array = Array<Int?>(size, { null })
 
@@ -129,7 +143,9 @@ actual class BoxedIntBenchmark actual constructor() {
         }
     }
 
-    actual fun boxedIntBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun boxedInt(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0.0
         for (i in 1..BENCHMARK_SIZE) {
             result += average(array[0]!!, array[1]!!, array[2]!!, array[3]!!, array[4]!!, array[5]!!, array[6]!!, array[7]!!, array[8]!!,
@@ -140,12 +156,16 @@ actual class BoxedIntBenchmark actual constructor() {
     }
 }
 
-actual class PinnedArrayBenchmark actual constructor() {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class PinnedArrayBenchmarkHideName : SkipWhenBaseOnly() {
     val size = 36
     val vec1 = FloatArray(size) { it.toFloat() / 10 }
     val vec2 = FloatArray(size) { it.toFloat() / 3 }
 
-    actual fun pinnedArrayBenchmark(bh: Blackhole) {
+    @Benchmark
+    fun pinnedArray(bh: Blackhole) {
+        skipWhenBaseOnly()
         for (i in 1..BENCHMARK_SIZE) {
             vec1.usePinned { first ->
                 vec2.usePinned { second ->

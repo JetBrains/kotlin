@@ -16,11 +16,14 @@
 
 package org.jetbrains.ring
 
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class WithIndiciesBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class WithIndicies : SkipWhenBaseOnly() {
     private var _data: ArrayList<Value>? = null
     val data: ArrayList<Value>
         get() = _data!!
@@ -32,7 +35,7 @@ open class WithIndiciesBenchmark {
         _data = list
     }
 
-    //Benchmark
+    @Benchmark
     fun withIndicies(bh: Blackhole) {
         var result = 0
         for ((index, value) in data.withIndex()) {
@@ -43,8 +46,9 @@ open class WithIndiciesBenchmark {
         bh.consume(result)
     }
 
-    //Benchmark
+    @Benchmark
     fun withIndiciesManual(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         var index = 0
         for (value in data) {

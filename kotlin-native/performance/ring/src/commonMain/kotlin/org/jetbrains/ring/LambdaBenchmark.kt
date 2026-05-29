@@ -17,13 +17,16 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
 var globalAddendum = 0
 
-open class LambdaBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Lambda : SkipWhenBaseOnly() {
     private inline fun <T> runLambda(x: () -> T): T = x()
     private fun <T> runLambdaNoInline(x: () -> T): T = x()
 
@@ -33,7 +36,7 @@ open class LambdaBenchmark {
         globalAddendum = rnd.nextInt(20)
     }
 
-    //Benchmark
+    @Benchmark
     fun noncapturingLambda(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
@@ -42,8 +45,9 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun noncapturingLambdaNoInline(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambdaNoInline { globalAddendum }
@@ -51,7 +55,7 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun capturingLambda(bh: Blackhole) {
         val addendum = globalAddendum + 1
         var x: Int = 0
@@ -61,8 +65,9 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun capturingLambdaNoInline(bh: Blackhole) {
+        skipWhenBaseOnly()
         val addendum = globalAddendum + 1
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
@@ -71,8 +76,9 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun mutatingLambda(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             runLambda { x += globalAddendum }
@@ -80,8 +86,9 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun mutatingLambdaNoInline(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             runLambdaNoInline { x += globalAddendum }
@@ -89,7 +96,7 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun methodReference(bh: Blackhole) {
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
@@ -98,8 +105,9 @@ open class LambdaBenchmark {
         bh.consume(x)
     }
 
-    //Benchmark
+    @Benchmark
     fun methodReferenceNoInline(bh: Blackhole) {
+        skipWhenBaseOnly()
         var x: Int = 0
         for (i in 0..BENCHMARK_SIZE) {
             x += runLambdaNoInline(::referenced)

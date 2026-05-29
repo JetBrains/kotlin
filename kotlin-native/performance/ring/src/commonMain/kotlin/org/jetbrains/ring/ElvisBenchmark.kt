@@ -17,11 +17,14 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 10000
 
-open class ElvisBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Elvis : SkipWhenBaseOnly() {
     // Use the same seed for reproducibility
     private val rnd = Random(785)
 
@@ -35,7 +38,7 @@ open class ElvisBenchmark {
         }
     }
 
-    //Benchmark
+    @Benchmark
     fun testElvis(bh: Blackhole) {
         var result = 0
         for (obj in array) {
@@ -50,7 +53,9 @@ open class ElvisBenchmark {
         return a?.y?.x ?: (a?.x ?: 3)
     }
 
+    @Benchmark
     fun testCompositeElvis(bh: Blackhole) {
+        skipWhenBaseOnly()
         var result = 0
         for (i in 0..BENCHMARK_SIZE)
             result += check(Composite(rnd.nextInt(100), Composite(rnd.nextInt(100), null)))

@@ -6,7 +6,8 @@
 package org.jetbrains.ring
 
 import kotlin.random.Random
-import kotlinx.benchmark.Blackhole
+import kotlinx.benchmark.*
+import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 
 private const val BENCHMARK_SIZE = 1000
 
@@ -17,13 +18,15 @@ private object A {
     val a = rnd.nextInt(100)
 }
 
-open class SingletonBenchmark {
+@State(Scope.Benchmark)
+@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)
+class Singleton {
     init {
         // Make sure A is initialized.
         A.a
     }
 
-    // Benchmark
+    @Benchmark
     fun access(bh: Blackhole) {
         var result = 0
         for (i in 0 until BENCHMARK_SIZE) {
