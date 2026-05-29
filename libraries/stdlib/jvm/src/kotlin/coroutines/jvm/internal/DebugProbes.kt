@@ -11,7 +11,19 @@ import kotlin.coroutines.Continuation
 import kotlin.coroutines.intrinsics.*
 import kotlin.coroutines.jvm.DebugProbes
 
+private val IS_ANDROID: Boolean = try {
+    Class.forName("android.os.Build")
+    true
+} catch (_: Exception) {
+    false
+}
+
+private val hasNoProbes: Boolean
 private val debugProbes: Array<DebugProbes> = run {
+    if (IS_ANDROID) {
+        hasNoProbes = true
+        return@run emptyArray()
+    }
     /*
     Respect debug probes loading explicitly being enabled or disabled by the System Property.
     If the property is not specified, we disable the mechanics on Android as using Service Loaders on Android can
@@ -21,10 +33,19 @@ private val debugProbes: Array<DebugProbes> = run {
         ?: runCatching { Class.forName("android.os.Build") }.isFailure
 
     if (isDebugProbesLoadingEnabled) {
-        ServiceLoader.load(DebugProbes::class.java, DebugProbes::class.java.classLoader).toList().toTypedArray()
-    } else emptyArray()
+        val result = mutableListOf<DebugProbes>()
+        var noProbes = true
+        for (service in ServiceLoader.load(DebugProbes::class.java, DebugProbes::class.java.classLoader)) {
+            noProbes = false
+            result.add(service)
+        }
+        hasNoProbes = noProbes
+        result.toTypedArray()
+    } else {
+        hasNoProbes = true
+        emptyArray()
+    }
 }
-
 
 /**
  * This probe is invoked when coroutine is being created and it can replace completion
@@ -62,7 +83,7 @@ private val debugProbes: Array<DebugProbes> = run {
 @SinceKotlin("1.3")
 internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuation<T> {
     /** implementation of this function can be replaced by debugger */
-    if (debugProbes.isEmpty()) return completion
+    if (hasNoProbes) return completion
     return debugProbes.foldRight(completion) { probe, acc -> probe.probeCoroutineCreated(acc) }
 }
 
@@ -82,7 +103,7 @@ internal fun <T> probeCoroutineCreated(completion: Continuation<T>): Continuatio
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineResumed(frame: Continuation<*>) {
     /** implementation of this function can be replaced by debugger */
-    if (debugProbes.isEmpty()) return
+    if (hasNoProbes) return
     debugProbes.forEach { it.probeCoroutineResumed(frame) }
 }
 
@@ -100,6 +121,6 @@ internal fun probeCoroutineResumed(frame: Continuation<*>) {
 @Suppress("UNUSED_PARAMETER")
 internal fun probeCoroutineSuspended(frame: Continuation<*>) {
     /** implementation of this function can be replaced by debugger */
-    if (debugProbes.isEmpty()) return
+    if (hasNoProbes) return
     debugProbes.forEach { it.probeCoroutineSuspended(frame) }
 }
