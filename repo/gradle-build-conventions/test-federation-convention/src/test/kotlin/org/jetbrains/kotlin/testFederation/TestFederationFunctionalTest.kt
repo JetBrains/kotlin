@@ -29,6 +29,16 @@ import kotlin.time.Duration.Companion.seconds
  * (e.g., the compiler contract test is expected to only be executed when the compiler subsystem is affected, or the full test mode is specified)
  */
 class TestFederationFunctionalTest {
+
+    @Test
+    fun `test - smoke - compiler contract`() {
+        val result = runTestBuild(TestFederationMode.Smoke, Domain.Compiler)
+        assertEquals(
+            setOf(TestResult("PseudoTest", "smoke test")),
+            result.executedTests
+        )
+    }
+
     @Test
     fun `test - smoke - js contract`() {
         val result = runTestBuild(TestFederationMode.Smoke, Domain.Js)

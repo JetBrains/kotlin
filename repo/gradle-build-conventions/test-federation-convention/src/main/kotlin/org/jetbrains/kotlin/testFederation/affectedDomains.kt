@@ -58,10 +58,6 @@ private fun inferAffectedDomains(changes: List<RepositoryPath>, commitMessages: 
         .withAffectedDependencies()
 }
 
-internal fun inferAffectedDomains(argumentString: String): Set<Domain>? {
-    return Domain.fromArgumentString(argumentString)?.withAffectedDependencies()
-}
-
 /**
  * 'Inverse' dependencies of domains
  *

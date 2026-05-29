@@ -31,7 +31,9 @@ internal val Project.testFederationMode: Provider<TestFederationMode>
             return provider { TestFederationMode.Full }
         }
 
-        return providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY).map(TestFederationMode::valueOf)
+        return (providers.gradleProperty(TEST_FEDERATION_MODE_KEY)
+            .orElse(providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY)))
+            .map(TestFederationMode::valueOf)
             .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
                 if (domain in affectedTestSystems) TestFederationMode.Full
                 else TestFederationMode.Smoke
@@ -44,8 +46,9 @@ internal val Project.testFederationAffectedDomains: Provider<Set<Domain>>
             return provider { Domain.entries.toSet() }
         }
 
-        return providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)
-            .map { argumentString -> inferAffectedDomains(argumentString) }
+        return (providers.gradleProperty(TEST_FEDERATION_AFFECTED_DOMAINS_KEY)
+            .orElse(providers.environmentVariable(TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY)))
+            .map { argumentString -> Domain.fromArgumentStringOrThrow(argumentString) }
             .orElse(project.affectedDomainsService.map { it.affectedDomains })
     }
 
