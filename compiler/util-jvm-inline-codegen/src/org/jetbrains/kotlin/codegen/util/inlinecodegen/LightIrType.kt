@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.util.inlinecodegen
 
+import org.jetbrains.org.objectweb.asm.Opcodes
 import java.io.Serializable
 import kotlin.io.encoding.Base64
 
@@ -126,6 +127,33 @@ data class LightIrType(
                 asmTypeInternalName
             },
         )
+    }
+
+    fun specializedAbi(): SpecializedTypeAbi? {
+        val classifier = classifier as? Classifier.Clazz ?: return null
+
+        // Simple non-null primitive casse
+        if (!nullable) when (classifier.fqName) {
+            "kotlin.Boolean" -> return Primitive("Z", "boolean", "java/lang/Boolean", 0, Opcodes.ICONST_0)
+            "kotlin.Char" -> return Primitive("C", "char", "java/lang/Character", 0, Opcodes.ICONST_0)
+            "kotlin.Byte" -> return Primitive("B", "byte", "java/lang/Byte", 0, Opcodes.ICONST_0)
+            "kotlin.Short" -> return Primitive("S", "short", "java/lang/Short", 0, Opcodes.ICONST_0)
+            "kotlin.Int" -> return Primitive("I", "int", "java/lang/Integer", 0, Opcodes.ICONST_0)
+            "kotlin.Float" -> return Primitive("F", "float", "java/lang/Float", 2, Opcodes.FCONST_0)
+            "kotlin.Long" -> return Primitive("J", "long", "java/lang/Long", 1, Opcodes.LCONST_0)
+            "kotlin.Double" -> return Primitive("D", "double", "java/lang/Double", 3, Opcodes.DCONST_0)
+        }
+
+        // Inline value class
+        if (classifier.inlineAbi != null) {
+            return InlineClass(
+                classifier.fqName.replace('.', '/'),
+                nullable,
+                classifier.inlineAbi,
+            )
+        }
+
+        return null
     }
 
     companion object {

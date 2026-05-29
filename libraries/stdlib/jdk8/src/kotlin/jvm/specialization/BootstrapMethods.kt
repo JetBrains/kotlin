@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecTypeParametersUsages
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.SpecializedTypeAbi
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.extractJvmSpecializeMetadataValue
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.isSpecBootstrapCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
@@ -186,8 +186,8 @@ private fun adaptLVT(
     for (specLVTEntry in metadata.specLVT) {
         specLVTEntry.typeParameterUsage
             .adjustType(typeParameters)
-            ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-            ?.also { abi -> methodNode.localVariables[specLVTEntry.lvtEntryIndex].desc = abi.reprDesc }
+            ?.specializedAbi()
+            ?.also { methodNode.localVariables[specLVTEntry.lvtEntryIndex].desc = it.reprDesc }
     }
 }
 
@@ -221,7 +221,7 @@ private fun peeholeAdapt(
 
     val typeParametersAbi = buildMap {
         for ([k, v] in typeParameters) {
-            SpecializedTypeAbi.fromLightIrType(v)?.also { put(k, it) }
+            v.specializedAbi()?.also { put(k, it) }
         }
     }
 
@@ -258,22 +258,22 @@ private fun peeholeAdapt(
                             SpecTypeParametersUsages.Usage.decode((prev as MethodInsnNode).name.substring("specializedTypeMarker".length))
                         instructions.set(prev, InsnNode(Opcodes.NOP))
                         typeParameterUsage.adjustType(typeParameters)
-                            ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-                            ?.let { instructions.set(insn, VarInsnNode(insn.opcode - 4 + it.loadStoreReturnOpcodeOffset, insn.`var`)) }
+                            ?.specializedAbi()
+                            ?.also { instructions.set(insn, VarInsnNode(insn.opcode - 4 + it.loadStoreReturnOpcodeOffset, insn.`var`)) }
                     }
                 }
             }
 
             insn.opcode == Opcodes.ARETURN -> {
                 metadata.specTypeParametersUsages.returnType?.adjustType(typeParameters)
-                    ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-                    ?.let { abi -> instructions.set(insn, InsnNode(Opcodes.IRETURN + abi.loadStoreReturnOpcodeOffset)) }
+                    ?.specializedAbi()
+                    ?.also { instructions.set(insn, InsnNode(Opcodes.IRETURN + it.loadStoreReturnOpcodeOffset)) }
             }
 
             insn.isBoxMarker() -> {
                 val typeParameterUsage =
                     SpecTypeParametersUsages.Usage.decode((insn as MethodInsnNode).name.substring("boxMarker".length))
-                when (val abi = typeParameterUsage.adjustType(typeParameters)?.let { SpecializedTypeAbi.fromLightIrType(it) }) {
+                when (val abi = typeParameterUsage.adjustType(typeParameters)?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genBox(instructions, insn)
                 }
@@ -282,7 +282,7 @@ private fun peeholeAdapt(
             insn.isUnboxMarker() -> {
                 val typeParameterUsage =
                     SpecTypeParametersUsages.Usage.decode((insn as MethodInsnNode).name.substring("unboxMarker".length))
-                when (val abi = typeParameterUsage.adjustType(typeParameters)?.let { SpecializedTypeAbi.fromLightIrType(it) }) {
+                when (val abi = typeParameterUsage.adjustType(typeParameters)?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genUnbox(instructions, insn)
                 }
@@ -290,7 +290,7 @@ private fun peeholeAdapt(
 
             insn.isCoerce2NullableMarker() -> {
                 val typeParameterIndex = (insn as MethodInsnNode).name.substring("coerce2NullableMarker".length).toInt()
-                when (val abi = typeParameters[typeParameterIndex]?.let { SpecializedTypeAbi.fromLightIrType(it) }) {
+                when (val abi = typeParameters[typeParameterIndex]?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genCoerce2Nullable(instructions, insn)
                 }
@@ -298,7 +298,7 @@ private fun peeholeAdapt(
 
             insn.isCoerce2NonNullableMarker() -> {
                 val typeParameterIndex = (insn as MethodInsnNode).name.substring("coerce2NonNullableMarker".length).toInt()
-                when (val abi = typeParameters[typeParameterIndex]?.let { SpecializedTypeAbi.fromLightIrType(it) }) {
+                when (val abi = typeParameters[typeParameterIndex]?.specializedAbi()) {
                     null -> instructions.set(insn, InsnNode(Opcodes.NOP))
                     else -> abi.genCoerce2NonNullable(instructions, insn)
                 }
@@ -306,22 +306,25 @@ private fun peeholeAdapt(
 
             insn.isReifiedOperationMarker() -> reify(methodNode, insn as MethodInsnNode, metadata.typeParametersNames, typeParameters)
 
-            insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall -> {
+            insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall -> {
                 val nestedSpecTypeParametersUsages = SpecTypeParametersUsages.decode(insn.bsmArgs[2] as String)
                 val nestedTypeParameters =
                     LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(typeParameters) }
-                val descArgs = Type.getArgumentTypes(insn.desc)
-                var descReturnType = Type.getReturnType(insn.desc)
+
+                val nestedDescriptorParameterTypes = Type.getArgumentTypes(insn.desc)
                 for ([parameterIndex, usage] in nestedSpecTypeParametersUsages.parameterGenericIndices) {
                     usage.adjustType(nestedTypeParameters)
-                        ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-                        ?.also { descArgs[parameterIndex] = Type.getType(it.reprDesc) }
+                        ?.specializedAbi()
+                        ?.also { nestedDescriptorParameterTypes[parameterIndex] = Type.getType(it.reprDesc) }
                 }
+
+                var nestedDescriptorReturnType = Type.getReturnType(insn.desc)
                 nestedSpecTypeParametersUsages.returnType
                     ?.adjustType(nestedTypeParameters)
-                    ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-                    ?.also { descReturnType = Type.getType(it.reprDesc) }
-                insn.desc = Type.getMethodType(descReturnType, *descArgs).descriptor
+                    ?.specializedAbi()
+                    ?.also { nestedDescriptorReturnType = Type.getType(it.reprDesc) }
+
+                insn.desc = Type.getMethodType(nestedDescriptorReturnType, *nestedDescriptorParameterTypes).descriptor
                 insn.bsmArgs[3] = nestedTypeParameters.entries.joinToString("\n") { [k, v] -> "$k=${v.encode()}" }
             }
         }

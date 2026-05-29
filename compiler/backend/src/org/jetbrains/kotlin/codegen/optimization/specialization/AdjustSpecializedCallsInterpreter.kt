@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.optimization.specialization
 
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.isSpecBootstrapCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.tree.AbstractInsnNode
@@ -26,7 +26,7 @@ internal class AdjustSpecializedCallsInterpreter : BasicInterpreter(API_VERSION)
             return SpecializedArgumentValue(insn)
         }
 
-        if (insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall) {
+        if (insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall) {
             specializedCalls[insn] = SpecializedCall(insn, values)
         }
 

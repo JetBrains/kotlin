@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.codegen.util.inlinecodegen.LightIrType
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.TypeIntrinsics
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReifiedOperationKind
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.ReificationArgument
-import org.jetbrains.kotlin.codegen.util.inlinecodegen.isSpecBootstrapCall
+import org.jetbrains.kotlin.codegen.util.inlinecodegen.isBootstrapSpecializedCall
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.processCatch
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reificationArgument
 import org.jetbrains.kotlin.codegen.util.inlinecodegen.reifiedOperationKind
@@ -144,7 +144,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
                 if (newNames != null) {
                     result.mergeAll(newNames)
                 }
-            } else if (insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall) {
+            } else if (insn is InvokeDynamicInsnNode && insn.isBootstrapSpecializedCall) {
                 if (toLightIrTypeMapping == null) {
                     toLightIrTypeMapping =
                         parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! }

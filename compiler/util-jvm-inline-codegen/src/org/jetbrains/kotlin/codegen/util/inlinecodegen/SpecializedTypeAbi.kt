@@ -24,38 +24,6 @@ sealed interface SpecializedTypeAbi {
     fun genUnbox(instructions: InsnList, targetInsn: AbstractInsnNode)
     fun genCoerce2Nullable(instructions: InsnList, targetInsn: AbstractInsnNode)
     fun genCoerce2NonNullable(instructions: InsnList, targetInsn: AbstractInsnNode)
-
-    companion object {
-        fun fromLightIrType(type: LightIrType): SpecializedTypeAbi? {
-            val classifier = type.classifier as? LightIrType.Classifier.Clazz ?: return null
-
-            // Simple non-null primitive casse
-            if (!type.nullable) ktPrimitiveToSpecializedType(classifier.fqName)?.let { return it }
-
-            // Inline value class
-            if (classifier.inlineAbi != null) {
-                return InlineClass(
-                    classifier.fqName.replace('.', '/'),
-                    type.nullable,
-                    classifier.inlineAbi,
-                )
-            }
-
-            return null
-        }
-    }
-}
-
-private fun ktPrimitiveToSpecializedType(fqName: String) = when (fqName) {
-    "kotlin.Boolean" -> Primitive("Z", "boolean", "java/lang/Boolean", 0, Opcodes.ICONST_0)
-    "kotlin.Char" -> Primitive("C", "char", "java/lang/Character", 0, Opcodes.ICONST_0)
-    "kotlin.Byte" -> Primitive("B", "byte", "java/lang/Byte", 0, Opcodes.ICONST_0)
-    "kotlin.Short" -> Primitive("S", "short", "java/lang/Short", 0, Opcodes.ICONST_0)
-    "kotlin.Int" -> Primitive("I", "int", "java/lang/Integer", 0, Opcodes.ICONST_0)
-    "kotlin.Float" -> Primitive("F", "float", "java/lang/Float", 2, Opcodes.FCONST_0)
-    "kotlin.Long" -> Primitive("J", "long", "java/lang/Long", 1, Opcodes.LCONST_0)
-    "kotlin.Double" -> Primitive("D", "double", "java/lang/Double", 3, Opcodes.DCONST_0)
-    else -> null
 }
 
 data class Primitive(

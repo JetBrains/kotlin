@@ -321,7 +321,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             val fromType = SpecTypeParametersUsages.Usage.decode(fromTypeStr)
             val toTypeStr = castWithType.second.internalName.substring("kotlin/jvm/internal/SpecUnboxedDecoy".length)
             val toType = SpecTypeParametersUsages.Usage.decode(toTypeStr)
-            if (fromType.genericIndex != toType.genericIndex) error("generic index does not mach, cannot cast from one generic to another")
+            if (fromType.genericIndex != toType.genericIndex) error("generic index does not match, cannot cast from one generic to another")
             when {
                 !fromType.nullable && toType.nullable -> node.instructions.insertBefore(
                     castInsn,

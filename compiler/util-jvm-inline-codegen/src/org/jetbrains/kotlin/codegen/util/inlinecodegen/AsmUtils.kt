@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.codegen.util.inlinecodegen
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.*
 
-val InvokeDynamicInsnNode.isSpecBootstrapCall: Boolean
+val InvokeDynamicInsnNode.isBootstrapSpecializedCall: Boolean
     get() = this.bsm.owner == "kotlin/jvm/specialization/BootstrapMethods" &&
             this.bsm.name == "bootstrapSpecializedGeneric"
 

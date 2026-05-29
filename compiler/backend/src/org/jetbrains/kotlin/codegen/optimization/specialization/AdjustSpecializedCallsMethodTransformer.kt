@@ -48,17 +48,17 @@ private fun adjustSpecializedCall(instructions: InsnList, specCall: SpecializedC
     var newReturnType = Type.getReturnType(specCall.insn.desc)
     val newDescArgs = Type.getArgumentTypes(specCall.insn.desc)
 
-    for ((argI, typeParameterUsage) in specTypeParametersUsages.parameterGenericIndices) {
+    for ([argI, typeParameterUsage] in specTypeParametersUsages.parameterGenericIndices) {
         val typeParameter = typeParameterUsage.adjustType(specializedTypeParameters) ?: continue
         when (val classifier = typeParameter.classifier) {
             is LightIrType.Classifier.Clazz -> {
-                val specType = SpecializedTypeAbi.fromLightIrType(typeParameter) ?: continue
-                newDescArgs[argI] = Type.getType(specType.reprDesc)
+                val abi = typeParameter.specializedAbi() ?: continue
+                newDescArgs[argI] = Type.getType(abi.reprDesc)
                 val argValue = specCall.args[argI]
                 if (argValue is SpecializedArgumentValue) {
                     val placeholder = InsnNode(Opcodes.NOP)
                     instructions.insert(argValue.insn, placeholder)
-                    specType.genUnbox(instructions, placeholder)
+                    abi.genUnbox(instructions, placeholder)
                 }
             }
             is LightIrType.Classifier.TypeParameter -> {
@@ -83,11 +83,11 @@ private fun adjustSpecializedCall(instructions: InsnList, specCall: SpecializedC
     specTypeParametersUsages.returnType?.adjustType(specializedTypeParameters)?.let { typeParameter ->
         when (val classifier = typeParameter.classifier) {
             is LightIrType.Classifier.Clazz -> {
-                SpecializedTypeAbi.fromLightIrType(typeParameter)?.let { specType ->
-                    newReturnType = Type.getType(specType.reprDesc)
+                typeParameter.specializedAbi()?.also { abi ->
+                    newReturnType = Type.getType(abi.reprDesc)
                     val placeholder = InsnNode(Opcodes.NOP)
                     instructions.insert(specCall.insn, placeholder)
-                    specType.genBox(instructions, placeholder)
+                    abi.genBox(instructions, placeholder)
                 }
             }
             is LightIrType.Classifier.TypeParameter -> {
