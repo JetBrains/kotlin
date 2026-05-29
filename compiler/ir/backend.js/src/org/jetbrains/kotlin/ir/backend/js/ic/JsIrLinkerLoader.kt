@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.ic
 
+import org.jetbrains.kotlin.backend.common.IrBuiltInsForLinker
 import org.jetbrains.kotlin.backend.common.IrModuleDependencies
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.config.perfManager
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -34,8 +36,6 @@ import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.*
-import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
-import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -207,10 +207,8 @@ internal class JsIrLinkerLoader(
         }
 
         linker.init(null)
-        val moduleDescriptor = loadedModules.keys.last()
-        val typeTranslator = TypeTranslatorImpl(linker.symbolTable, compilerConfiguration.languageVersionSettings, moduleDescriptor)
-        @OptIn(ObsoleteDescriptorBasedAPI::class)
-        val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, linker.symbolTable)
+        @OptIn(InternalSymbolFinderAPI::class)
+        val irBuiltIns = IrBuiltInsForLinker(linker, compilerConfiguration.languageVersionSettings)
 
         if (!loadAllIr) {
             for ([loadingLibFile, loadingSrcFiles] in modifiedFiles) {

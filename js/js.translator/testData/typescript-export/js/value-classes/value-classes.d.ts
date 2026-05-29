@@ -2,6 +2,15 @@ declare namespace JS_TESTS {
     type Nullable<T> = T | null | undefined
     function KtSingleton<T>(): T & (abstract new() => any);
     namespace kotlin.collections {
+        interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
+            asJsReadonlySetView(): ReadonlySet<E>;
+            readonly __doNotUseOrImplementIt: {
+                readonly "kotlin.collections.KtSet": unique symbol;
+            };
+        }
+        namespace KtSet {
+            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
+        }
         interface KtList<out E> /* extends kotlin.collections.Collection<E> */ {
             asJsReadonlyArrayView(): ReadonlyArray<E>;
             readonly __doNotUseOrImplementIt: {
@@ -19,15 +28,6 @@ declare namespace JS_TESTS {
         }
         namespace KtMap {
             function fromJsMap<K, V>(map: ReadonlyMap<K, V>): kotlin.collections.KtMap<K, V>;
-        }
-        interface KtSet<out E> /* extends kotlin.collections.Collection<E> */ {
-            asJsReadonlySetView(): ReadonlySet<E>;
-            readonly __doNotUseOrImplementIt: {
-                readonly "kotlin.collections.KtSet": unique symbol;
-            };
-        }
-        namespace KtSet {
-            function fromJsSet<E>(set: ReadonlySet<E>): kotlin.collections.KtSet<E>;
         }
         interface KtMutableList<E> extends kotlin.collections.KtList<E>/*, kotlin.collections.MutableCollection<E> */ {
             asJsArrayView(): Array<E>;
