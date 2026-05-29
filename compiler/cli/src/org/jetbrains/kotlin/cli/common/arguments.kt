@@ -277,6 +277,7 @@ private val FRAGMENT_REFINES_ARG_NAME = CommonCompilerArguments::fragmentRefines
 private val FRAGMENT_SOURCES_ARG_NAME = CommonCompilerArguments::fragmentSources.cliArgument
 private val FRAGMENT_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentDependencies.cliArgument
 private val FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME = CommonCompilerArguments::fragmentFriendDependencies.cliArgument
+private val FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME = CommonCompilerArguments::fragmentIncrementalClasspath.cliArgument
 
 private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonCompilerArguments): HmppCliModuleStructure? {
     val rawFragments = arguments.fragments
@@ -371,7 +372,13 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
         if (rawFragmentRefines.isNotEmpty()) {
             reportError("$FRAGMENT_REFINES_ARG_NAME flag is specified but there is only one module declared")
         }
-        return HmppCliModuleStructure(modules, sourceDependencies = emptyMap(), moduleDependencies = emptyMap(), friendDependencies = emptyMap())
+        return HmppCliModuleStructure(
+            modules,
+            sourceDependencies = emptyMap(),
+            moduleDependencies = emptyMap(),
+            friendDependencies = emptyMap(),
+            incrementalDependencies = emptyMap(),
+        )
     }
 
     val duplicatedModules = modules.filter { module -> modules.count { it.name == module.name } > 1 }
@@ -428,6 +435,9 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     if (arguments.fragmentFriendDependencies.isNotEmpty() && !arguments.separateKmpCompilationScheme) {
         reportError("$FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME flag could be used only with ${CommonCompilerArguments::separateKmpCompilationScheme.cliArgument}")
     }
+    if (arguments.fragmentIncrementalClasspath.isNotEmpty() && arguments.incrementalCompilation != true) {
+        reportError("$FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME flag could be used only with ${CommonCompilerArguments::incrementalCompilation.cliArgument}")
+    }
 
     fun buildFragmentDependencyMap(arguments: Array<String>?, argumentName: String): Map<HmppCliModule, MutableList<String>> {
         return buildMap {
@@ -453,6 +463,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
 
     val moduleDependencies = buildFragmentDependencyMap(arguments.fragmentDependencies, FRAGMENT_DEPENDENCIES_ARG_NAME)
     val friendDependencies = buildFragmentDependencyMap(arguments.fragmentFriendDependencies, FRAGMENT_FRIEND_DEPENDENCIES_ARG_NAME)
+    val incrementalDependencies = buildFragmentDependencyMap(arguments.fragmentIncrementalClasspath, FRAGMENT_INCREMENTAL_CLASSPATH_ARG_NAME)
 
-    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies)
+    return HmppCliModuleStructure(modules, sourceDependencies, moduleDependencies, friendDependencies, incrementalDependencies)
 }

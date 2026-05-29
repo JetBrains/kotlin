@@ -350,8 +350,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
 
-        var firJvmIncrementalCompilationSymbolProviders: FirJvmIncrementalCompilationSymbolProviders? = null
-        var firJvmIncrementalCompilationSymbolProvidersIsInitialized = false
         val context = FirJvmSessionFactory.Context(
             configuration,
             projectEnvironment,
@@ -389,18 +387,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     moduleData,
                     javaSourcesScope,
                     createIncrementalCompilationSymbolProviders = { session ->
-                        // Temporary solution for KT-61942 - we need to share the provider built on top of previously compiled files,
-                        // because we do not distinguish classes generated from common and platform sources, so may end up with the
-                        // same type loaded from both. And if providers are not shared, the types will not match on the actualizing.
-                        // The proper solution would be to build IC providers only on class files generated for the currently compiled module.
-                        // But to solve it we need to have a mapping from module to its class files.
-                        // TODO: reimplement with splitted providers after fixing KT-62686
-                        if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
-                        else {
-                            firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
-                            incrementalCompilationContext?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
-                                firJvmIncrementalCompilationSymbolProviders = it
-                            }
+                        when {
+                            isForLeafHmppModule -> incrementalCompilationContext?.createSymbolProviders(
+                                session,
+                                moduleData,
+                                projectEnvironment
+                            )
+
+                            else -> createIncrementalProvidersForNonLeafMppModules(session, moduleData, configuration)
                         }
                     },
                     extensionRegistrars,

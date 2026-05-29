@@ -692,12 +692,82 @@ Caused by: java.lang.AssertionError: assert
     }
 
     fun testCommonFragmentsMetadataDestination() {
+        val metadataDir = compileSimpleCommonPlatformProject()
+
+        val library = KlibLoader { libraryPaths(metadataDir.absolutePath) }.load().librariesStdlibFirst.single()
+        val klibMetadata = library.metadata
+        val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
+            override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
+            override val metadataVersion: KlibMetadataVersion =
+                KlibMetadataVersion(library.versions.metadataVersion!!.toArray())
+
+            override fun packageMetadataParts(fqName: String): Set<String> =
+                klibMetadata.getPackageFragmentNames(fqName)
+
+            override fun packageMetadata(fqName: String, partName: String): ByteArray =
+                klibMetadata.getPackageFragment(fqName, partName)
+        })
+
+        val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
+        assertNotNull("Class 'Some' must be present in the common-fragments metadata", someClass)
+        requireNotNull(someClass)
+        assertTrue("Class 'Some' must be marked as expect", someClass.isExpect)
+        assertTrue(someClass.functions.any { it.name == "foo" })
+        assertFalse(someClass.functions.any { it.name == "bar" })
+    }
+
+    /*
+     * Ideally, the JVM KMP IC should be tested using IC test infrastructure, but
+     * until the BTA part is implemented, this test is the best effort of testing
+     * the compiler behavior
+     */
+    fun testDummyFragmentIncrementalClasspathTest() {
+        val metadataDir = compileSimpleCommonPlatformProject()
+        val newCommonKt = tmpdir.resolve("new-common.kt").apply {
+            writeText(
+                """
+                    fun test(x: Some) {
+                        x.foo() // should be visible
+                        x.bar() // should not be visible
+                        baz() // should be visible
+                    }
+                """.trimIndent()
+            )
+        }
+        val newClassesDir = tmpdir.resolve("new-classes")
+        runProcess(
+            "kotlinc-jvm",
+            newCommonKt.absolutePath,
+            K2JVMCompilerArguments::destination.cliArgument, newClassesDir.absolutePath,
+            K2JVMCompilerArguments::multiPlatform.cliArgument,
+            K2JVMCompilerArguments::expectActualClasses.cliArgument,
+            K2JVMCompilerArguments::incrementalCompilation.cliArgument,
+            K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
+            K2JVMCompilerArguments::fragmentSources.cliArgument("common:${newCommonKt.absolutePath}"),
+            K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
+            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.absolutePath}"),
+
+            expectedExitCode = 1,
+            expectedStderr = $$"""
+                $TMP_DIR$/new-common.kt:3:7: error: unresolved reference 'bar' on receiver of type 'Some'.
+                    x.bar() // should not be visible
+                      ^^^
+            """.trimIndent()
+        )
+    }
+
+    /**
+     * @return metadata output directory
+     */
+    private fun compileSimpleCommonPlatformProject(): File {
         val commonKt = tmpdir.resolve("common.kt").apply {
             writeText(
                 """
                     expect class Some {
                         fun foo()
                     }
+                    
+                    internal fun baz() {}
                 """.trimIndent()
             )
         }
@@ -727,26 +797,6 @@ Caused by: java.lang.AssertionError: assert
             K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
             K2JVMCompilerArguments::commonFragmentsMetadataDestination.cliArgument(metadataDir.absolutePath),
         )
-
-        val library = KlibLoader { libraryPaths(metadataDir.absolutePath) }.load().librariesStdlibFirst.single()
-        val klibMetadata = library.metadata
-        val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
-            override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
-            override val metadataVersion: KlibMetadataVersion =
-                KlibMetadataVersion(library.versions.metadataVersion!!.toArray())
-
-            override fun packageMetadataParts(fqName: String): Set<String> =
-                klibMetadata.getPackageFragmentNames(fqName)
-
-            override fun packageMetadata(fqName: String, partName: String): ByteArray =
-                klibMetadata.getPackageFragment(fqName, partName)
-        })
-
-        val someClass = module.fragments.flatMap { it.classes }.singleOrNull { it.name == "Some" }
-        assertNotNull("Class 'Some' must be present in the common-fragments metadata", someClass)
-        requireNotNull(someClass)
-        assertTrue("Class 'Some' must be marked as expect", someClass.isExpect)
-        assertTrue(someClass.functions.any { it.name == "foo" })
-        assertFalse(someClass.functions.any { it.name == "bar" })
+        return metadataDir
     }
 }

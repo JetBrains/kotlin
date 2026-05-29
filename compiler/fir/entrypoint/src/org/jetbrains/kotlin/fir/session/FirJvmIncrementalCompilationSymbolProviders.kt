@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.fir.session
 
+import org.jetbrains.kotlin.backend.common.loadMetadataKlibs
+import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.hmppModuleStructure
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
@@ -14,9 +17,10 @@ import org.jetbrains.kotlin.fir.java.deserialization.OptionalAnnotationClassesPr
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectEnvironment
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 data class FirJvmIncrementalCompilationSymbolProviders(
-    val symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider?,
+    val symbolProviderForBinariesFromIncrementalCompilation: FirSymbolProvider?,
     val previousFirSessionsSymbolProviders: Collection<FirSymbolProvider>,
     val optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider?,
 )
@@ -54,5 +58,28 @@ fun IncrementalCompilationContext.createSymbolProviders(
         symbolProviderForBinariesFromIncrementalCompilation,
         previousFirSessionsSymbolProviders,
         optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation
+    )
+}
+
+fun createIncrementalProvidersForNonLeafMppModules(
+    session: FirSession,
+    moduleData: FirModuleData,
+    configuration: CompilerConfiguration,
+): FirJvmIncrementalCompilationSymbolProviders? {
+    val moduleStructure = configuration.hmppModuleStructure ?: return null
+    val incrementalClasspath = moduleStructure.incrementalDependencies.firstNotNullOfOrNull { [module, classpath] ->
+        runIf(module.name == moduleData.name.asStringStripSpecialMarkers()) { classpath }
+    } ?: return null
+    val resolvedLibraries = loadMetadataKlibs(incrementalClasspath, configuration).all
+    val provider = KlibBasedSymbolProvider(
+        session,
+        moduleDataProvider = SingleModuleDataProvider(moduleData),
+        kotlinScopeProvider = session.kotlinScopeProvider,
+        resolvedLibraries
+    )
+    return FirJvmIncrementalCompilationSymbolProviders(
+        symbolProviderForBinariesFromIncrementalCompilation = provider,
+        previousFirSessionsSymbolProviders = emptyList(),
+        optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation = null,
     )
 }
