@@ -15,8 +15,10 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irFlag
+import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.util.OperatorNameConventions
 
 var IrFunction.shouldBeCompiledAsGenerator by irFlag(copyByDefault = true)
 
@@ -26,6 +28,7 @@ var IrFunction.shouldBeCompiledAsGenerator by irFlag(copyByDefault = true)
 class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     private val jsYieldFunctionSymbol = context.symbols.jsYieldFunctionSymbol
     private val jsYieldStarFunctionSymbol = context.symbols.jsYieldStarFunctionSymbol
+    private val lambdaRunFunctionSymbol = context.symbols.suspendLambdaRunFunctionSymbol
 
     override fun lower(irModule: IrModuleFragment) {
         if (!context.compileSuspendAsJsGenerator) return
@@ -62,13 +65,15 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
      * The lowering transforms the suspend function in the way it could be generated as a generator:
      * - Add [shouldBeCompiledAsGenerator] flag to mark a function as a generator for the codegen
      * - At each suspension point we put an intrinsic for `yield*` statement, so that the generator could be resumed from the suspension point
+     * - Call suspend lambdas via `suspendLambdaRun` intrinsic which allows to call both `async` and `suspend` lambdas in the same way
      *
      * Before:
      *  ```
-     *  suspend fun foo() {
+     *  suspend fun foo(a: suspend () -> Unit) {
      *      println("Hello")
      *      suspendHere()
      *      println("World")
+     *      a()
      *      return 1
      *  }
      *  ```
@@ -76,10 +81,11 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
      * After:
      *  ```
      *  [shouldBeCompiledAsGenerator = true]
-     *  suspend fun foo() {
+     *  suspend fun foo(a: suspend () -> Unit) {
      *      println("Hello")
      *      jsYieldStar(suspendHere())
      *      println("World")
+     *      jsYieldStar(suspendLambdaRun(a()))
      *      return 1
      *  }
      *  ```
@@ -88,14 +94,26 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
         function.shouldBeCompiledAsGenerator = true
         functionBody.transformChildrenVoid(object : IrElementTransformerVoid() {
             override fun visitCall(expression: IrCall): IrExpression {
-                val call = super.visitCall(expression)
-                return if (call !is IrCall || !call.symbol.owner.isSuspend) {
-                    call
-                } else {
-                    JsIrBuilder.buildCall(jsYieldStarFunctionSymbol, call.type, listOf(call.type))
-                        .apply { arguments[0] = call }
+                expression.transformChildrenVoid(this)
+                val callee = expression.symbol.owner
+                return when {
+                    !callee.isSuspend -> expression
+                    else -> {
+                        val yieldStarArgument = if (callee.isSuspendLambdaInvoke()) {
+                            JsIrBuilder.buildCall(lambdaRunFunctionSymbol, expression.type, listOf(expression.type))
+                                .apply { arguments[0] = expression }
+                        } else expression
+
+                        JsIrBuilder.buildCall(jsYieldStarFunctionSymbol, expression.type, listOf(expression.type))
+                            .apply { arguments[0] = yieldStarArgument }
+                    }
                 }
             }
         })
+    }
+
+    private fun IrSimpleFunction.isSuspendLambdaInvoke(): Boolean {
+        val dispatchReceiver = dispatchReceiverParameter ?: return false
+        return name == OperatorNameConventions.INVOKE && dispatchReceiver.type.isSuspendFunction()
     }
 }

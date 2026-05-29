@@ -3,7 +3,9 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import kotlin.Boolean
 import kotlin.String
+import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.KotlinReleaseVersion
 
 /**
@@ -54,5 +56,15 @@ public interface JsCompilerArguments : CommonJsAndWasmArguments {
     override fun build(): JsCompilerArguments
   }
 
-  public companion object
+  public companion object {
+    /**
+     * Enable exporting suspend lambdas to JavaScript/TypeScript.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_SUSPEND_LAMBDA_EXPORTING: JsCompilerArgument<Boolean> =
+        JsCompilerArgument("X_SUSPEND_LAMBDA_EXPORTING", KotlinReleaseVersion(2, 4, 20))
+  }
 }

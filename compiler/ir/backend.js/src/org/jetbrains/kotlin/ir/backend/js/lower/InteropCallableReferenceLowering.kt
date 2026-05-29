@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.functionReferenceReflectedName
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDelegatedPropertiesLowering
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -22,9 +23,13 @@ import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionWith
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.originalCallableReferenceClass
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.shouldBeCompiledAsGenerator
+import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
+import org.jetbrains.kotlin.ir.builders.irBlockBody
+import org.jetbrains.kotlin.ir.builders.irCall
+import org.jetbrains.kotlin.ir.builders.irReturn
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
@@ -61,6 +66,8 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
     JsCallableReferenceLowering::class
 )
 class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLoweringPass {
+    private val getContinuation = context.symbols.getContinuation
+    private val orPromiseFunctionSymbol = context.symbols.orPromiseFunctionSymbol
     private val constructCallableReferenceSymbol = context.symbols.constructCallableReferenceSymbol
 
     /**
@@ -358,6 +365,55 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
     }
 
     /**
+     * The function is wrapping suspend callable references and lambdas with a special function `orPromise`
+     * This function is doing quite a simple thing:
+     *  - If the callable reference/lambda is called with a continuation: it just calls it as any suspend function
+     *  - If the continuation was not provided (it's expected only on the JS/TS call side) it's called via Promise
+     *    to emulate `async` function behavior
+     */
+    private fun promisifiedSuspendLambda(
+        lambdaDeclaration: IrSimpleFunction,
+        lambdaType: IrType,
+    ): IrSimpleFunction {
+        if (!context.compileSuspendAsJsGenerator || !lambdaDeclaration.isSuspend) return lambdaDeclaration
+
+        val innerLambda = context.irFactory.buildFun {
+            startOffset = lambdaDeclaration.startOffset
+            endOffset = lambdaDeclaration.endOffset
+            returnType = lambdaDeclaration.returnType
+            visibility = DescriptorVisibilities.LOCAL
+            name = Name.identifier("$")
+            isSuspend = true
+        }
+
+        innerLambda.parent = lambdaDeclaration
+        innerLambda.shouldBeCompiledAsGenerator = true
+
+
+        val lambdaBody = lambdaDeclaration.body
+            ?.patchDeclarationParents(innerLambda) ?: return lambdaDeclaration
+
+        innerLambda.body = lambdaBody
+        lambdaDeclaration.shouldBeCompiledAsGenerator = false
+
+        lambdaDeclaration.body = context.createIrBuilder(lambdaDeclaration.symbol, lambdaBody.startOffset, lambdaBody.endOffset)
+            .irBlockBody {
+                +irReturn(irCall(orPromiseFunctionSymbol).apply {
+                    arguments[0] = irCall(getContinuation)
+                    arguments[1] = IrFunctionExpressionImpl(
+                        startOffset,
+                        endOffset,
+                        lambdaType,
+                        innerLambda,
+                        JsStatementOrigins.SYNTHESIZED_STATEMENT
+                    )
+                })
+            }
+
+        return lambdaDeclaration
+    }
+
+    /**
      * [lambdaContextMapping] — a mapping from lambda class fields to the values outside the lambda that the lambda captures.
      *
      * [outerReceiverMapping] — a mapping from lambda class fields to outer class receivers, in case the lambda is inside an inner class,
@@ -523,7 +579,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         val superClass = lambdaInfo.superInvokeFun.parentAsClass
         val lambdaName = Name.identifier("${lambdaInfo.lambdaClass.name.asString()}\$lambda")
 
-        val lambdaDeclaration =
+        val rawLambdaDeclaration =
             createLambdaDeclaration(lambdaInfo.invokeFun, lambdaName, factoryFunction, lambdaInfo.superInvokeFun)
 
         val statements = ArrayList<IrStatement>(4)
@@ -552,20 +608,22 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
 
             statements.add(instanceVal)
 
-            lambdaDeclaration.body = buildLambdaBody(instanceVal, lambdaDeclaration, lambdaInfo.invokeFun)
+            rawLambdaDeclaration.body = buildLambdaBody(instanceVal, rawLambdaDeclaration, lambdaInfo.invokeFun)
 
             newDeclarations.add(lambdaInfo.lambdaClass)
         } else {
             val fieldToParameterMapping = remapCapturedFields(constructor) { factoryFunction.parameters[it.owner.indexInParameters].symbol }
-            val oldToNewInvokeParametersMapping = lambdaInfo.createOldToNewInvokeParametersMapping(lambdaDeclaration)
-            lambdaDeclaration.body =
-                inlineLambdaBody(lambdaDeclaration, lambdaInfo.invokeFun, oldToNewInvokeParametersMapping, fieldToParameterMapping)
+            val oldToNewInvokeParametersMapping = lambdaInfo.createOldToNewInvokeParametersMapping(rawLambdaDeclaration)
+            rawLambdaDeclaration.body =
+                inlineLambdaBody(rawLambdaDeclaration, lambdaInfo.invokeFun, oldToNewInvokeParametersMapping, fieldToParameterMapping)
 
             // lambdas can contain another lambdas and local classes in so let's not lose them
             newDeclarations.addAll(lambdaInfo.lambdaInnerClasses())
         }
 
         val lambdaType = lambdaInfo.lambdaClass.superTypes.single { it.classifierOrNull === superClass.symbol }
+        val lambdaDeclaration = promisifiedSuspendLambda(rawLambdaDeclaration, lambdaType)
+
         val functionExpression = lambdaInfo.lambdaClass.run {
             IrFunctionExpressionImpl(startOffset, endOffset, lambdaType, lambdaDeclaration, JsStatementOrigins.CALLABLE_REFERENCE_CREATE)
         }

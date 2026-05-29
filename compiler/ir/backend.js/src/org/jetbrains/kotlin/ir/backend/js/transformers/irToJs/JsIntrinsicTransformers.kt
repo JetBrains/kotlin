@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassBoxing
 import org.jetbrains.kotlin.js.backend.ast.metadata.isInlineClassUnboxing
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
 private typealias IrCallTransformer<T> = (T, context: JsGenerationContext) -> JsExpression
@@ -99,11 +100,21 @@ class JsIntrinsicTransformers(backendContext: JsIrBackendContext) {
             add(symbols.jsIsEs6) { _, _ -> JsBooleanLiteral(backendContext.es6mode) }
 
             add(symbols.jsYieldFunctionSymbol) { call, context ->
-                JsYield(translateCallArguments(call, context).single())
+                val argument = translateCallArguments(call, context).single()
+                if (backendContext.configuration.compileSuspendAsJsGenerator) {
+                    JsYield(argument)
+                } else {
+                    argument
+                }
             }
 
             add(symbols.jsYieldStarFunctionSymbol) { call, context ->
-                JsYieldStar(translateCallArguments(call, context).single())
+                val argument = translateCallArguments(call, context).single()
+                if (backendContext.configuration.compileSuspendAsJsGenerator) {
+                    JsYieldStar(argument)
+                } else {
+                    argument
+                }
             }
 
             add(symbols.jsGenerateInterfaceSymbol) { _, context ->

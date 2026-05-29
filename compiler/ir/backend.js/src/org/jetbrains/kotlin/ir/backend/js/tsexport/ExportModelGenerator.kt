@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.js.common.makeValidES5Identifier
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
+import org.jetbrains.kotlin.js.config.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.js.util.NameTable
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.utils.*
@@ -43,6 +44,9 @@ private const val notImplementablePropertyName = "__doNotUseOrImplementIt"
 
 class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boolean) {
     private val transitiveExportCollector = TransitiveExportCollector(context)
+    private val allowExportSuspendLambdas = context.configuration.languageVersionSettings.supportsFeature(
+        LanguageFeature.JsExportingSuspendLambdas
+    )
     private val allowImplementingInterfaces = context.configuration.languageVersionSettings.supportsFeature(
         LanguageFeature.JsExportInterfacesInImplementableWay
     )
@@ -990,16 +994,32 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             nonNullType.isUnit() -> ExportedType.Primitive.Unit
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
             nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner, typeParameterScope))
-            nonNullType.isSuspendFunction() -> ExportedType.ErrorType("Suspend functions are not supported")
-            nonNullType.isFunction() -> ExportedType.Function(
-                parameters = nonNullType.arguments.dropLast(1).memoryOptimizedMap {
-                    ExportedParameter(
-                        name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
-                        type = exportTypeArgument(it, typeOwner, typeParameterScope),
+            nonNullType.isFunction() ->
+                ExportedType.Function(
+                    parameters = nonNullType.exportFunctionTypeArguments(typeOwner, typeParameterScope),
+                    returnType = nonNullType.exportFunctionTypeReturnType(typeOwner, typeParameterScope)
+                )
+
+            nonNullType.isSuspendFunction() -> when {
+                !allowExportSuspendLambdas -> ExportedType.ErrorType("Suspend functions are not supported")
+                else -> {
+                    if (!context.configuration.compileSuspendAsJsGenerator) {
+                        context.diagnosticReporter.report(
+                            JsKlibErrors.JS_SUSPEND_LAMBDA_EXPORT_ERROR,
+                            "",
+                            typeOwner?.getCompilerMessageLocation(typeOwner.file)
+                        )
+                    }
+
+                    ExportedType.Function(
+                        parameters = nonNullType.exportFunctionTypeArguments(typeOwner, typeParameterScope),
+                        returnType = ExportedType.ClassType(
+                            name = FqName("Promise"),
+                            arguments = listOf(nonNullType.exportFunctionTypeReturnType(typeOwner, typeParameterScope))
+                        )
                     )
-                },
-                returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner, typeParameterScope)
-            )
+                }
+            }
 
             classifier is IrTypeParameterSymbol -> typeParameterScope[classifier]?.let(ExportedType::TypeParameterRef)
                 ?: error("Type parameter '${classifier.owner.render()}' is not in scope")
@@ -1066,6 +1086,18 @@ class ExportModelGenerator(val context: JsIrBackendContext, val isEsModules: Boo
             .also { currentlyProcessedTypes.remove(type) }
     }
 
+    private fun IrSimpleType.exportFunctionTypeArguments(typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): List<ExportedParameter> {
+        return arguments.dropLast(1).memoryOptimizedMap {
+            ExportedParameter(
+                name = (it as? IrTypeProjection)?.type?.getAnnotationArgumentValue(StandardNames.FqNames.parameterName, "name"),
+                type = exportTypeArgument(it, typeOwner, typeParameterScope),
+            )
+        }
+    }
+
+    private fun IrSimpleType.exportFunctionTypeReturnType(typeOwner: IrDeclaration?, typeParameterScope: TypeParameterScope): ExportedType {
+        return exportTypeArgument(arguments.last(), typeOwner, typeParameterScope)
+    }
 
     /**
      * With this method we're collecting all the super types that may contain either implementable or non-implementable properties

@@ -13631,6 +13631,50 @@
                                                         }
                                                     },
                                                     {
+                                                        "name": "Xsuspend-lambda-exporting",
+                                                        "shortName": null,
+                                                        "deprecatedName": null,
+                                                        "description": {
+                                                            "current": "Enable exporting suspend lambdas to JavaScript/TypeScript.",
+                                                            "valueInVersions": []
+                                                        },
+                                                        "delimiter": null,
+                                                        "affectsCompilationOutcome": true,
+                                                        "restrictedToCompilerPhase": null,
+                                                        "valueType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        },
+                                                        "valueDescription": {
+                                                            "current": null,
+                                                            "valueInVersions": []
+                                                        },
+                                                        "releaseVersionsMetadata": {
+                                                            "introducedVersion": "2.4.20",
+                                                            "stabilizedVersion": null,
+                                                            "deprecatedVersion": null,
+                                                            "removedVersion": null
+                                                        },
+                                                        "argumentType": {
+                                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                            "isNullable": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            },
+                                                            "defaultValue": {
+                                                                "current": false,
+                                                                "valueInVersions": []
+                                                            }
+                                                        }
+                                                    },
+                                                    {
                                                         "name": "Xtyped-arrays",
                                                         "shortName": null,
                                                         "deprecatedName": null,

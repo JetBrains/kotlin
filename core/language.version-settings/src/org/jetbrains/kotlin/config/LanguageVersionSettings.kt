@@ -681,6 +681,7 @@ enum class LanguageFeature(
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     FullValueClasses(sinceVersion = null, "KT-84904"),
+    JsExportingSuspendLambdas(sinceVersion = null, "KT-80188"),
     ;
 
     constructor(
