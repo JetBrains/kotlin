@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.isInPublicInlineScope
 import org.jetbrains.kotlin.backend.jvm.ir.rawType
 import org.jetbrains.kotlin.backend.jvm.ir.suspendFunctionOriginal
+import org.jetbrains.kotlin.backend.jvm.isPublicAbi
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrElement
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
+import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -67,6 +69,14 @@ internal class JvmSingleAbstractMethodLowering(context: JvmBackendContext) : Sin
         for (property in fakeOverrideProperties) {
             property.getter?.let(klass.declarations::add)
             property.setter?.let(klass.declarations::add)
+        }
+
+        if (klass.visibility != DescriptorVisibilities.LOCAL) {
+            // Essentially, all SAM wrappers are local classes, but that visibility is lifted historically.
+            klass.isOriginallyLocalDeclaration = true
+        }
+        if (inInlineFunctionScope) {
+            klass.isPublicAbi = true
         }
     }
 }

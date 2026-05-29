@@ -325,15 +325,14 @@ class ClassCodegen private constructor(
         // There are four kinds of classes which are regenerated during inlining.
         // 1) Anonymous classes which are in the scope of an inline function, including anonymous
         //    objects, function references and lambda classes.
-        // 2) SAM wrappers used in an inline function. These are identified by name, since they
-        //    can be reused in different functions and are thus generated in the enclosing top-level
-        //    class instead of inside of an inline function.
+        // 2) SAM wrappers used in an inline function. These are marked with `isPublicAbi` in
+        //    `JvmSingleAbstractMethodLowering`
         // 3) WhenMapping classes used from public inline functions. These are collected in
         //    `JvmBackendContext.publicAbiSymbols` in `MappedEnumWhenLowering`.
         // 4) Annotation implementation classes used from public inline function. Similar to
         //    public WhenMapping classes, these are collected in `publicAbiSymbols` in
         //    `JvmAnnotationImplementationTransformer`.
-        val isPublicAbi = irClass.isPublicAbi || irClass.isInlineSamWrapper ||
+        val isPublicAbi = irClass.isPublicAbi ||
                 type.isAnonymousClass && irClass.isInPublicInlineScope
 
         writeKotlinMetadata(visitor, context.config, kind, isPublicAbi, extraFlags) { av ->
@@ -558,9 +557,6 @@ class ClassCodegen private constructor(
 
     private val IrClass.isAnonymousInnerClass: Boolean
         get() = isSamWrapper || name.isSpecial || isAnnotationImplementation // NB '<Continuation>' is treated as anonymous inner class here
-
-    private val IrClass.isInlineSamWrapper: Boolean
-        get() = isSamWrapper && visibility == DescriptorVisibilities.PUBLIC
 
     private val IrClass.isSamWrapper: Boolean
         get() = origin == IrDeclarationOrigin.GENERATED_SAM_IMPLEMENTATION
