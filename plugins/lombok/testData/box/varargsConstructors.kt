@@ -42,12 +42,16 @@ public class VarargsConstructor2 {
 fun box(): String {
     VarargsConstructor.test()
 
+    // The only signature with varags matches the current call-site
     assertEquals("vararg", VarargsConstructor("str0").field2)
+    // The more more specific constructor overload with regular parameters should be chosen instead of the signature with varags
     assertEquals("allArgsConstructor", VarargsConstructor("str0", "allArgsConstructor").field2)
 
     VarargsConstructor2.test()
 
+    // The only signature with varags matches the current call-site
     assertEquals("vararg", VarargsConstructor2("str0", "vararg").field1)
+    // The more more specific constructor overload with regular parameters should be chosen instead of the signature with varags
     assertEquals("allArgsConstructor", VarargsConstructor2("allArgsConstructor").field1)
 
     return "OK"

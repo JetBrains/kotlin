@@ -4,15 +4,14 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.toEffectiveVisibility
@@ -56,40 +55,6 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
         returns(true) implies (this@isSuitableJavaClass is FirRegularClassSymbol)
     }
     return (this is FirRegularClassSymbol) && origin == FirDeclarationOrigin.Java.Source
-}
-
-@OptIn(SymbolInternals::class)
-@DirectDeclarationsAccess
-fun List<FirFunction>.filterClashingDeclarations(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
-    @Suppress("UNCHECKED_CAST")
-    val allStaticFunctionsAndConstructors = classSymbol.fir.declarations.filterIsInstance<FirFunction>().toMutableList()
-    val result = mutableListOf<FirFunction>()
-    for (function in this) {
-        if (allStaticFunctionsAndConstructors.none { sameSignature(it, function) }) {
-            allStaticFunctionsAndConstructors += function
-            result += function
-        }
-    }
-    return result.map { it.symbol }
-}
-
-/**
- * Lombok treat functions as having the same signature by argument count only
- */
-private fun sameSignature(existingFunctions: FirFunction, functionToAdd: FirFunction): Boolean {
-    if (existingFunctions is FirConstructor && functionToAdd !is FirConstructor ||
-        existingFunctions !is FirConstructor && functionToAdd is FirConstructor
-    ) {
-        return false
-    }
-
-    if (existingFunctions.symbol.callableId.callableName != functionToAdd.symbol.callableId.callableName) return false
-
-    val isExistingFunctionHasVararg = existingFunctions.valueParameters.any { it.isVararg }
-    require(functionToAdd.valueParameters.none { it.isVararg }) // Generated functions can't have vararg
-
-    // Function with vararg never cause clashing
-    return !isExistingFunctionHasVararg && existingFunctions.valueParameters.size == functionToAdd.valueParameters.size
 }
 
 fun FirClassSymbol<*>.createJavaMethod(
