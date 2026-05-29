@@ -1,0 +1,90 @@
+@RestrictsSuspension
+class Foo {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+  context($context-String: String)
+  suspend fun foo() {
+  }
+
+}
+
+context(s: String)
+fun bar(vararg p: Int) {
+}
+
+context($context-Foo: Foo)
+suspend fun baz() {
+}
+
+context($context-String: String)
+suspend fun Foo.baz() {
+}
+
+context(s: String)
+fun foo(p: Int = 1) {
+}
+
+context($context-Foo: Foo)
+fun String.test() {
+  val suspendConversion: SuspendFunction1<Int, Unit> = SuspendFunction1<Int, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local suspend fun(c0: String, p0: Int) {
+      foo(/* s = c0, */ p = p0)
+    }
+  )
+
+  val default: Function0<Unit> = Function0<Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local fun(c0: String) {
+      foo(/* s = c0 */)
+    }
+  )
+
+  val vararg0: Function0<Unit> = Function0<Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local fun(c0: String) {
+      bar(/* s = c0 */)
+    }
+  )
+
+  val vararg1: Function1<Int, Unit> = Function1<Int, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local fun(c0: String, p0: Int) {
+      bar(/* s = c0, */ p = [p0])
+    }
+  )
+
+  val vararg2: Function2<Int, Int, Unit> = Function2<Int, Int, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local fun(c0: String, p0: Int, p1: Int) {
+      bar(/* s = c0, */ p = [p0, p1])
+    }
+  )
+
+  val restricted1: KSuspendFunction1<Foo, Unit> = KSuspendFunction1<Foo, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local suspend fun(c0: String, p0: Foo) {
+      p0.foo(/* $context-String = c0 */)
+    }
+  )
+
+  val restricted2: @ExtensionFunctionType KSuspendFunction1<Foo, Unit> = @ExtensionFunctionType KSuspendFunction1<Foo, Unit>(
+    /* bound = */ [<this>],
+    /* invoke = */    local suspend fun(c0: String, p0: Foo) {
+      baz(/* $context-String = c0, <this> = p0 */)
+    }
+  )
+
+  val restricted3: KSuspendFunction0<Unit> = KSuspendFunction0<Unit>(
+    /* bound = */ [$context-Foo],
+    /* invoke = */    local suspend fun(c0: Foo) {
+      baz(/* $context-Foo = c0 */)
+    }
+  )
+
+}
+

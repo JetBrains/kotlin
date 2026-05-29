@@ -9,21 +9,19 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.isExplicit
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.InlineStatus
-import org.jetbrains.kotlin.fir.declarations.hasAnnotationWithClassId
+import org.jetbrains.kotlin.fir.declarations.isRestrictSuspensionReceiver
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.isContextParameter
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
-import kotlin.coroutines.RestrictsSuspension
 
 object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
 
@@ -276,32 +273,6 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             ?: return false
 
         return visualValueArgumentsCount != expression.arguments.count() - 1
-    }
-
-    context(sessionHolder: SessionHolder)
-    private fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
-        return when (this) {
-            is ConeClassLikeType -> {
-                val regularClassSymbol = fullyExpandedType().lookupTag.toRegularClassSymbol() ?: return false
-                if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, sessionHolder.session)) {
-                    return true
-                }
-                regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver() }
-            }
-            is ConeTypeParameterType -> {
-                lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
-            }
-            is ConeLookupTagBasedType -> error("impossible branch")
-            is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
-            is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
-            is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true
-            is ConeIntersectionType -> intersectedTypes.any { it.isRestrictSuspensionReceiver() }
-            is ConeIntegerConstantOperatorType,
-            is ConeIntegerLiteralConstantType,
-            is ConeStubTypeForTypeVariableInSubtyping,
-            is ConeTypeVariableType,
-                -> false
-        }
     }
 
     private fun sameInstanceOfReceiver(

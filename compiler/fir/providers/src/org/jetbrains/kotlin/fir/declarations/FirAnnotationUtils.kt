@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
@@ -268,4 +270,30 @@ private val LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID: ClassId =
 fun hasLowPriorityAnnotation(annotations: List<FirAnnotation>): Boolean = annotations.any {
     val lookupTag = it.annotationTypeRef.coneType.classLikeLookupTagIfAny ?: return@any false
     lookupTag.classId == LOW_PRIORITY_IN_OVERLOAD_RESOLUTION_CLASS_ID
+}
+
+context(sessionHolder: SessionHolder)
+fun ConeKotlinType.isRestrictSuspensionReceiver(): Boolean {
+    return when (this) {
+        is ConeClassLikeType -> {
+            val regularClassSymbol = fullyExpandedType().lookupTag.toRegularClassSymbol() ?: return false
+            if (regularClassSymbol.hasAnnotationWithClassId(StandardClassIds.Annotations.RestrictsSuspension, sessionHolder.session)) {
+                return true
+            }
+            regularClassSymbol.resolvedSuperTypes.any { it.isRestrictSuspensionReceiver() }
+        }
+        is ConeTypeParameterType -> {
+            lookupTag.typeParameterSymbol.resolvedBounds.any { it.coneType.isRestrictSuspensionReceiver() }
+        }
+        is ConeLookupTagBasedType -> error("impossible branch")
+        is ConeFlexibleType -> upperBound.isRestrictSuspensionReceiver()
+        is ConeDefinitelyNotNullType -> original.isRestrictSuspensionReceiver()
+        is ConeCapturedType -> constructor.supertypes?.any { it.isRestrictSuspensionReceiver() } == true
+        is ConeIntersectionType -> intersectedTypes.any { it.isRestrictSuspensionReceiver() }
+        is ConeIntegerConstantOperatorType,
+        is ConeIntegerLiteralConstantType,
+        is ConeStubTypeForTypeVariableInSubtyping,
+        is ConeTypeVariableType,
+            -> false
+    }
 }

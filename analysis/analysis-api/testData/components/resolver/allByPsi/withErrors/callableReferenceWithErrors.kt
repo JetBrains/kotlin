@@ -76,4 +76,12 @@ fun callableReferenceWithContextArguments() {
     ::withContextProperty(LoggerContext())
 }
 
+context(c: LoggerContext)
+fun callableReferenceWithContextArgumentsWithContext() {
+    ::withContext
+    ::withContext(LoggerContext(), 1)
+    ::withContextProperty
+    ::withContextProperty(LoggerContext())
+}
+
 // LANGUAGE: +ContextParameters +ExplicitContextArguments

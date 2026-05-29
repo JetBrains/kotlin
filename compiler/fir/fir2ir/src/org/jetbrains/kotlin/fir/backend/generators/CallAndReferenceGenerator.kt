@@ -110,20 +110,35 @@ class CallAndReferenceGenerator(
                 val referencedPropertySetterSymbol = runIf(callableReferenceAccess.resolvedType.isKMutableProperty(session)) {
                     declarationStorage.findSetterOfProperty(irPropertySymbol)
                 }
-                val backingFieldSymbol = when {
-                    referencedPropertyGetterSymbol != null -> null
-                    else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+
+                // TODO(KT-86453) drop else branch and always generate rich reference
+                return if (referencedPropertyGetterSymbol != null && propertySymbol.hasContextParameters) {
+                    adapterGenerator.generateRichPropertyReference(
+                        callableReferenceAccess,
+                        type,
+                        explicitReceiverExpression,
+                        irPropertySymbol,
+                        referencedPropertyGetterSymbol,
+                        referencedPropertySetterSymbol,
+                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) },
+                        isForDelegate,
+                    )
+                } else {
+                    val backingFieldSymbol = when {
+                        referencedPropertyGetterSymbol != null -> null
+                        else -> declarationStorage.findBackingFieldOfProperty(irPropertySymbol)
+                    }
+                    IrPropertyReferenceImpl(
+                        startOffset, endOffset, type, irPropertySymbol,
+                        typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
+                        field = backingFieldSymbol,
+                        getter = referencedPropertyGetterSymbol,
+                        setter = referencedPropertySetterSymbol,
+                        origin = origin
+                    )
+                        .applyTypeArguments(callableReferenceAccess)
+                        .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
                 }
-                return IrPropertyReferenceImpl(
-                    startOffset, endOffset, type, irPropertySymbol,
-                    typeArgumentsCount = callableReferenceAccess.toResolvedCallableSymbol()?.fir?.typeParameters?.size ?: 0,
-                    field = backingFieldSymbol,
-                    getter = referencedPropertyGetterSymbol,
-                    setter = referencedPropertySetterSymbol,
-                    origin = origin
-                )
-                    .applyTypeArguments(callableReferenceAccess)
-                    .applyReceiversAndArguments(callableReferenceAccess, firSymbol, explicitReceiverExpression)
             }
 
             fun convertReferenceToSyntheticProperty(propertySymbol: FirSimpleSyntheticPropertySymbol): IrExpression? {
@@ -190,9 +205,24 @@ class CallAndReferenceGenerator(
                     // And for IR, we need to use the original constructor as a source of truth
                     function = function.typeAliasConstructorInfo?.originalConstructor ?: function
                 }
-                return if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
+
+                // TODO(KT-86453) drop else branches and always generate rich reference
+                return if (callableReferenceAccess.contextArguments.isNotEmpty()) {
+                    adapterGenerator.generateRichFunctionReference(
+                        callableReferenceAccess,
+                        type,
+                        explicitReceiverExpression,
+                        irFunctionSymbol,
+                        callableReferenceAccess.contextArguments.map { visitor.convertToIrExpression(it) }
+                    )
+                } else if (adapterGenerator.needToGenerateAdaptedCallableReference(callableReferenceAccess, type, function)) {
                     // Receivers are being applied inside
-                    adapterGenerator.generateAdaptedCallableReference(callableReferenceAccess, explicitReceiverExpression, irFunctionSymbol, type)
+                    adapterGenerator.generateAdaptedCallableReference(
+                        callableReferenceAccess,
+                        explicitReceiverExpression,
+                        irFunctionSymbol,
+                        type
+                    )
                 } else {
                     IrFunctionReferenceImplWithShape(
                         startOffset, endOffset, type, irFunctionSymbol,
