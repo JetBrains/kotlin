@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.visitors.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.name.ClassIdBasedLocality
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.ClassKind
 
@@ -143,6 +144,18 @@ class FirReachabilityAnalyzer(private val session: FirSession) : FirVisitorVoid(
     }
 
     override fun visitRegularClass(regularClass: FirRegularClass) {
+        if (regularClass.status.modality == Modality.SEALED) {
+            val nestedClasses = regularClass.declarations.filterIsInstance<FirRegularClass>().associateBy { it.symbol.classId }
+            regularClass.getSealedClassInheritors(session).forEach { inheritorClassId ->
+                val localNestedClass = nestedClasses[inheritorClassId]
+                if (localNestedClass != null) {
+                    mark(localNestedClass.symbol)
+                } else {
+                    mark(session.symbolProvider.getClassLikeSymbolByClassId(inheritorClassId))
+                }
+            }
+        }
+
         regularClass.annotations.forEach { it.accept(this) }
         regularClass.superTypeRefs.forEach { it.accept(this) }
         regularClass.typeParameters.forEach { it.accept(this) }
