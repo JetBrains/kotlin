@@ -204,6 +204,8 @@ inline fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long {
     return sum
 }
 
+fun <T, C : Collection<T>> C.takeIfNotEmpty(): C? = ifEmpty { null }
+
 inline fun <T, C : Collection<T>, O> C.ifNotEmpty(body: C.() -> O?): O? = if (isNotEmpty()) this.body() else null
 
 inline fun <T, O> Array<out T>.ifNotEmpty(body: Array<out T>.() -> O?): O? = if (isNotEmpty()) this.body() else null
