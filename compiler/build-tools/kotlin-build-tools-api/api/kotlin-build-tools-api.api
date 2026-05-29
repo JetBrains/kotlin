@@ -770,6 +770,7 @@ public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/a
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonJsAndWasmArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$Companion;
+	public static final field X_SUSPEND_LAMBDA_EXPORTING Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsCompilerArguments$JsCompilerArgument;)Ljava/lang/Object;
 }
 

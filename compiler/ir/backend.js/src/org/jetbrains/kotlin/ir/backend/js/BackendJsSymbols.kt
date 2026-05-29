@@ -351,6 +351,8 @@ class BackendJsSymbols(
     val awaitFunctionSymbol by CallableIds.await.functionSymbol()
     val promisifyFunctionSymbol by CallableIds.promisify.functionSymbol()
     val suspendOrReturnFunctionSymbol: IrSimpleFunctionSymbol by CallableIds.suspendOrReturn.functionSymbol()
+    val orPromiseFunctionSymbol by CallableIds.orPromise.functionSymbol()
+    val suspendLambdaRunFunctionSymbol by CallableIds.suspendLambdaRun.functionSymbol()
 
     val jsNumberRangeToNumber by CallableIds.numberRangeToNumber.functionSymbol()
     val jsNumberRangeToLong by CallableIds.numberRangeToLong.functionSymbol()
@@ -787,6 +789,8 @@ private object CallableIds {
     val await = "await".coroutinesCallableId
     val promisify = "promisify".coroutinesCallableId
     val suspendOrReturn = "suspendOrReturn".coroutinesCallableId
+    val orPromise = "orPromise".coroutinesCallableId
+    val suspendLambdaRun = "suspendLambdaRun".coroutinesCallableId
 
     // Custom properties
     val coroutineState = CallableId(Name.identifier("state")).withClassId(ClassIds.coroutineImpl)
