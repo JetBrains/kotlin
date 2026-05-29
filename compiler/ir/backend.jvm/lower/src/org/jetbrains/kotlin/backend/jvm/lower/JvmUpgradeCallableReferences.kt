@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.ir.expressions.*
 internal class JvmUpgradeCallableReferences(context: JvmBackendContext) : UpgradeCallableReferences(
     context = context,
     upgradeSamConversions = true,
-    upgradeExtractedAdaptedBlocks = true,
     castDispatchReceiver = false,
     generateFakeAccessorsForReflectionProperty = true,
 )
