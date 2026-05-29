@@ -1,5 +1,6 @@
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.internal.os.OperatingSystem
+import org.gradle.kotlin.dsl.javaToolchains
 import org.gradle.kotlin.dsl.register
 import java.util.regex.Pattern.quote
 import kotlin.io.path.exists
@@ -10,7 +11,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
-    id("test-inputs-check")
+    id("test-inputs-check-v2")
 }
 
 val nativeImageClasspath by configurations.creating {
@@ -35,6 +36,11 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+val graalLauncher = javaToolchains.launcherFor {
+    languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_25_0.targetName))
+    vendor.set(JvmVendorSpec.GRAAL_VM)
+}
+
 projectTests {
     testData(project(":compiler").isolated, "testData/codegen")
 
@@ -43,17 +49,39 @@ projectTests {
         generateTestsInBuildDirectory = true,
     )
 
-    testTask(
-        taskName = "nativeImageBoxTest",
-        jUnitMode = JUnitMode.JUnit5,
-        skipInLocalBuild = false,
-    ) {
+    nativeImageTestTask("nativeImageBoxTest") {
         description = "Compares native-image kotlinc against default kotlinc on " +
                 "compiler/testData/codegen/box."
-        addClasspathProperty(
-            kotlincNativeImageDist.map { layout.files(it.destinationDir) },
-            "kotlin.native-image.dist.path"
+        exclude("**/*ReachabilityMetadataTest*.class")
+        exclude("**/*SmokeTest*.class")
+        useNativeImageDist()
+    }
+
+    nativeImageTestTask("nativeImageSmokeTest") {
+        description = "Smoke test: compiles a hello-world with the native-image kotlinc " +
+                "and verifies it succeeds."
+        include("**/NativeImageSmokeTest.class")
+        useNativeImageDist()
+    }
+
+    nativeImageTestTask("generateReachabilityMetadataSmoke") {
+        description = "Quick reachability metadata regen: runs JVM kotlinc with the " +
+                "native-image-agent on the smoke test."
+        include("**/ReachabilityMetadataSmokeTest.class")
+        useReachabilityMetadataResources()
+    }
+
+    nativeImageTestTask("generateReachabilityMetadataBox") {
+        description = "Runs JVM kotlinc with reachability metadata collector agent on " +
+                "compiler/testData/codegen/box."
+        exclude("**/*BoxTest*.class")
+        exclude("**/*SmokeTest*.class")
+        // We can't run in parallel because of the tracing agent
+        systemProperty(
+            "junit.jupiter.execution.parallel.enabled",
+            "false",
         )
+        useReachabilityMetadataResources()
     }
 
     withJvmStdlibAndReflect()
@@ -79,13 +107,9 @@ val kotlincNativeImageTask = tasks.register<Exec>("kotlincNativeImage") {
     val executableFile = layout.buildDirectory.file("bin/kotlinc-native-image$executableExtension")
     outputs.file(executableFile)
 
-    val javaLauncher = javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(JdkMajorVersion.JDK_25_0.targetName))
-        vendor.set(JvmVendorSpec.GRAAL_VM)
-    }
-
+    val launcher = graalLauncher
     doFirst {
-        val javaHome = javaLauncher.get().executablePath.asFile.toPath().parent.parent
+        val javaHome = launcher.get().executablePath.asFile.toPath().parent.parent
 
         val nativeImageName = if (isWindows) "native-image.exe" else "native-image"
         val nativeImageBin = javaHome.resolve("lib/svm/bin/$nativeImageName")
@@ -140,4 +164,30 @@ val kotlincNativeImageDist = tasks.register<Copy>("kotlincNativeImageDist") {
             unix("rw-r--r--")
         }
     }
+}
+
+fun ProjectTestsExtension.nativeImageTestTask(name: String, body: Test.() -> Unit): TaskProvider<out Task> =
+    testTask(taskName = name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        javaLauncher.set(graalLauncher)
+        body()
+    }
+
+fun Test.useNativeImageDist() {
+    addClasspathProperty(
+        kotlincNativeImageDist.map { layout.files(it.destinationDir) },
+        "kotlin.native-image.dist.path",
+    )
+}
+
+@OptIn(KotlinCompilerDistUsage::class)
+fun Test.useReachabilityMetadataResources() {
+    withDist()
+    addClasspathProperty(
+        nativeImageClasspath,
+        "kotlin.compiler-embeddable.classpath",
+    )
+    addDirectoryProperty(
+        layout.projectDirectory.dir("resources").asFile,
+        "kotlin.native-image.resources.path",
+    )
 }

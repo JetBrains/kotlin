@@ -12,7 +12,10 @@ fun main(args: Array<String>) {
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot = args[0], testDataRoot = "compiler/testData/codegen") {
-            testClass<AbstractNativeImageBlackBoxCodegenTest> {
+            testClass<AbstractNativeImageBoxTest> {
+                model("box")
+            }
+            testClass<AbstractNativeImageReachabilityMetadataTest> {
                 model("box")
             }
         }

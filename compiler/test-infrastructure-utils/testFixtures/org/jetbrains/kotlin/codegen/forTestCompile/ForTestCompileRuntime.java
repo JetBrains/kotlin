@@ -234,6 +234,16 @@ public class ForTestCompileRuntime {
     }
 
     @NotNull
+    public static File kotlinNativeImageResourcesPathForTests() {
+        return getFileFromProperty(KOTLIN_NATIVE_IMAGE_RESOURCES_PATH);
+    }
+
+    @NotNull
+    public static List<File> kotlinCompilerEmbeddableClasspathForTests() {
+        return getFilesFromProperty(KOTLIN_COMPILER_EMBEDDABLE_CLASSPATH);
+    }
+
+    @NotNull
     public static synchronized ClassLoader runtimeAndReflectJarClassLoader() {
         ClassLoader loader = reflectJarClassLoader.get();
         if (loader == null) {
