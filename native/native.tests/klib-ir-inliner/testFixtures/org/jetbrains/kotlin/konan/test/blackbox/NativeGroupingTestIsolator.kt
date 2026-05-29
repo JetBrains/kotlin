@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.GroupingTestIsolator
@@ -25,13 +26,23 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestDirectives)
+        get() = listOf(CodegenTestDirectives, TestDirectives)
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
+        val isolationDirectives = listOf(
+            CodegenTestDirectives.IGNORE_BACKEND,
+            CodegenTestDirectives.IGNORE_BACKEND_K2,
+            TestDirectives.NATIVE_STANDALONE,
+            TestDirectives.FILECHECK_STAGE,
+            TestDirectives.IGNORE_NATIVE,
+            TestDirectives.DISABLE_NATIVE,
+            TestDirectives.EXPECTED_TIMEOUT_FAILURE,
+            TestDirectives.MUTED,
+        )
+
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
         val shouldBeIsolated = testServices.testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
-                || moduleStructure.allDirectives.contains(TestDirectives.NATIVE_STANDALONE)
-                || moduleStructure.allDirectives[TestDirectives.FILECHECK_STAGE].isNotEmpty()
+                || isolationDirectives.any { it in moduleStructure.allDirectives }
                 || moduleStructure.sourceContains(packageKotlinInternalRegex)
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
         if (shouldBeIsolated) return BatchToken.Isolated
