@@ -381,47 +381,49 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
 public sealed interface KaCallableImplementationState {
     /**
      * The declaration is directly implemented or explicitly overridden in the target class.
-     *
-     * @property isComplete Whether the implementation is complete. E.g., for a `var` property implemented by `val`,
-     * [isComplete] will be `false`.
      */
     @KaExperimentalApi
     @SubclassOptInRequired(KaImplementationDetail::class)
     public interface Explicit : KaCallableImplementationState {
+        /**
+         * Whether the implementation is complete. E.g., for a `var` property implemented by `val`, [isComplete] will be `false`.
+         */
         public val isComplete: Boolean
     }
 
     /**
      * The declaration has the implementation provided by a supertype or multiple supertypes, and **does not** have explicit implementation
      * in the target class.
-     *
-     * @property isAmbiguous Whether multiple supertypes provide implementations. As the compiler cannot decide which implementation
-     * to choose, the declaration must be overridden explicitly. E.g.:
-     *
-     * ```kotlin
-     * interface ColoredEntity {
-     *     val color: String
-     * }
-     * *
-     * interface GreenEntity : ColoredEntity {
-     *     override val color get() = "green"
-     * }
-     * *
-     * interface BlueEntity : ColoredEntity {
-     *     override val color get() = "blue"
-     * }
-     * *
-     * // Interface 'SeaColorEntity' must override 'color' because it inherits multiple interface methods for it
-     * interface SeaColorEntity : GreenEntity, BlueEntity
-     * ```
-     *
-     * @property isOverridable Whether the declaration can be overridden in the target class (e.g., it is not marked as `final`
-     * in a supertype).
      */
     @KaExperimentalApi
     @SubclassOptInRequired(KaImplementationDetail::class)
     public interface Inherited : KaCallableImplementationState {
+        /**
+         * Whether multiple supertypes provide implementations.
+         * As the compiler cannot decide which implementation to choose, the declaration must be overridden explicitly. E.g.:
+         *
+         * ```kotlin
+         * interface ColoredEntity {
+         *     val color: String
+         * }
+         *
+         * interface GreenEntity : ColoredEntity {
+         *     override val color get() = "green"
+         * }
+         *
+         * interface BlueEntity : ColoredEntity {
+         *     override val color get() = "blue"
+         * }
+         *
+         * // Interface 'SeaColorEntity' must override 'color' because it inherits multiple interface methods for it
+         * interface SeaColorEntity : GreenEntity, BlueEntity
+         * ```
+         */
         public val isAmbiguous: Boolean
+
+        /**
+         * Whether the declaration can be overridden in the target class (e.g., it is not marked as `final` in a supertype).
+         */
         public val isOverridable: Boolean
     }
 
