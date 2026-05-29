@@ -68,7 +68,6 @@ import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.mapToIndex
 
 class FirElementSerializer private constructor(
@@ -147,7 +146,7 @@ class FirElementSerializer private constructor(
         extension.serializePackage(packageFqName, builder, versionRequirementTable, this)
         // Next block will process declarations from plugins.
         // Such declarations don't belong to any file, so there is no need to call `extension.processFile`.
-        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName, scopeSession)) {
+        for (declaration in providedDeclarationsService.getProvidedTopLevelDeclarations(packageFqName)) {
             builder.addDeclarationProto(declaration, actualizedExpectDeclarations) {
                 error("Unsupported top-level declaration type: ${it.render()}")
             }
@@ -226,7 +225,7 @@ class FirElementSerializer private constructor(
             }
 
             val providedConstructors = providedDeclarationsService
-                .getProvidedConstructors(classSymbol, scopeSession)
+                .getProvidedConstructors(classSymbol)
                 .sortedWith(FirCallableDeclarationComparator)
             for (constructor in providedConstructors) {
                 builder.addConstructor(constructorProto(constructor))
@@ -234,7 +233,7 @@ class FirElementSerializer private constructor(
         }
 
         val providedCallables = providedDeclarationsService
-            .getProvidedCallables(classSymbol, scopeSession)
+            .getProvidedCallables(classSymbol)
             .sortedWith(FirCallableDeclarationComparator)
 
         /*

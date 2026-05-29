@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
-import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.name.FqName
@@ -62,9 +61,9 @@ abstract class FirProvidedDeclarationsForMetadataService : FirSessionComponent {
         }
     }
 
-    abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration>
-    abstract fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor>
-    abstract fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration>
+    abstract fun getProvidedTopLevelDeclarations(packageFqName: FqName): List<FirDeclaration>
+    abstract fun getProvidedConstructors(owner: FirClassSymbol<*>): List<FirConstructor>
+    abstract fun getProvidedCallables(owner: FirClassSymbol<*>): List<FirCallableDeclaration>
 
     abstract fun registerDeclaration(declaration: FirCallableDeclaration)
 
@@ -89,15 +88,15 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
         }
     }
 
-    override fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
+    override fun getProvidedTopLevelDeclarations(packageFqName: FqName): List<FirDeclaration> {
         return topLevelsCache[packageFqName] ?: emptyList()
     }
 
-    override fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor> {
+    override fun getProvidedConstructors(owner: FirClassSymbol<*>): List<FirConstructor> {
         return memberCache[owner]?.providedConstructors ?: emptyList()
     }
 
-    override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
+    override fun getProvidedCallables(owner: FirClassSymbol<*>): List<FirCallableDeclaration> {
         return memberCache[owner]?.providedCallables ?: emptyList()
     }
 
