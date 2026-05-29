@@ -15,13 +15,11 @@ import com.intellij.psi.PsiManager
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
-import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
 import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
-import org.jetbrains.kotlin.cli.common.LegacyK2CliPipeline
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
@@ -33,15 +31,11 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.report
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
 import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
 import org.jetbrains.kotlin.fir.backend.jvm.*
-import org.jetbrains.kotlin.fir.backend.utils.extractFirDeclarations
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.fir.pipeline.Fir2IrActualizedResult
 import org.jetbrains.kotlin.fir.pipeline.convertToIrAndActualize
@@ -50,45 +44,8 @@ import org.jetbrains.kotlin.ir.backend.jvm.serialization.JvmIrMangler
 import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
-import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
-import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.io.File
-
-@LegacyK2CliPipeline
-fun convertAnalyzedFirToIr(
-    configuration: CompilerConfiguration,
-    targetId: TargetId,
-    frontendOutput: AllModulesFrontendOutput,
-    environment: ModuleCompilerEnvironment
-): ModuleCompilerIrBackendInput {
-    val extensions = JvmFir2IrExtensions(configuration)
-
-    (
-        val moduleFragment = irModuleFragment,
-        val components,
-        val pluginContext,
-        val irActualizedResult,
-        val symbolTable,
-    ) =
-        frontendOutput.convertToIrAndActualizeForJvm(
-            extensions, configuration, environment.diagnosticsReporter,
-            configuration.getCompilerExtensions(IrGenerationExtension),
-        )
-
-    return ModuleCompilerIrBackendInput(
-        targetId,
-        configuration,
-        extensions,
-        moduleFragment,
-        components,
-        pluginContext,
-        irActualizedResult,
-        symbolTable
-    )
-}
 
 fun AllModulesFrontendOutput.convertToIrAndActualizeForJvm(
     fir2IrExtensions: Fir2IrExtensions,
@@ -113,62 +70,6 @@ fun AllModulesFrontendOutput.convertToIrAndActualizeForJvm(
             { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
         },
     )
-}
-
-@LegacyK2CliPipeline
-fun generateCodeFromIr(
-    input: ModuleCompilerIrBackendInput,
-    environment: ModuleCompilerEnvironment
-): GenerationState {
-    val generationState = GenerationState(
-        environment.projectEnvironment.project,
-        input.irModuleFragment.descriptor,
-        input.configuration,
-        ClassBuilderFactories.BINARIES,
-        targetId = input.targetId,
-        moduleName = input.targetId.name,
-        jvmBackendClassResolver = FirJvmBackendClassResolver(input.components),
-        diagnosticReporter = environment.diagnosticsReporter,
-    )
-
-    val performanceManager = input.configuration.perfManager
-    @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
-    performanceManager?.notifyCurrentPhaseFinishedIfNeeded() // It should be `notifyIRGenerationFinished`, but this phase not always started or already finished
-    lateinit var codegenFactory: JvmIrCodegenFactory
-    val codegenInput = performanceManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-        val backendInput = JvmIrCodegenFactory.BackendInput(
-            input.irModuleFragment,
-            input.pluginContext.irBuiltIns,
-            input.symbolTable,
-            input.components.irProviders,
-            input.extensions,
-            FirJvmBackendExtension(
-                input.components,
-                input.irActualizedResult?.actualizedExpectDeclarations?.extractFirDeclarations()
-            ),
-            input.pluginContext,
-        )
-
-        codegenFactory = JvmIrCodegenFactory(input.configuration)
-        codegenFactory.invokeLowerings(generationState, backendInput)
-    }
-
-    codegenFactory.invokeCodegen(codegenInput)
-
-    // It's allowed to call `tryMeasurePhaseTime` multiple times on the same phase (`Backend`)
-    performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
-        if (input.configuration.outputDirectory != null) {
-            writeOutputsIfNeeded(
-                environment.projectEnvironment.project,
-                input.configuration,
-                environment.diagnosticsReporter.hasErrors,
-                listOf(generationState),
-                mainClassFqName = null,
-            )
-        }
-    }
-
-    return generationState
 }
 
 private class ProjectEnvironmentWithCoreEnvironmentEmulation(
