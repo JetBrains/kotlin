@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.statistics
 
 import org.gradle.api.logging.LogLevel
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService
-import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService.Companion.findFusFilesByBuildId
+import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFinishBuildService.Companion.findV2FusFilesByBuildId
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
@@ -121,7 +121,7 @@ class BuildFinishBuildServiceTest {
             it.setLastModified(modificationTime + 1)
         }
 
-        val fusFiles = fusReportDirectory.findFusFilesByBuildId(buildId)?.map { it.name }
+        val fusFiles = fusReportDirectory.findV2FusFilesByBuildId(buildId)?.map { it.name }
         assertEquals(listOf("$buildId.2.plugin-profile", "$buildId.3.kotlin-profile", "$buildId.1.plugin-profile"), fusFiles)
     }
 

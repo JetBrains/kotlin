@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.statistics
 import org.jetbrains.kotlin.statistics.BuildSessionLogger
 import org.jetbrains.kotlin.statistics.BuildSessionLogger.Companion.FUS_KOTLIN_FILE_NAME_SUFFIX
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusV2KotlinProfileFile
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringAnonymizationPolicy
@@ -220,9 +220,9 @@ class BuildSessionLoggerTest {
         logger.finishBuildSession() // create kotlin-profile fus file with comma-separated values
 
         // read metrics from kotlin-profile file in old format with semicolon-separated values
-        val metricContainer = MetricsContainer.createMetricsContainerForProfileFile()
+        val metricContainer = MetricsContainer.createMetricsContainerForV1ProfileFile()
 
-        metricContainer.addMetricFromFusKotlinProfileFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file"))
+        metricContainer.addMetricFromFusV2KotlinProfileFile(statsFolder.listFiles()?.single() ?: fail("Could not find stat file"))
 
         for (metric in StringMetrics.entries) {
             val metricValue = metricContainer.getMetric(metric)?.getValue() ?: fail("Could not find metric ${metric.name}")

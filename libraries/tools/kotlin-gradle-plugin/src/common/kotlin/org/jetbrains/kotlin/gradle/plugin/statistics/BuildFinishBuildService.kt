@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.BuildEventsListenerRegistryHolder
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
-import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
+import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusV2KotlinProfileFile
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.createValidateAndAnonymizeCopy
 import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
@@ -94,11 +94,11 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             log: Logger,
         ): Errors {
             try {
-                val metricContainer = MetricsContainer.createMetricsContainerForProfileFile()
+                val metricContainer = MetricsContainer.createMetricsContainerForV1ProfileFile()
 
-                fusReportDirectory.findFusFilesByBuildId(buildUid)
+                fusReportDirectory.findV2FusFilesByBuildId(buildUid)
                     ?.forEach {
-                        metricContainer.addMetricFromFusKotlinProfileFile(it)
+                        metricContainer.addMetricFromFusV2KotlinProfileFile(it)
                     }
 
                 val fusFile = fusReportDirectory.resolve("$buildUid.profile")
@@ -121,7 +121,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             return emptyList()
         }
 
-        internal fun File.findFusFilesByBuildId(buildUid: String): List<File>? = listFiles()
+        internal fun File.findV2FusFilesByBuildId(buildUid: String): List<File>? = listFiles()
             ?.sortedWith(compareBy({ it.lastModified() }, { it.name }))
             ?.filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
     }
