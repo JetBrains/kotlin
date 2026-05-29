@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.JvmTarget
 import org.jetbrains.kotlin.config.JvmTarget.Companion.fromString
 import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil.getFileClassInfoNoResolve
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.scripting.definitions.K1SpecificScriptingServiceAccessor
 import org.jetbrains.kotlin.scripting.definitions.ScriptConfigurationsProvider
 import org.jetbrains.kotlin.scripting.resolve.KtFileScriptSource
@@ -37,9 +36,6 @@ import java.lang.reflect.Method
 import java.net.MalformedURLException
 import java.net.URL
 import java.net.URLClassLoader
-import java.util.*
-import java.util.function.Consumer
-import java.util.stream.Collectors
 import kotlin.script.experimental.api.valueOrNull
 
 abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
@@ -131,17 +127,15 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
     }
 
     protected fun loadFiles(vararg names: String) {
-        val files: MutableList<KtFile?> = ArrayList(names.size)
-        for (name in names) {
-            try {
+        try {
+            val files = names.map { name ->
                 val content = KtTestUtil.doLoadFile(KtTestUtil.getTestDataFileLocatedInCompilerTestData("codegen/").absolutePath, name)
-                val file = KtTestUtil.createFile(name, content, myEnvironment!!.project)
-                files.add(file)
-            } catch (e: IOException) {
-                throw RuntimeException(e)
+                KtTestUtil.createFile(name, content, myEnvironment!!.project)
             }
+            myFiles = CodegenTestFiles.create(files)
+        } catch (e: IOException) {
+            throw RuntimeException(e)
         }
-        myFiles = CodegenTestFiles.create(files)
     }
 
     protected fun loadFile() {
@@ -181,12 +175,10 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         )
     }
 
-    private val classPathURLs: Array<URL?>
+    private val classPathURLs: Array<URL>
         get() {
-            val files: MutableList<File?> = ArrayList()
-            if (javaClassesOutputDirectory != null) {
-                files.add(javaClassesOutputDirectory)
-            }
+            val files = mutableListOf<File>()
+            javaClassesOutputDirectory?.let { files.add(it) }
             files.addAll(additionalDependencies)
 
             val environment = myEnvironment
@@ -194,26 +186,20 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
                 ScriptConfigurationsProvider
             )?.firstOrNull()
             if (externalImportsProvider != null) {
-                environment.getSourceFiles().forEach(
-                    Consumer { file: KtFile ->
-                        @OptIn(K1SpecificScriptingServiceAccessor::class)
-                        externalImportsProvider.project = environment.project
-                        val refinedConfiguration = externalImportsProvider.getScriptCompilationConfiguration(
-                            KtFileScriptSource(file)
-                        )?.valueOrNull()
-                        if (refinedConfiguration != null) {
-                            files.addAll(refinedConfiguration.dependenciesClassPath)
-                        }
+                environment.getSourceFiles().forEach { file ->
+                    @OptIn(K1SpecificScriptingServiceAccessor::class)
+                    externalImportsProvider.project = environment.project
+                    val refinedConfiguration = externalImportsProvider.getScriptCompilationConfiguration(
+                        KtFileScriptSource(file)
+                    )?.valueOrNull()
+                    if (refinedConfiguration != null) {
+                        files.addAll(refinedConfiguration.dependenciesClassPath)
                     }
-                )
+                }
             }
 
             try {
-                val result = arrayOfNulls<URL>(files.size)
-                for (i in files.indices) {
-                    result[i] = files[i]!!.toURI().toURL()
-                }
-                return result
+                return files.map { it.toURI().toURL() }.toTypedArray()
             } catch (e: MalformedURLException) {
                 throw rethrow(e)
             }
@@ -256,8 +242,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             // Some names are not allowed in the dex file format and the VM will reject the program
             // if they are used. Therefore, a few tests cannot be dexed as they use such names that
             // are valid on the JVM but not on the Android Runtime.
-            val ignoreDexing = myFiles!!.psiFiles.stream()
-                .anyMatch { it: KtFile? -> InTextDirectivesUtils.isDirectiveDefined(it!!.getText(), "IGNORE_DEXING") }
+            val ignoreDexing = myFiles!!.psiFiles.any { InTextDirectivesUtils.isDirectiveDefined(it.getText(), "IGNORE_DEXING") }
             if (D8Checker.RUN_D8_CHECKER && !ignoreDexing) {
                 D8Checker.check(classFileFactory)
             }
@@ -320,47 +305,41 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
 
         val configuration = createConfiguration(
             configurationKind, getTestJdkKind(files),
-            mutableListOf<File>(KtTestUtil.getAnnotationsJar()),
+            mutableListOf(KtTestUtil.getAnnotationsJar()),
             arrayOf(javaSourceDir).filterNotNull(),
             files
         )
 
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
-        )
-        setupEnvironment(myEnvironment!!)
+        ).also { environment ->
+            setupEnvironment(environment)
 
-        myFiles = loadMultiFiles(files, myEnvironment!!.project)
+            myFiles = loadMultiFiles(files, environment.project)
+        }
 
         generateClassesInFile(reportProblems)
 
         val compileJavaFiles = javaSourceDir != null && javaClassesOutputDirectory == null
-        var kotlinOut: File? = null
+        javaClassesOutputDirectory = null
 
         // If there are Java files, they should be compiled against the class files produced by Kotlin, so we dump them to the disk
         if (compileJavaFiles) {
-            kotlinOut = createTempDirectory(toString())
+            val kotlinOut = createTempDirectory(toString())
             classFileFactory!!.writeAllTo(kotlinOut)
-        }
-
-        javaClassesOutputDirectory = null
-        if (compileJavaFiles) {
             javaClassesOutputDirectory = createTempDirectory("java-classes")
-            val javacOptions: MutableList<String?> = extractJavacOptions(
+            val javacOptions = extractJavacOptions(
                 files,
                 configuration[JVMConfigurationKeys.JVM_TARGET],
                 configuration.getBoolean(JVMConfigurationKeys.ENABLE_JVM_PREVIEW)
             )
             val isJava9Module = false // No Java modules in legacy tests
             val finalJavacOptions = CodegenTestUtil.prepareJavacOptions(
-                mutableListOf(kotlinOut?.path), javacOptions, javaClassesOutputDirectory!!, isJava9Module
+                listOf(kotlinOut.path), javacOptions, javaClassesOutputDirectory!!, isJava9Module
             )
 
             compileJavaFiles(
-                CodegenTestUtil.findJavaSourcesInDirectory(javaSourceDir).stream().map { pathname: String -> File(pathname) }
-                    .collect(
-                        Collectors.toList()
-                    ),
+                CodegenTestUtil.findJavaSourcesInDirectory(javaSourceDir).map { pathname -> File(pathname) },
                 finalJavacOptions
             ).assertSuccessful()
         }
@@ -373,7 +352,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         val file = File(filePath)
 
         val expectedText = KtTestUtil.doLoadFile(file)
-        val testFiles: MutableList<TestFile> = createTestFilesFromFile(file, expectedText)
+        val testFiles = createTestFilesFromFile(file, expectedText)
 
         try {
             doMultiFileTest(file, testFiles)
@@ -382,7 +361,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         }
     }
 
-    override fun createTestFilesFromFile(file: File, expectedText: String): MutableList<TestFile> {
+    override fun createTestFilesFromFile(file: File, expectedText: String): List<TestFile> {
         @OptIn(ObsoleteTestInfrastructure::class)
         return TestFiles.createTestFiles(
             file.getName(),
@@ -415,13 +394,12 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         private val DEFAULT_JVM_TARGET: String? = System.getProperty("kotlin.test.default.jvm.target")
 
         private fun loadMultiFiles(files: List<TestFile>, project: Project): CodegenTestFiles {
-            val ktFiles: MutableList<KtFile?> = ArrayList(files.size)
-            for (file in files.sorted()) {
-                if (file.name.endsWith(".kt") || file.name.endsWith(".kts")) {
-                    // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
-                    val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0), null)
-                    ktFiles.add(KtTestUtil.createFile(file.name, content, project))
-                }
+            val ktFiles = files.sorted().filter { file ->
+                file.name.endsWith(".kt") || file.name.endsWith(".kts")
+            }.map { file ->
+                // `rangesToDiagnosticNames` parameter is not-null only for diagnostic tests, it's using for lazy diagnostics
+                val content = CheckerTestUtil.parseDiagnosedRanges(file.content, ArrayList(0), null)
+                KtTestUtil.createFile(file.name, content, project)
             }
 
             return CodegenTestFiles.create(ktFiles)
@@ -450,10 +428,9 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
             files: List<TestFile>,
             kotlinTarget: JvmTarget?,
             isJvmPreviewEnabled: Boolean
-        ): MutableList<String?> {
-            val javacOptions: MutableList<String?> = ArrayList(0)
-            for (file in files) {
-                javacOptions.addAll(InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:"))
+        ): List<String> {
+            val javacOptions = files.flatMapTo(mutableListOf()) { file ->
+                InTextDirectivesUtils.findListWithPrefixes(file.content, "// JAVAC_OPTIONS:")
             }
 
             if (kotlinTarget != null) {
