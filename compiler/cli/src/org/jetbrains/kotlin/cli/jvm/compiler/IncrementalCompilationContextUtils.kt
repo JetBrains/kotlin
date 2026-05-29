@@ -47,7 +47,6 @@ fun createIncrementalCompilationScope(
 fun createContextForIncrementalCompilation(
     configuration: CompilerConfiguration,
     projectEnvironment: VfsBasedProjectEnvironment,
-    sourceScope: AbstractProjectFileSearchScope,
     previousStepsSymbolProviders: List<FirSymbolProvider>,
     incrementalCompilationScope: AbstractProjectFileSearchScope?
 ): IncrementalCompilationContext? {
@@ -58,7 +57,7 @@ fun createContextForIncrementalCompilation(
     return IncrementalCompilationContext(
         previousFirSessionsSymbolProviders = previousStepsSymbolProviders,
         precompiledBinariesPackagePartProvider = IncrementalPackagePartProvider(
-            projectEnvironment.getPackagePartProvider(sourceScope),
+            configuration.languageVersionSettings,
             targetIds.map(incrementalComponents::getIncrementalCache)
         ),
         precompiledBinariesFileScope = incrementalCompilationScope
@@ -71,7 +70,6 @@ fun createContextForIncrementalCompilation(
 fun createContextForIncrementalCompilation(
     projectEnvironment: VfsBasedProjectEnvironment,
     moduleConfiguration: CompilerConfiguration,
-    sourceScope: AbstractProjectFileSearchScope,
 ): IncrementalCompilationContext? {
     val incrementalComponents = moduleConfiguration.incrementalCompilationComponents ?: return null
     val targetIds = moduleConfiguration.modules.map(::TargetId).takeIfNotEmpty() ?: return null
@@ -83,7 +81,7 @@ fun createContextForIncrementalCompilation(
         .takeIf { !it.isEmpty }
         ?: return null
     val packagePartProvider = IncrementalPackagePartProvider(
-        projectEnvironment.getPackagePartProvider(sourceScope),
+        moduleConfiguration.languageVersionSettings,
         targetIds.map(incrementalComponents::getIncrementalCache)
     )
     return IncrementalCompilationContext(

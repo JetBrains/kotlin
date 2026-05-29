@@ -94,7 +94,6 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                     createContextForIncrementalCompilation(
                         configuration,
                         projectEnvironment,
-                        projectEnvironment.getSearchScopeBySourceFiles(files),
                         previousStepsSymbolProviders = emptyList(),
                         incrementalCompilationScope
                     )
@@ -122,8 +121,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
                 projectEnvironment.getSearchScopeByPsiFiles(ktFiles) + projectEnvironment.getSearchScopeForProjectJavaSources()
             val providerAndScopeForIncrementalCompilation = createContextForIncrementalCompilation(
                 projectEnvironment,
-                configuration,
-                sourceScope
+                configuration
             )
             providerAndScopeForIncrementalCompilation?.precompiledBinariesFileScope?.let {
                 librariesScope -= it

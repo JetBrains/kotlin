@@ -152,7 +152,6 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 createContextForIncrementalCompilation(
                     configuration,
                     environment,
-                    scope,
                     previousStepsSymbolProviders = emptyList(),
                     incrementalCompilationScope
                 )

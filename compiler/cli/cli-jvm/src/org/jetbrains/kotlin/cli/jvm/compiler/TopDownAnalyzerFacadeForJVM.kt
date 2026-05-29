@@ -210,7 +210,7 @@ object TopDownAnalyzerFacadeForJVM {
 
         val partProvider = packagePartProvider(sourceModuleSearchScope).let { fragment ->
             if (targetIds == null || incrementalComponents == null) fragment
-            else IncrementalPackagePartProvider(fragment, targetIds.map(incrementalComponents::getIncrementalCache))
+            else IncrementalPackagePartProvider(languageVersionSettings, targetIds.map(incrementalComponents::getIncrementalCache))
         }
 
         // Note that it's necessary to create container for sources _after_ creation of container for dependencies because
@@ -228,7 +228,6 @@ object TopDownAnalyzerFacadeForJVM {
             implicitsResolutionFilter = implicitsResolutionFilter
         ).apply {
             initJvmBuiltInsForTopDownAnalysis()
-            (partProvider as? IncrementalPackagePartProvider)?.deserializationConfiguration = get()
         }
 
         moduleClassResolver.sourceCodeResolver = container.get()
