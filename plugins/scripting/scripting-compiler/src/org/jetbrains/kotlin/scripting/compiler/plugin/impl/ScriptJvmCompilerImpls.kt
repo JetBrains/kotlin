@@ -359,9 +359,7 @@ private fun doCompileWithK2(
         friendPaths = emptyList(),
         librariesScope,
         isScript = { false },
-        createProviderAndScopeForIncrementalCompilation = { _ ->
-            incrementalCompilationContext
-        }
+        incrementalCompilationContext,
     ).single().session
 
     (configuration.scriptingHostConfiguration as? ScriptingHostConfiguration)?.get(ScriptingHostConfiguration.configureFirSession)?.also {
@@ -469,11 +467,11 @@ private fun prepareJvmSessionsForScripting(
     friendPaths: List<String>,
     librariesScope: AbstractProjectFileSearchScope,
     isScript: (KtFile) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<KtFile>) -> IncrementalCompilationContext?,
+    incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
     val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
     return MinimizedFrontendContext(projectEnvironment, MessageCollector.NONE, extensionRegistrars, configuration).prepareJvmSessions(
         files, rootModuleNameAsString, friendPaths, librariesScope, isCommonSourceForPsi, isScript,
-        fileBelongsToModuleForPsi, createProviderAndScopeForIncrementalCompilation
+        fileBelongsToModuleForPsi, incrementalCompilationContext
     )
 }

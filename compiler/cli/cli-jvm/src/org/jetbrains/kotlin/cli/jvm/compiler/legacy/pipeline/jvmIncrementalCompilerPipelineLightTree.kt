@@ -82,9 +82,7 @@ private fun FrontendContext.compileModuleToAnalyzedFirViaLightTreeIncrementally(
             isCommonSource = input.groupedSources.isCommonSourceForLt,
             isScript = { false },
             fileBelongsToModule = input.groupedSources.fileBelongsToModuleForLt,
-            createProviderAndScopeForIncrementalCompilation = { _ ->
-                incrementalCompilationContext
-            }
+            incrementalCompilationContext,
         )
 
         val countFilesAndLines = if (performanceManager == null) null else performanceManager::addSourcesStats

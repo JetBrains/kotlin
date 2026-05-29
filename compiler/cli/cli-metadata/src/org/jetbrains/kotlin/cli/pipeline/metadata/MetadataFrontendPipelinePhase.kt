@@ -104,9 +104,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             resolvedLibraries = klibs,
             isCommonSource = groupedSources.isCommonSourceForLt,
             fileBelongsToModule = groupedSources.fileBelongsToModuleForLt,
-            createProviderAndScopeForIncrementalCompilation = { _ ->
-                incrementalCompilationContext
-            }
+            incrementalCompilationContext,
         )
 
         val outputs = sessionsWithSources.map { (session, files) ->

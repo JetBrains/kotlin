@@ -306,7 +306,7 @@ internal fun <F> prepareJKlibSessions(
                 predefinedJavaComponents = predefinedJavaComponents,
             )
         },
-        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+        createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
             FirJKlibSessionFactory.createSourceSession(
                 moduleData = moduleData,
                 javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
