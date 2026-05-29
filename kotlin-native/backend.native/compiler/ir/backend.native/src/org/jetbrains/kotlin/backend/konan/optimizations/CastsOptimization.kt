@@ -108,7 +108,7 @@ private sealed class Predicate {
     open fun size(): Int = 0
 
     data object False : Predicate()
-    data object Empty : Predicate()
+    data object True : Predicate()
 }
 
 private class Conjunction(val terms: List<Disjunction>) : Predicate() {
@@ -149,7 +149,7 @@ private object Predicates {
             isSuperClassCast -> {
                 if (variableIsNullable && !typeIsNullable) // (variable: A?) is A = variable != null
                     disjunctionOf(buildSimpleTerm(variable, null) setTo false)
-                else Predicate.Empty
+                else Predicate.True
             }
             else -> {
                 if (variableIsNullable && typeIsNullable) // (variable: A?) is B? = variable == null || variable is B
@@ -183,7 +183,7 @@ private object Predicates {
     fun optimizeAwayComplexTerms(predicate: Predicate, complexTermsMask: CustomBitSet): Predicate {
         val conjunction = predicate as? Conjunction ?: return predicate
         val terms = conjunction.terms.filterNot { disjunction -> disjunction.terms.intersects(complexTermsMask) }
-        return if (terms.isEmpty()) Predicate.Empty else Conjunction(terms)
+        return if (terms.isEmpty()) Predicate.True else Conjunction(terms)
     }
 
     // 010101...010101 in binary.
@@ -219,8 +219,8 @@ private object Predicates {
     fun or(leftPredicate: Predicate, rightPredicate: Predicate): Predicate = when {
         leftPredicate == Predicate.False -> rightPredicate
         rightPredicate == Predicate.False -> leftPredicate
-        leftPredicate == Predicate.Empty -> rightPredicate
-        rightPredicate == Predicate.Empty -> leftPredicate
+        leftPredicate == Predicate.True -> Predicate.True
+        rightPredicate == Predicate.True -> Predicate.True
         else -> {
             // (a1 & a2 &.. ak) | (b1 & b2 &.. bl) = &[i=1..k, j=1..l] (ai | bj)
             val leftTerms = (leftPredicate as Conjunction).terms
@@ -261,7 +261,7 @@ private object Predicates {
             }
 
             when {
-                removedCount == resultDisjunctions.size -> Predicate.Empty
+                removedCount == resultDisjunctions.size -> Predicate.True
                 else -> {
                     if (removedCount > 0)
                         resultDisjunctions.removeAll(removedMarkerSingletonList)
@@ -275,9 +275,9 @@ private object Predicates {
     fun and(leftPredicate: Predicate, rightPredicate: Predicate): Predicate {
         if (leftPredicate == Predicate.False || rightPredicate == Predicate.False)
             return Predicate.False
-        if (leftPredicate == Predicate.Empty)
+        if (leftPredicate == Predicate.True)
             return rightPredicate
-        if (rightPredicate == Predicate.Empty)
+        if (rightPredicate == Predicate.True)
             return leftPredicate
 
         // (a | b) & (!a) = b & !a
@@ -291,7 +291,7 @@ private object Predicates {
             if (term.size == 1)
                 allSingleTerms.or(term.terms)
         }
-        if (someTermBothTrueAndFalse(allSingleTerms))
+        if (someTermBothTrueAndFalse(allSingleTerms)) // A contradicting pair of terms.
             return Predicate.False
         val allSingleTermsInverted = invertTerms(allSingleTerms)
 
@@ -337,8 +337,8 @@ private object Predicates {
     }
 
     fun invert(predicate: Predicate): Predicate = when (predicate) {
-        Predicate.False -> Predicate.Empty
-        Predicate.Empty -> Predicate.False
+        Predicate.False -> Predicate.True
+        Predicate.True -> Predicate.False
         is Conjunction -> when {
             predicate.terms.size == 1 -> {
                 val terms = mutableListOf<Disjunction>()
@@ -398,7 +398,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val typeCheckResults = mutableMapOf<IrTypeOperatorCall, TypeCheckResult>()
         try {
-            irBody.accept(TypeCheckResolver(typeCheckResults), Predicate.Empty)
+            irBody.accept(TypeCheckResolver(typeCheckResults), Predicate.True)
         } catch (t: DivergingAnalysisError) {
             context.log { "ERROR: the analysis has diverged for ${container.render()}: ${t.message}\n" }
             return
@@ -468,13 +468,13 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             var phiNodeAlias: IrValueDeclaration? = null,
             // True if a value not coming from a variable (e.g. a constant) has flowed into the phi node.
             var phiNodeHasNonVariableValue: Boolean = false,
-            var predicate: Predicate = Predicate.Empty,
+            var predicate: Predicate = Predicate.False,
             val variableAliases: MutableMap<IrVariable, IrValueDeclaration> = mutableMapOf(),
     )
 
     private data class VisitorResult(
             // The predicate after evaluating the current expression.
-            var predicate: Predicate = Predicate.Empty,
+            var predicate: Predicate = Predicate.True,
             // If the result of the current expression comes from a variable
             // (basically, IrGetValue possibly wrapped with casts/blocks etc.)
             var variable: IrValueDeclaration? = null,
@@ -485,7 +485,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
         }
 
         companion object {
-            val Nothing = VisitorResult(Predicate.False, null)
+            val Unreachable = VisitorResult(Predicate.False)
         }
     }
 
@@ -707,7 +707,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
 
         fun getFullPredicate(currentPredicate: Predicate, level: Int) =
                 usingUpperLevelPredicate(currentPredicate) {
-                    val initialPredicate: Predicate = Predicate.Empty
+                    val initialPredicate: Predicate = Predicate.True
                     upperLevelPredicates.drop(level).fold(initialPredicate) { acc, predicate ->
                         Predicates.and(acc, predicate)
                     }
@@ -734,7 +734,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                                 // Happens when a bool? variable aliases to a bool variable.
                                 NullablePredicate(
                                         ifNull = Predicate.False, // Never happens.
-                                        ifNotNull = Predicate.Empty
+                                        ifNotNull = Predicate.True
                                 )
                             }
                         }
@@ -754,11 +754,11 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
 
         private fun buildNullablePredicate(expression: IrExpression, result: VisitorResult): NullablePredicate? {
             if (!expression.type.isNullable()) {
-                result.copyFrom(expression.accept(this, Predicate.Empty))
-                return NullablePredicate(ifNull = Predicate.False, ifNotNull = Predicate.Empty)
+                result.copyFrom(expression.accept(this, Predicate.True))
+                return NullablePredicate(ifNull = Predicate.False, ifNotNull = Predicate.True)
             }
             if (expression is IrTypeOperatorCall && expression.operator == IrTypeOperator.SAFE_CAST) {
-                val (predicate, variable) = expression.argument.accept(this, Predicate.Empty)
+                val (predicate, variable) = expression.argument.accept(this, Predicate.True)
                 result.predicate = predicate
                 return if (variable == null) {
                     // Mark as unknown as an earlier loop iteration might have resolved to a variable
@@ -800,7 +800,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                     )
                 }
             }
-            result.copyFrom(expression.accept(this, Predicate.Empty))
+            result.copyFrom(expression.accept(this, Predicate.True))
             return result.variable?.let { buildNullablePredicate(it) }
         }
 
@@ -811,14 +811,14 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             expression.matchEquality()?.let { return buildEqEq(expression, it) }
 
             if ((expression as? IrConst)?.value == true) {
-                return BooleanPredicate(ifTrue = Predicate.Empty, ifFalse = Predicate.False)
+                return BooleanPredicate(ifTrue = Predicate.True, ifFalse = Predicate.False)
             }
             if ((expression as? IrConst)?.value == false) {
-                return BooleanPredicate(ifTrue = Predicate.False, ifFalse = Predicate.Empty)
+                return BooleanPredicate(ifTrue = Predicate.False, ifFalse = Predicate.True)
             }
 
             if (expression is IrTypeOperatorCall && expression.isTypeCheck()) {
-                val (predicate, variable) = expression.argument.accept(this, Predicate.Empty)
+                val (predicate, variable) = expression.argument.accept(this, Predicate.True)
                 return if (variable == null) {
                     // Mark as unknown as an earlier loop iteration might have resolved to a variable
                     // and could have had the type check computed (see KT-86948).
@@ -839,7 +839,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 }
             }
 
-            val (predicate, variable) = expression.accept(this, Predicate.Empty)
+            val (predicate, variable) = expression.accept(this, Predicate.True)
             return if (variable == null) {
                 val term = buildComplexTerm(expression)
                 BooleanPredicate(
@@ -889,9 +889,9 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             val rightIsNullConst = right.isNullConst()
             return if ((leftIsNullConst || !left.type.isNullable()) && right.type.isNullable()) {
                 val leftPredicate = if (leftIsNullConst)
-                    Predicate.Empty
+                    Predicate.True
                 else
-                    left.accept(this, Predicate.Empty).predicate
+                    left.accept(this, Predicate.True).predicate
                 val rightResult = VisitorResult()
                 val nullablePredicate = usingUpperLevelPredicate(leftPredicate) { buildNullablePredicate(right, rightResult) }
                 val result = Predicates.and(leftPredicate, rightResult.predicate)
@@ -948,7 +948,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                             leftCommonPredicate,
                             Predicates.or(nullablePredicate.ifNull, nullablePredicate.ifNotNull)
                     )
-                    val rightPredicate = usingUpperLevelPredicate(leftPredicate) { right.accept(this, Predicate.Empty).predicate }
+                    val rightPredicate = usingUpperLevelPredicate(leftPredicate) { right.accept(this, Predicate.True).predicate }
                     val fullLeftIsNullPredicate = Predicates.and(leftIsNullPredicate, rightPredicate)
                     val fullLeftIsNotNullPredicate = Predicates.and(leftIsNotNullPredicate, rightPredicate)
                     val term = buildComplexTerm(expression)
@@ -967,7 +967,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                     )
                 }
             } else {
-                val result = expression.accept(this, Predicate.Empty).predicate
+                val result = expression.accept(this, Predicate.True).predicate
                 val term = buildComplexTerm(expression)
                 return BooleanPredicate(
                         ifTrue = Predicates.and(result, Predicates.disjunctionOf(term setTo true)),
@@ -993,7 +993,8 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             var predicate = data
             for (child in children)
                 predicate = child.accept(this, predicate).predicate
-            return VisitorResult(predicate, null)
+
+            return VisitorResult(predicate)
         }
 
         override fun visitBlock(expression: IrBlock, data: Predicate): VisitorResult {
@@ -1029,7 +1030,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
             }
 
             return if (expression.type == nothingType)
-                VisitorResult.Nothing
+                VisitorResult.Unreachable
             else result
         }
 
@@ -1045,12 +1046,14 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                     +"    result = ${cfmpInfo.predicate.format(leafTerms)}"
                 }
             }
-            return VisitorResult.Nothing
+
+            return VisitorResult.Unreachable
         }
 
         override fun visitThrow(expression: IrThrow, data: Predicate): VisitorResult {
             expression.value.accept(this, data)
-            return VisitorResult.Nothing
+
+            return VisitorResult.Unreachable
         }
 
         override fun visitTry(aTry: IrTry, data: Predicate) = usingUpperLevelPredicate(data) {
@@ -1072,13 +1075,13 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 }
             }
 
-            aTry.tryResult.accept(this, Predicate.Empty)
+            aTry.tryResult.accept(this, Predicate.True)
             // Conservatively assume that the try block might throw an exception right away.
             // This means no variable change inside the try clause is visible for any of the catch clauses.
             forgetChangedVariables(aTry)
 
             for (aCatch in aTry.catches) {
-                aCatch.accept(this, Predicate.Empty)
+                aCatch.accept(this, Predicate.True)
                 // Same goes for all the catch clauses (we don't know which one is going to be executed).
                 forgetChangedVariables(aCatch)
             }
@@ -1089,13 +1092,13 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
         override fun visitBreak(jump: IrBreak, data: Predicate): VisitorResult {
             breaksCFMPInfos[jump.loop]!!.merge(VisitorResult(data))
 
-            return VisitorResult.Nothing
+            return VisitorResult.Unreachable
         }
 
         override fun visitContinue(jump: IrContinue, data: Predicate): VisitorResult {
             continuesCFMPInfos[jump.loop]!!.merge(VisitorResult(data))
 
-            return VisitorResult.Nothing
+            return VisitorResult.Unreachable
         }
 
         var loopsDepth = 0
@@ -1105,7 +1108,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 throw DivergingAnalysisError("The analysis doesn't support nested loops deeper than $MAX_LOOPS_DEPTH")
             }
 
-            var predicateAtLoopStart: Predicate = Predicate.Empty
+            var predicateAtLoopStart: Predicate = Predicate.True
             var variableAliasesAtLoopStart = variableAliases.toMutableMap()
 
             context.logMultiple {
@@ -1169,7 +1172,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                         return Predicates.and(
                                 Predicates.or(Predicates.invert(predicateAtLoopStart), prevPredicateAtLoopStart),
                                 Predicates.or(predicateAtLoopStart, Predicates.invert(predicateAtLoopStart)),
-                        ) == Predicate.Empty
+                        ) == Predicate.True
                     }
 
                     context.logMultiple {
@@ -1278,25 +1281,26 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                     return if (expression.isCast())
                         VisitorResult(
                                 Predicates.and(argumentPredicate, buildIsSubtypeOfPredicate(argumentVariable, expression.typeOperand)),
-                                argumentVariable.takeIf { // Only if no box/unbox operation is needed.
+                                variable = argumentVariable.takeIf { // Only if no box/unbox operation is needed.
                                     it.type.getInlinedClassNative() == expression.typeOperand.getInlinedClassNative()
                                 }
                         )
-                    else VisitorResult(argumentPredicate, null)
+                    else VisitorResult(argumentPredicate)
                 }
             }
-            return VisitorResult(argumentPredicate, null)
+
+            return VisitorResult(argumentPredicate)
         }
 
         override fun visitWhen(expression: IrWhen, data: Predicate): VisitorResult = usingUpperLevelPredicate(data) {
             val result = mergeControlFlow(expression) { cfmpInfo ->
-                var predicate: Predicate = Predicate.Empty
+                var predicate: Predicate = Predicate.True
                 for (branch in expression.branches) {
                     usingUpperLevelPredicate(predicate) {
                         val conditionBooleanPredicate = buildBooleanPredicate(branch.condition)
                         context.logMultiple {
                             +"WHEN: ${branch.condition.dump()}"
-                            +"    upperLevelPredicate = ${getFullPredicate(Predicate.Empty, 0).format(leafTerms)}"
+                            +"    upperLevelPredicate = ${getFullPredicate(Predicate.True, 0).format(leafTerms)}"
                             +"    condition = ${conditionBooleanPredicate.ifTrue.format(leafTerms)}"
                             +"    ~condition = ${conditionBooleanPredicate.ifFalse.format(leafTerms)}"
                             +"    result = ${cfmpInfo.predicate.format(leafTerms)}"
@@ -1388,12 +1392,12 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
         override fun visitVariable(declaration: IrVariable, data: Predicate): VisitorResult {
             val initializer = declaration.initializer
             val resultPredicate = if (initializer == null) data else setVariable(declaration, initializer, data)
-            return VisitorResult(resultPredicate, null)
+            return VisitorResult(resultPredicate)
         }
 
         override fun visitSetValue(expression: IrSetValue, data: Predicate): VisitorResult {
             val variable = expression.symbol.owner as? IrVariable ?: error("Unexpected set to ${expression.symbol.owner.render()}")
-            return VisitorResult(setVariable(variable, expression.value, data), null)
+            return VisitorResult(setVariable(variable, expression.value, data))
         }
 
         override fun visitGetValue(expression: IrGetValue, data: Predicate): VisitorResult {
@@ -1431,7 +1435,7 @@ internal class CastsOptimization(val context: NativeBackendContext) : BodyLoweri
                 VisitorResult(receiverResult?.predicate ?: data, phantomVariable)
             } else {
                 if (expression.type == nothingType)
-                    VisitorResult.Nothing
+                    VisitorResult.Unreachable
                 else super.visitCall(expression, data)
             }
         }
