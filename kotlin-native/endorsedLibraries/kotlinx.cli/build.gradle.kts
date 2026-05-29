@@ -13,6 +13,7 @@ kotlin {
             kotlin.srcDir("src/main/kotlin")
             compilerOptions {
                 freeCompilerArgs.add("-Xname-based-destructuring=complete")
+                freeCompilerArgs.add("-Xcollection-literals")
             }
         }
         commonTest {
@@ -23,6 +24,7 @@ kotlin {
             kotlin.srcDir("src/tests")
             compilerOptions {
                 freeCompilerArgs.add("-Xname-based-destructuring=complete")
+                freeCompilerArgs.add("-Xcollection-literals")
             }
         }
         jvm {

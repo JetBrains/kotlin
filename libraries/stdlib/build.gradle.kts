@@ -57,6 +57,7 @@ fun KotlinCommonCompilerOptions.mainCompilationOptions() {
     freeCompilerArgs.add("-Xdont-warn-on-error-suppression")
     freeCompilerArgs.add("-Xcontext-parameters")
     freeCompilerArgs.add("-Xname-based-destructuring=complete")
+    freeCompilerArgs.add("-Xcollection-literals")
     if (!kotlinBuildProperties.disableWerror) allWarningsAsErrors = true
 
     if (this is KotlinJvmCompilerOptions) {
@@ -633,6 +634,7 @@ kotlin {
                 }
             }
             compilerOptions.freeCompilerArgs.add("-Xname-based-destructuring=complete")
+            compilerOptions.freeCompilerArgs.add("-Xcollection-literals")
         }
     }
 }
