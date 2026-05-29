@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
-import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
@@ -70,6 +69,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     name = "JvmFrontendPipelinePhase",
     postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
 ) {
+    @Suppress("IncorrectFormatting") // Destructuring declaration reformating is weird due to KTIJ-38744
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, rootDisposable) = input
 
@@ -83,15 +83,14 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return null
         }
 
-        (val environment, val sourcesProvider = sources) =
-            createEnvironmentAndSources(
-                configuration,
-                rootDisposable,
-                targetDescription,
-            ) ?: run {
-                perfManager?.notifyPhaseFinished(PhaseType.Initialization)
-                return null
-            }
+        (val environment, val sourcesProvider = sources) = createEnvironmentAndSources(
+            configuration,
+            rootDisposable,
+            targetDescription,
+        ) ?: run {
+            perfManager?.notifyPhaseFinished(PhaseType.Initialization)
+            return null
+        }
 
         runAnalysisHandlerExtensions(environment.project, configuration)?.let {
             /*
@@ -181,7 +180,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val kotlinPackageUsageIsFine = when (configuration.useLightTree) {
             true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
-            false -> sessionsWithSources.all { (val _ = session, val sources = files) -> checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList()) }
+            false -> sessionsWithSources.all { (val _ = session, val sources = files) ->
+                checkKotlinPackageUsageForPsi(configuration, sources.asKtFilesList())
+            }
         }
 
         if (!kotlinPackageUsageIsFine) return null
@@ -258,9 +259,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
     private fun checkNotSupportedPlugins(compilerConfiguration: CompilerConfiguration): Boolean {
         val notSupportedPlugins = mutableListOf<String?>().apply {
-            compilerConfiguration.get(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS)
+            compilerConfiguration[ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS]
                 .collectIncompatiblePluginNamesTo(this, ComponentRegistrar::supportsK2)
-            compilerConfiguration.get(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS)
+            compilerConfiguration[CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS]
                 .collectIncompatiblePluginNamesTo(this, CompilerPluginRegistrar::supportsK2)
         }
 
@@ -288,7 +289,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     }
 
     private fun checkIfScriptsInCommonSources(configuration: CompilerConfiguration, ktFiles: List<KtFile>): Boolean {
-        val lastHmppModule = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)?.modules?.lastOrNull()
+        val lastHmppModule = configuration.hmppModuleStructure?.modules?.lastOrNull()
         val commonScripts = ktFiles.filter { it.isScript() && (it.isCommonSource == true || it.hmppModuleName != lastHmppModule?.name) }
         if (commonScripts.isNotEmpty()) {
             val cwd = File(".").absoluteFile
@@ -445,7 +446,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                         javaSourceRoots.packagePrefix?.let { writeAttribute("packagePrefix", it) }
                         end(depth)
                     }
-                    for (classpath in configuration.get(CONTENT_ROOTS).orEmpty()) {
+                    for (classpath in configuration.contentRoots) {
                         when (classpath) {
                             is JvmClasspathRoot -> {
                                 empty("classpath", depth)
@@ -482,8 +483,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
      * Applies [FirAnalysisHandlerExtension] instances to a project
      * @param project the project to analyze
      * @param configuration compiler configuration
-     * @return [null] if no applicable extensions were found, [true] if all applicable extensions returned [true] from [doAnalysis],
-     * [false] if any applicable extension returned [false]
+     * @return `null` if no applicable extensions were found, `true` if all applicable extensions returned `true` from [FirAnalysisHandlerExtension.doAnalysis],
+     * `false` if any applicable extension returned `false`
      *
      * @see FirAnalysisHandlerExtension.isApplicable
      * @see FirAnalysisHandlerExtension.doAnalysis
@@ -516,39 +517,39 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
 
         val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
 
-        val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
+        val jdkRelease = configuration.jdkRelease
 
         val javaModuleFinder = CliJavaModuleFinder(
             configuration.jdkHome,
             configuration,
             javaFileManager,
             project,
-            releaseTarget
+            jdkRelease
         )
 
-        val outputDirectory =
-            configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
-                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+        val outputDirectory = configuration.modules.singleOrNull()?.getOutputDirectory()
+            ?: configuration.outputDirectory?.absolutePath
 
-        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+        val contentRoots = configuration.contentRoots
 
         val classpathRootsResolver = ClasspathRootsResolver(
             PsiManager.getInstance(project),
             configuration,
-            configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
-            { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
+            additionalModules = configuration.additionalJavaModules,
+            contentRootToVirtualFile = { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
             javaModuleFinder,
-            !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
+            requireStdlibModule = !configuration.allowKotlinPackage,
             outputDirectory?.let { localFileSystem.findFileByPath(it) },
             javaFileManager,
-            releaseTarget,
+            jdkRelease,
             hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
         )
 
         (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
 
-        val [roots, singleJavaFileRoots] =
-            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+        val [roots, singleJavaFileRoots] = initialRoots.partition { (file) ->
+            file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION
+        }
 
         // REPL and kapt2 update classpath dynamically
         val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
@@ -565,7 +566,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
         )
 
-        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, enableSearchInCtSym = jdkRelease != null, perfManager)
         project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
         project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
 
@@ -581,7 +582,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 rootsIndex,
                 it.packagePartProviders,
                 SingleJavaFileRootsIndex(singleJavaFileRoots),
-                configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+                configuration.usePsiClassFilesReading,
                 perfManager,
             )
         }
@@ -612,8 +613,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         localFileSystem: VirtualFileSystem,
         jarFileSystem: VirtualFileSystem,
         configuration: CompilerConfiguration,
-    ): VirtualFile? =
-        when (root) {
+    ): VirtualFile? {
+        return when (root) {
             // TODO: find out why non-existent location is not reported for JARs, add comment or fix
             is JvmClasspathRoot ->
                 if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
@@ -628,12 +629,16 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             else ->
                 throw IllegalStateException("Unexpected root: $root")
         }
+    }
 
-    private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
-        findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+    private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? {
+        return findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+    }
 
     private fun VirtualFileSystem.findExistingRoot(
-        root: JvmContentRoot, rootDescription: String, configuration: CompilerConfiguration,
+        root: JvmContentRoot,
+        rootDescription: String,
+        configuration: CompilerConfiguration,
     ): VirtualFile? {
         return findFileByPath(root.file.absolutePath).also {
             if (it == null) {
