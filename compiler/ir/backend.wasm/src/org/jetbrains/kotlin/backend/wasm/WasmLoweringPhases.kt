@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.lower.*
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.AddContinuationToFunctionCallsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.JsSuspendFunctionsLowering
 import org.jetbrains.kotlin.ir.backend.js.lower.inline.RemoveInlineDeclarationsWithReifiedTypeParametersLowering
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
@@ -99,10 +98,11 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createObjectDeclarationLoweringPhase(context: JsCommonBackendContext): ObjectDeclarationLowering {
-    return ObjectDeclarationLowering(context,
-                                     initializeParentCompanions = true,
-                                     initializeObjectEnumParent = false,
-    )
+    return ObjectDeclarationLowering(context, initializeParentCompanions = true)
+}
+
+private fun createStaticInitializersUsageLoweringPhase(context: JsCommonBackendContext): JsStaticInitializersUsageLowering {
+    return JsStaticInitializersUsageLowering(context, initializeObjectEnumParent = false)
 }
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
@@ -167,7 +167,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EnumClassConstructorBodyTransformer,
     ::EnumEntryInstancesLowering,
     ::EnumEntryInstancesBodyLowering,
-    ::EnumClassCreateInitializerLowering,
     ::EnumEntryCreateGetInstancesFunsLowering,
     ::EnumSyntheticFunctionsAndPropertiesLowering,
 
@@ -195,6 +194,10 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::ComplexExternalDeclarationsUsageLowering,
 
     ::JsInteropFunctionsLowering,
+
+    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::JsStaticInitializersDeclarationLowering,
+    ::createStaticInitializersUsageLoweringPhase,
 
     ::EnumUsageLowering,
     ::EnumClassRemoveEntriesLowering,
@@ -245,7 +248,6 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EraseVirtualDispatchReceiverParametersTypes,
     ::WasmBridgesConstruction,
 
-    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::GenericReturnTypeLowering,
     ::UnitToVoidLowering,
 
