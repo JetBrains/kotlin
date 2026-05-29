@@ -12,15 +12,13 @@ import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
-import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
-import org.jetbrains.kotlin.codegen.ClassBuilderFactories
-import org.jetbrains.kotlin.codegen.ClassBuilderFactory
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -29,14 +27,12 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
-import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendClassResolver
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
 import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
-import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.psi.KtFile
@@ -47,8 +43,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
-    val customClassBuilderFactory = CompilerConfigurationKey.create<ClassBuilderFactory>("customClassBuilderFactory")
-
     private fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
@@ -119,9 +113,15 @@ object KotlinToJVMBytecodeCompiler {
                 } else it
             }
             // Lowerings (per module)
-            codegenInputs += runLowerings(
-                project, moduleConfiguration, moduleDescriptor, module, codegenFactory, backendInput, diagnosticsReporter,
-                firJvmBackendClassResolver,
+            codegenInputs += JvmBackendPipelinePhase.runLowerings(
+                project,
+                moduleConfiguration,
+                moduleDescriptor,
+                module,
+                codegenFactory,
+                backendInput,
+                diagnosticsReporter,
+                JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
             )
         }
 
@@ -129,13 +129,13 @@ object KotlinToJVMBytecodeCompiler {
 
         for (input in codegenInputs) {
             // Codegen (per module)
-            outputs += runCodegen(
+            outputs += JvmBackendPipelinePhase.runCodegen(
                 input,
                 input.state,
                 codegenFactory,
                 diagnosticsReporter,
                 compilerConfiguration,
-                reportDiagnosticsToMessageCollector = true,
+                reportDiagnosticsToMessageCollector = true
             )
         }
 
@@ -182,7 +182,6 @@ object KotlinToJVMBytecodeCompiler {
         val codegenFactory: JvmIrCodegenFactory,
         val backendInput: JvmIrCodegenFactory.BackendInput,
         val moduleDescriptor: ModuleDescriptor,
-        val firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
         val firJvmBackendExtension: FirJvmBackendExtension? = null,
         val mainClassFqName: FqName? = null,
     )
@@ -249,17 +248,23 @@ object KotlinToJVMBytecodeCompiler {
 
         val diagnosticsReporter = DiagnosticsCollectorImpl()
         val [codegenFactory, backendInput] = convertToIr(environment, result, diagnosticsReporter)
-        val input = runLowerings(
-            environment.project, environment.configuration, result.moduleDescriptor, module = null, codegenFactory,
-            backendInput, diagnosticsReporter,
+        val input = JvmBackendPipelinePhase.runLowerings(
+            environment.project,
+            environment.configuration,
+            result.moduleDescriptor,
+            module = null,
+            codegenFactory = codegenFactory,
+            backendInput = backendInput,
+            diagnosticsReporter = diagnosticsReporter,
+            backendClassResolver = JvmBackendClassResolverForModuleWithDependencies(result.moduleDescriptor),
         )
-        return runCodegen(
+        return JvmBackendPipelinePhase.runCodegen(
             input,
             input.state,
             codegenFactory,
             diagnosticsReporter,
             environment.configuration,
-            reportDiagnosticsToMessageCollector = true,
+            reportDiagnosticsToMessageCollector = true
         )
     }
 
@@ -285,8 +290,7 @@ object KotlinToJVMBytecodeCompiler {
         return Pair(codegenFactory, backendInput)
     }
 
-    @K1Deprecation
-    fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
+    private fun analyze(environment: KotlinCoreEnvironment): AnalysisResult? {
         val klibs: List<KotlinLibrary> = loadJvmKlibs(environment.configuration).all
 
         val sourceFiles = environment.getSourceFiles()
@@ -324,55 +328,5 @@ object KotlinToJVMBytecodeCompiler {
             analysisResult
         else
             null
-    }
-
-    internal fun runLowerings(
-        project: Project,
-        configuration: CompilerConfiguration,
-        moduleDescriptor: ModuleDescriptor,
-        module: Module?,
-        codegenFactory: JvmIrCodegenFactory,
-        backendInput: JvmIrCodegenFactory.BackendInput,
-        diagnosticsReporter: BaseDiagnosticsCollector,
-        firJvmBackendClassResolver: FirJvmBackendClassResolver? = null,
-    ): JvmIrCodegenFactory.CodegenInput {
-        val state = GenerationState(
-            project,
-            moduleDescriptor,
-            configuration,
-            builderFactory = configuration.get(customClassBuilderFactory, ClassBuilderFactories.BINARIES),
-            targetId = module?.let(::TargetId),
-            moduleName = module?.getModuleName() ?: configuration.moduleName,
-            diagnosticReporter = diagnosticsReporter,
-            jvmBackendClassResolver = firJvmBackendClassResolver ?: JvmBackendClassResolverForModuleWithDependencies(moduleDescriptor),
-        )
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        return configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            codegenFactory.invokeLowerings(state, backendInput)
-        }
-    }
-
-    internal fun runCodegen(
-        codegenInput: JvmIrCodegenFactory.CodegenInput,
-        state: GenerationState,
-        codegenFactory: JvmIrCodegenFactory,
-        diagnosticsReporter: BaseDiagnosticsCollector,
-        configuration: CompilerConfiguration,
-        reportDiagnosticsToMessageCollector: Boolean,
-    ): GenerationState {
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        codegenFactory.invokeCodegen(codegenInput)
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-
-        if (reportDiagnosticsToMessageCollector) {
-            FirDiagnosticsCompilerResultsReporter.reportToMessageCollector(diagnosticsReporter, configuration)
-        }
-
-        ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
-        return state
     }
 }
