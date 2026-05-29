@@ -2412,6 +2412,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     }
 
     @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParametersWithContext.kt")
+    public void testCallableReferenceOnFunctionWithContextParametersWithContext() {
+      run("callableReferenceOnFunctionWithContextParametersWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnFunctionWithContextParametersWithContext_rhs.kt")
+    public void testCallableReferenceOnFunctionWithContextParametersWithContext_rhs() {
+      run("callableReferenceOnFunctionWithContextParametersWithContext_rhs.kt");
+    }
+
+    @Test
     @TestMetadata("callableReferenceOnFunctionWithContextParameters_rhs.kt")
     public void testCallableReferenceOnFunctionWithContextParameters_rhs() {
       run("callableReferenceOnFunctionWithContextParameters_rhs.kt");
@@ -2421,6 +2433,18 @@ public class SourceLikeResolveCandidatesFirTreeConsistencyTestGenerated extends 
     @TestMetadata("callableReferenceOnPropertyWithContextParameters.kt")
     public void testCallableReferenceOnPropertyWithContextParameters() {
       run("callableReferenceOnPropertyWithContextParameters.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParametersWithContext.kt")
+    public void testCallableReferenceOnPropertyWithContextParametersWithContext() {
+      run("callableReferenceOnPropertyWithContextParametersWithContext.kt");
+    }
+
+    @Test
+    @TestMetadata("callableReferenceOnPropertyWithContextParametersWithContext_rhs.kt")
+    public void testCallableReferenceOnPropertyWithContextParametersWithContext_rhs() {
+      run("callableReferenceOnPropertyWithContextParametersWithContext_rhs.kt");
     }
 
     @Test

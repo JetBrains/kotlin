@@ -1,7 +1,8 @@
 KtNameReferenceExpression(89,92): 'foo'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  KaSymbolResolutionSuccess:
-    symbols = [
+  KaSymbolResolutionError:
+    candidateSymbols = [
       val foo: kotlin.Boolean
     ]
+    diagnostic = ERROR<NO_CONTEXT_ARGUMENT: No context argument for 'param1: Int' found.>
