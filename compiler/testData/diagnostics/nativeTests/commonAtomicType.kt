@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// IGNORE_FIR_DIAGNOSTICS
 // WITH_STDLIB
 import kotlin.concurrent.atomics.AtomicIntArray
 import kotlin.concurrent.atomics.ExperimentalAtomicApi

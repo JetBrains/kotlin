@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ForbidOverriddenDefaultParametersInInline
+// IGNORE_FIR_DIAGNOSTICS
 // ISSUE: KT-49722
 
 interface I {

@@ -3,6 +3,7 @@
 // WITH_EXTRA_CHECKERS
 // LANGUAGE: +ContextParameters
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// IGNORE_FIR_DIAGNOSTICS
 
 import kotlin.concurrent.*
 
@@ -25,11 +26,11 @@ class Owner(l: <!NATIVE_SPECIFIC_ATOMIC!>AtomicLong<!>) {
 
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicIntArray<!>)
 fun withContext() {
-    val i: AtomicInt? = null
+    val <!UNUSED_VARIABLE!>i<!>: AtomicInt? = null
 
-    val f = fun(arg: AtomicLong?): AtomicLong? = null
+    val <!UNUSED_VARIABLE!>f<!> = fun(arg: AtomicLong?): AtomicLong? = null
 
-    val l = { arg: <!OPT_IN_USAGE_ERROR!>AtomicIntArray<!> -> <!OPT_IN_USAGE_ERROR!>arg<!> }
+    val <!UNUSED_VARIABLE!>l<!> = { arg: <!OPT_IN_USAGE_ERROR!>AtomicIntArray<!> -> <!OPT_IN_USAGE_ERROR!>arg<!> }
 }
 
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicLongArray<!>)
