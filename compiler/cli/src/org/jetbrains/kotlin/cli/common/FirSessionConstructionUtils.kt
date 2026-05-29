@@ -160,7 +160,7 @@ private fun <F> prepareKlibSessions(
                 configuration,
             )
         },
-        createSourceSession = { _, moduleData, isForLeafHmppModule, sessionConfigurator ->
+        createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
             sessionFactory.createSourceSession(
                 moduleData,
                 extensionRegistrars,
@@ -192,7 +192,7 @@ fun <F> prepareMetadataSessions(
     resolvedLibraries: List<KotlinLibrary>,
     isCommonSource: (F) -> Boolean,
     fileBelongsToModule: (F, String) -> Boolean,
-    createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
+    incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<F>> {
     val packagePartProvider = projectEnvironment.getPackagePartProvider(librariesScope) as PackageAndMetadataPartProvider
     val languageVersionSettings = configuration.languageVersionSettings
@@ -236,11 +236,11 @@ fun <F> prepareMetadataSessions(
                 context,
             )
         },
-        createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
+        createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
             sessionFactory.createSourceSession(
                 moduleData,
                 projectEnvironment,
-                incrementalCompilationContext = createProviderAndScopeForIncrementalCompilation(moduleFiles),
+                incrementalCompilationContext,
                 extensionRegistrars,
                 configuration,
                 context,
@@ -253,13 +253,12 @@ fun <F> prepareMetadataSessions(
 
 // ---------------------------------------------------- Implementation ----------------------------------------------------
 
-fun interface FirSessionProducer<F> {
+fun interface FirSessionProducer {
     /**
      * @param isForLeafHmppModule could be set to true only for leaf modules in HMPP hierarchies
      * in case if HMPP compilation scheme is enabled
      */
     fun createSession(
-        files: List<F>,
         moduleData: FirModuleData,
         isForLeafHmppModule: Boolean,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
@@ -284,7 +283,7 @@ object SessionConstructionUtils {
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
         createSharedLibrarySession: () -> FirSession,
         createLibrarySession: (sharedLibrarySession: FirSession) -> FirSession,
-        createSourceSession: FirSessionProducer<F>,
+        createSourceSession: FirSessionProducer,
         additionalProvidersForMetadataLibrarySessionsInHmppMode: AdditionalProvidersSupplier? = null,
     ): List<SessionWithSources<F>> {
         val languageVersionSettings = configuration.languageVersionSettings
@@ -355,7 +354,7 @@ object SessionConstructionUtils {
         lastModuleData: FirModuleData,
         targetPlatform: TargetPlatform,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
-        createSourceSession: FirSessionProducer<F>,
+        createSourceSession: FirSessionProducer,
     ): SessionWithSources<F> =
         createSingleSession(
             scripts, Name.identifier("${rootModuleName.asString()}-scripts"),
@@ -376,7 +375,7 @@ object SessionConstructionUtils {
         libraryList: DependencyListForCliModule,
         targetPlatform: TargetPlatform,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
-        sourceSessionProducer: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer,
     ): SessionWithSources<F> {
         val platformModuleData = FirSourceModuleData(
             rootModuleName,
@@ -386,7 +385,7 @@ object SessionConstructionUtils {
             targetPlatform,
         )
 
-        val session = sourceSessionProducer.createSession(files, platformModuleData, isForLeafHmppModule = false) {
+        val session = sourceSessionProducer.createSession(platformModuleData, isForLeafHmppModule = false) {
             sessionConfigurator()
             useCheckers(CliOnlyLanguageVersionSettingsCheckers)
         }
@@ -400,7 +399,7 @@ object SessionConstructionUtils {
         targetPlatform: TargetPlatform,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         isCommonSource: (F) -> Boolean,
-        sourceSessionProducer: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer,
     ): List<SessionWithSources<F>> {
         val commonModuleData = FirSourceModuleData(
             Name.identifier("${rootModuleName.asString()}-common"),
@@ -427,13 +426,11 @@ object SessionConstructionUtils {
         }
 
         val commonSession = sourceSessionProducer.createSession(
-            commonFiles,
             commonModuleData,
             isForLeafHmppModule = false,
             sessionConfigurator
         )
         val platformSession = sourceSessionProducer.createSession(
-            platformFiles,
             platformModuleData,
             isForLeafHmppModule = false
         ) {
@@ -457,7 +454,7 @@ object SessionConstructionUtils {
         targetPlatform: TargetPlatform,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         fileBelongsToModule: (F, String) -> Boolean,
-        createFirSession: FirSessionProducer<F>,
+        createFirSession: FirSessionProducer,
     ): List<SessionWithSources<F>> {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
 
@@ -499,7 +496,7 @@ object SessionConstructionUtils {
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
         fileBelongsToModule: (F, String) -> Boolean,
         createMetadataSessionFactoryContextForHmppCommonLibrarySession: () -> AbstractFirMetadataSessionFactory.Context,
-        createFirSession: FirSessionProducer<F>,
+        createFirSession: FirSessionProducer,
         additionalProvidersForMetadataLibrarySessions: AdditionalProvidersSupplier?,
     ): List<SessionWithSources<F>> {
         val moduleDataForHmppModule = LinkedHashMap<HmppCliModule, FirModuleData>()
@@ -584,7 +581,7 @@ object SessionConstructionUtils {
         moduleDataForHmppModule: LinkedHashMap<HmppCliModule, FirModuleData>,
         files: List<F>,
         fileBelongsToModule: (F, String) -> Boolean,
-        sourceSessionProducer: FirSessionProducer<F>,
+        sourceSessionProducer: FirSessionProducer,
         sessionConfigurator: FirSessionConfigurator.() -> Unit,
     ): List<SessionWithSources<F>> {
         return hmppModuleStructure.modules.mapIndexed { i, module ->
@@ -592,7 +589,6 @@ object SessionConstructionUtils {
             val sources = files.filter { fileBelongsToModule(it, module.name) }
             val isLeafModule = i == hmppModuleStructure.modules.lastIndex
             val session = sourceSessionProducer.createSession(
-                sources,
                 moduleData,
                 isForLeafHmppModule = isLeafModule
             ) {

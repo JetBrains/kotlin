@@ -91,7 +91,7 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
             isCommonSource = { false },
             isScript = { false },
             fileBelongsToModule = { _, _ -> false },
-            createProviderAndScopeForIncrementalCompilation = { null }
+            incrementalCompilationContext = null,
         )
     }
 

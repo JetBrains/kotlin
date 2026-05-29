@@ -147,9 +147,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             isCommonSource = sources.isCommonSourceForLt,
             isScript = { ((it as? KtPsiSourceFile)?.psiFile as? KtFile)?.isScript() == true },
             fileBelongsToModule = sources.fileBelongsToModuleForLt,
-            createProviderAndScopeForIncrementalCompilation = { _ ->
-                incrementalCompilationContext
-            }
+            incrementalCompilationContext,
         )
 
         val countFilesAndLines = if (perfManager == null) null else perfManager::addSourcesStats
@@ -297,7 +295,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         isCommonSource: (F) -> Boolean,
         isScript: (F) -> Boolean,
         fileBelongsToModule: (F, String) -> Boolean,
-        createProviderAndScopeForIncrementalCompilation: (List<F>) -> IncrementalCompilationContext?,
+        incrementalCompilationContext: IncrementalCompilationContext?,
     ): List<SessionWithSources<F>> {
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources()
@@ -336,7 +334,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                 )
             },
-            createSourceSession = { moduleFiles, moduleData, isForLeafHmppModule, sessionConfigurator ->
+            createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     javaSourcesScope,
@@ -350,10 +348,9 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                         if (firJvmIncrementalCompilationSymbolProvidersIsInitialized) firJvmIncrementalCompilationSymbolProviders
                         else {
                             firJvmIncrementalCompilationSymbolProvidersIsInitialized = true
-                            createProviderAndScopeForIncrementalCompilation(moduleFiles)
-                                ?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
-                                    firJvmIncrementalCompilationSymbolProviders = it
-                                }
+                            incrementalCompilationContext?.createSymbolProviders(session, moduleData, projectEnvironment)?.also {
+                                firJvmIncrementalCompilationSymbolProviders = it
+                            }
                         }
                     },
                     extensionRegistrars,
