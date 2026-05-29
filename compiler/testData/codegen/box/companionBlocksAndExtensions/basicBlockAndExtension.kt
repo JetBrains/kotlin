@@ -1,9 +1,8 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // DUMP_KLIB_ABI: DEFAULT
 // DUMP_IR
-// IGNORE_BACKEND: JS_IR, JS_IR_ES6, WASM, WASM_JS, WASM_WASI
+// IGNORE_BACKEND: WASM, WASM_JS, WASM_WASI
 // Notes:
-// JS compBlockVal is undefined
 // WASM dereferencing a null pointer
 
 class A {

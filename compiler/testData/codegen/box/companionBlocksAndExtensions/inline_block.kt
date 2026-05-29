@@ -1,9 +1,8 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
 // DUMP_KLIB_ABI: DEFAULT
-// IGNORE_BACKEND: WASM_JS, WASM_WASI, JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: WASM_JS, WASM_WASI
 // Notes:
 // WASM gets 0 from A.compBlockValI instead of 1
-// JS fails because static vals are undefined
 
 
 class A {
