@@ -12,6 +12,7 @@ module kotlin.stdlib {
     exports kotlin.coroutines;
     exports kotlin.coroutines.cancellation;
     exports kotlin.coroutines.intrinsics;
+    exports kotlin.coroutines.jvm;
     exports kotlin.coroutines.jvm.internal;
     exports kotlin.enums;
     exports kotlin.io;
@@ -55,4 +56,6 @@ module kotlin.stdlib {
     opens kotlin.internal to kotlin.reflect;
     opens kotlin.ranges to kotlin.reflect;
     opens kotlin.reflect to kotlin.reflect;
+
+    uses kotlin.coroutines.jvm.DebugProbes;
 }
