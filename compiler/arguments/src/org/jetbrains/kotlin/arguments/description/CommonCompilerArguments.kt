@@ -290,18 +290,6 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
-        name = "Xdirect-class-inheritors"
-        description = "Enable experimental direct class inheritors resolution.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        additionalAnnotations(Enables(LanguageFeature.DirectClassInheritors))
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v2_4_0,
-        )
-    }
-
-    compilerArgument {
         name = "Xinline-classes"
         description = "Enable experimental inline classes.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

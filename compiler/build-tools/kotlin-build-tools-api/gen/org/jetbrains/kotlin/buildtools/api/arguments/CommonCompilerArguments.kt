@@ -276,16 +276,6 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_DETAILED_PERF", KotlinReleaseVersion(2, 3, 0))
 
     /**
-     * Enable experimental direct class inheritors resolution.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_DIRECT_CLASS_INHERITORS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("X_DIRECT_CLASS_INHERITORS", KotlinReleaseVersion(2, 4, 0))
-
-    /**
      * Don't enable the scripting plugin by default.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
