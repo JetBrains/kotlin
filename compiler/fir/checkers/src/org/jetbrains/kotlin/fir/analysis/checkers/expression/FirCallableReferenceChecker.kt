@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
+import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -50,7 +51,6 @@ object FirCallableReferenceChecker : FirCallableReferenceAccessChecker(MppChecke
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
-// See FE 1.0 [DoubleColonExpressionResolver#checkReferenceIsToAllowedMember]
     private fun checkReferenceIsToAllowedMember(
         referredSymbol: FirBasedSymbol<*>,
         source: KtSourceElement,
@@ -64,7 +64,7 @@ object FirCallableReferenceChecker : FirCallableReferenceAccessChecker(MppChecke
                 reporter.reportOn(source, FirErrors.EXTENSION_IN_CLASS_REFERENCE_NOT_ALLOWED, referredSymbol)
             }
 
-            if (referredSymbol.hasContextParameters && LanguageFeature.ContextParameters.isEnabled()) {
+            if (referredSymbol.hasContextParameters && LanguageFeature.ContextParameters.isEnabled() && LanguageFeature.CallableReferencesToContextual.isDisabled()) {
                 reporter.reportOn(source, FirErrors.CALLABLE_REFERENCE_TO_CONTEXTUAL_DECLARATION, referredSymbol)
             }
         }
