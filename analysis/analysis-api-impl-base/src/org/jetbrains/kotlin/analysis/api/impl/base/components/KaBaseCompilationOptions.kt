@@ -35,7 +35,7 @@ class KaBaseCompilationOptions(
     val jvmExecutionStack: Sequence<PsiElement?>?,
     val jvmOutputAsmListing: Boolean,
 ) : KaCompilationOptions {
-    fun modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions {
+    fun modify(init: KaCompilationOptionsBuilder.() -> Unit): KaCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptionsBuilder(token, configuration.copy()).apply {
             target?.let { originalTarget ->
                 target(originalTarget)
@@ -73,7 +73,7 @@ class KaBaseCompilationOptionsBuilder(
     private var jvmExecutionStackValue: Sequence<PsiElement?>? = null
     private var jvmOutputAsmListingValue: Boolean = false
 
-    fun build(): KaBaseCompilationOptions {
+    fun build(): KaBaseCompilationOptions = withValidityAssertion {
         return KaBaseCompilationOptions(
             token = token,
             configuration = configuration,
