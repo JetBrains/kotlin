@@ -61,7 +61,7 @@ open class LowLevelFirAnalyzerFacade(
 }
 
 class AnalysisApiFirDiagnosticCollectorService(testServices: TestServices) : FirDiagnosticCollectorService(testServices) {
-    override fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+    override fun computeDiagnostics(info: FirOutputArtifact): DiagnosticsMap {
         val result = listMultimapOf<FirFile, DiagnosticWithKmpCompilationMode>()
         for (part in info.partsForDependsOnModules) {
             val facade = part.firAnalyzerFacade
