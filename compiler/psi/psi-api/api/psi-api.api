@@ -316,8 +316,9 @@ public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocName : org/jetbrains/k
 	public final fun getQualifier ()Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocName;
 }
 
-public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocSection : org/jetbrains/kotlin/kdoc/psi/impl/KDocTag, com/intellij/psi/ContributedReferenceHost {
+public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocSection : org/jetbrains/kotlin/kdoc/psi/impl/KDocTag, com/intellij/psi/ContributedReferenceHost, com/intellij/psi/PsiLanguageInjectionHost {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
+	public fun createLiteralTextEscaper ()Lcom/intellij/psi/LiteralTextEscaper;
 	public final fun findTagByName (Ljava/lang/String;)Lorg/jetbrains/kotlin/kdoc/psi/impl/KDocTag;
 	public final fun findTagsByName (Ljava/lang/String;)Ljava/util/List;
 	public fun getContent ()Ljava/lang/String;
@@ -325,6 +326,8 @@ public final class org/jetbrains/kotlin/kdoc/psi/impl/KDocSection : org/jetbrain
 	public fun getReference ()Lcom/intellij/psi/PsiReference;
 	public fun getReferences ()[Lcom/intellij/psi/PsiReference;
 	public fun getSubjectName ()Ljava/lang/String;
+	public fun isValidHost ()Z
+	public fun updateText (Ljava/lang/String;)Lcom/intellij/psi/PsiLanguageInjectionHost;
 }
 
 public class org/jetbrains/kotlin/kdoc/psi/impl/KDocTag : org/jetbrains/kotlin/kdoc/psi/impl/KDocElementImpl {

@@ -18,8 +18,12 @@ package org.jetbrains.kotlin.kdoc.psi.impl
 
 import com.intellij.lang.ASTNode
 import com.intellij.psi.ContributedReferenceHost
+import com.intellij.psi.LiteralTextEscaper
+import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.PsiReference
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
+import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 /**
@@ -28,7 +32,7 @@ import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
  * can have sections for the class itself, its primary constructor and each of the
  * properties defined in the primary constructor.
  */
-class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost {
+class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost, PsiLanguageInjectionHost {
     /**
      * Returns the name of the section (the name of the doc tag introducing the section,
      * or null for the default section).
@@ -55,4 +59,16 @@ class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost {
     override fun getReferences(): Array<out PsiReference?> {
         return KotlinReferenceProvidersService.getReferencesFromProviders(this)
     }
+
+    override fun isValidHost(): Boolean = true
+
+    override fun updateText(text: String): PsiLanguageInjectionHost {
+        val factory = KtPsiFactory(project)
+        val text = factory.createComment("/**\n$text\n*/")
+        val snippet = PsiTreeUtil.findChildOfType<KDocSection?>(text, KDocSection::class.java)
+        return snippet as? PsiLanguageInjectionHost ?: this
+    }
+
+    override fun createLiteralTextEscaper(): LiteralTextEscaper<out PsiLanguageInjectionHost> =
+        LiteralTextEscaper.createSimple(this, false)
 }
