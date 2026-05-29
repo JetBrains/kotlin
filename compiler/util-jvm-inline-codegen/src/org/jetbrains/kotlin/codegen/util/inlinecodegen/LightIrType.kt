@@ -102,8 +102,8 @@ data class LightIrType(
         return Base64.encode(bytes)
     }
 
-    fun reify(mapping: Map<String, LightIrType>): LightIrType {
-        (this.classifier as? Classifier.TypeParameter)?.name?.let { mapping[it] }?.let { parameterValue ->
+    fun reify(mapping: Map<Int, LightIrType>): LightIrType {
+        (this.classifier as? Classifier.TypeParameter)?.index?.let { mapping[it] }?.let { parameterValue ->
             return if (nullable) parameterValue.markNullable() else parameterValue
         }
 

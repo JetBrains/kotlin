@@ -137,7 +137,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
 
         maxStackSize = 0
         val result = ReifiedTypeParametersUsages()
-        var toLightIrTypeMapping: Map<String, LightIrType>? = null
+        var toLightIrTypeMapping: Map<Int, LightIrType>? = null
         for (insn in node.instructions.toArray()) {
             if (isOperationReifiedMarker(insn)) {
                 val newNames = processReifyMarker(insn as MethodInsnNode, node)
@@ -147,7 +147,7 @@ class ReifiedTypeInliner<KT : KotlinTypeMarker>(
             } else if (insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall) {
                 if (toLightIrTypeMapping == null) {
                     toLightIrTypeMapping =
-                        parametersMapping?.entries.orEmpty().associate { (k, v) -> k to parametersMapping!!.mapTypeToLightIrType(v.type)!! }
+                        parametersMapping?.values.orEmpty().associate { it.index to parametersMapping!!.mapTypeToLightIrType(it.type)!! }
                 }
                 val specializedTypeParameters =
                     LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(toLightIrTypeMapping) }
@@ -400,16 +400,17 @@ class TypeParameterMappings<KT : KotlinTypeMarker>(
 ) {
     private val mappingsByName = hashMapOf<String, TypeParameterMapping<KT>>()
 
-    internal val entries: Set<Map.Entry<String, TypeParameterMapping<KT>>>
-        get() = mappingsByName.entries
+    internal val values: Collection<TypeParameterMapping<KT>>
+        get() = mappingsByName.values
 
     init {
         with(typeSystem) {
-            for ([parameter, type] in typeArguments.entries) {
+            for ([typeParameterIndex, entry] in typeArguments.entries.withIndex()) {
+                val [parameter, type] = entry
                 val name = parameter.getName().identifier
                 val sw = BothSignatureWriter(BothSignatureWriter.Mode.TYPE)
                 mappingsByName[name] = TypeParameterMapping(
-                    type, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
+                    type, typeParameterIndex, mapType(type, sw), sw.toString(), allReified || parameter.isReified(),
                     typeSystem.extractReificationArgument(type)?.second,
                     typeSystem.extractUsedReifiedParameters(type)
                 )
@@ -427,6 +428,7 @@ class TypeParameterMappings<KT : KotlinTypeMarker>(
 
 class TypeParameterMapping<KT : KotlinTypeMarker>(
     val type: KT,
+    val index: Int,
     val asmType: Type,
     val signature: String,
     val isReified: Boolean,

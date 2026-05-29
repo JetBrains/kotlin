@@ -307,16 +307,12 @@ private fun peeholeAdapt(
             insn.isReifiedOperationMarker() -> reify(methodNode, insn as MethodInsnNode, metadata.typeParametersNames, typeParameters)
 
             insn is InvokeDynamicInsnNode && insn.isSpecBootstrapCall -> {
-                val mapping = buildMap {
-                    typeParameters.forEach { (genericIndex, typeParameterValue) ->
-                        put(metadata.typeParametersNames[genericIndex], typeParameterValue)
-                    }
-                }
                 val nestedSpecTypeParametersUsages = SpecTypeParametersUsages.decode(insn.bsmArgs[2] as String)
-                val nestedTypeParameters = LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(mapping) }
+                val nestedTypeParameters =
+                    LightIrType.decodeTypeParameters(insn.bsmArgs[3] as String).mapValues { it.value.reify(typeParameters) }
                 val descArgs = Type.getArgumentTypes(insn.desc)
                 var descReturnType = Type.getReturnType(insn.desc)
-                for ((parameterIndex, usage) in nestedSpecTypeParametersUsages.parameterGenericIndices) {
+                for ([parameterIndex, usage] in nestedSpecTypeParametersUsages.parameterGenericIndices) {
                     usage.adjustType(nestedTypeParameters)
                         ?.let { SpecializedTypeAbi.fromLightIrType(it) }
                         ?.also { descArgs[parameterIndex] = Type.getType(it.reprDesc) }
@@ -326,7 +322,7 @@ private fun peeholeAdapt(
                     ?.let { SpecializedTypeAbi.fromLightIrType(it) }
                     ?.also { descReturnType = Type.getType(it.reprDesc) }
                 insn.desc = Type.getMethodType(descReturnType, *descArgs).descriptor
-                insn.bsmArgs[3] = nestedTypeParameters.entries.joinToString("\n") { (k, v) -> "$k=${v.encode()}" }
+                insn.bsmArgs[3] = nestedTypeParameters.entries.joinToString("\n") { [k, v] -> "$k=${v.encode()}" }
             }
         }
     }
