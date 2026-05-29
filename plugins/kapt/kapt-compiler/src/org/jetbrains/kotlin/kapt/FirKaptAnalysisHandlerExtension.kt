@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.output.writeAll
-import org.jetbrains.kotlin.cli.jvm.compiler.KotlinToJVMBytecodeCompiler
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.pipeline.ConfigurationPipelineArtifact
@@ -222,7 +221,7 @@ open class FirKaptAnalysisHandlerExtension(
         // so we need to create an empty diagnostics collector once again
         val configurationForBackend = configuration.copy().apply {
             diagnosticsCollector = DiagnosticsCollectorImpl()
-            put(KotlinToJVMBytecodeCompiler.customClassBuilderFactory, builderFactory)
+            put(JvmBackendPipelinePhase.customClassBuilderFactory, builderFactory)
         }
         val backendOutput = JvmBackendPipelinePhase.executePhase(fir2IrOutput.withCompilerConfiguration(configurationForBackend))
         val generationState = backendOutput.outputs.singleOrNull() ?: return null
