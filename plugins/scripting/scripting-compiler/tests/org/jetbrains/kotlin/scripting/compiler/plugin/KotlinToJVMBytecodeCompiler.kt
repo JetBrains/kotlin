@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.addJavaSourceRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmBackendPipelinePhase.getSourceFiles
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmWriteOutputsPhase.writeOutputsIfNeeded
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolverForModuleWithDependencies
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.config.*
@@ -28,7 +30,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
 import org.jetbrains.kotlin.fir.backend.jvm.FirJvmBackendExtension
+import org.jetbrains.kotlin.idea.MainFunctionDetector
 import org.jetbrains.kotlin.ir.backend.jvm.loadJvmKlibs
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -36,7 +40,9 @@ import org.jetbrains.kotlin.load.kotlin.ModuleVisibilityManager
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
-import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
+import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
@@ -294,4 +300,33 @@ internal object KotlinToJVMBytecodeCompiler {
         else
             null
     }
+
+    private fun findMainClass(bindingContext: BindingContext, languageVersionSettings: LanguageVersionSettings, files: List<KtFile>): FqName? {
+        val mainFunctionDetector = MainFunctionDetector(bindingContext, languageVersionSettings)
+        return files.asSequence()
+            .map { file ->
+                mainFunctionDetector.findMainFunction(file)?.let { mainFunction ->
+                    if (mainFunction.isTopLevel) {
+                        JvmFileClassUtil.getFileClassInfoNoResolve(file).facadeClassFqName
+                    } else {
+                        val parent = mainFunction.getParentOfType<KtClassOrObject>(strict = true)
+                        if (parent is KtObjectDeclaration && parent.isCompanion()) {
+                            mainFunction.fqName?.parent()?.parent()
+                        } else {
+                            mainFunction.fqName?.parent()
+                        }
+                    }
+                }
+            }
+            .singleOrNull { it != null }
+    }
+
+    private fun MainFunctionDetector.findMainFunction(container: KtDeclarationContainer): KtNamedFunction? =
+        container.declarations.mapNotNull { declaration ->
+            when (declaration) {
+                is KtNamedFunction -> declaration.takeIf(::isMain)
+                is KtDeclarationContainer -> findMainFunction(declaration)
+                else -> null
+            }
+        }.singleOrNull()
 }

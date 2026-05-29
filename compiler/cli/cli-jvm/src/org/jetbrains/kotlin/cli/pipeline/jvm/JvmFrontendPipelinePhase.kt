@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
+import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
 import org.jetbrains.kotlin.cli.jvm.config.*
@@ -33,8 +33,8 @@ import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
 import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
 import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
-import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
+import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors.CheckDiagnosticCollector
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
@@ -219,7 +219,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 EnvironmentAndSources(environment, sources)
             }
             false -> {
-                val kotlinCoreEnvironment = K2JVMCompiler.createCoreEnvironment(
+                val kotlinCoreEnvironment = createCoreEnvironment(
                     rootDisposable, configuration, targetDescription
                 ) ?: return null
 
@@ -302,6 +302,37 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             return true
         }
         return false
+    }
+
+    fun createLibraryListForJvm(
+        moduleName: String,
+        configuration: CompilerConfiguration,
+        friendPaths: List<String>
+    ): DependencyListForCliModule {
+        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
+        val libraryList = DependencyListForCliModule.build(Name.identifier(moduleName)) {
+            dependencies(
+                contentRoots.mapNotNull {
+                    when (it) {
+                        is JvmClasspathRoot -> it.file.path
+                        is VirtualJvmClasspathRoot if !it.isFriend -> it.file.toNioPath().toString()
+                        else -> null
+                    }
+                }
+            )
+            friendDependencies(
+                contentRoots
+                    .filterIsInstance<VirtualJvmClasspathRoot>()
+                    .filter { it.isFriend }
+                    .map { it.file.toNioPath().toString() }
+            )
+
+            dependencies(configuration.jvmModularRoots.map { it.path })
+            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            friendDependencies(friendPaths)
+        }
+        return libraryList
     }
 
     fun <F> prepareJvmSessions(
@@ -649,6 +680,28 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
     }
+
+    private fun createCoreEnvironment(
+        rootDisposable: Disposable,
+        configuration: CompilerConfiguration,
+        targetDescription: String
+    ): KotlinCoreEnvironment? {
+        val perfManager = configuration.perfManager
+        perfManager?.targetDescription = targetDescription
+
+        if (CheckDiagnosticCollector.checkHasErrors(configuration)) return null
+
+        val environment = KotlinCoreEnvironment.createForProduction(
+            rootDisposable,
+            configuration,
+            EnvironmentConfigFiles.JVM_CONFIG_FILES
+        )
+
+        val sourceFiles = environment.getSourceFiles()
+        perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
+
+        return if (CheckDiagnosticCollector.checkHasErrors(configuration)) null else environment
+    }
 }
 
 // Pretty-printing helpers for StAX writer
@@ -674,4 +727,10 @@ private fun XMLStreamWriter.end(depth: PrettyPrintDepth) {
 private fun XMLStreamWriter.empty(name: String, depth: PrettyPrintDepth) {
     indent(depth)
     writeEmptyElement(name)
+}
+
+private fun ModuleChunk.targetDescription(): String {
+    return modules
+        .map { input -> input.getModuleName() + "-" + input.getModuleType() }
+        .let { names -> names.singleOrNull() ?: names.joinToString() }
 }
