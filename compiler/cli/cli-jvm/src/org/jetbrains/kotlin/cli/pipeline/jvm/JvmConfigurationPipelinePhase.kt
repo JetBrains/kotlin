@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.psi.PsiJavaModule
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.jvmPhases
@@ -19,8 +20,6 @@ import org.jetbrains.kotlin.cli.diagnosticFactoriesStorage
 import org.jetbrains.kotlin.cli.jvm.*
 import org.jetbrains.kotlin.cli.jvm.compiler.CompileEnvironmentUtil
 import org.jetbrains.kotlin.cli.jvm.compiler.applyModuleProperties
-import org.jetbrains.kotlin.cli.jvm.compiler.configureFromArgs
-import org.jetbrains.kotlin.cli.jvm.compiler.getBuildFilePaths
 import org.jetbrains.kotlin.cli.jvm.config.*
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
@@ -33,6 +32,7 @@ import org.jetbrains.kotlin.load.kotlin.incremental.components.IncrementalCompil
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.modules.JavaRootPath
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.io.File
@@ -184,6 +184,32 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
         }
     }
 
+    private fun ModuleBuilder.configureFromArgs(args: K2JVMCompilerArguments) {
+        args.friendPaths.forEach { addFriendDir(it) }
+        args.classpath?.split(File.pathSeparator)?.forEach { addClasspathEntry(it) }
+        args.javaSourceRoots.forEach {
+            addJavaSourceRoot(JavaRootPath(it, args.javaPackagePrefix))
+        }
+
+        val commonSources = args.commonSources.toSet()
+        // With `-script` flag, the first free arg is considered as a path to the script file and others are as script arguments
+        if (args.script) return
+        for (arg in args.freeArgs) {
+            if (arg.endsWith(JavaFileType.DOT_DEFAULT_EXTENSION)) {
+                addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
+            } else {
+                addSourceFiles(arg)
+                if (arg in commonSources) {
+                    addCommonSourceFiles(arg)
+                }
+
+                if (File(arg).isDirectory) {
+                    addJavaSourceRoot(JavaRootPath(arg, args.javaPackagePrefix))
+                }
+            }
+        }
+    }
+
     fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: File? = null) {
         val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         for (module in chunk) {
@@ -234,4 +260,12 @@ object JvmConfigurationUpdater : ConfigurationUpdater<K2JVMCompilerArguments>() 
 
         addAll(JVMConfigurationKeys.MODULES, chunk)
     }
+
+    fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<String> {
+        return if (buildFile == null) sourceFilePaths
+        else sourceFilePaths.map { path ->
+            (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
+        }
+    }
+
 }

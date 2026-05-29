@@ -6,8 +6,7 @@
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.vfs.StandardFileSystems
-import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.*
 import org.jetbrains.kotlin.backend.jvm.JvmGeneratorExtensionsImpl
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory.BackendInput
@@ -16,9 +15,9 @@ import org.jetbrains.kotlin.cli.common.diagnosticsCollector
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.moduleChunk
 import org.jetbrains.kotlin.cli.jvm.compiler.createConfigurationForModule
-import org.jetbrains.kotlin.cli.jvm.compiler.getSourceFiles
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PipelinePhase
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmConfigurationUpdater.getBuildFilePaths
 import org.jetbrains.kotlin.codegen.ClassBuilderFactories
 import org.jetbrains.kotlin.codegen.ClassBuilderFactory
 import org.jetbrains.kotlin.codegen.JvmBackendClassResolver
@@ -33,8 +32,10 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import java.io.File
 
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBackendPipelineArtifact>(
     name = "JvmBackendPipelineStep",
@@ -167,5 +168,30 @@ object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBac
 
         ProgressIndicatorAndCompilationCanceledStatus.checkCanceled()
         return state
+    }
+
+    fun Module.getSourceFiles(
+        allSourceFiles: List<KtFile>,
+        localFileSystem: VirtualFileSystem?,
+        multiModuleChunk: Boolean,
+        buildFile: File?
+    ): List<KtFile> {
+        return if (multiModuleChunk) {
+            // filter out source files from other modules
+            assert(buildFile != null) { "Compiling multiple modules, but build file is null" }
+            val [moduleSourceDirs, moduleSourceFiles] =
+                getBuildFilePaths(buildFile, getSourceFiles())
+                    .mapNotNull(localFileSystem!!::findFileByPath)
+                    .partition(VirtualFile::isDirectory)
+
+            allSourceFiles.filter { file ->
+                val virtualFile = file.virtualFile
+                virtualFile in moduleSourceFiles || moduleSourceDirs.any { dir ->
+                    VfsUtilCore.isAncestor(dir, virtualFile, true)
+                }
+            }
+        } else {
+            allSourceFiles
+        }
     }
 }
