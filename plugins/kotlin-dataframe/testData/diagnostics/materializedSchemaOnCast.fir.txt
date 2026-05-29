@@ -300,6 +300,7 @@ FILE: materializedSchemaOnCast.kt
         )
         R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|B|>()
         R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|I|>()
+        R|<local>/cities|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|NotDataSchema|>()
         ^box String(OK)
     }
     @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public final class B : R|kotlin/Any|, R|org/jetbrains/kotlinx/dataframe/api/DataRowSchema| {
@@ -309,4 +310,10 @@ FILE: materializedSchemaOnCast.kt
 
     }
     @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchema|() public abstract interface I : R|kotlin/Any| {
+    }
+    public final class NotDataSchema : R|kotlin/Any| {
+        public constructor(): R|NotDataSchema| {
+            super<R|kotlin/Any|>()
+        }
+
     }

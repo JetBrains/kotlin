@@ -17,6 +17,8 @@ fun box(): String {
     cities.<!MATERIALIZED_SCHEMA_ON_CAST("@DataSchemadata class B(    val city: String,    val name_collision: NameCollision1,    val NameCollision: Int,    val frame: List<Frame>,) {    @DataSchema    data class NameCollision1(        val coordinates: Pair<String, String>,    )    @DataSchema    data class Frame(        val a: Int,    )}")!>cast<!><B>()
 
     cities.<!MATERIALIZED_SCHEMA_ON_CAST("@DataSchemainterface I {    val city: String    val name_collision: NameCollision1    val NameCollision: Int    val frame: List<Frame>    @DataSchema    interface NameCollision1 {        val coordinates: Pair<String, String>    }    @DataSchema    interface Frame {        val a: Int    }}")!>cast<!><I>()
+
+    cities.<!CAST_TARGET_WARNING("NotDataSchema"), MATERIALIZED_SCHEMA_ON_CAST("@DataSchemadata class NotDataSchema(    val city: String,    val name_collision: NameCollision1,    val NameCollision: Int,    val frame: List<Frame>,) {    @DataSchema    data class NameCollision1(        val coordinates: Pair<String, String>,    )    @DataSchema    data class Frame(        val a: Int,    )}")!>cast<!><NotDataSchema>()
     return "OK"
 }
 
@@ -25,3 +27,5 @@ class B
 
 @DataSchema
 interface I
+
+class NotDataSchema
