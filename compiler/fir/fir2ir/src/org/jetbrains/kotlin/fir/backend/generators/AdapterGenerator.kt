@@ -122,31 +122,31 @@ class AdapterGenerator(
         }
     }
 
+    private inner class AdaptedCallableReferenceContext(
+        val callableReferenceAccess: FirCallableReferenceAccess,
+        val adaptedType: IrSimpleType,
+        explicitReceiverExpression: IrExpression?,
+    ) {
+        val firAdaptee: FirFunction =
+            callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as FirFunction
+        val boundDispatchReceiver: IrExpression? =
+            callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = true)
+        val boundExtensionReceiver: IrExpression? =
+            callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = false)
+
+        val boundReceiver: IrExpression? get() = boundDispatchReceiver ?: boundExtensionReceiver
+        val hasBoundReceiver: Boolean get() = boundDispatchReceiver != null || boundExtensionReceiver != null
+    }
+
     internal fun generateAdaptedCallableReference(
         callableReferenceAccess: FirCallableReferenceAccess,
         explicitReceiverExpression: IrExpression?,
         adapteeSymbol: IrFunctionSymbol,
         type: IrSimpleType
     ): IrExpression {
-        val firAdaptee = callableReferenceAccess.toResolvedCallableReference()?.resolvedSymbol?.fir as? FirFunction
-        val expectedReturnType = type.arguments.last().typeOrNull
         return callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
-            val boundDispatchReceiver = callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = true)
-            val boundExtensionReceiver = callableReferenceAccess.findBoundReceiver(explicitReceiverExpression, isDispatch = false)
-
-            val irAdapterFunction = createAdapterFunctionForCallableReference(
-                callableReferenceAccess, startOffset, endOffset, firAdaptee!!, type, boundDispatchReceiver, boundExtensionReceiver
-            )
-            val irCall = createAdapteeCallForCallableReference(
-                callableReferenceAccess, firAdaptee, adapteeSymbol, irAdapterFunction, type, boundDispatchReceiver, boundExtensionReceiver
-            )
-            irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
-                if (expectedReturnType?.isUnit() == true) {
-                    statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
-                } else {
-                    statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
-                }
-            }
+            val context = AdaptedCallableReferenceContext(callableReferenceAccess, type, explicitReceiverExpression)
+            val irAdapterFunction = context.buildCallableReferenceAdapterFunction(startOffset, endOffset, adapteeSymbol)
 
             require(irAdapterFunction.typeParameters.isEmpty()) {
                 "Internal error: function adapter ${irAdapterFunction.symbol} " +
@@ -157,7 +157,7 @@ class AdapterGenerator(
                 startOffset, endOffset, type, irAdapterFunction.symbol, typeArgumentsCount = 0,
                 null, IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
             ).apply {
-                (boundDispatchReceiver ?: boundExtensionReceiver)?.let {
+                context.boundReceiver?.let {
                     arguments[0] = it
                 }
 
@@ -170,7 +170,24 @@ class AdapterGenerator(
         }
     }
 
-    @Suppress("FoldInitializerAndIfToElvis")
+    private fun AdaptedCallableReferenceContext.buildCallableReferenceAdapterFunction(
+        startOffset: Int,
+        endOffset: Int,
+        adapteeSymbol: IrFunctionSymbol,
+    ): IrSimpleFunction {
+        val irAdapterFunction = createAdapterFunctionForCallableReference(startOffset, endOffset)
+        val irCall = createAdapteeCallForCallableReference(adapteeSymbol, irAdapterFunction)
+
+        irAdapterFunction.body = IrFactoryImpl.createBlockBody(startOffset, endOffset) {
+            if (adaptedType.arguments.last().typeOrNull?.isUnit() == true) {
+                statements.add(Fir2IrImplicitCastInserter.coerceToUnitIfNeeded(irCall))
+            } else {
+                statements.add(IrReturnImpl(startOffset, endOffset, builtins.nothingType, irAdapterFunction.symbol, irCall))
+            }
+        }
+        return irAdapterFunction
+    }
+
     private fun FirCallableReferenceAccess.findBoundReceiver(
         explicitReceiverExpression: IrExpression?,
         isDispatch: Boolean
@@ -184,17 +201,12 @@ class AdapterGenerator(
         }
     }
 
-    private fun createAdapterFunctionForCallableReference(
-        callableReferenceAccess: FirCallableReferenceAccess,
+    private fun AdaptedCallableReferenceContext.createAdapterFunctionForCallableReference(
         startOffset: Int,
         endOffset: Int,
-        firAdaptee: FirFunction,
-        type: IrSimpleType,
-        boundDispatchReceiver: IrExpression?,
-        boundExtensionReceiver: IrExpression?
     ): IrSimpleFunction {
-        val returnType = type.arguments.last().typeOrNull!!
-        val parameterTypes = type.arguments.dropLast(1).map { it.typeOrNull!! }
+        val returnType = adaptedType.arguments.last().typeOrNull!!
+        val parameterTypes = adaptedType.arguments.dropLast(1).map { it.typeOrNull!! }
         val firMemberAdaptee = firAdaptee as FirMemberDeclaration
         val name = when (firAdaptee) {
             is FirConstructor -> SpecialNames.INIT
@@ -212,21 +224,20 @@ class AdapterGenerator(
             modality = Modality.FINAL,
             symbol = IrSimpleFunctionSymbolImpl(),
             isTailrec = false,
-            isSuspend = firMemberAdaptee.isSuspend || type.isSuspendFunction(),
+            isSuspend = firMemberAdaptee.isSuspend || adaptedType.isSuspendFunction(),
             isOperator = firMemberAdaptee.isOperator,
             isInfix = firMemberAdaptee.isInfix,
             isExternal = false,
         ).also { irAdapterFunction ->
             irAdapterFunction.parameters = buildList {
-                val boundReceiver = boundDispatchReceiver ?: boundExtensionReceiver
-                if (boundReceiver != null) {
+                boundReceiver?.let {
                     if (boundDispatchReceiver != null && boundExtensionReceiver != null) {
                         error("Bound callable references can't have both receivers: ${callableReferenceAccess.render()}")
                     } else {
                         this += createAdapterParameter(
                             irAdapterFunction,
                             Name.identifier("receiver"),
-                            boundReceiver.type,
+                            it.type,
                             IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                             IrParameterKind.ExtensionReceiver,
                         )
@@ -275,14 +286,9 @@ class AdapterGenerator(
     private fun IrValueDeclaration.toIrGetValue(startOffset: Int, endOffset: Int): IrGetValue =
         IrGetValueImpl(startOffset, endOffset, this.type, this.symbol)
 
-    private fun createAdapteeCallForCallableReference(
-        callableReferenceAccess: FirCallableReferenceAccess,
-        firAdaptee: FirFunction,
+    private fun AdaptedCallableReferenceContext.createAdapteeCallForCallableReference(
         adapteeSymbol: IrFunctionSymbol,
         adapterFunction: IrFunction,
-        adaptedType: IrSimpleType,
-        boundDispatchReceiver: IrExpression?,
-        boundExtensionReceiver: IrExpression?
     ): IrExpression = callableReferenceAccess.convertWithOffsets { startOffset, endOffset ->
         val substitutor = callableReferenceAccess.createConeSubstitutorFromTypeArguments(session) ?: ConeSubstitutor.Empty
         val type = substitutor.substituteOrSelf(firAdaptee.returnTypeRef.coneType).toIrType()
@@ -303,14 +309,19 @@ class AdapterGenerator(
 
         var adapterParameterIndex = 0
         var parameterShift = 0
-        if (boundDispatchReceiver != null || boundExtensionReceiver != null) {
-            val receiverParameter = adapterFunction.parameters[0]
+
+        fun passThroughParameter(origin: IrStatementOrigin?) {
+            val receiverParameter = adapterFunction.parameters[parameterShift]
             val receiverValue = IrGetValueImpl(
                 startOffset, endOffset, receiverParameter.type, receiverParameter.symbol,
-                IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE
+                origin
             )
-            irCall.arguments[0] = receiverValue
-            parameterShift = 1
+            irCall.arguments[parameterShift] = receiverValue
+            parameterShift++
+        }
+
+        if (hasBoundReceiver) {
+            passThroughParameter(IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE)
         } else if (
             callableReferenceAccess.explicitReceiver is FirResolvedQualifier &&
             (firAdaptee !is FirConstructor ||
@@ -318,12 +329,7 @@ class AdapterGenerator(
             ((firAdaptee as? FirMemberDeclaration)?.isStatic != true)
         ) {
             // Unbound callable reference 'A::foo'
-            val adaptedReceiverParameter = adapterFunction.parameters[0]
-            val adaptedReceiverValue = IrGetValueImpl(
-                startOffset, endOffset, adaptedReceiverParameter.type, adaptedReceiverParameter.symbol
-            )
-            irCall.arguments[0] = adaptedReceiverValue
-            parameterShift = 1
+            passThroughParameter(origin = null)
         }
 
         val mappedArguments = (callableReferenceAccess.calleeReference as? FirResolvedCallableReference)?.mappedArguments
@@ -602,7 +608,10 @@ class AdapterGenerator(
         if (argumentType.findSubtypeOfBasicFunctionType(session, expectedFunctionalType) == null) {
             return null
         }
+        return findInvokeSymbol(expectedFunctionalType)
+    }
 
+    internal fun findInvokeSymbol(expectedFunctionalType: ConeClassLikeType): IrSimpleFunctionSymbol? {
         return if (expectedFunctionalType.isSomeFunctionType(session)) {
             expectedFunctionalType.findBaseInvokeSymbol()
         } else {
