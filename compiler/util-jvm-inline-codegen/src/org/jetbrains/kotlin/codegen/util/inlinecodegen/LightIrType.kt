@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codegen.util.inlinecodegen
 
 import java.io.Serializable
+import kotlin.io.encoding.Base64
 
 data class LightIrType(
     val classifier: Classifier,
@@ -98,7 +99,7 @@ data class LightIrType(
             java.io.ObjectOutputStream(bos).use { it.writeObject(this) }
             bos.toByteArray()
         }
-        return java.util.Base64.getEncoder().encodeToString(bytes)
+        return Base64.encode(bytes)
     }
 
     fun reify(mapping: Map<String, LightIrType>): LightIrType {
@@ -129,7 +130,7 @@ data class LightIrType(
 
     companion object {
         fun decode(s: String): LightIrType {
-            val bytes = java.util.Base64.getDecoder().decode(s)
+            val bytes = Base64.decode(s)
             return java.io.ObjectInputStream(java.io.ByteArrayInputStream(bytes)).use { it.readObject() as LightIrType }
         }
 

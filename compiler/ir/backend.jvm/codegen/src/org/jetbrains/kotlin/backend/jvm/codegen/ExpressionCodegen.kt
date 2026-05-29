@@ -375,8 +375,7 @@ class ExpressionCodegen(
         index: Int,
         type: IrType?,
     ) {
-        specLVT.add(
-            type?.asSpecTypeParameterUsage()?.let { SpecLVTEntry(index, specLVT.size, it.genericIndex, it.nullable) })
+        specLVT.add(type?.asSpecTypeParameterUsage()?.let { SpecLVTEntry(index, specLVT.size, it) })
         mv.visitLocalVariable(name, descriptor, signature, start, end, index)
     }
 

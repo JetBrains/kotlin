@@ -182,18 +182,12 @@ private fun adaptLVT(
     metadata: JvmSpecializeMetadataValue,
     widenedSlots: WidenedSlots,
 ) {
-    var lvtIndex = 0
-    for ([varIndex, varNode] in methodNode.localVariables.withIndex()) {
-        varNode.index = widenedSlots.adjustIndex(varNode.index)
-
-        while (lvtIndex < metadata.specLVT.size && metadata.specLVT[lvtIndex].variableIndex < varIndex) lvtIndex++
-        if (lvtIndex < metadata.specLVT.size && metadata.specLVT[lvtIndex].variableIndex == varIndex) {
-            val specLocalVariable = metadata.specLVT[lvtIndex]
-            SpecTypeParametersUsages.Usage(specLocalVariable.typeParameterIndex, specLocalVariable.isNullable)
-                .adjustType(typeParameters)
-                ?.let { SpecializedTypeAbi.fromLightIrType(it) }
-                ?.also { abi -> varNode.desc = abi.reprDesc }
-        }
+    methodNode.localVariables.forEach { it.index = widenedSlots.adjustIndex(it.index) }
+    for (specLVTEntry in metadata.specLVT) {
+        specLVTEntry.typeParameterUsage
+            .adjustType(typeParameters)
+            ?.let { SpecializedTypeAbi.fromLightIrType(it) }
+            ?.also { abi -> methodNode.localVariables[specLVTEntry.lvtEntryIndex].desc = abi.reprDesc }
     }
 }
 

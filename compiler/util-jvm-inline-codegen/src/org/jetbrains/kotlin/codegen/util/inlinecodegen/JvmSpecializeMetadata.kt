@@ -47,22 +47,21 @@ data class JvmSpecializeMetadataValue(
     }
 
     private fun encodeSpecLocalVariables(): List<Int> {
-        return buildList {
-            for (entry in specLVT) {
-                add(entry.index)
-                add(entry.variableIndex)
-                add(entry.typeParameterIndex)
-                add(if (entry.isNullable) 1 else 0)
-            }
+        return specLVT.flatMap {
+            sequenceOf(
+                it.index,
+                it.lvtEntryIndex,
+                it.typeParameterUsage.genericIndex,
+                if (it.typeParameterUsage.nullable) 1 else 0
+            )
         }
     }
 }
 
 data class SpecLVTEntry(
     val index: Int,
-    val variableIndex: Int,
-    val typeParameterIndex: Int,
-    val isNullable: Boolean,
+    val lvtEntryIndex: Int,
+    val typeParameterUsage: SpecTypeParametersUsages.Usage,
 )
 
 fun MethodNode.extractJvmSpecializeMetadataValue(): JvmSpecializeMetadataValue? {
@@ -80,8 +79,7 @@ fun MethodNode.extractJvmSpecializeMetadataValue(): JvmSpecializeMetadataValue? 
         SpecLVTEntry(
             chunk[0],
             chunk[1],
-            chunk[2],
-            chunk[3] == 1,
+            SpecTypeParametersUsages.Usage(chunk[2], chunk[3] == 1),
         )
     }
 
