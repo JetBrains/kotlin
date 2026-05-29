@@ -246,7 +246,7 @@ fun PluginDataFrameSchema.renderAsKotlin(
 
 private data class Nested(val markerName: String, val cols: List<SimpleCol>)
 
-context(c: SessionHolder)
+context(sessionHolder: SessionHolder)
 private fun StringBuilder.renderMarker(
     name: String,
     cols: List<SimpleCol>,
@@ -272,7 +272,7 @@ private fun StringBuilder.renderMarker(
 
         val type = when (col) {
             is SimpleDataColumn -> {
-                val denotable = c.session.typeApproximator.approximateToSuperType(
+                val denotable = sessionHolder.session.typeApproximator.approximateToSuperType(
                     col.type.coneType,
                     TypeApproximatorConfiguration.PublicDeclaration.ApproximateLocalAndAnonymousTypes
                 ) ?: col.type.coneType
