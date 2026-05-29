@@ -1,0 +1,45 @@
+KtCallableReferenceExpression(118,123): '::foo'
+  KaApplicableCallCandidate:
+    candidate = KaCallableReferenceCall:
+      contextArguments = [
+        KaImplicitReceiverValue:
+          symbol = param1: kotlin.Int
+          type = kotlin.Int,
+        KaImplicitReceiverValue:
+          symbol = param2: kotlin.String
+          type = kotlin.String
+      ]
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = /foo(b: kotlin.Boolean): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.Boolean
+            symbol = b: kotlin.Boolean
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = [
+          KaVariableSignature:
+            name = param1
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = param1: kotlin.Int
+            contextParameters = []
+            callableId = null,
+          KaVariableSignature:
+            name = param2
+            receiverType = null
+            returnType = kotlin.String
+            symbol = param2: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        callableId = /foo
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
