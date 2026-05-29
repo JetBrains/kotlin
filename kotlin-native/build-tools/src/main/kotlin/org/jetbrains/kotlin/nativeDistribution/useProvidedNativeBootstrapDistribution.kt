@@ -21,6 +21,6 @@ internal const val PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY = "providedNativeB
  */
 fun Task.useProvidedNativeBootstrapDistribution(configure: (Provider<NativeDistribution>) -> Unit) {
     @Suppress("UNCHECKED_CAST") val distribution = project.extra.get(PROVIDED_NATIVE_BOOTSTRAP_DISTRIBUTION_KEY) as Provider<NativeDistribution>
-    inputs.file(distribution.map { it.compilerFingerprint }).withPathSensitivity(PathSensitivity.NONE)
+    inputs.file(distribution.map { it.distributionFingerprint }).withPathSensitivity(PathSensitivity.NONE)
     configure(distribution)
 }
