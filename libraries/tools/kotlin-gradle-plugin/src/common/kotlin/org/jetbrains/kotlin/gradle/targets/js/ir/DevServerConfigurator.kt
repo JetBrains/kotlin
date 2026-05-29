@@ -5,28 +5,20 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
-import com.google.gson.JsonParser
 import org.gradle.api.Action
-import org.gradle.api.file.FileVisitDetails
-import org.gradle.api.tasks.Sync
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.isMain
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget.Companion.DISTRIBUTION_TASK_NAME
 import org.jetbrains.kotlin.gradle.targets.js.ir.SimpleDistributionTask.Companion.VENDORS_FOLDER
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.kotlinNodeJsRootExtension
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import org.jetbrains.kotlin.gradle.targets.js.npm.npmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinImportMapGenerateTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
-import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
-import org.jetbrains.kotlin.gradle.utils.distsDirectory
 import org.jetbrains.kotlin.gradle.utils.domainObjectSet
 import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
-import java.io.File
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
 internal class DevServerConfigurator(
@@ -90,7 +82,8 @@ internal class DevServerConfigurator(
                             ""
                         else
                             binary.name,
-                        "Simple" + DISTRIBUTION_TASK_NAME
+                        "Simple",
+                        DISTRIBUTION_TASK_NAME,
                     )
                 ) {
                     it.mainDirectory.fileProvider(binary.linkSyncTask.flatMap { it.destinationDirectory })

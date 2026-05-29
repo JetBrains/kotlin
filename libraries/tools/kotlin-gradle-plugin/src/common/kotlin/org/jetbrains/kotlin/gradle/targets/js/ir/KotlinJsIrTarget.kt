@@ -197,14 +197,20 @@ internal constructor(
     }
 
     //region Browser
+    // Specify if webpack should be used as a bundler.
+    // It is captured on the first access to [browserLazyDelegate] and can't be changed afterwards,
+    // because the corresponding configurator registers its tasks during configuration.
+    private var useWebpack: Boolean = true
+
     private val browserLazyDelegate = lazy {
         commonLazy
         addSubTarget(KotlinBrowserJsIr::class.java) {
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(WebpackConfigurator(this))
-            if (wasmTargetType != null) {
+            if (useWebpack) {
+                subTargetConfigurators.add(WebpackConfigurator(this))
+            } else {
                 subTargetConfigurators.add(DevServerConfigurator(this))
             }
         }
@@ -212,7 +218,16 @@ internal constructor(
 
     override val browser: KotlinJsBrowserDsl by browserLazyDelegate
 
-    override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
+    override fun browser(useWebpack: Boolean, body: KotlinJsBrowserDsl.() -> Unit) {
+        if (!browserLazyDelegate.isInitialized()) {
+            this@KotlinJsIrTarget.useWebpack = useWebpack
+        } else if (this@KotlinJsIrTarget.useWebpack != useWebpack) {
+            project.logger.warn(
+                "w: Kotlin browser target '$targetName' is already configured with bundler '${this@KotlinJsIrTarget.useWebpack}'; " +
+                        "the request to use '$useWebpack' will be ignored. " +
+                        "The bundler must be specified on the first 'browser { }' call."
+            )
+        }
         body(browser)
     }
     //endregion

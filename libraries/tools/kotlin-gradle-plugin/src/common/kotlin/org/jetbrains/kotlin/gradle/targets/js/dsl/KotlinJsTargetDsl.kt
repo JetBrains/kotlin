@@ -153,7 +153,7 @@ interface KotlinJsTargetDsl :
      *
      * @see KotlinJsBrowserDsl
      */
-    fun browser() = browser { }
+    fun browser() = browser(useWebpack = true) { }
 
     /**
      * Enable 'browsers' as the execution environment for this target,
@@ -169,13 +169,60 @@ interface KotlinJsTargetDsl :
      *
      * @see KotlinJsBrowserDsl
      */
-    fun browser(body: KotlinJsBrowserDsl.() -> Unit)
+    fun browser(body: KotlinJsBrowserDsl.() -> Unit) = browser(useWebpack = true, body)
 
     /**
      * [Action] based version of [browser] above.
      */
     fun browser(fn: Action<KotlinJsBrowserDsl>) {
-        browser {
+        browser(useWebpack = true) {
+            fn.execute(this)
+        }
+    }
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The [useWebpack] parameter selects the bundler / development server used for the
+     * browser execution environment. The bundler is chosen when the `browser { }` block
+     * is configured for the first time and cannot be changed afterwards.
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    fun browser(useWebpack: Boolean) = browser(useWebpack) { }
+
+    /**
+     * Enable 'browsers' as the execution environment for this target,
+     * so the project can be used for client-side scripting in browsers.
+     *
+     * When enabled, Kotlin Gradle plugin will download and install
+     * the required environment and dependencies for running and testing
+     * in a browser.
+     *
+     * The [useWebpack] parameter selects the bundler / development server used for the
+     * browser execution environment. The bundler is chosen when the `browser { }` block
+     * is configured for the first time and cannot be changed afterwards.
+     *
+     * The target can be configured using [body].
+     *
+     * For more information, see https://kotl.in/kotlin-js-execution-environments
+     *
+     * @see KotlinJsBrowserDsl
+     */
+    fun browser(useWebpack: Boolean, body: KotlinJsBrowserDsl.() -> Unit)
+
+    /**
+     * [Action] based version of [browser] with a [useWebpack] parameter above.
+     */
+    fun browser(useWebpack: Boolean, fn: Action<KotlinJsBrowserDsl>) {
+        browser(useWebpack) {
             fn.execute(this)
         }
     }
