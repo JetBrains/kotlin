@@ -1,5 +1,0 @@
-KtCallableReferenceExpression(124,129): '::foo'
-  KaSymbolResolutionSuccess:
-    symbols = [
-      val foo: kotlin.Boolean
-    ]
