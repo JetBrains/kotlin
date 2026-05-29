@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 open class UpgradeCallableReferences(
     val context: LoweringContext,
     val upgradeSamConversions: Boolean = true,
-    val upgradeExtractedAdaptedBlocks: Boolean = false,
     val castDispatchReceiver: Boolean = true,
     val generateFakeAccessorsForReflectionProperty: Boolean = false,
 ) : FileLoweringPass {
@@ -136,28 +135,16 @@ open class UpgradeCallableReferences(
             IrStatementOrigin.LAMBDA, IrStatementOrigin.INLINE_LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
         )
 
-        // TODO delete once the lowering is moved
-        private val usedLambdas = mutableSetOf<IrFunction>()
-
-        // TODO delete once the lowering is moved
-        override fun visitClass(declaration: IrClass, data: IrDeclarationParent): IrStatement {
-            return super.visitClass(declaration, data).also { declaration.declarations.removeIf { it in usedLambdas } }
-        }
-
         private fun IrBlock.parseAdaptedBlock() : AdaptedBlock? {
             if (origin !in blockReferenceOrigins) return null
             if (statements.size != 2) return null
             val [function, reference] = statements
             return when (reference) {
                 is IrFunctionReference -> {
-                    when (function) {
-                        is IrSimpleFunction -> AdaptedBlock(function, reference, null, reference.type)
-                        is IrContainerExpression if upgradeExtractedAdaptedBlocks && function.statements.isEmpty() -> {
-                            val lambda = reference.symbol.owner as IrSimpleFunction
-                            val lambdaToAdd = if (usedLambdas.add(lambda)) lambda else lambda.deepCopyWithSymbols()
-                            AdaptedBlock(lambdaToAdd, reference, null, reference.type)
-                        }
-                        else -> null
+                    if (function is IrSimpleFunction) {
+                        AdaptedBlock(function, reference, null, reference.type)
+                    } else {
+                        null
                     }
                 }
                 is IrTypeOperatorCall -> {
