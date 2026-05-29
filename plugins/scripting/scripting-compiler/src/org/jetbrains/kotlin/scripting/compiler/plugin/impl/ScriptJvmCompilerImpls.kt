@@ -363,7 +363,6 @@ private fun doCompileWithK2(
             createContextForIncrementalCompilation(
                 configuration,
                 projectEnvironment,
-                compilerEnvironment.projectEnvironment.getSearchScopeBySourceFiles(files.map { KtPsiSourceFile(it) }),
                 emptyList(),
                 incrementalCompilationScope
             )
