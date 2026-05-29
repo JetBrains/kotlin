@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.reportPerformanceData
-import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.DATA_PATH
 import org.jetbrains.kotlin.buildtools.api.cri.CriToolchain.Companion.FILE_IDS_TO_PATHS_FILENAME
@@ -190,6 +189,15 @@ abstract class IncrementalJvmCompilerRunnerBase(
     override fun performWorkBeforeCompilation(compilationMode: CompilationMode, args: K2JVMCompilerArguments) {
         super.performWorkBeforeCompilation(compilationMode, args)
 
+        /*
+         * This is required because JVM dependencies are handled using the IJ infrastructure in the compiler, which creates
+         * one big index over all possible binaries and then allows to restrict it for callers using search scopes.
+         *
+         * So in IC one big `JvmPackagePartProvider` is created for both regular classpath and incremental classpath,
+         * which is then split into two symbol providers.
+         *
+         * When we stop using IJ for JVM dependencies traversal, we can remove this hack (OSIP-191).
+         */
         if (compilationMode is CompilationMode.Incremental) {
             args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
         }

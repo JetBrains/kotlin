@@ -344,12 +344,12 @@ private fun doCompileWithK2(
     val projectEnvironment = context.environment.toVfsBasedProjectEnvironment()
     val compilerEnvironment = ModuleCompilerEnvironment(projectEnvironment, diagnosticsReporter)
 
-    var librariesScope = projectEnvironment.getSearchScopeForProjectLibraries()
-    val incrementalCompilationScope = createIncrementalCompilationScope(
+    val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
         configuration,
         projectEnvironment,
+        previousStepsSymbolProviders = emptyList(),
         incrementalExcludesScope = null
-    )?.also { librariesScope -= it }
+    )
 
     val session = prepareJvmSessionsForScripting(
         projectEnvironment,
@@ -359,13 +359,8 @@ private fun doCompileWithK2(
         friendPaths = emptyList(),
         librariesScope,
         isScript = { false },
-        createProviderAndScopeForIncrementalCompilation = { files ->
-            createContextForIncrementalCompilation(
-                configuration,
-                projectEnvironment,
-                emptyList(),
-                incrementalCompilationScope
-            )
+        createProviderAndScopeForIncrementalCompilation = { _ ->
+            incrementalCompilationContext
         }
     ).single().session
 
