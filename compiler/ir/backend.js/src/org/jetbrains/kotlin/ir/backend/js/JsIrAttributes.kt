@@ -111,3 +111,8 @@ var IrSimpleFunction.originalCallableReferenceClass: IrClass? by irAttribute(cop
  * For anonymous classes representing callable references contains it's preceding [IrRichFunctionReference] node.
  */
 var IrClass.originalCallableReference: IrRichFunctionReference? by irAttribute(copyByDefault = false)
+
+/**
+ * For classes with initialized static members, contains a reference to a static initializer function.
+ */
+var IrClass.staticInitializer: IrSimpleFunction? by irAttribute(copyByDefault = false)
