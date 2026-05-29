@@ -15,3 +15,4 @@ final fun /usePlainArgs(kotlin/Function2<kotlin/Int, kotlin/Int, kotlin/Int>) //
 final fun /usePrimitiveArray(kotlin/Function1<kotlin/IntArray, kotlin/Int>) // /usePrimitiveArray|usePrimitiveArray(kotlin.Function1<kotlin.IntArray,kotlin.Int>){}[0]
 final fun /useStringArray(kotlin/Function1<kotlin/Array<kotlin/String>, kotlin/Unit>) // /useStringArray|useStringArray(kotlin.Function1<kotlin.Array<kotlin.String>,kotlin.Unit>){}[0]
 final fun /zap(kotlin/Array<out kotlin/String>..., kotlin/Int = ...) // /zap|zap(kotlin.Array<out|kotlin.String>...;kotlin.Int){}[0]
+final fun <#A: kotlin/Any?> /zapGeneric(kotlin/Array<out #A>..., kotlin/Int = ...) // /zapGeneric|zapGeneric(kotlin.Array<out|0:0>...;kotlin.Int){0§<kotlin.Any?>}[0]
