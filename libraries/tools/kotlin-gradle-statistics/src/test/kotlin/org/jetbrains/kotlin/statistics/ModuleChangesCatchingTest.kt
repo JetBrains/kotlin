@@ -89,7 +89,7 @@ class ModuleChangesCatchingTest {
     @Test
     fun testChecksCorrectChangingStringListMetricsVersion() {
         val actualVersionAndHash =
-            Pair(StringListMetrics.VERSION, calculateFileChecksum(STRING_METRICS_RELATIVE_PATH))
+            Pair(StringListMetrics.VERSION, calculateFileChecksum(STRING_LIST_METRICS_RELATIVE_PATH))
         assertEquals(
             STRING_LIST_METRICS_EXPECTED_VERSION_AND_HASH, actualVersionAndHash,
             errorMessage(StringListMetrics::class)
