@@ -6,20 +6,34 @@
 
 package org.jetbrains.kotlin.cli.pipeline.jvm
 
+import com.intellij.core.CoreJavaFileManager
+import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.Disposable
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.vfs.VirtualFile
+import com.intellij.openapi.vfs.VirtualFileSystem
+import com.intellij.psi.PsiManager
+import com.intellij.psi.search.GlobalSearchScope
+import com.intellij.util.io.URLUtil
 import org.jetbrains.kotlin.KtPsiSourceFile
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_ARGUMENTS_ERROR
 import org.jetbrains.kotlin.cli.CliDiagnostics.COMPILER_PLUGIN_INITIALIZATION_ERROR
+import org.jetbrains.kotlin.cli.CliDiagnostics.ROOTS_RESOLUTION_WARNING
 import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys.CONTENT_ROOTS
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.config.KotlinSourceRoot
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.createProjectEnvironment
-import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
-import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
+import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment.Companion.configureProjectEnvironment
+import org.jetbrains.kotlin.cli.jvm.config.*
+import org.jetbrains.kotlin.cli.jvm.index.JavaRoot
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesDynamicCompoundIndex
+import org.jetbrains.kotlin.cli.jvm.index.JvmDependenciesIndexImpl
+import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
+import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleFinder
+import org.jetbrains.kotlin.cli.jvm.modules.CliJavaModuleResolver
 import org.jetbrains.kotlin.cli.jvm.targetDescription
 import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase.createEnvironmentAndSources
@@ -35,10 +49,14 @@ import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.*
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
+import org.jetbrains.kotlin.load.kotlin.MetadataFinderFactory
+import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
+import org.jetbrains.kotlin.load.kotlin.VirtualFileFinderFactory
 import org.jetbrains.kotlin.modules.Module
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver
 import org.jetbrains.kotlin.resolve.multiplatform.hmppModuleName
 import org.jetbrains.kotlin.resolve.multiplatform.isCommonSource
 import org.jetbrains.kotlin.util.PhaseType
@@ -477,6 +495,154 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             .takeIf { it.isNotEmpty() }
             ?: return null
         return extensions.all { it.doAnalysis(project, configuration) }
+    }
+
+    // ----------------------- Project environment utils -----------------------
+
+    fun createProjectEnvironment(
+        configuration: CompilerConfiguration,
+        parentDisposable: Disposable,
+        configFiles: EnvironmentConfigFiles
+    ): VfsBasedProjectEnvironment {
+        setupIdeaStandaloneExecution()
+        val appEnv = KotlinCoreEnvironment.getOrCreateApplicationEnvironment(parentDisposable, configuration)
+        // TODO: get rid of projEnv too - seems that all needed components could be easily extracted
+        val projectEnvironment = KotlinCoreEnvironment.ProjectEnvironment(parentDisposable, appEnv, configuration)
+
+        projectEnvironment.configureProjectEnvironment(configuration, configFiles)
+
+        val project = projectEnvironment.project
+        val localFileSystem = projectEnvironment.environment.localFileSystem
+
+        val javaFileManager = project.getService(CoreJavaFileManager::class.java) as KotlinCliJavaFileManagerImpl
+
+        val releaseTarget = configuration.get(JVMConfigurationKeys.JDK_RELEASE)
+
+        val javaModuleFinder = CliJavaModuleFinder(
+            configuration.jdkHome,
+            configuration,
+            javaFileManager,
+            project,
+            releaseTarget
+        )
+
+        val outputDirectory =
+            configuration.get(JVMConfigurationKeys.MODULES)?.singleOrNull()?.getOutputDirectory()
+                ?: configuration.get(JVMConfigurationKeys.OUTPUT_DIRECTORY)?.absolutePath
+
+        val contentRoots = configuration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
+
+        val classpathRootsResolver = ClasspathRootsResolver(
+            PsiManager.getInstance(project),
+            configuration,
+            configuration.getList(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES),
+            { contentRootToVirtualFile(it, localFileSystem, projectEnvironment.jarFileSystem, configuration) },
+            javaModuleFinder,
+            !configuration.getBoolean(CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE),
+            outputDirectory?.let { localFileSystem.findFileByPath(it) },
+            javaFileManager,
+            releaseTarget,
+            hasKotlinSources = contentRoots.any { it is KotlinSourceRoot },
+        )
+
+        (val initialRoots = roots, val javaModules = modules) = classpathRootsResolver.convertClasspathRoots(contentRoots)
+
+        val [roots, singleJavaFileRoots] =
+            initialRoots.partition { (file) -> file.isDirectory || file.extension != JavaFileType.DEFAULT_EXTENSION }
+
+        // REPL and kapt2 update classpath dynamically
+        val rootsIndex = JvmDependenciesDynamicCompoundIndex(shouldOnlyFindFirstClass = true).apply {
+            addIndex(JvmDependenciesIndexImpl(roots))
+            indexedRoots.forEach {
+                projectEnvironment.addSourcesToClasspath(it.file)
+            }
+        }
+
+        val perfManager = configuration.perfManager
+
+        project.registerService(
+            JavaModuleResolver::class.java,
+            CliJavaModuleResolver(classpathRootsResolver.javaModuleGraph, javaModules, javaModuleFinder.systemModules.toList(), project)
+        )
+
+        val fileFinderFactory = CliVirtualFileFinderFactory(rootsIndex, releaseTarget != null, perfManager)
+        project.registerService(VirtualFileFinderFactory::class.java, fileFinderFactory)
+        project.registerService(MetadataFinderFactory::class.java, CliMetadataFinderFactory(fileFinderFactory))
+
+        project.setupHighestLanguageLevel()
+
+        return ProjectEnvironmentWithCoreEnvironmentEmulation(
+            project,
+            listOfNotNull(projectEnvironment.jarFileSystem, projectEnvironment.environment.jrtFileSystem, localFileSystem),
+            { JvmPackagePartProvider(configuration.languageVersionSettings, it) },
+            initialRoots, configuration
+        ).also {
+            javaFileManager.initialize(
+                rootsIndex,
+                it.packagePartProviders,
+                SingleJavaFileRootsIndex(singleJavaFileRoots),
+                configuration.getBoolean(JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING),
+                perfManager,
+            )
+        }
+    }
+
+    private class ProjectEnvironmentWithCoreEnvironmentEmulation(
+        project: Project,
+        knownFileSystems: List<VirtualFileSystem>,
+        getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider,
+        val initialRoots: List<JavaRoot>,
+        val configuration: CompilerConfiguration
+    ) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
+
+        val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
+
+        override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
+            return super.getPackagePartProvider(fileSearchScope).also {
+                (it as? JvmPackagePartProvider)?.run {
+                    addRoots(initialRoots, configuration)
+                    packagePartProviders += this
+                }
+            }
+        }
+    }
+
+    private fun contentRootToVirtualFile(
+        root: JvmContentRootBase,
+        localFileSystem: VirtualFileSystem,
+        jarFileSystem: VirtualFileSystem,
+        configuration: CompilerConfiguration,
+    ): VirtualFile? =
+        when (root) {
+            // TODO: find out why non-existent location is not reported for JARs, add comment or fix
+            is JvmClasspathRoot ->
+                if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
+                else localFileSystem.findExistingRoot(root, "Classpath entry", configuration)
+            is JvmModulePathRoot ->
+                if (root.file.isFile) jarFileSystem.findJarRoot(root.file)
+                else localFileSystem.findExistingRoot(root, "Java module root", configuration)
+            is JavaSourceRoot ->
+                localFileSystem.findExistingRoot(root, "Java source root", configuration)
+            is VirtualJvmClasspathRoot ->
+                root.file
+            else ->
+                throw IllegalStateException("Unexpected root: $root")
+        }
+
+    private fun VirtualFileSystem.findJarRoot(file: File): VirtualFile? =
+        findFileByPath("$file${URLUtil.JAR_SEPARATOR}")
+
+    private fun VirtualFileSystem.findExistingRoot(
+        root: JvmContentRoot, rootDescription: String, configuration: CompilerConfiguration,
+    ): VirtualFile? {
+        return findFileByPath(root.file.absolutePath).also {
+            if (it == null) {
+                configuration.report(
+                    ROOTS_RESOLUTION_WARNING,
+                    "$rootDescription points to a non-existent location: ${root.file}"
+                )
+            }
+        }
     }
 }
 
