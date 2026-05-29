@@ -11,19 +11,16 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.common.fir.reportToMessageCollector
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.jvm.compiler.*
-import org.jetbrains.kotlin.cli.jvm.compiler.legacy.pipeline.*
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmModulePathRoot
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.state.GenerationState
-import org.jetbrains.kotlin.compiler.plugin.getCompilerExtensions
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.IncrementalCompilationContext
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
@@ -34,6 +31,7 @@ import org.jetbrains.kotlin.ir.util.kotlinFqName
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name.special
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtScript
 import org.jetbrains.kotlin.resolve.jvm.extensions.PackageFragmentProviderExtension
@@ -458,7 +456,6 @@ internal fun extractResultFields(irModule: IrModuleFragment): MutableMap<FqName,
     return resultFields
 }
 
-@LegacyK2CliPipeline
 private fun prepareJvmSessionsForScripting(
     projectEnvironment: VfsBasedProjectEnvironment,
     configuration: CompilerConfiguration,
@@ -469,9 +466,18 @@ private fun prepareJvmSessionsForScripting(
     isScript: (KtFile) -> Boolean,
     incrementalCompilationContext: IncrementalCompilationContext?,
 ): List<SessionWithSources<KtFile>> {
-    val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
-    return MinimizedFrontendContext(projectEnvironment, MessageCollector.NONE, extensionRegistrars, configuration).prepareJvmSessions(
-        files, rootModuleNameAsString, friendPaths, librariesScope, isCommonSourceForPsi, isScript,
-        fileBelongsToModuleForPsi, incrementalCompilationContext
+    val libraryList = createLibraryListForJvm(rootModuleNameAsString, configuration, friendPaths)
+    val rootModuleName = special("<$rootModuleNameAsString>")
+    return JvmFrontendPipelinePhase.prepareJvmSessions(
+        files,
+        rootModuleName,
+        configuration,
+        projectEnvironment,
+        librariesScope,
+        libraryList,
+        isCommonSourceForPsi,
+        isScript,
+        fileBelongsToModuleForPsi,
+        incrementalCompilationContext,
     )
 }

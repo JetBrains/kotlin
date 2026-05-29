@@ -50,7 +50,6 @@ import java.io.File
  * This extension implements K2 kapt by invoking the compiler in the "skip bodies" / suppress-errors mode, and translating the resulting
  * in-memory class files to Java sources, correcting error types.
  */
-@OptIn(LegacyK2CliPipeline::class)
 open class FirKaptAnalysisHandlerExtension(
     private val kaptLogger: MessageCollectorBackedKaptLogger? = null,
 ) : FirAnalysisHandlerExtension() {
