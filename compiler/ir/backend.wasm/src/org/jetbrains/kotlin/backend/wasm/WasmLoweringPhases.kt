@@ -70,9 +70,6 @@ private fun createSyntheticAccessorGenerationPhase(context: LoweringContext): Sy
 private fun createUpgradeCallableReferences(context: LoweringContext): UpgradeCallableReferences {
     return UpgradeCallableReferences(
         context,
-        upgradeFunctionReferencesAndLambdas = true,
-        upgradePropertyReferences = true,
-        upgradeLocalDelegatedPropertyReferences = true,
         upgradeSamConversions = false,
     )
 }
