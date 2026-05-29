@@ -1,9 +1,9 @@
 /*
- * Copyright 2010-2022 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.cli.jvm.compiler
+package org.jetbrains.kotlin.scripting.compiler.plugin
 
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.StandardFileSystems
@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.checkKotlinPackageUsageForPsi
 import org.jetbrains.kotlin.cli.common.messages.AnalyzerWithCompilerReport
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
+import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys.JAVA_CLASSES_TRACKER
 import org.jetbrains.kotlin.cli.jvm.config.JavaSourceRoot
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
@@ -42,7 +43,7 @@ import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
-object KotlinToJVMBytecodeCompiler {
+internal object KotlinToJVMBytecodeCompiler {
     private fun compileModules(
         environment: KotlinCoreEnvironment,
         buildFile: File?,
@@ -230,42 +231,6 @@ object KotlinToJVMBytecodeCompiler {
         }
 
         return result
-    }
-
-    @Suppress("unused") // Used in ExecuteKotlinScriptMojo. To be removed (KT-71729).
-    @K1Deprecation
-    fun analyzeAndGenerate(environment: KotlinCoreEnvironment): GenerationState? {
-        val result = environment.configuration.perfManager.let {
-            it?.notifyPhaseFinished(PhaseType.Initialization)
-            it.tryMeasurePhaseTime(PhaseType.Analysis) {
-                repeatAnalysisIfNeeded(analyze(environment), environment) ?: return null
-            }
-        }
-
-        if (!result.shouldGenerateCode) return null
-
-        result.throwIfError()
-
-        val diagnosticsReporter = DiagnosticsCollectorImpl()
-        val [codegenFactory, backendInput] = convertToIr(environment, result, diagnosticsReporter)
-        val input = JvmBackendPipelinePhase.runLowerings(
-            environment.project,
-            environment.configuration,
-            result.moduleDescriptor,
-            module = null,
-            codegenFactory = codegenFactory,
-            backendInput = backendInput,
-            diagnosticsReporter = diagnosticsReporter,
-            backendClassResolver = JvmBackendClassResolverForModuleWithDependencies(result.moduleDescriptor),
-        )
-        return JvmBackendPipelinePhase.runCodegen(
-            input,
-            input.state,
-            codegenFactory,
-            diagnosticsReporter,
-            environment.configuration,
-            reportDiagnosticsToMessageCollector = true
-        )
     }
 
     private fun convertToIr(
