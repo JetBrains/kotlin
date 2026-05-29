@@ -607,7 +607,7 @@ class AdapterGenerator(
             expectedFunctionalType.findBaseInvokeSymbol()
         } else {
             expectedFunctionalType.findContributedInvokeSymbol(
-                expectedFunctionalType, shouldCalculateReturnTypesOfFakeOverrides = true
+                shouldCalculateReturnTypesOfFakeOverrides = true
             )
         }?.let {
             declarationStorage.getIrFunctionSymbol(it) as? IrSimpleFunctionSymbol
