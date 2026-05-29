@@ -43,7 +43,6 @@ import kotlin.io.path.listDirectoryEntries
 import kotlin.io.path.writeText
 import kotlin.io.readText
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 @Suppress("INVISIBLE_REFERENCE")
 const val SYNTHETIC_IMPORT_TARGET_MAGIC_NAME = GenerateSyntheticLinkageImportProject.Companion.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
@@ -355,10 +354,28 @@ internal fun addSwiftPmGitTag(
     runGit("tag", tag, repoDir = repoDir)
 }
 
-internal fun TestProject.initDefaultKmp(extra: KotlinMultiplatformExtension.() -> Unit = {}) {
+internal fun TestProject.initKmpPluginsOnly() {
     plugins {
         kotlin("multiplatform")
     }
+}
+
+internal fun TestProject.initJvmKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
+    buildScriptInjection {
+        project.applyMultiplatform {
+            jvm()
+            extra()
+        }
+    }
+}
+
+internal fun TestProject.initDefaultKmp(
+    extra: KotlinMultiplatformExtension.() -> Unit = {},
+) {
+    initKmpPluginsOnly()
     buildScriptInjection {
         project.applyMultiplatform {
             listOf(
@@ -429,30 +446,82 @@ internal fun TestProject.initSwiftPmProject(
     extra: KotlinMultiplatformExtension.() -> Unit,
 ) {
     initDefaultKmp {
-        project.tasks
-            .withType(FetchSyntheticImportProjectPackages::class.java)
-            .configureEach { task ->
-                task.additionalSwiftPackageResolveArgs.set(
-                    listOf(
-                        "--resolver-fingerprint-checking", "warn",
-                        "--cache-path", cacheDirFile.path,
-                    )
-                )
-            }
-
-        project.tasks
-            .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
-            .configureEach { task ->
-                task.additionalXcodeArgs.set(
-                    listOf(
-                        "-packageFingerprintPolicy", "warn",
-                        "-packageCachePath", cacheDirFile.path,
-                    )
-                )
-            }
-
+        configureSwiftPmTestArgs(cacheDirFile)
         extra()
     }
+}
+
+private fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
+    cacheDirFile: File,
+) {
+    project.tasks
+        .withType(FetchSyntheticImportProjectPackages::class.java)
+        .configureEach { task ->
+            task.additionalSwiftPackageResolveArgs.set(
+                listOf(
+                    "--resolver-fingerprint-checking", "warn",
+                    "--cache-path", cacheDirFile.path,
+                )
+            )
+        }
+
+    project.tasks
+        .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
+        .configureEach { task ->
+            task.additionalXcodeArgs.set(
+                listOf(
+                    "-packageFingerprintPolicy", "warn",
+                    "-packageCachePath", cacheDirFile.path,
+                )
+            )
+        }
+}
+
+internal fun TestProject.dumpTaskGraph(
+    taskName: String,
+    assertions: Set<String>.() -> Unit = {},
+): Set<String> {
+    lateinit var taskGraph: Set<String>
+
+    build(taskName, "--dry-run") {
+        taskGraph = output
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.endsWith(" SKIPPED") }
+            .map { it.removeSuffix(" SKIPPED") }
+            .filter { it.startsWith(":") }
+            .toSet()
+    }
+
+    assertions(taskGraph)
+    return taskGraph
+}
+
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : String) {
+    val taskToExclude = setOf(
+        ":kmpPartiallyResolvedDependenciesChecker",
+        ":downloadKotlinNativeDistribution",
+        ":checkKotlinGradlePluginConfigurationErrors",
+    )
+    // we also need to exlcude "right:checkKotlinGradlePluginConfigurationErrors"
+    val filteredGraph = filterNot { taskPath ->
+        taskToExclude.any { suffix ->
+            taskPath.endsWith(suffix)
+        }
+    }.toSet()
+    filteredGraph.assertExactTaskGraph(*tasks)
+}
+
+internal fun Set<String>.assertExactTaskGraph(vararg tasks : String) {
+    val expected = tasks.toSet()
+
+    val difference = (this - expected + (expected - this)).toSet()
+    assertEquals(
+        expected, this, "Executed tasks should be exactly the expected ones \n" +
+                "Expected: ${expected}\n" +
+                "Actual: ${this} \n" +
+                "Difference: ${difference}\n"
+    )
 }
 
 internal fun LockFileTestFixture.createRepo(
@@ -594,10 +663,6 @@ internal data class SwiftPmPinState(
     val branch: String? = null,
 )
 
-private val swiftPmJson = Json {
-    ignoreUnknownKeys = true
-}
-
 
 internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
     copy(pins = pins.map { it.copy(state = it.state.copy(revision = "<ignored>")) })
@@ -605,7 +670,7 @@ internal fun SwiftPmPackageResolved.ignoreRevisions(): SwiftPmPackageResolved =
 internal fun SwiftPmPackageResolved.ignoreTopLevelVersion(): SwiftPmPackageResolved =
     copy(version = -1)
 
-internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = swiftPmJson.decodeFromString(jsonString)
+internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = JsonHolder.json.decodeFromString(jsonString)
 
 // Package.resolved DTO
 
@@ -687,8 +752,10 @@ data class SwiftPackageTarget(
 
 // endregion
 
-private val appleToolJson = Json {
-    ignoreUnknownKeys = true
+private object JsonHolder {
+    val json = Json {
+        ignoreUnknownKeys = true
+    }
 }
 
 private inline fun <reified T> runAppleToolCommand(
@@ -704,7 +771,7 @@ private inline fun <reified T> runAppleToolCommand(
         "Failed to run command ${command.joinToString(" ")} at $workingDir: ${result.output}"
     }
     val jsonContent = outputFile?.readText() ?: result.output
-    return appleToolJson.decodeFromString<T>(jsonContent)
+    return JsonHolder.json.decodeFromString<T>(jsonContent)
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
@@ -1009,7 +1076,7 @@ fun TestProject.assertApplicationRunsAndObjCRuntimeDoesntEmitInStderr(
 
 fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
     val gradleMetadata = rootComponent.gradleMetadata.readText().let {
-        swiftPmJson.decodeFromString<GradleMetadata>(it)
+        JsonHolder.json.decodeFromString<GradleMetadata>(it)
     }
 
     assertEquals(

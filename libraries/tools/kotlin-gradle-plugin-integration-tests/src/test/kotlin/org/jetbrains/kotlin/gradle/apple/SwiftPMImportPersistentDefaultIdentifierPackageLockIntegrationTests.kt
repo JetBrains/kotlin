@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.FetchSyntheticImportProjectPackages
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.GenerateSyntheticLinkageImportProject
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.PackageResolvedSynchronization
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SerializeSwiftPMDependenciesMetadataForLockFiles
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.include
@@ -573,6 +574,118 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
     @OptIn(ExperimentalKotlinGradlePluginApi::class)
     @GradleTest
+    fun `jvm compilation does not materialize SwiftPM import tasks from KMP dependency with SwiftPM deps`(
+        version: GradleVersion,
+    ) {
+        val sharedProjectName = "shared"
+        val sharedRepoName = "SharedPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val sharedRepo = repoRef(sharedRepoName).also {
+                    createRepo(it.name, listOf("1.0.0"))
+                }
+
+                initSwiftPmProject(cacheDirFile) {
+                    jvm()
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$sharedProjectName"))
+                    }
+                }
+
+                val sharedProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        jvm()
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(sharedRepo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(sharedRepo.name)),
+                            )
+                        }
+                    }
+                }
+
+                include(sharedProject, sharedProjectName)
+
+                dumpTaskGraph(":compileKotlinJvm") {
+
+                    assertExactTaskGraph(
+                        ":kmpPartiallyResolvedDependenciesChecker",
+                        ":checkKotlinGradlePluginConfigurationErrors",
+                        ":shared:kmpPartiallyResolvedDependenciesChecker",
+                        ":shared:checkKotlinGradlePluginConfigurationErrors",
+                        ":shared:compileKotlinJvm",
+                        ":shared:compileJvmMainJava",
+                        ":shared:jvmProcessResources",
+                        ":shared:processJvmMainResources",
+                        ":shared:jvmMainClasses",
+                        ":shared:jvmJar",
+                        ":compileKotlinJvm"
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `identifier synchronization ignores non-Apple consumer projects when generating umbrella lock without swiftPM import block`(
+        version: GradleVersion,
+    ) {
+        val defaultIdentifier = "default"
+        val sharedProjectName = "shared"
+
+        project("empty", version) {
+            withLockFileFixture{
+
+                initJvmKmp{
+                    sourceSets.getByName("commonMain").dependencies {
+                        implementation(project(":$sharedProjectName"))
+                    }
+                }
+
+                val sharedProject = project("empty", version) {
+                    withLockFileFixture{
+                        initSwiftPmProject(cacheDirFile) {
+                            jvm()
+                        }
+                    }
+                }
+
+                include(sharedProject, sharedProjectName)
+
+                val expectedSharedGenerateUmbrellaPackageTaskName =
+                    GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(defaultIdentifier)
+
+                val expectedSharedFetchUmbrellaPackageTaskName =
+                    FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(defaultIdentifier)
+
+                build(":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
+
+                    assertTasksSkipped(
+                        ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
+                        ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
+                    )
+
+                    // umbrella generate should be picked by shared
+                    assertExactTasksInGraph(
+                        ":$sharedProjectName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":$sharedProjectName:$expectedSharedGenerateUmbrellaPackageTaskName",
+                        ":$sharedProjectName:$expectedSharedFetchUmbrellaPackageTaskName",
+                        ":$sharedProjectName:${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
+                        ":$sharedProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                    )
+                }
+
+                dumpTaskGraph(":$sharedProjectName:build")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
     fun `default identifier synchronization overwrites identifier gitignore with checkout dir`(
         version: GradleVersion,
     ) {
@@ -678,8 +791,14 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                         )
                     )
 
-                    assertTasksExecuted(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+                    assertExactTasksInGraph(
+                        ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
+                        ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
+                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}",
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
+                    )
                 }
 
                 build("fetchSyntheticImportProjectPackages", "-P${useFromVersionKey}=true") {
@@ -692,7 +811,15 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     )
 
                     assertTasksUpToDate(":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}")
-                    assertTasksAreNotInTaskGraph(":${SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME}")
+
+                    assertExactTasksInGraph(
+                        ":${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
+                        ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(identifier)}",
+                        ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(identifier)}",
+                        ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
+                        ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
+                    )
                 }
 
             }
@@ -742,7 +869,6 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
 
                 include(revenueConsumer, revenueConsumerProject)
 
-
                 build(":convertSyntheticImportProjectIntoDefFileIphoneos") {
 
                     assertTasksExecuted(
@@ -755,6 +881,123 @@ class SwiftPMImportPersistentDefaultIdentifierPackageLockIntegrationTests : KGPB
                     )
                 }
 
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `compile task in unrelated project without direct or transitive SwiftPM deps does not materialize SwiftPM import tasks`(
+        version: GradleVersion,
+    ) {
+        val rightProjectName = "right"
+        val repoName = "TestPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val repo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
+
+                initSwiftPmProject(cacheDirFile) {
+                    swiftPMDependencies {
+                        swiftPackage(
+                            url = url(repo.url),
+                            version = from("1.0.0"),
+                            products = listOf(product(repo.name)),
+                        )
+                    }
+                }
+
+                val rightProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {}
+                }
+
+                include(rightProject, rightProjectName)
+
+                dumpTaskGraph(":$rightProjectName:compileKotlinIosSimulatorArm64") {
+
+                    assertExactSwiftImportTasksInGraph(
+                        ":right:compileKotlinIosSimulatorArm64"
+                    )
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class)
+    @GradleTest
+    fun `link task in project without direct or transitive SwiftPM deps skips all SwiftPM import tasks when sibling has default identifier alignment enabled`(
+        version: GradleVersion,
+    ) {
+        val leftProjectName = "left"
+        val rightProjectName = "right"
+        val repoName = "TestPackage"
+
+        project("empty", version) {
+            withLockFileFixture {
+                val repo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
+
+                initSwiftPmProject(cacheDirFile) {}
+
+                val leftProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            swiftPackage(
+                                url = url(repo.url),
+                                version = from("1.0.0"),
+                                products = listOf(product(repo.name)),
+                            )
+                        }
+                    }
+                }
+
+                val rightProject = project("empty", version) {
+                    initSwiftPmProject(cacheDirFile) {
+                        swiftPMDependencies {
+                            packageResolvedSynchronization = PackageResolvedSynchronization.None
+                        }
+                    }
+                }
+
+                include(leftProject, leftProjectName)
+                include(rightProject, rightProjectName)
+
+                dumpTaskGraph(":$rightProjectName:linkDebugTestIosSimulatorArm64") {
+
+                    assertExactSwiftImportTasksInGraph(
+                        ":right:iosSimulatorArm64ProcessResources",
+                        ":right:computeLocalPackageDependencyInputFiles",
+                        ":right:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
+                        ":right:syncPersistedPackageResolvedToSynthetic",
+                        ":right:fetchSyntheticImportProjectPackages",
+                        ":right:syncSyntheticPackageResolvedToPersisted",
+                        ":right:convertSyntheticImportProjectIntoDefFileIphonesimulator",
+                        ":right:compileKotlinIosSimulatorArm64",
+                        ":right:iosSimulatorArm64MainKlibrary",
+                        ":right:compileTestKotlinIosSimulatorArm64",
+                        ":right:linkDebugTestIosSimulatorArm64",
+                    )
+                }
+
+                dumpTaskGraph(":$leftProjectName:linkDebugTestIosSimulatorArm64") {
+
+                    assertExactSwiftImportTasksInGraph(
+                        ":left:computeLocalPackageDependencyInputFiles",
+                        ":left:generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
+                        ":serializeSwiftPMDependenciesMetadataForLockFiles",
+                        ":left:serializeSwiftPMDependenciesMetadataForLockFiles",
+                        ":generateUmbrellaPackageIdentifierBasedResolutionForDefault",
+                        ":fetchUmbrellaPackageIdentifierForDefault",
+                        ":left:iosSimulatorArm64ProcessResources",
+                        ":left:syncPersistedPackageResolvedToSynthetic",
+                        ":left:fetchSyntheticImportProjectPackages",
+                        ":left:convertSyntheticImportProjectIntoDefFileIphonesimulator",
+                        ":left:cinteropSwiftPMImportIosSimulatorArm64",
+                        ":left:compileKotlinIosSimulatorArm64",
+                        ":left:iosSimulatorArm64MainKlibrary",
+                        ":left:compileTestKotlinIosSimulatorArm64",
+                        ":left:linkDebugTestIosSimulatorArm64",
+                    )
+                }
             }
         }
     }
