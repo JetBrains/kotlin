@@ -392,6 +392,7 @@ kotlin {
                 "jvm/builtins",
             )
             project.sourceSets["jvmMain"].java.srcDirs(*jvmSrcDirs.toTypedArray())
+            project.sourceSets["jvmMain"].resources.srcDirs("jvm/resources")
             kotlin.setSrcDirs(jvmSrcDirs)
             kotlin.exclude("kotlin/internal/InternalAnnotations.kt")
         }
