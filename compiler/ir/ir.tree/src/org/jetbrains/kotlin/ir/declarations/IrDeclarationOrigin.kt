@@ -123,6 +123,8 @@ interface IrDeclarationOrigin {
         val STUB_FOR_TYPE_SWITCH by IrDeclarationOriginImpl.Synthetic
 
         val VERSION_OVERLOAD_WRAPPER by IrDeclarationOriginImpl.Regular
+
+        val LAMBDA_EXTENSION_RECEIVER by IrDeclarationOriginImpl.Regular
     }
 
     /**

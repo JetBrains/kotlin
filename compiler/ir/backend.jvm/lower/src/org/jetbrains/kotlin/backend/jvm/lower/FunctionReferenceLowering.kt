@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -91,7 +92,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         for (parameter in expression.invokeFunction.parameters) {
             // this origin affects how name in bytecode would be generated. We need this change only for inline lambdas,
             // so let's drop it for everything else.
-            if (parameter.origin == LAMBDA_EXTENSION_RECEIVER) {
+            if (parameter.origin == IrDeclarationOrigin.LAMBDA_EXTENSION_RECEIVER) {
                 parameter.origin = IrDeclarationOrigin.DEFINED
             }
         }
