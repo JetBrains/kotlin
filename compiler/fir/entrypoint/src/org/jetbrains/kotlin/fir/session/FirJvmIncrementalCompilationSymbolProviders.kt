@@ -28,7 +28,7 @@ fun IncrementalCompilationContext.createSymbolProviders(
 ): FirJvmIncrementalCompilationSymbolProviders {
     var symbolProviderForBinariesFromIncrementalCompilation: JvmClassFileBasedSymbolProvider? = null
     var optionalAnnotationClassesProviderForBinariesFromIncrementalCompilation: OptionalAnnotationClassesProvider? = null
-    if (precompiledBinariesPackagePartProvider != null && precompiledBinariesFileScope != null) {
+    if (precompiledBinariesFileScope != null) {
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val kotlinScopeProvider = session.kotlinScopeProvider
         symbolProviderForBinariesFromIncrementalCompilation =
