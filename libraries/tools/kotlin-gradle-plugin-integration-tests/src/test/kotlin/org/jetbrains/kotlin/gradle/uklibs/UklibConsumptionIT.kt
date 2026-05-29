@@ -1456,7 +1456,7 @@ class UklibConsumptionIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, maxVersion = TestVersions.AGP.AGP_91)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_88, maxVersion = TestVersions.AGP.AGP_813)
     fun `uklib consumption - KMP androidLibrary with stub JVM variant - KT-81434`(
         version: GradleVersion,
         androidVersion: String,

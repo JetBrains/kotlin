@@ -381,7 +381,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Run test against older versions of open @Composable function")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_91, maxVersion = TestVersions.AGP.AGP_91)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @GradleTestVersions(maxVersion = TestVersions.Gradle.G_8_14) // Kotlin 1.9.2x is not compatible with Gradle 9+
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
@@ -513,7 +513,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName("Run source information test with older versions of Compose runtime")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_91, maxVersion = TestVersions.AGP.AGP_91)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
     fun testComposeSourceInformationOldRuntime(
@@ -843,7 +843,7 @@ class ComposeIT : KGPBaseTest() {
 
     @DisplayName($$"Ensure that older versions of the compiler can access the backing field of a $stable property")
     @GradleAndroidTest
-    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_91, maxVersion = TestVersions.AGP.AGP_91)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_813, maxVersion = TestVersions.AGP.AGP_813)
     @GradleTestVersions(minVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST, maxVersion = GRADLE_VERSION_FOR_STABLE_PROPERTY_TEST)
     @OtherGradlePluginTests
     @TestMetadata("composeMultiModule")
