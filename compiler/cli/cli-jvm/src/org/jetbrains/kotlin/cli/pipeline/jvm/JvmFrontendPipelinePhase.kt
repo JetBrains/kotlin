@@ -119,12 +119,12 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             }
         }
 
-        var librariesScope = environment.getSearchScopeForProjectLibraries()
-        val incrementalCompilationScope = createIncrementalCompilationScope(
+        val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
             configuration,
             environment,
+            previousStepsSymbolProviders = emptyList(),
             incrementalExcludesScope = sourceScope
-        )?.also { librariesScope -= it }
+        )
 
         val moduleName = when {
             chunk.modules.size > 1 -> chunk.modules.joinToString(separator = "+") { it.getModuleName() }
@@ -147,14 +147,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
             isCommonSource = sources.isCommonSourceForLt,
             isScript = { ((it as? KtPsiSourceFile)?.psiFile as? KtFile)?.isScript() == true },
             fileBelongsToModule = sources.fileBelongsToModuleForLt,
-            createProviderAndScopeForIncrementalCompilation = { files ->
-                val scope = environment.getSearchScopeBySourceFiles(files)
-                createContextForIncrementalCompilation(
-                    configuration,
-                    environment,
-                    previousStepsSymbolProviders = emptyList(),
-                    incrementalCompilationScope
-                )
+            createProviderAndScopeForIncrementalCompilation = { _ ->
+                incrementalCompilationContext
             }
         )
 
