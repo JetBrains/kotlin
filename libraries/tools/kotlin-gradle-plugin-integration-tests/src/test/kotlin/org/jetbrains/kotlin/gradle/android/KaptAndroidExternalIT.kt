@@ -19,6 +19,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
 
     @DisplayName("kapt works with dagger")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testDagger(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -112,6 +113,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
 
     @DisplayName("kapt works with databinding")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     open fun testDatabinding(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -150,6 +152,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
 
     @DisplayName("KT-30735: kapt works with androidx.navigation.safeargs")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testAndroidxNavigationSafeArgs(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -171,6 +174,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
 
     @DisplayName("kapt works with androidx")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testDatabindingWithAndroidX(
         gradleVersion: GradleVersion,
         agpVersion: String,

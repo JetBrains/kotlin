@@ -192,6 +192,7 @@ class SubpluginsIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("KT-39809: kapt subplugin legacy loading does not fail the build")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKotlinVersionDowngradeInSupbrojectKt39809(
         gradleVersion: GradleVersion,
         agpVersion: String,

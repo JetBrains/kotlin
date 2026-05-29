@@ -30,7 +30,10 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
     companion object {
         private val agpVersions = listOf(
             TestVersions.AGP.MIN_SUPPORTED,
-            TestVersions.AGP.MAX_SUPPORTED,
+            // AGP 9+ rejects the KMP+`com.android.library` and standalone `kotlin("android")` combinations
+            // used by the sample projects under `mppPublicationCompatibility/sampleProjects/`.
+            // Cap at the last AGP 8 release until the fixtures migrate to `com.android.kotlin.multiplatform.library`.
+            TestVersions.AGP.AGP_813,
         )
 
         private val kotlinVersions = listOf(

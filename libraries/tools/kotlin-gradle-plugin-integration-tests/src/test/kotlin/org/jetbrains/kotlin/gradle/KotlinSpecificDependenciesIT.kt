@@ -371,6 +371,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("Android: Kotlin test single dependency in unit tests")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kotlinTestSingleDependencyAndroidUnitTests(
         gradleVersion: GradleVersion,
         agpVersion: String,

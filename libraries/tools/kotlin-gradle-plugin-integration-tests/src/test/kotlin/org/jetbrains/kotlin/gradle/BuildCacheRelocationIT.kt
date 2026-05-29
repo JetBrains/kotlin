@@ -200,6 +200,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("Test relocation for Android with dagger project")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testRelocationAndroidDagger(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -229,6 +230,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @AndroidGradlePluginTests
     @DisplayName("KT-48617: Kapt ignores empty directories from Android variant")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kaptIgnoreEmptyAndroidVariant(
         gradleVersion: GradleVersion,
         agpVersion: String,

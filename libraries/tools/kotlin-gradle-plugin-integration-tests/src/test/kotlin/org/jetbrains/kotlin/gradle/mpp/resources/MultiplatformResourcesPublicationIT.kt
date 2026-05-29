@@ -18,6 +18,7 @@ class MultiplatformResourcesPublicationIT : KGPBaseTest() {
 
     @DisplayName("Multiplatform resources publication for Android target with release build type")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testAndroidReleaseResourcesPublicationInNewerAgpVersions(
         gradleVersion: GradleVersion,
         androidVersion: String,

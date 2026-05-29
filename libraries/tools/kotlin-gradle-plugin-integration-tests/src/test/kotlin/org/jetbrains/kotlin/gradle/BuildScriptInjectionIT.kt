@@ -526,12 +526,14 @@ class BuildScriptInjectionIT : KGPBaseTest() {
     }
 
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun pluginApplicationSugarAgpGroovy(
         version: GradleVersion,
         agpVersion: String,
     ) = testPluginApplicationSugarAgp("empty", version, agpVersion)
 
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun pluginApplicationSugarAgp(
         version: GradleVersion,
         agpVersion: String,

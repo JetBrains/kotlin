@@ -83,7 +83,8 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
 
     @GradleAndroidTest
     @AndroidTestVersions(
-        minVersion = TestVersions.AGP.AGP_88
+        minVersion = TestVersions.AGP.AGP_88,
+        maxVersion = TestVersions.AGP.AGP_91,
     )
     fun `kmp publication with uklibs - with stub jvm target - with KMP android library target`(
         version: GradleVersion,

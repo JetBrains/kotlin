@@ -15,6 +15,7 @@ import kotlin.io.path.*
 
 @DisplayName("KMP/Android: project compilation")
 @AndroidGradlePluginTests
+@AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
 class KotlinAndroidMppCompilationIT : KGPBaseTest() {
 
     @DisplayName("android app can depend on mpp lib")

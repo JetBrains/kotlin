@@ -297,6 +297,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
 
     @DisplayName("KT-34340: origins in classpath")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     @DisabledOnOs(OS.WINDOWS, disabledReason = "https://youtrack.jetbrains.com/issue/KTI-405")
     fun testIsolatingWithOriginsInClasspath(
         gradleVersion: GradleVersion,

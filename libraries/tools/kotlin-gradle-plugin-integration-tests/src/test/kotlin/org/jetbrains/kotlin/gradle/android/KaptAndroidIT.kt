@@ -23,6 +23,7 @@ import kotlin.io.path.writeText
 class KaptAndroidIT : KaptBaseIT() {
     @DisplayName("KT-15001")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKt15001(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -42,6 +43,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("KT-25374: kapt doesn't fail with anonymous classes with IC")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testICWithAnonymousClasses(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -75,6 +77,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("static dsl options are passed to kapt")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testStaticDslOptionsPassedToKapt(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -111,6 +114,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("KT-45532: kapt tasks shouldn't create outputs at configuration time")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kaptTasksShouldNotCreateOutputsOnConfigurationPhase(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -131,6 +135,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("KT-31127: kapt doesn't break JavaCompile when using Filer API")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun testKotlinProcessorUsingFiler(
         gradleVersion: GradleVersion,
         agpVersion: String,
@@ -301,6 +306,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
     @DisplayName("KT-55334: Kapt generate stubs and related KotlinCompile tasks are using similar -module-name value")
     @GradleAndroidTest
+    @AndroidTestVersions(maxVersion = TestVersions.AGP.AGP_813)
     fun kaptGenerateStubsModuleName(
         gradleVersion: GradleVersion,
         agpVersion: String,
