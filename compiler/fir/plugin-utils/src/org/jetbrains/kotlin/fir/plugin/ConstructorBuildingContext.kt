@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.origin
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
+import org.jetbrains.kotlin.fir.expressions.FirDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.expressions.FirEmptyArgumentList
 import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCall
 import org.jetbrains.kotlin.fir.extensions.FirExtension
@@ -135,7 +136,7 @@ public fun FirExtension.createConstructor(
         }
     }.build().also {
         if (generateDelegatedNoArgConstructorCall) {
-            it.generateNoArgDelegatingConstructorCall(session)
+            it.populateNoArgDelegatingConstructorCall(session)
         }
     }
 }
@@ -159,15 +160,19 @@ public fun FirExtension.createDefaultPrivateConstructor(
     }
 }
 
-private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSession) {
+private fun FirConstructor.populateNoArgDelegatingConstructorCall(session: FirSession) {
     val owner = returnTypeRef.coneType.toClassSymbol(session)
     requireNotNull(owner)
-    val delegatingConstructorCall = buildDelegatedConstructorCall {
-        val superClasses = owner.resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
+    replaceDelegatedConstructor(owner.generateNoArgDelegatingConstructorCall(session))
+}
+
+public fun FirClassSymbol<*>.generateNoArgDelegatingConstructorCall(session: FirSession): FirDelegatedConstructorCall {
+    return buildDelegatedConstructorCall {
+        val superClasses = resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
         val singleSupertype = when (superClasses.size) {
             0 -> session.builtinTypes.anyType.coneType
             1 -> superClasses.first()
-            else -> error("Object $owner has more than one class supertypes: $superClasses")
+            else -> error("Object $this has more than one class supertypes: $superClasses")
         }
         constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
         val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
@@ -182,5 +187,4 @@ private fun FirConstructor.generateNoArgDelegatingConstructorCall(session: FirSe
         argumentList = FirEmptyArgumentList
         isThis = false
     }
-    replaceDelegatedConstructor(delegatingConstructorCall)
 }

@@ -1,0 +1,31 @@
+FILE: ConstructorExample.kt
+    @R|lombok/NoArgsConstructor|() public open class ConstructorExample : R|kotlin/Any| {
+        public constructor(boolean: R|kotlin/Boolean|, char: R|kotlin/Char|, int: R|kotlin/Int|, str: R|kotlin/String|): R|ConstructorExample| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val boolean: R|kotlin/Boolean| = R|<local>/boolean|
+            public get(): R|kotlin/Boolean|
+
+        public final val char: R|kotlin/Char| = R|<local>/char|
+            public get(): R|kotlin/Char|
+
+        public final val int: R|kotlin/Int| = R|<local>/int|
+            public get(): R|kotlin/Int|
+
+        public final val str: R|kotlin/String| = R|<local>/str|
+            public get(): R|kotlin/String|
+
+        public constructor(): R|ConstructorExample| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun box(): R|kotlin/String| {
+        lval zeroObject: R|ConstructorExample| = R|/ConstructorExample|()
+        R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExample.boolean|)
+        R|/assertEquals|<R|kotlin/Char|>(R|kotlin/Char|(Int(0)), R|<local>/zeroObject|.R|/ConstructorExample.char|)
+        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|<local>/zeroObject|.R|/ConstructorExample.int|)
+        R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExample.str|)
+        ^box String(OK)
+    }

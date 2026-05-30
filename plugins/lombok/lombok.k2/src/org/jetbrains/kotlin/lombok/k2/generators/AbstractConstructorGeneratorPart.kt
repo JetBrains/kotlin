@@ -11,14 +11,13 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassForStaticMemberAttr
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirFunction
-import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirConstructorBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildConstructedClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameterCopy
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.java.declarations.*
+import org.jetbrains.kotlin.fir.plugin.generateNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.scopes.impl.FirClassDeclaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -85,8 +84,21 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
             }
             if (hasConflict) return
 
-            FirJavaConstructorBuilder().apply {
-                containingClassSymbol = classSymbol
+            val builder = if (classSymbol.hasJavaOrigin) {
+                FirJavaConstructorBuilder().apply {
+                    containingClassSymbol = classSymbol
+                    isPrimary = false
+                    isFromSource = true
+                }
+            } else {
+                FirConstructorBuilder().apply {
+                    isLocal = false
+                    origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
+                    delegatedConstructor = classSymbol.generateNoArgDelegatingConstructorCall(session)
+                }
+            }
+
+            builder.apply {
                 symbol = FirConstructorSymbol(classSymbol.classId.callableIdForConstructor()).also { constructorSymbol = it }
                 classSymbol.fir.typeParameters.mapTo(typeParameters) {
                     buildConstructedClassTypeParameterRef { this.symbol = it.symbol }
@@ -95,8 +107,6 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = classSymbol.defaultType()
                 }
-                isPrimary = false
-                isFromSource = true
             }
         } else {
             if (checkClashing<FirNamedFunction>(valuesParameterCount)) return
@@ -149,6 +159,9 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
         }
 
         builder.apply {
+            // The plugin-generated source is needed to prevent reporting of `PRIMARY_CONSTRUCTOR_DELEGATION_CALL_EXPECTED`
+            // in the same way as the no-arg plugin works. Also, see KT-80651
+            source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.PluginGenerated.Default)
             moduleData = classSymbol.moduleData
             status = FirResolvedDeclarationStatusImpl(
                 visibility,

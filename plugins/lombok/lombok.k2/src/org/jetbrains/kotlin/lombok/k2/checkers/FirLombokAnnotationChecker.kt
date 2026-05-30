@@ -47,6 +47,9 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         this[LombokNames.TO_STRING_EXCLUDE_ID] = listOf(
             KotlinTarget.PROPERTY,
         )
+        this[LombokNames.NO_ARGS_CONSTRUCTOR_ID] = listOf(
+            KotlinTarget.CLASS_ONLY, // Objects have empty constructor by default, so doesn't make sense to support the annotation on them.
+        )
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

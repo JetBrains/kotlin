@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.java.declarations.FirJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaMethod
 import org.jetbrains.kotlin.fir.java.declarations.buildJavaValueParameter
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
@@ -99,3 +100,5 @@ fun FirClassSymbol<*>.createJavaMethod(
 }
 
 class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
+
+val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
