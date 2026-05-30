@@ -240,7 +240,7 @@ object Aggregates : TemplateGroupBase() {
             """
             Returns `true` if all ${f.element.pluralize()} in the ${f.collection} are equal to each other.
 
-            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
+            Returns `true` for an empty ${f.collection}.
 
             The ${f.element.pluralize()} are compared sequentially using $equalityPhrase,
             and the ${f.collection} is considered all-equal if the first ${f.element} equals every
@@ -300,7 +300,7 @@ object Aggregates : TemplateGroupBase() {
             Returns `true` if all ${f.element.pluralize()} in the ${f.collection} yield the same value
             produced by the given [selector] function.
 
-            Returns `true` if the ${f.collection} has fewer than two ${f.element.pluralize()}.
+            Returns `true` for an empty ${f.collection}.
 
             The [selector] values are compared sequentially using structural equality (`==`),
             and the ${f.collection} is considered all-equal-by if the [selector] value of the first

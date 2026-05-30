@@ -1420,7 +1420,7 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements in the sequence are equal to each other.
  * 
- * Returns `true` if the sequence has fewer than two elements.
+ * Returns `true` for an empty sequence.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the sequence is considered all-equal if the first element equals every
@@ -1449,7 +1449,7 @@ public fun <T> Sequence<T>.allEqual(): Boolean {
  * Returns `true` if all elements in the sequence yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the sequence has fewer than two elements.
+ * Returns `true` for an empty sequence.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the sequence is considered all-equal-by if the [selector] value of the first

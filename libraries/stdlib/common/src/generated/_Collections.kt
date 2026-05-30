@@ -1944,7 +1944,7 @@ public inline fun <T> Iterable<T>.all(predicate: (T) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements in the collection are equal to each other.
  * 
- * Returns `true` if the collection has fewer than two elements.
+ * Returns `true` for an empty collection.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the collection is considered all-equal if the first element equals every
@@ -1971,7 +1971,7 @@ public fun <T> Iterable<T>.allEqual(): Boolean {
  * Returns `true` if all elements in the collection yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the collection has fewer than two elements.
+ * Returns `true` for an empty collection.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the collection is considered all-equal-by if the [selector] value of the first

@@ -14283,7 +14283,7 @@ public inline fun CharArray.all(predicate: (Char) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14308,7 +14308,7 @@ public fun <T> Array<out T>.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14330,7 +14330,7 @@ public fun ByteArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14352,7 +14352,7 @@ public fun ShortArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14374,7 +14374,7 @@ public fun IntArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14396,7 +14396,7 @@ public fun LongArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using equality semantics consistent with [Float.equals],
  * and the array is considered all-equal if the first element equals every
@@ -14421,7 +14421,7 @@ public fun FloatArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using equality semantics consistent with [Double.equals],
  * and the array is considered all-equal if the first element equals every
@@ -14446,7 +14446,7 @@ public fun DoubleArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14468,7 +14468,7 @@ public fun BooleanArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -14491,7 +14491,7 @@ public fun CharArray.allEqual(): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14517,7 +14517,7 @@ public inline fun <T, K> Array<out T>.allEqualBy(selector: (T) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14543,7 +14543,7 @@ public inline fun <K> ByteArray.allEqualBy(selector: (Byte) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14569,7 +14569,7 @@ public inline fun <K> ShortArray.allEqualBy(selector: (Short) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14595,7 +14595,7 @@ public inline fun <K> IntArray.allEqualBy(selector: (Int) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14621,7 +14621,7 @@ public inline fun <K> LongArray.allEqualBy(selector: (Long) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14647,7 +14647,7 @@ public inline fun <K> FloatArray.allEqualBy(selector: (Float) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14673,7 +14673,7 @@ public inline fun <K> DoubleArray.allEqualBy(selector: (Double) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -14699,7 +14699,7 @@ public inline fun <K> BooleanArray.allEqualBy(selector: (Boolean) -> K): Boolean
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first

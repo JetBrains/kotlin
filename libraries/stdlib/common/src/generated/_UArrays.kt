@@ -6043,7 +6043,7 @@ public inline fun UShortArray.all(predicate: (UShort) -> Boolean): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -6066,7 +6066,7 @@ public fun UIntArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -6089,7 +6089,7 @@ public fun ULongArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -6112,7 +6112,7 @@ public fun UByteArray.allEqual(): Boolean {
 /**
  * Returns `true` if all elements in the array are equal to each other.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The elements are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal if the first element equals every
@@ -6136,7 +6136,7 @@ public fun UShortArray.allEqual(): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -6163,7 +6163,7 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -6190,7 +6190,7 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
@@ -6217,7 +6217,7 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
  * Returns `true` if all elements in the array yield the same value
  * produced by the given [selector] function.
  * 
- * Returns `true` if the array has fewer than two elements.
+ * Returns `true` for an empty array.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
  * and the array is considered all-equal-by if the [selector] value of the first
