@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.AbstractKDocCoverageTest
 import org.junit.jupiter.api.Test
 
 class KtReferencesKDocCoverageTest : AbstractKDocCoverageTest() {
-    override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = listOf(
+    override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = [
         SourceDirectory.ForDumpFileComparison(
-            listOf("src/org/jetbrains/kotlin"),
+            ["src/org/jetbrains/kotlin"],
             "api/kt-references.undocumented",
         ),
-    )
+    ]
 
     @Test
     fun testKDocCoverage() {

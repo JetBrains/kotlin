@@ -38,8 +38,8 @@ internal fun buildCall(
     target: IrSimpleFunctionSymbol,
     type: IrType? = null,
     origin: IrStatementOrigin? = null,
-    typeArguments: List<IrType> = emptyList(),
-    arguments: List<IrExpression?> = emptyList()
+    typeArguments: List<IrType> = [],
+    arguments: List<IrExpression?> = []
 ): IrCall =
     IrCallImpl(
         startOffset,
@@ -95,7 +95,7 @@ internal fun buildSimpleType(
         classifier = symbol,
         hasQuestionMark = false,
         arguments = typeParameters.map { makeTypeProjection(it, Variance.INVARIANT) },
-        annotations = emptyList()
+        annotations = []
     )
 
 internal fun buildGetValue(
@@ -122,13 +122,13 @@ internal fun IrValueParameter.capture() = buildGetValue(UNDEFINED_OFFSET, UNDEFI
 internal fun IrPluginContext.buildGetterType(valueType: IrType): IrSimpleType =
     buildSimpleType(
         irBuiltIns.functionN(0).symbol,
-        listOf(valueType)
+        [valueType]
     )
 
 internal fun IrPluginContext.buildSetterType(valueType: IrType): IrSimpleType =
     buildSimpleType(
         irBuiltIns.functionN(1).symbol,
-        listOf(valueType, irBuiltIns.unitType)
+        [valueType, irBuiltIns.unitType]
     )
 
 private fun IrPluginContext.buildSetField(backingField: IrField, ownerClass: IrExpression?, value: IrGetValue): IrSetField {
@@ -170,9 +170,9 @@ internal fun IrPluginContext.buildArrayElementAccessor(
     val name = if (isSetter) arrayField.setterName() else arrayField.getterName()
     val accessorFunction = buildDefaultPropertyAccessor(name).apply {
         val valueParameter = buildValueParameter(this, name, valueType)
-        this.parameters = if (isSetter) listOf(valueParameter) else emptyList()
+        this.parameters = if (isSetter) [valueParameter] else []
         body = irFactory.buildBlockBody(
-            listOf(
+            [
                 if (isSetter) {
                     val setSymbol = referenceFunction(referenceArrayClass(arrayField.type as IrSimpleType), SET)
                     buildCall(
@@ -180,7 +180,7 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = setSymbol,
                         type = irBuiltIns.unitType,
                         origin = IrStatementOrigin.LAMBDA,
-                        arguments = listOf(arrayGetter, index, valueParameter.capture())
+                        arguments = [arrayGetter, index, valueParameter.capture()]
                     )
                 } else {
                     val getField = buildGetField(arrayField, arrayGetter.dispatchReceiver)
@@ -190,10 +190,10 @@ internal fun IrPluginContext.buildArrayElementAccessor(
                         target = getSymbol,
                         type = valueType,
                         origin = IrStatementOrigin.LAMBDA,
-                        arguments = listOf(getField, index)
+                        arguments = [getField, index]
                     )
                 }
-            )
+            ]
         )
         this.returnType = returnType
     }
@@ -218,13 +218,13 @@ internal fun IrPluginContext.buildFieldAccessor(
         val valueParameter = buildValueParameter(this, name, valueType)
         if (isSetter) parameters += valueParameter
         body = irFactory.buildBlockBody(
-            listOf(
+            [
                 if (isSetter) {
                     buildSetField(field, dispatchReceiver, valueParameter.capture())
                 } else {
                     buildGetField(field, dispatchReceiver)
                 }
-            )
+            ]
         )
         this.returnType = returnType
     }

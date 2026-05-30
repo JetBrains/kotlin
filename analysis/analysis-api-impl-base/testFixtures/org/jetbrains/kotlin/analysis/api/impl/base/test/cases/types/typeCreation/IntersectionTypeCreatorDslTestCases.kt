@@ -37,7 +37,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         return session.typeCreator.intersectionType {
             conjunct { type1 }
             conjuncts {
-                listOf(type2, type3)
+                [type2, type3]
             }
         }
     }
@@ -48,7 +48,7 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type3 = getTypeByCaret("3")
         return session.typeCreator.intersectionType {
             conjunct { type1 }
-            conjuncts(listOf(type2, type3))
+            conjuncts([type2, type3])
         }
     }
 
@@ -57,14 +57,14 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         val type2 = getTypeByCaret("2")
         val type3 = getTypeByCaret("3")
         return session.typeCreator.intersectionType {
-            conjuncts(listOf(type1, type2, type3))
+            conjuncts([type1, type2, type3])
         }
     }
 
     fun testDuplicates(): KaType {
         val type = getTypeByCaret("type")
         return session.typeCreator.intersectionType {
-            conjuncts(listOf(type, type, type))
+            conjuncts([type, type, type])
         }
     }
 
@@ -94,13 +94,13 @@ class IntersectionTypeCreatorDslTestCases(session: KaSession, caretToType: Map<S
         return session.typeCreator.intersectionType {
             conjunct {
                 classType(symbol1) {
-                    annotations(listOf(annotationClassId1, annotationClassId2))
+                    annotations([annotationClassId1, annotationClassId2])
                 }
             }
 
             conjunct {
                 classType(symbol2) {
-                    annotations(listOf(annotationClassId2, annotationClassId3))
+                    annotations([annotationClassId2, annotationClassId3])
                 }
             }
         }

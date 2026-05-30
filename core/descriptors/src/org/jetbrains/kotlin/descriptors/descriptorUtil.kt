@@ -43,7 +43,7 @@ fun ModuleDescriptor.getContinuationOfTypeOrAny(kotlinType: KotlinType) =
     )?.defaultType?.let {
         KotlinTypeFactory.simpleType(
             it,
-            arguments = listOf(kotlinType.asTypeProjection())
+            arguments = [kotlinType.asTypeProjection()]
         )
     } ?: module.builtIns.nullableAnyType
 

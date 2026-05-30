@@ -72,7 +72,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
     private fun FirClass.collectInitializationInfo(
     ): VariableInitializationInfo? {
         val graph = (this as? FirControlFlowGraphOwner)?.controlFlowGraphReference?.controlFlowGraph ?: return null
-        val memberPropertySymbols = mutableSetOf<FirPropertySymbol>()
+        val memberPropertySymbols: MutableSet<FirPropertySymbol> = []
         symbol.processAllDeclaredCallables(context.session) { symbol ->
             if (symbol is FirPropertySymbol && symbol.requiresInitialization(isForInitialization = true)) {
                 memberPropertySymbols += symbol
@@ -80,7 +80,7 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         }
         if (memberPropertySymbols.isEmpty()) return null
         // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-        val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = emptySet(), symbol, graph)
+        val data = PropertyInitializationInfoData(memberPropertySymbols, conditionallyInitializedProperties = [], symbol, graph)
         PropertyInitializationCheckProcessor.check(data, isForInitialization = true)
         return data.getValue(graph.exitNode)[NormalPath]
     }

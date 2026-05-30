@@ -28,7 +28,7 @@ class CompoundDependenciesResolver(val resolvers: List<ExternalDependenciesResol
     ): ResultWithDiagnostics<Boolean> {
         var success = false
         var repositoryAdded = false
-        val reports = mutableListOf<ScriptDiagnostic>()
+        val reports: MutableList<ScriptDiagnostic> = []
 
         for (resolver in resolvers) {
             if (resolver.acceptsRepository(repositoryCoordinates)) {
@@ -86,7 +86,7 @@ class CompoundDependenciesResolver(val resolvers: List<ExternalDependenciesResol
                     }
                 } else {
                     resolverGroups
-                        .getOrPut(currentIndex) { mutableListOf() }
+                        .getOrPut(currentIndex) { [] }
                         .add(artifactWithLocation)
                 }
             }

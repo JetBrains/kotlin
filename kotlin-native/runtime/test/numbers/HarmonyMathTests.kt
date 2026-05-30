@@ -755,16 +755,16 @@ class HarmonyMath {
         /**
          * cases for test_copySign_DD in est/Strictest
          */
-        internal val COPYSIGN_DD_CASES = doubleArrayOf(Double.POSITIVE_INFINITY, Double.MAX_VALUE, 3.4E302, 2.3,
-                MIN_NORMAL_D, MIN_NORMAL_D / 2, Double.MIN_VALUE, +0.0, 0.0, -0.0, -Double.MIN_VALUE,
-                -MIN_NORMAL_D / 2, -MIN_NORMAL_D, -4.5, -3.4E102, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY)
+        internal val COPYSIGN_DD_CASES: DoubleArray = [Double.POSITIVE_INFINITY, Double.MAX_VALUE, 3.4E302, 2.3,
+            MIN_NORMAL_D, MIN_NORMAL_D / 2, Double.MIN_VALUE, +0.0, 0.0, -0.0, -Double.MIN_VALUE,
+            -MIN_NORMAL_D / 2, -MIN_NORMAL_D, -4.5, -3.4E102, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY]
 
         /**
          * cases for test_copySign_FF in est/Strictest
          */
-        internal val COPYSIGN_FF_CASES = floatArrayOf(Float.POSITIVE_INFINITY, Float.MAX_VALUE, 3.4E12f, 2.3f,
-                MIN_NORMAL_F, MIN_NORMAL_F / 2, Float.MIN_VALUE, +0.0f, 0.0f, -0.0f, -Float.MIN_VALUE,
-                -MIN_NORMAL_F / 2, -MIN_NORMAL_F, -4.5f, -5.6442E21f, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY)
+        internal val COPYSIGN_FF_CASES: FloatArray = [Float.POSITIVE_INFINITY, Float.MAX_VALUE, 3.4E12f, 2.3f,
+            MIN_NORMAL_F, MIN_NORMAL_F / 2, Float.MIN_VALUE, +0.0f, 0.0f, -0.0f, -Float.MIN_VALUE,
+            -MIN_NORMAL_F / 2, -MIN_NORMAL_F, -4.5f, -5.6442E21f, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY]
 
         /**
          * start number cases for test_nextTowards_DD in est/Strictest
@@ -772,32 +772,32 @@ class HarmonyMath {
          * NEXTAFTER_DD_START_CASES[i][1] is the nextUp of start number
          * NEXTAFTER_DD_START_CASES[i][2] is the nextDown of start number
          */
-        internal val NEXTAFTER_DD_START_CASES = arrayOf(
-                doubleArrayOf(3.4, 3.4000000000000004, 3.3999999999999995),
-                doubleArrayOf(-3.4, -3.3999999999999995, -3.4000000000000004),
-                doubleArrayOf(3.4233E109, 3.4233000000000005E109, 3.4232999999999996E109),
-                doubleArrayOf(-3.4233E109, -3.4232999999999996E109, -3.4233000000000005E109),
-                doubleArrayOf(+0.0, Double.MIN_VALUE, -Double.MIN_VALUE),
-                doubleArrayOf(0.0, Double.MIN_VALUE, -Double.MIN_VALUE),
-                doubleArrayOf(-0.0, Double.MIN_VALUE, -Double.MIN_VALUE),
-                doubleArrayOf(Double.MIN_VALUE, 1.0E-323, +0.0),
-                doubleArrayOf(-Double.MIN_VALUE, -0.0, -1.0E-323),
-                doubleArrayOf(MIN_NORMAL_D, 2.225073858507202E-308, 2.225073858507201E-308),
-                doubleArrayOf(-MIN_NORMAL_D, -2.225073858507201E-308, -2.225073858507202E-308),
-                doubleArrayOf(Double.MAX_VALUE, Double.POSITIVE_INFINITY, 1.7976931348623155E308),
-                doubleArrayOf(-Double.MAX_VALUE, -1.7976931348623155E308, Double.NEGATIVE_INFINITY),
-                doubleArrayOf(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.MAX_VALUE),
-                doubleArrayOf(Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY)
-        )
+        internal val NEXTAFTER_DD_START_CASES: Array<DoubleArray> = [
+            [3.4, 3.4000000000000004, 3.3999999999999995],
+            [-3.4, -3.3999999999999995, -3.4000000000000004],
+            [3.4233E109, 3.4233000000000005E109, 3.4232999999999996E109],
+            [-3.4233E109, -3.4232999999999996E109, -3.4233000000000005E109],
+            [+0.0, Double.MIN_VALUE, -Double.MIN_VALUE],
+            [0.0, Double.MIN_VALUE, -Double.MIN_VALUE],
+            [-0.0, Double.MIN_VALUE, -Double.MIN_VALUE],
+            [Double.MIN_VALUE, 1.0E-323, +0.0],
+            [-Double.MIN_VALUE, -0.0, -1.0E-323],
+            [MIN_NORMAL_D, 2.225073858507202E-308, 2.225073858507201E-308],
+            [-MIN_NORMAL_D, -2.225073858507201E-308, -2.225073858507202E-308],
+            [Double.MAX_VALUE, Double.POSITIVE_INFINITY, 1.7976931348623155E308],
+            [-Double.MAX_VALUE, -1.7976931348623155E308, Double.NEGATIVE_INFINITY],
+            [Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.MAX_VALUE],
+            [Double.NEGATIVE_INFINITY, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY]
+        ]
 
         /**
          * direction number cases for test_nextTowards_DD/test_nextTowards_FD in
          * est/Strictest
          */
-        internal val NEXTAFTER_DD_FD_DIRECTION_CASES = doubleArrayOf(Double.POSITIVE_INFINITY,
-                Double.MAX_VALUE, 8.8, 3.4, 1.4, MIN_NORMAL_D, MIN_NORMAL_D / 2,
-                Double.MIN_VALUE, +0.0, 0.0, -0.0, -Double.MIN_VALUE, -MIN_NORMAL_D / 2,
-                -MIN_NORMAL_D, -1.4, -3.4, -8.8, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY)
+        internal val NEXTAFTER_DD_FD_DIRECTION_CASES: DoubleArray = [Double.POSITIVE_INFINITY,
+            Double.MAX_VALUE, 8.8, 3.4, 1.4, MIN_NORMAL_D, MIN_NORMAL_D / 2,
+            Double.MIN_VALUE, +0.0, 0.0, -0.0, -Double.MIN_VALUE, -MIN_NORMAL_D / 2,
+            -MIN_NORMAL_D, -1.4, -3.4, -8.8, -Double.MAX_VALUE, Double.NEGATIVE_INFINITY]
 
         /**
          * start number cases for test_nextTowards_FD in est/Strictest
@@ -805,20 +805,21 @@ class HarmonyMath {
          * NEXTAFTER_FD_START_CASES[i][1] is the nextUp of start number
          * NEXTAFTER_FD_START_CASES[i][2] is the nextDown of start number
          */
-        internal val NEXTAFTER_FD_START_CASES = arrayOf(floatArrayOf(3.4f, 3.4000003f, 3.3999999f),
-            floatArrayOf(-3.4f, -3.3999999f, -3.4000003f),
-            floatArrayOf(3.4233E19f, 3.4233002E19f, 3.4232998E19f),
-            floatArrayOf(-3.4233E19f, -3.4232998E19f, -3.4233002E19f),
-            floatArrayOf(+0.0f, Float.MIN_VALUE, -Float.MIN_VALUE),
-            floatArrayOf(0.0f, Float.MIN_VALUE, -Float.MIN_VALUE),
-            floatArrayOf(-0.0f, Float.MIN_VALUE, -Float.MIN_VALUE),
-            floatArrayOf(Float.MIN_VALUE, 2.8E-45f, +0.0f),
-            floatArrayOf(-Float.MIN_VALUE, -0.0f, -2.8E-45f),
-            floatArrayOf(MIN_NORMAL_F, 1.1754945E-38f, 1.1754942E-38f),
-            floatArrayOf(-MIN_NORMAL_F, -1.1754942E-38f, -1.1754945E-38f),
-            floatArrayOf(Float.MAX_VALUE, Float.POSITIVE_INFINITY, 3.4028233E38f),
-            floatArrayOf(-Float.MAX_VALUE, -3.4028233E38f, Float.NEGATIVE_INFINITY),
-            floatArrayOf(Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.MAX_VALUE),
-            floatArrayOf(Float.NEGATIVE_INFINITY, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY))
+        internal val NEXTAFTER_FD_START_CASES: Array<FloatArray> = [[3.4f, 3.4000003f, 3.3999999f],
+            [-3.4f, -3.3999999f, -3.4000003f],
+            [3.4233E19f, 3.4233002E19f, 3.4232998E19f],
+            [-3.4233E19f, -3.4232998E19f, -3.4233002E19f],
+            [+0.0f, Float.MIN_VALUE, -Float.MIN_VALUE],
+            [0.0f, Float.MIN_VALUE, -Float.MIN_VALUE],
+            [-0.0f, Float.MIN_VALUE, -Float.MIN_VALUE],
+            [Float.MIN_VALUE, 2.8E-45f, +0.0f],
+            [-Float.MIN_VALUE, -0.0f, -2.8E-45f],
+            [MIN_NORMAL_F, 1.1754945E-38f, 1.1754942E-38f],
+            [-MIN_NORMAL_F, -1.1754942E-38f, -1.1754945E-38f],
+            [Float.MAX_VALUE, Float.POSITIVE_INFINITY, 3.4028233E38f],
+            [-Float.MAX_VALUE, -3.4028233E38f, Float.NEGATIVE_INFINITY],
+            [Float.POSITIVE_INFINITY, Float.POSITIVE_INFINITY, Float.MAX_VALUE],
+            [Float.NEGATIVE_INFINITY, -Float.MAX_VALUE, Float.NEGATIVE_INFINITY]
+        ]
     }
 }

@@ -204,7 +204,7 @@ private fun ObjCExportContext.getObjCTypeName(type: KaClassType): String {
 }
 
 internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<ObjCNonNullReferenceType> {
-    if (type !is KaClassType) return emptyList()
+    if (type !is KaClassType) return []
 
     /* See special casing below */
     val isKnownCollectionType = type.classId in collectionClassIds
@@ -230,7 +230,7 @@ internal fun ObjCExportContext.translateTypeArgumentsToObjC(type: KaType): List<
  * Currently, it contains super types of classes handled by custom type mappers.
  * Note: It can be generated programmatically, but requires stdlib in this case.
  */
-private val hiddenClassIds: Set<ClassId> = listOf(
+private val hiddenClassIds: Set<ClassId> = [
     "kotlin.Any",
     "kotlin.CharSequence",
     "kotlin.Comparable",
@@ -240,17 +240,17 @@ private val hiddenClassIds: Set<ClassId> = listOf(
     "kotlin.collections.Iterable",
     "kotlin.collections.MutableCollection",
     "kotlin.collections.MutableIterable"
-).map { ClassId.topLevel(FqName(it)) }.toSet()
+].map { ClassId.topLevel(FqName(it)) }.toSet()
 
 
 private val kotlinNativePrimitiveClassIds: Set<ClassId> =
     KonanPrimitiveType.entries.map { it.classId }.toSet()
 
-private val collectionClassIds = setOf(
+private val collectionClassIds: Set<ClassId> = [
     StandardClassIds.List, StandardClassIds.MutableList,
     StandardClassIds.Set, StandardClassIds.MutableSet,
     StandardClassIds.Map, StandardClassIds.MutableMap
-)
+]
 
 /**
  * 1. We try to find upper bound from type parameters

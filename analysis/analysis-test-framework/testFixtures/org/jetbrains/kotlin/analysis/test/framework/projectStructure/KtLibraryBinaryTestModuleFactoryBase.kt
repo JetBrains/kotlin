@@ -41,7 +41,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
             testModule.targetPlatform(testServices),
             StandaloneProjectFactory.createLibraryModuleSearchScope(
                 binaryRoots,
-                emptyList(),
+                [],
                 testServices.environmentManager.getApplicationEnvironment(),
                 project,
             ),

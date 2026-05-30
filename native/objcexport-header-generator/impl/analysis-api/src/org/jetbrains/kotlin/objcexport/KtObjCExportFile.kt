@@ -46,7 +46,7 @@ fun KtObjCExportFile(file: KtFile): KtObjCExportFile {
  * Returns an empty list if this [KaLibraryModule] is not a klib
  */
 fun KaLibraryModule.readKtObjCExportFiles(): List<KtObjCExportFile> {
-    val klibAddresses = readKlibDeclarationAddresses() ?: return emptyList()
+    val klibAddresses = readKlibDeclarationAddresses() ?: return []
     return createKtObjCExportFiles(klibAddresses)
 }
 

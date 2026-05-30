@@ -51,7 +51,7 @@ interface QualifierReceiver : Receiver, DetailedReceiver {
 
     // for qualifiers smart cast is impossible
     val classValueReceiverWithSmartCastInfo: ReceiverValueWithSmartCastInfo?
-        get() = classValueReceiver?.let { ReceiverValueWithSmartCastInfo(it, emptySet(), true) }
+        get() = classValueReceiver?.let { ReceiverValueWithSmartCastInfo(it, [], true) }
 }
 
 fun ReceiverValueWithSmartCastInfo.prepareReceiverRegardingCaptureTypes(): ReceiverValueWithSmartCastInfo {

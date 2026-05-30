@@ -171,7 +171,7 @@ class MemoizedMultiFieldValueClassReplacements(
         abstract val parameters: List<IrValueParameter>
 
         data class RegularMapping(val valueParameter: IrValueParameter) : RemappedParameter() {
-            override val parameters: List<IrValueParameter> = listOf(valueParameter)
+            override val parameters: List<IrValueParameter> = [valueParameter]
             override fun toString(): String {
                 return "RegularMapping(valueParameter=${valueParameter.render()})"
             }
@@ -205,7 +205,7 @@ class MemoizedMultiFieldValueClassReplacements(
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
         buildReplacement(function, JvmLoweredDeclarationOrigin.STATIC_MULTI_FIELD_VALUE_CLASS_REPLACEMENT, noFakeOverride = true) {
-            typeParameters = listOf()
+            typeParameters = []
             copyTypeParametersFrom(function.parentAsClass)
             val substitutionMap = function.parentAsClass.typeParameters.map { it.symbol }.zip(typeParameters.map { it.defaultType }).toMap()
             copyTypeParametersFrom(function, parameterMap = (function.parentAsClass.typeParameters zip typeParameters).toMap())
@@ -245,7 +245,7 @@ class MemoizedMultiFieldValueClassReplacements(
         parameters = listOfNotNull(function.dispatchReceiverParameter?.copyTo(this)) + nonDispatchParameters
         val newFlattenedParameters = makeAndAddGroupedValueParametersFrom(function, includeDispatcherReceiver = false, mapOf(), this)
         val receiver = dispatchReceiverParameter
-        return if (receiver != null) listOf(RegularMapping(receiver)) + newFlattenedParameters else newFlattenedParameters
+        return if (receiver != null) [RegularMapping(receiver)] + newFlattenedParameters else newFlattenedParameters
     }
 
     /**
@@ -332,7 +332,7 @@ class MemoizedMultiFieldValueClassReplacements(
         return this
     }
 
-    fun getFieldsToRemove(clazz: IrClass): Set<IrField> = clazz.mfvcFieldsToRemove ?: emptySet()
+    fun getFieldsToRemove(clazz: IrClass): Set<IrField> = clazz.mfvcFieldsToRemove ?: []
     fun addFieldToRemove(clazz: IrClass, field: IrField) {
         clazz::mfvcFieldsToRemove.getOrSetIfNull {
             ConcurrentHashMap<IrField, Unit>().keySet(Unit)

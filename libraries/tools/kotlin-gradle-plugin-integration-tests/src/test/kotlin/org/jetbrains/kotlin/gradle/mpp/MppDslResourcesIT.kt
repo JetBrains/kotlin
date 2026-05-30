@@ -18,7 +18,7 @@ class MppDslResourcesIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
         ) {
-            val targetsWithResources = listOf("jvm6", "nodeJs", "linux64")
+            val targetsWithResources = ["jvm6", "nodeJs", "linux64"]
             val processResourcesTasks = targetsWithResources.map { ":${it}ProcessResources" }
 
             build(

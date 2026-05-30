@@ -113,7 +113,7 @@ internal open class SirProtocolFromKtSymbol(
         }
     }
 
-    override val bridges: List<SirBridge> = emptyList()
+    override val bridges: List<SirBridge> = []
 }
 
 /**
@@ -132,9 +132,9 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
     override val visibility: SirVisibility = SirVisibility.PACKAGE
     override val documentation: String? = null
-    override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
+    override val attributes: List<SirAttribute> get() = [SirAttribute.ObjC(this.name)]
     override val name: String get() = "_${target.name}"
-    override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> get() = []
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol>
         get() = target.translatedProtocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
@@ -180,12 +180,12 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val extendedType: SirType
         get() = SirNominalType(targetProtocol)
 
-    override val protocols: List<SirProtocol> get() = emptyList()
+    override val protocols: List<SirProtocol> get() = []
 
     override val constraints: List<SirTypeConstraint> by lazy {
-        listOf(
+        [
             SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
-        )
+        ]
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -330,12 +330,12 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
     override val extendedType: SirType
         get() = SirNominalType(KotlinRuntimeSupportModule.kotlinExistential)
 
-    override open val protocols: List<SirProtocol> get() = listOf(targetProtocol)
+    override open val protocols: List<SirProtocol> get() = [targetProtocol]
 
     override val constraints: List<SirTypeConstraint> by lazy {
-        listOf(
-            SirTypeConstraint.Conformance(SirExistentialType(targetProtocol.existentialMarker), listOf("Wrapped"))
-        )
+        [
+            SirTypeConstraint.Conformance(SirExistentialType(targetProtocol.existentialMarker), ["Wrapped"])
+        ]
     }
 
     override val attributes: List<SirAttribute> by lazy {
@@ -345,7 +345,7 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
         }
     }
 
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = []
 }
 
 internal class SirStubProtocol(
@@ -355,7 +355,7 @@ internal class SirStubProtocol(
     ktSymbol,
     sirSession
 ) {
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = []
 }
 
 /**
@@ -392,9 +392,9 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
         }
     }
 
-    override val constraints: List<SirTypeConstraint> = emptyList()
+    override val constraints: List<SirTypeConstraint> = []
 
-    override val protocols: List<SirProtocol> = emptyList()
+    override val protocols: List<SirProtocol> = []
 
     override val extendedType: SirType = SirNominalType(targetProtocol)
 
@@ -431,11 +431,11 @@ internal class SirFlowFromKtSymbol(
         val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
         val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
 
-        val CLASS_IDS = listOf(
+        val CLASS_IDS = [
             FLOW_CLASS_ID,
             SHARED_FLOW_CLASS_ID, MUTABLE_SHARED_FLOW_CLASS_ID,
             STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID,
-        )
+        ]
     }
 
     private val supportProtocol = when (ktSymbol.classId) {

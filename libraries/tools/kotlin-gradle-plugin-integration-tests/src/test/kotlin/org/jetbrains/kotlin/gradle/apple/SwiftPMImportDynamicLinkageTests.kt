@@ -70,27 +70,27 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
             val outgoingArchive = projectPath.resolve("FrameworkTarget.xcarchive")
             runProcess(
-                listOf(
+                [
                     "xcodebuild", "archive",
                     "-project", "iosApp.xcodeproj",
                     "-scheme", "FrameworkTarget",
                     "-destination", "generic/platform=iOS Simulator",
                     "-archivePath", outgoingArchive.pathString,
                     "ARCHS=arm64", "SKIP_INSTALL=NO", "MACH_O_TYPE=staticlib",
-                ),
+                ],
                 projectPath.resolve("iosApp").toFile(),
             ).assertProcessRunResult { assertTrue(isSuccessful) }
 
             val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
-            runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
+            runProcess(["/usr/bin/swift", "package", "init", "--type", "library"], packageDependency)
             val outgoingXCFramework = packageDependency.resolve("FrameworkTarget.xcframework")
             runProcess(
-                listOf(
+                [
                     "xcodebuild", "-create-xcframework",
                     "-archive", outgoingArchive.pathString,
                     "-framework", "FrameworkTarget.framework",
                     "-output", outgoingXCFramework.path,
-                ),
+                ],
                 projectPath.resolve("iosApp").toFile(),
             ).assertProcessRunResult { assertTrue(isSuccessful) }
 
@@ -153,7 +153,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir("PackageDependency"),
-                            products = listOf("PackageDependency"),
+                            products = ["PackageDependency"],
                         )
                     }
                 }
@@ -196,23 +196,23 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
             val appPath = derivedDataPath.resolve("Build/Products/Debug-iphonesimulator/emptyxcode.app")
             checkBinariesLinkage(
                 appPath,
-                symbolsFilter = listOf(
+                symbolsFilter = [
                     "_OBJC_CLASS_\$_SharedType",
                     "_OBJC_CLASS_\$_ApplicationOnlyType",
-                ),
+                ],
                 expectedLibrarySymbols = mapOf(
-                    "FrameworkTarget" to setOf(
-                    ),
-                    "KotlinMultiplatformLinkedPackageDylib" to setOf(
-                    ),
-                    "Shared" to setOf(
+                    "FrameworkTarget" to [
+                    ],
+                    "KotlinMultiplatformLinkedPackageDylib" to [
+                    ],
+                    "Shared" to [
                         "(__DATA,__objc_data) external _OBJC_CLASS_\$_SharedType",
-                    ),
+                    ],
                 ),
-                expectedApplicationSymbols = setOf(
+                expectedApplicationSymbols = [
                     "(__DATA,__objc_data) external _OBJC_CLASS_\$_ApplicationOnlyType",
                     "(__DATA,__objc_data) external _OBJC_CLASS_\$_SharedType",
-                ),
+                ],
             )
 
             val result = runApplication(projectPath = projectPath, appPath = appPath)
@@ -224,7 +224,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
     fun `dynamic linkage with SwiftPM import - exposes sources-based transitive SwiftPM dependencies through Kotlin dynamic library`(version: GradleVersion) {
         project("emptyxcode", version) {
             val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
-            runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
+            runProcess(["/usr/bin/swift", "package", "init", "--type", "library"], packageDependency)
             val swiftClassName = "LocalHelper"
 
             packageDependency.resolve("Sources/PackageDependency/PackageDependency.swift").writeText(
@@ -282,7 +282,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir("PackageDependency"),
-                            products = listOf("PackageDependency"),
+                            products = ["PackageDependency"],
                         )
                     }
                 }
@@ -316,23 +316,23 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
              */
             checkBinariesLinkage(
                 appPath,
-                symbolsFilter = listOf(
+                symbolsFilter = [
                     "_OBJC_CLASS_\$_PackageDependency.LocalHelper",
                     "PackageDependency.LocalHelper.greeting",
-                ),
+                ],
                 expectedLibrarySymbols = mapOf(
-                    "Shared" to setOf(
+                    "Shared" to [
                         "(undefined) external _OBJC_CLASS_\$_PackageDependency.LocalHelper (from KotlinMultiplatformLinkedPackageDylib)",
-                    ),
-                    "KotlinMultiplatformLinkedPackageDylib" to setOf(
+                    ],
+                    "KotlinMultiplatformLinkedPackageDylib" to [
                         "(__TEXT,__text) external static PackageDependency.LocalHelper.greeting(Swift.String) -> ()",
                         "(__TEXT,__text) non-external @objc static PackageDependency.LocalHelper.greeting(Swift.String) -> ()",
                         "(__DATA,__objc_data) external _OBJC_CLASS_\$_PackageDependency.LocalHelper",
-                    ),
+                    ],
                 ),
-                expectedApplicationSymbols = setOf(
+                expectedApplicationSymbols = [
                     "(undefined) external static PackageDependency.LocalHelper.greeting(Swift.String) -> () (from KotlinMultiplatformLinkedPackageDylib)"
-                ),
+                ],
             )
             checkApplicationRun(projectPath, appPath)
         }
@@ -342,7 +342,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
     fun `KT-85502 - macOS executable are runnable`(version: GradleVersion) {
         project("empty", version) {
             val packageDependency = projectPath.resolve("PackageDependency").also { it.createDirectories() }.toFile()
-            runProcess(listOf("/usr/bin/swift", "package", "init", "--type", "library"), packageDependency)
+            runProcess(["/usr/bin/swift", "package", "init", "--type", "library"], packageDependency)
             val swiftClassName = "LocalHelper"
 
             packageDependency.resolve("Sources/PackageDependency/PackageDependency.swift").writeText(
@@ -382,7 +382,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir("PackageDependency"),
-                            products = listOf("PackageDependency")
+                            products = ["PackageDependency"]
                         )
                     }
                 }
@@ -394,7 +394,7 @@ class SwiftPMImportDynamicLinkageTests : KGPBaseTest() {
 
             // Check that executable is also self-sufficient and runs without dyld env hacks
             val executablePath = projectPath.resolve("build/bin/macosArm64/debugExecutable/empty.kexe")
-            runProcess(listOf(executablePath.pathString), projectPath.toFile()).assertProcessRunResult {
+            runProcess([executablePath.pathString], projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertEquals("Hello from Kotlin\n", output)
             }

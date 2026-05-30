@@ -442,7 +442,7 @@ class FirElementSerializer private constructor(
      *   - generated classifiers in sorted order
      */
     fun computeNestedClassifiersForClass(classSymbol: FirClassSymbol<*>): List<FirClassifierSymbol<*>> {
-        val scope = session.nestedClassifierScope(classSymbol.fir) ?: return emptyList()
+        val scope = session.nestedClassifierScope(classSymbol.fir) ?: return []
         return buildList {
             val indexByDeclaration = classSymbol.fir.declarations.filterIsInstance<FirClassLikeDeclaration>().mapToIndex()
             val [declared, nonDeclared] = scope.getClassifierNames()
@@ -1045,7 +1045,7 @@ class FirElementSerializer private constructor(
         abbreviationOnly: Boolean = false,
     ): ProtoBuf.Type.Builder {
         val builder = ProtoBuf.Type.newBuilder()
-        val typeAnnotations = mutableListOf<FirAnnotation>()
+        val typeAnnotations: MutableList<FirAnnotation> = []
         when (type) {
             is ConeDefinitelyNotNullType -> return typeProto(type.original, toSuper, correspondingTypeRef, isDefinitelyNotNullType = true)
             is ConeErrorType -> {
@@ -1084,7 +1084,7 @@ class FirElementSerializer private constructor(
             }
             is ConeTypeParameterType -> {
                 val typeParameter = type.lookupTag.typeParameterSymbol.fir
-                if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: emptyList())) {
+                if (typeParameter in ((currentDeclaration as? FirMemberDeclaration)?.typeParameters ?: [])) {
                     builder.typeParameterName = getSimpleNameIndex(typeParameter.name)
                 } else {
                     builder.typeParameter = getTypeParameterId(typeParameter)
@@ -1124,7 +1124,7 @@ class FirElementSerializer private constructor(
             builder.nullable = type.isMarkedNullable
         }
 
-        val extensionAttributes = mutableListOf<ConeAttribute<*>>()
+        val extensionAttributes: MutableList<ConeAttribute<*>> = []
         // KT-67474: In K1, iteration order of `type.attributes` is the following: 1) custom attrs, then 2) builtin attrs;
         //   see it in `Annotations.withExtensionFunctionAnnotation` in functionTypes.kt
         // In K2, relevant iteration order of ArrayMap is defined by order of registration, defined by initialization order of the following properties:
@@ -1160,7 +1160,7 @@ class FirElementSerializer private constructor(
             annotationTypeRef = buildResolvedTypeRef {
                 this.coneType = ConeClassLikeTypeImpl(
                     lookupTag,
-                    emptyArray(),
+                    [],
                     isMarkedNullable = false
                 )
             }

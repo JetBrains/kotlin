@@ -37,8 +37,8 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
      * @see TestSettings
      */
     fun process(): TestSettings {
-        val listeners = mutableSetOf<TestListener>()
-        val filters = mutableListOf<TestFilter>()
+        val listeners: MutableSet<TestListener> = []
+        val filters: MutableList<TestFilter> = []
         var logger: TestLogger = GTestLogger()
         var runTests = true
         var useExitCode = true
@@ -119,7 +119,7 @@ internal class TestProcessor(val suites: List<TestSuite>, val args: Array<String
         }
 
         val positivePatterns = filters[0].fromGTestPatterns()
-        val negativePatterns = filters.getOrNull(1)?.fromGTestPatterns() ?: emptyList()
+        val negativePatterns = filters.getOrNull(1)?.fromGTestPatterns() ?: []
 
         return { testCase ->
             positivePatterns.any { testCase.prettyName.matches(it) } &&

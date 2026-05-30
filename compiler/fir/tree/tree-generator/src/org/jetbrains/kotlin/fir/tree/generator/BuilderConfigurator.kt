@@ -33,7 +33,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         val classBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from klass without listOf("symbol", "resolvePhase", "resolveState", "controlFlowGraphReference")
+            fields from klass without ["symbol", "resolvePhase", "resolveState", "controlFlowGraphReference"]
             isSealed = true
         }
 
@@ -63,14 +63,14 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         val functionBuilder by builder {
             parents += declarationBuilder
             parents += annotationContainerBuilder
-            fields from function without listOf(
+            fields from function without [
                 "symbol",
                 "resolvePhase",
                 "resolveState",
                 "controlFlowGraphReference",
                 "receiverParameter",
                 "typeParameters",
-            )
+            ]
         }
 
         val loopJumpBuilder by builder {
@@ -79,7 +79,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         val abstractConstructorBuilder by builder {
             parents += functionBuilder
-            fields from constructor without listOf("isPrimary")
+            fields from constructor without ["isPrimary"]
         }
 
         val abstractFunctionCallBuilder by builder {
@@ -88,7 +88,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             fields from functionCall
         }
 
-        for (constructorType in listOf("FirPrimaryConstructor", "FirConstructorImpl")) {
+        for (constructorType in ["FirPrimaryConstructor", "FirConstructorImpl"]) {
             builder(constructor, constructorType) {
                 parents += abstractConstructorBuilder
                 defaultNull("delegatedConstructor", "body", "contractDescription")
@@ -233,7 +233,7 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
         }
 
         val variableBuilder by builder {
-            fields from variable without listOf("symbol", "typeParameters", "isVal")
+            fields from variable without ["symbol", "typeParameters", "isVal"]
             parents += declarationBuilder
         }
 

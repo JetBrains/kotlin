@@ -25,7 +25,7 @@ import kotlin.test.assertNotNull
 
 abstract class AbstractFileBasedKotlinDeclarationProviderTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val provider = KotlinFileBasedDeclarationProvider(mainFile)

@@ -172,7 +172,7 @@ fun getArgumentsInfo(klass: Class<*>): ArgumentsInfo {
                     val getter = klass.getMethod(JvmAbi.getterName(field.name))
                     val setter = klass.getMethod(JvmAbi.setterName(field.name), field.type)
                     val argumentField = ArgumentField(getter, setter, argument, enablesAnnotations, disablesAnnotations)
-                    for (key in listOf(argument.value, argument.shortName, argument.deprecatedName)) {
+                    for (key in [argument.value, argument.shortName, argument.deprecatedName]) {
                         if (key.isNotEmpty()) put(key, argumentField)
                     }
                 }
@@ -251,7 +251,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
             }
         }
 
-        val existingValues by lazy(LazyThreadSafetyMode.NONE) { explicitArgs.getOrPut(argumentField) { mutableListOf() } }
+        val existingValues by lazy(LazyThreadSafetyMode.NONE) { explicitArgs.getOrPut(argumentField) { [] } }
 
         val newValue: Any = if (getterReturnType == Boolean::class) {
             parseBooleanValue(arg, argumentField, delimiter, errors).also { existingValues.add(it) }
@@ -343,7 +343,7 @@ private fun convertArrayOfStrings(
     val resolvedDelimiter = argument.resolvedDelimiter
 
     val newElements: List<String> = if (resolvedDelimiter.isNullOrEmpty()) {
-        listOf(stringValue)
+        [stringValue]
     } else {
         stringValue.split(resolvedDelimiter)
     }
@@ -385,7 +385,7 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
  * @return all error messages encountered during arguments parsing.
  */
 fun validateArgumentsAllErrors(errors: ArgumentParseErrors?): List<String> {
-    if (errors == null) return emptyList()
+    if (errors == null) return []
     return buildList {
         errors.argumentsWithoutValue.forEach {
             add("No value passed for argument $it")

@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import java.io.File
 import java.util.Properties
 
-private val TRANSIENT_MANIFEST_PROPERTIES = listOf(
+private val TRANSIENT_MANIFEST_PROPERTIES = [
     KLIB_PROPERTY_ABI_VERSION,
     KLIB_PROPERTY_METADATA_VERSION,
     KLIB_PROPERTY_COMPILER_VERSION,
     KLIB_PROPERTY_IR_SIGNATURE_VERSIONS
-)
+]
 
 private const val SANITIZED_VALUE_STUB = "<value sanitized for test data stability>"
 private const val SANITIZED_TEST_RUN_TARGET = "<test-run-target>"
@@ -41,7 +41,7 @@ private fun sanitizeManifest(
     singleTargetInManifestToBeReplacedByTheAlias: KonanTarget?
 ): List<Pair<String, String>> {
     // intentionally not using Properties as output to guarantee stable order of properties
-    val result = mutableListOf<Pair<String, String>>()
+    val result: MutableList<Pair<String, String>> = []
     original.entries.forEach {
         val key = it.key as String
         val value = it.value as String

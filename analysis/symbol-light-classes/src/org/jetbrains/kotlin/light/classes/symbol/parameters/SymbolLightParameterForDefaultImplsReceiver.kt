@@ -50,7 +50,7 @@ internal class SymbolLightParameterForDefaultImplsReceiver(containingDeclaration
         SymbolLightClassModifierList(
             this,
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
-                listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
+                [SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList)]
             })
     }
 

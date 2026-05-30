@@ -521,7 +521,7 @@ class AdapterGenerator(
                                 IrVarargImpl(
                                     startOffset, endOffset,
                                     parameterType, varargElementType!!,
-                                    listOf(IrSpreadElementImpl(startOffset, endOffset, irValueArgument))
+                                    [IrSpreadElementImpl(startOffset, endOffset, irValueArgument)]
                                 )
                         } else {
                             irCall.arguments[index + parameterShift] = irValueArgument
@@ -862,10 +862,10 @@ class AdapterGenerator(
                 startOffset, endOffset,
                 irReferenceType,
                 IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE,
-                listOf(
+                [
                     irAdapterFun,
                     irAdapterRef
-                )
+                ]
             )
         }
 
@@ -914,10 +914,10 @@ class AdapterGenerator(
                 IrDeclarationOrigin.ADAPTER_PARAMETER_FOR_CALLABLE_REFERENCE,
                 IrParameterKind.Regular,
             )
-            irAdapterFunction.parameters = listOf(irFunctionParameter)
+            irAdapterFunction.parameters = [irFunctionParameter]
             irAdapterFunction.body = IrFactoryImpl.createBlockBody(
                 startOffset, endOffset,
-                listOf(
+                [
                     IrReturnImpl(
                         startOffset, endOffset, c.builtins.nothingType, irAdapterFunction.symbol,
                         IrTypeOperatorCallImpl(
@@ -936,7 +936,7 @@ class AdapterGenerator(
                             }
                         )
                     )
-                )
+                ]
             )
             irAdapterFunction.parent = conversionScope.parent()!!
         }

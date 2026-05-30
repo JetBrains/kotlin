@@ -301,18 +301,18 @@ fun createResolutionCandidatesForConstructors(
     val constructors = typeAliasDescriptor?.constructors?.mapNotNull(TypeAliasConstructorDescriptor::withDispatchReceiver)
             ?: classWithConstructors.constructors
 
-    if (constructors.isEmpty()) return emptyList()
+    if (constructors.isEmpty()) return []
 
     val receiverKind: ExplicitReceiverKind
     val dispatchReceiver: ReceiverValue?
 
     if (classWithConstructors.isInner) {
-        val outerClassType = (classWithConstructors.containingDeclaration as? ClassDescriptor)?.defaultType ?: return emptyList()
+        val outerClassType = (classWithConstructors.containingDeclaration as? ClassDescriptor)?.defaultType ?: return []
         val substitutedOuterClassType = knownSubstitutor?.substitute(outerClassType, Variance.INVARIANT) ?: outerClassType
 
         val receiver = lexicalScope.getImplicitReceiversHierarchy().firstOrNull {
             KotlinTypeChecker.DEFAULT.isSubtypeOf(it.type, substitutedOuterClassType)
-        } ?: return emptyList()
+        } ?: return []
 
         receiverKind = ExplicitReceiverKind.DISPATCH_RECEIVER
         dispatchReceiver = receiver.value
@@ -360,7 +360,7 @@ internal fun List<KotlinCallArgument>.replaceTypes(
         argument.psiCallArgument.dataFlowInfoAfterThisArgument,
         ReceiverValueWithSmartCastInfo(
             ExpressionReceiver.create(psiExpression, newType, context.trace.bindingContext),
-            typesFromSmartCasts = emptySet(),
+            typesFromSmartCasts = [],
             isStable = true
         )
     )

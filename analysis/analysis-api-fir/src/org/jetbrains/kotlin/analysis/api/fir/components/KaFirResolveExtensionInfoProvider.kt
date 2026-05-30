@@ -45,7 +45,7 @@ internal class KaFirResolveExtensionInfoProvider(
 
     override val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
         get() = withValidityAssertion {
-            val targetsProvider = containingFile?.virtualFile?.navigationTargetsProvider ?: return emptyList()
+            val targetsProvider = containingFile?.virtualFile?.navigationTargetsProvider ?: return []
             return with(targetsProvider) { analysisSession.getNavigationTargets(this@resolveExtensionNavigationElements) }
         }
 }
@@ -65,7 +65,7 @@ private class KaFirResolveExtensionScope(
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
@@ -75,7 +75,7 @@ private class KaFirResolveExtensionScope(
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
@@ -96,13 +96,13 @@ private class KaFirResolveExtensionScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {
             // Only emit package symbols for top-level packages (subpackages of root). This matches the behavior
             // of the root-level KtFirPackageScope.
-            val seenTopLevelPackages = mutableSetOf<Name>()
+            val seenTopLevelPackages: MutableSet<Name> = []
             for (tool in tools) {
                 for (packageName in tool.packageFilter.getAllSubPackages(FqName.ROOT)) {
                     if (seenTopLevelPackages.add(packageName) && nameFilter(packageName)) {

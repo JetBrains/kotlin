@@ -22,11 +22,11 @@ class ChunkedKlibModuleFragmentWriteStrategy(
     }
 
     override fun processPackageParts(parts: List<KmModuleFragment>): List<KmModuleFragment> {
-        if (parts.isEmpty()) return emptyList()
+        if (parts.isEmpty()) return []
 
         val fqName = checkNotNull(parts.first().fqName) { "KmModuleFragment should have a not-null fqName!" }
 
-        val chunks = mutableListOf<KmModuleFragment>()
+        val chunks: MutableList<KmModuleFragment> = []
         var lastChunk: KmModuleFragment? = null
 
         fun createNewChunk(): KmModuleFragment = KmModuleFragment().also { chunk ->
@@ -64,7 +64,7 @@ class ChunkedKlibModuleFragmentWriteStrategy(
             }
         }
 
-        parts.asSequence().flatMap { it.pkg?.let { pkg -> pkg.functions.asSequence() + pkg.properties } ?: emptySequence() }
+        parts.asSequence().flatMap { it.pkg?.let { pkg -> pkg.functions.asSequence() + pkg.properties } ?: [] }
             .chunked(topLevelCallableDeclarationsPerFile)
             .forEach { chunkedCallables ->
                 val pkgToAddCallables = createNewChunk().getExistingPkgOrCreateNew()
@@ -98,15 +98,15 @@ private sealed interface ClassifierBucket {
              * classes with the same top-level name go to the same bucket.
              */
             fun createBuckets(classes: List<KmClass>): Sequence<Classes> = when (classes.size) {
-                0 -> emptySequence()
-                1 -> sequenceOf(Classes(classes))
+                0 -> []
+                1 -> [Classes(classes)]
                 else -> {
                     val groupedByTopLevelClassNames = linkedMapOf<ClassName, MutableList<KmClass>>()
 
                     for (clazz in classes) {
                         val className = clazz.name
                         val topLevelClassName = if (!className.isLocalClassName()) className.substringBefore('.') else className
-                        groupedByTopLevelClassNames.computeIfAbsent(topLevelClassName) { mutableListOf() } += clazz
+                        groupedByTopLevelClassNames.computeIfAbsent(topLevelClassName) { [] } += clazz
                     }
 
                     groupedByTopLevelClassNames.values.asSequence().map(::Classes)
@@ -121,7 +121,7 @@ private sealed interface ClassifierBucket {
         companion object {
             /** Wrap the sequence of [KmTypeAlias]es as the sequence of individual [ClassifierBucket.TypeAlias]es. */
             fun createBuckets(typeAliases: List<KmTypeAlias>?): Sequence<TypeAlias> =
-                if (typeAliases.isNullOrEmpty()) emptySequence() else typeAliases.asSequence().map(::TypeAlias)
+                if (typeAliases.isNullOrEmpty()) [] else typeAliases.asSequence().map(::TypeAlias)
         }
     }
 

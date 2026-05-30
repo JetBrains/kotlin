@@ -16,26 +16,30 @@ import kotlin.test.assertNotNull
 class KlibTargetHierarchyTest {
     @Test
     fun testHierarchy() {
-        assertContentEquals(listOf("linuxArm64", "linux", "native", "all"),
+        assertContentEquals(
+            ["linuxArm64", "linux", "native", "all"],
             hierarchyFrom("linuxArm64"))
 
-        assertContentEquals(listOf("js", "all"),
+        assertContentEquals(
+            ["js", "all"],
             hierarchyFrom("js"))
 
-        assertContentEquals(listOf("iosArm64", "ios", "apple", "native", "all"),
+        assertContentEquals(
+            ["iosArm64", "ios", "apple", "native", "all"],
             hierarchyFrom("iosArm64"))
 
-        assertContentEquals(listOf("androidNative", "native", "all"),
+        assertContentEquals(
+            ["androidNative", "native", "all"],
             hierarchyFrom("androidNative"))
 
-        assertContentEquals(listOf("unknown"), hierarchyFrom("unknown"))
+        assertContentEquals(["unknown"], hierarchyFrom("unknown"))
     }
 
     @Test
     fun testTargetsList() {
-        assertEquals(setOf("linuxX64"), TargetHierarchy.targets("linuxX64"))
-        assertEquals(setOf("macosX64", "macosArm64"), TargetHierarchy.targets("macos"))
-        assertEquals(emptySet(), TargetHierarchy.targets("unknown"))
+        assertEquals(["linuxX64"], TargetHierarchy.targets("linuxX64"))
+        assertEquals(["macosX64", "macosArm64"], TargetHierarchy.targets("macos"))
+        assertEquals([], TargetHierarchy.targets("unknown"))
     }
 
     @Test
@@ -51,7 +55,8 @@ class KlibTargetHierarchyTest {
     @Test
     fun testAllTargetsAreMapped() {
         val notMappedTargets = KonanTarget.predefinedTargets.keys.subtract(KlibTarget.supportedKonanNames())
-        assertEquals(emptySet(), notMappedTargets,
+        assertEquals(
+            [], notMappedTargets,
             "Following targets are not mapped: $notMappedTargets")
     }
 

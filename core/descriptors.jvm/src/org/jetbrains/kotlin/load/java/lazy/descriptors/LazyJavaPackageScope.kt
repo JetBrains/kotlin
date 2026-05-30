@@ -148,13 +148,13 @@ class LazyJavaPackageScope(
 
     internal fun findClassifierByJavaClass(javaClass: JavaClass) = findClassifier(javaClass.name, javaClass)
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = emptyList()
+    override fun getContributedVariables(name: Name, location: LookupLocation): List<PropertyDescriptor> = []
 
     override fun computeMemberIndex(): DeclaredMemberIndex = DeclaredMemberIndex.Empty
 
     override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> {
         // neither objects nor enum members can be in java package
-        if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return emptySet()
+        if (!kindFilter.acceptsKinds(DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) return []
 
         val knownClassNamesInPackage = knownClassNamesInPackage()
         if (knownClassNamesInPackage != null) return knownClassNamesInPackage.mapTo(HashSet()) { Name.identifier(it) }
@@ -164,12 +164,12 @@ class LazyJavaPackageScope(
         }
     }
 
-    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = emptySet()
+    override fun computeFunctionNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = []
 
     override fun computeNonDeclaredFunctions(result: MutableCollection<SimpleFunctionDescriptor>, name: Name) {
     }
 
-    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?) = emptySet<Name>()
+    override fun computePropertyNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = []
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
@@ -179,7 +179,7 @@ class LazyJavaPackageScope(
         // computeFunctionNames and computePropertyNames return always emptySet
         // therefore don't need to check if kindFilter anything else but CLASSIFIERS
         return if (!kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK or DescriptorKindFilter.NON_SINGLETON_CLASSIFIERS_MASK)) {
-            emptyList()
+            []
         } else {
             // we don't use implementation from super which caches all descriptors and does not use filters
             allDescriptors().filter { it is ClassDescriptor && nameFilter(it.name) }

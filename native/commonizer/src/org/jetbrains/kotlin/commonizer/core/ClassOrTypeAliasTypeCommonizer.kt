@@ -181,7 +181,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         return CirTypeAliasType.createInterned(
             destinationTypeAliasId,
             underlyingType = destinationTypeAlias.underlyingType,
-            arguments = emptyList(),
+            arguments = [],
             isMarkedNullable = sourceType.isMarkedNullable
         )
     }
@@ -203,7 +203,7 @@ internal class ClassOrTypeAliasTypeCommonizer(
         return CirTypeAliasType.createInterned(
             destinationTypeAliasId,
             underlyingType = destinationTypeAlias.underlyingType.toCirClassOrTypeAliasTypeOrNull(providedClassifiers) ?: return null,
-            arguments = emptyList(),
+            arguments = [],
             isMarkedNullable = sourceType.isMarkedNullable
         )
     }

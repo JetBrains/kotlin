@@ -11,16 +11,16 @@ import java.net.URL
 fun findCompilerJar(classFromJarInTheSameLocation: Class<*>, kotlinHome: File): List<File> {
     val baseDir = (tryGetResourcePathForClass(classFromJarInTheSameLocation)?.takeUnless { it.isDirectory }?.parentFile
         ?: kotlinHome).takeIf { it.isDirectory }
-        ?: return emptyList()
+        ?: return []
     val compilerJars = baseDir.listFiles { f: File ->
         COMPILER_JARS.any { expected ->
             f.matchMaybeVersionedFile(expected) && f.extension == "jar"
         }
     }?.takeIf { it.size >= COMPILER_JARS.size }?.toList()
-    return compilerJars ?: emptyList()
+    return compilerJars ?: []
 }
 
-private val COMPILER_JARS = listOf("kotlin-compiler", "kotlin-stdlib", "kotlin-reflect")
+private val COMPILER_JARS = ["kotlin-compiler", "kotlin-stdlib", "kotlin-reflect"]
 
 // below is a copy from kotlin.script.experimental.jvm.impl, but we do not want to introduce dependency to that implementation, and
 // there is no other good place for sharing this functionality yet

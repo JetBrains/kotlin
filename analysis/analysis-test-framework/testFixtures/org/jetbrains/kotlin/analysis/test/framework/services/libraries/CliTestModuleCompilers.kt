@@ -99,7 +99,7 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
         dependencyBinaryRoots.mapTo(this) { it.pathString }
     }
 
-    protected open fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = emptyList()
+    protected open fun buildPlatformExtraClasspath(module: TestModule, testServices: TestServices): List<String> = []
 
     private fun buildCompilerOptions(
         module: TestModule,
@@ -113,11 +113,11 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
     private fun buildCommonCompilerOptions(module: TestModule): List<String> = buildList {
         module.directives.singleOrZeroValue(LanguageSettingsDirectives.API_VERSION)?.let { apiVersion ->
-            addAll(listOf(CommonCompilerArguments::apiVersion.cliArgument, apiVersion.versionString))
+            addAll([CommonCompilerArguments::apiVersion.cliArgument, apiVersion.versionString])
         }
 
         module.directives.singleOrZeroValue(LanguageSettingsDirectives.LANGUAGE_VERSION)?.let { languageVersion ->
-            addAll(listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString))
+            addAll([CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString])
         }
 
         module.directives[LanguageSettingsDirectives.LANGUAGE].forEach {
@@ -133,15 +133,15 @@ abstract class CliTestModuleCompiler : TestModuleCompiler() {
 
     private fun buildCommonSourcesCompilerOptions(commonSourcesTempDirectory: Path?): List<String> {
         if (commonSourcesTempDirectory == null) {
-            return emptyList()
+            return []
         }
 
         val commonSourcesPathString = commonSourcesTempDirectory.absolutePathString()
 
-        return listOf(
+        return [
             "-Xcommon-sources=$commonSourcesPathString",
             commonSourcesPathString // Also add common sources directly, as a free parameter
-        )
+        ]
     }
 
     private fun addFileToJar(path: String, text: String, jarOutputStream: JarOutputStream) {
@@ -157,7 +157,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
     override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> = buildList {
         module.directives[JvmEnvironmentConfigurationDirectives.JVM_TARGET].firstOrNull()?.let { jvmTarget ->
-            addAll(listOf(K2JVMCompilerArguments::jvmTarget.cliArgument, jvmTarget.description))
+            addAll([K2JVMCompilerArguments::jvmTarget.cliArgument, jvmTarget.description])
 
             val jdkHome = when {
                 jvmTarget <= JvmTarget.JVM_1_8 -> KtTestUtil.getJdk8Home()
@@ -167,7 +167,7 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
                 else -> error("JDK for $jvmTarget is not found")
             }
 
-            addAll(listOf(K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()))
+            addAll([K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.toString()])
         }
 
         if (LanguageSettingsDirectives.JVM_EXPOSE_BOXED in module.directives) {
@@ -203,9 +203,9 @@ object JvmJarTestModuleCompiler : CliTestModuleCompiler() {
 
 object JsKlibTestModuleCompiler : CliTestModuleCompiler() {
     override fun buildPlatformCompilerOptions(module: TestModule, testServices: TestServices): List<String> {
-        return listOf(
+        return [
             K2JSCompilerArguments::libraries.cliArgument, testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
-        )
+        ]
     }
 
     override fun doCompile(
@@ -247,7 +247,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
         module: TestModule,
         testServices: TestServices,
     ): List<String> {
-        return emptyList()
+        return []
     }
 
     override fun doCompile(
@@ -265,7 +265,7 @@ object MetadataKlibDirTestModuleCompiler : CliTestModuleCompiler() {
             // JS and Wasm platforms is excluded to allow inheritance from functional types and initializers in external declarations
             add("${K2MetadataCompilerArguments::targetPlatform.cliArgument}=JVM,Native")
             add(K2MetadataCompilerArguments::classpath.cliArgument)
-            addAll(listOf(ForTestCompileRuntime.stdlibCommonForTests().absolutePath) + extraClasspath)
+            addAll([ForTestCompileRuntime.stdlibCommonForTests().absolutePath] + extraClasspath)
             addAll(options)
         }
 

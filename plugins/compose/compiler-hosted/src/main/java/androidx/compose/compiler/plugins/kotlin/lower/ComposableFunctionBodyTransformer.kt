@@ -513,12 +513,12 @@ class ComposableFunctionBodyTransformer(
 
     private val traceEventStartFunction by guardedLazy {
         getTopLevelFunctions(ComposeCallableIds.traceEventStart).singleOrNull {
-            it.owner.parameters.map { p -> p.type } == listOf(
+            it.owner.parameters.map { p -> p.type } == [
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
                 context.irBuiltIns.intType,
                 context.irBuiltIns.stringType
-            )
+            ]
         }?.owner
     }
 
@@ -1328,7 +1328,7 @@ class ComposableFunctionBodyTransformer(
 
     private class SourceInfoFixup(val call: IrCall, val index: Int, val scope: Scope.BlockScope)
 
-    private val sourceFixups = mutableListOf<SourceInfoFixup>()
+    private val sourceFixups: MutableList<SourceInfoFixup> = []
 
     private fun recordSourceParameter(call: IrCall, index: Int, scope: Scope.BlockScope) {
         sourceFixups.add(SourceInfoFixup(call, index, scope))
@@ -1414,10 +1414,10 @@ class ComposableFunctionBodyTransformer(
                                 irIf(
                                     condition = irGetBit(defaultParam, defaultIndex),
                                     body = irBlock(
-                                        statements = listOf(
+                                        statements = [
                                             irSet(param, defaultValue),
                                             dirty.irSetSlotUncertain(slotIndex)
-                                        )
+                                        ]
                                     )
                                 )
                             )
@@ -1536,7 +1536,7 @@ class ComposableFunctionBodyTransformer(
                         // default expression, the parameter can be considered "static".
                         irWhen(
                             origin = IrStatementOrigin.IF,
-                            branches = listOf(
+                            branches = [
                                 irBranch(
                                     condition = irGetBit(defaultParam, defaultIndex),
                                     result = dirty.irOrSetBitsAtSlot(
@@ -1548,7 +1548,7 @@ class ComposableFunctionBodyTransformer(
                                     condition = skipCondition,
                                     result = modifyDirtyFromChangedResult
                                 )
-                            )
+                            ]
                         )
                     } else {
                         // we only call `$composer.changed(...)` on a parameter if the value came in
@@ -1577,7 +1577,7 @@ class ComposableFunctionBodyTransformer(
                 // for varargs with default type, check if $default is set for that parameter
                 val statements = if (defaultParam != null && param.defaultValue != null) {
                     val defaultIndex = scope.defaultIndexForSlotIndex(slotIndex)
-                    val block = irBlock(statements = listOf())
+                    val block = irBlock(statements = [])
                     skipPreamble.statements.add(
                         irIf(
                             condition = irIsProvided(defaultParam, defaultIndex),
@@ -2103,7 +2103,7 @@ class ComposableFunctionBodyTransformer(
         scope: Scope.BlockScope,
     ): IrExpression {
         return if (collectSourceInformation && scope.hasSourceInformation) {
-            irBlock(statements = listOf(startGroup, irSourceInformation(scope)))
+            irBlock(statements = [startGroup, irSourceInformation(scope)])
         } else startGroup
     }
 
@@ -2152,8 +2152,8 @@ class ComposableFunctionBodyTransformer(
         before: List<IrStatement>,
     ): IrExpression = if (collectSourceInformation && scope.hasSourceInformation) {
         expression.wrap(
-            before = before + listOf(irSourceInformationMarkerStart(expression, scope)),
-            after = listOf(irSourceInformationMarkerEnd(expression, scope))
+            before = before + irSourceInformationMarkerStart(expression, scope),
+            after = [irSourceInformationMarkerEnd(expression, scope)]
         )
     } else if (before.isNotEmpty())
         expression.wrap(before = before)
@@ -2348,7 +2348,7 @@ class ComposableFunctionBodyTransformer(
         val tmpVal = irTemporary(target, nameHint = "safe_receiver")
         return irBlock(
             origin = IrStatementOrigin.SAFE_CALL,
-            statements = listOf(
+            statements = [
                 tmpVal,
                 irIfThenElse(
                     condition = irEqual(irGet(tmpVal), irNull()),
@@ -2359,7 +2359,7 @@ class ComposableFunctionBodyTransformer(
                         args = args
                     )
                 )
-            )
+            ]
         )
     }
 
@@ -2405,7 +2405,7 @@ class ComposableFunctionBodyTransformer(
                 endOffset,
                 type,
                 origin,
-                prefix + listOf(irStartReplaceGroup(this, scope)) + suffix
+                prefix + irStartReplaceGroup(this, scope) + suffix
             )
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
@@ -2414,14 +2414,12 @@ class ComposableFunctionBodyTransformer(
                 endOffset,
                 type,
                 origin,
-                prefix + listOf(
-                    irStartReplaceGroup(
-                        this,
-                        scope,
-                        startOffset = startOffset,
-                        endOffset = startOffset
-                    )
-                ) + suffix + listOf(irEndReplaceGroup(endOffset, endOffset, scope))
+                prefix + irStartReplaceGroup(
+                    this,
+                    scope,
+                    startOffset = startOffset,
+                    endOffset = startOffset
+                ) + suffix + irEndReplaceGroup(endOffset, endOffset, scope)
             )
         }
     }
@@ -2434,7 +2432,7 @@ class ComposableFunctionBodyTransformer(
         // could be inside of the block
         if (!scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump) {
             return wrap(
-                before = listOf(
+                before = [
                     irStartReplaceGroup(
                         this,
                         scope,
@@ -2442,7 +2440,7 @@ class ComposableFunctionBodyTransformer(
                         endOffset = startOffset,
                     ),
                     irEndReplaceGroup(endOffset, endOffset, scope)
-                )
+                ]
             )
         }
         scope.realizeGroup {
@@ -2453,21 +2451,21 @@ class ComposableFunctionBodyTransformer(
             // just push the end call on the scope because of the way returns get transformed in
             // this class. As a result, here we can safely just "prepend" the start call
             endsWithReturnOrJump() -> {
-                wrap(before = listOf(irStartReplaceGroup(this, scope)))
+                wrap(before = [irStartReplaceGroup(this, scope)])
             }
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
             else -> {
                 wrap(
-                    before = listOf(
+                    before = [
                         irStartReplaceGroup(
                             this,
                             scope,
                             startOffset = startOffset,
                             endOffset = endOffset
                         )
-                    ),
-                    after = listOf(irEndReplaceGroup(startOffset, endOffset, scope))
+                    ],
+                    after = [irEndReplaceGroup(startOffset, endOffset, scope)]
                 )
             }
         }
@@ -2479,12 +2477,12 @@ class ComposableFunctionBodyTransformer(
             endOffset,
             type,
             null,
-            listOf(variable, this)
+            [variable, this]
         )
 
     fun IrExpression.wrap(
-        before: List<IrStatement> = emptyList(),
-        after: List<IrStatement> = emptyList(),
+        before: List<IrStatement> = [],
+        after: List<IrStatement> = [],
     ): IrContainerExpression {
         return if (after.isEmpty() || type.isNothing() || type.isUnit()) {
             wrap(startOffset, endOffset, type, before, after)
@@ -2522,8 +2520,8 @@ class ComposableFunctionBodyTransformer(
             }
         )
         return wrap(
-            listOf(before),
-            listOf(after)
+            [before],
+            [after]
         )
     }
 
@@ -2557,8 +2555,8 @@ class ComposableFunctionBodyTransformer(
         }
         if (!scope.hasComposableCalls && !scope.hasReturn && !scope.hasJump) {
             return wrap(
-                before = listOf(makeStart()),
-                after = listOf(makeEnd()),
+                before = [makeStart()],
+                after = [makeEnd()],
             )
         }
 
@@ -2568,14 +2566,14 @@ class ComposableFunctionBodyTransformer(
             // just push the end call on the scope because of the way returns get transformed in
             // this class. As a result, here we can safely just "prepend" the start call
             endsWithReturnOrJump() -> {
-                wrap(before = listOf(makeStart()))
+                wrap(before = [makeStart()])
             }
             // otherwise, we want to push an end call for any early returns/jumps, but also add
             // an end call to the end of the group
             else -> {
                 wrap(
-                    before = listOf(makeStart()),
-                    after = listOf(makeEnd()),
+                    before = [makeStart()],
+                    after = [makeEnd()],
                 )
             }
         }
@@ -2682,7 +2680,7 @@ class ComposableFunctionBodyTransformer(
         extraEndLocation: (IrExpression) -> Unit,
     ) {
         var scope: Scope? = currentScope
-        val blockScopeMarks = mutableListOf<Scope.BlockScope>()
+        val blockScopeMarks: MutableList<Scope.BlockScope> = []
         var leavingInlinedComposableLambda = false
         loop@ while (scope != null) {
             when (scope) {
@@ -2964,18 +2962,18 @@ class ComposableFunctionBodyTransformer(
 
                     val result = mutableStatementContainer()
                     result.statements.addAll(
-                        listOf(
+                        [
                             before,
                             irBlock(
                                 type = expression.type,
                                 origin = IrStatementOrigin.FOR_LOOP,
-                                statements = listOf(
+                                statements = [
                                     newVar,
                                     loop
-                                )
+                                ]
                             ),
                             after
-                        )
+                        ]
                     )
                     result
                 } else {
@@ -3146,7 +3144,7 @@ class ComposableFunctionBodyTransformer(
 
         val fileContainingExpression = currentScope.fileScope?.declaration
         var dispatchMeta: CallArgumentMeta? = null
-        val argsMeta = mutableListOf<CallArgumentMeta>()
+        val argsMeta: MutableList<CallArgumentMeta> = []
         var valueParamIndex = 0
         for (i in 0 until composerIndex) {
             val arg = expression.arguments[i]
@@ -3208,7 +3206,7 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitRememberCall(expression: IrCall): IrExpression {
         val fileContainingRememberCall = currentScope.fileScope?.declaration
-        val inputArgs = mutableListOf<IrExpression>()
+        val inputArgs: MutableList<IrExpression> = []
         var hasSpreadArgs = false
         var calculationArg: IrExpression? = null
         for (i in 0 until expression.arguments.size) {
@@ -3367,10 +3365,9 @@ class ComposableFunctionBodyTransformer(
                 }
             } else {
                 cacheCall.wrap(
-                    before = nonNullInputValues + listOf(
-                        irStartReplaceGroup(expression, blockScope, irFunctionSourceKey(expression.symbol.owner))
-                    ),
-                    after = listOf(irEndReplaceGroup(scope = blockScope))
+                    before = nonNullInputValues +
+                        irStartReplaceGroup(expression, blockScope, irFunctionSourceKey(expression.symbol.owner)),
+                    after = [irEndReplaceGroup(scope = blockScope)]
                 )
             }
         }.also { expr ->
@@ -3521,7 +3518,7 @@ class ComposableFunctionBodyTransformer(
 
     private fun visitKeyCall(expression: IrCall): IrExpression {
         encounteredComposableCall(withGroups = true)
-        val keyArgs = mutableListOf<IrExpression>()
+        val keyArgs: MutableList<IrExpression> = []
         var blockArg: IrExpression? = null
         for (i in 0 until expression.arguments.size) {
             val param = expression.symbol.owner.parameters[i]
@@ -3614,7 +3611,7 @@ class ComposableFunctionBodyTransformer(
     private fun buildChangedArgumentsForCall(args: List<CallArgumentMeta>): List<IrExpression> {
         // passing in 0 for thisParams since they should be included in the params list
         val changedCount = changedParamCount(args.size, 0)
-        val result = mutableListOf<IrExpression>()
+        val result: MutableList<IrExpression> = []
         for (i in 0 until changedCount) {
             val start = i * SLOTS_PER_INT
             val end = min(start + SLOTS_PER_INT, args.size)
@@ -3647,7 +3644,7 @@ class ComposableFunctionBodyTransformer(
 
         // NOTE: we start with 0b0 because it is important that the low bit is always 0
         var bitMaskConstant = 0b0
-        val orExprs = mutableListOf<IrExpression>()
+        val orExprs: MutableList<IrExpression> = []
 
         arguments.fastForEachIndexed { slot, argInfo ->
             val stability = argInfo.stability
@@ -3786,14 +3783,14 @@ class ComposableFunctionBodyTransformer(
         return if (
             !scope.hasComposableCalls && expression.value.type.isUnitOrNullableUnit()
         ) {
-            expression.wrap(listOf(endBlock))
+            expression.wrap([endBlock])
         } else {
             val tempVar = irTemporary(expression.value, nameHint = "return")
             tempVar.wrap(
                 expression.startOffset,
                 expression.endOffset,
                 expression.type,
-                after = listOf(
+                after = [
                     endBlock,
                     IrReturnImpl(
                         expression.startOffset,
@@ -3802,7 +3799,7 @@ class ComposableFunctionBodyTransformer(
                         expression.returnTargetSymbol,
                         irGet(tempVar)
                     )
-                )
+                ]
             )
         }
     }
@@ -3811,7 +3808,7 @@ class ComposableFunctionBodyTransformer(
         if (!isInComposableScope) return super.visitBreakContinue(jump)
         val endBlock = mutableStatementContainer()
         encounteredJump(jump) { endBlock.statements.add(it) }
-        return jump.wrap(before = listOf(endBlock))
+        return jump.wrap(before = [endBlock])
     }
 
     override fun visitDoWhileLoop(loop: IrDoWhileLoop): IrExpression {
@@ -3907,8 +3904,8 @@ class ComposableFunctionBodyTransformer(
             expression.type,
             expression.origin
         )
-        val resultScopes = mutableListOf<Scope.BranchScope>()
-        val condScopes = mutableListOf<Scope.BranchScope>()
+        val resultScopes: MutableList<Scope.BranchScope> = []
+        val condScopes: MutableList<Scope.BranchScope> = []
         val whenScope = withScope(Scope.WhenScope()) {
             expression.branches.fastForEachIndexed { index, it ->
                 if (it is IrElseBranch) {
@@ -3985,7 +3982,7 @@ class ComposableFunctionBodyTransformer(
                         startOffset = expression.endOffset,
                         endOffset = expression.endOffset,
                         type = context.irBuiltIns.unitType,
-                        statements = emptyList()
+                        statements = []
                     )
                 )
             )
@@ -4195,8 +4192,8 @@ class ComposableFunctionBodyTransformer(
                 }
 
             init {
-                val defaultParams = mutableListOf<IrValueParameter>()
-                val changedParams = mutableListOf<IrValueParameter>()
+                val defaultParams: MutableList<IrValueParameter> = []
+                val changedParams: MutableList<IrValueParameter> = []
                 for (param in function.parameters) {
                     when (param.kind) {
                         IrParameterKind.DispatchReceiver,
@@ -4310,7 +4307,7 @@ class ComposableFunctionBodyTransformer(
                 val call: IrCall,
             )
 
-            private val intrinsicRememberFixups = mutableListOf<IntrinsicRememberFixup>()
+            private val intrinsicRememberFixups: MutableList<IntrinsicRememberFixup> = []
 
             fun recordIntrinsicRememberFixUp(
                 isMemoizedLambda: Boolean,
@@ -4351,8 +4348,8 @@ class ComposableFunctionBodyTransformer(
         }
 
         abstract class BlockScope(name: String) : Scope(name) {
-            private val extraEndLocations = mutableListOf<(IrExpression) -> Unit>()
-            private val sourceLocations = mutableListOf<SourceLocation>()
+            private val extraEndLocations: MutableList<(IrExpression) -> Unit> = []
+            private val sourceLocations: MutableList<SourceLocation> = []
 
             override val isInComposable: Boolean get() = parent?.isInComposable ?: false
 
@@ -4473,7 +4470,7 @@ class ComposableFunctionBodyTransformer(
                 private set
             var hasJump = false
                 protected set
-            private val coalescableChildren = mutableListOf<CoalescableGroupInfo>()
+            private val coalescableChildren: MutableList<CoalescableGroupInfo> = []
 
             class CoalescableGroupInfo(
                 private val scope: BlockScope,
@@ -4503,7 +4500,7 @@ class ComposableFunctionBodyTransformer(
         }
 
         class LoopScope(val loop: IrLoop) : BlockScope("loop") {
-            private val jumpEndLocations = mutableListOf<(IrExpression) -> Unit>()
+            private val jumpEndLocations: MutableList<(IrExpression) -> Unit> = []
             var needsGroupPerIteration = false
                 private set
 
@@ -4857,7 +4854,7 @@ class ComposableFunctionBodyTransformer(
             return irCall(
                 symbol = if (bitsToShiftLeft > 0) shiftLeft else shiftRight,
                 dispatchReceiver = value,
-                args = arrayOf(irConst(abs(bitsToShiftLeft)))
+                args = [irConst(abs(bitsToShiftLeft))]
             )
         }
     }

@@ -92,7 +92,7 @@ internal open class ExtTestCaseGroupProvider : TestCaseGroupProvider, TestDispos
             val disabledTestCaseIds = hashSetOf<TestCaseId>()
             excludedTestDataFiles.mapTo(disabledTestCaseIds, TestCaseId::TestDataFile)
 
-            val testCases = mutableListOf<TestCase>()
+            val testCases: MutableList<TestCase> = []
 
             testDataFiles.forEach { testDataFile ->
                 val extTestDataFile = ExtTestDataFile(
@@ -200,7 +200,7 @@ private class ExtTestDataFile(
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
 
     private fun assembleFreeCompilerArgs(settings: Settings): TestCompilerArgs {
-        val args = mutableListOf<String>()
+        val args: MutableList<String> = []
         val defaultDirectives = settings.get<RegisteredDirectives>()
         args += defaultDirectives[FREE_COMPILER_ARGS]
         args += structure.directives[FREE_COMPILER_ARGS]
@@ -321,7 +321,7 @@ private class ExtTestDataFile(
                 basePackageName,
                 transformHelpersPackage = false
             )
-            handler.accept(visitor, emptySet())
+            handler.accept(visitor, [])
         }
     }
 
@@ -352,7 +352,7 @@ private class ExtTestDataFile(
 
     /** Finds the fully-qualified name of the entry point function (aka `fun box(): String`). */
     private fun findEntryPoint(): Pair<String, Boolean>? = with(structure) {
-        val result = mutableListOf<Pair<String, Boolean>>()
+        val result: MutableList<Pair<String, Boolean>> = []
 
         filesToTransform.forEach { handler ->
             handler.accept(object : KtTreeVisitorVoid() {
@@ -430,7 +430,7 @@ private class ExtTestDataFile(
         )
 
         val testFiltering = TestFiltering(
-            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+            if (testKind in [TestKind.REGULAR, TestKind.STANDALONE]) TCTestOutputFilter
             else TestOutputFilter.NO_FILTERING
         )
 
@@ -509,19 +509,19 @@ private class ExtTestDataFile(
     }
 
     companion object {
-        private val INCOMPATIBLE_DIRECTIVES = setOf(FULL_JDK, JVM_TARGET, DIAGNOSTICS)
+        private val INCOMPATIBLE_DIRECTIVES: Set<Directive> = [FULL_JDK, JVM_TARGET, DIAGNOSTICS]
 
-        private val INCOMPATIBLE_API_VERSIONS = setOf(ApiVersion.KOTLIN_1_4)
-        private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
+        private val INCOMPATIBLE_API_VERSIONS: Set<ApiVersion> = [ApiVersion.KOTLIN_1_4]
+        private val INCOMPATIBLE_LANGUAGE_VERSIONS: Set<LanguageVersion> = [LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4]
 
-        private val OPT_INS_PURELY_FOR_COMPILER = setOf(
+        private val OPT_INS_PURELY_FOR_COMPILER: Set<String> = [
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()
-        )
+        ]
 
         private val BOX_FUNCTION_NAME = Name.identifier("box")
         private val OPT_IN_ANNOTATION_NAME = Name.identifier("OptIn")
 
-        private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = listOf(DiagnosticsRemovingSourceTransformer)
+        private val MANDATORY_SOURCE_TRANSFORMERS: ExternalSourceTransformers = [DiagnosticsRemovingSourceTransformer]
     }
 }
 
@@ -547,7 +547,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         }
 
         private val filesAndModules = FilesAndModules(originalTestDataFile, sourceTransformers)
-        val originalTestSourceFiles = mutableSetOf<File>()
+        val originalTestSourceFiles: MutableSet<File> = []
 
         val directives: RegisteredDirectives get() = filesAndModules.directives
 
@@ -676,7 +676,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
         friends: List<String>,
         dependsOn: List<String>, // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
     ) : KotlinBaseTest.TestModule(name, dependencies, friends, dependsOn) {
-        val files = mutableListOf<ExtTestFile>()
+        val files: MutableList<ExtTestFile> = []
         val directivesBuilder = RegisteredDirectivesParser(DirectivesContainer.Empty, JUnit5Assertions)
 
         val isSupport get() = name == SUPPORT_MODULE_NAME
@@ -706,8 +706,8 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
     @OptIn(ObsoleteTestInfrastructure::class)
     private class ExtTestFileFactory : TestFiles.TestFileFactory<ExtTestModule, ExtTestFile> {
-        private val defaultModule by lazy { createModule(DEFAULT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
-        private val supportModule by lazy { createModule(SUPPORT_MODULE_NAME, emptyList(), emptyList(), emptyList()) }
+        private val defaultModule by lazy { createModule(DEFAULT_MODULE_NAME, [], [], []) }
+        private val supportModule by lazy { createModule(SUPPORT_MODULE_NAME, [], [], []) }
         val directivesParser = RegisteredDirectivesParser(
             ComposedDirectivesContainer(
                 TestDirectives, ConfigurationDirectives, LanguageSettingsDirectives,
@@ -730,7 +730,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 
         private fun recordRegisteredDirectives(module: ExtTestModule?, directives: Directives) {
             for ([name, valuesPerLine] in directives.allDirectives) {
-                for (rawValue in valuesPerLine ?: listOf(null)) {
+                for (rawValue in valuesPerLine ?: [null]) {
                     // Convert Directive to RegisteredDirective
                     val splitValues = rawValue?.split(RegisteredDirectivesParser.SPACES_PATTERN)
                         ?.filter { it.isNotBlank() }?.takeIf { it.isNotEmpty() }
@@ -852,7 +852,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
 fun Settings.isIgnoredTarget(testDataFile: File): Boolean {
     val disposable = Disposer.newDisposable("Disposable for ExtTestCaseGroupProvider.isIgnoredTarget")
     try {
-        val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, emptyList())
+        val extTestDataFileStructure = ExtTestDataFileStructureFactory(disposable).ExtTestDataFileStructure(testDataFile, [])
         return isIgnoredTarget(extTestDataFileStructure.directives)
     } finally {
         disposeRootInWriteAction(disposable)

@@ -61,7 +61,7 @@ fun PluginDataFrameSchema.explodeImpl(dropEmpty: Boolean, selector: ColumnsResol
     }
 
     fun explode(column: SimpleCol, path: List<String>): SimpleCol {
-        val fullPath = path + listOf(column.name)
+        val fullPath = path + column.name
         return when (column) {
             is SimpleColumnGroup -> {
                 SimpleColumnGroup(column.name, column.columns().map { explode(it, fullPath) })
@@ -91,7 +91,7 @@ fun PluginDataFrameSchema.explodeImpl(dropEmpty: Boolean, selector: ColumnsResol
 
     return PluginDataFrameSchema(
         columns(impliedColumnsResolver = selector).map { column ->
-            explode(column, emptyList())
+            explode(column, [])
         }
     )
 }

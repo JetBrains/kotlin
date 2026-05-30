@@ -99,7 +99,7 @@ abstract class AbstractOverriddenDeclarationProviderTest : AbstractAnalysisApiBa
             .toList()
             .asReversed()
 
-        val chunks = mutableListOf<String>()
+        val chunks: MutableList<String> = []
 
         for ([index, parent] in parentsWithSelf.withIndex()) {
             // Render qualified names for top-level declarations

@@ -37,10 +37,10 @@ private fun extractConstantValue(descriptor: DeclarationDescriptor, type: String
 
 private val cEnumEntryValueAnnotationName = FqName("kotlinx.cinterop.internal.ConstantValue")
 
-private val cEnumEntryValueTypes = setOf(
-        "Byte", "Short", "Int", "Long",
-        "UByte", "UShort", "UInt", "ULong"
-)
+private val cEnumEntryValueTypes: Set<String> = [
+    "Byte", "Short", "Int", "Long",
+    "UByte", "UShort", "UInt", "ULong"
+]
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
 internal class CEnumClassGenerator(
@@ -52,7 +52,7 @@ internal class CEnumClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = []
 
     private val enumClassMembersGenerator = EnumClassMembersGenerator(DeclarationGenerator(context))
 

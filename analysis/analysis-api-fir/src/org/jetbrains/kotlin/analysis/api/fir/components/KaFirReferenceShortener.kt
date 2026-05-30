@@ -105,12 +105,12 @@ internal class KaFirReferenceShortener(
         val firDeclaration = declarationToVisit.getCorrespondingFirElement() ?: return ShortenCommandImpl(
             @Suppress("DEPRECATION")
             file.createSmartPointer(),
-            importsToAdd = emptySet(),
-            starImportsToAdd = emptySet(),
-            listOfTypeToShortenInfo = emptyList(),
-            listOfQualifierToShortenInfo = emptyList(),
-            thisLabelsToShorten = emptyList(),
-            kDocQualifiersToShorten = emptyList(),
+            importsToAdd = [],
+            starImportsToAdd = [],
+            listOfTypeToShortenInfo = [],
+            listOfQualifierToShortenInfo = [],
+            thisLabelsToShorten = [],
+            kDocQualifiersToShorten = [],
         )
 
         val towerContext = FirTowerDataContextProvider.create(resolutionFacade, declarationToVisit)
@@ -309,7 +309,7 @@ private class FirShorteningContext(val analysisSession: KaFirSession) {
      */
     private fun findAvailableConstructors(scope: FirScope, targetClassName: Name): List<FirFunctionSymbol<*>> {
         val classLikeSymbol = scope.findFirstClassifierByName(targetClassName) as? FirClassLikeSymbol
-            ?: return emptyList()
+            ?: return []
 
         @OptIn(DirectDeclarationsAccess::class)
         val constructors = (classLikeSymbol as? FirClassSymbol)?.declarationSymbols?.filterIsInstance<FirConstructorSymbol>().orEmpty()
@@ -450,7 +450,7 @@ private class ShortenKDocQualifier(
 )
 
 private class CollectingVisitor(private val collector: ElementsToShortenCollector) : FirVisitorVoid() {
-    private val visitedProperty = mutableSetOf<FirProperty>()
+    private val visitedProperty: MutableSet<FirProperty> = []
 
     override fun visitValueParameter(valueParameter: FirValueParameter) {
         super.visitValueParameter(valueParameter)
@@ -528,9 +528,9 @@ private class ElementsToShortenCollector(
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
     private val resolutionFacade: LLResolutionFacade,
 ) {
-    val typesToShorten: MutableList<ShortenType> = mutableListOf()
-    val qualifiersToShorten: MutableList<ShortenQualifier> = mutableListOf()
-    val labelsToShorten: MutableList<ShortenThisLabel> = mutableListOf()
+    val typesToShorten: MutableList<ShortenType> = []
+    val qualifiersToShorten: MutableList<ShortenQualifier> = []
+    val labelsToShorten: MutableList<ShortenThisLabel> = []
 
     private val contextSensitiveResolutionIsEnabled: Boolean
         get() {
@@ -825,7 +825,7 @@ private class ElementsToShortenCollector(
          */
         if (shorteningContext.findPropertiesInScopes(scopes, name).isNotEmpty()) {
             val firForElement = element.getOrBuildFir(resolutionFacade) as? FirQualifiedAccessExpression
-            val typeArguments = firForElement?.typeArguments ?: emptyList()
+            val typeArguments = firForElement?.typeArguments ?: []
             val qualifiedAccessCandidates = findCandidatesForPropertyAccess(classSymbol.annotations, typeArguments, name, element)
             if (qualifiedAccessCandidates.mapNotNull { it.candidate.originScope }.hasScopeCloserThan(scopeForClass, element)) return false
         }
@@ -1561,7 +1561,7 @@ private class KDocQualifiersToShortenCollector(
     private val classShortenStrategy: (FirClassLikeSymbol<*>) -> ShortenStrategy,
     private val callableShortenStrategy: (FirCallableSymbol<*>) -> ShortenStrategy,
 ) : KtVisitorVoid() {
-    val kDocQualifiersToShorten: MutableList<ShortenKDocQualifier> = mutableListOf()
+    val kDocQualifiersToShorten: MutableList<ShortenKDocQualifier> = []
     override fun visitElement(element: PsiElement) {
         if (!element.textRange.intersects(selection)) return
 

@@ -26,7 +26,7 @@ class JvmBuiltInClassDescriptorFactory(
     private val cloneable by storageManager.createLazyValue {
         ClassDescriptorImpl(
             computeContainingDeclaration(moduleDescriptor),
-            CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, listOf(moduleDescriptor.builtIns.anyType),
+            CLONEABLE_NAME, Modality.ABSTRACT, ClassKind.INTERFACE, [moduleDescriptor.builtIns.anyType],
             SourceElement.NO_SOURCE, false, storageManager
         ).apply {
             initialize(CloneableClassScope(storageManager, this), emptySet(), null)

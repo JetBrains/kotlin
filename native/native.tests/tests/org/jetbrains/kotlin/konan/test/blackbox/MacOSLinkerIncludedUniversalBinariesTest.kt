@@ -31,32 +31,32 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
     @Test
     fun includedUniversalDylib___producesThinArchive() = assertProducesThinImageInFramework(
         includedImageType = ImageType.DYLIB,
-        linkingFlags = listOf("-Xstatic-framework"),
+        linkingFlags = ["-Xstatic-framework"],
         expectedMagic = thinArchiveMagic,
     )
 
     @Test
     fun includedUniversalDylib___producesThinDylib() = assertProducesThinImageInFramework(
         includedImageType = ImageType.DYLIB,
-        linkingFlags = emptyList(),
+        linkingFlags = [],
         expectedMagic = thinMachOMagic,
     )
 
     @Test
     fun includedUniversalArchive___producesThinArchive() = assertProducesThinImageInFramework(
         includedImageType = ImageType.OBJECT_FILE,
-        linkingFlags = listOf("-Xstatic-framework"),
+        linkingFlags = ["-Xstatic-framework"],
         expectedMagic = thinArchiveMagic,
     )
 
     @Test
     fun includedUniversalArchive___producesThinDylib() = assertProducesThinImageInFramework(
         includedImageType = ImageType.OBJECT_FILE,
-        linkingFlags = emptyList(),
+        linkingFlags = [],
         expectedMagic = thinMachOMagic,
     )
 
-    private val thinArchiveMagic = listOf(0x21, 0x3c, 0x61, 0x72)
+    private val thinArchiveMagic = [0x21, 0x3c, 0x61, 0x72]
     private val thinMachOMagic: List<Int>
         get() = listOf(
             0xfe, 0xed, 0xfa, if (targets.testTarget.has32BitPointers()) 0xce else 0xcf
@@ -90,7 +90,7 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
                 freeCompilerArgs = TestCompilerArgs(
                     "-include-binary", image.canonicalPath,
                 ),
-                dependencies = emptyList()
+                dependencies = []
             ),
             TestCompilationDependencyType.IncludedLibrary,
         )
@@ -98,12 +98,12 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val frameworkImagePath = ObjCFrameworkCompilation(
             testRunSettings,
             freeCompilerArgs = TestCompilerArgs(
-                listOf(
+                [
                     "-Xbinary=bundleId=stub",
-                ) + linkingFlags
+                ] + linkingFlags
             ),
-            sourceModules = emptyList(),
-            dependencies = listOf(klibWithIncludedUniversalBinary),
+            sourceModules = [],
+            dependencies = [klibWithIncludedUniversalBinary],
             expectedArtifact = TestCompilationArtifact.ObjCFramework(
                 buildDir,
                 "Kotlin",
@@ -142,7 +142,7 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         val outputImage = buildDir.resolve("output.a")
         if (outputImage.exists()) outputImage.delete()
         return lipoCreate(
-            inputFiles = listOf(armImage, otherImage),
+            inputFiles = [armImage, otherImage],
             outputFile = outputImage,
         ).assertSuccess().resultingArtifact.libraryFile
     }
@@ -153,8 +153,9 @@ class MacOSLinkerIncludedUniversalBinariesTest : AbstractNativeSimpleTest() {
         imageType: ImageType,
     ): File {
         val outputImage = buildDir.resolve("output_$arch")
+        @Suppress("ConvertToCollectionLiterals")
         compileWithClang(
-            sourceFiles = listOf(inputFile),
+            sourceFiles = [inputFile],
             outputFile = outputImage,
             additionalClangFlags = imageType.clangOptions + listOf("-arch", arch),
         ).assertSuccess()

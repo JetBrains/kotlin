@@ -29,13 +29,13 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker(MppC
     override fun check(declaration: FirRegularClass) {
         val containingClass = context.containingDeclarations.lastIsInstanceOrNull<FirRegularClassSymbol>()
         if (declaration.isEffectivelyExternal(containingClass)) return
-        val cyclicConstructors = mutableSetOf<FirConstructorSymbol>()
+        val cyclicConstructors: MutableSet<FirConstructorSymbol> = []
         var hasPrimaryConstructor = false
         val isEffectivelyExpect = declaration.isEffectivelyExpect(context.containingDeclarations.lastOrNull() as? FirRegularClassSymbol)
 
         // secondary; non-cyclic;
         // candidates for further analysis
-        val otherConstructors = mutableSetOf<FirConstructorSymbol>()
+        val otherConstructors: MutableSet<FirConstructorSymbol> = []
 
         declaration.constructors(context.session).forEach {
             if (!it.isPrimary || it.isErrorPrimaryConstructor) {
@@ -82,8 +82,8 @@ object FirCommonConstructorDelegationIssuesChecker : FirRegularClassChecker(MppC
         }
     }
 
-    private fun FirConstructorSymbol.findCycle(knownCyclicConstructors: Set<FirConstructorSymbol> = emptySet()): Set<FirConstructorSymbol>? {
-        val visitedConstructors = mutableSetOf(this)
+    private fun FirConstructorSymbol.findCycle(knownCyclicConstructors: Set<FirConstructorSymbol> = []): Set<FirConstructorSymbol>? {
+        val visitedConstructors: MutableSet<FirConstructorSymbol> = [this]
 
         var it = this
         var delegated = this.getDelegated()

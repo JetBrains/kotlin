@@ -191,8 +191,8 @@ internal class CallGenerator(statementGenerator: StatementGenerator) : Statement
                 hasExtensionReceiver = descriptor.extensionReceiverParameter != null,
             )
             context.callToSubstitutedDescriptorMap[irCall] = constructorDescriptor
-            updateOriginForImplicitReceivers(call.original, dispatchReceiver, emptyList(), extensionReceiver)
-            addParametersToCall(startOffset, endOffset, call, irCall, irCall.type, emptyList())
+            updateOriginForImplicitReceivers(call.original, dispatchReceiver, [], extensionReceiver)
+            addParametersToCall(startOffset, endOffset, call, irCall, irCall.type, [])
         }
     }
 

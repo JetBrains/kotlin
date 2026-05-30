@@ -27,7 +27,7 @@ internal open class TypeTransformerPrinter(
         modality: Modality?,
         override: Boolean,
     ) {
-        val typeTP = TypeVariable("Type", listOf(irTypeType.copy(nullable = true)))
+        val typeTP = TypeVariable("Type", [irTypeType.copy(nullable = true)])
         printFunctionDeclaration(
             name = name,
             parameters = listOfNotNull(
@@ -36,7 +36,7 @@ internal open class TypeTransformerPrinter(
                 FunctionParameter("data", visitorDataType).takeIf { hasDataParameter },
             ),
             returnType = typeTP,
-            typeParameters = listOf(typeTP),
+            typeParameters = [typeTP],
             modality = modality,
             override = override,
         )

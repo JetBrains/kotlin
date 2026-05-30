@@ -66,7 +66,7 @@ internal object IrTypeInlineClassesSupport : InlineClassesSupport<IrClass, IrTyp
     }
 
     override fun computeFullErasure(type: IrType): Sequence<IrClass> = when (val classifier = type.classifierOrFail) {
-        is IrClassSymbol -> sequenceOf(classifier.owner)
+        is IrClassSymbol -> [classifier.owner]
         is IrTypeParameterSymbol -> classifier.owner.superTypes.asSequence().flatMap { computeFullErasure(it) }
         is IrScriptSymbol -> classifier.unexpectedSymbolKind<IrClassifierSymbol>()
     }

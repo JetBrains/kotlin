@@ -32,7 +32,7 @@ class KotlinStandalonePackageProvider(
         for (packageName in matchingPackageNames) {
             var currentPackage = FqName.ROOT
             for (subPackage in packageName.pathSegments()) {
-                packages.getOrPut(currentPackage) { mutableSetOf() } += subPackage
+                packages.getOrPut(currentPackage) { [] } += subPackage
                 currentPackage = currentPackage.child(subPackage)
             }
             packages.computeIfAbsent(currentPackage) { mutableSetOf() }
@@ -45,7 +45,7 @@ class KotlinStandalonePackageProvider(
     }
 
     override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> {
-        return kotlinPackageToSubPackages[packageFqName] ?: emptySet()
+        return kotlinPackageToSubPackages[packageFqName] ?: []
     }
 }
 
@@ -91,7 +91,7 @@ class KotlinStandalonePackageProviderFactory(
 
             for ([libraryRoot, libraryFile] in klibFiles) {
                 if (searchScope.contains(libraryRoot)) {
-                    addAll(klibPackages[libraryFile] ?: emptyList())
+                    addAll(klibPackages[libraryFile] ?: [])
                 }
             }
         }

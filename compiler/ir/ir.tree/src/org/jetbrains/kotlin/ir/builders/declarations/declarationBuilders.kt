@@ -158,9 +158,9 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
         origin = IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
         returnType = field.type
     }.apply {
-        parameters = listOf(parentClass.thisReceiver!!.copyTo(this))
+        parameters = [parentClass.thisReceiver!!.copyTo(this)]
         body = factory.createBlockBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, [
                 IrReturnImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     builtIns.nothingType,
@@ -176,7 +176,7 @@ fun IrProperty.addDefaultGetter(parentClass: IrClass, builtIns: IrBuiltIns) {
                         )
                     )
                 )
-            )
+            ]
         )
     }
 }
@@ -193,20 +193,25 @@ fun IrProperty.addDefaultSetter(parentClass: IrClass, builtIns: IrBuiltIns) {
             type = field.type
             kind = IrParameterKind.Regular
         }
-        setter.parameters = listOf(
+        setter.parameters = [
             parentClass.thisReceiver!!.copyTo(setter),
             irValueParameter,
-        )
+        ]
         setter.body = factory.createBlockBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, [
                 IrSetFieldImpl(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     field.symbol,
-                    IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, setter.dispatchReceiverParameter!!.type, setter.dispatchReceiverParameter!!.symbol),
+                    IrGetValueImpl(
+                        UNDEFINED_OFFSET,
+                        UNDEFINED_OFFSET,
+                        setter.dispatchReceiverParameter!!.type,
+                        setter.dispatchReceiverParameter!!.symbol
+                    ),
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irValueParameter.type, irValueParameter.symbol),
                     builtIns.unitType,
                 )
-            )
+            ]
         )
     }
 }
@@ -307,7 +312,7 @@ fun IrClass.addFunction(
     }.apply {
         if (!isStatic) {
             val thisReceiver = parentAsClass.thisReceiver!!
-            parameters = listOf(thisReceiver.copyTo(this, type = thisReceiver.type))
+            parameters = [thisReceiver.copyTo(this, type = thisReceiver.type)]
         }
     }
 

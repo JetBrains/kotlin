@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.KtPsiDiagnostic
 internal class FileStructureElementDiagnosticList(
     private val map: Map<PsiElement, List<KtPsiDiagnostic>>
 ) {
-    fun diagnosticsFor(element: PsiElement): List<KtPsiDiagnostic> = map[element] ?: emptyList()
+    fun diagnosticsFor(element: PsiElement): List<KtPsiDiagnostic> = map[element] ?: []
 
     inline fun forEach(action: (List<KtPsiDiagnostic>) -> Unit) = map.values.forEach(action)
 }

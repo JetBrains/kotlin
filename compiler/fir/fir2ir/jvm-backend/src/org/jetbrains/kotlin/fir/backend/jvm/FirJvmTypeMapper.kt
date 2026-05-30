@@ -188,7 +188,7 @@ class FirJvmTypeMapper(override val session: FirSession) : FirSessionComponent, 
                         (arguments.size > BuiltInFunctionArity.BIG_ARITY)) ||
                 defaultType.isReflectFunctionType(session)
             ) {
-                writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
+                writeGenericArguments(sw, [arguments.last()], [parameters.last()], mode)
                 return
             }
 

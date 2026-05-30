@@ -37,7 +37,7 @@ internal class KaFe10VariableSignature<out S : KaVariableSymbol>(
                     backingSymbol = contextParameter.symbol,
                     backingReturnType = substitutor.substitute(contextParameter.returnType),
                     backingReceiverType = contextParameter.receiverType?.let(substitutor::substitute),
-                    backingContextParameters = emptyList(),
+                    backingContextParameters = [],
                 )
             }
         )

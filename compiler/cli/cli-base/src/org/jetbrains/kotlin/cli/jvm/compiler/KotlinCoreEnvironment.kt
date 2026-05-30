@@ -199,7 +199,7 @@ class KotlinCoreEnvironment private constructor(
         }
     }
 
-    private val sourceFiles = mutableListOf<KtFile>()
+    private val sourceFiles: MutableList<KtFile> = []
     private val rootsIndex: JvmDependenciesDynamicCompoundIndex
 
     val packagePartProviders: List<JvmPackagePartProvider>
@@ -307,7 +307,7 @@ class KotlinCoreEnvironment private constructor(
             val allNewSources = ArrayList<KtFile>()
             for (extension in CollectAdditionalSourcesExtension.getInstances(project)) {
                 // do not feed the extension with the sources it returned on the previous iteration
-                val sourcesToProcess = unprocessedSources - (processedSourcesByExtension[extension] ?: emptyList())
+                val sourcesToProcess = unprocessedSources - (processedSourcesByExtension[extension] ?: [])
                 val newSources = extension.collectAdditionalSourcesAndUpdateConfiguration(sourcesToProcess, configuration, project)
                 if (newSources.isNotEmpty()) {
                     allNewSources.addAll(newSources)

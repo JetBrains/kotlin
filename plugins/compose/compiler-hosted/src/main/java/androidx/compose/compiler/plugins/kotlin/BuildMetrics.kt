@@ -239,9 +239,9 @@ class ModuleMetricsImpl(
     private var composableLambdas = 0
     private var totalLambdas = 0
 
-    private val composables = mutableListOf<FunctionMetrics>()
-    private val classes = mutableListOf<ClassMetrics>()
-    private val logMessages = mutableListOf<String>()
+    private val composables: MutableList<FunctionMetrics> = []
+    private val classes: MutableList<ClassMetrics> = []
+    private val logMessages: MutableList<String> = []
 
     private inner class ClassMetrics(
         val declaration: IrClass,
@@ -532,7 +532,7 @@ class FunctionMetricsImpl(
         }
     }
 
-    private val parameters = mutableListOf<Param>()
+    private val parameters: MutableList<Param> = []
 
     override fun recordGroup() {
         groups++

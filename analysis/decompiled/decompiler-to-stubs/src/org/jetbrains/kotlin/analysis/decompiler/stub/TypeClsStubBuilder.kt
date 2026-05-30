@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.serialization.deserialization.*
 import org.jetbrains.kotlin.utils.doNothing
 
 // TODO: see DescriptorRendererOptions.excludedTypeAnnotationClasses for decompiler
-private val ANNOTATIONS_NOT_LOADED_FOR_TYPES = setOf(StandardNames.FqNames.parameterName)
+private val ANNOTATIONS_NOT_LOADED_FOR_TYPES: Set<FqName> = [StandardNames.FqNames.parameterName]
 private val CONTEXT_FUNCTION_TYPE_PARAMS_ARGUMENT_NAME = Name.identifier("count")
 
 const val COMPILED_DEFAULT_PARAMETER_VALUE = "COMPILED_CODE"
@@ -41,7 +41,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     fun createTypeReferenceStub(
         parent: StubElement<out PsiElement>,
         type: Type,
-        additionalAnnotations: () -> List<AnnotationWithTarget> = { emptyList() },
+        additionalAnnotations: () -> List<AnnotationWithTarget> = { [] },
         loadTypeAnnotations: (Type) -> List<AnnotationWithArgs> = { c.components.annotationLoader.loadTypeAnnotations(it, c.nameResolver) }
     ) {
         val typeReference = KotlinPlaceHolderStubImpl<KtTypeReference>(parent, KtStubElementTypes.TYPE_REFERENCE)
@@ -217,7 +217,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
     }
 
     private fun getTypeModifiersAsWritten(type: Type): Set<KtModifierKeywordToken> {
-        if (!type.hasClassName() && !type.hasTypeAliasName()) return emptySet()
+        if (!type.hasClassName() && !type.hasTypeAliasName()) return []
 
         val result = hashSetOf<KtModifierKeywordToken>()
 
@@ -448,7 +448,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         parent: StubElement<out PsiElement>,
         typeParameterProtoList: List<ProtoBuf.TypeParameter>
     ): List<Pair<Name, Type>> {
-        if (typeParameterProtoList.isEmpty()) return listOf()
+        if (typeParameterProtoList.isEmpty()) return []
 
         val typeParameterListStub = KotlinPlaceHolderStubImpl<KtTypeParameterList>(parent, KtStubElementTypes.TYPE_PARAMETER_LIST)
         val protosForTypeConstraintList = arrayListOf<Pair<Name, Type>>()

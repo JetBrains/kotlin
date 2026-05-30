@@ -59,21 +59,21 @@ internal fun FirErrorNamedReference.getCandidateSymbols(): Collection<FirBasedSy
     diagnostic.getCandidateSymbols()
 
 internal fun FirNamedReference.getCandidateSymbols(): Collection<FirBasedSymbol<*>> = when (this) {
-    is FirResolvedNamedReference -> listOf(resolvedSymbol)
+    is FirResolvedNamedReference -> [resolvedSymbol]
     is FirErrorNamedReference -> getCandidateSymbols()
-    else -> emptyList()
+    else -> []
 }
 
 internal fun ConeDiagnostic.getCandidateSymbols(): Collection<FirBasedSymbol<*>> =
     when (this) {
         is ConeHiddenCandidateError -> {
             // Candidate with @Deprecated(DeprecationLevel.HIDDEN)
-            emptyList()
+            []
         }
         is ConeDiagnosticWithCandidates -> candidateSymbols
-        is ConeDiagnosticWithSymbol<*> -> listOf(symbol)
+        is ConeDiagnosticWithSymbol<*> -> [symbol]
         is ConeUnreportedDuplicateDiagnostic -> original.getCandidateSymbols()
-        else -> emptyList()
+        else -> []
     }
 
 internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnnotation {
@@ -89,7 +89,7 @@ internal fun FirAnnotation.toKaAnnotation(builder: KaSymbolByFirBuilder): KaAnno
         lazyArguments = if (this !is FirAnnotationCall || arguments.isNotEmpty())
             lazy { computeAnnotationArguments(this, builder) }
         else
-            lazyOf(emptyList()),
+            lazyOf([]),
         constructorSymbol = constructorSymbol,
         token = builder.token,
     )

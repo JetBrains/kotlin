@@ -11,7 +11,7 @@ package org.jetbrains.kotlin.util
 fun <T> Collection<T>.bfs(getNeighbors: (T) -> Iterator<T>): Sequence<T> {
     return sequence {
         val queue = ArrayDeque(this@bfs)
-        val visited = mutableSetOf<T>()
+        val visited: MutableSet<T> = []
 
         while (queue.isNotEmpty()) {
             val current = queue.removeFirst()

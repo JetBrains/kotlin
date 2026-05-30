@@ -88,11 +88,11 @@ fun TestProject.makeSnapshotTo(
 
         if ("Windows" !in System.getProperty("os.name")) {
             setPosixFilePermissions(
-                setOf(
+                [
                     PosixFilePermission.OWNER_EXECUTE,
                     PosixFilePermission.OWNER_READ,
                     PosixFilePermission.OWNER_WRITE,
-                )
+                ]
             )
         }
     }
@@ -174,7 +174,7 @@ fun GradleProject.addPropertyToGradleProperties(
         )
     } else {
         val argsLine = existingPropertyLine.single()
-        val optionsToRewrite = mutableListOf<String>()
+        val optionsToRewrite: MutableList<String> = []
         val appendedOptions = buildString {
             propertyValues.forEach {
                 if (argsLine.contains(it.key) &&

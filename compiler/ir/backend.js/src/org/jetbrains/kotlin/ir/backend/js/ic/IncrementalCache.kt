@@ -30,8 +30,8 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
 
     private var cacheHeaderShouldBeUpdated = false
 
-    private var removedSrcFiles: Set<KotlinSourceFile> = emptySet()
-    private var modifiedSrcFiles: Set<KotlinSourceFile> = emptySet()
+    private var removedSrcFiles: Set<KotlinSourceFile> = []
+    private var modifiedSrcFiles: Set<KotlinSourceFile> = []
 
     private val kotlinLibrarySourceFileMetadata = hashMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
 
@@ -131,21 +131,21 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
     }
 
     data class ModifiedFiles(
-        val addedFiles: Collection<KotlinSourceFile> = emptyList(),
+        val addedFiles: Collection<KotlinSourceFile> = [],
         val removedFiles: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
         val modifiedFiles: Map<KotlinSourceFile, KotlinSourceFileMetadata> = emptyMap(),
-        val nonModifiedFiles: Collection<KotlinSourceFile> = emptyList()
+        val nonModifiedFiles: Collection<KotlinSourceFile> = []
     )
 
     fun collectModifiedFiles(): ModifiedFiles {
         val cachedFingerprints = cacheHeaderFromDisk?.sourceFileFingerprints ?: emptyMap()
         if (cacheHeaderFromDisk?.libraryFingerprint == library.libraryFingerprint) {
-            return ModifiedFiles(emptyList(), emptyMap(), emptyMap(), cachedFingerprints.keys)
+            return ModifiedFiles([], emptyMap(), emptyMap(), cachedFingerprints.keys)
         }
 
-        val addedFiles = mutableListOf<KotlinSourceFile>()
+        val addedFiles: MutableList<KotlinSourceFile> = []
         val modifiedFiles = hashMapOf<KotlinSourceFile, KotlinSourceFileMetadata>()
-        val nonModifiedFiles = mutableListOf<KotlinSourceFile>()
+        val nonModifiedFiles: MutableList<KotlinSourceFile> = []
 
         for ([file, fileNewFingerprint] in library.sourceFileFingerprints) {
             when (cachedFingerprints[file]) {
@@ -267,7 +267,7 @@ internal class IncrementalCache(private val library: KotlinLibraryHeader, val ca
                     buildSetUntil(readInt32()) { add(deserializer.deserializeIdSignature(this@readInverseDependencies)) }
                 } else {
                     repeat(readInt32()) { deserializer.skipIdSignature(this@readInverseDependencies) }
-                    emptySet()
+                    []
                 }
             }
 

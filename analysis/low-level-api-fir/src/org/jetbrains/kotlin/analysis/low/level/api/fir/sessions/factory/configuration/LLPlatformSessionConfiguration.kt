@@ -49,7 +49,7 @@ internal interface LLPlatformSessionConfiguration {
     fun createPlatformSpecificSymbolProviders(
         session: LLFirSession,
         contentScope: GlobalSearchScope,
-    ): List<FirSymbolProvider> = emptyList()
+    ): List<FirSymbolProvider> = []
 
     /**
      * Creates additional, platform-specific symbol providers to include in the dangling file session's composite [FirSymbolProvider].
@@ -60,7 +60,7 @@ internal interface LLPlatformSessionConfiguration {
     fun createPlatformSpecificSymbolProvidersForDanglingFileSession(
         session: LLFirDanglingFileSession,
         contextSession: LLFirSession,
-    ): List<FirSymbolProvider> = emptyList()
+    ): List<FirSymbolProvider> = []
 
     /**
      * Creates additional, platform-specific symbol providers to include in the built-in sessions.
@@ -71,7 +71,7 @@ internal interface LLPlatformSessionConfiguration {
      */
     fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
         session: LLFirBuiltinsAndCloneableSession
-    ): List<FirSymbolProvider> = emptyList()
+    ): List<FirSymbolProvider> = []
 
     /**
      * Creates the symbol providers for binary library sessions.

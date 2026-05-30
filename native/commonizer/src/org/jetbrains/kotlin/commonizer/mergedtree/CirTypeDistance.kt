@@ -149,18 +149,18 @@ internal fun generateUnderlyingTypeSequence(
         )
     }
 
-    return emptySequence()
+    return []
 }
 
 internal fun generateUnderlyingTypeSequence(classifier: CirClassifier): Sequence<CirClassOrTypeAliasType> {
-    if (classifier !is CirTypeAlias) return emptySequence()
+    if (classifier !is CirTypeAlias) return []
     return generateSequence(classifier.underlyingType) { type -> if (type is CirTypeAliasType) type.underlyingType else null }
 }
 
 internal fun generateUnderlyingTypeSequence(
     classifiers: CirProvidedClassifiers, classifier: CirProvided.Classifier
 ): Sequence<CirProvided.ClassOrTypeAliasType> {
-    if (classifier !is CirProvided.TypeAlias) return emptySequence()
+    if (classifier !is CirProvided.TypeAlias) return []
     return generateSequence(classifier.underlyingType) next@{ type ->
         if (type !is CirProvided.TypeAliasType) return@next null
         classifiers.classifier(type.classifierId)?.safeAs<CirProvided.TypeAlias>()?.underlyingType

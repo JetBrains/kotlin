@@ -47,9 +47,9 @@ class ProgramNameTest : AbstractNativeSimpleTest() {
         val cExecutable = buildDir.resolve("main.cexe")
         compileWithClang(
             clangDistribution = ClangDistribution.Llvm,
-            sourceFiles = listOf(sourceDir.resolve("main.c")),
+            sourceFiles = [sourceDir.resolve("main.c")],
             outputFile = cExecutable,
-            additionalClangFlags = listOf("-Wall", "-Werror"),
+            additionalClangFlags = ["-Wall", "-Werror"],
         ).assertSuccess()
 
         // 3. run main.cexe (with different parameters) to call kotlin executable

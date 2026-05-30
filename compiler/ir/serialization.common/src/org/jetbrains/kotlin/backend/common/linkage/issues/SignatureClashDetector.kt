@@ -24,7 +24,7 @@ abstract class SignatureClashDetector<Signature : Any, Declaration : IrDeclarati
      * Returns all the declarations that have [signature] previously recorded by [trackDeclaration].
      */
     protected fun declarationsWithSignature(signature: Signature): Set<Declaration> =
-        declarationsBySignature[signature] ?: emptySet()
+        declarationsBySignature[signature] ?: []
 
     /**
      * Records the declaration, so it could later participate in signature clash detection.

@@ -28,11 +28,11 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.Variance
 
 // FIXME: KT-78361 Investigate invalid IR in `kotlinx-serialization-core-js-1.7.0.klib` after enabling annotation validation
-val EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION = listOf(
+val EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION = [
     "kotlinx.serialization.modules",
     "kotlinx.serialization.json",
     "kotlinx.serialization.json.internal"
-).mapTo(hashSetOf(), ::FqName)
+].mapTo(hashSetOf(), ::FqName)
 
 context(checker: IrChecker)
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {

@@ -428,7 +428,7 @@ class ResultTypeResolver(
         var atLeastOneProper = false
         var atLeastOneNonProper = false
 
-        val lowerConstraintTypes = mutableListOf<KotlinTypeMarker>()
+        val lowerConstraintTypes: MutableList<KotlinTypeMarker> = []
 
         for (constraint in constraints) {
             if (constraint.kind != ConstraintKind.LOWER) continue
@@ -445,7 +445,7 @@ class ResultTypeResolver(
             }
         }
 
-        if (!atLeastOneProper) return emptyList()
+        if (!atLeastOneProper) return []
 
         // PCLA slow path
         // We only allow using TVs fixation for nested PCLA calls

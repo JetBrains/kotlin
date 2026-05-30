@@ -26,7 +26,7 @@ abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() 
             sourcesDir = lib11Source,
             outputDir = lib1Output,
             freeCompilerArgs = TestCompilerArgs(),
-            dependencies = emptyList(),
+            dependencies = [],
         )
 
         // Create lib2 that depends on both functions from lib1
@@ -36,7 +36,7 @@ abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() 
             sourcesDir = lib2Source,
             outputDir = lib2Output,
             freeCompilerArgs = TestCompilerArgs(),
-            dependencies = listOf(lib11.asLibraryDependency()),
+            dependencies = [lib11.asLibraryDependency()],
         )
 
         val lib12Source = buildDir.resolve("lib1.kt").apply { writeText(lib12SourceText) }
@@ -44,7 +44,7 @@ abstract class NativePartialLinkageDiagnosticsTest : AbstractNativeSimpleTest() 
             sourcesDir = lib12Source,
             outputDir = lib1Output,
             freeCompilerArgs = TestCompilerArgs(),
-            dependencies = emptyList(),
+            dependencies = [],
         )
 
         val executableSource = buildDir.resolve("main.kt").apply { writeText(mainSourceText) }

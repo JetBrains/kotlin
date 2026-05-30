@@ -43,7 +43,7 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
     private val intersectedTypes = LinkedHashSet(typesToIntersect)
     private val hashCode = intersectedTypes.hashCode()
 
-    override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
 
     override fun getSupertypes(): Collection<KotlinType> = intersectedTypes
 
@@ -77,7 +77,7 @@ class IntersectionTypeConstructor(typesToIntersect: Collection<KotlinType>) : Ty
     @OptIn(TypeRefinement::class)
     fun createType(): SimpleType =
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            TypeAttributes.Empty, this, listOf(), false, this.createScopeForKotlinType()
+            TypeAttributes.Empty, this, [], false, this.createScopeForKotlinType()
         ) { kotlinTypeRefiner ->
             this.refine(kotlinTypeRefiner).createType()
         }

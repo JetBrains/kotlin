@@ -21,9 +21,9 @@ class FunInterfaceConstructorsScopeProvider(
     samResolver: SamConversionResolver,
     samConversionOracle: SamConversionOracle
 ) : SyntheticScopes {
-    override val scopes: Collection<SyntheticScope> = listOf(
+    override val scopes: Collection<SyntheticScope> = [
         FunInterfaceConstructorsSyntheticScope(storageManager, lookupTracker, samResolver, samConversionOracle)
-    )
+    ]
 }
 
 class FunInterfaceConstructorsSyntheticScope(

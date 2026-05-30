@@ -34,16 +34,16 @@ abstract class EchoServerBaseTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(targets.areDifferentTargets(), "The test uses localhost networking")
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/echoServer")
 
-        val cinteropModule = TestModule.Exclusive("sockets", emptySet(), emptySet(), emptySet()).apply {
+        val cinteropModule = TestModule.Exclusive("sockets", [], [], []).apply {
             files += TestFile.createCommitted(rootDir.resolve("sockets.def"), this)
         }
-        val ktModule = TestModule.Exclusive("server", setOf(cinteropModule.name), emptySet(), emptySet()).apply {
+        val ktModule = TestModule.Exclusive("server", [cinteropModule.name], [], []).apply {
             files += TestFile.createCommitted(rootDir.resolve("echo_server.kt"), this)
         }
         val testCase = TestCase(
             id = TestCaseId.Named("echo_server"),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(cinteropModule, ktModule),
+            modules = [cinteropModule, ktModule],
             freeCompilerArgs = TestCompilerArgs.EMPTY,
             nominalPackageName = PackageName("echo_server"),
             checks = TestRunChecks.Default(Duration.INFINITE),
@@ -52,7 +52,7 @@ abstract class EchoServerBaseTest : AbstractNativeSimpleTest() {
             initialize(null, null)
         }
 
-        val compilationResult = testCompilationFactory.testCasesToExecutable(listOf(testCase), testRunSettings).result.assertSuccess()
+        val compilationResult = testCompilationFactory.testCasesToExecutable([testCase], testRunSettings).result.assertSuccess()
 
         val process = ProcessBuilder(compilationResult.resultingArtifact.path).start()
         try {

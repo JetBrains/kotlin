@@ -39,10 +39,10 @@ open class AbstractAtomicfuJsWithInlinedFunInKlibTest : AbstractAtomicfuJsTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }

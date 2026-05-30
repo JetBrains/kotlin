@@ -120,9 +120,9 @@ class SanityCheckCodegenTests : AbstractCodegenTest() {
                     }
                 }
             """,
-            additionalPaths = listOf(
+            additionalPaths = [
                 Classpath.composeUiGraphicsJar()
-            )
+            ]
         )
     }
 
@@ -148,10 +148,10 @@ class SanityCheckGroupOptimizationCodegenTests : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(
+            [
                 FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
-            )
+            ]
         )
     }
 

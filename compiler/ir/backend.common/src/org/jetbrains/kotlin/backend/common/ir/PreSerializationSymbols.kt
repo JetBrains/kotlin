@@ -107,7 +107,7 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
         const val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
         const val COROUTINE_CONTEXT_NAME = "coroutineContext"
 
-        private val kotlinInternalPackageFqn = FqName.fromSegments(listOf("kotlin", "internal"))
+        private val kotlinInternalPackageFqn = FqName.fromSegments(["kotlin", "internal"])
         private val String.internalCallableId: CallableId
             get() = CallableId(kotlinInternalPackageFqn, Name.identifier(this))
 
@@ -137,7 +137,7 @@ interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
 
 interface PreSerializationJsSymbols : PreSerializationWebSymbols {
     val dynamicType: IrDynamicType
-        get() = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+        get() = IrDynamicTypeImpl([], Variance.INVARIANT)
 
     val jsCode: IrSimpleFunctionSymbol
     val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
@@ -177,7 +177,7 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
         override val coroutineGetContext: IrSimpleFunctionSymbol by CallableIds.coroutineGetContext.functionSymbol()
 
         companion object {
-            private val wasmInternalFqName = FqName.fromSegments(listOf("kotlin", "wasm", "internal"))
+            private val wasmInternalFqName = FqName.fromSegments(["kotlin", "wasm", "internal"])
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
 
             private object CallableIds {
@@ -231,9 +231,10 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
         override val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
         override val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
 
-        override val signedIntegerClasses = setOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
-        override val unsignedIntegerClasses =
-            setOf(irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!)
+        override val signedIntegerClasses: Set<IrClassSymbol> =
+            [irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass]
+        override val unsignedIntegerClasses: Set<IrClassSymbol> =
+            [irBuiltIns.ubyteClass!!, irBuiltIns.ushortClass!!, irBuiltIns.uintClass!!, irBuiltIns.ulongClass!!]
         override val allIntegerClasses = signedIntegerClasses + unsignedIntegerClasses
 
         override val nativePointed = ClassIds.nativePointed.classSymbol()
@@ -251,8 +252,8 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
 
         companion object {
             private const val COROUTINE_SUSPEND_OR_RETURN_NAME = "suspendCoroutineUninterceptedOrReturn"
-            private val kotlinNativeInternalPackageName: FqName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
-            private val kotlinNativePackageName: FqName = FqName.fromSegments(listOf("kotlin", "native"))
+            private val kotlinNativeInternalPackageName: FqName = FqName.fromSegments(["kotlin", "native", "internal"])
+            private val kotlinNativePackageName: FqName = FqName.fromSegments(["kotlin", "native"])
 
             private object CallableIds {
                 // Internal functions
@@ -279,7 +280,7 @@ interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
             }
 
             private object ClassIds {
-                val kotlinNativeInternalTestPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal", "test"))
+                val kotlinNativeInternalTestPackageName = FqName.fromSegments(["kotlin", "native", "internal", "test"])
                 private val String.internalTestClassId
                     get() = ClassId(kotlinNativeInternalTestPackageName, Name.identifier(this))
                 val testInitializer = "TestInitializer".internalTestClassId

@@ -63,7 +63,7 @@ internal class BranchingExpressionGenerator(statementGenerator: StatementGenerat
     }
 
     private fun generateEmptyBlockForMissingBranch(ktLastIf: KtIfExpression) =
-        IrBlockImpl(ktLastIf.startOffset, ktLastIf.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.IF, listOf())
+        IrBlockImpl(ktLastIf.startOffset, ktLastIf.endOffset, context.irBuiltIns.unitType, IrStatementOrigin.IF, [])
 
     private fun createIrWhen(
         ktIf: KtIfExpression,

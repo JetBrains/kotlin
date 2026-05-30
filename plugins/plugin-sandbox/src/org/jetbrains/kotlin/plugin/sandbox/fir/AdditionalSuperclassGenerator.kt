@@ -40,8 +40,8 @@ class AdditionalSuperclassGenerator(session: FirSession) : FirSupertypeGeneratio
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
-        val symbol = classLikeDeclaration.symbol as? FirClassSymbol<*> ?: return emptyList()
-        val def = ENTITY_TYPE_CLASS_ID.constructClassLikeType(arrayOf(symbol.defaultType()), false)
-        return listOf(def)
+        val symbol = classLikeDeclaration.symbol as? FirClassSymbol<*> ?: return []
+        val def = ENTITY_TYPE_CLASS_ID.constructClassLikeType([symbol.defaultType()], false)
+        return [def]
     }
 }

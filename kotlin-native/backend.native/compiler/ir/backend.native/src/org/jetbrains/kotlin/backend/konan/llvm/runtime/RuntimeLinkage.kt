@@ -20,7 +20,7 @@ import kotlin.collections.forEach
 
 internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeNativeLibraries: List<LLVMModuleRef>): List<LLVMModuleRef> {
     if (runtimeNativeLibraries.isEmpty()) {
-        return emptyList()
+        return []
     }
 
     runtimeNativeLibraries.forEach {
@@ -47,7 +47,7 @@ internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeN
         it.execute(runtimeModule)
     }
 
-    return listOf(runtimeModule)
+    return [runtimeModule]
 }
 
 /**

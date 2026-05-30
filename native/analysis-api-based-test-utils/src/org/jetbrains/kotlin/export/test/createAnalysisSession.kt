@@ -36,7 +36,7 @@ fun createStandaloneAnalysisApiSession(
     tempDir: File,
     kotlinSourceModuleName: String = defaultKotlinSourceModuleName,
     kotlinSources: Map</* File Name */ String, /* Source Code */ String>,
-    dependencies: List<LibraryModuleInfo> = emptyList(),
+    dependencies: List<LibraryModuleInfo> = [],
 ): StandaloneAnalysisAPISession {
     val testModuleRoot = tempDir.resolve("testModule")
     testModuleRoot.mkdirs()
@@ -46,7 +46,7 @@ fun createStandaloneAnalysisApiSession(
             writeText(sourceCode)
         }
     }
-    return createStandaloneAnalysisApiSession(kotlinSourceModuleName, listOf(testModuleRoot), dependencies)
+    return createStandaloneAnalysisApiSession(kotlinSourceModuleName, [testModuleRoot], dependencies)
 }
 
 /**
@@ -56,10 +56,10 @@ fun createStandaloneAnalysisApiSession(
 fun createStandaloneAnalysisApiSession(
     kotlinSourceModuleName: String = defaultKotlinSourceModuleName,
     kotlinFiles: List<File>,
-    dependencies: List<LibraryModuleInfo> = emptyList(),
+    dependencies: List<LibraryModuleInfo> = [],
 ): StandaloneAnalysisAPISession {
     val currentArchitectureTarget = HostManager.host
-    val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
+    val nativePlatform = NativePlatforms.nativePlatformByTargets([currentArchitectureTarget])
     return buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = nativePlatform

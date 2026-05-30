@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.abicmp.checkers
 import org.jetbrains.kotlin.abicmp.reports.ListEntryDiff
 import org.jetbrains.org.objectweb.asm.Type
 
-val IGNORED_ANNOTATIONS = listOf("Lkotlin/Metadata;", "Lkotlin/coroutines/jvm/internal/DebugMetadata;")
+val IGNORED_ANNOTATIONS = ["Lkotlin/Metadata;", "Lkotlin/coroutines/jvm/internal/DebugMetadata;"]
 
 fun compareAnnotations(
     annotations1: List<AnnotationEntry>,

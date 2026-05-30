@@ -170,7 +170,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
                 .filter { it.second.annotationClass?.isInheritableSerialInfoAnnotation == true }
         }
         val annotationByFq: MutableMap<FqName, AnnotationDescriptor> = mutableMapOf()
-        val reported: MutableSet<FqName> = mutableSetOf()
+        val reported: MutableSet<FqName> = []
         // my annotations
         annotationByFq.putAll(annotationsFilter(descriptor.annotations))
         // inherited
@@ -396,7 +396,7 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         )
 
         // check that all names are unique
-        val namesSet = mutableSetOf<String>()
+        val namesSet: MutableSet<String> = []
         props.serializableProperties.forEach {
             if (!namesSet.add(it.name)) {
                 descriptor.onSerializableOrMetaAnnotation { a ->
@@ -484,9 +484,9 @@ open class SerializationPluginDeclarationChecker : DeclarationChecker {
         val duplicates = mutableMapOf<Int, MutableList<Int?>>()
         originToProto.forEach { [originNumber, protoNumber] ->
             if (protoNumber != null) {
-                duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
+                duplicates.getOrPut(protoNumber) { [] }.add(originNumber)
             } else {
-                duplicates.getOrPut(originNumber) { mutableListOf() }.add(null)
+                duplicates.getOrPut(originNumber) { [] }.add(null)
             }
         }
 

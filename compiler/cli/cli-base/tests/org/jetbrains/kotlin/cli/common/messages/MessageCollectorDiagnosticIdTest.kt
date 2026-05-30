@@ -22,7 +22,7 @@ class MessageCollectorDiagnosticIdTest {
             val diagnosticId: String?,
         )
 
-        val entries = mutableListOf<Entry>()
+        val entries: MutableList<Entry> = []
         private var hasErrorFlag = false
 
         override fun report(
@@ -48,7 +48,7 @@ class MessageCollectorDiagnosticIdTest {
      * used to verify the extension function gracefully falls back to the 3-arg report.
      */
     private class PlainRecordingMessageCollector : MessageCollector {
-        val messages = mutableListOf<String>()
+        val messages: MutableList<String> = []
         override fun report(severity: CompilerMessageSeverity, message: String, location: CompilerMessageSourceLocation?) {
             messages.add(message)
         }

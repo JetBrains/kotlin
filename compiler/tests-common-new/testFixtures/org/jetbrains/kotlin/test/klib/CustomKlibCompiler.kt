@@ -137,7 +137,7 @@ sealed interface CustomKlibCompilerArtifacts {
                     ?.split(File.pathSeparatorChar)
                     ?.map(::File)
                     ?: return propertyNotFound(runtimeDependenciesPropertyName)
-            } ?: emptyList()
+            } ?: []
 
             val compilerDist = compilerDistPropertyName?.let {
                 File(readProperty(it) ?: return propertyNotFound(it))
@@ -151,7 +151,7 @@ sealed interface CustomKlibCompilerArtifacts {
             compilerDist: File,
             compilerClassPath: List<File>,
         ): CustomKlibCompilerArtifacts =
-            Resolvable(version.versionString, compilerClassPath.map { it.toURI().toURL() }, runtimeDependencies = emptyList(), compilerDist)
+            Resolvable(version.versionString, compilerClassPath.map { it.toURI().toURL() }, runtimeDependencies = [], compilerDist)
 
         fun readProperty(propertyName: String): String? =
             System.getProperty(propertyName)?.trim(Char::isWhitespace)?.takeIf(String::isNotEmpty)

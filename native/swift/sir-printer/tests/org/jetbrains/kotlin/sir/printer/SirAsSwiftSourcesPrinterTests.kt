@@ -136,7 +136,7 @@ class SirAsSwiftSourcesPrinterTests {
                     visibility = SirVisibility.PUBLIC
                     name = "foo"
                     parameters.addAll(
-                        listOf(
+                        [
                             SirParameter(
                                 argumentName = "arg1",
                                 type = SirNominalType(SirSwiftModule.bool)
@@ -173,7 +173,7 @@ class SirAsSwiftSourcesPrinterTests {
                                 argumentName = "arg9",
                                 type = SirNominalType(SirSwiftModule.bool).optional()
                             ),
-                        )
+                        ]
                     )
                     returnType = SirNominalType(SirSwiftModule.bool)
                 }
@@ -203,7 +203,7 @@ class SirAsSwiftSourcesPrinterTests {
                         )
                     )
                     returnType = SirNominalType(SirSwiftModule.bool)
-                    body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
+                    body = SirFunctionBody(["return foo_wrapped(arg1)"])
                 }
             )
         }.attachDeclarations()
@@ -236,7 +236,7 @@ class SirAsSwiftSourcesPrinterTests {
                                 )
                             )
                             returnType = SirNominalType(SirSwiftModule.bool)
-                            body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
+                            body = SirFunctionBody(["return foo_wrapped(arg1)"])
                         }
                     )
                 }.attachDeclarations()
@@ -270,7 +270,7 @@ class SirAsSwiftSourcesPrinterTests {
                                 )
                             )
                             returnType = SirNominalType(SirSwiftModule.bool)
-                            body = SirFunctionBody(listOf("return foo_wrapped(arg1)"))
+                            body = SirFunctionBody(["return foo_wrapped(arg1)"])
                         }
                     )
                 }.attachDeclarations()
@@ -646,7 +646,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             name = "foo"
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.bool)
@@ -679,7 +679,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg8",
                                         type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                                     ),
-                                )
+                                ]
                             )
                             returnType = SirNominalType(SirSwiftModule.bool)
                         }
@@ -691,7 +691,7 @@ class SirAsSwiftSourcesPrinterTests {
                             visibility = SirVisibility.PUBLIC
                             name = "bar"
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.uint8)
@@ -708,7 +708,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg4",
                                         type = SirNominalType(SirSwiftModule.uint64)
                                     ),
-                                )
+                                ]
                             )
                             returnType = SirNominalType(SirSwiftModule.bool)
                         }
@@ -740,7 +740,7 @@ class SirAsSwiftSourcesPrinterTests {
                             isFailable = true
                             isOverride = false
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.bool)
@@ -773,7 +773,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg8",
                                         type = SirNominalType(SirSwiftModule.utf16CodeUnit)
                                     ),
-                                )
+                                ]
                             )
                         }
                     )
@@ -785,7 +785,7 @@ class SirAsSwiftSourcesPrinterTests {
                             isFailable = false
                             isOverride = false
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.uint8)
@@ -802,7 +802,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg4",
                                         type = SirNominalType(SirSwiftModule.uint64)
                                     ),
-                                )
+                                ]
                             )
                         }
                     )
@@ -815,7 +815,7 @@ class SirAsSwiftSourcesPrinterTests {
                             isFailable = false
                             isOverride = false
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.uint8)
@@ -832,7 +832,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg4",
                                         type = SirNominalType(SirSwiftModule.uint64)
                                     ),
-                                )
+                                ]
                             )
                         }
                     )
@@ -845,7 +845,7 @@ class SirAsSwiftSourcesPrinterTests {
                             isFailable = false
                             isOverride = false
                             parameters.addAll(
-                                listOf(
+                                [
                                     SirParameter(
                                         argumentName = "arg1",
                                         type = SirNominalType(SirSwiftModule.uint8)
@@ -862,7 +862,7 @@ class SirAsSwiftSourcesPrinterTests {
                                         argumentName = "arg4",
                                         type = SirNominalType(SirSwiftModule.uint64)
                                     ),
-                                )
+                                ]
                             )
                         }
                     )
@@ -977,7 +977,7 @@ class SirAsSwiftSourcesPrinterTests {
 
         val enum: SirEnum = buildEnum {
             name = "my_enum"
-            origin = SirOrigin.Namespace(listOf("my_enum"))
+            origin = SirOrigin.Namespace(["my_enum"])
         }
 
         val protocol: SirProtocol = buildProtocol {
@@ -1094,8 +1094,8 @@ class SirAsSwiftSourcesPrinterTests {
                     extendedType = SirNominalType(enum)
                     visibility = SirVisibility.PUBLIC
                     protocols.add(protocol)
-                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
-                    constraints.add(SirTypeConstraint.Conformance(SirNominalType(protocol), listOf("NestedType1", "NestedType2")))
+                    constraints.add(SirTypeConstraint.Equality(SirNominalType(protocol), ["NestedType1", "NestedType2"]))
+                    constraints.add(SirTypeConstraint.Conformance(SirNominalType(protocol), ["NestedType1", "NestedType2"]))
                 }
             )
         }.apply {
@@ -1115,11 +1115,11 @@ class SirAsSwiftSourcesPrinterTests {
         }
 
         module.imports.addAll(
-            listOf(
+            [
                 SirImport(moduleName = "DEMO_PACKAGE"),
                 SirImport(moduleName = "ExportedModule", mode = SirImport.Mode.Exported),
                 SirImport(moduleName = "PrivateModule", mode = SirImport.Mode.ImplementationOnly),
-            )
+            ]
         )
 
         runTest(
@@ -1135,7 +1135,7 @@ class SirAsSwiftSourcesPrinterTests {
             stableDeclarationsOrder = false,
             renderDocComments = true,
             renderDeclarationOrigins = false,
-            emptyBodyStub = SirFunctionBody(listOf("stub()"))
+            emptyBodyStub = SirFunctionBody(["stub()"])
         )
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
     }
@@ -1252,7 +1252,7 @@ class SirAsSwiftSourcesPrinterTests {
 
     @Test
     fun `should escape identifiers`() {
-        val identifiers = listOf(
+        val identifiers = [
             "simple0",
             "", // empty
             "_", // underscore
@@ -1271,7 +1271,7 @@ class SirAsSwiftSourcesPrinterTests {
             "with\textensive\r\nwhite spacing",
             "\t\r\n", // just whitespacing
             "\b\\\$" // more escapes
-        )
+        ]
 
         val module = buildModule {
             name = "Test"
@@ -1319,7 +1319,7 @@ class SirAsSwiftSourcesPrinterTests {
 
     @Test
     fun `should choose appropriate string literals`() {
-        val messages = listOf(
+        val messages = [
             "simple",
             "", // empty
             "∞", // single unicode symbol 221e
@@ -1333,7 +1333,7 @@ class SirAsSwiftSourcesPrinterTests {
             "'singly-quoted'",
             "`backticked`",
             "\"#unescaped",
-        )
+        ]
 
         val module = buildModule {
             name = "Test"
@@ -1399,7 +1399,7 @@ class SirAsSwiftSourcesPrinterTests {
                 buildProtocol {
                     name = "Foo"
                     superClass = SirNominalType(kotlinBase)
-                    protocols.addAll(listOf(proto1, proto2))
+                    protocols.addAll([proto1, proto2])
 
                     declarations.add(
                         buildFunction {
@@ -1409,7 +1409,7 @@ class SirAsSwiftSourcesPrinterTests {
                             returnType = SirNominalType(
                                 SirSwiftModule.bool
                             )
-                            body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                            body = SirFunctionBody(["<SHOULD NOT BE VISIBLE>"])
                         }
                     )
 
@@ -1422,10 +1422,10 @@ class SirAsSwiftSourcesPrinterTests {
                                 SirSwiftModule.bool
                             )
                             getter = buildGetter {
-                                body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                                body = SirFunctionBody(["<SHOULD NOT BE VISIBLE>"])
                             }
                             setter = buildSetter {
-                                body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                                body = SirFunctionBody(["<SHOULD NOT BE VISIBLE>"])
                             }
                         }
                     )
@@ -1435,7 +1435,7 @@ class SirAsSwiftSourcesPrinterTests {
                             origin = SirOrigin.Unknown
                             visibility = SirVisibility.PUBLIC
                             isFailable = false
-                            body = SirFunctionBody(listOf("<SHOULD NOT BE VISIBLE>"))
+                            body = SirFunctionBody(["<SHOULD NOT BE VISIBLE>"])
                         }
                     )
                 }.attachDeclarations()
@@ -1538,7 +1538,7 @@ class SirAsSwiftSourcesPrinterTests {
                         SirParameter(
                             argumentName = "asyncEmptyClosure",
                             type = SirFunctionalType(
-                                parameterTypes = emptyList(),
+                                parameterTypes = [],
                                 isAsync = true,
                                 returnType = SirType.void,
                             )
@@ -1557,7 +1557,7 @@ class SirAsSwiftSourcesPrinterTests {
                         SirParameter(
                             argumentName = "asyncReturnClosure",
                             type = SirFunctionalType(
-                                parameterTypes = listOf(SirNominalType(SirSwiftModule.int32)),
+                                parameterTypes = [SirNominalType(SirSwiftModule.int32)],
                                 isAsync = true,
                                 returnType = SirNominalType(SirSwiftModule.bool),
                             )
@@ -1571,10 +1571,10 @@ class SirAsSwiftSourcesPrinterTests {
                 origin = SirOrigin.Unknown
                 name = "AsyncClosure"
                 type = SirFunctionalType(
-                    parameterTypes = emptyList(),
+                    parameterTypes = [],
                     isAsync = true,
                     returnType = SirType.void,
-                    attributes = listOf(SirAttribute.Escaping)
+                    attributes = [SirAttribute.Escaping]
                 )
                 attributes.add(SirAttribute.Escaping)
             }
@@ -1589,17 +1589,17 @@ class SirAsSwiftSourcesPrinterTests {
                         SirParameter(
                             argumentName = "asyncReturnClosure",
                             type = SirFunctionalType(
-                                parameterTypes = listOf(
+                                parameterTypes = [
                                     SirFunctionalType(
-                                        parameterTypes = listOf(SirNominalType(SirSwiftModule.int32)),
+                                        parameterTypes = [SirNominalType(SirSwiftModule.int32)],
                                         isAsync = true,
                                         returnType = SirNominalType(SirSwiftModule.bool),
-                                        attributes = listOf(SirAttribute.Escaping)
+                                        attributes = [SirAttribute.Escaping]
                                     )
-                                ),
+                                ],
                                 isAsync = true,
                                 returnType = SirNominalType(SirSwiftModule.bool),
-                                attributes = listOf(SirAttribute.Escaping)
+                                attributes = [SirAttribute.Escaping]
                             )
                         )
                     )
@@ -1610,17 +1610,17 @@ class SirAsSwiftSourcesPrinterTests {
                         )
                     )
                     returnType = SirFunctionalType(
-                        parameterTypes = listOf(
+                        parameterTypes = [
                             SirFunctionalType(
-                                parameterTypes = listOf(SirNominalType(SirSwiftModule.int32)),
+                                parameterTypes = [SirNominalType(SirSwiftModule.int32)],
                                 isAsync = true,
                                 returnType = SirNominalType(SirSwiftModule.bool),
-                                attributes = listOf(SirAttribute.Escaping)
+                                attributes = [SirAttribute.Escaping]
                             )
-                        ),
+                        ],
                         isAsync = true,
                         returnType = SirNominalType(SirSwiftModule.bool),
-                        attributes = listOf(SirAttribute.Escaping)
+                        attributes = [SirAttribute.Escaping]
                     )
                 }
             )
@@ -1675,11 +1675,11 @@ class SirAsSwiftSourcesPrinterTests {
                         SirParameter(
                             parameterName = "block",
                             type = SirFunctionalType(
-                                contextTypes = listOf(
+                                contextTypes = [
                                     SirNominalType(SirSwiftModule.int32),
                                     SirNominalType(SirSwiftModule.bool),
-                                ),
-                                parameterTypes = listOf(SirNominalType(SirSwiftModule.float)),
+                                ],
+                                parameterTypes = [SirNominalType(SirSwiftModule.float)],
                                 returnType = SirType.void,
                             )
                         )

@@ -100,7 +100,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
         val owner = context?.owner
         return when (owner) {
             null -> generate(Receiver.DATA_ROW) + generate(Receiver.COLUMNS_CONTAINER)
-            else -> emptyList()
+            else -> []
         }
     }
 
@@ -157,7 +157,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
     ) {
         require(columnGroupProjection == null)
         resolvedReturnType = Names.DF_CLASS_ID.constructClassLikeType(
-            typeArguments = arrayOf(resolvedReturnType.typeArguments[0]),
+            typeArguments = [resolvedReturnType.typeArguments[0]],
             isMarkedNullable = false
         )
     }
@@ -165,7 +165,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
     val columnReturnType = when {
         columnGroupProjection != null -> {
             Names.COLUM_GROUP_CLASS_ID.constructClassLikeType(
-                typeArguments = arrayOf(columnGroupProjection),
+                typeArguments = [columnGroupProjection],
                 isMarkedNullable = false
             )
         }
@@ -177,7 +177,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
         TopLevelExtensionsGenerator.Receiver.DATA_ROW -> generateExtensionProperty(
             callableIdOrSymbol = CallableIdOrSymbol.Symbol(firPropertySymbol),
             receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
-                typeArguments = arrayOf(marker),
+                typeArguments = [marker],
                 isMarkedNullable = false
             ),
             propertyName = name,
@@ -192,7 +192,7 @@ fun FirDeclarationGenerationExtension.buildExtensionPropertiesApi(
         TopLevelExtensionsGenerator.Receiver.COLUMNS_CONTAINER -> generateExtensionProperty(
             callableIdOrSymbol = CallableIdOrSymbol.Symbol(firPropertySymbol),
             receiverType = Names.COLUMNS_CONTAINER_CLASS_ID.constructClassLikeType(
-                typeArguments = arrayOf(marker),
+                typeArguments = [marker],
                 isMarkedNullable = false
             ),
             propertyName = name,

@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 class KnownResultProcessor<out C>(
     val result: Collection<C>
 ) : ScopeTowerProcessor<C> {
-    override fun process(data: TowerData) = if (data == TowerData.Empty) listOfNotNull(result.takeIf { it.isNotEmpty() }) else emptyList()
+    override fun process(data: TowerData) = if (data == TowerData.Empty) listOfNotNull(result.takeIf { it.isNotEmpty() }) else []
 
     override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {}
 }
@@ -60,7 +60,7 @@ class VariableAndObjectScopeTowerProcessor<out C : Candidate>(
                 }
             }
         ) return variablesResult + objectResult
-        val result = mutableListOf<List<C>>()
+        val result: MutableList<List<C>> = []
         result.addAll(variablesResult.map { it.toMutableList() })
         for ([index, objectLevel] in objectResult.withIndex()) {
             val enumEntryLevel = objectLevel.filter { it.isEnumEntryCandidate() }
@@ -117,7 +117,7 @@ internal abstract class AbstractSimpleScopeTowerProcessor<C : Candidate>(
         kind: ExplicitReceiverKind,
         receiver: ReceiverValueWithSmartCastInfo?
     ) : Collection<C> {
-        val result = mutableListOf<C>()
+        val result: MutableList<C> = []
         for (candidate in collector) {
             if (candidate.requiresExtensionReceiver == (receiver != null)) {
                 result.add(
@@ -154,7 +154,7 @@ internal class ExplicitReceiverScopeTowerProcessor<C : Candidate>(
                 ExplicitReceiverKind.EXTENSION_RECEIVER,
                 explicitReceiver
             )
-            else -> emptyList()
+            else -> []
         }
     }
 
@@ -174,7 +174,7 @@ private class QualifierScopeTowerProcessor<C : Candidate>(
     val collectCandidates: CandidatesCollector
 ) : AbstractSimpleScopeTowerProcessor<C>(context) {
     override fun simpleProcess(data: TowerData): Collection<C> {
-        if (data != TowerData.Empty) return emptyList()
+        if (data != TowerData.Empty) return []
 
         return createCandidates(
             QualifierScopeTowerLevel(scopeTower, qualifier).collectCandidates(null),
@@ -222,7 +222,7 @@ private class NoExplicitReceiverScopeTowerProcessor<C : Candidate>(
                 )
             }
         }
-        else -> emptyList()
+        else -> []
     }
 
     override fun recordLookups(skippedData: Collection<TowerData>, name: Name) {
@@ -333,7 +333,7 @@ fun <C : Candidate> createProcessorWithReceiverValueOrEmpty(
 ): ScopeTowerProcessor<C> {
     return if (explicitReceiver is QualifierReceiver) {
         explicitReceiver.classValueReceiverWithSmartCastInfo?.let(create)
-                ?: KnownResultProcessor<C>(listOf())
+            ?: KnownResultProcessor<C>([])
     } else {
         create(explicitReceiver as ReceiverValueWithSmartCastInfo?)
     }

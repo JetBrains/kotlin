@@ -8,11 +8,11 @@ package org.jetbrains.kotlin
 import org.jetbrains.kotlin.name.FqName
 
 abstract class AbstractPsiKDocCoverageTest : AbstractKDocCoverageTest() {
-    override val ignoredPackages: List<FqName> = listOf(
+    override val ignoredPackages: List<FqName> = [
         FqName("org.jetbrains.kotlin.idea"),
         FqName("org.jetbrains.kotlin.lexer"),
         FqName("org.jetbrains.kotlin.parsing"),
         FqName("org.jetbrains.kotlin.kdoc.lexer"),
         FqName("org.jetbrains.kotlin.kdoc.parser"),
-    )
+    ]
 }

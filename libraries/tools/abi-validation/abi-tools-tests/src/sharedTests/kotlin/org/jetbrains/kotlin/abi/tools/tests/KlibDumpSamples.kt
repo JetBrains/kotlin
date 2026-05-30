@@ -170,7 +170,7 @@ class KlibDumpSamples {
             """.trimIndent(), mergedDumpContent
         )
 
-        mergedDump.remove(listOf(KlibTarget.parse("linuxX64.linuxX86_64")))
+        mergedDump.remove([KlibTarget.parse("linuxX64.linuxX86_64")])
         val filteredDumpContent = buildString { mergedDump.print(this) }
         assertEquals(
             """

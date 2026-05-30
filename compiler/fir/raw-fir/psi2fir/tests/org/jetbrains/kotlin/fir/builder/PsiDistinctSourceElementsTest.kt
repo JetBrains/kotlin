@@ -35,7 +35,7 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile = ktFile.toFirFile()
 
-            checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in '${file.toRelativeString(root)}'" }
+            checkDistinctSourceElements([firFile]) { _, _ -> "Duplicate source elements in '${file.toRelativeString(root)}'" }
         }
     }
 
@@ -54,7 +54,7 @@ class PsiDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
                 val ktFile = createPsiFile(FileUtil.getNameWithoutExtension(PathUtil.getFileName(filePath)), fileText) as KtFile
                 val firFile = ktFile.toFirFile()
 
-                checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in '$filePath'" }
+                checkDistinctSourceElements([firFile]) { _, _ -> "Duplicate source elements in '$filePath'" }
             }
         }
     }

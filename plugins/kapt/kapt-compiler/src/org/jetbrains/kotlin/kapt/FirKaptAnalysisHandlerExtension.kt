@@ -214,7 +214,7 @@ open class FirKaptAnalysisHandlerExtension(
         }
         val fir2IrOutput = JvmFir2IrPipelinePhase.executePhase(
             frontendOutput.withCompilerConfiguration(configurationForFir2Ir),
-            irGenerationExtensions = emptyList()
+            irGenerationExtensions = []
         ) ?: return null
 
         val builderFactory = OriginCollectingClassBuilderFactory(ClassBuilderMode.KAPT3)
@@ -274,7 +274,7 @@ open class FirKaptAnalysisHandlerExtension(
             it.relativePath.substringBeforeLast(".class", missingDelimiterValue = "")
         } else null
 
-        val sourceFiles = mutableListOf<String>()
+        val sourceFiles: MutableList<String> = []
 
         for (kaptStub in stubs) {
             val stub = kaptStub.file

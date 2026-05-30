@@ -66,12 +66,12 @@ class TaskOutputsBackupIT : KGPBaseTest() {
                         return org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup(
                             fileSystemOperations = fileSystemOperations,
                             snapshotsDir = snapshotDir,
-                            outputsToRestore = listOf(
+                            outputsToRestore = [
                                 projectPath.resolve("file1"),
                                 projectPath.resolve("dirOut"),
                                 projectPath.resolve("dirOut2"),
                                 projectPath.resolve("noFile"),
-                            ),
+                            ],
                             logger = org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger(
                                 Logging.getLogger("task-outputs-backup"),
                             ),

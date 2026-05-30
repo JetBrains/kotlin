@@ -46,7 +46,7 @@ fun isValidTypeParameterFromOuterDeclaration(
         return true  // Extra check is required because of classDeclaration will be resolved later
     }
 
-    val visited = mutableSetOf<FirDeclaration>()
+    val visited: MutableSet<FirDeclaration> = []
 
     fun containsTypeParameter(currentDeclaration: FirDeclaration?): Boolean {
         if (currentDeclaration == null || !visited.add(currentDeclaration)) {

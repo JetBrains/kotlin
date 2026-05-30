@@ -99,7 +99,7 @@ class JvmBackendContext(
 
     val inlineMethodGenerationLock = Any()
 
-    val optionalAnnotations = mutableListOf<MetadataSource.Class>()
+    val optionalAnnotations: MutableList<MetadataSource.Class> = []
 
     init {
         state.mapInlineClass = { descriptor ->

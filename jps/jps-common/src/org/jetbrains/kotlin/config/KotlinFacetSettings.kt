@@ -269,7 +269,7 @@ class KotlinFacetSettings: IKotlinFacetSettings {
             return field
         }
 
-    override var externalSystemRunTasks: List<ExternalSystemRunTask> = emptyList()
+    override var externalSystemRunTasks: List<ExternalSystemRunTask> = []
 
     @Suppress("DEPRECATION_ERROR")
     @Deprecated(
@@ -281,16 +281,16 @@ class KotlinFacetSettings: IKotlinFacetSettings {
         return targetPlatform?.toIdePlatform()
     }
 
-    override var implementedModuleNames: List<String> = emptyList() // used for first implementation of MPP, aka 'old' MPP
-    override var dependsOnModuleNames: List<String> = emptyList() // used for New MPP and later implementations
+    override var implementedModuleNames: List<String> = [] // used for first implementation of MPP, aka 'old' MPP
+    override var dependsOnModuleNames: List<String> = [] // used for New MPP and later implementations
 
-    override var additionalVisibleModuleNames: Set<String> = emptySet()
+    override var additionalVisibleModuleNames: Set<String> = []
 
     override var productionOutputPath: String? = null
     override var testOutputPath: String? = null
 
     override var kind: KotlinModuleKind = KotlinModuleKind.DEFAULT
-    override var sourceSetNames: List<String> = emptyList()
+    override var sourceSetNames: List<String> = []
     override var isTestModule: Boolean = false
 
     override var externalProjectId: String = ""
@@ -308,5 +308,5 @@ class KotlinFacetSettings: IKotlinFacetSettings {
             else -> null
         }
 
-    override var pureKotlinSourceFolders: List<String> = emptyList()
+    override var pureKotlinSourceFolders: List<String> = []
 }

@@ -15,7 +15,7 @@ import kotlin.io.path.exists
 import kotlin.io.path.name
 
 object ExperimentalAnnotationListChecker {
-    val nonJvmSubdirsOfStdlibDir = listOf("js", "wasm", "native-wasm", "test", "jvm-minimal-for-test", "samples")
+    val nonJvmSubdirsOfStdlibDir = ["js", "wasm", "native-wasm", "test", "jvm-minimal-for-test", "samples"]
     fun checkNoMissingAnnotations(stdlibPathString: String) {
         val stdlibPath = Paths.get(stdlibPathString)
         require(stdlibPath.exists()) { "Stdlib path $stdlibPathString doesn't exist" }
@@ -65,7 +65,7 @@ object ExperimentalAnnotationListChecker {
 
     // Please do not add new annotations here
     // See KT-62510 for details
-    val allowedAnnotations = setOf(
+    val allowedAnnotations: Set<String> = [
         "kotlin.contracts.ExperimentalContracts",
-    )
+    ]
 }

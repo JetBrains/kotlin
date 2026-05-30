@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.contracts.model.structure.*
 class OrFunctor : AbstractBinaryFunctor() {
     override fun invokeWithConstant(computation: Computation, constant: ESConstant): List<ESEffect> = when {
         constant.isFalse -> computation.effects
-        constant.isTrue -> emptyList()
+        constant.isTrue -> []
 
         // This means that expression isn't typechecked properly
         else -> computation.effects
@@ -54,7 +54,7 @@ class OrFunctor : AbstractBinaryFunctor() {
         // *must* be false when whole OR-functor returns false
         val conditionWhenFalse = applyWithDefault(whenLeftReturnsFalse, whenRightReturnsFalse) { l, r -> ESAnd(l, r) }
 
-        val result = mutableListOf<ConditionalEffect>()
+        val result: MutableList<ConditionalEffect> = []
 
         if (conditionWhenTrue != null) {
             result.add(ConditionalEffect(conditionWhenTrue, ESReturns(ESConstants.trueValue)))

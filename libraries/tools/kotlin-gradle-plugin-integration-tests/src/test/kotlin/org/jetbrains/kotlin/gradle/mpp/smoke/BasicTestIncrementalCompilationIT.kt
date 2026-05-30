@@ -21,7 +21,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
         get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
 
     override val mainCompileTasks: Set<String>
-        get() = setOf(
+        get() = [
             ":app:compileCommonMainKotlinMetadata",
             ":lib:compileCommonMainKotlinMetadata",
 
@@ -43,7 +43,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
             // for native, we check only recompilation, but not test run, as sometimes after recompilation exactly same binary is produced.
             ":app:linkDebugTestNative",
             ":lib:linkDebugTestNative",
-        )
+        ]
     override val gradleTask: String
         get() = "build"
 
@@ -77,7 +77,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val changedInAppCommon = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileCommonMainKotlinMetadata",
                 ":app:compileTestKotlinJvm",
                 ":app:compileTestKotlinNative",
@@ -85,7 +85,7 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
                 ":app:jsTest",
                 ":app:jvmTest",
                 ":app:linkDebugTestNative",
-            ),
+            ],
         ) {
             assertNativeTestIsUpToDateAfterChanginUnusedCode()
 
@@ -98,10 +98,10 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val touchedAppJvm = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileTestKotlinJvm",
                 ":app:jvmTest",
-            ),
+            ],
         ) {
             assertIncrementalCompilation(listOf(touchedAppJvm).relativizeTo(projectPath))
         }
@@ -112,10 +112,10 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val changedInAppJs = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileTestKotlinJs",
                 ":app:jsTest",
-            ),
+            ],
         ) {
             assertIncrementalCompilation(listOf(changedInAppJs).relativizeTo(projectPath))
         }
@@ -126,10 +126,10 @@ open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
         resolvePath("app", "nativeMain", "UnusedNative.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileTestKotlinNative",
                 ":app:linkDebugTestNative",
-            ),
+            ],
         ) {
             assertNativeTestIsUpToDateAfterChanginUnusedCode()
         }

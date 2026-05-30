@@ -17,7 +17,7 @@ object ConeIntegerOperatorConflictResolver : ConeCallConflictResolver() {
         }
         val candidateWithWrappedIntegerOperator = candidates.firstOrNull { it.symbol.isWrappedIntegerOperator() }
         return if (candidateWithWrappedIntegerOperator != null) {
-            setOf(candidateWithWrappedIntegerOperator)
+            [candidateWithWrappedIntegerOperator]
         } else {
             candidates
         }

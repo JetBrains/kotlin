@@ -33,6 +33,6 @@ internal class KaBaseConstructorDelegationReference(
             get() = KtConstructorDelegationReferenceExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtConstructorDelegationReferenceExpression>
-            get() = { listOf(KaBaseConstructorDelegationReference(it)) }
+            get() = { [KaBaseConstructorDelegationReference(it)] }
     }
 }

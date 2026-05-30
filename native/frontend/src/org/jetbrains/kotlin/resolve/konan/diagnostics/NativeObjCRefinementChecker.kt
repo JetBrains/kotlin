@@ -34,8 +34,8 @@ object NativeObjCRefinementChecker : DeclarationChecker {
     }
 
     private fun DeclarationDescriptor.findRefinedAnnotations(): Pair<List<AnnotationDescriptor>, List<AnnotationDescriptor>> {
-        val objCAnnotations = mutableListOf<AnnotationDescriptor>()
-        val swiftAnnotations = mutableListOf<AnnotationDescriptor>()
+        val objCAnnotations: MutableList<AnnotationDescriptor> = []
+        val swiftAnnotations: MutableList<AnnotationDescriptor> = []
         for (annotation in annotations) {
             val annotations = annotation.annotationClass?.annotations ?: continue
             for (metaAnnotation in annotations) {

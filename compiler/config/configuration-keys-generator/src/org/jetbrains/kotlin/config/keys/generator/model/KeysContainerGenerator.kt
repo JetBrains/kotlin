@@ -17,10 +17,10 @@ import java.io.File
 import kotlin.reflect.full.starProjectedType
 
 object KeysContainerGenerator {
-    private val defaultImports = listOf(
+    private val defaultImports = [
         "org.jetbrains.kotlin.config.CompilerConfigurationKey",
         "org.jetbrains.kotlin.config.CompilerConfiguration"
-    )
+    ]
 
     fun generate(file: File, container: KeysContainer) {
         file.writeToFileUsingSmartPrinterIfFileContentChanged {
@@ -43,7 +43,7 @@ object KeysContainerGenerator {
             container.packageName,
             importableTypes = regularTypes + optInTypes + annotationTypes,
             simpleImports = defaultImports + container.keys.flatMap { it.importsToAdd },
-            starImports = emptyList(),
+            starImports = [],
         )
     }
 

@@ -33,14 +33,14 @@ import com.sun.tools.javac.util.List as JavacList
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
-    binaryTypesToReprocess: List<String> = emptyList()
+    binaryTypesToReprocess: List<String> = []
 ) = doAnnotationProcessing(javaSourceFiles, processors, JavacList.nil(), binaryTypesToReprocess)
 
 fun KaptContext.doAnnotationProcessing(
     javaSourceFiles: List<File>,
     processors: List<IncrementalProcessor>,
     additionalSources: JavacList<JCTree.JCCompilationUnit> = JavacList.nil(),
-    binaryTypesToReprocess: List<String> = emptyList()
+    binaryTypesToReprocess: List<String> = []
 ) {
     val processingEnvironment = JavacProcessingEnvironment.instance(context)
 
@@ -211,8 +211,8 @@ private fun reportIfRunningNonIncrementally(
 
 private class ProcessorWrapper(private val delegate: IncrementalProcessor) : Processor by delegate {
     private var initTime: Long = 0
-    private val roundTime = mutableListOf<Long>()
-    private val sourcesGenerated = mutableListOf<Int>()
+    private val roundTime: MutableList<Long> = []
+    private val sourcesGenerated: MutableList<Int> = []
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         val [time, result] = measureTimeMillisWithResult {

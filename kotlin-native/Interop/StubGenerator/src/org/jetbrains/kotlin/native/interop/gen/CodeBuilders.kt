@@ -21,7 +21,7 @@ interface NativeScope {
 }
 
 class NativeCodeBuilder(val scope: NativeScope) {
-    val lines = mutableListOf<String>()
+    val lines: MutableList<String> = []
 
     fun out(line: String): Unit {
         lines.add(line)
@@ -35,9 +35,9 @@ inline fun buildNativeCodeLines(scope: NativeScope, block: NativeCodeBuilder.() 
 }
 
 private class Block(val nesting: Int, val start: String, val end: String) {
-    val prologue = mutableListOf<String>()
-    val body = mutableListOf<String>()
-    val epilogue = mutableListOf<String>()
+    val prologue: MutableList<String> = []
+    val body: MutableList<String> = []
+    val epilogue: MutableList<String> = []
 
     fun indent(line: String) = "    ".repeat(nesting) + line
     fun indentBraces(line: String) = "    ".repeat(nesting - 1) + line
@@ -45,7 +45,7 @@ private class Block(val nesting: Int, val start: String, val end: String) {
 
 class KotlinCodeBuilder(val scope: KotlinScope) {
 
-    private val blocks = mutableListOf<Block>()
+    private val blocks: MutableList<Block> = []
 
     init {
         pushBlock("", "")
@@ -90,7 +90,7 @@ class KotlinCodeBuilder(val scope: KotlinScope) {
     }
 
     fun build(): List<String> {
-        val lines = mutableListOf<String>()
+        val lines: MutableList<String> = []
         emitBlockAndNested(0, lines)
         return lines.toList()
     }

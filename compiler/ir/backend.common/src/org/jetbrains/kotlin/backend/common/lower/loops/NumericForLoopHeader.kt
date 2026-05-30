@@ -104,7 +104,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
             val stepType = stepClass.defaultType
             val plusFun = elementClass.defaultType.getClass()!!.functions.single {
                 it.name == OperatorNameConventions.PLUS &&
-                        it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, stepType))
+                        it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = [null, stepType])
             }
             irSet(
                 inductionVariable.symbol, irCallOp(
@@ -132,7 +132,7 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 val unsignedCompareToFun = if (this is UnsignedProgressionType) {
                     unsignedType.getClass()!!.functions.single {
                         it.name == OperatorNameConventions.COMPARE_TO &&
-                                it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, unsignedType))
+                                it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = [null, unsignedType])
                     }
                 } else null
 

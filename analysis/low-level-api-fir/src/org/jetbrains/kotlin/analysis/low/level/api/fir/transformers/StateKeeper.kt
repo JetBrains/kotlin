@@ -168,7 +168,7 @@ internal inline fun <Entity : Any, Context : Any> StateKeeperBuilder.entityList(
 internal fun <Owner : Any, Context : Any> stateKeeper(
     block: StateKeeperScope<Owner, Context>.(StateKeeperBuilder, Owner, Context) -> Unit,
 ): StateKeeper<Owner, Context> = StateKeeper { owner, context ->
-    val states = mutableListOf<PreservedState>()
+    val states: MutableList<PreservedState> = []
 
     val builder = object : StateKeeperBuilder {
         override fun register(state: PreservedState) {

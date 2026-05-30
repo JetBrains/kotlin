@@ -23,7 +23,7 @@ interface StabilityConfigParser {
 
     companion object {
         fun fromFile(filepath: String?): StabilityConfigParser {
-            if (filepath == null) return StabilityConfigParserImpl(emptyList())
+            if (filepath == null) return StabilityConfigParserImpl([])
 
             val confFile = File(filepath)
             return StabilityConfigParserImpl(confFile.readLines())
@@ -43,7 +43,7 @@ private class StabilityConfigParserImpl(
     override val stableTypeMatchers: Set<FqNameMatcher>
 
     init {
-        val matchers: MutableSet<FqNameMatcher> = mutableSetOf()
+        val matchers: MutableSet<FqNameMatcher> = []
 
         lines.forEachIndexed { index, line ->
             val l = line.trim()

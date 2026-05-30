@@ -42,7 +42,7 @@ object BuiltinSpecialProperties {
     val SPECIAL_SHORT_NAMES: Set<Name> = SPECIAL_FQ_NAMES.map(FqName::shortName).toSet()
 
     fun getPropertyNameCandidatesBySpecialGetterName(name1: Name): List<Name> =
-        GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: emptyList()
+        GETTER_JVM_NAME_TO_PROPERTIES_SHORT_NAME_MAP[name1] ?: []
 }
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))

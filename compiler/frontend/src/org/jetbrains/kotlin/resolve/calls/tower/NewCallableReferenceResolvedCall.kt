@@ -31,7 +31,7 @@ class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
 ) : NewAbstractResolvedCall<D>() {
     override val positionDependentApproximation: Boolean = true
     override val argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument> = emptyMap()
-    override val diagnostics: Collection<KotlinCallDiagnostic> = emptyList()
+    override val diagnostics: Collection<KotlinCallDiagnostic> = []
 
     override val resolvedCallAtom: ResolvedCallableReferenceCallAtom?
         get() = when (resolvedAtom) {
@@ -72,7 +72,7 @@ class NewCallableReferenceResolvedCall<D : CallableDescriptor>(
 
     override fun getExtensionReceiver(): ReceiverValue? = extensionReceiver
     override fun getDispatchReceiver(): ReceiverValue? = dispatchReceiver
-    override fun getContextReceivers() = emptyList<ReceiverValue>()
+    override fun getContextReceivers(): List<ReceiverValue> = []
 
     override fun updateDispatchReceiverType(newType: KotlinType) {
         if (dispatchReceiver?.type == newType) return

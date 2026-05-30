@@ -16,7 +16,7 @@ class KaBaseSymbolResolutionSuccess(
     private val backingSymbols: List<KaSymbol>,
 ) : KaSymbolResolutionSuccess {
     constructor(backingSymbol: KaSymbol) : this(
-        backingSymbols = listOf(backingSymbol),
+        backingSymbols = [backingSymbol],
     )
 
     init {

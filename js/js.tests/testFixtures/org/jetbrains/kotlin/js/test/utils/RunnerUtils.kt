@@ -93,7 +93,7 @@ fun getAdditionalFiles(
 
     val withModuleSystem = testWithModuleSystem(testServices)
 
-    val additionalFiles = mutableListOf<File>()
+    val additionalFiles: MutableList<File> = []
     if (withModuleSystem) additionalFiles += ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
 
     originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
@@ -122,7 +122,7 @@ fun getAdditionalMainFiles(
     shouldCopyFiles: Boolean = false
 ): List<File> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-    val additionalFiles = mutableListOf<File>()
+    val additionalFiles: MutableList<File> = []
 
     originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main$REGULAR_EXTENSION")
         .takeIf { it.exists() }
@@ -175,7 +175,7 @@ fun getAllFilesForRunner(
         val additionalFiles = getAdditionalFilePaths(testServices, mode)
         val additionalMainFiles = getAdditionalMainFilePaths(testServices, mode)
 
-        val paths = mutableListOf<String>()
+        val paths: MutableList<String> = []
 
         if (mode.granularity == JsGenerationGranularity.PER_MODULE && outputs.dependencies.size > 1) {
             // Need to sort modules in the reverse topological order to avoid problems in V8 with loading JS files

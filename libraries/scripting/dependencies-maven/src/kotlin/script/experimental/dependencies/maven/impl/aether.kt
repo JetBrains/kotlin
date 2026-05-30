@@ -63,7 +63,7 @@ internal enum class ResolutionKind {
 
 internal class AetherResolveSession(
     localRepoDirectory: File? = null,
-    remoteRepos: List<RemoteRepository> = listOf(mavenCentral),
+    remoteRepos: List<RemoteRepository> = [mavenCentral],
     settingsFactory: () -> Settings = ::createMavenSettings,
 ) {
 
@@ -174,7 +174,7 @@ internal class AetherResolveSession(
             if (isOptional) {
                 resolutionException.results
             } else {
-                return makeResolveFailureResult(listOf(resolutionException.message.orEmpty()), null, resolutionException)
+                return makeResolveFailureResult([resolutionException.message.orEmpty()], null, resolutionException)
             }
         }
 
@@ -241,7 +241,7 @@ internal class AetherResolveSession(
 
         return fetch(
             requests,
-            { reqs -> listOf(repositorySystem.resolveArtifacts(repositorySystemSession, reqs)) },
+            { reqs -> [repositorySystem.resolveArtifacts(repositorySystemSession, reqs)] },
             { reqs, ex -> ArtifactResolutionException(reqs.map { req -> ArtifactResult(req) }, ex.message, IllegalArgumentException(ex)) }
         ).flatMap { it.toFiles() }
     }

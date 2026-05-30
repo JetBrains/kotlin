@@ -132,7 +132,7 @@ class CliJavaModuleFinder(
             JavaModule.Explicit(
                 moduleInfo,
                 when {
-                    useLastJdkApi -> listOf(JavaModule.Root(moduleRoot, isBinary = true, isBinarySignature = useSig))
+                    useLastJdkApi -> [JavaModule.Root(moduleRoot, isBinary = true, isBinarySignature = useSig)]
                     useSig -> createModuleFromSignature(moduleInfo)
                     else -> error("Can't find ${moduleRoot.path} module")
                 },
@@ -143,7 +143,7 @@ class CliJavaModuleFinder(
     }
 
     private fun createModuleFromSignature(moduleInfo: JavaModuleInfo): List<JavaModule.Root> {
-        return listOf(createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo))
+        return [createModuleFromSignature(!isCompilationJDK12OrLater, isCompilationJDK12OrLater, moduleInfo)]
     }
 
     private fun createModuleFromSignature(
@@ -195,17 +195,17 @@ class CliJavaModuleFinder(
         createModuleFromSignature(
             filterPackages = false,
             filterModules = false,
-            moduleInfo = JavaModuleInfo("*", emptyList(), emptyList(), emptyList())
+            moduleInfo = JavaModuleInfo("*", [], [], [])
         )
     }
 
     private val listFoldersForRelease: List<VirtualFile> by lazy {
-        if (ctSymRootFolder == null) emptyList()
+        if (ctSymRootFolder == null) []
         else ctSymRootFolder!!.children.filter { matchesRelease(it.name, jdkRelease!!) }.flatMap {
             if (isCompilationJDK12OrLater)
                 it.children.toList()
             else {
-                listOf(it)
+                [it]
             }
         }.apply {
             if (isEmpty()) reportError("'-Xjdk-release=${jdkRelease}' option is not supported by used JDK: ${jdkHome?.path}")

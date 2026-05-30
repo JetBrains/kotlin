@@ -78,7 +78,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
         ) {
             return declaration.valueParameters.filter { it.source.valOrVarKeyword != null }
         }
-        return emptyList()
+        return []
     }
 
     private fun getConstructorDelegationCall(declaration: FirMemberDeclaration): FirDelegatedConstructorCall? {
@@ -95,7 +95,7 @@ object FirExpectConsistencyChecker : FirBasicDeclarationChecker(MppCheckerKind.C
     }
 
     private fun getClassSuperTypeReferencesWithInitializers(declaration: FirMemberDeclaration): List<FirTypeRef> {
-        if (declaration !is FirRegularClass) return emptyList()
+        if (declaration !is FirRegularClass) return []
         return declaration.withNavigator {
             declaration.superTypeRefs.filter { it.isInConstructorCallee() }
         }

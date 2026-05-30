@@ -41,7 +41,7 @@ abstract class MemoizedValueClassAbstractReplacements(
     protected fun IrFunction.isRemoveAtSpecialBuiltinStub() =
         origin == IrDeclarationOrigin.IR_BUILTINS_STUB &&
                 name.asString() == "remove" &&
-                hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, context.irBuiltIns.intType))
+                hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = [null, context.irBuiltIns.intType])
 
     protected fun IrFunction.isValueClassMemberFakeOverriddenFromJvmDefaultInterfaceMethod(): Boolean =
         this is IrSimpleFunction && isFakeOverride && modality != Modality.ABSTRACT &&
@@ -123,7 +123,7 @@ abstract class MemoizedValueClassAbstractReplacements(
         }
 
     fun replaceOverriddenSymbols(function: IrSimpleFunction): List<IrSimpleFunctionSymbol> =
-        if (function.overriddenSymbols.isEmpty()) listOf()
+        if (function.overriddenSymbols.isEmpty()) []
         else replaceOverriddenSymbolsImpl(function)
 
     abstract fun getReplacementForRegularClassConstructor(constructor: IrConstructor): IrConstructor?

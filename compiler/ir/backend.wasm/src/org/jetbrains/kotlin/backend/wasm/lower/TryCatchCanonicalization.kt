@@ -166,7 +166,7 @@ internal class CatchMerger(private val ctx: WasmBackendContext) : IrElementTrans
             return irTry(
                 aTry.type,
                 aTry.tryResult,
-                listOf(newCatch),
+                [newCatch],
                 aTry.finallyExpression
             )
         }

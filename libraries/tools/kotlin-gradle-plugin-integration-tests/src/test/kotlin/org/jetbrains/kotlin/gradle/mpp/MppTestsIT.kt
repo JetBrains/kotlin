@@ -23,7 +23,7 @@ class MppTestsIT : KGPBaseTest() {
             "new-mpp-lib-with-tests",
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("--continue"), // to ensure that all the tests are run
+                freeArgs = ["--continue"], // to ensure that all the tests are run
             ).disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
         ) {
             val nativeTarget = MPPNativeTargets.current
@@ -97,7 +97,7 @@ class MppTestsIT : KGPBaseTest() {
     fun testKt68638KotlinNativeLinkApiFilesResolutionError(gradleVersion: GradleVersion) {
         project("kt-68638-native-link-self-dependency", gradleVersion) {
             val buildOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("--dry-run")
+                freeArgs = ["--dry-run"]
             )
             // no build failure is expected
             build(":p1:linkDebugTestLinuxX64", buildOptions = buildOptions) {}

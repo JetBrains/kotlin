@@ -23,7 +23,7 @@ internal class TransformerVoidPrinter(
 ) : AbstractTransformerVoidPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irTransformerType.withArgs(visitorDataType))
+        get() = [irTransformerType.withArgs(visitorDataType)]
 
     // IrPackageFragment is treated as transformByChildren in IrElementTransformerVoid for historical reasons.
     private val Element.isPackageFragment: Boolean
@@ -49,12 +49,12 @@ internal class TransformerVoidPrinter(
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
         println()
-        val typeParameter = TypeVariable("T", listOf(IrTree.rootElement))
+        val typeParameter = TypeVariable("T", [IrTree.rootElement])
         printFunctionWithBlockBody(
             name = "transformPostfix",
-            parameters = listOf(FunctionParameter("body", Lambda(receiver = typeParameter, returnType = StandardTypes.unit))),
+            parameters = [FunctionParameter("body", Lambda(receiver = typeParameter, returnType = StandardTypes.unit))],
             returnType = typeParameter,
-            typeParameters = listOf(typeParameter),
+            typeParameters = [typeParameter],
             extensionReceiver = typeParameter,
             visibility = Visibility.PROTECTED,
             isInline = true,
@@ -66,7 +66,7 @@ internal class TransformerVoidPrinter(
         println()
         printFunctionWithBlockBody(
             name = "transformChildrenVoid",
-            parameters = emptyList(),
+            parameters = [],
             returnType = StandardTypes.unit,
             extensionReceiver = IrTree.rootElement,
             visibility = Visibility.PROTECTED,
@@ -117,7 +117,7 @@ internal class TransformerVoidPrinter(
             val transformerParameter = FunctionParameter("transformer", visitorType)
             printFunctionWithBlockBody(
                 name = "transformChildrenVoid",
-                parameters = listOf(transformerParameter),
+                parameters = [transformerParameter],
                 returnType = StandardTypes.unit,
                 extensionReceiver = IrTree.rootElement,
             ) {

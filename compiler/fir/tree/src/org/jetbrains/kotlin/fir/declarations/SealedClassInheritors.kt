@@ -23,7 +23,7 @@ private val FirSession.sealedClassInheritorsProvider: SealedClassInheritorsProvi
 object SealedClassInheritorsProviderImpl : SealedClassInheritorsProvider() {
     @OptIn(SealedClassInheritorsProviderInternals::class)
     override fun getSealedClassInheritors(firClass: FirRegularClass): List<ClassId> {
-        return firClass.sealedInheritorsAttr?.value ?: emptyList()
+        return firClass.sealedInheritorsAttr?.value ?: []
     }
 }
 

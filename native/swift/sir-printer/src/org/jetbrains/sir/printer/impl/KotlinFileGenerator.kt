@@ -11,12 +11,12 @@ import kotlin.collections.plusAssign
 
 internal class KotlinBridgePrinter {
 
-    private val imports = mutableSetOf<String>()
-    private val functions = mutableSetOf<List<String>>()
-    private val fileLevelAnnotations = mutableSetOf<String>(
+    private val imports: MutableSet<String> = []
+    private val functions: MutableSet<List<String>> = []
+    private val fileLevelAnnotations: MutableSet<String> = [
         """kotlin.Suppress("DEPRECATION_ERROR")""",
-    )
-    private val fileLevelOptIns = mutableSetOf<String>()
+    ]
+    private val fileLevelOptIns: MutableSet<String> = []
 
     fun add(bridge: SirBridge) {
         when (bridge) {

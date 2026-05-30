@@ -76,7 +76,7 @@ internal abstract class JvmValueClassAbstractLowering(
                     createExposedNoArgConstructor(replacement, function),
                 )
             } else {
-                emptyList()
+                []
             }
         }
 
@@ -118,7 +118,7 @@ internal abstract class JvmValueClassAbstractLowering(
         allScopes.push(createScope(replacement))
         replacement.body = function.body?.transform(this, null)?.patchDeclarationParents(replacement)
         allScopes.pop()
-        return listOf(replacement)
+        return [replacement]
     }
 
     private fun IrFunction.hashSuffix(): String? = InlineClassAbi.hashSuffix(
@@ -152,18 +152,18 @@ internal abstract class JvmValueClassAbstractLowering(
         if (!(function.shouldBeExposedByAnnotationOrFlag(context) && !function.isFakeOverride) &&
             (function.overriddenSymbols.isEmpty() || replacement.dispatchReceiverParameter != null)
         ) {
-            return listOf(replacement)
+            return [replacement]
         } else if (function.shouldBeExposedByAnnotationOrFlag(context) &&
             function.acceptsNullableResultWithoutRenaming()
         ) {
             // Propagate @JvmExposeBoxed annotation
             replacement.annotations = replacement.annotations.withJvmExposeBoxedAnnotation(replacement, context)
-            return listOf(replacement)
+            return [replacement]
         }
 
         val bridgeFunction = createBridgeFunction(function, replacement)
 
-        return listOf(replacement, bridgeFunction)
+        return [replacement, bridgeFunction]
     }
 
     // There is only one special case with `kotlin.Result` class - when the type is nullable.
@@ -203,8 +203,8 @@ internal abstract class JvmValueClassAbstractLowering(
         container.statements.transformFlat { statement ->
             val newStatements =
                 if (statement is IrFunction) withinScope(statement) { transformFunctionFlat(statement) }
-                else listOf(statement.transformStatement(this))
-            for (replacingDeclaration in (newStatements ?: listOf(statement)).filterIsInstance<IrDeclaration>()) {
+                else [statement.transformStatement(this)]
+            for (replacingDeclaration in (newStatements ?: [statement]).filterIsInstance<IrDeclaration>()) {
                 postActionAfterTransformingClassDeclaration(replacingDeclaration)
             }
             newStatements

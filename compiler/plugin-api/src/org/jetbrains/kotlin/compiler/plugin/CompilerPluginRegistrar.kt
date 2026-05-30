@@ -33,7 +33,7 @@ abstract class CompilerPluginRegistrar {
 
         operator fun <T : Any> get(descriptor: ExtensionPointDescriptor<T>): List<T> {
             @Suppress("UNCHECKED_CAST")
-            return registeredExtensions[descriptor] as List<T>? ?: emptyList()
+            return registeredExtensions[descriptor] as List<T>? ?: []
         }
 
         fun <T : Any> ExtensionPointDescriptor<T>.registerExtension(extension: T) {

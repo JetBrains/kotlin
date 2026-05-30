@@ -64,7 +64,7 @@ class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTr
                 }
 
                 declaration.parent = irClass.file
-                return listOf()
+                return []
             }
         }
 

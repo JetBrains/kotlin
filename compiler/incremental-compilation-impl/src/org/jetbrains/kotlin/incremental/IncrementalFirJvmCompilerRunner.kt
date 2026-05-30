@@ -142,7 +142,7 @@ open class IncrementalFirJvmCompilerRunner(
 
             val paths = computeKotlinPaths(configuration, args)
             if (CheckDiagnosticCollector.checkHasErrorsAndReportToMessageCollector(configuration)) {
-                return ExitCode.COMPILATION_ERROR to emptyList()
+                return ExitCode.COMPILATION_ERROR to []
             }
 
             // -- plugins
@@ -159,7 +159,7 @@ open class IncrementalFirJvmCompilerRunner(
                 configuration,
                 rootDisposable
             )
-            if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to emptyList()
+            if (pluginLoadResult != ExitCode.OK) return pluginLoadResult to []
             // -- /plugins
 
             with(configuration) {
@@ -176,7 +176,7 @@ open class IncrementalFirJvmCompilerRunner(
                 } else {
                     put(JVMConfigurationKeys.OUTPUT_DIRECTORY, destination)
                 }
-                addAll(JVMConfigurationKeys.MODULES, listOf(ModuleBuilder(targetId.name, destination.path, targetId.type)))
+                addAll(JVMConfigurationKeys.MODULES, [ModuleBuilder(targetId.name, destination.path, targetId.type)])
 
                 configureBaseRoots(args)
                 configureSourceRootsFromSources(allSourcesWithJava, commonSources, args.javaPackagePrefix)
@@ -202,7 +202,7 @@ open class IncrementalFirJvmCompilerRunner(
                 if (isCommon) allCommonSourceFiles.add(file)
                 else allPlatformSourceFiles.add(file)
                 if (hmppModule != null) {
-                    sourcesByModuleName.getOrPut(hmppModule) { mutableSetOf() }.add(file)
+                    sourcesByModuleName.getOrPut(hmppModule) { [] }.add(file)
                 }
             }
 
@@ -311,7 +311,7 @@ open class IncrementalFirJvmCompilerRunner(
                 projectEnvironment.project,
                 configuration,
                 hasPendingErrors = false,
-                listOf(generationState),
+                [generationState],
                 mainClassFqName
             )
         } catch (e: CompilationCanceledException) {

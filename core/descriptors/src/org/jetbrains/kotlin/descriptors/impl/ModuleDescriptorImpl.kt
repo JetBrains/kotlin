@@ -122,11 +122,11 @@ class ModuleDescriptorImpl @JvmOverloads constructor(
     // TODO(KT-62534) these methods set friendModules to an empty set.
     //  Migrate callers to the overload with friends parameter and get rid of these overloads.
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>) {
-        setDependencies(descriptors, emptySet())
+        setDependencies(descriptors, [])
     }
 
     fun setDependencies(descriptors: List<ModuleDescriptorImpl>, friends: Set<ModuleDescriptorImpl>) {
-        setDependencies(ModuleDependenciesImpl(descriptors, friends, emptyList(), emptySet()))
+        setDependencies(ModuleDependenciesImpl(descriptors, friends, [], []))
     }
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {

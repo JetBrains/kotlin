@@ -33,6 +33,6 @@ internal class KaBasePropertyDelegationMethodsReference(
             get() = KtPropertyDelegate::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtPropertyDelegate>
-            get() = { listOf(KaBasePropertyDelegationMethodsReference(it)) }
+            get() = { [KaBasePropertyDelegationMethodsReference(it)] }
     }
 }

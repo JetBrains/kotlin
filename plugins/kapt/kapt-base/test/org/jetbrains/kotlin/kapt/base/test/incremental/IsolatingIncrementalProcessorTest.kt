@@ -15,7 +15,7 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     fun testDependenciesRecorded() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val isolating = SimpleProcessor().toIsolating()
-        runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
+        runAnnotationProcessing(srcFiles, [isolating], generatedSources)
 
         assertEquals(RuntimeProcType.ISOLATING, isolating.getRuntimeType())
 
@@ -32,7 +32,7 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     fun testNoSourcesToProcess() {
         val srcFiles = listOf("Observable.java").map { File(TEST_DATA_DIR, it) }
         val isolating = SimpleProcessor().toIsolating()
-        runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
+        runAnnotationProcessing(srcFiles, [isolating], generatedSources)
 
         assertEquals(RuntimeProcType.ISOLATING, isolating.getRuntimeType())
         assertEquals(emptyMap<File, String?>(), isolating.getGeneratedToSources())
@@ -42,7 +42,7 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     fun testGeneratingSourcesClassesResources() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val isolating = SimpleCreatingClassFilesAndResources().toIsolating()
-        runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
+        runAnnotationProcessing(srcFiles, [isolating], generatedSources)
 
         assertEquals(RuntimeProcType.ISOLATING, isolating.getRuntimeType())
 
@@ -63,7 +63,7 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     fun testWrongOriginElement() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val isolating = SimpleProcessor(wrongOrigin = true).toIsolating()
-        runAnnotationProcessing(srcFiles, listOf(isolating), generatedSources)
+        runAnnotationProcessing(srcFiles, [isolating], generatedSources)
 
         assertEquals(RuntimeProcType.NON_INCREMENTAL, isolating.getRuntimeType())
         assertEquals(emptyMap<File, String?>(), isolating.getGeneratedToSources())
@@ -72,10 +72,10 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     @Test
     fun testTwoIsolating() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
-        val isolating = listOf(
+        val isolating = [
             SimpleProcessor().toIsolating(),
             SimpleProcessor(generatedSuffix = "Two").toIsolating()
-        )
+        ]
         runAnnotationProcessing(srcFiles, isolating, generatedSources)
 
         isolating.forEach { assertEquals(RuntimeProcType.ISOLATING, it.getRuntimeType()) }
@@ -97,7 +97,7 @@ class IsolationgIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir()
     @Test
     fun testIsolatingWithMultipleOriginatingElements() {
         val srcFiles = listOf("User.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
-        val isolating = listOf(ReportTwoOriginElements().toIsolating())
+        val isolating = [ReportTwoOriginElements().toIsolating()]
         runAnnotationProcessing(srcFiles, isolating, generatedSources)
 
         assertEquals(

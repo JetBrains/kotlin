@@ -27,7 +27,7 @@ class ClassVerificationTest : BaseJvmAbiTest() {
         )
         val compilation = Compilation(workingDir, name = null).also { make(it) }
 
-        val classLoader = URLClassLoader(arrayOf(compilation.abiDir.toURI().toURL()), null)
+        val classLoader = URLClassLoader([compilation.abiDir.toURI().toURL()], null)
         classLoader.loadClass("test.C")
         classLoader.loadClass("test.TestKt")
     }

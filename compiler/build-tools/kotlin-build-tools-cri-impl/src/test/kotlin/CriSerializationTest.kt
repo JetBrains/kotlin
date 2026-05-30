@@ -29,9 +29,9 @@ class CriSerializationTest {
         val file3 = "C.kt"
         val lookups = mapOf(
             LookupSymbol(name = fqName1.shortName().asString(), scope = fqName1.parent().asString())
-                    to listOf(file1, file2),
+                    to [file1, file2],
             LookupSymbol(name = fqName2.shortName().asString(), scope = fqName2.parent().asString())
-                    to listOf(file2, file3),
+                    to [file2, file3],
         )
 
         (val serializedLookups = lookups, val serializedFileIdsToPaths = fileIdsToPaths) = CriDataSerializerImpl().serializeLookups(
@@ -43,17 +43,17 @@ class CriSerializationTest {
         val decodedLookups = deserializer.deserializeLookupData(serializedLookups)
         val decodedFileIdsToPaths = deserializer.deserializeFileIdToPathData(serializedFileIdsToPaths)
 
-        val expectedLookups = listOf(
-            LookupEntryImpl(fqName1.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
-            LookupEntryImpl(fqName2.hashCode(), listOf(file2.hashCode(), file3.hashCode())),
-        )
+        val expectedLookups = [
+            LookupEntryImpl(fqName1.hashCode(), [file1.hashCode(), file2.hashCode()]),
+            LookupEntryImpl(fqName2.hashCode(), [file2.hashCode(), file3.hashCode()]),
+        ]
         assertEquals(expectedLookups, decodedLookups.toList())
 
-        val expectedFileIdsToPaths = listOf(
+        val expectedFileIdsToPaths = [
             FileIdToPathEntryImpl(file1.hashCode(), file1),
             FileIdToPathEntryImpl(file2.hashCode(), file2),
             FileIdToPathEntryImpl(file3.hashCode(), file3),
-        )
+        ]
         assertEquals(expectedFileIdsToPaths, decodedFileIdsToPaths.toList())
     }
 
@@ -67,15 +67,15 @@ class CriSerializationTest {
         val file3 = "C.kt"
         val lookups1 = mapOf(
             LookupSymbol(name = fqName1.shortName().asString(), scope = fqName1.parent().asString())
-                    to listOf(file1, file2),
+                    to [file1, file2],
             LookupSymbol(name = fqName2.shortName().asString(), scope = fqName2.parent().asString())
-                    to listOf(file2, file3),
+                    to [file2, file3],
         )
         val lookups2 = mapOf(
             LookupSymbol(name = fqName1.shortName().asString(), scope = fqName1.parent().asString())
-                    to listOf(file3),
+                    to [file3],
             LookupSymbol(name = fqName3.shortName().asString(), scope = fqName3.parent().asString())
-                    to listOf(file1, file2),
+                    to [file1, file2],
         )
 
         (val serializedLookups1 = lookups) = CriDataSerializerImpl().serializeLookups(
@@ -95,12 +95,12 @@ class CriSerializationTest {
         val deserializer = CriDataDeserializerImpl()
         val decodedLookups = deserializer.deserializeLookupData(serializedLookups)
 
-        val expectedLookups = listOf(
-            LookupEntryImpl(fqName1.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
-            LookupEntryImpl(fqName2.hashCode(), listOf(file2.hashCode(), file3.hashCode())),
-            LookupEntryImpl(fqName1.hashCode(), listOf(file3.hashCode())),
-            LookupEntryImpl(fqName3.hashCode(), listOf(file1.hashCode(), file2.hashCode())),
-        )
+        val expectedLookups = [
+            LookupEntryImpl(fqName1.hashCode(), [file1.hashCode(), file2.hashCode()]),
+            LookupEntryImpl(fqName2.hashCode(), [file2.hashCode(), file3.hashCode()]),
+            LookupEntryImpl(fqName1.hashCode(), [file3.hashCode()]),
+            LookupEntryImpl(fqName3.hashCode(), [file1.hashCode(), file2.hashCode()]),
+        ]
         assertEquals(expectedLookups, decodedLookups.toList())
     }
 
@@ -113,18 +113,18 @@ class CriSerializationTest {
         val fqName5 = "scope5.Name5"
 
         val input = mapOf(
-            FqName(fqName1) to listOf(FqName(fqName2), FqName(fqName3)),
-            FqName(fqName4) to listOf(FqName(fqName5)),
+            FqName(fqName1) to [FqName(fqName2), FqName(fqName3)],
+            FqName(fqName4) to [FqName(fqName5)],
         )
 
         val serializedSubtypes = CriDataSerializerImpl().serializeSubtypes(input)
 
         val subtypes = CriDataDeserializerImpl().deserializeSubtypeData(serializedSubtypes).map { it.fqNameHashCode to it.subtypes }
 
-        val expected = listOf(
-            fqName1.hashCode() to listOf(fqName2, fqName3),
-            fqName4.hashCode() to listOf(fqName5),
-        )
+        val expected = [
+            fqName1.hashCode() to [fqName2, fqName3],
+            fqName4.hashCode() to [fqName5],
+        ]
         assertEquals(expected, subtypes)
     }
 
@@ -138,7 +138,7 @@ class CriSerializationTest {
         fun serializeUnder(root: File): CriDataSerializerImpl.SerializedLookupData {
             val absolutePath = root.resolve(relativeFile).absolutePath
             return CriDataSerializerImpl().serializeLookups(
-                mapOf(lookup to listOf(absolutePath)),
+                mapOf(lookup to [absolutePath]),
                 RelocatableFileToPathConverter(root),
             )
         }

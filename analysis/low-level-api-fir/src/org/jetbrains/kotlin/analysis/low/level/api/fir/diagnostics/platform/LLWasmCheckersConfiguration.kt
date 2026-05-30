@@ -30,5 +30,5 @@ internal class LLWasmCheckersConfiguration(wasmTarget: WasmTarget) : LLPlatformC
             }
         }
 
-    override val typeCheckers: List<TypeCheckers> = listOf(WasmBaseTypeCheckers)
+    override val typeCheckers: List<TypeCheckers> = [WasmBaseTypeCheckers]
 }

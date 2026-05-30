@@ -115,7 +115,7 @@ class JvmMappedScope(
         }.let {
             // If getFirst/getLast don't exist, we need to add them so that we can mark overrides as deprecated (KT-65440)
             if (isList && (GET_FIRST_NAME !in it || GET_LAST_NAME !in it)) {
-                it + listOf(GET_FIRST_NAME, GET_LAST_NAME)
+                it + GET_FIRST_NAME + GET_LAST_NAME
             } else {
                 it
             }
@@ -123,7 +123,7 @@ class JvmMappedScope(
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
-        val declared = mutableListOf<FirNamedFunctionSymbol>()
+        val declared: MutableList<FirNamedFunctionSymbol> = []
         declaredMemberScope.processFunctionsByName(name) { symbol ->
             if (!filterOutJvmPlatformDeclarations || FirJvmPlatformDeclarationFilter.isFunctionAvailable(
                     symbol.fir,
@@ -380,7 +380,7 @@ class JvmMappedScope(
             newReturnType = substitutor.substituteOrSelf(oldConstructor.returnTypeRef.coneType),
             newParameterTypes = oldConstructor.valueParameters.map { substitutor.substituteOrSelf(it.returnTypeRef.coneType) },
             newTypeParameters = null,
-            newContextParameterTypes = emptyList(),
+            newContextParameterTypes = [],
             isExpect = false,
             deferredReturnTypeCalculation = null,
             newSource = oldConstructor.source,

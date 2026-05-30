@@ -11,9 +11,9 @@ import org.jetbrains.kotlin.fir.analysis.checkers.config.FirOptInLanguageVersion
 import org.jetbrains.kotlin.fir.analysis.checkers.config.FirSuppressedDiagnosticsCheckers
 
 object CliOnlyLanguageVersionSettingsCheckers : LanguageVersionSettingsCheckers() {
-    override val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = setOf(
+    override val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = [
         FirOptInLanguageVersionSettingsChecker,
         FirSuppressedDiagnosticsCheckers,
         FirContextParametersLanguageVersionSettingsChecker,
-    )
+    ]
 }

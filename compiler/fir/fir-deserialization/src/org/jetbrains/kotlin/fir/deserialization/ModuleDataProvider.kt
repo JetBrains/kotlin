@@ -19,7 +19,7 @@ abstract class ModuleDataProvider {
 
 class SingleModuleDataProvider(private val moduleData: FirModuleData) : ModuleDataProvider() {
     override val allModuleData: Collection<FirModuleData>
-        get() = listOf(moduleData)
+        get() = [moduleData]
 
     override val regularDependenciesModuleData: FirModuleData
         get() = moduleData

@@ -31,8 +31,8 @@ interface CirPropertySetter : CirDeclaration, CirPropertyAccessor, CirHasVisibil
 
         @Suppress("NOTHING_TO_INLINE")
         inline fun createDefaultNoAnnotations(visibility: Visibility): CirPropertySetter = createInterned(
-            annotations = emptyList(),
-            parameterAnnotations = emptyList(),
+            annotations = [],
+            parameterAnnotations = [],
             visibility = visibility,
             isDefault = visibility == Visibilities.Public,
             isInline = false

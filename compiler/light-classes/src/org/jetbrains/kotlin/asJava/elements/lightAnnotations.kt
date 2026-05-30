@@ -174,13 +174,13 @@ class KtLightAnnotationForSourceEntry(
         private val _attributes: Array<PsiNameValuePair> by lazyPub {
 
             if (this@KtLightAnnotationForSourceEntry.kotlinOrigin.valueArguments.isEmpty()) {
-                return@lazyPub emptyArray()
+                return@lazyPub []
             }
 
             val resolvedArguments =
                 this@KtLightAnnotationForSourceEntry.kotlinOrigin.getResolvedCall()?.valueArguments
 
-            resolvedArguments ?: return@lazyPub emptyArray()
+            resolvedArguments ?: return@lazyPub []
 
             resolvedArguments.mapNotNull { resolvedArgumentEntry ->
                 if (checkIfToArrayConversionExpected(resolvedArgumentEntry)) {
@@ -212,7 +212,7 @@ class KtLightAnnotationForSourceEntry(
 
 class KtLightEmptyAnnotationParameterList(parent: PsiElement) : KtLightElementBase(parent), PsiAnnotationParameterList {
     override val kotlinOrigin: KtElement? get() = null
-    override fun getAttributes(): Array<PsiNameValuePair> = emptyArray()
+    override fun getAttributes(): Array<PsiNameValuePair> = []
 }
 
 open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwner>>(val member: D, parent: PsiElement) :
@@ -315,7 +315,7 @@ open class KtLightNullabilityAnnotation<D : KtLightElement<*, PsiModifierListOwn
 
 internal fun isNullabilityAnnotation(qualifiedName: String?) = qualifiedName in backendNullabilityAnnotations
 
-private val backendNullabilityAnnotations = arrayOf(Nullable::class.java.name, NotNull::class.java.name)
+private val backendNullabilityAnnotations: Array<String> = [Nullable::class.java.name, NotNull::class.java.name]
 
 private fun KtElement.analyze(): BindingContext = LightClassGenerationSupport.getInstance(this.project).analyze(this)
 

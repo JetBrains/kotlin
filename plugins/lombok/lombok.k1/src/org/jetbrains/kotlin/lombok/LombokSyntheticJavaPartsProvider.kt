@@ -23,7 +23,7 @@ import java.util.*
 @Suppress("IncorrectFormatting") // KTIJ-22227
 class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPartsProvider {
 
-    private val processors = listOf(
+    private val processors = [
         GetterProcessor(config),
         SetterProcessor(config),
         WithProcessor(),
@@ -31,7 +31,7 @@ class LombokSyntheticJavaPartsProvider(config: LombokConfig) : SyntheticJavaPart
         AllArgsConstructorProcessor(),
         RequiredArgsConstructorProcessor(),
         BuilderProcessor(config)
-    )
+    ]
 
     private val valueFieldModifier = ValueFieldModifier(config)
 

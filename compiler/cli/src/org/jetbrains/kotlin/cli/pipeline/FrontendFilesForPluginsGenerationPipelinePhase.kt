@@ -46,7 +46,7 @@ class FrontendFilesForPluginsGenerationPipelinePhase<A : FrontendPipelineArtifac
 
         @OptIn(FirExtensionApiInternals::class, SymbolInternals::class)
         fun createFilesWithGeneratedDeclarations(session: FirSession): List<FirFile> {
-            val symbolProvider = session.generatedDeclarationsSymbolProvider ?: return emptyList()
+            val symbolProvider = session.generatedDeclarationsSymbolProvider ?: return []
             val declarationGenerators = session.extensionService.declarationGenerators
 
             val fileModuleData = session.moduleData

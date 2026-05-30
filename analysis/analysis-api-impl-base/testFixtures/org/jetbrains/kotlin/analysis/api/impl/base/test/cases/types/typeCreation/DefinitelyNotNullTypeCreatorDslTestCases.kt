@@ -60,7 +60,7 @@ class DefinitelyNotNullTypeCreatorDslTestCases(session: KaSession, caretToType: 
         return session.typeCreator.definitelyNotNullType(type) {
             annotation { annotationClassId1 }
             annotation(annotationClassId2)
-            annotations(listOf(annotationClassId3))
+            annotations([annotationClassId3])
         }
     }
 

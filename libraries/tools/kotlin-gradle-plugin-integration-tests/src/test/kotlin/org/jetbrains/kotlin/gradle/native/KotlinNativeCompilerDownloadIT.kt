@@ -79,7 +79,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
                 "native-simple-project",
                 gradleVersion,
                 buildOptions = defaultBuildOptions.copy(
-                    freeArgs = listOf("-Pkotlin.native.home=$customKonanHome"),
+                    freeArgs = ["-Pkotlin.native.home=$customKonanHome"],
                     // when both `konan.data.dir` and `kotlin.native.home` properties are set the `konan.data.dir` one has priority,
                     // that is why we are disabling it `konan.data.dir` here.
                     konanDataDir = null
@@ -175,7 +175,7 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 konanDataDir = konanTemp,
-                freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
+                freeArgs = ["-Pkotlin.native.toolchain.enabled=false"],
             ),
         ) {
             build("assemble") {
@@ -231,20 +231,20 @@ class KotlinNativeCompilerDownloadIT : KGPBaseTest() {
         ) {
             val os = OperatingSystem.current()
             val expectedNativeDependencies = when {
-                os.isMacOsX -> listOf("lldb-4-macos", "apple-llvm-20200714-macos-aarch64-essentials", "libffi-3.3-1-macos-arm64")
-                os.isLinux -> listOf(
+                os.isMacOsX -> ["lldb-4-macos", "apple-llvm-20200714-macos-aarch64-essentials", "libffi-3.3-1-macos-arm64"]
+                os.isLinux -> [
                     "x86_64-unknown-linux-gnu-gcc-8.3.0-glibc-2.19-kernel-4.9-2",
                     "lldb-4-linux",
                     "llvm-11.1.0-linux-x64-essentials",
                     "libffi-3.2.1-2-linux-x86-64"
-                )
-                os.isWindows -> listOf(
+                ]
+                os.isWindows -> [
                     "llvm-11.1.0-windows-x64-essentials",
                     "libffi-3.3-windows-x64-1",
                     "lldb-2-windows",
                     "lld-12.0.1-windows-x64",
                     "msys2-mingw-w64-x86_64-2"
-                )
+                ]
                 else -> fail("Unsupported os: ${os.name}")
             }
 

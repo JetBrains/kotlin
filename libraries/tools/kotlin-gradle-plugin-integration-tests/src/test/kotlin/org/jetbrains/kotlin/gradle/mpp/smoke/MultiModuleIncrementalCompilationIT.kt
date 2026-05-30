@@ -40,10 +40,10 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
 
         multiStepCheckIncrementalBuilds(
             incrementalPath = usedInAppCommon,
-            steps = listOf(
+            steps = [
                 "1_addUnusedParameter",
                 "2_changeReturnType"
-            ),
+            ],
             tasksExpectedToExecuteOnEachStep = mainCompileTasks,
             afterEachStep = {
                 assertIncrementalCompilation(
@@ -63,10 +63,10 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
 
         fun testIndividualTarget(moduleTask: String, extraAssertions: BuildResult.() -> Unit = {}) {
             build(":app:$moduleTask") {
-                val targetTasks = setOf(
+                val targetTasks: Set<String> = [
                     ":app:$moduleTask",
                     ":lib:$moduleTask"
-                )
+                ]
                 assertTasksExecuted(targetTasks)
                 assertTasksAreNotInTaskGraph(*(mainCompileTasks - targetTasks).toTypedArray())
                 extraAssertions()
@@ -103,7 +103,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
     fun testTouchLibPlatform(gradleVersion: GradleVersion) = withProject(gradleVersion) {
         build("assemble")
 
-        val commonSteps = listOf("1_addUnusedParameter", "2_changeReturnType")
+        val commonSteps = ["1_addUnusedParameter", "2_changeReturnType"]
 
         /**
          * Step 1 - jvm
@@ -112,10 +112,10 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         multiStepCheckIncrementalBuilds(
             incrementalPath = jvmUtil,
             steps = commonSteps,
-            tasksExpectedToExecuteOnEachStep = setOf(
+            tasksExpectedToExecuteOnEachStep = [
                 ":app:compileKotlinJvm",
                 ":lib:compileKotlinJvm"
-            ),
+            ],
             afterEachStep = {
                 assertIncrementalCompilation(
                     listOf(
@@ -133,10 +133,10 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         multiStepCheckIncrementalBuilds(
             incrementalPath = jsUtil,
             steps = commonSteps,
-            tasksExpectedToExecuteOnEachStep = setOf(
+            tasksExpectedToExecuteOnEachStep = [
                 ":app:compileKotlinJs",
                 ":lib:compileKotlinJs"
-            ),
+            ],
             afterEachStep = {
                 assertIncrementalCompilation(
                     listOf(
@@ -154,10 +154,10 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         multiStepCheckIncrementalBuilds(
             incrementalPath = nativeUtil,
             steps = commonSteps,
-            tasksExpectedToExecuteOnEachStep = setOf(
+            tasksExpectedToExecuteOnEachStep = [
                 ":app:compileKotlinNative",
                 ":lib:compileKotlinNative"
-            )
+            ]
         )
     }
 
@@ -174,17 +174,17 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
 
         multiStepCheckIncrementalBuilds(
             incrementalPath = utilPath,
-            steps = listOf(
+            steps = [
                 "1_changeReturnType",
                 "2_addUnusedParameter"
                 // test changes in a different order for robustness
-            ),
-            tasksExpectedToExecuteOnEachStep = setOf(
+            ],
+            tasksExpectedToExecuteOnEachStep = [
                 ":app:compileCommonMainKotlinMetadata",
                 ":app:compileKotlinJvm",
                 ":app:compileKotlinJs",
                 ":app:compileKotlinNative"
-            ),
+            ],
             afterEachStep = {
                 assertIncrementalCompilation(
                     listOf(
@@ -213,7 +213,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         val changedJvmSource = resolvePath("app", "jvmMain", "UnusedJvm.kt")
             .replaceWithVersion("addParent")
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
+            tasksExpectedToExecute = [":app:compileKotlinJvm"]
         ) {
             assertIncrementalCompilation(listOf(changedJvmSource).relativizeTo(projectPath))
         }
@@ -224,7 +224,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         val changedJsSource = resolvePath("app", "jsMain", "UnusedJs.kt")
             .replaceWithVersion("addParent")
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinJs")
+            tasksExpectedToExecute = [":app:compileKotlinJs"]
         ) {
             assertIncrementalCompilation(listOf(changedJsSource).relativizeTo(projectPath))
         }
@@ -235,7 +235,7 @@ open class MultiModuleIncrementalCompilationIT : KmpIncrementalITBase() {
         resolvePath("app", "nativeMain", "UnusedNative.kt")
             .replaceWithVersion("addParent")
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinNative")
+            tasksExpectedToExecute = [":app:compileKotlinNative"]
         )
     }
 }

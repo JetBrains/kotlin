@@ -42,7 +42,7 @@ private fun IrFunction.isStaticInlineClassReplacementDelegatingCall(): Boolean {
     }?.isStaticInlineClassReplacement == true
 }
 
-private val BRIDGE_ORIGINS = setOf(
+private val BRIDGE_ORIGINS: Set<IrDeclarationOrigin> = [
     IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
     JvmLoweredDeclarationOrigin.JVM_STATIC_WRAPPER,
     JvmLoweredDeclarationOrigin.JVM_OVERLOADS_WRAPPER,
@@ -52,7 +52,7 @@ private val BRIDGE_ORIGINS = setOf(
     IrDeclarationOrigin.BRIDGE,
     IrDeclarationOrigin.BRIDGE_SPECIAL,
     IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION,
-)
+]
 
 // These functions contain a single `suspend` tail call, the value of which should be returned as is
 // (i.e. if it's an unboxed inline class value, it should remain unboxed).

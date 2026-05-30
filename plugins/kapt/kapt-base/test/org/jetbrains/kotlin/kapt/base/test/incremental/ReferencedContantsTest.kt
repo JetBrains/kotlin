@@ -19,6 +19,7 @@ import java.io.File
 
 private val MY_TEST_DIR = File("plugins/kapt/kapt-base/testData/runner/incremental/constants")
 
+@Suppress("ConvertToCollectionLiterals")
 class ReferencedConstantsTest {
 
     companion object {
@@ -29,25 +30,25 @@ class ReferencedConstantsTest {
         @BeforeAll
         fun setUp(@TempDir tmp: File) {
             val compiledClasses = tmp.newFolder("compiledClasses")
-            compileSources(listOf(MY_TEST_DIR.resolve("CKlass.java")), compiledClasses)
+            compileSources([MY_TEST_DIR.resolve("CKlass.java")], compiledClasses)
 
             cache = JavaClassCacheManager(tmp.newCacheFolder())
             generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()
-            val srcFiles = listOf(
+            val srcFiles = [
                 "A.java",
                 "B.java",
                 "AnnotationA.java",
                 "AnnotatedType.java"
-            ).map { File(MY_TEST_DIR, it) }
+            ].map { File(MY_TEST_DIR, it) }
             runAnnotationProcessing(
                 srcFiles,
-                listOf(processor),
+                [processor],
                 generatedSources,
-                listOf(compiledClasses)
+                [compiledClasses]
             ) { elements, trees -> MentionedTypesTaskListener(cache.javaCache, elements, trees) }
-            cache.updateCache(listOf(processor), false)
+            cache.updateCache([processor], false)
         }
     }
 

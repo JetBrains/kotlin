@@ -16,8 +16,8 @@ private typealias PassId = Class<out ModuleLoweringPass>
 
 abstract class LoweringPrerequisitesTest {
     protected fun checkPrerequisites(phases: List<AnyNamedPhase>) {
-        val createdPhases = mutableListOf<PassId>()
-        val unsatisfiedPrerequisites = mutableListOf<Pair<PassId, PassId>>()
+        val createdPhases: MutableList<PassId> = []
+        val unsatisfiedPrerequisites: MutableList<Pair<PassId, PassId>> = []
         for (phase in phases) {
             phase as? LoweringPhase<*, *, *>
                 ?: fail("Unexpected phase type: ${phase::class.simpleName}")

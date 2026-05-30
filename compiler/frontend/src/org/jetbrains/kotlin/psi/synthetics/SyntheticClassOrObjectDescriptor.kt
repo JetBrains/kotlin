@@ -58,7 +58,7 @@ class SyntheticClassOrObjectDescriptor(
     private val thisDescriptor: SyntheticClassOrObjectDescriptor get() = this // code readability
 
     private lateinit var typeParameters: List<TypeParameterDescriptor>
-    public var secondaryConstructors: List<ClassConstructorDescriptor> = emptyList()
+    public var secondaryConstructors: List<ClassConstructorDescriptor> = []
 
     private val typeConstructor = SyntheticTypeConstructor(c.storageManager)
     private val resolutionScopesSupport = ClassResolutionScopesSupport(thisDescriptor, c.storageManager, c.languageVersionSettings, { outerScope })
@@ -71,7 +71,7 @@ class SyntheticClassOrObjectDescriptor(
 
     @JvmOverloads
     fun initialize(
-        typeParameters: List<TypeParameterDescriptor> = emptyList()
+        typeParameters: List<TypeParameterDescriptor> = []
     ) {
         this.typeParameters = typeParameters
     }
@@ -91,11 +91,11 @@ class SyntheticClassOrObjectDescriptor(
     override fun getCompanionObjectDescriptor(): ClassDescriptorWithResolutionScopes? = null
     override fun getTypeConstructor(): TypeConstructor = typeConstructor
     override fun getUnsubstitutedPrimaryConstructor() = _unsubstitutedPrimaryConstructor()
-    override fun getConstructors() = listOf(_unsubstitutedPrimaryConstructor()) + secondaryConstructors
+    override fun getConstructors() = [_unsubstitutedPrimaryConstructor()] + secondaryConstructors
     override fun getDeclaredTypeParameters() = typeParameters
     override fun getStaticScope() = MemberScope.Empty
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = unsubstitutedMemberScope
-    override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
+    override fun getSealedSubclasses(): List<ClassDescriptor> = []
     override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     init {
@@ -140,14 +140,14 @@ class SyntheticClassOrObjectDescriptor(
         override val correspondingClassOrObject: KtPureClassOrObject
     ) : ClassMemberDeclarationProvider {
         override val ownerInfo: KtClassLikeInfo? = null
-        override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> = emptyList()
-        override fun getFunctionDeclarations(name: Name): Collection<KtNamedFunction> = emptyList()
-        override fun getPropertyDeclarations(name: Name): Collection<KtProperty> = emptyList()
-        override fun getDestructuringDeclarationsEntries(name: Name): Collection<KtDestructuringDeclarationEntry> = emptyList()
-        override fun getClassOrObjectDeclarations(name: Name): Collection<KtClassOrObjectInfo<*>> = emptyList()
-        override fun getScriptDeclarations(name: Name): Collection<KtScriptInfo> = emptyList()
-        override fun getTypeAliasDeclarations(name: Name): Collection<KtTypeAlias> = emptyList()
-        override fun getDeclarationNames() = emptySet<Name>()
+        override fun getDeclarations(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<KtDeclaration> = []
+        override fun getFunctionDeclarations(name: Name): List<KtNamedFunction> = []
+        override fun getPropertyDeclarations(name: Name): List<KtProperty> = []
+        override fun getDestructuringDeclarationsEntries(name: Name): List<KtDestructuringDeclarationEntry> = []
+        override fun getClassOrObjectDeclarations(name: Name): List<KtClassOrObjectInfo<*>> = []
+        override fun getScriptDeclarations(name: Name): List<KtScriptInfo> = []
+        override fun getTypeAliasDeclarations(name: Name): List<KtTypeAlias> = []
+        override fun getDeclarationNames(): Set<Name> = []
     }
 
     internal inner class SyntheticDeclaration(
@@ -159,17 +159,17 @@ class SyntheticClassOrObjectDescriptor(
         override fun getName(): String? = _name
         override fun isLocal(): Boolean = false
 
-        override fun getDeclarations(): List<KtDeclaration> = emptyList()
-        override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = emptyList()
-        override fun getCompanionObjects(): List<KtObjectDeclaration> = emptyList()
+        override fun getDeclarations(): List<KtDeclaration> = []
+        override fun getSuperTypeListEntries(): List<KtSuperTypeListEntry> = []
+        override fun getCompanionObjects(): List<KtObjectDeclaration> = []
 
         override fun hasExplicitPrimaryConstructor(): Boolean = false
         override fun hasPrimaryConstructor(): Boolean = false
         override fun getPrimaryConstructor(): KtPrimaryConstructor? = null
         override fun getPrimaryConstructorModifierList(): KtModifierList? = null
-        override fun getPrimaryConstructorParameters(): List<KtParameter> = emptyList()
-        override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = emptyList()
-        override fun getContextReceivers(): List<KtContextReceiver> = emptyList()
+        override fun getPrimaryConstructorParameters(): List<KtParameter> = []
+        override fun getSecondaryConstructors(): List<KtSecondaryConstructor> = []
+        override fun getContextReceivers(): List<KtContextReceiver> = []
 
         override fun getPsiOrParent() = _parent.psiOrParent
         override fun getParent() = _parent.psiOrParent

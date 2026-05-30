@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 
-class TestLookupTracker(val savedLookups: MutableSet<LookupSymbol> = mutableSetOf()) : LookupTracker {
+class TestLookupTracker(val savedLookups: MutableSet<LookupSymbol> = []) : LookupTracker {
     val lookups = arrayListOf<LookupInfo>()
     private val interner = Interner.createStringInterner()
 

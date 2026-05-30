@@ -31,7 +31,7 @@ class DiagnosticCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag(this)
 
-    override val attributes: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = []
 
     override fun asString(): String = renderConfiguration.asString(this)
 }

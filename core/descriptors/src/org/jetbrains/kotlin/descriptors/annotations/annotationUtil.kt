@@ -37,7 +37,7 @@ fun KotlinBuiltIns.createDeprecatedAnnotation(
         StandardNames.FqNames.replaceWith,
         mapOf(
                     REPLACE_WITH_EXPRESSION_NAME to StringValue(replaceWith),
-                    REPLACE_WITH_IMPORTS_NAME to ArrayValue(emptyList()) { module ->
+                    REPLACE_WITH_IMPORTS_NAME to ArrayValue([]) { module ->
                         module.builtIns.getArrayType(Variance.INVARIANT, stringType)
                     }
             )

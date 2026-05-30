@@ -94,7 +94,7 @@ class IrFakeOverrideBuilder(
         // TODO KT-83545 Stop deserializing fake overrides
         // Drop all deserialized `overridenSymbols` before FO recalculation from scratch
         for (member in allFromCurrent) {
-            member.overriddenSymbols = emptyList()
+            member.overriddenSymbols = []
         }
         val allFromSuper = supertypes.flatMap { superType ->
             superType.classOrFail.owner.declarations
@@ -122,7 +122,7 @@ class IrFakeOverrideBuilder(
             }
             val isIntersectionOverrideForbidden = isStaticJavaMembers || isIntersectionOverrideForbiddenByGenericClash
             generateOverridesInFunctionGroup(
-                superMembers, allFromCurrentByName[name] ?: emptyList(), clazz, oldSignatures, isIntersectionOverrideForbidden
+                superMembers, allFromCurrentByName[name] ?: [], clazz, oldSignatures, isIntersectionOverrideForbidden
             )
         }
 
@@ -161,7 +161,7 @@ class IrFakeOverrideBuilder(
         }
 
         val unoverriddenSuperMembersGroupedByName = unoverriddenSuperMembers.groupBy { it.override.name }
-        val fakeOverrides = mutableListOf<IrOverridableMember>()
+        val fakeOverrides: MutableList<IrOverridableMember> = []
         for (group in unoverriddenSuperMembersGroupedByName.values) {
             createAndBindFakeOverrides(clazz, group, fakeOverrides, compatibilityMode)
         }
@@ -191,10 +191,10 @@ class IrFakeOverrideBuilder(
             notOverridden -= bound
         }
 
-        val addedFakeOverrides = mutableListOf<IrOverridableMember>()
+        val addedFakeOverrides: MutableList<IrOverridableMember> = []
         if (isIntersectionOverrideForbidden) {
             for (member in notOverridden) {
-                createAndBindFakeOverride(listOf(member), current, addedFakeOverrides, compatibilityMode)
+                createAndBindFakeOverride([member], current, addedFakeOverrides, compatibilityMode)
             }
         } else {
             createAndBindFakeOverrides(current, notOverridden, addedFakeOverrides, compatibilityMode)
@@ -207,7 +207,7 @@ class IrFakeOverrideBuilder(
         membersFromSuper: List<FakeOverride>
     ): List<FakeOverride> {
         val bound = ArrayList<FakeOverride>(membersFromSuper.size)
-        val overridden = mutableSetOf<FakeOverride>()
+        val overridden: MutableSet<FakeOverride> = []
 
         for (fromSupertype in membersFromSuper) {
             // Note: We do allow overriding multiple FOs at once one of which is `isInline=true`.
@@ -425,7 +425,7 @@ class IrFakeOverrideBuilder(
         if (overridables.size == 1) {
             return overridables.first()
         }
-        val candidates = mutableListOf<FakeOverride>()
+        val candidates: MutableList<FakeOverride> = []
         var transitivelyMostSpecific = overridables.first()
         for (overridable in overridables) {
             if (isMoreSpecificThenAllOf(overridable, overridables)) {

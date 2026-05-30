@@ -110,11 +110,11 @@ abstract class KtLightClassForScriptBase(
     }
 
     override fun getSupers(): Array<PsiClass> {
-        return superClass?.let { arrayOf(it) } ?: arrayOf()
+        return superClass?.let { [it] } ?: []
     }
 
     override fun getSuperTypes(): Array<PsiClassType> {
-        return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+        return [PsiType.getJavaLangObject(manager, resolveScope)]
     }
 
     override fun getNameIdentifier(): PsiIdentifier? = null

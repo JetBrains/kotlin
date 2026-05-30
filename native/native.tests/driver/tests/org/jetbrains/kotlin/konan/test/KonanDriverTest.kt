@@ -74,13 +74,13 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // No need to test with different GC schedulers
         Assumptions.assumeFalse(testRunSettings.get<GCScheduler>().scheduler == GCSchedulerType.AGGRESSIVE)
 
-        compileSimpleFile(listOf("-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles")).let {
+        compileSimpleFile(["-Xllvm-variant=dev", "-Xverbose-phases=ObjectFiles"]).let {
             assertFalse(
                 it.stderr.contains("-essentials"),
                 "`-essentials` must not be in stdout of dev LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
             )
         }
-        compileSimpleFile(listOf("-Xllvm-variant=user", "-Xverbose-phases=ObjectFiles")).let {
+        compileSimpleFile(["-Xllvm-variant=user", "-Xverbose-phases=ObjectFiles"]).let {
             assertTrue(
                 it.stderr.contains("-essentials"),
                 "`-essentials` must be in stdout of user LLVM.\nSTDOUT: ${it.stdout}\nSTDERR: ${it.stderr}\n---"
@@ -116,7 +116,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs.EMPTY,
             sourceModules = testCase.modules,
             extras = TestCase.NoTestRunnerExtras("main"),
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
@@ -142,10 +142,10 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
-            freeCompilerArgs = TestCompilerArgs(listOf("-version")),
+            freeCompilerArgs = TestCompilerArgs(["-version"]),
             sourceModules = testCase.modules,
             extras = TestCase.NoTestRunnerExtras("main"),
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
@@ -169,14 +169,14 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
             freeCompilerArgs = TestCompilerArgs(
-                listOf(
+                [
                     "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
                     "-Xoverride-konan-properties=llvmInlineThreshold=76",
-                )
+                ]
             ),
             sourceModules = testCase.modules,
             extras = TestCase.NoTestRunnerExtras("main"),
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
@@ -209,14 +209,14 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             timeout = Duration.parse("1m")
         }
 
-        val module = TestModule.Exclusive("moduleName", emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive("moduleName", [], [], [])
         val kexe = buildDir.resolve("kexe.kexe").also { it.delete() }
         val compilation = ExecutableCompilation(
             settings = testRunSettings,
-            freeCompilerArgs = TestCompilerArgs(listOf("-linker-option", fileRes.absolutePath)),
-            sourceModules = listOf(module),
+            freeCompilerArgs = TestCompilerArgs(["-linker-option", fileRes.absolutePath]),
+            sourceModules = [module],
             extras = TestCase.NoTestRunnerExtras("main"),
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.Executable(kexe),
             tryPassSystemCacheDirectory = true
         )
@@ -330,7 +330,7 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
         // and therefore won't show the downloading process in the output.
         runKonanc("-Xcheck-dependencies")
 
-        val compilationResult = compileSimpleFile(emptyList())
+        val compilationResult = compileSimpleFile([])
 
         assertEquals("", compilationResult.stdout)
         assertEquals("", compilationResult.stderr)

@@ -75,7 +75,7 @@ internal fun IrExpression.safeCallOnDispatchReceiver(
     SafeCallReceiver(
         generator, startOffset, endOffset,
         extensionReceiver = null,
-        contextReceivers = emptyList(),
+        contextReceivers = [],
         dispatchReceiver = OnceExpressionValue(this),
         isStatement = false
     ).call { dispatchReceiverValue, _, contextReceiverValues ->

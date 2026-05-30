@@ -272,7 +272,7 @@ internal object KDocReferenceResolver {
              * If the name has more than one segment, and it's contained in `@param` or `@property`, then
              * it shouldn't be resolved. These tags are only intended for the short name search in context declarations.
              */
-            return emptyList()
+            return []
         }
 
         if (fqName.isOneSegmentFQN()) {
@@ -283,7 +283,7 @@ internal object KDocReferenceResolver {
              * as there is a dedicated `@receiver` tag for such cases.
              */
             if (containedTagSectionIfSubject != null && shortName.asString() == KtTokens.THIS_KEYWORD.value) {
-                return emptyList()
+                return []
             }
 
             // Search for symbols by `this` qualifier
@@ -294,7 +294,7 @@ internal object KDocReferenceResolver {
              * both body properties and properties from the primary constructor.
              */
             if (containedTagSectionIfSubject == KDocKnownTag.PROPERTY) {
-                val containingClass = contextElement as? KtClassOrObject ?: return emptyList()
+                val containingClass = contextElement as? KtClassOrObject ?: return []
                 val propertySymbol = containingClass.classSymbol?.combinedMemberScope?.callables(shortName)
                     ?.getNonHiddenDeclarations()
                     ?.firstIsInstanceOrNull<KaPropertySymbol>()
@@ -335,14 +335,14 @@ internal object KDocReferenceResolver {
         name: Name,
         contextElement: KtElement,
     ): List<KaSymbol> {
-        val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return emptyList()
+        val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return []
         if (name.asString() == KtTokens.THIS_KEYWORD.value) {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
-                val symbol = owner.symbol as? KaCallableSymbol ?: return emptyList()
+                val symbol = owner.symbol as? KaCallableSymbol ?: return []
                 return listOfNotNull(symbol.receiverParameter)
             }
         }
-        return emptyList()
+        return []
     }
 
     /**
@@ -500,7 +500,7 @@ internal object KDocReferenceResolver {
                     .ifNotEmpty { return this.toResolveResults() }
             }
 
-            return emptyList()
+            return []
         }
 
         allScopesPossiblyContainingName.forEach { currentScope ->
@@ -526,14 +526,14 @@ internal object KDocReferenceResolver {
 
         // Search for package
         findPackage(fqName)?.let {
-            return listOf(it.toResolveResult())
+            return [it.toResolveResult()]
         }
 
         // Search for symbols provided via `AdditionalKDocResolutionProvider` extension point
         resolveKdocFqName(useSiteSession, fqName, contextElement)
             .ifNotEmpty { return this.toResolveResults() }
 
-        return emptyList()
+        return []
     }
 
     /**
@@ -593,8 +593,8 @@ internal object KDocReferenceResolver {
      */
     private fun KaSession.getOuterClassScopesForPosition(contextElement: KtElement): Collection<KaScope> {
         val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false)
-            ?: return emptyList()
-        val scopeList = mutableListOf<KaScope>()
+            ?: return []
+        val scopeList: MutableList<KaScope> = []
 
         for (ktDeclaration in declaration.parentsOfType<KtDeclaration>(withSelf = true)) {
             if (ktDeclaration is KtClassOrObject) {
@@ -676,11 +676,11 @@ internal object KDocReferenceResolver {
         fqName: FqName,
         visibleScopes: List<KaScope>,
     ): List<ResolveResult> {
-        if (fqName.isRoot) return emptyList()
+        if (fqName.isRoot) return []
         val extensionName = fqName.shortName()
 
         val receiverTypeName = fqName.parent()
-        if (receiverTypeName.isRoot) return emptyList()
+        if (receiverTypeName.isRoot) return []
 
         val scopesContainingPossibleReceivers = sequence {
             yieldAll(applyScopeReduction(receiverTypeName, visibleScopes))
@@ -696,7 +696,7 @@ internal object KDocReferenceResolver {
                     .filter { it.isExtension }.toSet().getNonHiddenDeclarations()
             }
 
-        if (possibleExtensionsByScope.flatten().isEmpty() || possibleReceivers.isEmpty()) return emptyList()
+        if (possibleExtensionsByScope.flatten().isEmpty() || possibleReceivers.isEmpty()) return []
 
         return possibleReceivers.mapNotNull { actualReceiverSymbol ->
             val actualReceiverType = actualReceiverSymbol.defaultType

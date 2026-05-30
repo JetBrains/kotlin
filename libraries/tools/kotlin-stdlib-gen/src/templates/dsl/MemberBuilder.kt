@@ -45,9 +45,9 @@ class MemberBuilder(
 
     var doc: String? = null; private set
 
-    var samples = listOf<String>()
+    var samples: List<String> = []
 
-    val sequenceClassification = mutableListOf<SequenceClass>()
+    val sequenceClassification: MutableList<SequenceClass> = []
     var deprecate: Deprecation? = null; private set
     var since: String? = null; private set
     var platformName: String? = null; private set
@@ -58,18 +58,18 @@ class MemberBuilder(
     var infix: Boolean = false; private set
     var operator: Boolean = false; private set
     var explicitActual: Boolean = false; private set
-    val typeParams = mutableListOf<String>()
+    val typeParams: MutableList<String> = []
     var primaryTypeParameter: String? = null; private set
     var customReceiver: String? = null; private set
     var genericStarProjection: Boolean = false
     var toNullableT: Boolean = false
 
     var returns: String? = null; private set
-    val throwsExceptions = mutableListOf<ThrowsException>()
+    val throwsExceptions: MutableList<ThrowsException> = []
     var body: String? = null; private set
-    val annotations: MutableSet<String> = mutableSetOf()
-    val suppressions: MutableList<String> = mutableListOf()
-    val wasExperimentalAnnotations: MutableSet<String> = mutableSetOf()
+    val annotations: MutableSet<String> = []
+    val suppressions: MutableList<String> = []
+    val wasExperimentalAnnotations: MutableSet<String> = []
 
     fun sourceFile(file: SourceFile) { sourceFile = file }
 
@@ -282,7 +282,7 @@ class MemberBuilder(
         fun String.renderType(): String = renderType(this, receiver, self)
 
         fun effectiveTypeParams(): List<TypeParameter> {
-            val parameters = typeParams.mapTo(mutableListOf()) { parseTypeParameter(it.renderType()) }
+            val parameters: MutableList<TypeParameter> = typeParams.mapTo([]) { parseTypeParameter(it.renderType()) }
 
             if (family == Generic) {
                 if (parameters.none { it.name == primaryTypeParameter })

@@ -128,9 +128,9 @@ class CacheSupport(
                 target = target,
                 allLibraries = allLibraries,
                 explicitCaches = if (ignoreCachedLibraries) emptyMap() else explicitCaches,
-                implicitCacheDirectories = if (ignoreCachedLibraries) emptyList() else implicitCacheDirectories,
+                implicitCacheDirectories = if (ignoreCachedLibraries) [] else implicitCacheDirectories,
                 autoCacheDirectory = autoCacheDirectory,
-                autoCacheableFrom = if (ignoreCachedLibraries) emptyList() else autoCacheableFrom,
+                autoCacheableFrom = if (ignoreCachedLibraries) [] else autoCacheableFrom,
                 libraryToCache = configuration.konanLibraryToAddToCache?.let { getLibrary(File(it)) },
         )
     }

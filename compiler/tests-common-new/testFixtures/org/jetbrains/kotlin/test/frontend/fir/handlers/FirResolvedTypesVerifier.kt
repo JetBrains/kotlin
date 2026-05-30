@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(testServices, failureDisablesNextSteps = true) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         val visitor = Visitor()
@@ -68,9 +68,9 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
     }
 
     private inner class Visitor : FirDefaultVisitor<Unit, FirElement>() {
-        val detectedImplicitTypesParents = mutableSetOf<FirElement>()
-        val detectedTypeVariableTypesParents = mutableSetOf<FirElement>()
-        val detectedStubTypesParents = mutableSetOf<FirElement>()
+        val detectedImplicitTypesParents: MutableSet<FirElement> = []
+        val detectedTypeVariableTypesParents: MutableSet<FirElement> = []
+        val detectedStubTypesParents: MutableSet<FirElement> = []
 
         override fun visitElement(element: FirElement, data: FirElement) {
             if (element is FirDiagnosticHolder) {
@@ -134,8 +134,8 @@ class FirResolvedTypesVerifier(testServices: TestServices) : FirAnalysisHandler(
 
         private fun ConeDiagnostic.coneTypes(): List<ConeKotlinType> = when (this) {
             is ConeAmbiguousSuper -> candidateTypes
-            is ConeFunctionExpectedError -> listOf(type)
-            else -> emptyList()
+            is ConeFunctionExpectedError -> [type]
+            else -> []
         }
     }
 

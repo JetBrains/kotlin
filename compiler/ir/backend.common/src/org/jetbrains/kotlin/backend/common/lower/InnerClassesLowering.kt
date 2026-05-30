@@ -61,7 +61,7 @@ open class InnerClassesLowering(val context: CommonBackendContext) : Declaration
                 }
             }
 
-            return listOf(newConstructor)
+            return [newConstructor]
         }
 
         return null

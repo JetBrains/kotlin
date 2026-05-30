@@ -84,8 +84,8 @@ private fun capacity(expectedSize: Int): Int =
 
 fun <T> ArrayList<T>.compact(): List<T> =
     when (size) {
-        0 -> emptyList()
-        1 -> listOf(first())
+        0 -> []
+        1 -> [first()]
         else -> apply { trimToSize() }
     }
 
@@ -97,8 +97,8 @@ fun <T> ArrayList<T>.compact(): List<T> =
  */
 fun <T> List<T>.compactIfPossible(): List<T> =
     when (size) {
-        0 -> emptyList()
-        1 -> listOf(first())
+        0 -> []
+        1 -> [first()]
         else -> apply {
             if (this is ArrayList<*>) trimToSize()
         }

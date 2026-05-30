@@ -30,7 +30,7 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
@@ -44,13 +44,13 @@ internal abstract class KaFe10ScopeResolution : KaScope, KaLifetimeOwner {
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 
     override val token: KaLifetimeToken
@@ -62,11 +62,11 @@ internal class KaFe10ScopeLexical(
     override val analysisContext: Fe10AnalysisContext
 ) : KaFe10ScopeResolution(), KaLifetimeOwner {
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        return emptySet()
+        return []
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return emptySet()
+        return []
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
@@ -89,7 +89,7 @@ internal open class KaFe10ScopeMember(
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return scope.getClassifierNames() ?: emptySet()
+        return scope.getClassifierNames() ?: []
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
@@ -132,5 +132,5 @@ internal class KaFe10ScopeImporting(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 }

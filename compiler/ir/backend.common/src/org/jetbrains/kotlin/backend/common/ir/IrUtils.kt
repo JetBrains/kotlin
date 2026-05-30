@@ -165,7 +165,7 @@ fun IrFunction.wrapWithLambdaCall(parent: IrDeclarationParent, context: Lowering
         reflectionTargetSymbol = symbol,
         overriddenFunctionSymbol = overridenClass.selectSAMOverriddenFunction().symbol,
         invokeFunction = wrapper,
-        captures = emptyList(),
+        captures = [],
         origin = IrStatementOrigin.LAMBDA,
     )
 }

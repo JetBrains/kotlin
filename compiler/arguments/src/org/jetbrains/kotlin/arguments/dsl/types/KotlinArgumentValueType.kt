@@ -276,7 +276,7 @@ class JdkReleaseType : EnumType<JdkRelease>(ReleaseDependent(true)) {
 @ExperimentalArgumentApi
 @Serializable
 class StringListType(
-    override val defaultValue: ReleaseDependent<List<String>?> = ReleaseDependent(emptyList()),
+    override val defaultValue: ReleaseDependent<List<String>?> = ReleaseDependent([]),
 ) : KotlinArgumentValueType<List<String>> {
 
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
@@ -311,7 +311,7 @@ class SearchPathType : KotlinArgumentValueType<List<Path>> {
 @ExperimentalArgumentApi
 @Serializable
 class PathListType : KotlinArgumentValueType<List<Path>> {
-    override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent(emptyList())
+    override val defaultValue: ReleaseDependent<List<Path>?> = ReleaseDependent([])
     override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
 
     override fun stringRepresentation(value: List<Path>?): String? {

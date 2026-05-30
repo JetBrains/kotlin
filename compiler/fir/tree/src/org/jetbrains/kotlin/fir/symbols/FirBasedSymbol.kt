@@ -69,7 +69,7 @@ abstract class FirBasedSymbol<out E : FirDeclaration> : DeclarationSymbolMarker 
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (annotations.isEmpty()) return emptyList()
+    if (annotations.isEmpty()) return []
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
     return annotations
@@ -77,7 +77,7 @@ fun FirAnnotationContainer.resolvedCompilerRequiredAnnotations(anchorElement: Fi
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithArguments(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isDefinitelyEmpty(anchorElement)) return emptyList()
+    if (isDefinitelyEmpty(anchorElement)) return []
 
     if (anchorElement.fir.resolvePhase >= FirResolvePhase.ANNOTATION_ARGUMENTS) return annotations
 
@@ -113,7 +113,7 @@ private fun FirAnnotationContainer.isDefinitelyEmpty(anchorElement: FirBasedSymb
 
 @SymbolInternals
 fun FirAnnotationContainer.resolvedAnnotationsWithClassIds(anchorElement: FirBasedSymbol<*>): List<FirAnnotation> {
-    if (isDefinitelyEmpty(anchorElement)) return emptyList()
+    if (isDefinitelyEmpty(anchorElement)) return []
 
     anchorElement.lazyResolveToPhase(FirResolvePhase.TYPES)
 

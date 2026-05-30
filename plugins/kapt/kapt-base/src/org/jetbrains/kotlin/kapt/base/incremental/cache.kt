@@ -76,7 +76,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
         val isolatingGeneratedTypes = aptCache.getIsolatingGeneratedTypes(javaCache::getTypesForFiles)
 
         val sourcesToReprocess = changedSources.toMutableSet()
-        val classNamesToReprocess = mutableListOf<String>()
+        val classNamesToReprocess: MutableList<String> = []
 
         if (changedSources.isNotEmpty() || impactedTypes.isNotEmpty()) {
             for (aggregatingOrigin in aptCache.getAggregatingOrigins()) {

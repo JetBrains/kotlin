@@ -35,13 +35,13 @@ import org.jetbrains.kotlin.types.SmartcastStability
 
 abstract class AbstractContextCollectorTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = emptyList(), useBodyElement = false)
-        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = listOf("body"), useBodyElement = true)
+        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = [], useBodyElement = false)
+        performTestByMainFile(mainFile, mainModule, testServices, testPrefixes = ["body"], useBodyElement = true)
 
         val fakeFile = createFileCopy(mainFile)
 
-        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy"), useBodyElement = false)
-        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = listOf("copy", "body.copy"), useBodyElement = true)
+        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = ["copy"], useBodyElement = false)
+        performTestByMainFile(fakeFile, mainModule, testServices, testPrefixes = ["copy", "body.copy"], useBodyElement = true)
     }
 
     private fun createFileCopy(file: KtFile): KtFile {
@@ -270,7 +270,7 @@ private fun FirScope.flatten(): List<FirScope> {
     return when (this) {
         is FirCompositeScope -> scopes.flatMap { it.flatten() }
         is FirNameAwareCompositeScope -> scopes.flatMap { it.flatten() }
-        else -> listOf(this)
+        else -> [this]
     }
 }
 

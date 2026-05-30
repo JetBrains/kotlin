@@ -20,8 +20,8 @@ class JvmSnapshotBasedIncrementalCompilationConfigurationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val icConfiguration = kotlinToolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path("."))
-            .snapshotBasedIcConfigurationBuilder(Path("."), SourcesChanges.Unknown, emptyList()).build()
+        val icConfiguration = kotlinToolchains.jvm.jvmCompilationOperationBuilder([], Path("."))
+            .snapshotBasedIcConfigurationBuilder(Path("."), SourcesChanges.Unknown, []).build()
         testDefaults(icConfiguration)
     }
 

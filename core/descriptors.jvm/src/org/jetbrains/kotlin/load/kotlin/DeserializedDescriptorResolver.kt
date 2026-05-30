@@ -69,7 +69,7 @@ class DeserializedDescriptorResolver {
             "scope for $source in $descriptor"
         ) {
             // All classes are included into Java scope
-            emptyList()
+            []
         }
     }
 
@@ -129,10 +129,10 @@ class DeserializedDescriptorResolver {
         }
 
     companion object {
-        internal val KOTLIN_CLASS = setOf(KotlinClassHeader.Kind.CLASS)
+        internal val KOTLIN_CLASS: Set<KotlinClassHeader.Kind> = [KotlinClassHeader.Kind.CLASS]
 
-        private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART =
-            setOf(KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART)
+        private val KOTLIN_FILE_FACADE_OR_MULTIFILE_CLASS_PART: Set<KotlinClassHeader.Kind> =
+            [KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART]
 
         private val KOTLIN_1_1_EAP_METADATA_VERSION = MetadataVersion(1, 1, 2)
 

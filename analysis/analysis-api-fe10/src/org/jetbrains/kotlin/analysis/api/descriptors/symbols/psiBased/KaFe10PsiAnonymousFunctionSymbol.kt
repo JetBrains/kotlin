@@ -65,7 +65,7 @@ internal class KaFe10PsiAnonymousFunctionSymbol(
         }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: [] }
 
     override val contextParameters: List<KaContextParameterSymbol>
         get() = withValidityAssertion { psi.contextParameters(analysisContext) }

@@ -320,9 +320,9 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
                 metadata = FirMetadataSource.CodeFragment(codeFragment)
                 setParent(containingFile)
                 addDeclarationToParent(this, containingFile)
-                typeParameters = emptyList()
-                setThisReceiver(emptyList())
-                superTypes = listOf(builtins.anyType)
+                typeParameters = []
+                setThisReceiver([])
+                superTypes = [builtins.anyType]
             }
         }
         return irClass
@@ -437,9 +437,9 @@ class Fir2IrClassifiersGenerator(private val c: Fir2IrComponents) : Fir2IrCompon
         ).apply {
             setParent(irParent)
             addDeclarationToParent(this, irParent)
-            typeParameters = emptyList()
-            setThisReceiver(emptyList())
-            superTypes = listOf(builtins.anyType)
+            typeParameters = []
+            setThisReceiver([])
+            superTypes = [builtins.anyType]
         }
     }
 }

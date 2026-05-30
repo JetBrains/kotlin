@@ -165,7 +165,7 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                     override val innerTestClasses: Collection<TestClassModel> = models
 
                     override val methods: Collection<MethodModel<*>>
-                        get() = emptyList()
+                        get() = []
 
                     override val isEmpty: Boolean
                         get() = false
@@ -228,10 +228,10 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
                 rootFile = rootFile.parentFile
                 val fileForModel = rootFile
                 result = object : TestClassModel() {
-                    override val innerTestClasses: Collection<TestClassModel> = listOf(result)
+                    override val innerTestClasses: Collection<TestClassModel> = [result]
 
                     override val methods: Collection<MethodModel<*>>
-                        get() = emptyList()
+                        get() = []
 
                     override val isEmpty: Boolean
                         get() = false
@@ -247,11 +247,11 @@ object TestGeneratorForJUnit5 : AbstractTestGenerator() {
 
                     override val annotations: Collection<AnnotationModel>
                         // models have same annotations, so either distinct() or intersect() yield same result
-                        get() = emptyList()
+                        get() = []
 
                     override val tags: List<String>
                         // models have same tags, so either distinct() or intersect() yield same result
-                        get() = emptyList()
+                        get() = []
 
                     override val testKClass: Class<*>
                         get() = this@unfold.testKClass

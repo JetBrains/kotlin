@@ -95,7 +95,7 @@ class XcodeDirectIntegrationIT : KGPBaseTest() {
                 assert(!dsymPath.isSymbolicLink()) { "${dsymPath} is a symbolic link" }
 
                 fun dumpUuid(binary: File): List<String> {
-                    return runProcess(listOf("otool", "-l", binary.path), projectPath.toFile())
+                    return runProcess(["otool", "-l", binary.path], projectPath.toFile())
                         .output.lines().filter { it.contains("uuid") }
                 }
 

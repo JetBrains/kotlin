@@ -193,7 +193,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     membersBuilder.generateUniqueFieldName(companion.name.orEmpty(), usedNames),
                     this,
                     support,
-                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, companion.simpleVisibility())
+                    [PsiModifier.STATIC, PsiModifier.FINAL, companion.simpleVisibility()]
                 )
             )
 
@@ -241,7 +241,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                     JvmAbi.INSTANCE_FIELD,
                     this,
                     support,
-                    setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
+                    [PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC]
                 )
             )
         }
@@ -252,7 +252,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
                 result.add(
                     KtUltraLightEnumEntry(
                         ktEnumEntry, name, this, support,
-                        setOf(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC)
+                        [PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC]
                     )
                 )
             }
@@ -268,7 +268,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
     private fun propertyParameters() = classOrObject.primaryConstructorParameters.filter { it.hasValOrVar() }
 
     private fun ownMethods(): List<PsiMethod> {
-        val result = mutableListOf<PsiMethod>()
+        val result: MutableList<PsiMethod> = []
 
         for (declaration in this.classOrObject.declarations.filterNot { it.isHiddenByDeprecation(support) }) {
             if (declaration.hasModifier(PRIVATE_KEYWORD) && isInterface) continue
@@ -320,7 +320,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
         val lazyDescriptor = lazy { getDescriptor() }
         project.applyCompilerPlugins {
-            val methodsList = mutableListOf<KtLightMethod>()
+            val methodsList: MutableList<KtLightMethod> = []
             it.interceptMethodsBuilding(
                 declaration = kotlinOrigin,
                 descriptor = lazyDescriptor,
@@ -490,7 +490,7 @@ open class KtUltraLightClass(classOrObject: KtClassOrObject, internal val suppor
 
     private fun KtCallableDeclaration.isJvmField() = hasAnnotation(JvmAbi.JVM_FIELD_ANNOTATION_FQ_NAME)
 
-    override fun getInitializers(): Array<PsiClassInitializer> = emptyArray()
+    override fun getInitializers(): Array<PsiClassInitializer> = []
 
     override fun getContainingClass(): PsiClass? {
 

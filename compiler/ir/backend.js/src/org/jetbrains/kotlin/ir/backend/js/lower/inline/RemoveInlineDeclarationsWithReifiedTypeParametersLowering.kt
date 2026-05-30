@@ -22,7 +22,7 @@ class RemoveInlineDeclarationsWithReifiedTypeParametersLowering(@Suppress("unuse
         if (declaration is IrFunction && declaration.isInlineFunWithReifiedParameter() ||
             declaration is IrProperty && declaration.getter?.isInlineFunWithReifiedParameter() == true
         ) {
-            return emptyList()
+            return []
         }
 
         return null

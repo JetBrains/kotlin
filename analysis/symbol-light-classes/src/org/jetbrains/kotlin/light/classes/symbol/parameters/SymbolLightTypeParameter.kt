@@ -126,9 +126,9 @@ internal class SymbolLightTypeParameter private constructor(
     override fun findMethodBySignature(patternMethod: PsiMethod, checkBases: Boolean): PsiMethod? = null
     override fun findMethodsBySignature(patternMethod: PsiMethod, checkBases: Boolean): Array<PsiMethod> = PsiMethod.EMPTY_ARRAY
     override fun findMethodsAndTheirSubstitutorsByName(name: String, checkBases: Boolean): List<Pair<PsiMethod, PsiSubstitutor>> =
-        emptyList()
+        []
 
-    override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod, PsiSubstitutor>> = emptyList()
+    override fun getAllMethodsAndTheirSubstitutors(): List<Pair<PsiMethod, PsiSubstitutor>> = []
     override fun findInnerClassByName(name: String?, checkBases: Boolean): PsiClass? = null
     override fun getLBrace(): PsiElement? = null
     override fun getRBrace(): PsiElement? = null
@@ -142,7 +142,7 @@ internal class SymbolLightTypeParameter private constructor(
         return InheritanceImplUtil.isInheritorDeep(this, baseClass, classToByPass)
     }
 
-    override fun getVisibleSignatures(): MutableCollection<HierarchicalMethodSignature> = mutableListOf()
+    override fun getVisibleSignatures(): MutableList<HierarchicalMethodSignature> = []
     override fun setName(name: String): PsiElement = cannotModify()
     override fun getNameIdentifier(): PsiIdentifier? = null
     override fun getModifierList(): PsiModifierList? = null

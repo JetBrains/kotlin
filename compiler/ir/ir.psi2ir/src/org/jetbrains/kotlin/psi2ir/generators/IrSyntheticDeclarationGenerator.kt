@@ -42,7 +42,7 @@ internal class IrSyntheticDeclarationGenerator(context: GeneratorContext) : IrVi
     }
 
     private fun collectDescriptors(descriptor: ClassDescriptor): MutableList<DeclarationDescriptor> {
-        val result = mutableListOf<DeclarationDescriptor>()
+        val result: MutableList<DeclarationDescriptor> = []
         result.addAll(DescriptorUtils.getAllDescriptors(descriptor.unsubstitutedMemberScope))
         result.addAll(descriptor.constructors)
         descriptor.companionObjectDescriptor?.let { result.add(it) }

@@ -36,7 +36,7 @@ class JsNameLinkingNamer(
         }
     }
 
-    val importedModules = mutableListOf<JsImportedModule>()
+    val importedModules: MutableList<JsImportedModule> = []
     val imports = mutableMapOf<IrDeclaration, JsStatement>()
 
     override fun getNameForStaticDeclaration(declaration: IrDeclarationWithName): JsName {
@@ -121,12 +121,12 @@ class JsNameLinkingNamer(
             imports[this] = when (val qualifiedReference = jsQualifier?.makeRef()) {
                 null -> importStatement
                 else -> JsCompositeBlock(
-                    listOf(
+                    [
                         importStatement,
                         jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(
                             declarationStableName.toJsName()
                         )
-                    )
+                    ]
                 )
             }
 
@@ -134,7 +134,7 @@ class JsNameLinkingNamer(
             val moduleName = JsName(makeValidES5Identifier("\$module\$$fileJsModule"), true)
             importedModules += JsImportedModule(fileJsModule, moduleName, null)
             val qualifiedReference =
-                if (jsQualifier == null) moduleName.makeRef() else (listOf(moduleName) + jsQualifier).makeRef()
+                if (jsQualifier == null) moduleName.makeRef() else ([moduleName] + jsQualifier).makeRef()
             imports[this] =
                 jsElementAccess(declarationStableName, qualifiedReference).putIntoVariableWitName(declarationStableName.toJsName())
         }
@@ -158,7 +158,7 @@ class JsNameLinkingNamer(
         return context.fieldDataCache.getOrPut(this) {
             val nameCnt = hashMapOf<String, Int>()
 
-            val allClasses = DFS.topologicalOrder(listOf(this)) { node ->
+            val allClasses = DFS.topologicalOrder([this]) { node ->
                 node.superTypes.mapNotNull {
                     it.safeAs<IrSimpleType>()?.classifier.safeAs<IrClassSymbol>()?.owner
                 }

@@ -36,7 +36,7 @@ object KotlinCompilerRunnerUtils {
         messageCollector: MessageCollector,
         isDebugEnabled: Boolean,
         daemonOptions: DaemonOptions = configureDaemonOptions(),
-        additionalJvmParams: Array<String> = arrayOf()
+        additionalJvmParams: Array<String> = []
     ): CompileServiceSession? = newDaemonConnection(
         compilerId,
         clientAliveFlagFile,

@@ -79,7 +79,7 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
 
         defaultDirectives {
             +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-            DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
+            DiagnosticsDirectives.DIAGNOSTICS with ["-infos"]
             FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree
         }
 

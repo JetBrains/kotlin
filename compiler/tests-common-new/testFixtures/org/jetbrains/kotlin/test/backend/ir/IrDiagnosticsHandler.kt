@@ -24,7 +24,7 @@ class IrDiagnosticsHandler(testServices: TestServices) : AbstractIrHandler(testS
         get() = testServices.diagnosticsService
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::DiagnosticsService))
+        get() = [service(::DiagnosticsService)]
 
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_IR_DIAGNOSTICS_FULL_TEXT)
 

@@ -25,7 +25,7 @@ class BuildReportICReporterTest {
         reporter.flush()
 
         assertEquals(
-            expected = listOf(WARNING_MESSAGE, INFO_MESSAGE, DEBUG_MESSAGE),
+            expected = [WARNING_MESSAGE, INFO_MESSAGE, DEBUG_MESSAGE],
             actual = compilationResults.results.single() as List<*>
         )
     }
@@ -40,7 +40,7 @@ class BuildReportICReporterTest {
         reporter.flush()
 
         assertEquals(
-            expected = listOf(WARNING_MESSAGE, INFO_MESSAGE),
+            expected = [WARNING_MESSAGE, INFO_MESSAGE],
             actual = compilationResults.results.single() as List<*>
         )
     }

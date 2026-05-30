@@ -71,17 +71,17 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
             if (dependencyName.isBlank()) return@mapNotNull null
 
             val dependencySourceFile = dependencyTestDataFile.copyTo(buildDir.resolve("$dependencyName.kt"))
-            compileSingleKotlinFileToLibrary(dependencySourceFile, emptyList()).asLibraryDependency()
+            compileSingleKotlinFileToLibrary(dependencySourceFile, []).asLibraryDependency()
         }
     }
 
     internal fun compileCInteropDependencies(testDataFile: File): List<TestCompilationDependency<KLIB>> {
         val defFile = testDataFile.withExtension(".lib.def")
-        if (!defFile.exists()) return emptyList()
+        if (!defFile.exists()) return []
 
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
 
-        return listOf(compileDefFileToLibrary(defFile).asLibraryDependency())
+        return [compileDefFileToLibrary(defFile).asLibraryDependency()]
     }
 
     internal fun compileSingleKotlinFileToLibrary(
@@ -89,13 +89,13 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
         dependencies: List<TestCompilationDependency<KLIB>>,
     ): KLIB {
         val moduleName: String = sourceFile.nameWithoutExtension
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, [], [], [])
         module.files += TestFile.createCommitted(sourceFile, module)
 
         val testCase = TestCase(
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE,
-            modules = setOf(module),
+            modules = [module],
             freeCompilerArgs = TestCompilerArgs(
                 "-Xklib-relative-path-base=${sourceFile.parent}",
                 // Test only scenario with enabled preserialization IR-Inliner, since signatures must not be changed after inlining,

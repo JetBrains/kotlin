@@ -313,8 +313,8 @@ class BackendNativeSymbols(
     }
 
     val integerConversions by run {
-        val signedIntegerClassIds = listOf(StandardClassIds.Byte, StandardClassIds.Short, StandardClassIds.Int, StandardClassIds.Long)
-        val unsignedIntegerClassIds = listOf(StandardClassIds.UByte, StandardClassIds.UShort, StandardClassIds.UInt, StandardClassIds.ULong)
+        val signedIntegerClassIds = [StandardClassIds.Byte, StandardClassIds.Short, StandardClassIds.Int, StandardClassIds.Long]
+        val unsignedIntegerClassIds = [StandardClassIds.UByte, StandardClassIds.UShort, StandardClassIds.UInt, StandardClassIds.ULong]
         val allIntegerClassIds = signedIntegerClassIds + unsignedIntegerClassIds
         val symbols = buildList {
             for (to in allIntegerClassIds) {
@@ -566,7 +566,7 @@ class BackendNativeSymbols(
     val checkNotNull by CallableIds.checkNotNull.functionSymbol()
 
     val println by CallableIds.println.functionSymbol {
-        it.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.stringType))
+        it.hasShape(regularParameters = 1, parameterTypes = [irBuiltIns.stringType])
     }
 
     override val getContinuation by CallableIds.getContinuation.functionSymbol()

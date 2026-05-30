@@ -21,10 +21,10 @@ class KotlinResourcesRootProvider : AdditionalRootsProviderService<ResourceRootD
         target: BuildTarget<ResourceRootDescriptor>,
         dataPaths: BuildDataPaths,
     ): List<ResourceRootDescriptor> {
-        val moduleBuildTarget = target as? ResourcesTarget ?: return listOf()
+        val moduleBuildTarget = target as? ResourcesTarget ?: return []
         val module = moduleBuildTarget.module
 
-        val result = mutableListOf<ResourceRootDescriptor>()
+        val result: MutableList<ResourceRootDescriptor> = []
 
         // Add source roots with type KotlinResourceRootType.
         // See the note in KotlinSourceRootProvider

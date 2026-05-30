@@ -38,8 +38,8 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (context != null) return emptyList()
-        val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return emptyList()
+        if (context != null) return []
+        val matchedClassSymbol = findMatchedClassForFunction(callableId) ?: return []
         val containingFileName = matchedClassSymbol.getAnnotationByClassId(DUMMY_FUNCTION_CLASS_ID, session)?.let {
             val argument = (it as? FirAnnotationCall)?.arguments?.firstOrNull() as? FirLiteralExpression ?: return@let null
             argument.value as? String
@@ -53,7 +53,7 @@ class TopLevelDeclarationsGenerator(session: FirSession) : FirDeclarationGenerat
             valueParameter(Name.identifier("value"), matchedClassSymbol.constructStarProjectedType())
             withGeneratedDefaultBody()
         }
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
     private fun findMatchedClassForFunction(callableId: CallableId): FirRegularClassSymbol? {

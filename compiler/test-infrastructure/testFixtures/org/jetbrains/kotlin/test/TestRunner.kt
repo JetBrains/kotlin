@@ -102,7 +102,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         @Suppress("PropertyName")
         @PrivateForInline
         @PublishedApi
-        internal val _allFailedExceptions: MutableList<WrappedException> = mutableListOf()
+        internal val _allFailedExceptions: MutableList<WrappedException> = []
 
         val hasFailures: Boolean get() = allFailedExceptions.isNotEmpty()
 
@@ -120,7 +120,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
                     }
                     allFailedExceptions.map { it.cause }
                 }
-                else -> emptyList()
+                else -> []
             }
             filteredFailedAssertions.firstIsInstanceOrNull<WrappedException.FromFacade>()?.let {
                 throw it
@@ -169,7 +169,7 @@ class NonGroupingTestRunner(
         }
     }
 
-    private val allRanHandlers = mutableSetOf<AnalysisHandler<*>>()
+    private val allRanHandlers: MutableSet<AnalysisHandler<*>> = []
 
     fun runTest(@TestDataFile testDataFileName: String, beforeDispose: (NonGroupingStageTestConfiguration) -> Unit = {}) {
         try {
@@ -198,7 +198,7 @@ class NonGroupingTestRunner(
         } catch (e: ExceptionFromModuleStructureTransformer) {
             services.register(TestModuleStructure::class, e.alreadyParsedModuleStructure)
             val exception = failuresInterceptor.filterFailedExceptions(
-                listOf(WrappedException.FromModuleStructureTransformer(e.cause))
+                [WrappedException.FromModuleStructureTransformer(e.cause)]
             ).firstOrNull() ?: return null
             throw exception
         }
@@ -319,11 +319,11 @@ class GroupingTestRunner(
 
     private object EmptyModuleStructure : TestModuleStructure() {
         override val modules: List<TestModule>
-            get() = emptyList()
+            get() = []
         override val allDirectives: RegisteredDirectives
-            get() = RegisteredDirectivesImpl(emptyList(), emptyMap(), emptyMap())
+            get() = RegisteredDirectivesImpl([], emptyMap(), emptyMap())
         override val originalTestDataFiles: List<File>
-            get() = emptyList()
+            get() = []
     }
 
     private fun TestStep.GroupingStageStep<*, *>.hackyProcess(

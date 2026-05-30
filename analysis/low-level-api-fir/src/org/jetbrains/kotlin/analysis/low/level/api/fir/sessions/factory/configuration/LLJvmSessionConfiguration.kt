@@ -35,7 +35,7 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
         session: LLFirSession,
         contentScope: GlobalSearchScope,
     ): List<FirSymbolProvider> =
-        listOf(LLFirJavaSymbolProvider(session, contentScope))
+        [LLFirJavaSymbolProvider(session, contentScope)]
 
     override fun createPlatformSpecificSymbolProvidersForDanglingFileSession(
         session: LLFirDanglingFileSession,
@@ -45,7 +45,7 @@ internal class LLJvmSessionConfiguration(private val project: Project) : LLPlatf
 
     override fun createPlatformSpecificSymbolProvidersForBuiltinsSession(
         session: LLFirBuiltinsAndCloneableSession
-    ): List<FirSymbolProvider> = listOf(createCloneableSymbolProvider(session))
+    ): List<FirSymbolProvider> = [createCloneableSymbolProvider(session)]
 
     override fun createBinaryLibrarySymbolProviders(session: LLFirSession, scope: GlobalSearchScope): List<FirSymbolProvider> =
         createSymbolProvidersWithOptionalAnnotationClassesProvider(session, scope) { packagePartProvider ->

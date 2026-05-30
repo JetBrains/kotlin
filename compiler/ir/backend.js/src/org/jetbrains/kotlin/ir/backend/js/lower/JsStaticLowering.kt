@@ -43,7 +43,7 @@ class JsStaticLowering(private val context: JsIrBackendContext) : DeclarationTra
         return if (parentClass.isCompanion) {
             staticScopeOwner.declarations.add(proxyDeclaration)
             null
-        } else listOf(declaration, proxyDeclaration)
+        } else [declaration, proxyDeclaration]
     }
 
     private fun IrProperty.generateStaticPropertyProxy(proxyParent: IrClass): IrProperty {

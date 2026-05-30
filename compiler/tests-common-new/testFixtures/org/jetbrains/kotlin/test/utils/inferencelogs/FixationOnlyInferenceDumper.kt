@@ -43,7 +43,7 @@ class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
     private fun FixationLogRecordElement.render(): String = record.render()
 
     private fun InferenceLogger.FixationLogRecord.render(): String {
-        val lines = mutableListOf<String?>()
+        val lines: MutableList<String?> = []
 
         if (chosen != null) {
             lines += "CHOSEN for fixation: $chosen --- " + map[chosen]?.render()
@@ -63,7 +63,7 @@ class FixationOnlyInferenceLogsDumper() : FirInferenceLogsDumper() {
     }
 
     private fun InferenceLogger.FixationLogVariableInfo<*>.render(): String {
-        val lines = mutableListOf(renderReadiness(4))
+        val lines: MutableList<String> = [renderReadiness(4)]
         lines += formattedConstraintsBeforeFixation.values.map { representation -> "     $representation" }
         lines += freezeConstraintsAfterFixation().map { representation -> "     $representation (inferred during fixation)" }
         return lines.joinToString("\n")

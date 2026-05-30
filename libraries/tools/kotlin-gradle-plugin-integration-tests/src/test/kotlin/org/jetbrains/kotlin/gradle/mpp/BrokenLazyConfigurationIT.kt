@@ -39,7 +39,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
     @TestMetadata("kotlin-js-browser-project")
     fun testBrokenTcaInJs(gradleVersion: GradleVersion) {
         project("kotlin-js-browser-project", gradleVersion) {
-            val subprojects = listOf("app", "base", "lib")
+            val subprojects = ["app", "base", "lib"]
             for (subproject in subprojects) {
                 val subprojectBuildScript = subProject(subproject).buildGradleKts
                 assert("dependencies {" in subprojectBuildScript.readText())

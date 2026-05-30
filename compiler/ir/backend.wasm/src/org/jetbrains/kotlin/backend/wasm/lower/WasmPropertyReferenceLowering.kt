@@ -32,13 +32,13 @@ internal class PropertyReferencesConstructorsSet(
 internal val BackendWasmSymbols.immutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
         kLocalDelegatedPropertyImpl,
-        listOf(kProperty0Impl, kProperty1Impl, kProperty2Impl)
+        [kProperty0Impl, kProperty1Impl, kProperty2Impl]
     )
 
 internal val BackendWasmSymbols.mutablePropertiesConstructors
     get() = PropertyReferencesConstructorsSet(
         kLocalDelegatedMutablePropertyImpl,
-        listOf(kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl)
+        [kMutableProperty0Impl, kMutableProperty1Impl, kMutableProperty2Impl]
     )
 
 class WasmPropertyReferenceLowering(context: WasmBackendContext) : AbstractPropertyReferenceLowering<WasmBackendContext>(context) {
@@ -81,7 +81,7 @@ class WasmPropertyReferenceLowering(context: WasmBackendContext) : AbstractPrope
         return irCall(
             callee = constructor,
             type = constructor.owner.returnType,
-            typeArguments = listOf(reference.type)
+            typeArguments = [reference.type]
         ).apply {
             arguments[0] = irString(propertyName)
         }

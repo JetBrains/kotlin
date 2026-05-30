@@ -31,7 +31,7 @@ class JarContentTest {
         for (entry in zipFile.entries()) {
             if (!entry.name.endsWith(".class")) continue
 
-            val loadedConstants = mutableListOf<String>()
+            val loadedConstants: MutableList<String> = []
             zipFile.getInputStream(entry).use { stream ->
                 ClassReader(stream).accept(object : ClassVisitor(API_VERSION) {
                     override fun visitMethod(
@@ -60,8 +60,10 @@ class JarContentTest {
 
     companion object {
         private val INTERNAL_COMPANIONS =
-            listOf("Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum")
+            ["Char", "Byte", "Short", "Int", "Float", "Long", "Double", "String", "Enum"]
                 .map { "kotlin/jvm/internal/${it}CompanionObject" }
+
+        @Suppress("ConvertToCollectionLiterals")
         val PREDEFINED_STRINGS =
             JvmNameResolverBase.PREDEFINED_STRINGS + listOf("kotlin/jvm/functions", "kotlin/reflect/KFunction") + INTERNAL_COMPANIONS
     }

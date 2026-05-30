@@ -80,7 +80,7 @@ class ComposerParamTransformer(
         irModule.patchDeclarationParents()
     }
 
-    private val transformedFunctionSet = mutableSetOf<IrSimpleFunction>()
+    private val transformedFunctionSet: MutableSet<IrSimpleFunction> = []
 
     private val composerType = composerIrClass.defaultType.replaceArgumentsWithStarProjections()
 
@@ -384,7 +384,7 @@ class ComposerParamTransformer(
 
         symbol = newFn.symbol
 
-        val argumentsMissing = mutableListOf<Boolean>()
+        val argumentsMissing: MutableList<Boolean> = []
 
         var hasDefaultParams = false
         arguments.fastForEachIndexed { i, arg ->
@@ -441,7 +441,7 @@ class ComposerParamTransformer(
                 it.endOffset,
                 it.type,
                 IrStatementOrigin.DEFAULT_VALUE,
-                listOf(it)
+                [it]
             )
         }
     }
@@ -491,8 +491,8 @@ class ComposerParamTransformer(
                                 this.arguments[i].typeOrNull ?: IrSimpleTypeImpl(
                                     classSymbol.owner.typeParameters[i].symbol,
                                     false,
-                                    emptyList(),
-                                    emptyList()
+                                    [],
+                                    []
                                 )
                         }
                     }
@@ -538,7 +538,7 @@ class ComposerParamTransformer(
     private fun jvmNameAnnotation(name: String): IrAnnotation {
         val jvmName = getTopLevelClass(JvmStandardClassIds.Annotations.JvmName)
         val ctor = jvmName.constructors.first { it.owner.isPrimary }
-        val type = jvmName.createType(false, emptyList())
+        val type = jvmName.createType(false, [])
         return IrAnnotationImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
@@ -745,7 +745,7 @@ class ComposerParamTransformer(
         val parent = parent
         if (parent is IrClass || parent is IrFile) {
             // checking if any stubs have all same-type parameters and discarding them
-            val addedParamTypes = mutableSetOf(toComparableParams(this))
+            val addedParamTypes: MutableSet<List<Pair<IrClassifierSymbol, SimpleTypeNullability>?>> = [toComparableParams(this)]
             stubs.forEach { stub ->
                 val stubParamTypes = stub.toComparableParams(this)
                 if (addedParamTypes.add(stubParamTypes)) {
@@ -913,7 +913,7 @@ class ComposerParamTransformer(
                                     arguments[param.indexInParameters] = irBlock(
                                         argType,
                                         origin = IrStatementOrigin.ELVIS,
-                                        statements = listOf(
+                                        statements = [
                                             paramValue,
                                             irIfThenElse(
                                                 argType,
@@ -921,7 +921,7 @@ class ComposerParamTransformer(
                                                 thenPart = irGet(paramValue),
                                                 elsePart = defaultArgumentFor(origParam)!!
                                             )
-                                        )
+                                        ]
                                     )
                                 } else {
                                     arguments[param.indexInParameters] = irGet(param)
@@ -936,10 +936,10 @@ class ComposerParamTransformer(
 
     private fun IrSimpleFunction.makeStubsForDefaultValueClassIfNeeded(): List<IrSimpleFunction> {
         if (!isPublicComposableFunction()) {
-            return emptyList()
+            return []
         }
 
-        val stubs = mutableListOf<IrSimpleFunction>()
+        val stubs: MutableList<IrSimpleFunction> = []
         makeValueClassNonPrimitiveStub()?.let { stubs.add(it) }
 
         if (!context.platform.isJvm()) {

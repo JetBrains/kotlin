@@ -108,7 +108,7 @@ internal class KaFe10DescNamedFunctionSymbol private constructor(
         get() = withValidityAssertion {
             if (descriptor.isDynamic()) {
                 // For consistency with the K2 implementation, see `FirDynamicMembersStorage`
-                return@withValidityAssertion listOf(KaFe10DynamicFunctionDescValueParameterSymbol(this))
+                return@withValidityAssertion [KaFe10DynamicFunctionDescValueParameterSymbol(this)]
             }
             descriptor.valueParameters.map { KaFe10DescValueParameterSymbol(it, analysisContext) }
         }

@@ -68,7 +68,7 @@ abstract class AbstractRawFirBuilderSourceElementMappingTestCase : AbstractRawFi
         }
 
         fun find(firFile: FirFile, element: KtElement): Set<FirElement> =
-            ElementFindingResult(element, mutableSetOf()).also { firFile.accept(this, it) }.result
+            ElementFindingResult(element, []).also { firFile.accept(this, it) }.result
     }
 
     private data class ElementFindingResult(val psi: KtElement, val result: MutableSet<FirElement>)

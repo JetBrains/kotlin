@@ -258,7 +258,7 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             },
         )
         assertEquals(
-            setOf(org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier("foo", "producer")),
+            [org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier("foo", "producer")],
             parseKotlinSourceSetMetadataFromJson(path.readText()).sourceSetModuleDependencies["commonMain"],
         )
     }
@@ -317,14 +317,14 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
                         listOf(main, test).flatMap {
                             val configurations = it.configurations
-                            listOf(
+                            [
                                 configurations.compileDependencyConfiguration,
                                 configurations.runtimeDependencyConfiguration,
                                 configurations.apiConfiguration,
                                 configurations.implementationConfiguration,
                                 configurations.runtimeOnlyConfiguration,
                                 configurations.compileOnlyConfiguration
-                            )
+                            ]
                         }.forEach { c ->
                             c?.incoming?.beforeResolve {
                                 c.resolutionStrategy { rs ->
@@ -337,14 +337,14 @@ class MppMetadataResolutionIT : KGPBaseTest() {
                         }
                     }
 
-                    val defaultKonanTargetsPublishedByAndroidx = setOf(
+                    val defaultKonanTargetsPublishedByAndroidx: Set<KonanTarget> = [
                         KonanTarget.LINUX_X64,
                         KonanTarget.IOS_X64,
                         KonanTarget.IOS_ARM64,
                         KonanTarget.IOS_SIMULATOR_ARM64,
                         KonanTarget.MACOS_X64,
                         KonanTarget.MACOS_ARM64,
-                    )
+                    ]
                     targets.all {
                         if (it is KotlinNativeTarget && it.konanTarget in defaultKonanTargetsPublishedByAndroidx) {
                             it.substituteForRedirectedPublishedDependencies()
@@ -363,10 +363,10 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("metadata", "commonMain"),
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
-                    listOf("commonMain", "androidx.collection-collection-1.5.0-commonMain-.klib"),
-                    listOf("commonMain", "androidx.annotation-annotation-1.9.1-commonMain-.klib"),
+                    ["metadata", "commonMain"],
+                    ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"],
+                    ["commonMain", "androidx.collection-collection-1.5.0-commonMain-.klib"],
+                    ["commonMain", "androidx.annotation-annotation-1.9.1-commonMain-.klib"],
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath("commonMain")
                     .relativeTransformationPathComponents().prettyPrinted
@@ -421,8 +421,8 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                    ["commonMain", "test-producer-1.0-commonMain-.klib"],
+                    ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"],
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath(
                     "commonMain",
@@ -480,19 +480,19 @@ class MppMetadataResolutionIT : KGPBaseTest() {
 
             assertEquals(
                 listOf(
-                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                    ["commonMain", "test-producer-1.0-commonMain-.klib"],
+                    ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"],
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath("commonMain").relativeTransformationPathComponents().prettyPrinted
             )
 
             assertEquals(
                 listOf(
-                    listOf("klib", "producer_iosMain"),
-                    listOf("klib", "producer_appleMain"),
-                    listOf("klib", "producer_nativeMain"),
-                    listOf("commonMain", "test-producer-1.0-commonMain-.klib"),
-                    listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"),
+                    ["klib", "producer_iosMain"],
+                    ["klib", "producer_appleMain"],
+                    ["klib", "producer_nativeMain"],
+                    ["commonMain", "test-producer-1.0-commonMain-.klib"],
+                    ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${buildOptions.kotlinVersion}-commonMain-.klib"],
                 ).prettyPrinted,
                 metadataTransformationOutputClasspath("nativeMain")
                     .relativeTransformationPathComponents().prettyPrinted

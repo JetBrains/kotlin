@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object JvmFir2IrPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFir2IrPipelineArtifact>(
     name = "JvmFir2IrPipelinePhase",
-    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
-    postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.TranslationToIrStarted],
+    postActions = [PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFir2IrPipelineArtifact? =
         executePhase(input, input.configuration.getCompilerExtensions(IrGenerationExtension))

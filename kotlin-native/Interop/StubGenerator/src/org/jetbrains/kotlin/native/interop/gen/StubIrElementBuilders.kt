@@ -18,7 +18,7 @@ internal class MacroConstantStubBuilder(
         val origin = StubOrigin.Constant(constant)
         val declaration = when (constant) {
             is IntegerConstantDef -> {
-                val literal = context.tryCreateIntegralStub(constant.type, constant.value) ?: return emptyList()
+                val literal = context.tryCreateIntegralStub(constant.type, constant.value) ?: return []
                 val kotlinType = context.mirror(constant.type).argType.toStubIrType()
                 when (context.platform) {
                     KotlinPlatform.NATIVE -> PropertyStub(kotlinName, kotlinType, PropertyStub.Kind.Constant(literal), origin = origin)
@@ -30,7 +30,7 @@ internal class MacroConstantStubBuilder(
                 }
             }
             is FloatingConstantDef -> {
-                val literal = context.tryCreateDoubleStub(constant.type, constant.value) ?: return emptyList()
+                val literal = context.tryCreateDoubleStub(constant.type, constant.value) ?: return []
                 val kind = when (context.generationMode) {
                     GenerationMode.SOURCE_CODE -> {
                         PropertyStub.Kind.Val(PropertyAccessor.Getter.SimpleGetter(constant = literal))
@@ -54,9 +54,9 @@ internal class MacroConstantStubBuilder(
                 }
                 PropertyStub(kotlinName, KotlinTypes.string.toStubIrType(), kind, origin = origin)
             }
-            else -> return emptyList()
+            else -> return []
         }
-        return listOf(declaration)
+        return [declaration]
     }
 }
 
@@ -83,7 +83,7 @@ internal class StructStubBuilder(
 
         val classifier = context.getKotlinClassForPointed(decl)
 
-        val methods: List<FunctionStub> = emptyList()
+        val methods: List<FunctionStub> = []
 
         val fields: List<PropertyStub?> = def.fields.map { field ->
             try {
@@ -99,13 +99,13 @@ internal class StructStubBuilder(
                     val annotations = if (platform == KotlinPlatform.JVM) {
                         val length = getArrayLength(unwrappedFieldType)
                         // TODO: @CLength should probably be used on types instead of properties.
-                        listOf(AnnotationStub.CLength(length))
+                        [AnnotationStub.CLength(length)]
                     } else {
-                        emptyList()
+                        []
                     }
                     val getter = when (context.generationMode) {
                         GenerationMode.SOURCE_CODE -> PropertyAccessor.Getter.ArrayMemberAt(offset)
-                        GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.ArrayMemberAt(offset)))
+                        GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter([AnnotationStub.CStruct.ArrayMemberAt(offset)])
                     }
                     val kind = PropertyStub.Kind.Val(getter)
                     // TODO: Should receiver be added?
@@ -118,12 +118,12 @@ internal class StructStubBuilder(
                         val setter: PropertyAccessor.Setter
                         when (context.generationMode) {
                             GenerationMode.SOURCE_CODE -> {
-                                getter = PropertyAccessor.Getter.MemberAt(offset, typeArguments = listOf(pointedTypeArgument), hasValueAccessor = true)
-                                setter = PropertyAccessor.Setter.MemberAt(offset, typeArguments = listOf(pointedTypeArgument))
+                                getter = PropertyAccessor.Getter.MemberAt(offset, typeArguments = [pointedTypeArgument], hasValueAccessor = true)
+                                setter = PropertyAccessor.Setter.MemberAt(offset, typeArguments = [pointedTypeArgument])
                             }
                             GenerationMode.METADATA -> {
-                                getter = PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.MemberAt(offset)))
-                                setter = PropertyAccessor.Setter.ExternalSetter(listOf(AnnotationStub.CStruct.MemberAt(offset)))
+                                getter = PropertyAccessor.Getter.ExternalGetter([AnnotationStub.CStruct.MemberAt(offset)])
+                                setter = PropertyAccessor.Setter.ExternalSetter([AnnotationStub.CStruct.MemberAt(offset)])
                             }
                         }
                         val kind = PropertyStub.Kind.Var(getter, setter)
@@ -131,7 +131,7 @@ internal class StructStubBuilder(
                     } else {
                         val accessor = when (context.generationMode) {
                             GenerationMode.SOURCE_CODE -> PropertyAccessor.Getter.MemberAt(offset, hasValueAccessor = false)
-                            GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.MemberAt(offset)))
+                            GenerationMode.METADATA -> PropertyAccessor.Getter.ExternalGetter([AnnotationStub.CStruct.MemberAt(offset)])
                         }
                         val kind = PropertyStub.Kind.Val(accessor)
                         PropertyStub(fieldName, pointedType, kind, origin = origin)
@@ -157,8 +157,8 @@ internal class StructStubBuilder(
                     PropertyStub.Kind.Var(readBits, writeBits)
                 }
                 GenerationMode.METADATA -> {
-                    val readBits = PropertyAccessor.Getter.ExternalGetter(listOf(AnnotationStub.CStruct.BitField(field.offset, field.size)))
-                    val writeBits = PropertyAccessor.Setter.ExternalSetter(listOf(AnnotationStub.CStruct.BitField(field.offset, field.size)))
+                    val readBits = PropertyAccessor.Getter.ExternalGetter([AnnotationStub.CStruct.BitField(field.offset, field.size)])
+                    val writeBits = PropertyAccessor.Setter.ExternalSetter([AnnotationStub.CStruct.BitField(field.offset, field.size)])
                     PropertyStub.Kind.Var(readBits, writeBits)
                 }
             }
@@ -170,15 +170,15 @@ internal class StructStubBuilder(
         val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
         val origin = StubOrigin.Struct(decl)
         val primaryConstructor = ConstructorStub(
-                parameters = listOf(rawPtrConstructorParam),
+                parameters = [rawPtrConstructorParam],
                 isPrimary = true,
-                annotations = emptyList(),
+                annotations = [],
                 origin = origin
         )
-        val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
+        val superClassInit = SuperClassInit(superClass, [GetConstructorParameter(rawPtrConstructorParam)])
 
         val companionSuper = superClass.nested("Type")
-        val typeSize = listOf(IntegralConstantStub(def.size, 4, true), IntegralConstantStub(def.align.toLong(), 4, true))
+        val typeSize = [IntegralConstantStub(def.size, 4, true), IntegralConstantStub(def.align.toLong(), 4, true)]
         val companionSuperInit = SuperClassInit(companionSuper, typeSize)
         val companionClassifier = classifier.nested("Companion")
         val annotation = AnnotationStub.CStruct.VarType(def.size, def.align).takeIf {
@@ -193,22 +193,22 @@ internal class StructStubBuilder(
             superClassInit = companionSuperInit,
             annotations = listOfNotNull(annotation, AnnotationStub.Deprecated.deprecatedCVariableCompanion),
             properties = classFields,
-            methods = emptyList()
+            methods = []
         )
 
         val classStub = ClassStub.Simple(
                 classifier,
                 origin = origin,
-                properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else emptyList(),
-                constructors = listOf(primaryConstructor),
+                properties = fields.filterNotNull() + if (platform == KotlinPlatform.NATIVE) bitFields else [],
+                constructors = [primaryConstructor],
                 methods = methods,
                 modality = ClassStubModality.NONE,
                 annotations = structAnnotations,
                 superClassInit = superClassInit,
                 companion = companion,
-                interfaces = emptyList()
+                interfaces = []
         )
-        return listOf(classStub)
+        return [classStub]
     }
 
     private fun getArrayLength(type: ArrayType): Long {
@@ -244,17 +244,17 @@ internal class StructStubBuilder(
             val classifier = context.getKotlinClassForPointed(s)
             val superClass = context.platform.getRuntimeType("COpaque")
             val rawPtrConstructorParam = FunctionParameterStub("rawPtr", context.platform.getRuntimeType("NativePtr"))
-            val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
+            val superClassInit = SuperClassInit(superClass, [GetConstructorParameter(rawPtrConstructorParam)])
             val origin = StubOrigin.Struct(s)
-            val primaryConstructor = ConstructorStub(listOf(rawPtrConstructorParam), emptyList(), isPrimary = true, origin = origin)
-            listOf(ClassStub.Simple(
+            val primaryConstructor = ConstructorStub([rawPtrConstructorParam], [], isPrimary = true, origin = origin)
+            [ClassStub.Simple(
                     classifier,
                     ClassStubModality.NONE,
-                    constructors = listOf(primaryConstructor),
+                    constructors = [primaryConstructor],
                     superClassInit = superClassInit,
-                    origin = origin))
+                    origin = origin)]
         }
-        KotlinPlatform.NATIVE -> emptyList()
+        KotlinPlatform.NATIVE -> []
     }
 }
 
@@ -304,8 +304,8 @@ internal class EnumStubBuilder(
                 }
         val origin = StubOrigin.Enum(enumDef)
         val primaryConstructor = ConstructorStub(
-                parameters = listOf(constructorParameter),
-                annotations = emptyList(),
+                parameters = [constructorParameter],
+                annotations = [],
                 isPrimary = true,
                 origin = origin,
                 visibility = VisibilityModifier.PRIVATE
@@ -314,34 +314,34 @@ internal class EnumStubBuilder(
         val byValueFunction = FunctionStub(
                 name = "byValue",
                 returnType = ClassifierStubType(classifier),
-                parameters = listOf(FunctionParameterStub("value", baseType)),
+                parameters = [FunctionParameterStub("value", baseType)],
                 origin = StubOrigin.Synthetic.EnumByValue(enumDef),
                 receiver = null,
                 modality = MemberStubModality.FINAL,
-                annotations = mutableListOf(AnnotationStub.Deprecated.deprecatedCEnumByValue)
+                annotations = [AnnotationStub.Deprecated.deprecatedCEnumByValue]
         )
 
         val companion = ClassStub.Companion(
                 classifier = classifier.nested("Companion"),
                 properties = canonicalEntriesWithAliases.flatMap { it.second },
-                methods = listOf(byValueFunction)
+                methods = [byValueFunction]
         )
         val enumVarClass = constructEnumVarClass().takeIf { context.generationMode == GenerationMode.METADATA }
         val kotlinEnumType = ClassifierStubType(Classifier.topLevel("kotlin", "Enum"),
-                listOf(TypeArgumentStub(ClassifierStubType(classifier))))
+                [TypeArgumentStub(ClassifierStubType(classifier))])
         val enum = ClassStub.Enum(
                 classifier = classifier,
                 superClassInit = SuperClassInit(kotlinEnumType),
                 entries = canonicalEntriesWithAliases.map { it.first },
                 companion = companion,
-                constructors = listOf(primaryConstructor),
-                properties = listOf(valueProperty),
+                constructors = [primaryConstructor],
+                properties = [valueProperty],
                 origin = origin,
-                interfaces = listOf(context.platform.getRuntimeType("CEnum")),
+                interfaces = [context.platform.getRuntimeType("CEnum")],
                 childrenClasses = listOfNotNull(enumVarClass)
         )
         context.bridgeComponentsBuilder.enumToTypeMirror[enum] = baseTypeMirror
-        return listOf(enum)
+        return [enum]
     }
 
     private fun constructAliasProperty(enumConstant: EnumConstant, entry: EnumEntryStub): PropertyStub {
@@ -364,12 +364,12 @@ internal class EnumStubBuilder(
         val superClass = context.platform.getRuntimeType("CEnumVar")
         require(superClass is ClassifierStubType)
         val primaryConstructor = ConstructorStub(
-                parameters = listOf(rawPtrConstructorParam),
+                parameters = [rawPtrConstructorParam],
                 isPrimary = true,
-                annotations = emptyList(),
+                annotations = [],
                 origin = StubOrigin.Synthetic.DefaultConstructor
         )
-        val superClassInit = SuperClassInit(superClass, listOf(GetConstructorParameter(rawPtrConstructorParam)))
+        val superClassInit = SuperClassInit(superClass, [GetConstructorParameter(rawPtrConstructorParam)])
 
         val baseIntegerTypeSize = when (val unwrappedType = enumDef.baseType.unwrapTypedefs()) {
             is IntegerType -> unwrappedType.size.toLong()
@@ -382,7 +382,7 @@ internal class EnumStubBuilder(
                 .takeIf { context.generationMode == GenerationMode.METADATA }
         val companion = ClassStub.Companion(
                 classifier = enumVarClassifier.nested("Companion"),
-                superClassInit = SuperClassInit(companionSuper, listOf(typeSize)),
+                superClassInit = SuperClassInit(companionSuper, [typeSize]),
                 annotations = listOfNotNull(varSizeAnnotation, AnnotationStub.Deprecated.deprecatedCVariableCompanion)
         )
         val valueProperty = PropertyStub(
@@ -396,12 +396,12 @@ internal class EnumStubBuilder(
         )
         return ClassStub.Simple(
                 classifier = enumVarClassifier,
-                constructors = listOf(primaryConstructor),
+                constructors = [primaryConstructor],
                 superClassInit = superClassInit,
                 companion = companion,
                 modality = ClassStubModality.NONE,
                 origin = StubOrigin.VarOf(StubOrigin.Enum(enumDef)),
-                properties = listOf(valueProperty)
+                properties = [valueProperty]
         )
     }
 
@@ -418,8 +418,8 @@ internal class EnumStubBuilder(
         // TODO: if this enum defines e.g. a type of struct field, then it should be generated inside the struct class
         //  to prevent name clashing
 
-        val entries = mutableListOf<PropertyStub>()
-        val typealiases = mutableListOf<TypealiasStub>()
+        val entries: MutableList<PropertyStub> = []
+        val typealiases: MutableList<TypealiasStub> = []
 
         val constants = enumDef.constants.filter {
             // Macro "overrides" the original enum constant.
@@ -474,7 +474,7 @@ internal class EnumStubBuilder(
                 properties = entries.toList(),
                 typealiases = typealiases.toList()
         )
-        return listOf(container)
+        return [container]
     }
 }
 
@@ -502,8 +502,8 @@ internal abstract class FunctionalStubBuilder(
             parameters += when {
                 representCFunctionParameterAsString(func, parameter.type) -> {
                     val annotations = when (platform) {
-                        KotlinPlatform.JVM -> emptyList()
-                        KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.CString)
+                        KotlinPlatform.JVM -> []
+                        KotlinPlatform.NATIVE -> [AnnotationStub.CCall.CString]
                     }
                     val type = KotlinTypes.string.makeNullable().toStubIrType()
                     val functionParameterStub = FunctionParameterStub(parameterName, type, annotations)
@@ -512,8 +512,8 @@ internal abstract class FunctionalStubBuilder(
                 }
                 representCFunctionParameterAsWString(func, parameter.type) -> {
                     val annotations = when (platform) {
-                        KotlinPlatform.JVM -> emptyList()
-                        KotlinPlatform.NATIVE -> listOf(AnnotationStub.CCall.WCString)
+                        KotlinPlatform.JVM -> []
+                        KotlinPlatform.NATIVE -> [AnnotationStub.CCall.WCString]
                     }
                     val type = KotlinTypes.string.makeNullable().toStubIrType()
                     val functionParameterStub = FunctionParameterStub(parameterName, type, annotations)
@@ -537,7 +537,7 @@ internal abstract class FunctionalStubBuilder(
             cCallModeAnnotations(
                     name = func.name,
                     directAccess = func.directAccess,
-                    direct = { symbolName -> listOf(AnnotationStub.CCall.Direct(symbolName)) },
+                    direct = { symbolName -> [AnnotationStub.CCall.Direct(symbolName)] },
                     indirect = { AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}") }
             )
 
@@ -571,7 +571,7 @@ internal abstract class FunctionalStubBuilder(
     }
 
 
-    private val platformWStringTypes = setOf("LPCWSTR")
+    private val platformWStringTypes: Set<String> = ["LPCWSTR"]
 
     private val noStringConversion: Set<String>
         get() = context.configuration.noStringConversion
@@ -605,7 +605,7 @@ internal class FunctionStubBuilder(
 
     override fun build(): List<StubIrElement> {
         val platform = context.platform
-        val parameters = mutableListOf<FunctionParameterStub>()
+        val parameters: MutableList<FunctionParameterStub> = []
 
         val hasStableParameterNames = buildParameters(parameters, platform)
 
@@ -615,12 +615,12 @@ internal class FunctionStubBuilder(
         }.toStubIrType()
 
         if (skipOverloads && context.isOverloading(func.fullName, parameters.map { it.type }))
-            return emptyList()
+            return []
 
         val annotations: List<AnnotationStub>
         val mustBeExternal: Boolean
         if (platform == KotlinPlatform.JVM) {
-            annotations = emptyList()
+            annotations = []
             mustBeExternal = false
         } else {
             if (func.isVararg) {
@@ -641,7 +641,7 @@ internal class FunctionStubBuilder(
             MemberStubModality.FINAL,
             hasStableParameterNames = hasStableParameterNames
         )
-        return listOf(functionStub)
+        return [functionStub]
     }
 
 }
@@ -751,7 +751,7 @@ internal class GlobalStubBuilder(
                 }
             }
         }
-        return listOf(PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin))
+        return [PropertyStub(global.name, kotlinType.toStubIrType(), kind, origin = origin)]
     }
 
     private fun cCallOrGlobalAccess(
@@ -852,14 +852,14 @@ internal class TypedefStubBuilder(
                 val valueType = (mirror as TypeMirror.ByValue).valueType
                 val varTypeAliasee = mirror.info.constructPointedType(valueType)
                 val valueTypeAliasee = baseMirror.valueType
-                listOf(
-                        TypealiasStub(varType, varTypeAliasee.toStubIrType(), StubOrigin.VarOf(origin)),
-                        TypealiasStub(valueType.classifier, valueTypeAliasee.toStubIrType(), origin)
-                )
+                [
+                    TypealiasStub(varType, varTypeAliasee.toStubIrType(), StubOrigin.VarOf(origin)),
+                    TypealiasStub(valueType.classifier, valueTypeAliasee.toStubIrType(), origin)
+                ]
             }
             is TypeMirror.ByRef -> {
                 val varTypeAliasee = baseMirror.pointedType
-                listOf(TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin))
+                [TypealiasStub(varType, varTypeAliasee.toStubIrType(), origin)]
             }
         }
     }

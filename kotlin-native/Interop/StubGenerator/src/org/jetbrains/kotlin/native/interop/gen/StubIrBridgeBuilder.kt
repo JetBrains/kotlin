@@ -32,7 +32,7 @@ class StubIrBridgeBuilder(
                 simpleBridgeGenerator.kotlinToNative(
                         nativeBacked = accessor,
                         returnType = BridgedType.NATIVE_PTR,
-                        kotlinValues = emptyList(),
+                        kotlinValues = [],
                         independent = false
                 ) {
                     "&$cGlobalName"
@@ -67,7 +67,7 @@ class StubIrBridgeBuilder(
 
     private val propertyAccessorBridgeBodies = mutableMapOf<PropertyAccessor, String>()
     private val functionBridgeBodies = mutableMapOf<FunctionStub, List<String>>()
-    private val excludedStubs = mutableSetOf<StubIrElement>()
+    private val excludedStubs: MutableSet<StubIrElement> = []
 
     private val bridgeGeneratingVisitor = object : StubIrVisitor<StubContainer?, Unit> {
 
@@ -109,7 +109,7 @@ class StubIrBridgeBuilder(
             val cCallAnnotation = function.annotations.firstIsInstanceOrNull<AnnotationStub.CCall.Symbol>()
                     ?: return
             val wrapper = wrapperGenerator.generateCCalleeWrapper(origin.function, cCallAnnotation.symbolName)
-            simpleBridgeGenerator.insertNativeBridge(function, emptyList(), wrapper.lines)
+            simpleBridgeGenerator.insertNativeBridge(function, [], wrapper.lines)
         }
 
         override fun visitProperty(element: PropertyStub, data: StubContainer?) {
@@ -144,7 +144,7 @@ class StubIrBridgeBuilder(
                             propertyAccessorBridgeBodies[propertyAccessor] = typeInfo.argFromBridged(simpleBridgeGenerator.kotlinToNative(
                                     nativeBacked = propertyAccessor,
                                     returnType = typeInfo.bridgedType,
-                                    kotlinValues = emptyList(),
+                                    kotlinValues = [],
                                     independent = false
                             ) {
                                 typeInfo.cToBridged(expr = extra.cGlobalName)
@@ -176,7 +176,7 @@ class StubIrBridgeBuilder(
                         val setter = simpleBridgeGenerator.kotlinToNative(
                                 nativeBacked = propertyAccessor,
                                 returnType = BridgedType.VOID,
-                                kotlinValues = listOf(bridgedValue),
+                                kotlinValues = [bridgedValue],
                                 independent = false
                         ) { nativeValues ->
                             out("${extra.cGlobalName} = ${typeInfo.cFromBridged(
@@ -212,7 +212,7 @@ class StubIrBridgeBuilder(
                         } else {
                             wrapperGenerator.generateCGlobalGetter(extra.global, cCallAnnotation.symbolName)
                         }
-                        simpleBridgeGenerator.insertNativeBridge(propertyAccessor, emptyList(), wrapper.lines)
+                        simpleBridgeGenerator.insertNativeBridge(propertyAccessor, [], wrapper.lines)
                     }
                 }
 
@@ -222,7 +222,7 @@ class StubIrBridgeBuilder(
                         val cCallAnnotation = propertyAccessor.annotations.firstIsInstanceOrNull<AnnotationStub.CCall.Symbol>()
                                 ?: error("external setter for ${extra.global.name} wasn't marked with @CCall")
                         val wrapper = wrapperGenerator.generateCGlobalSetter(extra.global, cCallAnnotation.symbolName)
-                        simpleBridgeGenerator.insertNativeBridge(propertyAccessor, emptyList(), wrapper.lines)
+                        simpleBridgeGenerator.insertNativeBridge(propertyAccessor, [], wrapper.lines)
                     }
                 }
                 is PropertyAccessor.Getter.ArrayMemberAt,
@@ -261,7 +261,7 @@ class StubIrBridgeBuilder(
         assert(function.origin is StubOrigin.Function) { "Can't create bridge for ${function.name}" }
         val origin = function.origin as StubOrigin.Function
         val bodyGenerator = KotlinCodeBuilder(scope = kotlinFile)
-        val bridgeArguments = mutableListOf<TypedKotlinValue>()
+        val bridgeArguments: MutableList<TypedKotlinValue> = []
         var isVararg = false
         function.parameters.forEachIndexed { index, parameter ->
             isVararg = isVararg or parameter.isVararg
@@ -310,7 +310,7 @@ class StubIrBridgeBuilder(
             out("    return @protocol(${protocol.name});")
             out("}")
         }
-        simpleBridgeGenerator.insertNativeBridge(nativeBacked, emptyList(), builder.lines)
+        simpleBridgeGenerator.insertNativeBridge(nativeBacked, [], builder.lines)
     }
 
     fun build(): BridgeBuilderResult {

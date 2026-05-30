@@ -56,7 +56,7 @@ interface Fir2IrExtensions {
         override val parametersAreAssignable: Boolean
             get() = false
 
-        override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList()
+        override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = []
         override fun findInjectedValue(calleeReference: FirReference, conversionScope: Fir2IrConversionScope): Nothing? = null
         override fun findInjectedInlineLambdaArgument(parameter: FirValueParameterSymbol): FirExpression? = null
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField

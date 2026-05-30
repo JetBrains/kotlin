@@ -72,7 +72,7 @@ class ParseErrorKotlinCallArgument(
 ) : ExpressionKotlinCallArgument, SimplePSIKotlinCallArgument() {
     override val receiver = ReceiverValueWithSmartCastInfo(
         TransientReceiver(ErrorUtils.createErrorType(ErrorTypeKind.PARSE_ERROR_ARGUMENT, valueArgument.toString())),
-        typesFromSmartCasts = emptySet(),
+        typesFromSmartCasts = [],
         isStable = true
     )
 
@@ -225,7 +225,7 @@ class EmptyLabeledReturn(
 ) : ExpressionKotlinCallArgument {
     override val isSpread: Boolean get() = false
     override val argumentName: Name? get() = null
-    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.unitType), emptySet(), true)
+    override val receiver = ReceiverValueWithSmartCastInfo(TransientReceiver(builtIns.unitType), [], true)
     override val isSafeCall: Boolean get() = false
 }
 
@@ -259,7 +259,7 @@ fun processFunctionalExpression(
             if (!postponedExpression.isFunctionalExpression()) return null
             val receiverType = resolveType(outerCallContext, postponedExpression.receiverTypeReference, typeResolver)
             val contextReceiversTypes = resolveContextReceiversTypes(outerCallContext, postponedExpression, typeResolver)
-            val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: emptyArray()
+            val parametersTypes = resolveParametersTypes(outerCallContext, postponedExpression, typeResolver) ?: []
             val returnType = resolveType(outerCallContext, postponedExpression.typeReference, typeResolver)
                 ?: if (postponedExpression.hasBlockBody()) builtIns.unitType else null
 
@@ -368,7 +368,7 @@ internal fun createSimplePSICallArgument(
         if (ktExpression is KtCallExpression || partiallyResolvedCall != null) {
             // For a sub-call (partially or fully resolved), there can't be any smartcast
             // so we use a fast-path here to avoid calling transformToReceiverWithSmartCastInfo function
-            ReceiverValueWithSmartCastInfo(expressionReceiver, emptySet(), isStable = true)
+            ReceiverValueWithSmartCastInfo(expressionReceiver, [], isStable = true)
         } else {
             val useDataFlowInfoBeforeArgument = call.callType == Call.CallType.CONTAINS
             transformToReceiverWithSmartCastInfo(

@@ -17,7 +17,7 @@ abstract class BooleanGenerator(private val writer: PrintWriter) : BuiltInsGener
         writer.print(generateFile().build())
     }
 
-    protected open val fileAnnotations: List<String> = emptyList()
+    protected open val fileAnnotations: List<String> = []
 
     private fun generateFile(): FileBuilder {
         return file(this::class) {
@@ -199,11 +199,11 @@ class JvmBooleanGenerator(writer: PrintWriter) : BooleanGenerator(writer) {
     }
 
     override val fileAnnotations =
-        listOf(
+        [
             "kotlin.internal.JvmBuiltin",
             "kotlin.internal.SuppressBytecodeGeneration",
             "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\")"
-        )
+        ]
 
     override fun MethodBuilder.modifyGeneratedHashCode() {
         noBody()

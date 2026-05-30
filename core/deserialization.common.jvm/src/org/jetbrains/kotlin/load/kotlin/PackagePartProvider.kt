@@ -37,14 +37,14 @@ interface PackagePartProvider {
     fun mayHaveOptionalAnnotationClasses(): Boolean
 
     object Empty : PackagePartProvider {
-        override fun findPackageParts(packageFqName: String): List<String> = emptyList()
+        override fun findPackageParts(packageFqName: String): List<String> = []
 
-        override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = emptyList()
+        override fun getAnnotationsOnBinaryModule(moduleName: String): List<ClassId> = []
 
-        override fun getAllOptionalAnnotationClasses(): List<ClassData> = emptyList()
+        override fun getAllOptionalAnnotationClasses(): List<ClassData> = []
 
         override fun mayHaveOptionalAnnotationClasses(): Boolean = false
 
-        override fun computePackageSetWithNonClassDeclarations(): Set<String> = emptySet()
+        override fun computePackageSetWithNonClassDeclarations(): Set<String> = []
     }
 }

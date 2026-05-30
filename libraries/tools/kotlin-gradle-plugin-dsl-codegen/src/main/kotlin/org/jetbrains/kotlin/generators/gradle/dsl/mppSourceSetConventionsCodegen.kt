@@ -83,7 +83,7 @@ internal data class CommonSourceSetConvention(
     val sampleTarget2: String,
 )
 
-private val commonSourceSetConventions = listOf(
+private val commonSourceSetConventions = [
     CommonSourceSetConvention("common", "all declared targets", "jvm", "iosX64"),
     CommonSourceSetConvention("native", "all declared native targets", "linuxX64", "iosX64"),
     CommonSourceSetConvention("apple", "all declared Apple targets (ios, macos, watchos, tvos)", "iosX64", "macosX64"),
@@ -95,14 +95,14 @@ private val commonSourceSetConventions = listOf(
     CommonSourceSetConvention("mingw", "all declared Mingw targets", "mingwX64", "mingwX86"),
     CommonSourceSetConvention("androidNative", "all declared Android Native targets", "androidNativeX64", "androidNativeArm64"),
     CommonSourceSetConvention("web", "all declared JS and WasmJS targets", "js", "wasmJs"),
-)
+]
 
-private val nonNativeSourceSetConventions = listOf(
+private val nonNativeSourceSetConventions = [
     PlatformSourceSetConvention("jvm"),
     PlatformSourceSetConvention("js"),
     PlatformSourceSetConvention("wasmJs", experimentalAnnotation = "@ExperimentalWasmDsl"),
     PlatformSourceSetConvention("wasmWasi", experimentalAnnotation = "@ExperimentalWasmDsl"),
-)
+]
 
 
 private fun List<PlatformSourceSetConvention>.generatePlatformInterfaceDeclarations(): String = buildString {

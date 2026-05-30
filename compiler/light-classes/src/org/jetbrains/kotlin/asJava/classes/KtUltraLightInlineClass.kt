@@ -71,7 +71,7 @@ class KtUltraLightInlineClass(
         result
     }
 
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnFields(): List<KtLightField> = []
 
     override fun getOwnMethods() = _ownMethods
 

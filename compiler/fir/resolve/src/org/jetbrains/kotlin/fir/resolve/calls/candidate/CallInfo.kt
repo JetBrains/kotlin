@@ -83,7 +83,7 @@ open class CallInfo(
     fun asImplicitInvokeReceiver(): CallInfo =
         copy(
             callKind = CallKind.VariableAccess,
-            typeArguments = emptyList(),
+            typeArguments = [],
             argumentList = FirEmptyArgumentList,
             isImplicitInvokeReceiver = true
         )
@@ -136,7 +136,7 @@ class CallableReferenceInfo(
     callKind: CallKind = CallKind.CallableReference
 ) : CallInfo(
     callSite, callKind, name, explicitReceiver, FirEmptyArgumentList,
-    isUsedAsGetClassReceiver = false, typeArguments = emptyList(),
+    isUsedAsGetClassReceiver = false, typeArguments = [],
     session, containingFile, containingDeclarations,
     candidateForCommonInvokeReceiver = null, resolutionMode = ResolutionMode.ContextIndependent, origin,
     implicitInvokeMode = ImplicitInvokeMode.None,

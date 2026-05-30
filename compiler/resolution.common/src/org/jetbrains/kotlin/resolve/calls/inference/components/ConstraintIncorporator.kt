@@ -142,7 +142,7 @@ class ConstraintIncorporator(
     // NB: The result is reflexive
     private fun Constraint.computeNewDerivedFrom(other: Constraint): Set<TypeVariableMarker> =
         when {
-            !languageVersionSettings.supportsFeature(LanguageFeature.StricterConstraintIncorporationRecursionDetector) -> emptySet()
+            !languageVersionSettings.supportsFeature(LanguageFeature.StricterConstraintIncorporationRecursionDetector) -> []
             derivedFrom.isEmpty() -> other.derivedFrom
             other.derivedFrom.isEmpty() -> derivedFrom
             else -> derivedFrom + other.derivedFrom
@@ -287,7 +287,7 @@ class ConstraintIncorporator(
                     ConstraintKind.UPPER if !isBaseGenericType && !isBaseOrOtherCapturedType -> causeOfIncorporationConstraint.type to false
                     else -> c.createCapturedType(
                         c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
-                        listOf(causeOfIncorporationConstraint.type),
+                        [causeOfIncorporationConstraint.type],
                         null,
                         CaptureStatus.FOR_INCORPORATION
                     ) to true
@@ -308,7 +308,7 @@ class ConstraintIncorporator(
                     ConstraintKind.LOWER if !isBaseGenericType && !isBaseOrOtherCapturedType -> causeOfIncorporationConstraint.type to false
                     else -> c.createCapturedType(
                         c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
-                        emptyList(),
+                        [],
                         causeOfIncorporationConstraint.type,
                         CaptureStatus.FOR_INCORPORATION
                     ) to true

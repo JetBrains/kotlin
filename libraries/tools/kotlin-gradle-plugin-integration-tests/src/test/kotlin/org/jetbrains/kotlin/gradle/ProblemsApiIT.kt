@@ -46,58 +46,58 @@ class ProblemsApiIT : KGPBaseTest() {
                     buildList {
                         add(
                             ProblemsApiDiagnosticG811(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = listOf(TextWrapper("Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used")),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [TextWrapper("Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used")],
                                 severity = "ERROR",
-                                problemDetails = listOf(TextWrapper("The `kotlin.internal.single.build.metrics.file` deprecated property is used in your build.")),
+                                problemDetails = [TextWrapper("The `kotlin.internal.single.build.metrics.file` deprecated property is used in your build.")],
                                 contextualLabel = "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier(
                                         "deprecated-warning-gradle-properties",
                                         "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used"
                                     )
-                                ),
-                                solutions = listOf(listOf(TextWrapper("It is unsupported, please stop using it.")))
+                                ],
+                                solutions = [[TextWrapper("It is unsupported, please stop using it.")]]
                             )
                         )
 
                         add(
                             ProblemsApiDiagnosticG811(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = listOf(TextWrapper("Deprecated Gradle Property 'kotlin.build.report.dir' Used")),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [TextWrapper("Deprecated Gradle Property 'kotlin.build.report.dir' Used")],
                                 severity = "ERROR",
-                                problemDetails = listOf(TextWrapper("The `kotlin.build.report.dir` deprecated property is used in your build.")),
+                                problemDetails = [TextWrapper("The `kotlin.build.report.dir` deprecated property is used in your build.")],
                                 contextualLabel = "Deprecated Gradle Property 'kotlin.build.report.dir' Used",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier(
                                         "deprecated-warning-gradle-properties",
                                         "Deprecated Gradle Property 'kotlin.build.report.dir' Used"
                                     )
-                                ),
-                                solutions = listOf(listOf(TextWrapper("It is unsupported, please stop using it.")))
+                                ],
+                                solutions = [[TextWrapper("It is unsupported, please stop using it.")]]
                             )
                         )
 
                         add(
                             ProblemsApiDiagnosticG811(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = listOf(TextWrapper("Usage of Internal Kotlin Gradle Plugin Properties Detected")),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [TextWrapper("Usage of Internal Kotlin Gradle Plugin Properties Detected")],
                                 severity = "ERROR",
-                                problemDetails = listOf(TextWrapper("ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.")),
+                                problemDetails = [TextWrapper("ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.")],
                                 contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kgp:misconfiguration", "Kotlin Gradle Plugin Misconfiguration"),
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier(
                                         "internal-kotlin-gradle-plugin-properties-used",
                                         "Usage of Internal Kotlin Gradle Plugin Properties Detected"
                                     )
-                                ),
-                                solutions = listOf(listOf(TextWrapper("Please consider using the public API instead of internal properties.")))
+                                ],
+                                solutions = [[TextWrapper("Please consider using the public API instead of internal properties.")]]
                             )
                         )
                     }
@@ -105,58 +105,58 @@ class ProblemsApiIT : KGPBaseTest() {
                     buildList {
                         add(
                             ProblemsApiDiagnosticG94(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = emptyList(),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [],
                                 severity = "ERROR",
                                 problemDetails = "The `kotlin.internal.single.build.metrics.file` deprecated property is used in your build.",
                                 contextualLabel = "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
                                     ProblemIdentifier(
                                         "deprecated-warning-gradle-properties",
                                         "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used"
                                     )
-                                ),
-                                solutions = listOf("It is unsupported, please stop using it.")
+                                ],
+                                solutions = ["It is unsupported, please stop using it."]
                             )
                         )
 
                         add(
                             ProblemsApiDiagnosticG94(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = emptyList(),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [],
                                 severity = "ERROR",
                                 problemDetails = "The `kotlin.build.report.dir` deprecated property is used in your build.",
                                 contextualLabel = "Deprecated Gradle Property 'kotlin.build.report.dir' Used",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
                                     ProblemIdentifier(
                                         "deprecated-warning-gradle-properties",
                                         "Deprecated Gradle Property 'kotlin.build.report.dir' Used"
                                     )
-                                ),
-                                solutions = listOf("It is unsupported, please stop using it.")
+                                ],
+                                solutions = ["It is unsupported, please stop using it."]
                             )
                         )
 
                         add(
                             ProblemsApiDiagnosticG94(
-                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
-                                problem = emptyList(),
+                                locations = [ProblemsApiLocation("org.jetbrains.kotlin.jvm")],
+                                problem = [],
                                 severity = "ERROR",
                                 problemDetails = "ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.",
                                 contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
-                                problemId = listOf(
+                                problemId = [
                                     ProblemIdentifier("kotlin", "Kotlin"),
                                     ProblemIdentifier("kgp:misconfiguration", "Kotlin Gradle Plugin Misconfiguration"),
                                     ProblemIdentifier(
                                         "internal-kotlin-gradle-plugin-properties-used",
                                         "Usage of Internal Kotlin Gradle Plugin Properties Detected"
                                     )
-                                ),
-                                solutions = listOf("Please consider using the public API instead of internal properties.")
+                                ],
+                                solutions = ["Please consider using the public API instead of internal properties."]
                             )
                         )
                     }

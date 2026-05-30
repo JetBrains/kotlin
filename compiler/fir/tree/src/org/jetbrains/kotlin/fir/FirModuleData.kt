@@ -128,13 +128,13 @@ class FirBinaryDependenciesModuleData(
     override val capabilities: FirModuleCapabilities = FirModuleCapabilities.Empty,
 ) : FirModuleData() {
     override val dependencies: List<FirModuleData>
-        get() = emptyList()
+        get() = []
     override val dependsOnDependencies: List<FirModuleData>
-        get() = emptyList()
+        get() = []
     override val allDependsOnDependencies: List<FirModuleData>
-        get() = emptyList()
+        get() = []
     override val friendDependencies: List<FirModuleData>
-        get() = emptyList()
+        get() = []
 
     // target platform is meaningless for dependencies
     override val platform: TargetPlatform

@@ -47,11 +47,11 @@ internal class VolatileFieldsLowering(val context: Context) : FileLoweringPass {
         arguments[0] = expression
         arguments[1] = irByte(1)
     }
-    private fun IrBuilderWithScope.irBoolToByte(expression: IrExpression) = irWhen(irBuiltins.byteType, listOf(
+    private fun IrBuilderWithScope.irBoolToByte(expression: IrExpression) = irWhen(irBuiltins.byteType, [
         irBranch(expression, irByte(1)),
         irElseBranch(irByte(0))
-    ))
-    private val convertedBooleanFields = mutableSetOf<IrFieldSymbol>()
+    ])
+    private val convertedBooleanFields: MutableSet<IrFieldSymbol> = []
     private fun IrField.requiresBooleanConversion() = (type == irBuiltins.booleanType && hasAnnotation(KonanFqNames.volatile)) || symbol in convertedBooleanFields
     private fun IrField.effectiveFieldType(): IrType = if (requiresBooleanConversion()) irBuiltins.byteType else this.type
 

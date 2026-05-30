@@ -85,7 +85,7 @@ class PowerAssertEnvironmentConfigurator(testServices: TestServices) : Environme
         if (DISABLE_PLUGIN in module.directives) return
 
         val functions = moduleStructure.allDirectives[PowerAssertConfigurationDirectives.FUNCTION]
-            .ifEmpty { listOf("kotlin.assert") }
+            .ifEmpty { ["kotlin.assert"] }
             .mapTo(mutableSetOf()) { FqName(it) }
 
         IrGenerationExtension.registerExtension(
@@ -101,7 +101,7 @@ class PowerAssertEnvironmentConfigurator(testServices: TestServices) : Environme
 
 class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(AdditionalFilesDirectives)
+        [AdditionalFilesDirectives]
 
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
@@ -110,7 +110,7 @@ class AdditionalSourceFilesProvider(testServices: TestServices) : AdditionalSour
     ): List<TestFile> {
         // For multiplatform projects, add the files only to common modules with no dependencies.
         val isMultiplatform = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
-        if (isMultiplatform && module.allDependencies.isNotEmpty()) return emptyList()
+        if (isMultiplatform && module.allDependencies.isNotEmpty()) return []
 
         return buildList {
             val helpers = "plugins/power-assert/power-assert-compiler/testData/helpers"

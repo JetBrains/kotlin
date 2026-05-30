@@ -35,7 +35,7 @@ fun ObjCProtocolImpl(
     descriptor: ClassDescriptor,
     superProtocols: List<String>,
     members: List<ObjCExportStub>,
-    attributes: List<String> = emptyList(),
+    attributes: List<String> = [],
     comment: ObjCComment? = null,
 ) = ObjCProtocolImpl(
     name = name,
@@ -48,14 +48,14 @@ fun ObjCProtocolImpl(
 
 fun ObjCInterfaceImpl(
     name: String,
-    generics: List<ObjCGenericTypeDeclaration> = emptyList(),
+    generics: List<ObjCGenericTypeDeclaration> = [],
     descriptor: ClassDescriptor? = null,
     superClass: String? = null,
-    superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
-    superProtocols: List<String> = emptyList(),
+    superClassGenerics: List<ObjCNonNullReferenceType> = [],
+    superProtocols: List<String> = [],
     categoryName: String? = null,
-    members: List<ObjCExportStub> = emptyList(),
-    attributes: List<String> = emptyList(),
+    members: List<ObjCExportStub> = [],
+    attributes: List<String> = [],
     comment: ObjCComment? = null,
 ) = ObjCInterfaceImpl(
     name = name,
@@ -106,7 +106,7 @@ fun ObjCProperty(
     propertyAttributes: List<String>,
     setterName: String? = null,
     getterName: String? = null,
-    declarationAttributes: List<String> = emptyList(),
+    declarationAttributes: List<String> = [],
     comment: ObjCComment? = null,
 ) = ObjCProperty(
     name = name,

@@ -30,36 +30,36 @@ class ScriptHostUtilTest : TestCase() {
     companion object {
         @Parameterized.Parameters(name = "{0}")
         @JvmStatic
-        fun parameters(): List<Array<Any>> = listOf(
-            arrayOf("first and last fragments included", MergedScriptTextTestParams(listOf(0, 2))),
-            arrayOf("first fragment is included and last is excluded", MergedScriptTextTestParams(listOf(0, 1))),
-            arrayOf("first fragment is excluded and last is included", MergedScriptTextTestParams(listOf(1, 2))),
-            arrayOf("first and last fragments are excluded", MergedScriptTextTestParams(listOf(1))),
+        fun parameters(): List<Array<Any>> = [
+            ["first and last fragments included", MergedScriptTextTestParams([0, 2])],
+            ["first fragment is included and last is excluded", MergedScriptTextTestParams([0, 1])],
+            ["first fragment is excluded and last is included", MergedScriptTextTestParams([1, 2])],
+            ["first and last fragments are excluded", MergedScriptTextTestParams([1])],
 
-            arrayOf("first and last fragments included, random char pool", MergedScriptTextTestParams(listOf(0, 2), randomCharPool = true)),
-            arrayOf(
+            ["first and last fragments included, random char pool", MergedScriptTextTestParams([0, 2], randomCharPool = true)],
+            [
                 "first fragment is included and last is excluded, random char pool",
-                MergedScriptTextTestParams(listOf(0, 1), randomCharPool = true)
-            ),
-            arrayOf(
+                MergedScriptTextTestParams([0, 1], randomCharPool = true)
+            ],
+            [
                 "first fragment is excluded and last is included, random char pool",
-                MergedScriptTextTestParams(listOf(1, 2), randomCharPool = true)
-            ),
-            arrayOf(
+                MergedScriptTextTestParams([1, 2], randomCharPool = true)
+            ],
+            [
                 "first and last fragments are excluded, random char pool",
-                MergedScriptTextTestParams(listOf(1), randomCharPool = true)
-            ),
+                MergedScriptTextTestParams([1], randomCharPool = true)
+            ],
 
-            arrayOf("first and last fragments included, with multiple lines", MergedScriptTextTestParams(listOf(0, 2), "a\nb\nc")),
-            arrayOf("first included, last excluded, with multiple lines", MergedScriptTextTestParams(listOf(0, 1), "a\nb\nc")),
-            arrayOf("first excluded, last included, with multiple lines", MergedScriptTextTestParams(listOf(1, 2), "a\nb\nc")),
-            arrayOf("first and last fragments are excluded, with multiple lines", MergedScriptTextTestParams(listOf(1), "a\nb\nc")),
+            ["first and last fragments included, with multiple lines", MergedScriptTextTestParams([0, 2], "a\nb\nc")],
+            ["first included, last excluded, with multiple lines", MergedScriptTextTestParams([0, 1], "a\nb\nc")],
+            ["first excluded, last included, with multiple lines", MergedScriptTextTestParams([1, 2], "a\nb\nc")],
+            ["first and last fragments are excluded, with multiple lines", MergedScriptTextTestParams([1], "a\nb\nc")],
 
-            arrayOf("first and last fragments included, duplicate fragments", MergedScriptTextTestParams(listOf(0, 2), "aaa")),
-            arrayOf("first included, last excluded, duplicate fragments", MergedScriptTextTestParams(listOf(0, 1), "aaa")),
-            arrayOf("first is excluded,last is included, duplicate fragments", MergedScriptTextTestParams(listOf(1, 2), "aaa")),
-            arrayOf("first and last fragments are excluded, duplicate fragments", MergedScriptTextTestParams(listOf(1), "aaa")),
-        )
+            ["first and last fragments included, duplicate fragments", MergedScriptTextTestParams([0, 2], "aaa")],
+            ["first included, last excluded, duplicate fragments", MergedScriptTextTestParams([0, 1], "aaa")],
+            ["first is excluded,last is included, duplicate fragments", MergedScriptTextTestParams([1, 2], "aaa")],
+            ["first and last fragments are excluded, duplicate fragments", MergedScriptTextTestParams([1], "aaa")],
+        ]
     }
 
 

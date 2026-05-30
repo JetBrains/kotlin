@@ -76,7 +76,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
         get() = !isVar
 
     override val annotations: List<FirAnnotation>
-        get() = emptyList()
+        get() = []
 
     override val typeParameters: List<FirTypeParameter>
         get() = getter.typeParameters

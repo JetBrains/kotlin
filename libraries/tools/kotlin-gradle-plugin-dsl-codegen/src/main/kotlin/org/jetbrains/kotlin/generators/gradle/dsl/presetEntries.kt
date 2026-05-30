@@ -20,7 +20,7 @@ internal class KotlinPresetEntry(
     // Adds `.also { $alsoBlockAfterConfiguration }` after configureOrCreate(...)
     val alsoBlockAfterConfiguration: String? = null,
     // Extra declarations will be inserted before functions are generated
-    val extraTopLevelDeclarations: List<String> = emptyList(),
+    val extraTopLevelDeclarations: List<String> = [],
     val kdoc: String? = null,
 ) {
     class Deprecation(
@@ -31,7 +31,7 @@ internal class KotlinPresetEntry(
     )
 }
 
-internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = setOf(presetType, targetType)
+internal fun KotlinPresetEntry.typeNames(): Set<TypeName> = [presetType, targetType]
 
 internal const val MPP_PACKAGE = "org.jetbrains.kotlin.gradle.plugin.mpp"
 
@@ -70,10 +70,10 @@ internal val androidTargetPresetEntry = KotlinPresetEntry(
 )
 
 // Note: modifying these sets should also be reflected in the MPP plugin code, see 'setupDefaultPresets'
-private val nativeTargetsWithHostTests =
-    setOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.MINGW_X64)
-private val nativeTargetsWithSimulatorTests =
-    setOf(
+private val nativeTargetsWithHostTests: Set<KonanTarget> =
+    [KonanTarget.LINUX_X64, KonanTarget.MACOS_X64, KonanTarget.MACOS_ARM64, KonanTarget.MINGW_X64]
+private val nativeTargetsWithSimulatorTests: Set<KonanTarget> =
+    [
         KonanTarget.IOS_X64,
         KonanTarget.IOS_SIMULATOR_ARM64,
 
@@ -82,7 +82,7 @@ private val nativeTargetsWithSimulatorTests =
 
         KonanTarget.TVOS_X64,
         KonanTarget.TVOS_SIMULATOR_ARM64
-    )
+    ]
 
 internal val nativePresetEntries = HostManager().targets
     .map { [_, target] ->
@@ -104,7 +104,7 @@ internal val nativePresetEntries = HostManager().targets
         KotlinPresetEntry(target.presetName, typeName(presetType), typeName(targetType), deprecation)
     }
 
-internal val allPresetEntries = listOf(
+internal val allPresetEntries = [
     jvmPresetEntry,
     androidTargetPresetEntry,
-) + nativePresetEntries
+] + nativePresetEntries

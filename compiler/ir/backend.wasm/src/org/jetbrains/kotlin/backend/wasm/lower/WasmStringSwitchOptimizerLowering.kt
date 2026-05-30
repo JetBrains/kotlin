@@ -130,7 +130,7 @@ class WasmStringSwitchOptimizerLowering(
                 thenPart = transformedWhen.branches[matchedCase.branchIndex].result,
             )
         } else {
-            val bucketBranches = mutableListOf<IrBranch>()
+            val bucketBranches: MutableList<IrBranch> = []
             bucket.value.mapTo(bucketBranches) { bucketCase ->
                 val matchedCase = stringConstantToMatchedCase.getValue(bucketCase)
                 irBranch(matchedCase.condition, transformedWhen.branches[matchedCase.branchIndex].result)
@@ -146,7 +146,7 @@ class WasmStringSwitchOptimizerLowering(
         selectorsType: IrType,
         elseBranchExpression: IrExpression?
     ): IrWhen {
-        val allBucketsWhenBranches = mutableListOf<IrBranch>()
+        val allBucketsWhenBranches: MutableList<IrBranch> = []
         bucketsSelectors.mapTo(allBucketsWhenBranches) { bucketSelector ->
             val condition = createEqEqForIntVariable(tempIntVariable, bucketSelector.hashCode)
             irBranch(condition, bucketSelector.selector)
@@ -189,7 +189,7 @@ class WasmStringSwitchOptimizerLowering(
                 elsePart = elseBranchIndex.toIrConst(intType)
             )
         } else {
-            val bucketBranches = mutableListOf<IrBranch>()
+            val bucketBranches: MutableList<IrBranch> = []
             bucket.value.mapTo(bucketBranches) { bucketCase ->
                 val matchedCase = stringConstantToMatchedCase.getValue(bucketCase)
                 irBranch(matchedCase.condition, matchedCase.branchIndex.toIrConst(intType))
@@ -201,7 +201,7 @@ class WasmStringSwitchOptimizerLowering(
     }
 
     private fun IrBlockBuilder.createTransformedWhen(tempIntVariable: IrVariable, transformedWhen: IrWhen): IrWhen {
-        val mainResultsBranches = mutableListOf<IrBranch>()
+        val mainResultsBranches: MutableList<IrBranch> = []
         transformedWhen.branches.mapIndexedTo(mainResultsBranches) { index, branch ->
             if (!isElseBranch(branch)) {
                 irBranch(createEqEqForIntVariable(tempIntVariable, index), branch.result)

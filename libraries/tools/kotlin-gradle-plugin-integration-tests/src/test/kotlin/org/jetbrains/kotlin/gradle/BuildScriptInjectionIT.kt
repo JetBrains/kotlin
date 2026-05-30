@@ -309,10 +309,10 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             }
 
             assertEquals(
-                setOf(
+                [
                     "META-INF/MANIFEST.MF",
                     "Generated.class",
-                ),
+                ],
                 publishJava(PublisherConfiguration()).rootComponent.jar.useAsZipFile {
                     it.entries().asSequence().filter { !it.isDirectory }.map { it.name }.toSet()
                 }
@@ -420,12 +420,12 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
                 mutableMapOf<String, ResolvedComponentWithArtifacts>(
                     ":sub" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "foo",
                                 "org.gradle.usage" to "java-api",
                             ),
-                        ),
+                        ],
                         configuration = "consumable",
                     ),
                 ).prettyPrinted,
@@ -699,11 +699,11 @@ class BuildScriptInjectionIT : KGPBaseTest() {
             }.buildAndReturn(metadataTransformationTaskName)
 
             assertEquals(
-                listOf(
-                    listOf("foo", producerName, "1.0", "linuxMain"),
-                    listOf("foo", producerName, "1.0", "nativeMain"),
-                    listOf("foo", producerName, "1.0", "commonMain"),
-                ),
+                [
+                    ["foo", producerName, "1.0", "linuxMain"],
+                    ["foo", producerName, "1.0", "nativeMain"],
+                    ["foo", producerName, "1.0", "commonMain"],
+                ],
                 transformedFiles.map { it.nameWithoutExtension.split("-").take(4) },
             )
         }

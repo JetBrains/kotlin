@@ -39,6 +39,6 @@ interface AdditionalClassPartsProvider {
         override fun getAdditionalSupertypes(
             thisDescriptor: ClassDescriptor,
             existingSupertypes: List<KotlinType>
-        ): List<KotlinType> = emptyList()
+        ): List<KotlinType> = []
     }
 }

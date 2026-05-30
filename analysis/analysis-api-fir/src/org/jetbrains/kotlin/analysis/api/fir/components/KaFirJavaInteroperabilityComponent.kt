@@ -231,7 +231,7 @@ internal class KaFirJavaInteroperabilityComponent(
 
         val javaTypeRef = buildJavaTypeRef {
             // Annotations are unused during `resolveIfJavaType`, so there is no need to provide something
-            annotationBuilder = { emptyList() }
+            annotationBuilder = { [] }
             type = javaType
         }
 
@@ -457,7 +457,7 @@ internal class KaFirJavaInteroperabilityComponent(
 private fun ConeKotlinType.simplifyType(
     session: FirSession,
     useSitePosition: PsiElement,
-    visited: MutableSet<ConeKotlinType> = mutableSetOf(),
+    visited: MutableSet<ConeKotlinType> = [],
 ): ConeKotlinType {
     // E.g., Wrapper<T> : Comparable<Wrapper<T>>
     if (!visited.add(this)) return this
@@ -508,7 +508,7 @@ private fun ConeKotlinType.needLocalTypeApproximation(
     useSitePosition: PsiElement,
 ): Boolean {
     if (!shouldApproximateLocalTypesOfNonLocalDeclaration(visibilityForApproximation, isInlineFunction)) return false
-    val localTypes: List<ConeKotlinType> = if (isLocal(session)) listOf(this) else {
+    val localTypes: List<ConeKotlinType> = if (isLocal(session)) [this] else {
         typeArguments.mapNotNull {
             if (it is ConeKotlinTypeProjection && it.type.isLocal(session)) {
                 it.type
@@ -605,7 +605,7 @@ private class AnonymousTypesSubstitutor(
     }
 
     private fun ConeKotlinType.hasRecursiveTypeArgument(
-        visited: MutableSet<ConeKotlinType> = mutableSetOf(),
+        visited: MutableSet<ConeKotlinType> = [],
     ): Boolean {
         if (typeArguments.isEmpty()) return false
         if (!visited.add(this)) return true

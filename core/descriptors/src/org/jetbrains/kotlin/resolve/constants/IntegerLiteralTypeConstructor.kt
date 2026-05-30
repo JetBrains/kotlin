@@ -76,7 +76,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
         this.value = value
         this.module = module
 
-        val possibleTypes = mutableSetOf<KotlinType>()
+        val possibleTypes: MutableSet<KotlinType> = []
 
         fun checkBoundsAndAddPossibleType(value: Long, kotlinType: KotlinType) {
             if (value in kotlinType.minValue()..kotlinType.maxValue()) {
@@ -132,7 +132,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
     private fun isContainsOnlyUnsignedTypes(): Boolean = module.allSignedLiteralTypes.all { it !in possibleTypes }
 
     private val supertypes: List<KotlinType> by lazy {
-        val result = mutableListOf(builtIns.comparable.defaultType.replace(listOf(TypeProjectionImpl(Variance.IN_VARIANCE, type))))
+        val result: MutableList<SimpleType> = [builtIns.comparable.defaultType.replace([TypeProjectionImpl(Variance.IN_VARIANCE, type)])]
         if (!isContainsOnlyUnsignedTypes()) {
             result += builtIns.numberType
         }
@@ -154,7 +154,7 @@ class IntegerLiteralTypeConstructor : TypeConstructor {
     }
 
 
-    override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
 

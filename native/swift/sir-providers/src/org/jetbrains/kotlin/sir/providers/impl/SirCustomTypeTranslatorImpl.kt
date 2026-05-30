@@ -94,7 +94,7 @@ public class SirCustomTypeTranslatorImpl(
                     if (!swiftArgumentType.isBridgeableCollectionElement()) return null
                     swiftType = SirNominalType(
                         SirSwiftModule.set,
-                        listOf(swiftArgumentType)
+                        [swiftArgumentType]
                     )
                     AsNSSet(swiftType, bridgeAsNSCollectionElement(swiftArgumentType)).wrapper()
                 }
@@ -119,7 +119,7 @@ public class SirCustomTypeTranslatorImpl(
                     val inclusive = !isClassType(ClassId.topLevel(openEndRangeFqName))
                     swiftType = SirNominalType(
                         typeDeclaration = if (inclusive) SirSwiftModule.closedRange else SirSwiftModule.range,
-                        typeArguments = listOf(swiftArgumentType)
+                        typeArguments = [swiftArgumentType]
                     )
                     RangeBridge(
                         swiftType,
@@ -133,7 +133,7 @@ public class SirCustomTypeTranslatorImpl(
                     val swiftArgumentType = SirNominalType(SirSwiftModule.int32)
                     swiftType = SirNominalType(
                         SirSwiftModule.closedRange,
-                        listOf(swiftArgumentType)
+                        [swiftArgumentType]
                     )
                     RangeBridge(
                         swiftType,
@@ -147,7 +147,7 @@ public class SirCustomTypeTranslatorImpl(
                     val swiftArgumentType = SirNominalType(SirSwiftModule.int64)
                     swiftType = SirNominalType(
                         SirSwiftModule.closedRange,
-                        listOf(swiftArgumentType)
+                        [swiftArgumentType]
                     )
                     RangeBridge(
                         swiftType,
@@ -282,7 +282,7 @@ public class SirCustomTypeTranslatorImpl(
 
         context(sir: SirSession)
         override fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> =
-            listOf(constructorBridge(), getterBridge(0), getterBridge(1))
+            [constructorBridge(), getterBridge(0), getterBridge(1)]
 
         private fun constructorBridge(): SirFunctionBridge {
             val operator = if (inclusive) ".." else "..<"
@@ -291,17 +291,17 @@ public class SirCustomTypeTranslatorImpl(
             return SirFunctionBridge(
                 name,
                 KotlinFunctionBridge(
-                    lines = listOf(
+                    lines = [
                         "@${exportAnnotationFqName.substringAfterLast('.')}(\"$name\")",
                         "fun $name(start: ${pairedParameterKotlinType.repr}, end: ${pairedParameterKotlinType.repr}): kotlin.native.internal.NativePtr {",
                         "    return kotlin.native.internal.ref.createRetainedExternalRCRef(start $operator end)",
                         "}",
-                    ),
-                    packageDependencies = listOf()
+                    ],
+                    packageDependencies = []
                 ),
                 CFunctionBridge(
-                    listOf("void * $name($cRangeElementName start, $cRangeElementName end);"),
-                    listOf()
+                    ["void * $name($cRangeElementName start, $cRangeElementName end);"],
+                    []
                 )
             )
         }
@@ -315,18 +315,18 @@ public class SirCustomTypeTranslatorImpl(
             return SirFunctionBridge(
                 name,
                 KotlinFunctionBridge(
-                    lines = listOf(
+                    lines = [
                         "@${exportAnnotationFqName.substringAfterLast('.')}(\"$name\")",
                         "fun $name(nativePtr: kotlin.native.internal.NativePtr): ${pairedParameterKotlinType.repr} {",
                         "    val $kotlinRangeNameDecapitalized = kotlin.native.internal.ref.dereferenceExternalRCRef(nativePtr) as $kotlinRangeTypeDescription",
                         "    return $kotlinRangeNameDecapitalized.$propertyName",
                         "}",
-                    ),
-                    packageDependencies = listOf()
+                    ],
+                    packageDependencies = []
                 ),
                 CFunctionBridge(
-                    listOf("$cRangeElementName $name(void * nativePtr);"),
-                    listOf()
+                    ["$cRangeElementName $name(void * nativePtr);"],
+                    []
                 )
             )
         }
@@ -345,7 +345,7 @@ public class SirCustomTypeTranslatorImpl(
 
         // These classes already have ObjC counterparts assigned statically in ObjC Export.
         private val supportedFqNames: List<FqName> =
-            listOf(
+            [
                 FqNames.set,
                 FqNames.map,
                 FqNames.list,
@@ -367,7 +367,7 @@ public class SirCustomTypeTranslatorImpl(
                 FqNames._double.toSafe(),
                 FqNames._float.toSafe(),
                 FqNames.unit.toSafe(),
-            )
+            ]
 
         private val primitiveTypeToWrapperMap: Map<SirNominalType, SirCustomTypeTranslator.BridgeWrapper> = buildMap {
             for ([declaration, kctype] in mapOf(

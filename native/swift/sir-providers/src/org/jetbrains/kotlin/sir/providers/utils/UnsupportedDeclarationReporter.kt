@@ -17,7 +17,7 @@ public interface UnsupportedDeclarationReporter {
 
 public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReporter {
 
-    private val _messages: MutableList<String> = mutableListOf()
+    private val _messages: MutableList<String> = []
 
     public override val messages: List<String>
         get() = _messages.toList()
@@ -33,6 +33,6 @@ public class SimpleUnsupportedDeclarationReporter : UnsupportedDeclarationReport
 }
 
 public object SilentUnsupportedDeclarationReporter : UnsupportedDeclarationReporter {
-    public override val messages: List<String> = emptyList()
+    public override val messages: List<String> = []
     override fun report(symbol: KaDeclarationSymbol, reason: String) {}
 }

@@ -22,13 +22,13 @@ class FiltersMatcherTests {
         val emptyMatcherManual = compileMatcher(FiltersBuilder().build())
         assertTrue(emptyMatcherManual.isEmpty)
         assertFalse(emptyMatcherManual.isExcludedByName("some.Name"))
-        assertFalse(emptyMatcherManual.isExcludedByAnnotations(listOf("some.Annotation")))
+        assertFalse(emptyMatcherManual.isExcludedByAnnotations(["some.Annotation"]))
 
         // default empty
         val emptyMatcherDefault = compileMatcher(AbiFilters.EMPTY)
         assertTrue(emptyMatcherDefault.isEmpty)
         assertFalse(emptyMatcherDefault.isExcludedByName("some.Name"))
-        assertFalse(emptyMatcherDefault.isExcludedByAnnotations(listOf("some.Annotation")))
+        assertFalse(emptyMatcherDefault.isExcludedByAnnotations(["some.Annotation"]))
     }
 
     @Test
@@ -215,10 +215,10 @@ class FiltersMatcherTests {
     }
 
     private class FiltersBuilder {
-        private val includedClasses = mutableSetOf<String>()
-        private val excludedClasses = mutableSetOf<String>()
-        private val includedAnnotatedWith = mutableSetOf<String>()
-        private val excludedAnnotatedWith = mutableSetOf<String>()
+        private val includedClasses: MutableSet<String> = []
+        private val excludedClasses: MutableSet<String> = []
+        private val includedAnnotatedWith: MutableSet<String> = []
+        private val excludedAnnotatedWith: MutableSet<String> = []
 
         fun excludeClasses(vararg filter: String): FiltersBuilder {
             excludedClasses.addAll(filter)

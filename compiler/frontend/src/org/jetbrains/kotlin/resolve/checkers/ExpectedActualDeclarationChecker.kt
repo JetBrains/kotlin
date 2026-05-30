@@ -260,7 +260,7 @@ class ExpectedActualDeclarationChecker(
     }
 
     private fun getMembersWithDefaultValueParametersUnlessAnnotation(classDescriptor: ClassDescriptor): List<FunctionDescriptor> {
-        val result = mutableListOf<FunctionDescriptor>()
+        val result: MutableList<FunctionDescriptor> = []
 
         fun collectFunctions(classDescriptor: ClassDescriptor) {
             if (classDescriptor.kind == ClassKind.ANNOTATION_CLASS) {

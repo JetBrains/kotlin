@@ -13,11 +13,11 @@ fun LighterASTNode.getChildren(tree: FlyweightCapableTreeStructure<LighterASTNod
     val children = Ref<Array<LighterASTNode?>>()
     val count = tree.getChildren(this, children)
     @Suppress("UNCHECKED_CAST")
-    return if (count > 0) children.get().take(count) as List<LighterASTNode> else emptyList()
+    return if (count > 0) children.get().take(count) as List<LighterASTNode> else []
 }
 
 fun LighterASTNode.getSingleChildOrNull(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode? {
-    val children = Ref<Array<LighterASTNode?>>(arrayOf(null))
+    val children = Ref<Array<LighterASTNode?>>([null])
     val count = tree.getChildren(this, children)
     return if (count == 1) children.get()[0] else null
 }

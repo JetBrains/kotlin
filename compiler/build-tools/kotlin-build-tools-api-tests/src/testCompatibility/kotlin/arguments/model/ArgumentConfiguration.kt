@@ -25,7 +25,7 @@ internal abstract class ArgumentConfiguration<T>(
 
     fun expectedArgumentStringsFor(value: String?): List<String> {
         if (value == null || value == getDefaultValueString()) {
-            return emptyList()
+            return []
         }
 
         return argumentTestDescriptor.expectedArgumentStringsFor(value)

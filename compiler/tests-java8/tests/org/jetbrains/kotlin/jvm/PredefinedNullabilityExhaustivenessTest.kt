@@ -20,7 +20,7 @@ class PredefinedNullabilityExhaustivenessTest : TestCase() {
     }
 
     companion object {
-        private val EXPECTED_TO_BE_EXCLUDED_FROM_PREDEFINED_NULLABILITY = setOf(
+        private val EXPECTED_TO_BE_EXCLUDED_FROM_PREDEFINED_NULLABILITY: Set<String> = [
             "java/lang/CharSequence.codePoints()Ljava/util/stream/IntStream;",
             "java/lang/CharSequence.chars()Ljava/util/stream/IntStream;",
             "java/lang/Iterable.forEach(Ljava/util/function/Consumer;)V",
@@ -38,6 +38,6 @@ class PredefinedNullabilityExhaustivenessTest : TestCase() {
             // It's ok because we've got a Kotlin defined signature in built-in class declaration
             "java/util/Map.getOrDefault(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;",
             "java/lang/Throwable.<init>(Ljava/lang/String;Ljava/lang/Throwable;ZZ)V"
-        )
+        ]
     }
 }

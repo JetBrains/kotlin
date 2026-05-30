@@ -58,7 +58,7 @@ internal fun KmProperty.getterId(propertyId: PropertyId): FunctionId = FunctionI
     qualifiedName = "${propertyId.qualifiedName.dropLast(name.length)}<get-$name>",
     contextReceivers = propertyId.contextReceivers,
     extensionReceiver = propertyId.extensionReceiver,
-    parameters = emptyList(),
+    parameters = [],
     returnType = propertyId.returnType
 )
 
@@ -66,7 +66,7 @@ internal fun KmProperty.setterId(propertyId: PropertyId, setterParameter: KmValu
     qualifiedName = "${propertyId.qualifiedName.dropLast(name.length)}<set-$name>",
     contextReceivers = propertyId.contextReceivers,
     extensionReceiver = propertyId.extensionReceiver,
-    parameters = listOf(ParameterId((setterParameter?.type ?: returnType).typeId(), false)),
+    parameters = [ParameterId((setterParameter?.type ?: returnType).typeId(), false)],
     returnType = TypeId.UNIT
 )
 

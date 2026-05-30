@@ -89,10 +89,10 @@ class Fir2IrDataClassMembersGenerator(
             )
 
         fun generateHeaders(): List<FirDeclaration> {
-            val result = mutableListOf<FirDeclaration>()
+            val result: MutableList<FirDeclaration> = []
             val contributedSyntheticFunctions = calculateSyntheticFirFunctions()
 
-            val generatedIrFunctions = mutableListOf<IrSimpleFunction>()
+            val generatedIrFunctions: MutableList<IrSimpleFunction> = []
 
             val toStringContributedFunction = contributedSyntheticFunctions[TO_STRING]
             if (toStringContributedFunction != null) {
@@ -143,7 +143,7 @@ class Fir2IrDataClassMembersGenerator(
             val scope = klass.unsubstitutedScope()
             val contributedSyntheticFunctions =
                 buildMap<Name, FirNamedFunction> {
-                    for (name in listOf(EQUALS, HASHCODE_NAME, TO_STRING)) {
+                    for (name in [EQUALS, HASHCODE_NAME, TO_STRING]) {
                         scope.processFunctionsByName(name) {
                             // We won't synthesize a function if there is a user-contributed (non-synthetic) one.
                             if (it.origin !is FirDeclarationOrigin.Synthetic) return@processFunctionsByName

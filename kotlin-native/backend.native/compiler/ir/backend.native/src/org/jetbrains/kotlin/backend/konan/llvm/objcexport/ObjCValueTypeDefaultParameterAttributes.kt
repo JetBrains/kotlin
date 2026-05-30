@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 
 internal val ObjCValueType.defaultParameterAttributes: List<LlvmParameterAttribute>
     get() = when (this) {
-        ObjCValueType.BOOL -> listOf(LlvmParameterAttribute.SignExt)
-        ObjCValueType.UNICHAR -> listOf(LlvmParameterAttribute.ZeroExt)
-        ObjCValueType.CHAR -> listOf(LlvmParameterAttribute.SignExt)
-        ObjCValueType.SHORT -> listOf(LlvmParameterAttribute.SignExt)
-        ObjCValueType.UNSIGNED_CHAR -> listOf(LlvmParameterAttribute.ZeroExt)
-        ObjCValueType.UNSIGNED_SHORT -> listOf(LlvmParameterAttribute.ZeroExt)
-        else -> emptyList()
+        ObjCValueType.BOOL -> [LlvmParameterAttribute.SignExt]
+        ObjCValueType.UNICHAR -> [LlvmParameterAttribute.ZeroExt]
+        ObjCValueType.CHAR -> [LlvmParameterAttribute.SignExt]
+        ObjCValueType.SHORT -> [LlvmParameterAttribute.SignExt]
+        ObjCValueType.UNSIGNED_CHAR -> [LlvmParameterAttribute.ZeroExt]
+        ObjCValueType.UNSIGNED_SHORT -> [LlvmParameterAttribute.ZeroExt]
+        else -> []
     }

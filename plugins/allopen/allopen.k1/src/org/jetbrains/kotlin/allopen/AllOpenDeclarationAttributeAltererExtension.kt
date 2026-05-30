@@ -33,7 +33,7 @@ class CliAllOpenDeclarationAttributeAltererExtension(
 
 abstract class AbstractAllOpenDeclarationAttributeAltererExtension : DeclarationAttributeAltererExtension, AnnotationBasedExtension {
     companion object {
-        val ANNOTATIONS_FOR_TESTS = listOf("AllOpen", "AllOpen2", "test.AllOpen")
+        val ANNOTATIONS_FOR_TESTS = ["AllOpen", "AllOpen2", "test.AllOpen"]
     }
 
     override fun refineDeclarationModality(

@@ -81,7 +81,7 @@ open class Arguments(internal val arguments: Map<String, Interpreter.Success<Any
 
 abstract class AbstractInterpreter<T> : Interpreter<T> {
     @PublishedApi
-    internal val expectedArguments: MutableList<Interpreter.ExpectedArgument> = mutableListOf()
+    internal val expectedArguments: MutableList<Interpreter.ExpectedArgument> = []
 
     override fun expectedArguments(): List<Interpreter.ExpectedArgument> = expectedArguments
 

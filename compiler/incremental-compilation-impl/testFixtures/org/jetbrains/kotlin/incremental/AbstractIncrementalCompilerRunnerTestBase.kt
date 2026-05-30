@@ -48,7 +48,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
 
 
     protected open fun setupTest(testDir: File, srcDir: File, cacheDir: File, outDir: File): List<File> =
-        listOf(srcDir)
+        [srcDir]
 
     protected open fun resetTest(testDir: File, newOutDir: File, newCacheDir: File) {}
 
@@ -256,7 +256,7 @@ abstract class AbstractIncrementalCompilerRunnerTestBase<Args : CommonCompilerAr
                 ?.readText()
                 ?.split(" ", "\n")
                 ?.filter { it.isNotBlank() }
-                ?: emptyList()
+                ?: []
         }
     }
 }

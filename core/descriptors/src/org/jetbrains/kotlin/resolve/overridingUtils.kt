@@ -23,7 +23,7 @@ import java.util.*
 
 fun <D : CallableDescriptor> D.findTopMostOverriddenDescriptors(): List<D> {
     return DFS.dfs(
-        listOf(this),
+        [this],
         { current -> current.overriddenDescriptors },
         object : DFS.CollectingNodeHandler<CallableDescriptor, CallableDescriptor, ArrayList<D>>(ArrayList<D>()) {
             override fun afterChildren(current: CallableDescriptor) {

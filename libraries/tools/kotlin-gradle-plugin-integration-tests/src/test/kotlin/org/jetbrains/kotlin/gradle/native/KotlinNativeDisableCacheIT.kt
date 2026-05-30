@@ -161,7 +161,7 @@ internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() 
      * Defines the parameters for a Linux Arm64 host environment.
      * These parameters are used to specify the operating system name and architecture.
      */
-    private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
+    private val linuxArm64HostParameters = ["-Dos.name=Linux", "-Dos.arch=aarch64"]
 
     @OptIn(KotlinNativeCacheApi::class)
     @GradleTest
@@ -178,7 +178,7 @@ internal class KotlinNativeDisableCacheUnsupportedHostIT : KGPDaemonsBaseTest() 
 
             // Simulate a host (Linux Arm64) that cannot build the defined target.
             // result: The link task is NOT registered.
-            val args = listOf(taskName) + linuxArm64HostParameters
+            val args = [taskName] + linuxArm64HostParameters
 
             build(*args.toTypedArray()) {
                 // Confirm that the host mismatch was detected

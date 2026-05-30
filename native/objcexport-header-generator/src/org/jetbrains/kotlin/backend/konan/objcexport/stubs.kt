@@ -85,7 +85,7 @@ class ObjCComment(val contentLines: List<String>) {
 
 data class ObjCClassForwardDeclaration(
     val className: String,
-    val typeDeclarations: List<ObjCGenericTypeDeclaration> = emptyList(),
+    val typeDeclarations: List<ObjCGenericTypeDeclaration> = [],
 )
 
 class ObjCProtocolImpl(
@@ -143,7 +143,7 @@ class ObjCProperty(
     val propertyAttributes: List<String>,
     val setterName: String? = null,
     val getterName: String? = null,
-    val declarationAttributes: List<String> = emptyList(),
+    val declarationAttributes: List<String> = [],
     override val extras: Extras = emptyExtras(),
 ) : ObjCExportStub
 

@@ -59,7 +59,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
 
     private fun getVersionParameterRawIndexes(function: IrFunction): Map<String?, MutableList<Int>> =
         buildMap {
-            put(null, mutableListOf()) // we always have the 'no annotation' case
+            put(null, []) // we always have the 'no annotation' case
             for ([index, parameter] in function.parameters.withIndex()) {
                 val version = when {
                     parameter.kind != IrParameterKind.Regular -> null
@@ -69,7 +69,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
                         (annotation?.arguments?.first() as? IrConst)?.value as? String
                     }
                 }
-                getOrPut(version) { mutableListOf() }.add(index)
+                getOrPut(version) { [] }.add(index)
             }
         }
 
@@ -77,9 +77,9 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         container: IrDeclarationContainer,
         versionParamRawIndexes: Map<String?, MutableList<Int>>
     ) = irFactory.stageController.restrictTo(this) {
-        val versionParamIndexes = buildSortedMap {
+        val versionParamIndexes = buildSortedMap<_, MutableList<Int>> {
             for ([version, indexes] in versionParamRawIndexes) {
-                getOrPut(version?.let(::MavenComparableVersion)) { mutableListOf() }.addAll(indexes)
+                getOrPut(version?.let(::MavenComparableVersion)) { [] }.addAll(indexes)
             }
         }
 
@@ -102,7 +102,7 @@ open class VersionOverloadsLowering(val irFactory: IrFactory, val irBuiltIns: Ir
         generateWrapperHeader(original, version, includedParams).apply {
             val wrapperCall = generateWrapperCall(original, includedParams)
             body = when (original) {
-                is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(wrapperCall))
+                is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, [wrapperCall])
                 else -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
                     statements += IrReturnImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.nothingType, symbol, wrapperCall)
                 }

@@ -7,7 +7,7 @@ class MapToFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.body by dsl()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val addDsl = AddDslApproximation(mutableListOf())
+        val addDsl = AddDslApproximation([])
         body(addDsl, emptyMap())
         return PluginDataFrameSchema(addDsl.columns)
     }

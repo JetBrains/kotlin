@@ -31,5 +31,5 @@ object JvmDefaultImportsProvider : DefaultImportsProvider() {
         }
     }
 
-    override val defaultLowPriorityImports: List<ImportPath> = listOf(ImportPath.fromString("java.lang.*"))
+    override val defaultLowPriorityImports: List<ImportPath> = [ImportPath.fromString("java.lang.*")]
 }

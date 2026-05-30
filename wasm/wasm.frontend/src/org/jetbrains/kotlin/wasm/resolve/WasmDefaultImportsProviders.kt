@@ -10,12 +10,12 @@ import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
 object WasmJsDefaultImportsProvider : DefaultImportsProvider() {
-    override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.js.*"))
+    override val platformSpecificDefaultImports: List<ImportPath> = [ImportPath.fromString("kotlin.js.*")]
 
-    override val excludedImports: List<FqName> = listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json")
+    override val excludedImports: List<FqName> = ["Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json"]
         .map { FqName("kotlin.js.$it") }
 }
 
 object WasmWasiDefaultImportsProvider : DefaultImportsProvider() {
-    override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.wasm.*"))
+    override val platformSpecificDefaultImports: List<ImportPath> = [ImportPath.fromString("kotlin.wasm.*")]
 }

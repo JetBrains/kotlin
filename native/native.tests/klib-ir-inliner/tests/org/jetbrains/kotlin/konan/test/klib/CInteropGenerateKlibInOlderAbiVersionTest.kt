@@ -59,15 +59,15 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             Good("2.4"),
             Bad("2.5"),
         ).forEach { testData ->
-            val cinteropArgs = listOf(
+            val cinteropArgs = [
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
                 "-Xccall-mode", "DIRECT",
-            )
+            ]
 
             val cinteropResult = cinteropToLibrary(
                 defFile = defFile,
                 outputDir = outputDir,
-                freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = cinteropArgs)
+                freeCompilerArgs = TestCompilerArgs(compilerArgs = [], cinteropArgs = cinteropArgs)
             )
 
             when (cinteropResult) {
@@ -102,15 +102,15 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             Good("2.4", "DIRECT"),
             Good("2.4", "BOTH"),
         ).forEach { testData ->
-            val cinteropArgs = listOf(
+            val cinteropArgs = [
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
                 "-Xccall-mode", testData.cCallMode,
-            )
+            ]
 
             val cinteropResult = cinteropToLibrary(
                 defFile = defFile,
                 outputDir = outputDir,
-                freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = cinteropArgs)
+                freeCompilerArgs = TestCompilerArgs(compilerArgs = [], cinteropArgs = cinteropArgs)
             )
 
             when (cinteropResult) {
@@ -138,15 +138,15 @@ class CInteropGenerateKlibInOlderAbiVersionTest : AbstractNativeSimpleTest() {
             TestData(abiCompatibilityLevel = "2.3", expectedAbiVersion = "2.3.0", expectedMetadataVersion = "2.3.0"),
             TestData(abiCompatibilityLevel = "2.4", expectedAbiVersion = "2.4.0", expectedMetadataVersion = "2.4.0"),
         ).forEach { testData ->
-            val cinteropArgs = listOf(
+            val cinteropArgs = [
                 "-Xklib-abi-compatibility-level", testData.abiCompatibilityLevel,
                 "-Xccall-mode", "DIRECT",
-            )
+            ]
 
             val cinteropResult = cinteropToLibrary(
                 defFile = defFile,
                 outputDir = outputDir,
-                freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = cinteropArgs)
+                freeCompilerArgs = TestCompilerArgs(compilerArgs = [], cinteropArgs = cinteropArgs)
             )
 
             when (cinteropResult) {

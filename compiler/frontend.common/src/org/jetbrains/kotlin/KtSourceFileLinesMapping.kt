@@ -76,7 +76,7 @@ fun InputStreamReader.readSourceFileWithMapping(): Pair<CharSequence, KtSourceFi
 
     var charsRead = 0
 
-    val lineOffsets = mutableListOf(0) // TODO: consider using implicit first line offset (needs to be handled properly in IR)
+    val lineOffsets: MutableList<Int> = [0] // TODO: consider using implicit first line offset (needs to be handled properly in IR)
     val sb = StringBuilder()
 
     while (true) {
@@ -116,7 +116,7 @@ fun InputStreamReader.readSourceFileWithMapping(): Pair<CharSequence, KtSourceFi
  * intended for using mainly in tests, so no care is taken about performance or possible corner cases
  */
 fun CharSequence.toSourceLinesMapping(): KtSourceFileLinesMapping {
-    val lineOffsets = mutableListOf(0)
+    val lineOffsets: MutableList<Int> = [0]
     var offset = 0
     for (c in this) {
         offset++

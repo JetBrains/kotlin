@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
-val kotlinPackageFqn = FqName.fromSegments(listOf("kotlin"))
+val kotlinPackageFqn = FqName.fromSegments(["kotlin"])
 private val kotlinReflectionPackageFqn = kotlinPackageFqn.child(Name.identifier("reflect"))
 private val kotlinCoroutinesPackageFqn = kotlinPackageFqn.child(Name.identifier("coroutines"))
 
@@ -65,7 +65,7 @@ private inline fun IrClassifierSymbol.checkNameAndPackage(checkName: (String) ->
 fun IrClassifierSymbol.superTypes(): List<IrType> = when (this) {
     is IrClassSymbol -> owner.superTypes
     is IrTypeParameterSymbol -> owner.superTypes
-    is IrScriptSymbol -> emptyList()
+    is IrScriptSymbol -> []
 }
 
 fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
@@ -74,10 +74,10 @@ fun IrClassifierSymbol.isSubtypeOfClass(superClass: IrClassSymbol): Boolean =
 fun IrClassifierSymbol.isStrictSubtypeOfClass(superClass: IrClassSymbol): Boolean =
     superTypes().any { it.isSubtypeOfClass(superClass) }
 
-fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: emptyList()
+fun IrType.superTypes(): List<IrType> = classifierOrNull?.superTypes() ?: []
 
-fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isFunction)
-fun IrType.isSuspendFunctionTypeOrSubtype(): Boolean = DFS.ifAny(listOf(this), IrType::superTypes, IrType::isSuspendFunction)
+fun IrType.isFunctionTypeOrSubtype(): Boolean = DFS.ifAny([this], IrType::superTypes, IrType::isFunction)
+fun IrType.isSuspendFunctionTypeOrSubtype(): Boolean = DFS.ifAny([this], IrType::superTypes, IrType::isSuspendFunction)
 
 fun IrType.isTypeParameter() = classifierOrNull is IrTypeParameterSymbol
 

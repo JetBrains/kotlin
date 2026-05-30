@@ -496,10 +496,10 @@ private class FirPartialBodyExpressionResolveTransformer(
     private fun collectDefaultParameterValues(declaration: FirDeclaration): List<FirExpression> {
         if (declaration is FirFunction) {
             val result = declaration.valueParameters.mapNotNull { it.defaultValue }
-            return result.ifEmpty { emptyList() }
+            return result.ifEmpty { [] }
         }
 
-        return emptyList()
+        return []
     }
 
     /**
@@ -954,7 +954,7 @@ private fun StateKeeperScope<FirAnonymousInitializer, FirDesignation>.preserveRe
         builder = builder,
         declaration = initializer,
         bodySupplier = FirAnonymousInitializer::body,
-        parameterSupplier = { emptyList() },
+        parameterSupplier = { [] },
     )
 }
 

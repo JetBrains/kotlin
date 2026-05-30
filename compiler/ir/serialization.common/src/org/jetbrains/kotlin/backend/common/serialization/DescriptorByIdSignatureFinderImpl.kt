@@ -99,7 +99,7 @@ class DescriptorByIdSignatureFinderImpl(
             return listOfNotNull(classifier)
         }
 
-        val result = mutableListOf<DeclarationDescriptor>()
+        val result: MutableList<DeclarationDescriptor> = []
         classifier?.let { result.add(it) }
 
         result.addAll(getContributedFunctions(descriptorName, NoLookupLocation.FROM_BACKEND))
@@ -141,13 +141,13 @@ class DescriptorByIdSignatureFinderImpl(
         for (i in 1 until nameSegments.size) {
             val current = Name.guessByFirstCharacter(nameSegments[i])
             acc = acc.flatMap { container ->
-                val classDescriptor = container as? ClassDescriptor ?: return@flatMap emptyList<DeclarationDescriptor>()
+                val classDescriptor = container as? ClassDescriptor ?: return@flatMap []
                 val isLeaf = i == lastIndex
                 val memberScope = classDescriptor.unsubstitutedMemberScope
 
                 val classifier = memberScope.getContributedClassifier(current, NoLookupLocation.FROM_BACKEND)
                 if (!isLeaf) {
-                    classifier?.let { listOf(it) } ?: emptyList()
+                    classifier?.let { [it] } ?: []
                 } else {
                     mutableListOf<DeclarationDescriptor>().apply {
                         addIfNotNull(classifier)

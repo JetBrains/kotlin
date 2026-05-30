@@ -60,7 +60,7 @@ fun IrClass.isObjCClass() = this.packageFqName != interopPackageName &&
         selfOrAnySuperClass { it.hasEqualFqName(objCObjectFqName) }
 
 fun IrType.isObjCObjectType(): Boolean = DFS.ifAny(
-    /* nodes = */ listOf(this.classifierOrFail),
+    /* nodes = */ [this.classifierOrFail],
     /* neighbors = */ { current -> current.superTypes().map { it.classifierOrFail } },
     /* predicate = */ { (it as? IrClassSymbol)?.owner?.hasEqualFqName(objCObjectFqName) == true }
 )

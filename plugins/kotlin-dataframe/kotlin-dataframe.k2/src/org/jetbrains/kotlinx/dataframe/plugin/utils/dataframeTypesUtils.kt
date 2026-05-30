@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 fun ConeKotlinType.isDataFrame(session: FirSession) =
     isSubtypeOf(
-        Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false),
+        Names.DF_CLASS_ID.constructClassLikeType([ConeStarProjection], isMarkedNullable = false),
         session
     )
 
@@ -62,7 +62,7 @@ context(sessionHolder: SessionHolder)
 fun ConeKotlinType.isSelfComparable(): Boolean {
     val session = sessionHolder.session
     val comparable = StandardClassIds.Comparable.constructClassLikeType(
-        typeArguments = arrayOf(this.withNullability(nullable = false, session.typeContext)),
+        typeArguments = [this.withNullability(nullable = false, session.typeContext)],
         isMarkedNullable = this.isMarkedNullable,
     )
     return this.isSubtypeOf(comparable, session)

@@ -54,7 +54,7 @@ class NativeDownloadAndPlatformLibsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.withBundledKotlinNative().copy(
             // Disabling toolchain feature for checking stable logic with downloading kotlin native
-            freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
+            freeArgs = ["-Pkotlin.native.toolchain.enabled=false"],
             // For each test in this class, we need to provide an isolated .konan directory,
             // so we create it within each test project folder
             konanDataDir = workingDir.resolve(".konan")

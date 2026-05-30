@@ -21,12 +21,12 @@ class SourceMap3Builder(
     private val out = StringBuilder(8192)
 
     private val sources = createOpenHashMap<SourceKey>()
-    private val orderedSources = mutableListOf<String>()
-    private val orderedSourceContentSuppliers = mutableListOf<Supplier<Reader?>>()
+    private val orderedSources: MutableList<String> = []
+    private val orderedSourceContentSuppliers: MutableList<Supplier<Reader?>> = []
     private val ignoredSources = linkedSetOf<Int>()
 
     private val names = createOpenHashMap<String>()
-    private val orderedNames = mutableListOf<String>()
+    private val orderedNames: MutableList<String> = []
     private var previousNameIndex = 0
     private var previousPreviousNameIndex = 0
 

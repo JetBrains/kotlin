@@ -104,7 +104,7 @@ class LargeClasspathsPerformanceTest : AbstractKotlinCompilerIntegrationTest() {
             }
         }
 
-        val classPaths = mutableListOf<File>()
+        val classPaths: MutableList<File> = []
         var totalNumberOfGeneratedJavaFiles = 0
 
         val generationTime = measureTime {

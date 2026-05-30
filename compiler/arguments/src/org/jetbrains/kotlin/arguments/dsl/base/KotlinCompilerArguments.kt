@@ -42,7 +42,7 @@ internal class KotlinCompilerArgumentsBuilder() {
      */
     fun topLevel(
         name: String,
-        mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
+        mergeWith: Set<KotlinCompilerArgumentsLevel> = [],
         config: KotlinCompilerArgumentsLevelBuilder.() -> Unit
     ) {
         val levelBuilder = KotlinCompilerArgumentsLevelBuilder(name)

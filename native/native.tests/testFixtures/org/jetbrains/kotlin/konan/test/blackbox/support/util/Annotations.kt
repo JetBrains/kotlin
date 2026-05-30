@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support.util
  */
 internal val Class<*>.allInheritedAnnotations: List<Annotation>
     get() {
-        val annotations = mutableListOf<Annotation>()
+        val annotations: MutableList<Annotation> = []
 
         val processedClasses = hashSetOf<Class<*>>()
         fun process(clazz: Class<*>) {

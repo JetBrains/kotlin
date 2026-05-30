@@ -26,7 +26,7 @@ abstract class AbstractNativeHeaderKlibComparisonTest : AbstractNativeSimpleTest
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
 
-        val testCaseBase: TestCase = generateTestcaseFromDirectory(testPathFull, "base", listOf())
+        val testCaseBase: TestCase = generateTestcaseFromDirectory(testPathFull, "base", [])
         compileToLibrary(testCaseBase).assertSuccess()
         val headerKlibBase = File(getHeaderPath("base"))
         assert(headerKlibBase.exists())
@@ -37,7 +37,7 @@ abstract class AbstractNativeHeaderKlibComparisonTest : AbstractNativeSimpleTest
         assert(sameAbiDir.exists() || differentAbiDir.exists()) { "Nothing to compare" }
 
         if (sameAbiDir.exists()) {
-            val testCaseSameAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "sameAbi", listOf())
+            val testCaseSameAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "sameAbi", [])
             compileToLibrary(testCaseSameAbi).assertSuccess()
             val headerKlibSameAbi = File(getHeaderPath("sameAbi"))
             assert(headerKlibSameAbi.exists())
@@ -45,7 +45,7 @@ abstract class AbstractNativeHeaderKlibComparisonTest : AbstractNativeSimpleTest
         }
 
         if (differentAbiDir.exists()) {
-            val testCaseDifferentAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "differentAbi", listOf())
+            val testCaseDifferentAbi: TestCase = generateTestcaseFromDirectory(testPathFull, "differentAbi", [])
             compileToLibrary(testCaseDifferentAbi).assertSuccess()
             val headerKlibDifferentAbi = File(getHeaderPath("differentAbi"))
             assert(headerKlibDifferentAbi.exists())
@@ -64,7 +64,7 @@ abstract class AbstractNativeHeaderKlibCompilationTest : AbstractNativeSimpleTes
     protected fun runTest(@TestDataFile testPath: String) {
         val testPathFull = getAbsoluteFile(testPath)
         assert(testPathFull.exists())
-        val testCaseLib: TestCase = generateTestcaseFromDirectory(testPathFull, "lib", listOf())
+        val testCaseLib: TestCase = generateTestcaseFromDirectory(testPathFull, "lib", [])
         val klibLib = compileToLibrary(testCaseLib)
         val headerKlibLib = File(getHeaderPath("lib"))
         assert(headerKlibLib.exists())
@@ -81,7 +81,7 @@ abstract class AbstractNativeHeaderKlibCompilationTest : AbstractNativeSimpleTes
 private fun AbstractNativeSimpleTest.getHeaderPath(rev: String) = buildDir.absolutePath + "/header.$rev.klib"
 private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File, rev: String, extraArgs: List<String>): TestCase {
     val moduleName: String = source.name
-    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(moduleName, [], [], [])
     source.resolve(rev).listFiles()?.forEach {
         muteTestIfNecessary(it)
         module.files += TestFile.createCommitted(it, module)
@@ -93,7 +93,7 @@ private fun AbstractNativeSimpleTest.generateTestcaseFromDirectory(source: File,
     return TestCase(
         id = TestCaseId.Named(moduleName),
         kind = TestKind.STANDALONE,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = TestCompilerArgs(extraArgs + relativeBasePath + headerKlibPath),
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),

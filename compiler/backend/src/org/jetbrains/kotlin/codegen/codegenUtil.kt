@@ -243,7 +243,7 @@ fun String.isDefinitelyFitEncodingLimit() = length <= STRING_UTF8_ENCODING_BYTE_
 
 fun splitStringConstant(value: String): List<String> {
     return if (value.isDefinitelyFitEncodingLimit()) {
-        listOf(value)
+        [value]
     } else {
         val result = arrayListOf<String>()
 

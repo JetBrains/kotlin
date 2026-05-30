@@ -52,8 +52,8 @@ internal class ImplementationPrinter(
 
     override fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> =
         if (implementation.hasConstructorIndicator) {
-            listOf(FunctionParameter("constructorIndicator", irElementConstructorIndicatorType.copy(nullable = true), markAsUnused = true))
+            [FunctionParameter("constructorIndicator", irElementConstructorIndicatorType.copy(nullable = true), markAsUnused = true)]
         } else {
-            emptyList()
+            []
         }
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import com.intellij.psi.NavigatablePsiElement
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
@@ -43,12 +44,12 @@ internal class KaFe10ExpressionTypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseSessionComponent<KaFe10Session>(), KaExpressionTypeProvider, KaFe10SessionComponent {
     private companion object {
-        val NON_EXPRESSION_CONTAINERS = arrayOf(
+        val NON_EXPRESSION_CONTAINERS: Array<out Class<out NavigatablePsiElement>> = [
             KtImportDirective::class.java,
             KtTypeReference::class.java,
             KtPackageDirective::class.java,
             KtLabelReferenceExpression::class.java
-        )
+        ]
     }
 
     override val KtExpression.expressionType: KaType?

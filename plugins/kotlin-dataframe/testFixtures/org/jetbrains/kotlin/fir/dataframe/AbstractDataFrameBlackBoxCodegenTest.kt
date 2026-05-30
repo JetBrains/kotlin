@@ -57,7 +57,7 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
             testModuleStructure: TestModuleStructure,
         ): List<TestFile> {
             val classLoader = this::class.java.classLoader
-            return listOf(classLoader.getResource(SELECTION_DSL_UTILS)!!.toTestFile())
+            return [classLoader.getResource(SELECTION_DSL_UTILS)!!.toTestFile()]
         }
     }
 }

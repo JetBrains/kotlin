@@ -356,11 +356,11 @@ internal class HexStringParser(private val EXPONENT_WIDTH: Int, private val MANT
                 throw NumberFormatException()
             }
 
-            val hexSegments = arrayOf(
-                    matchResult.groupValues[1],
-                    matchResult.groupValues[2],
-                    matchResult.groupValues[3]
-            )
+            val hexSegments: Array<String> = [
+                matchResult.groupValues[1],
+                matchResult.groupValues[2],
+                matchResult.groupValues[3]
+            ]
 
             return hexSegments
         }

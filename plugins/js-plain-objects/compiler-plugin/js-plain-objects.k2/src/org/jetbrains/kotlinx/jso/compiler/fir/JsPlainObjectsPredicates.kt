@@ -6,11 +6,12 @@ package org.jetbrains.kotlinx.jspo.compiler.fir
 
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlinx.jspo.compiler.resolve.JsPlainObjectsAnnotations
 
 object JsPlainObjectsPredicates {
     internal object AnnotatedWithJsPlainObject {
-        private val jsPlainObjectAnnotation = setOf(JsPlainObjectsAnnotations.jsPlainObjectAnnotationFqName)
+        private val jsPlainObjectAnnotation: Set<FqName> = [JsPlainObjectsAnnotations.jsPlainObjectAnnotationFqName]
         internal val LOOKUP = LookupPredicate.create { annotated(jsPlainObjectAnnotation) }
         internal val DECLARATION = DeclarationPredicate.create { annotated(jsPlainObjectAnnotation) }
     }

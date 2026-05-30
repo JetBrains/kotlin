@@ -15,7 +15,7 @@ class DynamicIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir() {
     fun testIfIsolating() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val dynamic = DynamicProcessor(kind = RuntimeProcType.ISOLATING).toDynamic()
-        runAnnotationProcessing(srcFiles, listOf(dynamic), generatedSources)
+        runAnnotationProcessing(srcFiles, [dynamic], generatedSources)
 
         assertEquals(RuntimeProcType.ISOLATING, dynamic.getRuntimeType())
 
@@ -32,7 +32,7 @@ class DynamicIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir() {
     fun testIfAggregating() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val dynamic = DynamicProcessor(kind = RuntimeProcType.AGGREGATING).toDynamic()
-        runAnnotationProcessing(srcFiles, listOf(dynamic), generatedSources)
+        runAnnotationProcessing(srcFiles, [dynamic], generatedSources)
 
         assertEquals(RuntimeProcType.AGGREGATING, dynamic.getRuntimeType())
 
@@ -49,7 +49,7 @@ class DynamicIncrementalProcessorTest : AbstractTestWithGeneratedSourcesDir() {
     fun testIfNonIncremental() {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         val dynamic = DynamicProcessor(kind = RuntimeProcType.NON_INCREMENTAL).toDynamic()
-        runAnnotationProcessing(srcFiles, listOf(dynamic), generatedSources)
+        runAnnotationProcessing(srcFiles, [dynamic], generatedSources)
 
         assertEquals(RuntimeProcType.NON_INCREMENTAL, dynamic.getRuntimeType())
         assertEquals(

@@ -54,7 +54,7 @@ object CommonParser {
         )
 
     class RelevantLinks(linksMatcher: Matcher?) {
-        val linksSet: MutableSet<SpecPlace> = mutableSetOf()
+        val linksSet: MutableSet<SpecPlace> = []
 
         init {
             if (linksMatcher != null) {

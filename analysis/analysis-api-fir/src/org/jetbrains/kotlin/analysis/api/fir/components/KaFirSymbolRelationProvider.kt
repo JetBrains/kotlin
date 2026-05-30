@@ -532,7 +532,7 @@ internal class KaFirSymbolRelationProvider(
         require(this is KaFirSymbol<*>)
         val firSymbol = firSymbol
         if (firSymbol !is FirCallableSymbol && firSymbol !is FirClassSymbol && firSymbol !is FirTypeAliasSymbol) {
-            return emptyList()
+            return []
         }
 
         val actualModule = containingModule
@@ -547,7 +547,7 @@ internal class KaFirSymbolRelationProvider(
             val firSymbols = when (firSymbol) {
                 is FirClassLikeSymbol -> computeExpectsForLibraryClass(firSymbol, actualModule, expectDeclarationProvider)
                 is FirCallableSymbol -> computeExpectsForLibraryCallable(firSymbol, actualModule, expectDeclarationProvider)
-                else -> emptyList()
+                else -> []
             }
 
             return firSymbols.map { analysisSession.firSymbolBuilder.buildSymbol(it) as KaDeclarationSymbol }
@@ -567,24 +567,24 @@ internal class KaFirSymbolRelationProvider(
                 }
             }
             is KaTypeParameterSymbol -> {
-                val actualParent = containingDeclaration as? KaTypeParameterOwnerSymbol ?: return emptyList()
-                val actualIndex = actualParent.typeParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                val actualParent = containingDeclaration as? KaTypeParameterOwnerSymbol ?: return []
+                val actualIndex = actualParent.typeParameters.indexOf(this).takeIf { it >= 0 } ?: return []
                 return getExpectsForActualParent(actualParent) { expectParent ->
                     /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.TypeParameterNames] */
                     expectParent.typeParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
                 }
             }
             is KaContextParameterSymbol -> {
-                val actualParent = containingDeclaration as? KaContextParameterOwnerSymbol ?: return emptyList()
-                val actualIndex = actualParent.contextParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                val actualParent = containingDeclaration as? KaContextParameterOwnerSymbol ?: return []
+                val actualIndex = actualParent.contextParameters.indexOf(this).takeIf { it >= 0 } ?: return []
                 return getExpectsForActualParent(actualParent) { expectParent ->
                     /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.ContextParameterNames] */
                     expectParent.contextParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
                 }
             }
             is KaValueParameterSymbol -> {
-                val actualParent = containingDeclaration as? KaFunctionSymbol ?: return emptyList()
-                val actualIndex = actualParent.valueParameters.indexOf(this).takeIf { it >= 0 } ?: return emptyList()
+                val actualParent = containingDeclaration as? KaFunctionSymbol ?: return []
+                val actualIndex = actualParent.valueParameters.indexOf(this).takeIf { it >= 0 } ?: return []
                 return getExpectsForActualParent(actualParent) { expectParent: KaFunctionSymbol ->
                     /** See [org.jetbrains.kotlin.resolve.multiplatform.ExpectActualIncompatibility.ParameterNames] */
                     expectParent.valueParameters.getOrNull(actualIndex)?.takeIf { it.name == actualName }
@@ -645,11 +645,11 @@ internal class KaFirSymbolRelationProvider(
         expectDeclarationProvider: KotlinDeclarationProvider
     ): List<FirCallableSymbol<*>> {
         @OptIn(ClassIdBasedLocality::class)
-        val callableId = actualSymbol.callableId?.takeUnless { it.isLocal } ?: return emptyList()
+        val callableId = actualSymbol.callableId?.takeUnless { it.isLocal } ?: return []
 
         val actualSession = actualSymbol.llFirSession
 
-        val result = mutableListOf<FirCallableSymbol<*>>()
+        val result: MutableList<FirCallableSymbol<*>> = []
 
         val expectMatchingContext = FirExpectActualMatchingContextImpl.Factory.create(
             actualSession,
@@ -680,7 +680,7 @@ internal class KaFirSymbolRelationProvider(
         if (callableId.classId != null) {
             val actualClass = actualSymbol.getContainingClassSymbol()
             if (actualClass !is FirRegularClassSymbol || actualClass.isExpect) {
-                return emptyList()
+                return []
             }
 
             val expectClasses = computeExpectsForLibraryClass(actualClass, actualModule, expectDeclarationProvider)
@@ -716,7 +716,7 @@ internal class KaFirSymbolRelationProvider(
             val candidates = when (actualSymbol) {
                 is FirFunctionSymbol -> expectDeclarationProvider.getTopLevelFunctions(callableId)
                 is FirPropertySymbol -> expectDeclarationProvider.getTopLevelProperties(callableId)
-                else -> emptyList()
+                else -> []
             }
 
             for (candidate in candidates) {

@@ -18,7 +18,7 @@ class TypeParameterCommonizer(typeCommonizer: TypeCommonizer) : AbstractStandard
 
     override fun commonizationResult(): CirTypeParameter? {
         return CirTypeParameter(
-            annotations = emptyList(),
+            annotations = [],
             name = name,
             isReified = isReified,
             variance = variance,

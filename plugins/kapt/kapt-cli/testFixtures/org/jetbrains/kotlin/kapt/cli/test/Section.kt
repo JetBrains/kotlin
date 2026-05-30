@@ -13,7 +13,7 @@ class Section(val name: String, val content: String) {
         const val SECTION_INDICATOR = "# "
 
         fun parse(file: File): List<Section> {
-            val sections = mutableListOf<Section>()
+            val sections: MutableList<Section> = []
 
             var currentName = ""
             val currentContent = StringBuilder()
@@ -51,7 +51,7 @@ fun List<Section>.render(): String = buildString {
 }.trim()
 
 fun List<Section>.replacingSection(name: String, newContent: String): List<Section> {
-    val result = mutableListOf<Section>()
+    val result: MutableList<Section> = []
     var found = false
 
     for (section in this) {

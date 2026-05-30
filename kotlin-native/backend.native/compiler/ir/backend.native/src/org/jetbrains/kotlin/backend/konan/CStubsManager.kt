@@ -13,15 +13,15 @@ private const val dumpBridges = false
 internal class CStubsManager(private val target: KonanTarget, private val generationState: NativeGenerationState) {
 
     fun addStub(kotlinLocation: CompilerMessageLocation?, lines: List<String>, language: String) {
-        val stubs = languageToStubs.getOrPut(language) { mutableListOf() }
+        val stubs = languageToStubs.getOrPut(language) { [] }
         stubs += Stub(kotlinLocation, lines)
     }
 
     fun compile(clang: ClangArgs, diagnosticReporter: IrDiagnosticReporter, verbose: Boolean): List<File> {
-        if (languageToStubs.isEmpty()) return emptyList()
+        if (languageToStubs.isEmpty()) return []
 
         val bitcodes = languageToStubs.entries.map { [language, stubs] ->
-            val compilerOptions = mutableListOf<String>()
+            val compilerOptions: MutableList<String> = []
             val sourceFileExtension = when {
                 language == "C++" -> ".cpp"
                 target.family.isAppleFamily -> {

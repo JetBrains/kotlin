@@ -65,10 +65,10 @@ private class IrJvmFlexibleTypeImpl(
                 }
             }
             if (arrayVariance) {
-                arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT))
+                arguments = [makeTypeProjection(irType.getArrayElementType(), Variance.INVARIANT)]
             }
             if (raw) {
-                annotations = listOf(specialAnnotations.generateRawTypeAnnotation())
+                annotations = [specialAnnotations.generateRawTypeAnnotation()]
             }
         }
 
@@ -92,7 +92,7 @@ private class IrJvmFlexibleTypeImpl(
                 }
             }
             if (arrayVariance) {
-                arguments = listOf(makeTypeProjection(irType.getArrayElementType(), Variance.OUT_VARIANCE))
+                arguments = [makeTypeProjection(irType.getArrayElementType(), Variance.OUT_VARIANCE)]
             }
             if (raw) {
                 arguments = List(arguments.size) { IrStarProjectionImpl }

@@ -42,9 +42,9 @@ class AbiTypeArgumentRenderingTest {
 
     private fun mockLibraryAbi(signatureVersion: AbiSignatureVersion, vararg declarations: AbiDeclaration): LibraryAbi =
         LibraryAbi(
-            manifest = LibraryManifest(null, emptyList(), null, null, null),
+            manifest = LibraryManifest(null, [], null, null, null),
             uniqueName = "type-argument-rendering-test",
-            signatureVersions = setOf(signatureVersion),
+            signatureVersions = [signatureVersion],
             topLevelDeclarations = object : AbiTopLevelDeclarations {
                 override val declarations = declarations.toList()
             }
@@ -61,8 +61,8 @@ class AbiTypeArgumentRenderingTest {
             isValue = false,
             isFunction = false,
             superTypes = superTypes.toList(),
-            declarations = emptyList(),
-            typeParameters = emptyList()
+            declarations = [],
+            typeParameters = []
         )
 
     private fun mockType(packageName: String, className: String, vararg arguments: Pair<AbiType, AbiVariance>?): AbiType {

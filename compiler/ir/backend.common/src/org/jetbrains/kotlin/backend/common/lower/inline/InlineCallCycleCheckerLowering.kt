@@ -31,9 +31,9 @@ class InlineCallCycleCheckerLowering<Context : LoweringContext>(val context: Con
     private fun traverseCallGraph(
         callGraph: MutableMap<CallNode, MutableSet<CallEdge>>,
     ) {
-        val visited = mutableSetOf<CallNode>()
-        val completed = mutableSetOf<CallNode>()
-        val inlineCallsStack = mutableListOf<CallEdge>()
+        val visited: MutableSet<CallNode> = []
+        val completed: MutableSet<CallNode> = []
+        val inlineCallsStack: MutableList<CallEdge> = []
 
         fun reportInlineCallCycle(edgesInCycle: List<CallEdge>) {
             (edgesInCycle + edgesInCycle.first()).zipWithNext().forEach { [callerEdge, calleeEdge] ->
@@ -105,6 +105,6 @@ internal class IrInlineCallGraphBuilder(
         val callNodes =
             (usedDefaultValues + callee.body).filterNotNull().map { CallEdge(call, CallNode(callee, it)) }
 
-        callGraph.getOrPut(callerNode) { mutableSetOf() }.addAll(callNodes)
+        callGraph.getOrPut(callerNode) { [] }.addAll(callNodes)
     }
 }

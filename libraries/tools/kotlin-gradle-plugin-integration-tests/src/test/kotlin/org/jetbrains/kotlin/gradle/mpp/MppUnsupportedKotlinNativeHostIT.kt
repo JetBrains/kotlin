@@ -21,13 +21,13 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
      * Defines the parameters for a Linux RISCV64 host environment.
      * These parameters are used to specify the operating system name and architecture.
      */
-    private val linuxRiscv64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=riscv64")
+    private val linuxRiscv64HostParameters = ["-Dos.name=Linux", "-Dos.arch=riscv64"]
 
     /**
      * Defines the parameters for a Linux Arm64 host environment.
      * These parameters are used to specify the operating system name and architecture.
      */
-    private val linuxArm64HostParameters = listOf("-Dos.name=Linux", "-Dos.arch=aarch64")
+    private val linuxArm64HostParameters = ["-Dos.name=Linux", "-Dos.arch=aarch64"]
 
     @OptIn(ExperimentalWasmDsl::class)
     @DisplayName("Build multiplatform project should not fail on unsupported native host platforms")
@@ -74,21 +74,21 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
             }
 
             // JVM and JS compile
-            var args = listOf(":compileKotlinJvm") + linuxRiscv64HostParameters
+            var args = [":compileKotlinJvm"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJvm")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/jvm/main")
             }
 
-            args = listOf(":compileKotlinJs") + linuxRiscv64HostParameters
+            args = [":compileKotlinJs"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinJs")
                 verifyDiagnostics()
                 assertDirectoryInProjectExists("build/classes/kotlin/js/main")
             }
 
-            args = listOf(":compileKotlinWasmJs") + linuxRiscv64HostParameters
+            args = [":compileKotlinWasmJs"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":compileKotlinWasmJs")
                 verifyDiagnostics()
@@ -96,26 +96,26 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
             }
 
             // Native compile
-            args = listOf(":compileKotlinLinuxX64") + linuxRiscv64HostParameters
+            args = [":compileKotlinLinuxX64"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinLinuxX64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMacosArm64") + linuxRiscv64HostParameters
+            args = [":compileKotlinMacosArm64"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMacosArm64")
                 verifyDiagnostics()
             }
 
-            args = listOf(":compileKotlinMingwX64") + linuxRiscv64HostParameters
+            args = [":compileKotlinMingwX64"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(":compileKotlinMingwX64")
                 verifyDiagnostics()
             }
 
             // Assemble
-            args = listOf(":assemble") + linuxRiscv64HostParameters
+            args = [":assemble"] + linuxRiscv64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksSkipped(
                     ":compileKotlinMingwX64",
@@ -170,7 +170,7 @@ class MppUnsupportedKotlinNativeHostIT : KGPDaemonsBaseTest() {
                 }
             }
 
-            val args = listOf(":build") + linuxArm64HostParameters
+            val args = [":build"] + linuxArm64HostParameters
             build(*args.toTypedArray()) {
                 assertTasksExecuted(":build")
             }

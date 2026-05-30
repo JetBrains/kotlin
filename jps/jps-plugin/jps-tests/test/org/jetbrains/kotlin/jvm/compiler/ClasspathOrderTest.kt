@@ -35,15 +35,15 @@ class ClasspathOrderTest : TestCaseWithTmpdir() {
         val xmlContent = KotlinModuleXmlBuilder().addModule(
             "name",
             File(tmpdir, "output").absolutePath,
-            listOf(sourceDir),
-            listOf(JvmSourceRoot(sourceDir)),
-            listOf(PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath),
-            emptyList(),
+            [sourceDir],
+            [JvmSourceRoot(sourceDir)],
+            [PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath],
+            [],
             null,
             JavaModuleBuildTargetType.PRODUCTION.typeId,
             JavaModuleBuildTargetType.PRODUCTION.isTests,
-            setOf(),
-            emptyList(),
+            [],
+            [],
             IncrementalCompilation.isEnabledForJvm()
         ).asText().toString()
 

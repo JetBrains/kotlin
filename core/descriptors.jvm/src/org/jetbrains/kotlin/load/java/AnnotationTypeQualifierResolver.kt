@@ -31,7 +31,7 @@ class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancem
         get() = false
 
     override val AnnotationDescriptor.metaAnnotations: Iterable<AnnotationDescriptor>
-        get() = annotationClass?.annotations ?: emptyList()
+        get() = annotationClass?.annotations ?: []
 
     override val AnnotationDescriptor.key: Any
         get() = annotationClass!!
@@ -44,13 +44,13 @@ class AnnotationTypeQualifierResolver(javaTypeEnhancementState: JavaTypeEnhancem
             if (!onlyValue || parameter == JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()
             else
-                emptyList()
+                []
         }
 
     private fun ConstantValue<*>.toEnumNames(): List<String> =
         when (this) {
             is ArrayValue -> value.flatMap { it.toEnumNames() }
-            is EnumValue -> listOf(enumEntryName.identifier)
-            else -> emptyList()
+            is EnumValue -> [enumEntryName.identifier]
+            else -> []
         }
 }

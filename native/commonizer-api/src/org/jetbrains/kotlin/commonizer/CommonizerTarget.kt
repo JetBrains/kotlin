@@ -77,7 +77,7 @@ private val SharedCommonizerTarget.identityString: String
 public val CommonizerTarget.konanTargets: Set<KonanTarget>
     get() {
         return when (this) {
-            is LeafCommonizerTarget -> setOf(konanTarget)
+            is LeafCommonizerTarget -> [konanTarget]
             is SharedCommonizerTarget -> targets.flatMap { it.konanTargets }.toSet()
         }
     }
@@ -96,7 +96,7 @@ public val CommonizerTarget.level: Int
 
 public fun CommonizerTarget.allLeaves(): Set<LeafCommonizerTarget> {
     return when (this) {
-        is LeafCommonizerTarget -> setOf(this)
+        is LeafCommonizerTarget -> [this]
         is SharedCommonizerTarget -> this.targets
     }
 }

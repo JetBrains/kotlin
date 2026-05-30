@@ -122,12 +122,12 @@ open class ExtraClassInfoGenerator() {
  */
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private object ConstantValueExternalizer : DataExternalizer<Any> by DelegateDataExternalizer(
-    listOf(
+    [
         java.lang.Integer::class.java,
         java.lang.Long::class.java,
         java.lang.Float::class.java,
         java.lang.Double::class.java,
         java.lang.String::class.java
-    ),
-    listOf(IntExternalizer, LongExternalizer, FloatExternalizer, DoubleExternalizer, StringExternalizer)
+    ],
+    [IntExternalizer, LongExternalizer, FloatExternalizer, DoubleExternalizer, StringExternalizer]
 )

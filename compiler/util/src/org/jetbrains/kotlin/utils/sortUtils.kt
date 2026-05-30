@@ -21,8 +21,8 @@ fun <A> topologicalSort(
     reportCycle: (A) -> Nothing = { throw IllegalStateException("Cannot compute a topological sort: The node $it is in a cycle.") },
     dependencies: A.() -> Iterable<A>,
 ): List<A> {
-    val visiting = mutableSetOf<A>()
-    val visited = mutableSetOf<A>()
+    val visiting: MutableSet<A> = []
+    val visited: MutableSet<A> = []
 
     fun visit(node: A) {
         if (node in visited) return

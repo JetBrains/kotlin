@@ -304,10 +304,10 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     }
 
     override fun getAnnotations(): List<KtAnnotation> =
-        fileAnnotationList?.annotations ?: emptyList()
+        fileAnnotationList?.annotations ?: []
 
     override fun getAnnotationEntries(): List<KtAnnotationEntry> =
-        fileAnnotationList?.annotationEntries ?: emptyList()
+        fileAnnotationList?.annotationEntries ?: []
 
     @Throws(IncorrectOperationException::class)
     override fun setName(name: String): PsiElement {

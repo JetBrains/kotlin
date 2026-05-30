@@ -14,7 +14,7 @@ abstract class IdSignatureBuilder<Declaration : Any, Mangler : KotlinMangler<Dec
     private data class PropertyAccessorIdHashAndDescription(val id: Long, val description: String)
 
     protected var packageFqn: FqName = FqName.ROOT
-    protected val classFqnSegments = mutableListOf<String>()
+    protected val classFqnSegments: MutableList<String> = []
 
     /**
      * Use [setHashIdAndDescriptionFor] or [setHashIdAndDescription] with `isPropertyAccessor = false` to set this property.

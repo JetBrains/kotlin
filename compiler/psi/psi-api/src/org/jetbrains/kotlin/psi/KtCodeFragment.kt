@@ -194,7 +194,7 @@ abstract class KtCodeFragment(
         get() = listOfNotNull(importsAsImportList())
 
     override val importDirectives: List<KtImportDirective>
-        get() = importsAsImportList()?.imports ?: emptyList()
+        get() = importsAsImportList()?.imports ?: []
 
     override fun setVisibilityChecker(checker: VisibilityChecker?) {}
 

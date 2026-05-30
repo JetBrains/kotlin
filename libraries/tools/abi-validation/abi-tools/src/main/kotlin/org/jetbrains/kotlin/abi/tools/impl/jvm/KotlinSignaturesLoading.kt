@@ -30,7 +30,7 @@ internal fun Sequence<ClassNode>.loadApiFromJvmClasses(): List<ClassBinarySignat
                 val metadata = kotlinMetadata
                 val mVisibility = visibilityMap[name]
                 val classAccess = AccessFlags(effectiveAccess and Opcodes.ACC_STATIC.inv())
-                val supertypes = listOf(superName) - "java/lang/Object" + interfaces.sorted()
+                val supertypes = [superName] - "java/lang/Object" + interfaces.sorted()
 
                 val fieldSignatures = fields
                     .map { it.buildFieldSignature(mVisibility, this, classNodeMap) }
@@ -122,7 +122,7 @@ private fun FieldNode.buildFieldSignature(
 ): FieldBinarySignatureWrapper {
     val annotationHolders =
         ownerVisibility?.members?.get(JvmFieldSignature(name, desc))?.propertyAnnotation
-    val foundAnnotations = mutableListOf<AnnotationNode>()
+    val foundAnnotations: MutableList<AnnotationNode> = []
     foundAnnotations.addAll(ownerClass.methods.annotationsFor(annotationHolders?.method))
 
     var companionClass: ClassNode? = null
@@ -228,21 +228,21 @@ private fun MethodNode.buildMethodSignature(
 }
 
 private fun List<MethodNode>.annotationsFor(methodSignature: JvmMethodSignature?): List<AnnotationNode> {
-    if (methodSignature == null) return emptyList()
+    if (methodSignature == null) return []
 
     return firstOrNull { it.name == methodSignature.name && it.desc == methodSignature.descriptor }
         ?.run {
             visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
-        } ?: emptyList()
+        } ?: []
 }
 
 private fun List<FieldNode>.annotationsFor(fieldSignature: JvmFieldSignature?): List<AnnotationNode> {
-    if (fieldSignature == null) return emptyList()
+    if (fieldSignature == null) return []
 
     return firstOrNull { it.name == fieldSignature.name && it.desc == fieldSignature.descriptor }
         ?.run {
             visibleAnnotations.orEmpty() + invisibleAnnotations.orEmpty()
-        } ?: emptyList()
+        } ?: []
 }
 
 /**
@@ -318,7 +318,7 @@ internal fun List<ClassBinarySignature>.filterByMatcher(matcher: FiltersMatcher)
             val annotations = if (packageAnnotations != null) {
                 (classDeclaration.annotations.extractAnnotationQualifiedNames() + packageAnnotations[classDeclaration.packageName])
             } else {
-                emptyList()
+                []
             }
 
             return@mapNotNull when (val test = matcher.testClass(qualifiedName, annotations)) {
@@ -411,9 +411,9 @@ private class PackageAnnotationsHolder {
 
     private class Packages(
         val subpackages: MutableMap<String, Packages> = mutableMapOf(),
-        val annotations: MutableSet<String> = mutableSetOf(),
+        val annotations: MutableSet<String> = [],
     )
 }
 
 internal fun annotations(l1: List<AnnotationNode>?, l2: List<AnnotationNode>?): List<AnnotationNode> =
-    ((l1 ?: emptyList()) + (l2 ?: emptyList()))
+    ((l1 ?: []) + (l2 ?: []))

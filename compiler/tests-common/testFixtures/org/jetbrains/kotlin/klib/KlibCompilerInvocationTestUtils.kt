@@ -96,7 +96,7 @@ object KlibCompilerInvocationTestUtils {
             Dependencies(regularDependencies + other.regularDependencies, friendDependencies + other.friendDependencies)
 
         companion object {
-            val EMPTY = Dependencies(emptySet(), emptySet())
+            val EMPTY = Dependencies([], [])
 
             private fun Set<Dependency>.checkNoDuplicates(kind: String) {
                 fun Map<String, List<Dependency>>.dump(): String = values.flatten().sortedBy { it.moduleName }.joinToString()

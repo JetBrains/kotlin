@@ -27,12 +27,12 @@ object MinMaxTestGenerator {
 
 
     private fun elements(elementType: String) = when (elementType) {
-        "Int", "Byte", "Short", "Long" -> listOf("1", "2", "$elementType.MAX_VALUE")
-        "UInt", "UByte", "UShort" -> listOf("1U", "2U", "$elementType.MAX_VALUE")
-        "ULong" -> listOf("1UL", "2UL", "$elementType.MAX_VALUE")
-        "Double" -> listOf("1.0", "2.0", "$elementType.POSITIVE_INFINITY")
-        "Float" -> listOf("1.0F", "2.0F", "$elementType.POSITIVE_INFINITY")
-        "Char" -> listOf("'a'", "'b'", "$elementType.MAX_VALUE")
+        "Int", "Byte", "Short", "Long" -> ["1", "2", "$elementType.MAX_VALUE"]
+        "UInt", "UByte", "UShort" -> ["1U", "2U", "$elementType.MAX_VALUE"]
+        "ULong" -> ["1UL", "2UL", "$elementType.MAX_VALUE"]
+        "Double" -> ["1.0", "2.0", "$elementType.POSITIVE_INFINITY"]
+        "Float" -> ["1.0F", "2.0F", "$elementType.POSITIVE_INFINITY"]
+        "Char" -> ["'a'", "'b'", "$elementType.MAX_VALUE"]
         "T" -> listOf("a", "bcd", "e").map { "\"$it\"" }
         else -> error(elementType)
     }
@@ -45,7 +45,7 @@ object MinMaxTestGenerator {
             else -> error(family)
         }
 
-        val isGeneric = family in listOf(Iterables, Sequences, ArraysOfObjects)
+        val isGeneric = family in [Iterables, Sequences, ArraysOfObjects]
 
         val elementType = when {
             isGeneric -> "T"
@@ -118,7 +118,7 @@ object MinMaxTestGenerator {
             }
 
             if (isGeneric) {
-                for (type in listOf(PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.UInt, PrimitiveType.Char)) {
+                for (type in [PrimitiveType.Int, PrimitiveType.Long, PrimitiveType.UInt, PrimitiveType.Char]) {
                     val elements = elements(type.toString())
                     writer.appendLine("        expectMinMax(${elements.first()}, ${elements.last()}, ${containerOf(elements)})")
                 }
@@ -153,8 +153,8 @@ object MinMaxTestGenerator {
                     writer.appendLine("""
     @Test
     fun minMaxDouble() {
-        val zeroes = ${containerOf(listOf("0.0", "-0.0"), shuffle = true)}
-        val NaNs = ${containerOf(listOf("0.0", "Double.NaN"), shuffle = true)}
+        val zeroes = ${containerOf(["0.0", "-0.0"], shuffle = true)}
+        val NaNs = ${containerOf(["0.0", "Double.NaN"], shuffle = true)}
 $assertions
     }
 """)
@@ -163,8 +163,8 @@ $assertions
                     writer.appendLine("""
     @Test
     fun minMaxFloat() {
-        val zeroes = ${containerOf(listOf("0.0F", "-0.0F"), shuffle = true)}
-        val NaNs = ${containerOf(listOf("0.0F", "Float.NaN"), shuffle = true)}
+        val zeroes = ${containerOf(["0.0F", "-0.0F"], shuffle = true)}
+        val NaNs = ${containerOf(["0.0F", "Float.NaN"], shuffle = true)}
 $assertions
     }
 """)
@@ -309,7 +309,7 @@ $assertions
     @Test
     fun minMaxOfEmpty() {
         val empty = ${emptyContainer(elementType)}""")
-            for (selector in listOf("it.toString()", "0.0", "0.0F")) {
+            for (selector in ["it.toString()", "0.0", "0.0F"]) {
                 writer.appendLine("""
         assertNull(empty.minOfOrNull { $selector })
         assertNull(empty.maxOfOrNull { $selector })

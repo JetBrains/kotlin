@@ -41,8 +41,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf(":classes", ":testClasses"),
-            listOf(":compileKotlin", ":compileTestKotlin")
+            [":classes", ":testClasses"],
+            [":compileKotlin", ":compileTestKotlin"]
         )
     }
 
@@ -65,8 +65,8 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf(":classes", ":testClasses"),
-            listOf(":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileTestKotlin", ":compileJava")
+            [":classes", ":testClasses"],
+            [":kaptKotlin", ":kaptGenerateStubsKotlin", ":compileKotlin", ":compileTestKotlin", ":compileJava"]
         )
     }
 
@@ -83,13 +83,13 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assemble"),
-            listOf(
+            ["assemble"],
+            [
                 ":libraryProject:compileKotlinJs",
                 ":mainProject:compileKotlinJs",
                 ":mainProject:compileProductionExecutableKotlinJs",
                 ":mainProject:jsBrowserProductionWebpack"
-            )
+            ]
         )
     }
 
@@ -107,15 +107,15 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assemble"),
-            listOf(
+            ["assemble"],
+            [
                 ":lib:compileKotlinWasmJs",
                 ":lib:compileKotlinWasmWasi",
                 ":app:compileKotlinWasmJs",
                 ":app:compileKotlinWasmWasi",
                 ":app:compileProductionExecutableKotlinWasmJs",
                 ":app:compileProductionExecutableKotlinWasmWasi",
-            )
+            ]
         )
     }
 
@@ -133,13 +133,13 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assemble"),
-            listOf(
+            ["assemble"],
+            [
                 ":compileKotlinWasmJs",
                 ":compileKotlinWasmJs",
                 ":compileProductionExecutableKotlinWasmJs",
                 ":wasmJsBrowserProductionWebpack",
-            )
+            ]
         )
     }
 
@@ -157,14 +157,14 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("build"),
-            listOf(
+            ["build"],
+            [
                 ":compileCommonMainKotlinMetadata",
                 ":compileKotlinJvmWithoutJava",
                 ":compileTestKotlinJvmWithoutJava",
                 ":compileKotlinJs",
                 ":compileTestKotlinJs"
-            )
+            ]
         )
     }
 
@@ -186,7 +186,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assembleDebug"),
+            ["assembleDebug"],
             listOf(":Lib", ":Android").flatMap { module ->
                 listOf("Flavor1", "Flavor2").flatMap { flavor ->
                     listOf("Debug").map { buildType ->
@@ -217,7 +217,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assembleDebug"),
+            ["assembleDebug"],
             listOf("Debug").flatMap { buildType ->
                 listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
                     ":app:$kotlinTask${buildType}Kotlin"
@@ -249,7 +249,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf("assembleDebug"),
+            ["assembleDebug"],
             listOf("Debug").flatMap { buildType ->
                 listOf("kapt", "kaptGenerateStubs", "compile").map { kotlinTask ->
                     ":app:$kotlinTask${buildType}Kotlin"
@@ -279,22 +279,22 @@ class BuildCacheRelocationIT : KGPBaseTest() {
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf(":build-cache-lib:publish"),
-            listOf(
+            [":build-cache-lib:publish"],
+            [
                 ":build-cache-lib:compileKotlinHost",
-            )
+            ]
         )
 
         checkBuildCacheRelocation(
             firstProject,
             secondProject,
-            listOf(":build-cache-app:assemble"),
-            listOf(
+            [":build-cache-app:assemble"],
+            [
                 ":build-cache-app:compileKotlinHost",
                 ":build-cache-app:lib-module:compileKotlinHost",
                 ":build-cache-app:linkDebugStaticHost",
                 ":build-cache-app:linkDebugSharedHost"
-            )
+            ]
         )
     }
 
@@ -425,7 +425,7 @@ class BuildCacheRelocationIT : KGPBaseTest() {
     @DisplayName("test custom source set and build directory located outside project directory") // Regression test for KT-61852 and KT-58547
     @GradleTest
     fun testCustomSourceSetAndBuildDirectory(gradleVersion: GradleVersion) {
-        val projects = mutableListOf<TestProject>()
+        val projects: MutableList<TestProject> = []
 
         checkKotlinIncrementalCompilationAfterCacheHit(
             gradleVersion,

@@ -57,16 +57,16 @@ object TestData {
             irLinkingStats = totalTime * 0.005,
             irLoweringStats = totalTime * 0.005,
             backendStats = totalTime * 0.16,
-            dynamicStats = listOf(
+            dynamicStats = [
                 DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat1", totalTime * 0.01 / 2),
                 DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat2", totalTime * 0.01 / 4),
                 DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat3", totalTime * 0.01 / 4),
-            ),
+            ],
             findJavaClassStats = SideStats(increment, totalTime * 0.04),
             findKotlinClassStats = SideStats(increment, totalTime * 0.06),
-            gcStats = listOf(
+            gcStats = [
                 GarbageCollectionStats("gc-$increment", (increment * 100).toLong(), increment.toLong()),
-            ),
+            ],
             jitTimeMillis = increment.toLong(),
         )
     }

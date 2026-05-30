@@ -295,7 +295,7 @@ class KotlinConstraintSystemCompleter(
         when (argument) {
             is PostponedCallableReferenceAtom ->
                 CallableReferenceWithRevisedExpectedTypeAtom(argument.atom, revisedExpectedType).also {
-                    argument.setAnalyzedResults(null, listOf(it))
+                    argument.setAnalyzedResults(null, [it])
                 }
             is LambdaWithTypeVariableAsExpectedTypeAtom ->
                 argument.transformToResolvedLambda(c.getBuilder(), diagnosticsHolder, revisedExpectedType)
@@ -410,7 +410,7 @@ class KotlinConstraintSystemCompleter(
                 }
                 is ResolvedCallAtom -> freshVariablesSubstitutor.freshVariables.map { it.freshTypeConstructor }
                 is ResolvedCallableReferenceArgumentAtom -> candidate?.freshVariablesSubstitutor?.freshVariables?.map { it.freshTypeConstructor }.orEmpty()
-                else -> emptyList()
+                else -> []
             }
 
             typeVariables.mapNotNullTo(result) {

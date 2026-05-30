@@ -248,7 +248,7 @@ internal class VarargInjectionLowering constructor(val context: KonanBackendCont
                 elementType: IrType,
                 values: List<IrConstantValue>): IrConstantValue {
             return builder.irConstantArray(
-                    arraySymbol.typeWith(listOf(elementType)),
+                    arraySymbol.typeWith([elementType]),
                     values
             )
         }

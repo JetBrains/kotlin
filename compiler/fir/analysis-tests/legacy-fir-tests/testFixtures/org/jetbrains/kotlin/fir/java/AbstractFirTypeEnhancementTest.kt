@@ -65,17 +65,17 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
         val jsr305Jar =
             MockLibraryUtilExt.compileJavaFilesLibraryToJar(JavaForeignAnnotationType.Jsr305.path, "jsr305")
 
-        return listOf(
+        return [
             MockLibraryUtilExt.compileJavaFilesLibraryToJar(
                 JavaForeignAnnotationType.Annotations.path, "foreign-annotations",
-                extraClasspath = listOf(jsr305Jar.absolutePath),
+                extraClasspath = [jsr305Jar.absolutePath],
             ),
             jsr305Jar,
-        )
+        ]
     }
 
     private fun createEnvironment(content: String): KotlinCoreEnvironment {
-        val classpath = mutableListOf(getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests())
+        val classpath: MutableList<File?> = [getAnnotationsJar(), ForTestCompileRuntime.runtimeJarForTests()]
         if (InTextDirectivesUtils.isDirectiveDefined(content, "WITH_KOTLIN_JVM_ANNOTATIONS")) {
             classpath.add(ForTestCompileRuntime.jvmAnnotationsForTests())
         }
@@ -153,7 +153,7 @@ abstract class AbstractFirTypeEnhancementTest : KtUsefulTestCase() {
 
             val javaFirDump = StringBuilder().also { builder ->
                 val renderer = FirRenderer(builder, renderVarargTypes = true)
-                val processedJavaClasses = mutableSetOf<FirJavaClass>()
+                val processedJavaClasses: MutableSet<FirJavaClass> = []
                 fun processClassWithChildren(psiClass: PsiClass, parentFqName: FqName) {
                     val classId = psiClass.classId(parentFqName)
                     val javaClass = session.symbolProvider.getClassLikeSymbolByClassId(classId)?.fir

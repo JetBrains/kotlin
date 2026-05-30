@@ -79,7 +79,7 @@ internal fun annotationsByClassId(
 
 internal fun computeAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {
     if (annotation is FirAnnotationCall) {
-        if (annotation.arguments.isEmpty()) return emptyList()
+        if (annotation.arguments.isEmpty()) return []
 
         val symbol = annotation.containingDeclarationSymbol
         if (symbol.fir.resolvePhase < FirResolvePhase.ANNOTATION_ARGUMENTS) {
@@ -126,10 +126,10 @@ private fun computeTargetAnnotationArguments(
             ),
         )
 
-        return listOf(value)
+        return [value]
     }
 
-    return emptyList()
+    return []
 }
 
 private fun computeKotlinTargetAnnotationArguments(annotation: FirAnnotation, builder: KaSymbolByFirBuilder): List<KaNamedAnnotationValue> {

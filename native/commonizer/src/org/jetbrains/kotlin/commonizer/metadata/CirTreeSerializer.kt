@@ -85,7 +85,7 @@ private class CirTreeSerializationVisitor(
                 statsCollector?.logClass(clazz, classContext)
             }
 
-            val topLevelTypeAliases = mutableListOf<KmTypeAlias>()
+            val topLevelTypeAliases: MutableList<KmTypeAlias> = []
             node.typeAliases.forEach { [typeAliasName, typeAliasNode] ->
                 val typeAliasContext = packageContext.classifierContext(typeAliasName)
                 when (val classifier = typeAliasNode.accept(this, typeAliasContext)) {
@@ -221,7 +221,7 @@ private class CirTreeSerializationVisitor(
             is CirTypeAlias -> cirClassifier.serializeTypeAlias(typeAliasContext)
             is CirClass -> {
                 val fullClassName = typeAliasContext.currentPath.toString()
-                cirClassifier.serializeClass(typeAliasContext, fullClassName, emptyList(), emptyList(), emptyList(), emptyList())
+                cirClassifier.serializeClass(typeAliasContext, fullClassName, [], [], [], [])
             }
         }
     }
@@ -274,8 +274,8 @@ private class CirTreeSerializationVisitor(
             StatsKey(
                 id = propertyContext.currentPath.toString(),
                 extensionReceiver = propertyKey.extensionReceiverParameterType?.toString(),
-                parameterNames = emptyList(),
-                parameterTypes = emptyList(),
+                parameterNames = [],
+                parameterTypes = [],
                 declarationType = declarationType
             )
         }

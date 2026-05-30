@@ -74,7 +74,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         val correspondingProperty = (inlinedFunction as? IrSimpleFunction)?.correspondingPropertySymbol
         val owner = correspondingProperty?.owner ?: inlinedFunction
         val funName = owner.fqNameWhenAvailable ?: owner.name
-        return listOf(JsSingleLineComment(" Inline function '$funName' call")) + this
+        return [JsSingleLineComment(" Inline function '$funName' call")] + this
     }
 
     override fun visitComposite(expression: IrComposite, context: JsGenerationContext): JsStatement {

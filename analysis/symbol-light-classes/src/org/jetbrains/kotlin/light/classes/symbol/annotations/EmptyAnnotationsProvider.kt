@@ -8,8 +8,8 @@ package org.jetbrains.kotlin.light.classes.symbol.annotations
 import org.jetbrains.kotlin.name.ClassId
 
 internal object EmptyAnnotationsProvider : AnnotationsProvider {
-    override fun annotationInfos(): List<AnnotationApplication> = emptyList()
-    override fun get(classId: ClassId): List<AnnotationApplication> = emptyList()
+    override fun annotationInfos(): List<AnnotationApplication> = []
+    override fun get(classId: ClassId): List<AnnotationApplication> = []
     override fun contains(classId: ClassId): Boolean = false
     override fun ownerClassId(): ClassId? = null
 }

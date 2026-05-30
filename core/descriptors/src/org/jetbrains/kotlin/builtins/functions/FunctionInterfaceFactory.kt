@@ -32,17 +32,13 @@ class FunctionInterfaceMemberScope(
     ) =
         classDescriptorFactory.getAllContributedClassesIfPossible(packageName)
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> =
-        emptyList()
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> = []
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> =
-        emptyList()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> = []
 
-    override fun getFunctionNames(): Set<Name> =
-        emptySet()
+    override fun getFunctionNames(): Set<Name> = []
 
-    override fun getVariableNames(): Set<Name> =
-        emptySet()
+    override fun getVariableNames(): Set<Name> = []
 
     override fun getClassifierNames(): Set<Name>? = null
 
@@ -76,11 +72,11 @@ fun functionInterfacePackageFragmentProvider(
     module: ModuleDescriptor
 ): PackageFragmentProvider {
     val classFactory = BuiltInFictitiousFunctionClassFactory(storageManager, module)
-    val fragments = listOf(
+    val fragments = [
         KOTLIN_REFLECT_FQ_NAME,
         BUILT_INS_PACKAGE_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME
-    ).map { fqName ->
+    ].map { fqName ->
         FunctionInterfacePackageFragmentImpl(classFactory, module, fqName)
     }
     return PackageFragmentProviderImpl(fragments)

@@ -46,7 +46,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     @property:PrivateForInline val session: FirSession,
     @property:PrivateForInline val scopeSession: ScopeSession,
     @property:PrivateForInline val computationSession: CompilerRequiredAnnotationsComputationSession,
-    containingDeclarations: List<FirDeclaration> = emptyList(),
+    containingDeclarations: List<FirDeclaration> = [],
     private val outerBodyResolveContext: BodyResolveContext? = null,
 ) : FirDefaultTransformer<Nothing?>() {
     inner class FirEnumAnnotationArgumentsTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
@@ -278,7 +278,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
             })
 
             calleeSymbol.containingClassLookupTag()
-                ?.let { ConeClassLikeTypeImpl(it, emptyArray(), false) }
+                ?.let { ConeClassLikeTypeImpl(it, [], false) }
                 ?.let { replaceConeTypeOrNull(it) }
         }
     }
@@ -370,7 +370,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
     }
 
     private fun ConeKotlinType.markedWithMetaAnnotation(session: FirSession, metaAnnotations: Set<AnnotationFqn>): Boolean {
-        return markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, mutableSetOf()) {
+        return markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself = true, []) {
             computationSession.resolveAnnotationsOnAnnotationIfNeeded(it, scopeSession)
             it.annotations
         }

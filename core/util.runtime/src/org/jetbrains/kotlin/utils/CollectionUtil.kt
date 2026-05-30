@@ -24,12 +24,12 @@ inline fun <reified T, reified R, C : MutableCollection<in R>> Iterable<*>.filte
 }
 
 inline fun <reified T, reified R> Collection<*>.filterIsInstanceMapNotNull(transform: (T) -> R?): Collection<R> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return filterIsInstanceMapNotNullTo(SmartList(), transform)
 }
 
 inline fun <reified R> Collection<*>.filterIsInstanceAnd(predicate: (R) -> Boolean): List<R> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return filterIsInstanceAndTo(SmartList(), predicate)
 }
 
@@ -77,7 +77,7 @@ fun <T> Collection<T>.atMostOne(): T? {
 inline fun <T> Iterable<T>.atMostOne(predicate: (T) -> Boolean): T? = this.filter(predicate).atMostOne()
 
 fun <K, V> MutableMap<K, MutableList<V>>.putToMultiMap(key: K, value: V) {
-    val list = getOrPut(key) { mutableListOf() }
+    val list = getOrPut(key) { [] }
     list.add(value)
 }
 

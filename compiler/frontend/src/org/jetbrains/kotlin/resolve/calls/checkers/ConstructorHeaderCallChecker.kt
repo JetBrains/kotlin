@@ -43,7 +43,7 @@ object ConstructorHeaderCallChecker : CallChecker {
 
         if (dispatchReceiverClass == null && extensionReceiverClass == null && labelReferenceClass == null) return
 
-        val classes = setOf(dispatchReceiverClass, extensionReceiverClass, labelReferenceClass)
+        val classes: Set<ClassDescriptor?> = [dispatchReceiverClass, extensionReceiverClass, labelReferenceClass]
 
         if (context.scope.parentsWithSelf.any { scope ->
                 scope is LexicalScope && scope.kind == LexicalScopeKind.CONSTRUCTOR_HEADER &&

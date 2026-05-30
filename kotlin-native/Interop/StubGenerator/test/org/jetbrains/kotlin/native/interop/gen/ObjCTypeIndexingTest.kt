@@ -41,7 +41,7 @@ class ObjCTypeIndexingTest : IndexerTestsBase() {
     @Test
     fun id() {
         val actual = type("id")
-        val expected = ObjCIdType(ObjCPointer.Nullability.Unspecified, emptyList())
+        val expected = ObjCIdType(ObjCPointer.Nullability.Unspecified, [])
         assertEquals(expected, actual)
     }
 
@@ -172,7 +172,7 @@ class ObjCTypeIndexingTest : IndexerTestsBase() {
     @Test
     fun Class() {
         val actual = type("Class")
-        val expected = ObjCClassPointer(ObjCPointer.Nullability.Unspecified, emptyList())
+        val expected = ObjCClassPointer(ObjCPointer.Nullability.Unspecified, [])
         assertEquals(expected, actual)
     }
 

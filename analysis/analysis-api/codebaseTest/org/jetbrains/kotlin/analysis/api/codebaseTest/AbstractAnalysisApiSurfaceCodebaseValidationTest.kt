@@ -18,11 +18,11 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
  * A base test for checking the Analysis API surface codebase
  */
 abstract class AbstractAnalysisApiSurfaceCodebaseValidationTest : AbstractAnalysisApiCodebaseValidationTest() {
-    override val sourceDirectories = listOf(
+    override val sourceDirectories = [
         SourceDirectory.ForValidation(
-            sourcePaths = listOf("src/org/jetbrains/kotlin/analysis/api"),
+            sourcePaths = ["src/org/jetbrains/kotlin/analysis/api"],
         )
-    )
+    ]
 
     protected fun KtFile.findSessionComponent(): KtClassOrObject? {
         val declarations = declarations

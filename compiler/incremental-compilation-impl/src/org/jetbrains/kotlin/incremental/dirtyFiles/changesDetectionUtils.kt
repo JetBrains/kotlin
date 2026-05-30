@@ -148,5 +148,5 @@ internal fun getRemovedClassesChanges(
 
     val changesCollector = ChangesCollector()
     removedClasses.forEach { changesCollector.collectSignature(FqName(it), areSubclassesAffected = true) }
-    return changesCollector.getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter)
+    return changesCollector.getChangedAndImpactedSymbols([caches.platformCache], reporter)
 }

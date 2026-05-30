@@ -54,7 +54,7 @@ abstract class SupertypeSupplier {
 }
 
 fun collectSymbolsForType(type: ConeKotlinType, useSiteSession: FirSession): List<FirClassSymbol<*>> {
-    val lookupTags = mutableListOf<ConeClassLikeLookupTag>()
+    val lookupTags: MutableList<ConeClassLikeLookupTag> = []
 
     fun ConeKotlinType.collectClassIds() {
         when (val unwrappedType = unwrapToSimpleTypeUsingLowerBound().fullyExpandedType(useSiteSession)) {
@@ -133,7 +133,7 @@ fun FirClass.isSubclassOf(
 
 fun FirClass.isThereLoopInSupertypes(session: FirSession): Boolean {
     val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = SmartSet.create()
-    val inProcess: MutableSet<FirClassifierSymbol<*>> = mutableSetOf()
+    val inProcess: MutableSet<FirClassifierSymbol<*>> = []
 
     var isThereLoop = false
 
@@ -271,7 +271,7 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
     substituteSuperTypes: Boolean,
     useSiteSession: FirSession,
     supertypeSupplier: SupertypeSupplier,
-    visitedSymbols: MutableSet<FirClassifierSymbol<*>> = mutableSetOf(),
+    visitedSymbols: MutableSet<FirClassifierSymbol<*>> = [],
     onSupertypeAndInheritor: (ConeClassLikeType, FirClassLikeSymbol<*>) -> Unit,
 ) {
     val substitutor: ConeSubstitutor = ConeSubstitutor.Empty
@@ -296,15 +296,15 @@ inline fun FirClassLikeSymbol<*>.forEachSupertypeWithInheritor(
                                 else -> substitutor
                             }
                         }
-                        else -> emptyList()
+                        else -> []
                     }
                 }
                 is FirTypeAliasSymbol -> {
                     val expansion = supertypeSupplier
                         .expansionForTypeAlias(next.fir, useSiteSession)
                         ?.computePartialExpansion(useSiteSession, supertypeSupplier)
-                        ?: return@act emptyList()
-                    listOf(expansion to substitutor)
+                        ?: return@act []
+                    [expansion to substitutor]
                 }
             }
         },
@@ -318,7 +318,7 @@ inline fun <T, K> T.traverseDepthFirstWithoutDuplicates(
     toStackElement: (T, K) -> T?,
     visit: (T) -> Boolean,
 ) {
-    val stack = mutableListOf(this)
+    val stack: MutableList<T> = [this]
 
     while (stack.isNotEmpty()) {
         val current = stack.popLast()

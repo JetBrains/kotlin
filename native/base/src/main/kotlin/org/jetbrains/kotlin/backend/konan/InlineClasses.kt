@@ -226,7 +226,7 @@ object KotlinTypeInlineClassesSupport : InlineClassesSupport<ClassDescriptor, Ko
 
     override fun computeFullErasure(type: KotlinType): Sequence<ClassDescriptor> {
         val classifier = type.constructor.declarationDescriptor
-        return if (classifier is ClassDescriptor) sequenceOf(classifier)
+        return if (classifier is ClassDescriptor) [classifier]
         else type.constructor.supertypes.asSequence().flatMap { computeFullErasure(it) }
     }
 

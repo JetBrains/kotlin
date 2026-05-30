@@ -104,7 +104,7 @@ class TemporaryVariablesEliminationTransformer : MethodTransformer() {
                 result.add(trivialPredecessor)
             }
 
-            result.addAll(nonTrivialPredecessors[label] ?: emptyList())
+            result.addAll(nonTrivialPredecessors[label] ?: [])
 
             return result
         }

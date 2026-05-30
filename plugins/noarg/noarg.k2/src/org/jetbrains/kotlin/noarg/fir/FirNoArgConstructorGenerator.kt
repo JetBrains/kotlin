@@ -48,16 +48,16 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> =
         if (classSymbol is FirRegularClassSymbol) {
-            setOf(SpecialNames.INIT)
+            [SpecialNames.INIT]
         } else {
-            emptySet()
+            []
         }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val ownerClass = context.owner
-        val ownerClassDeclaredMemberScope = context.declaredScope ?: return emptyList()
+        val ownerClassDeclaredMemberScope = context.declaredScope ?: return []
 
-        if (!shouldGenerateNoArgConstructor(ownerClass, ownerClassDeclaredMemberScope)) return emptyList()
+        if (!shouldGenerateNoArgConstructor(ownerClass, ownerClassDeclaredMemberScope)) return []
 
         val noArgsConstructor = createConstructor(
             owner = ownerClass,
@@ -68,7 +68,7 @@ internal class FirNoArgConstructorGenerator(session: FirSession) : FirDeclaratio
 
         configureDeprecation(noArgsConstructor)
 
-        return listOf(noArgsConstructor.symbol)
+        return [noArgsConstructor.symbol]
     }
 
     /**

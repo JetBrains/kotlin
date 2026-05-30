@@ -82,7 +82,7 @@ public fun <T> Collection<Future<T>>.waitForMultipleFutures(millis: Int): Set<Fu
  */
 @ObsoleteWorkersApi
 public fun <T> waitForMultipleFutures(futures: Collection<Future<T>>, timeoutMillis: Int): Set<Future<T>> {
-    val result = mutableSetOf<Future<T>>()
+    val result: MutableSet<Future<T>> = []
 
     while (true) {
         val versionToken = versionToken()

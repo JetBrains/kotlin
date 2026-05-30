@@ -115,7 +115,7 @@ internal class KaFirTypeCreator(
                 val builder = KaBaseCapturedTypeBuilder(this@KaFirTypeCreator).apply(init)
                 val capturedType = firSession.typeContext.createCapturedType(
                     projection.coneTypeProjection,
-                    projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: emptyList(),
+                    projection.type?.directSupertypes?.map { it.coneType }?.toList() ?: [],
                     lowerType = null,
                     CaptureStatus.FROM_EXPRESSION
                 )
@@ -276,7 +276,7 @@ internal class KaFirTypeCreator(
             ?: return ConeErrorType(ConeUnresolvedSymbolError(refinedClassId)).asKaType()
         val lookupTag = classSymbol.toLookupTag()
 
-        val contextParameters = builder.contextParameters.map { it.coneType }.butIf(isReflect) { emptyList() }
+        val contextParameters = builder.contextParameters.map { it.coneType }.butIf(isReflect) { [] }
         val receiverType = builder.receiverType?.coneType
         val valueParameters = builder.valueParameters.map { valueParameter ->
             val parameterConeType = valueParameter.type.coneType
@@ -328,12 +328,12 @@ internal class KaFirTypeCreator(
 
     private fun constructAnnotationAttributesList(annotationClassIds: List<ClassId>): List<ConeAttribute<*>> {
         if (annotationClassIds.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         val customAttribute = CustomAnnotationTypeAttribute(annotationClassIds.mapNotNull(::constructAnnotation))
 
-        return listOf(customAttribute)
+        return [customAttribute]
     }
 
     private fun constructAnnotation(classId: ClassId): FirAnnotation? {

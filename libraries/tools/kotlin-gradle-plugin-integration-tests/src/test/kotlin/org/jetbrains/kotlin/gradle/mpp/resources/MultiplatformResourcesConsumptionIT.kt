@@ -77,12 +77,13 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 }
             }
 
-            val resolvableTargets = listOf(
+            @Suppress("ConvertToCollectionLiterals")
+            val resolvableTargets = [
                 "linuxX64",
                 "wasmJs",
                 "wasmWasi",
                 "js",
-            ) + if (HostManager.hostIsMac) listOf("iosArm64") else emptyList()
+            ] + if (HostManager.hostIsMac) listOf("iosArm64") else []
 
             resolvableTargets.forEach { target ->
                 build(":${target}ResolveResources") {
@@ -115,12 +116,12 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
     ) : java.io.Serializable
 
     // Keep this list in reversed topsorted order by resourcesDependency
-    private val dependencies: List<ResourcesProject> = listOf(
+    private val dependencies: List<ResourcesProject> = [
         ResourcesProject("A", resourcesDependency = "B", hasResources = false),
         ResourcesProject("B", resourcesDependency = "C", hasResources = true),
         ResourcesProject("C", resourcesDependency = "D", hasResources = false),
         ResourcesProject("D", resourcesDependency = null, hasResources = true),
-    )
+    ]
 
     private fun prepareProjectDependencies(
         gradleVersion: GradleVersion,

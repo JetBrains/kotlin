@@ -32,6 +32,6 @@ fun TestConfigurationBuilder.configureSerializationFirPsiDiagnosticTest() {
 
 private fun TestConfigurationBuilder.disableOptInErrors() {
     defaultDirectives {
-        DIAGNOSTICS with listOf("-OPT_IN_USAGE", "-OPT_IN_USAGE_ERROR", "-OPT_IN_TO_INHERITANCE", "-OPT_IN_TO_INHERITANCE_ERROR")
+        DIAGNOSTICS with ["-OPT_IN_USAGE", "-OPT_IN_USAGE_ERROR", "-OPT_IN_TO_INHERITANCE", "-OPT_IN_TO_INHERITANCE_ERROR"]
     }
 }

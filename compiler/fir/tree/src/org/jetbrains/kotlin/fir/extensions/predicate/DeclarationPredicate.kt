@@ -54,7 +54,7 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
 
         final override val metaAnnotations: Set<AnnotationFqn>
-            get() = emptySet()
+            get() = []
 
         override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
             return visitor.visitAnnotated(this, data)
@@ -101,7 +101,7 @@ sealed class DeclarationPredicate : AbstractPredicate<DeclarationPredicate> {
         }
 
         override val annotations: Set<AnnotationFqn>
-            get() = emptySet()
+            get() = []
 
         override fun <R, D> accept(visitor: PredicateVisitor<DeclarationPredicate, R, D>, data: D): R {
             return visitor.visitMetaAnnotatedWith(this, data)

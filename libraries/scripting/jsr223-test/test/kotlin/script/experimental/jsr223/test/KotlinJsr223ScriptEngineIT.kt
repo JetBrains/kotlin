@@ -62,14 +62,14 @@ class KotlinJsr223ScriptEngineIT {
             assertEquals(KotlinCompilerVersion.VERSION, languageVersion)
             assertEquals("kotlin", engineName)
             assertEquals(KotlinCompilerVersion.VERSION, engineVersion)
-            assertEquals(listOf("kts"), extensions)
-            assertEquals(listOf("text/x-kotlin"), mimeTypes)
-            assertEquals(listOf("kotlin"), names)
+            assertEquals(["kts"], extensions)
+            assertEquals(["text/x-kotlin"], mimeTypes)
+            assertEquals(["kotlin"], names)
             assertEquals("obj.method(arg1, arg2, arg3)", getMethodCallSyntax("obj", "method", "arg1", "arg2", "arg3"))
             assertEquals("print(\"Hello, world!\")", getOutputStatement("Hello, world!"))
             assertEquals(KotlinCompilerVersion.VERSION, getParameter(ScriptEngine.LANGUAGE_VERSION))
             val sep = System.getProperty("line.separator")
-            val prog = arrayOf("val x: Int = 3", "var y = x + 2")
+            val prog: Array<String> = ["val x: Int = 3", "var y = x + 2"]
             assertEquals(prog.joinToString(sep) + sep, getProgram(*prog))
         }
     }
@@ -469,7 +469,7 @@ obj
             )
             val paths = PathUtil.kotlinPathsForDistDirectory
             runAndCheckResults(
-                listOf(
+                [
                     runtime.absolutePath,
                     prepareArgFile(
                         "-cp", paths.compilerClasspath.joinToString(File.pathSeparator),
@@ -480,8 +480,8 @@ obj
                         K2JVMCompilerArguments::jvmTarget.cliArgument, "17",
                     ),
                     "libraries/scripting/jsr223-test/testData/testJsr223Inlining.kt"
-                ),
-                additionalEnvVars = listOf("JAVA_HOME" to jdk17.absolutePath)
+                ],
+                additionalEnvVars = ["JAVA_HOME" to jdk17.absolutePath]
             )
 
             val runtimeCp = File(System.getProperty("testJsr223RuntimeClasspath")!!).readText().split(File.pathSeparator).map(::File) + outJar
@@ -491,13 +491,13 @@ obj
             )
 
             runAndCheckResults(
-                listOf(
+                [
                     runtime.absolutePath,
                     "-cp",
                     prepareArgFile(runtimeCp.joinToString(File.pathSeparator) { it.path }),
                     "TestJsr223InliningKt"
-                ),
-                listOf("OK")
+                ],
+                ["OK"]
             )
         } finally {
             tempDir.toFile().deleteRecursively()

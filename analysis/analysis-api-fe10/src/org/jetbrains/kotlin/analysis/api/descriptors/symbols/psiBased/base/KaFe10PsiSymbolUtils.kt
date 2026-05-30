@@ -98,8 +98,8 @@ internal fun KtDeclaration.calculateCallableId(allowLocal: Boolean): CallableId?
 
     var current = this.getElementParentDeclaration()
 
-    val localName = mutableListOf<String>()
-    val className = mutableListOf<String>()
+    val localName: MutableList<String> = []
+    val className: MutableList<String> = []
 
     while (current != null) {
         when (current) {

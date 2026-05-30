@@ -30,8 +30,8 @@ abstract class WebBackendPipelinePhase<Output : WebBackendPipelineArtifact, Inte
     name: String
 ) : PipelinePhase<ConfigurationPipelineArtifact, Output>(
     name = name,
-    preActions = emptySet(),
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [],
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): Output? {
         val configuration = input.configuration

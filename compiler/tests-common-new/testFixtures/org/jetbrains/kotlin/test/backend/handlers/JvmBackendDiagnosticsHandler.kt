@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.test.services.service
 
 class JvmBackendDiagnosticsHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::DiagnosticsService))
+        get() = [service(::DiagnosticsService)]
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(DiagnosticsDirectives)
+        get() = [DiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)

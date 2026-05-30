@@ -360,7 +360,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             typeRef.contextParameterTypeRefs.map { it.coneType } +
                     listOfNotNull(typeRef.receiverTypeRef?.coneType) +
                     typeRef.parameters.map { it.returnTypeRef.coneType.withParameterNameAnnotation(it) } +
-                    listOf(typeRef.returnTypeRef.coneType)
+                    typeRef.returnTypeRef.coneType
         val functionKinds = session.functionTypeService.extractAllSpecialKindsForFunctionTypeRef(typeRef)
         var diagnostic: ConeDiagnostic? = null
         val kind = when (functionKinds.size) {
@@ -473,7 +473,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
     ): CallableReferenceLhsAsType? {
         val classSymbol = qualifier.symbol ?: return null
 
-        val allTypeArguments: MutableList<ConeTypeProjection> = mutableListOf()
+        val allTypeArguments: MutableList<ConeTypeProjection> = []
         var diagnostic: ConeDiagnostic? = null
 
         if (!useProperResolutionOfCallableReferenceLHSs) {

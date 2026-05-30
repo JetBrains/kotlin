@@ -46,21 +46,21 @@ internal fun transformArgs(args: List<String>, messageCollector: MessageCollecto
     val errorMessages = validateArgumentsAllErrors(parseErrors)
     if (errorMessages.isNotEmpty()) {
         errorMessages.forEach { messageCollector.report(CompilerMessageSeverity.ERROR, it) }
-        return emptyList()
+        return []
     }
 
     return try {
         transformKaptToolArgs(kotlincTransformed, messageCollector, isTest)
     } catch (e: IllegalArgumentException) {
         messageCollector.report(CompilerMessageSeverity.ERROR, e.localizedMessage)
-        emptyList()
+        []
     }
 }
 
 private const val KAPT_COMPILER_PLUGIN_JAR_NAME = "kotlin-annotation-processing.jar"
 
 private fun transformKaptToolArgs(args: List<String>, messageCollector: MessageCollector, isTest: Boolean): List<String> {
-    val transformed = mutableListOf<String>()
+    val transformed: MutableList<String> = []
 
     if (!isTest) {
         val kaptCompilerPluginFile = findKaptCompilerPlugin()
@@ -168,7 +168,7 @@ private fun CliToolOption.transform(arg: String): String {
 }
 
 private fun kaptArg(option: KaptCliOption, value: String): List<String> {
-    return listOf("-P", "plugin:" + KaptCliOption.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID + ":" + option.optionName + "=" + value)
+    return ["-P", "plugin:${KaptCliOption.ANNOTATION_PROCESSING_COMPILER_PLUGIN_ID}:${option.optionName}=$value"]
 }
 
 private fun argError(text: String): Nothing {

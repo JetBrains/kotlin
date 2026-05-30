@@ -191,7 +191,7 @@ public abstract class KaConstructorSymbol : KaFunctionSymbol(), KaTypeParameterO
     final override val isCompanion: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { [] }
 
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 

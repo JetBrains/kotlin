@@ -27,7 +27,7 @@ open class ApplicationExtensionDescriptor<T : Any>(name: String, private val ext
 
     fun getInstances(): List<T> {
         val projectArea = ApplicationManager.getApplication().extensionArea
-        if (!projectArea.hasExtensionPoint(extensionPointName.name)) return listOf()
+        if (!projectArea.hasExtensionPoint(extensionPointName.name)) return []
 
         return projectArea.getExtensionPoint(extensionPointName).extensions.toList()
     }

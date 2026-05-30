@@ -91,7 +91,7 @@ class TemporaryValsAnalyzer {
 
         // Don't run analysis if we have no potential temporary val stores.
         if (potentiallyTemporaryStores.isEmpty())
-            return emptyList()
+            return []
 
         // If the method is big, and we couldn't eliminate enough temporary variable store candidates,
         // bail out, treat all variables as non-temporary.
@@ -104,7 +104,7 @@ class TemporaryValsAnalyzer {
                 potentiallyTemporaryStores.size /
                 (1024 * 1024)
         if (memoryComplexity > OptimizationMethodVisitor.MEMORY_LIMIT_BY_METHOD_MB)
-            return emptyList()
+            return []
 
         val storeInsnToStoreData = potentiallyTemporaryStores.associateWith { StoreData(it) }
 

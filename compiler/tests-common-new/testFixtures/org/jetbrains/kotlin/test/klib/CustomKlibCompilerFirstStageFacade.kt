@@ -73,7 +73,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
         val modulesToCompile: List<TestModule> = if (isKmpSupported)
             module.transitiveDependsOnDependencies(includeSelf = true, reverseOrder = true)
         else
-            listOf(module)
+            [module]
 
         val sourceFileProvider = testServices.sourceFileProvider
         val filesToCompile: List<String> = modulesToCompile.flatMap { it.files }
@@ -88,7 +88,7 @@ abstract class CustomKlibCompilerFirstStageFacade(
 
         return compileKlib(
             module = module,
-            customArgs = customArgs + listOf("-XXLanguage:+MultiPlatformProjects").takeIf { isKmpSupported }.orEmpty(),
+            customArgs = customArgs + ["-XXLanguage:+MultiPlatformProjects"].takeIf { isKmpSupported }.orEmpty(),
             sources = filesToCompile,
             regularDependencies = regularDependencies,
             friendDependencies = friendDependencies,

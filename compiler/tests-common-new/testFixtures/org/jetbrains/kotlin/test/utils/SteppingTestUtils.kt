@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
+import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
 import java.io.File
@@ -61,10 +62,10 @@ private const val DIRECTIVE_MARKER = "+"
 
 data class BackendWithDirectives(val backend: TargetBackend) {
     companion object {
-        private val directivesToConsider = mutableSetOf(LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS)
+        private val directivesToConsider: MutableSet<SimpleDirective> = [LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS]
     }
 
-    private val directives = mutableSetOf<Directive>()
+    private val directives: MutableSet<Directive> = []
 
     fun addDirectiveIfConsidered(directive: Directive) {
         if (directive in directivesToConsider) {
@@ -84,9 +85,9 @@ fun checkSteppingTestResult(
     loggedItems: List<SteppingTestLoggedData>,
     directives: RegisteredDirectives
 ) {
-    val actual = mutableListOf<String>()
+    val actual: MutableList<String> = []
     val lines = wholeFile.readLines()
-    val directivesInTestFile = mutableSetOf<Directive>()
+    val directivesInTestFile: MutableSet<Directive> = []
     var forceStepInto = false
     for (line in lines) {
         if (line.contains(DIRECTIVE_MARKER)) {
@@ -116,7 +117,7 @@ fun checkSteppingTestResult(
         if (line.startsWith(FORCE_STEP_INTO_MARKER)) break
     }
 
-    var currentBackends = listOf(BackendWithDirectives(TargetBackend.ANY))
+    var currentBackends = [BackendWithDirectives(TargetBackend.ANY)]
     var putExceedingActualLinesAtIndex = -1
     for (line in lineIterator) {
         if (line.isEmpty()) {
@@ -125,7 +126,7 @@ fun checkSteppingTestResult(
         }
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             val options = line.removePrefix(EXPECTATIONS_MARKER).splitToSequence(Regex("\\s+")).filter { it.isNotEmpty() }
-            val backends = mutableListOf<BackendWithDirectives>()
+            val backends: MutableList<BackendWithDirectives> = []
             var currentBackendWithDirectives: BackendWithDirectives? = null
             for (option in options) {
                 val backend = valueOfOrNull<TargetBackend>(option)
@@ -142,7 +143,7 @@ fun checkSteppingTestResult(
                 }
             }
 
-            currentBackends = backends.takeIf { it.isNotEmpty() } ?: listOf(BackendWithDirectives(TargetBackend.ANY))
+            currentBackends = backends.takeIf { it.isNotEmpty() } ?: [BackendWithDirectives(TargetBackend.ANY)]
         }
 
         val isUnderTargetBackend = currentBackends.any {
@@ -187,11 +188,11 @@ private fun String.getDeclaredDirectives(): List<Directive> {
  * strategy in debug tests.
  */
 private fun compressSequencesWithoutLineNumber(loggedItems: List<SteppingTestLoggedData>): List<SteppingTestLoggedData> {
-    if (loggedItems.isEmpty()) return listOf()
+    if (loggedItems.isEmpty()) return []
 
     val logIterator = loggedItems.iterator()
     var currentItem = logIterator.next()
-    val result = mutableListOf(currentItem)
+    val result: MutableList<SteppingTestLoggedData> = [currentItem]
 
     for (logItem in logIterator) {
         if (currentItem.line != -1 || currentItem.expectation != logItem.expectation) {

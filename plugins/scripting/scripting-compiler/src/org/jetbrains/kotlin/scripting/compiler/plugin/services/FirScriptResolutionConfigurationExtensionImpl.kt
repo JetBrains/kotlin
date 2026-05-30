@@ -27,11 +27,11 @@ class FirScriptResolutionConfigurationExtensionImpl(
 
     override fun getScriptDefaultImports(script: FirScript): List<FirImport>? {
         val scriptSession = script.moduleData.session
-        val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return emptyList()
-        val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return emptyList()
+        val scriptFile = scriptSession.firProvider.getFirScriptContainerFile(script.symbol) ?: return []
+        val scriptSourceFile = scriptFile.sourceFile?.toSourceCode() ?: return []
         @Suppress("DEPRECATION")
         val compilationConfiguration = script.scriptCompilationConfiguration
-            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return emptyList()
+            ?: session.getScriptCompilationConfiguration(scriptSourceFile, getDefault = { null }) ?: return []
 
         return compilationConfiguration[ScriptCompilationConfiguration.defaultImports]
             .firImportsFromDefaultImports(script.source.fakeElement(KtFakeSourceElementKind.ImplicitImport))

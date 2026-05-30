@@ -24,10 +24,10 @@ class Merger(
 
     private val isEsModules = moduleKind == ModuleKind.ES
     private val importStatements = mutableMapOf<String, JsStatement>()
-    private val importStatementsWithEffect = mutableListOf<JsStatement>()
+    private val importStatementsWithEffect: MutableList<JsStatement> = []
     private val importedModulesMap = mutableMapOf<JsImportedModuleKey, JsImportedModule>()
 
-    private val additionalExports = mutableListOf<JsStatement>()
+    private val additionalExports: MutableList<JsStatement> = []
 
     private fun linkJsNames() {
         val nameMap = mutableMapOf<String, JsName>()
@@ -132,7 +132,7 @@ class Merger(
     }
 
     private fun assertSingleDefinition() {
-        val definitions = mutableSetOf<String>()
+        val definitions: MutableSet<String> = []
         fragments.forEach {
             it.definitions.forEach {
                 if (!definitions.add(it)) {
@@ -159,7 +159,7 @@ class Merger(
         } else {
             val exportBody = JsBlock(fragments.flatMap { it.exports.statements })
             if (exportBody.isEmpty) {
-                return emptyList()
+                return []
             }
 
             val internalModuleName = ReservedJsNames.makeInternalModuleName()
@@ -170,7 +170,7 @@ class Merger(
                 parameters.add(JsParameter(internalModuleName))
             }
             val jsExporterCall = JsInvocation(exporterName.makeRef(), internalModuleName.makeRef())
-            val result = mutableListOf(jsExporterFunction.makeStmt(), jsExporterCall.makeStmt())
+            val result: MutableList<JsStatement> = [jsExporterFunction.makeStmt(), jsExporterCall.makeStmt()]
             if (!generateCallToMain) {
                 val exportExporter = jsAssignment(JsNameRef(exporterName, internalModuleName.makeRef()), exporterName.makeRef())
                 result += exportExporter.makeStmt()
@@ -202,7 +202,7 @@ class Merger(
 
         linkJsNames()
 
-        val moduleBody = mutableListOf<JsStatement>()
+        val moduleBody: MutableList<JsStatement> = []
 
         val preDeclarationBlock = JsCompositeBlock()
         val postDeclarationBlock = JsCompositeBlock()
@@ -300,7 +300,7 @@ class Merger(
 
         DFS.dfs(
             classModelMap.keys,
-            { classModelMap[it]?.dependsOnClasses ?: emptyList() },
+            { classModelMap[it]?.dependsOnClasses ?: [] },
             declarationHandler
         )
     }
@@ -343,12 +343,12 @@ class Merger(
                     is JsImport.Target.All -> JsImport.Target.All(alias = name.makeRef())
                     is JsImport.Target.Default -> JsImport.Target.Default(name = name.makeRef())
                     is JsImport.Target.Elements -> JsImport.Target.Elements(
-                        mutableListOf(
+                        [
                             JsImport.Element(
                                 elements.single().name,
                                 name.makeRef()
                             )
-                        )
+                        ]
                     )
                 }
             )
@@ -365,7 +365,7 @@ fun List<JsIrModule>.merge(): JsIrModule {
     return if (size == 1) {
         firstModule
     } else {
-        val fragments = mutableListOf<JsIrProgramFragment>()
+        val fragments: MutableList<JsIrProgramFragment> = []
         var reexportedInModuleWithName: String? = null
 
         for (module in this) {
@@ -384,9 +384,9 @@ fun List<JsIrModuleHeader>.merge(): JsIrModuleHeader {
     return if (size == 1) {
         firstModule
     } else {
-        val definitions = mutableSetOf<String>()
+        val definitions: MutableSet<String> = []
         val nameBindings = mutableMapOf<String, String>()
-        val optionalCrossModuleImports = mutableSetOf<String>()
+        val optionalCrossModuleImports: MutableSet<String> = []
         var reexportedInModuleWithName: String? = null
         var importedWithEffectInModuleWithName: String? = null
 

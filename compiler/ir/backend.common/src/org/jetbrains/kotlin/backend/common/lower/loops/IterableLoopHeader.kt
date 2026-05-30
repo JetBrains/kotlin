@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 internal class IterableLoopHeader(
     private val headerInfo: IterableHeaderInfo
 ) : ForLoopHeader {
-    override val loopInitStatements = listOf(headerInfo.iteratorVariable)
+    override val loopInitStatements = [headerInfo.iteratorVariable]
 
     override val consumesLoopVariableComponents = false
 
@@ -50,7 +50,7 @@ internal class IterableLoopHeader(
             loopVariables.firstOrNull()?.let { it.initializer = it.initializer?.transform(InitializerCallReplacer(next), null) }
             loopVariables.drop(1).forEach { it.initializer = irGet(loopVariables.first()) }
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
-            loopVariables.ifEmpty { listOf(next.coerceToUnitIfNeeded(next.type, context.irBuiltIns)) }
+            loopVariables.ifEmpty { [next.coerceToUnitIfNeeded(next.type, context.irBuiltIns)] }
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {

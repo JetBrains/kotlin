@@ -122,7 +122,7 @@ class TowerResolver {
     ) {
         private val isNameForHidesMember =
             name in HIDES_MEMBERS_NAME_LIST || implicitScopeTower.getNameForGivenImportAlias(name) in HIDES_MEMBERS_NAME_LIST
-        private val skippedDataForLookup = mutableListOf<TowerData>()
+        private val skippedDataForLookup: MutableList<TowerData> = []
 
         private val localLevels: Collection<ScopeTowerLevel> by lazy(LazyThreadSafetyMode.NONE) {
             implicitScopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
@@ -138,7 +138,7 @@ class TowerResolver {
         val syntheticLevel = SyntheticScopeBasedTowerLevel(implicitScopeTower, implicitScopeTower.syntheticScopes)
 
         private fun ImplicitScopeTower.createNonLocalLevels(): Collection<ScopeTowerLevel> {
-            val mainResult = mutableListOf<ScopeTowerLevel>()
+            val mainResult: MutableList<ScopeTowerLevel> = []
 
             fun addLevel(scopeTowerLevel: ScopeTowerLevel, mayFitForName: Boolean) {
                 if (mayFitForName) {
@@ -185,7 +185,7 @@ class TowerResolver {
 
             val parentScopes = lexicalScope.parentsWithSelf.toList()
 
-            val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+            val contextReceiversGroups: MutableList<List<ReceiverValueWithSmartCastInfo>> = []
             var firstImportingScopeIndex = 0
             for ([i, scope] in parentScopes.withIndex()) {
                 if (scope !is LexicalScope) {
@@ -232,7 +232,7 @@ class TowerResolver {
                 TowerData.TowerLevel(localLevel).process()?.let { return it }
             }
 
-            val contextReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+            val contextReceiversGroups: MutableList<List<ReceiverValueWithSmartCastInfo>> = []
 
             fun processLexicalScope(scope: LexicalScope, resolveExtensionsForImplicitReceiver: Boolean): Collection<C>? {
                 if (implicitScopeTower.areContextReceiversEnabled) {
@@ -382,7 +382,7 @@ class TowerResolver {
         val candidatesGroups = if (useOrder) {
             processor.process(towerData)
         } else {
-            listOf(processor.process(towerData).flatten())
+            [processor.process(towerData).flatten()]
         }
 
         for (candidatesGroup in candidatesGroups) {
@@ -479,9 +479,9 @@ class TowerResolver {
         }
 
         override fun getFinalCandidates(): Collection<C> {
-            val moreSuitableGroup = candidateGroups.maxByOrNull { it.groupApplicability } ?: return emptyList()
+            val moreSuitableGroup = candidateGroups.maxByOrNull { it.groupApplicability } ?: return []
             val groupApplicability = moreSuitableGroup.groupApplicability
-            if (groupApplicability == CandidateApplicability.HIDDEN) return emptyList()
+            if (groupApplicability == CandidateApplicability.HIDDEN) return []
 
             return moreSuitableGroup.filter { it.resultingApplicability == groupApplicability }
         }

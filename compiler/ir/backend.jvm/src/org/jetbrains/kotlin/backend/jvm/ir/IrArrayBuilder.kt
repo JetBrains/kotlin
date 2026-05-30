@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.util.isBoxedArray
 inline fun JvmIrBuilder.irArray(arrayType: IrType, block: IrArrayBuilder.() -> Unit): IrExpression =
     IrArrayBuilder(this, arrayType).apply { block() }.build()
 
-fun JvmIrBuilder.irArrayOf(arrayType: IrType, elements: List<IrExpression> = listOf()): IrExpression =
+fun JvmIrBuilder.irArrayOf(arrayType: IrType, elements: List<IrExpression> = []): IrExpression =
     irArray(arrayType) { elements.forEach { +it } }
 
 private class IrArrayElement(val expression: IrExpression, val isSpread: Boolean)
@@ -37,7 +37,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
     // The unwrapped element type
     val elementType = unwrappedArrayType.getArrayElementType(builder.context.irBuiltIns)
 
-    private val elements: MutableList<IrArrayElement> = mutableListOf()
+    private val elements: MutableList<IrArrayElement> = []
 
     private val hasSpread
         get() = elements.any { it.isSpread }
@@ -124,7 +124,7 @@ class IrArrayBuilder(val builder: JvmIrBuilder, val arrayType: IrType) {
         val toArray = spreadBuilder.functions.single { it.owner.name.asString() == "toArray" }
 
         return builder.irBlock {
-            val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single(), listOf()).apply {
+            val spreadBuilderVar = irTemporary(irCallConstructor(spreadBuilder.constructors.single(), []).apply {
                 arguments[0] = irInt(elements.size)
             })
 

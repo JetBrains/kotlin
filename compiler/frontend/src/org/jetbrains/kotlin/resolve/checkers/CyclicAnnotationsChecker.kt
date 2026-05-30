@@ -37,8 +37,8 @@ object CyclicAnnotationsChecker : DeclarationChecker {
     }
 
     private class Checker(val targetAnnotation: ClassDescriptor) {
-        private val visitedAnnotationDescriptors = mutableSetOf(targetAnnotation)
-        private val annotationDescriptorsWithCycle = mutableSetOf(targetAnnotation)
+        private val visitedAnnotationDescriptors: MutableSet<ClassDescriptor> = [targetAnnotation]
+        private val annotationDescriptorsWithCycle: MutableSet<ClassDescriptor> = [targetAnnotation]
 
         fun annotationHasCycle(annotationDescriptor: ClassDescriptor): Boolean {
             val constructorDescriptor = annotationDescriptor.unsubstitutedPrimaryConstructor ?: return false

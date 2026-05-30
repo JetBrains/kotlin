@@ -213,7 +213,7 @@ internal class MppHighlightingTestDataWithGradleIT : KGPBaseTest() {
     class GradleAndMppHighlightingProvider : GradleArgumentsProvider() {
         private val testDataRoot = Path("../../../idea/testData/multiModuleHighlighting/multiplatform")
 
-        private val bannedDependencies = setOf("fulljdk", "stdlib", "coroutines")
+        private val bannedDependencies: Set<String> = ["fulljdk", "stdlib", "coroutines"]
 
         private fun isTestSuiteValidForCommonCode(
             testDataDir: Path,

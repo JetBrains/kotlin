@@ -65,7 +65,7 @@ class LombokCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId: String = PLUGIN_ID
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(CONFIG_FILE_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> = [CONFIG_FILE_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {

@@ -81,8 +81,8 @@ class SimpleBridgeGeneratorImpl(
             block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression {
 
-        val kotlinLines = mutableListOf<String>()
-        val nativeLines = mutableListOf<String>()
+        val kotlinLines: MutableList<String> = []
+        val nativeLines: MutableList<String> = []
 
         val kotlinFunctionName = "kniBridge${nextUniqueId++}"
         val kotlinParameters = kotlinValues.withIndex().joinToString {
@@ -91,12 +91,12 @@ class SimpleBridgeGeneratorImpl(
 
         val callExpr = "$kotlinFunctionName(${kotlinValues.joinToString { it.value }})"
 
-        val cFunctionParameters = when (platform) {
-            KotlinPlatform.JVM -> mutableListOf(
-                    "jniEnv" to "JNIEnv*",
-                    "jclss" to "jclass"
-            )
-            KotlinPlatform.NATIVE -> mutableListOf()
+        val cFunctionParameters: MutableList<Pair<String, String>> = when (platform) {
+            KotlinPlatform.JVM -> [
+                "jniEnv" to "JNIEnv*",
+                "jclss" to "jclass"
+            ]
+            KotlinPlatform.NATIVE -> []
         }
 
         kotlinValues.withIndex().mapTo(cFunctionParameters) {
@@ -167,8 +167,8 @@ class SimpleBridgeGeneratorImpl(
 
         if (platform != KotlinPlatform.NATIVE) TODO()
 
-        val kotlinLines = mutableListOf<String>()
-        val nativeLines = mutableListOf<String>()
+        val kotlinLines: MutableList<String> = []
+        val nativeLines: MutableList<String> = []
 
         val kotlinFunctionName = "kniBridge${nextUniqueId++}"
         val kotlinParameters = nativeValues.withIndex().map {
@@ -213,11 +213,11 @@ class SimpleBridgeGeneratorImpl(
         nativeBridges.add(nativeBacked to nativeBridge)
     }
 
-    private val nativeBridges = mutableListOf<Pair<NativeBacked, NativeBridge>>()
+    private val nativeBridges: MutableList<Pair<NativeBacked, NativeBridge>> = []
 
     override fun prepare(): NativeBridges {
-        val includedBridges = mutableListOf<NativeBridge>()
-        val excludedClients = mutableSetOf<NativeBacked>()
+        val includedBridges: MutableList<NativeBridge> = []
+        val excludedClients: MutableSet<NativeBacked> = []
 
         val libraryWithPCH = if (libraryForCStubs is CompilationWithPCH) libraryForCStubs else libraryForCStubs.precompileHeaders()
 

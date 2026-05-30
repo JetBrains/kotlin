@@ -456,7 +456,7 @@ class WorkerTest {
         }
         actualWorkers.contains(Worker.current)
 
-        val terminatedWorkers = mutableSetOf<Worker>()
+        val terminatedWorkers: MutableSet<Worker> = []
         (workers.indices step 2).forEach {
             val worker = workers[it]
             worker.requestTermination().result

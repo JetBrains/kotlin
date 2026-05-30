@@ -37,8 +37,8 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
 
     override fun serialize(filesMetadata: List<MetadataSource.File>): List<Pair<FqName, ByteArray>> {
         class PackageContent {
-            val classes: MutableList<FirRegularClass> = mutableListOf()
-            val members: MutableList<FirMemberDeclaration> = mutableListOf()
+            val classes: MutableList<FirRegularClass> = []
+            val members: MutableList<FirMemberDeclaration> = []
         }
 
         val contentPerPackage: MutableMap<FqName, PackageContent> = mutableMapOf()
@@ -68,7 +68,7 @@ class FirBuiltInsSerializer(val session: FirSession, val scopeSession: ScopeSess
     }
 
     override fun serializeEmptyPackage(fqName: FqName): ByteArray {
-        return PackageSerializer(fqName, emptyList(), emptyList(), session, scopeSession).serialize()
+        return PackageSerializer(fqName, [], [], session, scopeSession).serialize()
     }
 
     private inner class PackageSerializer(

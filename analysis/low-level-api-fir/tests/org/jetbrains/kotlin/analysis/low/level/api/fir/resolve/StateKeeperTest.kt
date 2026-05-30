@@ -182,7 +182,7 @@ class StateKeeperTest {
 
         val foo0 = Foo(1)
         val foo1 = Foo(2)
-        val bar = Bar("Foo", listOf(foo0, foo1))
+        val bar = Bar("Foo", [foo0, foo1])
 
         barKeeper.withRestoration(bar) {
             assertEquals("Foo", bar.one)

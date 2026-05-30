@@ -136,9 +136,9 @@ private fun generatePresetFunctions(
     |    configure: ${presetEntry.targetType.renderShort()}.() -> Unit = { }
     |): ${presetEntry.targetType.renderShort()}
     |
-    |${presetEntry.kdoc()}${presetEntry.deprecated(emptyList())}${suppress}fun $presetName() = $presetName("$entityName") { }
+    |${presetEntry.kdoc()}${presetEntry.deprecated([])}${suppress}fun $presetName() = $presetName("$entityName") { }
     |
-    |${presetEntry.kdoc()}${presetEntry.deprecated(listOf("name"))}${suppress}fun $presetName(name: String) = $presetName(name) { }
+    |${presetEntry.kdoc()}${presetEntry.deprecated(["name"])}${suppress}fun $presetName(name: String) = $presetName(name) { }
     |
     |${presetEntry.kdoc()}${presetEntry.deprecated()}${suppress}fun $presetName(
     |    name: String,

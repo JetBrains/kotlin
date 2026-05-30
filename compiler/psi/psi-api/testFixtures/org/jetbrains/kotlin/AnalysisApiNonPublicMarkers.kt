@@ -29,12 +29,12 @@ object AnalysisApiNonPublicMarkers {
 
     const val REQUIRES_OPT_IN: String = "RequiresOptIn"
 
-    val INTERNAL_API_MARKER_ANNOTATIONS: Set<String> = setOf(
+    val INTERNAL_API_MARKER_ANNOTATIONS: Set<String> = [
         KA_IMPLEMENTATION_DETAIL,
         KA_EXPERIMENTAL_API,
         KA_PLATFORM_INTERFACE,
         KA_NON_PUBLIC_API,
         KA_IDE_API,
         LL_FIR_INTERNALS,
-    )
+    ]
 }

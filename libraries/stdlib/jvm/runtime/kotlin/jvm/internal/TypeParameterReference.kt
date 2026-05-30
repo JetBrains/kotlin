@@ -22,7 +22,7 @@ public class TypeParameterReference(
 
     @OptIn(ExperimentalStdlibApi::class)
     override val upperBounds: List<KType>
-        get() = bounds ?: listOf(typeOf<Any?>()).also { bounds = it }
+        get() = bounds ?: [typeOf<Any?>()].also { bounds = it }
 
     public fun setUpperBounds(upperBounds: List<KType>) {
         // This assertion is only checking that the typeOf compiler implementation didn't generate some nonsense in bytecode.

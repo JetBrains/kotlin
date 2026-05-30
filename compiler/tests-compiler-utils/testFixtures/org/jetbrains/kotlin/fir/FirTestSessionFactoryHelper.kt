@@ -32,7 +32,7 @@ object FirTestSessionFactoryHelper {
         javaSourceScope: AbstractProjectFileSearchScope,
         librariesScope: AbstractProjectFileSearchScope = !javaSourceScope,
         moduleName: String = "TestModule",
-        friendsPaths: List<Path> = emptyList(),
+        friendsPaths: List<Path> = [],
         languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
     ): FirSession {
         val configuration = CompilerConfiguration.create().apply {
@@ -46,7 +46,7 @@ object FirTestSessionFactoryHelper {
             javaSourceScope,
             librariesScope,
             incrementalCompilationContext = null,
-            extensionRegistrars = emptyList(),
+            extensionRegistrars = [],
             needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
                 friendDependencies(friendsPaths.map { it.pathString })
@@ -61,7 +61,7 @@ object FirTestSessionFactoryHelper {
         librariesScope: GlobalSearchScope,
         configuration: CompilerConfiguration,
         moduleName: String = "TestModule",
-        friendsPaths: List<Path> = emptyList(),
+        friendsPaths: List<Path> = [],
         getPackagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
     ): FirSession {
         return FirSessionFactoryHelper.createSessionWithDependencies(
@@ -76,7 +76,7 @@ object FirTestSessionFactoryHelper {
             PsiBasedProjectFileSearchScope(sourceScope),
             PsiBasedProjectFileSearchScope(librariesScope),
             incrementalCompilationContext = null,
-            extensionRegistrars = emptyList(),
+            extensionRegistrars = [],
             needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
                 friendDependencies(friendsPaths.map { it.pathString })

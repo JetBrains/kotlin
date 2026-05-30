@@ -88,7 +88,7 @@ class KtUltraLightClassForScript(
     }
 
     private fun ownMethods(): List<KtLightMethod> {
-        val result = mutableListOf<KtLightMethod>()
+        val result: MutableList<KtLightMethod> = []
 
         result.addScriptDefaultMethods()
 

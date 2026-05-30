@@ -489,7 +489,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
                 buildNativeLibraryFrom(
                         def,
                         // Here we intentionally don't use -fmodules since this is how the platform libraries are built
-                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        ["-compiler-option", "-I${files.directory}"],
                         imports = ImportsMock(
                                 mapOf(
                                         definitionHeaderId to "original"
@@ -637,7 +637,7 @@ class ModularCinteropUnitTests : IndexerTestsBase() {
         )
 
         assertEquals(
-                listOf(TypeCheck("Foo", listOf("bar"), false)),
+                listOf(TypeCheck("Foo", ["bar"], false)),
                 index.objCClasses.map { TypeCheck(it.name, it.methods.map { it.kotlinName }, it.isForwardDeclaration) }
         )
 

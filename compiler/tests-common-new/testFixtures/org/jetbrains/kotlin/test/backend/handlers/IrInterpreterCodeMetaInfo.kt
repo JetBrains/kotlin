@@ -13,7 +13,7 @@ class IrInterpreterCodeMetaInfo(override val start: Int, override val end: Int, 
 
     override val tag: String = if (isError) "WAS_NOT_EVALUATED" else "EVALUATED"
 
-    override val attributes: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = []
 
     override fun asString(): String = renderConfiguration.asString(this)
 

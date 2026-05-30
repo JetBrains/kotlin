@@ -95,7 +95,7 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
             val renderingOptions = testServices.firRenderingOptions
                 .copy(renderKtText = elementsToAnalyze.size > 1)
 
-            val results = mutableListOf<String>()
+            val results: MutableList<String> = []
 
             for ([index, element] in elementsToAnalyze.withIndex()) {
                 val ktFile = element.containingKtFile
@@ -185,7 +185,7 @@ internal fun renderActualFir(
     fir: FirElement?,
     ktElement: KtElement,
     renderingOptions: FirRenderingOptions,
-    firFiles: List<FirFile> = emptyList(),
+    firFiles: List<FirFile> = [],
 ): String = buildString {
     appendLine("KT element: ${ktElement::class.simpleName}")
     if (renderingOptions.renderKtText) {
@@ -252,7 +252,7 @@ abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest
 abstract class AbstractInterruptingSourceLikeGetOrBuildFirTest : AbstractInterruptingGetOrBuildFirTest() {
     override val configurator = object : LLSourceLikeTestConfigurator() {
         override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-            get() = super.serviceRegistrars + listOf(ErrorResistanceServiceRegistrar)
+            get() = super.serviceRegistrars + ErrorResistanceServiceRegistrar
     }
 }
 

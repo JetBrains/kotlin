@@ -38,11 +38,11 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
     lateinit var diagnostic: ConeDiagnostic
@@ -128,7 +128,7 @@ class FirErrorPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilde
         }
 
     @Deprecated("Modification of 'typeParameters' has no impact for FirErrorPropertyBuilder", level = DeprecationLevel.HIDDEN)
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = []
 }
 
 @OptIn(ExperimentalContracts::class)

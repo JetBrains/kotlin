@@ -40,7 +40,7 @@ class BinaryClassSignatureParser {
 
     fun parseTypeParametersDeclaration(signature: CharacterIterator, context: ClassifierResolutionContext): List<JavaTypeParameter> {
         if (signature.current() != '<') {
-            return emptyList()
+            return []
         }
 
         val typeParameters = arrayListOf<JavaTypeParameter>()
@@ -107,7 +107,7 @@ class BinaryClassSignatureParser {
 
         val parameterName = canonicalNameInterner.intern(id.toString())
 
-        return PlainJavaClassifierType({ context.resolveTypeParameter(parameterName) }, emptyList())
+        return PlainJavaClassifierType({ context.resolveTypeParameter(parameterName) }, [])
     }
 
     private fun parseParameterizedClassRefSignature(
@@ -122,7 +122,7 @@ class BinaryClassSignatureParser {
         while (signature.current() != ';' && signature.current() != CharacterIterator.DONE) {
             val c = signature.current()
             if (c == '<') {
-                val group = mutableListOf<JavaType>()
+                val group: MutableList<JavaType> = []
                 signature.next()
                 do {
                     group.add(parseClassOrTypeVariableElement(signature, context))

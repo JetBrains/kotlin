@@ -164,12 +164,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            val compileTasks = listOf(
+            val compileTasks = [
                 "compileCommonMainKotlinMetadata",
                 "compileKotlinJvmWithoutJava",
                 "compileKotlinJs",
                 // we do not allow modifying free args for K/N at execution time
-            )
+            ]
             build(*compileTasks.toTypedArray()) {
                 if (output.contains("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1")) {
                     // output from BTA * 2
@@ -297,7 +297,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 @Suppress("DEPRECATION")
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
-                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    ["another.custom.UnderOptIn", "my.custom.OptInAnnotation"], arguments.optIn?.toSet(),
                     "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
                 )
             }
@@ -308,7 +308,7 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 @Suppress("DEPRECATION")
                 val arguments = parseCompilerArgumentsFromBuildOutput(K2NativeCompilerArguments::class, taskOutput)
                 assertEquals(
-                    setOf("another.custom.UnderOptIn", "my.custom.OptInAnnotation"), arguments.optIn?.toSet(),
+                    ["another.custom.UnderOptIn", "my.custom.OptInAnnotation"], arguments.optIn?.toSet(),
                     "Arguments optIn does not match '-opt-in=another.custom.UnderOptIn, -opt-in=my.custom.OptInAnnotation'"
                 )
             }
@@ -333,10 +333,10 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("compileKotlinHost") {
-                val expectedOptIn = listOf("kotlin.RequiresOptIn", "my.CustomOptIn")
+                val expectedOptIn = ["kotlin.RequiresOptIn", "my.CustomOptIn"]
                 @Suppress("DEPRECATION")
                 val arguments = parseCompilerArguments<K2NativeCompilerArguments>()
-                if (arguments.optIn?.toList() != listOf("kotlin.RequiresOptIn", "my.CustomOptIn")) {
+                if (arguments.optIn?.toList() != ["kotlin.RequiresOptIn", "my.CustomOptIn"]) {
                     fail(
                         "compiler arguments does not contain expected optIns'${expectedOptIn.joinToString()}': ${arguments.optIn}"
                     )

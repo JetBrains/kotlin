@@ -34,7 +34,7 @@ object IteratorNext : CallBasedIntrinsicMethod() {
         val type = if (AsmUtil.isBoxedPrimitiveType(signature.returnType)) AsmUtil.unboxType(signature.returnType) else signature.returnType
         val newSignature = signature.newReturnType(type)
         val primitiveClassName = getKotlinPrimitiveClassName(type)
-        return IntrinsicFunction.create(expression, newSignature, classCodegen, listOf(getPrimitiveIteratorType(primitiveClassName))) {
+        return IntrinsicFunction.create(expression, newSignature, classCodegen, [getPrimitiveIteratorType(primitiveClassName)]) {
             it.invokevirtual(
                 getPrimitiveIteratorType(primitiveClassName).internalName,
                 "next${primitiveClassName.asString()}",

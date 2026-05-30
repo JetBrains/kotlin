@@ -283,7 +283,7 @@ class FirSpecificTypeResolverTransformer(
             return 0
         }
 
-        val packageSegmentsToTry = qualifiers.mapTo(mutableListOf()) { it.name.asString() }
+        val packageSegmentsToTry: MutableList<String> = qualifiers.mapTo([]) { it.name.asString() }
 
         while (packageSegmentsToTry.size > 1) {
             packageSegmentsToTry.removeLast()

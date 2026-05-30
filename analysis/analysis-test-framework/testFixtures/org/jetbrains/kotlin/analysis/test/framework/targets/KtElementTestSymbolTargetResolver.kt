@@ -56,7 +56,7 @@ internal class KtElementTestSymbolTargetResolver(project: Project) : TestSymbolT
 
     override fun resolveScriptTarget(target: ScriptTarget): List<KtElement> {
         val ktScript = target.file.script ?: error("The file `${target.file.name}` is not a script.")
-        return listOf(ktScript)
+        return [ktScript]
     }
 
     override fun resolveTypeAliasTarget(target: TypeAliasTarget): List<KtElement> =

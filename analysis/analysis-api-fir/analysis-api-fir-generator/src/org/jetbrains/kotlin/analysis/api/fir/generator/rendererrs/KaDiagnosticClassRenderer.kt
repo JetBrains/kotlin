@@ -49,15 +49,15 @@ object KaDiagnosticClassRenderer : AbstractDiagnosticsDataClassRenderer() {
     }
 
     override fun collectImportsForDiagnosticParameterReflect(diagnosticParameter: HLDiagnosticParameter): Collection<KType> {
-        return listOf(diagnosticParameter.type)
+        return [diagnosticParameter.type]
     }
 
     override fun collectImportsForDiagnosticParameterSimple(diagnosticParameter: HLDiagnosticParameter): Collection<String> {
-        return emptyList()
+        return []
     }
 
-    override val defaultImports = listOf(
+    override val defaultImports = [
         "org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi",
         "com.intellij.psi.PsiElement",
-    )
+    ]
 }

@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.name.Name
  * the Analysis API by requesting the combined member scope and looking for [KtSymbolOrigin.SOURCE_MEMBER_GENERATED].
  */
 internal fun ObjCExportContext.translateEnumMembers(symbol: KaClassSymbol): List<ObjCExportStub> {
-    if (symbol.classKind != KaClassKind.ENUM_CLASS) return emptyList()
+    if (symbol.classKind != KaClassKind.ENUM_CLASS) return []
+
+    @Suppress("ConvertToCollectionLiterals")
     return getEnumEntries(symbol) + listOf(getEnumValuesMethod(symbol), getEnumEntriesProperty(symbol))
 }
 
@@ -33,8 +35,8 @@ private fun ObjCExportContext.getEnumEntries(symbol: KaClassSymbol): List<ObjCPr
             comment = null,
             origin = null,
             type = mapToReferenceTypeIgnoringNullability(entry.returnType),
-            propertyAttributes = listOf("class", "readonly"),
-            declarationAttributes = listOf(swiftNameAttribute(swiftName))
+            propertyAttributes = ["class", "readonly"],
+            declarationAttributes = [swiftNameAttribute(swiftName)]
         )
     }
 }
@@ -49,9 +51,9 @@ private fun ObjCExportContext.getEnumValuesMethod(symbol: KaClassSymbol): ObjCMe
         comment = null,
         isInstanceMethod = false,
         returnType = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
-        selectors = listOf("values"),
-        parameters = emptyList(),
-        attributes = listOf(swiftNameAttribute("values()")),
+        selectors = ["values"],
+        parameters = [],
+        attributes = [swiftNameAttribute("values()")],
         origin = null
     )
 }
@@ -67,8 +69,8 @@ private fun ObjCExportContext.getEnumEntriesProperty(symbol: KaClassSymbol): Obj
         name = "entries",
         comment = null,
         type = if (returnType == null) ObjCIdType else translateToObjCReferenceType(returnType),
-        propertyAttributes = listOf("class", "readonly"),
-        declarationAttributes = listOf(swiftNameAttribute("entries")),
+        propertyAttributes = ["class", "readonly"],
+        declarationAttributes = [swiftNameAttribute("entries")],
         origin = null,
         setterName = null,
         getterName = null

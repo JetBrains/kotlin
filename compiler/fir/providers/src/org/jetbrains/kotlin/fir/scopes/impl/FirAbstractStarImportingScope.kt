@@ -35,7 +35,7 @@ abstract class FirAbstractStarImportingScope(
         return false
     }
 
-    private val absentClassifierNames = mutableSetOf<Name>()
+    private val absentClassifierNames: MutableSet<Name> = []
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
         if ((!name.isSpecial && name.identifier.isEmpty()) || starImports.isEmpty() || name in absentClassifierNames) {

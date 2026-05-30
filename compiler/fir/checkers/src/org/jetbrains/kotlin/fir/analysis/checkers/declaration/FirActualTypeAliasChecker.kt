@@ -86,7 +86,7 @@ object FirActualTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     }
 
     private fun getMembersWithDefaultValueParametersUnlessAnnotation(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
-        val result = mutableListOf<FirFunctionSymbol<*>>()
+        val result: MutableList<FirFunctionSymbol<*>> = []
 
         fun collectFunctions(classSymbol: FirClassSymbol<*>) {
             if (classSymbol.classKind == ClassKind.ANNOTATION_CLASS) {

@@ -43,11 +43,11 @@ fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessorsTest(
         dependencyKind = DependencyKind.Binary
     }
     defaultDirectives {
-        DIAGNOSTICS with listOf("-NOTHING_TO_INLINE", "-ERROR_SUPPRESSION", "-UNCHECKED_CAST")
-        LANGUAGE with listOf(
+        DIAGNOSTICS with ["-NOTHING_TO_INLINE", "-ERROR_SUPPRESSION", "-UNCHECKED_CAST"]
+        LANGUAGE with [
             "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
             "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-        )
+        ]
         +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
         +ConfigurationDirectives.WITH_STDLIB
     }

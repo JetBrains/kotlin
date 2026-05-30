@@ -65,9 +65,9 @@ internal class Caches {
     val createdStaticFunctions = ConcurrentHashMap<FunctionSpec, CPointer<CFunction<*>>>()
 
     // TODO: No concurrent bag or something in Java?
-    private val createdTypeStructs = mutableListOf<NativePtr>()
-    private val createdCifs = mutableListOf<NativePtr>()
-    private val createdClosures = mutableListOf<NativePtr>()
+    private val createdTypeStructs: MutableList<NativePtr> = []
+    private val createdCifs: MutableList<NativePtr> = []
+    private val createdClosures: MutableList<NativePtr> = []
 
     fun addTypeStruct(ptr: NativePtr) {
         synchronized(createdTypeStructs) { createdTypeStructs.add(ptr) }
@@ -103,7 +103,7 @@ internal val jvmCallbacksDisposeHelper = ThreadSafeDisposableHelper(
         }
 )
 
-val callbacksLibName = listOf("kotlinx", "cinterop", "jvmcallbacks").joinToString("")
+val callbacksLibName = ["kotlinx", "cinterop", "jvmcallbacks"].joinToString("")
 
 inline fun <R> usingJvmCInteropCallbacks(konanHome: String? = null, block: () -> R): R {
     loadKonanLibrary(callbacksLibName, konanHome)
@@ -136,7 +136,7 @@ private fun getStructCType(structClass: KClass<*>): CType<*> = caches.structType
         propertiesByName[it]!!.single()
     }
 
-    val fieldCTypes = mutableListOf<CType<*>>()
+    val fieldCTypes: MutableList<CType<*>> = []
 
     for (field in fields) {
         val lengthAnnotation = field.annotations.filterIsInstance<CLength>().firstOrNull()

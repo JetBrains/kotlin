@@ -51,7 +51,7 @@ private fun IrExpression.asInlinableLambda(builder: IrStatementsBuilder<*>): IrI
         is IrFunctionExpression -> {
             if (function.parameters.any { it.isVararg || it.defaultValue != null })
                 return null
-            return IrInlinableLambda(function, emptyList())
+            return IrInlinableLambda(function, [])
         }
         else -> return asInlinableFunctionReference()?.let { reference ->
             IrInlinableLambda(
@@ -112,7 +112,7 @@ private fun IrBody.move(
  */
 fun IrFunction.inline(
     target: IrDeclarationParent,
-    arguments: List<IrValueDeclaration> = emptyList(),
+    arguments: List<IrValueDeclaration> = [],
     moveBody: Boolean = true,
 ): IrReturnableBlock {
     val body = this.body!!.let { if (moveBody) it else it.deepCopyWithSymbols(target) }
@@ -121,7 +121,7 @@ fun IrFunction.inline(
     }
 }
 
-fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = listOf()): IrExpression =
+fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDeclaration> = []): IrExpression =
     when (this) {
         is IrInlinableLambda ->
             function.inline(target, boundArguments + arguments)
@@ -132,7 +132,7 @@ fun IrInlinable.inline(target: IrDeclarationParent, arguments: List<IrValueDecla
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET, invoke.returnType, invoke.symbol,
                 typeArgumentsCount = 0,
             ).apply {
-                val newArguments = (listOf(invokable) + arguments).map { arg ->
+                val newArguments = ([invokable] + arguments).map { arg ->
                     IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, arg.symbol)
                 }
                 for ([index, argument] in newArguments.withIndex()) {

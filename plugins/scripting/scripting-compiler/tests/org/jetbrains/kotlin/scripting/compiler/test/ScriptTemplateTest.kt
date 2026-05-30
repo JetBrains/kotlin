@@ -186,6 +186,7 @@ class ScriptTemplateTest {
     }
 
     @Test
+    @Suppress("ConvertToCollectionLiterals")
     fun testScriptWithArray2DParam() {
         val messageCollector = MessageCollectorImpl()
         val aClass = compileScript("array2d_param.kts", ScriptWithArray2DParam::class, messageCollector = messageCollector)
@@ -240,7 +241,7 @@ class ScriptTemplateTest {
         val aClass = compileScript("fib.kts", ScriptWithIntParam::class, messageCollector = messageCollector)
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")
         captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass, listOf("4"))
+            val anObj = tryConstructClassFromStringArgs(aClass, ["4"])
             assertNotNull(anObj)
         }.let {
             assertEqualsTrimmed(NUM_4_LINE + FIB_SCRIPT_OUTPUT_TAIL, it)
@@ -334,7 +335,7 @@ class ScriptTemplateTest {
         assertNotNull(aClass, "Compilation failed:\n$messageCollector")
         var exceptionThrown = false
         try {
-            tryConstructClassFromStringArgs(aClass, emptyList())
+            tryConstructClassFromStringArgs(aClass, [])
         } catch (e: InvocationTargetException) {
             assertTrue(e.cause is IllegalStateException)
             exceptionThrown = true
@@ -430,10 +431,10 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
     ): ResolveResult {
         return ScriptDependencies(
             classpath = classpathFromClassloader(),
-            imports = listOf(
+            imports = [
                 "org.jetbrains.kotlin.scripting.compiler.test.DependsOn",
                 "org.jetbrains.kotlin.scripting.compiler.test.DependsOnTwo"
-            )
+            ]
         ).asSuccess()
     }
 }
@@ -442,7 +443,7 @@ private fun classpathFromClassloader(): List<File> =
     (TestKotlinScriptDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
         ?.mapNotNull(URL::toFile)
         ?.filter { it.path.contains("out") && it.path.contains("test") }
-        ?: emptyList()
+        ?: []
 
 
 open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenciesResolver() {
@@ -454,13 +455,13 @@ open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenc
         val cp = scriptContents.annotations.flatMap { annotation ->
             when (annotation) {
                 is DependsOn ->
-                    if (annotation.path == "@{kotlin-stdlib}") listOf(kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
-                    else listOf(File(annotation.path))
+                    if (annotation.path == "@{kotlin-stdlib}") [kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath]
+                    else [File(annotation.path)]
                 is DependsOnTwo -> listOf(annotation.path1, annotation.path2).flatMap {
                     when {
-                        it.isBlank() -> emptyList()
-                        it == "@{kotlin-stdlib}" -> listOf(kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath)
-                        else -> listOf(File(it))
+                        it.isBlank() -> []
+                        it == "@{kotlin-stdlib}" -> [kotlinPaths.stdlibPath, kotlinPaths.scriptRuntimePath]
+                        else -> [File(it)]
                     }
                 }
                 is InvalidScriptResolverAnnotation -> throw Exception("Invalid annotation ${annotation.name}", annotation.error)
@@ -469,10 +470,10 @@ open class TestKotlinScriptDependenciesResolver : TestKotlinScriptDummyDependenc
         }
         return ScriptDependencies(
             classpath = classpathFromClassloader() + cp,
-            imports = listOf(
+            imports = [
                 "org.jetbrains.kotlin.scripting.compiler.test.DependsOn",
                 "org.jetbrains.kotlin.scripting.compiler.test.DependsOnTwo"
-            )
+            ]
         ).asSuccess()
     }
 }
@@ -485,12 +486,12 @@ class ErrorReportingResolver : TestKotlinScriptDependenciesResolver() {
         environment: Environment,
     ): ResolveResult {
         return ResolveResult.Failure(
-            listOf(
+            [
                 ScriptReport("error", ScriptReport.Severity.ERROR, null),
                 ScriptReport("warning", ScriptReport.Severity.WARNING, ScriptReport.Position(1, 0)),
                 ScriptReport("info", ScriptReport.Severity.INFO, ScriptReport.Position(2, 0)),
                 ScriptReport("debug", ScriptReport.Severity.DEBUG, ScriptReport.Position(3, 0))
-            )
+            ]
         )
     }
 }

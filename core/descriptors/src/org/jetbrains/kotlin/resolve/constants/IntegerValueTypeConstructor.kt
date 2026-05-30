@@ -80,7 +80,7 @@ class IntegerValueTypeConstructor(
 
     override fun getSupertypes(): Collection<KotlinType> = supertypes
 
-    override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
 
     override fun isFinal() = false
 

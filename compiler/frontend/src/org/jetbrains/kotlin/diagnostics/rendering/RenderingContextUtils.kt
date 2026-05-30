@@ -8,13 +8,13 @@ package org.jetbrains.kotlin.diagnostics.rendering
 import org.jetbrains.kotlin.diagnostics.*
 
 fun RenderingContext.Companion.parameters(d: Diagnostic): List<Any> = when (d) {
-    is SimpleDiagnostic<*> -> listOf()
-    is DiagnosticWithParameters1<*, *> -> listOf(d.a)
-    is DiagnosticWithParameters2<*, *, *> -> listOf(d.a, d.b)
-    is DiagnosticWithParameters3<*, *, *, *> -> listOf(d.a, d.b, d.c)
-    is DiagnosticWithParameters4<*, *, *, *, *> -> listOf(d.a, d.b, d.c, d.d)
+    is SimpleDiagnostic<*> -> []
+    is DiagnosticWithParameters1<*, *> -> [d.a]
+    is DiagnosticWithParameters2<*, *, *> -> [d.a, d.b]
+    is DiagnosticWithParameters3<*, *, *, *> -> [d.a, d.b, d.c]
+    is DiagnosticWithParameters4<*, *, *, *, *> -> [d.a, d.b, d.c, d.d]
     is ParametrizedDiagnostic<*> -> error("Unexpected diagnostic: ${d::class.java}")
-    else -> listOf()
+    else -> []
 }
 
 @OptIn(LegacyRenderingContextApi::class)

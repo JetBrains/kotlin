@@ -254,10 +254,10 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ) {
             build("publish") {
                 assertEquals(
-                    setOf(
+                    [
                         "third-party-lib-metadata-1.0.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
-                    ),
+                    ],
                     transformedArtifacts()
                 )
             }
@@ -271,11 +271,11 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ) {
             build("publish") {
                 assertEquals(
-                    setOf(
+                    [
                         "my-lib-foo-metadata-1.0.jar",
                         "third-party-lib-metadata-1.0.jar",
                         "kotlin-stdlib-${buildOptions.kotlinVersion}-all.jar",
-                    ),
+                    ],
                     transformedArtifacts()
                 )
             }
@@ -418,9 +418,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to setOf("com.example.thirdparty" to "third-party-lib", "org.jetbrains.kotlin" to "kotlin-stdlib"),
-                    "linuxAndJsMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib"),
-                    "commonMain" to setOf("org.jetbrains.kotlin" to "kotlin-stdlib")
+                    "jvmAndJsMain" to ["com.example.thirdparty" to "third-party-lib", "org.jetbrains.kotlin" to "kotlin-stdlib"],
+                    "linuxAndJsMain" to ["org.jetbrains.kotlin" to "kotlin-stdlib"],
+                    "commonMain" to ["org.jetbrains.kotlin" to "kotlin-stdlib"]
                 )
             )
 
@@ -473,18 +473,18 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedProjectStructureMetadata = expectedProjectStructureMetadata(
                 sourceSetModuleDependencies = mapOf(
-                    "jvmAndJsMain" to setOf(
+                    "jvmAndJsMain" to [
                         "org.jetbrains.kotlin" to "kotlin-stdlib",
                         "com.example.foo" to "my-lib-foo",
-                    ),
-                    "linuxAndJsMain" to setOf(
+                    ],
+                    "linuxAndJsMain" to [
                         "org.jetbrains.kotlin" to "kotlin-stdlib",
                         "com.example.foo" to "my-lib-foo",
-                    ),
-                    "commonMain" to setOf(
+                    ],
+                    "commonMain" to [
                         "org.jetbrains.kotlin" to "kotlin-stdlib",
                         "com.example.foo" to "my-lib-foo"
-                    )
+                    ]
                 )
             )
 
@@ -511,38 +511,38 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileCommonMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-foo" to "main"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            )
+            ]
         )
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileJvmAndJsMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-foo" to "linuxAndJsMain"
-            )
+            ]
         )
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileLinuxAndJsMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-foo" to "linuxAndJsMain",
                 "my-lib-foo" to "main"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-foo" to "jvmAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            )
+            ]
         )
     }
 
@@ -552,47 +552,47 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileCommonMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-bar" to "main",
                 "my-lib-foo" to "main"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-bar" to "linuxAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            )
+            ]
         )
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileJvmAndJsMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-bar" to "main",
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "jvmAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-bar" to "linuxAndJsMain",
                 "my-lib-foo" to "linuxAndJsMain"
-            )
+            ]
         )
 
         checkNamesOnCompileClasspath(
             "$taskPrefix:compileLinuxAndJsMainKotlinMetadata",
-            shouldInclude = listOf(
+            shouldInclude = [
                 "my-lib-bar" to "main",
                 "my-lib-bar" to "linuxAndJsMain",
                 "my-lib-foo" to "main",
                 "my-lib-foo" to "linuxAndJsMain"
-            ),
-            shouldNotInclude = listOf(
+            ],
+            shouldNotInclude = [
                 "my-lib-bar" to "jvmAndJsMain",
                 "my-lib-foo" to "jvmAndJsMain",
                 "third-party-lib-1.0" to "commonMain"
-            )
+            ]
         )
 
         checkNamesOnCompileClasspath("$taskPrefix:compileLinuxAndJsMainKotlinMetadata")
@@ -600,8 +600,8 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
     private fun BuildResult.checkNamesOnCompileClasspath(
         taskPath: String,
-        shouldInclude: Iterable<Pair<String, String>> = emptyList(),
-        shouldNotInclude: Iterable<Pair<String, String>> = emptyList(),
+        shouldInclude: Iterable<Pair<String, String>> = [],
+        shouldNotInclude: Iterable<Pair<String, String>> = [],
     ) {
         val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
@@ -641,20 +641,20 @@ open class HierarchicalMppIT : KGPBaseTest() {
         sourceSetModuleDependencies: Map<String, Set<Pair<String, String>>>,
     ): KotlinProjectStructureMetadata {
 
-        val jvmSourceSets = setOf("commonMain", "jvmAndJsMain")
-        val jsSourceSets = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain")
+        val jvmSourceSets: Set<String> = ["commonMain", "jvmAndJsMain"]
+        val jsSourceSets: Set<String> = ["commonMain", "jvmAndJsMain", "linuxAndJsMain"]
         return KotlinProjectStructureMetadata(
             sourceSetNamesByVariantName = mapOf(
                 "jsApiElements" to jsSourceSets,
                 "jsRuntimeElements" to jsSourceSets,
                 "jvmApiElements" to jvmSourceSets,
                 "jvmRuntimeElements" to jvmSourceSets,
-                "linuxX64ApiElements" to setOf("commonMain", "linuxAndJsMain")
+                "linuxX64ApiElements" to ["commonMain", "linuxAndJsMain"]
             ),
             sourceSetsDependsOnRelation = mapOf(
-                "jvmAndJsMain" to setOf("commonMain"),
-                "linuxAndJsMain" to setOf("commonMain"),
-                "commonMain" to emptySet()
+                "jvmAndJsMain" to ["commonMain"],
+                "linuxAndJsMain" to ["commonMain"],
+                "commonMain" to []
             ),
             sourceSetModuleDependencies = sourceSetModuleDependencies.mapValues { [_, pairs] ->
                 pairs.map {
@@ -662,9 +662,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 }.toSet()
             },
             sourceSetCInteropMetadataDirectory = mapOf(),
-            hostSpecificSourceSets = emptySet(),
+            hostSpecificSourceSets = [],
             sourceSetBinaryLayout = sourceSetModuleDependencies.mapValues { SourceSetMetadataLayout.KLIB },
-            sourceSetNames = setOf("commonMain", "jvmAndJsMain", "linuxAndJsMain"),
+            sourceSetNames = ["commonMain", "jvmAndJsMain", "linuxAndJsMain"],
             isPublishedAsRoot = true
         )
     }
@@ -760,9 +760,9 @@ open class HierarchicalMppIT : KGPBaseTest() {
             build(intermediateMetadataCompileTask) {
                 checkNamesOnCompileClasspath(
                     intermediateMetadataCompileTask,
-                    shouldInclude = listOf(
+                    shouldInclude = [
                         "third-party-lib" to "commonMain"
-                    )
+                    ]
                 )
             }
         }
@@ -815,16 +815,16 @@ open class HierarchicalMppIT : KGPBaseTest() {
         ).run {
             build("publish", "-Pkotlin.internal.suppressGradlePluginErrors=KotlinTargetAlreadyDeclaredError")
 
-            fun macOnly(code: () -> List<String>): List<String> = if (OS.MAC.isCurrentOs) code() else emptyList()
+            fun macOnly(code: () -> List<String>): List<String> = if (OS.MAC.isCurrentOs) code() else []
 
-            val rootModuleSources = listOf("test/lib/1.0/lib-1.0-sources.jar")
-            val jvmModuleSources = listOf("test/lib-jvm/1.0/lib-jvm-1.0-sources.jar")
-            val jvm2ModuleSources = listOf("test/lib-jvm2/1.0/lib-jvm2-1.0-sources.jar")
-            val linuxX64ModuleSources = listOf("test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar")
-            val linuxArm64ModuleSources = listOf("test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar")
-            val iosX64ModuleSources = macOnly { listOf("test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar") }
-            val iosArm64ModuleSources = macOnly { listOf("test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar") }
-            val iosSimulatorArm64ModuleSources = macOnly { listOf("test/lib-iossimulatorarm64/1.0/lib-iossimulatorarm64-1.0-sources.jar") }
+            val rootModuleSources = ["test/lib/1.0/lib-1.0-sources.jar"]
+            val jvmModuleSources = ["test/lib-jvm/1.0/lib-jvm-1.0-sources.jar"]
+            val jvm2ModuleSources = ["test/lib-jvm2/1.0/lib-jvm2-1.0-sources.jar"]
+            val linuxX64ModuleSources = ["test/lib-linuxx64/1.0/lib-linuxx64-1.0-sources.jar"]
+            val linuxArm64ModuleSources = ["test/lib-linuxarm64/1.0/lib-linuxarm64-1.0-sources.jar"]
+            val iosX64ModuleSources = macOnly { ["test/lib-iosx64/1.0/lib-iosx64-1.0-sources.jar"] }
+            val iosArm64ModuleSources = macOnly { ["test/lib-iosarm64/1.0/lib-iosarm64-1.0-sources.jar"] }
+            val iosSimulatorArm64ModuleSources = macOnly { ["test/lib-iossimulatorarm64/1.0/lib-iossimulatorarm64-1.0-sources.jar"] }
             val allPublishedSources = rootModuleSources +
                     jvmModuleSources + jvm2ModuleSources +
                     linuxX64ModuleSources + linuxArm64ModuleSources +
@@ -833,7 +833,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
             infix fun Pair<String, List<String>>.and(that: List<String>) = first to (second + that)
 
             // Here mentioned only source sets that should be published
-            val expectedSourcePublicationLayout = listOf(
+            val expectedSourcePublicationLayout = [
                 "commonMain" to rootModuleSources
                         and jvmModuleSources and jvm2ModuleSources
                         and iosX64ModuleSources and iosArm64ModuleSources and iosSimulatorArm64ModuleSources
@@ -852,7 +852,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                 "iosSimulatorArm64Main" to iosSimulatorArm64ModuleSources,
                 "linuxX64Main" to linuxX64ModuleSources,
                 "linuxArm64Main" to linuxArm64ModuleSources,
-            )
+            ]
 
             val expectedSourcePublicationLayoutBySourcesFile: Map<String, List<String>> = expectedSourcePublicationLayout
                 .flatMap { [sourceSet, sources] -> sources.map { sourceSet to it } }
@@ -913,25 +913,25 @@ open class HierarchicalMppIT : KGPBaseTest() {
 
             val expectedReports = mapOf(
                 "common" to SourcesVariantResolutionReport(
-                    files = listOf("lib-kotlin-1.0-sources.jar"),
+                    files = ["lib-kotlin-1.0-sources.jar"],
                     dependencyToVariant = mapOf("test:lib:1.0" to "metadataSourcesElements")
                 ),
                 "jvm" to SourcesVariantResolutionReport(
-                    files = listOf("lib-jvm-1.0-sources.jar"),
+                    files = ["lib-jvm-1.0-sources.jar"],
                     dependencyToVariant = mapOf(
                         "test:lib:1.0" to "jvmSourcesElements-published",
                         "test:lib-jvm:1.0" to "jvmSourcesElements-published"
                     )
                 ),
                 "jvm2" to SourcesVariantResolutionReport(
-                    files = listOf("lib-jvm2-1.0-sources.jar"),
+                    files = ["lib-jvm2-1.0-sources.jar"],
                     dependencyToVariant = mapOf(
                         "test:lib:1.0" to "jvm2SourcesElements-published",
                         "test:lib-jvm2:1.0" to "jvm2SourcesElements-published"
                     )
                 ),
                 "linuxX64" to SourcesVariantResolutionReport(
-                    files = listOf("lib-linuxx64-1.0-sources.jar"),
+                    files = ["lib-linuxx64-1.0-sources.jar"],
                     dependencyToVariant = mapOf(
                         "test:lib:1.0" to "linuxX64SourcesElements-published",
                         "test:lib-linuxx64:1.0" to "linuxX64SourcesElements-published"
@@ -1125,7 +1125,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
                     .toList()
 
                 assertEquals(
-                    listOf(":foo", ":bar"),
+                    [":foo", ":bar"],
                     actualDependencies
                 )
             }

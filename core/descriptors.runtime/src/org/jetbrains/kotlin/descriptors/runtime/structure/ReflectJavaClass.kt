@@ -60,7 +60,7 @@ class ReflectJavaClass(
 
     override val supertypes: Collection<JavaClassifierType>
         get() {
-            if (klass == Any::class.java) return emptyList()
+            if (klass == Any::class.java) return []
             return listOf(klass.genericSuperclass ?: Any::class.java, *klass.genericInterfaces).map(::ReflectJavaClassifierType)
         }
 
@@ -80,7 +80,7 @@ class ReflectJavaClass(
     private fun isEnumValuesOrValueOf(method: Method): Boolean {
         return when (method.name) {
             "values" -> method.parameterTypes.isEmpty()
-            "valueOf" -> Arrays.equals(method.parameterTypes, arrayOf(String::class.java))
+            "valueOf" -> Arrays.equals(method.parameterTypes, [String::class.java])
             else -> false
         }
     }
@@ -128,7 +128,7 @@ class ReflectJavaClass(
         get() = Java16SealedRecordLoader.loadIsRecord(klass) ?: false
 
     override val recordComponents: Collection<JavaRecordComponent>
-        get() = (Java16SealedRecordLoader.loadGetRecordComponents(klass) ?: emptyArray()).map(::ReflectJavaRecordComponent)
+        get() = (Java16SealedRecordLoader.loadGetRecordComponents(klass) ?: []).map(::ReflectJavaRecordComponent)
 
     override val isSealed: Boolean
         get() = Java16SealedRecordLoader.loadIsSealed(klass) ?: false
@@ -137,7 +137,7 @@ class ReflectJavaClass(
         get() = Java16SealedRecordLoader.loadGetPermittedSubclasses(klass)
             ?.map(::ReflectJavaClassifierType)
             ?.asSequence()
-            ?: emptySequence()
+            ?: []
 
     override fun equals(other: Any?) = other is ReflectJavaClass && klass == other.klass
 

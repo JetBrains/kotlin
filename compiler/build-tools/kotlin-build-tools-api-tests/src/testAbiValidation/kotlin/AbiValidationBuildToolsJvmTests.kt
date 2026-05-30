@@ -80,19 +80,19 @@ class AbiValidationBuildToolsJvmTests : BaseCompilationTest() {
             val dump = StringBuilder()
             val operation = kotlinToolchain.abiValidation.dumpJvmAbiToStringOperation(dump, classFiles) {
                 this[DumpJvmAbiToStringOperation.PATTERN_FILTERS] = filters {
-                    this[AbiFilters.INCLUDE_NAMED] = setOf(
+                    this[AbiFilters.INCLUDE_NAMED] = [
                         "org.example.api.**",
                         "org.example.PublicEntryPoint",
                         "org.example.util.**",
-                    )
-                    this[AbiFilters.EXCLUDE_NAMED] = setOf(
+                    ]
+                    this[AbiFilters.EXCLUDE_NAMED] = [
                         "org.example.impl.**",
                         "org.example.*Generated*",
                         "org.example.util.Tmp?Helper",
                         "org.example.api.*Api",
-                    )
-                    this[AbiFilters.INCLUDE_ANNOTATED_WITH] = setOf("org.example.api.PublicApi")
-                    this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = setOf("org.example.api.InternalApi")
+                    ]
+                    this[AbiFilters.INCLUDE_ANNOTATED_WITH] = ["org.example.api.PublicApi"]
+                    this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = ["org.example.api.InternalApi"]
                 }
             }
             kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }

@@ -139,7 +139,7 @@ class KotlinLoggerMessageCollectorAdapterTest {
         adapter.report(CompilerMessageSeverity.STRONG_WARNING, "strong warn", null)
 
         assertEquals(
-            listOf(LogMethod.WARN, LogMethod.WARN),
+            [LogMethod.WARN, LogMethod.WARN],
             logger.calls.map { it.method }
         )
     }
@@ -156,7 +156,7 @@ class KotlinLoggerMessageCollectorAdapterTest {
         adapter.report(CompilerMessageSeverity.OUTPUT, "o", null)
 
         assertEquals(
-            listOf(LogMethod.ERROR_WITH_THROWABLE, LogMethod.WARN, LogMethod.INFO, LogMethod.DEBUG, LogMethod.DEBUG),
+            [LogMethod.ERROR_WITH_THROWABLE, LogMethod.WARN, LogMethod.INFO, LogMethod.DEBUG, LogMethod.DEBUG],
             logger.calls.map { it.method }
         )
     }
@@ -225,7 +225,7 @@ class KotlinLoggerMessageCollectorAdapterTest {
     )
 
     private class RecordingDiagnosticAwareRenderer : CompilerMessageRendererWithDiagnosticId {
-        val calls = mutableListOf<RenderedMessage>()
+        val calls: MutableList<RenderedMessage> = []
 
         override fun render(severity: Severity, message: String, location: SourceLocation?, diagnosticId: String?): String {
             calls += RenderedMessage(message, diagnosticId)
@@ -235,7 +235,7 @@ class KotlinLoggerMessageCollectorAdapterTest {
 
     private class CapturingLogger : KotlinLogger {
         override val isDebugEnabled = true
-        val calls = mutableListOf<LogCall>()
+        val calls: MutableList<LogCall> = []
 
         override fun debug(msg: String) {
             calls.add(LogCall(LogMethod.DEBUG, msg))

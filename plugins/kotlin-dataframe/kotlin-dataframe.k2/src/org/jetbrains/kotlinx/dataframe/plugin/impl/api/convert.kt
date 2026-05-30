@@ -30,7 +30,7 @@ internal class Convert0 : AbstractInterpreter<ConvertApproximation>() {
 
 class Convert2 : AbstractInterpreter<ConvertApproximation>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
+    val Arguments.columns: List<String> by arg(defaultValue = Present([]))
 
     override fun Arguments.interpret(): ConvertApproximation {
         return ConvertApproximation(
@@ -44,14 +44,14 @@ class ConvertApproximation(val schema: PluginDataFrameSchema, val columns: Colum
 
 internal class Convert6 : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.firstCol: String by arg()
-    val Arguments.cols: List<String> by arg(defaultValue = Present(emptyList()))
+    val Arguments.cols: List<String> by arg(defaultValue = Present([]))
     val Arguments.infer by ignore()
     val Arguments.expression: ColumnType by type()
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     override val Arguments.startingSchema get() = receiver
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = (listOf(firstCol) + cols)
+        val columns = ([firstCol] + cols)
         val topLevelNames = receiver.columns().mapToSetOrEmpty { it.name }
         val assumedColumns = columns
             .filter { it !in topLevelNames }
@@ -104,7 +104,7 @@ class PerRowCol : AbstractSchemaModificationInterpreter() {
 
 internal fun PluginDataFrameSchema.map(selected: ColumnsSet, transform: ColumnMapper): PluginDataFrameSchema {
     return PluginDataFrameSchema(
-        f(columns(), transform, selected, emptyList())
+        f(columns(), transform, selected, [])
     )
 }
 
@@ -114,7 +114,7 @@ internal typealias ColumnMapper = (List<String>, SimpleCol) -> SimpleCol
 
 internal fun f(columns: List<SimpleCol>, transform: ColumnMapper, selected: ColumnsSet, path: List<String>): List<SimpleCol> {
     return columns.map {
-        val fullPath = path + listOf(it.name)
+        val fullPath = path + it.name
         when (it) {
             is SimpleColumnGroup -> if (fullPath in selected) {
                 transform(fullPath, it)
@@ -215,7 +215,7 @@ class ConvertAsFrame : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.schema.convertAsColumn(receiver.columns) {
-            SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()))
+            SimpleColumnGroup("", (expression.coneType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: []))
         }
     }
 }

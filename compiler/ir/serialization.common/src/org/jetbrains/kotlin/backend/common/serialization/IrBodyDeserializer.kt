@@ -364,7 +364,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeComposite(proto: ProtoComposite, start: Int, end: Int, type: IrType): IrComposite {
-        val statements = mutableListOf<IrStatement>()
+        val statements: MutableList<IrStatement> = []
         val statementProtos = proto.statementList
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
@@ -641,7 +641,7 @@ class IrBodyDeserializer(
         if (type.arguments.size != 3) return type
         if (!type.isKProperty() && !type.isKMutableProperty()) return type
         return type.buildSimpleType {
-            arguments = listOf(type.arguments[1], type.arguments[0], type.arguments[2])
+            arguments = [type.arguments[1], type.arguments[0], type.arguments[2]]
         }
     }
 
@@ -684,7 +684,7 @@ class IrBodyDeserializer(
 
     private fun deserializeStringConcat(proto: ProtoStringConcat, start: Int, end: Int, type: IrType): IrStringConcatenation {
         val argumentProtos = proto.argumentList
-        val arguments = mutableListOf<IrExpression>()
+        val arguments: MutableList<IrExpression> = []
 
         argumentProtos.forEach {
             arguments.add(deserializeExpression(it, start))
@@ -698,7 +698,7 @@ class IrBodyDeserializer(
 
     private fun deserializeTry(proto: ProtoTry, start: Int, end: Int, type: IrType): IrTryImpl {
         val result = deserializeExpression(proto.result, start)
-        val catches = mutableListOf<IrCatch>()
+        val catches: MutableList<IrCatch> = []
         proto.catchList.forEach {
             catches.add(deserializeStatement(it, start) as IrCatch)
         }
@@ -741,7 +741,7 @@ class IrBodyDeserializer(
     private fun deserializeVararg(proto: ProtoVararg, start: Int, end: Int, type: IrType): IrVararg {
         val elementType = declarationDeserializer.deserializeIrType(proto.elementType)
 
-        val elements = mutableListOf<IrVarargElement>()
+        val elements: MutableList<IrVarargElement> = []
         proto.elementList.forEach {
             elements.add(deserializeVarargElement(it, start))
         }
@@ -760,7 +760,7 @@ class IrBodyDeserializer(
     }
 
     private fun deserializeWhen(proto: ProtoWhen, start: Int, end: Int, type: IrType): IrWhen {
-        val branches = mutableListOf<IrBranch>()
+        val branches: MutableList<IrBranch> = []
         val origin = deserializeIrStatementOrigin(proto.hasOriginName()) { proto.originName }
 
         proto.branchList.forEach {

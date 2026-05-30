@@ -124,14 +124,14 @@ abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
         private val facadeFactory: LLFirAnalyzerFacadeFactory,
     ) : FirFrontendFacade(testServices) {
         override val additionalServices: List<ServiceRegistrationData>
-            get() = emptyList()
+            get() = []
 
         override fun analyze(module: TestModule): FirOutputArtifact {
             val isMppSupported = module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
 
-            val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
+            val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else [module]
 
-            val firOutputPartForDependsOnModules = mutableListOf<FirOutputPartForDependsOnModule>()
+            val firOutputPartForDependsOnModules: MutableList<FirOutputPartForDependsOnModule> = []
             for (testModule in sortedModules) {
                 firOutputPartForDependsOnModules.add(analyzeDependsOnModule(testModule))
             }

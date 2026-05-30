@@ -95,7 +95,7 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
         val classVirtualFiles = getClassVirtualFiles(classId.packageFqName)
 
         val files = getVirtualFilesForClass(classId, classVirtualFiles)
-        if (files.isEmpty()) return emptyList()
+        if (files.isEmpty()) return []
 
         // We don't need to filter the files if all extensions are requested.
         if (acceptedExtensions.extensions.size == JavaFileExtension.entries.size) {
@@ -117,13 +117,13 @@ internal class KotlinStandaloneJvmDependenciesIndex(roots: List<JavaRoot>) : Jvm
         classVirtualFiles[relativeClassName]?.let { return it }
 
         if (!relativeClassName.contains('$')) {
-            return emptyList()
+            return []
         }
 
         // We replace *all* `$` characters with `.` characters even when they are part of the class name. See `ClassVirtualFiles` for a
         // deeper explanation.
         val relativeClassNameWithDots = relativeClassName.replace('$', '.')
-        return classVirtualFiles[relativeClassNameWithDots] ?: emptyList()
+        return classVirtualFiles[relativeClassNameWithDots] ?: []
     }
 
     override fun traverseClassVirtualFilesInPackage(

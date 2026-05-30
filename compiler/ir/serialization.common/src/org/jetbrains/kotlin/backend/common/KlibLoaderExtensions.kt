@@ -93,7 +93,7 @@ fun KlibLoaderResult.reportLoadingProblemsIfAny(
  * so the loaded libraries should be in [KlibLoaderResult]. All we need is to "look up" them from the result.
  */
 fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List<KotlinLibrary> {
-    if (friendLibraryPaths.isEmpty() || librariesStdlibFirst.isEmpty()) return emptyList()
+    if (friendLibraryPaths.isEmpty() || librariesStdlibFirst.isEmpty()) return []
 
     val canonicalFriendLibraryPaths: Set<String> = friendLibraryPaths.mapNotNullTo(linkedSetOf()) { rawPath ->
         if (rawPath.isEmpty()) return@mapNotNullTo null
@@ -112,7 +112,7 @@ fun KlibLoaderResult.loadFriendLibraries(friendLibraryPaths: List<String>): List
         validPath.toRealPath().toString()
     }
 
-    if (canonicalFriendLibraryPaths.isEmpty()) return emptyList()
+    if (canonicalFriendLibraryPaths.isEmpty()) return []
 
     val canonicalLibraryPathsToLibraries: Map<String, KotlinLibrary> = librariesStdlibFirst.associateBy { it.libraryFile.canonicalPath }
 

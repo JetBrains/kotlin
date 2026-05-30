@@ -133,7 +133,7 @@ class SamAdapterFunctionsScope(
             }
         }
         return when {
-            result == null -> emptyList()
+            result == null -> []
             result.size > 1 -> result.toSet()
             else -> result
         }

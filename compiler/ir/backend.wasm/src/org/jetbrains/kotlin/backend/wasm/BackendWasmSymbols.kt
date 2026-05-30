@@ -167,12 +167,12 @@ class BackendWasmSymbols(
             else -> error("Unknown primitive type")
         }
 
-        val lazyList = listOf(
+        val lazyList = [
             lessFunByOperandType to "lt",
             lessOrEqualFunByOperandType to "le",
             greaterOrEqualFunByOperandType to "ge",
             greaterFunByOperandType to "gt"
-        ).flatMap { [typeToBuiltIn, wasmOp] ->
+        ].flatMap { [typeToBuiltIn, wasmOp] ->
             typeToBuiltIn.map { [type, builtin] ->
                 val wasmType = wasmPrimitiveTypeName(type)
                 val markSign = if (wasmType == "i32" || wasmType == "i64") "_s" else ""
@@ -238,11 +238,11 @@ class BackendWasmSymbols(
         val startCoroutineUninterceptedOrReturnIntrinsics1 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsics1.functionSymbol()
         val startCoroutineUninterceptedOrReturnIntrinsics2 by CallableIds.startCoroutineUninterceptedOrReturnIntrinsics2.functionSymbol()
         lazyOf(
-            listOf(
+            [
                 startCoroutineUninterceptedOrReturnIntrinsics0,
                 startCoroutineUninterceptedOrReturnIntrinsics1,
                 startCoroutineUninterceptedOrReturnIntrinsics2,
-            )
+            ]
         )
     }
 

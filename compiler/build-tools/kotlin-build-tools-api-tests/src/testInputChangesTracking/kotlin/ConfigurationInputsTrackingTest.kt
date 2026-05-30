@@ -57,7 +57,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             )
             module.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [], removedFiles = []),
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
             ) {
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
@@ -420,7 +420,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 },
             )
             module.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [], removedFiles = []),
                 icOptionsConfigAction = {
                     it[TRACK_CONFIGURATION_INPUTS] = false
                     it[MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION] = false
@@ -447,7 +447,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[CommonCompilerArguments.PROGRESSIVE] = false },
             )
             module.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [], removedFiles = []),
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = false },
                 compilationConfigAction = { it.compilerArguments[CommonCompilerArguments.PROGRESSIVE] = true },
             ) {
@@ -472,7 +472,7 @@ class ConfigurationInputsTrackingTest : BaseCompilationTest() {
                 compilationConfigAction = { it.compilerArguments[CommonCompilerArguments.PROGRESSIVE] = false },
             )
             module.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [], removedFiles = []),
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = false },
                 compilationConfigAction = { it.compilerArguments[CommonCompilerArguments.PROGRESSIVE] = true },
             ) {

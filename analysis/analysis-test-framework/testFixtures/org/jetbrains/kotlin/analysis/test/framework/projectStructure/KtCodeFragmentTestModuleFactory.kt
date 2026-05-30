@@ -71,14 +71,14 @@ object KtCodeFragmentTestModuleFactory : KtTestModuleFactory {
 
 
         val module = KaDanglingFileModuleImpl(
-            listOf(codeFragment),
+            [codeFragment],
             contextModule.ktModule,
             getResolutionMode(testFile)
         )
 
         codeFragment.explicitModule = module
 
-        return KtTestModule(TestModuleKind.CodeFragment, testModule, module, listOf(codeFragment))
+        return KtTestModule(TestModuleKind.CodeFragment, testModule, module, [codeFragment])
     }
 
     private fun getResolutionMode(testFile: TestFile): KaDanglingFileResolutionMode {

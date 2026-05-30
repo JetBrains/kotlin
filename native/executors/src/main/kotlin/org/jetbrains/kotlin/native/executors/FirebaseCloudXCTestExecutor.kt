@@ -100,13 +100,13 @@ class FirebaseCloudXCTestExecutor(
         val firebaseRequest = ExecuteRequest(
             executableAbsolutePath = "gcloud",
             workingDirectory = projectDir.toFile(),
-            args = mutableListOf(
+            args = [
                 "firebase", "test", "ios", "run",
                 "--test=$testsZip",
                 "--no-record-video",
                 "--device=model=iphone16pro,version=18.3",
                 "--client-details=matrixLabel=$description"
-            ),
+            ],
             stderr = stderr
         )
         val firebaseResponse = hostExecutor.execute(firebaseRequest)
@@ -138,15 +138,15 @@ class FirebaseCloudXCTestExecutor(
             ExecuteRequest(
                 executableAbsolutePath = "gcloud",
                 workingDirectory = projectDir.toFile(),
-                args = mutableListOf("storage", "cp", "-r", "gs://${resultsBucketURL}/iphone*", ".")
+                args = ["storage", "cp", "-r", "gs://${resultsBucketURL}/iphone*", "."]
             ),
             // This command sometimes just hangs on certain agents, see KT-72581.
             // Let's try repeating.
-            timeouts = listOf(
+            timeouts = [
                 10.seconds, // 3 seconds is always enough, so let's make it 10 just in case.
                 1.minutes, // Is 10 seconds not enough? Not typical, but I'll allow it.
                 2.minutes, // Ok, give it one last chance.
-            )
+            ]
         ).assertSuccess()
         val executionLog = projectDir.listDirectoryEntries("iphone*")
             .first()

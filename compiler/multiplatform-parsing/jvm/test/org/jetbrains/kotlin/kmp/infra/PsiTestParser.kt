@@ -38,7 +38,7 @@ class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(Par
             }
         }
 
-        return listOf(
+        return [
             TestParseNode(
                 elementType.toString(),
                 startOffset,
@@ -46,6 +46,6 @@ class PsiTestParser(disposable: Disposable) : AbstractTestParser<PsiElement>(Par
                 this,
                 children
             )
-        )
+        ]
     }
 }

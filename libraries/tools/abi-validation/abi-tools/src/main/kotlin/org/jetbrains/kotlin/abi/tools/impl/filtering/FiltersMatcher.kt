@@ -255,7 +255,7 @@ private class WildcardsMatcher(
     }
 
     companion object {
-        val EMPTY = WildcardsMatcher(emptySet(), emptySet(), emptySet(), emptySet(), emptyList())
+        val EMPTY = WildcardsMatcher([], [], [], [], [])
     }
 
     val isEmpty = full.isEmpty() && anyPostfix.isEmpty() && anyRightSegment.isEmpty() && anyPrefix.isEmpty() && regex.isEmpty()
@@ -263,11 +263,11 @@ private class WildcardsMatcher(
 
 
 private fun Iterable<String>.processClasses(): WildcardsMatcher {
-    val full = mutableSetOf<String>()
-    val anyPostfix = mutableSetOf<String>()
-    val anyRightSegment = mutableSetOf<String>()
-    val anyPrefix = mutableSetOf<String>()
-    val regex = mutableListOf<Regex>()
+    val full: MutableSet<String> = []
+    val anyPostfix: MutableSet<String> = []
+    val anyRightSegment: MutableSet<String> = []
+    val anyPrefix: MutableSet<String> = []
+    val regex: MutableList<Regex> = []
 
     forEach { classFilter ->
         val hasQuestionWildcard = classFilter.contains('?')

@@ -51,7 +51,7 @@ class TreeBasedTypeParameter(
 
     override val upperBounds: Collection<JavaClassifierType>
         get() = tree.bounds.mapNotNull {
-            TreeBasedType.create(it, compilationUnit, javac, emptyList(), containingElement) as? JavaClassifierType
+            TreeBasedType.create(it, compilationUnit, javac, [], containingElement) as? JavaClassifierType
         }
 
     override fun equals(other: Any?): Boolean {

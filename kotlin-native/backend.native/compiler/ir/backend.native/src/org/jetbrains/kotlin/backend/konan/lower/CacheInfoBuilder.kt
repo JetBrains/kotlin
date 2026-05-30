@@ -88,7 +88,7 @@ internal class CacheInfoBuilder(
     private val IrDeclaration.isExported
         get() = with(KonanManglerIr) { isExported(compatibleMode = moduleDeserializer.compatibilityMode.legacySignaturesForPrivateAndLocalDeclarations) }
 
-    private val visitedInlineFunctions = mutableSetOf<IrFunction>()
+    private val visitedInlineFunctions: MutableSet<IrFunction> = []
 
     private fun trackCallees(irFunction: IrFunction) {
         if (irFunction in visitedInlineFunctions) return

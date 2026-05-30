@@ -38,7 +38,7 @@ open class LowLevelFirAnalyzerFacade(
     override val frontendOutput: AllModulesFrontendOutput
         get() {
             val output = SingleModuleFrontendOutput(resolutionFacade.useSiteFirSession, scopeSession, allFirFiles.values.toList())
-            return AllModulesFrontendOutput(listOf(output))
+            return AllModulesFrontendOutput([output])
         }
 
     private var resolved: Boolean = false

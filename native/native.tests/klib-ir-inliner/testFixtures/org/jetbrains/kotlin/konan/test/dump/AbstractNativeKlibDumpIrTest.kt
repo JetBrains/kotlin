@@ -30,7 +30,7 @@ abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
 
         val testCase: TestCase = generateTestCaseWithSingleSource(
             testPathFull,
-            listOf("-Xklib-relative-path-base=${testPathFull.parent}")
+            ["-Xklib-relative-path-base=${testPathFull.parent}"]
         )
         val testCompilationResult: TestCompilationResult.Success<out TestCompilationArtifact.KLIB> = compileToLibrary(testCase)
 
@@ -52,13 +52,13 @@ abstract class AbstractNativeKlibDumpIrTest : AbstractNativeSimpleTest() {
 
     private fun generateTestCaseWithSingleSource(source: File, extraArgs: List<String>): TestCase {
         val moduleName: String = source.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, [], [], [])
         module.files += TestFile.createCommitted(source, module)
 
         return TestCase(
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE,
-            modules = setOf(module),
+            modules = [module],
             freeCompilerArgs = TestCompilerArgs(extraArgs),
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),

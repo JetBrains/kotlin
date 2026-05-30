@@ -53,7 +53,7 @@ object LightClassUtil {
         val property = accessor.property
         val customNameAnnoProvided =
             accessor.annotationEntries.find { JvmStandardClassIds.JVM_NAME.shortName() == it.shortName } != null || property.isSpecialNameProvided()
-        val propertyName = accessor.property.name ?: return emptyList()
+        val propertyName = accessor.property.name ?: return []
         val wrappers = getPsiMethodWrappers(property) { wrapper ->
             val wrapperName = wrapper.name
             if (customNameAnnoProvided) {
@@ -160,7 +160,7 @@ object LightClassUtil {
         // since light classes directly support only them. This helps to avoid unnecessary checks for `navigationElement`
         // on each candidate since the mapping between the library source and the decompiled is a heavy operation.
         // `KotlinAnalysisApiBasedDeclarationNavigationPolicyImpl` is responsible for this mapping on the IntelliJ Kotlin plugin.
-        val adjustedDeclaration = declaration.originalElement as? KtDeclaration ?: return emptySequence()
+        val adjustedDeclaration = declaration.originalElement as? KtDeclaration ?: return []
         return getWrappingClasses(adjustedDeclaration)
             .flatMap { it.methods.asSequence() }
             .filterIsInstance<KtLightMethod>()
@@ -210,10 +210,10 @@ object LightClassUtil {
     }
 
     private fun getWrappingClasses(declaration: KtDeclaration): Sequence<PsiClass> {
-        val wrapperClass = getWrappingClass(declaration) ?: return emptySequence()
+        val wrapperClass = getWrappingClass(declaration) ?: return []
         val wrapperClassOrigin = (wrapperClass as KtLightClass).kotlinOrigin
         if (wrapperClassOrigin is KtObjectDeclaration && wrapperClassOrigin.isCompanion() && wrapperClass.parent is PsiClass) {
-            return sequenceOf(wrapperClass, wrapperClass.parent as PsiClass)
+            return [wrapperClass, wrapperClass.parent as PsiClass]
         }
         return sequenceOf(wrapperClass)
     }
@@ -238,7 +238,7 @@ object LightClassUtil {
 
         val accessorWrappers = when {
             ktDeclaration is KtProperty && noAdditionalAccessorsExpected(ktDeclaration, specialSetter, specialGetter) -> {
-                emptySequence()
+                []
             }
             ktDeclaration.isSpecialNameProvided() -> {
                 getPsiMethodWrappers(ktDeclaration)

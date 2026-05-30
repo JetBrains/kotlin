@@ -12,6 +12,6 @@ interface MetadataPartProvider {
     fun findMetadataPackageParts(packageFqName: String): List<String>
 
     object Empty : MetadataPartProvider {
-        override fun findMetadataPackageParts(packageFqName: String): List<String> = emptyList()
+        override fun findMetadataPackageParts(packageFqName: String): List<String> = []
     }
 }

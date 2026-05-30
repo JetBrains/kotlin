@@ -63,7 +63,7 @@ private class LlvmFunctionAttributesCopier(private val externalFunction: LLVMVal
 
     private val attributesForFunctionDeclaration: List<List<LLVMAttributeRef>> by lazy {
         memScoped {
-            val result = mutableListOf<List<LLVMAttributeRef>>()
+            val result: MutableList<List<LLVMAttributeRef>> = []
             for (index in LLVMAttributeFunctionIndex..paramsCount) {
                 val count = LLVMGetAttributeCountAtIndex(externalFunction, index)
                 val attributesBuffer = allocArray<LLVMAttributeRefVar>(count)
@@ -142,9 +142,9 @@ internal fun LlvmFunctionSignature(irFunction: IrSimpleFunction, contextUtils: C
  */
 internal open class LlvmFunctionSignature(
         val returnType: LlvmRetType,
-        val parameterTypes: List<LlvmParamType> = emptyList(),
+        val parameterTypes: List<LlvmParamType> = [],
         val isVararg: Boolean = false,
-        val functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
+        val functionAttributes: List<LlvmFunctionAttribute> = [],
 ) : LlvmFunctionAttributeProvider {
 
     val returnsObjectType: Boolean get() = returnType.isObjectType

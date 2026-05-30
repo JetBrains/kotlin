@@ -63,11 +63,11 @@ internal class SymbolLightClassForInterfaceDefaultImpls(private val containingCl
 
     override fun getContainingClass() = containingClass
 
-    override fun getOwnInnerClasses() = emptyList<PsiClass>()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
 
     override fun acceptCallableSymbol(symbol: KaCallableSymbol): Boolean {
         return super.acceptCallableSymbol(symbol) && symbol.modality != KaSymbolModality.ABSTRACT
     }
 
-    override fun getOwnFields(): List<PsiField> = emptyList()
+    override fun getOwnFields(): List<PsiField> = []
 }

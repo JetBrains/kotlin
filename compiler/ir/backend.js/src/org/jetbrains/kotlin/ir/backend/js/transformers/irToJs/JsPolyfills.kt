@@ -46,7 +46,7 @@ class JsPolyfills {
 
             if (polyfillCodeString in orderedMapOfPolyfills) continue
 
-            orderedMapOfPolyfills[polyfillCodeString] = translateJsCodeIntoStatementList(polyfillCodeExpression, declaration) ?: emptyList()
+            orderedMapOfPolyfills[polyfillCodeString] = translateJsCodeIntoStatementList(polyfillCodeExpression, declaration) ?: []
         }
 
         return orderedMapOfPolyfills.flatMap { it.value }

@@ -74,7 +74,7 @@ class KlibAbiMergingTest {
 
     @Test
     fun divergingDumpFiles() {
-        val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+        val targets: MutableList<String> = ["androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64"]
         val random = Random(42)
         for (i in 0 until 10) {
             val klib = KlibAbiDumpMerger()
@@ -96,7 +96,7 @@ class KlibAbiMergingTest {
         val random = Random(42)
         for (i in 0 until 10) {
             val klib = KlibAbiDumpMerger()
-            val targets = mutableListOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+            val targets: MutableList<String> = ["androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64"]
             targets.shuffle(random)
             targets.forEach {
                 klib.merge(file("/merge/diverging/$it.api"))
@@ -124,7 +124,7 @@ class KlibAbiMergingTest {
         val klib = KlibAbiDumpMerger()
         klib.merge(file("/merge/diverging/merged.abi"))
 
-        val targets = listOf("androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64")
+        val targets = ["androidNativeArm64", "linuxArm64", "linuxX64", "tvosX64"]
         targets.forEach { target ->
             klib.remove(KlibTarget(target))
             klib.merge(file("/merge/diverging/$target.api"))
@@ -194,7 +194,7 @@ class KlibAbiMergingTest {
         )
 
         commonAbi.mergeTargetSpecific(klib)
-        commonAbi.overrideTargets(setOf(KlibTarget("linuxArm64")))
+        commonAbi.overrideTargets([KlibTarget("linuxArm64")])
 
         val guessedAbiDump = dumpToFile(commonAbi)
         assertContentEquals(
@@ -247,7 +247,7 @@ class KlibAbiMergingTest {
     fun renameWasmTargetHavingNameInManifest() {
         val klib = KlibAbiDumpMerger()
         klib.merge(loadAndRename(file("/merge/explicitWasmTargets/wasmWasi.abi"), "wasm"))
-        assertEquals(setOf(KlibTarget.parse("wasmWasi.wasm")), klib.targets)
+        assertEquals([KlibTarget.parse("wasmWasi.wasm")], klib.targets)
     }
 
     @Test
@@ -341,12 +341,12 @@ class KlibAbiMergingTest {
         val lib = KlibAbiDumpMerger().apply {
             merge(file("/merge/stdlib_native_common.abi"))
         }
-        val expectedTargetNames = listOf(
+        val expectedTargetNames = [
             "androidNativeArm32", "androidNativeArm64", "androidNativeX64", "androidNativeX86",
             "iosArm64", "iosSimulatorArm64", "iosX64", "linuxArm32Hfp", "linuxArm64", "linuxX64",
             "macosArm64", "macosX64", "mingwX64", "tvosArm64", "tvosSimulatorArm64", "tvosX64",
             "watchosArm32", "watchosArm64", "watchosDeviceArm64", "watchosSimulatorArm64", "watchosX64"
-        )
+        ]
         val expectedTargets = expectedTargetNames.asSequence().map(KlibTarget.Companion::parse).toSet()
         assertEquals(expectedTargets, lib.targets)
 
@@ -422,14 +422,14 @@ class KlibAbiMergingTest {
     private fun loadAndRename(file: File, customTargetName: String): KlibAbiDumpMerger {
         val klib = KlibAbiDumpMerger()
         klib.merge(file)
-        klib.overrideTargets(setOf(KlibTarget(klib.targets.single().targetName, customTargetName)))
+        klib.overrideTargets([KlibTarget(klib.targets.single().targetName, customTargetName)])
         return klib
     }
 
     private fun loadAndRename(file: File, target: KlibTarget): KlibAbiDumpMerger {
         val klib = KlibAbiDumpMerger()
         klib.merge(file)
-        klib.overrideTargets(setOf(target))
+        klib.overrideTargets([target])
         return klib
     }
 }

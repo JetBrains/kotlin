@@ -170,7 +170,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
             setUp()
             reportSourceSetCommonizerDependencies(
                 subproject = "p2",
-                options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
+                options = buildOptions.copy(freeArgs = [projectDependencyMode])
             ) {
                 it.assertProjectDependencyMode()
                 it.assertNoCompileTasksExecuted()
@@ -180,7 +180,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p3",
-                options = buildOptions.copy(freeArgs = listOf(projectDependencyMode))
+                options = buildOptions.copy(freeArgs = [projectDependencyMode])
             ) {
                 it.assertProjectDependencyMode()
                 it.assertNoCompileTasksExecuted()
@@ -206,7 +206,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p2",
-                options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+                options = buildOptions.copy(freeArgs = [repositoryDependencyMode])
             ) {
                 it.assertRepositoryDependencyMode()
                 it.assertNoCompileTasksExecuted()
@@ -216,7 +216,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
 
             reportSourceSetCommonizerDependencies(
                 subproject = "p3",
-                options = buildOptions.copy(freeArgs = listOf(repositoryDependencyMode))
+                options = buildOptions.copy(freeArgs = [repositoryDependencyMode])
             ) {
                 it.assertRepositoryDependencyMode()
                 it.assertNoCompileTasksExecuted()
@@ -512,7 +512,7 @@ class MppCInteropDependencyTransformationIT : KGPBaseTest() {
         // so disabling it in this test is mandatory
         val buildOptions = defaultBuildOptions.copy(configurationCache = ConfigurationCacheValue.DISABLED)
         project("kt-71328", gradleVersion, buildOptions = buildOptions) {
-            val projectsToApply = listOf(this, subProject("lib"))
+            val projectsToApply = [this, subProject("lib")]
             for (testProject in projectsToApply) {
                 testProject.buildScriptInjection {
                     TaskInstantiationTrackingBuildService.trackInstantiationInProject(project)

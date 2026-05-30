@@ -68,7 +68,7 @@ fun KType.toConeKotlinType(): ConeKotlinType? {
     val classId = kClass.toClassId() ?: return null
 
     return classId.constructClassLikeType(
-        typeArguments = emptyArray(),
+        typeArguments = [],
         isMarkedNullable = this.isMarkedNullable
     )
 }

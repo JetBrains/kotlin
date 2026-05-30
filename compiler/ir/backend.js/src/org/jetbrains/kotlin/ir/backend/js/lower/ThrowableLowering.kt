@@ -172,7 +172,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
                 return JsIrBuilder.buildComposite(
                     context.irBuiltIns.unitType,
-                    listOf(
+                    [
                         messageTmp,
                         causeTmp,
                         delegatingCall,
@@ -186,7 +186,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                             arguments[2] =
                                 if (causeArg != null) JsIrBuilder.buildGetValue(causeTmp.symbol) else undefinedValue()
                         }
-                    )
+                    ]
                 )
             }
 
@@ -203,7 +203,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             return JsIrBuilder.buildComposite(
                 context.irBuiltIns.unitType,
-                listOf(
+                [
                     IrDelegatingConstructorCallImpl(
                         expression.startOffset,
                         expression.endOffset,
@@ -212,7 +212,7 @@ class ThrowableLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                         0,
                     ),
                     expressionReplacement
-                )
+                ]
             )
         }
     }

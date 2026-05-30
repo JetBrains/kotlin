@@ -87,8 +87,8 @@ class SourceFileProviderImpl(
         // So for them, we also need to create a module on the fly.
         val module = testServices.moduleStructure.modules.singleOrNull { testFile in it.files } ?: TestModule(
             name = "_stubModuleForOnTheFlyFile_",
-            files = listOf(testFile),
-            allDependencies = emptyList(),
+            files = [testFile],
+            allDependencies = [],
             directives = RegisteredDirectives.Empty,
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT
         )

@@ -43,4 +43,4 @@ private fun Sequence<KlibDeclarationAddress>.getAllClassifiers(): Sequence<KaCla
         .filter { it is KaNamedSymbol }
 
 private val KaLibraryModule.addresses: Set<KlibDeclarationAddress>
-    get() = readKlibDeclarationAddresses() ?: emptySet()
+    get() = readKlibDeclarationAddresses() ?: []

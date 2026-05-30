@@ -38,7 +38,7 @@ object NativeStandardInteropNames {
         val objCNamesClassesPackage = objCNamesPackage.child(Name.identifier("classes"))
         val objCNamesProtocolsPackage = objCNamesPackage.child(Name.identifier("protocols"))
 
-        val syntheticPackages = setOf(cNamesPackage, objCNamesPackage)
+        val syntheticPackages: Set<FqName> = [cNamesPackage, objCNamesPackage]
     }
 
     const val cTypeDefinitionsFileName = "CTypeDefinitions"

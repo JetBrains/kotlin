@@ -213,12 +213,12 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.getTaskName())
                 assertContentEquals(
-                    listOf(
+                    [
                         StatTag.ARTIFACT_TRANSFORM,
                         StatTag.NON_INCREMENTAL,
                         StatTag.CONFIGURATION_CACHE,
                         StatTag.KOTLIN_2,
-                    ),
+                    ],
                     taskData.getTags().sorted(),
                 )
                 assertEquals(
@@ -229,12 +229,12 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.getTaskName())
                 assertContentEquals(
-                    listOf(
+                    [
                         StatTag.ARTIFACT_TRANSFORM,
                         StatTag.NON_INCREMENTAL,
                         StatTag.CONFIGURATION_CACHE,
                         StatTag.KOTLIN_2
-                    ), taskData.getTags().sorted()
+                    ], taskData.getTags().sorted()
                 )
                 assertEquals(
                     defaultBuildOptions.kotlinVersion, taskData.getKotlinVersion(),
@@ -248,14 +248,14 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
             validateTaskData(port) { taskData ->
                 assertEquals(":lib:compileKotlin", taskData.getTaskName())
                 assertContentEquals(
-                    listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2),
+                    [StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2],
                     taskData.getTags().sorted()
                 )
             }
             validateTaskData(port) { taskData ->
                 assertEquals(":app:compileKotlin", taskData.getTaskName())
                 assertContentEquals(
-                    listOf(StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2),
+                    [StatTag.ARTIFACT_TRANSFORM, StatTag.INCREMENTAL, StatTag.CONFIGURATION_CACHE, StatTag.KOTLIN_2],
                     taskData.getTags().sorted()
                 )
             }
@@ -333,10 +333,10 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
                 )
             }
 
-            val compileNativeTasks = listOf(
+            val compileNativeTasks = [
                 ":compileCommonMainKotlinMetadata",
                 ":compileNativeMainKotlinMetadata",
-            )
+            ]
 
             for (task in compileNativeTasks) {
                 validateTaskData(port) { taskReport ->

@@ -19,7 +19,7 @@ abstract class DiagnosticList(internal val objectName: String) {
 
     @Suppress("PropertyName")
     @PrivateForInline
-    val _groups = mutableListOf<AbstractDiagnosticGroup>()
+    val _groups: MutableList<AbstractDiagnosticGroup> = []
 
     @OptIn(PrivateForInline::class)
     val groups: List<AbstractDiagnosticGroup>
@@ -46,7 +46,7 @@ abstract class DiagnosticList(internal val objectName: String) {
 
         fun collect(groups: List<AbstractDiagnosticGroup>) {
             for (group in groups) {
-                val list = groupsByName.getOrPut(group.name) { mutableListOf() }
+                val list = groupsByName.getOrPut(group.name) { [] }
                 list += group
             }
         }
@@ -119,7 +119,7 @@ sealed class DiagnosticBuilder(
     }
 
     @PrivateForInline
-    val parameters = mutableListOf<DiagnosticParameter>()
+    val parameters: MutableList<DiagnosticParameter> = []
 
     @OptIn(PrivateForInline::class)
     inline fun <reified T> parameter(name: String) {

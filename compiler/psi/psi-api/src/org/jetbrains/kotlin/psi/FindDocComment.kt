@@ -33,7 +33,7 @@ fun findDocComment(declaration: KtDeclaration): KDoc? {
             if (it is KtDeclarationModifierList) {
                 return@flatMap it.children.asSequence()
             }
-            sequenceOf(it)
+            [it]
         }
         .dropWhile { it !is KDoc }
         .firstOrNull() as? KDoc

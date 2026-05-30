@@ -33,7 +33,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
     ): List<Pair<FirBasedSymbol<*>, AbstractKtSourceElement?>> {
         val calleeSymbol = expression.calleeReference.toResolvedBaseSymbol()
         if (calleeSymbol != null && calleeSymbol.getContainingClassSymbol() == null) {
-            return listOf(calleeSymbol to expression.calleeReference.source)
+            return [calleeSymbol to expression.calleeReference.source]
         }
 
         return when (val receiver = expression.dispatchReceiver?.unwrapSmartcastExpression()) {
@@ -46,7 +46,7 @@ object FirJsModuleQualifiedAccessChecker : FirQualifiedAccessExpressionChecker(M
                     listOfNotNull(classSymbol?.to(expression.calleeReference.source))
                 }
             }
-            else -> emptyList()
+            else -> []
         }
     }
 

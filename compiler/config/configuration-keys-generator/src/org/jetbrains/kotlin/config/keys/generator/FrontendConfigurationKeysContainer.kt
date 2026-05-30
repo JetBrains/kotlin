@@ -17,6 +17,6 @@ object FrontendConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.
     @OptIn(ExperimentalCompilerApi::class)
     val EXTENSIONS_STORAGE by key<CompilerPluginRegistrar.ExtensionStorage>(
         "Storage of registered compiler plugins.",
-        optIns = listOf(ExperimentalCompilerApi())
+        optIns = [ExperimentalCompilerApi()]
     )
 }

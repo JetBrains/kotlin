@@ -77,7 +77,7 @@ open class ProcessorLoaderImpl(private val options: KaptOptions, private val log
     }
 
     open fun doLoadProcessors(classpath: LinkedHashSet<File>, classLoader: ClassLoader): List<Processor> {
-        val processorNames = mutableSetOf<String>()
+        val processorNames: MutableSet<String> = []
 
         fun processSingleInput(input: InputStream) {
             val lines = input.bufferedReader().lineSequence()

@@ -23,14 +23,14 @@ class SourceMapGenerator(
 ) : DebugInformationGenerator {
     // TODO: eliminate duplication for the [org.jetbrains.kotlin.backend.wasm.writeCompilationResult] logic
     private val sourceMapFileName = "$baseFileName.map"
-    private val sourceLocationMappings = mutableListOf<SourceLocationMapping>()
+    private val sourceLocationMappings: MutableList<SourceLocationMapping> = []
 
     override fun addSourceLocation(location: SourceLocationMapping) {
         sourceLocationMappings.add(location)
     }
 
     override fun generateDebugInformation(): DebugInformation {
-        return listOf(DebugSection("sourceMappingURL", DebugData.StringData(sourceMapFileName)))
+        return [DebugSection("sourceMappingURL", DebugData.StringData(sourceMapFileName))]
     }
 
     fun generate(): String? {

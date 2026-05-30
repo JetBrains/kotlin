@@ -35,7 +35,7 @@ internal fun findMatchingCallableSymbols(callableId: CallableId, classSymbol: Ka
                 null
             }
         }
-        ?.let { return listOf(it) }
+        ?.let { return [it] }
 
     // Fake overrides are absent in the declared member scope.
     return classSymbol.combinedMemberScope

@@ -111,13 +111,13 @@ private fun buildExtensionFacade(objCName: String, members: List<ObjCExportStub>
         name = objCName,
         comment = null,
         origin = null,
-        attributes = emptyList(),
-        superProtocols = emptyList(),
+        attributes = [],
+        superProtocols = [],
         members = members,
         categoryName = extensionsCategoryName,
-        generics = emptyList(),
+        generics = [],
         superClass = null,
-        superClassGenerics = emptyList()
+        superClassGenerics = []
     )
 }
 

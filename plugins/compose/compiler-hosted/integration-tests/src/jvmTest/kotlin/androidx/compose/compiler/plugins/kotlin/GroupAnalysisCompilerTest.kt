@@ -25,10 +25,10 @@ class GroupAnalysisCompilerTest(
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "mapping={0}")
-        fun data() = arrayOf<Any>(
+        fun data(): Array<Any> = [
             arrayOf(true),
             arrayOf(false),
-        )
+        ]
     }
 
     @Test
@@ -426,10 +426,10 @@ class GroupAnalysisCompilerTest(
         allowDuplicatedKeys: Boolean = false,
         dumpIr: Boolean = false
     ) {
-        val sources = listOf(
+        val sources = [
             SourceFile("Test.kt", wrapWithImports(source)),
             SourceFile("Extra.kt", wrapWithImports(extra))
-        )
+        ]
         if (dumpIr) {
             println(compileToIr(sources).dumpSrc())
         }
@@ -444,7 +444,7 @@ class GroupAnalysisCompilerTest(
                         sources,
                         additionalConfigurationParameters = {
                             it.put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY, meta)
-                            it.put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(groups)))
+                            it.put(ComposeConfiguration.FEATURE_FLAGS, [FeatureFlag.OptimizeNonSkippingGroups.name(groups)])
                         }
                     )
                     it to classLoader
@@ -500,29 +500,29 @@ class GroupAnalysisCompilerTest(
         checkOptimizeGroups: Boolean
     ): List<BooleanArray> = when {
         !checkOptimizeGroups && !checkFunctionMeta -> {
-            listOf(
-                booleanArrayOf(true, true)
-            )
+            [
+                [true, true]
+            ]
         }
         !checkOptimizeGroups -> {
-            listOf(
-                booleanArrayOf(true, true),
-                booleanArrayOf(false, true)
-            )
+            [
+                [true, true],
+                [false, true]
+            ]
         }
         !checkFunctionMeta -> {
-            listOf(
-                booleanArrayOf(true, true),
-                booleanArrayOf(true, false)
-            )
+            [
+                [true, true],
+                [true, false]
+            ]
         }
         else -> {
-            listOf(
-                booleanArrayOf(true, true),
-                booleanArrayOf(false, true),
-                booleanArrayOf(true, false),
-                booleanArrayOf(false, false)
-            )
+            [
+                [true, true],
+                [false, true],
+                [true, false],
+                [false, false]
+            ]
         }
     }
 

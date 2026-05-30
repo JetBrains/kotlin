@@ -51,7 +51,7 @@ abstract class FirSupertypeGenerationExtension(session: FirSession) : FirExtensi
     open fun computeAdditionalSupertypesForGeneratedNestedClass(
         klass: FirRegularClass,
         typeResolver: TypeResolveService
-    ): List<ConeKotlinType> = emptyList()
+    ): List<ConeKotlinType> = []
 
     fun interface Factory : FirExtension.Factory<FirSupertypeGenerationExtension>
 

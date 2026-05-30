@@ -82,7 +82,7 @@ class CollectionLiteralBoundsCollector(
             return CollectionLiteralBounds.NonTvExpected(atom, classSymbol)
         }
 
-        val bounds: MutableSet<FirRegularClassSymbol> = mutableSetOf()
+        val bounds: MutableSet<FirRegularClassSymbol> = []
 
         // recursive implementation
         fun processConstraintsOfShallowlyDependentVariable(
@@ -91,7 +91,7 @@ class CollectionLiteralBoundsCollector(
         ) {
             visited.add(dependentVariable)
 
-            val constraints = c.notFixedTypeVariables[dependentVariable]?.constraints ?: emptyList()
+            val constraints = c.notFixedTypeVariables[dependentVariable]?.constraints ?: []
 
             val lowerSetOfConstraints: MutableSet<FirRegularClassSymbol> = SmartSet.create()
             val upperSetOfConstraints: MutableSet<FirRegularClassSymbol> = SmartSet.create()

@@ -23,7 +23,7 @@ open class InstanceComponentDescriptor(val instance: Any) : ComponentDescriptor 
     override fun getValue(): Any = instance
     override fun getRegistrations(): Iterable<Type> = instance::class.java.getInfo().registrations
 
-    override fun getDependencies(context: ValueResolveContext): Collection<Class<*>> = emptyList()
+    override fun getDependencies(context: ValueResolveContext): List<Class<*>> = []
 
     override fun toString(): String {
         return "Instance: ${instance::class.java.simpleName}"

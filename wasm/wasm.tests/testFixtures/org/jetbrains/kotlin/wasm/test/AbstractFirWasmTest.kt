@@ -68,7 +68,7 @@ abstract class AbstractFirWasmTest(
         with(builder) {
             defaultDirectives {
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
-                DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
+                DiagnosticsDirectives.DIAGNOSTICS with ["-infos"]
                 FirDiagnosticsDirectives.FIR_PARSER with FirParser.Psi
             }
 
@@ -81,10 +81,10 @@ abstract class AbstractFirWasmTest(
                 )
             }
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
 
             configureIgnoredTestSuppressor()
@@ -127,10 +127,10 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -148,7 +148,7 @@ open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : Abstrac
     testGroupOutputDirPrefix = "codegen/boxSplitted/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -216,10 +216,10 @@ open class AbstractFirWasmJsSteppingWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -229,7 +229,7 @@ open class AbstractFirWasmJsSteppingSplitTest : AbstractFirWasmJsSteppingTest(
     testGroupOutputDirPrefix = "debug/firSteppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -247,7 +247,7 @@ open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirW
     testGroupOutputDirPrefix = "debug/firSteppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -301,10 +301,10 @@ open class AbstractFirWasmWasiCodegenBoxWithInlinedFunInKlibTest : AbstractFirWa
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }

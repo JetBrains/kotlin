@@ -31,7 +31,7 @@ class AnalysisApiTestGroup(
 
     inline fun <reified T : Any> test(
         noinline filter: TestFilter = { true },
-        targetPlatforms: List<TargetPlatformEnum> = listOf(TargetPlatformEnum.JVM),
+        targetPlatforms: List<TargetPlatformEnum> = [TargetPlatformEnum.JVM],
         noinline init: TestGroup.TestClass.(data: AnalysisApiTestConfiguratorFactoryData) -> Unit,
     ) {
         test(T::class.java, filter and { it.targetPlatform in targetPlatforms }, init)
@@ -103,7 +103,7 @@ class AnalysisApiTestGroup(
 internal fun TestGroup.TestClass.model(
     data: AnalysisApiTestConfiguratorFactoryData,
     relativeRootPath: String,
-    excludeDirsRecursively: List<String> = listOf(),
+    excludeDirsRecursively: List<String> = [],
     excludedPattern: String? = null,
 ) {
     model(

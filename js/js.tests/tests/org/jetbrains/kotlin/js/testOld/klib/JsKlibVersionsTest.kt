@@ -48,14 +48,14 @@ class JsKlibVersionsTest : AbstractWebKlibVersionsTest() {
             dependency
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
-        val args = arrayOf(
+        val args: Array<String> = [
             K2JSCompilerArguments::irProduceJs.cliArgument,
             K2JSCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
             K2JSCompilerArguments::libraries.cliArgument, libraries,
             K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
             K2JSCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
             K2JSCompilerArguments::target.cliArgument, "es2015",
-        )
+        ]
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->

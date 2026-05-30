@@ -113,7 +113,7 @@ class WasmTypeTransformer(
                         arg.typeOrNull?.toWasmValueType() ?: error("Function parameter type cannot be null")
                     }
                     val returnType = functionTypeArguments.last().typeOrNull?.let {
-                        if (it.isUnit()) emptyList() else listOf(it.toWasmValueType())
+                        if (it.isUnit()) [] else [it.toWasmValueType()]
                     } ?: error("Function return type cannot be null")
 
                     val wasmFunctionType = WasmFunctionType(parameterTypes, returnType)

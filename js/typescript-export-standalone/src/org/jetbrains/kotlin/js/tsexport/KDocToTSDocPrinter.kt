@@ -31,11 +31,11 @@ internal fun <T : ExportedDeclaration> T.addDocumentationAttributes(source: KaDe
     val kdoc = source?.findKDoc() ?: return
 
     val isClass = this is ExportedClass
-    val sections = mutableListOf<String>()
+    val sections: MutableList<String> = []
     val tagsToProcess: MutableList<KDocTag> = kdoc.additionalSections.toMutableList()
 
     var constructorDescription: List<String>? = null
-    val otherConstructorSections = mutableListOf<String>()
+    val otherConstructorSections: MutableList<String> = []
     val parameterSections = mutableMapOf<String, MutableList<String>>()
     val functionSections = mutableMapOf<String, MutableList<String>>()
 
@@ -74,16 +74,16 @@ internal fun <T : ExportedDeclaration> T.addDocumentationAttributes(source: KaDe
 
                         if (getterName != null || setterName != null) {
                             getterName?.let {
-                                functionSections.getOrPut(it) { mutableListOf() }
+                                functionSections.getOrPut(it) { [] }
                                     .addAll(jsDocLines)
                             }
                             setterName?.let {
-                                functionSections.getOrPut(it) { mutableListOf() }
+                                functionSections.getOrPut(it) { [] }
                                     .addAll(jsDocLines)
                             }
                         } else {
                             parameterSections
-                                .getOrPut(dedicatedProperty.getExportedIdentifier()) { mutableListOf() }
+                                .getOrPut(dedicatedProperty.getExportedIdentifier()) { [] }
                                 .addAll(jsDocLines)
                         }
                     }
@@ -134,14 +134,14 @@ private fun ExportedDeclaration.addDocumentationIfThereIsNoOne(sections: List<St
 }
 
 private fun KDocTag.toParamJsDocLines(firstLine: String, restLines: List<String>): List<String> =
-    listOf("@param ${getSubjectName()?.plus(" - ") ?: ""}$firstLine") + restLines
+    ["@param ${getSubjectName()?.plus(" - ") ?: ""}$firstLine"] + restLines
 
 private fun KDocTag.toJsDocTagLines(): List<String> {
     val subject = getSubjectName()
     val content = getContent().removeSuffix("\n").lines()
     val contentFirstLine = content.firstOrNull() ?: ""
 
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
 
     // More about the KDoc known tags: https://kotlinlang.org/docs/kotlin-doc.html#block-tags
     // More about the JSDoc known tags: https://jsdoc.app/

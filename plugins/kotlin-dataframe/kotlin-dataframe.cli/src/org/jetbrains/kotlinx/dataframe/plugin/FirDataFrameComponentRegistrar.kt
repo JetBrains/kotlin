@@ -109,7 +109,7 @@ class DataFrameCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String
         get() = DataFramePluginNames.PLUGIN_ID
 
-    override val pluginOptions: Collection<AbstractCliOption> = listOf(DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION, SCHEMAS_OPTION)
+    override val pluginOptions: Collection<AbstractCliOption> = [DISABLE_TOP_LEVEL_EXTENSION_PROPERTIES_OPTION, SCHEMAS_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         return when (option) {

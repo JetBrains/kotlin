@@ -207,7 +207,7 @@ class NewResolutionOldInference(
                     candidate.descriptor, basicCallContext.call, basicCallContext.trace.bindingContext, basicCallContext.isSuperCall
                 )
             ) {
-                return@map MyCandidate(listOf(HiddenDescriptor), resolvedCall)
+                return@map MyCandidate([HiddenDescriptor], resolvedCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
@@ -318,7 +318,7 @@ class NewResolutionOldInference(
         val errorCandidates = when (kind) {
             ResolutionKind.Function -> collectErrorCandidatesForFunction(scopeTower, name, detailedReceiver)
             ResolutionKind.Variable -> collectErrorCandidatesForVariable(scopeTower, name, detailedReceiver)
-            else -> emptyList()
+            else -> []
         }
 
         val candidate = errorCandidates.firstOrNull() as? ErrorCandidate.Classifier ?: return false
@@ -447,7 +447,7 @@ class NewResolutionOldInference(
                 if (parameterIsDynamic != argumentIsDynamic ||
                     (parameterIsDynamic && !towerCandidate.descriptor.hasDynamicExtensionAnnotation())
                 ) {
-                    return MyCandidate(listOf(HiddenExtensionRelatedToDynamicTypes), candidateCall)
+                    return MyCandidate([HiddenExtensionRelatedToDynamicTypes], candidateCall)
                 }
             }
 
@@ -455,7 +455,7 @@ class NewResolutionOldInference(
                     towerCandidate.descriptor, basicCallContext.call, basicCallContext.trace.bindingContext, basicCallContext.isSuperCall
                 )
             ) {
-                return MyCandidate(listOf(HiddenDescriptor), candidateCall)
+                return MyCandidate([HiddenDescriptor], candidateCall)
             }
 
             val callCandidateResolutionContext = CallCandidateResolutionContext.create(
@@ -496,9 +496,9 @@ class NewResolutionOldInference(
             }
 
         private fun checkInfixAndOperator(call: Call, descriptor: CallableDescriptor): List<ResolutionDiagnostic> {
-            if (descriptor !is FunctionDescriptor || ErrorUtils.isError(descriptor)) return emptyList()
+            if (descriptor !is FunctionDescriptor || ErrorUtils.isError(descriptor)) return []
             if (descriptor.name != name && (name == OperatorNameConventions.UNARY_PLUS || name == OperatorNameConventions.UNARY_MINUS)) {
-                return listOf(DeprecatedUnaryPlusAsPlus)
+                return [DeprecatedUnaryPlusAsPlus]
             }
 
             val conventionError = if (isConventionCall(call) && !descriptor.isOperator) InvokeConventionCallNoOperatorModifier else null

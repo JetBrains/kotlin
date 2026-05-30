@@ -68,25 +68,25 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         val enableLookupStorageFillingInDumbMode = System.getProperty("kotlin.jps.enable.lookups.in.dumb.mode", "false")!!.toBoolean()
 
         private val classesToLoadByParentFromRegistry =
-            System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
+            System.getProperty("kotlin.jps.classesToLoadByParent")?.split(',')?.map { it.trim() } ?: []
         private val classPrefixesToLoadByParentFromRegistry =
-            System.getProperty("kotlin.jps.classPrefixesToLoadByParent")?.split(',')?.map { it.trim() } ?: emptyList()
+            System.getProperty("kotlin.jps.classPrefixesToLoadByParent")?.split(',')?.map { it.trim() } ?: []
 
         val classesToLoadByParent: ClassCondition
             get() = ClassCondition { className ->
-                val prefixes = listOf(
+                val prefixes = [
                     "org.apache.log4j.", // For logging from compiler
                     "org.jetbrains.kotlin.incremental.components.",
                     "org.jetbrains.kotlin.load.kotlin.incremental.components."
-                ) + classPrefixesToLoadByParentFromRegistry
+                ] + classPrefixesToLoadByParentFromRegistry
 
-                val classes = listOf(
+                val classes = [
                     "org.jetbrains.kotlin.config.Services",
                     "org.jetbrains.kotlin.progress.CompilationCanceledStatus",
                     "org.jetbrains.kotlin.progress.CompilationCanceledException",
                     "org.jetbrains.kotlin.modules.TargetId",
                     "org.jetbrains.kotlin.cli.common.ExitCode"
-                ) + classesToLoadByParentFromRegistry
+                ] + classesToLoadByParentFromRegistry
 
                 prefixes.forEach { if (className.startsWith(it)) return@ClassCondition true }
                 classes.forEach { if (className == it) return@ClassCondition true }

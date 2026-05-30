@@ -290,7 +290,7 @@ abstract class DeserializedMemberScope protected constructor(
                     generateSequence {
                         parser.parseDelimitedFrom(inputStream, c.components.extensionRegistryLite)
                     }.toList()
-                } ?: emptyList(),
+                } ?: [],
                 factory,
                 computeNonDeclared
             )
@@ -325,7 +325,7 @@ abstract class DeserializedMemberScope protected constructor(
         }
 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-            if (name !in functionNames) return emptyList()
+            if (name !in functionNames) return []
             return functions(name)
         }
 
@@ -334,7 +334,7 @@ abstract class DeserializedMemberScope protected constructor(
         }
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-            if (name !in variableNames) return emptyList()
+            if (name !in variableNames) return []
             return properties(name)
         }
 
@@ -391,7 +391,7 @@ abstract class DeserializedMemberScope protected constructor(
         typeAliasList: List<ProtoBuf.TypeAlias>
     ) : Implementation {
 
-        private val typeAliasList = if (c.components.configuration.typeAliasesAllowed) typeAliasList else emptyList()
+        private val typeAliasList = if (c.components.configuration.typeAliasesAllowed) typeAliasList else []
 
         private val declaredFunctions: List<SimpleFunctionDescriptor>
                 by c.storageManager.createLazyValue { computeFunctions() }
@@ -450,7 +450,7 @@ abstract class DeserializedMemberScope protected constructor(
             computeNonDeclaredDescriptors(name, declaredProperties, ::computeNonDeclaredProperties)
 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-            if (name !in functionNames) return emptyList()
+            if (name !in functionNames) return []
             return functionsByName[name].orEmpty()
         }
 
@@ -459,7 +459,7 @@ abstract class DeserializedMemberScope protected constructor(
         }
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-            if (name !in variableNames) return emptyList()
+            if (name !in variableNames) return []
             return propertiesByName[name].orEmpty()
         }
 

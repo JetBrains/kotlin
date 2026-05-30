@@ -92,10 +92,10 @@ internal class StaticInitializersLowering(val context: Context) : FileLoweringPa
     }
 
     fun processDeclarationContainter(container: IrDeclarationContainer) {
-        val threadLocalInitializers = mutableListOf<IrExpression>()
-        val globalInitializers = mutableListOf<IrExpression>()
-        val eagerThreadLocalInitializers = mutableListOf<IrExpression>()
-        val eagerGlobalInitializers = mutableListOf<IrExpression>()
+        val threadLocalInitializers: MutableList<IrExpression> = []
+        val globalInitializers: MutableList<IrExpression> = []
+        val eagerThreadLocalInitializers: MutableList<IrExpression> = []
+        val eagerGlobalInitializers: MutableList<IrExpression> = []
 
         val builder = context.irBuiltIns.createIrBuilder((container as IrSymbolOwner).symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
 

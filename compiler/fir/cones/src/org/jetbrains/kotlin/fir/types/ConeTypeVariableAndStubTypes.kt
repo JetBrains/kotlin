@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.types.model.*
 class ConeTypeVariableType(
     val isMarkedNullable: Boolean,
     val typeConstructor: ConeTypeVariableTypeConstructor,
-    override val attributes: ConeAttributes = ConeAttributes.Empty,
+    override val attributes: ConeAttributes = [],
 ) : ConeSimpleKotlinType() {
     override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
@@ -72,7 +72,7 @@ sealed class ConeStubType(
         get() = EMPTY_ARRAY
 
     override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
+        get() = []
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

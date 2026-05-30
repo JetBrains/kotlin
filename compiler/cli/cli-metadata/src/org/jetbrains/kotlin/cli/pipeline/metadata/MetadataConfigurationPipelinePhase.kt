@@ -35,8 +35,8 @@ import java.io.File
 
 object MetadataConfigurationPipelinePhase : AbstractConfigurationPhase<K2MetadataCompilerArguments>(
     name = "MetadataConfigurationPipelinePhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(MetadataConfigurationUpdater)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [MetadataConfigurationUpdater]
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
@@ -64,7 +64,7 @@ object MetadataConfigurationUpdater : ConfigurationUpdater<K2MetadataCompilerArg
         arguments: K2MetadataCompilerArguments,
         rootDisposable: Disposable,
     ) {
-        val commonSources = arguments.commonSources?.toSet() ?: emptySet()
+        val commonSources = arguments.commonSources?.toSet() ?: []
         val hmppCliModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
         if (hmppCliModuleStructure != null) {
             configuration.report(

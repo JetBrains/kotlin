@@ -112,7 +112,7 @@ private class MutableMatcherTree {
 
     private class Node {
         val children = mutableMapOf<Char, Node>()
-        val values = mutableListOf<FqNameMatcher>()
+        val values: MutableList<FqNameMatcher> = []
     }
 }
 

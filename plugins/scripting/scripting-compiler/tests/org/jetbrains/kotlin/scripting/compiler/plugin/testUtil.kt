@@ -34,15 +34,15 @@ internal fun getBaseCompilerArgumentsFromProperty(): List<String>? =
 // TODO: partially copypasted from LauncherReplTest, consider extracting common parts to some (new) test util module
 fun runWithKotlinc(
     scriptPath: String,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedErrPatterns: List<String> = emptyList(),
+    expectedOutPatterns: List<String> = [],
+    expectedErrPatterns: List<String> = [],
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
-    classpath: List<File> = emptyList(),
+    classpath: List<File> = [],
     additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     runWithKotlinc(
-        arrayOf("-script", scriptPath),
+        ["-script", scriptPath],
         expectedOutPatterns, expectedErrPatterns, expectedExitCode, workDirectory, classpath, additionalEnvVars
     )
 }
@@ -50,11 +50,11 @@ fun runWithKotlinc(
 fun runWithKotlinLauncherScript(
     launcherScriptName: String,
     compilerArgs: Iterable<String>,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedErrPatterns: List<String> = emptyList(),
+    expectedOutPatterns: List<String> = [],
+    expectedErrPatterns: List<String> = [],
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
-    classpath: List<File> = emptyList(),
+    classpath: List<File> = [],
     additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     val executableFileName =
@@ -79,11 +79,11 @@ fun runWithKotlinLauncherScript(
 
 fun runWithKotlinc(
     compilerArgs: Array<String>,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedErrPatterns: List<String> = emptyList(),
+    expectedOutPatterns: List<String> = [],
+    expectedErrPatterns: List<String> = [],
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
-    classpath: List<File> = emptyList(),
+    classpath: List<File> = [],
     additionalEnvVars: Iterable<Pair<String, String>>? = null
 ) {
     runWithKotlinLauncherScript(
@@ -94,8 +94,8 @@ fun runWithKotlinc(
 
 fun runAndCheckResults(
     args: List<String>,
-    expectedOutPatterns: List<String> = emptyList(),
-    expectedErrPatterns: List<String> = emptyList(),
+    expectedOutPatterns: List<String> = [],
+    expectedErrPatterns: List<String> = [],
     expectedExitCode: Int = 0,
     workDirectory: File? = null,
     additionalEnvVars: Iterable<Pair<String, String>>? = null
@@ -169,9 +169,9 @@ fun runAndCheckResults(
 
 fun runWithK2JVMCompiler(
     scriptPath: String,
-    expectedOutPatterns: List<String> = emptyList(),
+    expectedOutPatterns: List<String> = [],
     expectedExitCode: Int = 0,
-    classpath: List<File> = emptyList(),
+    classpath: List<File> = [],
     skipScriptArgument: Boolean = false,
     disableScriptCompilationCache: Boolean = true,
 ) {
@@ -196,7 +196,7 @@ fun runWithK2JVMCompiler(
 
 fun runWithK2JVMCompiler(
     args: Array<String>,
-    expectedAllOutPatterns: List<String> = emptyList(),
+    expectedAllOutPatterns: List<String> = [],
     expectedExitCode: Int = 0,
     expectedSomeErrPatterns: List<String>? = null
 ) {
@@ -208,7 +208,7 @@ fun runWithK2JVMCompiler(
         )
     }
     try {
-        val outLines = if (out.isEmpty()) emptyList() else out.lines()
+        val outLines = if (out.isEmpty()) [] else out.lines()
         val errLines by lazy { err.lines() }
         assertEquals(
             expectedAllOutPatterns.size, outLines.size,

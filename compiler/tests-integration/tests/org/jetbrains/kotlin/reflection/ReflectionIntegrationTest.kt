@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.File
+import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -38,8 +39,8 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
 
         val root = KtTestUtil.getTestDataFileLocatedInCompilerTestData("reflection/classLoaderForBuiltIns").path
         compileJavaFiles(
-            listOf(File("$root/Main.java")),
-            listOf("-d", tmpdir.absolutePath)
+            [File("$root/Main.java")],
+            ["-d", tmpdir.absolutePath]
         ).assertSuccessful()
 
         val lib = CompilerTestUtil.compileJvmLibrary(File("$root/test.kt"))
@@ -59,10 +60,10 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
     // being closed in one of the threads. It creates two threads that for several seconds continuously load kotlin-reflect in a new
     // class loader, call something from it, and close the class loader.
     fun testParallelAccess() {
-        val urls = arrayOf(
+        val urls: Array<URL> = [
             ForTestCompileRuntime.reflectJarForTests().toURI().toURL(),
             ForTestCompileRuntime.runtimeJarForTests().toURI().toURL(),
-        )
+        ]
 
         val latch = CountDownLatch(1)
         val error = AtomicReference<Throwable?>()
@@ -123,7 +124,7 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
 
     private fun checkFullReflectionIsNotLoaded(root: String) {
         // Run the program and print all classes loaded by the JVM.
-        val (stdout, stderr) = compileAndRunProgram(root, listOf("-verbose:class"))
+        val (stdout, stderr) = compileAndRunProgram(root, ["-verbose:class"])
 
         // Protobuf is loaded via an entrypoint in the `JvmProtoBuf` class. If that class is not loaded by the JVM, metadata has not been
         // loaded, and full reflection is not initialized.
@@ -168,12 +169,12 @@ class ReflectionIntegrationTest : KtUsefulTestCase() {
 
     private fun compileAndRunProgram(
         root: String,
-        jvmArgs: List<String> = emptyList(),
+        jvmArgs: List<String> = [],
     ): TestOutput {
         val javaSources = File(root).walkTopDown().filter { it.extension == "java" }.toList()
         val extraClasspath = if (javaSources.isNotEmpty()) {
             KotlinTestUtils.tmpDirForTest(this).also { output ->
-                compileJavaFiles(javaSources, listOf("-d", output.absolutePath)).assertSuccessful()
+                compileJavaFiles(javaSources, ["-d", output.absolutePath]).assertSuccessful()
             }
         } else null
 

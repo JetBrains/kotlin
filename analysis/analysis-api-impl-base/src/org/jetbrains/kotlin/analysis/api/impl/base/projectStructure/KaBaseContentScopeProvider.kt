@@ -21,8 +21,8 @@ internal class KaBaseContentScopeProvider : KaContentScopeProvider {
             return baseContentScope
         }
 
-        val enlargementScopes = mutableListOf(baseContentScope)
-        val restrictionScopes = mutableListOf<GlobalSearchScope>()
+        val enlargementScopes: MutableList<GlobalSearchScope> = [baseContentScope]
+        val restrictionScopes: MutableList<GlobalSearchScope> = []
 
         refiners.forEach { refiner ->
             enlargementScopes.addAll(

@@ -42,12 +42,12 @@ abstract class FunctionBodySkippingTransformTestsBase : AbstractIrTransformTest(
             fun used(x: Any?) {}
         """.trimIndent(),
         dumpTree = dumpTree,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeUiUnitJar(),
             Classpath.composeUiTextJar(),
             Classpath.composeFoundationLayoutJar()
-        )
+        ]
     )
 }
 
@@ -1353,10 +1353,10 @@ class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransform
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(
+            [
                 FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
-            )
+            ]
         )
     }
 
@@ -1500,10 +1500,10 @@ class FunctionBodySkippingTransformTestsNoSource : FunctionBodySkippingTransform
             @Composable
             fun Text(value: String) {}
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeFoundationLayoutJar()
-        )
+        ]
     )
 
     @Test

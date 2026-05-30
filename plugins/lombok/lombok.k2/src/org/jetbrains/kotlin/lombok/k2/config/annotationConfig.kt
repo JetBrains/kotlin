@@ -106,7 +106,7 @@ class GlobalConfig(
             return GlobalConfig(
                 accessorsFluent = config.getBoolean(ACCESSORS_FLUENT_CONFIG) ?: false,
                 accessorsChain = config.getBoolean(ACCESSORS_CHAIN_CONFIG) ?: false,
-                accessorsPrefix = config.getMultiString(ACCESSORS_PREFIX_CONFIG) ?: emptyList(),
+                accessorsPrefix = config.getMultiString(ACCESSORS_PREFIX_CONFIG) ?: [],
                 getterNoIsPrefix = config.getBoolean(GETTER_NO_IS_PREFIX_CONFIG) ?: false,
                 builderClassName = config.getString(BUILDER_CLASS_NAME_CONFIG) ?: "*Builder",
                 logFieldName = config.getString(LOG_FIELD_NAME_CONFIG) ?: "log",
@@ -529,7 +529,7 @@ object ConeLombokAnnotations {
                     callSuper = annotation.getBooleanArgument(CALL_SUPER)?.let { if (it) CallSuperMode.Call else CallSuperMode.Skip },
                     doNotUseGetters = annotation.getBooleanArgument(DO_NOT_USE_GETTERS),
                     onlyExplicitlyIncluded = annotation.getBooleanArgument(ONLY_EXPLICITLY_INCLUDED),
-                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: emptySet(),
+                    excludeFields = annotation.getStringArrayArgument(EXCLUDE)?.toSet() ?: [],
                     annotation = annotation,
                 )
             }

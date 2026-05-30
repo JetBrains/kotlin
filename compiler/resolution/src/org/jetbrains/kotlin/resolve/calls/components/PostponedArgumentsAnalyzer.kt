@@ -102,8 +102,8 @@ class PostponedArgumentsAnalyzer(
         }
 
         val expectedParametersToMatchAgainst = when {
-            receiver == null && expectedReceiver != null && expectedParameters != null -> listOf(expectedReceiver) + expectedParameters
-            receiver == null && expectedReceiver != null -> listOf(expectedReceiver)
+            receiver == null && expectedReceiver != null && expectedParameters != null -> [expectedReceiver] + expectedParameters
+            receiver == null && expectedReceiver != null -> [expectedReceiver]
             receiver != null && expectedReceiver == null -> expectedParameters?.drop(1)
             else -> expectedParameters
         }

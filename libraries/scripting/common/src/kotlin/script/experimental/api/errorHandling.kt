@@ -116,7 +116,7 @@ sealed class ResultWithDiagnostics<out R> {
      */
     data class Success<out R>(
         val value: R,
-        override val reports: List<ScriptDiagnostic> = listOf()
+        override val reports: List<ScriptDiagnostic> = []
     ) : ResultWithDiagnostics<R>()
 
     /**
@@ -213,7 +213,7 @@ operator fun <R> List<ScriptDiagnostic>.plus(result: ResultWithDiagnostics<R>): 
 /**
  * Converts the receiver value to the Success result wrapper with optional diagnostic [reports]
  */
-fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = listOf()): ResultWithDiagnostics.Success<R> =
+fun <R> R.asSuccess(reports: List<ScriptDiagnostic> = []): ResultWithDiagnostics.Success<R> =
     ResultWithDiagnostics.Success(this, reports)
 
 /**
@@ -309,9 +309,9 @@ fun <R> ResultWithDiagnostics<R>.valueOrThrow(): R = valueOr {
 }
 
 class IterableResultsCollector<T> {
-    private val diagnostics = mutableListOf<ScriptDiagnostic>()
-    private val failureResults = mutableListOf<ResultWithDiagnostics<Iterable<T>>>()
-    private val values = mutableListOf<T>()
+    private val diagnostics: MutableList<ScriptDiagnostic> = []
+    private val failureResults: MutableList<ResultWithDiagnostics<Iterable<T>>> = []
+    private val values: MutableList<T> = []
 
     fun add(result: ResultWithDiagnostics<Iterable<T>>) {
         if (result is ResultWithDiagnostics.Success) {

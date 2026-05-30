@@ -28,7 +28,7 @@ object Inv : CallBasedIntrinsicMethod() {
     ): IntrinsicFunction {
         val returnType = signature.returnType
         val type = numberFunctionOperandType(returnType)
-        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(type)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, [type]) {
             if (returnType == Type.LONG_TYPE) {
                 it.lconst(-1)
             } else {

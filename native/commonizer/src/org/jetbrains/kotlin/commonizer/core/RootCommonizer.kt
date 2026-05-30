@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.commonizer.allLeaves
 import org.jetbrains.kotlin.commonizer.cir.CirRoot
 
 class RootCommonizer : AbstractStandardCommonizer<CirRoot, CirRoot>() {
-    private val targets = mutableSetOf<LeafCommonizerTarget>()
+    private val targets: MutableSet<LeafCommonizerTarget> = []
 
     override fun commonizationResult() = CirRoot.create(
         target = SharedCommonizerTarget(targets)

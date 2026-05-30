@@ -76,12 +76,12 @@ internal val KDOC_OPTIONS_CONTAINS = """
     @return true if the option has a value set, false otherwise
 """.trimIndent()
 
-internal val experimentalLevelNames = listOf(
+internal val experimentalLevelNames = [
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,
     CompilerArgumentsLevelNames.commonJsAndWasmArguments,
     CompilerArgumentsLevelNames.wasmArguments,
-)
+]
 
 internal val levelsSince = mapOf(
     CompilerArgumentsLevelNames.commonToolArguments to KDOC_SINCE_2_3_0,

@@ -28,7 +28,7 @@ public class CommonizeNativeDistributionTest {
 
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
-            outputTargets = setOf(linuxTarget1, linuxTarget2),
+            outputTargets = [linuxTarget1, linuxTarget2],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )
@@ -56,7 +56,7 @@ public class CommonizeNativeDistributionTest {
 
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
-            outputTargets = setOf(unixTarget),
+            outputTargets = [unixTarget],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )
@@ -77,7 +77,7 @@ public class CommonizeNativeDistributionTest {
 
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
-            outputTargets = setOf(iosTarget, watchosTarget, macosTarget, appleTarget),
+            outputTargets = [iosTarget, watchosTarget, macosTarget, appleTarget],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )
@@ -109,7 +109,7 @@ public class CommonizeNativeDistributionTest {
         val nativeTarget = CommonizerTarget(MINGW_X64, LINUX_X64, MACOS_X64)
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
-            outputTargets = setOf(unixTarget, nativeTarget),
+            outputTargets = [unixTarget, nativeTarget],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )
@@ -124,7 +124,7 @@ public class CommonizeNativeDistributionTest {
     public fun `commonize - no outputTargets specified`() {
         CliCommonizer(this::class.java.classLoader).commonizeNativeDistribution(
             konanHome = konanHome,
-            outputTargets = emptySet(),
+            outputTargets = [],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )

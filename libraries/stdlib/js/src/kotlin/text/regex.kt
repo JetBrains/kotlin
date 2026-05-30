@@ -273,7 +273,7 @@ public actual class Regex public actual constructor(pattern: String, options: Se
     public actual fun split(input: CharSequence, limit: Int = 0): List<String> {
         requireNonNegativeLimit(limit)
         val matches = findAll(input).let { if (limit == 0) it else it.take(limit - 1) }
-        val result = mutableListOf<String>()
+        val result: MutableList<String> = []
         var lastStart = 0
 
         for (match in matches) {

@@ -89,7 +89,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * supertype.
      */
     open val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = emptyList()
+        get() = []
 
     /**
      * Allows easily specifying additional directives without overriding [configureTest].
@@ -97,7 +97,7 @@ abstract class AbstractAnalysisApiBasedTest : TestWithDisposable(), ManagedTest 
      * By convention, the override should include `super.additionalDirectives` to inherit additional directives from the supertype.
      */
     open val additionalDirectives: List<DirectivesContainer>
-        get() = emptyList()
+        get() = []
 
     /**
      * Consider implementing this method if you can choose some main file in your test case. It can be, for example, a file with a caret.

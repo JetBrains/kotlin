@@ -74,9 +74,9 @@ internal fun KtClassOrObject.contentModificationTrackers(): List<ModificationTra
     val outOfBlockTracker = KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
     return if (isLocal) {
         val file = containingKtFile
-        listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
+        [outOfBlockTracker, ModificationTracker { file.modificationStamp }]
     } else {
-        listOf(outOfBlockTracker)
+        [outOfBlockTracker]
     }
 }
 
@@ -317,7 +317,7 @@ private class ValueParameterMaskFilterByIntroducedAt(
 
     private fun createSignature(pickMask: BitSet): MethodSignature {
         val classIds = if (pickMask.isEmpty) {
-            emptyList()
+            []
         } else {
             valueParameters.mapIndexedNotNullTo(ArrayList(pickMask.length())) { index, symbol ->
                 if (pickMask[index]) with(session) {
@@ -354,7 +354,7 @@ private fun valueParameterMaskFilter(
         nullsFirst(compareBy { it }),
     ).apply {
         // We always have the base method without versions
-        put(null, mutableListOf())
+        put(null, [])
 
         valueParameters.forEachIndexed { index, valueParameter ->
             val version = if (valueParameter.hasDeclaredDefaultValue) {
@@ -363,7 +363,7 @@ private fun valueParameterMaskFilter(
                 null
             }
 
-            getOrPut(version) { mutableListOf() }.add(index)
+            getOrPut(version) { [] }.add(index)
         }
     }
 

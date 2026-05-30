@@ -27,7 +27,7 @@ class TestSimpleIncrementalAptCache {
     fun setUp(@TempDir tmp: File) {
         cache = JavaClassCacheManager(tmp.newCacheFolder())
         generatedSources = tmp.newGeneratedSourcesFolder()
-        compiledSources = listOf(tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
+        compiledSources = [tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() }]
         cache.close()
     }
 
@@ -36,12 +36,12 @@ class TestSimpleIncrementalAptCache {
         runProcessor(SimpleProcessor().toAggregating())
 
         val dirtyFiles = cache.invalidateAndGetDirtyFiles(
-            listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile),
-            emptyList(),
+            [TEST_DATA_DIR.resolve("User.java").absoluteFile],
+            [],
             compiledSources
         ) as SourcesToReprocess.Incremental
         assertEquals(
-            listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile, TEST_DATA_DIR.resolve("Address.java").absoluteFile),
+            [TEST_DATA_DIR.resolve("User.java").absoluteFile, TEST_DATA_DIR.resolve("Address.java").absoluteFile],
             dirtyFiles.toReprocess
         )
         assertFalse(generatedSources.resolve("test/UserGenerated.java").exists())
@@ -53,13 +53,13 @@ class TestSimpleIncrementalAptCache {
         runProcessor(SimpleProcessor().toIsolating())
 
         val dirtyFiles = cache.invalidateAndGetDirtyFiles(
-            listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile),
-            emptyList(),
+            [TEST_DATA_DIR.resolve("User.java").absoluteFile],
+            [],
             compiledSources
         ) as SourcesToReprocess.Incremental
         assertFalse(generatedSources.resolve("test/UserGenerated.java").exists())
         assertEquals(
-            listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile),
+            [TEST_DATA_DIR.resolve("User.java").absoluteFile],
             dirtyFiles.toReprocess
         )
     }
@@ -69,7 +69,7 @@ class TestSimpleIncrementalAptCache {
         runProcessor(SimpleProcessor().toNonIncremental())
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(TEST_DATA_DIR.resolve("User.java").absoluteFile), emptyList(), compiledSources)
+            cache.invalidateAndGetDirtyFiles([TEST_DATA_DIR.resolve("User.java").absoluteFile], [], compiledSources)
         assertTrue(dirtyFiles is SourcesToReprocess.FullRebuild)
     }
 
@@ -77,10 +77,10 @@ class TestSimpleIncrementalAptCache {
         val srcFiles = listOf("User.java", "Address.java", "Observable.java").map { File(TEST_DATA_DIR, it) }
         runAnnotationProcessing(
             srcFiles,
-            listOf(processor),
+            [processor],
             generatedSources
         ) { elementUtils, trees -> MentionedTypesTaskListener(cache.javaCache, elementUtils, trees) }
-        cache.updateCache(listOf(processor), false)
+        cache.updateCache([processor], false)
 
         // add mock compiled source files
         compiledSources.single().resolve("test/User.class").createNewFile()

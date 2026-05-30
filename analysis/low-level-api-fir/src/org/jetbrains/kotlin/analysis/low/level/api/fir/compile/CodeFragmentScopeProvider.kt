@@ -61,7 +61,7 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
         val javaType = JavaTypeImpl.create(psiType, javaElementSourceFactory.createTypeSource(psiType))
 
         val javaTypeRef = buildJavaTypeRef {
-            annotationBuilder = { emptyList() }
+            annotationBuilder = { [] }
             type = javaType
         }
 
@@ -69,8 +69,8 @@ class CodeFragmentScopeProvider(private val session: FirSession) : FirSessionCom
     }
 
     fun getExtraScopes(codeFragment: KtCodeFragment): List<FirLocalScope> {
-        val foreignValues = foreignValueProvider?.getForeignValues(codeFragment)?.takeUnless { it.isEmpty() } ?: return emptyList()
-        return listOf(getForeignValuesScope(codeFragment, foreignValues))
+        val foreignValues = foreignValueProvider?.getForeignValues(codeFragment)?.takeUnless { it.isEmpty() } ?: return []
+        return [getForeignValuesScope(codeFragment, foreignValues)]
     }
 
     private fun getForeignValuesScope(ktCodeFragment: KtCodeFragment, foreignValues: Map<String, String>): FirLocalScope {

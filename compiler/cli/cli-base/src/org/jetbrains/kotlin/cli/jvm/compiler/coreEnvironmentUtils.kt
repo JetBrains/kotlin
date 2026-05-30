@@ -69,7 +69,7 @@ fun List<KotlinSourceRoot>.forAllFiles(
             }
             isKotlin
         },
-        convertToSourceFiles = { listOf(virtualFileCreator.create(it)) }
+        convertToSourceFiles = { [virtualFileCreator.create(it)] }
     ).forEach { filesInfo ->
         filesInfo.sourceFiles.forEach {
             body(it, filesInfo.isCommon, filesInfo.moduleName)
@@ -127,7 +127,7 @@ fun createSourceFilesFromSourceRoots(
     reportLocation: CompilerMessageLocation? = null
 ): MutableList<KtFile> {
     val psiManager = PsiManager.getInstance(project)
-    val result = mutableListOf<KtFile>()
+    val result: MutableList<KtFile> = []
     sourceRoots.forAllFiles(configuration, project, reportLocation) { virtualFile, isCommon, moduleName ->
         psiManager.findFile(virtualFile)?.let {
             if (it is KtFile) {
@@ -162,7 +162,7 @@ fun CompilerConfiguration.applyModuleProperties(module: Module, buildFile: File?
 
 fun getSourceRootsCheckingForDuplicates(configuration: CompilerConfiguration): List<KotlinSourceRoot> {
     val uniqueSourceRoots = hashSetOf<String>()
-    val result = mutableListOf<KotlinSourceRoot>()
+    val result: MutableList<KotlinSourceRoot> = []
     for (root in configuration.kotlinSourceRoots) {
         if (!uniqueSourceRoots.add(root.path)) {
             configuration.report(ROOTS_RESOLUTION_WARNING, "Duplicate source root: ${root.path}")

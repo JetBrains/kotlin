@@ -45,7 +45,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
             when (callShapeData) {
                 is CallShapeData.Schema -> callShapeData.columns.withIndex().associate { [index, property] ->
                     val identifier = property.propertyName.identifier
-                    identifier to listOf(
+                    identifier to [
                         buildProperty(
                             property.dataRowReturnType,
                             identifier,
@@ -53,11 +53,11 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                             property.propertyName.columnNameAnnotation,
                             order = index
                         )
-                    )
+                    ]
                 }
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val identifier = Name.identifier(it.name.identifier.replaceFirstChar { it.lowercaseChar() })
-                    identifier to listOf(buildProperty(it.defaultType(), identifier, k, isScopeProperty = true))
+                    identifier to [buildProperty(it.defaultType(), identifier, k, isScopeProperty = true)]
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate { schemaProperty ->
                     val propertyName = schemaProperty.propertyName
@@ -65,7 +65,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                     val dataRowExtension = generateExtensionProperty(
                         callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
                         receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
-                            typeArguments = arrayOf(schemaProperty.marker)
+                            typeArguments = [schemaProperty.marker]
                         ),
                         propertyName = propertyName.identifier,
                         returnType = schemaProperty.dataRowReturnType,
@@ -77,7 +77,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                     val columnContainerExtension = generateExtensionProperty(
                         callableIdOrSymbol = CallableIdOrSymbol.Id(callableId),
                         receiverType = Names.COLUMNS_SCOPE_CLASS_ID.constructClassLikeType(
-                            typeArguments = arrayOf(schemaProperty.marker)
+                            typeArguments = [schemaProperty.marker]
                         ),
                         propertyName = propertyName.identifier,
                         returnType = schemaProperty.columnContainerReturnType,
@@ -85,26 +85,26 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                         effectiveVisibility = EffectiveVisibility.Local,
                         source = callShapeData.source
                     )
-                    propertyName.identifier to listOf(dataRowExtension, columnContainerExtension)
+                    propertyName.identifier to [dataRowExtension, columnContainerExtension]
                 }
             }
         }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        if (classSymbol !is FirRegularClassSymbol) return emptySet()
-        val destination = mutableSetOf<Name>()
+        if (classSymbol !is FirRegularClassSymbol) return []
+        val destination: MutableSet<Name> = []
         when (classSymbol.callShapeData) {
             is CallShapeData.RefinedType -> destination.add(SpecialNames.INIT)
             is CallShapeData.Schema -> destination.add(SpecialNames.INIT)
             is CallShapeData.Scope -> destination.add(SpecialNames.INIT)
             null -> Unit
         }
-        return propertiesCache.getValue(classSymbol)?.values?.flatten()?.mapTo(destination) { it.name } ?: emptySet()
+        return propertiesCache.getValue(classSymbol)?.values?.flatten()?.mapTo(destination) { it.name } ?: []
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
-        val owner = context?.owner as? FirRegularClassSymbol ?: return emptyList()
-        val properties = propertiesCache.getValue(owner)?.get(callableId.callableName) ?: return emptyList()
+        val owner = context?.owner as? FirRegularClassSymbol ?: return []
+        val properties = propertiesCache.getValue(owner)?.get(callableId.callableName) ?: return []
         return properties.map { it.symbol }
     }
 
@@ -120,11 +120,11 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
             modality = Modality.ABSTRACT
             visibility = Visibilities.Public
         }.apply {
-            val annotations = mutableListOf<FirAnnotation>()
+            val annotations: MutableList<FirAnnotation> = []
             if (order != null) {
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        coneType = Names.ORDER_ANNOTATION.defaultType(emptyList())
+                        coneType = Names.ORDER_ANNOTATION.defaultType([])
                     }
                     argumentMapping = buildAnnotationArgumentMapping {
                         mapping[Names.ORDER_ARGUMENT] = buildLiteralExpression(null, ConstantValueKind.Int, order, setType = true)
@@ -134,7 +134,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
             if (isScopeProperty) {
                 annotations += buildAnnotation {
                     annotationTypeRef = buildResolvedTypeRef {
-                        coneType = Names.SCOPE_PROPERTY_ANNOTATION.defaultType(emptyList())
+                        coneType = Names.SCOPE_PROPERTY_ANNOTATION.defaultType([])
                     }
                     argumentMapping = buildAnnotationArgumentMapping()
                 }
@@ -147,6 +147,6 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        return listOf(createConstructor(context.owner, DataFrameTokenContentKey, isPrimary = true).symbol)
+        return [createConstructor(context.owner, DataFrameTokenContentKey, isPrimary = true).symbol]
     }
 }

@@ -68,9 +68,9 @@ open class DeserializedPackageMemberScope(
         c.components.lookupTracker.record(location, packageDescriptor, name)
     }
 
-    override fun getNonDeclaredFunctionNames(): Set<Name> = emptySet()
-    override fun getNonDeclaredVariableNames(): Set<Name> = emptySet()
-    override fun getNonDeclaredClassifierNames(): Set<Name>? = emptySet()
+    override fun getNonDeclaredFunctionNames(): Set<Name> = []
+    override fun getNonDeclaredVariableNames(): Set<Name> = []
+    override fun getNonDeclaredClassifierNames(): Set<Name>? = []
 
     override fun addEnumEntryDescriptors(result: MutableCollection<DeclarationDescriptor>, nameFilter: (Name) -> Boolean) {
         // Do nothing

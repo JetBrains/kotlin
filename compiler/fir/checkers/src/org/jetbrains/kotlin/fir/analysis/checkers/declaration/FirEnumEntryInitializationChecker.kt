@@ -69,7 +69,7 @@ private class EnumEntryInitializationInfoData(
     override val receiver: FirBasedSymbol<*>,
     override val graph: ControlFlowGraph,
 ) : VariableInitializationInfoData() {
-    override val conditionallyInitializedProperties: Set<FirVariableSymbol<*>> = emptySet()
+    override val conditionallyInitializedProperties: Set<FirVariableSymbol<*>> = []
 
     override fun getValue(node: CFGNode<*>): PathAwarePropertyInitializationInfo {
         return emptyNormalPathInfo()

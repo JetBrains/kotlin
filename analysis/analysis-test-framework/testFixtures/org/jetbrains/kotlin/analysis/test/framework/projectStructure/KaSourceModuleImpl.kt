@@ -21,13 +21,13 @@ class KaSourceModuleImpl(
     override val project: Project,
     override val baseContentScope: GlobalSearchScope,
 ) : KtModuleWithModifiableDependencies(), KaSourceModule {
-    override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
-    override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
-    override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+    override val directRegularDependencies: MutableList<KaModule> = []
+    override val directDependsOnDependencies: MutableList<KaModule> = []
+    override val directFriendDependencies: MutableList<KaModule> = []
 
     override fun toString(): String = name
 
     @KaExperimentalApi
     override val psiRoots: List<PsiFileSystemItem>
-        get() = listOf()
+        get() = []
 }

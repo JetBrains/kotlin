@@ -24,10 +24,10 @@ abstract class KtForLoopInReference(element: KtForExpression) : KtMultiReference
         get() = NAMES
 
     companion object {
-        private val NAMES = listOf(
+        private val NAMES = [
             OperatorNameConventions.ITERATOR,
             OperatorNameConventions.NEXT,
             OperatorNameConventions.HAS_NEXT
-        )
+        ]
     }
 }

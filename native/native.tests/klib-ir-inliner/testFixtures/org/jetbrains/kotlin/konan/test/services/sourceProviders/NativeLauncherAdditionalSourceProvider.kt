@@ -27,7 +27,7 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
+        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return []
         var boxFqName = detectPackage(fileWithBox)?.let { "$it.$BOX_FUNCTION_NAME" } ?: BOX_FUNCTION_NAME
         if (ESCAPE_MODULE_NAME in globalDirectives &&
             // Non-isolated tests will be grouped, hence their `box()` functions have to be moved to separate packages to avoid clashes.
@@ -43,6 +43,6 @@ class NativeLauncherAdditionalSourceProvider(testServices: TestServices) : MainF
         val launcherFile = tempDir.resolve(LAUNCHER_FILE_NAME).also {
             it.writeText(launcherContent)
         }
-        return listOf(launcherFile.toTestFile())
+        return [launcherFile.toTestFile()]
     }
 }

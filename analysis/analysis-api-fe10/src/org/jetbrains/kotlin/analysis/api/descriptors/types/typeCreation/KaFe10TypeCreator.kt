@@ -293,7 +293,7 @@ internal class KaFe10TypeCreator(
 
         val typeParameters = descriptor.typeConstructor.parameters
 
-        val contextParameters = builder.contextParameters.map { (it as KaFe10Type).fe10Type }.butIf(isReflect) { emptyList() }
+        val contextParameters = builder.contextParameters.map { (it as KaFe10Type).fe10Type }.butIf(isReflect) { [] }
         val receiverType = (builder.receiverType as? KaFe10Type)?.fe10Type
         val returnType = (builder.returnType as KaFe10Type).fe10Type
         val valueParameters = builder.valueParameters.map { valueParameter ->
@@ -358,7 +358,7 @@ internal class KaFe10TypeCreator(
         val annotations = constructAnnotations(annotationClassIds)
         val annotationsTypeAttribute = AnnotationsTypeAttribute(annotations)
 
-        return TypeAttributes.create(listOf(annotationsTypeAttribute))
+        return TypeAttributes.create([annotationsTypeAttribute])
     }
 
     private fun constructAnnotations(annotationClassIds: List<ClassId>): Annotations = Annotations.create(

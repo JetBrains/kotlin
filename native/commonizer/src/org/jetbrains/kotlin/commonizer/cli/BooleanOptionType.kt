@@ -15,8 +15,8 @@ internal class BooleanOptionType(
     }
 
     companion object {
-        internal val TRUE_TOKENS = setOf("1", "on", "yes", "true")
-        internal val FALSE_TOKENS = setOf("0", "off", "no", "false")
+        internal val TRUE_TOKENS: Set<String> = ["1", "on", "yes", "true"]
+        internal val FALSE_TOKENS: Set<String> = ["0", "off", "no", "false"]
     }
 }
 

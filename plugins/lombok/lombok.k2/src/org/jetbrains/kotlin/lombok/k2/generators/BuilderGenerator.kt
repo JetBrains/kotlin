@@ -41,7 +41,7 @@ class BuilderGenerator(
     }
 
     override fun getExtraTypeArguments(): List<ConeTypeProjection> {
-        return emptyList()
+        return []
     }
 
     override fun getBuilderType(builderSymbol: FirClassSymbol<*>): ConeKotlinType {
@@ -60,7 +60,7 @@ class BuilderGenerator(
             val builderTypeArguments = builderSymbol.typeParameterSymbols.map { typeParameter -> typeParameter.toConeType() }.toTypedArray()
             builderSymbol.createJavaMethod(
                 name,
-                valueParameters = emptyList(),
+                valueParameters = [],
                 returnTypeRef = when (builderDeclaration) {
                     is FirJavaClass -> builderDeclaration.defaultType().toFirResolvedTypeRef()
                     is FirJavaMethod -> builderDeclaration.returnTypeRef
@@ -88,6 +88,6 @@ class BuilderGenerator(
     override fun FirJavaClassBuilder.completeBuilder(
         classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>,
     ) {
-        superTypeRefs += listOf(session.builtinTypes.anyType)
+        superTypeRefs.addAll([session.builtinTypes.anyType])
     }
 }

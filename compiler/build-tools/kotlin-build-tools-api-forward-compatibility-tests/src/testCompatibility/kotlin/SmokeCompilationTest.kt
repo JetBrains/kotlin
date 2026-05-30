@@ -33,10 +33,10 @@ class SmokeCompilationTest : BaseCompilationTest() {
         val sourceA = workingDirectory.resolve("a.kt")
         val sourceB = workingDirectory.resolve("b.kt")
 
-        val sources = listOf(
+        val sources = [
             sourceA.apply { writeText("fun a() = 42") },
             sourceB.apply { writeText("fun b() = a()") },
-        )
+        ]
         val destination = workingDirectory.resolve("classes")
 
         val [toolchain, executionPolicy] = strategyConfig
@@ -53,10 +53,10 @@ class SmokeCompilationTest : BaseCompilationTest() {
         val sourceA = workingDirectory.resolve("a.kt")
         val sourceB = workingDirectory.resolve("b.kt")
 
-        val sources = listOf(
+        val sources = [
             sourceA.apply { writeText("fun a() = 42") },
             sourceB.apply { writeText("fun b() = a()") },
-        )
+        ]
         val destination = workingDirectory.resolve("app-classes")
 
         val [toolchain, executionPolicy] = strategyConfig
@@ -71,18 +71,18 @@ class SmokeCompilationTest : BaseCompilationTest() {
                 session.executeOperation(
                     jvmIncrementalCompilationOperation(
                         sources, destination,
-                        sourceChanges = SourcesChanges.Known(listOf(sourceA.toFile()), emptyList()),
+                        sourceChanges = SourcesChanges.Known([sourceA.toFile()], []),
                     ),
                     executionPolicy, logger,
                 )
-                logger.logMessagesByLevel.getValue(LogLevel.DEBUG).assertCompiledSources(setOf("../a.kt", "../b.kt"))
+                logger.logMessagesByLevel.getValue(LogLevel.DEBUG).assertCompiledSources(["../a.kt", "../b.kt"])
             }
             run {
                 val logger = TestKotlinLogger()
                 session.executeOperation(
                     jvmIncrementalCompilationOperation(
                         sources, destination,
-                        sourceChanges = SourcesChanges.Known(emptyList(), emptyList()),
+                        sourceChanges = SourcesChanges.Known([], []),
                     ),
                     executionPolicy, logger,
                 )
@@ -102,8 +102,8 @@ class SmokeCompilationTest : BaseCompilationTest() {
         val libSnapshotFile = workingDirectory.resolve("lib-snapshot.bin")
         val appDestination = workingDirectory.resolve("app-classes")
 
-        val sourcesApp = listOf(sourceA.apply { writeText("fun a() = lib()") })
-        val sourcesLib = listOf(sourceLib.apply { writeText("fun lib() = 42") })
+        val sourcesApp = [sourceA.apply { writeText("fun a() = lib()") }]
+        val sourcesLib = [sourceLib.apply { writeText("fun lib() = 42") }]
 
         val [toolchain, executionPolicy] = strategyConfig
 
@@ -119,8 +119,8 @@ class SmokeCompilationTest : BaseCompilationTest() {
                 session.executeOperation(
                     jvmIncrementalCompilationOperation(
                         sourcesApp, appDestination,
-                        extraClasspath = listOf(libDestination),
-                        dependenciesSnapshotFiles = listOf(libSnapshotFile),
+                        extraClasspath = [libDestination],
+                        dependenciesSnapshotFiles = [libSnapshotFile],
                     ),
                     executionPolicy,
                 )
@@ -133,13 +133,13 @@ class SmokeCompilationTest : BaseCompilationTest() {
                 session.executeOperation(
                     jvmIncrementalCompilationOperation(
                         sourcesApp, appDestination,
-                        extraClasspath = listOf(libDestination),
-                        sourceChanges = SourcesChanges.Known(emptyList(), emptyList()),
-                        dependenciesSnapshotFiles = listOf(libSnapshotFile),
+                        extraClasspath = [libDestination],
+                        sourceChanges = SourcesChanges.Known([], []),
+                        dependenciesSnapshotFiles = [libSnapshotFile],
                     ),
                     executionPolicy, logger,
                 )
-                logger.logMessagesByLevel.getValue(LogLevel.DEBUG).assertCompiledSources(setOf("../app/a.kt"))
+                logger.logMessagesByLevel.getValue(LogLevel.DEBUG).assertCompiledSources(["../app/a.kt"])
             }
             run {
                 val logger = TestKotlinLogger()
@@ -147,9 +147,9 @@ class SmokeCompilationTest : BaseCompilationTest() {
                 session.executeOperation(
                     jvmIncrementalCompilationOperation(
                         sourcesApp, appDestination,
-                        extraClasspath = listOf(libDestination),
-                        sourceChanges = SourcesChanges.Known(emptyList(), emptyList()),
-                        dependenciesSnapshotFiles = listOf(libSnapshotFile),
+                        extraClasspath = [libDestination],
+                        sourceChanges = SourcesChanges.Known([], []),
+                        dependenciesSnapshotFiles = [libSnapshotFile],
                     ),
                     executionPolicy, logger,
                 )
@@ -161,9 +161,9 @@ class SmokeCompilationTest : BaseCompilationTest() {
     private fun jvmIncrementalCompilationOperation(
         sources: List<Path>,
         destination: Path,
-        extraClasspath: List<Path> = emptyList(),
+        extraClasspath: List<Path> = [],
         sourceChanges: SourcesChanges = SourcesChanges.Unknown,
-        dependenciesSnapshotFiles: List<Path> = emptyList(),
+        dependenciesSnapshotFiles: List<Path> = [],
     ): JvmCompilationOperation = jvmNonIncrementalCompilationOperation(sources, destination, extraClasspath) {
         this[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotBasedIcConfiguration(
             workingDirectory.resolve("ic-cache"),
@@ -178,7 +178,7 @@ class SmokeCompilationTest : BaseCompilationTest() {
     private fun jvmNonIncrementalCompilationOperation(
         sources: List<Path>,
         destination: Path,
-        extraClasspath: List<Path> = emptyList(),
+        extraClasspath: List<Path> = [],
         additionalConfiguration: JvmCompilationOperation.Builder.() -> Unit = {},
     ): JvmCompilationOperation = toolchain.jvm.jvmCompilationOperation(sources, destination) {
         val stdlibPath = KotlinVersion::class.java.protectionDomain.codeSource.location.toURI().toPath()
@@ -186,7 +186,7 @@ class SmokeCompilationTest : BaseCompilationTest() {
         compilerArguments[JvmCompilerArguments.JVM_TARGET] = JvmTarget.JVM_17
         compilerArguments[NO_REFLECT] = true
         compilerArguments[NO_STDLIB] = true
-        compilerArguments[CLASSPATH] = (listOf(stdlibPath) + extraClasspath)
+        compilerArguments[CLASSPATH] = ([stdlibPath] + extraClasspath)
             .joinToString(File.pathSeparator) { it.absolutePathString() }
         additionalConfiguration()
     }

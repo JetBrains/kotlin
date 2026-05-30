@@ -92,7 +92,7 @@ abstract class AbstractSimpleFileBenchmark {
 
     @OptIn(ObsoleteTestInfrastructure::class)
     protected fun analyzeGreenFile(bh: Blackhole) {
-        val scope = GlobalSearchScope.filesScope(env.project, listOf(file.virtualFile))
+        val scope = GlobalSearchScope.filesScope(env.project, [file.virtualFile])
             .uniteWith(AllJavaSourcesInProjectScope(env.project))
         val session = FirTestSessionFactoryHelper.createSessionForTests(env.toVfsBasedProjectEnvironment(), scope.toAbstractProjectFileSearchScope())
         val firProvider = session.firProvider as FirProviderImpl
@@ -101,7 +101,7 @@ abstract class AbstractSimpleFileBenchmark {
         val totalTransformer = FirTotalResolveProcessor(session)
         val firFile = builder.buildFirFile(file).also(firProvider::recordFile)
 
-        totalTransformer.process(listOf(firFile))
+        totalTransformer.process([firFile])
 
         bh.consume(firFile.hashCode())
         env.project.extensionArea

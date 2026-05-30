@@ -89,7 +89,7 @@ class MoveCallableFactoriesToDeclarationsLowering(private val context: JsIrBacke
         if (sourceFile.module != destinationFile.module) return null
 
         destinationFile.addChild(callableReferenceFactory)
-        return listOf()
+        return []
     }
 }
 

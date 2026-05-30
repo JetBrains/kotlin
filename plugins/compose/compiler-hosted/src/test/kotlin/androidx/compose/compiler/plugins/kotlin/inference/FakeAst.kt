@@ -49,7 +49,7 @@ class Lambda(
 
 class Call(
     val target: Node,
-    val arguments: List<Node> = emptyList()
+    val arguments: List<Node> = []
 ) : Node() {
     override fun accept(visitor: Visitor) = visitor.visit(this)
     override fun visitChildren(visitor: Visitor) {
@@ -81,15 +81,15 @@ class Variable(
 class Function(
     val name: String,
     val type: FunctionType,
-    private val body: List<Node> = emptyList()
+    private val body: List<Node> = []
 ) : Node() {
     constructor(
         name: String,
-        annotations: List<Annotation> = emptyList(),
-        parameters: List<Parameter> = emptyList(),
-        typeParameters: List<OpenType> = emptyList(),
+        annotations: List<Annotation> = [],
+        parameters: List<Parameter> = [],
+        typeParameters: List<OpenType> = [],
         result: Type = UnitType,
-        body: List<Node> = emptyList()
+        body: List<Node> = []
     ) : this(
         name,
         FunctionType(
@@ -148,9 +148,9 @@ abstract class Type(
 
 class FunctionType(
     name: String,
-    annotations: List<Annotation> = emptyList(),
-    val parameters: List<Parameter> = emptyList(),
-    val typeParameters: List<OpenType> = emptyList(),
+    annotations: List<Annotation> = [],
+    val parameters: List<Parameter> = [],
+    val typeParameters: List<OpenType> = [],
     val result: Type = UnitType
 ) : Type(name, annotations) {
     private var boundFrom = this
@@ -229,13 +229,13 @@ class FunctionType(
     }
 }
 
-class OpenType(name: String) : Type(name, emptyList()) {
+class OpenType(name: String) : Type(name, []) {
     override fun bind(binding: Map<OpenType, Type>, context: MutableMap<Type, Type>) =
         binding[this] ?: this
     override fun toString(): String = "\\$name"
 }
 
-object UnitType : Type("Unit", emptyList()) {
+object UnitType : Type("Unit", []) {
     override fun bind(binding: Map<OpenType, Type>, context: MutableMap<Type, Type>): Type = this
     override fun toString(): String = "Unit"
 }
@@ -427,7 +427,7 @@ fun resolve(data: Map<String, Function>): Resolutions {
 
 fun containersOf(data: Map<String, Function>): Map<Node, Node> {
     val result = mutableMapOf<Node, Node>()
-    val currentContainer = mutableListOf<Node>()
+    val currentContainer: MutableList<Node> = []
     for (function in data.values) {
         currentContainer.add(function)
         walk(
@@ -480,10 +480,10 @@ private fun List<Annotation>.item(): Item? =
     firstOrNull { it.name == "ComposableTarget" }?.let { Token(it.value) }
         ?: firstOrNull { it.name == "ComposableOpenTarget" }?.let { Open(it.value.toInt()) }
 
-val composable = listOf(Annotation("Composable"))
-val uiTarget = listOf(Annotation("ComposableTarget", "UI"))
-val vectorTarget = listOf(Annotation("ComposableTarget", "Vector"))
+val composable = [Annotation("Composable")]
+val uiTarget = [Annotation("ComposableTarget", "UI")]
+val vectorTarget = [Annotation("ComposableTarget", "Vector")]
 fun composableLambda() = FunctionType("lambda", annotations = composable)
 fun call(name: String, vararg args: Node) = Call(Ref(name), arguments = args.toList())
 fun lambda(vararg body: Node) = Lambda(type = composableLambda(), body = body.toList())
-fun openTarget(index: Int) = listOf(Annotation("ComposableOpenTarget", "$index"))
+fun openTarget(index: Int) = [Annotation("ComposableOpenTarget", "$index")]

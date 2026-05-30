@@ -18,7 +18,7 @@ class BuildOperationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = kotlinToolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path(".")).build()
+        val operation = kotlinToolchains.jvm.jvmCompilationOperationBuilder([], Path(".")).build()
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
     }
 

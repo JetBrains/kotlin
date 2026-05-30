@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.annotations.hasJvmStaticAnnotation
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
@@ -109,7 +110,7 @@ class MainFunctionDetector {
             return false
         }
 
-        val parameters = descriptor.valueParameters.mapTo(mutableListOf()) { it.type }
+        val parameters: MutableList<KotlinType> = descriptor.valueParameters.mapTo([]) { it.type }
         descriptor.extensionReceiverParameter?.type?.let { parameters += it }
 
         if (!isParameterNumberSuitsForMain(

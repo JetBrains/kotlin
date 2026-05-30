@@ -82,7 +82,7 @@ object K1AbstractExpectActualCompatibilityChecker {
 
         if (!areCompatibleClassKinds(expectClassSymbol, actualClass)) return Incompatible.ClassKind
 
-        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInline || it.isValue) }) {
+        if (!equalBy(expectClassSymbol, actualClass) { [it.isCompanion, it.isInner, it.isInline || it.isValue] }) {
             return Incompatible.ClassModifiers
         }
 

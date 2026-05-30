@@ -409,7 +409,7 @@ private fun selectExportedLibraries(
                 "-Xexport-library is only supported when producing frameworks or native libraries, " +
                         "but the compiler is producing ${outputKind.name.lowercase()}")
 
-        emptyList()
+        []
     } else {
         exportedLibraries
     }
@@ -427,7 +427,7 @@ private fun selectIncludes(
                 KONAN_ARGUMENT_ERROR,
                 "The ${K2NativeCompilerArguments::includes.cliArgument} flag is not supported when producing ${outputKind.name.lowercase()}"
         )
-        emptyList()
+        []
     } else {
         includes
     }

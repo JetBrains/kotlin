@@ -31,7 +31,7 @@ class InnerClassesScopeWrapper(val workerScope: MemberScope) : MemberScopeImpl()
             }
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): List<ClassifierDescriptor> {
-        val restrictedFilter = kindFilter.restrictedToKindsOrNull(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return listOf()
+        val restrictedFilter = kindFilter.restrictedToKindsOrNull(DescriptorKindFilter.CLASSIFIERS_MASK) ?: return []
         return workerScope.getContributedDescriptors(restrictedFilter, nameFilter).filterIsInstance<ClassifierDescriptorWithTypeParameters>()
     }
 

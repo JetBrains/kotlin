@@ -26,5 +26,5 @@ class KaBuiltinsModuleImpl(
 
     override fun equals(other: Any?): Boolean = other is KaBuiltinsModule && this.targetPlatform == other.targetPlatform
     override fun hashCode(): Int = targetPlatform.hashCode()
-    override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
+    override val transitiveDependsOnDependencies: List<KaModule> get() = []
 }

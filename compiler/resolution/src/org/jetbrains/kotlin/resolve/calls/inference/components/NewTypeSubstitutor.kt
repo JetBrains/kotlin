@@ -239,7 +239,7 @@ class FreshVariableNewTypeSubstitutor(val freshVariables: List<TypeVariableFromC
     override val isEmpty: Boolean get() = freshVariables.isEmpty()
 
     companion object {
-        val Empty = FreshVariableNewTypeSubstitutor(emptyList())
+        val Empty = FreshVariableNewTypeSubstitutor([])
     }
 }
 

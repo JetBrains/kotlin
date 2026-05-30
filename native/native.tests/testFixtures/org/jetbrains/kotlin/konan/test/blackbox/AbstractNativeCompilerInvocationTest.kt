@@ -122,7 +122,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
                 TestCompilerArgs(compilerArguments),
                 srcFiles[0],
                 sources = srcFiles.filterNot { it == srcFiles[0] },
-                dependencies = emptyList(),
+                dependencies = [],
                 klibArtifact,
             )
 
@@ -150,7 +150,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
                 producedKlib.klibArtifact.toStaticCacheArtifact().toDependency()
             }
         } else
-            emptyList()
+            []
 
         val testCase = createTestCase(
             moduleName = LAUNCHER_MODULE_NAME,
@@ -183,9 +183,9 @@ class NativeCompilerInvocationTestArtifactBuilder(
             TestModule.Exclusive(
                 name = moduleName,
                 /* Don't need to pass any dependency symbols here. Dependencies are already handled by the NativeArtifactBuilder class. */
-                directRegularDependencySymbols = emptySet(),
-                directFriendDependencySymbols = emptySet(),
-                directDependsOnDependencySymbols = emptySet(),
+                directRegularDependencySymbols = [],
+                directFriendDependencySymbols = [],
+                directDependsOnDependencySymbols = [],
             ).also { module ->
                 moduleSourceDir.walk()
                     .filter { file -> file.isFile && file.extension == "kt" }
@@ -252,9 +252,9 @@ class NativeCompilerInvocationTestArtifactBuilder(
         private val DEFAULT_EXTRAS = WithTestRunnerExtras(TestRunnerType.DEFAULT)
 
         private val COMPILER_ARGS = TestCompilerArgs(
-            listOf(
+            [
                 "-nostdlib", // stdlib is passed explicitly.
-            )
+            ]
         )
     }
 }

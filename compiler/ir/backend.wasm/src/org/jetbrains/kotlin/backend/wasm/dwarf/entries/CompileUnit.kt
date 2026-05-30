@@ -16,7 +16,7 @@ class CompileUnit(
     val stmtList = 0
     val lowProgramCounter = 0
     val language: UShort = 0x001au // DW_LANG_C_plus_plus_11 - https://dwarfstd.org/languages.html
-    val children = mutableListOf<Subprogram>()
+    val children: MutableList<Subprogram> = []
     val highProgramCounter by lazy { children.lastOrNull()?.highProgramCounter ?: 0 }
 
     fun write(
@@ -58,7 +58,7 @@ class CompileUnit(
         val abbreviation = Abbreviation(
             tag = DwTag.COMPILE_UNIT,
             hasChildren = true,
-            attributes = listOf(
+            attributes = [
                 DwAttribute.NAME by DwForm.STRP,
                 DwAttribute.LANGUAGE by DwForm.DATA2,
                 DwAttribute.PRODUCER by DwForm.STRP,
@@ -66,7 +66,7 @@ class CompileUnit(
                 DwAttribute.LOW_PC by DwForm.ADDR,
                 DwAttribute.HIGH_PC by DwForm.ADDR,
                 DwAttribute.STMT_LIST by DwForm.SEC_OFFSET,
-            )
+            ]
         )
     }
 }

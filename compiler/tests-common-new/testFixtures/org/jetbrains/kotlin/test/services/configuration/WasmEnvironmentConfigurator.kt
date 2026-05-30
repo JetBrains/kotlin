@@ -43,11 +43,11 @@ abstract class WasmEnvironmentConfigurator(
 ) : EnvironmentConfigurator(testServices), KlibBasedEnvironmentConfigurator {
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
+        get() = [WasmEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives]
 
     companion object {
         fun getRuntimePathsForModule(target: WasmTarget, testServices: TestServices): List<String> {
-            return listOf(stdlibPath(target, testServices), kotlinTestPath(target, testServices))
+            return [stdlibPath(target, testServices), kotlinTestPath(target, testServices)]
         }
 
         fun kotlinTestPath(target: WasmTarget): String = System.getProperty("kotlin.${target.alias}.kotlin.test.path")!!

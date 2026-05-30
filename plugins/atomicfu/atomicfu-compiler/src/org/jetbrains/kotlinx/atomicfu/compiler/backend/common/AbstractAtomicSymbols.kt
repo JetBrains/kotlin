@@ -44,12 +44,12 @@ abstract class AbstractAtomicSymbols(
 
     fun function0Type(returnType: IrType) = buildSimpleType(
         irBuiltIns.functionN(0).symbol,
-        listOf(returnType)
+        [returnType]
     )
 
     fun function1Type(argType: IrType, returnType: IrType) = buildSimpleType(
         irBuiltIns.functionN(1).symbol,
-        listOf(argType, returnType)
+        [argType, returnType]
     )
 
     val arrayOfNulls by lazy {
@@ -57,18 +57,18 @@ abstract class AbstractAtomicSymbols(
     }
 
     private val ATOMIC_ARRAY_TYPES: Set<IrClassSymbol> by lazy {
-        setOf(
+        [
             atomicIntArrayClassSymbol,
             atomicLongArrayClassSymbol,
             atomicRefArrayClassSymbol
-        )
+        ]
     }
 
     fun isAtomicArrayHandlerType(type: IrType) = type.classOrNull in ATOMIC_ARRAY_TYPES
 
     // KMutableProperty0<T>
     fun kMutableProperty0Type(typeArg: IrType): IrType =
-        buildSimpleType(irBuiltIns.kMutableProperty0Class, listOf(typeArg))
+        buildSimpleType(irBuiltIns.kMutableProperty0Class, [typeArg])
 
     // () -> KMutableProperty0<T>
     fun kMutableProperty0GetterType(typeArg: IrType): IrType = function0Type(kMutableProperty0Type(typeArg))
@@ -81,7 +81,7 @@ abstract class AbstractAtomicSymbols(
             classifier = symbol,
             hasQuestionMark = false,
             arguments = typeParameters.map { makeTypeProjection(it, Variance.INVARIANT) },
-            annotations = emptyList()
+            annotations = []
         )
 
     companion object {

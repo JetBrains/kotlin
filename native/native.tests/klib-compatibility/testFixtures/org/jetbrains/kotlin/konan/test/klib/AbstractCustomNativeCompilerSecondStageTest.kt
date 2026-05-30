@@ -57,11 +57,11 @@ open class AbstractCustomNativeCompilerSecondStageTest : AbstractNativeCoreTest(
 
                 LANGUAGE with "+ExportKlibToOlderAbiVersion"
             }
-            OPT_IN with listOf(
+            OPT_IN with [
                 "kotlin.native.internal.InternalForKotlinNative",
                 "kotlin.native.internal.InternalForKotlinNativeTests",
                 "kotlin.experimental.ExperimentalNativeApi"
-            )
+            ]
         }
 
         val nativeHomeForFirstStage = if (customNativeCompilerSettings.defaultLanguageVersion < LanguageVersion.LATEST_STABLE)

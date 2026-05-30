@@ -28,7 +28,7 @@ class WorkaroundTests : IndexerTests() {
         """.trimIndent()
         val language = Language.OBJECTIVE_C
         val compilation = CompilationImpl(
-                includes = emptyList(),
+                includes = [],
                 additionalPreambleLines = code.split("\n"),
                 compilerArgs = defaultCompilerArgs(language),
                 language = language

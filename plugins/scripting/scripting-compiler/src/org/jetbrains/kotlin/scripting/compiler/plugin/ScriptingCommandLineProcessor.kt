@@ -67,7 +67,7 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
 
     override val pluginId = KOTLIN_SCRIPTING_PLUGIN_ID
     override val pluginOptions =
-        listOf(
+        [
             DISABLE_SCRIPTING_PLUGIN_OPTION,
             SCRIPT_DEFINITIONS_OPTION,
             SCRIPT_DEFINITIONS_CLASSPATH_OPTION,
@@ -78,7 +78,7 @@ class ScriptingCommandLineProcessor : CommandLineProcessor {
             LEGACY_SCRIPT_RESOLVER_ENVIRONMENT_OPTION,
             ENABLE_SCRIPT_EXPLANATION_OPTION,
             DISABLE_SCRIPT_COMPILATION_CACHE,
-        )
+        ]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         DISABLE_SCRIPTING_PLUGIN_OPTION -> {

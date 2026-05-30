@@ -22,9 +22,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testScriptResolverEnvironmentWithCommaInValueGetWhenSet(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val entries = listOf("key=val1,val2")
+        val entries = ["key=val1,val2"]
 
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }.build()
 
@@ -38,14 +38,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentStringsWithCommaInValue(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=val1,val2")
         )
 
         assertEquals(
-            listOf("key=val1", "val2"),
+            ["key=val1", "val2"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -54,9 +54,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testScriptResolverEnvironmentWithQuoteInValueGetWhenSet(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val entries = listOf("key=\"quoted\"")
+        val entries = ["key=\"quoted\""]
 
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }.build()
 
@@ -70,14 +70,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentStringsWithQuotedEntry(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=\"quoted\"")
         )
 
         assertEquals(
-            listOf("key=\"quoted\""),
+            ["key=\"quoted\""],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -86,9 +86,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testScriptResolverEnvironmentWithBackslashInValueGetWhenSet(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val entries = listOf("key=path\\to\\file")
+        val entries = ["key=path\\to\\file"]
 
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }.build()
 
@@ -102,14 +102,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentStringsWithBackslashInValue(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=path\\to\\file")
         )
 
         assertEquals(
-            listOf("key=path\\to\\file"),
+            ["key=path\\to\\file"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -118,9 +118,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testScriptResolverEnvironmentWithQuotedCommaEntriesGetWhenSet(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val entries = listOf("key=\"value1", "key2\"")
+        val entries = ["key=\"value1", "key2\""]
 
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }.build()
 
@@ -134,14 +134,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentStringsQuotedValueWithCommaIsSplit(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=\"value1,key2\"")
         )
 
         assertEquals(
-            listOf("key=\"value1", "key2\""),
+            ["key=\"value1", "key2\""],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -150,9 +150,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testScriptResolverEnvironmentWithBackslashCommaEntriesGetWhenSet(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val entries = listOf("key=value1\\", "key2")
+        val entries = ["key=value1\\", "key2"]
 
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }.build()
 
@@ -166,20 +166,20 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @BtaVersionsOnlyCompilationTest
     fun testRawArgumentStringsBackslashCommaIsSplit(toolchain: KotlinToolchains) {
         assumeArgumentSupported(toolchain.getCompilerVersion())
-        val operation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=value1\\,key2")
         )
 
         assertEquals(
-            listOf("key=value1\\", "key2"),
+            ["key=value1\\", "key2"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
 
     private fun expectedArgumentStringsFor(value: String): List<String> {
-        return listOf("-Xscript-resolver-environment=$value")
+        return ["-Xscript-resolver-environment=$value"]
     }
 
     private fun getValueString(argument: List<String>): String =

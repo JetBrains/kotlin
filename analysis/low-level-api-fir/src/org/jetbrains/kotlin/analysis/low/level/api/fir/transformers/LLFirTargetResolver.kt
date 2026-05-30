@@ -80,7 +80,7 @@ internal sealed class LLFirTargetResolver(
     private val requiresJumpingLock: Boolean get() = resolverPhase.isItAllowedToCallLazyResolveToTheSamePhase
 
     val containingDeclarations: List<FirDeclaration>
-        field = mutableListOf()
+        field: MutableList<FirDeclaration> = []
 
     /**
      * @param context used as a context in the case of exception

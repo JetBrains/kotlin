@@ -30,5 +30,5 @@ internal class KaFe10ResolveExtensionInfoProvider(
         get() = withValidityAssertion { containingKtFile.virtualFile?.isResolveExtensionFile == true }
 
     override val KtElement.resolveExtensionNavigationElements: Collection<PsiElement>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { [] }
 }

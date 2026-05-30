@@ -104,6 +104,6 @@ internal class DumpKlibAbiToStringOperationImpl private constructor(
 
         val REFERENCE_DUMP_FILE: Option<Path?> = Option("REFERENCE_DUMP_FILE", null)
 
-        val TARGETS_TO_INFER: Option<Set<KlibTargetId>> = Option("TARGETS_TO_INFER", emptySet())
+        val TARGETS_TO_INFER: Option<Set<KlibTargetId>> = Option("TARGETS_TO_INFER", [])
     }
 }

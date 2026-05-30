@@ -54,7 +54,7 @@ class WasmBoxRunner(
                 it.compilerResult.writeTo(outputDir, it.compilerResult.baseFileName, debugMode, mode)
             }
 
-            val filesToIgnoreInSizeChecks = mutableSetOf<File>()
+            val filesToIgnoreInSizeChecks: MutableSet<File> = []
             val exceptions = saveAdditionalFilesAndRun(
                 outputDir = outputDir,
                 mark = mode,
@@ -64,12 +64,12 @@ class WasmBoxRunner(
             return exceptions + when (mode) {
                 "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
                 "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, outputDir, filesToIgnoreInSizeChecks)
-                "dev" -> emptyList() // no additional checks required
+                "dev" -> [] // no additional checks required
                 else -> error("Unknown mode: $mode")
             }
         }
 
-        val allExceptions = mutableListOf<Throwable>()
+        val allExceptions: MutableList<Throwable> = []
 
         allExceptions.addAll(writeToFilesAndRunTest("dev", artifacts.compilation))
 

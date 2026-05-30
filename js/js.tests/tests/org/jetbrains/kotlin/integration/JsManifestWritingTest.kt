@@ -45,7 +45,7 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
                 foo,
                 lib,
                 outKlibDir,
-                listOf("-XXLanguage:+${poisoningFeature}", "-XXLanguage:-${enabledLanguageFeature}"),
+                ["-XXLanguage:+${poisoningFeature}", "-XXLanguage:-${enabledLanguageFeature}"],
             )
 
             val manifestFile = File(outKlibDir, "default/manifest")
@@ -66,19 +66,19 @@ class JsManifestWritingTest : TestCaseWithTmpdir() {
         src: TestKtFile,
         libs: String,
         outFile: String,
-        extras: List<String> = emptyList(),
+        extras: List<String> = [],
         messageRenderer: MessageRenderer? = null,
     ) {
         val mainKt = tmpdir.resolve(src.name).apply { writeText(src.content) }
         val outputFile = File(outFile)
-        val args = listOf(
+        val args = [
             mainKt.absolutePath,
             K2JSCompilerArguments::libraries.cliArgument(libs),
             K2JSCompilerArguments::outputDir.cliArgument(outputFile.path),
             K2JSCompilerArguments::moduleName.cliArgument(outputFile.nameWithoutExtension),
             K2JSCompilerArguments::languageVersion.cliArgument(LanguageVersion.LATEST_STABLE.versionString),
             K2JSCompilerArguments::nopack.cliArgument,
-        )
+        ]
         CompilerTestUtil.executeCompilerAssertSuccessful(compiler, args + extras, messageRenderer)
     }
 

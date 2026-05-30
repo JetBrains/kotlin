@@ -582,13 +582,13 @@ class LauncherScriptTest : TestCaseWithTmpdir() {
         }
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
-            listOf(
+            [
                 K2JVMCompilerArguments::destination.cliArgument,
                 tmpdir.absolutePath,
                 CommonCompilerArguments::languageVersion.cliArgument,
                 LanguageVersion.FIRST_NON_DEPRECATED.versionString,
                 file1kt.absolutePath
-            )
+            ]
         )
         val file2kt = tmpdir.resolve("file1.kt").apply {
             writeText("val c = C()")

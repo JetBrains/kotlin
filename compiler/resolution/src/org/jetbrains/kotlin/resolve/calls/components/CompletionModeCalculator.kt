@@ -64,11 +64,11 @@ class CompletionModeCalculator {
 
         private val fixationDirectionsForVariables: MutableMap<VariableWithConstraints, FixationDirection> =
             newLinkedHashMapWithExpectedSize(csCompleterContext.notFixedTypeVariables.size)
-        private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
+        private val variablesWithQueuedConstraints: MutableSet<TypeVariableMarker> = []
         private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
 
         private val postponedAtoms: List<PostponedResolvedAtom> by lazy {
-            KotlinConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments(listOf(candidate.resolvedCall))
+            KotlinConstraintSystemCompleter.getOrderedNotAnalyzedPostponedArguments([candidate.resolvedCall])
         }
 
         fun computeCompletionMode(): ConstraintSystemCompletionMode = with(csCompleterContext) {
@@ -90,7 +90,7 @@ class CompletionModeCalculator {
                 if (!type.contains { it.typeConstructor() in notFixedTypeVariables })
                     continue
 
-                val fixationDirectionsFromType = mutableSetOf<FixationDirectionForVariable>()
+                val fixationDirectionsFromType: MutableSet<FixationDirectionForVariable> = []
                 collectRequiredDirectionsForVariables(type, TypeVariance.OUT, fixationDirectionsFromType)
 
                 for (directionForVariable in fixationDirectionsFromType) {

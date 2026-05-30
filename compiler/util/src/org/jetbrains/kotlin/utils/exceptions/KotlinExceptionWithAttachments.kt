@@ -40,7 +40,7 @@ interface KotlinExceptionWithAttachments : ExceptionWithAttachments {
 }
 
 open class KotlinIllegalStateExceptionWithAttachments : IllegalStateException, KotlinExceptionWithAttachments {
-    final override val mutableAttachments = mutableListOf<Attachment>()
+    final override val mutableAttachments: MutableList<Attachment> = []
 
     constructor(message: String) : super(message)
 
@@ -50,7 +50,7 @@ open class KotlinIllegalStateExceptionWithAttachments : IllegalStateException, K
 }
 
 open class KotlinRuntimeExceptionWithAttachments : RuntimeException, KotlinExceptionWithAttachments {
-    final override val mutableAttachments = mutableListOf<Attachment>()
+    final override val mutableAttachments: MutableList<Attachment> = []
 
     constructor(message: String) : super(message)
 
@@ -60,7 +60,7 @@ open class KotlinRuntimeExceptionWithAttachments : RuntimeException, KotlinExcep
 }
 
 open class KotlinIllegalArgumentExceptionWithAttachments : IllegalArgumentException, KotlinExceptionWithAttachments {
-    final override val mutableAttachments = mutableListOf<Attachment>()
+    final override val mutableAttachments: MutableList<Attachment> = []
 
     constructor(message: String) : super(message)
 

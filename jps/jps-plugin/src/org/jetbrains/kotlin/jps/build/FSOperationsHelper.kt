@@ -50,7 +50,7 @@ class FSOperationsHelper(
 
     private val buildLogger = compileContext.testingContext?.buildLogger
 
-    fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = setOf()) {
+    fun markChunk(recursively: Boolean, kotlinOnly: Boolean, excludeFiles: Set<File> = []) {
         fun shouldMark(file: File): Boolean {
             if (kotlinOnly && !file.isKotlinSourceFile) return false
 

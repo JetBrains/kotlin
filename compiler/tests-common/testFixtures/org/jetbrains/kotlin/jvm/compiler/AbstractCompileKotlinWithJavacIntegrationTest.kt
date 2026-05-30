@@ -66,8 +66,8 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
         val out = File(tmpdir, "out")
 
         val compiledSuccessfully = compileKotlinWithJava(
-            listOf(javaFile),
-            listOf(ktFile),
+            [javaFile],
+            [ktFile],
             out, testRootDisposable,
             aptMode
         )
@@ -83,7 +83,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
 
         environment.configuration.put(JVMConfigurationKeys.USE_JAVAC, true)
         environment.configuration.put(JVMConfigurationKeys.OUTPUT_DIRECTORY, out)
-        environment.registerJavac(emptyList(), bootClasspath = listOf(KtTestUtil.findMockJdkRtJar()))
+        environment.registerJavac([], bootClasspath = [KtTestUtil.findMockJdkRtJar()])
 
         @Suppress("DEPRECATION_ERROR")
         val analysisResult = JvmResolveUtil.analyze(environment)
@@ -116,7 +116,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
             javaFiles = javaFiles,
             kotlinFiles = ktFiles,
             arguments = if (aptMode) arrayOf() else arrayOf("-proc:none"),
-            bootClasspath = listOf(KtTestUtil.findMockJdkRtJar())
+            bootClasspath = [KtTestUtil.findMockJdkRtJar()]
         )
         ModuleVisibilityManager.SERVICE.getInstance(environment.project).addModule(
             ModuleBuilder("module for test", tmpdir.absolutePath, "test")
@@ -145,7 +145,7 @@ abstract class AbstractCompileKotlinWithJavacIntegrationTest : TestCaseWithTmpdi
                 parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
                 verbose = true
                 annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-                excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
+                excludedAnnotationClasses = [FqName(Retention::class.java.name)]
                 modifiers = DescriptorRendererModifier.ALL
             }
         )

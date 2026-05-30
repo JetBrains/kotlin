@@ -81,13 +81,13 @@ class LoadJavaPackageAnnotationsTest : KtUsefulTestCase() {
 
     fun testAnnotationFromSource() {
         doTest(useJavac = false) {
-            it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
+            it.addJavaSourceRoots([File(TEST_DATA_PATH)])
         }
     }
 
     fun testAnnotationFromSourceWithJavac() {
         doTest(useJavac = true) {
-            it.addJavaSourceRoots(listOf(File(TEST_DATA_PATH)))
+            it.addJavaSourceRoots([File(TEST_DATA_PATH)])
         }
     }
 

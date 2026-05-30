@@ -61,7 +61,7 @@ class KotlinLocalVirtualFile(
 
     override fun getChildren(): Array<VirtualFile> {
         _children?.let { return it }
-        val fileChildren = file.listFiles() ?: emptyArray()
+        val fileChildren = file.listFiles() ?: []
 
         _children = fileChildren
             .map { KotlinLocalVirtualFile(it, _fileSystem, parent = this) }

@@ -81,11 +81,11 @@ class ExpressionAnalysisAdditionalChecker(
             Checker(isTest),
             DataFrameFunctionCallTransformationContextChecker,
         )
-        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(ShadowedExtensionPropertyChecker)
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = [ShadowedExtensionPropertyChecker]
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val regularClassCheckers: Set<FirRegularClassChecker> = setOf(DataSchemaDeclarationChecker)
-        override val propertyCheckers: Set<FirPropertyChecker> = setOf(DataFramePropertyChecker)
+        override val regularClassCheckers: Set<FirRegularClassChecker> = [DataSchemaDeclarationChecker]
+        override val propertyCheckers: Set<FirPropertyChecker> = [DataFramePropertyChecker]
     }
 }
 
@@ -93,7 +93,7 @@ private class Checker(
     val isTest: Boolean,
 ) : FirFunctionCallChecker(mppKind = MppCheckerKind.Common) {
     companion object {
-        val CAST_ID = CallableId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe", "api")), Name.identifier("cast"))
+        val CAST_ID = CallableId(FqName.fromSegments(["org", "jetbrains", "kotlinx", "dataframe", "api"]), Name.identifier("cast"))
         val CHECK = ClassId(FqName("org.jetbrains.kotlinx.dataframe.annotations"), Name.identifier("Check"))
         val VALID_CAST_TARGET_PREDICATE = LookupPredicate.create {
             annotated(
@@ -150,7 +150,7 @@ private class Checker(
         val sourceColumns = source.flatten(includeFrames = true)
         val targetColumns = target.flatten(includeFrames = true)
         val sourceMap = sourceColumns.associate { it.path.path to it.column }
-        val missingColumns = mutableListOf<String>()
+        val missingColumns: MutableList<String> = []
         var valid = true
         for (target in targetColumns) {
             val source = sourceMap[target.path.path]
@@ -234,7 +234,7 @@ private class Checker(
         asDataClass: Boolean,
     ) {
         val inner = "$indent    "
-        val nested = mutableListOf<Nested>()
+        val nested: MutableList<Nested> = []
         val fieldNames = cols.map {
             ValidFieldName.of(it.name)
         }

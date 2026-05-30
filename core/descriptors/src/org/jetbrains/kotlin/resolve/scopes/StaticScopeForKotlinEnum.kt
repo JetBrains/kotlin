@@ -41,7 +41,7 @@ class StaticScopeForKotlinEnum(
     override fun getContributedClassifier(name: Name, location: LookupLocation) = null // TODO
 
     private val functions: List<SimpleFunctionDescriptor> by storageManager.createLazyValue {
-        listOf(createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass))
+        [createEnumValueOfMethod(containingClass), createEnumValuesMethod(containingClass)]
     }
 
     private val properties: List<PropertyDescriptor> by storageManager.createLazyValue {
@@ -49,7 +49,7 @@ class StaticScopeForKotlinEnum(
             // It still might be filtered out later in tower resolve if feature disabled
             listOfNotNull(createEnumEntriesProperty(containingClass))
         } else {
-            emptyList()
+            []
         }
     }
 

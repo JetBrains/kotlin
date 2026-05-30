@@ -44,7 +44,7 @@ class ProgressionLoopHeader(
             ) +
             listOfNotNull(stepVariable)
 
-    private var loopVariables: List<IrVariable> = emptyList()
+    private var loopVariables: List<IrVariable> = []
 
     override fun initializeIteration(
         loopVariables: List<IrVariable>,
@@ -55,14 +55,14 @@ class ProgressionLoopHeader(
         with(builder) {
             // loopVariable is used in the loop condition if it can overflow. If no loopVariable was provided, create one.
             this@ProgressionLoopHeader.loopVariables = if (headerInfo.canOverflow && loopVariables.isEmpty()) {
-                listOf(
+                [
                     scope.createTemporaryVariable(
                         irGet(inductionVariable),
                         nameHint = "loopVariable",
                         isMutable = true,
                         inventUniqueName = false,
                     )
-                )
+                ]
             } else {
                 for (loopVar in loopVariables) {
                     loopVar.initializer = irGet(inductionVariable).let {

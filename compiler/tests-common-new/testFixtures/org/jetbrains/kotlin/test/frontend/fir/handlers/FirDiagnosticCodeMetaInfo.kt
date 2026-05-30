@@ -33,7 +33,7 @@ class FirDiagnosticCodeMetaInfo(
     override val tag: String
         get() = renderConfiguration.getTag(this)
 
-    override val attributes: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = []
 
     override fun asString(): String = renderConfiguration.asString(this)
 
@@ -62,7 +62,7 @@ class FirDiagnosticCodeMetaRenderConfiguration(
 
     private fun getParamsString(codeMetaInfo: FirDiagnosticCodeMetaInfo): String {
         if (!renderParams) return ""
-        val params = mutableListOf<String>()
+        val params: MutableList<String> = []
 
         val diagnostic = codeMetaInfo.diagnostic
 

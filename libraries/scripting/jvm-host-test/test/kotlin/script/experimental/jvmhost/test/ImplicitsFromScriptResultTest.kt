@@ -43,11 +43,11 @@ class ImplicitsFromScriptResultTest {
         // TODO: consider either fix it or rewrite to the REPL compiler
         val host = CompilerHost()
 
-        val snippets = listOf(
+        val snippets = [
             "val xyz0 = 42",
             "fun f() = xyz0",
             "val finalRes = xyz0 + f()",
-        )
+        ]
         for (snippet in snippets) {
             val res = host.compile(snippet)
             assertTrue(res is ResultWithDiagnostics.Success)
@@ -86,7 +86,7 @@ class GetScriptClassForImplicits(
 
 class CompilerHost {
     private var counter = 0
-    private val implicits = mutableListOf<KClass<*>>()
+    private val implicits: MutableList<KClass<*>> = []
     private val outputDir: Path = Files.createTempDirectory("kotlin-scripting-jvm")
     private val classWriter = ClassWriter(outputDir)
 

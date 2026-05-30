@@ -93,10 +93,10 @@ class ObjectDeclarationLowering(
                 val thenPart: IrExpression = if (parentCompanionGetInstanceFun != null) {
                     irBlock {
                         +irCall(parentCompanionGetInstanceFun.symbol)
-                        +irCallConstructor(primaryConstructor.symbol, emptyList())
+                        +irCallConstructor(primaryConstructor.symbol, [])
                     }
                 } else {
-                    irCallConstructor(primaryConstructor.symbol, emptyList())
+                    irCallConstructor(primaryConstructor.symbol, [])
                 }
                 +irIfThen(
                     irNullabilityCheck(instanceField),
@@ -107,7 +107,7 @@ class ObjectDeclarationLowering(
             }.statements
         }
 
-        return listOf(declaration, instanceField, getInstanceFun)
+        return [declaration, instanceField, getInstanceFun]
     }
 
     private fun IrBuilderWithScope.irNullabilityCheck(instanceField: IrField): IrExpression {
@@ -150,10 +150,10 @@ class ObjectUsageLowering(val context: JsCommonBackendContext) : BodyLoweringPas
                 } else {
                     JsIrBuilder.buildComposite(
                         context.irBuiltIns.unitType,
-                        listOf(
+                        [
                             super.visitDelegatingConstructorCall(expression),
                             generateInitInstanceField(instanceField, JsIrBuilder.buildGetValue(irClass.thisReceiver!!.symbol))
-                        )
+                        ]
                     )
                 }
             }

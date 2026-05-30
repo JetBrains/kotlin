@@ -49,7 +49,7 @@ class SetterProcessor(private val config: LombokConfig) : Processor {
 
             classDescriptor.createFunction(
                 Name.identifier(functionName),
-                listOf(LombokValueParameter(field.name, field.type)),
+                [LombokValueParameter(field.name, field.type)],
                 returnType,
                 visibility = getter.visibility.toDescriptorVisibility()
             )

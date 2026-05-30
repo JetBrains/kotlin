@@ -61,7 +61,7 @@ class StubIrTextEmitter(
     }
 
     private fun generateLinesBy(action: () -> Unit): List<String> {
-        val result = mutableListOf<String>()
+        val result: MutableList<String> = []
         withOutput({ result.add(it) }, action)
         return result
     }

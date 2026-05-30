@@ -293,7 +293,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     private fun <C : FirCallableSymbol<*>, CONTEXT> FirCache<CallableId, List<C>, CONTEXT?>.getCallablesWithoutContext(
         id: CallableId,
     ): List<C> {
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return []
         return getValue(id, null)
     }
 
@@ -442,7 +442,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             annotationDeserializer,
             containerSource = null,
             outerClassSymbol = null,
-            outerTypeParameters = emptyList(),
+            outerTypeParameters = [],
             classOrigin,
             classLikeDeclaration,
         )

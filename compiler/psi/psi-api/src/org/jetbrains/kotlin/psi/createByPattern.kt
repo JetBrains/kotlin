@@ -105,13 +105,13 @@ private object PsiChildRangeArgumentType :
     }
 }
 
-private val SUPPORTED_ARGUMENT_TYPES = listOf(
+private val SUPPORTED_ARGUMENT_TYPES = [
     PsiElementArgumentType(KtExpression::class.java),
     PsiElementArgumentType(KtTypeReference::class.java),
     PlainTextArgumentType(String::class.java, toPlainText = { it }),
     PlainTextArgumentType(Name::class.java, toPlainText = Name::render),
     PsiChildRangeArgumentType
-)
+]
 
 fun <TElement : KtElement> createByPattern(
     pattern: String,
@@ -207,7 +207,7 @@ fun <TElement : KtElement> createByPattern(
         elementType == KtTokens.ANDAND || elementType == KtTokens.OROR
     }
 
-    for (partition in listOf(left, right)) {
+    for (partition in [left, right]) {
         for ([pointer, n] in partition) {
             var element = pointer.element!!
 

@@ -40,7 +40,7 @@ abstract class FirScope {
 
     open fun mayContainName(name: Name): Boolean = true
 
-    open val scopeOwnerLookupNames: List<String> get() = emptyList()
+    open val scopeOwnerLookupNames: List<String> get() = []
 
     /**
      * This function creates a copy of the scope in case if this scope is session-dependant

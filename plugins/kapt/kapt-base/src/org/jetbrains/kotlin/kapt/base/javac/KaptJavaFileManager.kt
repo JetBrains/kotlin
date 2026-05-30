@@ -16,7 +16,7 @@ import java.util.*
 import javax.tools.*
 
 class KaptJavaFileManager(context: Context, private val shouldRecordFileRead: Boolean) : JavacFileManager(context, true, null) {
-    private val fileReadHistory = mutableSetOf<URI>()
+    private val fileReadHistory: MutableSet<URI> = []
 
     fun handleOptionJavac9(option: Option, value: String) {
         val handleOptionMethod = JavacFileManager::class.java
@@ -25,10 +25,10 @@ class KaptJavaFileManager(context: Context, private val shouldRecordFileRead: Bo
         handleOptionMethod.invoke(this, option, value)
     }
 
-    var rootsToFilter = emptySet<File>()
+    var rootsToFilter: Set<File> = []
 
     // TODO (gavra): store these more efficiently by package (requires some changes to type collection).
-    var typeToIgnore = emptySet<String>()
+    var typeToIgnore: Set<String> = []
 
     override fun list(
         location: JavaFileManager.Location?,

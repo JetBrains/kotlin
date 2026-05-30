@@ -34,7 +34,7 @@ internal class KaBaseDestructuringDeclarationReference(
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
         val element = element
         // TODO(KT-82708): Only the initializer symbol is expected
-        return listOf(element.symbol) + element.tryResolveSymbols()?.symbols.orEmpty()
+        return [element.symbol] + element.tryResolveSymbols()?.symbols.orEmpty()
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
@@ -46,6 +46,6 @@ internal class KaBaseDestructuringDeclarationReference(
             get() = KtDestructuringDeclarationEntry::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtDestructuringDeclarationEntry>
-            get() = { listOf(KaBaseDestructuringDeclarationReference(it)) }
+            get() = { [KaBaseDestructuringDeclarationReference(it)] }
     }
 }

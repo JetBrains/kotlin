@@ -76,7 +76,7 @@ internal class ConstInliner(
             is IrGetField -> this.receiver = getObject
         }
 
-        return IrCompositeImpl(startOffset, endOffset, this.type, null, listOf(receiver, const))
+        return IrCompositeImpl(startOffset, endOffset, this.type, null, [receiver, const])
     }
 
     private fun IrExpression.shouldDropConstReceiver(): Boolean {

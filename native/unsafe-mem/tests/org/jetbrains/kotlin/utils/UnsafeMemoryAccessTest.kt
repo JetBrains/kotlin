@@ -81,7 +81,7 @@ abstract class UnsafeMemoryAccessTest {
     ) {
         val expectedBytes = toBytes(toRawBits(value), size)
 
-        for (offset in listOf(0, 1)) {
+        for (offset in [0, 1]) {
             // Direction 1: write value, read bytes and verify.
             withMemory(size.toLong() + offset) { base ->
                 val address = base + offset
@@ -325,7 +325,7 @@ abstract class UnsafeMemoryAccessTest {
     inner class ByteArrayOperations {
         @Test
         fun testCopyFromAndToByteArray() {
-            val src = byteArrayOf(10, 20, 30, 40, 50)
+            val src: ByteArray = [10, 20, 30, 40, 50]
             withMemory(src.size.toLong()) { address ->
                 memory.copyFromByteArray(src, address, src.size)
 
@@ -338,7 +338,7 @@ abstract class UnsafeMemoryAccessTest {
 
         @Test
         fun testCopyByteArrayUnaligned() {
-            val src = byteArrayOf(10, 20, 30, 40, 50)
+            val src: ByteArray = [10, 20, 30, 40, 50]
             val totalSize = src.size.toLong() + 3
             withMemory(totalSize) { address ->
                 for (i in 0..<totalSize) {
@@ -349,14 +349,14 @@ abstract class UnsafeMemoryAccessTest {
                 // Read back at a different unaligned offset to verify memory layout
                 val dest = ByteArray(src.size + 2)
                 memory.copyToByteArray(address + 1, dest, dest.size)
-                assertEquals(listOf<Byte>(0xAA.toByte(), 0xAA.toByte(), 10, 20, 30, 40, 50), dest.toList())
+                assertEquals([0xAA.toByte(), 0xAA.toByte(), 10, 20, 30, 40, 50], dest.toList())
             }
         }
 
         @Test
         fun testCopyByteArrayPartial() {
             val size = 8L
-            val src = byteArrayOf(1, 2, 3, 4, 5, 6, 7, 8)
+            val src: ByteArray = [1, 2, 3, 4, 5, 6, 7, 8]
             withMemory(size) { address ->
                 for (i in 0..<size) {
                     memory.putByte(address + i, 0xAA.toByte())
@@ -375,7 +375,7 @@ abstract class UnsafeMemoryAccessTest {
 
         @Test
         fun testCopyByteArrayVerifyViaDirectReads() {
-            val src = byteArrayOf(0x11, 0x22, 0x33, 0x44)
+            val src: ByteArray = [0x11, 0x22, 0x33, 0x44]
             withMemory(src.size.toLong()) { address ->
                 memory.copyFromByteArray(src, address, src.size)
 
@@ -396,7 +396,7 @@ abstract class UnsafeMemoryAccessTest {
 
                 val dest = ByteArray(4)
                 memory.copyToByteArray(address, dest, 4)
-                assertEquals(listOf(0xAA.toByte(), 0xBB.toByte(), 0xCC.toByte(), 0xDD.toByte()), dest.toList())
+                assertEquals([0xAA.toByte(), 0xBB.toByte(), 0xCC.toByte(), 0xDD.toByte()], dest.toList())
             }
         }
     }
@@ -419,14 +419,14 @@ abstract class UnsafeMemoryAccessTest {
     @Nested
     inner class CharArrayOperations {
         @Test
-        fun testCopyFromCharArray() = checkCopyFromCharArray(charArrayOf('H', 'e', 'l', 'l', 'o'), offset = 0)
+        fun testCopyFromCharArray() = checkCopyFromCharArray(['H', 'e', 'l', 'l', 'o'], offset = 0)
 
         @Test
-        fun testCopyCharArrayUnaligned() = checkCopyFromCharArray(charArrayOf('H', 'e', 'l', 'l', 'o'), offset = 3)
+        fun testCopyCharArrayUnaligned() = checkCopyFromCharArray(['H', 'e', 'l', 'l', 'o'], offset = 3)
 
         @Test
         fun testCopyCharArrayPartial() {
-            val src = charArrayOf('A', 'B', 'C', 'D', 'E')
+            val src: CharArray = ['A', 'B', 'C', 'D', 'E']
             val totalBytes = src.size.toLong() * Char.SIZE_BYTES
             withMemory(totalBytes) { address ->
                 for (i in 0..<totalBytes) {
@@ -450,7 +450,7 @@ abstract class UnsafeMemoryAccessTest {
 
         @Test
         fun testCopyCharArrayWithNonAscii() =
-            checkCopyFromCharArray(charArrayOf('\u0000', '\u00FF', '\u4E16', '\uD7FF', '\uFFFF'), offset = 0)
+            checkCopyFromCharArray(['\u0000', '\u00FF', '\u4E16', '\uD7FF', '\uFFFF'], offset = 0)
 
 
     }
@@ -540,7 +540,7 @@ abstract class UnsafeMemoryAccessTest {
                 for (i in 0..<4) {
                     memory.putByte(address + i, 0xDD.toByte())
                 }
-                memory.copyFromByteArray(byteArrayOf(1, 2, 3), address, 0)
+                memory.copyFromByteArray([1, 2, 3], address, 0)
 
                 for (i in 0..<4) {
                     assertEquals(0xDD.toByte(), memory.getByte(address + i))
@@ -551,7 +551,7 @@ abstract class UnsafeMemoryAccessTest {
         @Test
         fun testCopyToByteArrayZeroLength() {
             withMemory(4) { address ->
-                val dest = byteArrayOf(1, 2, 3)
+                val dest: ByteArray = [1, 2, 3]
                 memory.copyToByteArray(address, dest, 0)
 
                 assertEquals(listOf<Byte>(1, 2, 3), dest.toList())
@@ -564,7 +564,7 @@ abstract class UnsafeMemoryAccessTest {
                 for (i in 0..<4) {
                     memory.putByte(address + i, 0xEE.toByte())
                 }
-                memory.copyFromCharArray(charArrayOf('A', 'B'), address, 0)
+                memory.copyFromCharArray(['A', 'B'], address, 0)
 
                 for (i in 0..<4) {
                     assertEquals(0xEE.toByte(), memory.getByte(address + i))

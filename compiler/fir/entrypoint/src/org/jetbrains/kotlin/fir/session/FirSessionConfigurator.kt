@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.extensions.*
 import kotlin.reflect.KClass
 
 class FirSessionConfigurator(private val session: FirSession) {
-    private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = mutableListOf(BunchOfRegisteredExtensions.empty())
+    private val registeredExtensions: MutableList<BunchOfRegisteredExtensions> = [BunchOfRegisteredExtensions.empty()]
     private var filterPlatformSpecificCheckers: Boolean = false
 
     fun registerExtensions(extensions: BunchOfRegisteredExtensions) {
@@ -105,7 +105,7 @@ class FirSessionConfigurator(private val session: FirSession) {
         var extensions = registeredExtensions.reduce(BunchOfRegisteredExtensions::plus)
         if (session.kind == FirSession.Kind.Library) {
             val filteredExtensions = extensions.extensions.filterKeys { it in FirExtensionRegistrar.ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION }
-            extensions = BunchOfRegisteredExtensions(filteredExtensions, diagnosticsContainers = emptyList())
+            extensions = BunchOfRegisteredExtensions(filteredExtensions, diagnosticsContainers = [])
         }
         session.extensionService.registerExtensions(extensions)
 

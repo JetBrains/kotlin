@@ -44,7 +44,7 @@ open class MethodOrderTest : CodegenTestCase() {
     }
 
     protected open fun delegatedMethodExpectation(): List<String> =
-        listOf("<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V")
+        ["<init>()V", "f3()V", "f0()V", "f4()V", "f2()V", "f1()V", "f5()V"]
 
     fun testAnonymousObjectClosureOrdering() {
         doTest(
@@ -60,7 +60,7 @@ open class MethodOrderTest : CodegenTestCase() {
                 }
             """,
             "\$f$1",
-            listOf("<init>(Ljava/lang/String;IDLjava/lang/Object;JLjava/lang/Object;LKlass;)V", "run()V")
+            ["<init>(Ljava/lang/String;IDLjava/lang/Object;JLjava/lang/Object;LKlass;)V", "run()V"]
         )
     }
 
@@ -80,14 +80,14 @@ open class MethodOrderTest : CodegenTestCase() {
                 }
             """,
             "Outer",
-            listOf(
+            [
                 "<init>(ILjava/lang/String;)V",
                 "c()V",
                 "access\$setB\$p(LOuter;Ljava/lang/String;)V",
                 "access\$getB\$p(LOuter;)Ljava/lang/String;",
                 "access\$getA\$p(LOuter;)I",
                 "access\$c(LOuter;)V"
-            )
+            ]
         )
     }
 
@@ -112,7 +112,7 @@ open class MethodOrderTest : CodegenTestCase() {
                 }
             """,
             "MinMap",
-            listOf(
+            [
                 "<init>()V",
                 "removeEldestEntry(Ljava/lang/Object;)Z",
                 "getSize()I",
@@ -123,7 +123,7 @@ open class MethodOrderTest : CodegenTestCase() {
                 "entrySet()I",
                 "getValues()I",
                 "values()I"
-            )
+            ]
         )
     }
 
@@ -145,12 +145,12 @@ open class MethodOrderTest : CodegenTestCase() {
                 abstract class ClassLowerWithContext : IrElementTransformer<IrClassContext?>
             """,
             "ClassLowerWithContext",
-            listOf(
+            [
                 "<init>()V",
                 "visitElement(LIrElement;LIrClassContext;)LIrElement;",
                 "visitElement(LIrElement;Ljava/lang/Object;)LIrElement;",
                 "visitElement(LIrElement;Ljava/lang/Object;)Ljava/lang/Object;",
-            )
+            ]
         )
     }
 

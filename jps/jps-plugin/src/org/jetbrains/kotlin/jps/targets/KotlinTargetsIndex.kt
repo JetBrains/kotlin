@@ -25,7 +25,7 @@ internal class KotlinTargetsIndexBuilder internal constructor(
     private val uninitializedContext: KotlinCompileContext
 ) {
     private val byJpsModuleBuildTarget = mutableMapOf<ModuleBuildTarget, KotlinModuleBuildTarget<*>>()
-    private val chunks = mutableListOf<KotlinChunk>()
+    private val chunks: MutableList<KotlinChunk> = []
 
     fun build(): KotlinTargetsIndex {
         val time = measureTimeMillis {

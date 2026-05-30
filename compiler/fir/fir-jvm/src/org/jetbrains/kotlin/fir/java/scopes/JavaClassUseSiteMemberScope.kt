@@ -137,9 +137,9 @@ class JavaClassUseSiteMemberScope(
     }
 
     override fun collectProperties(name: Name): Collection<FirVariableSymbol<*>> {
-        val fields = mutableSetOf<FirCallableSymbol<*>>()
-        val fieldNames = mutableSetOf<Name>()
-        val result = mutableSetOf<FirVariableSymbol<*>>()
+        val fields: MutableSet<FirCallableSymbol<*>> = []
+        val fieldNames: MutableSet<Name> = []
+        val result: MutableSet<FirVariableSymbol<*>> = []
 
         // fields
         declaredMemberScope.processPropertiesByName(name) processor@{ variableSymbol ->
@@ -175,12 +175,12 @@ class JavaClassUseSiteMemberScope(
             val key = SyntheticPropertiesCacheKey(
                 name,
                 overriddenProperty.chosenSymbol.resolvedReceiverType,
-                overriddenProperty.chosenSymbol.contextParameterSymbols.ifNotEmpty { map { it.resolvedReturnType } } ?: emptyList()
+                overriddenProperty.chosenSymbol.contextParameterSymbols.ifNotEmpty { map { it.resolvedReturnType } } ?: []
             )
             val overrideInClass = syntheticPropertyCache.getValue(key, this to overriddenProperty)
 
             val chosenSymbol = overrideInClass ?: overriddenProperty.chosenSymbol
-            directOverriddenProperties[chosenSymbol] = listOf(overriddenProperty)
+            directOverriddenProperties[chosenSymbol] = [overriddenProperty]
             overriddenProperty.overriddenMembers.forEach { overrideByBase[it.member] = overrideInClass }
             result += chosenSymbol
         }
@@ -431,7 +431,7 @@ class JavaClassUseSiteMemberScope(
     // ---------------------------------------------------------------------------------------------------------
 
     override fun collectFunctions(name: Name): Collection<FirNamedFunctionSymbol> {
-        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val result: MutableList<FirNamedFunctionSymbol> = []
         collectDeclaredFunctions(name, result)
         val explicitlyDeclaredFunctions = result.toSet()
 
@@ -470,7 +470,7 @@ class JavaClassUseSiteMemberScope(
         functionsFromSupertypes: MembersByScope<FirNamedFunctionSymbol>, // candidates for override
         destination: MutableCollection<FirNamedFunctionSymbol>,
     ) {
-        val functionsFromSupertypesToSaveInCache = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
+        val functionsFromSupertypesToSaveInCache: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>> = []
         // The special override checker is needed for the case when we're trying to consider e.g. explicitly defined `Long toLong()`
         // as an override of `long toLong()` which is an enhanced version of `long longValue()`. K1 in such cases used
         // LazyJavaClassMemberScope.doesOverride, that ignores the return type, so we reproduce the behavior here.
@@ -521,7 +521,7 @@ class JavaClassUseSiteMemberScope(
                 }
                 else -> {
                     destination += explicitlyDeclaredFunction
-                    directOverriddenFunctions[explicitlyDeclaredFunction] = listOf(resultOfIntersection)
+                    directOverriddenFunctions[explicitlyDeclaredFunction] = [resultOfIntersection]
                     for (overriddenMember in resultOfIntersection.overriddenMembers) {
                         overrideByBase[overriddenMember.member] = explicitlyDeclaredFunction
                     }
@@ -576,7 +576,7 @@ class JavaClassUseSiteMemberScope(
         ) ?: return false
 
         destination += symbolToBeCollected
-        directOverriddenFunctions[symbolToBeCollected] = listOf(resultOfIntersection)
+        directOverriddenFunctions[symbolToBeCollected] = [resultOfIntersection]
         for ((val member, val _ = baseScope) in resultOfIntersection.overriddenMembers) {
             overrideByBase[member] = symbolToBeCollected
         }
@@ -769,11 +769,11 @@ class JavaClassUseSiteMemberScope(
             // Something with jvmNames in supertypes: intersect them and renamed builtins, excluding non-builtins with natural name
             functionsFromSupertypesWithBuiltinJvmName != null -> {
                 val membersByScope = buildList {
-                    intersectedOverridingRenamedBuiltin.mapTo(this) { it.baseScope to listOf(it.member) }
+                    intersectedOverridingRenamedBuiltin.mapTo(this) { it.baseScope to [it.member] }
                     addAll(
                         functionsFromSupertypesWithBuiltinJvmName.overriddenMembers.map {
                             val renamedFunction = createCopyWithNaturalName(it.member, origin = FirDeclarationOrigin.RenamedForOverride)
-                            it.baseScope to listOf(renamedFunction)
+                            it.baseScope to [renamedFunction]
                         }
                     )
                 }
@@ -783,9 +783,9 @@ class JavaClassUseSiteMemberScope(
             // Intersect only renamed builtins, excluding non-builtins with natural name, if any
             else -> {
                 // We could leave only else branch here, if branch is just an optimization
-                if (intersectedOverridingNonBuiltin.isEmpty()) listOf(resultOfIntersectionWithNaturalName)
+                if (intersectedOverridingNonBuiltin.isEmpty()) [resultOfIntersectionWithNaturalName]
                 else supertypeScopeContext.convertGroupedCallablesToIntersectionResults(
-                    intersectedOverridingRenamedBuiltin.map { it.baseScope to listOf(it.member) }
+                    intersectedOverridingRenamedBuiltin.map { it.baseScope to [it.member] }
                 )
             }
         }
@@ -805,7 +805,7 @@ class JavaClassUseSiteMemberScope(
             // The CharBuffer situation as example: both `get(Int):Char` and `charAt(Int):Char` are declared or inherited.
 
             val resultOfIntersectionOfOverridingNonBuiltin = supertypeScopeContext.convertGroupedCallablesToIntersectionResults(
-                intersectedOverridingNonBuiltin.map { it.baseScope to listOf(it.member) }
+                intersectedOverridingNonBuiltin.map { it.baseScope to [it.member] }
             )
 
             if (explicitlyDeclaredFunctionWithNaturalName != null) {
@@ -862,7 +862,7 @@ class JavaClassUseSiteMemberScope(
                 if (fir.getter.delegate.symbol == functionSymbol || fir.setter?.delegate?.symbol == functionSymbol) return true
                 val getterDescriptor = fir.getter.delegate.computeJvmDescriptor(includeReturnType = false)
                 val setterDescriptor = fir.setter?.delegate?.computeJvmDescriptor(includeReturnType = false)
-                listOf(getterDescriptor to setterDescriptor)
+                [getterDescriptor to setterDescriptor]
             }
             else -> {
                 val getterNames =
@@ -986,7 +986,7 @@ class JavaClassUseSiteMemberScope(
     /**
      * Checks if class has any kotlin super-types apart from builtins and interfaces
      */
-    private fun FirRegularClass.hasKotlinSuper(session: FirSession, visited: MutableSet<FirRegularClass> = mutableSetOf()): Boolean =
+    private fun FirRegularClass.hasKotlinSuper(session: FirSession, visited: MutableSet<FirRegularClass> = []): Boolean =
         when {
             !visited.add(this) -> false
             this is FirJavaClass -> superConeTypes.any { type ->

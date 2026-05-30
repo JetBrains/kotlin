@@ -26,7 +26,7 @@ internal class KPropertyState(
      * Non-null values in [boundValues] are always passed as arguments to both getter and setter.
      * Other arguments (including `value`, in case of setter) have to be provided at call-site when invoking the accessor.
      */
-    private val boundValues: List<State?> = emptyList(),
+    private val boundValues: List<State?> = [],
 ) : ReflectionState() {
     constructor(
         callInterceptor: CallInterceptor,

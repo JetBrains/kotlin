@@ -106,7 +106,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             class Visitor : ClassVisitor(Opcodes.API_VERSION) {
                 var readVariables: MutableList<LocalVariable> = ArrayList()
                 var methodFound = false
-                var methodsFound = mutableListOf<String>()
+                var methodsFound: MutableList<String> = []
 
                 override fun visitMethod(
                     access: Int, name: String, desc: String, signature: String?, exceptions: Array<String>?
@@ -157,11 +157,11 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
             // as well as the actual locals at entry to the block computed
             // based on the recorded load and store instructions in the code.
             class BasicBlock(
-                val successors: MutableSet<BasicBlock> = mutableSetOf(),
+                val successors: MutableSet<BasicBlock> = [],
                 var endsWithUnconditionalJump: Boolean = false,
                 var localsTable: MutableMap<Int, String> = mutableMapOf(),
                 var localsAtEntry: MutableMap<Int, String> = mutableMapOf(),
-                val localsInstructions: MutableList<Instruction> = mutableListOf()
+                val localsInstructions: MutableList<Instruction> = []
             ) {
                 fun addInstruction(index: Int, opcode: Int) {
                     localsInstructions.add(
@@ -192,7 +192,7 @@ abstract class AbstractCheckLocalVariablesTableTest : CodegenTestCase() {
                 var skipValidation = false
 
                 var entryBlock = BasicBlock()
-                var allBlocks: MutableSet<BasicBlock> = mutableSetOf(entryBlock)
+                var allBlocks: MutableSet<BasicBlock> = [entryBlock]
                 var currentBlock = entryBlock
                 var labelToBlock: MutableMap<Label, BasicBlock> = mutableMapOf()
                 val currentLocalsTable: MutableMap<Int, String> = mutableMapOf()

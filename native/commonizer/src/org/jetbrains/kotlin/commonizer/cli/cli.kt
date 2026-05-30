@@ -23,7 +23,7 @@ internal fun parseTasksFromCommandLineArguments(args: Array<String>): MutableLis
     val argumentsWithArgfilesExpanded = preprocessCommandLineArguments(args)
 
     val tokens: Iterator<String> = argumentsWithArgfilesExpanded.iterator()
-    val tasks = mutableListOf<Task>()
+    val tasks: MutableList<Task> = []
 
     var taskAlias: String? = tokens.next()
     while (taskAlias != null) {

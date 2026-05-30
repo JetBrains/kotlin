@@ -239,8 +239,8 @@ private class SupplementaryGenerator(val outputRoot: File) {
 }
 
 
-private val jsFiles = listOf("logic.js")
-private val cssFiles = listOf("style.css", "colors.white.css", "colors.dark.css")
+private val jsFiles = ["logic.js"]
+private val cssFiles = ["style.css", "colors.white.css", "colors.dark.css"]
 
 
 class MultiModuleHtmlFirDump(private val outputRoot: File) {
@@ -1099,7 +1099,7 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
 
     private fun FlowContent.declarationRef(
         href: String?,
-        classes: Set<String> = emptySet(),
+        classes: Set<String> = [],
         body: A.() -> Unit
     ) {
         a(href = href, classes = "ref") {
@@ -1216,9 +1216,10 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
         }
     }
 
+    @Suppress("ConvertToCollectionLiterals")
     private fun FlowContent.symbolRef(symbol: FirBasedSymbol<*>?, body: FlowContent.() -> Unit) {
         val [link, classes] = when (symbol) {
-            null -> null to setOf()
+            null -> null to emptySet()
             is FirClassLikeSymbol<*> -> linkResolver.classLocation(symbol.classId) to setOf("class-fqn")
             else -> linkResolver.nearSymbolLocation(symbol) to setOf("symbol")
         }

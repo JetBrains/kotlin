@@ -846,7 +846,7 @@ private fun Int.monthLength(isLeapYear: Boolean): Int =
         else -> 31
     }
 
-private val POWERS_OF_TEN = intArrayOf(
+private val POWERS_OF_TEN: IntArray = [
     1,
     10,
     100,
@@ -857,11 +857,11 @@ private val POWERS_OF_TEN = intArrayOf(
     10000000,
     100000000,
     1000000000
-)
+]
 
-private val asciiDigitPositionsInIsoStringAfterYear = intArrayOf(1, 2, 4, 5, 7, 8, 10, 11, 13, 14)
-private val colonsInIsoOffsetString = intArrayOf(3, 6)
-private val asciiDigitsInIsoOffsetString = intArrayOf(1, 2, 4, 5, 7, 8)
+private val asciiDigitPositionsInIsoStringAfterYear: IntArray = [1, 2, 4, 5, 7, 8, 10, 11, 13, 14]
+private val colonsInIsoOffsetString: IntArray = [3, 6]
+private val asciiDigitsInIsoOffsetString: IntArray = [1, 2, 4, 5, 7, 8]
 
 private fun CharSequence.truncateForErrorMessage(maxLength: Int): String {
     return if (length <= maxLength) this.toString() else substring(0, maxLength) + "..."

@@ -125,7 +125,7 @@ internal fun collectNewDirtySources(
                         }
                     }
                 }
-            }, mutableListOf())
+            }, [])
         }
     }
 
@@ -134,17 +134,17 @@ internal fun collectNewDirtySources(
     }
 
     (val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile) = changesCollector.getChangedAndImpactedSymbols(
-        listOf(caches.platformCache),
+        [caches.platformCache],
         reporter
     )
 
-    val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
+    val forceToRecompileFiles = mapClassesFqNamesToFiles([caches.platformCache], forceRecompile, reporter)
 
     return linkedSetOf<File>().apply {
         addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = alreadyCompiledSources))
         addAll(
             mapClassesFqNamesToFiles(
-                listOf(caches.platformCache),
+                [caches.platformCache],
                 dirtyClassFqNames,
                 reporter,
                 excludes = alreadyCompiledSources

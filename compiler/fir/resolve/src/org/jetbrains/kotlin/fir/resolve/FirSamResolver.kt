@@ -368,14 +368,14 @@ private fun FirRegularClass.getSingleAbstractMethodOrNull(): FirNamedFunction? {
 
 context(c: SessionHolder)
 private fun FirRegularClass.computeSamCandidateNames(): Set<Name> {
-    val classes =
+    val classes: MutableList<FirRegularClass> =
         // Note: we search only for names in this function, so substitution is not needed      V
         lookupSuperTypes(this, lookupInterfaces = true, deep = true, useSiteSession = c.session, substituteTypes = false)
-            .mapNotNullTo(mutableListOf(this)) {
+            .mapNotNullTo([this]) {
                 (it.lookupTag.toRegularClassSymbol())?.fir
             }
 
-    val samCandidateNames = mutableSetOf<Name>()
+    val samCandidateNames: MutableSet<Name> = []
     for (clazz in classes) {
         for (declaration in clazz.declarations) {
             when (declaration) {
@@ -484,7 +484,7 @@ private fun FirNamedFunction.isPublicInObject(checkOnlyName: Boolean): Boolean {
     }
 }
 
-private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
+private val PUBLIC_METHOD_NAMES_IN_OBJECT: Set<String> = ["equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString"]
 
 private fun FirNamedFunction.getFunctionTypeForAbstractMethod(session: FirSession): ConeLookupTagBasedType {
     val parameterTypes = valueParameters.map {

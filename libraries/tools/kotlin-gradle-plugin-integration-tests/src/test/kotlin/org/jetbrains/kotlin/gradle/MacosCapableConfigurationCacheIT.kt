@@ -21,7 +21,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @DisplayName("works with native tasks in complex project")
     @GradleTest
     fun testNativeTasks(gradleVersion: GradleVersion) {
-        val expectedTasks = mutableListOf(
+        val expectedTasks: MutableList<String> = [
             ":lib:cinteropMyCinteropLinuxX64",
             ":lib:commonizeCInterop",
             ":lib:compileKotlinLinuxX64",
@@ -29,10 +29,10 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
             ":lib:linkSharedDebugSharedLinuxX64",
             ":lib:linkStaticDebugStaticLinuxX64",
             ":lib:linkDebugTestLinuxX64",
-        )
+        ]
 
         if (HostManager.hostIsMac) {
-            expectedTasks += listOf(
+            expectedTasks.addAll([
                 ":lib:cinteropMyCinteropIosX64",
                 ":lib:compileKotlinIosX64",
                 ":lib:compileTestKotlinIosX64",
@@ -43,7 +43,7 @@ class MacosCapableConfigurationCacheIT : AbstractConfigurationCacheIT() {
                 ":lib:linkDebugFrameworkIosX64",
                 ":lib:linkReleaseFrameworkIosArm64",
                 ":lib:linkReleaseFrameworkIosX64",
-            )
+            ])
         }
 
         project(

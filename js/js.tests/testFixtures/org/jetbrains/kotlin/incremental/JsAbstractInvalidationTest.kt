@@ -151,7 +151,7 @@ abstract class JsAbstractInvalidationTest(
                 }
 
                 configuration.phaseConfig = createPhaseConfig(projStep.id, buildDir)
-                configuration.additionalExportedDeclarationNames = setOf(FqName(BOX_FUNCTION_NAME))
+                configuration.additionalExportedDeclarationNames = [FqName(BOX_FUNCTION_NAME)]
 
                 val artifactConfiguration = WebArtifactConfiguration(
                     moduleKind = projectInfo.moduleKind,

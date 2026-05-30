@@ -40,9 +40,9 @@ class PluginRuntimeAnnotationsProvider(testServices: TestServices) : RuntimeClas
     override fun runtimeClassPaths(module: TestModule): List<File> {
         val targetPlatform = module.targetPlatform(testServices)
         return when {
-            targetPlatform.isJvm() -> listOf(pluginSandboxAnnotationsJvmForTests())
-            targetPlatform.isJs() -> listOf(pluginSandboxAnnotationsJsForTests())
-            else -> emptyList()
+            targetPlatform.isJvm() -> [pluginSandboxAnnotationsJvmForTests()]
+            targetPlatform.isJs() -> [pluginSandboxAnnotationsJsForTests()]
+            else -> []
         }
     }
 }

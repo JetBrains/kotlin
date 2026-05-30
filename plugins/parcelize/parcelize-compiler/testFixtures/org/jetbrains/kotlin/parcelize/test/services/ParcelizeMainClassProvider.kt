@@ -14,15 +14,15 @@ import org.junit.runner.JUnitCore
 
 class ParcelizeMainClassProvider(testServices: TestServices) : JvmBoxMainClassProvider(testServices) {
     companion object {
-        private val properties = listOf(
+        private val properties = [
             "robolectric.classpath",
             "robolectric.offline",
             "robolectric.dependency.dir"
-        )
+        ]
     }
 
     override fun getMainClassNameAndAdditionalArguments(module: TestModule): List<String> {
-        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
+        if (ENABLE_PARCELIZE !in module.directives) return []
         val robolectricProperties = properties
             .map { "-D$it=${System.getProperty(it)}" }
             .toList()

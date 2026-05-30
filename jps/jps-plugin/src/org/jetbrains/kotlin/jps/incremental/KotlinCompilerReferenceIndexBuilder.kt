@@ -50,7 +50,7 @@ class KotlinCompilerReferenceIndexBuilder : ModuleLevelBuilder(BuilderCategory.C
         compiledTargets.clear()
     }
 
-    override fun getCompilableFileExtensions(): List<String> = emptyList()
+    override fun getCompilableFileExtensions(): List<String> = []
 
     companion object {
         private const val MESSAGE_TYPE = "processed module"

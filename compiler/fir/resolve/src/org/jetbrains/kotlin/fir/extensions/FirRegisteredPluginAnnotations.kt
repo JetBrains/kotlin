@@ -46,12 +46,12 @@ abstract class FirRegisteredPluginAnnotations : FirSessionComponent {
 
     object Empty : FirRegisteredPluginAnnotations() {
         override val annotations: Set<AnnotationFqn>
-            get() = emptySet()
+            get() = []
         override val metaAnnotations: Set<AnnotationFqn>
-            get() = emptySet()
+            get() = []
 
         override fun getAnnotationsWithMetaAnnotation(metaAnnotation: AnnotationFqn): Collection<AnnotationFqn> {
-            return emptyList()
+            return []
         }
 
         override fun registerUserDefinedAnnotation(metaAnnotation: AnnotationFqn, annotationClasses: Collection<FirRegularClass>) {
@@ -59,7 +59,7 @@ abstract class FirRegisteredPluginAnnotations : FirSessionComponent {
         }
 
         override fun getAnnotationsForPredicate(predicate: DeclarationPredicate): Set<AnnotationFqn> {
-            return emptySet()
+            return []
         }
 
         @PluginServicesInitialization
@@ -76,7 +76,7 @@ abstract class FirRegisteredPluginAnnotations : FirSessionComponent {
  * It also has some common code in it.
  */
 abstract class AbstractFirRegisteredPluginAnnotations(protected val session: FirSession) : FirRegisteredPluginAnnotations() {
-    final override val metaAnnotations: MutableSet<AnnotationFqn> = mutableSetOf()
+    final override val metaAnnotations: MutableSet<AnnotationFqn> = []
 
     private val annotationsForPredicateCache: FirCache<DeclarationPredicate, Set<AnnotationFqn>, Nothing?> =
         session.firCachesFactory.createCache { predicate ->
@@ -97,7 +97,7 @@ abstract class AbstractFirRegisteredPluginAnnotations(protected val session: Fir
     @PluginServicesInitialization
     final override fun initialize() {
         val registrar = object : FirDeclarationPredicateRegistrar() {
-            val predicates = mutableListOf<AbstractPredicate<*>>()
+            val predicates: MutableList<AbstractPredicate<*>> = []
             override fun register(vararg predicates: AbstractPredicate<*>) {
                 this.predicates += predicates
             }
@@ -124,7 +124,7 @@ abstract class AbstractFirRegisteredPluginAnnotations(protected val session: Fir
 
 @NoMutableState
 class FirRegisteredPluginAnnotationsImpl(session: FirSession) : AbstractFirRegisteredPluginAnnotations(session) {
-    override val annotations: MutableSet<AnnotationFqn> = mutableSetOf()
+    override val annotations: MutableSet<AnnotationFqn> = []
 
     // MetaAnnotation -> Annotations
     private val userDefinedAnnotations: Multimap<AnnotationFqn, AnnotationFqn> = LinkedHashMultimap.create()

@@ -78,7 +78,7 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
     override fun registerDeclaration(declaration: FirCallableDeclaration) {
         val containingClass = declaration.containingClassLookupTag()?.toRegularClassSymbol(session)?.fir
         if (containingClass == null) {
-            val list = topLevelsCache.getOrPut(declaration.symbol.callableId!!.packageName) { mutableListOf() }
+            val list = topLevelsCache.getOrPut(declaration.symbol.callableId!!.packageName) { [] }
             list += declaration
         } else {
             val declarations = memberCache.getOrPut(containingClass.symbol) { ClassDeclarations() }
@@ -90,20 +90,20 @@ private class FirProvidedDeclarationsForMetadataServiceImpl(private val session:
     }
 
     override fun getProvidedTopLevelDeclarations(packageFqName: FqName, scopeSession: ScopeSession): List<FirDeclaration> {
-        return topLevelsCache[packageFqName] ?: emptyList()
+        return topLevelsCache[packageFqName] ?: []
     }
 
     override fun getProvidedConstructors(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirConstructor> {
-        return memberCache[owner]?.providedConstructors ?: emptyList()
+        return memberCache[owner]?.providedConstructors ?: []
     }
 
     override fun getProvidedCallables(owner: FirClassSymbol<*>, scopeSession: ScopeSession): List<FirCallableDeclaration> {
-        return memberCache[owner]?.providedCallables ?: emptyList()
+        return memberCache[owner]?.providedCallables ?: []
     }
 
     private class ClassDeclarations {
-        val providedCallables: MutableList<FirCallableDeclaration> = mutableListOf()
-        val providedConstructors: MutableList<FirConstructor> = mutableListOf()
+        val providedCallables: MutableList<FirCallableDeclaration> = []
+        val providedConstructors: MutableList<FirConstructor> = []
     }
 }
 

@@ -20,13 +20,13 @@ val expectedRepoPath: Path = Paths.get("repo/artifacts-tests/src/test/resources/
 /**
  * Kotlin native bundles are present in TC artifacts but should not be checked until kotlin native enabled project-wide
  */
-val nativeBundles = setOf(
+val nativeBundles: Set<String> = [
     "kotlin-native",
     "kotlin-native-compiler-embeddable",
     "kotlin-native-prebuilt",
-)
+]
 
-val excludedProjects = setOf(
+val excludedProjects: Set<String> = [
     "android-test-fixes",
     "annotation-processor-example",
     "gradle-warnings-detector",
@@ -39,7 +39,7 @@ val excludedProjects = setOf(
     "org.jetbrains.kotlin.test.fixes.android.gradle.plugin",
     "org.jetbrains.kotlin.test.gradle-warnings-detector.gradle.plugin",
     "org.jetbrains.kotlin.test.kotlin-compiler-args-properties.gradle.plugin",
-)
+]
 
 /**
  * convert:

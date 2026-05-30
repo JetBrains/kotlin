@@ -146,7 +146,7 @@ internal class MappedEnumWhenLowering(override val context: JvmBackendContext) :
                         // Ignore NoSuchFieldError in case this module is running with a version of the dependency
                         // that is missing some of the enum's fields; the corresponding branches are then effectively
                         // unreachable code (KT-38637)
-                        context.irBuiltIns.unitType, writeToMapping, listOf(irCatch(noSuchFieldVariable, irUnit())),
+                        context.irBuiltIns.unitType, writeToMapping, [irCatch(noSuchFieldVariable, irUnit())],
                         finallyExpression = null
                     )
                 }

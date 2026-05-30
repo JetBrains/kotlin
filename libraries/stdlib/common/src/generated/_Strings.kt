@@ -823,8 +823,8 @@ public fun CharSequence.toHashSet(): HashSet<Char> {
  */
 public fun CharSequence.toList(): List<Char> {
     return when (length) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -843,8 +843,8 @@ public fun CharSequence.toMutableList(): MutableList<Char> {
  */
 public fun CharSequence.toSet(): Set<Char> {
     return when (length) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Char>(mapCapacity(length.coerceAtMost(128))))
     }
 }
@@ -2085,7 +2085,7 @@ public inline fun CharSequence.reduceRightOrNull(operation: (Char, acc: Char) ->
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.runningFold(initial: R, operation: (acc: R, Char) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(length + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -2109,7 +2109,7 @@ public inline fun <R> CharSequence.runningFold(initial: R, operation: (acc: R, C
  */
 @SinceKotlin("1.4")
 public inline fun <R> CharSequence.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(length + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -2132,7 +2132,7 @@ public inline fun <R> CharSequence.runningFoldIndexed(initial: R, operation: (in
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.runningReduce(operation: (acc: Char, Char) -> Char): List<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Char>(length).apply { add(accumulator) }
     for (index in 1 until length) {
@@ -2156,7 +2156,7 @@ public inline fun CharSequence.runningReduce(operation: (acc: Char, Char) -> Cha
  */
 @SinceKotlin("1.4")
 public inline fun CharSequence.runningReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Char>(length).apply { add(accumulator) }
     for (index in 1 until length) {
@@ -2557,7 +2557,7 @@ public fun CharSequence.zipWithNext(): List<Pair<Char, Char>> {
 @SinceKotlin("1.2")
 public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> R): List<R> {
     val size = length - 1
-    if (size < 1) return emptyList()
+    if (size < 1) return []
     val result = ArrayList<R>(size)
     for (index in 0 until size) {
         result.add(transform(this[index], this[index + 1]))
@@ -2569,7 +2569,7 @@ public inline fun <R> CharSequence.zipWithNext(transform: (a: Char, b: Char) -> 
  * Creates an [Iterable] instance that wraps the original char sequence returning its characters when being iterated.
  */
 public fun CharSequence.asIterable(): Iterable<Char> {
-    if (this is String && isEmpty()) return emptyList()
+    if (this is String && isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -2577,7 +2577,7 @@ public fun CharSequence.asIterable(): Iterable<Char> {
  * Creates a [Sequence] instance that wraps the original char sequence returning its characters when being iterated.
  */
 public fun CharSequence.asSequence(): Sequence<Char> {
-    if (this is String && isEmpty()) return emptySequence()
+    if (this is String && isEmpty()) return []
     return Sequence { this.iterator() }
 }
 

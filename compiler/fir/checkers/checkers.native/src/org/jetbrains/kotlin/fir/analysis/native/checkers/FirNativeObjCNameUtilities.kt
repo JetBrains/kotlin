@@ -50,7 +50,7 @@ object FirNativeObjCNameUtilities {
                 add(receiverParameterSymbol?.getObjCName(session))
                 contextParameterSymbols.forEach { add(it.getObjCName(session)) }
             }
-            else -> listOf(getObjCName(session))
+            else -> [getObjCName(session)]
         }
     }
 

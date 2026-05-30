@@ -90,7 +90,7 @@ class ToDataFrameColumn : AbstractSchemaModificationInterpreter() {
     val Arguments.columnName: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        return PluginDataFrameSchema(listOf(simpleColumnOf(columnName, typeArg0.coneType)))
+        return PluginDataFrameSchema([simpleColumnOf(columnName, typeArg0.coneType)])
     }
 }
 
@@ -167,7 +167,7 @@ class ToDataFrameFrom : AbstractInterpreter<Unit>() {
 
 class CreateDataFrameDslImplApproximation {
     val configuration: CreateDataFrameConfiguration = CreateDataFrameConfiguration()
-    val columns: MutableList<Pair<ColumnPath, SimpleCol>> = mutableListOf()
+    val columns: MutableList<Pair<ColumnPath, SimpleCol>> = []
 
     fun toPluginDataFrameSchema() = columns.map { it.first to it.second.asDataColumn() }
         .toDataFrameFromPairs<ConeTypesAdapter>()
@@ -180,10 +180,10 @@ class CreateDataFrameConfiguration {
 }
 
 class TraverseConfigurationBuilder {
-    val excludeProperties = mutableSetOf<FirCallableReferenceAccess>()
-    val excludeClasses = mutableSetOf<FirGetClassCall>()
-    val preserveClasses = mutableSetOf<FirGetClassCall>()
-    val preserveProperties = mutableSetOf<FirCallableReferenceAccess>()
+    val excludeProperties: MutableSet<FirCallableReferenceAccess> = []
+    val excludeClasses: MutableSet<FirGetClassCall> = []
+    val preserveClasses: MutableSet<FirGetClassCall> = []
+    val preserveProperties: MutableSet<FirCallableReferenceAccess> = []
 
     fun build(session: FirSession): TraverseConfiguration {
         return TraverseConfiguration(
@@ -202,7 +202,7 @@ class TraverseConfiguration(
     val preserveProperties: Set<FirPropertySymbol>,
 ) {
     companion object {
-        val EMPTY = TraverseConfiguration(emptySet(), emptySet(), emptySet(), emptySet())
+        val EMPTY = TraverseConfiguration([], [], [], [])
     }
 }
 
@@ -255,7 +255,7 @@ internal fun KotlinTypeFacade.toDataFrame(
 
     fun convert(classLike: ConeKotlinType, depth: Int, makeNullable: Boolean): List<SimpleCol> {
         if (!classLike.canBeUnfolded(session)) {
-            return listOf(simpleColumnOf("value", classLike))
+            return [simpleColumnOf("value", classLike)]
         }
 
         return classLike.properties(session)
@@ -334,7 +334,7 @@ internal fun KotlinTypeFacade.toDataFrame(
                             else -> session.builtinTypes.nullableAnyType.coneType
                         }
                         if (type.isValueType(session)) {
-                            val columnType = List.constructClassLikeType(arrayOf(type), returnType.isMarkedNullable)
+                            val columnType = List.constructClassLikeType([type], returnType.isMarkedNullable)
                                 .withNullability(makeNullable, session.typeContext)
                                 .wrap()
                             SimpleDataColumn(name, columnType)
@@ -367,13 +367,13 @@ internal fun KotlinTypeFacade.toDataFrame(
 private fun ConeKotlinType.isIterable(session: FirSession): Boolean =
     isSubtypeOf(
         StandardClassIds.Iterable.constructClassLikeType(
-            typeArguments = arrayOf(ConeStarProjection),
+            typeArguments = [ConeStarProjection],
             isMarkedNullable = false,
         ),
         session
     ) || isSubtypeOf(
         StandardClassIds.Iterable.constructClassLikeType(
-            typeArguments = arrayOf(ConeStarProjection),
+            typeArguments = [ConeStarProjection],
             isMarkedNullable = true,
         ),
         session
@@ -404,15 +404,15 @@ private fun ConeKotlinType.isValueType(session: FirSession) =
         Names.TIME_ZONE_CLASS_ID
     ) ||
             this.isSubtypeOf(
-                StandardClassIds.Number.constructClassLikeType(emptyArray(), isMarkedNullable = true),
+                StandardClassIds.Number.constructClassLikeType([], isMarkedNullable = true),
                 session
             ) ||
             this.toRegularClassSymbol(session)?.isEnumClass ?: false ||
             this.isSubtypeOf(
-                Names.TEMPORAL_ACCESSOR_CLASS_ID.constructClassLikeType(emptyArray(), isMarkedNullable = true), session
+                Names.TEMPORAL_ACCESSOR_CLASS_ID.constructClassLikeType([], isMarkedNullable = true), session
             ) ||
             this.isSubtypeOf(
-                Names.TEMPORAL_AMOUNT_CLASS_ID.constructClassLikeType(emptyArray(), isMarkedNullable = true), session
+                Names.TEMPORAL_AMOUNT_CLASS_ID.constructClassLikeType([], isMarkedNullable = true), session
             )
 
 private fun ConeKotlinType.hasProperties(session: FirSession): Boolean {
@@ -420,13 +420,13 @@ private fun ConeKotlinType.hasProperties(session: FirSession): Boolean {
 }
 
 private fun ConeKotlinType.properties(session: FirSession): List<ToDataFrameProperty> {
-    val symbol = this.toRegularClassSymbol(session) as? FirClassSymbol<*> ?: return emptyList()
+    val symbol = this.toRegularClassSymbol(session) as? FirClassSymbol<*> ?: return []
     val scope = scope(
         session,
         ScopeSession(),
         CallableCopyTypeCalculator.DoNothing,
         FirResolvePhase.STATUS
-    ) ?: return emptyList()
+    ) ?: return []
 
     @OptIn(SymbolInternals::class)
     symbol.fir.let { firClass ->

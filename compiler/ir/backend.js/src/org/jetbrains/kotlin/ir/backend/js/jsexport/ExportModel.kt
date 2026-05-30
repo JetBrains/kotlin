@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 
 sealed class ExportedDeclaration {
-    val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
+    val attributes: MutableSet<ExportedAttribute> = []
 }
 
 sealed interface ExportedMember {

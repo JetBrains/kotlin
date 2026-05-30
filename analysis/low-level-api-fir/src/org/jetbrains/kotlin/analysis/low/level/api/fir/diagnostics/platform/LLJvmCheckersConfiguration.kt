@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmExpressionCheckers
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.JvmTypeCheckers
 
 internal object LLJvmCheckersConfiguration : LLPlatformCheckersConfiguration {
-    override val declarationCheckers: List<DeclarationCheckers> = listOf(JvmDeclarationCheckers)
-    override val expressionCheckers: List<ExpressionCheckers> = listOf(JvmExpressionCheckers)
-    override val typeCheckers: List<TypeCheckers> = listOf(JvmTypeCheckers)
+    override val declarationCheckers: List<DeclarationCheckers> = [JvmDeclarationCheckers]
+    override val expressionCheckers: List<ExpressionCheckers> = [JvmExpressionCheckers]
+    override val typeCheckers: List<TypeCheckers> = [JvmTypeCheckers]
 }

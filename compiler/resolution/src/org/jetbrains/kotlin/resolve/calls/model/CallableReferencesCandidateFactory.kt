@@ -112,7 +112,7 @@ class CallableReferencesCandidateFactory(
         }
 
         if (candidateDescriptor !is CallableMemberDescriptor) {
-            return createCallableReferenceCallCandidate(listOf(NotCallableMemberReference(kotlinCall, candidateDescriptor)))
+            return createCallableReferenceCallCandidate([NotCallableMemberReference(kotlinCall, candidateDescriptor)])
         }
 
         if (candidateDescriptor is PropertyDescriptor && candidateDescriptor.isSyntheticEnumEntries()) {
@@ -237,7 +237,7 @@ class CallableReferencesCandidateFactory(
 
         for (valueParameter in descriptor.valueParameters) {
             if (valueParameter.isVararg) {
-                mappedArguments.putIfAbsent(valueParameter.original, ResolvedCallArgument.VarargArgument(emptyList()))
+                mappedArguments.putIfAbsent(valueParameter.original, ResolvedCallArgument.VarargArgument([]))
             }
         }
 
@@ -408,7 +408,7 @@ class CallableReferencesCandidateFactory(
                         (suspendConversionStrategy == SuspendConversionStrategy.SUSPEND_CONVERSION && buildTypeWithConversions)
 
                 callComponents.reflectionTypes.getKFunctionType(
-                    Annotations.EMPTY, null, emptyList(), argumentsAndReceivers, null,
+                    Annotations.EMPTY, null, [], argumentsAndReceivers, null,
                     returnType, descriptor.builtIns, isSuspend
                 ) to callableReferenceAdaptation
             }

@@ -18,12 +18,12 @@ import org.jetbrains.kotlin.resolve.extensions.AssignResolutionAltererExtension
 internal class KotlinFe10CompilerPluginsProvider : KotlinCompilerPluginsProvider {
     override fun <T : Any> getRegisteredExtensions(module: KaModule, extensionType: ExtensionPointDescriptor<T>): List<T> {
         if (!module.areCompilerPluginsSupported()) {
-            return emptyList()
+            return []
         }
         if (extensionType is ProjectExtensionDescriptor) {
             return extensionType.getInstances(module.project)
         }
-        return emptyList()
+        return []
     }
 
     @OptIn(InternalNonStableExtensionPoints::class)

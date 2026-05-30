@@ -66,7 +66,7 @@ class SwiftPMImportUnsupportedHostIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }
@@ -109,11 +109,11 @@ class SwiftPMImportUnsupportedHostIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -145,7 +145,7 @@ class SwiftPMImportUnsupportedHostIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }

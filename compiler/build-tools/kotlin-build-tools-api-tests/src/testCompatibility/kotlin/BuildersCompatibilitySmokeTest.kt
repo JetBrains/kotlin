@@ -71,13 +71,13 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun testICConfigBuilderImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val toolchain = strategyConfig.first
-        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
+        val sources = [workingDirectory.resolve("a.kt").also { it.writeText("class A") }]
         val destination = workingDirectory.resolve("classes")
         val operationBuilder = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination)
         val icBuilder = operationBuilder.snapshotBasedIcConfigurationBuilder(
             workingDirectory = workingDirectory.resolve("ic-work"),
             sourcesChanges = SourcesChanges.Unknown,
-            dependenciesSnapshotFiles = emptyList(),
+            dependenciesSnapshotFiles = [],
         ).apply {
             this[FORCE_RECOMPILATION] = false
             this[JvmSnapshotBasedIncrementalCompilationConfiguration.BACKUP_CLASSES] = true
@@ -98,7 +98,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
     @DefaultStrategyAgnosticCompilationTest
     fun testToBuilderOperationImmutability(strategyConfig: CompilerExecutionStrategyConfiguration) {
         val toolchain = strategyConfig.first
-        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
+        val sources = [workingDirectory.resolve("a.kt").also { it.writeText("class A") }]
         val destination = workingDirectory.resolve("classes")
         val original = toolchain.jvm.jvmCompilationOperationBuilder(sources, destination).apply {
             compilerArguments[JvmCompilerArguments.MODULE_NAME] = "original"
@@ -146,7 +146,7 @@ class BuildersCompatibilitySmokeTest : BaseCompilationTest() {
                     || kotlinToolchain::class.simpleName == "KotlinToolchainsV1Adapter"
         )
 
-        val classpath = listOf(workingDirectory.resolve("greet-script-template"))
+        val classpath = [workingDirectory.resolve("greet-script-template")]
         val builder = kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath)
         val renderer1 = object : CompilerMessageRenderer {
             override fun render(

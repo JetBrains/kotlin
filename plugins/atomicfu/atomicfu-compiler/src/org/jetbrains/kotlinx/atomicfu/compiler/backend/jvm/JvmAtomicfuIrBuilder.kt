@@ -121,7 +121,7 @@ class JvmAtomicfuIrBuilder(
                 if (atomicFactoryCall != null) {
                     val initValue = atomicFactoryCall.getAtomicFactoryValueArgument()
                     this.initializer = context.irFactory.createExpressionBody(
-                        newJavaBoxedAtomic(atomicBoxType, listOf(initValue))
+                        newJavaBoxedAtomic(atomicBoxType, [initValue])
                     )
                 }
                 this.annotations = annotations

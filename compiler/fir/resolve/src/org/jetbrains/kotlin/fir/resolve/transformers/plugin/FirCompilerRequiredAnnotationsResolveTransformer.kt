@@ -168,7 +168,7 @@ class FirDesignatedCompilerRequiredAnnotationsResolveTransformer(
 }
 
 open class CompilerRequiredAnnotationsComputationSession {
-    private val filesWithResolvedImports = mutableSetOf<FirFile>()
+    private val filesWithResolvedImports: MutableSet<FirFile> = []
 
     fun importsAreResolved(file: FirFile): Boolean {
         return file in filesWithResolvedImports
@@ -188,8 +188,8 @@ open class CompilerRequiredAnnotationsComputationSession {
      */
     open fun annotationResolved(annotation: FirAnnotationCall) {}
 
-    private val declarationsWithAnnotationResolutionInProgress: MutableSet<FirClassLikeDeclaration> = mutableSetOf()
-    private val declarationsWithResolvedAnnotations: MutableSet<FirAnnotationContainer> = mutableSetOf()
+    private val declarationsWithAnnotationResolutionInProgress: MutableSet<FirClassLikeDeclaration> = []
+    private val declarationsWithResolvedAnnotations: MutableSet<FirAnnotationContainer> = []
 
     fun annotationResolutionWasAlreadyStarted(klass: FirClassLikeDeclaration): Boolean {
         return klass in declarationsWithAnnotationResolutionInProgress

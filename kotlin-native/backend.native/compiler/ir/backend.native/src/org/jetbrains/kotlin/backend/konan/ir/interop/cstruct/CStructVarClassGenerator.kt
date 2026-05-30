@@ -28,7 +28,7 @@ internal class CStructVarClassGenerator(
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
     val irFactory: IrFactory = context.irFactory
-    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = []
 
     fun findOrGenerateCStruct(classDescriptor: ClassDescriptor, parent: IrDeclarationContainer): IrClass {
         val irClassSymbol = symbolTable.descriptorExtension.referenceClass(classDescriptor)

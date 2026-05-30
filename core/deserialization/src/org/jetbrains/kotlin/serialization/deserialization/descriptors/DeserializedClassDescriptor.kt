@@ -183,7 +183,7 @@ class DeserializedClassDescriptor(
         name in memberScope.classNames
 
     private fun computeSubclassesForSealedClass(): Collection<ClassDescriptor> {
-        if (modality != Modality.SEALED) return emptyList()
+        if (modality != Modality.SEALED) return []
 
         val fqNames = classProto.sealedSubclassFqNameList
         if (fqNames.isNotEmpty()) {

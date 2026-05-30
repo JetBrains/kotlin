@@ -39,7 +39,7 @@ class ParcelizeCommandLineProcessor : CommandLineProcessor {
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<AbstractCliOption>
-        get() = listOf(ADDITIONAL_ANNOTATION_OPTION, EXPERIMENTAL_CODE_GENERATION)
+        get() = [ADDITIONAL_ANNOTATION_OPTION, EXPERIMENTAL_CODE_GENERATION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {

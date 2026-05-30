@@ -41,12 +41,12 @@ import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 
-private val softDeprecatedTargets = setOf(
-        KonanTarget.LINUX_ARM32_HFP,
-        KonanTarget.MACOS_X64,
-        KonanTarget.TVOS_X64,
-        KonanTarget.WATCHOS_X64,
-)
+private val softDeprecatedTargets: Set<KonanTarget> = [
+    KonanTarget.LINUX_ARM32_HFP,
+    KonanTarget.MACOS_X64,
+    KonanTarget.TVOS_X64,
+    KonanTarget.WATCHOS_X64,
+]
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 

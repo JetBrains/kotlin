@@ -31,7 +31,7 @@ class NonFirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig)
     private var lines = 0
     private var measure = FirResolveBench.Measure()
 
-    private val times = mutableListOf<Long>()
+    private val times: MutableList<Long> = []
 
     private fun runAnalysis(environment: KotlinCoreEnvironment) {
         val vmBefore = vmStateSnapshot()

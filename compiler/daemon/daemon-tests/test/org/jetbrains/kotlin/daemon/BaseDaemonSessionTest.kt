@@ -38,7 +38,7 @@ abstract class BaseDaemonSessionTest {
 
     private val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
-    private val compileServices = mutableSetOf<CompileService>()
+    private val compileServices: MutableSet<CompileService> = []
 
     val outputDirectory
         get() = workingDirectory.resolve("output")

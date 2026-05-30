@@ -43,7 +43,7 @@ private class ClassLoaderData(classLoader: ClassLoader) {
 }
 
 object MemoryLeakDetector {
-    private val classLoaderData = mutableListOf<ClassLoaderData>()
+    private val classLoaderData: MutableList<ClassLoaderData> = []
 
     fun add(classLoader: ClassLoader) {
         synchronized(classLoaderData) {
@@ -52,10 +52,10 @@ object MemoryLeakDetector {
     }
 
     fun process(isParanoid: Boolean): Set<MemoryLeak> {
-        val memoryLeaks = mutableSetOf<MemoryLeak>()
+        val memoryLeaks: MutableSet<MemoryLeak> = []
 
         synchronized(classLoaderData) {
-            val newClassLoaderData = mutableListOf<ClassLoaderData>()
+            val newClassLoaderData: MutableList<ClassLoaderData> = []
             for (data in classLoaderData) {
                 val classLoader = data.ref.get() ?: continue
                 data.age += 1
@@ -85,7 +85,7 @@ object MemoryLeakDetector {
             return inspectStatics(classLoader)
         }
 
-        val leaks = mutableSetOf<MemoryLeak>()
+        val leaks: MutableSet<MemoryLeak> = []
 
         for (clazz in loadedClassesSet) {
             val declaredFields = try {

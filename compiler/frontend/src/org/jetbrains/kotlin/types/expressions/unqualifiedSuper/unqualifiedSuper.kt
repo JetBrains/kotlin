@@ -63,7 +63,7 @@ fun resolveUnqualifiedSuperFromExpressionContext(
         }
     }
 
-    return emptyList<KotlinType>() to false
+    return Pair([], false)
 }
 
 private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, "toString" to 0)
@@ -104,7 +104,7 @@ private fun resolveSupertypesForMethodOfAny(
     val [typesWithConcreteOverride, isEqualsMigration] = resolveSupertypesByMembers(supertypes, allowNonConcreteInterfaceMembers = false) {
         getFunctionMembers(it, calleeName)
     }
-    return typesWithConcreteOverride.ifEmpty { listOf(anyType) } to isEqualsMigration
+    return typesWithConcreteOverride.ifEmpty { [anyType] } to isEqualsMigration
 }
 
 private fun resolveSupertypesByCalleeName(supertypes: Collection<KotlinType>, calleeName: Name): Collection<KotlinType> =

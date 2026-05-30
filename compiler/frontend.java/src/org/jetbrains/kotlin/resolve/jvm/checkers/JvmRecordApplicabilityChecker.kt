@@ -135,7 +135,7 @@ class JvmRecordApplicabilityChecker(private val jvmTarget: JvmTarget) : Declarat
         }
 
         val primaryConstructor = declaration.primaryConstructor
-        val parameters = primaryConstructor?.valueParameters ?: emptyList()
+        val parameters = primaryConstructor?.valueParameters ?: []
         if (parameters.isEmpty()) {
             (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
                 context.trace.report(ErrorsJvm.JVM_RECORD_WITHOUT_PRIMARY_CONSTRUCTOR_PARAMETERS.on(it))

@@ -55,7 +55,7 @@ internal object EmptyIntersectionTypeChecker {
         fun extractIntersectionComponentsIfNeeded(type: KotlinTypeMarker) =
             if (type.typeConstructor() is IntersectionTypeConstructorMarker) {
                 type.typeConstructor().supertypes().toList()
-            } else listOf(type)
+            } else [type]
 
         val expandedTypes = extractIntersectionComponentsIfNeeded(first) + extractIntersectionComponentsIfNeeded(second)
         val typeCheckerState by lazy { c.newTypeCheckerState(errorTypesEqualToAnything = true, stubTypesEqualToAnything = true) }

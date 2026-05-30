@@ -22,9 +22,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("ScriptResolverEnvironment entry with comma in value is converted to '-Xscript-resolver-environment' argument")
     @Test
     fun testScriptResolverEnvironmentWithCommaInValueGetWhenSet() {
-        val entries = arrayOf("key=val1,val2")
+        val entries: Array<String> = ["key=val1,val2"]
 
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }
 
@@ -37,14 +37,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("Raw argument string with comma in value is split on the comma")
     @Test
     fun testRawArgumentStringsWithCommaInValue() {
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=val1,val2")
         )
 
         assertArrayEquals(
-            arrayOf("key=val1", "val2"),
+            ["key=val1", "val2"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -52,9 +52,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("ScriptResolverEnvironment entry with quote in value is converted to '-Xscript-resolver-environment' argument")
     @Test
     fun testScriptResolverEnvironmentWithQuoteInValueGetWhenSet() {
-        val entries = arrayOf("key=\"quoted\"")
+        val entries: Array<String> = ["key=\"quoted\""]
 
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }
 
@@ -67,14 +67,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("Raw argument string with quoted value is parsed as a single entry with quotes preserved")
     @Test
     fun testRawArgumentStringsWithQuotedEntry() {
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=\"quoted\"")
         )
 
         assertArrayEquals(
-            arrayOf("key=\"quoted\""),
+            ["key=\"quoted\""],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -82,9 +82,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("ScriptResolverEnvironment entry with backslash in value is converted to '-Xscript-resolver-environment' argument")
     @Test
     fun testScriptResolverEnvironmentWithBackslashInValueGetWhenSet() {
-        val entries = arrayOf("key=path\\to\\file")
+        val entries: Array<String> = ["key=path\\to\\file"]
 
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }
 
@@ -97,14 +97,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("Raw argument string with backslash in value preserves the backslash")
     @Test
     fun testRawArgumentStringsWithBackslashInValue() {
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=path\\to\\file")
         )
 
         assertArrayEquals(
-            arrayOf("key=path\\to\\file"),
+            ["key=path\\to\\file"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -112,9 +112,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("ScriptResolverEnvironment entries with partially-quoted content are converted to '-Xscript-resolver-environment' argument")
     @Test
     fun testScriptResolverEnvironmentWithQuotedCommaEntriesGetWhenSet() {
-        val entries = arrayOf("key=\"value1", "key2\"")
+        val entries: Array<String> = ["key=\"value1", "key2\""]
 
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }
 
@@ -127,14 +127,14 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("Quoted value containing a comma is still split on the comma")
     @Test
     fun testRawArgumentStringsQuotedValueWithCommaIsSplit() {
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=\"value1,key2\"")
         )
 
         assertArrayEquals(
-            arrayOf("key=\"value1", "key2\""),
+            ["key=\"value1", "key2\""],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
@@ -142,9 +142,9 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("ScriptResolverEnvironment entries where one has a trailing backslash are converted to '-Xscript-resolver-environment' argument")
     @Test
     fun testScriptResolverEnvironmentWithBackslashCommaEntriesGetWhenSet() {
-        val entries = arrayOf("key=value1\\", "key2")
+        val entries: Array<String> = ["key=value1\\", "key2"]
 
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT] = entries
         }
 
@@ -157,20 +157,20 @@ internal class ScriptResolverEnvironmentSpecialCharsTest {
     @DisplayName("Backslash before comma does not prevent splitting on the comma")
     @Test
     fun testRawArgumentStringsBackslashCommaIsSplit() {
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         operation.compilerArguments.applyArgumentStrings(
             expectedArgumentStringsFor("key=value1\\,key2")
         )
 
         assertArrayEquals(
-            arrayOf("key=value1\\", "key2"),
+            ["key=value1\\", "key2"],
             operation.compilerArguments[X_SCRIPT_RESOLVER_ENVIRONMENT]
         )
     }
 
     private fun expectedArgumentStringsFor(value: String): List<String> {
-        return listOf("-Xscript-resolver-environment=$value")
+        return ["-Xscript-resolver-environment=$value"]
     }
 
     private fun getValueString(argument: Array<String>): String =

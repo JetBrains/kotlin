@@ -26,8 +26,8 @@ abstract class TestModuleCompiler : TestService {
         dependencyBinaryRoots: Collection<Path>,
         testServices: TestServices,
     ): CompilationResult {
-        val binary = mutableListOf<Path>()
-        val sources = mutableListOf<Path>()
+        val binary: MutableList<Path> = []
+        val sources: MutableList<Path> = []
 
         val commonTestFiles = computeCommonFiles(module, testServices)
 
@@ -61,7 +61,7 @@ abstract class TestModuleCompiler : TestService {
     private fun computeCommonFiles(module: TestModule, testServices: TestServices): List<TestFile> {
         val dependsOnDependencies = module.dependsOnDependencies
         if (dependsOnDependencies.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         val selfTargetPlatform = module.targetPlatform(testServices)

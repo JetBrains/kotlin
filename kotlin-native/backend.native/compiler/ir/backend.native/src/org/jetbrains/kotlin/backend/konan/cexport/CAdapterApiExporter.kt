@@ -41,13 +41,13 @@ internal class CAdapterApiExporter(
     private lateinit var outputStreamWriter: PrintWriter
 
     // Primitive built-ins and unsigned types
-    private val predefinedTypes = listOf(
-            builtIns.byteType, builtIns.shortType,
-            builtIns.intType, builtIns.longType,
-            builtIns.floatType, builtIns.doubleType,
-            builtIns.charType, builtIns.booleanType,
-            builtIns.unitType
-    ) + UnsignedType.values().map {
+    private val predefinedTypes = [
+        builtIns.byteType, builtIns.shortType,
+        builtIns.intType, builtIns.longType,
+        builtIns.floatType, builtIns.doubleType,
+        builtIns.charType, builtIns.booleanType,
+        builtIns.unitType
+    ] + UnsignedType.values().map {
         // Unfortunately, `context.symbols` and `context.irBuiltins` are not initialized, so `context.symbols.ubyte`, etc, are unreachable.
         builtIns.builtInsModule.findClassAcrossModuleDependencies(it.classId)!!.defaultType
     }
@@ -142,7 +142,7 @@ internal class CAdapterApiExporter(
     }
 
     private fun defineUsedTypes(scope: ExportedElementScope, indent: Int) {
-        val usedTypes = mutableSetOf<KotlinType>()
+        val usedTypes: MutableSet<KotlinType> = []
         defineUsedTypesImpl(scope, usedTypes)
         val usedReferenceTypes = usedTypes.filter { typeTranslator.isMappedToReference(it) }
         // Add nullable primitives, which are used in prototypes of "(*createNullable<PRIMITIVE_TYPE_NAME>)"
@@ -158,7 +158,7 @@ internal class CAdapterApiExporter(
                 }
     }
 
-    private val exportedSymbols = mutableListOf<String>()
+    private val exportedSymbols: MutableList<String> = []
 
     // TODO: Pass temp and output files explicitly and untie from `NativeGenerationState`.
     fun makeGlobalStruct() {

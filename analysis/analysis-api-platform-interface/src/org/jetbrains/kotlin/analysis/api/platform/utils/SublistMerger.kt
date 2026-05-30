@@ -31,7 +31,7 @@ public class SublistMerger<A : Any>(
 
     public fun finish() {
         destination.addAll(remainingElements)
-        remainingElements = emptyList()
+        remainingElements = []
     }
 }
 

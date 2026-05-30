@@ -19,7 +19,7 @@ public class KtModuleProviderBuilder(
     public val coreApplicationEnvironment: CoreApplicationEnvironment,
     public val project: Project,
 ) {
-    private val mainModules: MutableList<KaModule> = mutableListOf()
+    private val mainModules: MutableList<KaModule> = []
 
     public fun <M : KaModule> addModule(module: M): M {
         mainModules.add(module)

@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.js.backend.ast.metadata.synthetic
 import org.jetbrains.kotlin.js.inline.util.collectFreeVariables
 
 internal class RedundantVariableDeclarationElimination(private val root: JsStatement) {
-    private val usages = mutableSetOf<JsName>()
+    private val usages: MutableSet<JsName> = []
     private var hasChanges = false
 
     fun apply(): Boolean {

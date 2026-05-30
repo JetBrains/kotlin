@@ -176,7 +176,7 @@ class NativeAtomicfuIrBuilder(
         vararg valueArguments: IrExpression?
     ): IrCall = irCallFunction(
         symbol = symbol,
-        arguments = listOf(propertyRef) + valueArguments.toList(),
+        arguments = [propertyRef] + valueArguments.toList(),
         valueType = receiverType
     )
 

@@ -22,15 +22,15 @@ private const val SCRIPT_COMPILATION_DISABLE_PLUGINS_PROPERTY = "script.compilat
 private const val SCRIPT_COMPILATION_DISABLE_COMMANDLINE_PROCESSORS_PROPERTY = "script.compilation.disable.commandline.processors"
 
 private val scriptCompilationDisabledPlugins =
-    listOf(
+    [
         ScriptingCompilerConfigurationComponentRegistrar::class.java.name,
         ScriptingK2CompilerPluginRegistrar::class.java.name
-    )
+    ]
 
 private val scriptCompilationDisabledCommandlineProcessors =
-    listOf(
+    [
         ScriptingCommandLineProcessor::class.java.name
-    )
+    ]
 
 internal fun CompilerConfiguration.loadPluginsFromClassloader(classLoader: ClassLoader) {
     val registrars =

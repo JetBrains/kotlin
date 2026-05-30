@@ -16,7 +16,7 @@ typealias CompiledHistoryList<CompiledT, ResultT> = List<CompiledHistoryItem<Com
 /*
    WARNING: Not thread safe, the caller is assumed to lock access.
  */
-open class SnippetsHistory<CompiledT, ResultT>(startingHistory: CompiledHistoryList<CompiledT, ResultT> = emptyList()) : Serializable {
+open class SnippetsHistory<CompiledT, ResultT>(startingHistory: CompiledHistoryList<CompiledT, ResultT> = []) : Serializable {
     protected val history: CompiledHistoryStorage<CompiledT, ResultT> = ArrayList(startingHistory)
 
     fun add(line: CompiledT, value: ResultT) {

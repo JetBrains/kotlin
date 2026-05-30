@@ -177,7 +177,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
 
         val removedSupertypes = supertypesMap[child].orEmpty().filter { it !in parents }
-        removedSupertypes.forEach { subtypesMap.removeValues(it, setOf(child)) }
+        removedSupertypes.forEach { subtypesMap.removeValues(it, [child]) }
 
         supertypesMap[child] = parents
     }
@@ -287,7 +287,7 @@ abstract class AbstractIncrementalCache<ClassName>(
             if (elements != null) {
                 storage.remove(key)
                 for (element in elements) {
-                    val originalFiles = fqNameToSourceStorage[element] ?: emptyList()
+                    val originalFiles = fqNameToSourceStorage[element] ?: []
                     val newFiles = originalFiles.filterNot { it == key }
                     if (newFiles.isEmpty()) {
                         fqNameToSourceStorage.remove(element)
@@ -317,7 +317,7 @@ abstract class AbstractIncrementalCache<ClassName>(
         }
 
         @Synchronized
-        fun getSourceByFqName(fqName: FqName): Collection<File> = fqNameToSourceStorage[fqName] ?: emptyList()
+        fun getSourceByFqName(fqName: FqName): Collection<File> = fqNameToSourceStorage[fqName] ?: []
     }
 
     override fun getComplementaryFilesRecursive(dirtyFiles: Collection<File>): Collection<File> {
@@ -340,8 +340,8 @@ abstract class AbstractIncrementalCache<ClassName>(
             val classes2recompile = sourceToClassesMap.getFqNames(file).orEmpty()
             classes2recompile.filter { !processedClasses.contains(it) }.forEach { class2recompile ->
                 processedClasses.add(class2recompile)
-                val sealedClasses = findSealedSupertypes(class2recompile, listOf(this))
-                val allSubtypes = sealedClasses.flatMap { withSubtypes(it, listOf(this)) }.also {
+                val sealedClasses = findSealedSupertypes(class2recompile, [this])
+                val allSubtypes = sealedClasses.flatMap { withSubtypes(it, [this]) }.also {
                     // there could be only one sealed class in hierarchy
                     processedClasses.addAll(it)
                 }
@@ -374,7 +374,7 @@ abstract class AbstractIncrementalCache<ClassName>(
 
         for (expect in expectActualTracker.expectsOfLenientStubsSet) {
             // We only need the key
-            expectOfLenientStubs[expect] = emptySet()
+            expectOfLenientStubs[expect] = []
         }
     }
 }

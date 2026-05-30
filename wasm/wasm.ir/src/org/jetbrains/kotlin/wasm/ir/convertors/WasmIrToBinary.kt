@@ -87,7 +87,7 @@ class WasmIrToBinary(
     private val resolver = module.resolver
 
     // Collected resolved annotations per function for code metadata section emission
-    private val resolvedAnnotationsByFunction = mutableListOf<FunctionResolvedAnnotations>()
+    private val resolvedAnnotationsByFunction: MutableList<FunctionResolvedAnnotations> = []
 
     // Context for tracking annotations during function emission
     private var currentFunctionCodeStart: Int = -1
@@ -246,7 +246,7 @@ class WasmIrToBinary(
         val byKind = mutableMapOf<AnnotationKind, MutableList<Pair<Int, ResolvedAnnotation>>>()
         for (funcAnnotations in resolvedAnnotationsByFunction) {
             for (resolved in funcAnnotations.annotations) {
-                byKind.getOrPut(resolved.kind) { mutableListOf() }
+                byKind.getOrPut(resolved.kind) { [] }
                     .add(funcAnnotations.functionIndex to resolved)
             }
         }

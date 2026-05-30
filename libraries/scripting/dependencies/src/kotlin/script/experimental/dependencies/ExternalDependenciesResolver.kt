@@ -32,7 +32,7 @@ interface ExternalDependenciesResolver {
         artifactCoordinates: String,
         options: Options = Options.Empty,
         sourceCodeLocation: SourceCode.LocationWithId? = null
-    ): ResultWithDiagnostics<List<File>> = resolve(listOf(ArtifactWithLocation(artifactCoordinates, sourceCodeLocation)), options)
+    ): ResultWithDiagnostics<List<File>> = resolve([ArtifactWithLocation(artifactCoordinates, sourceCodeLocation)], options)
 
     suspend fun resolve(
         artifactsWithLocations: List<ArtifactWithLocation>,

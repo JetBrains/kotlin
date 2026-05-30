@@ -85,7 +85,7 @@ abstract class KtModuleByCompilerConfiguration(
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
         val scope = StandaloneProjectFactory.createLibraryModuleSearchScope(
             jdkHomePaths,
-            emptyList(),
+            [],
             testServices.environmentManager.getApplicationEnvironment(),
             project
         )
@@ -119,7 +119,7 @@ abstract class KtModuleByCompilerConfiguration(
 
     protected abstract val ktModule: KaModule
 
-    private fun librariesByRoots(roots: List<Path>): List<LibraryByRoots> = roots.map { LibraryByRoots(listOf(it), ktModule, project, testServices) }
+    private fun librariesByRoots(roots: List<Path>): List<LibraryByRoots> = roots.map { LibraryByRoots([it], ktModule, project, testServices) }
 
     val languageVersionSettings: LanguageVersionSettings
         get() = testModule.languageVersionSettings
@@ -147,7 +147,7 @@ class KaScriptModuleByCompilerConfiguration(
     testModule: TestModule,
     override val file: KtFile,
     testServices: TestServices,
-) : KtModuleByCompilerConfiguration(project, testModule, listOf(file), testServices), KaScriptModule {
+) : KtModuleByCompilerConfiguration(project, testModule, [file], testServices), KaScriptModule {
     override val ktModule: KaModule get() = this
     override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
 }
@@ -163,7 +163,7 @@ class KaLibraryModuleByCompilerConfiguration(
     override val libraryName: String get() = testModule.name
     override val librarySources: KaLibrarySourceModule? get() = null
     override val isSdk: Boolean get() = false
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+    override val binaryVirtualFiles: Collection<VirtualFile> = []
 
     override val baseContentScope: GlobalSearchScope =
         GlobalSearchScope.filesScope(project, psiFiles.map { it.virtualFile })
@@ -190,19 +190,19 @@ private class LibraryByRoots(
 ) : KaLibraryModule, KaModuleBase() {
     override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createLibraryModuleSearchScope(
         roots,
-        emptyList(),
+        [],
         testServices.environmentManager.getApplicationEnvironment(),
         project,
     )
     override val libraryName: String get() = "Test Library $roots"
-    override val directRegularDependencies: List<KaModule> get() = emptyList()
-    override val directDependsOnDependencies: List<KaModule> get() = emptyList()
-    override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
-    override val directFriendDependencies: List<KaModule> get() = emptyList()
+    override val directRegularDependencies: List<KaModule> get() = []
+    override val directDependsOnDependencies: List<KaModule> get() = []
+    override val transitiveDependsOnDependencies: List<KaModule> get() = []
+    override val directFriendDependencies: List<KaModule> get() = []
     override val targetPlatform: TargetPlatform get() = parentModule.targetPlatform
     override val binaryRoots: Collection<Path> get() = roots
     override val isSdk: Boolean get() = false
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+    override val binaryVirtualFiles: Collection<VirtualFile> = []
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

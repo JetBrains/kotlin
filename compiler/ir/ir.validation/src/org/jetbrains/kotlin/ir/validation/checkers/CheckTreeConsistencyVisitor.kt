@@ -24,7 +24,7 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
     var hasInconsistency = false
 
     private val visitedElements = hashSetOf<IrElement>()
-    private val parentChain: MutableList<IrElement> = mutableListOf()
+    private val parentChain: MutableList<IrElement> = []
     private var currentActualParent: IrDeclarationParent? = null
 
     override fun visitElement(element: IrElement) {

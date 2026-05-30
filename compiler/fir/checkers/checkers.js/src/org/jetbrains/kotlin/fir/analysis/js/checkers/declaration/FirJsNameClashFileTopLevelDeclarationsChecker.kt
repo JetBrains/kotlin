@@ -28,7 +28,7 @@ object FirJsNameClashFileTopLevelDeclarationsChecker : FirFileChecker(MppChecker
     ) {
         val stableName = FirJsStableName.createStableNameOrNull(symbol)
         if (stableName != null) {
-            getOrPut(stableName.name) { mutableListOf() }.add(stableName)
+            getOrPut(stableName.name) { [] }.add(stableName)
         }
         if (symbol is FirPropertySymbol) {
             symbol.getterSymbol?.let { getter -> addStableName(getter) }

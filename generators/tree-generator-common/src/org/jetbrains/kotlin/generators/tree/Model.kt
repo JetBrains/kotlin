@@ -12,7 +12,7 @@ data class Model<Element : AbstractElement<Element, *, *>>(
     val rootElement: Element,
 ) {
     fun inheritFields() {
-        val processed = mutableSetOf<Element>()
+        val processed: MutableSet<Element> = []
         fun recurse(element: Element) {
             if (!processed.add(element)) return
             for (parent in element.elementParents) {

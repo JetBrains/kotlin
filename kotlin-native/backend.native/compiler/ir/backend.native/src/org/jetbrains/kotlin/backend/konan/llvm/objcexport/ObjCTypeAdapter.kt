@@ -87,7 +87,7 @@ internal class ObjCTypeAdapter private constructor(val irClass: IrClass?, val ob
                 irClass: IrClass?,
                 objCName: String,
                 vtableSize: Int,
-                reverseAdapters: List<KotlinToObjCMethodAdapter> = emptyList(),
+                reverseAdapters: List<KotlinToObjCMethodAdapter> = [],
         ) = ObjCTypeAdapter(
                 irClass = irClass,
                 objCName = objCName,

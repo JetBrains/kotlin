@@ -247,7 +247,7 @@ object ManagedTestAssertions {
 
         return AssertionFailedError(
             message,
-            FileInfo(writeTargetFile.absolutePathString(), byteArrayOf()),
+            FileInfo(writeTargetFile.absolutePathString(), []),
             normalizedActual,
         )
     }

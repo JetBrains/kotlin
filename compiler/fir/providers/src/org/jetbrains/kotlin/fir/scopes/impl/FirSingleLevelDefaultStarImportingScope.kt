@@ -47,7 +47,7 @@ class FirSingleLevelDefaultStarImportingScope(
                     }
                     packageFqName = it.fqName
                 }
-            } ?: emptyList()
+            } ?: []
     }
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object K1AbstractExpectActualAnnotationMatchChecker {
-    private val SKIPPED_CLASS_IDS = setOf(
+    private val SKIPPED_CLASS_IDS: Set<ClassId> = [
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,
         StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration,
@@ -25,7 +25,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.WasExperimental,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
-    )
+    ]
 
     class Incompatibility(
         /**
@@ -89,10 +89,10 @@ object K1AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: PropertySymbolMarker,
         actualSymbol: PropertySymbolMarker,
     ): Incompatibility? {
-        listOf(
+        [
             expectSymbol.getter to actualSymbol.getter,
             expectSymbol.setter to actualSymbol.setter,
-        ).forEach { [expectAccessor, actualAccessor] ->
+        ].forEach { [expectAccessor, actualAccessor] ->
             if (expectAccessor != null && actualAccessor != null) {
                 areAnnotationsSetOnDeclarationsCompatible(expectAccessor, actualAccessor)?.let {
                     // Write containing declarations into diagnostic
@@ -191,7 +191,7 @@ object K1AbstractExpectActualAnnotationMatchChecker {
             if (expectAnnotation.isRetentionSource && skipSourceAnnotations) {
                 continue
             }
-            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: emptyList()
+            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: []
             if (actualAnnotationsWithSameClassId.isEmpty()) {
                 return Incompatibility(
                     expectSymbol,

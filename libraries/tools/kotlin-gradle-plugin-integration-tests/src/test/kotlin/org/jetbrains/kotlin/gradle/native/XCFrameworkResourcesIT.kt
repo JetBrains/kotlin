@@ -40,12 +40,12 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     ) {
         project("empty", gradleVersion) {
             configureForResources {
-                listOf(
+                [
                     @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64(),
                     iosArm64(),
                     iosSimulatorArm64(),
-                )
+                ]
             }
 
             build("assembleSharedDebugXCFramework") {
@@ -87,12 +87,12 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
     ) {
         project("empty", gradleVersion) {
             configureForResources {
-                listOf(
+                [
                     @Suppress("DEPRECATION") // fixme: KT-81704 Cleanup tests after apple x64 family deprecation
                     iosX64(),
                     iosArm64(),
                     iosSimulatorArm64(),
-                )
+                ]
             }
 
             build("assembleSharedDebugXCFramework") {
@@ -231,10 +231,10 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
             project("empty", gradleVersion) {
                 embedDirectoryFromTestData("resourcesXCFramework/iosApp", "iosApp")
                 configureForResources {
-                    listOf(
+                    [
                         iosArm64(),
                         iosSimulatorArm64(),
-                    )
+                    ]
                 }
 
                 build("assembleSharedDebugXCFramework") {
@@ -266,7 +266,7 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
                     .resolve("xcodeDerivedData/Build/Products/Debug-iphonesimulator/XCTestAppTests.xctest/Frameworks/Shared.framework")
 
                 val stubSymbols = runProcess(
-                    listOf("nm", "-U", "Shared"),
+                    ["nm", "-U", "Shared"],
                     frameworkPath.toFile(),
                     redirectErrorStream = false,
                 ).output
@@ -283,9 +283,9 @@ class XCFrameworkResourcesIT : KGPBaseTest() {
 
 private fun TestProject.configureForResources(
     multiplatform: KotlinMultiplatformExtension.() -> List<KotlinNativeTarget> = {
-        listOf(
+        [
             iosArm64()
-        )
+        ]
     },
 ) {
     embedDirectoryFromTestData("resourcesXCFramework/appResources", "appResources")
@@ -315,8 +315,8 @@ private fun TestProject.configureForResources(
                     resourcePathForSourceSet = { sourceSet ->
                         KotlinTargetResourcesPublication.ResourceRoot(
                             resourcesBaseDirectory = project.provider { project.file("appResources") },
-                            includes = emptyList(),
-                            excludes = emptyList(),
+                            includes = [],
+                            excludes = [],
                         )
                     },
                     relativeResourcePlacement = project.provider { File("embedResources") },

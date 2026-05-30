@@ -53,7 +53,7 @@ fun createModuleDescriptor(
 fun createModuleDescriptor(
     environment: KotlinCoreEnvironment,
     kotlinFiles: List<File>,
-    dependencyKlibs: List<Path> = emptyList(),
+    dependencyKlibs: List<Path> = [],
 ): ModuleDescriptor {
 
     val klibFactory = KlibMetadataFactories(::KonanBuiltIns, DynamicTypeDeserializer)
@@ -92,10 +92,10 @@ fun createModuleDescriptor(
 
     moduleDescriptor.setDependencies(
         ModuleDependenciesImpl(
-            allDependencies = listOf(moduleDescriptor, stdlibModuleDescriptor) + dependencyKlibDescriptors,
-            modulesWhoseInternalsAreVisible = emptySet(),
-            directExpectedByDependencies = emptyList(),
-            allExpectedByDependencies = emptySet()
+            allDependencies = [moduleDescriptor, stdlibModuleDescriptor] + dependencyKlibDescriptors,
+            modulesWhoseInternalsAreVisible = [],
+            directExpectedByDependencies = [],
+            allExpectedByDependencies = []
         )
     )
 

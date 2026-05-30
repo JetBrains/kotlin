@@ -161,10 +161,10 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
                 }
             }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeAnimationJar()
-        )
+        ]
     )
 
     @Test
@@ -891,7 +891,7 @@ class ComposerParamSignatureTests : AbstractCodegenSignatureTest() {
                 }
             }
         """,
-        additionalPaths = listOf(Classpath.composeUiGraphicsJar())
+        additionalPaths = [Classpath.composeUiGraphicsJar()]
     )
 
     @Test

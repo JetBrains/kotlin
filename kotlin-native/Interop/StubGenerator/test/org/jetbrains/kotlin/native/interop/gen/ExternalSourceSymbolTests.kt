@@ -38,7 +38,7 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
             headers = generated.h
         """.trimIndent())
         val index = org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(
-                buildNativeLibraryFrom(def, arrayOf("-compiler-option", "-I${files.directory}")),
+                buildNativeLibraryFrom(def, ["-compiler-option", "-I${files.directory}"]),
                 verbose = false,
         ).index
 
@@ -59,7 +59,7 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
             headers = generated.h
         """.trimIndent())
         val index = org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(
-                buildNativeLibraryFrom(def, arrayOf("-compiler-option", "-I${files.directory}")),
+                buildNativeLibraryFrom(def, ["-compiler-option", "-I${files.directory}"]),
                 verbose = false,
         ).index
 
@@ -80,7 +80,7 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
             headers = generated.h
         """.trimIndent())
         val index = org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(
-                buildNativeLibraryFrom(def, arrayOf("-compiler-option", "-I${files.directory}")),
+                buildNativeLibraryFrom(def, ["-compiler-option", "-I${files.directory}"]),
                 verbose = false,
         ).index
 
@@ -115,7 +115,7 @@ class ExternalSourceSymbolTests : IndexerTestsBase() {
         """.trimIndent())
 
         val index = org.jetbrains.kotlin.native.interop.indexer.buildNativeIndex(
-                buildNativeLibraryFrom(def, arrayOf("-compiler-option", "-I${files.directory}")),
+                buildNativeLibraryFrom(def, ["-compiler-option", "-I${files.directory}"]),
                 verbose = false,
         ).index
 

@@ -84,9 +84,9 @@ object FirSessionFactoryHelper {
         return object : FirSession(Kind.Source) {}.apply {
             val moduleData = FirSourceModuleData(
                 Name.identifier("<stub module>"),
-                dependencies = emptyList(),
-                dependsOnDependencies = emptyList(),
-                friendDependencies = emptyList(),
+                dependencies = [],
+                dependsOnDependencies = [],
+                friendDependencies = [],
                 platform = JvmPlatforms.unspecifiedJvmPlatform,
             )
             registerModuleData(moduleData)

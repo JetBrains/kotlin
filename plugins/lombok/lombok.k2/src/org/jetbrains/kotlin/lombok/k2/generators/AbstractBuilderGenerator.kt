@@ -115,19 +115,19 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
     protected abstract fun FirJavaClassBuilder.completeBuilder(classSymbol: FirClassSymbol<*>, builderSymbol: FirClassSymbol<*>)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        if (!classSymbol.isSuitableJavaClass()) return emptySet()
+        if (!classSymbol.isSuitableJavaClass()) return []
         return functionsCache.getValue(classSymbol)?.keys.orEmpty()
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        val classesMap = builderClassesCache.getValue(classSymbol) ?: return emptySet()
+        if (!classSymbol.isSuitableJavaClass()) return []
+        val classesMap = builderClassesCache.getValue(classSymbol) ?: return []
         return classesMap.keys
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val classSymbol = context?.owner ?: return emptyList()
-        return functionsCache.getValue(classSymbol)?.get(callableId.callableName)?.let { listOf(it.symbol) } ?: emptyList()
+        val classSymbol = context?.owner ?: return []
+        return functionsCache.getValue(classSymbol)?.get(callableId.callableName)?.let { [it.symbol] } ?: []
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -202,7 +202,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
                 entitySymbol.createJavaMethod(
                     name,
-                    valueParameters = emptyList(),
+                    valueParameters = [],
                     returnTypeRef = createBuilderTypeRef(methodTypeParameters.map { it.symbol }),
                     visibility = visibility,
                     modality = Modality.FINAL,
@@ -217,7 +217,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 addIfNonClashing(Name.identifier(TO_BUILDER), existingFunctionNames) { name ->
                     entitySymbol.createJavaMethod(
                         name,
-                        valueParameters = emptyList(),
+                        valueParameters = [],
                         // toBuilder() is always an instance method, so the class type parameters are
                         // already provided by the dispatch receiver. The method must not introduce its
                         // own independent type parameters — otherwise call-site inference would fail.
@@ -269,7 +269,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                                 builderDeclaration,
                                 builderSymbol,
                                 entityClass.symbol,
-                                existingFunctionNames = emptySet()
+                                existingFunctionNames = []
                             )
                             addAll(builderMethods.values)
                         }
@@ -286,7 +286,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     @OptIn(SymbolInternals::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
-        val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
+        val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return []
         return buildList {
             val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
@@ -318,17 +318,17 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
         addSpecialBuilderMethods(builder, builderSymbol, builderDeclaration, existingFunctionNames)
 
-        val items = when (builderDeclaration) {
+        val items: List<FirVariable> = when (builderDeclaration) {
             is FirJavaClass -> {
                 if (entityJavaClass.isRecord) {
-                    entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir } ?: emptyList()
+                    entityJavaClass.primaryConstructorIfAny(session)?.valueParameterSymbols?.map { it.fir }.orEmpty()
                 } else {
                     entityJavaClass.declarations.filterIsInstance<FirJavaField>().map { it }
                 }
             }
             is FirJavaConstructor -> builderDeclaration.valueParameters
             is FirJavaMethod -> builderDeclaration.valueParameters
-            else -> emptyList()
+            else -> []
         }
         for (item in items) {
             when (val singular = lombokService.getSingular(item.symbol)) {
@@ -356,7 +356,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         addIfNonClashing(setterName, existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
-                valueParameters = listOf(ConeLombokValueParameter(fieldName, item.returnTypeRef)),
+                valueParameters = [ConeLombokValueParameter(fieldName, item.returnTypeRef)],
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 modality = Modality.FINAL,
                 visibility = builder.visibility
@@ -386,16 +386,16 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
                 val parameterType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
-                valueParameters = listOf(
+                valueParameters = [
                     ConeLombokValueParameter(nameInSingularForm, parameterType.toRef(source))
-                )
+                ]
 
                 val baseType = when (typeName) {
                     in LombokNames.SUPPORTED_GUAVA_COLLECTIONS -> JavaClasses.Iterable
                     else -> JavaClasses.Collection
                 }
 
-                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = listOf(parameterType))
+                addMultipleParameterType = DummyJavaClassType(baseType, typeArguments = [parameterType])
                     .withProperNullability(singular.allowNull)
                     .toRef(source)
             }
@@ -403,12 +403,12 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             in LombokNames.SUPPORTED_MAPS -> {
                 val keyType = javaClassifierType.parameterType(0) ?: fallbackParameterType ?: return
                 val valueType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
-                valueParameters = listOf(
+                valueParameters = [
                     ConeLombokValueParameter(Name.identifier("key"), keyType.toRef(source)),
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
-                )
+                ]
 
-                addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = listOf(keyType, valueType))
+                addMultipleParameterType = DummyJavaClassType(JavaClasses.Map, typeArguments = [keyType, valueType])
                     .withProperNullability(singular.allowNull)
                     .toRef(source)
             }
@@ -418,15 +418,15 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
                 val columnKeyType = javaClassifierType.parameterType(1) ?: fallbackParameterType ?: return
                 val valueType = javaClassifierType.parameterType(2) ?: fallbackParameterType ?: return
 
-                valueParameters = listOf(
+                valueParameters = [
                     ConeLombokValueParameter(Name.identifier("rowKey"), rowKeyType.toRef(source)),
                     ConeLombokValueParameter(Name.identifier("columnKey"), columnKeyType.toRef(source)),
                     ConeLombokValueParameter(Name.identifier("value"), valueType.toRef(source)),
-                )
+                ]
 
                 addMultipleParameterType = DummyJavaClassType(
                     JavaClasses.Table,
-                    typeArguments = listOf(rowKeyType, columnKeyType, valueType)
+                    typeArguments = [rowKeyType, columnKeyType, valueType]
                 ).withProperNullability(singular.allowNull).toRef(source)
             }
 
@@ -449,7 +449,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         addIfNonClashing(item.name.toMethodName(builder), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
-                valueParameters = listOf(ConeLombokValueParameter(item.name, addMultipleParameterType)),
+                valueParameters = [ConeLombokValueParameter(item.name, addMultipleParameterType)],
                 returnTypeRef = builderType,
                 modality = Modality.FINAL,
                 visibility = visibility
@@ -459,7 +459,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
         addIfNonClashing(Name.identifier("clear${item.name.identifier.capitalize()}"), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 name = it,
-                valueParameters = listOf(),
+                valueParameters = [],
                 returnTypeRef = builderType,
                 modality = Modality.FINAL,
                 visibility = visibility
@@ -625,7 +625,7 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             is FirJavaClass -> typeParameters.map { it.symbol.fir }
             is FirJavaMethod -> typeParameters
             is FirJavaConstructor -> typeParameters.map { it.symbol.fir }
-            else -> emptyList() // Use the fallback just in case, although it's normally unreachable
+            else -> [] // Use the fallback just in case, although it's normally unreachable
         }
         return buildMap {
             for (typeParameter in typeParameters) {

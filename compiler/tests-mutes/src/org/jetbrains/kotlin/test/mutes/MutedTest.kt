@@ -48,7 +48,7 @@ fun getMutedTest(testClass: Class<*>, methodKey: String): MutedTest? {
 internal fun loadMutedTests(file: File): List<MutedTest> {
     if (!file.exists()) {
         System.err.println("Can't find mute file: ${file.absolutePath}")
-        return listOf()
+        return []
     }
 
     try {

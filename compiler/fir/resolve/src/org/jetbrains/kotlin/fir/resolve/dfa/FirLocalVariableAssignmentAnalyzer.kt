@@ -56,8 +56,8 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         rootSymbol = null,
         assignedLocalVariablesByDeclaration = null,
         variableAssignments = null,
-        scopes = stackOf(),
-        postponedLambdas = stackOf(),
+        scopes = [],
+        postponedLambdas = [],
     )
 
     /**
@@ -211,7 +211,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         if (rootSymbol == null) {
             rootSymbol = function.symbol
             scopes.push(null to VariableAssignments())
-            return emptySet()
+            return []
         }
         val [info, prohibitSmartCasts] =
             enterScope(function.symbol, function is FirAnonymousFunction && function.invocationKind.isInPlace)
@@ -311,7 +311,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
      * Enters an [FirLoop] and returns all [FirPropertySymbol]s which are defined before the loop that will be modified within the loop.
      */
     fun enterLoop(loop: FirLoop): Set<FirPropertySymbol> {
-        if (rootSymbol == null) return emptySet()
+        if (rootSymbol == null) return []
         val [info, _] = enterScope(loop, evaluatedInPlace = true)
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
@@ -320,7 +320,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
      * Exits an [FirLoop] and returns all [FirPropertySymbol]s which were defined before the loop that were modified within the loop.
      */
     fun exitLoop(): Set<FirPropertySymbol> {
-        if (rootSymbol == null) return emptySet()
+        if (rootSymbol == null) return []
         val [info, _] = scopes.pop()
         return info?.assignedInside?.getAssignedProperties().orEmpty()
     }
@@ -436,7 +436,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
         }
 
         fun add(property: FirProperty, assignment: Assignment): Boolean {
-            return assignments.getOrPut(property) { mutableSetOf() }.add(assignment)
+            return assignments.getOrPut(property) { [] }.add(assignment)
         }
 
         @CfgInternals
@@ -459,7 +459,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
 
             var modified = false
             for ([property, values] in other.assignments) {
-                modified = modified or assignments.getOrPut(property) { mutableSetOf() }.addAll(values)
+                modified = modified or assignments.getOrPut(property) { [] }.addAll(values)
             }
             return modified
         }
@@ -479,10 +479,10 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
     private class MiniFlow(val parents: Set<MiniFlow>) {
         val assignedLater = VariableAssignments()
 
-        fun fork(): MiniFlow = MiniFlow(setOf(this))
+        fun fork(): MiniFlow = MiniFlow([this])
 
         companion object {
-            fun start() = MiniFlow(emptySet())
+            fun start() = MiniFlow([])
         }
     }
 
@@ -651,7 +651,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
             val property = variableDeclarations.lastOrNull { name in it }?.get(name) ?: return
 
             val assignment = Assignment(operatorAssignment)
-            assignments.getOrPut(property) { mutableListOf() }.add(assignment)
+            assignments.getOrPut(property) { [] }.add(assignment)
             flow.recordAssignment(property, assignment)
         }
 
@@ -667,7 +667,7 @@ class FirLocalVariableAssignmentAnalyzer private constructor(
 
         class MiniCfgData {
             var flow: MiniFlow = MiniFlow.start()
-            val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque(listOf(mutableMapOf()))
+            val variableDeclarations: ArrayDeque<MutableMap<Name, FirProperty>> = ArrayDeque([mutableMapOf()])
             val assignments: MutableMap<FirProperty, MutableList<Assignment>> = mutableMapOf()
             val forks: MutableMap<Any /* FirBasedSymbol<*> | FirLoop */, Fork> = mutableMapOf()
         }

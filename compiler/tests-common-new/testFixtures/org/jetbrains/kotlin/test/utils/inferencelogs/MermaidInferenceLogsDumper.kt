@@ -122,7 +122,7 @@ class MermaidInferenceLogsDumper(
         idPrefix: String,
         title: String,
         outgoingConnectionStyle: ConnectionStyle = ConnectionStyle.Normal,
-        extraClasses: List<String> = emptyList(),
+        extraClasses: List<String> = [],
     ): RenderingResult {
         val id = idPrefix + nextNodeIndex++
 
@@ -130,7 +130,7 @@ class MermaidInferenceLogsDumper(
             rendered = "$indent$id[\"$title\"]\n${indent}class $id nowrapClass;" +
                     extraClasses.joinToString("") { "\n${indent}class $id $it;" },
             firstNodeId = id,
-            lastNodes = listOf(LastNodeConnectionInfo(id, outgoingConnectionLength = 1, outgoingConnectionStyle)),
+            lastNodes = [LastNodeConnectionInfo(id, outgoingConnectionLength = 1, outgoingConnectionStyle)],
         )
     }
 
@@ -169,7 +169,7 @@ class MermaidInferenceLogsDumper(
     ): RenderingResult? {
         if (isEmpty()) return null
 
-        val renderedWithConnectors = mutableListOf(first().rendered)
+        val renderedWithConnectors: MutableList<String> = [first().rendered]
 
         for (it in 1 until size) {
             val previous = this[it - 1]
@@ -209,7 +209,7 @@ class MermaidInferenceLogsDumper(
             require(constraint.origins.isNotEmpty() || constraint is InitialConstraintElement) {
                 "$constraint has no originating constraints, but is not an InitialConstraintElement. Some `withOrigins()` calls are missing."
             }
-            constraintToTransitiveOrigins[constraint] = constraint.origins.fold(setOf()) { acc, element ->
+            constraintToTransitiveOrigins[constraint] = constraint.origins.fold([]) { acc, element ->
                 when {
                     element is InitialConstraintElement -> acc + element
                     else -> acc + constraintToTransitiveOrigins[element].orEmpty()
@@ -247,7 +247,7 @@ class MermaidInferenceLogsDumper(
         return buildMap<_, MutableSet<ConstraintElement>> {
             for (it in allConstraints) {
                 for (origin in it.getOrigins()) {
-                    getOrPut(origin) { mutableSetOf() }.add(it)
+                    getOrPut(origin) { [] }.add(it)
                 }
             }
         }
@@ -260,7 +260,7 @@ class MermaidInferenceLogsDumper(
         return node(
             idPrefix = "variableReadiness",
             title = "Choose " + formatCode(variable) + " with " + formatCodeBlock(readiness),
-            extraClasses = listOf("readinessStyle"),
+            extraClasses = ["readinessStyle"],
         )
     }
 
@@ -277,7 +277,7 @@ class MermaidInferenceLogsDumper(
         val title = node(
             idPrefix = "call",
             title = "Call ${index + 1}<br><br>" + formatCodeBlock(call.render),
-            extraClasses = listOf("callStyle"),
+            extraClasses = ["callStyle"],
         )
 
         val contents = candidates.renderNotNullWithIndex { _ -> render() }?.join("\n\n") ?: return null
@@ -291,7 +291,7 @@ class MermaidInferenceLogsDumper(
         val title = node(
             idPrefix = "candidate",
             title = "Candidate ${index + 1}: $formattedSymbol" + "<br><br>" + formatCodeBlock(signature),
-            extraClasses = listOf("candidateStyle"),
+            extraClasses = ["candidateStyle"],
         )
 
         val contents = blocks.renderList("\n\n") ?: return null
@@ -326,11 +326,11 @@ class MermaidInferenceLogsDumper(
 
     private class TitledGraph(
         val title: RenderingResult,
-        val constraints: MutableList<ConstraintElement> = mutableListOf(),
+        val constraints: MutableList<ConstraintElement> = [],
     )
 
     private fun List<BlockItemElement>.partitionIntoTitledGraphs(first: RenderingResult): List<TitledGraph> {
-        val graphs = mutableListOf(TitledGraph(first))
+        val graphs: MutableList<TitledGraph> = [TitledGraph(first)]
         var index = 0
 
         for (it in this) {
@@ -358,7 +358,7 @@ class MermaidInferenceLogsDumper(
 
         val ranks = calculateRanks(constraints)
         val maxRank = ranks.values.maxOrNull() ?: 0
-        val tailNodes = mutableListOf<RenderingResult>()
+        val tailNodes: MutableList<RenderingResult> = []
 
         val rendered = constraints.renderListWithoutJoining { element, rendered ->
             val rank = ranks[element] ?: error("Missing rank")
@@ -393,7 +393,7 @@ class MermaidInferenceLogsDumper(
 
     private fun calculateRanks(constraints: List<ConstraintElement>): MutableMap<ConstraintElement, Int> {
         val ranks = mutableMapOf<ConstraintElement, Int>()
-        val rankToCount = mutableListOf<Int>()
+        val rankToCount: MutableList<Int> = []
 
         fun getCountForRank(rank: Int) = rankToCount.getOrNull(rank)
             ?: 0.also(rankToCount::add)

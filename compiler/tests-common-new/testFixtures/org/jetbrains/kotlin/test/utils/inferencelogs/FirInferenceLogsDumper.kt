@@ -71,13 +71,13 @@ abstract class FirInferenceLogsDumper {
     class CallNode(
         val call: FirInferenceLogger.Call,
         val index: Int,
-        val candidates: MutableList<CandidateNode> = mutableListOf(),
+        val candidates: MutableList<CandidateNode> = [],
     ) : PrintingNode()
 
     class CandidateNode(
         val owner: BlockOwner.Candidate,
         val index: Int,
-        val blocks: MutableList<BlockElement> = mutableListOf(),
+        val blocks: MutableList<BlockElement> = [],
     ) : PrintingNode()
 
     class PassthroughNode(val element: FirInferenceLogger.LoggingElement) : PrintingNode()
@@ -90,7 +90,7 @@ abstract class FirInferenceLogsDumper {
     protected fun buildAdditionalPrintingStructure(topLevelElements: List<BlockElement>): MutableList<PrintingNode> {
         val callIndices = mutableMapOf<FirElement, Int>()
         val candidateIndices = mutableMapOf<FirElement?, MutableMap<BlockOwner, Int>>()
-        val topLevelNodes = mutableListOf<PrintingNode>()
+        val topLevelNodes: MutableList<PrintingNode> = []
 
         for (element in topLevelElements) {
             val owner = element.owner
@@ -113,7 +113,7 @@ abstract class FirInferenceLogsDumper {
                 .getOrPut(owningCall.fir) { mutableMapOf() }
                 .let { it.getOrPut(owner) { it.size } }
 
-            val candidate = CandidateNode(owner, candidateIndex, mutableListOf(element))
+            val candidate = CandidateNode(owner, candidateIndex, [element])
 
             if (owningCall.fir == previousCall?.call?.fir) {
                 previousCall.candidates.add(candidate)
@@ -121,7 +121,7 @@ abstract class FirInferenceLogsDumper {
             }
 
             val callIndex = callIndices.getOrPut(owningCall.fir) { callIndices.size }
-            val call = CallNode(owningCall, callIndex, mutableListOf(candidate))
+            val call = CallNode(owningCall, callIndex, [candidate])
             topLevelNodes += call
         }
 

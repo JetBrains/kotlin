@@ -28,7 +28,7 @@ class TypeArgumentsToParametersMapper {
 
         abstract fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument
 
-        object NoExplicitArguments : TypeArgumentsMapping(emptyList()) {
+        object NoExplicitArguments : TypeArgumentsMapping([]) {
             private val emptyIterator = mapOf<Nothing, Nothing>().iterator()
 
             override fun getTypeArgument(typeParameterDescriptor: TypeParameterDescriptor): TypeArgument =
@@ -55,11 +55,11 @@ class TypeArgumentsToParametersMapper {
 
         if (call.typeArguments.size != descriptor.typeParameters.size) {
             return TypeArgumentsMapping.TypeArgumentsMappingImpl(
-                listOf(WrongCountOfTypeArguments(descriptor, call.typeArguments.size)), emptyMap()
+                [WrongCountOfTypeArguments(descriptor, call.typeArguments.size)], emptyMap()
             )
         } else {
             val typeParameterToArgumentMap = descriptor.typeParameters.zip(call.typeArguments).associate { it }
-            return TypeArgumentsMapping.TypeArgumentsMappingImpl(listOf(), typeParameterToArgumentMap)
+            return TypeArgumentsMapping.TypeArgumentsMappingImpl([], typeParameterToArgumentMap)
         }
     }
 

@@ -36,13 +36,13 @@ class ContractInterpretationDispatcher {
     private val constantsInterpreter = ConstantValuesInterpreter()
     private val conditionInterpreter = ConditionInterpreter(this)
     private val conditionalEffectInterpreter = ConditionalEffectInterpreter(this)
-    private val effectsInterpreters: List<EffectDeclarationInterpreter> = listOf(
+    private val effectsInterpreters: List<EffectDeclarationInterpreter> = [
         ReturnsEffectInterpreter(this),
         CallsEffectInterpreter(this)
-    )
+    ]
 
     fun convertContractDescriptorToFunctor(contractDescription: ContractDescription): Functor? {
-        val resultingClauses = mutableListOf<ESEffect>()
+        val resultingClauses: MutableList<ESEffect> = []
         for (effect in contractDescription.effects) {
             if (effect is ConditionalEffectDeclaration) {
                 resultingClauses.add(conditionalEffectInterpreter.interpret(effect) ?: return null)

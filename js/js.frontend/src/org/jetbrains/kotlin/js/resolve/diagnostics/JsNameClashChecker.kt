@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.js.resolve.diagnostics
 
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.js.naming.JsNameSuggestion
@@ -62,15 +63,16 @@ abstract class AbstractNameClashChecker(
     private val kotlinTypeRefiner: KotlinTypeRefiner,
 ) : DeclarationChecker {
     companion object {
-        private val COMMON_DIAGNOSTICS = setOf(
-                Errors.REDECLARATION,
-                Errors.CONFLICTING_OVERLOADS,
-                Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION)
+        private val COMMON_DIAGNOSTICS: Set<DiagnosticFactory1<*, *>> = [
+            Errors.REDECLARATION,
+            Errors.CONFLICTING_OVERLOADS,
+            Errors.PACKAGE_OR_CLASSIFIER_REDECLARATION,
+        ]
     }
 
     private val scopes = mutableMapOf<DeclarationDescriptor, MutableMap<String, DeclarationDescriptor>>()
     private val clashedFakeOverrides = mutableMapOf<DeclarationDescriptor, Pair<DeclarationDescriptor, DeclarationDescriptor>>()
-    private val clashedDescriptors = mutableSetOf<Pair<DeclarationDescriptor, String>>()
+    private val clashedDescriptors: MutableSet<Pair<DeclarationDescriptor, String>> = []
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         // We don't generate JS properties for extension properties, we generate methods instead, so in this case
@@ -164,7 +166,7 @@ abstract class AbstractNameClashChecker(
                     (overriddenNames + primary).distinctBy { it.names }
                 }
                 else {
-                    emptyList()
+                    []
                 }
             }
             else {

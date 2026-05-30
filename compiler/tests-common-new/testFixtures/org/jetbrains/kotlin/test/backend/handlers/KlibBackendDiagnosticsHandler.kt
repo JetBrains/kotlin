@@ -16,11 +16,11 @@ import org.jetbrains.kotlin.test.services.service
 
 class KlibBackendDiagnosticsHandler(testServices: TestServices) : KlibArtifactHandler(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::DiagnosticsService))
+        get() = [service(::DiagnosticsService)]
 
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(DiagnosticsDirectives)
+        get() = [DiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         reportKtDiagnostics(module, info.reporter)

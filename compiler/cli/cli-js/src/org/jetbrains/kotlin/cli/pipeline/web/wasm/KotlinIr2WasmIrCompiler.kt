@@ -84,7 +84,7 @@ class WholeWorldCompiler(configuration: CompilerConfiguration, override val irFa
             loweredIr = loweredIr,
         )
 
-        return listOf(configuration)
+        return [configuration]
     }
 }
 
@@ -137,7 +137,7 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
             mainModuleFragment = loweredIr.backendContext.irModuleFragment,
             typeTracking = false,
         )
-        return listOf(configuration)
+        return [configuration]
     }
 }
 
@@ -199,7 +199,7 @@ private fun compileSingleModuleToWasmIr(
         skipLocations = !configuration.wasmGenerateDwarf && !configuration.sourceMap,
     )
 
-    val dependencyImports = mutableSetOf<WasmModuleDependencyImport>()
+    val dependencyImports: MutableSet<WasmModuleDependencyImport> = []
     val referencedDeclarations = ModuleReferencedDeclarations()
     val referencedTypes = typeTracking.ifTrue { ModuleReferencedTypes() }
     fun referenceFunction(functionSymbol: IrFunctionSymbol) {
@@ -212,7 +212,7 @@ private fun compileSingleModuleToWasmIr(
         )
     }
 
-    val compiledModuleFragments = mutableListOf<WasmCompiledFileFragment>()
+    val compiledModuleFragments: MutableList<WasmCompiledFileFragment> = []
 
     val mainModuleFileFragment = codeGenerator.generateAsSingleFileFragment(
         irModuleFragment = mainModuleFragment,

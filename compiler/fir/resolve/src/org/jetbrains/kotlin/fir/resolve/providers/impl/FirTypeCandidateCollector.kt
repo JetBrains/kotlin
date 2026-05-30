@@ -27,7 +27,7 @@ class FirTypeCandidateCollector(
     private val supertypeSupplier: SupertypeSupplier = SupertypeSupplier.Default,
     private val resolveDeprecations: Boolean = true,
 ) {
-    private val candidates: MutableSet<TypeCandidate> = mutableSetOf()
+    private val candidates: MutableSet<TypeCandidate> = []
 
     var applicability: CandidateApplicability? = null
         private set
@@ -102,7 +102,7 @@ class FirTypeCandidateCollector(
     private fun filterOutAmbiguousTypealiases(candidates: MutableSet<TypeCandidate>) {
         if (candidates.size <= 1) return
 
-        val aliasesToRemove = mutableSetOf<ClassId>()
+        val aliasesToRemove: MutableSet<ClassId> = []
         val classTypealiasesThatDontCauseAmbiguity = session.platformClassMapper.classTypealiasesThatDontCauseAmbiguity
         for (candidate in candidates) {
             val symbol = candidate.symbol

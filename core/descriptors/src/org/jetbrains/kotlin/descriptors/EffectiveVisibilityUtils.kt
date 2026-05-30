@@ -45,9 +45,9 @@ data class DescriptorWithRelation(val descriptor: ClassifierDescriptor, private 
 
 private fun ClassifierDescriptor.dependentDescriptors(ownRelation: RelationToType): Set<DescriptorWithRelation> =
     setOf(DescriptorWithRelation(this, ownRelation)) +
-            ((this.containingDeclaration as? ClassifierDescriptor)?.dependentDescriptors(ownRelation.containerRelation()) ?: emptySet())
+            ((this.containingDeclaration as? ClassifierDescriptor)?.dependentDescriptors(ownRelation.containerRelation()) ?: [])
 
-fun ClassDescriptor.effectiveVisibility(checkPublishedApi: Boolean = false) = effectiveVisibility(emptySet(), checkPublishedApi)
+fun ClassDescriptor.effectiveVisibility(checkPublishedApi: Boolean = false) = effectiveVisibility([], checkPublishedApi)
 
 private fun ClassDescriptor.effectiveVisibility(classes: Set<ClassDescriptor>, checkPublishedApi: Boolean): EffectiveVisibility =
     if (this in classes) EffectiveVisibility.Public
@@ -59,11 +59,11 @@ private fun ClassDescriptor.effectiveVisibility(classes: Set<ClassDescriptor>, c
     }
 
 // Should collect all dependent classifier descriptors, to get verbose diagnostic
-private fun KotlinType.dependentDescriptors() = dependentDescriptors(emptySet(), RelationToType.CONSTRUCTOR)
+private fun KotlinType.dependentDescriptors() = dependentDescriptors([], RelationToType.CONSTRUCTOR)
 
 private fun KotlinType.dependentDescriptors(types: Set<KotlinType>, ownRelation: RelationToType): Set<DescriptorWithRelation> {
-    if (this in types) return emptySet()
-    val ownDependent = constructor.declarationDescriptor?.dependentDescriptors(ownRelation) ?: emptySet()
+    if (this in types) return []
+    val ownDependent = constructor.declarationDescriptor?.dependentDescriptors(ownRelation) ?: []
     val argumentDependent = arguments.map { it.type.dependentDescriptors(types + this, RelationToType.ARGUMENT) }.flatten()
     return ownDependent + argumentDependent
 }

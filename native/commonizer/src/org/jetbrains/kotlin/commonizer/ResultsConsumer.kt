@@ -59,7 +59,7 @@ operator fun ResultsConsumer.plus(other: ResultsConsumer?): ResultsConsumer {
     if (this is CompositeResultsConsumer) {
         return CompositeResultsConsumer(consumers + other)
     }
-    return CompositeResultsConsumer(listOf(this, other))
+    return CompositeResultsConsumer([this, other])
 }
 
 private class CompositeResultsConsumer(val consumers: List<ResultsConsumer>) : ResultsConsumer {

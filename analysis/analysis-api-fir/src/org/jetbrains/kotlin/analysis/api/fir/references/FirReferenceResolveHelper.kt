@@ -127,7 +127,7 @@ internal object FirReferenceResolveHelper {
     }
 
     private fun collectTypeReferences(qualified: KtUserType): MutableList<KtNameReferenceExpression> {
-        val refs = mutableListOf<KtNameReferenceExpression>()
+        val refs: MutableList<KtNameReferenceExpression> = []
         fun collectFragments(type: KtUserType) {
             type.qualifier?.let { collectFragments(it) }
             refs.add(type.referenceExpression as? KtNameReferenceExpression ?: return)
@@ -163,12 +163,12 @@ internal object FirReferenceResolveHelper {
         analysisSession: KaFirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
-        val ktValueArgumentName = expression.parent as? KtValueArgumentName ?: return emptyList()
-        val ktValueArgument = ktValueArgumentName.parent as? KtValueArgument ?: return emptyList()
-        val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return emptyList()
-        val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return emptyList()
+        val ktValueArgumentName = expression.parent as? KtValueArgumentName ?: return []
+        val ktValueArgument = ktValueArgumentName.parent as? KtValueArgument ?: return []
+        val ktValueArgumentList = ktValueArgument.parent as? KtValueArgumentList ?: return []
+        val ktCallExpression = ktValueArgumentList.parent as? KtCallElement ?: return []
 
-        val firCall = ktCallExpression.getOrBuildFir(analysisSession.resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return emptyList()
+        val firCall = ktCallExpression.getOrBuildFir(analysisSession.resolutionFacade)?.unwrapSafeCall() as? FirCall ?: return []
         val parameter = firCall.findCorrespondingParameter(ktValueArgumentName.asName)
         return listOfNotNull(parameter?.buildSymbol(symbolBuilder))
     }
@@ -194,7 +194,7 @@ internal object FirReferenceResolveHelper {
         val selectedFqName = getQualifierSelected(expression, forQualifiedType = false)
         val packageFqName = fir.packageFqName
         if (packageFqName.startsWith(selectedFqName)) {
-            return listOf(builder.createPackageSymbol(selectedFqName))
+            return [builder.createPackageSymbol(selectedFqName)]
         }
 
         val fullFqName = fir.importedFqName
@@ -216,8 +216,8 @@ internal object FirReferenceResolveHelper {
             this.relativeParentClassName = parentClassNames?.let { FqName.fromSegments(it) }
         }
 
-        val scope = FirExplicitSimpleImportingScope(listOf(resolvedImport), session, ScopeSession())
-        val selectedName = resolvedImport.importedName ?: return emptyList()
+        val scope = FirExplicitSimpleImportingScope([resolvedImport], session, ScopeSession())
+        val selectedName = resolvedImport.importedName ?: return []
 
         // We don't need to build a package symbol here because the selected `FqName` is definitely a class or callable name. If it was not,
         // the package name check above would have caught it.
@@ -264,7 +264,7 @@ internal object FirReferenceResolveHelper {
 
         val firClassSymbol = classifier
             ?: return listOfNotNull(getPackageSymbolFor(expression, symbolBuilder))
-        return listOf(symbolBuilder.classifierBuilder.buildClassifierSymbol(firClassSymbol))
+        return [symbolBuilder.classifierBuilder.buildClassifierSymbol(firClassSymbol)]
     }
 
     private tailrec fun tryGettingSymbolFromPartiallyResolvedType(
@@ -274,7 +274,7 @@ internal object FirReferenceResolveHelper {
         symbolBuilder: KaSymbolByFirBuilder,
     ): List<KaSymbol> {
         return when (typeRef) {
-            null -> emptyList()
+            null -> []
             is FirErrorTypeRef -> {
                 tryGettingSymbolFromPartiallyResolvedType(
                     typeRef.partiallyResolvedTypeRef,
@@ -308,12 +308,12 @@ internal object FirReferenceResolveHelper {
         }
         if (referencedSymbol == null) {
             // If referencedSymbol is null, it means the reference goes to a package.
-            val parent = expression.parent as? KtDotQualifiedExpression ?: return emptyList()
+            val parent = expression.parent as? KtDotQualifiedExpression ?: return []
             val fqNameSegments =
                 when (expression) {
-                    parent.selectorExpression -> parent.fqNameSegments() ?: return emptyList()
-                    parent.receiverExpression -> listOf(expression.getReferencedName())
-                    else -> return emptyList()
+                    parent.selectorExpression -> parent.fqNameSegments() ?: return []
+                    parent.receiverExpression -> [expression.getReferencedName()]
+                    else -> return []
                 }
             return listOfNotNull(symbolBuilder.createPackageSymbolIfOneExists(FqName.fromSegments(fqNameSegments)))
         }
@@ -401,7 +401,7 @@ internal object FirReferenceResolveHelper {
                     } else {
                         // This is unexpected. The code probably contains some weird structures. In this case, we just fail the resolution
                         // with zero results.
-                        return emptyList()
+                        return []
                     }
                 }
                 qualifiedAccess = receiverExpression
@@ -425,7 +425,7 @@ internal object FirReferenceResolveHelper {
                     } else {
                         // This is unexpected. The code probably contains some weird structures. In this case, we just fail the resolution
                         // with zero results.
-                        return emptyList()
+                        return []
                     }
                 }
                 qualifiedAccess = receiverExpression

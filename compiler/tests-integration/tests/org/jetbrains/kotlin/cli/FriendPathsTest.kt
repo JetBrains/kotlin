@@ -85,26 +85,26 @@ class FriendPathsTest : TestCaseWithTmpdir() {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
-            listOf(
+            [
                 libSrc.path,
                 "-d", File(tmpdir, "output").path,
                 "-Xfriend-paths=non-existing-path",
                 "-no-stdlib",
                 "-cp", ForTestCompileRuntime.runtimeJarForTests().absolutePath,
-            ),
+            ],
         )
     }
 
     private fun doTestFriendPaths(libDest: File, friendPath: File) {
         val libSrc = File(getTestDataDirectory(), "lib.kt")
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("-d", libDest.path, libSrc.path))
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), ["-d", libDest.path, libSrc.path])
 
         CompilerTestUtil.executeCompilerAssertSuccessful(
             K2JVMCompiler(),
-            listOf(
+            [
                 "-d", tmpdir.path, "-cp", libDest.path, File(getTestDataDirectory(), "usage.kt").path,
                 "-Xfriend-paths=${friendPath.path}"
-            ),
+            ],
         )
     }
 }

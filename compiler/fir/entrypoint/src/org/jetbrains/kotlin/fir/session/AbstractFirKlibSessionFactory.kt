@@ -47,7 +47,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
         scopeProvider: FirKotlinScopeProvider,
         context: CONTEXT,
     ): List<FirSymbolProvider> {
-        return emptyList()
+        return []
     }
 
     // ==================================== Library session ====================================
@@ -94,7 +94,7 @@ abstract class AbstractFirKlibSessionFactory<CONTEXT> : FirAbstractSessionFactor
         kotlinScopeProvider: FirKotlinScopeProvider,
         resolvedLibraries: List<KotlinLibrary>,
     ): List<FirSymbolProvider> {
-        return emptyList()
+        return []
     }
 
     final override fun createKotlinScopeProviderForLibrarySession(): FirKotlinScopeProvider {

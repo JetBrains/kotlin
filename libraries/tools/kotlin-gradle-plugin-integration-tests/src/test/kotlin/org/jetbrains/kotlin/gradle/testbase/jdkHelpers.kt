@@ -15,12 +15,12 @@ private const val JDK_11_PROP_NAME = "jdk11Home"
 private const val JDK_17_PROP_NAME = "jdk17Home"
 private const val JDK_21_PROP_NAME = "jdk21Home"
 
-internal val allJdkProperties = setOf(
+internal val allJdkProperties: Set<String> = [
     JDK_8_PROP_NAME,
     JDK_11_PROP_NAME,
     JDK_17_PROP_NAME,
     JDK_21_PROP_NAME
-)
+]
 
 internal fun getUserJdk(): JavaInfo = Jvm.forHome(File(System.getProperty("java.home")))
 

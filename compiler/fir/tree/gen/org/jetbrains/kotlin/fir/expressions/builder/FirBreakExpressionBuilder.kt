@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 @FirBuilderDsl
 class FirBreakExpressionBuilder : FirLoopJumpBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var target: FirTarget<FirLoop>
 
     override fun build(): FirBreakExpression {

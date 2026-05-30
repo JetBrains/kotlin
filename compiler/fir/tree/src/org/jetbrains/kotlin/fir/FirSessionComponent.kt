@@ -29,7 +29,7 @@ interface FirComposableSessionComponent<T : FirComposableSessionComponent<T>> : 
 
     @Suppress("UNCHECKED_CAST")
     val components: List<T>
-        get() = listOf(this as T)
+        get() = [this as T]
 
     @SessionConfiguration
     fun createComposed(components: List<T>): Composed<T>

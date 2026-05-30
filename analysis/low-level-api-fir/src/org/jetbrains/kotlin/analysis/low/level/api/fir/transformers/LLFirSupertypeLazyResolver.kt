@@ -280,7 +280,7 @@ private class LLFirSuperTypeTargetResolver(
             }
 
             val superTypeRefs = when (classLikeDeclaration) {
-                is FirTypeAlias -> listOf(classLikeDeclaration.expandedTypeRef)
+                is FirTypeAlias -> [classLikeDeclaration.expandedTypeRef]
                 is FirClass -> classLikeDeclaration.superTypeRefs
             }
 
@@ -366,7 +366,7 @@ private open class LLFirSupertypeComputationSession(
         classLikeDeclaration: FirClassLikeDeclaration,
         useSiteSession: FirSession,
     ): List<FirResolvedTypeRef> {
-        if (classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES) return emptyList()
+        if (classLikeDeclaration.resolvePhase < FirResolvePhase.SUPER_TYPES) return []
 
         return super.getResolvedSuperTypeRefsForOutOfSessionDeclaration(classLikeDeclaration, useSiteSession)
     }

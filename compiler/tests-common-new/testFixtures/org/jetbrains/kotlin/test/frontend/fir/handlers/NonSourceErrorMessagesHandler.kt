@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
  */
 class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override fun check(thereWereFailures: Boolean) {
         if (CHECK_COMPILER_OUTPUT !in testServices.moduleStructure.allDirectives) return

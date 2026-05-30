@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirGetClassCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var argumentList: FirArgumentList
 
     override fun build(): FirGetClassCall {

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirFunctionTypeConversionExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var expression: FirExpression
     lateinit var kind: FirFunctionConversionKind
 

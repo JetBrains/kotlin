@@ -242,7 +242,7 @@ fun <T: Any> SingleArgument<T, DefaultRequiredType.Required>.optional(): SingleN
 fun <T: Any> MultipleArgument<T, DefaultRequiredType.Required>.optional(): MultipleArgument<T, DefaultRequiredType.None> {
     val newArgument = with((delegate.cast<ParsingValue<T, List<T>>>()).descriptor as ArgDescriptor) {
         MultipleArgument<T, DefaultRequiredType.None>(ArgDescriptor(type, fullName, number, description,
-                defaultValue?.toList() ?: listOf(), false, deprecatedWarning), owner)
+                defaultValue?.toList().orEmpty(), false, deprecatedWarning), owner)
     }
     owner.entity = newArgument
     return newArgument

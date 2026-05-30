@@ -85,7 +85,7 @@ abstract class MethodModel<M : MethodModel<M>> : TestEntityModel() {
     open val isSmokeTest: Boolean get() = false
 
 
-    open fun imports(): Collection<Class<*>> = emptyList()
+    open fun imports(): Collection<Class<*>> = []
 
     fun generateBody(p: Printer) {
         @Suppress("UNCHECKED_CAST")

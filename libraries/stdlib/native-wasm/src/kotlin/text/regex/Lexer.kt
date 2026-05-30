@@ -970,10 +970,10 @@ internal class Lexer(val patternString: String, flags: Int) {
                 val decomp: IntArray
 
                 if (T == 0) {
-                    decomp = intArrayOf(L, V)
+                    decomp = [L, V]
                 } else {
                     T = TBase + T
-                    decomp = intArrayOf(L, V, T)
+                    decomp = [L, V, T]
                 }
                 return decomp
             }

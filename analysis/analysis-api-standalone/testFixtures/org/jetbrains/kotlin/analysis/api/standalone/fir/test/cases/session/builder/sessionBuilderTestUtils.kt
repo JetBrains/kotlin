@@ -116,7 +116,7 @@ internal fun createDumbVirtualFile(
             error("Not yet implemented")
         }
 
-        override fun getChildren(): Array<VirtualFile> = emptyArray()
+        override fun getChildren(): Array<VirtualFile> = []
 
         override fun getInputStream(): InputStream {
             error("Not yet implemented")

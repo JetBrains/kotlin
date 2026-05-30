@@ -34,12 +34,12 @@ class BuildStep(
 
 fun parseTestBuildLog(file: File): List<BuildStep> {
     fun splitSteps(lines: List<String>): List<List<String>> {
-        val stepsLines = mutableListOf<MutableList<String>>()
+        val stepsLines: MutableList<MutableList<String>> = []
 
         for (line in lines) {
             when {
                 line.matches("=+ Step #\\d+ =+".toRegex()) -> {
-                    stepsLines.add(mutableListOf())
+                    stepsLines.add([])
                 }
                 else -> {
                     stepsLines.lastOrNull()?.add(line)

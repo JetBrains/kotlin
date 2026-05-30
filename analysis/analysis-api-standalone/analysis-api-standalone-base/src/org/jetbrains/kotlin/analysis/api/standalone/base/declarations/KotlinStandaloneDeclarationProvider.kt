@@ -44,12 +44,12 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     override fun getAllClassesByClassId(classId: ClassId): Collection<KtClassOrObject> =
         index.classesByClassId[classId]
             ?.filter { it.inScope }
-            ?: emptyList()
+            ?: []
 
     override fun getAllTypeAliasesByClassId(classId: ClassId): Collection<KtTypeAlias> =
         index.typeAliasesByClassId[classId]
             ?.filter { it.inScope }
-            ?: emptyList()
+            ?: []
 
     override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> {
         val classifiers = index.classLikeDeclarationsByPackage[packageFqName].orEmpty()
@@ -70,7 +70,7 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        if (facadeFqName.shortNameOrSpecial().isSpecial) return emptyList()
+        if (facadeFqName.shortNameOrSpecial().isSpecial) return []
         return findFilesForFacadeByPackage(facadeFqName.parent()) //TODO Not work correctly for classes with JvmPackageName
             .filter { it.javaFileFacadeFqName == facadeFqName }
     }
@@ -168,12 +168,12 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertiesByCallableId[callableId]
             ?.filter { it.inScope }
-            ?: emptyList()
+            ?: []
 
     override fun getTopLevelFunctions(callableId: CallableId): Collection<KtNamedFunction> =
         index.topLevelFunctionsByCallableId[callableId]
             ?.filter { it.inScope }
-            ?: emptyList()
+            ?: []
 
     override fun getTopLevelCallableFiles(callableId: CallableId): Collection<KtFile> = buildSet {
         getTopLevelProperties(callableId).mapTo(this) { it.containingKtFile }
@@ -199,8 +199,8 @@ class KotlinStandaloneDeclarationProviderFactory(
     private val project: Project,
     private val environment: CoreApplicationEnvironment,
     sourceKtFiles: Collection<KtFile>,
-    binaryRoots: List<VirtualFile> = emptyList(),
-    sharedBinaryRoots: List<VirtualFile> = emptyList(),
+    binaryRoots: List<VirtualFile> = [],
+    sharedBinaryRoots: List<VirtualFile> = [],
     skipBuiltins: Boolean = false,
     shouldBuildStubsForBinaryLibraries: Boolean = false,
     private val shouldComputeBinaryLibraryPackageSets: Boolean = false,

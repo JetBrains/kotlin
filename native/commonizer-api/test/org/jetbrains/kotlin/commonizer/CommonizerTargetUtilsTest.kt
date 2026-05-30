@@ -14,7 +14,7 @@ public class CommonizerTargetUtilsTest {
     public fun allLeaves() {
         val target = parseCommonizerTarget("((a, b), (c, d), (e, (f, g)))")
         assertEquals(
-            setOf(
+            [
                 LeafCommonizerTarget("a"),
                 LeafCommonizerTarget("b"),
                 LeafCommonizerTarget("c"),
@@ -22,26 +22,26 @@ public class CommonizerTargetUtilsTest {
                 LeafCommonizerTarget("e"),
                 LeafCommonizerTarget("f"),
                 LeafCommonizerTarget("g")
-            ),
+            ],
             target.allLeaves(),
             "Expected leaf targets present"
         )
 
         assertEquals(
-            setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").allLeaves(),
+            [LeafCommonizerTarget("a")], LeafCommonizerTarget("a").allLeaves(),
             "Expected LeafCommonizerTarget returns itself in 'allLeaves'"
         )
     }
 
     @Test
     public fun `withAllLeaves LeafCommonizerTarget`() {
-        assertEquals(setOf(LeafCommonizerTarget("a")), LeafCommonizerTarget("a").withAllLeaves())
+        assertEquals([LeafCommonizerTarget("a")], LeafCommonizerTarget("a").withAllLeaves())
     }
 
     @Test
     public fun `withAllLeaves SharedCommonizerTarget`() {
         assertEquals(
-            setOf(parseCommonizerTarget("(a, b)"), LeafCommonizerTarget("a"), LeafCommonizerTarget("b")),
+            [parseCommonizerTarget("(a, b)"), LeafCommonizerTarget("a"), LeafCommonizerTarget("b")],
             parseCommonizerTarget("(a, b)").withAllLeaves()
         )
     }

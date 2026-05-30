@@ -276,9 +276,9 @@ internal abstract class ScriptLikeToClassTransformer(
     override fun visitConstructor(declaration: IrConstructor, data: ScriptLikeToClassTransformerContext): IrConstructor =
         declaration.apply {
             if (declaration in capturingClassesConstructors) {
-                declaration.parameters = listOf(
+                declaration.parameters = [
                     declaration.createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, targetClassReceiver.type)
-                ) + declaration.nonDispatchParameters
+                ] + declaration.nonDispatchParameters
             }
             transformParent()
             transformFunctionChildren(data)
@@ -498,9 +498,9 @@ internal fun patchDeclarationsDispatchReceiver(statements: List<IrStatement>, co
 
     fun IrFunction.addScriptDispatchReceiverIfNeeded() {
         if (dispatchReceiverParameter == null) {
-            parameters = listOf(
+            parameters = [
                 createThisReceiverParameter(context, IrDeclarationOrigin.SCRIPT_THIS_RECEIVER, scriptClassReceiverType)
-            ) + parameters
+            ] + parameters
         }
     }
 
@@ -522,7 +522,7 @@ internal fun Collection<IrClass>.collectCapturersInScript(
     externalVariables: Set<IrVariableSymbol>
 ): Set<IrClass> {
     val annotator = ClosureAnnotator(parentDeclaration, parentDeclaration, scriptingMode = true, closureBuilders = mutableMapOf())
-    val capturingClasses = mutableSetOf<IrClass>()
+    val capturingClasses: MutableSet<IrClass> = []
 
     val collector = object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) {

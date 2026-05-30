@@ -130,8 +130,8 @@ class KotlinClassInfo(
             return KotlinClassInfo(
                 classId,
                 classHeader.kind,
-                classHeader.data ?: classHeader.incompatibleData ?: emptyArray(),
-                classHeader.strings ?: emptyArray(),
+                classHeader.data ?: classHeader.incompatibleData ?: [],
+                classHeader.strings ?: [],
                 classHeader.multifileClassName,
                 extraInfo = extraInfo
             )

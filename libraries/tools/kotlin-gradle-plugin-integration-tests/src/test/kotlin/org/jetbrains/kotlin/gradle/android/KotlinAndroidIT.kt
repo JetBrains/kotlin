@@ -42,11 +42,11 @@ class KotlinAndroidIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = jdkVersion.location
         ) {
-            val modules = listOf("Android", "Lib")
-            val flavors = listOf("Flavor1", "Flavor2")
-            val buildTypes = listOf("Debug")
+            val modules = ["Android", "Lib"]
+            val flavors = ["Flavor1", "Flavor2"]
+            val buildTypes = ["Debug"]
 
-            val expectedTasks = mutableListOf<String>()
+            val expectedTasks: MutableList<String> = []
             for (module in modules) {
                 for (flavor in flavors) {
                     for (buildType in buildTypes) {
@@ -106,7 +106,7 @@ class KotlinAndroidIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                setOf("https://clojars.org/repo/")
+                ["https://clojars.org/repo/"]
             )
         ) {
             build("assembleDebug")

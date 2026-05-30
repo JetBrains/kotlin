@@ -137,7 +137,7 @@ private class TestGeneratorForJUnit4Instance(
                     get() = testClassModels
 
                 override val methods: Collection<MethodModel<*>>
-                    get() = emptyList()
+                    get() = []
 
                 override val isEmpty: Boolean
                     get() = false
@@ -152,10 +152,10 @@ private class TestGeneratorForJUnit4Instance(
                     get() = null
 
                 override val annotations: Collection<AnnotationModel>
-                    get() = emptyList()
+                    get() = []
 
                 override val tags: List<String>
-                    get() = emptyList()
+                    get() = []
 
                 override val testKClass: Class<*>
                     get() = testClassModels.first().testKClass

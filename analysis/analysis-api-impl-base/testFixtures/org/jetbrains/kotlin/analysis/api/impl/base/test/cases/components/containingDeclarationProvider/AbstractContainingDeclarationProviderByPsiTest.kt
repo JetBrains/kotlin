@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingDeclarationProviderByPsiTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val currentPath = mutableListOf<KtDeclaration>()
-        val ktClasses = mutableListOf<KtClassOrObject>()
+        val currentPath: MutableList<KtDeclaration> = []
+        val ktClasses: MutableList<KtClassOrObject> = []
 
         copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val expectedFileSymbol = contextFile.symbol

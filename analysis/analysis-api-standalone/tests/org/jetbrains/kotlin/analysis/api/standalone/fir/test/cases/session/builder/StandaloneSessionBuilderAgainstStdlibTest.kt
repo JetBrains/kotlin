@@ -34,10 +34,10 @@ class StandaloneSessionBuilderAgainstStdlibTest : AbstractStandaloneSessionBuild
         doTestKotlinStdLibResolve(
             JsPlatforms.defaultJsPlatform,
             ForTestCompileRuntime.stdlibJsForTests().toPath(),
-            additionalStdlibRoots = listOf(
+            additionalStdlibRoots = [
                 Paths.get(System.getProperty("java.home")), // directory which exists and does not contain KLibs inside
                 ForTestCompileRuntime.runtimeJarForTests().toPath(), // file which exists and not a KLib
-            )
+            ]
         )
     }
 }

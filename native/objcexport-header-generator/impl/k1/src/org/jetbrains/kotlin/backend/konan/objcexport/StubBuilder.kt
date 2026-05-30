@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.objcexport
 
 internal class StubBuilder<S : ObjCExportStub>(private val problemCollector: ObjCExportProblemCollector) {
-    private val children = mutableListOf<S>()
+    private val children: MutableList<S> = []
 
     inline fun add(provider: () -> S) {
         try {

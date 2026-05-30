@@ -50,7 +50,7 @@ internal fun String.jvmTypeDescToCanonical(): Pair<String, String> {
 private fun String.replaceDollars(): String {
     if (!contains('$')) return this
 
-    val segments = mutableListOf<String>()
+    val segments: MutableList<String> = []
     val builder = StringBuilder()
     for (idx in indices) {
         val c = this[idx]

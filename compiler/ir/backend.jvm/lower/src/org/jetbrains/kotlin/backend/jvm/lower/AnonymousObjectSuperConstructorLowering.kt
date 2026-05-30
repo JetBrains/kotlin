@@ -75,7 +75,7 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
         val objectConstructorBody = objectConstructor.body as? IrBlockBody
             ?: throw AssertionError("object literal constructor body is not a block")
 
-        val newArguments = mutableListOf<IrExpression>()
+        val newArguments: MutableList<IrExpression> = []
         fun addArgument(value: IrExpression): IrValueParameter {
             newArguments.add(value)
             return objectConstructor.addValueParameter(
@@ -101,7 +101,7 @@ internal class AnonymousObjectSuperConstructorLowering(val context: JvmBackendCo
 
         objectConstructorBody.statements.transformInPlace {
             when {
-                it is IrDelegatingConstructorCall -> it.transform(listOf())
+                it is IrDelegatingConstructorCall -> it.transform([])
                 it is IrBlock && it.origin == IrStatementOrigin.ARGUMENTS_REORDERING_FOR_CALL && it.statements.last() is IrDelegatingConstructorCall ->
                     // If named arguments are used, the order of evaluation may not match the order of arguments,
                     // in which case IR like this is generated:

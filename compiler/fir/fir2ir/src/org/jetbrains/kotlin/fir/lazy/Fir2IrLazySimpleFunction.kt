@@ -53,7 +53,7 @@ class Fir2IrLazySimpleFunction(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) lazy@{
-        if (firParent == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
+        if (firParent == null || parent !is Fir2IrLazyClass) return@lazy []
 
         val baseFunctionWithDispatchReceiverTag =
             lazyFakeOverrideGenerator.computeFakeOverrideKeys(firParent, fir.symbol)

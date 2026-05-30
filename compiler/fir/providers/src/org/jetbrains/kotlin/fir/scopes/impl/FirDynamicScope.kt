@@ -58,9 +58,9 @@ class FirDynamicScope @FirDynamicScopeConstructor constructor(
         processor: (FirPropertySymbol, FirTypeScope) -> ProcessorAction,
     ): ProcessorAction = ProcessorAction.NEXT
 
-    override fun getCallableNames(): Set<Name> = emptySet()
+    override fun getCallableNames(): Set<Name> = []
 
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getClassifierNames(): Set<Name> = []
 
     private val anyTypeScope by lazy {
         session.builtinTypes.anyType.coneType.scope(
@@ -138,7 +138,7 @@ class FirDynamicMembersStorage(val session: FirSession) : FirSessionComponent {
     private val anyArrayTypeRef: FirResolvedTypeRef = buildResolvedTypeRef {
         coneType = ConeClassLikeTypeImpl(
             StandardClassIds.Array.toLookupTag(),
-            arrayOf(dynamicTypeRef.coneType),
+            [dynamicTypeRef.coneType],
             isMarkedNullable = false
         )
     }

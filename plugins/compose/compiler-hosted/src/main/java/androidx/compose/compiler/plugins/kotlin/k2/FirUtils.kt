@@ -137,7 +137,7 @@ fun FirFunction.getDirectOverriddenFunctions(
                 if (symbol.isGetter) it.getterSymbol else it.setterSymbol
             }
         }
-        else -> listOf()
+        else -> []
     }.map { it.originalOrSelf() }
 }
 

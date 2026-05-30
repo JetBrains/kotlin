@@ -36,10 +36,10 @@ open class ParcelizeDeclarationChecker(
     private val experimentalCodeGeneration: Boolean = false,
 ) : DeclarationChecker {
     private companion object {
-        private val IGNORED_ON_PARCEL_FQ_NAMES = listOf(
+        private val IGNORED_ON_PARCEL_FQ_NAMES = [
             FqName("kotlinx.parcelize.IgnoredOnParcel"),
             FqName("kotlinx.android.parcel.IgnoredOnParcel")
-        )
+        ]
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
@@ -225,7 +225,7 @@ open class ParcelizeDeclarationChecker(
         if (!parameter.hasValOrVar()) {
             if (containerClass.allowBareValueArguments()) {
                 if (containerClassBody != null) {
-                    FindParameterReferences(setOf(parameter), bindingContext, diagnosticHolder).visitElement(containerClassBody)
+                    FindParameterReferences([parameter], bindingContext, diagnosticHolder).visitElement(containerClassBody)
                 }
             } else {
                 val reportElement = parameter.nameIdentifier ?: parameter
@@ -273,43 +273,43 @@ open class ParcelizeDeclarationChecker(
             || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
             || type in customParcelerTypes
             || type.isBuiltinFunctionalTypeOrSubtype
-        ) return emptySet()
+        ) return []
 
         val upperBound = type.getErasedUpperBound()
         val descriptor = upperBound.constructor.declarationDescriptor as? ClassDescriptor
-            ?: return setOf(type)
+            ?: return [type]
 
         if (descriptor.kind.isSingleton || descriptor.kind.isEnumClass) {
-            return emptySet()
+            return []
         }
 
         val fqName = descriptor.fqNameSafe.asString()
         if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
-            return emptySet()
+            return []
         }
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
-            return upperBound.arguments.fold(emptySet()) { acc, arg ->
+            return upperBound.arguments.fold([]) { acc, arg ->
                 acc union checkParcelableType(arg.type, customParcelerTypes, containerClass, languageVersionSettings)
             }
         }
 
         if (BuiltinParcelableTypes.PARCELABLE_SUPERTYPE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
-            return emptySet()
+            return []
         }
 
         if (descriptor.isData && (inDataClass || type.annotations.hasAnnotation(ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME))) {
             val scope = descriptor.getMemberScope(type.arguments)
-            val primaryConstructor = descriptor.constructors.find { it.isPrimary } ?: return setOf(type)
+            val primaryConstructor = descriptor.constructors.find { it.isPrimary } ?: return [type]
             val properties = primaryConstructor.valueParameters.map {
                 scope.getContributedVariables(it.name, NoLookupLocation.FOR_ALREADY_TRACKED).first()
             }
             // Serialization uses the property getters, deserialization uses the constructor.
             if (!DescriptorVisibilityUtils.isVisible(null, primaryConstructor, containerClass, languageVersionSettings) ||
                 properties.any { !DescriptorVisibilityUtils.isVisible(null, it, containerClass, languageVersionSettings) }
-            ) return setOf(type)
+            ) return [type]
 
-            return properties.fold(emptySet()) { acc, property ->
+            return properties.fold([]) { acc, property ->
                 acc union checkParcelableType(
                     property.type, customParcelerTypes, containerClass, languageVersionSettings, inDataClass = true
                 )
@@ -317,10 +317,10 @@ open class ParcelizeDeclarationChecker(
         }
 
         if (BuiltinParcelableTypes.EXTERNAL_SERIALIZABLE_FQNAMES.any { type.matchesFqNameWithSupertypes(it) }) {
-            return emptySet()
+            return []
         }
 
-        return setOf(type)
+        return [type]
     }
 
     private fun KotlinType.getErasedUpperBound(): KotlinType =

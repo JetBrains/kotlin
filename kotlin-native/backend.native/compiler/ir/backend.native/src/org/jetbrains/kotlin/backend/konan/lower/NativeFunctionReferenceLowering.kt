@@ -75,8 +75,8 @@ internal class NativeFunctionReferenceLowering(val generationState: NativeGenera
     override fun getSuperClassType(reference: IrRichFunctionReference): IrType {
         return when {
             reference.reflectionTargetSymbol == null -> irBuiltIns.anyType
-            reference.invokeFunction.isSuspend -> kSuspendFunctionImplSymbol.typeWith(listOf(reference.invokeFunction.returnType))
-            else -> kFunctionImplSymbol.typeWithArguments(listOf(reference.invokeFunction.returnType))
+            reference.invokeFunction.isSuspend -> kSuspendFunctionImplSymbol.typeWith([reference.invokeFunction.returnType])
+            else -> kFunctionImplSymbol.typeWithArguments([reference.invokeFunction.returnType])
         }
     }
 

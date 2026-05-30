@@ -100,7 +100,7 @@ class JvmAbiClassBuilderInterceptor(
         var localOrAnonymousClass = false
         var keepClassAsIs = false
         val memberInfos = mutableMapOf<JvmMemberSignature, AbiMethodInfo>()
-        val maskedMethods = mutableSetOf<JvmMethodSignature>() // Methods which should be stripped even if they are marked as KEEP
+        val maskedMethods: MutableSet<JvmMethodSignature> = [] // Methods which should be stripped even if they are marked as KEEP
 
         override fun defineClass(
             version: Int, access: Int, name: String, signature: String?, superName: String, interfaces: Array<out String>

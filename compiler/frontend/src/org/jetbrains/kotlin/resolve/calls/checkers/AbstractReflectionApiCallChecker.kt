@@ -31,17 +31,17 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.storage.getValue
 
-private val ALLOWED_MEMBER_NAMES = setOf(
+private val ALLOWED_MEMBER_NAMES: Set<String> = [
     "equals", "hashCode", "toString", "invoke", "name"
-)
+]
 
-private val ALLOWED_CLASSES = setOf(
+private val ALLOWED_CLASSES: Set<FqName> = [
     FqName("kotlin.reflect.KType"),
     FqName("kotlin.reflect.KTypeParameter"),
     FqName("kotlin.reflect.KTypeProjection"),
     FqName("kotlin.reflect.KTypeProjection.Companion"),
     FqName("kotlin.reflect.KVariance")
-)
+]
 
 /**
  * Checks that there are no usages of reflection API which will fail at runtime.
@@ -54,7 +54,7 @@ abstract class AbstractReflectionApiCallChecker(
     protected abstract fun report(element: PsiElement, context: CallCheckerContext)
 
     private val kPropertyClasses by storageManager.createLazyValue {
-        setOf(reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2)
+        [reflectionTypes.kProperty0, reflectionTypes.kProperty1, reflectionTypes.kProperty2]
     }
 
     private val kClass by storageManager.createLazyValue { reflectionTypes.kClass }

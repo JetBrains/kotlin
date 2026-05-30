@@ -41,7 +41,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
                     it.getter,
                     it.setter?.takeIf(mapper::shouldBeExposed) // Similar to [ObjCExportTranslatorImpl.buildProperty].
             )
-            is FunctionDescriptor -> listOf(it)
+            is FunctionDescriptor -> [it]
             else -> error(it)
         }
     })
@@ -54,7 +54,7 @@ internal fun ObjCExportedInterface.createCodeSpec(symbolTable: SymbolTable): Obj
 
     val classToType = mutableMapOf<ClassDescriptor, ObjCTypeForKotlinType>()
     fun getType(descriptor: ClassDescriptor): ObjCTypeForKotlinType = classToType.getOrPut(descriptor) {
-        val methods = mutableListOf<ObjCMethodSpec>()
+        val methods: MutableList<ObjCMethodSpec> = []
 
         // Note: contributedMethods includes fake overrides too.
         val allBaseMethods = descriptor.contributedMethods.filter { mapper.shouldBeExposed(it) }

@@ -49,7 +49,7 @@ class FirParcelizeConstructorChecker(
             reporter.reportOn(containingClass.source, KtErrorsParcelize.PARCELABLE_PRIMARY_CONSTRUCTOR_IS_EMPTY)
             return
         }
-        val notValOrVarParameters = mutableListOf<FirValueParameter>()
+        val notValOrVarParameters: MutableList<FirValueParameter> = []
         for (valueParameter in declaration.valueParameters) {
             if (valueParameter.source?.hasValOrVar() != true) {
                 notValOrVarParameters.add(valueParameter)

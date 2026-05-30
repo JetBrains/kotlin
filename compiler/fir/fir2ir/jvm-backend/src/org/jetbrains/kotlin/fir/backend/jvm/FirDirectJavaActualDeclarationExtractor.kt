@@ -51,5 +51,5 @@ class FirDirectJavaActualDeclarationExtractor private constructor(
     override fun extract(
         expectTopLevelCallables: List<IrDeclarationWithName>,
         expectCallableId: CallableId,
-    ): List<IrSymbol> = emptyList()
+    ): List<IrSymbol> = []
 }

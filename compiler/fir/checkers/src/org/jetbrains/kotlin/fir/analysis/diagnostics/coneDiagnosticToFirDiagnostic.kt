@@ -96,7 +96,7 @@ private fun ConeFunctionCallExpectedError.mapFunctionCallExpected(
     session: FirSession,
     callOrAssignmentSource: KtSourceElement?,
 ): List<KtDiagnostic> {
-    val result = mutableListOf<KtDiagnostic>()
+    val result: MutableList<KtDiagnostic> = []
 
     result.addIfNotNull(
         FirErrors.FUNCTION_CALL_EXPECTED.createOn(
@@ -119,7 +119,7 @@ private fun ConeInapplicableCandidateError.mapInapplicableCandidateError(
 ): List<KtDiagnostic> {
     val typeContext = session.typeContext
     val genericDiagnostic = FirErrors.INAPPLICABLE_CANDIDATE.createOn(source, candidate.symbol, session)
-    val diagnostics = mutableSetOf<KtDiagnostic>()
+    val diagnostics: MutableSet<KtDiagnostic> = []
 
     for (rootCause in candidate.diagnostics.filter { !it.isSuccess }) {
         diagnostics += when (rootCause) {
@@ -401,7 +401,7 @@ private fun ConeConstraintSystemHasContradiction.mapSystemHasContradictionError(
                     else -> false
                 }
             }
-        ) return emptyList()
+        ) return []
         listOfNotNull(
             errors.firstNotNullOfOrNull {
                 if (it is NewConstraintError) {
@@ -487,7 +487,7 @@ private fun ConeAmbiguityError.mapConeAmbiguityError(
             it.argumentMapping.keys.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) ||
                     it.contextArguments?.any(AbstractConeResolutionAtom::containsErrorTypeForSuppressingAmbiguityError) == true ||
                     it.chosenExtensionReceiver?.containsErrorTypeForSuppressingAmbiguityError() == true
-        } -> emptyList()
+        } -> []
         applicability.isSuccess -> listOfNotNull(
             FirErrors.OVERLOAD_RESOLUTION_AMBIGUITY.createOn(
                 source,

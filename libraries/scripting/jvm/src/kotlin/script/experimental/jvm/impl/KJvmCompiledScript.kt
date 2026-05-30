@@ -17,7 +17,7 @@ internal class KJvmCompiledScriptData(
     var compilationConfiguration: ScriptCompilationConfiguration,
     var scriptClassFQName: String,
     var resultField: Pair<String, KotlinType>?,
-    var otherScripts: List<CompiledScript> = emptyList()
+    var otherScripts: List<CompiledScript> = []
 ) : Serializable {
 
     private fun writeObject(outputStream: ObjectOutputStream) {
@@ -53,7 +53,7 @@ open class KJvmCompiledScript internal constructor(
         compilationConfiguration: ScriptCompilationConfiguration,
         scriptClassFQName: String,
         resultField: Pair<String, KotlinType>?,
-        otherScripts: List<CompiledScript> = emptyList(),
+        otherScripts: List<CompiledScript> = [],
         compiledModule: KJvmCompiledModule? // module should be null for imported (other) scripts, so only one reference to the module is kept
     ) : this(
         KJvmCompiledScriptData(sourceLocationId, compilationConfiguration, scriptClassFQName, resultField, otherScripts),
@@ -125,28 +125,28 @@ fun KJvmCompiledScript.getOrCreateActualClassloader(evaluationConfiguration: Scr
     }
 
 private fun CompiledScript.makeClassLoaderFromDependencies(baseClassLoader: ClassLoader?, lastClassLoader: ClassLoader?): ClassLoader? {
-    val processedScripts = mutableSetOf<CompiledScript>()
+    val processedScripts: MutableSet<CompiledScript> = []
     fun recursiveScriptsSeq(res: Sequence<CompiledScript>, script: CompiledScript): Sequence<CompiledScript> =
         if (processedScripts.add(script)) script.otherScripts.asSequence().fold(res + script, ::recursiveScriptsSeq)
         else res
 
-    val dependenciesWithConfigurations = recursiveScriptsSeq(emptySequence(), this).flatMap { script ->
+    val dependenciesWithConfigurations = recursiveScriptsSeq([], this).flatMap { script ->
         script.compilationConfiguration[ScriptCompilationConfiguration.dependencies]
-            ?.asSequence()?.map { script.compilationConfiguration to it } ?: emptySequence()
+            ?.asSequence()?.map { script.compilationConfiguration to it } ?: []
     }
 
-    val processedClasspathElements = mutableSetOf<URL>()
+    val processedClasspathElements: MutableSet<URL> = []
     fun recursiveClassPath(res: Sequence<URL>, classLoader: ClassLoader?): Sequence<URL> =
         when (classLoader) {
             null, baseClassLoader -> res
             is DualClassLoader -> recursiveClassPath(res, classLoader.parent) +
-                    recursiveClassPath(emptySequence(), classLoader.fallbackClassLoader)
+                    recursiveClassPath([], classLoader.fallbackClassLoader)
             is URLClassLoader -> recursiveClassPath(res + classLoader.urLs, classLoader.parent)
             else -> recursiveClassPath(res, classLoader.parent)
         }
-    recursiveClassPath(emptySequence(), lastClassLoader).forEach { processedClasspathElements.add(it) }
+    recursiveClassPath([], lastClassLoader).forEach { processedClasspathElements.add(it) }
 
-    val processedClassloaders = mutableSetOf<ClassLoader>()
+    val processedClassloaders: MutableSet<ClassLoader> = []
 
     return dependenciesWithConfigurations.fold(lastClassLoader) { parentClassLoader, [compilationConfiguration, scriptDependency] ->
         when (scriptDependency) {

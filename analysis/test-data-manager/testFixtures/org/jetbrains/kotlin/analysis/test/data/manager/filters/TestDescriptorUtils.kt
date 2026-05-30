@@ -60,10 +60,10 @@ internal val TestIdentifier.variantChain: TestVariantChain
     get() {
         val testClass = when (val source = source.orElse(null)) {
             is MethodSource -> source.javaClass
-            else -> return emptyList()
+            else -> return []
         }
 
-        val managedTestClass = testClass.findManagedTestClass() ?: return emptyList()
+        val managedTestClass = testClass.findManagedTestClass() ?: return []
         return managedTestClass.getVariantChain()
     }
 

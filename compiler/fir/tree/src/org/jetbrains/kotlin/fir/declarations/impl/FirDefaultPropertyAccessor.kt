@@ -72,7 +72,7 @@ abstract class FirDefaultPropertyAccessor(
             visibility: Visibility,
             propertySymbol: FirPropertySymbol,
             isGetter: Boolean,
-            parameterAnnotations: List<FirAnnotation> = emptyList(),
+            parameterAnnotations: List<FirAnnotation> = [],
             parameterSource: KtSourceElement? = null,
         ): FirDefaultPropertyAccessor = if (isGetter) {
             FirDefaultPropertyGetter(
@@ -115,7 +115,7 @@ class FirDefaultPropertyGetter(
     moduleData,
     origin,
     propertyTypeRef,
-    valueParameters = mutableListOf(),
+    valueParameters = [],
     propertySymbol,
     isGetter = true,
     status = status,
@@ -163,7 +163,7 @@ class FirDefaultPropertySetter(
     status: FirDeclarationStatus,
     propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
     parameterSource: KtSourceElement? = null,
-    parameterAnnotations: List<FirAnnotation> = emptyList(),
+    parameterAnnotations: List<FirAnnotation> = [],
     resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
     attributes: FirDeclarationAttributes = FirDeclarationAttributes()
 ) : FirDefaultPropertyAccessor(
@@ -171,7 +171,7 @@ class FirDefaultPropertySetter(
     moduleData,
     origin,
     FirImplicitUnitTypeRef(source),
-    valueParameters = mutableListOf(
+    valueParameters = [
         buildDefaultSetterValueParameter builder@{
             this@builder.resolvePhase = resolvePhase
             this@builder.source =
@@ -183,7 +183,7 @@ class FirDefaultPropertySetter(
             this@builder.symbol = FirValueParameterSymbol()
             this@builder.annotations += parameterAnnotations
         }
-    ),
+    ],
     propertySymbol,
     isGetter = false,
     status = status,
@@ -204,7 +204,7 @@ class FirDefaultPropertySetter(
         isOverride: Boolean = false,
         propertyAccessorSymbol: FirPropertyAccessorSymbol = FirPropertyAccessorSymbol(),
         parameterSource: KtSourceElement? = null,
-        parameterAnnotations: List<FirAnnotation> = emptyList(),
+        parameterAnnotations: List<FirAnnotation> = [],
         resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR,
         attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     ) : this(

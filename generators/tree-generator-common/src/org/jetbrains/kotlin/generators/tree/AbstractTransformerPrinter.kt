@@ -23,15 +23,15 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
             println()
             val elementParameterName = element.visitorParameterName
             if (element.isRootElement) {
-                val elementTP = TypeVariable("E", listOf(element))
+                val elementTP = TypeVariable("E", [element])
                 printFunctionDeclaration(
                     name = "transformElement",
-                    parameters = listOf(
+                    parameters = [
                         FunctionParameter(elementParameterName, elementTP),
                         FunctionParameter("data", dataTypeVariable)
-                    ),
+                    ],
                     returnType = elementTP,
-                    typeParameters = listOf(elementTP),
+                    typeParameters = [elementTP],
                     modality = Modality.ABSTRACT,
                 )
                 println()
@@ -39,10 +39,10 @@ abstract class AbstractTransformerPrinter<Element : AbstractElement<Element, Fie
                 val parentInVisitor = parentInVisitor(element) ?: return
                 printFunctionWithBlockBody(
                     name = "transform" + element.name,
-                    parameters = listOf(
+                    parameters = [
                         FunctionParameter(elementParameterName, element.withSelfArgs()),
                         FunctionParameter("data", dataTypeVariable)
-                    ),
+                    ],
                     returnType = visitMethodReturnType(element),
                     typeParameters = element.params,
                     modality = Modality.OPEN,

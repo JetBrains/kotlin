@@ -387,12 +387,12 @@ class ComposableTargetCheckerTests : AbstractComposeDiagnosticsTest() {
            <!COMPOSE_APPLIER_CALL_MISMATCH!>Invalid<!>()
         }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeUiGraphicsJar(),
             Classpath.composeUiTextJar(),
             Classpath.composeFoundationTextJar()
-        )
+        ]
     )
 
     @Test

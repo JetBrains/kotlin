@@ -28,7 +28,7 @@ class AbiValidationTasksIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
     ) {
         jvmProject(gradleVersion) {
-            buildAndAssertAllTasks(notRegisteredTasks = listOf(":checkKotlinAbi"))
+            buildAndAssertAllTasks(notRegisteredTasks = [":checkKotlinAbi"])
 
             build("check") {
                 assertTasksAreNotInTaskGraph(":checkKotlinAbi")

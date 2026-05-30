@@ -112,6 +112,6 @@ class KotlinCompilerArgumentsLevelTest {
             introducedVersion = KotlinReleaseVersion.v1_0_0,
         ),
         delimiter = KotlinCompilerArgument.Delimiter.PathSeparator,
-        additionalAnnotations = emptyList(),
+        additionalAnnotations = [],
     )
 }

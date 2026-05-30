@@ -28,7 +28,7 @@ class TypeGenerator(
     private val unitPrimaryConstructor: IrConstructor? by lazy { backendContext.irBuiltIns.unitClass.owner.primaryConstructor }
 
     fun generateFunctionType(declaration: IrFunction) {
-        val parameterTypes = mutableListOf<WasmType>()
+        val parameterTypes: MutableList<WasmType> = []
         declaration.forEachEffectiveValueParameters {
             parameterTypes.add(wasmModuleTypeTransformer.transformValueParameterType(it))
         }
@@ -82,7 +82,7 @@ class TypeGenerator(
             val metadata = wasmModuleMetadataCache.getClassMetadata(symbol)
 
             val vtableRefGcType = WasmRefType(typeCodegenContext.referenceVTableHeapType(symbol))
-            val fields = mutableListOf<WasmStructFieldDeclaration>()
+            val fields: MutableList<WasmStructFieldDeclaration> = []
             fields.add(WasmStructFieldDeclaration("vtable", vtableRefGcType, false))
             fields.add(WasmStructFieldDeclaration("itable", WasmRefNullType(Synthetics.HeapTypes.wasmAnyArrayType), false))
             fields.add(WasmStructFieldDeclaration("rtti", WasmRefType(Synthetics.HeapTypes.rttiType), isMutable = false))
@@ -114,7 +114,7 @@ class TypeGenerator(
         isFinal: Boolean,
         generateSpecialITableField: Boolean,
     ): WasmStructDeclaration {
-        val vtableFields = mutableListOf<WasmStructFieldDeclaration>()
+        val vtableFields: MutableList<WasmStructFieldDeclaration> = []
         if (generateSpecialITableField) {
             val specialITableField = WasmStructFieldDeclaration(
                 name = "<SpecialITable>",

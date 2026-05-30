@@ -248,7 +248,7 @@ class KlibDumpParserTest {
 
         assertEquals(2, parsed.contextReceiverParametersCount())
         assertTrue(parsed.hasExtensionReceiverParameter())
-        assertEquals(listOf("kotlin/Int", "kotlin/String", "kotlin/Int", "kotlin/Double"), parsed.valueParameters.map { it.type.className.toString() })
+        assertEquals(["kotlin/Int", "kotlin/String", "kotlin/Int", "kotlin/Double"], parsed.valueParameters.map { it.type.className.toString() })
     }
 
     @Test
@@ -446,7 +446,7 @@ class KlibDumpParserTest {
                         )
                 )
         assertTrue(parsed.isConstructor)
-        assertIterableEquals(listOf("kotlin/Int", "kotlin/Int"), parsed.valueParameters.map { it.type.classNameOrTag })
+        assertIterableEquals(["kotlin/Int", "kotlin/Int"], parsed.valueParameters.map { it.type.classNameOrTag })
     }
 
     @Test

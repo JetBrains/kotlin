@@ -14,10 +14,10 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
-        expected = emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList()
+        expected = [],
+        [],
+        [],
+        []
     )
 
     @Test
@@ -56,7 +56,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
             "R" to "kotlin/CharSequence",
             "Q" to "org/sample/Foo"
         ),
-        emptyList()
+        []
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
@@ -117,7 +117,7 @@ class TypeParameterListCommonizerTest : AbstractCommonizerTest<List<CirTypeParam
             return params.map { [name, upperBounds] ->
                 TypeParameterCommonizerTest.mockTypeParam(
                     name = name,
-                    upperBounds = listOf(upperBounds)
+                    upperBounds = [upperBounds]
                 )
             }
         }

@@ -213,7 +213,7 @@ private fun TestProject.initDefaultKmpWithLocalSPM() {
         swiftPMDependencies {
             localSwiftPackage(
                 directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                products = listOf("LocalSwiftPackage"),
+                products = ["LocalSwiftPackage"],
             )
         }
     }
@@ -221,7 +221,7 @@ private fun TestProject.initDefaultKmpWithLocalSPM() {
 
 private fun Path.readPbxprojAsXcodeProject(): XcodeProject {
     val result = runProcess(
-        cmd = listOf("/usr/bin/plutil", "-convert", "json", absolutePathString(), "-o", "-"),
+        cmd = ["/usr/bin/plutil", "-convert", "json", absolutePathString(), "-o", "-"],
         workingDir = parent.toFile(),
         redirectErrorStream = false,
     )

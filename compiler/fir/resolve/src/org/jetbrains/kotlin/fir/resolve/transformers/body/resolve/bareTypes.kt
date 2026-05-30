@@ -66,7 +66,7 @@ private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
     firTypeAlias.lazyResolveToPhase(FirResolvePhase.TYPES)
 
     val typeAliasParameters = firTypeAlias.typeParameters.toSet()
-    val usedTypeParameters = mutableSetOf<FirTypeParameter>()
+    val usedTypeParameters: MutableSet<FirTypeParameter> = []
 
     val expandedType = firTypeAlias.expandedConeType ?: return false
     for (argument in expandedType.typeArguments) {

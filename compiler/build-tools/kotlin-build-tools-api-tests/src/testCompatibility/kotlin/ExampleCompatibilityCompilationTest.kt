@@ -21,7 +21,7 @@ class ExampleCompatibilityCompilationTest : BaseCompilationTest() {
     fun testCompatibilityCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")

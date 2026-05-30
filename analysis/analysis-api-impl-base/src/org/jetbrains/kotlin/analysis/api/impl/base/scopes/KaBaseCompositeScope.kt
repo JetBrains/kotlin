@@ -56,7 +56,7 @@ class KaBaseCompositeScope private constructor(
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         sequence {
             subScopes.forEach { yieldAll(it.callables(names)) }
         }
@@ -69,7 +69,7 @@ class KaBaseCompositeScope private constructor(
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         sequence {
             subScopes.forEach { yieldAll(it.classifiers(names)) }
         }

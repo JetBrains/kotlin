@@ -63,7 +63,7 @@ open class ReplCodeAnalyzerBase(
         @Suppress("DEPRECATION_ERROR")
         container = TopDownAnalyzerFacadeForJVM.createContainer(
             environment.project,
-            emptyList(),
+            [],
             trace,
             environment.configuration,
             environment::createPackagePartProvider,
@@ -115,7 +115,7 @@ open class ReplCodeAnalyzerBase(
 
     fun analyzeReplLine(psiFile: KtFile, codeLine: ReplCodeLine): ReplLineAnalysisResult {
         prepareForAnalyze(psiFile, codeLine.no)
-        return doAnalyze(psiFile, emptyList(), codeLine.toSourceCode())
+        return doAnalyze(psiFile, [], codeLine.toSourceCode())
     }
 
     fun analyzeReplLineWithImportedScripts(
@@ -130,12 +130,12 @@ open class ReplCodeAnalyzerBase(
 
     protected fun runAnalyzer(linePsi: KtFile, importedScripts: List<KtFile>): TopDownAnalysisContext {
         @Suppress("DEPRECATION_ERROR")
-        return topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, listOf(linePsi) + importedScripts)
+        return topDownAnalyzer.analyzeDeclarations(topDownAnalysisContext.topDownAnalysisMode, [linePsi] + importedScripts)
     }
 
     private fun doAnalyze(linePsi: KtFile, importedScripts: List<KtFile>, codeLine: SourceCodeByReplLine): ReplLineAnalysisResult {
         scriptDeclarationFactory.setDelegateFactory(
-            FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi) + importedScripts)
+            FileBasedDeclarationProviderFactory(resolveSession.storageManager, [linePsi] + importedScripts)
         )
         replState.submitLine(linePsi)
 
@@ -198,8 +198,8 @@ open class ReplCodeAnalyzerBase(
             fun addDelegateProvider(provider: PackageMemberDeclarationProvider) {
                 val combinedDelegateProvider = delegateProvider as? CombinedPackageMemberDeclarationProvider
                 val providers =
-                    if (combinedDelegateProvider != null) listOf(provider) + combinedDelegateProvider.providers
-                    else listOf(provider, delegateProvider)
+                    if (combinedDelegateProvider != null) [provider] + combinedDelegateProvider.providers
+                    else [provider, delegateProvider]
                 delegateProvider = CombinedPackageMemberDeclarationProvider(providers)
 
                 delegate = delegateProvider
@@ -315,7 +315,7 @@ data class SourceCodeByReplLine(
 private typealias ReplSourceHistoryList<ResultT> = List<CompiledHistoryItem<SourceCodeByReplLine, ResultT>>
 
 @Deprecated("This functionality is left for backwards compatibility only", ReplaceWith("SnippetsHistory"))
-private class ResettableSnippetsHistory<ResultT>(startingHistory: CompiledHistoryList<ReplCodeAnalyzerBase.CompiledCode, ResultT> = emptyList()) :
+private class ResettableSnippetsHistory<ResultT>(startingHistory: CompiledHistoryList<ReplCodeAnalyzerBase.CompiledCode, ResultT> = []) :
     SnippetsHistory<ReplCodeAnalyzerBase.CompiledCode, ResultT>(startingHistory) {
 
     fun resetToLine(line: ILineId): ReplSourceHistoryList<ResultT> {

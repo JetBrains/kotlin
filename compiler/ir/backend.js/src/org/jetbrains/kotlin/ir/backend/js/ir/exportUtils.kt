@@ -213,7 +213,7 @@ internal fun IrDeclaration.isExported(context: JsIrBackendContext): Boolean {
     return shouldDeclarationBeExported(candidate, context, this)
 }
 
-private val reservedWords = setOf(
+private val reservedWords: Set<String> = [
     "break",
     "case",
     "catch",
@@ -250,9 +250,9 @@ private val reservedWords = setOf(
     "void",
     "while",
     "with"
-)
+]
 
-private val strictModeReservedWords = setOf(
+private val strictModeReservedWords: Set<String> = [
     "as",
     "implements",
     "interface",
@@ -263,7 +263,7 @@ private val strictModeReservedWords = setOf(
     "public",
     "static",
     "yield"
-)
+]
 
 internal val allReservedWords = reservedWords + strictModeReservedWords
 

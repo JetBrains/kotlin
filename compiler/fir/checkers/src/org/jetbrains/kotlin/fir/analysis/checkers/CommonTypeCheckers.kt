@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirCoroutineContex
 import org.jetbrains.kotlin.fir.analysis.checkers.type.*
 
 object CommonTypeCheckers : TypeCheckers() {
-    override val typeRefCheckers: Set<FirTypeRefChecker> = setOf(
+    override val typeRefCheckers: Set<FirTypeRefChecker> = [
         FirSuspendModifierChecker,
         FirCoroutineContextAsContextParameterTypeRefChecker,
-    )
+    ]
 
-    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = [
         FirTypeAnnotationChecker,
         FirDeprecatedTypeChecker,
         FirOptInUsageTypeRefChecker,
@@ -34,15 +34,15 @@ object CommonTypeCheckers : TypeCheckers() {
         FirMissingDependencyClassInTypeAliasTypeChecker,
         FirRootIdePackageDeprecatedInCliTypeChecker,
         TypeArgumentsInPackagesTypeRefChecker,
-    )
+    ]
 
-    override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(
+    override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = [
         FirDefinitelyNotNullableChecker,
-    )
+    ]
 
-    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = setOf(
+    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = [
         FirUnsupportedDefaultValueInFunctionTypeParameterChecker,
         FirUnsupportedModifiersInFunctionTypeParameterChecker,
         FirDslMarkerPropagationChecker,
-    )
+    ]
 }

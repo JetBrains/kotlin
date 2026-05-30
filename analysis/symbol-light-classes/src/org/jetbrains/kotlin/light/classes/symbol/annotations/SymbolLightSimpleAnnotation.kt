@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.KtCallElement
 internal class SymbolLightSimpleAnnotation(
     private val fqName: String?,
     parent: PsiElement,
-    private val arguments: List<AnnotationArgument> = listOf(),
+    private val arguments: List<AnnotationArgument> = [],
     override val kotlinOrigin: KtCallElement? = null,
 ) : SymbolLightAbstractAnnotation(parent) {
     override fun createReferenceInformationProvider(): ReferenceInformationProvider = ReferenceInformationHolder(

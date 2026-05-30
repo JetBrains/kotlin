@@ -34,7 +34,7 @@ class LLStatisticsService(internal val project: Project) : Disposable {
 
     internal val symbolProviders: LLSymbolProviderStatistics = LLSymbolProviderStatistics(this)
 
-    internal val domains: List<LLStatisticsDomain> = listOf(analysisSessions, symbolProviders)
+    internal val domains: List<LLStatisticsDomain> = [analysisSessions, symbolProviders]
 
     internal val openTelemetry: OpenTelemetry
         get() = KotlinOpenTelemetryProvider.getInstance(project)?.openTelemetry

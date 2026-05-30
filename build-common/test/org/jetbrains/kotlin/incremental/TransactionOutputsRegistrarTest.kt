@@ -22,7 +22,7 @@ class TransactionOutputsRegistrarTest {
     private lateinit var workingDir: Path
 
     private class MockOutputItemsCollector : OutputItemsCollector {
-        val addedOutputItems = mutableSetOf<Pair<Collection<File>, File>>()
+        val addedOutputItems: MutableSet<Pair<Collection<File>, File>> = []
 
         override fun add(sourceFiles: Collection<File>, outputFile: File) {
             addedOutputItems.add(sourceFiles to outputFile)
@@ -40,12 +40,12 @@ class TransactionOutputsRegistrarTest {
         val outputFile = workingDir.resolve("AKt.class")
         RecoverableCompilationTransaction(DoNothingBuildReporter, stashDir).use {
             val registrar = TransactionOutputsRegistrar(it, mockCollector)
-            registrar.add(listOf(srcFile.toFile()), outputFile.toFile())
+            registrar.add([srcFile.toFile()], outputFile.toFile())
             Files.write(outputFile, "blah-blah".toByteArray())
             it.markAsSuccessful()
         }
         assertIterableEquals(
-            setOf(listOf(srcFile.toFile()) to outputFile.toFile()),
+            setOf([srcFile.toFile()] to outputFile.toFile()),
             mockCollector.addedOutputItems,
             "TransactionOutputsRegistrar should call the origin"
         )
@@ -59,11 +59,11 @@ class TransactionOutputsRegistrarTest {
         val outputFile = workingDir.resolve("AKt.class")
         RecoverableCompilationTransaction(DoNothingBuildReporter, stashDir).use {
             val registrar = TransactionOutputsRegistrar(it, mockCollector)
-            registrar.add(listOf(srcFile.toFile()), outputFile.toFile())
+            registrar.add([srcFile.toFile()], outputFile.toFile())
             Files.write(outputFile, "blah-blah".toByteArray())
         }
         assertIterableEquals(
-            setOf(listOf(srcFile.toFile()) to outputFile.toFile()),
+            setOf([srcFile.toFile()] to outputFile.toFile()),
             mockCollector.addedOutputItems,
             "TransactionOutputsRegistrar should call the origin"
         )

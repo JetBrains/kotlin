@@ -153,7 +153,7 @@ class JpsKotlinCompilerRunner {
             targetPlatform,
             reportCategories(verbose),
             reportSeverity(verbose),
-            requestedCompilationResults = emptyArray()
+            requestedCompilationResults = []
         )
         val compilationResult = JpsCompilationResult()
 
@@ -199,7 +199,7 @@ class JpsKotlinCompilerRunner {
 
     private fun withAdditionalCompilerArgs(compilerArgs: CommonCompilerArguments): Array<String> {
         val allArgs = ArgumentUtils.convertArgumentsToStringList(compilerArgs) +
-                (compilerSettings?.additionalArgumentsAsList ?: emptyList())
+                (compilerSettings?.additionalArgumentsAsList ?: [])
         return allArgs
             .filterDuplicatedCompilerPluginOptions()
             .filterDuplicatedWarningLevel()
@@ -210,8 +210,8 @@ class JpsKotlinCompilerRunner {
     * This function filters duplicates of -P plugin:<pluginId>:<optionName>=<value> in the compiler arguments
     */
     private fun List<String>.filterDuplicatedCompilerPluginOptions(): List<String> {
-        val filteredArguments = mutableListOf<String>()
-        val knownPluginOptions = mutableSetOf<String>()
+        val filteredArguments: MutableList<String> = []
+        val knownPluginOptions: MutableSet<String> = []
         val argumentsIterator = this.iterator()
 
         while (argumentsIterator.hasNext()) {
@@ -238,7 +238,7 @@ class JpsKotlinCompilerRunner {
      * keeping only the first occurrence of each unique `-Xwarning-level=<diagnostic>:<level>` entry
      */
     private fun List<String>.filterDuplicatedWarningLevel(): List<String> {
-        val warningLevelArgumentsAccumulator = mutableSetOf<String>()
+        val warningLevelArgumentsAccumulator: MutableSet<String> = []
         return filter {
             if (it.startsWith("-Xwarning-level")) {
                 return@filter warningLevelArgumentsAccumulator.add(it)
@@ -250,7 +250,7 @@ class JpsKotlinCompilerRunner {
     private fun reportCategories(verbose: Boolean): Array<Int> {
         val categories =
             if (!verbose) {
-                arrayOf(ReportCategory.COMPILER_MESSAGE, ReportCategory.EXCEPTION)
+                [ReportCategory.COMPILER_MESSAGE, ReportCategory.EXCEPTION]
             } else {
                 ReportCategory.values()
             }
@@ -322,7 +322,7 @@ class JpsKotlinCompilerRunner {
             val toolsJarPath = CompilerRunnerUtil.jdkToolsJar
             val compilerId = CompilerId.makeCompilerId(listOfNotNull(compilerPath, toolsJarPath, daemonJarPath))
             val daemonOptions = configureDaemonOptions()
-            val additionalJvmParams = mutableListOf<String>()
+            val additionalJvmParams: MutableList<String> = []
 
             @Suppress("DEPRECATION")
             IncrementalCompilation.toJvmArgs(additionalJvmParams)

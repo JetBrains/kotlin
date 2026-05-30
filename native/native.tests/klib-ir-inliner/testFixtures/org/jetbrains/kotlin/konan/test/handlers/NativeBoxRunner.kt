@@ -94,7 +94,7 @@ private fun createTestRun(
     val checks = TestRunChecks(
         executionTimeoutCheck = TestRunCheck.ExecutionTimeout.ShouldNotExceed(testServices.testRunSettings.get<Timeouts>().executionTimeout),
         testFiltering = TestRunCheck.TestFiltering(
-            if (testKind in listOf(TestKind.REGULAR, TestKind.STANDALONE)) TCTestOutputFilter
+            if (testKind in [TestKind.REGULAR, TestKind.STANDALONE]) TCTestOutputFilter
             else TestOutputFilter.NO_FILTERING
         ),
         exitCodeCheck = TestRunCheck.ExitCode.Expected(0),
@@ -123,7 +123,7 @@ private fun createTestRun(
         testCase = TestCase(
             id = caseId,
             kind = TestKind.STANDALONE,
-            modules = emptySet(),
+            modules = [],
             freeCompilerArgs = TestCompilerArgs(),
             nominalPackageName = PackageName.EMPTY,
             checks = checks,

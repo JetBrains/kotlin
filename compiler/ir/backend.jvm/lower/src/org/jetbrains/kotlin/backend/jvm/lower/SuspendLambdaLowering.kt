@@ -72,7 +72,7 @@ internal abstract class SuspendLoweringUtils(protected val context: JvmBackendCo
             function.name.asString(), function.returnType.substitute(typeSubstitution),
             startOffset = startOffset, endOffset = endOffset
         ).apply {
-            overriddenSymbols = listOf(function.symbol)
+            overriddenSymbols = [function.symbol]
             parameters += function.nonDispatchParameters.map { it.copyTo(this, type = it.type.substitute(typeSubstitution)) }
         }
     }
@@ -158,8 +158,8 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         + function.continuationType()
                         + context.irBuiltIns.anyNType
             )
-            superTypes = listOf(suspendLambda.defaultType, functionNType)
-            val usedParams = mutableSetOf<IrSymbolOwner>()
+            superTypes = [suspendLambda.defaultType, functionNType]
+            val usedParams: MutableSet<IrSymbolOwner> = []
 
             // marking the parameters referenced in the function
             function.acceptChildrenVoid(
@@ -265,7 +265,7 @@ internal class SuspendLambdaLowering(context: JvmBackendContext) : SuspendLoweri
                         this@SuspendLambdaLowering.context.symbols.generatedCodeMarkersInCoroutinesClass.functions.map {
                             IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.owner.returnType, it)
                         }.toList()
-                    } else emptyList()
+                    } else []
 
                 context.irFactory.createBlockBody(
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET, generatedCodeMarkers + localVals.filterNotNull() + body.statements

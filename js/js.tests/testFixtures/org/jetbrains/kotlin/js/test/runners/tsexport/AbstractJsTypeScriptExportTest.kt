@@ -38,10 +38,10 @@ abstract class AbstractJsTypeScriptExportWithInlinedFunInKlibTest : AbstractJsTy
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LanguageSettingsDirectives.LANGUAGE with listOf(
+                LanguageSettingsDirectives.LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }

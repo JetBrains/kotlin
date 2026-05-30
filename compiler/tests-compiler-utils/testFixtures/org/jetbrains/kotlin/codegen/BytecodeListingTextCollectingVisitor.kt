@@ -15,15 +15,15 @@ class BytecodeListingTextCollectingVisitor(
     val sortDeclarations: Boolean,
 ) : ClassVisitor(Opcodes.API_VERSION) {
     companion object {
-        private val CLASS_OR_FIELD_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.FIELD, ModifierTarget.METHOD)
-        private val CLASS_OR_METHOD = setOf(ModifierTarget.CLASS, ModifierTarget.METHOD)
-        private val FIELD_ONLY = setOf(ModifierTarget.FIELD)
-        private val METHOD_ONLY = setOf(ModifierTarget.METHOD)
-        private val FIELD_OR_METHOD = setOf(ModifierTarget.FIELD, ModifierTarget.METHOD)
+        private val CLASS_OR_FIELD_OR_METHOD: Set<ModifierTarget> = [ModifierTarget.CLASS, ModifierTarget.FIELD, ModifierTarget.METHOD]
+        private val CLASS_OR_METHOD: Set<ModifierTarget> = [ModifierTarget.CLASS, ModifierTarget.METHOD]
+        private val FIELD_ONLY: Set<ModifierTarget> = [ModifierTarget.FIELD]
+        private val METHOD_ONLY: Set<ModifierTarget> = [ModifierTarget.METHOD]
+        private val FIELD_OR_METHOD: Set<ModifierTarget> = [ModifierTarget.FIELD, ModifierTarget.METHOD]
 
         // TODO ACC_MANDATED - requires reading Parameters attribute, which we don't generate by default
-        internal val MODIFIERS =
-            arrayOf(
+        internal val MODIFIERS: Array<Modifier> =
+            [
                 Modifier("public", Opcodes.ACC_PUBLIC, CLASS_OR_FIELD_OR_METHOD),
                 Modifier("protected", Opcodes.ACC_PROTECTED, CLASS_OR_FIELD_OR_METHOD),
                 Modifier("private", Opcodes.ACC_PRIVATE, CLASS_OR_FIELD_OR_METHOD),
@@ -40,7 +40,7 @@ class BytecodeListingTextCollectingVisitor(
                 Modifier("enum", Opcodes.ACC_ENUM, FIELD_ONLY), // ACC_ENUM modifier on class is handled in 'classOrInterface'
                 Modifier("abstract", Opcodes.ACC_ABSTRACT, CLASS_OR_METHOD, excludedMask = Opcodes.ACC_INTERFACE),
                 Modifier("static", Opcodes.ACC_STATIC, FIELD_OR_METHOD)
-            )
+            ]
     }
 
     fun interface Filter {
@@ -175,7 +175,7 @@ class BytecodeListingTextCollectingVisitor(
 
             override fun visitEnd() {
                 val parameterWithAnnotations = parameterTypes.mapIndexed { index, parameter ->
-                    val annotations = parameterAnnotations.getOrElse(index, { emptyList() }).joinToString("")
+                    val annotations = parameterAnnotations.getOrElse(index, { [] }).joinToString("")
                     "${annotations}p$index: $parameter"
                 }.joinToString()
                 val signatureIfRequired = if (withSignatures) "<$signature> " else ""
@@ -220,7 +220,7 @@ class BytecodeListingTextCollectingVisitor(
 
     private fun visitAnnotationImpl(end: (List<String>) -> Unit): AnnotationVisitor? =
         if (!withAnnotations) null else object : AnnotationVisitor(Opcodes.API_VERSION) {
-            private val arguments = mutableListOf<String>()
+            private val arguments: MutableList<String> = []
 
             override fun visit(name: String?, value: Any) {
                 val rendered = when (value) {

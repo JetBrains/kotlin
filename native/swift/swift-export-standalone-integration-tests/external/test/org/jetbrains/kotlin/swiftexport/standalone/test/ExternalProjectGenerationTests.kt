@@ -67,7 +67,7 @@ class ExternalProjectGenerationTests : AbstractSwiftExportWithBinaryCompilationT
         val inputModule = klib.createInputModule(
             SwiftModuleConfig(rootPackage = klib.rootPackage, shouldBeFullyExported = true)
         )
-        val result = runSwiftExport(setOf(inputModule), config).getOrThrow()
+        val result = runSwiftExport([inputModule], config).getOrThrow()
         validateSwiftExportOutput(testDataDir.resolve(goldenData), result, validateKotlinBridge)
     }
 

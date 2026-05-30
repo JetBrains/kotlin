@@ -52,14 +52,14 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         session.firCachesFactory.createCache(::createMethods)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        return cache.getValue(classSymbol to context.declaredScope)?.keys ?: emptySet()
+        if (!classSymbol.isSuitableJavaClass()) return []
+        return cache.getValue(classSymbol to context.declaredScope)?.keys ?: []
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner
-        if (owner == null || !owner.isSuitableJavaClass()) return emptyList()
-        val accessor = cache.getValue(owner to context.declaredScope)?.get(callableId.callableName) ?: return emptyList()
+        if (owner == null || !owner.isSuitableJavaClass()) return []
+        val accessor = cache.getValue(owner to context.declaredScope)?.get(callableId.callableName) ?: return []
         return accessor.map { it.symbol }
     }
 
@@ -70,7 +70,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
         val config = lombokService.config
         val classAccessors = lombokService.getAccessors(classSymbol)
         val explicitlyDeclaredFunctions = declaredScope?.collectAllFunctions()?.associateBy { it.name }.orEmpty()
-        return buildMap {
+        return buildMap<Name, MutableList<FirJavaMethod>> {
             fieldsWithAccessor.forEach { (field, getter, setter) ->
                 val dispatchReceiverType = runIf(!field.isStatic) { classSymbol.defaultType() }
                 val fieldAccessors = lombokService.getAccessors(field.symbol)
@@ -84,7 +84,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                 ) {
                     val function = classSymbol.createJavaMethod(
                         name = getterName,
-                        valueParameters = emptyList(),
+                        valueParameters = [],
                         returnTypeRef = field.returnTypeRef,
                         visibility = getterVisibility,
                         modality = Modality.OPEN,
@@ -92,7 +92,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         isStatic = field.isStatic,
                     )
 
-                    getOrPut(getterName) { mutableListOf() }.add(function)
+                    getOrPut(getterName) { [] }.add(function)
                 }
 
                 val setterName = setter?.let { computeAccessorName(field, it, fieldAccessors, classAccessors, config) }
@@ -113,7 +113,7 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
                     val function = classSymbol.createJavaMethod(
                         name = setterName,
-                        valueParameters = listOf(ConeLombokValueParameter(field.name, field.returnTypeRef)),
+                        valueParameters = [ConeLombokValueParameter(field.name, field.returnTypeRef)],
                         returnTypeRef = returnTypeRef,
                         visibility = setterVisibility,
                         modality = Modality.OPEN,
@@ -121,15 +121,15 @@ class AccessorGenerator(session: FirSession) : FirDeclarationGenerationExtension
                         isStatic = field.isStatic,
                     )
 
-                    getOrPut(setterName) { mutableListOf() }.add(function)
+                    getOrPut(setterName) { [] }.add(function)
                 }
             }
 
             if (data != null) {
-                getOrPut(CAN_EQUAL) { mutableListOf() }.add(
+                getOrPut(CAN_EQUAL) { [] }.add(
                     classSymbol.createJavaMethod(
                         name = CAN_EQUAL,
-                        valueParameters = listOf(ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)),
+                        valueParameters = [ConeLombokValueParameter(Name.identifier("other"), session.builtinTypes.nullableAnyType)],
                         returnTypeRef = session.builtinTypes.booleanType,
                         visibility = JavaVisibilities.ProtectedAndPackage,
                         modality = Modality.OPEN,

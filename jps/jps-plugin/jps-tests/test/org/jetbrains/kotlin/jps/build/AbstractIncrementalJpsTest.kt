@@ -81,7 +81,7 @@ abstract class AbstractIncrementalJpsTest(
                 ?.readText()
                 ?.split(" ", "\n")
                 ?.filter { it.isNotBlank() }
-                ?: emptyList()
+                ?: []
         }
     }
 
@@ -431,7 +431,7 @@ abstract class AbstractIncrementalJpsTest(
     }
 
     private fun configureSingleModuleProject(jdk: JpsSdk<JpsDummyElement>?) {
-        addModule("module", arrayOf(getAbsolutePath("src")), null, null, jdk)
+        addModule("module", [getAbsolutePath("src")], null, null, jdk)
 
         val sourceDestinationDir = File(workDir, "src")
         val sourcesMapping = copyTestSources(testDataDir, File(workDir, "src"), "")
@@ -450,7 +450,7 @@ abstract class AbstractIncrementalJpsTest(
         modulesTxt.modules.forEach { module ->
             module.jpsModule = addModule(
                 module.name,
-                arrayOf(getAbsolutePath("${module.name}/src")),
+                [getAbsolutePath("${module.name}/src")],
                 null,
                 null,
                 jdk
@@ -521,7 +521,7 @@ abstract class AbstractIncrementalJpsTest(
     internal class MyLogger(val rootPath: String) : ProjectBuilderLoggerBase(), TestingBuildLogger {
         private val markedDirtyBeforeRound = ArrayList<File>()
         private val markedDirtyAfterRound = ArrayList<File>()
-        private val customMessages = mutableListOf<String>()
+        private val customMessages: MutableList<String> = []
 
         override fun invalidOrUnusedCache(
             chunk: KotlinChunk?,

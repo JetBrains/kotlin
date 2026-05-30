@@ -32,7 +32,7 @@ interface Annotations : Iterable<AnnotationDescriptor> {
 
     @Suppress("DeprecatedCallableAddReplaceWith")
     @Deprecated("This method should only be used in frontend where we split annotations according to their use-site targets.")
-    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = emptyList()
+    fun getUseSiteTargetedAnnotations(): List<AnnotationWithTarget> = []
 
     companion object {
         val EMPTY: Annotations = object : Annotations {

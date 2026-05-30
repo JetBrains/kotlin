@@ -35,16 +35,16 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
     fun checkArgumentsForIncrementalCache(gradleVersion: GradleVersion) {
         nativeProject("native-incremental-simple", gradleVersion) {
 
-            val compilerCacheOrchestrationArgs = arrayOf(
+            val compilerCacheOrchestrationArgs: Array<String> = [
                 "-Xauto-cache-from=${getGradleUserHome()}",
                 "-Xbackend-threads=4"
-            )
+            ]
 
             val icCacheDir = projectPath.toRealPath().resolve("build").resolve("kotlin-native-ic-cache").resolve("debugExecutable")
-            val incrementalCacheArgs = arrayOf(
+            val incrementalCacheArgs: Array<String> = [
                 "-Xenable-incremental-compilation",
                 "-Xic-cache-dir=${icCacheDir.toFile().absolutePath}"
-            )
+            ]
 
             // disabled incremental cache parameter
             val withoutIncrementalCacheBuildOptions = defaultBuildOptions.copy(

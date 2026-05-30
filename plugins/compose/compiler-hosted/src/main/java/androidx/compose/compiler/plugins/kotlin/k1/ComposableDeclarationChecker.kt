@@ -91,7 +91,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
                         declaration,
-                        listOf(descriptor, override)
+                        [descriptor, override]
                     )
                 )
             } else if (!descriptor.toScheme(null).canOverride(override.toScheme(null))) {
@@ -108,7 +108,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                         context.trace.report(
                             ComposeErrors.CONFLICTING_OVERLOADS.on(
                                 declaration,
-                                listOf(valueParameter, overriddenParam)
+                                [valueParameter, overriddenParam]
                             )
                         )
                     }
@@ -215,7 +215,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
                         declaration,
-                        listOf(descriptor, override)
+                        [descriptor, override]
                     )
                 )
             }
@@ -248,7 +248,7 @@ class ComposableDeclarationChecker : DeclarationChecker, StorageComponentContain
                 context.trace.report(
                     ComposeErrors.CONFLICTING_OVERLOADS.on(
                         declaration,
-                        listOf(descriptor, override)
+                        [descriptor, override]
                     )
                 )
             }

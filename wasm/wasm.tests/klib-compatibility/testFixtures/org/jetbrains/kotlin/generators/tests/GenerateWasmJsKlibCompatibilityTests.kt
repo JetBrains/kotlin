@@ -17,13 +17,13 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     System.setProperty("java.awt.headless", "true")
 
-    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val jvmOnlyBoxTests = ["compileKotlinAgainstKotlin"]
     val k1BoxTestDir = "multiplatform/k1"
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomWasmJsCompilerFirstStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
+                annotations = [annotation(HeavyTest::class.java)]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
@@ -31,16 +31,16 @@ fun main(args: Array<String>) {
 
             testClass<AbstractCustomWasmJsCompilerFirstStageTest>(
                 suiteTestClassName = "CustomWasmJsAggregateFirstStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     aggregate(),
-                )
+                ]
             ) {
                 model("boxInline")
             }
 
             testClass<AbstractCustomWasmJsCompilerSecondStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
+                annotations = [annotation(HeavyTest::class.java)]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
@@ -48,10 +48,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractCustomWasmJsCompilerSecondStageTest>(
                 suiteTestClassName = "CustomWasmJsAggregateSecondStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     aggregate(),
-                )
+                ]
             ) {
                 model("boxInline")
             }

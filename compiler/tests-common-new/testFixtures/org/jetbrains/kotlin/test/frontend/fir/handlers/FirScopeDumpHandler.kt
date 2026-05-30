@@ -40,7 +40,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     private val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {
@@ -56,7 +56,7 @@ class FirScopeDumpHandler(testServices: TestServices) : FirAnalysisHandler(testS
     }
 
     private fun extractFqNameAndMemberNames(fqNameWithNames: String): Pair<String, List<String>> {
-        val [fqName, namesString] = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to emptyList()
+        val [fqName, namesString] = fqNameWithNames.split(":").takeIf { it.size > 1 } ?: return fqNameWithNames to []
         return fqName to namesString.split(";")
     }
 

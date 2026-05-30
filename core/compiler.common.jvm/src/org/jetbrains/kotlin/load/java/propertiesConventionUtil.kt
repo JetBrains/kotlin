@@ -65,13 +65,13 @@ fun getPropertyNamesCandidatesByAccessorName(name: Name): List<Name> {
 }
 
 fun possibleGetMethodNames(propertyName: Name): List<Name> {
-    if (propertyName.isSpecial) return emptyList()
+    if (propertyName.isSpecial) return []
 
     val identifier = propertyName.identifier
-    if (identifier.isEmpty()) return emptyList()
+    if (identifier.isEmpty()) return []
 
     val firstChar = identifier[0]
-    if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return emptyList()
+    if (!firstChar.isJavaIdentifierStart() || firstChar in 'A'..'Z') return []
 
     val result = ArrayList<Name>(3)
 

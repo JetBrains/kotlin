@@ -255,7 +255,7 @@ internal sealed interface Bridge {
     val swiftType: SirType
 
     context(sir: SirSession)
-    fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> = emptyList()
+    fun helperBridges(typeNamer: SirTypeNamer): List<SirBridge> = []
 
     /**
      * A bridge that performs an as-is (trivial) conversion.
@@ -300,7 +300,7 @@ internal sealed interface Bridge {
     }
 
     object AsOptionalVoid : BidirectionalBridge {
-        override val swiftType = SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.void)))
+        override val swiftType = SirNominalType(SirSwiftModule.optional, [SirNominalType(SirSwiftModule.void)])
         override val kotlinType = KotlinType.Boolean
         override val cType = CType.Bool
         override val inKotlinSources = object : ValueConversion {
@@ -477,7 +477,7 @@ internal sealed interface Bridge {
                 KotlinCoroutineSupportModule.kotlinTypedMutableStateFlow -> KotlinCoroutineSupportModule.kotlinTypedMutableStateFlowImpl
                 else -> error("Unsupported typed flow type: ${swiftType.typedProtocol}")
             },
-            typeArguments = listOf(swiftType.elementType)
+            typeArguments = [swiftType.elementType]
         )
 
         override val inKotlinSources = object : ValueConversion {
@@ -774,7 +774,7 @@ internal sealed interface Bridge {
     }
 
     data object AsOptionalNothing : BidirectionalBridge {
-        override val swiftType = SirNominalType(SirSwiftModule.optional, listOf(SirNominalType(SirSwiftModule.never)))
+        override val swiftType = SirNominalType(SirSwiftModule.optional, [SirNominalType(SirSwiftModule.never)])
         override val kotlinType = KotlinType.Boolean
         override val cType = CType.Bool
         override val inKotlinSources = object : ValueConversion {
@@ -883,12 +883,12 @@ internal sealed interface Bridge {
         override val kotlinType = KotlinType.KotlinObject
         override val cType = CType.BlockPointer(
             parameters = (contextParameters + parameters).map { it.cType } +
-                    (asyncParameters?.toList()?.map { it.cType } ?: emptyList()),
+                    (asyncParameters?.toList()?.map { it.cType } ?: []),
             returnType = asyncParameters?.let { CType.Void } ?: returnType.cType,
         )
         private val kotlinFunctionTypeRendered = buildString {
             append("(")
-            append((contextParameters + parameters + (asyncParameters?.toList() ?: emptyList())).joinToString { it.kotlinType.repr })
+            append((contextParameters + parameters + (asyncParameters?.toList() ?: [])).joinToString { it.kotlinType.repr })
             append(")->")
             append(asyncParameters?.let { "Unit" } ?: returnType.kotlinType.repr)
         }
@@ -899,10 +899,10 @@ internal sealed interface Bridge {
                 returnType: SwiftToKotlinBridge
             ): Triple<KotlinToSwiftBridge, KotlinToSwiftBridge, KotlinToSwiftBridge> = Triple(
                 // continuation
-                AsCovariantBlock(parameters = listOf(returnType), returnType = AsVoid),
+                AsCovariantBlock(parameters = [returnType], returnType = AsVoid),
                 // exception
                 AsCovariantBlock(
-                    parameters = listOf(AsObjCBridged(SirSwiftModule.error.nominalType(), CType.NSError)),
+                    parameters = [AsObjCBridged(SirSwiftModule.error.nominalType(), CType.NSError)],
                     returnType = AsVoid,
                 ),
                 // cancellation
@@ -946,7 +946,7 @@ internal sealed interface Bridge {
                 val asyncParameters = swiftType.isAsync.ifTrue { computeAsyncParameters(returnType) }
                 return AsContravariantBlock(
                     swiftType,
-                    emptyList(),
+                    [],
                     parameters,
                     returnType,
                     session,
@@ -1158,7 +1158,7 @@ internal sealed interface Bridge {
             val baseHelpers = parameters.flatMap { it.helperBridges(typeNamer) } + returnType.helperBridges(typeNamer)
             val asyncHelpers = asyncParameters?.let { [continuation, exception, cancellation] ->
                 continuation.helperBridges(typeNamer) + exception.helperBridges(typeNamer) + cancellation.helperBridges(typeNamer)
-            } ?: emptyList()
+            } ?: []
             return baseHelpers + asyncHelpers
         }
     }
@@ -1178,19 +1178,19 @@ internal sealed interface Bridge {
                 swiftType,
                 bridgeProxy = session.generateFunctionBridge(
                     baseBridgeName = session.moduleToTranslate.sirModule().name + "_internal_functional_type_caller_" + swiftType.returnType.swiftName,
-                    explicitParameters = listOf(
+                    explicitParameters = [
                         SirParameter(
                             argumentName = "pointerToBlock",
                             type = SirSwiftModule.unsafeMutableRawPointer.nominalType()
                         )
-                    ) + swiftType.contextTypes.mapIndexed { idx, type ->
+                    ] + swiftType.contextTypes.mapIndexed { idx, type ->
                         SirParameter(argumentName = "ctx${idx}", type = type)
                     } + swiftType.parameterTypes.map { SirParameter(type = it) },
                     returnType = swiftType.returnType,
                     kotlinFqName = FqName(""),
                     kotlinOptIns = swiftType.allRequiredOptIns,
                     selfParameter = null,
-                    contextParameters = emptyList(),
+                    contextParameters = [],
                     extensionReceiverParameter = null,
                     errorParameter = null,
                     isAsync = swiftType.isAsync
@@ -1250,7 +1250,7 @@ internal sealed interface Bridge {
             return bridgeProxy?.createSirBridges {
                 val actualArgs = argNames.drop(1).also { if (extensionReceiverParameter != null) it.drop(1) }
                 buildCall("(${argNames.first()} as ${typeNamer.kotlinFqName(swiftType, SirTypeNamer.KotlinNameType.PARAMETRIZED)}).invoke(${actualArgs.joinToString()})")
-            } ?: emptyList()
+            } ?: []
         }
     }
 
@@ -1418,7 +1418,7 @@ private val SirType.allRequiredOptIns: List<ClassId>
             addAll(returnType.allRequiredOptIns)
         }
         is SirTupleType -> types.flatMap { it.second.allRequiredOptIns }
-        is SirErrorType, SirUnsupportedType -> emptyList()
+        is SirErrorType, SirUnsupportedType -> []
     }
 
 context(session: SirSession)

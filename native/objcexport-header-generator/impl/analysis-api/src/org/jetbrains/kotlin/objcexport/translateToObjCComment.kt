@@ -26,7 +26,7 @@ internal fun KaSession.translateToObjCComment(list: KaAnnotationList): ObjCComme
         .mapNotNull { annotation -> renderAnnotation(annotation) }
 
     if (annotations.isEmpty()) return null
-    return ObjCComment(listOf("@note annotations") + annotations.map { "  $it" })
+    return ObjCComment(["@note annotations"] + annotations.map { "  $it" })
 }
 
 /**
@@ -41,26 +41,26 @@ internal fun KaSession.translateToObjCComment(
         val effectiveThrows = getEffectiveThrows(function).toSet()
         when {
             effectiveThrows.contains(StandardClassIds.Throwable) -> {
-                listOf("@note This method converts all Kotlin exceptions to errors.")
+                ["@note This method converts all Kotlin exceptions to errors."]
             }
 
             effectiveThrows.isNotEmpty() -> {
-                listOf(
+                [
                     buildString {
                         append("@note This method converts instances of ")
                         effectiveThrows.joinTo(this) { it.relativeClassName.asString() }
                         append(" to errors.")
                     },
                     "Other uncaught Kotlin exceptions are fatal."
-                )
+                ]
             }
 
             else -> {
                 // Shouldn't happen though.
-                listOf("@warning All uncaught Kotlin exceptions are fatal.")
+                ["@warning All uncaught Kotlin exceptions are fatal."]
             }
         }
-    } else emptyList()
+    } else []
 
     val visibilityComments = function.buildObjCVisibilityComment("method")
 

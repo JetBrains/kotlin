@@ -19,12 +19,12 @@ public object KotlinEmptyPackageProvider : KotlinPackageProvider {
     override fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean = false
 
     override fun getSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> =
-        emptySet()
+        []
 
-    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> = emptySet()
+    override fun getKotlinOnlySubpackageNames(packageFqName: FqName): Set<Name> = []
 
     override fun getPlatformSpecificSubpackageNames(
         packageFqName: FqName,
         platform: TargetPlatform,
-    ): Set<Name> = emptySet()
+    ): Set<Name> = []
 }

@@ -16,7 +16,7 @@ fun main() {
         generationLinkedSpecTestDataConfig {
             testArea = TestArea.PSI
             testType = TestType.NEGATIVE
-            sections = listOf("expressions", "constant-literals", "boolean-literals")
+            sections = ["expressions", "constant-literals", "boolean-literals"]
             paragraphNumber = 1
             sentenceNumber = 2
             sentence = "These are strong keywords which cannot be used as identifiers unless escaped."
@@ -27,7 +27,7 @@ fun main() {
         generationLinkedSpecTestDataConfig {
             testArea = TestArea.PSI
             testType = TestType.POSITIVE
-            sections = listOf("expressions", "constant-literals", "boolean-literals")
+            sections = ["expressions", "constant-literals", "boolean-literals"]
             paragraphNumber = 1
             sentenceNumber = 2
             sentence = "These are strong keywords which cannot be used as identifiers unless escaped."
@@ -38,7 +38,7 @@ fun main() {
         generationLinkedSpecTestDataConfig {
             testArea = TestArea.CODEGEN_BOX
             testType = TestType.POSITIVE
-            sections = listOf("expressions", "constant-literals", "boolean-literals")
+            sections = ["expressions", "constant-literals", "boolean-literals"]
             paragraphNumber = 1
             sentenceNumber = 2
             sentence = "These are strong keywords which cannot be used as identifiers unless escaped."

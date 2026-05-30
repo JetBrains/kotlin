@@ -349,20 +349,20 @@ private fun createWrappersForJavaCollectionMethod(
                 hasImplementation = false
             )
 
-            listOf(finalBridgeForJava, abstractKotlinGetter)
+            [finalBridgeForJava, abstractKotlinGetter]
         }
 
         hasCorrespondingKotlinDeclaration -> {
             if (isSpecialNotErasedSignature) {
                 createMethodsWithSpecialSignature(containingClass, method, javaCollectionPsiClass, substitutor)
             } else {
-                emptyList()
+                []
             }
         }
 
         else -> {
             val stubOverrideOfJavaOnlyMethod = method.openBridge(containingClass, substitutor)
-            listOf(stubOverrideOfJavaOnlyMethod)
+            [stubOverrideOfJavaOnlyMethod]
         }
     }
 }
@@ -376,31 +376,31 @@ private fun createMethodsWithSpecialSignature(
     // Case 1: two type parameters
     if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_MAP) {
         val abstractKotlinVariantWithGeneric = createJavaUtilMapMethodWithSpecialSignature(containingClass, method, substitutor)
-            ?: return emptyList()
+            ?: return []
         val finalBridgeWithObject = method.finalBridge(containingClass, substitutor)
-        return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+        return [finalBridgeWithObject, abstractKotlinVariantWithGeneric]
     }
 
     // Remaining cases: one type parameter
     if (method.name == "remove") {
         if (method.parameterList.parameters.singleOrNull()?.type == PsiTypes.intType()) {
             // remove(int) -> final bridge remove(int), abstract removeAt(int)
-            return listOf(
+            return [
                 method.finalBridge(containingClass, substitutor),
                 method.wrap(containingClass, substitutor, name = "removeAt")
-            )
+            ]
         } else if (javaCollectionPsiClass.qualifiedName == CommonClassNames.JAVA_UTIL_ITERATOR) {
             // skip default method java.util.Iterator#remove()
-            return emptyList()
+            return []
         }
     }
 
-    val psiType = substitutor.substitutionMap.values.singleOrNull() ?: return emptyList()
-    if (psiType.isTypeParameter()) return emptyList()
+    val psiType = substitutor.substitutionMap.values.singleOrNull() ?: return []
+    if (psiType.isTypeParameter()) return []
 
     val finalBridgeWithObject = method.finalBridge(containingClass, substitutor)
     val abstractKotlinVariantWithGeneric = method.wrap(containingClass, substitutor, substituteObjectWith = psiType)
-    return listOf(finalBridgeWithObject, abstractKotlinVariantWithGeneric)
+    return [finalBridgeWithObject, abstractKotlinVariantWithGeneric]
 }
 
 internal fun PsiType.isTypeParameter(): Boolean =
@@ -420,24 +420,24 @@ private fun createJavaUtilMapMethodWithSpecialSignature(
     val signature = when (method.name) {
         "get" -> {
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = [k], returnType = v)
         }
 
         "containsKey" -> {
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = PsiTypes.booleanType())
+            MethodSignature(parameterTypes = [k], returnType = PsiTypes.booleanType())
         }
 
         "containsValue" -> {
             if (v.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(v), returnType = PsiTypes.booleanType())
+            MethodSignature(parameterTypes = [v], returnType = PsiTypes.booleanType())
         }
 
         "remove" -> {
             // only `remove(Object)` pair (i.e. `remove(K)`) is needed
             if (method.parameterList.parametersCount != 1) return null
             if (k.isTypeParameter()) return null
-            MethodSignature(parameterTypes = listOf(k), returnType = v)
+            MethodSignature(parameterTypes = [k], returnType = v)
         }
         else -> null
     } ?: return null

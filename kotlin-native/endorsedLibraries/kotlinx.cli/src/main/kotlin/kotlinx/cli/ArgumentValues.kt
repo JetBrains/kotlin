@@ -150,7 +150,7 @@ internal class ArgumentSingleNullableValue<T : Any>(descriptor: Descriptor<T, T>
 internal class ArgumentMultipleValues<T : Any>(descriptor: Descriptor<T, List<T>>):
         ParsingValue<T, List<T>>(descriptor), ArgumentValueDelegate<List<T>> {
 
-    private val addedValue = mutableListOf<T>()
+    private val addedValue: MutableList<T> = []
     init {
         parsedValue = addedValue
     }

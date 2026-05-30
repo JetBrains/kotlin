@@ -246,14 +246,14 @@ open class KlibBasedMppIT : KGPBaseTest() {
     @GradleTest
     fun testAvoidSkippingSharedNativeSourceSetKt38746(gradleVersion: GradleVersion) {
         project("hierarchical-all-native", gradleVersion) {
-            val targetNames = listOf(
+            val targetNames = [
                 // Try different alphabetical ordering of the targets to ensure that the behavior doesn't depend on it,
                 // as with 'first target'
-                listOf("a1", "a2", "a3"),
-                listOf("a3", "a1", "a2"),
-                listOf("a2", "a3", "a1"),
-            )
-            val targetParamNames = listOf("mingwTargetName", "linuxTargetName", "macosTargetName", "currentHostTargetName")
+                ["a1", "a2", "a3"],
+                ["a3", "a1", "a2"],
+                ["a2", "a3", "a1"],
+            ]
+            val targetParamNames = ["mingwTargetName", "linuxTargetName", "macosTargetName", "currentHostTargetName"]
             for (names in targetNames) {
                 val currentHostTargetName = when {
                     HostManager.hostIsMingw -> names[0]
@@ -404,7 +404,7 @@ open class KlibBasedMppIT : KGPBaseTest() {
         // Then check that in the host-specific modules, there's a metadata artifact that contains the host-specific source set but not the
         // common source sets:
         val hostSpecificTargets = when {
-            HostManager.hostIsMac -> listOf("iosArm64", "iosX64")
+            HostManager.hostIsMac -> ["iosArm64", "iosX64"]
             else -> error("Host doesn't support host-specific metadata")
         }
 
@@ -469,8 +469,8 @@ open class KlibBasedMppIT : KGPBaseTest() {
 
     private fun TestProject.checkTaskCompileClasspath(
         taskPath: String,
-        checkModulesInClasspath: List<Regex> = emptyList(),
-        checkModulesNotInClasspath: List<Regex> = emptyList(),
+        checkModulesInClasspath: List<Regex> = [],
+        checkModulesNotInClasspath: List<Regex> = [],
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
         val taskName = taskPath.removePrefix(subproject.orEmpty())

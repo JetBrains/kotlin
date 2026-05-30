@@ -74,9 +74,9 @@ class ClasspathRootsResolver(
     private data class RootWithPrefix(val root: VirtualFile, val packagePrefix: String?)
 
     fun convertClasspathRoots(contentRoots: List<ContentRoot>): RootsAndModules {
-        val javaSourceRoots = mutableListOf<RootWithPrefix>()
-        val jvmClasspathRoots = mutableListOf<VirtualFile>()
-        val jvmModulePathRoots = mutableListOf<VirtualFile>()
+        val javaSourceRoots: MutableList<RootWithPrefix> = []
+        val jvmClasspathRoots: MutableList<VirtualFile> = []
+        val jvmModulePathRoots: MutableList<VirtualFile> = []
 
         for (contentRoot in contentRoots) {
             if (contentRoot !is JvmContentRootBase) continue
@@ -97,8 +97,8 @@ class ClasspathRootsResolver(
         jvmClasspathRoots: List<VirtualFile>,
         jvmModulePathRoots: List<VirtualFile>
     ): RootsAndModules {
-        val result = mutableListOf<JavaRoot>()
-        val modules = mutableListOf<JavaModule>()
+        val result: MutableList<JavaRoot> = []
+        val modules: MutableList<JavaModule> = []
 
         val hasOutputDirectoryInClasspath = outputDirectory in jvmClasspathRoots || outputDirectory in jvmModulePathRoots
 
@@ -161,8 +161,8 @@ class ClasspathRootsResolver(
         val sourceRoot = JavaModule.Root(root, isBinary = false)
         val roots =
             if (hasOutputDirectoryInClasspath)
-                listOf(sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true))
-            else listOf(sourceRoot)
+                [sourceRoot, JavaModule.Root(outputDirectory!!, isBinary = true)]
+            else [sourceRoot]
         return JavaModule.Explicit(JavaModuleInfo.create(psiJavaModule), roots, moduleInfoFile)
     }
 
@@ -176,12 +176,12 @@ class ClasspathRootsResolver(
 
         if (moduleInfoFile != null) {
             val moduleInfo = JavaModuleInfo.read(moduleInfoFile, javaFileManager, searchScope) ?: return null
-            return JavaModule.Explicit(moduleInfo, listOf(JavaModule.Root(root, isBinary = true)), moduleInfoFile)
+            return JavaModule.Explicit(moduleInfo, [JavaModule.Root(root, isBinary = true)], moduleInfoFile)
         }
 
         // Only .jar files can be automatic modules
         if (isJar) {
-            val moduleRoot = listOf(JavaModule.Root(root, isBinary = true))
+            val moduleRoot = [JavaModule.Root(root, isBinary = true)]
 
             val automaticModuleName = manifest.value?.getValue(AUTOMATIC_MODULE_NAME)
             if (automaticModuleName != null) {
@@ -265,7 +265,7 @@ class ClasspathRootsResolver(
         }
 
         val rootModules = when {
-            sourceModule != null -> listOf(sourceModule.name) + additionalModules
+            sourceModule != null -> [sourceModule.name] + additionalModules
             addAllModulePathToRoots -> modules.map(JavaModule::name)
             else -> javaModuleFinder.computeDefaultRootModules() + additionalModules
         }

@@ -14,8 +14,8 @@ import java.io.File
 import java.io.FileWriter
 
 internal class StringCasingTestGenerator(private val outputDir: File) {
-    private val casedRanges = mutableListOf<PropertyLine>()
-    private val caseIgnorableRanges = mutableListOf<PropertyLine>()
+    private val casedRanges: MutableList<PropertyLine> = []
+    private val caseIgnorableRanges: MutableList<PropertyLine> = []
 
     init {
         outputDir.requireExistingDir()
@@ -54,11 +54,11 @@ internal class StringCasingTestGenerator(private val outputDir: File) {
             writer.appendLine()
             writer.appendLine("import kotlin.test.*")
             writer.appendLine()
-            writer.appendLine("private val $rangesArrayName = arrayOf<IntRange>(")
+            writer.appendLine("private val $rangesArrayName: Array<IntRange> = [")
             ranges.forEach {
                 writer.appendLine("    ${it.hexIntRangeLiteral()},")
             }
-            writer.appendLine(")")
+            writer.appendLine("]")
             writer.appendLine()
             writer.appendLine(test(rangesArrayName, functionName))
         }

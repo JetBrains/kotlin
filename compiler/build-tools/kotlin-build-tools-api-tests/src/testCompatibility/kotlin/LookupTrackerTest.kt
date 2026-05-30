@@ -99,7 +99,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @BtaVersionsOnlyCompilationTest
     @Suppress("DEPRECATION")
     fun setLookupTrackerDeprecated(toolchain: KotlinToolchains) {
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(""))
         val lookupTracker = object : CompilerLookupTracker {
             override fun clear() {}
 
@@ -120,7 +120,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @DisplayName("LOOKUP_TRACKER can be set using the newer Option")
     @BtaVersionsOnlyCompilationTest
     fun setLookupTracker(toolchain: KotlinToolchains) {
-        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(""))
+        val jvmOperation = toolchain.jvm.jvmCompilationOperationBuilder([], Paths.get(""))
         val lookupTracker = object : CompilerLookupTracker {
             override fun clear() {}
 

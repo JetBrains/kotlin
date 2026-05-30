@@ -143,7 +143,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
                 javaSourcesScope = PsiBasedProjectFileSearchScope(scope),
                 librariesScope = PsiBasedProjectFileSearchScope(allProjectScope),
                 incrementalCompilationContext = null,
-                extensionRegistrars = emptyList(),
+                extensionRegistrars = [],
                 needRegisterJavaElementFinder = true
             )
         }
@@ -156,7 +156,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
 
             val session = configToSession.getValue(testModule)
 
-            val firFiles = mutableListOf<FirFile>()
+            val firFiles: MutableList<FirFile> = []
             mapKtFilesToFirFiles(session, ktFiles, firFiles, useLightTree)
             firFilesPerSession[session] = firFiles
         }
@@ -316,7 +316,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
             get() = JvmPlatformAnalyzerServices
 
         override fun dependencies(): List<ModuleInfo> {
-            return listOf(this)
+            return [this]
         }
     }
 
@@ -327,7 +327,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
         override val analyzerServices: PlatformDependentAnalyzerServices
             get() = JvmPlatformAnalyzerServices
 
-        val dependencies = mutableListOf<ModuleInfo>(this)
+        val dependencies: MutableList<ModuleInfo> = [this]
         override fun dependencies(): List<ModuleInfo> {
             return dependencies
         }
@@ -345,7 +345,7 @@ abstract class AbstractFirOldFrontendLightClassesTest :
         textWithMarkers: String,
         directives: Directives,
     ) : KotlinBaseTest.TestFile(fileName, textWithMarkers, directives) {
-        val diagnosedRanges: MutableList<DiagnosedRange> = mutableListOf()
+        val diagnosedRanges: MutableList<DiagnosedRange> = []
         val diagnosedRangesToDiagnosticNames: MutableMap<IntRange, MutableSet<String>> = mutableMapOf()
         val expectedText: String
         val clearText: String
@@ -444,14 +444,14 @@ abstract class AbstractFirOldFrontendLightClassesTest :
         private const val HELPERS_PATH = "./compiler/testData/diagnostics/helpers"
         private val DIAGNOSTICS_DIRECTIVE = "DIAGNOSTICS"
         private val DIAGNOSTICS_PATTERN: Pattern = Pattern.compile("([+\\-!])(\\w+)\\s*")
-        private val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = setOf(
+        private val DIAGNOSTICS_TO_INCLUDE_ANYWAY: Set<DiagnosticFactory<*>> = [
             Errors.UNRESOLVED_REFERENCE,
             Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             SyntaxErrorDiagnosticFactory.INSTANCE,
             DebugInfoDiagnosticFactory0.ELEMENT_WITH_ERROR_TYPE,
             DebugInfoDiagnosticFactory0.MISSING_UNRESOLVED,
             DebugInfoDiagnosticFactory0.UNRESOLVED_WITH_TARGET
-        )
+        ]
 
         private val CHECK_TYPE_DIRECTIVE = "CHECK_TYPE"
 

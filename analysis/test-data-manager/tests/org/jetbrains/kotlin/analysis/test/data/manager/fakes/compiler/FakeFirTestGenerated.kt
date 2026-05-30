@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 @TestMetadata("testData/compiler/fir")
 class FakeFirTestGenerated : FakeManagedTest() {
-    override val variantChain = emptyList<String>()
+    override val variantChain: List<String> = []
 
     @Test
     @TestMetadata("checker.kt")

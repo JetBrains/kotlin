@@ -78,7 +78,7 @@ fun computeDownwardClosure(
     moduleDescriptors: List<ModuleDescriptor>
 ): Set<CallableMemberDescriptor> {
     val overriddenToOverride = mutableMapOf<CallableMemberDescriptor, MutableSet<CallableMemberDescriptor>>()
-    val matched = mutableSetOf<CallableMemberDescriptor>()
+    val matched: MutableSet<CallableMemberDescriptor> = []
 
     fun processCallable(descriptor: CallableMemberDescriptor) {
         descriptor.overriddenDescriptors.forEach { overridden ->
@@ -109,7 +109,7 @@ fun computeDownwardClosure(
         }
     }
 
-    val closure = mutableSetOf<CallableMemberDescriptor>()
+    val closure: MutableSet<CallableMemberDescriptor> = []
     val todo = matched.toMutableList()
 
     while (todo.isNotEmpty()) {

@@ -24,8 +24,8 @@ internal fun ConeKotlinType.isIgnorable(): Boolean {
 
 @OptIn(SymbolInternals::class)
 internal fun FirCallableSymbol<*>.indicesOfPropagatingFunctionalParameters(): List<Int> {
-    if (this !is FirFunctionSymbol<*>) return emptyList()
-    val contractDescription = resolvedContractDescription ?: return emptyList()
+    if (this !is FirFunctionSymbol<*>) return []
+    val contractDescription = resolvedContractDescription ?: return []
     return buildList {
         for (effectDeclaration in contractDescription.effects) {
             val effect = effectDeclaration.effect

@@ -185,14 +185,14 @@ class CocoaPodsGitIT : KGPBaseTest() {
     @DisplayName("UTD test")
     @GradleTest
     fun basicUTDTest(gradleVersion: GradleVersion) {
-        val tasks = listOf(
+        val tasks = [
             podspecTaskName,
             defaultPodGenTaskName,
             defaultPodInstallSyntheticTaskName,
             defaultSetupBuildTaskName,
             defaultBuildTaskName,
             defaultCinteropTaskName,
-        )
+        ]
         doTestGit(
             gradleVersion,
             testImportAssertions = { assertTasksExecuted(tasks) }
@@ -214,7 +214,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             val anotherPodRepo = "https://github.com/ZipArchive/ZipArchive"
             buildGradleKts.addPod(anotherPodName, produceGitBlock(anotherPodRepo, tagName = "2.5.5"))
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"16.0\"")
-            testImport(repos = listOf(defaultPodRepo, anotherPodRepo)) {
+            testImport(repos = [defaultPodRepo, anotherPodRepo]) {
 
                 assertTasksExecuted(
                     podspecTaskName,
@@ -255,13 +255,13 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addCocoapodsBlock("osx.deploymentTarget = \"10.15\"")
             testImport()
 
-            val tasks = listOf(
+            val tasks = [
                 podspecTaskName,
                 defaultPodGenTaskName,
                 defaultSetupBuildTaskName,
                 defaultBuildTaskName,
                 defaultCinteropTaskName
-            )
+            ]
             val anotherTarget = "MacosX64"
             val anotherAppleTarget = "macos"
             val anotherFamily = "macos"
@@ -340,7 +340,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             build("linkPodDebugFrameworkIosArm64") {
                 val framework = projectPath.resolve("build/bin/iosArm64/podDebugFramework/cocoapods.framework/cocoapods")
                 val processRunResult = runProcess(
-                    listOf("file", framework.absolutePathString()),
+                    ["file", framework.absolutePathString()],
                     workingDir = projectPath.toFile(),
                     environmentVariables = environmentVariables.environmentalVariables
                 )
@@ -362,7 +362,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             build("linkPodDebugFrameworkIosArm64") {
                 val framework = projectPath.resolve("build/bin/iosArm64/podDebugFramework/cocoapods.framework/cocoapods")
                 val processRunResult = runProcess(
-                    listOf("file", framework.absolutePathString()),
+                    ["file", framework.absolutePathString()],
                     workingDir = projectPath.toFile(),
                     environmentVariables = environmentVariables.environmentalVariables
                 )
@@ -380,10 +380,10 @@ class CocoaPodsGitIT : KGPBaseTest() {
         nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
 
             buildGradleKts.addPod(defaultPodName)
-            val repos = listOf(
+            val repos = [
                 "https://github.com/alozhkin/spec_repo_example",
                 "https://github.com/alozhkin/spec_repo_example_2"
-            )
+            ]
 
             isRepoAvailable(repos)
 
@@ -447,7 +447,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             buildGradleKts.addPod(podName)
             buildGradleKts.addSpecRepo(podRepo)
 
-            testImport(repos = listOf(podRepo)) {
+            testImport(repos = [podRepo]) {
                 podImportAsserts(buildGradleKts)
             }
         }
@@ -486,22 +486,22 @@ class CocoaPodsGitIT : KGPBaseTest() {
 
             // Create bare repo
             runShellCommands {
-                add(listOf("git", "init", "--bare", privateSpecGit.absolutePathString()))
+                add(["git", "init", "--bare", privateSpecGit.absolutePathString()])
             }
 
             // Create master branch in a bare repo
             val workingDir = projectPath.relativeTo(privateSpecGit).pathString
             runShellCommands(privateSpecGit) {
-                add(listOf("mkdir", "-p", workingDir))
-                add(listOf("git", "--work-tree=$workingDir", "checkout", "--orphan", "master"))
-                add(listOf("git", "--work-tree=$workingDir", "add", "../$customPodLibraryName.zip"))
-                add(listOf("git", "--work-tree=$workingDir", "commit", "-m", "Initial commit"))
+                add(["mkdir", "-p", workingDir])
+                add(["git", "--work-tree=$workingDir", "checkout", "--orphan", "master"])
+                add(["git", "--work-tree=$workingDir", "add", "../$customPodLibraryName.zip"])
+                add(["git", "--work-tree=$workingDir", "commit", "-m", "Initial commit"])
             }
 
             //Add spec repo and publish version 0.1.0
             runShellCommands(podLibrary.resolve("0.1.0")) {
-                add(listOf("pod", "repo", "add", privateSpecName, privateSpecGitUri))
-                add(listOf("pod", "repo", "push", privateSpecName, "cocoapodsLibrary.podspec"))
+                add(["pod", "repo", "add", privateSpecName, privateSpecGitUri])
+                add(["pod", "repo", "push", privateSpecName, "cocoapodsLibrary.podspec"])
             }
 
             podInstallSynthetic("0.1.0")
@@ -509,8 +509,8 @@ class CocoaPodsGitIT : KGPBaseTest() {
             //Silently publish 0.2.0
             val podLibSpecs = projectPath.resolve(customPodLibraryName).relativeTo(privateSpecGit).pathString
             runShellCommands(privateSpecGit) {
-                add(listOf("git", "--work-tree=$workingDir", "add", podLibSpecs))
-                add(listOf("git", "--work-tree=$workingDir", "commit", "-m", "Bump to 0.2.0"))
+                add(["git", "--work-tree=$workingDir", "add", podLibSpecs])
+                add(["git", "--work-tree=$workingDir", "commit", "-m", "Bump to 0.2.0"])
             }
 
             podInstallSynthetic("0.2.0")
@@ -534,7 +534,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
             val buildScript = if (isGradleBuildScript) buildGradle else buildGradleKts
             buildScript.addPod(pod, produceGitBlock(repo, branch, commit, tag))
 
-            testImport(repos = listOf(repo)) {
+            testImport(repos = [repo]) {
                 podImportAsserts(buildScript)
                 testImportAssertions()
             }
@@ -577,7 +577,7 @@ class CocoaPodsGitIT : KGPBaseTest() {
 
     private fun TestProject.testImport(
         taskName: String = podImportTaskName,
-        repos: List<String> = listOf(defaultPodRepo),
+        repos: List<String> = [defaultPodRepo],
         vararg args: String,
         assertions: BuildResult.() -> Unit = {},
     ) {

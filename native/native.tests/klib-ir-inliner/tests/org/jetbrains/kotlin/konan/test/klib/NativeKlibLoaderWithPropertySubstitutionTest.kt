@@ -85,12 +85,12 @@ class NativeKlibLoaderWithPropertySubstitutionTest {
 
         private const val BASE_SUBSTITUTED_PROPERTY = "compilerOpts"
 
-        private val ALL_SUBSTITUTED_PROPERTY_NAMES = listOf(
+        private val ALL_SUBSTITUTED_PROPERTY_NAMES = [
             BASE_SUBSTITUTED_PROPERTY,
             "$BASE_SUBSTITUTED_PROPERTY.linux_arm64",
             "$BASE_SUBSTITUTED_PROPERTY.arm64",
             "$BASE_SUBSTITUTED_PROPERTY.linux",
-        )
+        ]
 
         private val CUSTOM_MANIFEST_PROPERTIES: Map<String, String> = ALL_SUBSTITUTED_PROPERTY_NAMES.associateBy { it }
 

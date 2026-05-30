@@ -26,9 +26,9 @@ abstract class KotlinJsr223JvmScriptEngineFactoryBase : ScriptEngineFactory {
     override fun getLanguageVersion(): String = KotlinCompilerVersion.VERSION
     override fun getEngineName(): String = "kotlin"
     override fun getEngineVersion(): String = KotlinCompilerVersion.VERSION
-    override fun getExtensions(): List<String> = listOf("kts")
-    override fun getMimeTypes(): List<String> = listOf("text/x-kotlin")
-    override fun getNames(): List<String> = listOf("kotlin")
+    override fun getExtensions(): List<String> = ["kts"]
+    override fun getMimeTypes(): List<String> = ["text/x-kotlin"]
+    override fun getNames(): List<String> = ["kotlin"]
 
     override fun getOutputStatement(toDisplay: String?): String = "print(\"$toDisplay\")"
     override fun getMethodCallSyntax(obj: String, m: String, vararg args: String): String = "$obj.$m(${args.joinToString()})"

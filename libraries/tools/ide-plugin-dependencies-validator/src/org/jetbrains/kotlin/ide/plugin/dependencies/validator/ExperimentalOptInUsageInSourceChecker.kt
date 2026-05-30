@@ -29,7 +29,7 @@ object ExperimentalOptInUsageInSourceChecker {
         return ktFile
             .collectDescendantsOfType<KtAnnotationEntry>()
             .flatMap { annotationEntry ->
-                val annotationShortName = annotationEntry.shortName?.asString() ?: return@flatMap emptyList()
+                val annotationShortName = annotationEntry.shortName?.asString() ?: return@flatMap []
                 val experimentalAnnotations = when (annotationShortName) {
                     OPT_IN_ANNOTATION -> {
                         annotationEntry.valueArguments.mapNotNull mapArguments@{ argument ->
@@ -40,11 +40,11 @@ object ExperimentalOptInUsageInSourceChecker {
                         }
                     }
                     in ExperimentalAnnotations.experimentalAnnotationShortNames -> {
-                        listOf(annotationShortName)
+                        [annotationShortName]
                     }
-                    else -> return@flatMap emptyList()
+                    else -> return@flatMap []
                 }
-                if (experimentalAnnotations.isEmpty()) return@flatMap emptyList()
+                if (experimentalAnnotations.isEmpty()) return@flatMap []
 
                 /* offsetToLineNumber's indexing starts from 0*/
                 val lineNumber = StringUtil.offsetToLineNumber(ktFile.text, annotationEntry.startOffset) + 1

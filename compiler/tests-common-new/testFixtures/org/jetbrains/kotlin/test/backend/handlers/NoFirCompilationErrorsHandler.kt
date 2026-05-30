@@ -27,12 +27,12 @@ class NoFirCompilationErrorsHandler(
     failureDisablesNextSteps: Boolean = true,
 ) : FirAnalysisHandler(testServices, failureDisablesNextSteps) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirDiagnosticCollectorService))
+        get() = [service(::FirDiagnosticCollectorService)]
 
-    private val seenModules = mutableSetOf<TestModule>()
+    private val seenModules: MutableSet<TestModule> = []
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         for (part in info.partsForDependsOnModules) {

@@ -107,21 +107,21 @@ abstract class BaseMultimap<K, V, C : Collection<V>, MC : MutableCollection<V>> 
 
 class SetMultimap<K, V> : BaseMultimap<K, V, Set<V>, MutableSet<V>>() {
     override fun createContainer(): MutableSet<V> {
-        return mutableSetOf()
+        return []
     }
 
     override fun createEmptyContainer(): Set<V> {
-        return emptySet()
+        return []
     }
 }
 
 class ListMultimap<K, V> : BaseMultimap<K, V, List<V>, MutableList<V>>() {
     override fun createContainer(): MutableList<V> {
-        return mutableListOf()
+        return []
     }
 
     override fun createEmptyContainer(): List<V> {
-        return emptyList()
+        return []
     }
 }
 

@@ -20,8 +20,8 @@ val data = mapOf(
     "identity" to fresh { t ->
         Function(
             "identity",
-            typeParameters = listOf(t),
-            parameters = listOf(Parameter("value", t)),
+            typeParameters = [t],
+            parameters = [Parameter("value", t)],
             result = t
         )
     },
@@ -29,8 +29,8 @@ val data = mapOf(
     "run" to fresh { t ->
         Function(
             "run",
-            typeParameters = listOf(t),
-            parameters = listOf(
+            typeParameters = [t],
+            parameters = [
                 Parameter(
                     name = "value",
                     type = t
@@ -39,176 +39,177 @@ val data = mapOf(
                     name = "block",
                     type = FunctionType(
                         name = "<anonymous>",
-                        parameters = listOf(Parameter("it", t)),
+                        parameters = [Parameter("it", t)],
                         result = t
                     )
                 )
-            ),
+            ],
             result = t
         )
     },
     "useRun" to Function(
         "useRun",
         annotations = composable,
-        parameters = listOf(
+        parameters = [
             Parameter("content", composableLambda())
-        ),
-        body = listOf(
+        ],
+        body = [
             call("mark"),
-            call("run",
+            call(
+                "run",
                 Ref("content"),
                 Lambda(
                     type = FunctionType(
                         name = "<lambda>",
                         annotations = composable,
-                        parameters = listOf(
+                        parameters = [
                             Parameter(
                                 name = "content",
                                 type = composableLambda()
                             )
-                        )
+                        ]
                     ),
-                    body = listOf(
+                    body = [
                         call("content")
-                    )
+                    ]
                 )
             )
-        )
+        ]
     ),
     "useIdentity" to Function(
         "useIdentity",
         annotations = composable,
-        parameters = listOf(
+        parameters = [
             Parameter("content", composableLambda())
-        ),
-        body = listOf(
-            Call(Call(Ref("identity"), listOf(Ref("content"))))
-        )
+        ],
+        body = [
+            Call(Call(Ref("identity"), [Ref("content")]))
+        ]
     ),
     "Drawing" to Function(
         "Drawing",
         annotations = composable + uiTarget,
-        parameters = listOf(
+        parameters = [
             Parameter(
                 "content",
                 FunctionType("lambda", annotations = composable + vectorTarget)
             )
-        )
+        ]
     ),
     "useVarAndIdentity" to Function(
         "useVarAndIdentity",
         annotations = composable,
-        parameters = listOf(
+        parameters = [
             Parameter("content", composableLambda()),
             Parameter("image", composableLambda())
-        ),
-        body = listOf(
+        ],
+        body = [
             Variable("tmp", call("identity", Ref("content"))),
             Variable("tmp2", call("identity", Ref("tmp"))),
             call("tmp2"),
             Variable("image_tmp", call("identity", Ref("image"))),
             call("Drawing", Ref("image_tmp"))
-        )
+        ]
     ),
     "useVar" to Function(
         "useVar",
         annotations = composable,
-        parameters = listOf(
+        parameters = [
             Parameter("content", composableLambda())
-        ),
-        body = listOf(
+        ],
+        body = [
             Variable("tmp", Ref("content")),
             Call(Ref("tmp"))
-        )
+        ]
     ),
     "Layout/1" to Function("Layout/1", annotations = composable + uiTarget),
     "Layout/2" to Function(
         "Layout/2",
         annotations = composable + uiTarget,
-        parameters = listOf(
+        parameters = [
             Parameter(
                 "content",
                 FunctionType("lambda", annotations = composable + uiTarget)
             )
-        )
+        ]
     ),
     "Vector/1" to Function("Vector/1", annotations = composable + vectorTarget),
     "Vector/2" to Function(
         "Vector/2",
         annotations = composable + vectorTarget,
-        parameters = listOf(
+        parameters = [
             Parameter(
                 "content",
                 FunctionType("lambda", annotations = composable + vectorTarget)
             )
-        )
+        ]
     ),
     "CoreText" to Function(
         "CoreText",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Layout/1")
-        )
+        ]
     ),
     "BasicText" to Function(
         "BasicText",
         annotations = composable,
-        body = listOf(
+        body = [
             call("CoreText")
-        )
+        ]
     ),
     "Text" to Function(
         "Text",
         annotations = composable,
-        body = listOf(
+        body = [
             call("BasicText")
-        )
+        ]
     ),
     "Circle" to Function(
         "Circle",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Vector/1")
-        )
+        ]
     ),
     "Square" to Function(
         "Square",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Vector/1")
-        )
+        ]
     ),
     "Provider" to Function(
         "Provider",
         annotations = composable,
-        parameters = listOf(Parameter("content", composableLambda())),
-        body = listOf(
+        parameters = [Parameter("content", composableLambda())],
+        body = [
             call("content")
-        )
+        ]
     ),
     "Row" to Function(
         "Row",
         annotations = composable,
-        parameters = listOf(Parameter("content", composableLambda())),
-        body = listOf(
+        parameters = [Parameter("content", composableLambda())],
+        body = [
             call("Layout/2", Ref("content"))
-        )
+        ]
     ),
     "Button" to Function(
         "Button",
         annotations = composable,
-        parameters = listOf(Parameter("content", composableLambda())),
-        body = listOf(
+        parameters = [Parameter("content", composableLambda())],
+        body = [
             call("Row", Ref("content"))
-        )
+        ]
     ),
     "Layer" to Function(
         "Layer",
         annotations = composable,
-        parameters = listOf(Parameter("content", composableLambda())),
-        body = listOf(
+        parameters = [Parameter("content", composableLambda())],
+        body = [
             call("Vector/2", Ref("content"))
-        )
+        ]
     ),
 
     "SimpleOpen" to Function("SimpleOpen", annotations = composable),
@@ -216,82 +217,82 @@ val data = mapOf(
     "OpenRecursive" to Function(
         "OpenRecursive",
         annotations = composable,
-        body = listOf(
+        body = [
             call("OpenRecursive")
-        )
+        ]
     ),
 
     "ClosedRecursive" to Function(
         "ClosedRecursive",
         annotations = composable,
-        body = listOf(
+        body = [
             call("ClosedRecursive"),
             call("Text")
-        )
+        ]
     ),
 
     "ClosedIndirectRecursive" to Function(
         "ClosedIndirectRecursive",
         annotations = composable,
-        body = listOf(
+        body = [
             call("ClosedIndirectRecursiveRecurse")
-        )
+        ]
     ),
 
     "ClosedIndirectRecursiveRecurse" to Function(
         "ClosedIndirectRecursiveRecurse",
         annotations = composable,
-        body = listOf(
+        body = [
             call("ClosedIndirectRecursive"),
             call("Text")
-        )
+        ]
     ),
 
     "OpenIndirectRecursive" to Function(
         "OpenIndirectRecursive",
         annotations = composable,
-        body = listOf(
+        body = [
             call("OpenIndirectRecursiveRecurse")
-        )
+        ]
     ),
 
     "OpenIndirectRecursiveRecurse" to Function(
         "OpenIndirectRecursiveRecurse",
         annotations = composable,
-        body = listOf(
+        body = [
             call("OpenIndirectRecursive")
-        )
+        ]
     ),
 
     "p1" to Function(
         "p1",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Text")
-        )
+        ]
     ),
 
     "p2" to Function(
         "p2",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Circle")
-        )
+        ]
     ),
 
     "p3" to Function(
         "p3",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Text"),
             call("Text")
-        )
+        ]
     ),
 
     "p4" to Function(
         "p4",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Row",
                 lambda(
@@ -299,13 +300,13 @@ val data = mapOf(
                     call("Text")
                 )
             )
-        )
+        ]
     ),
 
     "p5" to Function(
         "p5",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Provider",
                 lambda(
@@ -323,13 +324,13 @@ val data = mapOf(
                     )
                 )
             )
-        )
+        ]
     ),
 
     "p6" to Function(
         "p6",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Provider",
                 lambda(
@@ -337,13 +338,13 @@ val data = mapOf(
                     call("Square")
                 )
             )
-        )
+        ]
     ),
 
     "p7" to Function(
         "p7",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Row",
                 lambda(
@@ -362,13 +363,13 @@ val data = mapOf(
                     )
                 )
             )
-        )
+        ]
     ),
 
     "p8" to Function(
         "p8",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Provider",
                 lambda(
@@ -391,19 +392,19 @@ val data = mapOf(
                     )
                 )
             )
-        )
+        ]
     ),
 
     "p9" to Function(
         "p9",
         annotations = composable,
-        parameters = listOf(
+        parameters = [
             Parameter(
                 "content",
                 FunctionType(
                     "lambda",
                     annotations = composable + openTarget(0),
-                    parameters = listOf(
+                    parameters = [
                         Parameter(
                             "content",
                             FunctionType(
@@ -411,33 +412,33 @@ val data = mapOf(
                                 annotations = composable + openTarget(0)
                             )
                         )
-                    )
+                    ]
                 )
             )
-        ),
-        body = listOf(
+        ],
+        body = [
             call(
                 "content",
                 lambda(
                     call("Text")
                 )
             )
-        )
+        ]
     ),
 
     "e1" to Function(
         "e1",
         annotations = composable,
-        body = listOf(
+        body = [
             call("Text"),
             call("Circle")
-        )
+        ]
     ),
 
     "e2" to Function(
         "e2",
         annotations = composable,
-        body = listOf(
+        body = [
             call(
                 "Provider",
                 lambda(
@@ -450,7 +451,7 @@ val data = mapOf(
                     call("Circle")
                 )
             )
-        )
+        ]
     )
 )
 
@@ -461,7 +462,7 @@ fun walkData(visitor: Visitor) {
 }
 
 fun randomlyWalkData(visitor: Visitor) {
-    val nodes = mutableListOf<Node>()
+    val nodes: MutableList<Node> = []
     for (function in data.values) {
         walk(
             function,

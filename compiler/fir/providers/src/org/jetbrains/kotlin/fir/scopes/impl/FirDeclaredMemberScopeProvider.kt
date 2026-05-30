@@ -104,7 +104,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
                     )
                 }
                 if (generatedScope != null) {
-                    FirNameAwareCompositeScope(listOf(baseScope, generatedScope))
+                    FirNameAwareCompositeScope([baseScope, generatedScope])
                 } else {
                     baseScope
                 }
@@ -127,7 +127,7 @@ class FirDeclaredMemberScopeProvider(val useSiteSession: FirSession) : FirSessio
             }
             if (generatedScope != null) {
                 FirCompositeNestedClassifierScope(
-                    listOf(baseScope, generatedScope),
+                    [baseScope, generatedScope],
                     klass,
                     useSiteSession
                 )

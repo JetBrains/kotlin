@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.objcexport.mangling.unifyName
 
 internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbol, baseMethodBridge: MethodBridge): List<ObjCParameter> {
     val valueParametersAssociated = valueParametersAssociated(baseMethodBridge, symbol)
-    val parameters = mutableListOf<ObjCParameter>()
-    val usedNames = mutableSetOf<String>()
+    val parameters: MutableList<ObjCParameter> = []
+    val usedNames: MutableSet<String> = []
 
     valueParametersAssociated.forEach { [bridge: MethodBridgeValueParameter, parameter: KtObjCParameterData?] ->
         val candidateName = when (bridge) {

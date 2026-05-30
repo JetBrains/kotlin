@@ -29,14 +29,14 @@ object StandardClassIds {
     val BASE_TEST_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("test"))
     val BASE_TEXT_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("text"))
 
-    val builtInsPackagesWithDefaultNamedImport = setOf(
+    val builtInsPackagesWithDefaultNamedImport: Set<FqName> = [
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
         BASE_RANGES_PACKAGE,
         BASE_ANNOTATION_PACKAGE,
-    )
+    ]
 
-    val builtInsPackages = setOf(
+    val builtInsPackages: Set<FqName> = [
         BASE_KOTLIN_PACKAGE,
         BASE_COLLECTIONS_PACKAGE,
         BASE_RANGES_PACKAGE,
@@ -45,7 +45,7 @@ object StandardClassIds {
         BASE_INTERNAL_PACKAGE,
         BASE_COROUTINES_PACKAGE,
         BASE_CONCURRENT_ATOMICS_PACKAGE
-    )
+    ]
 
     val Nothing = "Nothing".baseId()
     val Unit = "Unit".baseId()
@@ -98,13 +98,13 @@ object StandardClassIds {
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
 
-    val primitiveTypes = setOf(Boolean, Char, Byte, Short, Int, Long, Float, Double)
-    val signedIntegerTypes = setOf(Byte, Short, Int, Long)
+    val primitiveTypes: Set<ClassId> = [Boolean, Char, Byte, Short, Int, Long, Float, Double]
+    val signedIntegerTypes: Set<ClassId> = [Byte, Short, Int, Long]
 
     val primitiveArrayTypeByElementType = primitiveTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByPrimitiveArrayType = primitiveArrayTypeByElementType.inverseMap()
 
-    val unsignedTypes = setOf(UByte, UShort, UInt, ULong)
+    val unsignedTypes: Set<ClassId> = [UByte, UShort, UInt, ULong]
     val unsignedArrayTypeByElementType = unsignedTypes.associateWith { id -> id.shortClassName.primitiveArrayId() }
     val elementTypeByUnsignedArrayType = unsignedArrayTypeByElementType.inverseMap()
 

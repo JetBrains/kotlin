@@ -18,7 +18,7 @@ internal fun extractAbiFromKlib(to: Appendable, klibFile: File, filters: AbiFilt
     if (!klibFile.exists()) {
         throw FileNotFoundException("File does not exist: ${klibFile.absolutePath}")
     }
-    val abiFilters = mutableListOf<AbiReadingFilter>(Filter(filters))
+    val abiFilters: MutableList<AbiReadingFilter> = [Filter(filters)]
 
     val library = try {
         LibraryAbiReader.readAbiInfo(klibFile, abiFilters)

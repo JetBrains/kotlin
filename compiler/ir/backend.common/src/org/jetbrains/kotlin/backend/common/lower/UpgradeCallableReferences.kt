@@ -135,13 +135,13 @@ open class UpgradeCallableReferences(
                 }
         }
 
-        private val blockReferenceOrigins = setOf(
+        private val blockReferenceOrigins: Set<IrStatementOriginImpl> = [
             IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE, IrStatementOrigin.FUNCTION_TYPE_EXPRESSION_CONVERSION,
             IrStatementOrigin.LAMBDA, IrStatementOrigin.INLINE_LAMBDA, IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE, IrStatementOrigin.ANONYMOUS_FUNCTION,
-        )
+        ]
 
         // TODO delete once the lowering is moved
-        private val usedLambdas = mutableSetOf<IrFunction>()
+        private val usedLambdas: MutableSet<IrFunction> = []
 
         // TODO delete once the lowering is moved
         override fun visitClass(declaration: IrClass, data: IrDeclarationParent): IrStatement {
@@ -278,15 +278,15 @@ open class UpgradeCallableReferences(
 
             if (getter != null) {
                 if (generateFakeAccessorsForReflectionProperty && expression.origin == IrStatementOrigin.PROPERTY_REFERENCE_FOR_DELEGATE) {
-                    boundValues = emptyList()
+                    boundValues = []
                     getterFun = getter.let {
                         expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = false
+                            [], data, it.name, it.isSuspend, isPropertySetter = false
                         )
                     }
                     setterFun = setter?.let {
                         expression.buildReflectionPropertyAccessorWithoutBody(
-                            emptyList(), data, it.name, it.isSuspend, isPropertySetter = true
+                            [], data, it.name, it.isSuspend, isPropertySetter = true
                         )
                     }
                 } else {
@@ -375,10 +375,10 @@ open class UpgradeCallableReferences(
                 type = expression.type,
                 reflectionTargetSymbol = expression.symbol,
                 getterFunction = expression.getter.owner.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = false)
+                    expression.buildUnsupportedForLocalFunction([], data, it.name, it.isSuspend, isPropertySetter = false)
                 },
                 setterFunction = expression.setter?.owner?.let {
-                    expression.buildUnsupportedForLocalFunction(emptyList(), data, it.name, it.isSuspend, isPropertySetter = true)
+                    expression.buildUnsupportedForLocalFunction([], data, it.name, it.isSuspend, isPropertySetter = true)
                 },
                 origin = expression.origin
             )

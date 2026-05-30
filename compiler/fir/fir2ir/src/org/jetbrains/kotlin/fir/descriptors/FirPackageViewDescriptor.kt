@@ -24,7 +24,7 @@ class FirPackageViewDescriptor(override val fqName: FqName, val moduleDescriptor
         get() = moduleDescriptor
 
     override val fragments: List<PackageFragmentDescriptor>
-        get() = listOf(FirPackageFragmentDescriptor(fqName, moduleDescriptor))
+        get() = [FirPackageFragmentDescriptor(fqName, moduleDescriptor)]
 
     override fun getOriginal(): DeclarationDescriptor {
         shouldNotBeCalled()

@@ -21,7 +21,7 @@ import kotlinx.cinterop.*
 import java.io.File
 import java.util.stream.Collectors
 
-val predefinedMacros = setOf("__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__")
+val predefinedMacros: Set<String> = ["__DATE__", "__TIME__", "__TIMESTAMP__", "__FILE__", "__FILE_NAME__", "__BASE_FILE__", "__LINE__"]
 
 /**
  * Finds all "macro constants" and registers them as [NativeIndex.constants] in given index.
@@ -110,8 +110,8 @@ private fun tryExpandMacros(
 
     reparseWithCodeSnippets(library, translationUnit, sourceFile, names)
 
-    val macrosWithErrorsInSnippetFunctionHeader = mutableSetOf<String>()
-    val macrosWithErrorsInSnippetFunctionBody = mutableSetOf<String>()
+    val macrosWithErrorsInSnippetFunctionHeader: MutableSet<String> = []
+    val macrosWithErrorsInSnippetFunctionBody: MutableSet<String> = []
 
     val preambleSize = library.preambleLines.size
 
@@ -176,9 +176,9 @@ private fun reparseWithCodeSnippets(library: CompilationWithPCH,
         names.forEach { name ->
             val codeSnippetLines = when (library.language) {
                 Language.C, Language.CPP, Language.OBJECTIVE_C ->
-                    listOf("void $CODE_SNIPPET_FUNCTION_NAME_PREFIX$name() {",
-                            "    __auto_type KNI_INDEXER_VARIABLE_$name = $name;",
-                            "}")
+                    ["void $CODE_SNIPPET_FUNCTION_NAME_PREFIX$name() {",
+                        "    __auto_type KNI_INDEXER_VARIABLE_$name = $name;",
+                        "}"]
             }
 
             assert(codeSnippetLines.size == CODE_SNIPPET_LINES_NUMBER)
@@ -198,7 +198,7 @@ private fun processCodeSnippet(
         typeConverter: TypeConverter
 ): MacroDef? {
 
-    val kindsToSkip = setOf(CXCursorKind.CXCursor_CompoundStmt)
+    val kindsToSkip: Set<CXCursorKind> = [CXCursorKind.CXCursor_CompoundStmt]
     var state = VisitorState.EXPECT_NODES_TO_SKIP
     var evalResultOrNull: CXEvalResult? = null
     var typeOrNull: Type? = null
@@ -311,7 +311,7 @@ private fun collectMacroNamesLegacy(
         translationUnits: List<CXTranslationUnit>,
         headers: Set<ClangFile?>,
 ): List<String> {
-    val result = mutableSetOf<String>()
+    val result: MutableSet<String> = []
 
     translationUnits.forEach {
         visitChildren(it) { cursor, _ ->
@@ -339,7 +339,7 @@ private fun collectMacroNamesLibclangext(
         parallelize: Boolean,
 ): List<String> {
     fun processTranslationUnit(translationUnit: CXTranslationUnit): Set<String> {
-        val result = mutableSetOf<String>()
+        val result: MutableSet<String> = []
         visitObjectLikeMacroDefinitions(translationUnit, nativeIndex.library.excludeSystemLibs) { spelling, _, file ->
             if (spelling != null && file != null && file in headers) {
                 result.add(spelling.toKString())

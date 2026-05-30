@@ -43,13 +43,14 @@ data class Scenario(
                 else -> true
             }
 
+        @Suppress("ConvertToCollectionLiterals")
         val resolvedConfigurationsNames
             get() = when (variant) {
-                ProjectVariant.AndroidOnly -> listOf(
+                ProjectVariant.AndroidOnly -> [
                     "flavor1ReleaseCompileClasspath",
                     "flavor1DebugCompileClasspath"
-                )
-                ProjectVariant.JavaOnly -> listOf("compileClasspath")
+                ]
+                ProjectVariant.JavaOnly -> ["compileClasspath"]
                 is ProjectVariant.Kmp -> listOfNotNull(
                     "linuxX64CompileKlibraries",
                     "linuxArm64CompileKlibraries",
@@ -57,7 +58,7 @@ data class Scenario(
                 ) + if (variant.withAndroid) listOf(
                     "flavor1ReleaseCompileClasspath",
                     "flavor1DebugCompileClasspath"
-                ) else emptyList()
+                ) else []
             }
     }
 

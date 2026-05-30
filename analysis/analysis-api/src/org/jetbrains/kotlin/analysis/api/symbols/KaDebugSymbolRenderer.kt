@@ -440,7 +440,7 @@ public class KaDebugRenderer(
      */
     @OptIn(KaPlatformInterface::class, KaExperimentalApi::class)
     private val kaModuleApiSubclasses =
-        listOf(
+        [
             KaModule::class,
             KaSourceModule::class,
             KaLibraryModule::class,
@@ -451,7 +451,7 @@ public class KaDebugRenderer(
             KaScriptDependencyModule::class,
             KaDanglingFileModule::class,
             KaNotUnderContentRootModule::class,
-        ).sortedWith { a, b ->
+        ].sortedWith { a, b ->
             when {
                 a == b -> 0
                 a.isSubclassOf(b) -> -1
@@ -490,7 +490,7 @@ public class KaDebugRenderer(
 
     @KaNonPublicApi
     public companion object {
-        private val ignoredPropertyNames = setOf(
+        private val ignoredPropertyNames: Set<String> = [
             "psi",
             "token",
             "builder",
@@ -503,7 +503,7 @@ public class KaDebugRenderer(
             "classIdIfNonLocal",
             "containingClassIdIfNonLocal",
             "callableIdIfNonLocal",
-        )
+        ]
     }
 }
 

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.ir.types.isStringClassType
 import org.jetbrains.kotlin.ir.util.*
 
 class IrInterpreterCommonChecker : IrInterpreterChecker() {
-    private val visitedStack = mutableListOf<IrElement>()
+    private val visitedStack: MutableList<IrElement> = []
 
     private inline fun IrElement.asVisited(crossinline block: () -> Boolean): Boolean {
         visitedStack += this
@@ -31,7 +31,7 @@ class IrInterpreterCommonChecker : IrInterpreterChecker() {
     override fun visitElement(element: IrElement, data: IrInterpreterCheckerData) = false
 
     private fun IrDeclarationParent.getInnerDeclarations(): List<IrStatement> {
-        return (this as? IrDeclarationContainer)?.declarations ?: (this as? IrStatementContainer)?.statements ?: emptyList()
+        return (this as? IrDeclarationContainer)?.declarations ?: (this as? IrStatementContainer)?.statements ?: []
     }
 
     private fun visitStatements(statements: List<IrStatement>, data: IrInterpreterCheckerData): Boolean {

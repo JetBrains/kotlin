@@ -150,7 +150,7 @@ abstract class KaBaseKDocProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
         return primaryContent?.let {
             // makes little sense to include any other sections, since we found
             // documentation for a very specific element, like a property/param
-            KDocCommentDescriptorImpl(it, additionalSections = emptyList())
+            KDocCommentDescriptorImpl(it, additionalSections = [])
         }
     }
 }

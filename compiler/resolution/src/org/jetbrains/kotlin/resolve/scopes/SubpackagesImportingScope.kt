@@ -45,15 +45,15 @@ class SubpackagesImportingScope(
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> =
-        emptyList()
+    ): List<DeclarationDescriptor> =
+        []
 
     //TODO: kept old behavior, but it seems very strange (super call seems more applicable)
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
         changeNamesForAliased: Boolean
-    ): Collection<DeclarationDescriptor> = emptyList()
+    ): List<DeclarationDescriptor> = []
 
-    override fun computeImportedNames() = emptySet<Name>()
+    override fun computeImportedNames(): Set<Name> = []
 }

@@ -49,7 +49,7 @@ class KmpSymbolTestOutputSanitizer(private val testServices: TestServices) : Ana
 
     companion object {
         private val REGEXES: List<RegexSanitizer> =
-            listOf(
+            [
                 RegexSanitizer(
                     { !it.isJvm() },
                     Regex(
@@ -58,7 +58,7 @@ class KmpSymbolTestOutputSanitizer(private val testServices: TestServices) : Ana
                     ),
                     "$1null"
                 )
-            )
+            ]
     }
 
     private class RegexSanitizer(

@@ -30,13 +30,13 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     private fun runTest(
         name: String,
         files: List<File>,
-        compilationArgs: List<String> = emptyList(),
-        executionArgs: List<String> = emptyList(),
+        compilationArgs: List<String> = [],
+        executionArgs: List<String> = [],
         outputDataFile: OutputDataFile? = null,
         outputMatcher: TestRunCheck.OutputMatcher? = null,
-        dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
+        dependencies: List<TestCompilationArtifact.KLIB> = [],
     ) {
-        val module = TestModule.Exclusive(name, emptySet(), emptySet(), emptySet()).apply {
+        val module = TestModule.Exclusive(name, [], [], []).apply {
             files.forEach {
                 this.files += TestFile.createCommitted(it, this)
             }
@@ -53,8 +53,8 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
         val testCase = TestCase(
             id = TestCaseId.Named(module.name),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs(listOf("-tr") + compilationArgs),
+            modules = [module],
+            freeCompilerArgs = TestCompilerArgs(["-tr"] + compilationArgs),
             nominalPackageName = PackageName.EMPTY,
             checks = checks,
             extras = TestCase.NoTestRunnerExtras(arguments = executionArgs),
@@ -80,11 +80,11 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testGlobalInitializers() {
         runTest(
             "globalInitializers",
-            listOf(
+            [
                 testRoot.resolve("globalInitializers/lib.kt"),
                 testRoot.resolve("globalInitializers/lib2.kt"),
                 testRoot.resolve("globalInitializers/main.kt")
-            ),
+            ],
         )
     }
 
@@ -92,8 +92,8 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testAnnotations() {
         runTest(
             "annotations",
-            listOf(testRoot.resolve("annotations.kt")),
-            executionArgs = listOf("--ktest_logger=SIMPLE"),
+            [testRoot.resolve("annotations.kt")],
+            executionArgs = ["--ktest_logger=SIMPLE"],
             outputDataFile = OutputDataFile(file = testRoot.resolve("annotations.out"))
         )
     }
@@ -102,9 +102,9 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testCustomMain() {
         runTest(
             "custom_main",
-            listOf(testRoot.resolve("custom_main.kt")),
-            compilationArgs = listOf("-e", "kotlin.test.tests.main"),
-            executionArgs = listOf("--ktest_logger=SIMPLE", "--ktest_repeat=2"),
+            [testRoot.resolve("custom_main.kt")],
+            compilationArgs = ["-e", "kotlin.test.tests.main"],
+            executionArgs = ["--ktest_logger=SIMPLE", "--ktest_repeat=2"],
             outputDataFile = OutputDataFile(file = testRoot.resolve("custom_main.out"))
         )
     }
@@ -114,18 +114,18 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
         val library = compileToLibrary(testRoot.resolve("withLibrary/lib"))
         runTest(
             "withLibrary",
-            listOf(testRoot.resolve("withLibrary/library_user.kt")),
-            compilationArgs = listOf("-e", "main"),
-            executionArgs = listOf("--ktest_logger=SILENT"),
-            dependencies = listOf(library)
+            [testRoot.resolve("withLibrary/library_user.kt")],
+            compilationArgs = ["-e", "main"],
+            executionArgs = ["--ktest_logger=SILENT"],
+            dependencies = [library]
         )
     }
 
     @Test
     fun testStacktrace() {
         runTest("stacktrace",
-                listOf(testRoot.resolve("stacktrace.kt")),
-                executionArgs = listOf("--ktest_logger=TEAMCITY", "--ktest_no_exit_code"),
+                [testRoot.resolve("stacktrace.kt")],
+                executionArgs = ["--ktest_logger=TEAMCITY", "--ktest_no_exit_code"],
                 outputMatcher = TestRunCheck.OutputMatcher { rawOutput ->
                     val output = rawOutput.replace("\r\n", "\n")
                     val ignoredOutput = """
@@ -173,8 +173,8 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
             return "${clazz}.${method}"
         }
         runTest("filters",
-                listOf(testRoot.resolve("filters.kt")),
-                executionArgs = listOf("--ktest_logger=SIMPLE") + filter.args,
+                [testRoot.resolve("filters.kt")],
+                executionArgs = ["--ktest_logger=SIMPLE"] + filter.args,
                 outputMatcher = TestRunCheck.OutputMatcher { output ->
                     val actual = output.lines().mapNotNull {
                         regex.matchEntire(it)?.toTestName()
@@ -188,7 +188,7 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testFiltersPositive() {
         doTestFilters(
             Filter(
-                listOf("A.foo1", "B", "FiltersKt.foo1"), listOf(), listOf("A.foo1", "B.foo1", "B.foo2", "B.bar", "FiltersKt.foo1")
+                ["A.foo1", "B", "FiltersKt.foo1"], [], ["A.foo1", "B.foo1", "B.foo2", "B.bar", "FiltersKt.foo1"]
             )
         )
     }
@@ -197,7 +197,7 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testFiltersNegative() {
         doTestFilters(
             Filter(
-                listOf(), listOf("A.foo1", "B", "FiltersKt.foo1"), listOf("A.foo2", "A.bar", "FiltersKt.foo2", "FiltersKt.bar")
+                [], ["A.foo1", "B", "FiltersKt.foo1"], ["A.foo2", "A.bar", "FiltersKt.foo2", "FiltersKt.bar"]
             )
         )
     }
@@ -206,29 +206,29 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
     fun testFiltersPositiveNegative() {
         doTestFilters(
             Filter(
-                listOf("A", "FiltersKt"), listOf("A.foo1", "FiltersKt.foo1"), listOf("A.foo2", "A.bar", "FiltersKt.foo2", "FiltersKt.bar")
+                ["A", "FiltersKt"], ["A.foo1", "FiltersKt.foo1"], ["A.foo2", "A.bar", "FiltersKt.foo2", "FiltersKt.bar"]
             )
         )
     }
 
     @Test
     fun testFiltersPositiveGlob() {
-        doTestFilters(Filter(listOf("A.foo*", "B.*"), listOf(), listOf("A.foo1", "A.foo2", "B.foo1", "B.foo2", "B.bar")))
+        doTestFilters(Filter(["A.foo*", "B.*"], [], ["A.foo1", "A.foo2", "B.foo1", "B.foo2", "B.bar"]))
     }
 
     @Test
     fun testFiltersNegativeGlob() {
-        doTestFilters(Filter(listOf(), listOf("A.foo*", "B.*"), listOf("A.bar", "FiltersKt.foo1", "FiltersKt.foo2", "FiltersKt.bar")))
+        doTestFilters(Filter([], ["A.foo*", "B.*"], ["A.bar", "FiltersKt.foo1", "FiltersKt.foo2", "FiltersKt.bar"]))
     }
 
     @Test
     fun testFiltersPositiveGlobNegative() {
-        doTestFilters(Filter(listOf("*.foo*"), listOf("B"), listOf("A.foo1", "A.foo2", "FiltersKt.foo1", "FiltersKt.foo2")))
+        doTestFilters(Filter(["*.foo*"], ["B"], ["A.foo1", "A.foo2", "FiltersKt.foo1", "FiltersKt.foo2"]))
     }
 
     @Test
     fun testFiltersPositiveNegativeGlob() {
-        doTestFilters(Filter(listOf("A"), listOf("*.foo*"), listOf("A.bar")))
+        doTestFilters(Filter(["A"], ["*.foo*"], ["A.bar"]))
     }
 
     private fun doTestFilteredSuites(filter: Filter) {
@@ -237,8 +237,8 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
             return groups[1]!!.value
         }
         runTest("filteredSuites",
-                listOf(testRoot.resolve("filtered_suites.kt")),
-                executionArgs = listOf("--ktest_logger=SIMPLE") + filter.args,
+                [testRoot.resolve("filtered_suites.kt")],
+                executionArgs = ["--ktest_logger=SIMPLE"] + filter.args,
                 outputMatcher = TestRunCheck.OutputMatcher { output ->
                     val actual = output.lines().mapNotNull {
                         regex.matchEntire(it)?.toHook()
@@ -250,33 +250,33 @@ abstract class CompilerTestRunnerTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testFilteredSuitesTopLevel() {
-        doTestFilteredSuites(Filter(listOf("Filtered_suitesKt.*"), listOf(), listOf("Filtered_suitesKt.before", "Filtered_suitesKt.after")))
+        doTestFilteredSuites(Filter(["Filtered_suitesKt.*"], [], ["Filtered_suitesKt.before", "Filtered_suitesKt.after"]))
     }
 
     @Test
     fun testFilteredSuitesClass() {
-        doTestFilteredSuites(Filter(listOf("A.*"), listOf(), listOf("A.before", "A.after")))
+        doTestFilteredSuites(Filter(["A.*"], [], ["A.before", "A.after"]))
     }
 
     @Test
     fun testFilteredSuitesAll() {
         doTestFilteredSuites(
             Filter(
-                listOf("*.common"),
-                listOf(),
-                listOf("A.before", "A.after", "Filtered_suitesKt.before", "Filtered_suitesKt.after")
+                ["*.common"],
+                [],
+                ["A.before", "A.after", "Filtered_suitesKt.before", "Filtered_suitesKt.after"]
             )
         )
     }
 
     @Test
     fun testFilteredSuitesIgnoredClass() {
-        doTestFilteredSuites(Filter(listOf("Ignored.*"), listOf(), listOf()))
+        doTestFilteredSuites(Filter(["Ignored.*"], [], []))
     }
 
     @Test
     fun testFilteredSuitesIgnoredTest() {
-        doTestFilteredSuites(Filter(listOf("A.ignored"), listOf(), listOf()))
+        doTestFilteredSuites(Filter(["A.ignored"], [], []))
     }
 }
 

@@ -21,7 +21,7 @@ import java.io.FileDescriptor
 interface ParcelizeExtensionBase {
     companion object {
         val FILE_DESCRIPTOR_FQNAME = FqName(FileDescriptor::class.java.canonicalName)
-        val ALLOWED_CLASS_KINDS = listOf(ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS)
+        val ALLOWED_CLASS_KINDS = [ClassKind.CLASS, ClassKind.OBJECT, ClassKind.ENUM_CLASS]
     }
 
     fun ClassDescriptor.hasCreatorField(): Boolean {

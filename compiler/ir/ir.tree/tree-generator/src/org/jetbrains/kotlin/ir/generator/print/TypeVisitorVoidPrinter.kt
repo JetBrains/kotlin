@@ -25,10 +25,10 @@ internal open class TypeVisitorVoidPrinter(
         get() = StandardTypes.nothing.copy(nullable = true)
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(typeVisitorType.withArgs(StandardTypes.unit, visitorDataType))
+        get() = [typeVisitorType.withArgs(StandardTypes.unit, visitorDataType)]
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     override fun visitMethodReturnType(element: Element): TypeRef = StandardTypes.unit
 
@@ -87,7 +87,7 @@ internal open class TypeVisitorVoidPrinter(
             println()
             printVisitVoidMethodDeclaration(element)
             printBlock {
-                if (element in listOf(IrTree.declarationBase, IrTree.file)) {
+                if (element in [IrTree.declarationBase, IrTree.file]) {
                     println("${element.visitorParameterName}.annotations.forEach { visitAnnotationUsage(it) }")
                 }
                 printTypeRemappings(

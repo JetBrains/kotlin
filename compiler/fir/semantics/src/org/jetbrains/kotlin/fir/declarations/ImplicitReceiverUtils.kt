@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClass, defaultType: ConeKotlinType): TowerElementsForClass {
-    val allImplicitCompanionValues = mutableListOf<ImplicitReceiverValue<*>>()
+    val allImplicitCompanionValues: MutableList<ImplicitReceiverValue<*>> = []
 
     val companionObject = (owner as? FirRegularClass)?.companionObjectSymbol?.fir
     val companionReceiver = companionObject?.let { companion ->
@@ -37,7 +37,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
     }
     allImplicitCompanionValues.addIfNotNull(companionReceiver)
 
-    val superClassesStaticsAndCompanionReceivers = mutableListOf<FirTowerDataElement>()
+    val superClassesStaticsAndCompanionReceivers: MutableList<FirTowerDataElement> = []
     for (superType in lookupSuperTypes(owner, lookupInterfaces = false, deep = true, useSiteSession = session, substituteTypes = true)) {
         val expandedType = superType.fullyExpandedType()
         val superClass = expandedType.lookupTag.toRegularClassSymbol()?.fir ?: continue
@@ -193,10 +193,10 @@ data class FirTowerDataContext private constructor(
         return if (towerElementsForClass.companionStaticScope != null) {
             if (towerElementsForClass.hasStaticScopeOrOwnerSymbol) {
                 addNonLocalScopeElements(
-                    listOf(
+                    [
                         towerElementsForClass.companionStaticScope.asTowerDataElement(isLocal = false),
                         towerDataElementForStaticScope(towerElementsForClass)
-                    )
+                    ]
                 )
             } else {
                 addNonLocalScope(towerElementsForClass.companionStaticScope)
@@ -297,9 +297,9 @@ class FirTowerDataElement(
     fun getAvailableScopes(
         processTypeScope: FirTypeScope.(ConeKotlinType) -> FirTypeScope = { this },
     ): List<FirScope> = when {
-        scope != null -> listOf(scope)
-        implicitReceiver != null -> listOf(implicitReceiver.getImplicitScope(processTypeScope))
-        contextParameterGroup != null || staticScopeOwnerSymbol != null -> emptyList()
+        scope != null -> [scope]
+        implicitReceiver != null -> [implicitReceiver.getImplicitScope(processTypeScope)]
+        contextParameterGroup != null || staticScopeOwnerSymbol != null -> []
         else -> error("Tower data element is expected to have either scope or implicit receivers.")
     }
 

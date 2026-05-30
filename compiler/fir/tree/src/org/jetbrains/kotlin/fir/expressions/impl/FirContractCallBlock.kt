@@ -23,7 +23,7 @@ class FirContractCallBlock(var call: FirFunctionCall) : FirBlock() {
         get() = call.source?.fakeElement(KtFakeSourceElementKind.ContractBlock)
 
     override val statements: List<FirStatement>
-        get() = listOf(call)
+        get() = [call]
 
     override var annotations: MutableOrEmptyList<FirAnnotation> = MutableOrEmptyList.empty()
 

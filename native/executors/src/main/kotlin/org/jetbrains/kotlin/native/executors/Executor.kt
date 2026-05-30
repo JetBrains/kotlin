@@ -20,35 +20,35 @@ private class CloseProtectedOutputStream(stream : OutputStream) : FilterOutputSt
 }
 
 data class ExecuteRequest(
-        /**
+    /**
          * Path to the executable.
          */
         var executableAbsolutePath: String,
-        /**
+    /**
          * Command line args.
          */
-        val args: MutableList<String> = mutableListOf(),
-        /**
+        val args: MutableList<String> = [],
+    /**
          * Optional working directory. By default its the parent directory of [executableAbsolutePath].
          */
         var workingDirectory: File? = null,
-        /**
+    /**
          * Will be sent to the executable input and then closed. By default an empty stream.
          */
-        var stdin: InputStream = ByteArrayInputStream(byteArrayOf()),
-        /**
+        var stdin: InputStream = ByteArrayInputStream([]),
+    /**
          * The output stream of the executable will be sent to this stream and then this stream will be closed. By default stdout of current process.
          */
         var stdout: OutputStream = CloseProtectedOutputStream(System.out),
-        /**
+    /**
          * The error stream of the executable will be sent to this stream and then this stream will be closed. By default stderr of current process.
          */
         var stderr: OutputStream = CloseProtectedOutputStream(System.err),
-        /**
+    /**
          * Additional environment variables.
          */
         val environment: MutableMap<String, String> = mutableMapOf(),
-        /**
+    /**
          * Bound execution time of the process. By default it's [Duration.INFINITE] meaning it's unbounded.
          */
         var timeout: Duration = Duration.INFINITE

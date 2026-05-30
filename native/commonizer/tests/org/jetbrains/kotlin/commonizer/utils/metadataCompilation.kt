@@ -74,7 +74,7 @@ fun loadStdlibMetadata(configuration: CompilerConfiguration): NamedMetadata {
 
     val stdlib = kotlinLoaderResult.librariesStdlibFirst.firstOrNull() ?: error("No stdlib found")
     val dummyLogger = CliLoggerAdapter(CommonizerLogLevel.Quiet, 2)
-    val stdlibModuleProvider = DefaultModulesProvider.forDependencies(listOf(NativeLibrary(stdlib)), dummyLogger)
+    val stdlibModuleProvider = DefaultModulesProvider.forDependencies([NativeLibrary(stdlib)], dummyLogger)
 
     return NamedMetadata(stdlib.moduleName, stdlibModuleProvider.loadModuleMetadata(stdlib.moduleName))
 }
@@ -143,8 +143,8 @@ fun serializeModuleToMetadata(
     moduleRoot: File,
     targetPlatform: TargetPlatform,
     disposable: Disposable,
-    regularDependencies: List<ContentRoot> = emptyList(),
-    refinesDependencies: List<String> = emptyList(),
+    regularDependencies: List<ContentRoot> = [],
+    refinesDependencies: List<String> = [],
     isCommon: Boolean = false,
     firTransformationPhase: PipelinePhase<MetadataFrontendPipelineArtifact, MetadataFrontendPipelineArtifact>? = null,
 ): Pair<CompilerConfiguration, MetadataInMemorySerializationArtifact> {

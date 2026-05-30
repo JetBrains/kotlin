@@ -86,7 +86,7 @@ abstract class AbstractResolveCandidatesTest : AbstractResolveByElementTest() {
      */
     @Suppress("UNCHECKED_CAST")
     private fun List<*>.asKaCallCandidates(): List<KaCallCandidate> = when (val first = firstOrNull()) {
-        null -> emptyList()
+        null -> []
         is KaCallCandidate -> this as List<KaCallCandidate>
         is KaCallCandidateInfo -> (this as List<KaCallCandidateInfo>).map(KaCallCandidateInfo::asKaCallCandidate)
         else -> error("Unknown type: ${first::class.simpleName}")

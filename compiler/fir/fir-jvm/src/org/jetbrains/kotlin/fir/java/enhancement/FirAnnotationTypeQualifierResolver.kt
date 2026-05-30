@@ -50,7 +50,7 @@ class FirAnnotationTypeQualifierResolver(
             if (!onlyValue || argument !is FirNamedArgumentExpression || argument.name == DEFAULT_ANNOTATION_MEMBER_NAME)
                 argument.toEnumNames()
             else
-                emptyList()
+                []
         }
 
     private fun FirExpression.toEnumNames(): List<String> =

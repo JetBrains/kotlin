@@ -68,7 +68,7 @@ class NativeForwardDeclarationsSymbolProvider(
     private val includedForwardDeclarationsByPackage: Map<FqName, Set<Name>> by lazy {
         buildMap<FqName, MutableSet<Name>> {
             for (classId in includedForwardDeclarations) {
-                getOrPut(classId.packageFqName) { mutableSetOf() }
+                getOrPut(classId.packageFqName) { [] }
                     .add(classId.shortClassName)
             }
         }

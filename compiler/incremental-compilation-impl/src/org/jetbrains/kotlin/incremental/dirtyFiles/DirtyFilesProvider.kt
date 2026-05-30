@@ -31,7 +31,7 @@ internal class DirtyFilesCachedHistory(workingDir: File) {
         if (dirtySourcesSinceLastTimeFile.exists()) {
             return dirtySourcesSinceLastTimeFile.readLines().map(::File)
         }
-        return emptyList()
+        return []
     }
 
     fun clear(withTransaction: CompilationTransaction) {

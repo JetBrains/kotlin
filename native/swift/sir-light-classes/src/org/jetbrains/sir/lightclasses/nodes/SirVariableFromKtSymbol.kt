@@ -115,7 +115,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality
 
-    override val bridges: List<SirBridge> = emptyList()
+    override val bridges: List<SirBridge> = []
 }
 
 internal class SirVariableFromKtSymbol(
@@ -132,7 +132,7 @@ internal abstract class SirAbstractGetter(
     override lateinit var parent: SirDeclarationParent
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
     override val documentation: String? get() = null
-    override val attributes: List<SirAttribute> get() = emptyList()
+    override val attributes: List<SirAttribute> get() = []
     override val errorType: SirType get() = SirType.never
     override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
@@ -151,14 +151,14 @@ internal abstract class SirAbstractGetter(
 
         generateFunctionBridge(
             baseBridgeName = baseName,
-            explicitParameters = emptyList(),
+            explicitParameters = [],
             returnType = variable.type,
             kotlinFqName = fqName,
-            kotlinOptIns = getterSymbol?.allRequiredOptIns ?: emptyList(),
+            kotlinOptIns = getterSymbol?.allRequiredOptIns ?: [],
             selfParameter = (variable.parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)
@@ -202,7 +202,7 @@ internal abstract class SirAbstractSetter(
     override val visibility: SirVisibility get() = SirVisibility.PUBLIC
     override val documentation: String? get() = null
     override val parameterName: String = "newValue"
-    override val attributes: List<SirAttribute> get() = emptyList()
+    override val attributes: List<SirAttribute> get() = []
     override val errorType: SirType get() = SirType.never
     override val isAsync: Boolean get() = false
     private val variable get() = parent as? SirVariable
@@ -221,14 +221,14 @@ internal abstract class SirAbstractSetter(
 
         generateFunctionBridge(
             baseBridgeName = baseName,
-            explicitParameters = listOf(SirParameter(parameterName = parameterName, type = variable.type)),
+            explicitParameters = [SirParameter(parameterName = parameterName, type = variable.type)],
             returnType = SirNominalType(SirSwiftModule.void),
             kotlinFqName = fqName,
-            kotlinOptIns = setterSymbol?.allRequiredOptIns ?: emptyList(),
+            kotlinOptIns = setterSymbol?.allRequiredOptIns ?: [],
             selfParameter = (parent !is SirModule && variable.isInstance).ifTrue {
                 SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
             },
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "_out_error", it)

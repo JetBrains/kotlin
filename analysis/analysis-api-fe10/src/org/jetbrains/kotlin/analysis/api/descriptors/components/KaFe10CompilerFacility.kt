@@ -134,7 +134,7 @@ internal class KaFe10CompilerFacility(
 
         codegenFactory.convertAndGenerate(filesToCompile, state, bindingContext)
         val outputFiles = state.factory.asList().map(::KaBaseCompiledFileForOutputFile)
-        return KaCompilationResult.Success(outputFiles, capturedValues = emptyList(), canBeCached = true)
+        return KaCompilationResult.Success(outputFiles, capturedValues = [], canBeCached = true)
     }
 
     private fun computeErrors(diagnostics: Diagnostics, allowedErrorFilter: (KaDiagnostic) -> Boolean): List<KaDiagnostic> {

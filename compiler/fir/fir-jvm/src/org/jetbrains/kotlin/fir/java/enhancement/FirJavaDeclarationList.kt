@@ -22,5 +22,5 @@ interface FirJavaDeclarationList {
 }
 
 object FirEmptyJavaDeclarationList : FirJavaDeclarationList {
-    override val declarations: List<FirDeclaration> get() = emptyList()
+    override val declarations: List<FirDeclaration> get() = []
 }

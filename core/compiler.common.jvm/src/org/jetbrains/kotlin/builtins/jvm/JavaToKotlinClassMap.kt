@@ -39,7 +39,7 @@ object JavaToKotlinClassMap {
     private val mutableToReadOnlyClassId = HashMap<ClassId, ClassId>()
     private val readOnlyToMutableClassId = HashMap<ClassId, ClassId>()
 
-    private val mappedKotlinClassFqNames = mutableSetOf<FqName>()
+    private val mappedKotlinClassFqNames: MutableSet<FqName> = []
 
     // describes mapping for a java class that has separate readOnly and mutable equivalents in Kotlin
     data class PlatformMutabilityMapping(
@@ -53,7 +53,7 @@ object JavaToKotlinClassMap {
         return PlatformMutabilityMapping(classId(T::class.java), kotlinReadOnly, mutableClassId)
     }
 
-    val mutabilityMappings = listOf(
+    val mutabilityMappings = [
         mutabilityMapping<Iterable<*>>(ClassId.topLevel(FqNames.iterable), FqNames.mutableIterable),
         mutabilityMapping<Iterator<*>>(ClassId.topLevel(FqNames.iterator), FqNames.mutableIterator),
         mutabilityMapping<Collection<*>>(ClassId.topLevel(FqNames.collection), FqNames.mutableCollection),
@@ -64,7 +64,7 @@ object JavaToKotlinClassMap {
         mutabilityMapping<Map.Entry<*, *>>(
             ClassId.topLevel(FqNames.map).createNestedClassId(FqNames.mapEntry.shortName()), FqNames.mutableMapEntry
         )
-    )
+    ]
 
     init {
         addTopLevel(Any::class.java, FqNames.any)

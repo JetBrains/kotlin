@@ -92,13 +92,13 @@ class SerializableIrGenerator(
                             // skip transient lateinit or deferred properties (with null initializer) and optimized delegations
                             val expression = initializerAdapter(it.backingField!!.initializer!!)
 
-                            statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                            statementsAfterSerializableProperty.getOrPutNullable(current, { [] })
                                 .add(irSetField(irGet(thiz), it.backingField!!, expression))
                         }
                     }
                     it is IrAnonymousInitializer -> {
                         val statements = it.body.deepCopyWithoutPatchingParents().statements
-                        statementsAfterSerializableProperty.getOrPutNullable(current, { mutableListOf() })
+                        statementsAfterSerializableProperty.getOrPutNullable(current, { [] })
                             .addAll(statements)
                     }
                 }
@@ -326,7 +326,7 @@ class SerializableIrGenerator(
                         }
                     }
 
-                    val args = mutableListOf<IrExpression>(irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc))
+                    val args: MutableList<IrExpression> = [irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc)]
 
                     val typeArgsForParent =
                         (irClass.superTypes.single { it.classOrNull?.owner?.isInternalSerializable == true } as? IrSimpleType)?.arguments.orEmpty()

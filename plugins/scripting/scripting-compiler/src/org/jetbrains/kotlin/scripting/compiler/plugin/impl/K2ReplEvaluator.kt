@@ -55,7 +55,7 @@ class K2ReplEvaluator : ReplEvaluator<CompiledSnippet, KJvmEvaluatedSnippet> {
 
         val snippet = snippetClass.java.getField("INSTANCE").get(null)
 
-        val args = mutableListOf<Any?>()
+        val args: MutableList<Any?> = []
 
         configuration[ScriptEvaluationConfiguration.implicitReceivers]?.let {
             args.addAll(it)

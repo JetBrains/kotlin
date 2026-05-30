@@ -30,12 +30,12 @@ class KaptEnvironmentConfigurator(
         const val KAPT_RUNNER_DIRECTORY_NAME = "kaptRunner"
     }
 
-    override val directiveContainers: List<DirectivesContainer> = listOf(
+    override val directiveContainers: List<DirectivesContainer> = [
         CodegenTestDirectives,
         KaptTestDirectives
-    )
+    ]
 
-    override val additionalServices: List<ServiceRegistrationData> = listOf(service(::KaptOptionsProvider))
+    override val additionalServices: List<ServiceRegistrationData> = [service(::KaptOptionsProvider)]
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         testServices.kaptOptionsProvider.registerKaptOptions(module) {
@@ -79,7 +79,7 @@ class KaptEnvironmentConfigurator(
         configuration.put(JVMConfigurationKeys.SKIP_BODIES, true)
         if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR) {
             val moduleBuilder = ModuleBuilder(module.name, "", "test-module")
-            configuration.put(JVMConfigurationKeys.MODULES, listOf(moduleBuilder))
+            configuration.put(JVMConfigurationKeys.MODULES, [moduleBuilder])
         }
     }
 }

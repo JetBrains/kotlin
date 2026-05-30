@@ -129,7 +129,7 @@ sealed class WasmImmediate {
 enum class WasmOp(
     val mnemonic: String,
     val opcode: Int,
-    val immediates: List<WasmImmediateKind> = emptyList(),
+    val immediates: List<WasmImmediateKind> = [],
     val tailMnemonic: String = "",
 ) {
 
@@ -311,9 +311,9 @@ enum class WasmOp(
     // Memory
     MEMORY_SIZE("memory.size", 0x3F, MEMORY_IDX),
     MEMORY_GROW("memory.grow", 0x40, MEMORY_IDX),
-    MEMORY_INIT("memory.init", 0xFC_08, listOf(DATA_IDX, MEMORY_IDX)),
+    MEMORY_INIT("memory.init", 0xFC_08, [DATA_IDX, MEMORY_IDX]),
     DATA_DROP("data.drop", 0xFC_09, DATA_IDX),
-    MEMORY_COPY("memory.copy", 0xFC_0A, listOf(MEMORY_IDX, MEMORY_IDX)),
+    MEMORY_COPY("memory.copy", 0xFC_0A, [MEMORY_IDX, MEMORY_IDX]),
     MEMORY_FILL("memory.fill", 0xFC_0B, MEMORY_IDX),
 
     // Table
@@ -322,9 +322,9 @@ enum class WasmOp(
     TABLE_GROW("table.grow", 0xFC_0F, TABLE_IDX),
     TABLE_SIZE("table.size", 0xFC_10, TABLE_IDX),
     TABLE_FILL("table.fill", 0xFC_11, TABLE_IDX),
-    TABLE_INIT("table.init", 0xFC_0C, listOf(ELEM_IDX, TABLE_IDX)),
+    TABLE_INIT("table.init", 0xFC_0C, [ELEM_IDX, TABLE_IDX]),
     ELEM_DROP("elem.drop", 0xFC_0D, ELEM_IDX),
-    TABLE_COPY("table.copy", 0xFC_0E, listOf(TABLE_IDX, TABLE_IDX)),
+    TABLE_COPY("table.copy", 0xFC_0E, [TABLE_IDX, TABLE_IDX]),
 
     // Control
     UNREACHABLE("unreachable", 0x00),
@@ -336,11 +336,11 @@ enum class WasmOp(
     END("end", 0x0B),
     BR("br", 0x0C, LABEL_IDX),
     BR_IF("br_if", 0x0D, LABEL_IDX),
-    BR_TABLE("br_table", 0x0E, listOf(LABEL_IDX_VECTOR, LABEL_IDX)),
+    BR_TABLE("br_table", 0x0E, [LABEL_IDX_VECTOR, LABEL_IDX]),
     RETURN("return", 0x0F),
     CALL("call", 0x10, FUNC_IDX),
     CALL_PURE("call", 0x10, FUNC_IDX),
-    CALL_INDIRECT("call_indirect", 0x11, listOf(TYPE_IDX, TABLE_IDX)),
+    CALL_INDIRECT("call_indirect", 0x11, [TYPE_IDX, TABLE_IDX]),
     TRY("try", 0x06, BLOCK_TYPE),
     CATCH("catch", 0x07, TAG_IDX),
     CATCH_ALL("catch_all", 0x19),
@@ -380,22 +380,22 @@ enum class WasmOp(
     // WIP: https://github.com/WebAssembly/gc
     STRUCT_NEW("struct.new", 0xFB_00, STRUCT_TYPE_IDX),
     STRUCT_NEW_DEFAULT("struct.new_default", 0xFB_01, STRUCT_TYPE_IDX),
-    STRUCT_GET("struct.get", 0xFB_02, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_GET_S("struct.get_s", 0xFB_03, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_GET_U("struct.get_u", 0xFB_04, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
-    STRUCT_SET("struct.set", 0xFB_05, listOf(STRUCT_TYPE_IDX, STRUCT_FIELD_IDX)),
+    STRUCT_GET("struct.get", 0xFB_02, [STRUCT_TYPE_IDX, STRUCT_FIELD_IDX]),
+    STRUCT_GET_S("struct.get_s", 0xFB_03, [STRUCT_TYPE_IDX, STRUCT_FIELD_IDX]),
+    STRUCT_GET_U("struct.get_u", 0xFB_04, [STRUCT_TYPE_IDX, STRUCT_FIELD_IDX]),
+    STRUCT_SET("struct.set", 0xFB_05, [STRUCT_TYPE_IDX, STRUCT_FIELD_IDX]),
 
     ARRAY_NEW("array.new", 0xFB_06, STRUCT_TYPE_IDX),
     ARRAY_NEW_DEFAULT("array.new_default", 0xFB_07, STRUCT_TYPE_IDX),
-    ARRAY_GET("array.get", 0xFB_0B, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_GET_S("array.get_s", 0xFB_0C, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_GET_U("array.get_u", 0xFB_0D, listOf(STRUCT_TYPE_IDX)),
-    ARRAY_SET("array.set", 0xFB_0E, listOf(STRUCT_TYPE_IDX)),
+    ARRAY_GET("array.get", 0xFB_0B, [STRUCT_TYPE_IDX]),
+    ARRAY_GET_S("array.get_s", 0xFB_0C, [STRUCT_TYPE_IDX]),
+    ARRAY_GET_U("array.get_u", 0xFB_0D, [STRUCT_TYPE_IDX]),
+    ARRAY_SET("array.set", 0xFB_0E, [STRUCT_TYPE_IDX]),
     ARRAY_LEN("array.len", 0xFB_0F),
     // ARRAY_FILL,
-    ARRAY_COPY("array.copy", 0xFB_11, listOf(STRUCT_TYPE_IDX, STRUCT_TYPE_IDX)),
-    ARRAY_NEW_DATA("array.new_data", 0xFB_09, listOf(STRUCT_TYPE_IDX, DATA_IDX)),
-    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_08, listOf(STRUCT_TYPE_IDX, CONST_I32)),
+    ARRAY_COPY("array.copy", 0xFB_11, [STRUCT_TYPE_IDX, STRUCT_TYPE_IDX]),
+    ARRAY_NEW_DATA("array.new_data", 0xFB_09, [STRUCT_TYPE_IDX, DATA_IDX]),
+    ARRAY_NEW_FIXED("array.new_fixed", 0xFB_08, [STRUCT_TYPE_IDX, CONST_I32]),
 //    ARRAY_NEW_ELEM("array.new_elem", 0xFB_0A, listOf(STRUCT_TYPE_IDX, ELEM_IDX)),
 
     I31_NEW("i31.new", 0xFB_1C),
@@ -408,8 +408,8 @@ enum class WasmOp(
     REF_CAST("ref.cast", 0xFB_16, HEAP_TYPE),
     REF_CAST_NULL("ref.cast (ref null", 0xFB_17, HEAP_TYPE, tailMnemonic = ")"),
 
-    BR_ON_CAST("br_on_cast", 0xFB_18, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
-    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, listOf(CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE)),
+    BR_ON_CAST("br_on_cast", 0xFB_18, [CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE]),
+    BR_ON_CAST_FAIL("br_on_cast_fail", 0xFB_19, [CONST_U8, LABEL_IDX, HEAP_TYPE, HEAP_TYPE]),
 
     EXTERN_INTERNALIZE("any.convert_extern", 0xFB_1A), // externref -> anyref
     EXTERN_EXTERNALIZE("extern.convert_any", 0xFB_1B), // anyref -> externref
@@ -417,7 +417,7 @@ enum class WasmOp(
     // ============================================================
     // Exception handling
     // WIP: https://github.com/WebAssembly/exception-handling
-    TRY_TABLE("try_table", 0x1f, listOf(BLOCK_TYPE, CONST_I32, CATCH_VECTOR)),
+    TRY_TABLE("try_table", 0x1f, [BLOCK_TYPE, CONST_I32, CATCH_VECTOR]),
     THROW_REF("throw_ref", 0x0a, LABEL_IDX),
 
     // ============================================================
@@ -437,7 +437,7 @@ enum class WasmOp(
     ;
 
     constructor(mnemonic: String, opcode: Int, vararg immediates: WasmImmediateKind) : this(mnemonic, opcode, immediates.toList())
-    constructor(mnemonic: String, opcode: Int, immediate: WasmImmediateKind, tailMnemonic: String) : this(mnemonic, opcode, listOf(immediate), tailMnemonic)
+    constructor(mnemonic: String, opcode: Int, immediate: WasmImmediateKind, tailMnemonic: String) : this(mnemonic, opcode, [immediate], tailMnemonic)
 }
 
 const val WASM_OP_PSEUDO_OPCODE = 0xFFFF

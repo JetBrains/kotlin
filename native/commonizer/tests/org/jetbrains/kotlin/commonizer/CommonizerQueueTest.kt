@@ -31,34 +31,34 @@ class CommonizerQueueTest {
         )
 
         assertEquals(
-            setOf("a", "b", "c"), queue.retainedDeserializedTargets.map { it.identityString }.toSet(),
+            ["a", "b", "c"], queue.retainedDeserializedTargets.map { it.identityString }.toSet(),
             "Expected all targets a, b, c to be retained in the beginning"
         )
 
         assertEquals(
-            setOf("(a, b)", "(a, b, c)"), queue.retainedCommonizedTargets.map { it.identityString }.toSet(),
+            ["(a, b)", "(a, b, c)"], queue.retainedCommonizedTargets.map { it.identityString }.toSet(),
             "Expected all output targets to be retained in the beginning"
         )
 
         assertEquals(
-            setOf("(a, b)", "(a, b, c)"), queue.retainedTargetDependencies.keys.map { it.identityString }.toSet(),
+            ["(a, b)", "(a, b, c)"], queue.retainedTargetDependencies.keys.map { it.identityString }.toSet(),
             "Expected all output targets to declare its dependencies"
         )
 
         queue.invokeTarget(parseCommonizerTarget("(a, b)") as SharedCommonizerTarget)
 
         assertEquals(
-            setOf("c"), queue.retainedDeserializedTargets.map { it.identityString }.toSet(),
+            ["c"], queue.retainedDeserializedTargets.map { it.identityString }.toSet(),
             "Expected only target 'c' to be retained after commonizing (a, b)"
         )
 
         assertEquals(
-            setOf("(a, b)", "(a, b, c)"), queue.retainedCommonizedTargets.map { it.identityString }.toSet(),
+            ["(a, b)", "(a, b, c)"], queue.retainedCommonizedTargets.map { it.identityString }.toSet(),
             "Expected all output targets to be retained after commonizing (a, b)"
         )
 
         assertEquals(
-            setOf("(a, b, c)"), queue.retainedTargetDependencies.keys.map { it.identityString }.toSet(),
+            ["(a, b, c)"], queue.retainedTargetDependencies.keys.map { it.identityString }.toSet(),
             "Expected remaining targets to declare its dependencies"
         )
 
@@ -67,17 +67,17 @@ class CommonizerQueueTest {
         queue.invokeTarget(parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
 
         assertEquals(
-            emptySet(), queue.retainedDeserializedTargets,
+            [], queue.retainedDeserializedTargets,
             "Expected no retained deserialized targets"
         )
 
         assertEquals(
-            emptySet(), queue.retainedCommonizedTargets,
+            [], queue.retainedCommonizedTargets,
             "Expected no retained commonized targets"
         )
 
         assertEquals(
-            emptySet(), queue.retainedTargetDependencies.keys,
+            [], queue.retainedTargetDependencies.keys,
             "Expected no retained target dependencies"
         )
 
@@ -88,12 +88,12 @@ class CommonizerQueueTest {
 
     @Test
     fun `test commonizer being called`() {
-        val commonizerInvocations = mutableListOf<CommonizerInvocation>()
+        val commonizerInvocations: MutableList<CommonizerInvocation> = []
         val storageManager = LockBasedStorageManager.NO_LOCKS
         val providedTargets = setOf("a", "b", "c").map(::parseCommonizerTarget).toSet()
         val abOutputTarget = parseCommonizerTarget("(a, b)") as SharedCommonizerTarget
         val abcOutputTarget = parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget
-        val outputTargets = setOf(abOutputTarget, abcOutputTarget)
+        val outputTargets: Set<SharedCommonizerTarget> = [abOutputTarget, abcOutputTarget]
 
         val queue = CommonizerQueue(
             storageManager = storageManager,
@@ -137,7 +137,7 @@ class CommonizerQueueTest {
 
     @Test
     fun `test diamond output targets`() {
-        val commonizerInvocations = mutableListOf<CommonizerInvocation>()
+        val commonizerInvocations: MutableList<CommonizerInvocation> = []
 
         val queue = CommonizerQueue(
             storageManager = LockBasedStorageManager.NO_LOCKS,
@@ -158,16 +158,16 @@ class CommonizerQueueTest {
         )
 
         queue.invokeAll()
-        assertEquals(emptySet(), queue.pendingOutputTargets, "Expected empty pendingOutputTargets")
-        assertEquals(emptySet(), queue.retainedCommonizedTargets, "Expected no retained commonized targets")
-        assertEquals(emptySet(), queue.retainedDeserializedTargets, "Expected no retained deserialized targets")
-        assertEquals(emptySet(), queue.retainedTargetDependencies.entries, "Expected no retained dependencies")
+        assertEquals([], queue.pendingOutputTargets, "Expected empty pendingOutputTargets")
+        assertEquals([], queue.retainedCommonizedTargets, "Expected no retained commonized targets")
+        assertEquals([], queue.retainedDeserializedTargets, "Expected no retained deserialized targets")
+        assertEquals([], queue.retainedTargetDependencies.entries, "Expected no retained dependencies")
         assertEquals(
-            listOf(
-                listOf(parseCommonizerTarget("a"), parseCommonizerTarget("b")),
-                listOf(parseCommonizerTarget("b"), parseCommonizerTarget("c")),
-                listOf(parseCommonizerTarget("(a, b)"), parseCommonizerTarget("(b, c)"))
-            ), commonizerInvocations.map { it.inputs.targets }
+            [
+                [parseCommonizerTarget("a"), parseCommonizerTarget("b")],
+                [parseCommonizerTarget("b"), parseCommonizerTarget("c")],
+                [parseCommonizerTarget("(a, b)"), parseCommonizerTarget("(b, c)")]
+            ], commonizerInvocations.map { it.inputs.targets }
         )
     }
 }

@@ -13,7 +13,7 @@ class GlobalInlineContext {
     // Ordered set of declarations and inline calls being generated right now.
     // No call in it should point to a declaration that's before it in the stack.
     private val inlineCallsAndDeclarations by threadLocal { LinkedList<Any? /* CallableDescriptor | InlineFunctionSource? */>() }
-    private val inlineDeclarationSet by threadLocal { mutableSetOf<CallableDescriptor>() }
+    private val inlineDeclarationSet: MutableSet<CallableDescriptor> by threadLocal { [] }
 
     private val typesUsedInInlineFunctions by threadLocal { LinkedList<MutableSet<String>>() }
 

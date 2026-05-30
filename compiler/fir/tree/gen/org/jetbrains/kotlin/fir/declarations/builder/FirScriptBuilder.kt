@@ -25,16 +25,16 @@ import org.jetbrains.kotlin.name.Name
 @FirBuilderDsl
 class FirScriptBuilder : FirAnnotationContainerBuilder {
     var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var moduleData: FirModuleData
     lateinit var origin: FirDeclarationOrigin
     var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     lateinit var name: Name
-    val declarations: MutableList<FirDeclaration> = mutableListOf()
+    val declarations: MutableList<FirDeclaration> = []
     lateinit var source: KtSourceElement
     lateinit var symbol: FirScriptSymbol
-    val parameters: MutableList<FirProperty> = mutableListOf()
-    val receivers: MutableList<FirScriptReceiverParameter> = mutableListOf()
+    val parameters: MutableList<FirProperty> = []
+    val receivers: MutableList<FirScriptReceiverParameter> = []
     var resultPropertyName: Name? = null
 
     override fun build(): FirScript {

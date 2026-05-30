@@ -358,7 +358,7 @@ data class Variant(
     val attributes: Map<String, String>,
     @SerialName("available-at")
     val availableAt: ComponentPointer? = null,
-    val files: List<VariantFile> = emptyList(),
+    val files: List<VariantFile> = [],
 )
 
 @kotlinx.serialization.Serializable

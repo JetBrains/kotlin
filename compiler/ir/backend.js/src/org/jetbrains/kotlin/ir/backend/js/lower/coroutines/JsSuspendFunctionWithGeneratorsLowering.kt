@@ -92,7 +92,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                 return if (call !is IrCall || !call.symbol.owner.isSuspend) {
                     call
                 } else {
-                    JsIrBuilder.buildCall(jsYieldStarFunctionSymbol, call.type, listOf(call.type))
+                    JsIrBuilder.buildCall(jsYieldStarFunctionSymbol, call.type, [call.type])
                         .apply { arguments[0] = call }
                 }
             }

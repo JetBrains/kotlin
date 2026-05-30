@@ -17,12 +17,12 @@ import org.jetbrains.kotlin.name.Name
 internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) : TestSymbolTargetResolver<KaSymbol>() {
     override fun resolvePackageTarget(target: PackageTarget): List<KaSymbol> = with(session) {
         val symbol = findPackage(target.packageFqName) ?: error("Cannot find a symbol for the package `${target.packageFqName}`.")
-        listOf(symbol)
+        [symbol]
     }
 
     override fun resolveClassTarget(target: ClassTarget): List<KaSymbol> = with(session) {
         val symbol = resolveClass(target.classId)
-        listOf(symbol)
+        [symbol]
     }
 
     context(_: KaSession)
@@ -31,12 +31,12 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
 
     override fun resolveScriptTarget(target: ScriptTarget): List<KaSymbol> = with(session) {
         val script = target.file.script ?: error("The file `${target.file.name}` is not a script.")
-        listOf(script.symbol)
+        [script.symbol]
     }
 
     override fun resolveTypeAliasTarget(target: TypeAliasTarget): List<KaSymbol> = with(session) {
         val symbol = findTypeAlias(target.classId) ?: error("Cannot find a symbol for the type alias `${target.classId}`.")
-        listOf(symbol)
+        [symbol]
     }
 
     override fun resolveCallableTarget(target: CallableTarget): List<KaSymbol> = with(session) {
@@ -98,13 +98,13 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
             ?: error("Cannot find a symbol for the enum entry `$enumEntryId`.")
 
         val initializerSymbol = enumEntrySymbol.enumEntryInitializer ?: error("`${enumEntryId.callableName}` must have an initializer.")
-        listOf(initializerSymbol)
+        [initializerSymbol]
     }
 
     override fun resolveSamConstructorTarget(target: SamConstructorTarget): List<KaSymbol> = with(session) {
         val symbol = findClassLike(target.classId) ?: error("Cannot find a symbol for the class `${target.classId}`.")
         val samConstructor = symbol.samConstructor ?: error("Cannot find a symbol for the SAM constructor of `${target.classId}`.")
-        listOf(samConstructor)
+        [samConstructor]
     }
 
     override fun resolveTypeParameterTarget(target: TypeParameterTarget, owner: KaSymbol): KaSymbol? {

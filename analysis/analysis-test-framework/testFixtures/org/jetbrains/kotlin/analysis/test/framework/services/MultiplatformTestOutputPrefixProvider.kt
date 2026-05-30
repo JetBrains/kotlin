@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.platform.wasm.isWasmWasi
 object MultiplatformTestOutputPrefixProvider {
     fun getPrefixes(targetPlatform: TargetPlatform): List<String> {
         if (targetPlatform.isJvm()) {
-            return emptyList()
+            return []
         }
 
         return buildList {
@@ -42,10 +42,10 @@ object MultiplatformTestOutputPrefixProvider {
 
             if (!targetPlatform.isCommon()) {
                 val additionalPlatformPrefixes = when {
-                    targetPlatform.isJs() -> listOf("js")
-                    targetPlatform.isNative() -> listOf("native")
-                    targetPlatform.isWasmJs() -> listOf("js", "wasmJs")
-                    targetPlatform.isWasmWasi() -> listOf("wasmWasi")
+                    targetPlatform.isJs() -> ["js"]
+                    targetPlatform.isNative() -> ["native"]
+                    targetPlatform.isWasmJs() -> ["js", "wasmJs"]
+                    targetPlatform.isWasmWasi() -> ["wasmWasi"]
                     else -> error("Unsupported platform $targetPlatform")
                 }
 

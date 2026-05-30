@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 class FirVarargArgumentsExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val arguments: MutableList<FirExpression> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
+    val arguments: MutableList<FirExpression> = []
     var coneElementTypeOrNull: ConeKotlinType? = null
 
     override fun build(): FirVarargArgumentsExpression {

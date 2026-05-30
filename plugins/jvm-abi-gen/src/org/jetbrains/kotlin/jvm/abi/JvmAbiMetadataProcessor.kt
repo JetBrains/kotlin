@@ -30,7 +30,7 @@ fun abiMetadataProcessor(
             val major = v.getOrNull(0) ?: 0
             val minor = v.getOrNull(1) ?: 0
             major > 1 || major == 1 && minor >= 4
-        } ?: intArrayOf(1, 4)
+        } ?: [1, 4]
 
         val newHeader = runCatching {
             KotlinClassMetadata.transform(header) { metadata ->
@@ -84,9 +84,9 @@ fun abiMetadataProcessor(
 private fun kotlinClassHeaderVisitor(body: (Metadata) -> Unit): AnnotationVisitor =
     object : AnnotationVisitor(Opcodes.API_VERSION) {
         var kind: Int = 1
-        var metadataVersion: IntArray = intArrayOf()
-        var data1: MutableList<String> = mutableListOf()
-        var data2: MutableList<String> = mutableListOf()
+        var metadataVersion: IntArray = []
+        var data1: MutableList<String> = []
+        var data2: MutableList<String> = []
         var extraString: String? = null
         var packageName: String? = null
         var extraInt: Int = 0

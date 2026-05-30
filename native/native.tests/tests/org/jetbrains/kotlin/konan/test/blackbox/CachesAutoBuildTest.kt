@@ -43,7 +43,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     fun testSimple() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
-        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, [], [], lib)
 
         assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
@@ -57,7 +57,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         val userLib = compileToLibrary(rootDir.resolve("userLib"), buildDir.resolve("user"), externalLib)
         val main = compileToExecutable(
             rootDir.resolve("main"),
-            autoCacheFrom = buildDir.resolve("external"), emptyList(), emptyList(),
+            autoCacheFrom = buildDir.resolve("external"), [], [],
             externalLib, userLib
         )
 
@@ -76,7 +76,7 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
         compileToStaticCache(lib, cacheDir)
         val makePerFileCache = testRunSettings.get<CacheMode>().makePerFileCaches
         assertTrue(cacheDir.resolve("lib-${if (makePerFileCache) "per-file-cache" else "cache"}").exists())
-        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, listOf(cacheDir), emptyList(), lib)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, [cacheDir], [], lib)
 
         assertTrue(main.exists())
         assertFalse(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
@@ -87,13 +87,13 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
     fun testCustomBinaryOptions() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("$TEST_SUITE_PATH/simple")
         val lib = compileToLibrary(rootDir.resolve("lib"), buildDir)
-        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), emptyList(), lib)
+        val main = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, [], [], lib)
 
         assertTrue(main.exists())
         assertTrue(autoCacheDir.resolve(cacheFlavor).resolve("lib").exists())
 
         val customRuntimeAsserts = "-Xbinary=runtimeAssertionsMode=log"
-        val main2 = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, emptyList(), listOf(customRuntimeAsserts), lib)
+        val main2 = compileToExecutable(rootDir.resolve("main"), autoCacheFrom = buildDir, [], [customRuntimeAsserts], lib)
 
         assertTrue(main2.exists())
     }
@@ -110,10 +110,10 @@ class CachesAutoBuildTest : AbstractNativeSimpleTest() {
             sourcesDir,
             tryPassSystemCacheDirectory = false, // With auto-cache mode, the compiler chooses the system cache directory itself.
             freeCompilerArgs = TestCompilerArgs(
-                listOf(
+                [
                     "-Xauto-cache-from=${autoCacheFrom.absolutePath}",
                     "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
-                ) + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
+                ] + cacheDirectories.map { "-Xcache-directory=${it.absolutePath}" } + additionalArgs
             ),
             *dependencies
         ).executableFile

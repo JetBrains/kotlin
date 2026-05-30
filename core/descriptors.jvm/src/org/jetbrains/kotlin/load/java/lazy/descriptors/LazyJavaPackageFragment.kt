@@ -54,7 +54,7 @@ class LazyJavaPackageFragment(
     private val subPackages = c.storageManager.createRecursionTolerantLazyValue(
         { jPackage.subPackages.map(JavaPackage::fqName) },
         // This breaks infinite recursion between loading Java descriptors and building light classes
-        onRecursiveCall = listOf()
+        onRecursiveCall = []
     )
 
     override val annotations =

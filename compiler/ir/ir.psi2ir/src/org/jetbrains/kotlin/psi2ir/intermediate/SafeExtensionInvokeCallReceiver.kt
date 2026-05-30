@@ -48,7 +48,7 @@ internal class SafeExtensionInvokeCallReceiver(
             "Safe extension 'invoke' call should have null as its 1st value argument, got: ${callBuilder.irValueArgumentsByIndex[0]}"
         }
         callBuilder.irValueArgumentsByIndex[0] = safeReceiverValue.load()
-        val irResult = builder.withReceivers(functionReceiver, null, emptyList())
+        val irResult = builder.withReceivers(functionReceiver, null, [])
 
         val resultType = irResult.type.makeNullable()
 

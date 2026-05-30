@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.objcexport.*
  */
 internal fun ObjCExportContext.getFunctionMethodBridge(symbol: KaFunctionSymbol): MethodBridge {
 
-    val valueParameters = mutableListOf<MethodBridgeValueParameter>()
+    val valueParameters: MutableList<MethodBridgeValueParameter> = []
     val isInner = (with(analysisSession) { symbol.containingDeclaration } as? KaNamedClassSymbol)?.isInner ?: false
 
     symbol.receiverParameter?.apply {

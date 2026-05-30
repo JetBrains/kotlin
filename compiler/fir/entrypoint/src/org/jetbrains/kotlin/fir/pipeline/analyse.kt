@@ -41,8 +41,8 @@ fun FirSession.runCheckers(
     }
     collector.collectDiagnosticsInSettings(diagnosticsReporter)
     return firFiles.associateWith {
-        val sourceFile = it.sourceFile ?: return@associateWith emptyList()
-        diagnosticsCollector.diagnosticsByFile[sourceFile] ?: emptyList()
+        val sourceFile = it.sourceFile ?: return@associateWith []
+        diagnosticsCollector.diagnosticsByFile[sourceFile] ?: []
     }
 }
 
@@ -53,7 +53,7 @@ fun FirSession.collectLostDiagnosticsOnFile(
 ): List<KtDiagnostic> {
     val collector = CliDiagnosticsCollector(this, scopeSession) { reporter ->
         DiagnosticCollectorComponents(
-            arrayOf(LossDiagnosticCollectorComponent(this, reporter)),
+            [LossDiagnosticCollectorComponent(this, reporter)],
             ReportCommitterDiagnosticComponent(this, reporter)
         )
     }
@@ -61,6 +61,6 @@ fun FirSession.collectLostDiagnosticsOnFile(
     withFileAnalysisExceptionWrapping(file) {
         collector.collectDiagnostics(file, diagnosticsReporter)
     }
-    val sourceFile = file.sourceFile ?: return emptyList()
-    return diagnosticsCollector.diagnosticsByFile[sourceFile] ?: emptyList()
+    val sourceFile = file.sourceFile ?: return []
+    return diagnosticsCollector.diagnosticsByFile[sourceFile] ?: []
 }

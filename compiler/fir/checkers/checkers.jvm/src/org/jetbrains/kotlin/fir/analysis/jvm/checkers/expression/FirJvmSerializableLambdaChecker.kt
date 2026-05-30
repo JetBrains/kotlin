@@ -35,7 +35,7 @@ object FirJvmSerializableLambdaChecker : FirAnnotationChecker(MppCheckerKind.Com
                     expression.source,
                     FirErrors.WRONG_ANNOTATION_TARGET,
                     targetDescription,
-                    listOf(KotlinTarget.LAMBDA_EXPRESSION)
+                    [KotlinTarget.LAMBDA_EXPRESSION]
                 )
             } else {
                 val diagnostic = when (declaration.inlineStatus) {

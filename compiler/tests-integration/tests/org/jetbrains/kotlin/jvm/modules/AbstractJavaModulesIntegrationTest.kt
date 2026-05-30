@@ -33,9 +33,9 @@ abstract class AbstractJavaModulesIntegrationTest(
 
     private fun module(
         name: String,
-        modulePath: List<File> = emptyList(),
-        addModules: List<String> = emptyList(),
-        additionalKotlinArguments: List<String> = emptyList(),
+        modulePath: List<File> = [],
+        addModules: List<String> = [],
+        additionalKotlinArguments: List<String> = [],
         manifest: Manifest? = null,
         destination: File? = null,
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
@@ -43,12 +43,12 @@ abstract class AbstractJavaModulesIntegrationTest(
         @Suppress("DEPRECATION")
         val paths = (modulePath + ForTestCompileRuntime.runtimeJarFromDistForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
-        val kotlinOptions = mutableListOf(
+        val kotlinOptions: MutableList<String> = [
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(paths),
             K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
-        )
+        ]
         if (addModules.isNotEmpty()) {
             kotlinOptions += "-Xadd-modules=${addModules.joinToString()}"
         }
@@ -59,10 +59,10 @@ abstract class AbstractJavaModulesIntegrationTest(
             destination ?: File(tmpdir, "$name.jar"),
             kotlinOptions,
             compileJava = { _, javaFiles, outputDir ->
-                val javaOptions = mutableListOf(
+                val javaOptions: MutableList<String?> = [
                     "-d", outputDir.path,
                     "--module-path", paths
-                )
+                ]
                 if (addModules.isNotEmpty()) {
                     javaOptions += "--add-modules"
                     javaOptions += addModules.joinToString()
@@ -87,11 +87,11 @@ abstract class AbstractJavaModulesIntegrationTest(
     private data class ModuleRunResult(val stdout: String, val stderr: String)
 
     private fun runModule(className: String, modulePath: List<File>): ModuleRunResult {
-        val command = listOf(
+        val command = [
             File(jdkHome, "bin/java").path,
             "-p", (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(File.pathSeparator, transform = File::getPath),
             "-m", className
-        )
+        ]
 
         val process = ProcessBuilder().command(command).start()
         process.waitFor(1, TimeUnit.MINUTES)
@@ -102,13 +102,13 @@ abstract class AbstractJavaModulesIntegrationTest(
     }
 
     private fun createMultiReleaseJar(destination: File, mainRoot: File, version: Int, versionSpecificRoot: File): File {
-        val command = listOf<String>(
+        val command: List<String> = [
             File(jdkHome, "bin/jar").path,
             "--create", "--file=$destination",
             "-C", mainRoot.path, ".",
             "--release", version.toString(),
             "-C", versionSpecificRoot.path, "."
-        )
+        ]
 
         val process = ProcessBuilder().command(command).inheritIO().start()
         process.waitFor()
@@ -121,12 +121,12 @@ abstract class AbstractJavaModulesIntegrationTest(
 
     fun testSimple() {
         val a = module("moduleA")
-        module("moduleB", listOf(a))
+        module("moduleB", [a])
     }
 
     fun testAllModulePathAndNamedModule() {
         try {
-            module("main", addModules = listOf("ALL-MODULE-PATH"))
+            module("main", addModules = ["ALL-MODULE-PATH"])
         } catch (e: JavaCompilationError) {
             // Java compilation should fail, it's expected
         }
@@ -134,14 +134,14 @@ abstract class AbstractJavaModulesIntegrationTest(
 
     fun testNamedReadsTransitive() {
         val a = module("moduleA")
-        val b = module("moduleB", listOf(a))
-        module("moduleC", listOf(a, b))
+        val b = module("moduleB", [a])
+        module("moduleC", [a, b])
     }
 
     fun testUnnamedReadsTransitive() {
         val a = module("moduleA")
-        val b = module("moduleB", listOf(a))
-        module("moduleC", listOf(a, b), addModules = listOf("moduleB"))
+        val b = module("moduleB", [a])
+        module("moduleC", [a, b], addModules = ["moduleB"])
     }
 
     fun testInheritedDeclarationFromTwiceTransitiveDependency() {
@@ -151,21 +151,21 @@ abstract class AbstractJavaModulesIntegrationTest(
         val a = module("moduleA")
 
         // Java: class B extends A
-        val b = module("moduleB", listOf(a))
+        val b = module("moduleB", [a])
 
-        val c = module("moduleC", listOf(a, b))
+        val c = module("moduleC", [a, b])
 
         // Java: new B().ok()
         // Kotlin: B().ok()
-        val d = module("moduleD", listOf(a, b, c))
+        val d = module("moduleD", [a, b, c])
 
         // validate the run-time behavior of Java-compiled code for the sake of comparison
-        (val javaStdout = stdout, val javaStderr = stderr) = runModule("moduleD/d.JavaMain", listOf(d, c, b, a))
+        (val javaStdout = stdout, val javaStderr = stderr) = runModule("moduleD/d.JavaMain", [d, c, b, a])
         assertEquals("", javaStderr)
         assertEquals("OK", javaStdout)
 
         // test the run-time behavior of Kotlin-compiled code
-        (val kotlinStdout = stdout, val kotlinStderr = stderr) = runModule("moduleD/d.KotlinMainKt", listOf(d, c, b, a))
+        (val kotlinStdout = stdout, val kotlinStderr = stderr) = runModule("moduleD/d.KotlinMainKt", [d, c, b, a])
         assertEquals("", kotlinStderr)
         assertEquals("OK", kotlinStdout)
     }
@@ -173,13 +173,13 @@ abstract class AbstractJavaModulesIntegrationTest(
     fun testSpecifyPathToModuleInfoInArguments() {
         val a = module("moduleA")
 
-        val kotlinOptions = mutableListOf(
+        val kotlinOptions: MutableList<String> = [
             "$testDataDirectory/someOtherDirectoryWithTheActualModuleInfo/module-info.java",
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
             K2JVMCompilerArguments::javaModulePath.cliArgument(a.path),
             K2JVMCompilerArguments::languageVersion.cliArgument, languageVersion.versionString,
             K2JVMCompilerArguments::suppressVersionWarnings.cliArgument,
-        )
+        ]
         compileLibrary(
             "moduleB",
             additionalOptions = kotlinOptions,
@@ -191,19 +191,19 @@ abstract class AbstractJavaModulesIntegrationTest(
     fun testMultiReleaseLibrary() {
         val librarySrc = FileUtil.findFilesByMask(JAVA_FILES, File(testDataDirectory, "library"))
         val libraryOut = File(tmpdir, "out")
-        compileJavaFiles(librarySrc, listOf("-d", libraryOut.path), KtTestUtil.getJdk11Home()).assertSuccessful()
+        compileJavaFiles(librarySrc, ["-d", libraryOut.path], KtTestUtil.getJdk11Home()).assertSuccessful()
 
         val libraryOut11 = File(tmpdir, "out11")
         libraryOut11.mkdirs()
         File(libraryOut, "module-info.class").renameTo(File(libraryOut11, "module-info.class"))
 
-        for (version in listOf(9, 10, 11)) {
+        for (version in [9, 10, 11]) {
             try {
                 // Use the name other from 'library' to prevent it from being loaded as an automatic module if module-info.class is not found.
                 val libraryJar = createMultiReleaseJar(
                     File(tmpdir, "multi-release-library-jdk$version.jar"), libraryOut, version, libraryOut11
                 )
-                module("main", listOf(libraryJar))
+                module("main", [libraryJar])
             } catch (e: Throwable) {
                 fail("Fail on testing that module-info.class is loaded from META-INF/versions/$version", e)
             }
@@ -220,7 +220,7 @@ abstract class AbstractJavaModulesIntegrationTest(
             mainAttributes.putValue("Automatic-Module-Name", "automodule2")
         })
 
-        module("main", listOf(m1, m2))
+        module("main", [m1, m2])
     }
 
     fun testUnnamedAgainstSeveralAutomatic() {
@@ -229,19 +229,19 @@ abstract class AbstractJavaModulesIntegrationTest(
         // Even though we only add autoA to the module graph, autoB should be added as well because autoA, being automatic,
         // transitively requires every other automatic module, and in particular, autoB.
         // Furthermore, because autoB is automatic, main should read autoB
-        module("main", listOf(a, b), addModules = listOf("autoA"))
+        module("main", [a, b], addModules = ["autoA"])
     }
 
     fun testNamedAgainstSeveralAutomatic() {
         val a = module("autoA")
         val b = module("autoB")
-        module("main", listOf(a, b))
+        module("main", [a, b])
     }
 
     fun testSeveralModulesWithTheSameName() {
         val d1 = module("dependency1")
         val d2 = module("dependency2")
-        module("main", listOf(d1, d2))
+        module("main", [d1, d2])
     }
 
     @Suppress("DEPRECATION")
@@ -249,17 +249,17 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("unnamed")
         val namedWithExplicitDependency = module("namedWithExplicitDependency")
         module("namedWithoutExplicitDependency")
-        module("namedWithIndirectDependencyViaOtherModule", listOf(namedWithExplicitDependency))
-        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
+        module("namedWithIndirectDependencyViaOtherModule", [namedWithExplicitDependency])
+        module("namedWithIndirectDependencyViaReflect", [ForTestCompileRuntime.reflectJarFromDistForTests()])
     }
 
     fun testDependencyOnStdlibJdk78() {
-        module("usage", listOf(File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")))
+        module("usage", [File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")])
     }
 
     @Suppress("DEPRECATION")
     fun testDependencyOnReflect() {
-        module("usage", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
+        module("usage", [ForTestCompileRuntime.reflectJarFromDistForTests()])
     }
 
     fun testWithBuildFile() {
@@ -270,12 +270,12 @@ abstract class AbstractJavaModulesIntegrationTest(
             testDataDirectory,
             tmpdir.absolutePath
         )
-        module("usage", additionalKotlinArguments = listOf("-no-stdlib", buildFile))
+        module("usage", additionalKotlinArguments = ["-no-stdlib", buildFile])
     }
 
     fun testCoroutinesDebugMetadata() {
         val usage = module("usage")
-        val (stdout, stderr) = runModule("usage/some.module.withsome.packages.UsageKt", listOf(usage))
+        val (stdout, stderr) = runModule("usage/some.module.withsome.packages.UsageKt", [usage])
         assertEquals("", stderr)
         assertEquals("usage/some.module.withsome.packages.Test", stdout)
     }
@@ -283,8 +283,8 @@ abstract class AbstractJavaModulesIntegrationTest(
     @Suppress("DEPRECATION")
     fun testReflection() {
         val reflect = ForTestCompileRuntime.reflectJarFromDistForTests()
-        val usage = module("usage", listOf(reflect))
-        val (stdout, stderr) = runModule("usage/usage.test.UsageKt", listOf(usage, reflect))
+        val usage = module("usage", [reflect])
+        val (stdout, stderr) = runModule("usage/usage.test.UsageKt", [usage, reflect])
         assertEquals("", stderr)
         assertEquals("OK", stdout)
     }
@@ -308,7 +308,7 @@ abstract class AbstractJavaModulesIntegrationTest(
     fun testNoDependencyOnNamed() {
         // This is a test on the JAVA_MODULE_DOES_NOT_DEPEND_ON_MODULE diagnostic.
         val lib = module("lib")
-        module("main", listOf(lib), listOf("lib"))
+        module("main", [lib], ["lib"])
     }
 
     fun testNoDependencyOnUnnamed() {
@@ -323,7 +323,7 @@ abstract class AbstractJavaModulesIntegrationTest(
         //    as either a named or an automatic module; there's no way to observe a jar that is a part of the unnamed module.
         // In this test we're checking the diagnostic about using symbols from unnamed modules, so we need to compile 'lib' to a directory.
         val lib = module("lib", destination = File(tmpdir, name))
-        module("main", additionalKotlinArguments = listOf("-classpath", lib.path))
+        module("main", additionalKotlinArguments = ["-classpath", lib.path])
     }
 
     fun testNamedDoesNotReadAutomaticWithUnrelatedNamed() {
@@ -331,14 +331,14 @@ abstract class AbstractJavaModulesIntegrationTest(
         // But currently it's OK for compatibility, see KT-66622.
         val lib = module("lib")
         val unrelated = module("unrelated")
-        module("main", listOf(lib, unrelated))
+        module("main", [lib, unrelated])
     }
 
     fun testNamedDoesNotReadAutomaticWithTransitiveStdlib() {
         // This test should result in an error because 'main' does not depend on 'lib' or any other automatic module.
         // But currently it's OK for compatibility, see KT-66622.
         val lib = module("lib")
-        module("main", listOf(lib))
+        module("main", [lib])
     }
 
     fun testNamedReadsAutomaticWithUnrelatedAutomatic() {
@@ -346,6 +346,6 @@ abstract class AbstractJavaModulesIntegrationTest(
         // not have explicit "requires lib", in fact it depends on 'lib' because it has "requires unrelated". So "OK" is expected.
         val lib = module("lib")
         val unrelated = module("unrelated")
-        module("main", listOf(lib, unrelated))
+        module("main", [lib, unrelated])
     }
 }

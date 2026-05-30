@@ -60,7 +60,7 @@ class Fir2IrLazyPropertyAccessor(
 
     override var annotations: List<IrAnnotation> by when {
         firAccessor != null -> createLazyAnnotations()
-        else -> lazyVar<List<IrAnnotation>>(lock) { emptyList() }
+        else -> lazyVar<List<IrAnnotation>>(lock) { [] }
     }
 
     override var name: Name
@@ -72,7 +72,7 @@ class Fir2IrLazyPropertyAccessor(
     }
 
     override var overriddenSymbols: List<IrSimpleFunctionSymbol> by symbolsMappingForLazyClasses.lazyMappedFunctionListVar(lock) {
-        if (firParentClass == null) return@lazyMappedFunctionListVar emptyList()
+        if (firParentClass == null) return@lazyMappedFunctionListVar []
         // If property accessor is created then corresponding property is definitely created too
         @OptIn(UnsafeDuringIrConstructionAPI::class)
         val correspondingProperty = correspondingPropertySymbol!!.owner

@@ -168,7 +168,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         if (withTypes.any { it.second is ConeErrorType }) return
 
         var delegation: FirCallableSymbol<*>? = null
-        val implementations = mutableListOf<FirCallableSymbol<*>>()
+        val implementations: MutableList<FirCallableSymbol<*>> = []
 
         for (intSymbol in intersectionSymbols) {
             if (intSymbol.delegatedWrapperData?.containingClass?.classId == containingClass.classId) {
@@ -250,7 +250,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
                         currentParameter,
                         otherParameter,
                         parameterIndex,
-                        listOf(currentFunctionSymbol, otherFunctionSymbol)
+                        [currentFunctionSymbol, otherFunctionSymbol]
                     )
                 }
             }
@@ -262,7 +262,7 @@ sealed class FirImplementationMismatchChecker(mppKind: MppCheckerKind) : FirClas
         name: Name,
         containingClass: FirClass,
     ): List<FirCallableSymbol<*>> {
-        val allCallables = mutableListOf<FirCallableSymbol<*>>()
+        val allCallables: MutableList<FirCallableSymbol<*>> = []
 
         processFunctionsByName(name) { sym ->
             when (sym) {

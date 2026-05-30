@@ -65,7 +65,7 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
         v.referenceValueDescriptors + w.referenceValueDescriptors
 
     private val BasicValue.referenceValueDescriptors: Set<ReferenceValueDescriptor>
-        get() = if (this is TrackedReferenceValue) this.descriptors else emptySet()
+        get() = if (this is TrackedReferenceValue) this.descriptors else []
 
     protected fun getMergedValueType(type1: Type?, type2: Type?): Type =
         when {
@@ -76,24 +76,24 @@ abstract class ReferenceTrackingInterpreter : OptimizationBasicInterpreter() {
 
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? =
         if (value is TrackedReferenceValue) {
-            checkRefValuesUsages(insn, listOf(value))
+            checkRefValuesUsages(insn, [value])
             value
         } else {
             super.copyOperation(insn, value)
         }
 
     override fun unaryOperation(insn: AbstractInsnNode, value: BasicValue): BasicValue? {
-        checkRefValuesUsages(insn, listOf(value))
+        checkRefValuesUsages(insn, [value])
         return super.unaryOperation(insn, value)
     }
 
     override fun binaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue): BasicValue? {
-        checkRefValuesUsages(insn, listOf(value1, value2))
+        checkRefValuesUsages(insn, [value1, value2])
         return super.binaryOperation(insn, value1, value2)
     }
 
     override fun ternaryOperation(insn: AbstractInsnNode, value1: BasicValue, value2: BasicValue, value3: BasicValue): BasicValue? {
-        checkRefValuesUsages(insn, listOf(value1, value2, value3))
+        checkRefValuesUsages(insn, [value1, value2, value3])
         return super.ternaryOperation(insn, value1, value2, value3)
     }
 

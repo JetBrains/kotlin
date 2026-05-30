@@ -49,7 +49,7 @@ class ParcelizeComponentRegistrar : CompilerPluginRegistrar() {
     }
 
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: emptyList()
+        val additionalAnnotation = configuration.get(ParcelizeConfigurationKeys.ADDITIONAL_ANNOTATION) ?: []
         registerParcelizeComponents(
             this,
             additionalAnnotation,

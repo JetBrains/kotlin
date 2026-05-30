@@ -227,7 +227,7 @@ fun BuildResult.podImportAsserts(
         assertTasksSkipped("$taskPrefix$podInstallTaskName")
     }
     if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
-        assertTasksExecuted(listOf("$taskPrefix:${KotlinCocoapodsPlugin.POD_GEN_TASK_NAME}"))
+        assertTasksExecuted(["$taskPrefix:${KotlinCocoapodsPlugin.POD_GEN_TASK_NAME}"])
     }
 
     if (buildScriptText.matches("pod\\(.*\\)".toRegex())) {
@@ -248,7 +248,7 @@ private fun isCocoapodsInstalled(): Boolean {
     // Try to access the pod executable directly instead
     return try {
         val result = runProcess(
-            listOf("pod", "--version"),
+            ["pod", "--version"],
             File("."),
         )
         result.isSuccessful

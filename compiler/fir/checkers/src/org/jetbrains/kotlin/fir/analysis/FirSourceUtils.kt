@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.butIf
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 
 fun KtSourceElement.getChild(type: IElementType, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
-    getChild(setOf(type), index, depth, reverse)
+    getChild([type], index, depth, reverse)
 
 fun KtSourceElement.getChild(types: TokenSet, index: Int = 0, depth: Int = -1, reverse: Boolean = false): KtSourceElement? =
     getChild(types.types.toSet(), index, depth, reverse)
@@ -99,7 +99,7 @@ inline fun <T> forEachChildOfType(
     getChildren: (T) -> List<T>,
     processChild: (T) -> Unit,
 ) {
-    val stack = mutableListOf(root to 0)
+    val stack: MutableList<Pair<T, Int>> = [root to 0]
 
     while (stack.isNotEmpty()) {
         val [element, currentDepth] = stack.popLast()

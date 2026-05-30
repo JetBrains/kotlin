@@ -100,7 +100,7 @@ internal class JvmConstructorExtension : KmConstructorExtension {
 }
 
 internal class JvmTypeParameterExtension : KmTypeParameterExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE
@@ -113,7 +113,7 @@ internal class JvmTypeParameterExtension : KmTypeParameterExtension {
 
 internal class JvmTypeExtension : KmTypeExtension {
     var isRaw: Boolean = false
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE

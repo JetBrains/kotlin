@@ -42,7 +42,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             platformSession: FirSession,
             componentsPerSession: Map<FirSession, Fir2IrComponents>,
         ): IrCommonToPlatformDependencyActualizerMapContributor? {
-            val mappingProviders = mutableListOf<FirCommonDeclarationsMappingSymbolProvider>()
+            val mappingProviders: MutableList<FirCommonDeclarationsMappingSymbolProvider> = []
 
             fun process(session: FirSession) {
                 val mappingProvider = (session.symbolProvider as FirCachingCompositeSymbolProvider)

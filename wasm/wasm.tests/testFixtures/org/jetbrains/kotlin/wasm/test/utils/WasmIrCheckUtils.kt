@@ -30,7 +30,7 @@ object WasmIrCheckUtils {
     }
 
     fun countCalls(module: WasmModule, function: WasmFunction.Defined): Int =
-        countCalls(module, function, emptySet())
+        countCalls(module, function, [])
 
     private fun countCallsWithPredicate(module: WasmModule, function: WasmFunction.Defined, predicate: (String) -> Boolean): Int {
         return function.instructions.count { inst ->

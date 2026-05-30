@@ -654,12 +654,12 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         qualifiedExpressions: List<KtQualifiedExpression>,
         skipLast: Int
     ): List<QualifierPart> {
-        if (qualifiedExpressions.isEmpty()) return emptyList()
+        if (qualifiedExpressions.isEmpty()) return []
 
         val first = qualifiedExpressions.first()
-        if (first !is KtDotQualifiedExpression) return emptyList()
+        if (first !is KtDotQualifiedExpression) return []
         val firstReceiver = first.receiverExpression
-        if (firstReceiver !is KtSimpleNameExpression) return emptyList()
+        if (firstReceiver !is KtSimpleNameExpression) return []
 
         // Qualifier parts are receiver name for the leftmost expression
         //  and selector names for all but the rightmost qualified expressions

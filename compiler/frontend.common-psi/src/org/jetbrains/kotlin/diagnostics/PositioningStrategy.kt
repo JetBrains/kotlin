@@ -41,7 +41,7 @@ open class PositioningStrategy<in E : PsiElement> {
 }
 
 fun markElement(element: PsiElement): List<TextRange> {
-    return listOf(TextRange(getStartOffset(element), getEndOffset(element)))
+    return [TextRange(getStartOffset(element), getEndOffset(element))]
 }
 
 fun markSingleElement(element: PsiElement): TextRange {
@@ -53,7 +53,7 @@ fun markNode(node: ASTNode): List<TextRange> {
 }
 
 fun markRange(range: TextRange): List<TextRange> {
-    return listOf(range)
+    return [range]
 }
 
 fun markRange(from: PsiElement, to: PsiElement): List<TextRange> {

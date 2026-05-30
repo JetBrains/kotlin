@@ -25,7 +25,7 @@ class JavaClassCacheManagerTest {
     @BeforeEach
     fun setUp(@TempDir tmp: File) {
         cacheDir = tmp.newFolder("cacheDir")
-        compiledSources = listOf(tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() })
+        compiledSources = [tmp.newCompiledSourcesFolder().also { it.resolve(TEST_PACKAGE_NAME).mkdir() }]
         cache = JavaClassCacheManager(cacheDir)
     }
 
@@ -60,15 +60,15 @@ class JavaClassCacheManagerTest {
         prepareForIncremental()
 
         val dirtyFiles = cache.invalidateAndGetDirtyFiles(
-            listOf(File("Mentioned.java").absoluteFile),
-            emptyList(), compiledSources
+            [File("Mentioned.java").absoluteFile],
+            [], compiledSources
         ) as SourcesToReprocess.Incremental
         assertEquals(
-            listOf(
+            [
                 File("Mentioned.java").absoluteFile,
                 File("Src.java").absoluteFile,
                 File("ReferencesSrc.java").absoluteFile
-            ), dirtyFiles.toReprocess
+            ], dirtyFiles.toReprocess
         )
     }
 
@@ -95,15 +95,15 @@ class JavaClassCacheManagerTest {
 
         val dirtyFiles =
             cache.invalidateAndGetDirtyFiles(
-                listOf(File("Mentioned.java").absoluteFile),
-                emptyList(),
+                [File("Mentioned.java").absoluteFile],
+                [],
                 compiledSources
             ) as SourcesToReprocess.Incremental
         assertEquals(
-            listOf(
+            [
                 File("Mentioned.java").absoluteFile,
                 File("Src.java").absoluteFile
-            ), dirtyFiles.toReprocess
+            ], dirtyFiles.toReprocess
         )
     }
 
@@ -132,16 +132,16 @@ class JavaClassCacheManagerTest {
 
         val dirtyFiles =
             cache.invalidateAndGetDirtyFiles(
-                listOf(File("TwoTypes.java").absoluteFile),
-                emptyList(),
+                [File("TwoTypes.java").absoluteFile],
+                [],
                 compiledSources
             ) as SourcesToReprocess.Incremental
         assertEquals(
-            listOf(
+            [
                 File("TwoTypes.java").absoluteFile,
                 File("ReferencesTwoTypes.java").absoluteFile,
                 File("ReferencesAnotherType.java").absoluteFile
-            ), dirtyFiles.toReprocess
+            ], dirtyFiles.toReprocess
         )
     }
 
@@ -156,8 +156,8 @@ class JavaClassCacheManagerTest {
         prepareForIncremental()
 
         val dirtyFiles =
-            cache.invalidateAndGetDirtyFiles(listOf(), listOf("test/Mentioned"), compiledSources) as SourcesToReprocess.Incremental
-        assertEquals(listOf(File("Src.java").absoluteFile), dirtyFiles.toReprocess)
+            cache.invalidateAndGetDirtyFiles([], ["test/Mentioned"], compiledSources) as SourcesToReprocess.Incremental
+        assertEquals([File("Src.java").absoluteFile], dirtyFiles.toReprocess)
     }
 
     @Test
@@ -183,10 +183,10 @@ class JavaClassCacheManagerTest {
 
         val dirtyFiles =
             cache.invalidateAndGetDirtyFiles(
-                listOf(File("Constants.java").absoluteFile), emptyList(), compiledSources
+                [File("Constants.java").absoluteFile], [], compiledSources
             ) as SourcesToReprocess.Incremental
         assertEquals(
-            listOf(File("Constants.java").absoluteFile, File("MentionsConst.java").absoluteFile),
+            [File("Constants.java").absoluteFile, File("MentionsConst.java").absoluteFile],
             dirtyFiles.toReprocess
         )
     }

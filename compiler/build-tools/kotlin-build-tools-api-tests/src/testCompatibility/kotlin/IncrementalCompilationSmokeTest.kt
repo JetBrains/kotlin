@@ -70,7 +70,7 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
     fun jsBasicIcWorks(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
             val libModule = module("js-ic-basic-lib")
-            val appModule = module("js-ic-basic-app", dependencies = listOf(libModule))
+            val appModule = module("js-ic-basic-app", dependencies = [libModule])
 
             val libSources = libModule.sourcesDirectory.walk().filter { it.name.endsWith(".kt") }.toList()
 
@@ -86,11 +86,11 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
                 """.trimIndent()
             )
             libModule.compileIncrementally(SourcesChanges.ToBeCalculated) {
-                val expectedCompiledSources = setOf("A.kt", "useAInLibMain.kt")
+                val expectedCompiledSources: Set<String> = ["A.kt", "useAInLibMain.kt"]
                 assertCompiledSources(expectedCompiledSources)
             }
-            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), emptyList())) {
-                val expectedCompiledSources = setOf("useAInAppMain.kt")
+            appModule.compileIncrementally(SourcesChanges.Known(libModule.outputDirectory.walk().map(Path::toFile).toList(), [])) {
+                val expectedCompiledSources: Set<String> = ["useAInAppMain.kt"]
                 assertCompiledSources(expectedCompiledSources)
             }
         }
@@ -145,9 +145,9 @@ class IncrementalCompilationSmokeTest : BaseCompilationTest() {
             }
 
             val module2 = if (useTrackedModules) {
-                trackedModule("jvm-module-2", listOf(module1))
+                trackedModule("jvm-module-2", [module1])
             } else {
-                module("jvm-module-2", listOf(module1))
+                module("jvm-module-2", [module1])
             }
 
             module1.createPredefinedFile("secret.kt", "new-file")

@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.serialization.deserialization.builtins.BuiltInSerial
  */
 internal class KaFirLibraryTargetPlatformContentScopeRefiner : KotlinContentScopeRefiner {
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        if (module !is KaLibraryModule && module !is KaLibraryFallbackDependenciesModule) return emptyList()
-        return listOf(createFilteringScope(module))
+        if (module !is KaLibraryModule && module !is KaLibraryFallbackDependenciesModule) return []
+        return [createFilteringScope(module)]
     }
 
     private fun createFilteringScope(module: KaModule): GlobalSearchScope =

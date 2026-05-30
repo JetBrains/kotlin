@@ -45,7 +45,7 @@ class ImportsGenerator(
             name = "<classVTable>",
             type = WasmRefType(typeContext.referenceVTableHeapType(symbol)),
             isMutable = false,
-            init = emptyList(),
+            init = [],
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.VTABLE.prefix}$tag"))
         )
         declarationContext.defineGlobalVTable(irClass = symbol, wasmGlobal = vtableGlobal)
@@ -54,7 +54,7 @@ class ImportsGenerator(
             name = "<classITable>",
             type = WasmRefType(Synthetics.HeapTypes.wasmAnyArrayType),
             isMutable = false,
-            init = emptyList(),
+            init = [],
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.ITABLE.prefix}$tag"))
         )
         declarationContext.defineGlobalClassITable(irClass = symbol, wasmGlobal = iTableGlobal)
@@ -63,7 +63,7 @@ class ImportsGenerator(
             name = "${declaration.fqNameWhenAvailable}_rtti",
             type = WasmRefType(Synthetics.HeapTypes.rttiType),
             isMutable = false,
-            init = emptyList(),
+            init = [],
             importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmServiceImportExportKind.RTTI.prefix}$tag"))
         )
         declarationContext.defineRttiGlobal(global = rttiGlobal, irClass = symbol, irSuperClass = declaration.superClass?.symbol)

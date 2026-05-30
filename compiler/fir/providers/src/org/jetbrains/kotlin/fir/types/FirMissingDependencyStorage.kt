@@ -35,7 +35,7 @@ class FirMissingDependencyStorage(private val session: FirSession) : FirSessionC
     }
 
     private fun FirClassSymbol<*>.collectSuperTypes(session: FirSession): Set<ConeKotlinType> {
-        val result = mutableSetOf<ConeKotlinType>()
+        val result: MutableSet<ConeKotlinType> = []
         fun collect(symbol: FirClassSymbol<*>) {
             for (superTypeRef in symbol.resolvedSuperTypeRefs) {
                 val superType = superTypeRef.coneType

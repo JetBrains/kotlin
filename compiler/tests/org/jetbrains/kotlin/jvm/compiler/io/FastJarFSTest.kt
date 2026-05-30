@@ -61,9 +61,9 @@ class FastJarFSTest : AbstractFastJarFSTest() {
 
         out.close()
 
-        val indicesToCheck = listOf(
+        val indicesToCheck = [
             0, entriesNumber / 2, entriesNumber / 3, entriesNumber - 1
-        )
+        ]
 
         for (i in indicesToCheck) {
             val file = fs.findFileByPath(jarFile.absolutePath + "!/$i.txt") ?: error("Not found $i.txt")

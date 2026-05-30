@@ -27,7 +27,7 @@ class BytecodeTextHandler(testServices: TestServices, private val shouldEnableEx
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)

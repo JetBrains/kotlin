@@ -149,8 +149,8 @@ fun <T> buildTree(
     val root = RootNode(parameter)
     expression?.accept(
         object : IrVisitor<Unit, Node>() {
-            private val calls = mutableListOf<IrCall>()
-            private val whenSubjects = mutableListOf<IrVariableSymbol>()
+            private val calls: MutableList<IrCall> = []
+            private val whenSubjects: MutableList<IrVariableSymbol> = []
 
             private fun IrFunctionExpression.isInlineParameter(): Boolean {
                 val call = calls.lastOrNull() ?: return false

@@ -65,14 +65,14 @@ object FirNotImplementedOverrideChecker : FirClassChecker(MppCheckerKind.Platfor
 
         val classScope = declaration.unsubstitutedScope()
 
-        val notImplementedSymbols = mutableListOf<FirCallableSymbol<*>>()
-        val notImplementedIntersectionSymbols = mutableListOf<FirCallableSymbol<*>>()
-        val manyImplementationsDelegationSymbols = mutableListOf<FirCallableSymbol<*>>()
-        val delegationOverrideOfFinal = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
-        val delegationOverrideOfOpen = mutableListOf<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>>()
-        val invisibleSymbols = mutableListOf<FirCallableSymbol<*>>()
-        val varsImplementedByInheritedVal = mutableListOf<FirIntersectionCallableSymbol>()
-        val incorrectlyDelegatedSymbols = mutableListOf<FirCallableSymbol<*>>()
+        val notImplementedSymbols: MutableList<FirCallableSymbol<*>> = []
+        val notImplementedIntersectionSymbols: MutableList<FirCallableSymbol<*>> = []
+        val manyImplementationsDelegationSymbols: MutableList<FirCallableSymbol<*>> = []
+        val delegationOverrideOfFinal: MutableList<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>> = []
+        val delegationOverrideOfOpen: MutableList<Pair<FirCallableSymbol<*>, FirCallableSymbol<*>>> = []
+        val invisibleSymbols: MutableList<FirCallableSymbol<*>> = []
+        val varsImplementedByInheritedVal: MutableList<FirIntersectionCallableSymbol> = []
+        val incorrectlyDelegatedSymbols: MutableList<FirCallableSymbol<*>> = []
         val session = context.session
 
         fun DelegatedWrapperData<FirCallableDeclaration>.isIncorrectlyDelegated(): Boolean {

@@ -92,7 +92,7 @@ class WasmModule(
         compilationAction: (WasmKlibCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger,
     ): CompilationResult {
-        val allowedExtensions = setOf("kt")
+        val allowedExtensions: Set<String> = ["kt"]
 
         val compilationOperation = kotlinToolchain.wasm.wasmKlibCompilationOperation(
             sourcesDirectory.walk()

@@ -23,7 +23,7 @@ class ExtensionReceiverCommonizer(
 
         return Commonized(
             CirExtensionReceiver(
-                annotations = emptyList(),
+                annotations = [],
                 type = typeCommonizer(values.map { checkNotNull(it).type }) ?: return null
             )
         )

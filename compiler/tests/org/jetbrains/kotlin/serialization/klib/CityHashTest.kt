@@ -70,7 +70,7 @@ class CityHashTest : KtUsefulTestCase() {
     }
 
     fun testOriginal() {
-        val testData = listOf(
+        val testData = [
             ExpectedData(0x9ae16a3b2f90404fUL, 0x3df09dfc64c09a2bUL, 0x3cb540c392e51e29UL, 0x6b56343feac0663UL, 0x5b7bc50fd8e8ad92UL),
             ExpectedData(0x541150e87f415e96UL, 0xc3cdc41e1df33513UL, 0x2c138ff2596d42f6UL, 0xf58e9082aed3055fUL, 0x162e192b2957163dUL),
             ExpectedData(0xf3786a4b25827c1UL, 0x3149ba1dac77270dUL, 0x70e2e076e30703cUL, 0x59bcc9659bc5296UL, 0x9ecbc8132ae2f1d7UL),
@@ -371,7 +371,7 @@ class CityHashTest : KtUsefulTestCase() {
             ExpectedData(0x70c0637675b94150UL, 0xfca4e5bc9292788eUL, 0xcd509dc1facce41cUL, 0xbbba575a59d82feUL, 0x4e2e71c15b45d4d3UL),
             ExpectedData(0x74c0b8a6821faafeUL, 0x967e970df9673d2aUL, 0xd465247cffa415c0UL, 0x33a1df0ca1107722UL, 0x49fc2a10adce4a32UL),
             ExpectedData(0x5fb5e48ac7b7fa4fUL, 0x6cc09e60700563e9UL, 0xd18f23221e964791UL, 0xffc23eeef7af26ebUL, 0x693a954a3622a315UL)
-        )
+        ]
 
         var a = 9UL
         var b = 777UL

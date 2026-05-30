@@ -158,7 +158,7 @@ fun loadScriptTemplatesFromClasspath(
     hostConfiguration: ScriptingHostConfiguration,
     messageReporter: MessageReporter,
 ): Sequence<ScriptDefinition> =
-    if (scriptTemplates.isEmpty()) emptySequence()
+    if (scriptTemplates.isEmpty()) []
     else sequence {
         // trying the direct classloading from baseClassloader first, since this is the most performant variant
         val [initialLoadedDefinitions, initialNotFoundTemplates] = scriptTemplates.partitionMapNotNull {
@@ -197,7 +197,7 @@ fun loadScriptTemplatesFromClasspath(
                             // assuming that invalid classpath entries will be reported elsewhere anyway, so do not spam user with additional warnings here
                             messageReporter(ScriptDiagnostic.Severity.DEBUG, "Configure scripting: Unknown classpath entry $dep")
                             DefinitionsLoadPartitionResult(
-                                listOf(),
+                                [],
                                 remainingTemplates
                             )
                         }

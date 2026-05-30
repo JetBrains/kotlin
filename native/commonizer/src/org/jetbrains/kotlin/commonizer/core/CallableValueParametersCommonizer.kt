@@ -79,7 +79,7 @@ class CallableValueParametersCommonizer(
             fun buildFor(callable: CirCallableMemberWithParameters): ValueParameterNames {
                 val valueParameters = callable.valueParameters
                 if (valueParameters.isEmpty())
-                    return Real(emptyList())
+                    return Real([])
 
                 var real = false
                 val names = callable.valueParameters.mapIndexed { index, valueParameter ->
@@ -116,7 +116,7 @@ class CallableValueParametersCommonizer(
     }
 
     private val valueParameters = ValueParameterListCommonizer(typeCommonizer)
-    private val callables: MutableList<CallableToPatch> = mutableListOf()
+    private val callables: MutableList<CallableToPatch> = []
     private var hasStableParameterNames = true
     private var valueParameterNames: ValueParameterNames? = null
     private var error = false

@@ -14,7 +14,7 @@ internal fun typeName(fqName: String, vararg typeArgumentFlatFqNames: String): T
         typeArgumentFlatFqNames.map {
             TypeName(
                 it,
-                emptyList()
+                []
             )
         })
 }

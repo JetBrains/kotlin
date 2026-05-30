@@ -51,7 +51,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
             }
         }
 
-        val Empty: TypeAttributes = TypeAttributes(emptyList())
+        val Empty: TypeAttributes = TypeAttributes([])
 
         fun create(attributes: List<TypeAttribute<*>>): TypeAttributes {
             return if (attributes.isEmpty()) {
@@ -62,7 +62,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
         }
     }
 
-    private constructor(attribute: TypeAttribute<*>) : this(listOf(attribute))
+    private constructor(attribute: TypeAttribute<*>) : this([attribute])
 
     init {
         for (attribute in attributes) {
@@ -103,7 +103,7 @@ class TypeAttributes private constructor(attributes: List<TypeAttribute<*>>) : A
 
     private inline fun perform(other: TypeAttributes, op: TypeAttribute<*>.(TypeAttribute<*>?) -> TypeAttribute<*>?): TypeAttributes {
         if (this.isEmpty() && other.isEmpty()) return this
-        val attributes = mutableListOf<TypeAttribute<*>>()
+        val attributes: MutableList<TypeAttribute<*>> = []
         for (index in indices) {
             val a = arrayMap[index]
             val b = other.arrayMap[index]

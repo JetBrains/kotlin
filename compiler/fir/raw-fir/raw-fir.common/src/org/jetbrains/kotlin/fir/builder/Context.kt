@@ -39,11 +39,11 @@ class Context<T> {
 
     var classNameBeforeLocalContext: FqName = FqName.ROOT
 
-    val firFunctionTargets: MutableList<FirFunctionTarget> = mutableListOf()
-    val calleeNamesForLambda: MutableList<Name?> = mutableListOf()
+    val firFunctionTargets: MutableList<FirFunctionTarget> = []
+    val calleeNamesForLambda: MutableList<Name?> = []
 
     @PrivateForInline
-    val _firLabels: MutableList<FirLabel> = mutableListOf()
+    val _firLabels: MutableList<FirLabel> = []
 
     @OptIn(PrivateForInline::class)
     val firLabels: List<FirLabel>
@@ -54,11 +54,11 @@ class Context<T> {
      */
     @PrivateForInline
     var firLabelUserNode: Any? = null
-    val firLoopTargets: MutableList<FirLoopTarget> = mutableListOf()
-    val capturedTypeParameters: MutableList<StatusFirTypeParameterSymbolList> = mutableListOf()
+    val firLoopTargets: MutableList<FirLoopTarget> = []
+    val capturedTypeParameters: MutableList<StatusFirTypeParameterSymbolList> = []
     val arraySetArgument: MutableMap<T, FirExpression> = mutableMapOf()
 
-    val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = mutableListOf()
+    val dispatchReceiverTypesStack: MutableList<ConeClassLikeType> = []
     var containerIsExpect: Boolean = false
 
     var forceKeepingTheBodyInHeaderMode: Boolean = false
@@ -123,7 +123,7 @@ class Context<T> {
      */
     val containerSymbol: FirBasedSymbol<*> get() = _containerSymbolStack.last()
     val containerSymbolIfAny: FirBasedSymbol<*>? get() = _containerSymbolStack.lastOrNull()
-    private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = mutableListOf()
+    private val _containerSymbolStack: MutableList<FirBasedSymbol<*>> = []
 
     /**
      * Add [symbol] to the container symbols stack. Must be paired with [popContainerSymbol].
@@ -205,5 +205,5 @@ class Context<T> {
         }
     }
 
-    data class StatusFirTypeParameterSymbolList(val isInnerOrLocal: Boolean, val list: List<FirTypeParameterSymbol> = listOf())
+    data class StatusFirTypeParameterSymbolList(val isInnerOrLocal: Boolean, val list: List<FirTypeParameterSymbol> = [])
 }

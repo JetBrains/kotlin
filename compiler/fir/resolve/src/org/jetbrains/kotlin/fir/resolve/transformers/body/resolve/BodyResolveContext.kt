@@ -47,7 +47,7 @@ class BodyResolveContext(
     val dataFlowAnalyzerContext: DataFlowAnalyzerContext,
     private val isContextCollectorMode: Boolean
 ) {
-    val fileImportsScope: MutableList<FirScope> = mutableListOf()
+    val fileImportsScope: MutableList<FirScope> = []
 
     @set:PrivateForInline
     lateinit var file: FirFile
@@ -130,12 +130,12 @@ class BodyResolveContext(
         }
     }
 
-    val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = mutableSetOf()
+    val anonymousFunctionsAnalyzedInDependentContext: MutableSet<FirFunctionSymbol<*>> = []
 
     var containingClassDeclarations: ArrayDeque<FirClass> = ArrayDeque()
 
     @set:PrivateForInline
-    var targetedLocalClasses: Set<FirClassLikeDeclaration> = emptySet()
+    var targetedLocalClasses: Set<FirClassLikeDeclaration> = []
 
     val outerLocalClassForNested: MutableMap<FirClassLikeSymbol<*>, FirClassLikeSymbol<*>> = hashMapOf()
 
@@ -280,7 +280,7 @@ class BodyResolveContext(
 
     @PrivateForInline
     fun addNonLocalTowerDataElement(element: FirTowerDataElement) {
-        replaceTowerDataContext(towerDataContext.addNonLocalTowerDataElements(listOf(element)))
+        replaceTowerDataContext(towerDataContext.addNonLocalTowerDataElements([element]))
     }
 
     @PrivateForInline
@@ -722,7 +722,7 @@ class BodyResolveContext(
     ): T {
         val towerElementsForScript = holder.collectTowerDataElementsForScript(owner)
 
-        val base = towerDataContext.addNonLocalTowerDataElements(emptyList())
+        val base = towerDataContext.addNonLocalTowerDataElements([])
         val statics = base
             // TODO: temporary solution for avoiding problem described in KT-62712, flatten back after fix
             .let { baseCtx ->

@@ -31,13 +31,13 @@ internal object SharedExecutionBuilder {
         ConcurrentHashMap()
 
     fun buildRunner(settings: Settings, executor: Executor, testRun: TestRun): AbstractRunner<Unit> {
-        if (testRun.testCase.kind !in listOf(TestKind.REGULAR, TestKind.STANDALONE)) {
+        if (testRun.testCase.kind !in [TestKind.REGULAR, TestKind.STANDALONE]) {
             return RunnerWithExecutor(executor, testRun)
         }
 
         val separateTestCases = if (testRun.testCase.kind == TestKind.REGULAR)
             settings.computeSeparateTestCases(testRun)
-        else emptyList()
+        else []
 
         if (testRun.testCase in separateTestCases) {
             return RunnerWithExecutor(executor, testRun)
@@ -48,7 +48,7 @@ internal object SharedExecutionBuilder {
             val ignoredTests = if (testRun.testCase.extras is TestCase.WithTestRunnerExtras) {
                 testRun.testCase.extras.ignoredTests
             } else
-                emptySet()
+                []
 
             // Get tests that are not compatible with others
             val testsThatMayFail = separateTestCases.map { it.nominalPackageName.toString() }

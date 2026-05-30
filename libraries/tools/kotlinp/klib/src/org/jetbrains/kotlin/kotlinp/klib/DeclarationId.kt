@@ -126,7 +126,7 @@ data class TypeId(val classifier: ClassifierId, val arguments: List<TypeArgument
     override fun compareTo(other: TypeId) = COMPARATOR.compare(this, other)
 
     companion object {
-        val UNIT = TypeId(ClassOrTypeAliasId("kotlin/Unit"), emptyList())
+        val UNIT = TypeId(ClassOrTypeAliasId("kotlin/Unit"), [])
 
         private val COMPARATOR = compareBy<TypeId>(
             { it.classifier as? ClassOrTypeAliasId },

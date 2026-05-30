@@ -66,7 +66,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
     override fun RigidTypeMarker.possibleIntegerTypes(): Collection<ConeClassLikeType> {
-        return (this as? ConeIntegerLiteralType)?.possibleTypes ?: emptyList()
+        return (this as? ConeIntegerLiteralType)?.possibleTypes ?: []
     }
 
     override fun RigidTypeMarker.fastCorrespondingSupertypes(constructor: TypeConstructorMarker): List<ConeClassLikeType>? {
@@ -252,7 +252,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is FirAnonymousObjectSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
             is FirRegularClassSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
             is FirTypeAliasSymbol -> symbol.fir.typeParameters.map { it.symbol.toLookupTag() }
-            else -> emptyList()
+            else -> []
         }
     }
 
@@ -261,14 +261,14 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun TypeConstructorMarker.supertypes(): Collection<ConeKotlinType> {
         require(this is ConeTypeConstructorMarker)
         return when (this) {
-            is ConeStubTypeConstructor -> listOf(session.builtinTypes.nullableAnyType.coneType)
-            is ConeTypeVariableTypeConstructor -> emptyList()
+            is ConeStubTypeConstructor -> [session.builtinTypes.nullableAnyType.coneType]
+            is ConeTypeVariableTypeConstructor -> []
             is ConeClassifierLookupTag -> {
                 when (val symbol = toSymbol(session).also { it?.lazyResolveToPhase(FirResolvePhase.TYPES) }) {
                     is FirTypeParameterSymbol -> symbol.resolvedBounds.map { it.coneType }
                     is FirClassSymbol<*> -> symbol.fir.superConeTypes
                     is FirTypeAliasSymbol -> listOfNotNull(symbol.fir.expandedConeType)
-                    null -> listOf(session.builtinTypes.anyType.coneType)
+                    null -> [session.builtinTypes.anyType.coneType]
                 }
             }
             is ConeCapturedTypeConstructor -> supertypes.orEmpty()

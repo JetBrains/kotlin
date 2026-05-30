@@ -11,7 +11,7 @@ object CirStandardTypes {
     val ANY: CirClassType = CirClassType.createInterned(
         classId = ANY_CLASS_ID,
         outerType = null,
-        arguments = emptyList(),
+        arguments = [],
         isMarkedNullable = false
     )
 }

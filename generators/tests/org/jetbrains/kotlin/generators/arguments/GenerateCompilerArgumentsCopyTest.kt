@@ -33,7 +33,7 @@ class GenerateCompilerArgumentsCopyTest : TestCase() {
 
     fun testCopyDuplicatesArray() {
         val a = K2JVMCompilerArguments()
-        a.additionalJavaModules = arrayOf("xxx")
+        a.additionalJavaModules = ["xxx"]
 
         val b = K2JVMCompilerArguments()
         copyK2JVMCompilerArguments(a, b)

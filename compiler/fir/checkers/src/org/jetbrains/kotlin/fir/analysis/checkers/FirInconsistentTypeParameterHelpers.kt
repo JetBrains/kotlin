@@ -51,7 +51,7 @@ private fun buildDeepSubstitutionMultimap(
     val session = context.session
     val typeContext = session.typeContext
     val substitutor = FE10LikeConeSubstitutor(substitution, session)
-    val visitedSupertypes = mutableSetOf<ConeKotlinType>()
+    val visitedSupertypes: MutableSet<ConeKotlinType> = []
 
     context(context: CheckerContext)
     fun fillInDeepSubstitutor(
@@ -71,7 +71,7 @@ private fun buildDeepSubstitutionMultimap(
 
                 substitution[typeParameterSymbol] = substitutedArgument
                 val projections = result.getOrPut(typeParameterSymbol) {
-                    ClassSymbolAndProjections(classSymbol, mutableListOf())
+                    ClassSymbolAndProjections(classSymbol, [])
                 }.projections
 
                 val substitutedArgumentType = substitutedArgument.type

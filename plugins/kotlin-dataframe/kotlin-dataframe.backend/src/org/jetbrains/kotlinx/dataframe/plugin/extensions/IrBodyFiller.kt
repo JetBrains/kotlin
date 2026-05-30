@@ -74,19 +74,19 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val getterExtensionReceiver = getter.parameters.single { it.kind == IrParameterKind.ExtensionReceiver }
         val marker = ((getterExtensionReceiver.type as IrSimpleType).arguments.single() as IrSimpleType).classOrFail.owner
         val jvmNameArg = "${marker.nestedName()}_${declaration.name.identifier}"
-        getter.annotations = listOf(
+        getter.annotations = [
             IrAnnotationImpl(-1, -1, jvmName.owner.returnType, jvmName, 0, 1)
                 .also {
                     it.arguments[0] = IrConstImpl.string(-1, -1, context.irBuiltIns.stringType, jvmNameArg)
                 }
-        )
+        ]
         val returnType = getter.returnType
         val typeOp = generateColumnAccessCall(
             receiver = IrGetValueImpl(-1, -1, getterExtensionReceiver.symbol), declaration, returnType, marker
         )
         val returnExpression = IrReturnImpl(-1, -1, context.irBuiltIns.nothingType, getter.symbol, typeOp)
         getter.apply {
-            body = factory.createBlockBody(-1, -1, listOf(returnExpression))
+            body = factory.createBlockBody(-1, -1, [returnExpression])
         }
 
         return declaration
@@ -110,7 +110,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                     it.owner.hasShape(
                         dispatchReceiver = true,
                         regularParameters = 1,
-                        parameterTypes = listOf(null, context.irBuiltIns.stringType)
+                        parameterTypes = [null, context.irBuiltIns.stringType]
                     )
                 }
         } else {
@@ -120,7 +120,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
                     it.owner.hasShape(
                         dispatchReceiver = true,
                         regularParameters = 1,
-                        parameterTypes = listOf(null, context.irBuiltIns.stringType)
+                        parameterTypes = [null, context.irBuiltIns.stringType]
                     )
                 }
         }

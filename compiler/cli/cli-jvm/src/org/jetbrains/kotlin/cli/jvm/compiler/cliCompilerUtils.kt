@@ -191,7 +191,7 @@ fun createLibraryListForJvm(
                                .map { it.file.toNioPath().toString() })
 
         dependencies(configuration.jvmModularRoots.map { it.path })
-        friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+        friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: [])
         friendDependencies(friendPaths)
     }
     return libraryList

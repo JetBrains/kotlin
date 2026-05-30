@@ -45,7 +45,7 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
          *
          * The list of fully qualified names that violate the naming convention and have to be renamed.
          */
-        private val ignoredFqNames = listOf(
+        private val ignoredFqNames = [
             // KT-82440
             "org.jetbrains.kotlin.analysis.api.components.ShortenOptions",
             "org.jetbrains.kotlin.analysis.api.components.ShortenStrategy",
@@ -53,6 +53,6 @@ class AnalysisApiNameConventionTest : AbstractAnalysisApiSurfaceCodebaseValidati
             "org.jetbrains.kotlin.analysis.api.components.QualifierToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ThisLabelToShortenInfo",
             "org.jetbrains.kotlin.analysis.api.components.ShortenCommand",
-        )
+        ]
     }
 }

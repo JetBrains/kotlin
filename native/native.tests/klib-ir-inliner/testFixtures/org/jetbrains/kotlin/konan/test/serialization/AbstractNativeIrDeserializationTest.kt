@@ -47,9 +47,9 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
         deserializedIrHandlersStep { useHandlers({ SerializedIrDumpHandler(it, isAfterDeserialization = true) }) }
 
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
         }
         forTestsNotMatching(
             "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or

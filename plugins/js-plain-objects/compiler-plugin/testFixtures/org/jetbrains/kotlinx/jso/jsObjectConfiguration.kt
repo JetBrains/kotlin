@@ -26,7 +26,7 @@ class JsPlainObjectsEnvironmentConfigurator(testServices: TestServices) : Enviro
 
 class JsPlainObjectsRuntimeClasspathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        return listOf(File(System.getProperty("jso.runtime.path")))
+        return [File(System.getProperty("jso.runtime.path"))]
     }
 }
 

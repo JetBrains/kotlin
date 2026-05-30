@@ -54,7 +54,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
             extractConfigurationKind(files),
             getTestJdkKind(files),
             if (additionalClasspath == null) defaultClasspath else defaultClasspath + additionalClasspath,
-            if (isJavaSourceRootNeeded()) listOf(javaFilesDir) else emptyList(),
+            if (isJavaSourceRootNeeded()) [javaFilesDir] else [],
             files
         )
         if (isScriptingNeeded(file)) {
@@ -87,7 +87,7 @@ abstract class KotlinMultiFileTestWithJava<M : KotlinBaseTest.TestModule, F : Ko
         return result
     }
 
-    protected open fun getExtraClasspath(): List<File> = emptyList()
+    protected open fun getExtraClasspath(): List<File> = []
 
     protected open fun getEnvironmentConfigFiles(): EnvironmentConfigFiles = EnvironmentConfigFiles.JVM_CONFIG_FILES
 

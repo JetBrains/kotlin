@@ -42,7 +42,7 @@ internal class LLFirDiagnosticReporter : PendingDiagnosticReporter() {
 
     override fun checkAndCommitReportsOn(element: AbstractKtSourceElement, context: DiagnosticContext, commitEverything: Boolean) {
         for ([diagnosticElement, pendingList] in pendingDiagnostics) {
-            val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { mutableListOf() }
+            val committedList = _committedDiagnostics.getOrPut(diagnosticElement) { [] }
             val iterator = pendingList.iterator()
             while (iterator.hasNext()) {
                 val diagnostic = iterator.next()

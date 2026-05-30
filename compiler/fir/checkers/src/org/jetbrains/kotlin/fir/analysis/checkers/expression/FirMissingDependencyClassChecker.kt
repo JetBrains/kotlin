@@ -33,8 +33,8 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
         val calleeReference = expression.calleeReference
-        val missingTypes = mutableSetOf<ConeClassLikeType>()
-        val missingTypesFromExpression = mutableSetOf<ConeClassLikeType>()
+        val missingTypes: MutableSet<ConeClassLikeType> = []
+        val missingTypesFromExpression: MutableSet<ConeClassLikeType> = []
         val containingElements = context.containingElements
         if (!calleeReference.isError()) {
             expression.resolvedType.forEachType { type ->

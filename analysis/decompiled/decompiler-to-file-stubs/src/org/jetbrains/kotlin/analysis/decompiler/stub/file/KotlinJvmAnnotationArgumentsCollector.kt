@@ -60,7 +60,7 @@ internal open class KotlinJvmAnnotationArgumentsCollector : KotlinJvmBinaryClass
 
     override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
         return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-            private val elements = mutableListOf<Any>()
+            private val elements: MutableList<Any> = []
 
             override fun visit(value: Any?) {
                 elements.addIfNotNull(value)

@@ -28,12 +28,12 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
     val objectBodyType = if (useSeparateHolder) {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader, llvm.pointerType),
-                objectFieldIndices = listOf(1)
+                objectFieldIndices = [1]
         )
     } else {
         ObjectBodyType(
                 llvm.structType(codegen.kObjHeader),
-                objectFieldIndices = emptyList()
+                objectFieldIndices = []
         )
     }
     val bodyType = objectBodyType.llvmBodyType
@@ -53,7 +53,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         }
         val blockPtr = callFromBridge(
                 llvm.Kotlin_ObjCExport_GetAssociatedObject,
-                listOf(associatedObjectHolder)
+                [associatedObjectHolder]
         )
 
         val invoke = loadBlockInvoke(blockPtr, bridge)
@@ -68,7 +68,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
         val result = callAndMaybeRetainAutoreleased(
                 invoke,
                 bridge.blockType.toBlockInvokeLlvmType(llvm),
-                listOf(blockPtr) + args,
+                [blockPtr] + args,
                 exceptionHandler = terminatingExceptionHandler,
                 doRetain = !bridge.returnsVoid
         )
@@ -96,7 +96,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             objectBodyType,
             immutable = true
     )
-    val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)))
+    val functionSig = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, [LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)])
     return functionGenerator(
             functionSig.toProto("convertBlock${bridge.nameSuffix}", null, LLVMLinkage.LLVMInternalLinkage)
     ).generate {
@@ -105,7 +105,7 @@ internal fun ObjCExportCodeGeneratorBase.generateBlockToKotlinFunctionConverter(
             ret(llvm.kNull)
         }
 
-        val retainedBlockPtr = callFromBridge(retainBlock, listOf(blockPtr))
+        val retainedBlockPtr = callFromBridge(retainBlock, [blockPtr])
 
         val result = if (useSeparateHolder) {
             val result = allocInstance(typeInfo.llvm, Lifetime.RETURN_VALUE, null)
@@ -140,7 +140,7 @@ private fun FunctionGenerationContext.allocInstanceWithAssociatedObject(
         resultLifetime: Lifetime
 ): LLVMValueRef = call(
         llvm.Kotlin_ObjCExport_AllocInstanceWithAssociatedObject,
-        listOf(typeInfo.llvm, associatedObject),
+        [typeInfo.llvm, associatedObject],
         resultLifetime
 )
 
@@ -175,7 +175,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
 
     private val disposeProto = LlvmFunctionSignature(
             LlvmRetType(llvm.voidType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType))
+            [LlvmParamType(llvm.pointerType)]
     ).toProto(
             "blockDisposeHelper",
             null,
@@ -188,15 +188,15 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             switchToRunnable = true
     ) {
         val refHolder = load(llvm.pointerType, refHolderInBlock(param(0)))
-        call(llvm.Kotlin_mm_releaseExternalRCRef, listOf(refHolder))
-        call(llvm.Kotlin_mm_disposeExternalRCRef, listOf(refHolder))
+        call(llvm.Kotlin_mm_releaseExternalRCRef, [refHolder])
+        call(llvm.Kotlin_mm_disposeExternalRCRef, [refHolder])
 
         ret(null)
     }
 
     private val copyProto = LlvmFunctionSignature(
             LlvmRetType(llvm.voidType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType))
+            [LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)]
     ).toProto(
             "blockCopyHelper",
             null,
@@ -212,7 +212,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         val srcBlockPtr = param(1)
 
         val obj = load(llvm.pointerType, objectInBlock(srcBlockPtr))
-        val refHolder = call(llvm.Kotlin_mm_createRetainedExternalRCRef, listOf(obj))
+        val refHolder = call(llvm.Kotlin_mm_createRetainedExternalRCRef, [obj])
 
         store(obj, objectInBlock(dstBlockPtr))
         store(refHolder, refHolderInBlock(dstBlockPtr))
@@ -289,7 +289,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val invokeMethod = context.irBuiltIns.functionN(numberOfParameters).simpleFunctions()
                     .single { it.name == OperatorNameConventions.INVOKE }
             val llvmDeclarations = codegen.getVirtualFunctionTrampoline(invokeMethod)
-            val result = callFromBridge(llvmDeclarations, listOf(kotlinFunction) + kotlinArguments, Lifetime.ARGUMENT)
+            val result = callFromBridge(llvmDeclarations, [kotlinFunction] + kotlinArguments, Lifetime.ARGUMENT)
             if (bridge.returnsVoid) {
                 ret(null)
             } else {
@@ -312,7 +312,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
         return functionGenerator(
                 LlvmFunctionSignature(
                         LlvmRetType(llvm.pointerType, isObjectType = false),
-                        listOf(LlvmParamType(llvm.pointerType))
+                        [LlvmParamType(llvm.pointerType)]
                 ).toProto(
                         convertName, null, LLVMLinkage.LLVMInternalLinkage
                 )
@@ -333,7 +333,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             val blockOnStack = alloca(blockLiteralType, false)
             val blockOnStackBase = structGep(blockLiteralType, blockOnStack, 0)
 
-            listOf(isa, flags, reserved, invoke, descriptor).forEachIndexed { index, value ->
+            [isa, flags, reserved, invoke, descriptor].forEachIndexed { index, value ->
                 // Although value is actually on the stack, it's not in normal slot area, so we cannot handle it
                 // as if it was on the stack.
                 store(value, structGep(codegen.runtime.blockLiteralType, blockOnStackBase, index))
@@ -342,7 +342,7 @@ internal class BlockGenerator(private val codegen: CodeGenerator) {
             store(kotlinRef, objectInBlock(blockOnStack))
             store(llvm.kNull, refHolderInBlock(blockOnStack))
 
-            val copiedBlock = callFromBridge(retainBlock, listOf(blockOnStack))
+            val copiedBlock = callFromBridge(retainBlock, [blockOnStack])
 
             ret(copiedBlock)
         }
@@ -353,5 +353,5 @@ private val ObjCExportCodeGeneratorBase.retainBlock: LlvmCallable
     get() = llvm.externalNativeRuntimeFunction(
             "Kotlin_objc_retainBlock_inNative",
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType))
+            [LlvmParamType(llvm.pointerType)]
     )

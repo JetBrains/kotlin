@@ -22,11 +22,11 @@ class InlinedLambdaDoubleInliningTest : BaseCompilationTest() {
             val lib2 = module("ic-scenarios/inline-double-inlining/lib2")
             val lib1 = module(
                 "ic-scenarios/inline-double-inlining/lib1",
-                dependencies = listOf(lib2)
+                dependencies = [lib2]
             )
             val app = module(
                 "ic-scenarios/inline-double-inlining/app",
-                dependencies = listOf(lib1)
+                dependencies = [lib1]
             )
 
             app.execute(mainClass = "AppKt", exactOutput = "bar2 v1")

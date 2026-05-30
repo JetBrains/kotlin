@@ -136,7 +136,7 @@ internal class FirElementFinder : FirSessionComponent {
             ) ?: return null
 
             return FirDesignation(
-                path = patchDesignationPathIfNeeded(result, resultPath).ifEmpty { emptyList() },
+                path = patchDesignationPathIfNeeded(result, resultPath).ifEmpty { [] },
                 target = result,
             )
         }
@@ -322,7 +322,7 @@ private sealed class FirFileStructureNode(val element: FirDeclaration) {
 
             is FirReplSnippet -> Container(
                 element = element,
-                elements = convertDeclarations(listOf(element.snippetClass))
+                elements = convertDeclarations([element.snippetClass])
             )
 
             is FirRegularClass -> Container(

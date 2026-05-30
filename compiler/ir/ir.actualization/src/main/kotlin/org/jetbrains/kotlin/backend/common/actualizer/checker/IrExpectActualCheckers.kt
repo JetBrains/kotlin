@@ -6,13 +6,13 @@
 package org.jetbrains.kotlin.backend.common.actualizer.checker
 
 internal object IrExpectActualCheckers {
-    private val checkers: Set<IrExpectActualChecker> = setOf(
+    private val checkers: Set<IrExpectActualChecker> = [
         IrAnnotationMatchingKmpChecker,
         IrAnnotationConflictingDefaultArgumentValueKmpChecker,
         IrKotlinActualAnnotationOnJavaKmpChecker,
         IrJavaDirectActualizationDefaultParametersInExpectKmpChecker,
         IrJavaDirectActualizationDefaultParametersInActualKmpChecker,
-    )
+    ]
 
     fun check(context: IrExpectActualChecker.Context) {
         for (checker in checkers) {

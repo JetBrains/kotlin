@@ -170,8 +170,8 @@ object StubUtils {
     ): List<E>? = when (val nullableSize = readVarInt()) {
         0 -> null
         else -> when (val size = nullableSize - 1) { // -1 since 0 is reserved for null value
-            0 -> emptyList()
-            1 -> listOf(elementReader())
+            0 -> []
+            1 -> [elementReader()]
             else -> buildList(size) {
                 repeat(size) {
                     add(elementReader())

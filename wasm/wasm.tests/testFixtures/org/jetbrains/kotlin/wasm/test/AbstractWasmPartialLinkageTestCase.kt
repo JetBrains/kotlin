@@ -113,7 +113,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
     ) {
         require(compilerEdition == KlibCompilerEdition.CURRENT) { "Partial Linkage tests accept only Current compiler" }
 
-        val kotlinSourceFilePaths = mutableListOf<String>()
+        val kotlinSourceFilePaths: MutableList<String> = []
 
         module.sourceDir.walkTopDown().forEach { sourceFile ->
             if (sourceFile.isFile) when (sourceFile.extension) {
@@ -127,10 +127,10 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
 
         // Build KLIB:
         runCompilerViaCLI(
-            listOf(
+            [
                 KotlinWasmCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
-            ),
+            ],
             dependencies.toCompilerArgs(),
             compilerArguments,
             kotlinSourceFilePaths
@@ -147,12 +147,12 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
         val binariesDir: File = File(configuration.buildDir, BIN_DIR_NAME).also { it.mkdirs() }
 
         runCompilerViaCLI(
-            listOf(
+            [
                 KotlinWasmCompilerArguments::irProduceJs.cliArgument,
                 KotlinWasmCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
                 KotlinWasmCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 KotlinWasmCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
-            ),
+            ],
             listOf(
                 KotlinWasmCompilerArguments::cacheDirectory.cliArgument(configuration.buildDir.resolve("libs-cache").absolutePath),
             ).takeIf { configuration.compilerType.useIc },
@@ -171,7 +171,7 @@ internal class WasmCompilerInvocationTestArtifactBuilder(
             """,
         )
 
-        val additionalJsFiles = mutableListOf<File>()
+        val additionalJsFiles: MutableList<File> = []
         additionalJsFiles.addAll(getAdditionalJsFiles(mainModule))
         otherDependencies.regularDependencies.flatMapTo(additionalJsFiles) { getAdditionalJsFiles(it) }
         otherDependencies.friendDependencies.flatMapTo(additionalJsFiles) { getAdditionalJsFiles(it) }

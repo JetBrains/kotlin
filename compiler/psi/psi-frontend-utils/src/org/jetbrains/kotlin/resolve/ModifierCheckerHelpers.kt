@@ -127,14 +127,14 @@ private fun compatibilityRegister(
 }
 
 val featureDependencies = mapOf(
-    INLINE_KEYWORD to listOf(LanguageFeature.InlineProperties, LanguageFeature.InlineClasses),
-    EXPECT_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
-    ACTUAL_KEYWORD to listOf(LanguageFeature.MultiPlatformProjects),
+    INLINE_KEYWORD to [LanguageFeature.InlineProperties, LanguageFeature.InlineClasses],
+    EXPECT_KEYWORD to [LanguageFeature.MultiPlatformProjects],
+    ACTUAL_KEYWORD to [LanguageFeature.MultiPlatformProjects],
 )
 
 val featureDependenciesTargets = mapOf(
-    LanguageFeature.InlineClasses to setOf(KotlinTarget.CLASS_ONLY),
-    LanguageFeature.JvmInlineValueClasses to setOf(KotlinTarget.CLASS_ONLY),
+    LanguageFeature.InlineClasses to [KotlinTarget.CLASS_ONLY],
+    LanguageFeature.JvmInlineValueClasses to [KotlinTarget.CLASS_ONLY],
 )
 
 val defaultVisibilityTargetPredicate = always(
@@ -325,7 +325,7 @@ val redundantTargetMap = mapOf<KtKeywordToken, Set<KotlinTarget>>(
     OPEN_KEYWORD to EnumSet.of(KotlinTarget.INTERFACE)
 )
 
-val allowedInContextParameters: Set<KtKeywordToken> = setOf<KtKeywordToken>(NOINLINE_KEYWORD, CROSSINLINE_KEYWORD)
+val allowedInContextParameters: Set<KtKeywordToken> = [NOINLINE_KEYWORD, CROSSINLINE_KEYWORD]
 
 interface TargetAllowedPredicate {
     fun isAllowed(target: KotlinTarget, languageVersionSettings: LanguageVersionSettings): Boolean

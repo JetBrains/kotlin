@@ -60,14 +60,14 @@ fun TestConfigurationBuilder.configureDiagnostics() {
 
 class AssignmentPluginEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private val TEST_ANNOTATIONS = listOf(
+        private val TEST_ANNOTATIONS = [
             "ValueContainer",
             "qualified.ValueContainer",
-        )
+        ]
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(AssignmentDirectives)
+        get() = [AssignmentDirectives]
 
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(

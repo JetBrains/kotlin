@@ -46,39 +46,39 @@ class CollectScriptCompilationDependenciesTest {
 
     @Test
     fun testCascadeImport() {
-        runTest("imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
+        runTest("imp_imp_leaf.req1.kts", ["imp_leaf.req1.kts", "leaf.req1.kts"])
     }
 
     @Test
     fun testImportTwice() {
-        runTest("imp_leaf_twice.req1.kts", listOf("leaf.req1.kts"))
+        runTest("imp_leaf_twice.req1.kts", ["leaf.req1.kts"])
     }
 
     @Test
     fun testImportDiamond() {
-        runTest("imp_leaf_and_imp_imp_leaf.req1.kts", listOf("imp_leaf.req1.kts", "leaf.req1.kts"))
+        runTest("imp_leaf_and_imp_imp_leaf.req1.kts", ["imp_leaf.req1.kts", "leaf.req1.kts"])
     }
 
     @Test
     fun testDirectImportCycle() {
-        runTest("imp_self.req1.kts", emptyList())
+        runTest("imp_self.req1.kts", [])
     }
 
     @Test
     fun testIndirectImportCycle() {
-        runTest("imp_cycle_1.req1.kts", listOf("imp_cycle_2.req1.kts"))
+        runTest("imp_cycle_1.req1.kts", ["imp_cycle_2.req1.kts"])
     }
 
     @Test
     fun testImportWithDependenciesAdded() {
         runTest(
             "imp_leaf_with_deps.req1.kts",
-            listOf("leaf_with_deps_1.req1.kts", "leaf_with_deps_2.req1.kts"),
-            listOf(File("someDependency1.jar"), File("someDependency2.jar"))
+            ["leaf_with_deps_1.req1.kts", "leaf_with_deps_2.req1.kts"],
+            [File("someDependency1.jar"), File("someDependency2.jar")]
         )
     }
 
-    private fun runTest(scriptFile: String, expectedDependencies: List<String>, classPath: List<File> = emptyList()) {
+    private fun runTest(scriptFile: String, expectedDependencies: List<String>, classPath: List<File> = []) {
         val configuration = KotlinTestUtils.newConfiguration(ConfigurationKind.NO_KOTLIN_REFLECT, TestJdkKind.MOCK_JDK).apply {
             updateWithBaseCompilerArguments()
             add(

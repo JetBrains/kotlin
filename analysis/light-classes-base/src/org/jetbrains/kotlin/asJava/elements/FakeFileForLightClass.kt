@@ -52,7 +52,7 @@ open class FakeFileForLightClass(
 
     override fun getStub() = createFakeJavaFileStub()
 
-    override fun getClasses() = arrayOf(lightClass)
+    override fun getClasses(): Array<KtLightClass> = [lightClass]
 
     override fun getNavigationElement() = ktFile
 

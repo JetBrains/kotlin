@@ -70,10 +70,10 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
     ): List<TypeArgumentAnnotation> {
         val memberOwnerClass = memberOwnerClass
             ?: memberOwnerLookupTag.toClassSymbol(session)
-            ?: return emptyList()
+            ?: return []
 
         if (memberOwnerClass.typeParameterSymbols.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         val substitutedTypes = memberOwnerClass.typeParameterSymbols
@@ -84,7 +84,7 @@ class LLSubstitutionScopeKeyFactory(private val session: LLFirSession) : Substit
 
     fun collectPlacedAnnotations(types: List<ConeKotlinType?>): List<TypeArgumentAnnotation> {
         if (types.none { it != null && isAnnotated(it) }) {
-            return emptyList()
+            return []
         }
 
         val result = ArrayList<TypeArgumentAnnotation>()

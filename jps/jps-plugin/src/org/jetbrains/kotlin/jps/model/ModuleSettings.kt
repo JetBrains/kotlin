@@ -41,9 +41,9 @@ val JpsModule.expectedByModules: List<JpsModule>
     get() = findDependencies(kotlinFacet?.settings?.implementedModuleNames)
 
 private fun JpsModule.findDependencies(moduleNames: List<String>?): List<JpsModule> {
-    if (moduleNames == null || moduleNames.isEmpty()) return listOf()
+    if (moduleNames == null || moduleNames.isEmpty()) return []
 
-    val result = mutableSetOf<JpsModule>()
+    val result: MutableSet<JpsModule> = []
 
     JpsJavaExtensionService.dependencies(this)
         .processModules {

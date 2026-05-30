@@ -38,7 +38,7 @@ abstract class ParcelizeIrTransformerBase(
 ) : IrVisitorVoid(), ParcelizeExtensionBase {
     private val irFactory: IrFactory = IrFactoryImpl
 
-    protected val deferredOperations = mutableListOf<() -> Unit>()
+    protected val deferredOperations: MutableList<() -> Unit> = []
     protected fun defer(block: () -> Unit) = deferredOperations.add(block)
 
     protected fun IrSimpleFunction.generateDescribeContentsBody(parcelableProperties: List<ParcelableProperty>) {
@@ -150,7 +150,7 @@ abstract class ParcelizeIrTransformerBase(
                 visibility = DescriptorVisibilities.LOCAL
             }.apply {
                 parent = irField
-                superTypes = listOf(creatorType)
+                superTypes = [creatorType]
                 createThisReceiverParameter()
 
                 addConstructor {
@@ -163,7 +163,7 @@ abstract class ParcelizeIrTransformerBase(
 
                 val arrayType = context.irBuiltIns.arrayClass.typeWith(declarationType.makeNullable())
                 addFunction(NEW_ARRAY_NAME.identifier, arrayType).apply {
-                    overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
+                    overriddenSymbols = [androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!]
                     val sizeParameter = addValueParameter("size", context.irBuiltIns.intType)
                     body = context.createIrBuilder(symbol).run {
                         irExprBody(
@@ -177,7 +177,7 @@ abstract class ParcelizeIrTransformerBase(
                 }
 
                 addFunction(CREATE_FROM_PARCEL_NAME.identifier, declarationType).apply {
-                    overriddenSymbols = listOf(androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!)
+                    overriddenSymbols = [androidSymbols.androidOsParcelableCreator.getSimpleFunction(name.asString())!!]
                     val parcelParameter = addValueParameter("parcel", androidSymbols.androidOsParcel.defaultType)
 
                     // We need to defer the construction of the create method, since it may refer to the [Parcelable.Creator]
@@ -241,9 +241,9 @@ abstract class ParcelizeIrTransformerBase(
 
     protected val IrClass.parcelableProperties: List<ParcelableProperty>
         get() {
-            if (kind != ClassKind.CLASS) return emptyList()
+            if (kind != ClassKind.CLASS) return []
 
-            val constructor = primaryConstructor ?: return emptyList()
+            val constructor = primaryConstructor ?: return []
             val topLevelScope = getParcelerScope()
             return constructor.parameters.mapIndexedNotNull { index, parameter ->
                 val property = properties.firstOrNull { it.name == parameter.name }
@@ -331,9 +331,9 @@ abstract class ParcelizeIrTransformerBase(
 
     protected fun IrClass.inheritanceConstructorArguments(): List<ParcelableProperty> {
         val superClassArguments = if (superClass?.isParcelize(parcelizeAnnotations) == true) {
-            superClass?.inheritanceConstructorArguments() ?: emptyList()
+            superClass?.inheritanceConstructorArguments() ?: []
         } else {
-            emptyList()
+            []
         }
         return superClassArguments + parcelableProperties
     }

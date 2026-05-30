@@ -12,12 +12,12 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 object JsPlatforms {
     object DefaultSimpleJsPlatform : JsPlatform()
 
-    private object CompatJsPlatform : TargetPlatform(setOf(DefaultSimpleJsPlatform))
+    private object CompatJsPlatform : TargetPlatform([DefaultSimpleJsPlatform])
 
     val defaultJsPlatform: TargetPlatform
         get() = CompatJsPlatform
 
-    val allJsPlatforms: List<TargetPlatform> = listOf(defaultJsPlatform)
+    val allJsPlatforms: List<TargetPlatform> = [defaultJsPlatform]
 
     val latestSupportedTarget = EcmaVersion.latestSupportedVersion().name
 }

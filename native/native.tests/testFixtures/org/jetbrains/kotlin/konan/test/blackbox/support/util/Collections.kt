@@ -28,7 +28,7 @@ class FailOnDuplicatesSet<E : Any> : Set<E> {
 }
 
 inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
-    if (this is Collection && isEmpty()) return emptySet()
+    if (this is Collection && isEmpty()) return []
 
     val result = hashSetOf<R>()
     mapTo(result, transform)
@@ -36,7 +36,7 @@ inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
 }
 
 internal inline fun <T, R : Any> Iterable<T>.mapNotNullToSet(transform: (T) -> R?): Set<R> {
-    if (this is Collection && isEmpty()) return emptySet()
+    if (this is Collection && isEmpty()) return []
 
     val result = hashSetOf<R>()
     mapNotNullTo(result, transform)
@@ -44,7 +44,7 @@ internal inline fun <T, R : Any> Iterable<T>.mapNotNullToSet(transform: (T) -> R
 }
 
 internal inline fun <T, R : Any> Array<out T>.mapNotNullToSet(transform: (T) -> R?): Set<R> {
-    if (isEmpty()) return emptySet()
+    if (isEmpty()) return []
 
     val result = hashSetOf<R>()
     mapNotNullTo(result, transform)
@@ -52,7 +52,7 @@ internal inline fun <T, R : Any> Array<out T>.mapNotNullToSet(transform: (T) -> 
 }
 
 inline fun <T, R> Iterable<T>.flatMapToSet(transform: (T) -> Iterable<R>): Set<R> {
-    if (this is Collection && isEmpty()) return emptySet()
+    if (this is Collection && isEmpty()) return []
 
     val result = hashSetOf<R>()
     flatMapTo(result, transform)

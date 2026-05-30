@@ -90,4 +90,4 @@ private fun <Data, Context : NativeBackendPhaseContext> findLlvmModule(data: Dat
  * Default set of dump and validate actions for LLVM phases.
  */
 internal fun <Data, Context : NativeBackendPhaseContext> getDefaultLlvmModuleActions(): Set<Action<Data, Context>> =
-        setOf(createLlvmDumperAction(), createLlvmVerifierAction())
+        [createLlvmDumperAction(), createLlvmVerifierAction()]

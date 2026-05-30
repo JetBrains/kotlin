@@ -36,7 +36,7 @@ class RegisteredDirectivesBuilder private constructor(
     }
 
     infix fun StringDirective.with(value: String) {
-        with(listOf(value))
+        with([value])
     }
 
     infix fun StringDirective.with(values: List<String>) {
@@ -44,7 +44,7 @@ class RegisteredDirectivesBuilder private constructor(
     }
 
     operator fun StringDirective.plus(value: String) {
-        val previous = stringDirectives[this] ?: listOf()
+        val previous = stringDirectives[this] ?: []
         stringDirectives[this] = previous + value
     }
 

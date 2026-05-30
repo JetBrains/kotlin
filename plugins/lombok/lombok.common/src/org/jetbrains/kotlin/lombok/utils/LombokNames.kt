@@ -63,7 +63,7 @@ object LombokNames {
     val TO_STRING_EXCLUDE_ID = TO_STRING_ID.createNestedClassId(Name.identifier("Exclude"))
 
     //taken from idea lombok plugin
-    val NON_NULL_ANNOTATIONS = listOf(
+    val NON_NULL_ANNOTATIONS = [
         "androidx.annotation.NonNull",
         "android.support.annotation.NonNull",
         "com.sun.istack.internal.NotNull",
@@ -77,24 +77,24 @@ object LombokNames {
         "org.jmlspecs.annotation.NonNull",
         "org.netbeans.api.annotations.common.NonNull",
         "org.springframework.lang.NonNull"
-    ).map { FqName(it) }.toSet()
+    ].map { FqName(it) }.toSet()
 
-    private val SUPPORTED_JAVA_COLLECTIONS = setOf(
+    private val SUPPORTED_JAVA_COLLECTIONS: Set<String> = [
         "java.lang.Iterable",
         "java.util.Collection",
         "java.util.List",
         "java.util.Set",
         "java.util.SortedSet",
         "java.util.NavigableSet",
-    )
+    ]
 
-    private val SUPPORTED_JAVA_MAPS = setOf(
+    private val SUPPORTED_JAVA_MAPS: Set<String> = [
         "java.util.Map",
         "java.util.SortedMap",
         "java.util.NavigableMap",
-    )
+    ]
 
-    private val SUPPORTED_KOTLIN_COLLECTIONS = setOf(
+    private val SUPPORTED_KOTLIN_COLLECTIONS: Set<String> = [
         "kotlin.collections.Iterable",
         "kotlin.collections.MutableIterable",
         "kotlin.collections.Collection",
@@ -103,12 +103,12 @@ object LombokNames {
         "kotlin.collections.MutableList",
         "kotlin.collections.Set",
         "kotlin.collections.MutableSet",
-    )
+    ]
 
-    private val SUPPORTED_KOTLIN_MAPS = setOf(
+    private val SUPPORTED_KOTLIN_MAPS: Set<String> = [
         "kotlin.collections.Map",
         "kotlin.collections.MutableMap",
-    )
+    ]
 
     val SUPPORTED_GUAVA_COLLECTIONS = listOf(
         "ImmutableCollection",
@@ -127,9 +127,9 @@ object LombokNames {
 
     val SUPPORTED_MAPS = SUPPORTED_JAVA_MAPS + SUPPORTED_KOTLIN_MAPS + SUPPORTED_GUAVA_MAPS
 
-    val SUPPORTED_TABLES = listOf(
+    val SUPPORTED_TABLES = [
         "ImmutableTable",
-    ).guavaPackage()
+    ].guavaPackage()
 
     // Such ugly function is needed because shade plugin shades any name starting with com.google
     //   which causes shading even from string literals
@@ -138,7 +138,7 @@ object LombokNames {
     }
 
     private fun String.guavaPackage(): String {
-        val prefix = listOf("com", "google", "common", "collect").joinToString(".")
+        val prefix = ["com", "google", "common", "collect"].joinToString(".")
         return "$prefix.$this"
     }
 }

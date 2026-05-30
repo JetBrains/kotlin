@@ -44,7 +44,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  */
 abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationResolveTestCase() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->

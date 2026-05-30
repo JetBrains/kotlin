@@ -119,10 +119,10 @@ class StdlibAlignmentIT : KGPBaseTest() {
     @DisplayName("alignment in Kotlin DSL")
     @GradleTest
     fun stdlibJdkAlignmentKotlinDsl(gradleVersion: GradleVersion) {
-        for ([stdlibVersion, alignedVersion] in listOf(
+        for ([stdlibVersion, alignedVersion] in [
             defaultBuildOptions.kotlinVersion to constrainedAlignmentVersion,
             "1.9.0" to "1.9.0"
-        )) {
+        ]) {
             project("sourceSetsKotlinDsl", gradleVersion) {
                 buildGradleKts.appendText(
                     """

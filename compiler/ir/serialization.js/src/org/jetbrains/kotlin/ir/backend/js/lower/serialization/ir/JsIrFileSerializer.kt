@@ -16,7 +16,7 @@ fun interface JsIrFileMetadataFactory {
 }
 
 object JsIrFileEmptyMetadataFactory : JsIrFileMetadataFactory {
-    override fun createJsIrFileMetadata(irFile: IrFile) = JsIrFileMetadata(emptyList())
+    override fun createJsIrFileMetadata(irFile: IrFile) = JsIrFileMetadata([])
 }
 
 class JsIrFileSerializer(

@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
@@ -44,9 +44,9 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     var receiverParameter: FirReceiverParameter? = null
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
     var controlFlowGraphReference: FirControlFlowGraphReference? = null
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
     var contractDescription: FirContractDescription? = null
     lateinit var symbol: FirAnonymousFunctionSymbol
@@ -55,7 +55,7 @@ class FirAnonymousFunctionBuilder : FirFunctionBuilder, FirTypeParametersOwnerBu
     var inlineStatus: InlineStatus = InlineStatus.Unknown
     var isLambda: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var hasExplicitParameterList: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = []
     var typeRef: FirTypeRef = FirImplicitTypeRefImplWithoutSource
 
     override fun build(): FirAnonymousFunction {

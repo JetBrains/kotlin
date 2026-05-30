@@ -23,7 +23,7 @@ import java.util.function.BiConsumer
 private const val MAGIC: Int = 0x9E3779B9L.toInt() // ((sqrt(5.0) - 1) / 2 * pow(2.0, 32.0)).toLong().toString(16)
 private const val MAX_SHIFT = 27
 private const val THRESHOLD = ((1L shl 31) - 1).toInt() // 50% fill factor for speed
-private val EMPTY_ARRAY = arrayOf<Any?>()
+private val EMPTY_ARRAY: Array<Any?> = []
 
 
 // For more details see for Knuth's multiplicative hash with golden ratio

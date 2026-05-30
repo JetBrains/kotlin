@@ -82,7 +82,7 @@ abstract class AbstractTransformerForGenerator(
             constructorTypeArgumentsCount = 0
         )
         val returnStatement = IrReturnImpl(-1, -1, irBuiltIns.nothingType, function.symbol, constructorCall)
-        return irFactory.createBlockBody(-1, -1, listOf(returnStatement))
+        return irFactory.createBlockBody(-1, -1, [returnStatement])
     }
 
     protected fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
@@ -103,7 +103,7 @@ abstract class AbstractTransformerForGenerator(
             irBuiltIns.unitType,
         )
 
-        return irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
+        return irFactory.createBlockBody(-1, -1, [delegatingAnyCall, initializerCall])
     }
 }
 

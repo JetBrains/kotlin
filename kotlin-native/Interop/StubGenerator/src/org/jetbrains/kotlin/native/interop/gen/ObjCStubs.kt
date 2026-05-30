@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.native.interop.indexer.*
 internal fun ObjCMethod.getKotlinParameterNames(forConstructorOrFactory: Boolean = false): List<String> {
     val selectorParts = this.selector.split(":")
 
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
 
     fun String.mangled(): String {
         var mangled = this
@@ -71,17 +71,17 @@ private fun ObjCMethod.getKotlinParameters(
     if (this.isInit && this.parameters.isEmpty() && this.selector != "init") {
         // Create synthetic Unit parameter, just like Swift does in this case:
         val parameterName = this.selector.removePrefix("init").removePrefix("With").replaceFirstChar(Char::lowercaseChar)
-        return listOf(FunctionParameterStub(parameterName, KotlinTypes.unit.toStubIrType()))
+        return [FunctionParameterStub(parameterName, KotlinTypes.unit.toStubIrType())]
         // Note: this parameter is explicitly handled in compiler.
     }
 
     val names = getKotlinParameterNames(forConstructorOrFactory) // TODO: consider refactoring.
-    val result = mutableListOf<FunctionParameterStub>()
+    val result: MutableList<FunctionParameterStub> = []
 
     this.parameters.mapIndexedTo(result) { index, it ->
         val kotlinType = stubIrBuilder.mirror(it.type).argType
         val name = names[index]
-        val annotations = if (it.nsConsumed) listOf(AnnotationStub.ObjC.Consumed) else emptyList()
+        val annotations = if (it.nsConsumed) [AnnotationStub.ObjC.Consumed] else []
         FunctionParameterStub(name, kotlinType.toStubIrType(), isVararg = false, annotations = annotations)
     }
     if (this.isVariadic) {
@@ -89,7 +89,7 @@ private fun ObjCMethod.getKotlinParameters(
                 names.last(),
                 KotlinTypes.any.makeNullable().toStubIrType(),
                 isVararg = true,
-                annotations = emptyList()
+                annotations = []
         )
     }
     return result
@@ -103,7 +103,7 @@ private class ObjCMethodStubBuilder(
 ) : StubElementBuilder {
     private val isStret: Boolean
     private val stubReturnType: StubType
-    val annotations = mutableListOf<AnnotationStub>()
+    val annotations: MutableList<AnnotationStub> = []
     private val kotlinMethodParameters: List<FunctionParameterStub>
     private val external: Boolean
     private val receiver: ReceiverParameterStub?
@@ -231,14 +231,14 @@ private class ObjCMethodStubBuilder(
                         this.stubReturnType
                     }
                     val typeArgument = TypeArgumentStub(typeParameter.getStubType(false))
-                    val receiverType = ClassifierStubType(KotlinTypes.objCClassOf, listOf(typeArgument))
+                    val receiverType = ClassifierStubType(KotlinTypes.objCClassOf, [typeArgument])
                     val receiver = ReceiverParameterStub(receiverType)
                     val createMethod = FunctionStub(
                             "create",
                             returnType,
                             parameters,
                             receiver = receiver,
-                            typeParameters = listOf(typeParameter),
+                            typeParameters = [typeParameter],
                             external = true,
                             origin = StubOrigin.ObjCCategoryInitMethod(method),
                             annotations = annotations.toMutableList(),
@@ -272,7 +272,7 @@ private class ObjCMethodStubBuilder(
                         external,
                         receiver,
                         modality,
-                        emptyList(),
+                        [],
                         isOverride),
                 replacement
         )
@@ -328,7 +328,7 @@ internal val ObjCClassOrProtocol.superTypes: Sequence<ObjCClassOrProtocol>
 
 private fun ObjCContainer.declaredMethods(isClass: Boolean): Sequence<ObjCMethod> =
         this.methods.asSequence().filter { it.isClass == isClass } +
-                if (this is ObjCClass) { includedCategoriesMethods(isClass) } else emptyList()
+                if (this is ObjCClass) includedCategoriesMethods(isClass) else []
 
 private fun ObjCMethod.isUnavailableIn(container: ObjCContainer): Boolean {
     // true = unavailable, false = available, null = no declaration found in
@@ -367,7 +367,7 @@ private fun ObjCMethod.isUnavailableIn(container: ObjCContainer): Boolean {
 
 private fun ObjCContainer.declaredUnavailableMethods(isClass: Boolean): Sequence<ObjCUnavailableMethod> =
         this.unavailableMethods.asSequence().filter { it.isClass == isClass } +
-                if (this is ObjCClass) { includedCategoriesUnavailableMethods(isClass) } else emptyList()
+                if (this is ObjCClass) includedCategoriesUnavailableMethods(isClass) else []
 
 private val deprecatedUnavailableObjCDeclaration = AnnotationStub.Deprecated(
         "This Objective-C declaration is unavailable",
@@ -429,9 +429,9 @@ internal abstract class ObjCContainerStubBuilder(
     private val isMeta: Boolean get() = metaContainerStub == null
 
     private val designatedInitializerSelectors = if (container is ObjCClass && !isMeta) {
-        container.getDesignatedInitializerSelectors(mutableSetOf())
+        container.getDesignatedInitializerSelectors([])
     } else {
-        emptySet()
+        []
     }
 
     private val methods: List<ObjCMethod>
@@ -474,7 +474,7 @@ internal abstract class ObjCContainerStubBuilder(
         val properties = container.properties + if (container is ObjCClass) {
             container.includedCategoriesProperties(isMeta)
         } else {
-            emptyList()
+            []
         }
 
         this.properties = properties.filter { property ->
@@ -558,7 +558,7 @@ internal abstract class ObjCContainerStubBuilder(
     }
 
     private val interfaces: List<StubType> by lazy {
-        val interfaces = mutableListOf<StubType>()
+        val interfaces: MutableList<StubType> = []
         if (container is ObjCClass) {
             val baseClass = container.baseClass
             val baseClassifier = if (baseClass != null) {
@@ -608,7 +608,7 @@ internal abstract class ObjCContainerStubBuilder(
                 constructors = methods.filterIsInstance<ConstructorStub>(),
                 origin = origin,
                 modality = modality,
-                annotations = listOf(externalObjCAnnotation),
+                annotations = [externalObjCAnnotation],
                 interfaces = interfaces,
                 companion = companion
         )
@@ -628,7 +628,7 @@ internal sealed class ObjCClassOrProtocolStubBuilder(
                     is ObjCProtocol -> StubOrigin.ObjCProtocol(container, isMeta = true)
                     is ObjCClass -> StubOrigin.ObjCClass(container, isMeta = true)
                 }
-                return listOf(buildClassStub(origin))
+                return [buildClassStub(origin)]
             }
         }
 )
@@ -656,16 +656,16 @@ internal class ObjCClassStubBuilder(
 
         val superClassInit = SuperClassInit(companionSuper)
         val companionClassifier = context.getKotlinClassFor(clazz, isMeta = false).nested("Companion")
-        val companion = ClassStub.Companion(companionClassifier, emptyList(), superClassInit, listOf(objCClassType))
+        val companion = ClassStub.Companion(companionClassifier, [], superClassInit, [objCClassType])
         val classStub = buildClassStub(StubOrigin.ObjCClass(clazz, isMeta = false), companion)
         return listOf(*metaContainerStub!!.build().toTypedArray(), classStub)
     }
 }
 
 class GeneratedObjCCategoriesMembers {
-    private val propertyNames = mutableSetOf<String>()
-    private val instanceMethodSelectors = mutableSetOf<String>()
-    private val classMethodSelectors = mutableSetOf<String>()
+    private val propertyNames: MutableSet<String> = []
+    private val instanceMethodSelectors: MutableSet<String> = []
+    private val classMethodSelectors: MutableSet<String> = []
 
     fun register(method: ObjCMethod): Boolean =
             (if (method.isClass) classMethodSelectors else instanceMethodSelectors).add(method.selector)
@@ -702,7 +702,7 @@ internal class ObjCCategoryStubBuilder(
                 functions = methodBuilders.flatMap { it.build() },
                 properties = propertyBuilders.flatMap { it.build() }
         )
-        return listOf(container)
+        return [container]
     }
 }
 
@@ -743,11 +743,11 @@ private class ObjCPropertyStubBuilder(
         }
         val origin = StubOrigin.ObjCProperty(property, container)
         val annotations = if (isDeprecatedCategoryProperty) {
-            listOf(AnnotationStub.Deprecated(message = "Use instance property instead", replaceWith = "", level = DeprecationLevel.WARNING))
+            [AnnotationStub.Deprecated(message = "Use instance property instead", replaceWith = "", level = DeprecationLevel.WARNING)]
         } else {
-            emptyList()
+            []
         }
-        return listOf(PropertyStub(
+        return [PropertyStub(
                 mangleSimple(property.name),
                 kotlinType.toStubIrType(),
                 kind,
@@ -755,7 +755,7 @@ private class ObjCPropertyStubBuilder(
                 receiver,
                 annotations.toMutableList(),
                 origin = origin
-        ))
+        )]
     }
 }
 

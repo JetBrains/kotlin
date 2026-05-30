@@ -50,7 +50,7 @@ open class ExpectDeclarationRemover(val symbolTable: ReferenceSymbolTable, priva
 
     fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration.isTopLevelDeclaration && shouldRemoveTopLevelDeclaration(declaration)) {
-            return emptyList()
+            return []
         }
 
         if (declaration is IrValueParameter) {

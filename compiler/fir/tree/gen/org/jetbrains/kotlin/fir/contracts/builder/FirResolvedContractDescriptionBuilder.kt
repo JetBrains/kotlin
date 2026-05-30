@@ -22,8 +22,8 @@ import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 @FirBuilderDsl
 class FirResolvedContractDescriptionBuilder {
     var source: KtSourceElement? = null
-    val effects: MutableList<FirEffectDeclaration> = mutableListOf()
-    val unresolvedEffects: MutableList<FirContractElementDeclaration> = mutableListOf()
+    val effects: MutableList<FirEffectDeclaration> = []
+    val unresolvedEffects: MutableList<FirContractElementDeclaration> = []
     var diagnostic: ConeDiagnostic? = null
 
     fun build(): FirResolvedContractDescription {

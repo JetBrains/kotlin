@@ -35,8 +35,8 @@ internal fun ObjCExportContext.buildCompanionProperty(classSymbol: KaClassSymbol
             requiresForwardDeclaration = true
             originClassId = companion.classId
         }),
-        propertyAttributes = listOf("class", "readonly"),
+        propertyAttributes = ["class", "readonly"],
         getterName = propertyName,
-        declarationAttributes = listOf(swiftNameAttribute(propertyName))
+        declarationAttributes = [swiftNameAttribute(propertyName)]
     )
 }

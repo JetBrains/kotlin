@@ -27,7 +27,7 @@ class TransformerForTopLevelDeclarationsGenerator(context: IrPluginContext) : Ab
         val className = function.parameters.single { it.kind == IrParameterKind.Regular }.type.classFqName?.asString() ?: "<error>"
         val const = IrConstImpl(-1, -1, irBuiltIns.stringType, IrConstKind.String, className)
         val returnExpression = IrReturnImpl(-1, -1, irBuiltIns.nothingType, function.symbol, const)
-        return irFactory.createBlockBody(-1, -1, listOf(returnExpression))
+        return irFactory.createBlockBody(-1, -1, [returnExpression])
     }
 
     override fun generateBodyForConstructor(constructor: IrConstructor, key: GeneratedDeclarationKey?): IrBody? {

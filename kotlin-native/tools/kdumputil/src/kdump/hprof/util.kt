@@ -60,14 +60,14 @@ val Type.hprofRelativeName: String
 val RuntimeType.hprofTypes: List<HProfType>
     get() =
         when (this) {
-            RuntimeType.OBJECT -> listOf(HProfType.OBJECT)
-            RuntimeType.INT_8 -> listOf(HProfType.BYTE)
-            RuntimeType.INT_16 -> listOf(HProfType.SHORT)
-            RuntimeType.INT_32 -> listOf(HProfType.INT)
-            RuntimeType.INT_64 -> listOf(HProfType.LONG)
-            RuntimeType.FLOAT_32 -> listOf(HProfType.FLOAT)
-            RuntimeType.FLOAT_64 -> listOf(HProfType.DOUBLE)
-            RuntimeType.NATIVE_PTR -> listOf(HProfType.LONG)
-            RuntimeType.BOOLEAN -> listOf(HProfType.BOOLEAN)
+            RuntimeType.OBJECT -> [HProfType.OBJECT]
+            RuntimeType.INT_8 -> [HProfType.BYTE]
+            RuntimeType.INT_16 -> [HProfType.SHORT]
+            RuntimeType.INT_32 -> [HProfType.INT]
+            RuntimeType.INT_64 -> [HProfType.LONG]
+            RuntimeType.FLOAT_32 -> [HProfType.FLOAT]
+            RuntimeType.FLOAT_64 -> [HProfType.DOUBLE]
+            RuntimeType.NATIVE_PTR -> [HProfType.LONG]
+            RuntimeType.BOOLEAN -> [HProfType.BOOLEAN]
             RuntimeType.VECTOR_128 -> List(4) { HProfType.INT }
         }

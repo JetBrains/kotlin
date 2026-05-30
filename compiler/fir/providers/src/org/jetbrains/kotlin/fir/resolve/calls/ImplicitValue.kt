@@ -76,10 +76,10 @@ sealed class ImplicitValue<S : FirBasedSymbol<*>>(
                     source = this@ImplicitValue.originalExpression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
                     coneType = this@ImplicitValue.type
                 }
-                upperTypesFromSmartCast = listOf(this@ImplicitValue.type)
+                upperTypesFromSmartCast = [this@ImplicitValue.type]
                 smartcastStability = SmartcastStability.STABLE_VALUE
                 coneTypeOrNull = this@ImplicitValue.type
-                lowerTypesFromSmartCast = emptyList()
+                lowerTypesFromSmartCast = []
             }
         } else {
             originalExpression

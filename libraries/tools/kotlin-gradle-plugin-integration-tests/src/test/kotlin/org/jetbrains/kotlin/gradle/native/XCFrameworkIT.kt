@@ -81,11 +81,11 @@ class XCFrameworkIT : KGPBaseTest() {
         project("appleXCFramework", gradleVersion) {
             build("tasks") {
                 assertTasksInBuildOutput(
-                    expectedAbsentTasks = listOf(
+                    expectedAbsentTasks = [
                         "shared:assembleSharedDebugXCFramework",
                         "shared:assembleSharedReleaseXCFramework",
                         "shared:assembleXCFramework"
-                    )
+                    ]
                 )
             }
 

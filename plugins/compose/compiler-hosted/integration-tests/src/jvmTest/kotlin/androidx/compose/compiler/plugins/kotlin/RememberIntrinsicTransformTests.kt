@@ -25,10 +25,10 @@ class RememberIntrinsicTransformTests : AbstractIrTransformTest() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(
+            [
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
                 FeatureFlag.IntrinsicRemember.featureName
-            )
+            ]
         )
     }
 
@@ -798,11 +798,11 @@ class RememberIntrinsicTransformTestsStrongSkipping : AbstractIrTransformTest() 
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(
+            [
                 FeatureFlag.IntrinsicRemember.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
                 FeatureFlag.StrongSkipping.featureName
-            )
+            ]
         )
     }
 

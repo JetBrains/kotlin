@@ -49,8 +49,8 @@ class PipelineContext(
  */
 abstract class PipelinePhase<I : PipelineArtifact, O : PipelineArtifact>(
     name: String,
-    preActions: Set<Action<I, PipelineContext>> = emptySet(),
-    postActions: Set<Action<O, PipelineContext>> = emptySet(),
+    preActions: Set<Action<I, PipelineContext>> = [],
+    postActions: Set<Action<O, PipelineContext>> = [],
 ) : NamedCompilerPhase<PipelineContext, I, O>(
     name = name,
     preactions = preActions,

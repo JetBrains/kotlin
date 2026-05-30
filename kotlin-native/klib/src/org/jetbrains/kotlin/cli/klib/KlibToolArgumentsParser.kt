@@ -44,7 +44,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
             printSignatures = extraArgs[ExtraOption.PRINT_SIGNATURES]?.last()?.toBoolean() == true,
             signatureVersion,
             testMode = extraArgs[ExtraOption.INTERNAL_TEST_MODE]?.last()?.toBoolean() == true,
-            absolutePathPrefixes = extraArgs[ExtraOption.ABSOLUTE_PATH_PREFIX] ?: emptyList(),
+            absolutePathPrefixes = extraArgs[ExtraOption.ABSOLUTE_PATH_PREFIX].orEmpty(),
         )
     }
 
@@ -60,7 +60,7 @@ internal class KlibToolArgumentsParser(private val output: KlibToolOutput) {
                 output.logError("Expected an value after $key")
                 return null
             }
-            val value = listOf(args[index + 1])
+            val value = [args[index + 1]]
             options[key]?.addAll(value) ?: options.put(key, value.toMutableList())
         }
         return options

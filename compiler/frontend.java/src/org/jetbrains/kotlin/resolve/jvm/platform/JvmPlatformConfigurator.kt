@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.types.expressions.FunctionWithBigAritySupport
 import org.jetbrains.kotlin.types.expressions.GenericArrayClassLiteralSupport
 
 object JvmPlatformConfigurator : PlatformConfiguratorBase(
-    additionalDeclarationCheckers = listOf(
+    additionalDeclarationCheckers = [
         JvmNameAnnotationChecker(),
         SynchronizedAnnotationChecker(),
         LocalFunInlineChecker(),
@@ -44,9 +44,9 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         FunctionDelegateMemberNameClashChecker,
         ClassInheritsJavaSealedClassChecker,
         JavaOverrideWithWrongNullabilityOverrideChecker,
-    ),
+    ],
 
-    additionalCallCheckers = listOf(
+    additionalCallCheckers = [
         MissingBuiltInDeclarationChecker,
         JavaAnnotationCallChecker(),
         SuspensionPointInsideMutexLockChecker(),
@@ -64,33 +64,33 @@ object JvmPlatformConfigurator : PlatformConfiguratorBase(
         UpperBoundViolatedInTypealiasConstructorChecker,
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = false),
         JvmPropertyVsFieldAmbiguityCallChecker,
-    ),
+    ],
 
-    additionalAssignmentCheckers = listOf(
+    additionalAssignmentCheckers = [
         JvmSyntheticAssignmentChecker,
-    ),
+    ],
 
-    additionalTypeCheckers = listOf(
+    additionalTypeCheckers = [
         RuntimeAssertionsTypeChecker,
         JavaGenericVarianceViolationTypeChecker,
         JavaTypeAccessibilityChecker(),
         JvmArrayVariableInLoopAssignmentChecker
-    ),
+    ],
 
-    additionalClassifierUsageCheckers = listOf(
+    additionalClassifierUsageCheckers = [
         BigFunctionTypeAvailabilityChecker,
         MissingBuiltInDeclarationChecker.ClassifierUsage
-    ),
+    ],
 
-    additionalAnnotationCheckers = listOf(
+    additionalAnnotationCheckers = [
         FileClassAnnotationsChecker,
         ExplicitMetadataChecker,
         SynchronizedAnnotationOnLambdaChecker,
-    ),
+    ],
 
-    additionalClashResolvers = listOf(
+    additionalClashResolvers = [
         PlatformExtensionsClashResolver.FallbackToDefault(SamConversionResolver.Empty, SamConversionResolver::class.java)
-    ),
+    ],
 
     identifierChecker = JvmSimpleNameBacktickChecker,
 

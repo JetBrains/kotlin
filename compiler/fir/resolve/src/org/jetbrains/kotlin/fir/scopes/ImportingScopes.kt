@@ -50,8 +50,8 @@ internal fun computeImportingScopes(
     includePackageImport: Boolean = true
 ): List<FirScope> {
     file.lazyResolveToPhase(FirResolvePhase.IMPORTS)
-    val excludedImportNames =
-        file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { emptySet() }
+    val excludedImportNames: MutableSet<FqName> =
+        file.imports.filter { it.aliasName != null }.mapNotNullTo(hashSetOf()) { it.importedFqName }.ifEmpty { [] }
 
     val excludedNamesInPackage =
         excludedImportNames.mapNotNullTo(mutableSetOf()) {
@@ -98,7 +98,7 @@ internal fun computeImportingScopes(
                 excludedNamesInPackage.isEmpty() ->
                     // Supposed to be the most common branch, so we cache it
                     scopeSession.getOrBuild(file.packageFqName to session, PACKAGE_MEMBER) {
-                        FirPackageMemberScope(file.packageFqName, session, excludedNames = emptySet())
+                        FirPackageMemberScope(file.packageFqName, session, excludedNames = [])
                     }
                 else ->
                     FirPackageMemberScope(file.packageFqName, session, excludedNames = excludedNamesInPackage)

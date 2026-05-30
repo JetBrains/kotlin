@@ -220,9 +220,9 @@ private fun File.deleteAtomicallyIfPossible(tmpDirectory: File) {
 
 private fun topoSort(defFiles: List<DefFile>): List<DefFile> {
     // Do DFS toposort.
-    val markGray = mutableSetOf<DefFile>()
-    val markBlack = mutableSetOf<DefFile>()
-    val result = mutableListOf<DefFile>()
+    val markGray: MutableSet<DefFile> = []
+    val markBlack: MutableSet<DefFile> = []
+    val result: MutableList<DefFile> = []
 
     fun visit(def: DefFile) {
         if (markBlack.contains(def)) return
@@ -272,7 +272,7 @@ private fun generateLibrary(
                 "-Xdisable-experimental-annotation",
                 *cinteropOptions.additionalArguments.toTypedArray(),
                 "-$SHORT_MODULE_NAME", def.shortLibraryName,
-                *def.depends.flatMap { listOf("-l", "$outputDirectory/${it.libraryName}") }.toTypedArray()
+                *def.depends.flatMap { ["-l", "$outputDirectory/${it.libraryName}"] }.toTypedArray()
         )
         logger.verbose("Run cinterop with args: ${cinteropArgs.joinToString(separator = " ")}")
         invokeInterop("native", cinteropArgs, runFromDaemon = false)?.let { K2Native.mainNoExit(it) }
@@ -390,14 +390,14 @@ private fun generatePlatformLibraries(
     inputDirectory.listFilesOrEmpty.filter { it.extension == "def" }.forEach { file ->
         val name = file.name.split(".").also { assert(it.size == 2) }[0]
         val def = defFiles.getOrPut(name) {
-            DefFile(name, mutableListOf())
+            DefFile(name, [])
         }
         file.forEachLine { line ->
             val match = dependsRegex.matchEntire(line)
             if (match != null) {
                 match.groupValues[1].split(" ").forEach { dependency ->
                     def.depends.add(defFiles.getOrPut(dependency) {
-                        DefFile(dependency, mutableListOf())
+                        DefFile(dependency, [])
                     })
                 }
             }

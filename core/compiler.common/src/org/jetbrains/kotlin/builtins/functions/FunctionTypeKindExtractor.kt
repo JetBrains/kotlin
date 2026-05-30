@@ -20,12 +20,12 @@ class FunctionTypeKindExtractor(private val kinds: List<FunctionTypeKind>) {
         @JvmStatic
         @AllowedToUsedOnlyInK1
         val Default = FunctionTypeKindExtractor(
-            listOf(
+            [
                 FunctionTypeKind.Function,
                 FunctionTypeKind.SuspendFunction,
                 FunctionTypeKind.KFunction,
                 FunctionTypeKind.KSuspendFunction,
-            )
+            ]
         )
     }
 

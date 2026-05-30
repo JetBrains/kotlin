@@ -121,12 +121,12 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         }
     }
 
-    private val consideredOrigins: Set<FirDeclarationOrigin> = setOf(
+    private val consideredOrigins: Set<FirDeclarationOrigin> = [
         FirDeclarationOrigin.Source,
         FirDeclarationOrigin.Synthetic.DataClassMember,
         FirDeclarationOrigin.Delegated,
         FirDeclarationOrigin.IntersectionOverride,
-    )
+    ]
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
@@ -500,13 +500,13 @@ sealed class FirOverrideChecker(mppKind: MppCheckerKind) : FirAbstractOverrideCh
         overriddenMemberSymbols: List<FirCallableSymbol<*>>,
     ) {
         with(FirOptInUsageBaseChecker) {
-            val overriddenExperimentalities = mutableSetOf<Experimentality>()
+            val overriddenExperimentalities: MutableSet<Experimentality> = []
             val session = context.session
             val overriddenSymbolsWithUnwrappedIntersectionOverrides = overriddenMemberSymbols.flatMap {
                 when (it) {
                     is FirIntersectionOverridePropertySymbol -> it.intersections
                     is FirIntersectionOverrideFunctionSymbol -> it.intersections
-                    else -> listOf(it)
+                    else -> [it]
                 }
             }
             for (overriddenMemberSymbol in overriddenSymbolsWithUnwrappedIntersectionOverrides) {

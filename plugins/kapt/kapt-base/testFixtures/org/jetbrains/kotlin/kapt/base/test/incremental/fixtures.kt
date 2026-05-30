@@ -29,7 +29,7 @@ fun runAnnotationProcessing(
     srcFiles: List<File>,
     processor: List<IncrementalProcessor>,
     generatedSources: File,
-    classpath: List<File> = emptyList(),
+    classpath: List<File> = [],
     listener: (Elements, Trees) -> TaskListener? = { _, _ -> null }
 ) {
     val compiler = ToolProvider.getSystemJavaCompiler()
@@ -40,10 +40,10 @@ fun runAnnotationProcessing(
                 null,
                 fileManager,
                 null,
-                listOf(
+                [
                     "-proc:only", "-s", generatedSources.absolutePath, "-d", generatedSources.absolutePath,
                     "-cp", classpath.joinToString(separator = File.pathSeparator),
-                ),
+                ],
                 null,
                 javaSrcs
             ) as JavacTaskImpl
@@ -64,7 +64,7 @@ fun compileSources(srcFiles: Iterable<File>, outputDir: File) {
                 null,
                 fileManager,
                 null,
-                listOf("-d", outputDir.absolutePath),
+                ["-d", outputDir.absolutePath],
                 null,
                 fileManager.getJavaFileObjectsFromFiles(srcFiles)
             ) as JavacTaskImpl
@@ -88,7 +88,7 @@ open class SimpleProcessor(private val wrongOrigin: Boolean = false, private val
         filer = processingEnv!!.filer
     }
 
-    override fun getSupportedAnnotationTypes(): MutableSet<String> = mutableSetOf("test.Observable")
+    override fun getSupportedAnnotationTypes(): MutableSet<String> = ["test.Observable"]
 
     override fun process(annotations: MutableSet<out TypeElement>, roundEnv: RoundEnvironment): Boolean {
         if (annotations.isEmpty()) return false
@@ -110,7 +110,7 @@ open class SimpleProcessor(private val wrongOrigin: Boolean = false, private val
 
 class DynamicProcessor(private val kind: RuntimeProcType) : SimpleProcessor() {
     override fun getSupportedOptions(): MutableSet<String> {
-        return mutableSetOf("org.gradle.annotation.processing.${kind.name}")
+        return ["org.gradle.annotation.processing.${kind.name}"]
     }
 }
 

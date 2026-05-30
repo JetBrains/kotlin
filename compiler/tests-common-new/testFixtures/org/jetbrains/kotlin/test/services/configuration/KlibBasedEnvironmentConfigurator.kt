@@ -57,7 +57,7 @@ interface KlibBasedEnvironmentConfigurator {
     }
 
     fun getDependencyModulesFor(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> {
-        val visited = mutableSetOf<ModuleDescriptorImpl>()
+        val visited: MutableSet<ModuleDescriptorImpl> = []
         fun getRecursive(descriptor: ModuleDescriptor) {
             descriptor.allDependencyModules.forEach {
                 if (it is ModuleDescriptorImpl && it !in visited) {

@@ -45,7 +45,7 @@ class SwitchOptimizer(
 
         var varSymbol: IrValueSymbol? = null
 
-        val cases = mutableListOf<SwitchBranchData>()
+        val cases: MutableList<SwitchBranchData> = []
 
         fun tryToExtractEqeqeqConst(irCall: IrCall): IrConst? {
             // check weather the irCall is `s === #CONST`
@@ -99,12 +99,12 @@ class SwitchOptimizer(
                 is IrCall -> {
                     val constant = tryToExtractEqeqeqConst(condition) ?: return null
                     caseCount++
-                    cases += SwitchBranchData.SwitchCaseData(listOf(constant), branch.result)
+                    cases += SwitchBranchData.SwitchCaseData([constant], branch.result)
                 }
 
                 // check for a || b ... || z pattern
                 is IrWhen -> {
-                    val orConstants = mutableListOf<IrConst>()
+                    val orConstants: MutableList<IrConst> = []
                     if (checkForPrimitiveOrPattern(condition, orConstants)) {
                         caseCount += orConstants.size
                         cases += SwitchBranchData.SwitchCaseData(orConstants, branch.result)
@@ -138,7 +138,7 @@ class SwitchOptimizer(
 
         val jsExpr = context.getNameForValueDeclaration(switch.subject.owner).makeRef()
 
-        val jsCases = mutableListOf<JsSwitchMember>()
+        val jsCases: MutableList<JsSwitchMember> = []
 
         for (case in switch.cases) {
             val jsCase = if (case is SwitchBranchData.SwitchCaseData) {

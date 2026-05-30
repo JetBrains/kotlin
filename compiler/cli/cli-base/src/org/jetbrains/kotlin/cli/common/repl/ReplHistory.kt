@@ -31,7 +31,7 @@ typealias SourceList = List<ReplCodeLine>
 /*
    WARNING: Not thread safe, the caller is assumed to lock access.
  */
-class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = emptyList()) : Serializable {
+class ReplHistory<T>(startingHistory: CompiledHistoryList<T> = []) : Serializable {
     private val history: CompiledHistoryStorage<T> = ArrayDeque(startingHistory)
 
     fun isEmpty(): Boolean = history.isEmpty()

@@ -171,11 +171,11 @@ class ApplierInferencer<Type, Node>(
     private val errorReporter: ErrorReporter<Node>,
 ) {
     // A set of nodes that are currently being evaluated to prevent recursive evaluations.
-    private val inProgress = mutableSetOf<Node>()
+    private val inProgress: MutableSet<Node> = []
 
     // A list of visits to be re-evaluated if the inferencer produces a more refined scheme for
     // one of the LazySchemes referenced during inference.
-    private val pending = mutableListOf<() -> Boolean>()
+    private val pending: MutableList<() -> Boolean> = []
 
     // Produce a cached lazy scheme for a node. The scheme starts off being the declared scheme
     // (which, if no declarations are present, has open appliers by default) that will be further
@@ -212,7 +212,7 @@ class ApplierInferencer<Type, Node>(
     // scheme only has bindings that it owns.
     private fun Scheme.toCallBindings(
         bindings: Bindings,
-        context: MutableList<Binding> = mutableListOf(),
+        context: MutableList<Binding> = [],
     ): CallBindings =
         CallBindings(
             target = target.toBinding(bindings, context),
@@ -355,7 +355,7 @@ class ApplierInferencer<Type, Node>(
 
             // Recalculate any nodes that might have changed.
             if (pending.isNotEmpty()) {
-                val skipped = mutableListOf<() -> Boolean>()
+                val skipped: MutableList<() -> Boolean> = []
                 while (pending.isNotEmpty()) {
 
                     // Do not use `.removeLast()` doing so will re-introduce b/316644294

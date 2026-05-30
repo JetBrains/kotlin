@@ -25,10 +25,10 @@ import org.junit.jupiter.api.Assumptions
  */
 class CustomKlibCompilerTestSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, emptyList())))
+        get() = [service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, []))]
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val suppressionChecker = testServices.codegenSuppressionChecker

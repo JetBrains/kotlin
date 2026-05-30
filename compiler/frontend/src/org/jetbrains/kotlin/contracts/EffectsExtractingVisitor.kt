@@ -88,7 +88,7 @@ class EffectsExtractingVisitor(
                 val esType = descriptor.returnType?.toESType()
                 CallComputation(
                     esType,
-                    descriptor.getFunctor()?.invokeWithArguments(arguments, typeSubstitution, reducer) ?: emptyList()
+                    descriptor.getFunctor()?.invokeWithArguments(arguments, typeSubstitution, reducer) ?: []
                 )
             }
             else -> UNKNOWN_COMPUTATION
@@ -125,7 +125,7 @@ class EffectsExtractingVisitor(
         val arg = extractOrGetCached(expression.leftHandSide)
         return CallComputation(
             ESBooleanType,
-            IsFunctor(rightType, expression.isNegated).invokeWithArguments(listOf(arg), ESTypeSubstitution.empty(builtIns), reducer)
+            IsFunctor(rightType, expression.isNegated).invokeWithArguments([arg], ESTypeSubstitution.empty(builtIns), reducer)
         )
     }
 
@@ -147,7 +147,7 @@ class EffectsExtractingVisitor(
         val left = extractOrGetCached(expression.left ?: return UNKNOWN_COMPUTATION)
         val right = extractOrGetCached(expression.right ?: return UNKNOWN_COMPUTATION)
 
-        val args = listOf(left, right)
+        val args = [left, right]
 
         return when (expression.operationToken) {
             KtTokens.EXCLEQ -> CallComputation(
@@ -218,7 +218,7 @@ class EffectsExtractingVisitor(
                 (explicitReceiverKind == ExplicitReceiverKind.BOTH_RECEIVERS)
 
     private fun ResolvedCall<*>.getCallArgumentsAsComputations(): List<Computation>? {
-        val arguments = mutableListOf<Computation>()
+        val arguments: MutableList<Computation> = []
         arguments.addIfNotNull(extensionReceiver?.toComputation())
         arguments.addIfNotNull(dispatchReceiver?.toComputation())
 

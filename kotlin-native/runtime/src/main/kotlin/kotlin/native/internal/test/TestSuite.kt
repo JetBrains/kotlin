@@ -194,20 +194,20 @@ public abstract class BaseClassSuite<INSTANCE, COMPANION>(name: String, ignored:
     public open fun getCompanion(): COMPANION = throw NotImplementedError("Test class has no companion object")
 
     public companion object {
-        public val INSTANCE_KINDS: List<TestFunctionKind> = listOf(TestFunctionKind.BEFORE_TEST, TestFunctionKind.AFTER_TEST)
-        public val COMPANION_KINDS: List<TestFunctionKind> = listOf(TestFunctionKind.BEFORE_CLASS, TestFunctionKind.AFTER_CLASS)
+        public val INSTANCE_KINDS: List<TestFunctionKind> = [TestFunctionKind.BEFORE_TEST, TestFunctionKind.AFTER_TEST]
+        public val COMPANION_KINDS: List<TestFunctionKind> = [TestFunctionKind.BEFORE_CLASS, TestFunctionKind.AFTER_CLASS]
     }
 
     private val instanceFunctions = mutableMapOf<TestFunctionKind, MutableSet<INSTANCE.() -> Unit>>()
     private fun getInstanceFunctions(kind: TestFunctionKind): MutableCollection<INSTANCE.() -> Unit> {
         check(kind in INSTANCE_KINDS)
-        return instanceFunctions.getOrPut(kind) { mutableSetOf() }
+        return instanceFunctions.getOrPut(kind) { [] }
     }
 
     private val companionFunction = mutableMapOf<TestFunctionKind, MutableSet<COMPANION.() -> Unit>>()
     private fun getCompanionFunctions(kind: TestFunctionKind): MutableCollection<COMPANION.() -> Unit> {
         check(kind in COMPANION_KINDS)
-        return companionFunction.getOrPut(kind) { mutableSetOf() }
+        return companionFunction.getOrPut(kind) { [] }
     }
 
     public val before:      Collection<INSTANCE.() -> Unit>  get() = getInstanceFunctions(TestFunctionKind.BEFORE_TEST)
@@ -253,7 +253,7 @@ public class TopLevelSuite(name: String): AbstractTestSuite<TopLevelFun>(name, f
     }
 
     private val specialFunctions = mutableMapOf<TestFunctionKind, MutableSet<TopLevelFun>>()
-    private fun getFunctions(type: TestFunctionKind) = specialFunctions.getOrPut(type) { mutableSetOf() }
+    private fun getFunctions(type: TestFunctionKind) = specialFunctions.getOrPut(type) { [] }
 
     public val before:      Collection<TopLevelFun>  get() = getFunctions(TestFunctionKind.BEFORE_TEST)
     public val after:       Collection<TopLevelFun>  get() = getFunctions(TestFunctionKind.AFTER_TEST)

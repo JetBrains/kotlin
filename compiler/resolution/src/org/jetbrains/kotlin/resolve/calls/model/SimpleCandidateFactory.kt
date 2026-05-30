@@ -86,7 +86,7 @@ class SimpleCandidateFactory(
         }
         return createCandidate(
             givenCandidate.descriptor, explicitReceiverKind, dispatchArgumentReceiver, null, null,
-            listOf(), givenCandidate.knownTypeParametersResultingSubstitutor
+            [], givenCandidate.knownTypeParametersResultingSubstitutor
         )
     }
 
@@ -186,7 +186,7 @@ class SimpleCandidateFactory(
 
         return createCandidate(
             errorDescriptor, explicitReceiverKind, dispatchReceiver, extensionArgumentReceiver = null,
-            extensionArgumentReceiverCandidates = null, initialDiagnostics = listOf(), knownSubstitutor = null
+            extensionArgumentReceiverCandidates = null, initialDiagnostics = [], knownSubstitutor = null
         )
     }
 }

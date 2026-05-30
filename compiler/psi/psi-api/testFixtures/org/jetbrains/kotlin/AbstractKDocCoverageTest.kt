@@ -105,9 +105,9 @@ abstract class AbstractKDocCoverageTest : AbstractAnalysisApiCodebaseDumpFileCom
             else -> (this as? PsiDocCommentOwner)?.docComment == null
         }
 
-    protected open val ignoredPropertyNames: List<String> = listOf()
+    protected open val ignoredPropertyNames: List<String> = []
 
-    protected open val ignoredFunctionNames: List<String> = listOf()
+    protected open val ignoredFunctionNames: List<String> = []
 
-    protected open val ignoredPackages: List<FqName> = listOf()
+    protected open val ignoredPackages: List<FqName> = []
 }

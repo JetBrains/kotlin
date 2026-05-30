@@ -36,7 +36,7 @@ object CommonSMAPTestUtil {
                             if (name != "value") return super.visitArray(name)
                             check(sdeAnnotationValue == null) { outputFile.relativePath }
                             return object : AnnotationVisitor(Opcodes.API_VERSION) {
-                                val result = mutableListOf<String>()
+                                val result: MutableList<String> = []
 
                                 override fun visit(name: String?, value: Any?) {
                                     result.add(value as String)

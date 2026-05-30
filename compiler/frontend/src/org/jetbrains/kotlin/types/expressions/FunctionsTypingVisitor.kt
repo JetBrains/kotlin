@@ -356,7 +356,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 
     private fun collectReturns(function: KtDeclarationWithBody, trace: BindingTrace): List<KtReturnExpression> {
-        val bodyExpression = function.bodyExpression ?: return emptyList()
+        val bodyExpression = function.bodyExpression ?: return []
         val returns = ArrayList<KtReturnExpression>()
 
         bodyExpression.accept(object : KtTreeVisitor<Boolean>() {

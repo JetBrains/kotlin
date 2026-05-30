@@ -27,7 +27,7 @@ import kotlin.experimental.ExperimentalNativeApi
 /**
  * Group node over subexpression without alternations.
  */
-open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet(listOf(), fSet) {
+open internal class SingleSet(var kid: AbstractSet, fSet: FSet) : JointSet([], fSet) {
 
     var backReferencedSet: BackReferencedSingleSet? = null
 

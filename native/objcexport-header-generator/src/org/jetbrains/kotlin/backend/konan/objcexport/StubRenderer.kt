@@ -252,7 +252,7 @@ object StubRenderer {
     }
 
     private class Collector {
-        private val collection: MutableList<String> = mutableListOf()
+        private val collection: MutableList<String> = []
         fun build(): List<String> = collection
 
         operator fun String.unaryPlus() {

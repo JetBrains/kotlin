@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SimpleFunctionDescriptor
 
 class SyntheticParts(
-    val methods: List<SimpleFunctionDescriptor> = emptyList(),
-    val staticFunctions: List<SimpleFunctionDescriptor> = emptyList(),
-    val constructors: List<ClassConstructorDescriptor> = emptyList(),
-    val classes: List<ClassDescriptor> = emptyList(),
+    val methods: List<SimpleFunctionDescriptor> = [],
+    val staticFunctions: List<SimpleFunctionDescriptor> = [],
+    val constructors: List<ClassConstructorDescriptor> = [],
+    val classes: List<ClassDescriptor> = [],
 ) {
 
     operator fun plus(other: SyntheticParts): SyntheticParts = SyntheticParts(
@@ -29,10 +29,10 @@ class SyntheticParts(
 }
 
 class SyntheticPartsBuilder {
-    private val methods = mutableListOf<SimpleFunctionDescriptor>()
-    private val staticFunctions = mutableListOf<SimpleFunctionDescriptor>()
-    private val constructors = mutableListOf<ClassConstructorDescriptor>()
-    private val classes = mutableListOf<ClassDescriptor>()
+    private val methods: MutableList<SimpleFunctionDescriptor> = []
+    private val staticFunctions: MutableList<SimpleFunctionDescriptor> = []
+    private val constructors: MutableList<ClassConstructorDescriptor> = []
+    private val classes: MutableList<ClassDescriptor> = []
 
     fun addMethod(method: SimpleFunctionDescriptor) {
         methods += method

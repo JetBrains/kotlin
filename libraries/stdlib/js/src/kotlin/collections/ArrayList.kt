@@ -175,7 +175,7 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
 
     actual override fun clear() {
         checkIsMutable()
-        array = emptyArray()
+        array = []
         modCount++
     }
 

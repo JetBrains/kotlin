@@ -34,7 +34,7 @@ object DirectiveTestUtils {
 
     private val FUNCTION_CONTAINS_NO_CALLS = createSimpleDirectiveHandler("WASM_CHECK_CONTAINS_NO_CALLS") { module, arguments ->
         val functionName = arguments.getNamedArgument("inFunction")
-        val exceptNames = mutableSetOf<String>()
+        val exceptNames: MutableSet<String> = []
         val exceptNamesArg = arguments.findNamedArgument("except")
         if (exceptNamesArg != null) {
             for (exceptName in exceptNamesArg.split(";")) {
@@ -184,7 +184,7 @@ object DirectiveTestUtils {
         return WasmIrCheckUtils.countInstOperator(scopeFunction, operator) != 0
     }
 
-    private val DIRECTIVE_HANDLERS = listOf(
+    private val DIRECTIVE_HANDLERS = [
         FUNCTION_CONTAINS_NO_CALLS,
         FUNCTION_CALLED_IN_FUNCTION,
         INSTRUCTION_IN_FUNCTION,
@@ -193,7 +193,7 @@ object DirectiveTestUtils {
         COUNT_INSTRUCTION_IN_FUNCTION,
         LOCAL_IN_FUNCTION,
         LOCAL_NOT_IN_FUNCTION
-    )
+    ]
 
     @Throws(Exception::class)
     fun processDirectives(
@@ -201,7 +201,7 @@ object DirectiveTestUtils {
         sourceCode: String,
         targetBackend: TargetBackend,
     ) {
-        val assertionErrors = mutableListOf<Throwable>()
+        val assertionErrors: MutableList<Throwable> = []
         for (handler in DIRECTIVE_HANDLERS) {
             handler.process(module, sourceCode, targetBackend, assertionErrors)
         }
@@ -274,7 +274,7 @@ object DirectiveTestUtils {
     private class ArgumentsHelper(
         val entry: String,
     ) {
-        private val positionalArguments = mutableListOf<String>()
+        private val positionalArguments: MutableList<String> = []
         private val namedArguments = mutableMapOf<String, String>()
         private val argumentsPattern = Regex("""[\w${'$'}_.;]+(=((".*?")|[\w${'$'}_.;]+))?""")
 
@@ -366,7 +366,7 @@ private class WasmIgnoredTestSuppressorGroup(
             val os = ignoreForConfig.os
                 ?: return false
 
-            assert(os.lowercase() in listOf("linux", "windows", "mac")) {
+            assert(os.lowercase() in ["linux", "windows", "mac"]) {
                 "This is checked in WasmEnvironmentConfigurationDirectives.kt, and should never change from the sanitizing there"
             }
 
@@ -412,7 +412,7 @@ private class WasmIgnoredTestSuppressorGroup(
 
                 // not executed in vms
                 if (wasiRunner == null && wasmRunner == null)
-                    return listOf()
+                    return []
 
                 if (wasiRunner != null)
                     return wasiRunner.vmsToCheck
@@ -460,7 +460,7 @@ private class WasmIgnoredTestSuppressorGroup(
             if (exception.cause.suppressedExceptions.isNotEmpty())
                 exception.cause.suppressedExceptions.map { exception.withReplacedCause(it) }
             else
-                listOf(exception)
+                [exception]
         }
     }
 
@@ -475,7 +475,7 @@ private class WasmIgnoredTestSuppressorGroup(
         }
 
     override fun checkIfTestShouldBeUnmuted() {
-        val errors = mutableListOf<Throwable>()
+        val errors: MutableList<Throwable> = []
         for (suppressor in suppressors) {
             try {
                 suppressor.checkIfTestShouldBeUnmuted()

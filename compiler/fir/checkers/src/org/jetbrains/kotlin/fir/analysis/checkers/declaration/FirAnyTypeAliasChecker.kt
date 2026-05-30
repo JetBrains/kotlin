@@ -87,7 +87,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     ) {
         if (context.isTopLevel || isInner) return
 
-        val unsubstitutedOuterTypeParameters = mutableSetOf<FirTypeParameterSymbol>()
+        val unsubstitutedOuterTypeParameters: MutableSet<FirTypeParameterSymbol> = []
 
         fun checkRecursively(coneType: ConeKotlinType) {
             for (typeArgument in coneType.typeArguments) {

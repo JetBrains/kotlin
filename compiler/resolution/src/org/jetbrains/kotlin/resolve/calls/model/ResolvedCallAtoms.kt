@@ -74,7 +74,8 @@ class ResolvedCallableReferenceCallAtom(
     reflectionCandidateType: UnwrappedType? = null,
     candidate: CallableReferenceResolutionCandidate? = null
 ) : MutableResolvedCallAtom(
-    atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument, emptyList(), reflectionCandidateType, candidate
+    atom, candidateDescriptor, explicitReceiverKind, dispatchReceiverArgument, extensionReceiverArgument,
+    [], reflectionCandidateType, candidate
 ), ResolvedCallableReferenceAtom
 
 open class MutableResolvedCallAtom(
@@ -87,7 +88,7 @@ open class MutableResolvedCallAtom(
     open val reflectionCandidateType: UnwrappedType? = null,
     open val candidate: CallableReferenceResolutionCandidate? = null
 ) : ResolvedCallAtom() {
-    override var contextReceiversArguments: List<SimpleKotlinCallArgument> = listOf()
+    override var contextReceiversArguments: List<SimpleKotlinCallArgument> = []
     override lateinit var typeArgumentMappingByOriginal: TypeArgumentsToParametersMapper.TypeArgumentsMapping
     override lateinit var argumentMappingByOriginal: Map<ValueParameterDescriptor, ResolvedCallArgument>
     override lateinit var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor

@@ -26,7 +26,7 @@ class ReflectJavaConstructor(override val member: Constructor<*>) : ReflectJavaM
     override val valueParameters: List<JavaValueParameter>
         get() {
             val types = member.genericParameterTypes
-            if (types.isEmpty()) return emptyList()
+            if (types.isEmpty()) return []
 
             val klass = member.declaringClass
 

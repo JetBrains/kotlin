@@ -74,13 +74,13 @@ class LoopInfo(val loop: IrLoop, val continueLabel: Label, val breakLabel: Label
 open class TryInfo : ExpressionInfo() {
     // Regions corresponding to copy-pasted contents of the `finally` block.
     // These should not be covered by `catch` clauses.
-    val gaps = mutableListOf<Pair<Label, Label>>()
+    val gaps: MutableList<Pair<Label, Label>> = []
 }
 
 class TryWithFinallyInfo(val onExit: IrExpression) : TryInfo()
 
 class BlockInfo(val parent: BlockInfo? = null) {
-    val variables = mutableListOf<VariableInfo>()
+    val variables: MutableList<VariableInfo> = []
     val infos: Stack<ExpressionInfo> = parent?.infos ?: Stack()
     var activeLocalGaps = 0
 
@@ -129,7 +129,7 @@ class BlockInfo(val parent: BlockInfo? = null) {
 class Gap(val start: Label, val end: Label)
 
 class VariableInfo(val declaration: IrVariable, val index: Int, val type: Type, val startLabel: Label) {
-    val gaps = mutableListOf<Gap>()
+    val gaps: MutableList<Gap> = []
     var explicitEndLabel: Label? = null
 }
 

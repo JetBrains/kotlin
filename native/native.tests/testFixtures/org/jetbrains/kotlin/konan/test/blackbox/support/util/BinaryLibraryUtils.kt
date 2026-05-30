@@ -26,15 +26,15 @@ fun Settings.getKindSpecificClangFlags(binaryLibrary: TestCompilationArtifact.Bi
                 } else {
                     true
                 }
-            }.flatMap { listOf("-Xlinker", it) }
+            }.flatMap { ["-Xlinker", it] }
         }
         BinaryLibraryKind.DYNAMIC -> {
             if (get<KotlinNativeTargets>().testTarget.family != Family.MINGW) {
-                listOf("-rpath", binaryLibrary.libraryFile.parentFile.absolutePath)
+                ["-rpath", binaryLibrary.libraryFile.parentFile.absolutePath]
             } else {
                 // --allow-multiple-definition is needed because finalLinkCommands statically links a lot of MinGW-specific libraries,
                 // that are already included in DLL produced by Kotlin/Native.
-                listOf("-Wl,--allow-multiple-definition")
+                ["-Wl,--allow-multiple-definition"]
             }
         }
     }

@@ -456,12 +456,12 @@ class HierarchicalPlatformIntegerCommonizationTest : AbstractInlineSourcesCommon
         val longTarget1 = LINUX_X64.name
         val longTarget2 = LINUX_ARM64.name
 
-        val outputCommonizerTargets = arrayOf(
+        val outputCommonizerTargets: Array<String> = [
             "($intTarget1, $intTarget2)", "($longTarget1, $longTarget2)", "($intTarget1, $longTarget1)",
             "($intTarget1, $intTarget2, $longTarget1)",
             "($longTarget1, $longTarget2, $intTarget1)",
             "($intTarget1, $intTarget2, $longTarget1, $longTarget2)",
-        )
+        ]
 
         val result = commonize {
             setting(PlatformIntegerCommonizationEnabledKey, true)

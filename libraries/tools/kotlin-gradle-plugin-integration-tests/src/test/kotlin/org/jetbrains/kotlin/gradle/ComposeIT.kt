@@ -342,7 +342,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+                additionalRepos = ["https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository"]
             )
         ) {
             buildGradle.modify { originalBuildScript ->
@@ -442,7 +442,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+                additionalRepos = ["https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository"]
             )
         ) {
             buildGradleKts.appendComposePlugin()
@@ -662,13 +662,13 @@ class ComposeIT : KGPBaseTest() {
                 assertTasksExecuted(":mergeReleaseComposeMapping")
 
                 // validate all mapping files are present
-                val expectedOutputFiles = listOf(
+                val expectedOutputFiles = [
                     "mapping.txt",
                     "seeds.txt",
                     "configuration.txt",
                     "usage.txt",
                     "resources.txt",
-                )
+                ]
                 for (name in expectedOutputFiles) {
                     val file = projectPath.resolve(Path("build/outputs/mapping/release/$name")).toFile()
                     assertFileExists(file, "Missing $name from R8 outputs")
@@ -772,7 +772,7 @@ class ComposeIT : KGPBaseTest() {
                 ),
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED
             ),
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://redirector.kotlinlang.org/maven/compose-dev")),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(["https://redirector.kotlinlang.org/maven/compose-dev"]),
             enableGradleDaemonMemoryLimitInMb = 2048,
             enableKotlinDaemonMemoryLimitInMb = 2048,
         ) {
@@ -860,7 +860,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+                ["https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository"]
             )
         ) {
             buildGradleKts.appendComposePlugin()
@@ -886,7 +886,7 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion, kotlinVersion = "2.3.10"),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
+                additionalRepos = ["https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository"]
             )
         ) {
             buildGradleKts.appendComposePlugin()

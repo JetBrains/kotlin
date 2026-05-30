@@ -34,7 +34,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
                 compilationConfigAction = {
-                    it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_PLUGIN)
+                    it.compilerArguments[COMPILER_PLUGINS] = [NOARG_PLUGIN]
                 },
             ) {
                 assertLogContainsPatterns(
@@ -55,14 +55,14 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
                 compilationConfigAction = {
-                    it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_PLUGIN)
+                    it.compilerArguments[COMPILER_PLUGINS] = [NOARG_PLUGIN]
                 },
             )
             module.compileIncrementally(
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
                 compilationConfigAction = {
-                    it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
+                    it.compilerArguments[COMPILER_PLUGINS] = [NOARG_JPA_PLUGIN]
                 },
             ) {
                 assertLogContainsPatterns(
@@ -83,7 +83,7 @@ class CompilerPluginsConfigurationInputsTrackingTest : BaseCompilationTest() {
                 SourcesChanges.ToBeCalculated,
                 icOptionsConfigAction = { it[TRACK_CONFIGURATION_INPUTS] = true },
                 compilationConfigAction = {
-                    it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_PLUGIN)
+                    it.compilerArguments[COMPILER_PLUGINS] = [NOARG_PLUGIN]
                 },
             )
             module.compileIncrementally(

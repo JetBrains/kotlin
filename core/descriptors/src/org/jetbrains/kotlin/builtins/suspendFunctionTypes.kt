@@ -55,7 +55,7 @@ fun transformSuspendFunctionToRuntimeFunctionType(suspendFunType: KotlinType): S
                 KotlinTypeFactory.simpleType(
                     TypeAttributes.Empty,
                     FAKE_CONTINUATION_CLASS_DESCRIPTOR.typeConstructor,
-                    listOf(suspendFunType.getReturnTypeFromFunctionType().asTypeProjection()), nullable = false
+                    [suspendFunType.getReturnTypeFromFunctionType().asTypeProjection()], nullable = false
                 ),
         // TODO: names
         null,

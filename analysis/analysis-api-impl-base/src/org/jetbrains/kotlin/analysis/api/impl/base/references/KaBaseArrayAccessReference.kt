@@ -33,6 +33,6 @@ internal class KaBaseArrayAccessReference(
             get() = KtArrayAccessExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtArrayAccessExpression>
-            get() = { listOf(KaBaseArrayAccessReference(it)) }
+            get() = { [KaBaseArrayAccessReference(it)] }
     }
 }

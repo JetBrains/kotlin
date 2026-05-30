@@ -29,9 +29,9 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportWithResultValidationTest",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
-                ),
+                ],
             ) {
                 model("", extension = null, recursive = false)
             }
@@ -42,9 +42,9 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportWithBinaryCompilationTest",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
-                ),
+                ],
             ) {
                 model("", extension = null, recursive = false)
             }
@@ -55,9 +55,9 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportExecutionTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
-                ),
+                ],
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }
@@ -68,10 +68,10 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportWithResultValidationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithResultValidationTest",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
-                ),
+                ],
             ) {
                 model("", extension = null, recursive = false)
             }
@@ -82,10 +82,10 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
                 suiteTestClassName = "SwiftExportCoroutinesWithBinaryCompilationTest",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
-                ),
+                ],
             ) {
                 model("", extension = null, recursive = false)
             }
@@ -96,10 +96,10 @@ fun main() {
         ) {
             testClass<AbstractSwiftExportExecutionTest>(
                 suiteTestClassName = "SwiftExportCoroutinesExecutionTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
-                ),
+                ],
             ) {
                 model(pattern = "^([^_](.+))$", recursive = false)
             }

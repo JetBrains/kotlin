@@ -43,8 +43,8 @@ abstract class ConfigurationUpdater<in A : CommonCompilerArguments> {
 // from CLICompiler
 abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     name: String,
-    preActions: Set<Action<ArgumentsPipelineArtifact<A>, PipelineContext>> = emptySet(),
-    postActions: Set<Action<ConfigurationPipelineArtifact, PipelineContext>> = emptySet(),
+    preActions: Set<Action<ArgumentsPipelineArtifact<A>, PipelineContext>> = [],
+    postActions: Set<Action<ConfigurationPipelineArtifact, PipelineContext>> = [],
     val configurationUpdaters: List<ConfigurationUpdater<A>>
 ) : PipelinePhase<ArgumentsPipelineArtifact<A>, ConfigurationPipelineArtifact>(name, preActions, postActions) {
     override fun executePhase(input: ArgumentsPipelineArtifact<A>): ConfigurationPipelineArtifact {
@@ -70,7 +70,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
     }
 
     protected abstract fun createMetadataVersion(versionArray: IntArray): BinaryVersion
-    protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = emptyList()
+    protected open fun provideCustomScriptingPluginOptions(arguments: A): List<String> = []
 
     private fun CompilerConfiguration.setupCommonConfiguration(input: ArgumentsPipelineArtifact<A>) {
         (val arguments, val _ = services, val _ = rootDisposable, val _ = messageCollector, val performanceManager) = input
@@ -101,8 +101,8 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             return
         }
 
-        val scriptingPluginClasspath = mutableListOf<String>()
-        val scriptingPluginOptions = mutableListOf<String>()
+        val scriptingPluginClasspath: MutableList<String> = []
+        val scriptingPluginOptions: MutableList<String> = []
 
         if (!arguments.disableDefaultScriptingPlugin) {
             scriptingPluginOptions += provideCustomScriptingPluginOptions(arguments)
@@ -171,7 +171,7 @@ abstract class AbstractConfigurationPhase<A : CommonCompilerArguments>(
             else PluginCliParser::class.java.classLoader.loadClass(SCRIPT_PLUGIN_COMMANDLINE_PROCESSOR_NAME)!!
         val cmdlineProcessor = cmdlineProcessorClass?.getDeclaredConstructor()?.newInstance() as? CommandLineProcessor
         if (cmdlineProcessor != null) {
-            processCompilerPluginsOptions(configuration, pluginOptions, listOf(cmdlineProcessor))
+            processCompilerPluginsOptions(configuration, pluginOptions, [cmdlineProcessor])
         }
     }
 }

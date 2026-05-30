@@ -79,7 +79,7 @@ interface PartialLinkageSupportForLinker {
             override fun exploreClassifiersInInlineLazyIrFunction(function: IrFunction) = Unit
             override fun generateStubsAndPatchUsages(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) = Unit
             override fun preprocessBeforeFakeOverridesBuilding(symbolTable: SymbolTable, fakeOverrideBuilder: IrLinkerFakeOverrideProvider) = Unit
-            override fun collectAllStubbedSymbols(): Set<IrSymbol> = emptySet()
+            override fun collectAllStubbedSymbols(): Set<IrSymbol> = []
         }
     }
 }

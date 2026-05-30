@@ -229,7 +229,7 @@ class ScriptingProcessSourcesBeforeCompilingExtension(val project: Project) : Pr
 
         if (configuration.getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) return sources
         // TODO: see comment at LazyScriptDefinitionProvider.Companion.getNonScriptFilenameSuffixes
-        val nonScriptFilenameSuffixes = arrayOf(".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}")
+        val nonScriptFilenameSuffixes: Array<String> = [".${KotlinFileType.EXTENSION}", ".${JavaFileType.DEFAULT_EXTENSION}"]
         // filter out scripts that are not suitable for source roots, according to the compiler configuration and script definitions
         return sources.filter { ktFile ->
             when {

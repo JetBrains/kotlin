@@ -30,7 +30,7 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
     KlibBasedEnvironmentConfigurator
 {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
+        get() = [JsEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives]
 
     companion object {
         const val TEST_DATA_DIR_PATH = "js/js.translator/testData"
@@ -95,7 +95,7 @@ abstract class JsEnvironmentConfigurator(testServices: TestServices) : Environme
             JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME in module.directives || ConfigurationDirectives.WITH_STDLIB in module.directives
 
         fun getRuntimePathsForModule(module: TestModule, testServices: TestServices): List<String> {
-            val result = mutableListOf<String>()
+            val result: MutableList<String> = []
 
             val pathProvider = testServices.standardLibrariesPathProvider
             if (isFullJsRuntimeNeeded(module)) {

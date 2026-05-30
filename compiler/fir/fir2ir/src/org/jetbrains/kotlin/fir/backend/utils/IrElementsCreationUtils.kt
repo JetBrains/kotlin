@@ -72,11 +72,11 @@ context(c: Fir2IrComponents)
 internal fun IrClass.setThisReceiver(typeParameters: List<FirTypeParameterRef>) {
     val typeArguments = typeParameters.map {
         val typeParameter = c.classifierStorage.getIrTypeParameterSymbol(it.symbol, ConversionTypeOrigin.DEFAULT)
-        IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, emptyList(), emptyList())
+        IrSimpleTypeImpl(typeParameter, hasQuestionMark = false, [], [])
     }
     thisReceiver = declareThisReceiverParameter(
         kind = IrParameterKind.DispatchReceiver,
-        thisType = IrSimpleTypeImpl(symbol, false, typeArguments, emptyList()),
+        thisType = IrSimpleTypeImpl(symbol, false, typeArguments, []),
         thisOrigin = IrDeclarationOrigin.INSTANCE_RECEIVER
     )
 }
@@ -160,7 +160,7 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
         !moduleData.isCommon ||
         moduleData.dependsOnDependencies.isNotEmpty()
     ) {
-        return emptyList()
+        return []
     }
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 

@@ -36,7 +36,7 @@ class TypeEnhancementInfo(val map: Map<Int, JavaTypeQualifiers>) {
 
 class PredefinedFunctionEnhancementInfo(
     val returnTypeInfo: TypeEnhancementInfo? = null,
-    val parametersInfo: List<TypeEnhancementInfo?> = emptyList(),
+    val parametersInfo: List<TypeEnhancementInfo?> = [],
     // `null` means that it's enabled for any language version
     val errorsSinceLanguageVersion: String? = null,
     val returnValueStatus: ReturnValueStatus? = null,
@@ -321,7 +321,7 @@ private class SignatureEnhancementBuilder {
             val functionName: String,
             val errorsSinceLanguageVersion: String? = null,
         ) {
-            private val parameters = mutableListOf<Pair<String, TypeEnhancementInfo?>>()
+            private val parameters: MutableList<Pair<String, TypeEnhancementInfo?>> = []
             private var returnType: Pair<String, TypeEnhancementInfo?> = "V" to null
             private var returnValueStatus: ReturnValueStatus? = null
 

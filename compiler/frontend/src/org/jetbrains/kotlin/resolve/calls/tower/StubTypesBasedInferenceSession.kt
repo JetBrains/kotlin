@@ -118,8 +118,8 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
                 it.callResolutionResult.constraintSystem.errors.isNotEmpty() || it.callResolutionResult.diagnostics.isNotEmpty()
             }
 
-            for (callInfo in listOf(goodCandidate, badCandidate)) {
-                val atomsToAnalyze = mutableListOf<ResolvedAtom>(callInfo.callResolutionResult)
+            for (callInfo in [goodCandidate, badCandidate]) {
+                val atomsToAnalyze: MutableList<ResolvedAtom> = [callInfo.callResolutionResult]
                 val system = NewConstraintSystemImpl(
                     callComponents.constraintInjector, builtIns, callComponents.kotlinTypeRefiner, callComponents.languageVersionSettings
                 ).apply {

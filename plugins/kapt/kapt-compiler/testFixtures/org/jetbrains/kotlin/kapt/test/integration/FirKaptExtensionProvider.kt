@@ -114,7 +114,7 @@ class FirKaptExtensionForTests(
             member: ExecutableElement?,
             userText: String?
         ): Iterable<Completion> {
-            return emptyList()
+            return []
         }
 
         override fun getSupportedSourceVersion() = SourceVersion.RELEASE_6
@@ -167,7 +167,7 @@ class FirKaptExtensionForTests(
     ) : ProcessorLoader {
         override fun loadProcessors(parentClassLoader: ClassLoader): LoadedProcessors =
             LoadedProcessors(
-                listOf(IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger)),
+                [IncrementalProcessor(processor, DeclaredProcType.NON_INCREMENTAL, logger)],
                 FirKaptExtensionForTests::class.java.classLoader,
             )
 

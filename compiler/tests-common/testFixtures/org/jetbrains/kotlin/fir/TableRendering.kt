@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir
 import java.text.DecimalFormat
 
 class RTableContext {
-    val data: MutableList<Row> = mutableListOf()
+    val data: MutableList<Row> = []
     var cols = 0
     fun row(names: List<String>) = row(names.map { Cell(it) })
 
@@ -32,7 +32,7 @@ class RTableContext {
     }
 
     inner class RTableRowContext() {
-        val rowData = mutableListOf<Cell>()
+        val rowData: MutableList<Cell> = []
         val LEFT = false
         val RIGHT = true
         fun cell(text: String?, align: Boolean = RIGHT) {

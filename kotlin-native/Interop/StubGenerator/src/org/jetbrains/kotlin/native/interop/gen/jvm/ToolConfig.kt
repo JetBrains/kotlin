@@ -45,7 +45,7 @@ class ToolConfig(
     val platformCompilerOpts =
             if (clang is ClangArgs.Jni)
                 clang.hostCompilerArgsForJni.toList()
-            else emptyList()
+            else []
 
     override fun loadLibclang() {
         System.load(libclang)

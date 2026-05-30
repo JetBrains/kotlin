@@ -34,7 +34,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
     companion object {
         const val CLASS_TYPE_PARAMETER_INDEX_FROM_END = 2
         const val BUILDER_TYPE_PARAMETER_INDEX_FROM_END = 1
-        private val startProjectionsList = listOf(ConeStarProjection, ConeStarProjection)
+        private val startProjectionsList = [ConeStarProjection, ConeStarProjection]
     }
 
     override val builderModality: Modality = Modality.ABSTRACT
@@ -71,7 +71,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         addIfNonClashing(Name.identifier("self"), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 it,
-                valueParameters = emptyList(),
+                valueParameters = [],
                 returnTypeRef = builderType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Protected,
                 modality = Modality.ABSTRACT
@@ -80,7 +80,7 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
         addIfNonClashing(Name.identifier(builder.buildMethodName), existingFunctionNames) {
             builderSymbol.createJavaMethod(
                 it,
-                valueParameters = emptyList(),
+                valueParameters = [],
                 returnTypeRef = classType.toFirResolvedTypeRef(),
                 visibility = Visibilities.Public,
                 modality = Modality.ABSTRACT
@@ -153,6 +153,6 @@ class SuperBuilderGenerator(session: FirSession) : AbstractBuilderGenerator<Supe
             session.builtinTypes.anyType
         }
 
-        superTypeRefs += listOf(superBuilderTypeRef)
+        superTypeRefs.addAll([superBuilderTypeRef])
     }
 }

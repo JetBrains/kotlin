@@ -429,7 +429,7 @@ class Fir2IrVisitor(
         return anonymousObject.convertWithOffsets { startOffset, endOffset ->
             IrBlockImpl(
                 startOffset, endOffset, anonymousClassType, IrStatementOrigin.OBJECT_LITERAL,
-                listOf(
+                [
                     irAnonymousObject,
                     IrConstructorCallImpl.fromSymbolOwner(
                         startOffset,
@@ -441,7 +441,7 @@ class Fir2IrVisitor(
                         irAnonymousObject.typeParameters.size,
                         origin = IrStatementOrigin.OBJECT_LITERAL
                     )
-                )
+                ]
             )
         }.also {
             cleaner.cleanAnonymousObject(anonymousObject)
@@ -579,7 +579,7 @@ class Fir2IrVisitor(
         val irProperty = declarationStorage.getCachedIrPropertySymbol(property, fakeOverrideOwnerLookupTag = null)?.owner
             ?: return IrErrorExpressionImpl(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                IrErrorTypeImpl(null, emptyList(), Variance.INVARIANT),
+                IrErrorTypeImpl(null, [], Variance.INVARIANT),
                 "Stub for Enum.entries"
             )
         return conversionScope.withProperty(irProperty, property) {
@@ -631,10 +631,10 @@ class Fir2IrVisitor(
                     .filter { !isGetClassOfUnresolvedTypeInAnnotation(it) }
                     .flatMap {
                         val varargElement = it.convertToIrVarargElement()
-                        if (!annotationMode) return@flatMap listOf(varargElement)
+                        if (!annotationMode) return@flatMap [varargElement]
                         when (val unwrapped = (varargElement as? IrSpreadElement)?.expression ?: varargElement) {
                             is IrVararg -> unwrapped.elements
-                            else -> listOf(unwrapped)
+                            else -> [unwrapped]
                         }
                     }
             )
@@ -1301,7 +1301,7 @@ class Fir2IrVisitor(
             fun irGetLhsValue(): IrGetValue =
                 IrGetValueImpl(startOffset, endOffset, irLhsVariable.type, irLhsVariable.symbol)
 
-            val irBranches = listOf(
+            val irBranches = [
                 IrBranchImpl(
                     startOffset, endOffset,
                     IrCallImplWithShape(
@@ -1325,7 +1325,7 @@ class Fir2IrVisitor(
                     IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
                     irGetLhsValue()
                 )
-            )
+            ]
 
             generateWhen(
                 startOffset, endOffset, IrStatementOrigin.ELVIS,
@@ -1360,7 +1360,7 @@ class Fir2IrVisitor(
                 val whenExpressionType =
                     if (isProperlyExhaustive) whenExpression.resolvedType else unitType
                 val irBranches = whenExpression.convertWhenBranchesTo(
-                    mutableListOf(),
+                    [],
                     whenExpressionType,
                     flattenElse = origin == IrStatementOrigin.IF,
                 )
@@ -1447,7 +1447,7 @@ class Fir2IrVisitor(
         return if (subjectVariable == null) {
             irWhen
         } else {
-            IrBlockImpl(startOffset, endOffset, irWhen.type, origin, listOf(subjectVariable, irWhen))
+            IrBlockImpl(startOffset, endOffset, irWhen.type, origin, [subjectVariable, irWhen])
         }
     }
 
@@ -1665,7 +1665,7 @@ class Fir2IrVisitor(
         data: Any?
     ): IrElement = whileAnalysing(session, stringConcatenationCall) {
         return stringConcatenationCall.convertWithOffsets { startOffset, endOffset ->
-            val arguments = mutableListOf<IrExpression>()
+            val arguments: MutableList<IrExpression> = []
             val sb = StringBuilder()
             var startArgumentOffset = -1
             var endArgumentOffset = -1

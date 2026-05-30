@@ -36,7 +36,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
     private data class AccessorKey(val parent: IrDeclarationParent, val superQualifierSymbol: IrClassSymbol?)
 
     protected class AccessorNameBuilder {
-        private val nameParts = mutableListOf(ACCESSOR_PREFIX)
+        private val nameParts: MutableList<String> = [ACCESSOR_PREFIX]
 
         fun contribute(namePart: String) {
             nameParts += namePart
@@ -177,14 +177,14 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
 
             accessor.body = context.irFactory.createBlockBody(
                 accessor.startOffset, accessor.startOffset,
-                listOf(
+                [
                     IrReturnImpl(
                         accessor.startOffset, accessor.endOffset,
                         context.irBuiltIns.nothingType,
                         accessor.symbol,
                         createSimpleFunctionCall(accessor, source.symbol, superQualifierSymbol)
                     )
-                )
+                ]
             )
         }
     }
@@ -252,11 +252,11 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         )
         return context.irFactory.createBlockBody(
             accessor.startOffset, accessor.endOffset,
-            listOf(
+            [
                 IrReturnImpl(
                     accessor.startOffset, accessor.endOffset, context.irBuiltIns.nothingType, accessor.symbol, irGetField
                 )
-            )
+            ]
         )
     }
 
@@ -319,11 +319,11 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         )
         return context.irFactory.createBlockBody(
             accessor.startOffset, accessor.endOffset,
-            listOf(
+            [
                 IrReturnImpl(
                     accessor.startOffset, accessor.endOffset, context.irBuiltIns.nothingType, accessor.symbol, irSetField
                 )
-            )
+            ]
         )
     }
 
@@ -437,7 +437,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
             else -> accessorSymbol.produceCallToSyntheticFunction(oldExpression)
         }
         val capturedTypeParameters = if (oldExpression is IrCall)
-            capturedTypeParametersOfSyntheticAccessor(oldExpression.symbol.owner) else listOf()
+            capturedTypeParametersOfSyntheticAccessor(oldExpression.symbol.owner) else []
         capturedTypeParameters.forEachIndexed { index, typeParameter ->
             newExpression.typeArguments[index] = typeParameter.defaultType
         }
@@ -451,7 +451,7 @@ abstract class SyntheticAccessorGenerator<Context : LoweringContext, ScopeInfo>(
         return newExpression
     }
 
-    protected open fun capturedTypeParametersOfSyntheticAccessor(declaration: IrDeclaration): List<IrTypeParameter> = listOf()
+    protected open fun capturedTypeParametersOfSyntheticAccessor(declaration: IrDeclaration): List<IrTypeParameter> = []
 
     private fun IrFunctionSymbol.produceCallToSyntheticFunction(
         oldExpression: IrFunctionAccessExpression

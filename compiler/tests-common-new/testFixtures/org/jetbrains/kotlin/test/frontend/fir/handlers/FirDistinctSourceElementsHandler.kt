@@ -31,7 +31,7 @@ class FirDistinctSourceElementsHandler(testServices: TestServices) : FirAnalysis
                 // The test file's relative path is its logical file name in the test data. It isn't a path from the test data or project
                 // root that can be necessarily found in the repository. However, because the error will be displayed for a specific failing
                 // test, finding the affected test data is easy by following the failed test.
-                checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in test file '${file.relativePath}'" }
+                checkDistinctSourceElements([firFile]) { _, _ -> "Duplicate source elements in test file '${file.relativePath}'" }
             }
         }
     }

@@ -72,11 +72,11 @@ class AnalysisApiExecutionTestEnvironment(
 
 private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, AfterTestExecutionCallback, ParameterResolver {
     private companion object {
-        private val SUPPORTED_PARAMETER_TYPES = listOf(
+        private val SUPPORTED_PARAMETER_TYPES = [
             TestServices::class.java,
             KtFile::class.java,
             KtTestModule::class.java,
-        )
+        ]
     }
 
     private var cachedTestEnvironment = ThreadLocal<AnalysisApiExecutionTestEnvironment>()

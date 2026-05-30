@@ -155,7 +155,7 @@ internal object ClassicKDocReferenceResolver {
             getSymbolsFromSyntheticProperty(fqName, contextElement).ifNotEmpty { return this }
         }
 
-        return emptyList()
+        return []
     }
 
     private fun KaSession.getSymbolsFromSyntheticProperty(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
@@ -173,14 +173,14 @@ internal object ClassicKDocReferenceResolver {
         fqName: FqName,
         contextElement: KtElement,
     ): Collection<ResolveResult> {
-        val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return emptyList()
+        val owner = contextElement.parentOfType<KtDeclaration>(withSelf = true) ?: return []
         if (fqName.pathSegments().singleOrNull()?.asString() == "this") {
             if (owner is KtCallableDeclaration && owner.receiverTypeReference != null) {
-                val symbol = owner.symbol as? KaCallableSymbol ?: return emptyList()
+                val symbol = owner.symbol as? KaCallableSymbol ?: return []
                 return listOfNotNull(symbol.receiverParameter?.toResolveResult())
             }
         }
-        return emptyList()
+        return []
     }
 
 
@@ -270,7 +270,7 @@ internal object ClassicKDocReferenceResolver {
      * queried for a class `Foo` first, and then that class `Foo` will be queried for the member `bar` by short name.
      */
     private fun KaSession.getSymbolsFromParentMemberScopes(fqName: FqName, contextElement: KtElement): Collection<KaSymbol> {
-        val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: return emptyList()
+        val declaration = PsiTreeUtil.getContextOfType(contextElement, KtDeclaration::class.java, false) ?: return []
         for (ktDeclaration in declaration.parentsOfType<KtDeclaration>(withSelf = true)) {
             if (fqName.pathSegments().size == 1) {
                 getSymbolsFromDeclaration(fqName.shortName(), ktDeclaration).ifNotEmpty { return this }
@@ -284,7 +284,7 @@ internal object ClassicKDocReferenceResolver {
                 if (symbolsFromScope.isNotEmpty()) return symbolsFromScope
             }
         }
-        return emptyList()
+        return []
     }
 
     private fun KaSession.getCompositeCombinedMemberAndCompanionObjectScope(symbol: KaDeclarationContainerSymbol): KaScope =
@@ -302,7 +302,7 @@ internal object ClassicKDocReferenceResolver {
     private fun KaSession.getSymbolsFromPackageScope(fqName: FqName, contextElement: KtElement): Collection<KaDeclarationSymbol> {
         val containingFile = contextElement.containingKtFile
         val packageFqName = containingFile.packageFqName
-        val packageSymbol = findPackage(packageFqName) ?: return emptyList()
+        val packageSymbol = findPackage(packageFqName) ?: return []
         val packageScope = packageSymbol.packageScope
         return getSymbolsFromMemberScope(fqName, packageScope)
     }
@@ -355,16 +355,16 @@ internal object ClassicKDocReferenceResolver {
      * with by the other parts of [KDocReferenceResolver].
      */
     private fun KaSession.getTypeQualifiedExtensions(fqName: FqName, contextElement: KtElement): Collection<ResolveResult> {
-        if (fqName.isRoot) return emptyList()
+        if (fqName.isRoot) return []
         val extensionName = fqName.shortName()
 
         val receiverTypeName = fqName.parent()
-        if (receiverTypeName.isRoot) return emptyList()
+        if (receiverTypeName.isRoot) return []
 
         val possibleReceiversLayers = getReceiverTypeCandidates(receiverTypeName, contextElement).toList()
         val possibleExtensionsLayers = getExtensionCallableSymbolsByShortName(extensionName, contextElement).toList()
 
-        if (!possibleExtensionsLayers.any() || !possibleReceiversLayers.any()) return emptyList()
+        if (!possibleExtensionsLayers.any() || !possibleReceiversLayers.any()) return []
 
         return possibleReceiversLayers.first().flatMap { receiverClassSymbol ->
             val actualReceiverType = receiverClassSymbol.defaultType
@@ -380,7 +380,7 @@ internal object ClassicKDocReferenceResolver {
                 }.map { it.toResolveResult(receiverClassReference = receiverClassSymbol) }
             }.firstOrNull {
                 it.isNotEmpty()
-            } ?: emptyList()
+            } ?: []
         }
     }
 
@@ -462,7 +462,7 @@ internal object ClassicKDocReferenceResolver {
     private fun generateNameInterpretations(fqName: FqName): Sequence<FqNameInterpretation> = sequence {
         val parts = fqName.pathSegments()
         if (parts.isEmpty()) {
-            yield(FqNameInterpretation.create(packageParts = emptyList(), classParts = emptyList(), callable = null))
+            yield(FqNameInterpretation.create(packageParts = [], classParts = [], callable = null))
             return@sequence
         }
         for (lastPackagePartIndexExclusive in 0..parts.size) {

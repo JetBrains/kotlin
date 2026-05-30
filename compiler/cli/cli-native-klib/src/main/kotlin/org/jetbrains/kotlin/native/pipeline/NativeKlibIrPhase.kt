@@ -25,8 +25,8 @@ import org.jetbrains.kotlin.native.writeKlib
  */
 object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeSerializationArtifact>(
     name = "NativeIrSerializationPhase",
-    preActions = setOf(PerformanceNotifications.IrSerializationStarted),
-    postActions = setOf(PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.IrSerializationStarted],
+    postActions = [PerformanceNotifications.IrSerializationFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeSerializationArtifact? {
         val (fir2IrOutput, configuration, phaseContext) = input
@@ -69,8 +69,8 @@ object NativeIrSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, 
 
 object NativeKlibWritingPipelinePhase : PipelinePhase<NativeSerializationArtifact, NativeKlibSerializedArtifact>(
     name = "NativeKlibWritingPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.KlibWritingStarted],
+    postActions = [PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: NativeSerializationArtifact): NativeKlibSerializedArtifact {
         val (serializerOutput, configuration, phaseContext) = input

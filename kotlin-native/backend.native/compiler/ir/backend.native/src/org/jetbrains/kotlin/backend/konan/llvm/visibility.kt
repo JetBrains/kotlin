@@ -34,16 +34,16 @@ fun makeVisibilityHiddenLikeLlvmInternalizePass(module: LLVMModuleRef) {
 }
 
 private fun getLlvmUsed(module: LLVMModuleRef): Set<LLVMValueRef> {
-    val llvmUsed = LLVMGetNamedGlobal(module, "llvm.used") ?: return emptySet()
-    val llvmUsedValue = LLVMGetInitializer(llvmUsed) ?: return emptySet()
+    val llvmUsed = LLVMGetNamedGlobal(module, "llvm.used") ?: return []
+    val llvmUsedValue = LLVMGetInitializer(llvmUsed) ?: return []
 
     // Note: llvm.used value is an array of globals, wrapped into bitcasts, GEPs and other instructions;
     // see llvm::collectUsedGlobalVariables.
     // Conservatively extract all involved globals for simplicity:
     return DFS.dfs(
-            /* nodes = */ listOf(llvmUsedValue),
+            /* nodes = */ [llvmUsedValue],
             /* neighbors = */ { value -> getOperands(value) },
-            object : DFS.CollectingNodeHandler<LLVMValueRef, LLVMValueRef, MutableSet<LLVMValueRef>>(mutableSetOf()) {
+            object : DFS.CollectingNodeHandler<LLVMValueRef, LLVMValueRef, MutableSet<LLVMValueRef>>([]) {
                 override fun beforeChildren(current: LLVMValueRef): Boolean = when (LLVMGetValueKind(current)) {
                     LLVMValueKind.LLVMGlobalAliasValueKind,
                     LLVMValueKind.LLVMGlobalVariableValueKind,

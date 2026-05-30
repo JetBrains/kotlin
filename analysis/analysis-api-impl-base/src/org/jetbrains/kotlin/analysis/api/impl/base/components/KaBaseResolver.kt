@@ -45,7 +45,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
             if (this != null) {
                 analysisSession.resolveToSymbols()
             } else {
-                emptyList()
+                []
             }
         }
     }
@@ -84,10 +84,10 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
             is KaCallResolutionSuccess if callAttempt.call !is KaVariableAccessCall -> callAttempt.toSingleSymbolResolutionAttempt()
             is KaMultiCallResolutionAttempt -> when (callAttempt) {
                 is KaCompoundArrayAccessCallResolutionAttempt -> mergeSymbolAttempts(
-                    listOf(
+                    [
                         callAttempt.operationCallAttempt.toSingleSymbolResolutionAttempt(),
                         callAttempt.setterCallAttempt.toSingleSymbolResolutionAttempt(),
-                    )
+                    ]
                 )
 
                 is KaCompoundVariableAccessCallResolutionAttempt -> callAttempt.operationCallAttempt.toSingleSymbolResolutionAttempt()
@@ -104,7 +104,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
     }
 
     final override fun KtResolvable.resolveSymbols(): Collection<KaSymbol> = withValidityAssertion {
-        tryResolveSymbols()?.successfulSymbols ?: emptyList()
+        tryResolveSymbols()?.successfulSymbols ?: []
     }
 
     final override fun KtResolvable.resolveSymbol(): KaSymbol? = withValidityAssertion {
@@ -274,7 +274,7 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
             checkValidity()
             collectCallCandidatesImpl()
         } else {
-            emptyList()
+            []
         }
     }
 
@@ -359,8 +359,8 @@ abstract class KaBaseResolver<T : KaSession> : KaBaseSessionComponent<T>(), KaRe
      * (combining all successful symbols) and at least one [KaSymbolResolutionError].
      */
     private fun mergeSymbolAttempts(symbolAttempts: List<KaSingleSymbolResolutionAttempt>): KaSymbolResolutionAttempt {
-        val successSymbols = mutableListOf<KaSymbol>()
-        val errors = mutableListOf<KaSymbolResolutionError>()
+        val successSymbols: MutableList<KaSymbol> = []
+        val errors: MutableList<KaSymbolResolutionError> = []
 
         for (attempt in symbolAttempts) when (attempt) {
             is KaSymbolResolutionSuccess -> successSymbols.addAll(attempt.symbols)

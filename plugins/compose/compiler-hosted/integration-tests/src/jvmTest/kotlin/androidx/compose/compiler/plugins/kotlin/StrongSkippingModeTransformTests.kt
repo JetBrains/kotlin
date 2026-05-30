@@ -34,20 +34,20 @@ class StrongSkippingModeTransformTests(
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "intrinsicRemember = {0}")
-        fun data() = arrayOf<Any>(
+        fun data(): Array<Any> = [
             arrayOf(false),
-            arrayOf(true)
-        )
+            arrayOf(true),
+        ]
     }
 
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(
+            [
                 FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
                 FeatureFlag.IntrinsicRemember.name(intrinsicRememberEnabled)
-            )
+            ]
         )
     }
 
@@ -443,7 +443,7 @@ class StrongSkippingModeTransformTests(
     ): String {
         val sourceFile1 = SourceFile("Test.kt", source, path = path)
         val extraFile1 = SourceFile("Extra.kt", extra, path = path)
-        return compileToIr(listOf(sourceFile1, extraFile1)).files.joinToString("\n") {
+        return compileToIr([sourceFile1, extraFile1]).files.joinToString("\n") {
             buildString {
                 val fileShortName = it.fileEntry.name.takeLastWhile { it != File.separatorChar }
                 appendLine("IrFile: $fileShortName")

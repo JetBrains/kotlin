@@ -32,7 +32,7 @@ class LexicalWritableScope(
     override val implicitReceiver: ReceiverParameterDescriptor?
         get() = null
     override val contextReceiversGroup: List<ReceiverParameterDescriptor>
-        get() = emptyList()
+        get() = []
 
     private var canWrite: Boolean = true
     private var lastSnapshot: Snapshot? = null

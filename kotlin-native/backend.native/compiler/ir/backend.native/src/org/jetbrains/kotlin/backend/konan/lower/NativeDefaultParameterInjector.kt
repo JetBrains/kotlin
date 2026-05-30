@@ -48,7 +48,7 @@ internal class NativeDefaultParameterInjector(context: KonanBackendContext) : De
         }
 
         return with(createIrBuilder()) {
-            irCallWithSubstitutedType(symbols.reinterpret, listOf(nullConstOfEquivalentType.type, type)).apply {
+            irCallWithSubstitutedType(symbols.reinterpret, [nullConstOfEquivalentType.type, type]).apply {
                 arguments[0] = nullConstOfEquivalentType
             }
         }

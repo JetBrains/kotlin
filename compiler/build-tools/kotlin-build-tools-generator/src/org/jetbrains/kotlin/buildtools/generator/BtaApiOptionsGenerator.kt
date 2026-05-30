@@ -22,7 +22,7 @@ internal class BtaApiOptionsGenerator(
     private val skipXX: Boolean,
     private val kotlinVersion: KotlinReleaseVersion,
 ) : BtaOptionsGenerator {
-    private val outputs = mutableListOf<Pair<Path, String>>()
+    private val outputs: MutableList<Pair<Path, String>> = []
 
     override fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,

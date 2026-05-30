@@ -121,7 +121,7 @@ class K2ReplCompiler(
             val project = compilerContext.environment.project
             val languageVersionSettings = compilerContext.environment.configuration.languageVersionSettings
             val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
+                (it as? JvmDependency)?.classpath ?: []
             }
             compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
             val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()
@@ -186,7 +186,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
     private fun makeLibraryModuleData(name: Name): FirModuleData = FirBinaryDependenciesModuleData(name)
 
     val pathToModuleData: MutableMap<Path, FirModuleData> = mutableMapOf()
-    val moduleDataHistory: MutableList<FirModuleData> = mutableListOf()
+    val moduleDataHistory: MutableList<FirModuleData> = []
 
     init {
         baseLibraryPaths.map { it.toAbsolutePath().normalize() }.associateWithTo(pathToModuleData) { baseDependenciesModuleData }
@@ -213,7 +213,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
 
     fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
         val newLibraryPaths = libraryPaths.map { it.toAbsolutePath().normalize() }.filter { it !in pathToModuleData }
-        if (newLibraryPaths.isEmpty()) return null to emptyList()
+        if (newLibraryPaths.isEmpty()) return null to []
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<REPL-lib-${moduleDataHistory.size + 1}>"))
         newLibraryPaths.associateWithTo(pathToModuleData) { newDependenciesModuleData }
         moduleDataHistory.add(newDependenciesModuleData)
@@ -224,7 +224,7 @@ class ReplModuleDataProvider(baseLibraryPaths: List<Path>) : ModuleDataProvider(
         FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() },
-            dependsOnDependencies = emptyList(),
+            dependsOnDependencies = [],
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
         ).also { moduleDataHistory.add(it) }
@@ -272,7 +272,7 @@ private fun compileImpl(
     }
 
     // configuration refinement with the additional sources collection
-    val allSourceFiles = mutableListOf<SourceCode>(KtFileScriptSource(snippetKtFile))
+    val allSourceFiles: MutableList<SourceCode> = [KtFileScriptSource(snippetKtFile)]
     (
         val classpath, val newSources = sources, val sourceDependencies
     ) =
@@ -296,10 +296,10 @@ private fun compileImpl(
 
     // Updating compiler options
     val baseCompilerOptions = state.scriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]
-    val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) { file ->
+    val updatedCompilerOptions: MutableList<String> = allSourceFiles.flatMapTo([]) { file ->
         state.scriptConfigurationsProvider?.getScriptCompilationConfiguration(file)?.valueOrNull()?.configuration?.get(
             ScriptCompilationConfiguration.compilerOptions
-        )?.takeIf { it != baseCompilerOptions } ?: emptyList()
+        )?.takeIf { it != baseCompilerOptions } ?: []
     }
     if (updatedCompilerOptions.isNotEmpty()) {
         compilerConfiguration.updateWithCompilerOptions(
@@ -367,7 +367,7 @@ private fun compileImpl(
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
 
-    val frontendOutput = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
+    val frontendOutput = AllModulesFrontendOutput([SingleModuleFrontendOutput(session, scopeSession, fir)])
 
     if (diagnosticsReporter.hasErrors) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)

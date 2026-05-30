@@ -16,7 +16,7 @@ internal val IrFileEntry.lineStartOffsetsForSerialization: List<Int>
     }
 
 private fun File.directlyReadLineStartOffsets(): List<Int> {
-    if (!isFile) return emptyList()
+    if (!isFile) return []
 
     // TODO: could be incorrect, if file is not in system's line terminator format.
     // Maybe use (0..document.lineCount - 1)

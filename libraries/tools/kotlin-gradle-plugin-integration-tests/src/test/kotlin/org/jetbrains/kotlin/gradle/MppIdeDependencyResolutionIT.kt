@@ -340,7 +340,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         project(
             projectName = "cinterop-withFailingCInteropProcess", gradleVersion = gradleVersion,
             /* Adding idea.sync.active to ensure lenient cinterop generation */
-            buildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Didea.sync.active=true"))
+            buildOptions = defaultBuildOptions.copy(freeArgs = ["-Didea.sync.active=true"])
         ) {
             resolveIdeDependencies { dependencies ->
                 dependencies["commonMain"].assertMatches(
@@ -619,7 +619,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 assertNoCompileTasksGotExecuted()
                 dependencies.assertResolvedDependenciesOnly()
 
-                val expectedJvmDependencies = listOf(
+                val expectedJvmDependencies = [
                     jetbrainsAnnotationDependencies,
                     kotlinStdlibDependencies,
                     // FIXME: KT-74782 This is technically a bug, as we should expect that "kmp-lib" would be resolved
@@ -630,16 +630,16 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                         ":kmp-lib",
                         FilePathRegex(".*/kmp-lib-jvm.jar")
                     )
-                )
+                ]
                 dependencies["commonMain"]
                     .assertMatches(expectedJvmDependencies)
                 dependencies["jvmMain"]
                     .assertMatches(expectedJvmDependencies + dependsOnDependency(":/commonMain"))
 
-                val friendDependencies = listOf(
+                val friendDependencies = [
                     friendSourceDependency(":/commonMain"),
                     friendSourceDependency(":/jvmMain"),
-                )
+                ]
 
                 dependencies["commonTest"]
                     .assertMatches(expectedJvmDependencies + friendDependencies)
@@ -738,14 +738,14 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             ":resolveIdeDependencies", "-P${KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES}=true"
         ).unwrap().single()
         assertEquals<List<Class<*>>>(
-            listOf(
+            [
                 Foo::class.java,
                 Bar::class.java,
-            ),
+            ],
             events.errors.map { it.cause!!.javaClass }
         )
         assertEquals(
-            listOf(baz),
+            [baz],
             events.warnings.map { it.message }
         )
     }
@@ -1141,7 +1141,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
         }
 
         val dependencies = consumer.resolveIdeDependenciesAsModel(
-            sourceSets = setOf("commonMain"),
+            sourceSets = ["commonMain"],
             buildOptions = consumer.buildOptions.enableIsolatedProjects()
         )
 

@@ -20,7 +20,7 @@ class CustomFirstStageCInteropTestSuppressor(
     testServices: TestServices,
 ) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CustomKlibCompilerTestDirectives)
+        get() = [CustomKlibCompilerTestDirectives]
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         return failedAssertions.filterNot {

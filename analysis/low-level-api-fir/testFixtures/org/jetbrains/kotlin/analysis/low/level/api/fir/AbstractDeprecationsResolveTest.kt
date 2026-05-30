@@ -38,30 +38,30 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
         }
 
         val symbolSuppliers = when (declaration) {
-            is KtProperty -> listOf(
+            is KtProperty -> [
                 { s: KaSymbol -> s } to "property",
                 { s: KaSymbol -> (s as KaPropertySymbol).getter } to "getter",
                 { s: KaSymbol -> (s as KaPropertySymbol).setter } to "setter",
                 { s: KaSymbol -> (s as KaPropertySymbol).backingFieldSymbol } to "backingField",
-            )
-            is KtNamedFunction -> listOf(
+            ]
+            is KtNamedFunction -> [
                 { s: KaSymbol -> s } to "function",
-            )
-            is KtClassOrObject -> listOf(
+            ]
+            is KtClassOrObject -> [
                 { s: KaSymbol -> s } to "class",
-            )
-            is KtTypeAlias -> listOf(
+            ]
+            is KtTypeAlias -> [
                 { s: KaSymbol -> s } to "alias",
-            )
-            is PsiClass -> listOf(
+            ]
+            is PsiClass -> [
                 { s: KaSymbol -> s } to "class",
-            )
-            is PsiMethod -> listOf(
+            ]
+            is PsiMethod -> [
                 { s: KaSymbol -> s } to "method",
-            )
-            is PsiField -> listOf(
+            ]
+            is PsiField -> [
                 { s: KaSymbol -> s } to "field",
-            )
+            ]
             else -> error("Unexpected element: $declaration")
         }
 

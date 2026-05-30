@@ -123,9 +123,9 @@ data class ClassDump(
         val reservedId1: Id = Id.NULL,
         val reservedId2: Id = Id.NULL,
         val instanceSize: Int = 0,
-        val constants: List<Constant> = listOf(),
-        val staticFields: List<StaticField> = listOf(),
-        val instanceFields: List<InstanceField> = listOf(),
+        val constants: List<Constant> = [],
+        val staticFields: List<StaticField> = [],
+        val instanceFields: List<InstanceField> = [],
 ) : HeapDump.Record()
 
 data class Constant(
@@ -161,7 +161,7 @@ data class InstanceDump(
         val objectId: Id,
         val stackTraceSerialNumber: SerialNumber = SerialNumber.NULL,
         val classObjectId: Id,
-        val byteArray: ByteArray = byteArrayOf(),
+        val byteArray: ByteArray = [],
 ) : HeapDump.Record()
 
 data class ObjectArrayDump(

@@ -85,7 +85,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
     )
 
     fun emitEmptyClass(name: String, superName: String) {
-        emitClass(name, superName, instanceMethods = emptyList())
+        emitClass(name, superName, instanceMethods = [])
     }
 
     class Method(val selector: String, val encoding: String, val imp: ConstPointer)
@@ -140,7 +140,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 size = 8
             }
 
-            val fields = mutableListOf<ConstValue>()
+            val fields: MutableList<ConstValue> = []
 
             fields += llvm.constInt32(flags)
             fields += llvm.constInt32(start)
@@ -176,7 +176,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
                 superClass: ConstPointer,
                 classRo: ConstPointer
         ): ConstPointer {
-            val fields = mutableListOf<ConstValue>()
+            val fields: MutableList<ConstValue> = []
 
             fields += isa
             fields += superClass
@@ -213,7 +213,7 @@ internal class ObjCDataGenerator(val codegen: CodeGenerator) {
         definedClasses.add(classObject)
     }
 
-    private val definedClasses = mutableListOf<ConstPointer>()
+    private val definedClasses: MutableList<ConstPointer> = []
 
     private fun addModuleClassList(elements: List<ConstPointer>, name: String, section: String) {
         if (elements.isEmpty()) return

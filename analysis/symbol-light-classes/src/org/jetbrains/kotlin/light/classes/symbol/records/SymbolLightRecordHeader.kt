@@ -29,7 +29,7 @@ internal class SymbolLightRecordHeader(
     private fun createRecordComponents(): List<PsiRecordComponent> {
         return containingClass.withClassSymbol { classSymbol ->
             val primaryConstructorSymbol = classSymbol.declaredMemberScope.constructors.singleOrNull { it.isPrimary }
-                ?: return@withClassSymbol emptyList()
+                ?: return@withClassSymbol []
 
             val components = primaryConstructorSymbol.valueParameters.mapNotNull { parameterSymbol ->
                 val backingFieldSymbol = parameterSymbol.generatedPrimaryConstructorProperty?.backingFieldSymbol

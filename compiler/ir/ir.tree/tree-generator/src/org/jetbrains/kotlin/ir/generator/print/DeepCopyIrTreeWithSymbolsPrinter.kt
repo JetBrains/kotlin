@@ -22,7 +22,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     override val visitorType: ClassRef<*>,
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
     override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
@@ -30,9 +30,9 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
     override fun visitMethodReturnType(element: Element): TypeRef = element
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irDeepCopyBaseType)
+        get() = [irDeepCopyBaseType]
 
-    override val optIns: List<ClassRef<*>> = listOf(irImplementationDetailType)
+    override val optIns: List<ClassRef<*>> = [irImplementationDetailType]
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.OpenClass
@@ -48,7 +48,7 @@ internal class DeepCopyIrTreeWithSymbolsPrinter(
         VariableKind.PARAMETER
     )
 
-    override val constructorParameters: List<PrimaryConstructorParameter> = listOf(symbolRemapperParameter, typeRemapperParameter)
+    override val constructorParameters: List<PrimaryConstructorParameter> = [symbolRemapperParameter, typeRemapperParameter]
 
     override fun ImportCollectingPrinter.printAdditionalMethods() {
         addImport(ArbitraryImportable("org.jetbrains.kotlin.utils", "memoryOptimizedMap"))

@@ -53,14 +53,14 @@ internal val ModuleDescriptor.uShortType: SimpleType
     get() = unsignedType(StandardNames.FqNames.uShort)
 
 internal val ModuleDescriptor.allSignedLiteralTypes: Collection<KotlinType>
-    get() = listOf(builtIns.intType, builtIns.longType, builtIns.byteType, builtIns.shortType)
+    get() = [builtIns.intType, builtIns.longType, builtIns.byteType, builtIns.shortType]
 
 internal val ModuleDescriptor.allUnsignedLiteralTypes: Collection<KotlinType>
     get() = if (hasUnsignedTypesInModuleDependencies(this)) {
-        listOf(
+        [
             unsignedType(StandardNames.FqNames.uInt), unsignedType(StandardNames.FqNames.uLong),
             unsignedType(StandardNames.FqNames.uByte), unsignedType(StandardNames.FqNames.uShort)
-        )
+        ]
     } else {
-        emptyList()
+        []
     }

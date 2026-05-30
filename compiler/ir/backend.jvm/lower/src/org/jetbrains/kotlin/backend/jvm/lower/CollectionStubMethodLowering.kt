@@ -188,7 +188,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
         }.apply {
             // Replace Function metadata with the data from class
             // Add the abstract function symbol to stub function for bridge lowering
-            overriddenSymbols = listOf(function.symbol)
+            overriddenSymbols = [function.symbol]
             parent = irClass
             parameters = function.parameters.map { it.copyWithSubstitution(this, substitutionMap) }
             body = createThrowingStubBody(context, this)
@@ -336,7 +336,7 @@ internal class CollectionStubMethodLowering(val context: JvmBackendContext) : Cl
     }
 
     private fun computeStubsForSuperClasses(irClass: IrClass): List<StubsForCollectionClass> {
-        val immediateSuperClass = irClass.superClass ?: return emptyList()
+        val immediateSuperClass = irClass.superClass ?: return []
         return immediateSuperClass.superClassChain
             .flatMap { superClass -> computeStubsForSuperClass(superClass) }
             .toList()

@@ -52,10 +52,10 @@ private fun TestConfigurationBuilder.enableNoArg() {
 
 class NoArgEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private val NOARG_ANNOTATIONS = listOf("NoArg", "NoArg2", "test.NoArg")
+        private val NOARG_ANNOTATIONS = ["NoArg", "NoArg2", "test.NoArg"]
     }
 
-    override val directiveContainers: List<DirectivesContainer> = listOf(NoArgDirectives)
+    override val directiveContainers: List<DirectivesContainer> = [NoArgDirectives]
 
     override fun CompilerPluginRegistrar.ExtensionStorage.registerCompilerExtensions(
         module: TestModule,

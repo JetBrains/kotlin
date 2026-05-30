@@ -27,7 +27,7 @@ object DefaultTypeAttributeTranslator : TypeAttributeTranslator {
     ): TypeAttributes {
         return if (annotations.isEmpty())
             TypeAttributes.Empty else
-            TypeAttributes.create(listOf(AnnotationsTypeAttribute(annotations)))
+            TypeAttributes.create([AnnotationsTypeAttribute(annotations)])
     }
 
     override fun toAnnotations(attributes: TypeAttributes): Annotations {

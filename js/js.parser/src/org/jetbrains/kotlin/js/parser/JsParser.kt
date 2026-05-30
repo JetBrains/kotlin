@@ -24,7 +24,7 @@ object JsParser {
         scope: JsScope,
         fileName: String
     ): List<JsStatement> {
-        return parseStatements(code, fileName, CodePosition(0, 0), 0, reporter, scope) ?: emptyList()
+        return parseStatements(code, fileName, CodePosition(0, 0), 0, reporter, scope) ?: []
     }
 
     fun parseStatements(
@@ -124,8 +124,8 @@ object JsParser {
 
     private class AccumulatingReporter : ErrorReporter {
         var hasErrors = false
-        val errors = mutableListOf<Error>()
-        val warnings = mutableListOf<Warning>()
+        val errors: MutableList<Error> = []
+        val warnings: MutableList<Warning> = []
 
         override fun warning(message: String, startPosition: CodePosition, endPosition: CodePosition) {
             warnings += Warning(message, startPosition, endPosition)

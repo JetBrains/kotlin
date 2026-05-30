@@ -57,7 +57,7 @@ class AssociatedObjectsLowering(val context: WasmBackendContext) : FileLoweringP
         override fun visitClass(declaration: IrClass) {
             super.visitClass(declaration)
 
-            val associatedObjects = mutableListOf<Pair<IrClass, IrClass>>()
+            val associatedObjects: MutableList<Pair<IrClass, IrClass>> = []
             for (klassAnnotation in declaration.annotations) {
                 val annotationClass = klassAnnotation.symbol.owner.parentClassOrNull ?: continue
                 if (klassAnnotation.arguments.size != 1) continue

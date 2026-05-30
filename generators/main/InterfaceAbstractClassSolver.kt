@@ -78,9 +78,9 @@ private fun processRequirementsFromConfig(
 private fun solve2sat(elements: Collection<Node>, elementsToVar: ElementMapping): MutableList<Boolean> {
     val [g, gt] = buildGraphs(elements, elementsToVar)
 
-    val used = g.indices.mapTo(mutableListOf()) { false }
-    val order = mutableListOf<Int>()
-    val comp = g.indices.mapTo(mutableListOf()) { -1 }
+    val used: MutableList<Boolean> = g.indices.mapTo([]) { false }
+    val order: MutableList<Int> = []
+    val comp: MutableList<Int> = g.indices.mapTo([]) { -1 }
     val n = g.size
 
     fun dfs1(v: Int) {
@@ -116,7 +116,7 @@ private fun solve2sat(elements: Collection<Node>, elementsToVar: ElementMapping)
         }
     }
 
-    val res = (1..elements.size).mapTo(mutableListOf()) { false }
+    val res: MutableList<Boolean> = (1..elements.size).mapTo([]) { false }
 
     for (i in 0 until n step 2) {
         if (comp[i] == comp[i + 1]) {
@@ -129,8 +129,8 @@ private fun solve2sat(elements: Collection<Node>, elementsToVar: ElementMapping)
 
 
 private fun buildGraphs(elements: Collection<Node>, elementMapping: ElementMapping): Pair<List<List<Int>>, List<List<Int>>> {
-    val g = (1..elementMapping.size * 2).map { mutableListOf<Int>() }
-    val gt = (1..elementMapping.size * 2).map { mutableListOf<Int>() }
+    val g: List<MutableList<Int>> = (1..elementMapping.size * 2).map { [] }
+    val gt: List<MutableList<Int>> = (1..elementMapping.size * 2).map { [] }
 
     fun Int.direct(): Int = this
     fun Int.invert(): Int = this + 1

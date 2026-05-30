@@ -41,8 +41,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
             withLockFileFixture(
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
             ) {
-                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
+                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
+                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
 
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
@@ -61,7 +61,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(fuzzRepo.name)),
+                                products = [product(fuzzRepo.name)],
                             )
                         }
                     }
@@ -74,7 +74,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(buzzRepo.name)),
+                                products = [product(buzzRepo.name)],
                             )
                         }
                     }
@@ -88,19 +88,19 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     // Root Package.locked contains both deps
                     assertResolvedVersions(
                         persistedPackageResolved = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftImport/Package.resolved"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     // fuzz only contains its own deps.
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -113,19 +113,19 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                     // Root Package.locked contains both deps
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     // buzz only contains its own deps.
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -153,7 +153,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
             ) {
                 val fuzzRepo = repoRef(fuzzRepoName).also {
-                    createRepo(it.name, listOf("1.0.0"))
+                    createRepo(it.name, ["1.0.0"])
                 }
 
                 initSwiftPmProject(cacheDirFile) {
@@ -185,7 +185,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(fuzzRepo.name)),
+                                products = [product(fuzzRepo.name)],
                             )
                         }
                     }
@@ -240,7 +240,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
             withLockFileFixture(
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
             ) {
-                val commonRepo = repoRef(commonRepoName).also { createRepo(it.name, listOf("1.0.0", "1.0.1", "1.0.2")) }
+                val commonRepo = repoRef(commonRepoName).also { createRepo(it.name, ["1.0.0", "1.0.1", "1.0.2"]) }
 
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
@@ -260,7 +260,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(commonRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(commonRepo.name)),
+                                products = [product(commonRepo.name)],
                             )
                         }
                     }
@@ -274,7 +274,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(commonRepo.url),
                                 version = exact("1.0.1"),
-                                products = listOf(product(commonRepo.name)),
+                                products = [product(commonRepo.name)],
                             )
                         }
                     }
@@ -287,19 +287,19 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             // should include overlapping versions from both projects, since both are compatible with 1.0.1
                             commonRepo to "1.0.1",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             // should include overlapping versions from both projects, since both are compatible with 1.0.1
                             commonRepo to "1.0.1",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -312,18 +312,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             // should include overlapping versions from both projects, since both are compatible with 1.0.1
                             commonRepo to "1.0.1",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             commonRepo to "1.0.1",
-                        ),
+                        ],
                     )
                     assertGitIgnoreEquals(
                         identifierGitIgnore,
@@ -347,8 +347,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
             withLockFileFixture(
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
             ) {
-                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
+                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
+                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
 
                 initSwiftPmProject(cacheDirFile) {
                     // no direct deps in root, just initialize plugin infrastructure
@@ -367,7 +367,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(fuzzRepo.name)),
+                                products = [product(fuzzRepo.name)],
                             )
                         }
                     }
@@ -380,7 +380,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(buzzRepo.name)),
+                                products = [product(buzzRepo.name)],
                             )
                         }
                     }
@@ -393,18 +393,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -417,18 +417,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        )
+                        ]
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -444,18 +444,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -468,18 +468,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -506,8 +506,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
             withLockFileFixture(
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier(commonIdentifier)
             ) {
-                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
+                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
+                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
@@ -524,7 +524,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(fuzzRepo.name)),
+                                products = [product(fuzzRepo.name)],
                             )
                         }
                     }
@@ -537,7 +537,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(buzzRepo.name)),
+                                products = [product(buzzRepo.name)],
                             )
                         }
                     }
@@ -547,16 +547,16 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 include(buzzProject, buzzProjectName)
 
 
-                val umbrellaGenerateTasks = listOf(
+                val umbrellaGenerateTasks = [
                     ":${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(commonIdentifier)}",
                     ":$fuzzProjectName:${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(commonIdentifier)}",
                     ":$buzzProjectName:${GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(commonIdentifier)}",
-                )
-                val umbrellaFetchTasks = listOf(
+                ]
+                val umbrellaFetchTasks = [
                     ":${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(commonIdentifier)}",
                     ":$fuzzProjectName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(commonIdentifier)}",
                     ":$buzzProjectName:${FetchSyntheticImportProjectPackages.fetchUmbrellaPackageTaskName(commonIdentifier)}",
-                )
+                ]
 
                 build(":$fuzzProjectName:${FetchSyntheticImportProjectPackages.TASK_NAME}") {
                     //count how many generate umbrella task were registered. Exactly one for each identifier
@@ -568,19 +568,19 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             // should include overlapping versions from both projects, since both are compatible with 1.0.1
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -600,18 +600,18 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = persistedPackageResolvedSyncPath,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = projectPath.resolve(".swiftpm-locks/$commonIdentifier/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -635,8 +635,8 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
         project("empty", version) {
             withLockFileFixture {
-                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
-                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, listOf("1.0.0")) }
+                val fuzzRepo = repoRef(fuzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
+                val buzzRepo = repoRef(buzzRepoName).also { createRepo(it.name, ["1.0.0"]) }
 
                 initSwiftPmProject(cacheDirFile) {}
 
@@ -652,7 +652,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(fuzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(fuzzRepo.name)),
+                                products = [product(fuzzRepo.name)],
                             )
                         }
                     }
@@ -666,7 +666,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(buzzRepo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(buzzRepo.name)),
+                                products = [product(buzzRepo.name)],
                             )
                         }
                     }
@@ -711,17 +711,17 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = umbrellaPackageResolvedFuzz,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = fuzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = syntheticFuzzCheckoutDir,
-                        expectedPins = listOf(
+                        expectedPins = [
                             fuzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -738,17 +738,17 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = umbrellaPackageResolvedBuzz,
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = buzzProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = syntheticBuzzCheckoutDir,
-                        expectedPins = listOf(
+                        expectedPins = [
                             buzzRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertGitIgnoreEquals(
@@ -773,7 +773,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
         project("empty", version) {
             withLockFileFixture {
                 val sharedRepo = repoRef(sharedRepoName).also {
-                    createRepo(it.name, listOf("1.0.0"))
+                    createRepo(it.name, ["1.0.0"])
                 }
 
                 initJvmKmp{
@@ -794,7 +794,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                                 swiftPackage(
                                     url = url(sharedRepo.url),
                                     version = from("1.0.0"),
-                                    products = listOf(product(sharedRepo.name)),
+                                    products = [product(sharedRepo.name)],
                                 )
                             }
                         }
@@ -843,17 +843,17 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = sharedPersistedPackageResolved,
-                        expectedPins = listOf(
+                        expectedPins = [
                             sharedRepo to "1.0.0",
-                        ),
+                        ],
                     )
 
                     assertResolvedVersions(
                         persistedPackageResolved = sharedProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
                         checkoutRepoDir = sharedProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
-                        expectedPins = listOf(
+                        expectedPins = [
                             sharedRepo to "1.0.0",
-                        ),
+                        ],
                     )
                 }
 
@@ -896,7 +896,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
             withLockFileFixture(
                 packageResolvedSynchronization = PackageResolvedSynchronization.Identifier("rootLock")
             ) {
-                val repo = repoRef(repoName).also { createRepo(it.name, listOf("1.0.0")) }
+                val repo = repoRef(repoName).also { createRepo(it.name, ["1.0.0"]) }
 
                 initSwiftPmProject(cacheDirFile) {
                     swiftPMDependencies {
@@ -911,7 +911,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                             swiftPackage(
                                 url = url(repo.url),
                                 version = from("1.0.0"),
-                                products = listOf(product(repo.name)),
+                                products = [product(repo.name)],
                             )
                         }
                     }

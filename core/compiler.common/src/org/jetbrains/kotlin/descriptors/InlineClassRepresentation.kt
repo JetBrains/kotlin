@@ -14,7 +14,7 @@ class InlineClassRepresentation<Type : RigidTypeMarker> constructor(
 ) : ValueClassRepresentation<Type>() {
 
     override val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>
-        get() = listOf(underlyingPropertyName to underlyingType)
+        get() = [underlyingPropertyName to underlyingType]
 
     override fun containsPropertyWithName(name: Name): Boolean = underlyingPropertyName == name
 

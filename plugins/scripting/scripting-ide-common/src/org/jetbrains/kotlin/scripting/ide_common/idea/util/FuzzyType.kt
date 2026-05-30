@@ -39,10 +39,10 @@ class FuzzyType(
                 val originalFreeParameters = freeParameters.map { it.toOriginal() }.toSet()
                 this.freeParameters = usedTypeParameters.filter { it.toOriginal() in originalFreeParameters }.toSet()
             } else {
-                this.freeParameters = emptySet()
+                this.freeParameters = []
             }
         } else {
-            this.freeParameters = emptySet()
+            this.freeParameters = []
         }
     }
 
@@ -79,9 +79,9 @@ class FuzzyType(
     fun checkIsSuperTypeOf(otherType: FuzzyType): TypeSubstitutor? = matchedSubstitutor(otherType, MatchKind.IS_SUPERTYPE)
 
     @Suppress("unused") // Used in intellij-community
-    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSubtypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSubtypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSubtypeOf(otherType.toFuzzyType([]))
 
-    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSuperTypeOf(otherType.toFuzzyType(emptyList()))
+    fun checkIsSuperTypeOf(otherType: KotlinType): TypeSubstitutor? = checkIsSuperTypeOf(otherType.toFuzzyType([]))
 
     private enum class MatchKind {
         IS_SUBTYPE,

@@ -34,7 +34,7 @@ class Fir2IrLazyPropertyForPureField(
     }
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
-        val containingClass = field.containingClass ?: return@lazy emptyList()
+        val containingClass = field.containingClass ?: return@lazy []
 
         val baseFieldsWithDispatchReceiverTag =
             lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, field.fir.symbol)
@@ -44,7 +44,7 @@ class Fir2IrLazyPropertyForPureField(
     }
 
     override var annotations: List<IrAnnotation>
-        get() = emptyList()
+        get() = []
         set(_) = mutationNotSupported()
 
     override var startOffset: Int

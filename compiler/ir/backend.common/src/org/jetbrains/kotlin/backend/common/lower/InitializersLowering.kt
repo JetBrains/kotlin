@@ -103,7 +103,7 @@ open class InitializersCleanupLowering(
     override val withLocalDeclarations: Boolean get() = true
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        if (declaration is IrAnonymousInitializer) return emptyList()
+        if (declaration is IrAnonymousInitializer) return []
 
         if (declaration is IrField && declaration.parent is IrClass) {
             if (shouldEraseFieldInitializer(declaration)) {

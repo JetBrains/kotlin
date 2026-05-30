@@ -25,7 +25,7 @@ fun ObjCExportContext.valueParametersAssociated(
 ): List<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> {
     exportSession.overrideValueParameters(function)?.let { return it }
 
-    val result = mutableListOf<Pair<MethodBridgeValueParameter, KtObjCParameterData?>>()
+    val result: MutableList<Pair<MethodBridgeValueParameter, KtObjCParameterData?>> = []
     val functionParameters = function.valueParameters
     val bridgeParameters = bridge.valueParameters
 

@@ -248,7 +248,7 @@ internal abstract class IrExpectActualMatchingContext(
             ?.parameters
             ?.filter { it.kind == IrParameterKind.Context }
             ?.map { it.symbol }
-            ?: emptyList()
+            ?: []
 
     override fun createExpectActualTypeParameterSubstitutor(
         expectActualTypeParameters: List<Pair<TypeParameterSymbolMarker, TypeParameterSymbolMarker>>,
@@ -320,15 +320,15 @@ internal abstract class IrExpectActualMatchingContext(
         get() = processIr(
             onFunction = { it.typeParameters.map { parameter -> parameter.symbol } },
             onProperty = { it.getter?.symbol?.typeParameters.orEmpty() },
-            onField = { emptyList() },
-            onValueParameter = { emptyList() },
-            onEnumEntry = { emptyList() }
+            onField = { [] },
+            onValueParameter = { [] },
+            onEnumEntry = { [] }
         )
 
     override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker> =
         when (val node = asIr()) {
-            is IrConstructor -> listOf(this)
-            is IrSimpleFunction -> (listOf(this) + node.overriddenSymbols)
+            is IrConstructor -> [this]
+            is IrSimpleFunction -> ([this] + node.overriddenSymbols)
                 // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
                 // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                 // I didn't manage to invent a test that would check this condition
@@ -522,7 +522,7 @@ internal abstract class IrExpectActualMatchingContext(
 
     private val objCAnnotations: List<ClassId> = run {
         val packageFqName = FqName("kotlinx.cinterop")
-        listOf("ObjCMethod", "ObjCConstructor", "ObjCFactory")
+        ["ObjCMethod", "ObjCConstructor", "ObjCFactory"]
             .map { ClassId(packageFqName, Name.identifier(it)) }
     }
 

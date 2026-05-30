@@ -11,7 +11,7 @@ import kotlin.reflect.KTypeProjection
 
 internal object DynamicKType : KType {
     override val classifier: KClassifier? = null
-    override val arguments: List<KTypeProjection> = emptyList()
+    override val arguments: List<KTypeProjection> = []
     override val isMarkedNullable: Boolean = false
     override fun toString(): String = "dynamic"
 }

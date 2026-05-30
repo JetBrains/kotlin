@@ -50,7 +50,7 @@ data class Subprogram(
         val abbreviation = Abbreviation(
             tag = DwTag.SUBPROGRAM,
             hasChildren = false,
-            attributes = listOf(
+            attributes = [
                 DwAttribute.NAME by DwForm.STRP,
                 DwAttribute.EXTERNAL by DwForm.FLAG,
                 DwAttribute.DECL_FILE by DwForm.UDATA,
@@ -58,7 +58,7 @@ data class Subprogram(
                 DwAttribute.DECL_COLUMN by DwForm.UDATA,
                 DwAttribute.LOW_PC by DwForm.ADDR,
                 DwAttribute.HIGH_PC by DwForm.ADDR,
-            )
+            ]
         )
     }
 }

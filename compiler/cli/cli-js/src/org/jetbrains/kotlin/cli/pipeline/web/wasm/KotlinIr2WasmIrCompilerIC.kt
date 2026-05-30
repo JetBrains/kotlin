@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
 import org.jetbrains.kotlin.ir.backend.js.ic.ModuleArtifact
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.js.config.outputName
 import org.jetbrains.kotlin.wasm.config.wasmGenerateClosedWorldMultimodule
 import org.jetbrains.kotlin.wasm.config.wasmIncludedModuleOnly
@@ -41,19 +42,19 @@ enum class WasmCompilationMode {
 private val WasmModuleArtifactMultimoduleBase.outputFileName: String
     get() = externalModuleName ?: encodeModuleName(moduleName)
 
-private val linkerFunctionSignatures = setOf(
+private val linkerFunctionSignatures: Set<IdSignature> = [
     Synthetics.Functions.registerModuleDescriptorBuiltIn.value,
     Synthetics.Functions.createStringBuiltIn.value,
     Synthetics.Functions.tryGetAssociatedObjectBuiltIn.value,
     Synthetics.Functions.jsToKotlinStringAdapterBuiltIn.value,
     Synthetics.Functions.jsToKotlinAnyAdapterBuiltIn.value,
     Synthetics.Functions.runRootSuitesBuiltIn.value,
-)
-private val linkerTypeSignatures = setOf(
+]
+private val linkerTypeSignatures: Set<IdSignature> = [
     Synthetics.HeapTypes.associatedObjectGetterWrapper.type,
     Synthetics.HeapTypes.throwableBuiltInType.type,
     Synthetics.HeapTypes.anyBuiltInType.type,
-)
+]
 
 private fun WasmCompiledDependencyFileFragment.hasBuiltinSignature() =
     linkerFunctionSignatures.any { it in definedDeclarations.definedFunctions } ||
@@ -64,7 +65,7 @@ private fun WasmModuleArtifactMultimodule.loadDependency(
     builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
     isBuiltInFragments: Boolean
 ): List<WasmCompiledDependencyFileFragment> {
-    val loadedDependencies = mutableListOf<WasmCompiledDependencyFileFragment>()
+    val loadedDependencies: MutableList<WasmCompiledDependencyFileFragment> = []
     for (fileArtifact in this.fileArtifacts) {
         val loadedFragment = fileArtifact.loadIrDependencyFragments() ?: continue
         loadedDependencies.add(loadedFragment)
@@ -80,8 +81,8 @@ private fun WasmModuleArtifactMultimodule.loadRecompileAndDependency(
     builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule>,
     isBuiltInFragments: Boolean
 ): Pair<List<WasmIrProgramFragmentsMultimodule>, List<WasmCompiledDependencyFileFragment>> {
-    val loadedFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
-    val loadedDependencyFragments = mutableListOf<WasmCompiledDependencyFileFragment>()
+    val loadedFragments: MutableList<WasmIrProgramFragmentsMultimodule> = []
+    val loadedDependencyFragments: MutableList<WasmCompiledDependencyFileFragment> = []
     for (fileArtifact in this.fileArtifacts) {
         val loadedFragment = fileArtifact.loadIrFragments() ?: continue
         loadedFragments.add(loadedFragment)
@@ -109,7 +110,7 @@ private fun compileArtifactMultimodule(
     stdlibModuleName: String,
 ): WasmIrModuleConfiguration {
 
-    val currentCodeFragments = mutableListOf<WasmCompiledFileFragment>()
+    val currentCodeFragments: MutableList<WasmCompiledFileFragment> = []
     loadedFragments.mapTo(currentCodeFragments) { fragment ->
         WasmCompiledCodeFileFragment(fragment.definedTypes, fragment.codeDeclarations, fragment.linkerData)
     }
@@ -121,7 +122,7 @@ private fun compileArtifactMultimodule(
     val currentModuleDeclarationReferences = loadedFragments.collectDeclarationReferences { it.referencedDeclarations }
     currentModuleDeclarationReferences.functions.addAll(linkerFunctionSignatures)
 
-    val currentModuleImports = mutableSetOf<WasmModuleDependencyImport>()
+    val currentModuleImports: MutableSet<WasmModuleDependencyImport> = []
 
     val referencedModules = loadedFragments.flatMapTo(mutableSetOf()) { it.referencedModules }
     referencedModules.add(stdlibModuleName)
@@ -174,7 +175,7 @@ private fun compileStdlibArtifactMultimodule(
 ): WasmIrModuleConfiguration {
     val multimoduleOptions = MultimoduleCompileOptions(
         stdlibModuleNameForImport = null,
-        dependencyModules = emptySet(),
+        dependencyModules = [],
         initializeUnit = true,
     )
     return WasmIrModuleConfiguration(
@@ -201,7 +202,7 @@ fun compileIncrementallyMultimodule(
         artifact.forceRebuildWasm || artifact.fileArtifacts.any { it.isModified() }
     }
 
-    val builtInFragments = mutableListOf<WasmIrProgramFragmentsMultimodule>()
+    val builtInFragments: MutableList<WasmIrProgramFragmentsMultimodule> = []
     val dependencyFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmCompiledDependencyFileFragment>>()
     val recompileFragments = mutableMapOf<WasmModuleArtifactMultimodule, List<WasmIrProgramFragmentsMultimodule>>()
     for (recompile in toRecompile) {
@@ -213,7 +214,7 @@ fun compileIncrementallyMultimodule(
         dependencyFragments[recompile] = loadedDependency
     }
 
-    val allReferencedModules = mutableSetOf<String>()
+    val allReferencedModules: MutableSet<String> = []
     allReferencedModules.add(stdLibArtifact.moduleName)
     recompileFragments.values.forEach { fragments ->
         fragments.flatMapTo(allReferencedModules) { it.referencedModules }
@@ -266,7 +267,7 @@ fun compileIncrementallySingleModule(
         it.loadIrFragments()?.fragmentData as? WasmIrProgramFragmentsSingleModule.Compiled
     }
 
-    val currentCodeFragments = mutableListOf<WasmCompiledFileFragment>()
+    val currentCodeFragments: MutableList<WasmCompiledFileFragment> = []
     mainModuleCodeFragments.mapTo(currentCodeFragments) { it.codeFileFragment }
 
     if (stdLibArtifact == mainArtifact) {
@@ -275,14 +276,14 @@ fun compileIncrementallySingleModule(
             codeFragments = currentCodeFragments,
             configuration = configuration
         )
-        return listOf(configuration)
+        return [configuration]
     }
 
     val declarationReferences = mainModuleCodeFragments.collectDeclarationReferences { it.referencedDeclarations }
     declarationReferences.functions.addAll(linkerFunctionSignatures)
 
     val dependencyResolutionMap = parseDependencyResolutionMap(configuration)
-    val currentModuleImports = mutableSetOf<WasmModuleDependencyImport>()
+    val currentModuleImports: MutableSet<WasmModuleDependencyImport> = []
     val dependencyArtifacts = artifacts.filter { it != mainArtifact }
 
     dependencyArtifacts.forEach { dependencyArtifact ->
@@ -325,7 +326,7 @@ fun compileIncrementallySingleModule(
         baseFileName = mainArtifact.outputFileName,
         multimoduleOptions = multimoduleOptions,
     )
-    return listOf(configuration)
+    return [configuration]
 }
 
 fun compileIncrementallyWholeWorld(
@@ -348,5 +349,5 @@ fun compileIncrementallyWholeWorld(
         multimoduleOptions = null,
     )
 
-    return listOf(configuration)
+    return [configuration]
 }

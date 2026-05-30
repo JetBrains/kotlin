@@ -41,7 +41,7 @@ class ArgumentsToParametersMapper(
         val diagnostics: List<KotlinCallDiagnostic>
     )
 
-    val EmptyArgumentMapping = ArgumentMapping(emptyMap(), emptyList())
+    val EmptyArgumentMapping = ArgumentMapping(emptyMap(), [])
 
     fun mapArguments(call: KotlinCall, descriptor: CallableDescriptor): ArgumentMapping =
         mapArguments(call.argumentsInParenthesis, call.externalArgument, descriptor)
@@ -89,7 +89,7 @@ class ArgumentsToParametersMapper(
             diagnostics!!.add(diagnostic)
         }
 
-        fun getDiagnostics() = diagnostics ?: emptyList<KotlinCallDiagnostic>()
+        fun getDiagnostics() = diagnostics ?: []
 
         private fun getParameterByName(name: Name): ValueParameterDescriptor? {
             if (nameToParameter == null) {
@@ -265,7 +265,7 @@ class ArgumentsToParametersMapper(
                     if (parameter.hasDefaultValue()) {
                         result[parameter.original] = ResolvedCallArgument.DefaultArgument
                     } else if (parameter.isVararg) {
-                        result[parameter.original] = ResolvedCallArgument.VarargArgument(emptyList())
+                        result[parameter.original] = ResolvedCallArgument.VarargArgument([])
                     } else {
                         addDiagnostic(NoValueForParameter(parameter, descriptor))
                     }

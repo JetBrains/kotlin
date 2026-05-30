@@ -163,7 +163,7 @@ object TestModuleStructureFactory {
 
         val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(testModule, CompilationStage.FIRST)
 
-        val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, emptyList()]
+        val classpathRoots = compilerConfiguration[CLIConfigurationKeys.CONTENT_ROOTS, []]
             .mapNotNull { (it as? JvmClasspathRoot)?.file?.toPath() }
 
         if (classpathRoots.isNotEmpty()) {
@@ -240,14 +240,14 @@ object TestModuleStructureFactory {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
         val libraryName = stripOutKotlinVersionFromFileName(libraryFile.nameWithoutExtension)
-        val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
-        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
+        val libraryScope = getScopeForLibraryByRoots(project, [libraryFile], testServices)
+        return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, [libraryFile], librarySources = null, isSdk = false)
     }
 
     fun getScopeForLibraryByRoots(project: Project, roots: Collection<Path>, testServices: TestServices): GlobalSearchScope {
         return StandaloneProjectFactory.createLibraryModuleSearchScope(
             roots,
-            emptyList(),
+            [],
             testServices.environmentManager.getApplicationEnvironment(),
             project,
         )

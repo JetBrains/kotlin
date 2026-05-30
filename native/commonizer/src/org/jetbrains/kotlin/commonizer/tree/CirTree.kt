@@ -9,21 +9,21 @@ import org.jetbrains.kotlin.commonizer.cir.*
 import org.jetbrains.kotlin.commonizer.mergedtree.CirProvidedClassifiers
 
 data class CirTreeRoot(
-    val modules: List<CirTreeModule> = emptyList(),
+    val modules: List<CirTreeModule> = [],
     val dependencies: CirProvidedClassifiers = CirProvidedClassifiers.EMPTY
 )
 
 data class CirTreeModule(
     val module: CirModule,
-    val packages: List<CirTreePackage> = emptyList()
+    val packages: List<CirTreePackage> = []
 )
 
 data class CirTreePackage(
     val pkg: CirPackage,
-    val properties: List<CirProperty> = emptyList(),
-    val functions: List<CirFunction> = emptyList(),
-    val classes: List<CirTreeClass> = emptyList(),
-    val typeAliases: List<CirTreeTypeAlias> = emptyList()
+    val properties: List<CirProperty> = [],
+    val functions: List<CirFunction> = [],
+    val classes: List<CirTreeClass> = [],
+    val typeAliases: List<CirTreeTypeAlias> = []
 )
 
 sealed interface CirTreeClassifier {
@@ -38,10 +38,10 @@ data class CirTreeTypeAlias(
 data class CirTreeClass(
     override val id: CirEntityId,
     val clazz: CirClass,
-    val properties: List<CirProperty> = emptyList(),
-    val functions: List<CirFunction> = emptyList(),
-    val constructors: List<CirClassConstructor> = emptyList(),
-    val classes: List<CirTreeClass> = emptyList(),
+    val properties: List<CirProperty> = [],
+    val functions: List<CirFunction> = [],
+    val constructors: List<CirClassConstructor> = [],
+    val classes: List<CirTreeClass> = [],
 ) : CirTreeClassifier
 
 

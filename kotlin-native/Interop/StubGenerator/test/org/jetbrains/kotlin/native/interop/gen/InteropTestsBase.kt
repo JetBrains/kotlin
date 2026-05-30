@@ -68,7 +68,7 @@ abstract class InteropTestsBase {
     protected fun buildNativeLibraryFrom(defFile: File, headersDirectory: File, imports: Imports = ImportsMock()): NativeLibrary {
         return buildNativeLibraryFrom(
                 defFile = defFile,
-                cinteropArguments = arrayOf("-compiler-option", "-I${headersDirectory.absolutePath}"),
+                cinteropArguments = ["-compiler-option", "-I${headersDirectory.absolutePath}"],
                 imports = imports,
         )
     }

@@ -53,7 +53,7 @@ class UnknownVersionRequirementTest {
 
         val [d1, d2] = corrupt(original)
         val incorrect =
-            Metadata(KotlinClassMetadata.CLASS_KIND, intArrayOf(1, 1, 3), d1, d2, extraInt = 0)
+            Metadata(KotlinClassMetadata.CLASS_KIND, [1, 1, 3], d1, d2, extraInt = 0)
 
         val withInvalidRequirement = incorrect.readMetadataAsClass()
         assertEquals(2, withInvalidRequirement.kmClass.versionRequirements.size)

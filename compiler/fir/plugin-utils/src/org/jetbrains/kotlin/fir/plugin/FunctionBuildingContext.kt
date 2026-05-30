@@ -42,7 +42,7 @@ public sealed class FunctionBuildingContext<T : FirFunction>(
         val key: GeneratedDeclarationKey
     )
 
-    protected val valueParameters: MutableList<ValueParameterData> = mutableListOf()
+    protected val valueParameters: MutableList<ValueParameterData> = []
 
     /**
      * Adds value parameter with [type] type to constructed function

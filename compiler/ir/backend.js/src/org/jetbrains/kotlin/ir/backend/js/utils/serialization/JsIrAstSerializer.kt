@@ -88,7 +88,7 @@ private class JsIrAstSerializer {
     private val nameMap = mutableMapOf<JsName, Int>()
     private val stringMap = mutableMapOf<String, Int>()
     private val fileStack: Deque<String> = ArrayDeque()
-    private val importedNames = mutableSetOf<JsName>()
+    private val importedNames: MutableSet<JsName> = []
 
     fun append(fragments: JsIrProgramFragments): JsIrAstSerializer {
         append(fragments.mainFragment)

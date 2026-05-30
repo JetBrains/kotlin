@@ -76,8 +76,8 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val classId = context.owner.classId
-        if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return emptyList()
-        return listOf(createConstructor(context.owner, ExternalClassGeneratorKey).symbol)
+        if (classId != GENERATED_CLASS_ID && classId !in classIdsForMatchedClasses) return []
+        return [createConstructor(context.owner, ExternalClassGeneratorKey).symbol]
     }
 
     private fun generateNestedClass(classId: ClassId, owner: FirClassSymbol<*>): FirClassLikeSymbol<*>? {
@@ -90,24 +90,24 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (callableId.classId !in classIdsForMatchedClasses || callableId.callableName != MATERIALIZE_NAME) return emptyList()
+        if (callableId.classId !in classIdsForMatchedClasses || callableId.callableName != MATERIALIZE_NAME) return []
         val owner = context?.owner
         require(owner is FirRegularClassSymbol)
-        val matchedClassId = owner.matchedClass ?: return emptyList()
-        val matchedClassSymbol = session.getRegularClassSymbolByClassId(matchedClassId) ?: return emptyList()
+        val matchedClassId = owner.matchedClass ?: return []
+        val matchedClassSymbol = session.getRegularClassSymbolByClassId(matchedClassId) ?: return []
         val function = createMemberFunction(
             owner, ExternalClassGeneratorKey, callableId.callableName, matchedClassSymbol.constructStarProjectedType(),
         ) {
             withGeneratedDefaultBody()
         }
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when (classSymbol.classId) {
-            in classIdsForMatchedClasses -> setOf(MATERIALIZE_NAME, SpecialNames.INIT)
-            GENERATED_CLASS_ID -> setOf(SpecialNames.INIT)
-            else -> emptySet()
+            in classIdsForMatchedClasses -> [MATERIALIZE_NAME, SpecialNames.INIT]
+            GENERATED_CLASS_ID -> [SpecialNames.INIT]
+            else -> []
         }
     }
 
@@ -115,12 +115,12 @@ class ExternalClassGenerator(session: FirSession) : FirDeclarationGenerationExte
         return if (classSymbol.classId == GENERATED_CLASS_ID) {
             classIdsForMatchedClasses.keys.mapTo(mutableSetOf()) { it.shortClassName }
         } else {
-            emptySet()
+            []
         }
     }
 
     override fun getTopLevelClassIds(): Set<ClassId> {
-        return if (matchedClasses.isEmpty()) emptySet() else setOf(GENERATED_CLASS_ID)
+        return if (matchedClasses.isEmpty()) [] else [GENERATED_CLASS_ID]
     }
 
     override fun hasPackage(packageFqName: FqName): Boolean {

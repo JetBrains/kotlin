@@ -67,7 +67,7 @@ class IrImportedSchemaGenerator(
 
             context.irBuiltIns.createIrBuilder(declaration.symbol).apply {
                 declaration.body = irBlockBody {
-                    val schemaReaderInstance = irCallConstructor(zeroArg, emptyList())
+                    val schemaReaderInstance = irCallConstructor(zeroArg, [])
                     val call = irCall(provide).also {
                         it.arguments[0] = schemaReaderInstance
                         it.arguments[1] = param

@@ -21,7 +21,7 @@ class DataFrameAddAll : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         val allColumns = receiver.columns() + dataFrames.arguments.flatMap {
-            it.resolvedType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: emptyList()
+            it.resolvedType.findSchemaArgument(isTest)?.getSchema()?.columns() ?: []
         }
         return PluginDataFrameSchema(allColumns)
     }

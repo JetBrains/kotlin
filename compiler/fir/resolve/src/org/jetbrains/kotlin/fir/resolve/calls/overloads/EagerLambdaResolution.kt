@@ -50,7 +50,7 @@ private tailrec fun runEagerLambdaAnalysisAndFilterOutInapplicableCandidates(
     // If only unsuccessful candidates remain, return the first one.
     // We might also return all of them to report OVERLOAD_RESOLUTION_AMBIGUITY, but we preserve the current test data behavior
     // where we report RETURN_TYPE_MISMATCH on the first candidate.
-    return setOf(candidates.first())
+    return [candidates.first()]
 }
 
 /**

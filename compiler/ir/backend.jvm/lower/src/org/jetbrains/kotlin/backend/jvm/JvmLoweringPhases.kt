@@ -151,4 +151,4 @@ val jvmLoweringPhases = jvmModulePhases1 + PerformByIrFilePhase(jvmFilePhases) +
 
 @TestOnly
 internal fun getJvmLoweringPhaseListsForTests(): List<List<AnyNamedPhase>> =
-    listOf(jvmModulePhases1, jvmFilePhases, jvmModulePhases2)
+    [jvmModulePhases1, jvmFilePhases, jvmModulePhases2]

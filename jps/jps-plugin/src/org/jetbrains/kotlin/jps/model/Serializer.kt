@@ -19,14 +19,14 @@ import org.jetbrains.kotlin.config.*
 import java.util.*
 
 class KotlinModelSerializerService : KotlinCommonJpsModelSerializerExtension() {
-    override fun getProjectExtensionSerializers() = listOf(
+    override fun getProjectExtensionSerializers() = [
         KotlinCommonCompilerArgumentsSerializer(),
         Kotlin2JvmCompilerArgumentsSerializer(),
         KotlinCompilerSettingsSerializer(),
         KotlinJpsPluginSettingsSerializer()
-    )
+    ]
 
-    override fun getFacetConfigurationSerializers() = listOf(JpsKotlinFacetConfigurationSerializer)
+    override fun getFacetConfigurationSerializers() = [JpsKotlinFacetConfigurationSerializer]
 }
 
 object JpsKotlinFacetConfigurationSerializer : JpsFacetConfigurationSerializer<JpsKotlinFacetModuleExtension>(

@@ -70,7 +70,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
             return names
                 .flatMap {
                     syntheticScopes.collectSyntheticExtensionProperties(
-                        listOf(classDescriptorOwner.defaultType),
+                        [classDescriptorOwner.defaultType],
                         it,
                         NoLookupLocation.FROM_SYNTHETIC_SCOPE
                     )
@@ -84,7 +84,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
         fun findByGetterOrSetter(getterOrSetter: FunctionDescriptor, syntheticScope: SyntheticScope) =
             findByGetterOrSetter(getterOrSetter,
                                  object : SyntheticScopes {
-                                     override val scopes: Collection<SyntheticScope> = listOf(syntheticScope)
+                                     override val scopes: Collection<SyntheticScope> = [syntheticScope]
                                  })
 
         fun propertyNameByGetMethodName(methodName: Name): Name? = org.jetbrains.kotlin.load.java.propertyNameByGetMethodName(methodName)
@@ -133,7 +133,7 @@ class JavaSyntheticPropertiesScope(
         additionalName: Name? = null
     ): SyntheticPropertyHolder {
         if (lookupTracker === LookupTracker.DO_NOTHING) {
-            return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, emptyList())
+            return if (descriptor == null) SyntheticPropertyHolder.EMPTY else SyntheticPropertyHolder(descriptor, [])
         }
 
         val names = ArrayList<Name>(lookedNames.size + (additionalName?.let { 1 } ?: 0))
@@ -236,7 +236,7 @@ class JavaSyntheticPropertiesScope(
             result = collectSyntheticPropertiesByName(result, type.constructor, name, processedTypes, location)
         }
         return when {
-            result == null -> emptyList()
+            result == null -> []
             result.size > 1 -> result.toSet()
             else -> result
         }
@@ -315,13 +315,13 @@ class JavaSyntheticPropertiesScope(
         receiverTypes: Collection<KotlinType>,
         name: Name,
         location: LookupLocation
-    ): Collection<FunctionDescriptor> = emptyList()
+    ): List<FunctionDescriptor> = []
 
-    override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> = emptyList()
+    override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): List<FunctionDescriptor> = []
 
     private data class SyntheticPropertyHolder(val descriptor: PropertyDescriptor?, val lookedNames: List<Name>) {
         companion object {
-            val EMPTY = SyntheticPropertyHolder(null, emptyList())
+            val EMPTY = SyntheticPropertyHolder(null, [])
         }
     }
 

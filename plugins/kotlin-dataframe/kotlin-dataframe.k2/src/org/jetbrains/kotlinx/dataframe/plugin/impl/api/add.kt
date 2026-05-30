@@ -63,7 +63,7 @@ class AddDslStringInvoke : AbstractInterpreter<Unit>() {
     val Arguments.body by dsl()
 
     override fun Arguments.interpret() {
-        val addDsl = AddDslApproximation(mutableListOf())
+        val addDsl = AddDslApproximation([])
         body(addDsl, emptyMap())
         dsl.columns.add(SimpleColumnGroup(receiver, addDsl.columns))
     }
@@ -75,7 +75,7 @@ class AddDslNamedGroup : AbstractInterpreter<Unit>() {
     val Arguments.body by dsl()
 
     override fun Arguments.interpret() {
-        val addDsl = AddDslApproximation(mutableListOf())
+        val addDsl = AddDslApproximation([])
         body(addDsl, emptyMap())
         dsl.columns.add(SimpleColumnGroup(name, addDsl.columns))
     }
@@ -85,7 +85,7 @@ class AddDslAddGroup : AbstractInterpreter<AddDslApproximation>() {
     val Arguments.body by dsl()
 
     override fun Arguments.interpret(): AddDslApproximation {
-        val addDsl = AddDslApproximation(mutableListOf())
+        val addDsl = AddDslApproximation([])
         body(addDsl, emptyMap())
         return addDsl
     }

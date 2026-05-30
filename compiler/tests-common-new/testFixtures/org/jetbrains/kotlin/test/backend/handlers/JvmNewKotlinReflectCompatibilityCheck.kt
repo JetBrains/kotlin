@@ -181,7 +181,7 @@ class JvmNewKotlinReflectCompatibilityCheck(testServices: TestServices) : JvmBin
 }
 
 private fun Class<*>.newInstanceInNewClassloader(parentClassLoader: ClassLoader?): AlienInstance {
-    val classLoader = URLClassLoader(arrayOf(protectionDomain.codeSource.location), parentClassLoader)
+    val classLoader = URLClassLoader([protectionDomain.codeSource.location], parentClassLoader)
     return AlienInstance(Class.forName(name, true, classLoader).newInstance())
 }
 

@@ -136,7 +136,7 @@ abstract class AbstractFirUseSiteMemberScope(
                     // Case 2: some intersected symbols are overridden.
                     // Create a new ResultOfIntersection from the non-overridden and add it to destination.
                     destination += supertypeScopeContext
-                        .convertGroupedCallablesToIntersectionResults(visibleNotOverridden.map { it.baseScope to listOf(it.member) })
+                        .convertGroupedCallablesToIntersectionResults(visibleNotOverridden.map { it.baseScope to [it.member] })
                         .map { it.chosenSymbol }
                 }
                 // Case 3: all are overridden. Don't add anything to destination.
@@ -163,7 +163,7 @@ abstract class AbstractFirUseSiteMemberScope(
     protected abstract fun collectProperties(name: Name): Collection<FirVariableSymbol<*>>
 
     private fun computeDirectOverriddenForDeclaredFunction(declaredFunctionSymbol: FirNamedFunctionSymbol): List<ResultOfIntersection<FirNamedFunctionSymbol>> {
-        val result = mutableListOf<ResultOfIntersection<FirNamedFunctionSymbol>>()
+        val result: MutableList<ResultOfIntersection<FirNamedFunctionSymbol>> = []
         for (resultOfIntersection in getFunctionsFromSupertypesByName(declaredFunctionSymbol.name)) {
             resultOfIntersection.collectDirectOverriddenForDeclared(declaredFunctionSymbol, result, this::isOverriddenFunction)
         }
@@ -209,7 +209,7 @@ abstract class AbstractFirUseSiteMemberScope(
                 } else if (overridden.isNotEmpty()) {
                     // Case 2: some intersected symbols are overridden.
                     // Create a new ResultOfIntersection from the overridden symbols and add it to result.
-                    result += supertypeScopeContext.convertGroupedCallablesToIntersectionResults(overridden.map { it.baseScope to listOf(it.member) })
+                    result += supertypeScopeContext.convertGroupedCallablesToIntersectionResults(overridden.map { it.baseScope to [it.member] })
                 }
                 // Case 3: No intersected symbols are overridden. Don't add anything to result.
             }

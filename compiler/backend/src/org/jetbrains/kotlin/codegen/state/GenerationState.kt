@@ -110,7 +110,7 @@ class GenerationState(
 
     val typeApproximator: TypeApproximator = TypeApproximator(module.builtIns, config.languageVersionSettings)
 
-    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = mutableListOf()
+    val newFragmentCaptureParameters: MutableList<Triple<String, KotlinType, DeclarationDescriptor>> = []
 
     @Suppress("UNCHECKED_CAST")
     private fun loadClassBuilderInterceptors(): List<ClassGeneratorExtensionAdapter> {

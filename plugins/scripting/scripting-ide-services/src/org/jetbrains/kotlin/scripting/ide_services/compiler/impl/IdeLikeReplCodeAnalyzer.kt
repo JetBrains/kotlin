@@ -49,7 +49,7 @@ class IdeLikeReplCodeAnalyzer(
 
     private fun doStatelessAnalyze(linePsi: KtFile, importedScripts: List<KtFile>): ReplLineAnalysisResultWithStateless {
         scriptDeclarationFactory.setDelegateFactory(
-            FileBasedDeclarationProviderFactory(resolveSession.storageManager, listOf(linePsi) + importedScripts)
+            FileBasedDeclarationProviderFactory(resolveSession.storageManager, [linePsi] + importedScripts)
         )
         replState.submitLine(linePsi)
 

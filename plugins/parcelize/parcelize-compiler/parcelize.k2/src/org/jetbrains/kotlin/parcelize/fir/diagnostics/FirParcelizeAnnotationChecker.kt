@@ -135,11 +135,11 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
         // It's safe to assume that `Parceler` refers to `kotlinx.parcelize.Parceler` rather than `kotlinx.android.parcel.Parceler`,
         // since using the deprecated `WriteWith` annotation is an error.
         val targetType = (context.annotationContainers.lastOrNull() as? FirTypeRef)?.coneType
-            ?.withAttributes(ConeAttributes.Empty) ?: return
+            ?.withAttributes([]) ?: return
         val parcelerSuperType = parcelerTypeSymbol?.getSuperTypes(context.session)
             ?.firstOrNull { it.classId == ParcelizeNames.PARCELER_ID } ?: return
         val expectedType = parcelerSuperType.typeArguments.singleOrNull()?.type
-            ?.withAttributes(ConeAttributes.Empty) ?: return
+            ?.withAttributes([]) ?: return
 
         if (!targetType.isSubtypeOf(expectedType, context.session)) {
             val reportElement = annotationCall.typeArguments.singleOrNull()?.source ?: annotationCall.source

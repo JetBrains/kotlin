@@ -35,7 +35,7 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      * If some file contained in [getEnlargementScopes] is also already contained in [KaModule.baseContentScope], the enlargement scope will
      * have no additional effect with respect to this file.
      */
-    public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
+    public fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> = []
 
     /**
      * Given a [KaModule], [getRestrictionScopes] returns [GlobalSearchScope]s which restrict [KaModule.baseContentScope] to form
@@ -44,7 +44,7 @@ public interface KotlinContentScopeRefiner : KotlinPlatformComponent {
      * If some file not contained in [getRestrictionScopes] is also not contained in [KaModule.baseContentScope], the restriction scope will
      * have no additional effect with respect to this file.
      */
-    public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = emptyList()
+    public fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> = []
 
     @KaPlatformInterface
     public companion object {

@@ -58,7 +58,7 @@ class Fir2IrComponentsStorage(
     // builtins should go after storages and generators, because they use them during initialization
     override val builtins: Fir2IrBuiltinSymbolsContainer = Fir2IrBuiltinSymbolsContainer(this, syntheticIrBuiltinsSymbolsContainer)
 
-    override val irProviders: List<IrProvider> = emptyList()
+    override val irProviders: List<IrProvider> = []
 
     override val typeConverter: Fir2IrTypeConverter = Fir2IrTypeConverter(this, conversionScope)
 

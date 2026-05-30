@@ -166,7 +166,7 @@ open class StatusComputationSession(
         }
     }
 
-    protected open fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> = emptyList()
+    protected open fun additionalSuperTypes(regularClass: FirClass): List<FirTypeRef> = []
 
     /**
      * @return symbols which should be resolved to [FirResolvePhase.STATUS] phase
@@ -229,7 +229,7 @@ abstract class AbstractFirStatusResolveTransformer(
     override val session: FirSession get() = statusComputationSession.useSiteSession
 
     @PrivateForInline
-    val classes: MutableList<FirClass> = mutableListOf()
+    val classes: MutableList<FirClass> = []
     val statusResolver: FirStatusResolver = FirStatusResolver(session, statusComputationSession.useSiteScopeSession)
 
     @OptIn(PrivateForInline::class)
@@ -377,7 +377,7 @@ abstract class AbstractFirStatusResolveTransformer(
     private fun transformPropertyAccessor(
         propertyAccessor: FirPropertyAccessor,
         containingProperty: FirProperty,
-        overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
+        overriddenStatuses: List<FirResolvedDeclarationStatus> = [],
     ): Unit = whileAnalysing(session, propertyAccessor) {
         propertyAccessor.transformStatus(
             this,

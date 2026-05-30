@@ -22,17 +22,17 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
 
     // Common configuration shared between K1 and K2 tests:
-    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val jvmOnlyBoxTests = ["compileKotlinAgainstKotlin"]
     val k1BoxTestDir = "multiplatform/k1"
 
     val jsTranslatorTestPattern = "^([^_](.+))\\.kt$"
     val jsTranslatorReflectionPattern = "^(findAssociatedObject(InSeparatedFile)?(Lazyness)?(AndDCE)?)\\.kt$"
-    val jsTranslatorEsModulesExcludedDirs = listOf(
+    val jsTranslatorEsModulesExcludedDirs = [
         // JsExport is not supported for classes
         "jsExport", "native", "export", "escapedIdentifiers",
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
-    )
+    ]
     // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
     val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
 
@@ -233,7 +233,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
             testClass<AbstractWasmJsIrTextTest> {
                 model(
-                    excludeDirs = listOf("declarations/multiplatform/k1")
+                    excludeDirs = ["declarations/multiplatform/k1"]
                 )
             }
         }

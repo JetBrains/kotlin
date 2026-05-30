@@ -208,9 +208,9 @@ class KotlinCliJavaFileManagerTest : KotlinTestWithEnvironment() {
 
         val root = StandardFileSystems.local().findFileByPath(javaFilesDir.path)!!
         coreJavaFileManager.initialize(
-            JvmDependenciesIndexImpl(listOf(JavaRoot(root, JavaRoot.RootType.SOURCE))),
-            emptyList(),
-            SingleJavaFileRootsIndex(emptyList()),
+            JvmDependenciesIndexImpl([JavaRoot(root, JavaRoot.RootType.SOURCE)]),
+            [],
+            SingleJavaFileRootsIndex([]),
             usePsiClassFilesReading = false,
             perfManager = null, // Don't care about performance measurements in these custom tests
         )

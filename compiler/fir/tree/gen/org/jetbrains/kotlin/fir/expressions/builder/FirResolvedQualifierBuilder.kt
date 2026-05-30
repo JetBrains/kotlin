@@ -32,7 +32,7 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override var source: KtSourceElement? = null
     override var contextSensitiveAlternative: FirPropertyAccessExpression? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var packageFqName: FqName
     override var relativeClassFqName: FqName? = null
     override var symbol: FirClassLikeSymbol<*>? = null
@@ -42,9 +42,9 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
-    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
-    override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val typeArguments: MutableList<FirTypeProjection> = []
 
     override fun build(): FirResolvedQualifier {
         return FirResolvedQualifierImpl(

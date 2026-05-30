@@ -32,7 +32,7 @@ object JvmResolveUtil {
     @Deprecated(K1_DEPRECATION_WARNING, level = DeprecationLevel.ERROR)
     fun createContainer(
         environment: KotlinCoreEnvironment,
-        files: Collection<KtFile> = emptyList(),
+        files: Collection<KtFile> = [],
         targetEnvironment: TargetEnvironment = CompilerEnvironment
     ): ComponentProvider =
         @Suppress("DEPRECATION_ERROR")
@@ -57,7 +57,7 @@ object JvmResolveUtil {
         configuration: CompilerConfiguration,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace = CliBindingTrace(project),
-        klibList: List<KotlinLibrary> = emptyList()
+        klibList: List<KotlinLibrary> = []
     ): AnalysisResult {
         for (file in files) {
             try {
@@ -115,7 +115,7 @@ object JvmResolveUtil {
         configuration: CompilerConfiguration,
         packagePartProviderFactory: (GlobalSearchScope) -> PackagePartProvider,
         trace: BindingTrace = CliBindingTrace(project),
-        klibList: List<KotlinLibrary> = emptyList()
+        klibList: List<KotlinLibrary> = []
     ): AnalysisResult {
         @Suppress("DEPRECATION_ERROR")
         return TopDownAnalyzerFacadeForJVM.analyzeFilesWithJavaIntegration(

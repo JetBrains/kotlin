@@ -83,7 +83,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
         if (!context.es6mode || declaration !is IrConstructor || declaration.hasStrictSignature(context)) return null
 
         if (!declaration.isSyntheticPrimaryConstructor) return null // keep existing element
-        return listOf(declaration.generateInitFunction())
+        return [declaration.generateInitFunction()]
     }
 
     /**
@@ -135,7 +135,7 @@ class ES6SyntheticPrimaryConstructorLowering(val context: JsIrBackendContext) : 
             factory.copyTypeParametersFrom(irClass)
             factory.annotations = annotations
             val thisParameter = irClass.thisReceiver!!.copyTo(factory, kind = IrParameterKind.ExtensionReceiver)
-            factory.parameters = listOf(thisParameter)
+            factory.parameters = [thisParameter]
 
             factory.body = constructor.body
             factory.body?.transformChildrenVoid(
@@ -240,7 +240,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
             factory.copyTypeParametersFrom(irClass)
             val substitutionMap = makeTypeParameterSubstitutionMap(irClass, factory)
             val thisReceiver = irClass.thisReceiver!!
-            factory.parameters = listOf(thisReceiver.copyTo(factory, type = thisReceiver.type.substitute(substitutionMap)))
+            factory.parameters = [thisReceiver.copyTo(factory, type = thisReceiver.type.substitute(substitutionMap))]
             factory.copyParametersFrom(constructor, substitutionMap)
             factory.returnType = irClass.defaultType.substitute(substitutionMap)
             factory.annotations = annotations
@@ -366,7 +366,7 @@ class ES6ConstructorLowering(val context: JsIrBackendContext) : DeclarationTrans
                         map[selfParameterSymbol] = it.symbol
                     }
 
-                return super.visitComposite(JsIrBuilder.buildComposite(context.irBuiltIns.unitType, listOf(newThisVariable)))
+                return super.visitComposite(JsIrBuilder.buildComposite(context.irBuiltIns.unitType, [newThisVariable]))
             }
         })
 

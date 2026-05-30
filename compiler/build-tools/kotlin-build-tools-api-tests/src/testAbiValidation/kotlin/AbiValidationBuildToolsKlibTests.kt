@@ -83,8 +83,8 @@ class AbiValidationBuildToolsKlibTests : BaseCompilationTest() {
                 mapOf(KlibTargetId(KlibTargetType.JS, "js") to module.outputDirectory)
             ) {
                 this[DumpKlibAbiToStringOperation.PATTERN_FILTERS] = filters {
-                    this[AbiFilters.INCLUDE_NAMED] = setOf("A", "useAInLibMain")
-                    this[AbiFilters.EXCLUDE_NAMED] = setOf("DummyInLibMain")
+                    this[AbiFilters.INCLUDE_NAMED] = ["A", "useAInLibMain"]
+                    this[AbiFilters.EXCLUDE_NAMED] = ["DummyInLibMain"]
                 }
             }
             kotlinToolchain.createBuildSession().use { it.executeOperation(operation) }

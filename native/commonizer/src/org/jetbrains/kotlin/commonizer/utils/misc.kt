@@ -21,14 +21,14 @@ internal inline fun <K : Any, V, R> Map<K, V>.compactMapValues(transform: (Map.E
 
 internal inline fun <T, R> Collection<T>.compactMap(transform: (T) -> R): List<R> =
     when (size) {
-        0 -> emptyList()
+        0 -> []
         1 -> singletonList(transform(if (this is List) this[0] else iterator().next()))
         else -> mapTo(ArrayList(size), transform)
     }
 
 internal inline fun <T, R> Array<T>.compactMap(transform: (T) -> R): List<R> =
     when (size) {
-        0 -> emptyList()
+        0 -> []
         1 -> singletonList(transform(this[0]))
         else -> mapTo(ArrayList(size), transform)
     }
@@ -38,18 +38,18 @@ internal inline fun <T, R : Any> Array<T>.compactMapNotNull(transform: (T) -> R)
 }
 
 internal inline fun <T, reified R : Any> Collection<T>.compactMapNotNull(transform: (T) -> R?): List<R> =
-    if (isEmpty()) emptyList() else mapNotNullTo(ArrayList(size), transform).compact()
+    if (isEmpty()) [] else mapNotNullTo(ArrayList(size), transform).compact()
 
 internal inline fun <T, R> Collection<T>.compactMapIndexed(transform: (index: Int, T) -> R): List<R> =
     when (size) {
-        0 -> emptyList()
+        0 -> []
         1 -> singletonList(transform(0, if (this is List) this[0] else iterator().next()))
         else -> mapIndexedTo(ArrayList(size), transform)
     }
 
 internal inline fun <reified T> List<T>.compact(): List<T> =
     when (size) {
-        0 -> emptyList()
+        0 -> []
         1 -> singletonList(this[0])
         else -> when (this) {
             is java.util.ArrayList -> {

@@ -31,11 +31,11 @@ class KotlinStandaloneFirCompilerPluginsProvider(compilerConfiguration: Compiler
         extensionType: ExtensionPointDescriptor<T>,
     ): List<T> {
         if (!module.areCompilerPluginsSupported()) {
-            return emptyList()
+            return []
         }
 
         @Suppress("UNCHECKED_CAST")
-        return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: emptyList()
+        return (extensionStorage.registeredExtensions[extensionType] as? List<T>) ?: []
     }
 
     override fun isPluginOfTypeRegistered(module: KaModule, pluginType: CompilerPluginType): Boolean {

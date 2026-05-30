@@ -198,10 +198,10 @@ class MavenResolverTest : ResolversTestBase() {
 
         val messages = result.reports.map { it.message }
         assertEquals(
-            listOf(
+            [
                 "Environment variable `MY_USERNAME_XXX` for username is not set",
                 "Environment variable `MY_KEY_PASSPHRASE_YYY` for private key passphrase is not set"
-            ),
+            ],
             messages
         )
     }
@@ -281,20 +281,20 @@ class MavenResolverTest : ResolversTestBase() {
         // @DepensOn("eu.jrie.jetbrains:kotlin-shell-core:0.2")
         val dependsOn = dependsOnConstructor.callBy(
             mapOf(
-                dependsOnConstructor.parameters.first() to arrayOf("eu.jrie.jetbrains:kotlin-shell-core:0.2")
+                dependsOnConstructor.parameters.first() to ["eu.jrie.jetbrains:kotlin-shell-core:0.2"]
             )
         )
 
         val repositories = repositoryConstructor.callBy(
             mapOf(
-                repositoryConstructor.parameters.first() to arrayOf(
+                repositoryConstructor.parameters.first() to [
                     "TODO - REWRITE TEST TO OTHER REPOSITORY: https://dl.bbiintray.com/jakubriegel/kotlin-shell"
-                )
+                ]
             )
         )
 
-        val annotationsWithReposFirst = listOf(repositories, dependsOn)
-        val annotationsWithDependsOnFirst = listOf(dependsOn, repositories)
+        val annotationsWithReposFirst = [repositories, dependsOn]
+        val annotationsWithDependsOnFirst = [dependsOn, repositories]
 
         val filesWithReposFirst = runBlocking {
             MavenDependenciesResolver().resolveFromAnnotations(annotationsWithReposFirst)

@@ -31,15 +31,15 @@ class ComputeLocalPackageDependencyInputFilesTests : KGPBaseTest() {
             val packageOne = projectPath.resolve("packageOne").also { it.createDirectories() }.toFile()
             val packageTwo = projectPath.resolve("packageTwo").also { it.createDirectories() }.toFile()
 
-            runProcess(listOf("swift", "package", "init", "--type", "library"), packageOne)
-            runProcess(listOf("swift", "package", "init", "--type", "library"), packageTwo)
+            runProcess(["swift", "package", "init", "--type", "library"], packageOne)
+            runProcess(["swift", "package", "init", "--type", "library"], packageTwo)
 
             plugins {
                 kotlin("multiplatform").apply(false)
             }
             buildScriptInjection {
                 project.tasks.register<ComputeLocalPackageDependencyInputFiles>("computePackage") {
-                    localPackages.set(listOf(packageOne, packageTwo))
+                    localPackages.set([packageOne, packageTwo])
                     filesToTrackFromLocalPackages.set(project.layout.projectDirectory.file("result"))
                 }
             }

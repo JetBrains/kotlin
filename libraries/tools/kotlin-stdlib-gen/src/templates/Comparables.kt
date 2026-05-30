@@ -44,9 +44,9 @@ object ComparableOps : TemplateGroupBase() {
         }
 
     private val numericPrimitives = PrimitiveType.numericPrimitives.sortedBy { it.capacity }.toSet()
-    private val intPrimitives = setOf(PrimitiveType.Int, PrimitiveType.Long)
-    private val shortIntPrimitives = setOf(PrimitiveType.Byte, PrimitiveType.Short)
-    private val uintPrimitives = setOf(PrimitiveType.UInt, PrimitiveType.ULong)
+    private val intPrimitives: Set<PrimitiveType> = [PrimitiveType.Int, PrimitiveType.Long]
+    private val shortIntPrimitives: Set<PrimitiveType> = [PrimitiveType.Byte, PrimitiveType.Short]
+    private val uintPrimitives: Set<PrimitiveType> = [PrimitiveType.UInt, PrimitiveType.ULong]
 
     val f_coerceAtLeast = fn("coerceAtLeast(minimumValue: SELF)") {
         include(Generic)

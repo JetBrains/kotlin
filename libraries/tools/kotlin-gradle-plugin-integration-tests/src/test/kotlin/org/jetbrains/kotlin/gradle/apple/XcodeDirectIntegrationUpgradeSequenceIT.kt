@@ -87,15 +87,15 @@ class XcodeDirectIntegrationUpgradeSequenceIT : KGPBaseTest() {
                 val gradleVersion = arguments.get().first()
                 Stream.of(
                     // Make sure going from prior to current version works
-                    listOf(
+                    [
                         TestVersion("1", "1", TestVersions.Kotlin.STABLE_RELEASE),
                         TestVersion("2", "2", KOTLIN_VERSION),
-                    ),
+                    ],
                     // Make sure going backwards also works
-                    listOf(
+                    [
                         TestVersion("1", "1", KOTLIN_VERSION),
                         TestVersion("2", "2", TestVersions.Kotlin.STABLE_RELEASE),
-                    ),
+                    ],
                 ).map { versions ->
                     Arguments.of(gradleVersion, versions)
                 }

@@ -37,7 +37,7 @@ class JunitRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspa
         if (PowerAssertConfigurationDirectives.WITH_JUNIT5 in module.directives) {
             return junit5Classpath
         } else {
-            return emptyList()
+            return []
         }
     }
 }

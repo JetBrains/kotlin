@@ -74,7 +74,7 @@ inline fun ConeKotlinType.forEachType(
     prepareType: (ConeKotlinType) -> ConeKotlinType = { it },
     action: (ConeKotlinType) -> Unit,
 ) {
-    val stack = mutableListOf(this)
+    val stack: MutableList<ConeKotlinType> = [this]
 
     while (stack.isNotEmpty()) {
         val next = stack.popLast().let(prepareType)

@@ -64,7 +64,7 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
          * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
          * - `?` - any single character.
          */
-        val INCLUDE_NAMED: Option<Set<String>> = Option("INCLUDE_NAMED", emptySet())
+        val INCLUDE_NAMED: Option<Set<String>> = Option("INCLUDE_NAMED", [])
 
         /**
          * Excludes a class, file-level property, or file-level function from a dump by its name.
@@ -83,7 +83,7 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
          * - `*` - zero or any number of characters excluding dot. Using to specify simple class name.
          * - `?` - any single character.
          */
-        val EXCLUDE_NAMED: Option<Set<String>> = Option("EXCLUDE_NAMED", emptySet())
+        val EXCLUDE_NAMED: Option<Set<String>> = Option("EXCLUDE_NAMED", [])
 
         /**
          * Includes a declaration by annotations placed on it.
@@ -99,7 +99,7 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
          *
          * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
          */
-        val INCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("INCLUDE_ANNOTATED_WITH", emptySet())
+        val INCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("INCLUDE_ANNOTATED_WITH", [])
 
         /**
          * Excludes a declaration by annotations placed on it.
@@ -114,6 +114,6 @@ internal class AbiFiltersImpl private constructor(val options: Options) : AbiFil
          *
          * The annotation should not have [Retention] equal to [AnnotationRetention.SOURCE], otherwise, filtering by it will not work.
          */
-        val EXCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("EXCLUDE_ANNOTATED_WITH", emptySet())
+        val EXCLUDE_ANNOTATED_WITH: Option<Set<String>> = Option("EXCLUDE_ANNOTATED_WITH", [])
     }
 }

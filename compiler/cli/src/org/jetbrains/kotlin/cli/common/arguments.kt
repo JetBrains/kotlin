@@ -309,7 +309,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
     }
 
 
-    val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith { mutableSetOf<String>() }.apply {
+    val sourcesByFragmentName: Map<String, Set<String>> = rawFragments.associateWith<_, MutableSet<String>> { [] }.apply {
         rawFragmentSources.forEach { rawFragmentSourceArg ->
             val split = rawFragmentSourceArg.split(":", limit = 2)
             if (split.size < 2) {
@@ -450,7 +450,7 @@ private fun CompilerConfiguration.buildHmppModuleStructure(arguments: CommonComp
                     reportError("Module `$moduleName` not found in $FRAGMENTS_ARG_NAME arguments")
                     continue
                 }
-                val dependencies = getOrPut(module) { mutableListOf() }
+                val dependencies = getOrPut(module) { [] }
                 dependencies += dependency
             }
         }

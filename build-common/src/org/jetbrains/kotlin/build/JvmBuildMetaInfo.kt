@@ -47,6 +47,7 @@ class JvmBuildMetaInfo : BuildMetaInfo() {
         return super.createPropertiesMapFromCompilerArguments(args) + resultMap
     }
 
+    @Suppress("ConvertToCollectionLiterals")
     override val excludedProperties: List<String>
         get() = super.excludedProperties + listOf(
             "excludedProperties",
@@ -66,6 +67,7 @@ class JvmBuildMetaInfo : BuildMetaInfo() {
             "useFastJarFileSystem",
         )
 
+    @Suppress("ConvertToCollectionLiterals")
     override val argumentsListForSpecialCheck: List<String>
         get() = super.argumentsListForSpecialCheck + listOf(
             "allowNoSourceFiles",

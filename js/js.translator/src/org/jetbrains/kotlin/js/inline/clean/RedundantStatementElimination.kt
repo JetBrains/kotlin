@@ -82,14 +82,14 @@ class RedundantStatementElimination(private val root: JsFunction) {
             is JsNameRef -> {
                 when {
                     expression.name in localVars -> {
-                        listOf()
+                        []
                     }
                     expression.sideEffects != SideEffectKind.AFFECTS_STATE -> {
                         val qualifier = expression.qualifier
-                        if (qualifier != null) replace(qualifier) else listOf()
+                        if (qualifier != null) replace(qualifier) else []
                     }
                     else -> {
-                        listOf(expression)
+                        [expression]
                     }
                 }
             }
@@ -105,7 +105,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
 
                     JsUnaryOperator.DEC,
                     JsUnaryOperator.INC,
-                    JsUnaryOperator.DELETE -> listOf(expression)
+                    JsUnaryOperator.DELETE -> [expression]
                 }
             }
 
@@ -135,11 +135,11 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     JsBinaryOperator.AND,
                     JsBinaryOperator.OR -> {
                         val right = replace(expression.arg2)
-                        if (right.isEmpty()) replace(expression.arg1) else listOf(expression)
+                        if (right.isEmpty()) replace(expression.arg1) else [expression]
                     }
 
                     JsBinaryOperator.INOP,
-                    JsBinaryOperator.INSTANCEOF -> listOf(expression)
+                    JsBinaryOperator.INSTANCEOF -> [expression]
 
                     JsBinaryOperator.ASG,
                     JsBinaryOperator.ASG_ADD,
@@ -152,7 +152,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     JsBinaryOperator.ASG_BIT_XOR,
                     JsBinaryOperator.ASG_SHL,
                     JsBinaryOperator.ASG_SHR,
-                    JsBinaryOperator.ASG_SHRU -> listOf(expression)
+                    JsBinaryOperator.ASG_SHRU -> [expression]
                 }
             }
 
@@ -161,7 +161,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     replace(expression.qualifier) + replaceMany(expression.arguments)
                 }
                 else {
-                    listOf(expression)
+                    [expression]
                 }
             }
 
@@ -170,7 +170,7 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     replace(expression.constructorExpression) + replaceMany(expression.arguments)
                 }
                 else {
-                    listOf(expression)
+                    [expression]
                 }
             }
 
@@ -180,9 +180,9 @@ class RedundantStatementElimination(private val root: JsFunction) {
                 // TODO: consider case like this one: cond ? se() + 1 : se() + 2
                 when {
                     thenExpr.isEmpty() && elseExpr.isEmpty() -> replace(expression.testExpression)
-                    thenExpr.isEmpty() -> listOf(JsAstUtils.or(expression.testExpression, expression.elseExpression))
-                    elseExpr.isEmpty() -> listOf(JsAstUtils.and(expression.testExpression, expression.thenExpression))
-                    else -> listOf(expression)
+                    thenExpr.isEmpty() -> [JsAstUtils.or(expression.testExpression, expression.elseExpression)]
+                    elseExpr.isEmpty() -> [JsAstUtils.and(expression.testExpression, expression.thenExpression)]
+                    else -> [expression]
                 }
             }
 
@@ -197,11 +197,11 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     replace(expression.arrayExpression) + replace(expression.indexExpression)
                 }
                 else {
-                    listOf(expression)
+                    [expression]
                 }
             }
 
-            is JsLiteral.JsValueLiteral -> listOf()
+            is JsLiteral.JsValueLiteral -> []
 
             is JsArrayLiteral -> replaceMany(expression.expressions)
 
@@ -213,9 +213,9 @@ class RedundantStatementElimination(private val root: JsFunction) {
                     }
                 }
 
-            is JsFunction -> if (expression.name == null) listOf() else listOf(expression)
+            is JsFunction -> if (expression.name == null) [] else [expression]
 
-            else -> listOf(expression)
+            else -> [expression]
         }
     }
 

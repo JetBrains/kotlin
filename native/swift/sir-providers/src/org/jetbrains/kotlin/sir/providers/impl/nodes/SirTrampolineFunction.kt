@@ -45,7 +45,7 @@ public class SirTrampolineFunction(
 
     override val isAsync: Boolean get() = source.isAsync
 
-    override val bridges: List<SirBridge> = emptyList()
+    override val bridges: List<SirBridge> = []
 
     override var body: SirFunctionBody?
         get() = when {
@@ -56,7 +56,7 @@ public class SirTrampolineFunction(
         set(_) = Unit
 
     private fun buildTrampolineToSource(): SirFunctionBody = SirFunctionBody(
-        listOf(
+        [
             buildString {
                 if (source.errorType != SirType.never) append("try ")
                 if (source.isAsync) append("await ")
@@ -65,7 +65,7 @@ public class SirTrampolineFunction(
                 append(allParameters.joinToString { it.forward ?: error("unreachable") })
                 append(")")
             }
-        )
+        ]
     )
 }
 

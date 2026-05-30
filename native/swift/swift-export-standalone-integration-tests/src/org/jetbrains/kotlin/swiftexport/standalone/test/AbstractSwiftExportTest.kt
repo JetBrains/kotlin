@@ -47,7 +47,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     * For such cases it is possible to pass a klib into the translation unconditionally. KLIBs that are found here would be passed into both
     * execution and generation context, simulating a case when a user has a dependency in their Gradle project.
     * */
-    var givenModules: Set<TestModule.Given> = emptySet()
+    var givenModules: Set<TestModule.Given> = []
     var minOSVersion: String? = null
 
     private val binariesDir get() = testRunSettings.get<Binaries>().testBinariesDir
@@ -137,7 +137,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
     ): InputModule {
         val moduleToTranslate = this
         val klibToTranslate = testCompilationFactory.modulesToKlib(
-            sourceModules = setOf(moduleToTranslate),
+            sourceModules = [moduleToTranslate],
             freeCompilerArgs = freeCompilerArgs,
             settings = testRunSettings,
             produceStaticCache = ProduceStaticCache.No,
@@ -177,12 +177,12 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             return@computeIfAbsent compileSwiftModule(
                 swiftModuleDir = swiftModuleDir,
                 swiftModuleName = name,
-                sources = listOf(swiftApi.toFile()),
+                sources = [swiftApi.toFile()],
                 kotlinBridgeModuleMap = null,
-                deps = emptyList(),
+                deps = [],
             )
         }
-        return setOf(compiledSwiftModule)
+        return [compiledSwiftModule]
     }
 
     private fun SwiftExportModule.BridgesToKotlin.compile(
@@ -202,7 +202,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             return@computeIfAbsent compileSwiftModule(
                 swiftModuleDir = swiftModuleDir,
                 swiftModuleName = name,
-                sources = listOf(files.swiftApi.toFile()),
+                sources = [files.swiftApi.toFile()],
                 kotlinBridgeModuleMap = bridgeModuleFile,
                 deps = deps,
             )
@@ -228,11 +228,11 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                 *(modulemapFileToSwiftCompilerOptionsIfNeeded(kotlinBridgeModuleMap)).toTypedArray(),
                 "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
                 *deps.flatMap { dependency ->
-                    listOf(
+                    [
                         "-L", dependency.binaryLibrary.parentFile.absolutePath,
                         "-I", dependency.binaryLibrary.parentFile.absolutePath,
                         "-l${dependency.moduleName}",
-                    )
+                    ]
                 }.toTypedArray(),
                 "-emit-module", "-parse-as-library", "-emit-library", "-static", "-enable-library-evolution",
                 "-module-name", swiftModuleName,
@@ -247,7 +247,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
         testPathFull: File,
         testName: String = testPathFull.name,
         sources: List<File>,
-        modules: Set<TestModule.Exclusive> = emptySet(),
+        modules: Set<TestModule.Exclusive> = [],
         dependencies: Set<TestModule.Given>? = null,
     ): TestCase {
         val module = TestModule.newDefaultModule()
@@ -266,7 +266,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
             kind = TestKind.STANDALONE_NO_TR,
             modules = setOf(module) + modules,
             freeCompilerArgs = TestCompilerArgs(
-                listOf(
+                [
                     "-opt-in",
                     "kotlin.experimental.ExperimentalNativeApi",
                     "-opt-in",
@@ -274,7 +274,7 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
                     "-opt-in",
                     "kotlin.native.internal.InternalForKotlinNative", // for uninitialized object instance manipulation, and ExternalRCRef.
                     "-Xbinary=swiftExport=true",
-                )
+                ]
             ),
             nominalPackageName = PackageName(testName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {
@@ -309,10 +309,10 @@ abstract class AbstractSwiftExportTest : ExternalSourceTransformersProvider {
 }
 
 private fun modulemapFileToSwiftCompilerOptionsIfNeeded(modulemap: File?) = modulemap?.let {
-    listOf(
+    [
         "-Xcc", "-fmodule-map-file=${it.absolutePath}",
-    )
-} ?: emptyList()
+    ]
+} ?: []
 
 private fun SwiftExportModule.resolvedDependencies(allModules: Set<SwiftExportModule>): List<SwiftExportModule> = dependencies.map { dep ->
     allModules.firstOrNull { it.name == dep.name } ?: error("Module ${this.name} requested non-existing dependency ${dep.name}")

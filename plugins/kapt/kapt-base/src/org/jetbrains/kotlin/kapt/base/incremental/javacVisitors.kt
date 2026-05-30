@@ -205,7 +205,7 @@ private class TypeTreeVisitor(
     }
 }
 
-private val literalKinds = setOf(
+private val literalKinds: Set<Tree.Kind> = [
     Tree.Kind.BOOLEAN_LITERAL,
     Tree.Kind.INT_LITERAL,
     Tree.Kind.LONG_LITERAL,
@@ -213,7 +213,7 @@ private val literalKinds = setOf(
     Tree.Kind.FLOAT_LITERAL,
     Tree.Kind.CHAR_LITERAL,
     Tree.Kind.STRING_LITERAL
-)
+]
 
 /**
  * Visits a constant initializer expression, and extracts all references to constants, either through field select (A.MY_FIELD) or

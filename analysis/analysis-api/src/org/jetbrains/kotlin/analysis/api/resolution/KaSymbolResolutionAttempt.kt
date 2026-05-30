@@ -157,7 +157,7 @@ public val KaSymbolResolutionAttempt.symbols: List<KaSymbol>
  */
 @KaExperimentalApi
 public val KaSymbolResolutionAttempt.successfulSymbols: List<KaSymbol>
-    get() = fold(onSuccess = { it }, onFailure = { emptyList() })
+    get() = fold(onSuccess = { it }, onFailure = { [] })
 
 /**
  * Folds over a [KaSymbolResolutionAttempt] depending on whether the resolution succeeded.
@@ -179,7 +179,7 @@ public inline fun <T> KaSymbolResolutionAttempt.fold(
 
     val attempts = when (this) {
         is KaSymbolResolutionSuccess -> return onSuccess(symbols)
-        is KaSymbolResolutionError -> listOf(this)
+        is KaSymbolResolutionError -> [this]
         is KaCompoundSymbolResolutionError -> attempts
     }
 

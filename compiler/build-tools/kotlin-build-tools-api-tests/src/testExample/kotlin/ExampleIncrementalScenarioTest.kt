@@ -102,7 +102,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
     fun testScenario3(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             val randomInt = Random.nextInt()
             // Use this overload to modify file dynamically

@@ -53,7 +53,7 @@ class TestGroup(
 
     inline fun <reified T> testClass(
         suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
-        annotations: List<AnnotationModel> = emptyList(),
+        annotations: List<AnnotationModel> = [],
         noinline init: TestClass.() -> Unit,
     ) {
         val testKClass = T::class.java
@@ -64,7 +64,7 @@ class TestGroup(
         testKClass: Class<*>,
         baseTestClassName: String = testKClass.name,
         suiteTestClassName: String = getDefaultSuiteTestClassName(baseTestClassName.substringAfterLast('.')),
-        annotations: List<AnnotationModel> = emptyList(),
+        annotations: List<AnnotationModel> = [],
         init: TestClass.() -> Unit,
     ) {
         testClasses += TestClass(testKClass, baseTestClassName, suiteTestClassName, annotations).apply(init)
@@ -82,7 +82,7 @@ class TestGroup(
             get() = this@TestGroup.testsRoot
 
         val testModels = ArrayList<TestClassModel>()
-        private val methodModels = mutableListOf<MethodModel<*>>()
+        private val methodModels: MutableList<MethodModel<*>> = []
 
         fun method(method: MethodModel<*>) {
             methodModels += method
@@ -127,8 +127,8 @@ class TestGroup(
             testMethod: String = "doTest",
             testClassName: String? = null,
             targetBackend: TargetBackend? = null,
-            excludeDirs: List<String> = listOf(),
-            excludeDirsRecursively: List<String> = listOf(),
+            excludeDirs: List<String> = [],
+            excludeDirsRecursively: List<String> = [],
             skipTestAllFilesCheck: Boolean = defaultSkipTestAllFilesCheck,
             smokeTest: Boolean = false,
             smokeTestLimit: Int = 1,

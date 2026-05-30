@@ -22,14 +22,14 @@ data class TailSuspendCalls(val callSites: Set<IrCall>, val hasNotTailSuspendCal
  */
 fun collectTailSuspendCalls(context: CommonBackendContext, irFunction: IrSimpleFunction): TailSuspendCalls {
     require(irFunction.isSuspend) { "A suspend function expected: ${irFunction.render()}" }
-    val body = irFunction.body ?: return TailSuspendCalls(emptySet(), false)
+    val body = irFunction.body ?: return TailSuspendCalls([], false)
 
     class VisitorState(val insideTryBlock: Boolean, val isTailExpression: Boolean)
 
     val isUnitReturn = irFunction.returnType.isUnit()
     var hasNotTailSuspendCall = false
-    val tailSuspendCalls = mutableSetOf<IrCall>()
-    val tailReturnableBlocks = mutableSetOf<IrReturnableBlockSymbol>()
+    val tailSuspendCalls: MutableSet<IrCall> = []
+    val tailReturnableBlocks: MutableSet<IrReturnableBlockSymbol> = []
 
     val visitor = object : IrVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {

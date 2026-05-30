@@ -42,7 +42,7 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
         inlinedClassPrefix: String,
         ownMethodHash: Long
     ): Long {
-        val usedInstances = methodToUsedFqNames[methodSignature] ?: mutableSetOf()
+        val usedInstances = methodToUsedFqNames[methodSignature] ?: []
         return ownMethodHash xor classMultiHashProvider.searchAndGetFullAbiHashOfUsedClasses(usedInstances, inlinedClassPrefix)
     }
 }
@@ -65,7 +65,7 @@ private class InstanceBasedSnapshotter(
     private fun extractInlinedSnapshotAndDependenciesFromClassData(classData: ClassFileWithContents): Long {
         //here we want to visit every method, so it's virtually impossible to reuse the classVisitor from regular snapshotting
 
-        val usedClasses = mutableSetOf<JvmClassName>()
+        val usedClasses: MutableSet<JvmClassName> = []
         val visitor = InstanceOwnerRecordingClassVisitor(delegateClassVisitor = null, allUsedClassesSet = usedClasses)
         val classReader = ClassReader(classData.contents)
         classReader.accept(visitor, 0)
@@ -124,7 +124,7 @@ private class PrefixBasedSnapshotter(
     }
 
     fun getSetOfClasses(addedClasses: Set<JvmClassName>, processedClasses: Set<JvmClassName>): Set<JvmClassName> {
-        val accumulator = mutableSetOf<JvmClassName>()
+        val accumulator: MutableSet<JvmClassName> = []
         addedClasses.flatMapTo(accumulator) { addedClass ->
             getRangeByPredicate(addedClass.internalName)
         }.retainAll {

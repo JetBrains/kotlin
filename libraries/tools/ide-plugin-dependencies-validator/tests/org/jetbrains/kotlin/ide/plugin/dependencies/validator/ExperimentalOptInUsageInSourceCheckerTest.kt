@@ -15,7 +15,7 @@ class ExperimentalOptInUsageInSourceCheckerTest {
     fun test() {
         println(Paths.get(".").toAbsolutePath())
         val sourcePath = basePath.resolve("testData/source")
-        val usages = ExperimentalOptInUsageInSourceChecker.checkExperimentalOptInUsage(listOf(sourcePath))
+        val usages = ExperimentalOptInUsageInSourceChecker.checkExperimentalOptInUsage([sourcePath])
         Assertions.assertEquals(
             listOf(
                 ExperimentalAnnotationUsage(Paths.get("pckg/experimentalPathApi.kt"), lineNumber = 1, "ExperimentalPathApi"),

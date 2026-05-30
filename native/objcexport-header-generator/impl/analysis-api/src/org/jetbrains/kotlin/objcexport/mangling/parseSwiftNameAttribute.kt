@@ -10,14 +10,14 @@ internal fun parseSwiftPropertyNameAttribute(attribute: String): ObjCMemberDetai
     val swiftNameMatch = swiftNameRegex.find(attribute)
     if (swiftNameMatch != null) {
         val propertyName = swiftNameMatch.groupValues[1]
-        return ObjCMemberDetails(propertyName, emptyList())
+        return ObjCMemberDetails(propertyName, [])
     } else error("Invalid swift_name property attribute: $attribute")
 }
 
 internal fun parseSwiftMethodNameAttribute(
     attribute: String,
     isConstructor: Boolean = false,
-    parameters: List<ObjCParameter> = emptyList(),
+    parameters: List<ObjCParameter> = [],
 ): ObjCMemberDetails {
     val swiftNameMatch = swiftNameRegex.find(attribute)
     if (swiftNameMatch != null) {
@@ -28,9 +28,10 @@ internal fun parseSwiftMethodNameAttribute(
 
         if (!methodName.isNullOrEmpty()) {
             val hasErrorParameter = parameters.any { parameter -> parameter.isErrorParameter }
+            @Suppress("ConvertToCollectionLiterals")
             return ObjCMemberDetails(
                 name = methodName,
-                parameters = parameterNames + if (hasErrorParameter) listOf("$errorParameterName:") else emptyList(),
+                parameters = parameterNames + if (hasErrorParameter) listOf("$errorParameterName:") else [],
                 isConstructor = isConstructor,
                 hasErrorParameter = hasErrorParameter
             )
@@ -56,14 +57,14 @@ internal fun parseSwiftNameParameters(swiftNameValue: String): List<String> {
     return when {
         match != null -> {
             val params = match.groupValues[1]
-            if (params.isBlank()) emptyList()
+            if (params.isBlank()) []
             else {
                 params.split(':')
                     .filter { it.isNotEmpty() }
                     .map { param -> "$param:" }
             }
         }
-        else -> emptyList()
+        else -> []
     }
 }
 

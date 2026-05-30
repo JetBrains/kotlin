@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.parentsWithSelf
 import org.jetbrains.kotlin.resolve.BindingContext
@@ -239,10 +240,10 @@ internal class KaFe10Resolver(
                 -> return resolvedCall?.toKaCallCandidates().orEmpty()
         }
 
-        val resolutionScope = unwrappedPsi.getResolutionScope(bindingContext) ?: return emptyList()
+        val resolutionScope = unwrappedPsi.getResolutionScope(bindingContext) ?: return []
         val call = unwrappedPsi.getCall(bindingContext)?.let {
             if (it is CallTransformer.CallForImplicitInvoke) it.outerCall else it
-        } ?: return emptyList()
+        } ?: return []
         val dataFlowInfo = bindingContext.getDataFlowInfoBefore(unwrappedPsi)
         val bindingTrace = DelegatingBindingTrace(bindingContext, "Trace for all candidates", withParentDiagnostics = false)
         val dataFlowValueFactory = DataFlowValueFactoryImpl(analysisContext.languageVersionSettings)
@@ -296,14 +297,14 @@ internal class KaFe10Resolver(
         }
 
     private fun KaCallResolutionAttempt?.toKaCallCandidates(): List<KaCallCandidate> = when (this) {
-        null -> emptyList()
+        null -> []
 
-        is KaCallResolutionSuccess -> listOf(
+        is KaCallResolutionSuccess -> [
             KaBaseApplicableCallCandidate(
                 backingCandidate = call,
                 backingIsInBestCandidates = true,
             )
-        )
+        ]
 
         is KaCallResolutionError -> candidateCalls.map {
             KaBaseInapplicableCallCandidate(
@@ -314,7 +315,7 @@ internal class KaFe10Resolver(
         }
 
         is KaMultiCallResolutionAttempt -> fold(
-            onSuccess = { listOf(KaBaseApplicableCallCandidate(backingCandidate = it, backingIsInBestCandidates = true)) },
+            onSuccess = { [KaBaseApplicableCallCandidate(backingCandidate = it, backingIsInBestCandidates = true)] },
             onFailure = { attempts -> attempts.flatMap { it.toKaCallCandidates() } },
         )
     }
@@ -334,12 +335,12 @@ internal class KaFe10Resolver(
         }
 
         return when (this) {
-            is KaCallResolutionSuccess -> listOf(
+            is KaCallResolutionSuccess -> [
                 KaBaseApplicableCallCandidate(
                     backingCandidate = call,
                     backingIsInBestCandidates = (call as KaCall).isInBestCandidates(),
                 ),
-            )
+            ]
 
             is KaCallResolutionError -> candidateCalls.map {
                 KaBaseInapplicableCallCandidate(
@@ -351,23 +352,23 @@ internal class KaFe10Resolver(
 
             is KaMultiCallResolutionAttempt -> fold(
                 onSuccess = {
-                    listOf(
+                    [
                         KaBaseApplicableCallCandidate(
                             backingCandidate = it,
                             backingIsInBestCandidates = (it as KaCall).isInBestCandidates(),
                         ),
-                    )
+                    ]
                 },
                 onFailure = { attempts -> attempts.flatMap { it.toKaCallCandidates(bestCandidateDescriptors) } },
             )
-            null -> emptyList()
+            null -> []
         }
     }
 
     private fun handleAsCompoundAssignment(context: BindingContext, binaryExpression: KtBinaryExpression): KaCallResolutionAttempt? {
         val left = binaryExpression.left ?: return null
         val right = binaryExpression.right
-        val resolvedCalls = mutableListOf<ResolvedCall<*>>()
+        val resolvedCalls: MutableList<ResolvedCall<*>> = []
         return when (binaryExpression.operationToken) {
             KtTokens.EQ -> {
                 val resolvedCall = left.getResolvedCall(context) ?: return null
@@ -434,7 +435,7 @@ internal class KaFe10Resolver(
     private fun handleAsIncOrDecOperator(context: BindingContext, unaryExpression: KtUnaryExpression): KaCallResolutionAttempt? {
         if (unaryExpression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
         val operatorCall = unaryExpression.getResolvedCall(context) ?: return null
-        val resolvedCalls = mutableListOf(operatorCall)
+        val resolvedCalls: MutableList<ResolvedCall<out CallableDescriptor>> = [operatorCall]
         val operatorPartiallyAppliedSymbol = operatorCall.toPartiallyAppliedFunctionSymbol<KaNamedFunctionSymbol>(context) ?: return null
         val baseExpression = unaryExpression.baseExpression
         val kind = unaryExpression.getInOrDecOperationKind()
@@ -492,15 +493,15 @@ internal class KaFe10Resolver(
                 resolvedCall.functionCall.toFunctionKtCall(context)
             } else {
                 resolvedCall.variableCall.toPropertyRead(context)
-            }?.let { createCallInfo(context, element, it, listOf(resolvedCall), diagnostics) }
+            }?.let { createCallInfo(context, element, it, [resolvedCall], diagnostics) }
         } else {
-            resolvedCall.toFunctionKtCall(context)?.let { createCallInfo(context, element, it, listOf(resolvedCall), diagnostics) }
+            resolvedCall.toFunctionKtCall(context)?.let { createCallInfo(context, element, it, [resolvedCall], diagnostics) }
         }
     }
 
     private fun handleAsPropertyRead(context: BindingContext, element: KtElement): KaCallResolutionAttempt? {
         val call = element.getResolvedCall(context) ?: return null
-        return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, listOf(call)) }
+        return call.toPropertyRead(context)?.let { createCallInfo(context, element, it, [call]) }
     }
 
     private fun ResolvedCall<*>.toPropertyRead(context: BindingContext): KaVariableAccessCall? {
@@ -782,7 +783,7 @@ internal class KaFe10Resolver(
                 diagnostic.b as Collection<ResolvedCall<*>>
             }
             else -> {
-                emptyList()
+                []
             }
         }
 
@@ -943,13 +944,13 @@ internal class KaFe10Resolver(
     }
 
     private companion object {
-        private val operatorWithAssignmentVariant = setOf(
+        private val operatorWithAssignmentVariant: Set<Name> = [
             OperatorNameConventions.PLUS,
             OperatorNameConventions.MINUS,
             OperatorNameConventions.TIMES,
             OperatorNameConventions.DIV,
             OperatorNameConventions.REM,
-        )
+        ]
 
         private val callArgErrors = setOf(
             Errors.ARGUMENT_PASSED_TWICE,
@@ -995,27 +996,28 @@ internal class KaFe10Resolver(
             *Errors.TYPECHECKER_HAS_RUN_INTO_RECURSIVE_PROBLEM_IN_AUGMENTED_ASSIGNMENT.factories,
         )
 
-        private val syntaxErrors = setOf(
+        private val syntaxErrors: Set<DiagnosticFactory0<*>> = [
             Errors.ASSIGNMENT_IN_EXPRESSION_CONTEXT,
-        )
+        ]
 
-        val diagnosticWithResolvedCallsAtPosition1 = setOf(
+        val diagnosticWithResolvedCallsAtPosition1: Set<DiagnosticFactory1<*, *>> = [
             Errors.OVERLOAD_RESOLUTION_AMBIGUITY,
             Errors.NONE_APPLICABLE,
             Errors.CANNOT_COMPLETE_RESOLVE,
             Errors.UNRESOLVED_REFERENCE_WRONG_RECEIVER,
             Errors.ASSIGN_OPERATOR_AMBIGUITY,
             Errors.ITERATOR_AMBIGUITY,
-        )
+        ]
 
-        val diagnosticWithResolvedCallsAtPosition2 = setOf(
-            Errors.COMPONENT_FUNCTION_AMBIGUITY,
-            Errors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
-            Errors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
-            Errors.DELEGATE_PD_METHOD_NONE_APPLICABLE,
-        )
+        val diagnosticWithResolvedCallsAtPosition2: Set<DiagnosticFactory2<*, *, *>> =
+            [
+                Errors.COMPONENT_FUNCTION_AMBIGUITY,
+                Errors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
+                Errors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+                Errors.DELEGATE_PD_METHOD_NONE_APPLICABLE,
+            ]
 
         private val DiagnosticFactoryForDeprecation<*, *, *>.factories: Array<DiagnosticFactoryWithPsiElement<*, *>>
-            get() = arrayOf(warningFactory, errorFactory)
+            get() = [warningFactory, errorFactory]
     }
 }

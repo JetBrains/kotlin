@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.name.ClassId
 
 public fun ClassId.createConeType(
     session: FirSession,
-    typeArguments: Array<ConeTypeProjection> = emptyArray(),
+    typeArguments: Array<ConeTypeProjection> = [],
     nullable: Boolean = false
 ): ConeClassLikeType {
     val symbol = session.symbolProvider.getClassLikeSymbolByClassId(this) as? FirClassSymbol<*>

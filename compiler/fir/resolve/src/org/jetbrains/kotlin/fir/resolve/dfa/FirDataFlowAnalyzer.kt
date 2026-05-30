@@ -1224,9 +1224,9 @@ abstract class FirDataFlowAnalyzer(
         val arguments = qualifiedAccess.orderedArguments(callee) ?: return
 
         var hasAnyContractsToProcess = false
-        val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = mutableListOf()
-        val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = mutableListOf()
-        val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = mutableListOf()
+        val conditionalEffects: MutableList<ConeConditionalEffectDeclaration> = []
+        val conditionalReturns: MutableList<ConeConditionalReturnsDeclaration> = []
+        val conditionalHoldsIn: MutableList<ConeHoldsInEffectDeclaration> = []
 
         val indexOfLambdaArgument =
             if (targetLambdaArgument == null) -1
@@ -1686,8 +1686,8 @@ abstract class FirDataFlowAnalyzer(
     private fun CFGNode<*>.buildDefaultFlow(
         builder: (FlowPath, MutableFlow) -> Unit,
     ): MutableFlow {
-        val previousFlows = mutableListOf<PersistentFlow>()
-        val statementFlows = mutableListOf<PersistentFlow>()
+        val previousFlows: MutableList<PersistentFlow> = []
+        val statementFlows: MutableList<PersistentFlow> = []
 
         for (node in previousNodes) {
             val edge = edgeFrom(node)
@@ -1731,8 +1731,8 @@ abstract class FirDataFlowAnalyzer(
         builder: (FlowPath, MutableFlow) -> Unit,
     ): MutableFlow {
         val alternateFlowStart = this is FinallyBlockEnterNode
-        val previousFlows = mutableListOf<PersistentFlow>()
-        val statementFlows = mutableListOf<PersistentFlow>()
+        val previousFlows: MutableList<PersistentFlow> = []
+        val statementFlows: MutableList<PersistentFlow> = []
 
         for (node in previousNodes) {
             val edge = edgeFrom(node)
@@ -1780,7 +1780,7 @@ abstract class FirDataFlowAnalyzer(
     private fun CFGNode<*>.propagateAlternateFlows(
         builder: (FlowPath, MutableFlow) -> Unit,
     ) {
-        val propagatedPaths = mutableSetOf<FlowPath>()
+        val propagatedPaths: MutableSet<FlowPath> = []
         for (node in previousNodes) {
             if (node.alternateFlowPaths.isEmpty()) continue
 
@@ -1802,7 +1802,7 @@ abstract class FirDataFlowAnalyzer(
     private fun CFGNode<*>.createAlternateFlows(
         builder: (FlowPath, MutableFlow) -> Unit = { _, _ -> },
     ) {
-        val createdLabels = mutableSetOf<EdgeLabel>()
+        val createdLabels: MutableSet<EdgeLabel> = []
         for (node in previousNodes) {
             val edge = edgeFrom(node)
             if (edge.label == UncaughtExceptionPath || !usedInDfa(edge)) continue

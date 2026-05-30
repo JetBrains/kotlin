@@ -33,9 +33,9 @@ class JvmBackendClassResolverForModuleWithDependencies(
 ) : JvmBackendClassResolver {
 
     override fun resolveToClassDescriptors(type: Type): List<ClassDescriptor> {
-        if (type.sort != Type.OBJECT) return emptyList()
+        if (type.sort != Type.OBJECT) return []
 
-        val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(type.classId) ?: return emptyList()
+        val platformClass = moduleDescriptor.findClassAcrossModuleDependencies(type.classId) ?: return []
 
         return JavaToKotlinClassMapper.mapPlatformClass(platformClass) + platformClass
     }

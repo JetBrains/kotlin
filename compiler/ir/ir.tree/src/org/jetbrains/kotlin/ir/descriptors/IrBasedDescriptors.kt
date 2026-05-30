@@ -99,7 +99,7 @@ abstract class IrBasedCallableDescriptor<T : IrDeclaration>(owner: T) : Callable
 
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
 
-    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = emptyList()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = []
 
     override fun getTypeParameters(): List<TypeParameterDescriptor> {
         unsupportedInIrBasedDescriptor()
@@ -166,9 +166,9 @@ open class IrBasedValueParameterDescriptor(owner: IrValueParameter) : ValueParam
 
     override fun copy(newOwner: CallableDescriptor, newName: Name, newIndex: Int) = unsupportedInIrBasedDescriptor()
 
-    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
-    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
-    override fun getValueParameters(): List<ValueParameterDescriptor> = emptyList()
+    override fun getOverriddenDescriptors(): List<ValueParameterDescriptor> = []
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = []
+    override fun getValueParameters(): List<ValueParameterDescriptor> = []
 
     override fun getOriginal() = this
 
@@ -197,7 +197,7 @@ open class IrBasedReceiverParameterDescriptor(owner: IrValueParameter) : Receive
 
     override fun copy(newOwner: DeclarationDescriptor) = unsupportedInIrBasedDescriptor()
 
-    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
+    override fun getOverriddenDescriptors(): List<ValueParameterDescriptor> = []
 
     override fun getOriginal() = this
 
@@ -236,7 +236,7 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
 
             override val supertypeLoopChecker = SupertypeLoopChecker.EMPTY
 
-            override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
+            override fun getParameters(): List<TypeParameterDescriptor> = []
 
             override fun isFinal() = false
 
@@ -262,7 +262,7 @@ open class IrBasedTypeParameterDescriptor(owner: IrTypeParameter) : TypeParamete
 
     private val _defaultType: SimpleType by lazy {
         KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            TypeAttributes.Empty, typeConstructor, emptyList(), false,
+            TypeAttributes.Empty, typeConstructor, [], false,
             LazyScopeAdapter {
                 TypeIntersectionScope.create(
                     "Scope for type parameter " + name.asString(),
@@ -494,7 +494,7 @@ open class IrBasedClassConstructorDescriptor(owner: IrConstructor) : ClassConstr
 
     override fun getName() = owner.name
 
-    override fun getOverriddenDescriptors(): MutableCollection<out FunctionDescriptor> = mutableListOf()
+    override fun getOverriddenDescriptors(): MutableList<FunctionDescriptor> = []
 
     override fun getInitialSignatureDescriptor(): FunctionDescriptor? = null
 
@@ -737,7 +737,7 @@ open class IrBasedEnumEntryDescriptor(owner: IrEnumEntry) : ClassDescriptor, IrB
         unsupportedInIrBasedDescriptor()
     }
 
-    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getDeclaredTypeParameters(): List<TypeParameterDescriptor> = []
 
     override fun getSealedSubclasses(): Collection<ClassDescriptor> = unsupportedInIrBasedDescriptor()
 
@@ -799,7 +799,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         unsupportedInIrBasedDescriptor()
     }
 
-    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
+    override fun getOverriddenDescriptors(): MutableList<PropertyDescriptor> = []
 
     override fun copy(
         newOwner: DeclarationDescriptor?,
@@ -811,7 +811,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         unsupportedInIrBasedDescriptor()
     }
 
-    override fun getValueParameters(): MutableList<ValueParameterDescriptor> = mutableListOf()
+    override fun getValueParameters(): MutableList<ValueParameterDescriptor> = []
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? {
         return null
@@ -862,7 +862,7 @@ open class IrBasedPropertyDescriptor(owner: IrProperty) :
         ?.toIrBasedDescriptor() as? ReceiverParameterDescriptor
 
     override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
-        return getter?.contextReceiverParameters ?: emptyList()
+        return getter?.contextReceiverParameters ?: []
     }
 
     override fun isExternal() = owner.isExternal
@@ -1013,7 +1013,7 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
 
     override fun hasSynthesizedParameterNames() = false
 
-    override fun getOverriddenDescriptors(): MutableCollection<out PropertyDescriptor> = mutableListOf()
+    override fun getOverriddenDescriptors(): MutableList<PropertyDescriptor> = []
 
     override fun copy(
         newOwner: DeclarationDescriptor?,
@@ -1025,7 +1025,7 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
         unsupportedInIrBasedDescriptor()
     }
 
-    override fun getValueParameters(): MutableList<ValueParameterDescriptor> = mutableListOf()
+    override fun getValueParameters(): MutableList<ValueParameterDescriptor> = []
 
     override fun getCompileTimeInitializer(): ConstantValue<*>? {
         unsupportedInIrBasedDescriptor()
@@ -1037,9 +1037,9 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
         unsupportedInIrBasedDescriptor()
     }
 
-    override fun getAccessors(): MutableList<PropertyAccessorDescriptor> = mutableListOf()
+    override fun getAccessors(): MutableList<PropertyAccessorDescriptor> = []
 
-    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = []
 
     override fun getVisibility() = owner.visibility
 
@@ -1075,7 +1075,7 @@ open class IrBasedFieldDescriptor(owner: IrField) : PropertyDescriptor, IrBasedD
         owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.extensionReceiverParameter
 
     override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> {
-        return owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.contextReceiverParameters ?: emptyList()
+        return owner.correspondingPropertySymbol?.owner?.toIrBasedDescriptor()?.contextReceiverParameters ?: []
     }
 
     override fun isExternal() = owner.isExternal

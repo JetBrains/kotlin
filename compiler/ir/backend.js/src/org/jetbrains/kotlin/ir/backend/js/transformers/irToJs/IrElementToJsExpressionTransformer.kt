@@ -191,7 +191,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
         return if (context.staticContext.backendContext.es6mode) {
             JsInvocation(JsSuperRef(), arguments)
         } else {
-            JsInvocation(callFuncRef, listOf(thisRef) memoryOptimizedPlus arguments)
+            JsInvocation(callFuncRef, [thisRef] memoryOptimizedPlus arguments)
         }.withSource(expression, context)
     }
 
@@ -214,7 +214,7 @@ class IrElementToJsExpressionTransformer : BaseIrElementToJsNodeTransformer<JsEx
                     JsNew(refForExternalClass, arguments.memoryOptimizedMap { it.jsArgument })
                 } else {
                     val dummyThisArg = TranslatedCallArgument(klass.thisReceiver!!, null, JsNullLiteral())
-                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray(listOf(dummyThisArg) + arguments, context)
+                    val argumentsAsSingleArray = argumentsWithVarargAsSingleArray([dummyThisArg] + arguments, context)
                     JsNew(
                         JsInvocation(
                             JsNameRef("apply", JsNameRef("bind", JsNameRef("Function"))),

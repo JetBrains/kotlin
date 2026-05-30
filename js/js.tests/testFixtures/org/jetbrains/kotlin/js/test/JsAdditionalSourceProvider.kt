@@ -24,10 +24,10 @@ class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceP
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
+        if (JsEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return []
         // Add the files only to common modules with no dependencies, otherwise they'll produce "IrSymbol is already bound"
         if (module.allDependencies.isNotEmpty()) {
-            return emptyList()
+            return []
         }
         return getAdditionalKotlinFiles(module.files.first().originalFile.parent).map { it.toTestFile() }
     }
@@ -39,9 +39,9 @@ class JsAdditionalSourceProvider(testServices: TestServices) : AdditionalSourceP
 
         private fun getFilesInDirectoryByExtension(directory: String, extension: String): List<String> {
             val dir = ForTestCompileRuntime.transformTestDataPath(directory)
-            if (!dir.isDirectory) return emptyList()
+            if (!dir.isDirectory) return []
 
-            return dir.listFiles { it.extension == extension }?.map { it.absolutePath } ?: emptyList()
+            return dir.listFiles { it.extension == extension }?.map { it.absolutePath } ?: []
         }
 
         private fun getAdditionalFiles(directory: String, extension: String): List<File> {

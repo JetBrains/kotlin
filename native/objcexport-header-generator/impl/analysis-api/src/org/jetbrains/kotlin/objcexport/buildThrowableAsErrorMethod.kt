@@ -12,9 +12,9 @@ internal fun buildThrowableAsErrorMethod(): ObjCMethod {
         comment = null,
         isInstanceMethod = true,
         returnType = ObjCClassType("NSError"),
-        selectors = listOf("asError"),
-        parameters = emptyList(),
-        attributes = listOf(swiftNameAttribute("asError()")),
+        selectors = ["asError"],
+        parameters = [],
+        attributes = [swiftNameAttribute("asError()")],
         origin = null
     )
 }

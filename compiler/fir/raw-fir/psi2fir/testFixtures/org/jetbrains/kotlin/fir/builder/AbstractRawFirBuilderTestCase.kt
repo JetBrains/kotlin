@@ -251,7 +251,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
 
     companion object {
         fun FirElementWithResolveState.collectAnnotations(): Collection<AnnotationWithContext> {
-            val result = mutableListOf<AnnotationWithContext>()
+            val result: MutableList<AnnotationWithContext> = []
             val contextStack = ContextStack()
 
             this.accept(object : FirVisitorVoid() {
@@ -272,7 +272,7 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         class AnnotationWithContext(val annotation: FirAnnotationCall, val context: String)
 
         private class ContextStack {
-            val stack = mutableListOf<FirDeclaration>()
+            val stack: MutableList<FirDeclaration> = []
 
             inline fun withStack(element: FirElement, action: () -> Unit) {
                 if (element !is FirDeclaration) {

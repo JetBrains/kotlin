@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.test.services.assertions
 
 abstract class AbstractContainingModuleByFileTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     object Directives : SimpleDirectivesContainer() {
         // Note that there's already a global directive `ANALYSIS_CONTEXT_MODULE` which sets a dangling file's context module directly, so

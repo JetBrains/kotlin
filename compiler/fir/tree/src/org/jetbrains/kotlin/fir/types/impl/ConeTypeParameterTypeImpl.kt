@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 class ConeTypeParameterTypeImpl(
     override val lookupTag: ConeTypeParameterLookupTag,
     override val isMarkedNullable: Boolean,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    override val attributes: ConeAttributes = [],
 ) : ConeTypeParameterType() {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY

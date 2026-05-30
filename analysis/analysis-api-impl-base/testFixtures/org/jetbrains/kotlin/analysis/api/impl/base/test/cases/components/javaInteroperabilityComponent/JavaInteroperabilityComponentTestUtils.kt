@@ -57,7 +57,7 @@ internal object JavaInteroperabilityComponentTestUtils {
     }
 
     internal fun KtLightClass.findLightDeclarationContext(ktDeclaration: KtDeclaration): KtLightElement<*, *>? {
-        val selfOrParents = listOf(ktDeclaration) + ktDeclaration.parents.filterIsInstance<KtDeclaration>()
+        val selfOrParents = [ktDeclaration] + ktDeclaration.parents.filterIsInstance<KtDeclaration>()
         var result: KtLightElement<*, *>? = null
         val visitor = object : PsiElementVisitor() {
             override fun visitElement(element: PsiElement) {

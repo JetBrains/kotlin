@@ -80,7 +80,7 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
             val classOrObject = file.declarations.filterIsInstance<KtClassOrObject>().singleOrNull()
             if (file is KtClsFile && virtualFile != null) {
                 DecompiledLightClassesFactory.createClsJavaClassFromVirtualFile(file, virtualFile, classOrObject, project)?.let {
-                    return arrayOf(it)
+                    return [it]
                 }
             }
             return PsiClass.EMPTY_ARRAY

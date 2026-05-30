@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.progress.IncrementalNextRoundException
 
 object WebKlibInliningPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifact, WebFir2IrPipelineArtifact>(
     name = "WebKlibInliningPipelinePhase",
-    preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
-    postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector),
+    preActions = [PerformanceNotifications.IrPreLoweringStarted],
+    postActions = [PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector],
 ) {
     override fun executePhase(input: WebFir2IrPipelineArtifact): WebFir2IrPipelineArtifact {
         (val fir2IrResult = result, val firOutput = frontendOutput, val configuration) = input

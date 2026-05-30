@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 @PhasePrerequisites(JvmDefaultParameterInjector::class)
 internal class InterfaceLowering(val context: JvmBackendContext) : IrElementTransformerVoid(), ClassLoweringPass {
     private val removedFunctions = hashMapOf<IrSimpleFunctionSymbol, IrSimpleFunctionSymbol>()
-    private val removedFunctionsWithoutRemapping = mutableSetOf<IrSimpleFunctionSymbol>()
+    private val removedFunctionsWithoutRemapping: MutableSet<IrSimpleFunctionSymbol> = []
 
     override fun lower(irClass: IrClass) {
         if (!irClass.isJvmInterface) return

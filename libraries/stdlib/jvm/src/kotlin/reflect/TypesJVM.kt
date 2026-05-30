@@ -146,10 +146,10 @@ private class ObsoleteFallbackTypeVariableImpl(private val typeParameter: KTypeP
     fun <T : Annotation> getAnnotation(annotationClass: Class<T>): T? = null
 
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getAnnotations(): Array<Annotation> = emptyArray()
+    fun getAnnotations(): Array<Annotation> = []
 
     @Suppress("VIRTUAL_MEMBER_HIDDEN")
-    fun getDeclaredAnnotations(): Array<Annotation> = emptyArray()
+    fun getDeclaredAnnotations(): Array<Annotation> = []
 
     // There is also [getAnnotatedBounds] which returns an array of [AnnotatedType]; because [AnnotatedType] is JDK 8+,
     // we can't declare that method here for compatibility with Android SDK 25 and lower, so we leave it unimplemented
@@ -172,10 +172,10 @@ private class GenericArrayTypeImpl(private val elementType: Type) : GenericArray
 @ExperimentalStdlibApi
 private class WildcardTypeImpl(private val upperBound: Type?, private val lowerBound: Type?) : WildcardType, TypeImpl {
     override fun getUpperBounds(): Array<Type> =
-        arrayOf(upperBound ?: Any::class.java)
+        [upperBound ?: Any::class.java]
 
     override fun getLowerBounds(): Array<Type> =
-        if (lowerBound == null) emptyArray() else arrayOf(lowerBound)
+        if (lowerBound == null) [] else [lowerBound]
 
     override fun getTypeName(): String = when {
         lowerBound != null -> "? super ${typeToString(lowerBound)}"

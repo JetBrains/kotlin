@@ -307,7 +307,7 @@ abstract class IncrementalCompilerRunner<
         hashedConfigurationInputs: HashedConfigurationInputs?
     ): ExitCode {
         reporter.measure(CLEAR_OUTPUT_ON_REBUILD) {
-            val mainOutputDirs = setOf(destinationDir(args), workingDir)
+            val mainOutputDirs: Set<File> = [destinationDir(args), workingDir]
             val outputDirsToClean = outputDirs?.also {
                 check(it.containsAll(mainOutputDirs)) { "outputDirs is missing classesDir and workingDir: $it" }
             } ?: mainOutputDirs
@@ -403,11 +403,9 @@ abstract class IncrementalCompilerRunner<
         changesCollector: ChangesCollector,
     )
 
-    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> =
-        emptyList()
+    protected open fun additionalDirtyFiles(caches: CacheManager, generatedFiles: List<GeneratedFile>, services: Services): Iterable<File> = []
 
-    protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> =
-        emptyList()
+    protected open fun additionalDirtyLookupSymbols(): Iterable<LookupSymbol> = []
 
     protected open fun makeServices(
         args: Args,
@@ -605,18 +603,18 @@ abstract class IncrementalCompilerRunner<
                 val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames, val forceRecompile = dirtyClassesFqNamesForceRecompile
             ) =
                 changesCollector.getChangedAndImpactedSymbols(
-                    listOf(caches.platformCache),
+                    [caches.platformCache],
                     reporter
                 )
             val compiledInThisIterationSet = sourcesToCompile.toHashSet()
 
-            val forceToRecompileFiles = mapClassesFqNamesToFiles(listOf(caches.platformCache), forceRecompile, reporter)
+            val forceToRecompileFiles = mapClassesFqNamesToFiles([caches.platformCache], forceRecompile, reporter)
             with(dirtySources) {
                 clear()
                 addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = compiledInThisIterationSet))
                 addAll(
                     mapClassesFqNamesToFiles(
-                        listOf(caches.platformCache),
+                        [caches.platformCache],
                         dirtyClassFqNames,
                         reporter,
                         excludes = compiledInThisIterationSet
@@ -683,7 +681,7 @@ abstract class IncrementalCompilerRunner<
     ) {
         if (buildHistoryFile == null) return
         reporter.measure(IC_WRITE_HISTORY_FILE) {
-            val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: emptyList()
+            val prevDiffs = BuildDiffsStorage.readFromFile(buildHistoryFile, reporter)?.buildDiffs ?: []
             val newDiff = if (compilationMode is CompilationMode.Incremental) {
                 BuildDifference(currentBuildInfo.startTS, true, dirtyData)
             } else {

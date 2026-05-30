@@ -36,7 +36,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
             swiftModuleName = "LibraryA",
             rootPackage = "org.jetbrains.a",
         )
-        runTestsAgainstKlib(setOf(klibSettings), testPath)
+        runTestsAgainstKlib([klibSettings], testPath)
     }
 
     @Test
@@ -54,7 +54,7 @@ class ExternalProjectExecutionTests : AbstractSwiftExportExecutionTest() {
             swiftModuleName = "LibraryB",
             rootPackage = "org.jetbrains.b",
         )
-        runTestsAgainstKlib(setOf(klibSettingsA, klibSettingsB), testPath)
+        runTestsAgainstKlib([klibSettingsA, klibSettingsB], testPath)
     }
 
     private fun runTestsAgainstKlib(klibSettings: Set<KlibExportSettings>, testPath: File) {

@@ -46,12 +46,12 @@ class KlibNativeLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         val klibs = loadNativeKlibs(configuration, testServices.nativeEnvironmentConfigurator.getNativeTarget(module))
 
         return prepareNativeSessions(
-            files = emptyList(),
+            files = [],
             configuration,
             moduleName,
             klibs.all,
             libraryList,
-            extensionRegistrars = emptyList(),
+            extensionRegistrars = [],
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
             metadataCompilationMode = false,

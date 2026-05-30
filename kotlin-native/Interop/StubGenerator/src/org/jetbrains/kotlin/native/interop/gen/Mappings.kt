@@ -262,7 +262,7 @@ sealed class TypeInfo {
                         type.returnType,
                         type.parameterTypes.mapIndexed { index, it ->
                             TypedNativeValue(it, "p$index")
-                        } + TypedNativeValue(ObjCIdType(ObjCPointer.Nullability.Nullable, emptyList()), kniFunction)
+                        } + TypedNativeValue(ObjCIdType(ObjCPointer.Nullability.Nullable, []), kniFunction)
                 ) { kotlinValues ->
                     val kotlinFunctionType = kotlinType.render(this.scope)
                     val kotlinFunction = "unwrapKotlinObjectHolder<$kotlinFunctionType>(${kotlinValues.last()})"

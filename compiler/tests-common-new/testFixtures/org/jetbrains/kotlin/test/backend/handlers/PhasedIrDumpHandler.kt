@@ -19,7 +19,7 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
         val dumpFiles = dumpDirectory.resolve(module.name).listFiles()?.filter { it.name.contains(AFTER_PREFIX) } ?: return
         val testFile = module.files.first()
         val testDirectory = testFile.originalFile.parentFile
-        val visitedFiles = mutableListOf<String>()
+        val visitedFiles: MutableList<String> = []
         for (actualFile in dumpFiles) {
             val expectedFileName = testFile.originalFile.nameWithoutExtension + actualFile.name.removeRange(0, 2)
             visitedFiles += expectedFileName

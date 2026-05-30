@@ -32,7 +32,7 @@ internal class Select0 : AbstractInterpreter<PluginDataFrameSchema>() {
 
 internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
-    val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
+    val Arguments.columns: List<String> by arg(defaultValue = Present([]))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.select(columns)
@@ -42,10 +42,10 @@ internal class SelectString : AbstractInterpreter<PluginDataFrameSchema>() {
 internal class DataFrameGetColumns : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.first: String by arg()
-    val Arguments.other: List<String> by arg(defaultValue = Present(emptyList()))
+    val Arguments.other: List<String> by arg(defaultValue = Present([]))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val columns = listOf(first) + other
+        val columns = [first] + other
         return receiver.select(columns)
     }
 }
@@ -64,7 +64,7 @@ internal class Expr0 : AbstractInterpreter<ColumnsResolver>() {
     override fun Arguments.interpret(): ColumnsResolver {
         return ResolvedDataColumn(
             ColumnWithPathApproximation(
-                ColumnPath(listOf(name)),
+                ColumnPath([name]),
                 SimpleDataColumn(name, expression)
             )
         )
@@ -77,7 +77,7 @@ internal class And0 : AbstractInterpreter<ColumnsResolver>() {
 
     override fun Arguments.interpret(): ColumnsResolver {
         return object : ColumnsResolver, ColumnsList<Any?> {
-            override val columns = listOf(receiver, other)
+            override val columns = [receiver, other]
 
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 return receiver.resolve(df) + other.resolve(df)
@@ -227,7 +227,7 @@ internal class ColsOf0 : AbstractInterpreter<ColumnsResolver>() {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 val cols = df.columns().map {
-                    val path = ColumnPath(listOf(it.name))
+                    val path = ColumnPath([it.name])
                     ColumnWithPathApproximation(path, it)
                 }
                 return colsOf(cols, typeArg0.coneType)
@@ -247,10 +247,10 @@ fun SimpleCol.isColOf(type: ConeKotlinType, session: FirSession): Boolean {
     val columnType = when (this) {
         is SimpleDataColumn -> this.type.coneType
         is SimpleColumnGroup -> Names.DATA_ROW_CLASS_ID.constructClassLikeType(
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
+            typeArguments = [session.builtinTypes.anyType.coneType]
         )
         is SimpleFrameColumn -> Names.DF_CLASS_ID.constructClassLikeType(
-            typeArguments = arrayOf(session.builtinTypes.anyType.coneType)
+            typeArguments = [session.builtinTypes.anyType.coneType]
         )
     }
     return columnType.isSubtypeOf(type, session)
@@ -326,7 +326,7 @@ internal class WithoutNulls1 : AbstractInterpreter<ColumnsResolver>() {
         return object : ColumnsResolver {
             override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
                 val cols = df.columns().map {
-                    val path = ColumnPath(listOf(it.name))
+                    val path = ColumnPath([it.name])
                     ColumnWithPathApproximation(path, it)
                 }
                 return cols.filter {
@@ -767,7 +767,7 @@ internal class StringGetColumn : AbstractInterpreter<ColumnPathApproximation>() 
     val Arguments.column: String by arg()
 
     override fun Arguments.interpret(): ColumnPathApproximation {
-        return ColumnPathApproximation(listOf(receiver, column))
+        return ColumnPathApproximation([receiver, column])
     }
 }
 
@@ -792,7 +792,7 @@ fun KotlinTypeFacade.stringApiColumnResolver(path: ColumnPath, type: ConeKotlinT
             val col = df.getColumnOrNull(path)
                 ?.let { ColumnWithPathApproximation(path, it.asSimpleColumn(), isImpliedColumn = false) }
                 ?: createImpliedColumn(path, type)
-            return listOf(col)
+            return [col]
         }
 
         private fun createImpliedColumn(path: ColumnPath, type: ConeKotlinType): ColumnWithPathApproximation {
@@ -946,7 +946,7 @@ internal class StringSelect : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.selector: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false)
+        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType([ConeStarProjection], isMarkedNullable = false)
         val columnRef = stringApiColumnResolver(pathOf(receiver), anyRow)
         return columnsResolver { columnRef.asColumnGroup().select { selector } }
     }
@@ -958,7 +958,7 @@ internal class ColumnPathSelect : AbstractInterpreter<ColumnsResolver>() {
     val Arguments.selector: ColumnsResolver by arg()
 
     override fun Arguments.interpret(): ColumnsResolver {
-        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = false)
+        val anyRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType([ConeStarProjection], isMarkedNullable = false)
         val columnRef = stringApiColumnResolver(receiver.path, anyRow)
         return columnsResolver { columnRef.asColumnGroup().select { selector } }
     }

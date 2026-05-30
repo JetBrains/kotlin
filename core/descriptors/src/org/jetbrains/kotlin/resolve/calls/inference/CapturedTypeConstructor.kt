@@ -47,14 +47,14 @@ class CapturedTypeConstructorImpl(
         }
     }
 
-    override fun getParameters(): List<TypeParameterDescriptor> = listOf()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
 
     override fun getSupertypes(): Collection<KotlinType> {
         val superType = if (projection.projectionKind == Variance.OUT_VARIANCE)
             projection.type
         else
             builtIns.nullableAnyType
-        return listOf(superType)
+        return [superType]
     }
 
     override fun isFinal() = true
@@ -80,7 +80,7 @@ class CapturedType(
 ) : SimpleType(), SubtypingRepresentatives, CapturedTypeMarker {
 
     override val arguments: List<TypeProjection>
-        get() = listOf()
+        get() = []
 
     override val memberScope: MemberScope
         get() = ErrorUtils.createErrorScope(

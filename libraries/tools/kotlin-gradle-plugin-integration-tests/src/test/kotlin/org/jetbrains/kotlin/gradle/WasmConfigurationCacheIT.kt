@@ -24,7 +24,7 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(":compileKotlinWasmJs")
+                executedTaskNames = [":compileKotlinWasmJs"]
             )
         }
     }
@@ -69,7 +69,7 @@ class WasmConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(":compileKotlinWasmJs", ":wasmJsBrowserDistribution")
+                executedTaskNames = [":compileKotlinWasmJs", ":wasmJsBrowserDistribution"]
             )
         }
     }

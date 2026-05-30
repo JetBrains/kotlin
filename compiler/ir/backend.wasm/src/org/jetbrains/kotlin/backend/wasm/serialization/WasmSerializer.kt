@@ -139,7 +139,7 @@ class WasmSerializer(outputStream: OutputStream) {
     }
 
     private fun serializeWasmGlobal(global: WasmGlobal) =
-        serializeNamedModuleField(global, listOf(global.isMutable, global.importPair == null)) {
+        serializeNamedModuleField(global, [global.isMutable, global.importPair == null]) {
             serializeWasmType(global.type)
             serializeList(global.init, ::serializeWasmInstr)
             global.importPair?.let { serializeWasmImportDescriptor(it) }
@@ -159,26 +159,26 @@ class WasmSerializer(outputStream: OutputStream) {
         }
 
     private fun serializeWasmStructDeclaration(structDecl: WasmStructDeclaration) {
-        serializeNamedModuleField(structDecl, listOf(structDecl.superType == null, structDecl.isFinal)) {
+        serializeNamedModuleField(structDecl, [structDecl.superType == null, structDecl.isFinal]) {
             serializeList(structDecl.fields, ::serializeWasmStructFieldDeclaration)
             structDecl.superType?.let { serializeWasmHeapType(it) }
         }
     }
 
     private fun serializeWasmArrayDeclaration(arrDecl: WasmArrayDeclaration): Unit =
-        serializeNamedModuleField(arrDecl, listOf(arrDecl.field.isMutable)) {
+        serializeNamedModuleField(arrDecl, [arrDecl.field.isMutable]) {
             serializeString(arrDecl.field.name)
             serializeWasmType(arrDecl.field.type)
         }
 
     private fun serializeWasmMemory(memory: WasmMemory) =
-        serializeNamedModuleField(memory, listOf(memory.importPair == null)) {
+        serializeNamedModuleField(memory, [memory.importPair == null]) {
             serializeWasmLimits(memory.limits)
             memory.importPair?.let { serializeWasmImportDescriptor(it) }
         }
 
     private fun serializeWasmTag(tag: WasmTag): Unit =
-        serializeNamedModuleField(tag, listOf(tag.importPair == null)) {
+        serializeNamedModuleField(tag, [tag.importPair == null]) {
             serializeIdSignature((tag.type as FunctionHeapTypeSymbol).type)
             tag.importPair?.let { serializeWasmImportDescriptor(it) }
         }
@@ -334,7 +334,7 @@ class WasmSerializer(outputStream: OutputStream) {
     private fun serializeWasmTable(table: WasmTable) {
         val max = table.limits.maxSize
         val ip = table.importPair
-        serializeNamedModuleField(table, listOf(max == null, ip == null)) {
+        serializeNamedModuleField(table, [max == null, ip == null]) {
             body.writeUInt32(table.limits.minSize)
             max?.let { body.writeUInt32(it) }
             serializeWasmType(table.elementType)
@@ -660,10 +660,10 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeNullable(obj.qualifier, ::serializeString)
     }
 
-    private fun serializeNamedModuleField(obj: WasmNamedModuleField, flags: List<Boolean> = listOf(), serializeFunc: () -> Unit) =
+    private fun serializeNamedModuleField(obj: WasmNamedModuleField, flags: List<Boolean> = [], serializeFunc: () -> Unit) =
         serializeAsReference(obj) {
             // Serializes the common part of WasmNamedModuleField.
-            withFlags(*listOf(obj.id == null, obj.name.isEmpty()).plus(flags).toBooleanArray()) {
+            withFlags(*[obj.id == null, obj.name.isEmpty()].plus(flags).toBooleanArray()) {
                 obj.id?.let { body.writeUInt32(it.toUInt()) }
                 if (obj.name.isNotEmpty()) serializeString(obj.name)
                 serializeFunc()

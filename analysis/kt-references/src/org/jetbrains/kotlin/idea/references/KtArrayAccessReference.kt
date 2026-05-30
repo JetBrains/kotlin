@@ -30,6 +30,6 @@ abstract class KtArrayAccessReference(
     override fun canRename() = true
 
     companion object {
-        private val NAMES = listOf(OperatorNameConventions.GET, OperatorNameConventions.SET)
+        private val NAMES = [OperatorNameConventions.GET, OperatorNameConventions.SET]
     }
 }

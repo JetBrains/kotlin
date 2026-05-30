@@ -305,7 +305,7 @@ class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
 
         override fun nondeterministicJump(label: Label, element: KtElement, inputValue: PseudoValue?) {
             handleJumpInsideTryFinally(label)
-            add(NondeterministicJumpInstruction(element, listOf(label), currentScope, inputValue))
+            add(NondeterministicJumpInstruction(element, [label], currentScope, inputValue))
         }
 
         override fun nondeterministicJump(label: List<Label>, element: KtElement) {

@@ -176,7 +176,7 @@ class ReplInterpreter(
 
             @Suppress("DEPRECATION_ERROR")
             val evalRes: ReplEvalResult = internalScriptingRunSuspend {
-                when (val compileResult = compiler.compile(listOf(snippet), compilationConfiguration)) {
+                when (val compileResult = compiler.compile([snippet], compilationConfiguration)) {
                     is ResultWithDiagnostics.Failure -> {
                         val incompleteReport = compileResult.reports.find { it.code == ScriptDiagnostic.incompleteCode }
                         if (incompleteReport != null)

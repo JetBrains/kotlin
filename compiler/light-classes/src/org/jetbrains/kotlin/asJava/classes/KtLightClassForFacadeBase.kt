@@ -112,7 +112,7 @@ abstract class KtLightClassForFacadeBase(
 
     override fun getInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
 
-    override fun getOwnInnerClasses(): List<PsiClass> = listOf()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
 
     override fun getAllInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
 
@@ -189,11 +189,11 @@ abstract class KtLightClassForFacadeBase(
     }
 
     override fun getSupers(): Array<PsiClass> {
-        return superClass?.let { arrayOf(it) } ?: arrayOf()
+        return superClass?.let { [it] } ?: []
     }
 
     override fun getSuperTypes(): Array<PsiClassType> {
-        return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+        return [PsiType.getJavaLangObject(manager, resolveScope)]
     }
 
     override fun hashCode() = facadeClassFqName.hashCode()

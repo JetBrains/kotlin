@@ -54,7 +54,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
     ): List<FirSymbolProvider> {
-        return listOf(
+        return [
             LLJvmClassFileBasedSymbolProvider(
                 session,
                 SingleModuleDataProvider(session.moduleData),
@@ -63,7 +63,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
                 VirtualFileFinderFactory.getInstance(session.project).create(scope),
                 firJavaFacade,
             ),
-        )
+        ]
     }
 
     override fun createMetadataLibrarySymbolProvider(
@@ -128,7 +128,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val kLibs = moduleData.getLibraryKLibs()
 
-        return listOf(
+        return [
             KlibBasedSymbolProvider(
                 session,
                 moduleDataProvider,
@@ -136,7 +136,7 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
                 kLibs,
                 flexibleTypeFactory = JsFlexibleTypeFactory(session),
             ),
-        )
+        ]
     }
 
     override fun createWasmLibrarySymbolProvider(
@@ -147,19 +147,19 @@ internal object LLBinaryOriginLibrarySymbolProviderFactory : LLLibrarySymbolProv
         val moduleDataProvider = SingleModuleDataProvider(moduleData)
         val kLibs = moduleData.getLibraryKLibs()
 
-        return listOf(
+        return [
             KlibBasedSymbolProvider(session, moduleDataProvider, session.kotlinScopeProvider, kLibs),
-        )
+        ]
     }
 
     override fun createBuiltinsSymbolProvider(session: LLFirSession): List<FirSymbolProvider> =
-        listOf(
+        [
             createFallbackBuiltinsSymbolProvider(session),
             FirBuiltinSyntheticFunctionInterfaceProvider(session, session.moduleData, session.kotlinScopeProvider),
-        )
+        ]
 
     private fun LLFirModuleData.getLibraryKLibs(): List<KotlinLibrary> {
-        val ktLibraryModule = ktModule as? KaLibraryModule ?: return emptyList()
+        val ktLibraryModule = ktModule as? KaLibraryModule ?: return []
 
         return ktLibraryModule.binaryRoots
             .filter { it.isDirectory() || it.extension == KLIB_FILE_EXTENSION }

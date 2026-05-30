@@ -233,9 +233,9 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
     companion object {
         private const val INSTALL_ATTEMPTS = 2
 
-        private val flavorsToRun: List<String> = listOf(
+        private val flavorsToRun: List<String> = [
             "common0", "common1", "common2", "common3", "common4", "reflect0",
-        )
+        ]
 
         @JvmStatic
         fun runTestsInEmulator(pathManager: PathManager): TestSuite {

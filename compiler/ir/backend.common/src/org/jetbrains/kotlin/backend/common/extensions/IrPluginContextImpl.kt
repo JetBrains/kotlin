@@ -87,7 +87,7 @@ open class IrPluginContextImpl(
         KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, languageVersionSettings)
 
     private fun <S : IrSymbol> resolveSymbolCollection(fqName: FqName, referencer: (MemberScope) -> Collection<S>): Collection<S> {
-        val memberScope = resolveMemberScope(fqName) ?: return emptyList()
+        val memberScope = resolveMemberScope(fqName) ?: return []
 
         val symbols = referencer(memberScope)
 
@@ -208,7 +208,7 @@ open class IrPluginContextImpl(
     override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
 
     private object DummyIrGeneratedDeclarationsRegistrar : IrGeneratedDeclarationsRegistrar() {
-        override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation> = mutableListOf()
+        override fun getMetadataVisibleAnnotationsForElement(declaration: IrDeclaration): MutableList<IrAnnotation> = []
 
         override fun addMetadataVisibleAnnotationsToElement(declaration: IrDeclaration, annotations: List<IrAnnotation>) {
             declaration.annotations += annotations

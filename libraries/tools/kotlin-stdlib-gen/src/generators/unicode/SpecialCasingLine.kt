@@ -14,7 +14,7 @@ internal class SpecialCasingLine(properties: List<String>) {
     val lowercaseMapping: List<String> = properties[1].split(" ")
     val titlecaseMapping: List<String> = properties[2].split(" ")
     val uppercaseMapping: List<String> = properties[3].split(" ")
-    val conditionList: List<String> = if (properties.size == 6) properties[4].split(" ") else emptyList()
+    val conditionList: List<String> = if (properties.size == 6) properties[4].split(" ") else []
 
     override fun toString(): String {
         return "SpecialCasingLine{char=$char" +

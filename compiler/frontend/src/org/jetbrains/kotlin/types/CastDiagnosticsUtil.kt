@@ -88,7 +88,7 @@ object CastDiagnosticsUtil {
         type: KotlinType,
         platformToKotlinClassMapper: PlatformToKotlinClassMapper
     ): List<ClassDescriptor> {
-        val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return listOf()
+        val descriptor = type.constructor.declarationDescriptor as? ClassDescriptor ?: return []
 
         return platformToKotlinClassMapper.mapPlatformClass(descriptor) + descriptor
     }

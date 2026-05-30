@@ -70,7 +70,7 @@ inline fun <reified T> Collection<*>.memoryOptimizedFilterIsInstance(): List<T> 
  */
 infix fun <T> List<T>.memoryOptimizedPlus(elements: List<T>): List<T> =
     when (val resultSize = size + elements.size) {
-        0 -> emptyList()
+        0 -> []
         1 -> Collections.singletonList(if (isEmpty()) elements.first() else first())
         else -> ArrayList<T>(resultSize).also {
             it.addAll(this)
@@ -97,8 +97,8 @@ infix fun <T> List<T>.memoryOptimizedPlus(element: T): List<T> =
  */
 infix fun <T, R> Collection<T>.memoryOptimizedZip(other: Collection<R>): List<Pair<T, R>> {
     return when {
-        isEmpty() || other.isEmpty() -> emptyList()
-        min(size, other.size) == 1 -> listOf(first() to other.first())
+        isEmpty() || other.isEmpty() -> []
+        min(size, other.size) == 1 -> [first() to other.first()]
         else -> zip(other) { t1, t2 -> t1 to t2 }
     }
 }

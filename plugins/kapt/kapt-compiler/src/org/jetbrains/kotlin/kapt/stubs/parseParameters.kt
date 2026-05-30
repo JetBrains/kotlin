@@ -39,8 +39,8 @@ internal fun MethodNode.getParametersInfo(
     isInnerClassMember: Boolean,
     originalDescriptor: CallableDescriptor
 ): List<ParameterInfo> {
-    val localVariables = this.localVariables ?: emptyList()
-    val parameters = this.parameters ?: emptyList()
+    val localVariables = this.localVariables ?: []
+    val parameters = this.parameters ?: []
     val isStatic = isStatic(access)
     val isJvmOverloads = this.isJvmOverloadsGenerated()
 

@@ -135,7 +135,7 @@ class FirResolveModularizedTotalKotlinTestPure(config: ModularizedTestConfig) : 
         }
     }
 
-    private val dumpedModules = mutableSetOf<String>()
+    private val dumpedModules: MutableSet<String> = []
     private fun ModuleData.disambiguatedName(): String {
         val baseName = qualifiedName
         var disambiguatedName = baseName

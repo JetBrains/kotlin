@@ -197,7 +197,7 @@ val KtFile.allDeclarationsRecursively: Sequence<KtDeclaration>
                     is KtFile -> element.declarations
                     is KtScript -> element.declarations
                     is KtClassOrObject -> element.declarations
-                    else -> emptyList()
+                    else -> []
                 }
             }.takeUnless(List<KtDeclaration>::isEmpty)
         }.flatten().filterIsInstance<KtDeclaration>()

@@ -31,7 +31,7 @@ object FirKClassWithIncorrectTypeArgumentChecker : FirCallableDeclarationChecker
         val source = declaration.source ?: return
         if (source.kind is KtFakeSourceElementKind) return
 
-        val typeArgumentsWithWrongType = mutableListOf<ConeKotlinType>()
+        val typeArgumentsWithWrongType: MutableList<ConeKotlinType> = []
 
         val returnType = declaration.returnTypeRef.coneType
         if (returnType.isKClassTypeWithErrorOrNullableArgument(context.session.typeContext)) typeArgumentsWithWrongType.add(returnType)

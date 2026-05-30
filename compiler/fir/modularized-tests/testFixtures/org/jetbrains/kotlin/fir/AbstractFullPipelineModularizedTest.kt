@@ -37,10 +37,10 @@ abstract class AbstractFullPipelineModularizedTest(config: ModularizedTestConfig
         var exceptionMessage: String = "NO MESSAGE"
     }
 
-    private val totalModules = mutableListOf<ModuleStatus>()
-    private val okModules = mutableListOf<ModuleStatus>()
-    private val errorModules = mutableListOf<ModuleStatus>()
-    private val crashedModules = mutableListOf<ModuleStatus>()
+    private val totalModules: MutableList<ModuleStatus> = []
+    private val okModules: MutableList<ModuleStatus> = []
+    private val errorModules: MutableList<ModuleStatus> = []
+    private val crashedModules: MutableList<ModuleStatus> = []
 
     private val isolated = AbstractIsolatedFullPipelineModularizedTest(config)
 

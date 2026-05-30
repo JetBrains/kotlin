@@ -63,7 +63,7 @@ public sealed class SwiftExportModule(
         public val swiftApi: Path,
         public val kind: Kind,
         name: String,
-    ) : SwiftExportModule(name, emptyList()) {
+    ) : SwiftExportModule(name, []) {
         public enum class Kind {
             KotlinPackages,
             KotlinRuntimeSupport,
@@ -164,7 +164,7 @@ private fun translateModules(
         .mapNotNull { kaModules.inputsToModules[it] }
         .associateWith { inputModule ->
             explicitModulesTranslationResults
-                .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: emptyList() }
+                .flatMap { it.externalTypeDeclarationReferences[inputModule] ?: [] }
         }
     val transitiveModulesTranslationResults = translateCrossReferencingModulesTransitively(transitiveExportRoots, kaModules, config)
     return explicitModulesTranslationResults + transitiveModulesTranslationResults
@@ -215,7 +215,7 @@ private fun writeCoroutineSupportModule(
         name = config.coroutineSupportModuleName,
         config = config,
         outputPath = outputPath,
-        dependencies = listOf(SwiftExportModule.Reference(config.runtimeSupportModuleName))
+        dependencies = [SwiftExportModule.Reference(config.runtimeSupportModuleName)]
     )
 }
 
@@ -223,7 +223,7 @@ private fun writeSupportModule(
     name: String,
     config: SwiftExportConfig,
     outputPath: Path,
-    dependencies: List<SwiftExportModule.Reference> = emptyList(),
+    dependencies: List<SwiftExportModule.Reference> = [],
 ): SwiftExportModule.BridgesToKotlin {
     require(name.isNotBlank() && name.first().isLetter() && name.all { it.isLetterOrDigit() }) { "Invalid module name $name" }
 
@@ -245,10 +245,10 @@ private fun writeSupportModule(
 
     // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
     dumpTextAtPath(
-        sequenceOf(*arrayOf(runtimeSupportContent)),
+        sequenceOf(*[runtimeSupportContent]),
         BridgeSources(
-            sequenceOf(*arrayOf(kotlinBridgeContent)),
-            sequenceOf(*arrayOf(cHeaderBridgeContent)),
+            sequenceOf(*[kotlinBridgeContent]),
+            sequenceOf(*[cHeaderBridgeContent]),
         ),
         outputFiles
     )
@@ -263,7 +263,7 @@ private fun writeSupportModule(
 
 private fun TranslationResult.writeModule(config: SwiftExportConfig): SwiftExportModule {
     // arrayOf() used as workaround to target method from older kotlin-stlib due to https://github.com/gradle/gradle/issues/34442
-    val swiftSources = sequenceOf(*arrayOf(swiftModuleSources)) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
+    val swiftSources = sequenceOf(*[swiftModuleSources]) + moduleConfig.unsupportedDeclarationReporter.messages.map { "// $it" }
     val modulePath = config.outputPath / swiftModuleName
     val outputFiles = SwiftExportFiles(
         swiftApi = (modulePath / "$swiftModuleName.swift"),

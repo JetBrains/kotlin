@@ -92,12 +92,12 @@ internal class KaBaseSimpleNameReference(
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtSimpleNameExpression>
             get() = { nameReferenceExpression ->
                 when (nameReferenceExpression.readWriteAccess(useResolveForReadWrite = true)) {
-                    ReferenceAccess.READ -> listOf(KaBaseSimpleNameReference(nameReferenceExpression, isRead = true))
-                    ReferenceAccess.WRITE -> listOf(KaBaseSimpleNameReference(nameReferenceExpression, isRead = false))
-                    ReferenceAccess.READ_WRITE -> listOf(
+                    ReferenceAccess.READ -> [KaBaseSimpleNameReference(nameReferenceExpression, isRead = true)]
+                    ReferenceAccess.WRITE -> [KaBaseSimpleNameReference(nameReferenceExpression, isRead = false)]
+                    ReferenceAccess.READ_WRITE -> [
                         KaBaseSimpleNameReference(nameReferenceExpression, isRead = true),
                         KaBaseSimpleNameReference(nameReferenceExpression, isRead = false),
-                    )
+                    ]
                 }
             }
     }

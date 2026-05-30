@@ -69,7 +69,7 @@ class FirGeneratedClassDeclaredMemberScope private constructor(
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return nestedClassifierScope?.getClassifierNames() ?: emptySet()
+        return nestedClassifierScope?.getClassifierNames() ?: []
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
@@ -207,14 +207,14 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             get() = generationContext.owner
 
         private fun generateMemberFunctions(name: Name): List<FirNamedFunctionSymbol> {
-            if (name == SpecialNames.INIT) return emptyList()
+            if (name == SpecialNames.INIT) return []
             return extensionsByCallableName[name].orEmpty()
                 .flatMap { it.generateFunctions(CallableId(classSymbol.classId, name), generationContext) }
                 .onEach { it.fir.validate() }
         }
 
         private fun generateMemberProperties(name: Name): List<FirPropertySymbol> {
-            if (name == SpecialNames.INIT) return emptyList()
+            if (name == SpecialNames.INIT) return []
             return extensionsByCallableName[name].orEmpty()
                 .flatMap { it.generateProperties(CallableId(classSymbol.classId, name), generationContext) }
                 .onEach { it.fir.validate() }
@@ -286,7 +286,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
             "Class $classSymbol is declared in ${classSymbol.moduleData.session}, but generated storage for it taken from $session"
         }
         return if (classSymbol.origin.generated && !classSymbol.isLocal) {
-            listOf(classSymbol.fir.ownerGenerator!!)
+            [classSymbol.fir.ownerGenerator!!]
         } else {
             session.extensionService.declarationGenerators
         }

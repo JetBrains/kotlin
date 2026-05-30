@@ -36,13 +36,13 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             when (callShapeData) {
                 is CallShapeData.RefinedType -> callShapeData.scopes.associate {
                     val propertyName = Name.identifier(it.name.asString().replaceFirstChar { it.lowercaseChar() })
-                    propertyName to listOf(buildScopeReferenceProperty(it.classId, it, propertyName))
+                    propertyName to [buildScopeReferenceProperty(it.classId, it, propertyName)]
                 }
                 is CallShapeData.Scope -> callShapeData.columns.associate {
-                    it.name to listOf(buildScopeApiProperty(callShapeData.token, scopeSymbol = k, it.name))
+                    it.name to [buildScopeApiProperty(callShapeData.token, scopeSymbol = k, it.name)]
                 }
                 is CallShapeData.Schema -> callShapeData.columns.associate {
-                    it.name to listOf(buildTokenProperty(k, it.name))
+                    it.name to [buildTokenProperty(k, it.name)]
                 }
             }
         }
@@ -50,7 +50,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val properties = propertiesCache.getValue(classSymbol)
-        return properties?.flatMapTo(mutableSetOf(SpecialNames.INIT)) { it.value.map { it.name } } ?: emptySet()
+        return properties?.flatMapTo(mutableSetOf(SpecialNames.INIT)) { it.value.map { it.name } } ?: []
     }
 
 
@@ -62,12 +62,12 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
         ) {
             visibility = Visibilities.Local
         }
-        return listOf(constructor.symbol)
+        return [constructor.symbol]
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
-        val owner = context?.owner ?: return emptyList()
-        return propertiesCache.getValue(owner)?.flatMap { it.value.map { it.symbol } } ?: emptyList()
+        val owner = context?.owner ?: return []
+        return propertiesCache.getValue(owner)?.flatMap { it.value.map { it.symbol } } ?: []
     }
 
     private fun buildScopeApiProperty(
@@ -85,13 +85,13 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             extensionReceiverType {
                 ConeClassLikeTypeImpl(
                     ConeClassLikeLookupTagImpl(DataFrameLikeCallsRefinementExtension.DATAFRAME),
-                    arrayOf(
+                    [
                         ConeClassLikeTypeImpl(
                             ConeClassLikeLookupTagWithFixedSymbol(tokenSymbol.classId, tokenSymbol),
-                            emptyArray(),
+                            [],
                             isMarkedNullable = false
                         )
-                    ),
+                    ],
                     isMarkedNullable = false
                 )
             }
@@ -125,7 +125,7 @@ class DataFrameLikeTypeMembersGenerator(session: FirSession) : FirDeclarationGen
             name,
             ConeClassLikeTypeImpl(
                 ConeClassLikeLookupTagWithFixedSymbol(scope, scopeSymbol),
-                emptyArray(),
+                [],
                 isMarkedNullable = false
             )
         ) {

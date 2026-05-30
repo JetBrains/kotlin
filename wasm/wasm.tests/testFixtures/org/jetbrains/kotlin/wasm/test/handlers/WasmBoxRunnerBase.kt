@@ -195,9 +195,9 @@ fun checkExpectedOptimizedOutputSize(debugMode: DebugMode, testFileContent: Stri
         .findListWithPrefixes(testFileContent, "// WASM_OPT_EXPECTED_OUTPUT_SIZE: ")
         .lastOrNull()
         ?.filter(Char::isDigit)
-        ?.toInt() ?: return emptyList()
+        ?.toInt() ?: return []
 
-    return assertExpectedSizesMatchActual(debugMode, testDir, listOf("wasm" to expectedOptimizeSizes), filesToIgnore)
+    return assertExpectedSizesMatchActual(debugMode, testDir, ["wasm" to expectedOptimizeSizes], filesToIgnore)
 }
 
 private fun assertExpectedSizesMatchActual(
@@ -230,9 +230,9 @@ private fun assertExpectedSizesMatchActual(
         if (totalSize !in expectedMinSize..expectedMaxSize) message else null
     }
 
-    if (errors.isNotEmpty()) return listOf(AssertionError(errors.joinToString("\n")))
+    if (errors.isNotEmpty()) return [AssertionError(errors.joinToString("\n"))]
 
-    return emptyList()
+    return []
 }
 
 private fun Long.toFormattedString(): String {

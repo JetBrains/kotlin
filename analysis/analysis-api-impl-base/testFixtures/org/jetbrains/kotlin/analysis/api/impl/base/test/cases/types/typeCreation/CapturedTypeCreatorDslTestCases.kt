@@ -58,7 +58,7 @@ class CapturedTypeCreatorDslTestCases(session: KaSession, caretToType: Map<Strin
 
         val projection = session.typeCreator.starTypeProjection()
         return session.typeCreator.capturedType(projection) {
-            annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
+            annotations([annotationClassId1, annotationClassId2, annotationClassId3])
         }
     }
 }

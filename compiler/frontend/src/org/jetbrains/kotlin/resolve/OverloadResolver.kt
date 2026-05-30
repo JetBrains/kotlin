@@ -179,7 +179,7 @@ class OverloadResolver(
         }
 
         val containingModule = DescriptorUtils.getContainingModuleOrNull(descriptor) ?: return when (descriptor) {
-            is CallableMemberDescriptor -> listOf(descriptor)
+            is CallableMemberDescriptor -> [descriptor]
             is ClassDescriptor -> descriptor.constructors
             else -> throw AssertionError("Unexpected descriptor kind: $descriptor")
         }

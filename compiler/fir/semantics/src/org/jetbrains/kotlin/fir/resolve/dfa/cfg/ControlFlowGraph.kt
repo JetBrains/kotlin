@@ -24,7 +24,7 @@ class ControlFlowGraph(val declaration: FirDeclaration?, val name: String, val k
         get() = enterNode.previousNodes.isNotEmpty()
 
     val subGraphs: List<ControlFlowGraph>
-        get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: emptyList() }
+        get() = nodes.flatMap { (it as? CFGNodeWithSubgraphs<*>)?.subGraphs ?: [] }
 
     /**
      * Copies relation data from the [from] graph.

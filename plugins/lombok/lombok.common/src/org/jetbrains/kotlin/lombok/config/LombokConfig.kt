@@ -69,7 +69,7 @@ class ConfigBuilder {
     private val state: MutableMap<String, List<String>> = mutableMapOf()
 
     fun setValue(name: String, value: String) {
-        state[normalizeKey(name)] = listOf(value)
+        state[normalizeKey(name)] = [value]
     }
 
     fun clearValue(name: String) {
@@ -77,11 +77,11 @@ class ConfigBuilder {
     }
 
     fun plusValue(name: String, value: String) {
-        state.merge(normalizeKey(name), listOf(value)) { a, b -> a + b }
+        state.merge(normalizeKey(name), [value]) { a, b -> a + b }
     }
 
     fun minusValue(name: String, value: String) {
-        state.merge(normalizeKey(name), listOf(value)) { a, b -> a - b }
+        state.merge(normalizeKey(name), [value]) { a, b -> a - b }
     }
 
     fun build(): LombokConfig = LombokConfig(state)

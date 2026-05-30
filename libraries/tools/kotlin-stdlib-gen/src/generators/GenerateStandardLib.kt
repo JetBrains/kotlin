@@ -17,7 +17,7 @@ import kotlin.system.exitProcess
  * at runtime.
  */
 fun main(args: Array<String>) {
-    val templateGroups = sequenceOf<TemplateGroup>(
+    val templateGroups: Sequence<TemplateGroup> = [
         Elements,
         Filtering,
         Ordering,
@@ -32,8 +32,8 @@ fun main(args: Array<String>) {
         SequenceOps,
         RangeOps,
         Numeric,
-        ComparableOps
-    )
+        ComparableOps,
+    ]
 
     val targetBaseDirs = mutableMapOf<KotlinTarget, File>()
 

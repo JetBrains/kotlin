@@ -523,7 +523,7 @@ class ControlFlowInformationProviderImpl private constructor(
                     }
                 }
                 if (descriptor == null) {
-                    val descriptors = trace.get(AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: emptyList<DeclarationDescriptor>()
+                    val descriptors = trace.get(AMBIGUOUS_REFERENCE_TARGET, operationReference) ?: []
                     for (referenceDescriptor in descriptors) {
                         if ((referenceDescriptor as? FunctionDescriptor)?.returnType?.let { KotlinBuiltIns.isUnit(it) } == true) {
                             hasReassignMethodReturningUnit = true
@@ -570,7 +570,7 @@ class ControlFlowInformationProviderImpl private constructor(
         val containingClass = setterDescriptor.containingDeclaration as? ClassDescriptor ?: return
         val firstRealOverridden = setterDescriptor.firstOverridden { it.kind.isReal } ?: return
 
-        val visibleOverrides = OverridingUtil.filterVisibleFakeOverrides(containingClass, listOf(firstRealOverridden))
+        val visibleOverrides = OverridingUtil.filterVisibleFakeOverrides(containingClass, [firstRealOverridden])
         if (visibleOverrides.isEmpty()) {
             val diagnostic =
                 when (languageVersionSettings.supportsFeature(LanguageFeature.ProhibitAccessToInvisibleSetterFromDerivedClass)) {

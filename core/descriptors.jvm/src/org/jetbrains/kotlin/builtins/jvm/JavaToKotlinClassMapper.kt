@@ -31,7 +31,7 @@ object JavaToKotlinClassMapper : PlatformToKotlinClassMapper {
 
         val kotlinMutableAnalogFqName = JavaToKotlinClassMap.readOnlyToMutable(kotlinAnalog.fqNameUnsafe) ?: return setOf(kotlinAnalog)
 
-        return listOf(kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName))
+        return [kotlinAnalog, builtIns.getBuiltInClassByFqName(kotlinMutableAnalogFqName)]
     }
 
     fun mapJavaToKotlin(fqName: FqName, builtIns: KotlinBuiltIns, functionTypeArity: Int? = null): ClassDescriptor? {

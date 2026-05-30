@@ -51,8 +51,8 @@ data class ModulesTxt(
          */
         var kotlinFacetSettings: KotlinFacetSettings? = null
 
-        val dependencies = mutableListOf<Dependency>()
-        val usages = mutableListOf<Dependency>()
+        val dependencies: MutableList<Dependency> = []
+        val usages: MutableList<Dependency> = []
 
         val isCommonModule
             get() =
@@ -116,7 +116,7 @@ class ModulesTxtBuilder {
     var muted = false
 
     val modules = mutableMapOf<String, ModuleRef>()
-    private val dependencies = mutableListOf<DependencyBuilder>()
+    private val dependencies: MutableList<DependencyBuilder> = []
 
     /**
      * Reference to module which can be defined later
@@ -231,7 +231,7 @@ class ModulesTxtBuilder {
         } else ValueWithFlags(str)
     }
 
-    data class ValueWithFlags(val value: String, val flags: Set<String> = setOf())
+    data class ValueWithFlags(val value: String, val flags: Set<String> = [])
 
     private fun moduleRef(name: String) =
         modules.getOrPut(name) { ModuleRef(name) }

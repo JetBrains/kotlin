@@ -64,11 +64,11 @@ class MppDslAppAndLibIT : KGPBaseTest() {
 
         val localRepoDir = defaultLocalRepo(gradleVersion)
 
-        val compileTasksNames = listOf(
+        val compileTasksNames = [
             ":compileKotlinJvm6",
             ":compileKotlinNodeJs",
             ":compileKotlinLinux64",
-        )
+        ]
 
         val libProject = project(
             projectName = libProjectPath,

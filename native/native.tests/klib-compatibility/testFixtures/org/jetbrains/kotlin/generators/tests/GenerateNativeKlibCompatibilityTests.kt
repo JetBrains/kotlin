@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
     val testsRoot = args[0]
 
-    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val jvmOnlyBoxTests = ["compileKotlinAgainstKotlin"]
     val k1BoxTestDir = "multiplatform/k1"
     // KT-68747: `box/fir/inferenceWithTypeAliasFromOtherModule.kt` takes infinite time to compile. Fixed in 2.0.20
     val CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN = "^inferenceWithTypeAliasFromOtherModule.kt\$"
@@ -29,19 +29,19 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomNativeCompilerFirstStageTest>(
-                annotations = listOf(
+                annotations = [
                     provider<UseDummyTestCaseGroupProvider>(),
                     annotation(HeavyTest::class.java),
-                )
+                ]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN)
                 model("boxInline")
             }
             testClass<AbstractCustomNativeCompilerSecondStageTest>(
-                annotations = listOf(
+                annotations = [
                     provider<UseDummyTestCaseGroupProvider>(),
                     annotation(HeavyTest::class.java),
-                )
+                ]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
@@ -49,21 +49,21 @@ fun main(args: Array<String>) {
 
             testClass<AbstractCustomNativeCompilerFirstStageTest>(
                 suiteTestClassName = "CustomNativeAggregateFirstStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     annotation(Tag::class.java, "aggregate-first-stage"),
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model("boxInline")
             }
             testClass<AbstractCustomNativeCompilerSecondStageTest>(
                 suiteTestClassName = "CustomNativeAggregateSecondStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     annotation(Tag::class.java, "aggregate-second-stage"),
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model("boxInline")
             }
@@ -73,19 +73,19 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/codegen") {
             testClass<AbstractCustomNativeCompilerFirstStageTest>(
                 suiteTestClassName = "CustomNativeSpecificFirstStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model()
             }
             testClass<AbstractCustomNativeCompilerSecondStageTest>(
                 suiteTestClassName = "CustomNativeSpecificSecondStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model(
                     // only on Linux/x86: ld.lld: error: undefined symbol: stat unsupported: function is defined in a header file

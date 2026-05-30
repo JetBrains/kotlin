@@ -25,9 +25,9 @@ interface ModuleStructureOracle {
     object SingleModule : ModuleStructureOracle {
         override fun hasImplementingModules(module: ModuleDescriptor): Boolean = false
 
-        override fun findAllReversedDependsOnPaths(module: ModuleDescriptor): List<ModulePath> = listOf(ModulePath(module))
+        override fun findAllReversedDependsOnPaths(module: ModuleDescriptor): List<ModulePath> = [ModulePath(module)]
 
-        override fun findAllDependsOnPaths(module: ModuleDescriptor): List<ModulePath> = listOf(ModulePath(module))
+        override fun findAllDependsOnPaths(module: ModuleDescriptor): List<ModulePath> = [ModulePath(module)]
     }
 }
 

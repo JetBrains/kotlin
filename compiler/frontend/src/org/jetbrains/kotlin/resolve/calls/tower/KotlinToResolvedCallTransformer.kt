@@ -199,8 +199,8 @@ class KotlinToResolvedCallTransformer(
         )
 
         return if (psiKotlinCall is PSIKotlinCallForInvoke) {
-            val diagnosticsForVariableCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) emptyList() else diagnostics
-            val diagnosticsForFunctionCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) diagnostics else emptyList()
+            val diagnosticsForVariableCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) [] else diagnostics
+            val diagnosticsForFunctionCall = if (completedCallAtom.candidateDescriptor is FunctionDescriptor) diagnostics else []
 
             @Suppress("UNCHECKED_CAST")
             NewVariableAsFunctionResolvedCallImpl(
@@ -398,7 +398,7 @@ class KotlinToResolvedCallTransformer(
         val value = (constant.getValue(TypeUtils.NO_EXPECTED_TYPE) as? Number)?.toLong() ?: return null
         val typeConstructor = IntegerLiteralTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            TypeAttributes.Empty, typeConstructor, emptyList(), false,
+            TypeAttributes.Empty, typeConstructor, [], false,
             ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, typeConstructor.toString()),
         )
     }
@@ -480,7 +480,7 @@ class KotlinToResolvedCallTransformer(
                 val functionCall = resolvedCall.functionCall
 
                 reportCallDiagnostic(context, trace, variableCall, variableCall.resultingDescriptor, diagnostics)
-                reportCallDiagnostic(context, trace, functionCall, functionCall.resultingDescriptor, emptyList())
+                reportCallDiagnostic(context, trace, functionCall, functionCall.resultingDescriptor, [])
             }
             else -> {
                 val resolvedCallAtom = resolvedCall.resolvedCallAtom

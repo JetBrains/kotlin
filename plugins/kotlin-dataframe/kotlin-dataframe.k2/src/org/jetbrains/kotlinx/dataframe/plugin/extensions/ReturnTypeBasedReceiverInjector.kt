@@ -23,17 +23,18 @@ import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.forEachType
 import org.jetbrains.kotlin.fir.types.resolvedType
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin
 import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 
 class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
     companion object {
-        private val SCHEMA_TYPES = setOf(
+        private val SCHEMA_TYPES: Set<ClassId> = [
             Names.DF_CLASS_ID,
             Names.GROUP_BY_CLASS_ID,
             Names.DATA_ROW_CLASS_ID,
             Names.COLUM_GROUP_CLASS_ID,
-        )
+        ]
     }
 
     override fun addNewImplicitReceivers(
@@ -42,7 +43,7 @@ class ReturnTypeBasedReceiverInjector(session: FirSession) : FirExpressionResolu
         containingCallableSymbol: FirBasedSymbol<*>,
     ): List<ImplicitExtensionReceiverValue> {
         val callReturnType = functionCall.resolvedType
-        val typeArguments = mutableListOf<ConeTypeProjection>()
+        val typeArguments: MutableList<ConeTypeProjection> = []
         callReturnType.forEachType {
             if (it.classId in SCHEMA_TYPES) {
                 typeArguments += it.typeArguments

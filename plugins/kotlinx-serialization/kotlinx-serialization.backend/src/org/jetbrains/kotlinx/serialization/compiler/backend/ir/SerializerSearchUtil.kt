@@ -92,7 +92,7 @@ fun BaseIrGenerator?.findTypeSerializerOrContextUnchecked(
     context: SerializationBaseContext, kType: IrType, useTypeAnnotations: Boolean = true
 ): IrClassSymbol? {
     if (kType.isTypeParameter()) return null
-    val annotations = if (useTypeAnnotations) kType.annotations else emptyList()
+    val annotations = if (useTypeAnnotations) kType.annotations else []
     annotations.serializableWith()?.let { return it }
     this?.additionalSerializersInScopeOfCurrentFile?.get(kType.classOrNull!! to kType.isNullable())?.let {
         return it

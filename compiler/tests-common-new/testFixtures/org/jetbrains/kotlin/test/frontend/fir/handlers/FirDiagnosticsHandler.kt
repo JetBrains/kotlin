@@ -118,7 +118,7 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
                 DiagnosticData(
                     textRanges = when (it) {
                         is KtDiagnosticWithSource -> it.textRanges
-                        is KtDiagnosticWithoutSource -> listOf(it.firstRange)
+                        is KtDiagnosticWithoutSource -> [it.firstRange]
                     },
                     severity = it.severity.toCompilerMessageSeverity().toString().toLowerCaseAsciiOnly(),
                     message = it.renderMessage()
@@ -147,10 +147,10 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         get() = testServices.diagnosticsService
 
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(DiagnosticsDirectives)
+        [DiagnosticsDirectives]
 
     override val additionalServices: List<ServiceRegistrationData> =
-        listOf(service(::DiagnosticsService), service(::FirDiagnosticCollectorService))
+        [service(::DiagnosticsService), service(::FirDiagnosticCollectorService)]
 
     private val fullDiagnosticsRenderer = FullDiagnosticsRenderer(DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT)
 
@@ -201,7 +201,7 @@ class FirDiagnosticsHandler(testServices: TestServices) : FirAnalysisHandler(tes
         lightTreeEnabled: Boolean,
         lightTreeComparingModeEnabled: Boolean
     ) {
-        val result = mutableListOf<KtDiagnostic>()
+        val result: MutableList<KtDiagnostic> = []
 
         val diagnosedRangesToDiagnosticNames = globalMetadataInfoHandler.getExistingMetaInfosForFile(testFile)
             .groupBy(keySelector = { it.start..it.end }, valueTransform = { it.tag })
@@ -421,7 +421,7 @@ fun List<KtDiagnostic>.diagnosticCodeMetaInfos(
             diagnostic.factory.name,
             diagnostic.severity
         )
-    ) return@flatMap emptyList()
+    ) return@flatMap []
     diagnostic.toMetaInfos(
         module,
         file,
@@ -463,7 +463,7 @@ private class DebugDiagnosticConsumer(
     private val diagnosedRangesToDiagnosticNames: Map<IntRange, Set<String>>
 ) {
     private companion object {
-        private val allowedKindsForDebugInfo = setOf(
+        private val allowedKindsForDebugInfo: Set<KtSourceElementKind> = [
             KtRealSourceElementKind,
             KtFakeSourceElementKind.ReferenceInAtomicQualifiedAccess,
             KtFakeSourceElementKind.SmartCastExpression,
@@ -475,16 +475,16 @@ private class DebugDiagnosticConsumer(
             KtFakeSourceElementKind.DesugaredTimesAssign,
             KtFakeSourceElementKind.DesugaredDivAssign,
             KtFakeSourceElementKind.DesugaredRemAssign,
-        )
+        ]
 
         private val KtSourceElementKind.isAllowedKindForDebugInfo: Boolean
             get() = this in allowedKindsForDebugInfo ||
                     this is KtFakeSourceElementKind.DesugaredIncrementOrDecrement && !isSecondGetReference
 
-        private val FORCE_REPORTING = setOf(
+        private val FORCE_REPORTING: Set<KtDiagnosticFactory0> = [
             KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED,
             KtDebugInfoDiagnostics.CSR_MIGHT_BE_USED_INSTEAD_OF_IMPORT,
-        )
+        ]
     }
 
     fun report(factory: KtDiagnosticFactory0, sourceElement: KtSourceElement?) {
@@ -614,7 +614,7 @@ fun KtDiagnostic.toMetaInfos(
 ): List<FirDiagnosticCodeMetaInfo> {
     val ranges = when (this) {
         is KtDiagnosticWithSource -> textRanges
-        is KtDiagnosticWithoutSource -> listOf(firstRange)
+        is KtDiagnosticWithoutSource -> [firstRange]
     }
     return ranges.map { range ->
         val metaInfo = FirDiagnosticCodeMetaInfo(this, FirMetaInfoUtils.renderDiagnosticNoArgs, range)

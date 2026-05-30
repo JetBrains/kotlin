@@ -92,9 +92,9 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         source: String,
         fileName: String,
         dumpClasses: Boolean = false,
-        additionalPaths: List<File> = emptyList(),
+        additionalPaths: List<File> = [],
     ): GeneratedClassLoader {
-        val loader = createClassLoader(listOf(SourceFile(fileName, source)), additionalPaths = additionalPaths)
+        val loader = createClassLoader([SourceFile(fileName, source)], additionalPaths = additionalPaths)
         if (dumpClasses) dumpClasses(loader)
         return loader
     }
@@ -138,7 +138,7 @@ abstract class AbstractCodegenTest : AbstractCompilerTest() {
         return loader
     }
 
-    protected fun testCompile(@Language("kotlin") source: String, dumpClasses: Boolean = false, additionalPaths: List<File> = emptyList()) {
+    protected fun testCompile(@Language("kotlin") source: String, dumpClasses: Boolean = false, additionalPaths: List<File> = []) {
         classLoader(source, "Test.kt", dumpClasses, additionalPaths)
     }
 }

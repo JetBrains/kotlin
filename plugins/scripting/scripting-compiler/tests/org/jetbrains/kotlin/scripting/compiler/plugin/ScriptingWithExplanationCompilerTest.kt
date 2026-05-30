@@ -167,7 +167,7 @@ private fun runScriptAndValidateExplain(
 
 private fun runScriptWithExplain(scriptPath: String, explainFilePath: String): ExitCode = CLICompiler.doMainNoExit(
     K2JVMCompiler(),
-    arrayOf(
+    [
         "-P",
         "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
         "-P",
@@ -182,5 +182,5 @@ private fun runScriptWithExplain(scriptPath: String, explainFilePath: String): E
         K2JVMCompilerArguments::classpath.cliArgument, additionalClasspath,
         "-script",
         scriptPath,
-    )
+    ]
 )

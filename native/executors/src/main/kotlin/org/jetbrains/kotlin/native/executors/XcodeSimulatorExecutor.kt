@@ -43,8 +43,8 @@ class XcodeSimulatorExecutor(
         val hostArch = HostManager.host.architecture
         val targetArch = target.architecture
         val compatibleArchs = when (hostArch) {
-            Architecture.X64 -> listOf(Architecture.X64, Architecture.X86)
-            Architecture.ARM64 -> listOf(Architecture.ARM64, Architecture.ARM32)
+            Architecture.X64 -> [Architecture.X64, Architecture.X86]
+            Architecture.ARM64 -> [Architecture.ARM64, Architecture.ARM32]
             else -> throw IllegalStateException("$hostArch is not a supported host architecture for the simulator")
         }
         require(targetArch in compatibleArchs) {
@@ -53,9 +53,9 @@ class XcodeSimulatorExecutor(
     }
 
     private val archSpecification = when (target.architecture) {
-        Architecture.X86 -> listOf("-a", "i386")
-        Architecture.X64 -> listOf() // x86-64 is used by default on Intel Macs.
-        Architecture.ARM64 -> listOf() // arm64 is used by default on Apple Silicon.
+        Architecture.X86 -> ["-a", "i386"]
+        Architecture.X64 -> [] // x86-64 is used by default on Intel Macs.
+        Architecture.ARM64 -> [] // arm64 is used by default on Apple Silicon.
         else -> error("${target.architecture} can't be used in simulator.")
     }.toTypedArray()
 

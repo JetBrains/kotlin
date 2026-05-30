@@ -308,7 +308,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
             // check with one target banned - should still pass
             build(
                 "checkKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"))
+                buildOptions = buildOptions.copy(freeArgs = ["-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"])
             ) {
                 assertTasksExecuted(":checkKotlinAbi")
             }
@@ -329,7 +329,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             buildAndFail(
                 "checkKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"))
+                buildOptions = buildOptions.copy(freeArgs = ["-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"])
             ) {
                 assertTasksFailed(":internalDumpKotlinAbi")
             }
@@ -348,7 +348,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
             // generate dump with linuxArm64 banned - should infer from common
             build(
                 "updateKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"))
+                buildOptions = buildOptions.copy(freeArgs = ["-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"])
             ) {
                 assertTasksExecuted(":updateKotlinAbi")
             }
@@ -380,7 +380,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             build(
                 "updateKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf("-P$BANNED_TARGETS_PROPERTY_NAME=linux"))
+                buildOptions = buildOptions.copy(freeArgs = ["-P$BANNED_TARGETS_PROPERTY_NAME=linux"])
             ) {
                 assertTasksExecuted(":updateKotlinAbi")
             }
@@ -402,7 +402,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             buildAndFail(
                 "updateKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf("-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"))
+                buildOptions = buildOptions.copy(freeArgs = ["-P$BANNED_TARGETS_PROPERTY_NAME=linuxArm64"])
             ) {
                 assertTasksFailed(":internalDumpKotlinAbi")
                 assertOutputContains(
@@ -426,7 +426,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
             // dump should fail
             buildAndFail(
                 "updateKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf(allTargetsBanned))
+                buildOptions = buildOptions.copy(freeArgs = [allTargetsBanned])
             ) {
                 assertOutputContains("is not supported by the host compiler and there are no targets similar to")
             }
@@ -435,7 +435,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             build(
                 "checkKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf(allTargetsBanned))
+                buildOptions = buildOptions.copy(freeArgs = [allTargetsBanned])
             ) {
                 assertTasksExecuted(":checkKotlinAbi")
             }
@@ -459,7 +459,7 @@ class AbiValidationKmpIT : KGPBaseTest() {
 
             buildAndFail(
                 "checkKotlinAbi",
-                buildOptions = buildOptions.copy(freeArgs = listOf(allTargetsBanned))
+                buildOptions = buildOptions.copy(freeArgs = [allTargetsBanned])
             ) {
                 assertTasksFailed(":internalDumpKotlinAbi")
             }

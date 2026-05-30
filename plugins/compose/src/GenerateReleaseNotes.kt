@@ -39,7 +39,7 @@ val parseCommit =
 val matchRelnote =
     Regex(
         "^\\s*Relnote:\\s+(\"{3}.+\"{3}|\".+\"|[^\\n]+)$",
-        setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL),
+        [RegexOption.IGNORE_CASE, RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL],
     )
 val matchChangeId = Regex("Change-Id:\\s+(I[0-9a-f]+)", RegexOption.IGNORE_CASE)
 val matchIssue = Regex("(?:Bug|Fixes):\\s+\\[?(\\d+|KT-\\d+)\\]?", RegexOption.IGNORE_CASE)
@@ -83,7 +83,7 @@ fun main(vararg args: String) {
         exitProcess(1)
     }
 
-    val ignoreRelnotes = listOf("n/a")
+    val ignoreRelnotes = ["n/a"]
 
     val fromRevision = args[0]
     val toRevision = args[1]

@@ -99,7 +99,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
     override val controlFlowGraphReference: FirControlFlowGraphReference? get() = null
 
     override val contextParameters: List<FirValueParameter>
-        get() = emptyList()
+        get() = []
 
     init {
         @OptIn(FirImplementationDetail::class)
@@ -116,25 +116,25 @@ class FirJavaClass @FirImplementationDetail internal constructor(
         val superTypesRefs = nonEnhancedSuperTypes.ifEmpty {
             computeSuperTypeRefsByJavaClass()
         }.ifEmpty {
-            listOf(
+            [
                 buildResolvedTypeRef {
                     coneType = StandardClassIds.Any.constructClassLikeType()
                 }
-            )
+            ]
         }
 
         val enhancement = FirSignatureEnhancement(
             this,
             moduleData.session,
             enhanceClassHeaderOnly = true,
-            overridden = { emptyList() },
+            overridden = { [] },
         )
 
         enhancement.enhanceSuperTypes(superTypesRefs)
     }
 
     private fun computeSuperTypeRefsByJavaClass(): List<FirTypeRef> {
-        val supertypes = javaClass?.supertypes ?: return emptyList()
+        val supertypes = javaClass?.supertypes ?: return []
         val session = moduleData.session
         val fakeSource = source?.fakeElement(KtFakeSourceElementKind.Enhancement)
         return supertypes.map { it.toFirJavaTypeRef(session, fakeSource) }
@@ -167,7 +167,7 @@ class FirJavaClass @FirImplementationDetail internal constructor(
             this,
             moduleData.session,
             enhanceClassHeaderOnly = true,
-            overridden = { emptyList() },
+            overridden = { [] },
         )
 
         enhancement.enhanceTypeParameterBounds(this, nonEnhancedTypeParameters, typeParameterBoundsResolveLock::withLock)
@@ -254,15 +254,15 @@ class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuil
     var isFromSource: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack
-    val existingNestedClassifierNames: MutableList<Name> = mutableListOf()
+    val existingNestedClassifierNames: MutableList<Name> = []
 
     override var source: KtSourceElement? = null
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = []
     override val declarations: MutableList<FirDeclaration> get() = shouldNotBeCalled()
 
     /** Has to be omitted in the case of [javaClass] presence */
-    override val superTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    override val superTypeRefs: MutableList<FirTypeRef> = []
     var containingClassSymbol: FirClassSymbol<*>? = null
     var declarationList: FirJavaDeclarationList = FirEmptyJavaDeclarationList
 

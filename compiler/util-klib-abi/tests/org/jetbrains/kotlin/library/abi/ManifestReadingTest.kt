@@ -37,29 +37,29 @@ class ManifestReadingTest {
         val testData = mapOf(
             "sample-library-1" to LibraryManifest(
                 platform = BuiltInsPlatform.JS.name,
-                platformTargets = emptyList(),
+                platformTargets = [],
                 compilerVersion = "1.23.45",
                 abiVersion = "2.34.56",
                 irProviderName = "test_ir_provider_123"
             ),
             "sample-library-2" to LibraryManifest(
                 platform = BuiltInsPlatform.NATIVE.name,
-                platformTargets = listOf(
+                platformTargets = [
                     LibraryTarget.Native("ios_arm64"),
                     LibraryTarget.Native("ios_simulator_arm64"),
                     LibraryTarget.Native("macos_arm64"),
                     LibraryTarget.Native("macos_x64"),
-                ),
+                ],
                 compilerVersion = null,
                 abiVersion = null,
                 irProviderName = null
             ),
             "sample-library-3" to LibraryManifest(
                 platform = BuiltInsPlatform.WASM.name,
-                platformTargets = listOf(
+                platformTargets = [
                     LibraryTarget.WASM("wasm-js"),
                     LibraryTarget.WASM("wasm-wasi"),
-                ),
+                ],
                 compilerVersion = null,
                 abiVersion = null,
                 irProviderName = null
@@ -84,7 +84,7 @@ class ManifestReadingTest {
         val targetNames = when (platform) {
             BuiltInsPlatform.NATIVE -> libraryManifest.platformTargets.filterIsInstance<LibraryTarget.Native>().map { it.name }
             BuiltInsPlatform.WASM -> libraryManifest.platformTargets.filterIsInstance<LibraryTarget.WASM>().map { it.name }
-            else -> emptyList()
+            else -> []
         }
 
         KlibWriter {
@@ -104,7 +104,7 @@ class ManifestReadingTest {
                     }
                 }
             }
-            includeIr(SerializedIrModule(files = emptyList(), fileWithPreparedInlinableFunctions = null)) // empty IR
+            includeIr(SerializedIrModule(files = [], fileWithPreparedInlinableFunctions = null)) // empty IR
         }.writeTo(libraryFile.absolutePath)
 
         return libraryFile

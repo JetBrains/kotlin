@@ -27,7 +27,7 @@ class ReflectJavaTypeParameter(
     override val upperBounds: List<ReflectJavaClassifierType>
         get() {
             val bounds = typeVariable.bounds.map(::ReflectJavaClassifierType)
-            if (bounds.singleOrNull()?.reflectType == Any::class.java) return emptyList()
+            if (bounds.singleOrNull()?.reflectType == Any::class.java) return []
             return bounds
         }
 

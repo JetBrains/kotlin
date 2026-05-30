@@ -75,7 +75,7 @@ fun JavaType.withAnnotations(annotations: Collection<JavaAnnotation>): JavaType 
 
 abstract class NullabilityJavaAnnotation(override val classId: ClassId) : JavaAnnotation {
     override val arguments: Collection<JavaAnnotationArgument>
-        get() = emptyList()
+        get() = []
 
     override fun resolve(): JavaClass? = null
 
@@ -83,7 +83,7 @@ abstract class NullabilityJavaAnnotation(override val classId: ClassId) : JavaAn
     object Nullable : NullabilityJavaAnnotation(ClassId(ORG_JETBRAINS_ANNOTATIONS, Name.identifier("Nullable")))
 
     companion object {
-        private val ORG_JETBRAINS_ANNOTATIONS = FqName.fromSegments(listOf("org", "jetbrains", "annotations"))
+        private val ORG_JETBRAINS_ANNOTATIONS = FqName.fromSegments(["org", "jetbrains", "annotations"])
     }
 }
 
@@ -92,11 +92,11 @@ class DummyJavaClassType(
     override val typeArguments: List<JavaType?>
 ) : JavaClassifierType {
     companion object {
-        val ObjectType = DummyJavaClassType(JavaClasses.Object, typeArguments = emptyList())
+        val ObjectType = DummyJavaClassType(JavaClasses.Object, typeArguments = [])
     }
 
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = []
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
     override val isRaw: Boolean
@@ -109,6 +109,6 @@ class DummyJavaClassType(
 
 fun JavaType.toRef(source: KtSourceElement?): FirJavaTypeRef = buildJavaTypeRef {
     type = this@toRef
-    annotationBuilder = { emptyList() }
+    annotationBuilder = { [] }
     this.source = source
 }

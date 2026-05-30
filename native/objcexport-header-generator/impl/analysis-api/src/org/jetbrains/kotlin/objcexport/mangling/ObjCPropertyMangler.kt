@@ -22,7 +22,7 @@ class ObjCPropertyMangler {
                     member.copy(
                         name = member.name + "_",
                         propertyAttributes = null,
-                        declarationAttributes = listOf(buildMangledSwiftNamePropertyAttribute(attr.mangleAttribute()))
+                        declarationAttributes = [buildMangledSwiftNamePropertyAttribute(attr.mangleAttribute())]
                     )
                 } else {
                     member.copy(

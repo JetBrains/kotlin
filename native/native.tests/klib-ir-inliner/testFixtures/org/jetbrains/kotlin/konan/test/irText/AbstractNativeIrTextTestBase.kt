@@ -69,10 +69,10 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
                 // `Any`, `String`, `println`, etc.
                 +ConfigurationDirectives.WITH_STDLIB
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }

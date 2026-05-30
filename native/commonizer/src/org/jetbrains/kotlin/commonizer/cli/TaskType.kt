@@ -14,7 +14,7 @@ internal enum class TaskType(
     NATIVE_DIST_COMMONIZE(
         "native-dist-commonize",
         "Commonize platform-specific libraries in Kotlin/Native distribution",
-        listOf(
+        [
             NativeDistributionOptionType,
             OutputOptionType,
             NativeTargetsOptionType,
@@ -31,7 +31,7 @@ internal enum class TaskType(
             ),
             StatsTypeOptionType,
             LogLevelOptionType,
-        ) + ADDITIONAL_COMMONIZER_SETTINGS,
+        ] + ADDITIONAL_COMMONIZER_SETTINGS,
         ::NativeDistributionCommonize
     ),
 
@@ -47,14 +47,14 @@ internal enum class TaskType(
     NATIVE_KLIB_COMMONIZE(
         "native-klib-commonize",
         "Commonize any platform-specific libraries",
-        listOf(
+        [
             NativeDistributionOptionType,
             OutputOptionType,
             InputLibrariesOptionType,
             DependencyLibrariesOptionType,
             OutputCommonizerTargetsOptionType,
             LogLevelOptionType
-        ) + ADDITIONAL_COMMONIZER_SETTINGS,
+        ] + ADDITIONAL_COMMONIZER_SETTINGS,
         ::NativeKlibCommonize
     )
     ;

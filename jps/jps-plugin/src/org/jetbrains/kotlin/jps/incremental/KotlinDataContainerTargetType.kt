@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.config.SettingConstants
 import java.io.File
 
 object KotlinDataContainerTargetType : BuildTargetType<KotlinDataContainerTarget>(SettingConstants.KOTLIN_DATA_CONTAINER_ID) {
-    override fun computeAllTargets(model: JpsModel): List<KotlinDataContainerTarget> = listOf(KotlinDataContainerTarget)
+    override fun computeAllTargets(model: JpsModel): List<KotlinDataContainerTarget> = [KotlinDataContainerTarget]
 
     override fun createLoader(model: JpsModel): BuildTargetLoader<KotlinDataContainerTarget> =
         object : BuildTargetLoader<KotlinDataContainerTarget>() {
@@ -44,12 +44,12 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
         index: ModuleExcludeIndex,
         ignoredFileIndex: IgnoredFileIndex,
         dataPaths: BuildDataPaths,
-    ): List<BuildRootDescriptor> = listOf()
+    ): List<BuildRootDescriptor> = []
 
     override fun getOutputRoots(context: CompileContext): Collection<File> {
         val dataManager = context.projectDescriptor.dataManager
         val storageRoot = dataManager.dataPaths.dataStorageDir.toFile()
-        return listOf(File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID))
+        return [File(storageRoot, SettingConstants.KOTLIN_DATA_CONTAINER_ID)]
     }
 
     override fun findRootDescriptor(rootId: String, rootIndex: BuildRootIndex): BuildRootDescriptor? = null
@@ -57,5 +57,5 @@ object KotlinDataContainerTarget : BuildTarget<BuildRootDescriptor>(KotlinDataCo
     override fun computeDependencies(
         targetRegistry: BuildTargetRegistry,
         outputIndex: TargetOutputIndex,
-    ): Collection<BuildTarget<*>> = listOf()
+    ): Collection<BuildTarget<*>> = []
 }

@@ -38,7 +38,7 @@ class FirLazyNestedClassifierScope(
 
     override fun getClassifierNames(): Set<Name> = existingNames.toSet()
 
-    override fun getCallableNames(): Set<Name> = emptySet()
+    override fun getCallableNames(): Set<Name> = []
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirLazyNestedClassifierScope? {

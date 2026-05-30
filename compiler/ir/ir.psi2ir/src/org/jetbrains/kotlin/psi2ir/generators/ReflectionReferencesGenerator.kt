@@ -177,10 +177,10 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
             startOffset, endOffset,
             irReferenceType,
             IrStatementOrigin.FUN_INTERFACE_CONSTRUCTOR_REFERENCE,
-            listOf(
+            [
                 irAdapterFun,
                 irAdapterRef
-            )
+            ]
         )
     }
 
@@ -227,7 +227,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
                         )
                     ) ?: throw AssertionError("Substitution failed for $checkNotNull: T=$fnType")
 
-                irAdapterFun.parameters = listOf(irFnParameter)
+                irAdapterFun.parameters = [irFnParameter]
                 irAdapterFun.body =
                     IrBlockBodyBuilder(
                         context,
@@ -727,7 +727,7 @@ internal class ReflectionReferencesGenerator(statementGenerator: StatementGenera
         (statementGenerator.context.irBuiltIns as IrBuiltInsOverDescriptors).builtIns,
         annotations,
         null,
-        emptyList(),
+        [],
         arguments.dropLast(1).map { it.type },
         null,
         arguments.last().type,

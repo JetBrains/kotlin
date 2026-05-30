@@ -17,7 +17,7 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
     receiverTypes: Collection<KotlinType>,
     callType: CallType<*>
 ): Collection<TCallable> {
-    if (!callType.descriptorKindFilter.accepts(this)) return listOf()
+    if (!callType.descriptorKindFilter.accepts(this)) return []
 
     var types = receiverTypes.asSequence()
     if (callType == CallType.SAFE) {
@@ -34,7 +34,7 @@ fun <TCallable : CallableDescriptor> TCallable.substituteExtensionIfCallable(
         substitutor
     }
     return if (typeParameters.isEmpty()) { // optimization for non-generic callables
-        if (substitutors.any()) listOf(this) else listOf()
+        if (substitutors.any()) [this] else []
     } else {
         substitutors
             .mapNotNull { @Suppress("UNCHECKED_CAST") (substitute(it) as TCallable?) }

@@ -85,11 +85,11 @@ abstract class AbstractInvokeTowerProcessor<C : Candidate>(
 
     private fun Collection<VariableInvokeProcessor>.processVariableGroup(data: TowerData): List<Collection<C>> {
         return when (size) {
-            0 -> emptyList()
+            0 -> []
             1 -> single().process(data)
         // overload on variables see KT-10093 Resolve depends on the order of declaration for variable with implicit invoke
 
-            else -> listOf(this.flatMap { it.process(data).flatten() })
+            else -> [this.flatMap { it.process(data).flatten() }]
         }
     }
 
@@ -175,26 +175,26 @@ private class InvokeExtensionScopeTowerProcessor<C : Candidate>(
 
     override fun simpleProcess(data: TowerData): Collection<C> {
         if (explicitReceiver != null && data == TowerData.Empty) {
-            return listOf(
+            return [
                 candidateFactory.createCandidate(
                     invokeCandidateDescriptor,
                     ExplicitReceiverKind.BOTH_RECEIVERS,
                     explicitReceiver
                 )
-            )
+            ]
         }
 
         if (explicitReceiver == null && data is TowerData.OnlyImplicitReceiver) {
-            return listOf(
+            return [
                 candidateFactory.createCandidate(
                     invokeCandidateDescriptor,
                     ExplicitReceiverKind.DISPATCH_RECEIVER,
                     data.implicitReceiver
                 )
-            )
+            ]
         }
 
-        return emptyList()
+        return []
     }
 
     // No lookups happen in `simpleProcess`
@@ -209,12 +209,12 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
     if (!type.isBuiltinExtensionFunctionalType) return null // todo: missing smart cast?
 
     val invokeDescriptor = type.memberScope.getContributedFunctions(OperatorNameConventions.INVOKE, location).single()
-    val synthesizedInvokes = createSynthesizedInvokes(listOf(invokeDescriptor))
+    val synthesizedInvokes = createSynthesizedInvokes([invokeDescriptor])
     val synthesizedInvoke = synthesizedInvokes.singleOrNull()
             ?: error("No single synthesized invoke for $invokeDescriptor: $synthesizedInvokes")
 
     // here we don't add SynthesizedDescriptor diagnostic because it should has priority as member
-    return CandidateWithBoundDispatchReceiver(extensionFunctionReceiver, synthesizedInvoke, listOf())
+    return CandidateWithBoundDispatchReceiver(extensionFunctionReceiver, synthesizedInvoke, [])
 }
 
 // case 1.(foo())() or (foo())()
@@ -228,7 +228,7 @@ fun <C : Candidate> createCallTowerProcessorForExplicitInvoke(
     if (explicitReceiver != null) {
         return if (invokeExtensionDescriptor == null) {
             // case 1.(foo())(), where foo() isn't extension function
-            KnownResultProcessor(emptyList())
+            KnownResultProcessor([])
         } else {
             InvokeExtensionScopeTowerProcessor(functionContext, invokeExtensionDescriptor, explicitReceiver = explicitReceiver)
         }

@@ -65,8 +65,8 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
                     "iterator", "next", "hasNext" -> AsIsWithAdditions(kaSymbol)
 
                     // Misc
-                    "contains" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "~=")) }
-                    "equals" -> AsIsWithAdditions(kaSymbol) { listOf(SirBinaryMathOperatorTrampolineFunction(it, "==")) }
+                    "contains" -> AsIsWithAdditions(kaSymbol) { [SirBinaryMathOperatorTrampolineFunction(it, "~=")] }
+                    "equals" -> AsIsWithAdditions(kaSymbol) { [SirBinaryMathOperatorTrampolineFunction(it, "==")] }
                     "compareTo" -> AsComparisonOperator(kaSymbol)
                     "invoke" -> AsInvokeOperator(kaSymbol)
 
@@ -82,7 +82,7 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
 
     public class AsIsWithAdditions(
         symbol: KaNamedFunctionSymbol,
-        private val supplementaryDeclarationsProvider: (SirFunction) -> List<SirDeclaration> = { emptyList() }
+        private val supplementaryDeclarationsProvider: (SirFunction) -> List<SirDeclaration> = { [] }
     ) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirFunctionFromKtSymbol(kaSymbol, sirSession).let {
@@ -94,9 +94,9 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
     public class AsUnaryMathOperator(symbol: KaNamedFunctionSymbol, private val name: String) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
-                SirTranslationResult.OperatorFunction(it, listOf(
-                        SirUnaryMathOperatorTrampolineFunction(it, name)
-                    )
+                SirTranslationResult.OperatorFunction(it, [
+                    SirUnaryMathOperatorTrampolineFunction(it, name)
+                ]
                 )
             }
         }
@@ -105,9 +105,9 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
     public class AsBinaryMathOperator(symbol: KaNamedFunctionSymbol, private val name: String) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
-                SirTranslationResult.OperatorFunction(it, listOf(
-                        SirBinaryMathOperatorTrampolineFunction(it, name)
-                    )
+                SirTranslationResult.OperatorFunction(it, [
+                    SirBinaryMathOperatorTrampolineFunction(it, name)
+                ]
                 )
             }
         }
@@ -119,9 +119,9 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
     ) : SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
-                SirTranslationResult.OperatorFunction(it, listOf(
-                        SirBinaryMathOperatorTrampolineFunction(it, name)
-                    )
+                SirTranslationResult.OperatorFunction(it, [
+                    SirBinaryMathOperatorTrampolineFunction(it, name)
+                ]
                 )
             }
         }
@@ -130,7 +130,7 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
     public class AsInvokeOperator(symbol: KaNamedFunctionSymbol): SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirRenamedFunction(kaSymbol, sirSession = sirSession) { "callAsFunction" }.let {
-                SirTranslationResult.OperatorFunction(it, emptyList())
+                SirTranslationResult.OperatorFunction(it, [])
             }
         }
     }
@@ -138,12 +138,12 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
     public class AsComparisonOperator(symbol: KaNamedFunctionSymbol): SirOperatorTranslationStrategy(symbol) {
         override fun translate(sirSession: SirSession): SirTranslationResult {
             return SirRenamedFunction(kaSymbol, sirSession = sirSession).let {
-                SirTranslationResult.OperatorFunction(it, listOf(
-                        SirComparisonOperatorTrampolineFunction (it, "<"),
-                        SirComparisonOperatorTrampolineFunction(it, "<="),
-                        SirComparisonOperatorTrampolineFunction(it, ">"),
-                        SirComparisonOperatorTrampolineFunction(it, ">="),
-                    )
+                SirTranslationResult.OperatorFunction(it, [
+                    SirComparisonOperatorTrampolineFunction(it, "<"),
+                    SirComparisonOperatorTrampolineFunction(it, "<="),
+                    SirComparisonOperatorTrampolineFunction(it, ">"),
+                    SirComparisonOperatorTrampolineFunction(it, ">="),
+                ]
                 )
             }
         }
@@ -169,13 +169,13 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
 
                     return SirTranslationResult.OperatorSubscript(
                         SirSubscriptTrampoline(getterFunction, setterFunction),
-                        listOf(getterFunction)
+                        [getterFunction]
                     )
                 }
                 "set" -> {
                     return SirTranslationResult.OperatorFunction(
                         SirRenamedFunction(kaSymbol, sirSession),
-                        emptyList()
+                        []
                     )
                 }
                 else -> error("Unknown operator name: ${kaSymbol.name.asString()} in SirOperatorTranslationStrategy.")

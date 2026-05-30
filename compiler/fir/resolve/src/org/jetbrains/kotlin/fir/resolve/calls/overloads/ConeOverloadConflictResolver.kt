@@ -133,7 +133,7 @@ class ConeOverloadConflictResolver(
     ): Set<Candidate> {
         if (candidateSet.size <= 1) return candidateSet
 
-        val result = mutableSetOf<Candidate>()
+        val result: MutableSet<Candidate> = []
 
         // Assuming `overrides` is a partial order, this loop leaves minimal elements of `candidateSet` in `result`.
         // Namely, it leaves in `result` only candidates, for any pair of them (x, y): !x.overrides(y) && !y.overrides(x)
@@ -226,10 +226,10 @@ class ConeOverloadConflictResolver(
             )?.let { return it }
         }
 
-        findMaximallySpecificCall(candidates, false)?.let { return setOf(it) }
+        findMaximallySpecificCall(candidates, false)?.let { return [it] }
 
         if (discriminationFlags.generics) {
-            findMaximallySpecificCall(candidates, true)?.let { return setOf(it) }
+            findMaximallySpecificCall(candidates, true)?.let { return [it] }
         }
 
         if (discriminationFlags.SAMs) {
@@ -285,7 +285,7 @@ class ConeOverloadConflictResolver(
 
         val filtered = candidates.filterTo(mutableSetOf()) { it.usesSamConversionOrSamConstructor }
         if (filtered.isNotEmpty()) {
-            findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return setOf(it) }
+            findMaximallySpecificCall(candidates, discriminateGenerics = false, useOriginalSamTypes = true)?.let { return [it] }
         }
 
         return candidates
@@ -616,7 +616,7 @@ class ConeOverloadConflictResolver(
         return FlatSignature(
             call,
             (klass as? FirTypeParameterRefsOwner)?.typeParameters?.map { it.symbol.toLookupTag() }.orEmpty(),
-            emptyList(),
+            [],
             hasExtensionReceiver = false,
             0,
             hasVarargs = false,

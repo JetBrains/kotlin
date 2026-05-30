@@ -103,7 +103,7 @@ object FirPropertyAccessorsTypesChecker : FirPropertyChecker(MppCheckerKind.Comm
             return
         }
 
-        if (valueSetterType.withAttributes(ConeAttributes.Empty) != propertyType.withAttributes(ConeAttributes.Empty) && !valueSetterType.hasError()) {
+        if (valueSetterType.withAttributes([]) != propertyType.withAttributes([]) && !valueSetterType.hasError()) {
             reporter.reportOn(valueSetterTypeSource, FirErrors.WRONG_SETTER_PARAMETER_TYPE, propertyType, valueSetterType)
         }
 

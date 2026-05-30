@@ -18,11 +18,11 @@ object WasmBaseDeclarationCheckers : DeclarationCheckers() {
         )
 
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
+        get() = [
             FirWasmImportAnnotationChecker,
             FirWasmExportAnnotationChecker,
             FirWasmExternalChecker,
-        )
+        ]
 
     override val propertyAccessorCheckers: Set<FirPropertyAccessorChecker>
         get() = setOf(
@@ -32,14 +32,14 @@ object WasmBaseDeclarationCheckers : DeclarationCheckers() {
 
 object WasmJsDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
+        get() = [
             FirWasmJsInteropTypesChecker,
             FirWasmJsFunAnnotationChecker,
             FirJsExportAnnotationChecker,
             FirWasmJsModuleChecker,
             FirWasmExternalFileChecker,
             FirWasmJsAssociatedObjectChecker,
-        )
+        ]
 
     override val namedFunctionCheckers: Set<FirNamedFunctionChecker>
         get() = setOf(

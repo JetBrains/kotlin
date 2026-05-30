@@ -71,7 +71,7 @@ class KlibParsingCursorExtensionsTest {
         val input = "inner value fun whatever"
         val cursor = Cursor(input)
         val modifiers = cursor.parseClassModifiers()
-        assertIterableEquals(listOf("inner", "value", "fun"), modifiers)
+        assertIterableEquals(["inner", "value", "fun"], modifiers)
         assertEquals("whatever", cursor.currentLine)
     }
 
@@ -81,7 +81,7 @@ class KlibParsingCursorExtensionsTest {
         val cursor = Cursor(input)
         cursor.parseAbiModality()
         val modifiers = cursor.parseFunctionModifiers()
-        assertIterableEquals(listOf("inline", "suspend"), modifiers)
+        assertIterableEquals(["inline", "suspend"], modifiers)
         assertEquals("fun myFun(): kotlin/Long", cursor.currentLine)
     }
 
@@ -170,10 +170,10 @@ class KlibParsingCursorExtensionsTest {
     @Test
     fun hasGetterOrSetter() {
         val inputs =
-            listOf(
+            [
                 "final inline fun <set-example>(): kotlin.ranges/IntRange",
                 "final inline fun <get-example>(): kotlin.ranges/IntRange",
-            )
+            ]
         inputs.forEach { input -> assertTrue(Cursor(input).hasGetterOrSetter()) }
     }
 

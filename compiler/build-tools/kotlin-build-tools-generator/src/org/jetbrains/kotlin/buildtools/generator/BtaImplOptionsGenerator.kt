@@ -42,7 +42,7 @@ internal class BtaImplOptionsGenerator(
 
     private val generateCompatLayer = compatLayerConfig != null
 
-    private val outputs = mutableListOf<Pair<Path, String>>()
+    private val outputs: MutableList<Pair<Path, String>> = []
 
     override fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
@@ -899,7 +899,7 @@ internal fun FunSpec.Builder.addSafeSetStatement(
         )
         addSafeMethodAccessStatement(
             setStatement,
-            catches = listOf(catchNoSuchMethodError(errorMessage)),
+            catches = [catchNoSuchMethodError(errorMessage)],
         )
     } else {
         addStatement("%L", setStatement)

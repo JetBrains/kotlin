@@ -80,7 +80,7 @@ class BuiltInsLoaderImpl : BuiltInsLoader {
             additionalClassPartsProvider,
             platformDependentDeclarationFilter,
             BuiltInSerializerProtocol.extensionRegistry,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList())
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = [])
         )
 
         for (packageFragment in packageFragments) {

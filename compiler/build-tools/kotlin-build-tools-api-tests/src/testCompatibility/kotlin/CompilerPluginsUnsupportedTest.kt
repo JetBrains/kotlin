@@ -26,7 +26,7 @@ class CompilerPluginsUnsupportedTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("compiler-plugins")
             val exception = assertThrows<IllegalStateException> {
-                module.compile(compilationConfigAction = { it.compilerArguments[COMPILER_PLUGINS] = emptyList() })
+                module.compile(compilationConfigAction = { it.compilerArguments[COMPILER_PLUGINS] = [] })
             }
 
             assertEquals("COMPILER_PLUGINS is available only since 2.3.20", exception.message)

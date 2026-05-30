@@ -23,7 +23,7 @@ private class Context(
     val candidateProcessor: (Candidate) -> Unit,
     val postponedAtomsProcessor: (ConePostponedResolvedAtom) -> Unit
 ) {
-    val visited: MutableSet<ConeResolutionAtom> = mutableSetOf()
+    val visited: MutableSet<ConeResolutionAtom> = []
 }
 
 private fun Context.processCandidatesAndPostponedAtoms(atom: ConeResolutionAtom?) {

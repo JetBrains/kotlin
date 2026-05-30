@@ -52,7 +52,8 @@ class LazyJavaClassDescriptor(
 
     companion object {
         @JvmStatic
-        private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
+        private val PUBLIC_METHOD_NAMES_IN_OBJECT: Set<String> =
+            ["equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString"]
     }
 
     private val c: LazyJavaResolverContext = outerContext.childForClassOrPackage(this, jClass)
@@ -201,7 +202,7 @@ class LazyJavaClassDescriptor(
             c.typeResolver.transformJavaType(it, attributes).constructor.declarationDescriptor as? ClassDescriptor
         }.sortedBy { it.fqNameSafe.asString() }
     } else {
-        emptyList()
+        []
     }
 
     override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
@@ -256,7 +257,7 @@ class LazyJavaClassDescriptor(
                 })
             }
 
-            return if (result.isNotEmpty()) result.toList() else listOf(c.module.builtIns.anyType)
+            return if (result.isNotEmpty()) result.toList() else [c.module.builtIns.anyType]
         }
 
         private fun getPurelyImplementedSupertype(): KotlinType? {

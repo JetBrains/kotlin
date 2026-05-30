@@ -79,10 +79,10 @@ class KaptConfigurationIT : KGPBaseTest() {
                 project.tasks.withType(BaseKapt::class.java).configureEach {
                     @Suppress("DEPRECATION")
                     it.annotationProcessorOptionProviders.add(
-                        listOf(CommandLineArgumentProvider { listOf("-Aoption1=kt58009", "-Aoption2=kt58009") })
+                        [CommandLineArgumentProvider { ["-Aoption1=kt58009", "-Aoption2=kt58009"] }]
                     )
                     it.annotationProcessorOptionsProviders.add(
-                        CommandLineArgumentProvider { listOf("-Aoption3=kt58009", "-Aoption4=kt58009") }
+                        CommandLineArgumentProvider { ["-Aoption3=kt58009", "-Aoption4=kt58009"] }
                     )
                 }
             }

@@ -22,15 +22,15 @@ class ImportTrackerTest : BaseCompilationTest() {
         val moduleName = "jvm-module-3"
         // also check order and quantity
         val expectedFileToImport =
-            listOf(
+            [
                 "/src/bar.kt" to "p.foo",
                 "/src/foo.kt" to "p2.*",
-            )
+            ]
         val kotlinToolchains = KotlinToolchains.loadImplementation(customBtaClassLoader)
         val inProcessPolicy = kotlinToolchains.createInProcessExecutionPolicy()
         jvmProject(kotlinToolchains to inProcessPolicy) {
             val module1 = module(moduleName)
-            val recordedImports = mutableListOf<Pair<String, String>>()
+            val recordedImports: MutableList<Pair<String, String>> = []
             val importTracker = object : CompilerImportTracker {
                 override fun report(filePath: String, importedFqName: String) {
                     val relativePath = filePath.substringAfter(moduleName)

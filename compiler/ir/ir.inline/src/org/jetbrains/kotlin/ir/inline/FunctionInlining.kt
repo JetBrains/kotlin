@@ -112,7 +112,7 @@ private class CallInlining(
     private val currentFile: IrFile,
     private val parent: IrDeclarationParent
 ) {
-    private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
+    private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: [parent]
 
     // Callee can be different from callSite.symbol if resolver returned a non-trivial result.
     // For example, if it is a call of function from another module, callSite.symbol can be equal to lazy function,

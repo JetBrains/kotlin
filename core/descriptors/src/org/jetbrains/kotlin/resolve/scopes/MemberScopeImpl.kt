@@ -29,24 +29,24 @@ import org.jetbrains.kotlin.utils.filterIsInstanceMapTo
 abstract class MemberScopeImpl : MemberScope {
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<@JvmWildcard PropertyDescriptor> =
-        emptyList()
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<@JvmWildcard PropertyDescriptor> = []
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<@JvmWildcard SimpleFunctionDescriptor> =
-        emptyList()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<@JvmWildcard SimpleFunctionDescriptor> = []
 
-    override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
-                                           nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> = emptyList()
+    override fun getContributedDescriptors(
+        kindFilter: DescriptorKindFilter,
+        nameFilter: (Name) -> Boolean,
+    ): Collection<DeclarationDescriptor> = []
 
     override fun getFunctionNames(): Set<Name> =
         getContributedDescriptors(
             DescriptorKindFilter.FUNCTIONS, alwaysTrue()
-        ).filterIsInstanceMapTo<SimpleFunctionDescriptor, Name, MutableSet<Name>>(mutableSetOf()) { it.name }
+        ).filterIsInstanceMapTo<SimpleFunctionDescriptor, Name, MutableSet<Name>>([]) { it.name }
 
     override fun getVariableNames(): Set<Name> =
         getContributedDescriptors(
             DescriptorKindFilter.VARIABLES, alwaysTrue()
-        ).filterIsInstanceMapTo<SimpleFunctionDescriptor, Name, MutableSet<Name>>(mutableSetOf()) { it.name }
+        ).filterIsInstanceMapTo<SimpleFunctionDescriptor, Name, MutableSet<Name>>([]) { it.name }
 
     override fun getClassifierNames(): Set<Name>? = null
 

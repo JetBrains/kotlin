@@ -119,8 +119,8 @@ open class CommonCompilerArgumentsConfigurator {
         reporter: Reporter,
         languageVersion: LanguageVersion,
     ) {
-        val featuresThatForcePreReleaseBinaries = mutableListOf<LanguageFeature>()
-        val disabledFeaturesFromUnsupportedVersions = mutableListOf<LanguageFeature>()
+        val featuresThatForcePreReleaseBinaries: MutableList<LanguageFeature> = []
+        val disabledFeaturesFromUnsupportedVersions: MutableList<LanguageFeature> = []
 
         var standaloneSamConversionFeaturePassedExplicitly = false
         var functionReferenceWithDefaultValueFeaturePassedExplicitly = false

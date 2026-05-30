@@ -29,13 +29,13 @@ class TestScheme {
 
     @Test
     fun canCreateASchemeWithOpenAppliers() {
-        val scheme = Scheme(Open(0), listOf(Scheme(Open(0))))
+        val scheme = Scheme(Open(0), [Scheme(Open(0))])
         assertEquals("[0, [0]]", scheme.toString())
     }
 
     @Test
     fun canCreateASchemeWithAnonymousOpens() {
-        val scheme = Scheme(Open(-1), listOf(Scheme(Open(-1))))
+        val scheme = Scheme(Open(-1), [Scheme(Open(-1))])
         assertEquals("[_, [_]]", scheme.toString())
     }
 
@@ -49,7 +49,7 @@ class TestScheme {
     fun canCreateAClosedBinding() {
         val scheme = Scheme(Token("token"))
         val bindings = Bindings()
-        val context = mutableListOf<Binding>()
+        val context: MutableList<Binding> = []
         val binding = scheme.target.toBinding(bindings, context)
         assertEquals("token", binding.token)
     }
@@ -58,13 +58,13 @@ class TestScheme {
     fun canCreateOpenBindings() {
         val scheme = Scheme(
             Open(0),
-            listOf(
+            [
                 Scheme(Open(0)),
                 Scheme(Open(2))
-            )
+            ]
         )
         val bindings = Bindings()
-        val context = mutableListOf<Binding>()
+        val context: MutableList<Binding> = []
         val t1 = scheme.target.toBinding(bindings, context)
         val t2 = scheme.parameters[0].target.toBinding(bindings, context)
         val t3 = scheme.parameters[1].target.toBinding(bindings, context)
@@ -80,36 +80,36 @@ class TestScheme {
     @Test
     fun testEquals() {
         // Non-unique opens are alpha renamed to lowest unused index
-        val schemeA = Scheme(Open(0), listOf(Scheme(Open(0))))
-        val schemeB = Scheme(Open(2), listOf(Scheme(Open(2))))
+        val schemeA = Scheme(Open(0), [Scheme(Open(0))])
+        val schemeB = Scheme(Open(2), [Scheme(Open(2))])
         assertEquals(schemeA, schemeB)
 
         // Unique opens are alpha renamed to -1
-        val schemeOne = Scheme(Open(0), listOf(Scheme(Open(1))))
-        val schemeTwo = Scheme(Open(-1), listOf(Scheme(Open(-1))))
+        val schemeOne = Scheme(Open(0), [Scheme(Open(1))])
+        val schemeTwo = Scheme(Open(-1), [Scheme(Open(-1))])
         assertEquals(schemeOne, schemeTwo)
 
         // Bound schemes should be equal
-        val boundA = Scheme(Token("one"), listOf(Scheme(Token("two"))))
-        val boundB = Scheme(Token("one"), listOf(Scheme(Token("two"))))
+        val boundA = Scheme(Token("one"), [Scheme(Token("two"))])
+        val boundB = Scheme(Token("one"), [Scheme(Token("two"))])
         assertEquals(boundA, boundB)
     }
 
     @Test
     fun testHashCode() {
         // Non-unique opens are alpha renamed to lowest unused index
-        val schemeA = Scheme(Open(0), listOf(Scheme(Open(0))))
-        val schemeB = Scheme(Open(2), listOf(Scheme(Open(2))))
+        val schemeA = Scheme(Open(0), [Scheme(Open(0))])
+        val schemeB = Scheme(Open(2), [Scheme(Open(2))])
         assertEquals(schemeA.hashCode(), schemeB.hashCode())
 
         // Unique opens are alpha renamed to -1
-        val schemeOne = Scheme(Open(0), listOf(Scheme(Open(1))))
-        val schemeTwo = Scheme(Open(-1), listOf(Scheme(Open(-1))))
+        val schemeOne = Scheme(Open(0), [Scheme(Open(1))])
+        val schemeTwo = Scheme(Open(-1), [Scheme(Open(-1))])
         assertEquals(schemeOne.hashCode(), schemeTwo.hashCode())
 
         // Bound schemes should renamed
-        val boundA = Scheme(Token("one"), listOf(Scheme(Token("two"))))
-        val boundB = Scheme(Token("one"), listOf(Scheme(Token("two"))))
+        val boundA = Scheme(Token("one"), [Scheme(Token("two"))])
+        val boundB = Scheme(Token("one"), [Scheme(Token("two"))])
         assertEquals(boundA, boundB)
     }
 
@@ -122,18 +122,18 @@ class TestScheme {
         val z = Open(0)
         val one = Open(1)
         val oneScheme = Scheme(one)
-        val schemes = listOf(
+        val schemes = [
             ui,
-            Scheme(z, listOf(Scheme(z))),
+            Scheme(z, [Scheme(z)]),
             Scheme(Token("This is a really long token with special chars [],_,123")),
             Scheme(Token("Contains a \" character")),
             Scheme(Token("Contains a \\ character")),
-            Scheme(one, listOf(Scheme(Open(2), listOf(Scheme(Open(3)))))),
-            Scheme(uiToken, listOf(ui, ui, ui, ui, ui, ui)),
-            Scheme(a, listOf(aScheme, aScheme, aScheme)),
-            Scheme(one, listOf(oneScheme, aScheme, oneScheme, aScheme)),
-            Scheme(Open(Int.MAX_VALUE), listOf(Scheme(Open(Int.MAX_VALUE)))),
-            Scheme(Open(Int.MIN_VALUE), listOf(Scheme(Open(Int.MIN_VALUE)))),
+            Scheme(one, [Scheme(Open(2), [Scheme(Open(3))])]),
+            Scheme(uiToken, [ui, ui, ui, ui, ui, ui]),
+            Scheme(a, [aScheme, aScheme, aScheme]),
+            Scheme(one, [oneScheme, aScheme, oneScheme, aScheme]),
+            Scheme(Open(Int.MAX_VALUE), [Scheme(Open(Int.MAX_VALUE))]),
+            Scheme(Open(Int.MIN_VALUE), [Scheme(Open(Int.MIN_VALUE))]),
             Scheme(
                 target = z,
                 result = oneScheme
@@ -142,7 +142,7 @@ class TestScheme {
                 target = z,
                 anyParameters = true
             )
-        )
+        ]
 
         for (scheme in schemes) {
             val serialized = scheme.serialize()
@@ -153,7 +153,7 @@ class TestScheme {
 
     @Test
     fun invalidDeserializationCanBeCaught() {
-        val invalids = listOf(
+        val invalids = [
             "",
             "[ ]",
             "[123123123123123123123123123123123123]",
@@ -164,7 +164,7 @@ class TestScheme {
             "[\"\\u0000\"]",
             "[0*[0]]",
             "[0[0]*]"
-        )
+        ]
         for (invalid in invalids) {
             val result = deserializeScheme(invalid)
             assertNull(result)

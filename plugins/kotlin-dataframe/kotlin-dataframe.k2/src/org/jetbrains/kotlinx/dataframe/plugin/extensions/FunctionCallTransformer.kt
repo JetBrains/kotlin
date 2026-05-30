@@ -137,15 +137,15 @@ class FunctionCallTransformer(
     }
 
     // also update [ReturnTypeBasedReceiverInjector.SCHEMA_TYPES]
-    private val transformers = listOf(
+    private val transformers = [
         GroupByCallTransformer(),
         DataFrameCallTransformer(),
         DataRowCallTransformer(),
         ColumnGroupCallTransformer(),
-    )
+    ]
 
     override fun intercept(callInfo: CallInfo, symbol: FirNamedFunctionSymbol): CallReturnType? {
-        val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: emptyList()
+        val callSiteAnnotations = (callInfo.callSite as? FirAnnotationContainer)?.annotations ?: []
         if (!shouldRefine(callSiteAnnotations, symbol, session)) return null
 
         if (callInfo.containingDeclarations.any { it.hasAnnotationSafe(Names.DISABLE_INTERPRETATION_ANNOTATION, session) }) {
@@ -200,12 +200,12 @@ class FunctionCallTransformer(
             val newDataFrameArgument = buildNewTypeArgument(argument, callInfo.name, hash, callInfo.callSite)
             val typeRef = buildResolvedTypeRef {
                 coneType = dataSchemaLikeClassId.constructClassLikeType(
-                    typeArguments = arrayOf(
+                    typeArguments = [
                         ConeClassLikeLookupTagWithFixedSymbol(
                             newDataFrameArgument.classId,
                             newDataFrameArgument.symbol
                         ).constructClassType()
-                    )
+                    ]
                 )
             }
             return CallReturnType(typeRef)
@@ -224,7 +224,7 @@ class FunctionCallTransformer(
             val tokenFir = token.toRegularClassSymbol()!!.fir
             tokenFir.callShapeData = CallShapeData.RefinedType(dataSchemaApis.map { it.scope.symbol }, rootSchemaSymbol)
 
-            return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, listOf(tokenFir)) { tokenFir.generatedClasses = it }
+            return buildScopeFunctionCall(call, originalSymbol, dataSchemaApis, [tokenFir]) { tokenFir.generatedClasses = it }
         }
     }
 
@@ -245,10 +245,10 @@ class FunctionCallTransformer(
             val group = buildNewTypeArgument(null, Name.identifier("Group"), hash, callInfo.callSite)
             val typeRef = buildResolvedTypeRef {
                 coneType = Names.GROUP_BY_CLASS_ID.constructClassLikeType(
-                    typeArguments = arrayOf(
+                    typeArguments = [
                         ConeClassLikeLookupTagWithFixedSymbol(keys.classId, keys.symbol).constructClassType(),
                         ConeClassLikeLookupTagWithFixedSymbol(group.classId, group.symbol).constructClassType(),
-                    )
+                    ]
                 )
             }
             return CallReturnType(typeRef)
@@ -288,7 +288,7 @@ class FunctionCallTransformer(
                 call,
                 originalSymbol,
                 keyApis + groupApis,
-                additionalDeclarations = listOf(groupToken, keyToken)
+                additionalDeclarations = [groupToken, keyToken]
             ) {
                 keyToken.generatedClasses = it
             }
@@ -457,11 +457,11 @@ class FunctionCallTransformer(
                 typeRef = buildResolvedTypeRef {
                     coneType = if (receiverType != null) {
                         StandardClassIds.FunctionN(1).constructClassLikeType(
-                            typeArguments = arrayOf(receiverType, returnType)
+                            typeArguments = [receiverType, returnType]
                         )
                     } else {
                         StandardClassIds.FunctionN(0).constructClassLikeType(
-                            typeArguments = arrayOf(returnType)
+                            typeArguments = [returnType]
                         )
                     }
                 }
@@ -515,7 +515,7 @@ class FunctionCallTransformer(
         i: Int = 0,
     ): List<DataSchemaApi> {
         var i = i
-        val dataSchemaApis = mutableListOf<DataSchemaApi>()
+        val dataSchemaApis: MutableList<DataSchemaApi> = []
         val usedNames = mutableMapOf<String, Int>()
         fun PluginDataFrameSchema.materialize(
             schema: FirRegularClass? = null,
@@ -563,11 +563,11 @@ class FunctionCallTransformer(
                         val nestedSchema = PluginDataFrameSchema(it.columns()).materialize(it)
                         val columnsContainerReturnType =
                             Names.COLUM_GROUP_CLASS_ID.constructClassLikeType(
-                                typeArguments = arrayOf(nestedSchema.schema.defaultType())
+                                typeArguments = [nestedSchema.schema.defaultType()]
                             )
 
                         val dataRowReturnType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
-                            typeArguments = arrayOf(nestedSchema.schema.defaultType())
+                            typeArguments = [nestedSchema.schema.defaultType()]
                         )
 
                         SchemaProperty(schema.defaultType(), PropertyName.of(it.name), dataRowReturnType, columnsContainerReturnType)
@@ -576,7 +576,7 @@ class FunctionCallTransformer(
                     is SimpleFrameColumn -> {
                         val nestedClassMarker = PluginDataFrameSchema(it.columns()).materialize(it)
                         val frameColumnReturnType = Names.DF_CLASS_ID.constructClassLikeType(
-                            typeArguments = arrayOf(nestedClassMarker.schema.defaultType())
+                            typeArguments = [nestedClassMarker.schema.defaultType()]
                         )
 
                         SchemaProperty(

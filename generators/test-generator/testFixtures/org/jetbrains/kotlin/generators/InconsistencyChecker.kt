@@ -35,5 +35,5 @@ object EmptyInconsistencyChecker : InconsistencyChecker {
     }
 
     override val affectedFiles: List<String>
-        get() = emptyList()
+        get() = []
 }

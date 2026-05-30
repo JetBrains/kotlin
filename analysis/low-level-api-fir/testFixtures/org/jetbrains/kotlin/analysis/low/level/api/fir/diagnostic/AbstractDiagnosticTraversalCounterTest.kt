@@ -84,7 +84,7 @@ abstract class AbstractDiagnosticTraversalCounterTest : AbstractAnalysisApiBased
 
     private fun collectErrorElements(firFile: FirFile): List<Pair<FirElement, Int>> {
         val handler = firFile.llFirSession.beforeElementDiagnosticCollectionHandler as BeforeElementTestDiagnosticCollectionHandler
-        val errorElements = mutableListOf<Pair<FirElement, Int>>()
+        val errorElements: MutableList<Pair<FirElement, Int>> = []
         val nonDuplicatingElements = findNonDuplicatingFirElements(firFile).filter { element ->
             when {
                 element is FirTypeRef && element.source?.kind != KtRealSourceElementKind -> {

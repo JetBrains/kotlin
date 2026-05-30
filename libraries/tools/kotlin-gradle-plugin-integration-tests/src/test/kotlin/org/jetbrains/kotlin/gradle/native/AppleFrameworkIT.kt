@@ -315,7 +315,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "BUILT_PRODUCTS_DIR" to iosBuildProductsDir().absolutePathString(),
             )
             buildAndAssertAllTasks(
-                registeredTasks = listOf(
+                registeredTasks = [
                     "shared:assembleDebugAppleFrameworkForXcodeIosArm64",
                     "shared:embedAndSignAppleFrameworkForXcode",
                     "shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64",
@@ -326,7 +326,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                     "shared:assembleCustomDebugAppleFrameworkForXcodeIosX64",
                     "shared:assembleCustomReleaseAppleFrameworkForXcodeIosX64",
                     "shared:assembleCustomReleaseAppleFrameworkForXcodeIosArm64"
-                ),
+                ],
                 environmentVariables = environmentVariables
             )
         }
@@ -409,11 +409,11 @@ class AppleFrameworkIT : KGPBaseTest() {
             )
 
             buildAndAssertAllTasks(
-                registeredTasks = listOf(
+                registeredTasks = [
                     "shared:embedAndSignAppleFrameworkForXcode",
                     "shared:embedAndSignCustomAppleFrameworkForXcode",
-                ),
-                notRegisteredTasks = listOf(
+                ],
+                notRegisteredTasks = [
                     "shared:assembleReleaseAppleFrameworkForXcodeIosX64",
                     "shared:assembleDebugAppleFrameworkForXcodeIosX64",
                     "shared:assembleReleaseAppleFrameworkForXcodeIosArm64",
@@ -422,7 +422,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                     "shared:assembleCustomReleaseAppleFrameworkForXcodeIosX64",
                     "shared:assembleCustomDebugAppleFrameworkForXcodeIosArm64",
                     "shared:assembleCustomReleaseAppleFrameworkForXcodeIosArm64",
-                ),
+                ],
                 environmentVariables = environmentVariables,
             )
             buildAndFail(
@@ -726,6 +726,6 @@ private val GradleProject.darwinBuildProductsDir: Path
 
 private fun GradleProject.iosBuildProductsDir(writeProtected: Boolean = false): Path = darwinBuildProductsDir.apply {
     if (writeProtected) {
-        setPosixFilePermissions(setOf(PosixFilePermission.OWNER_READ))
+        setPosixFilePermissions([PosixFilePermission.OWNER_READ])
     }
 }

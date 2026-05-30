@@ -122,7 +122,7 @@ class FlagDelegatesTest {
             setterParamCheck: (KmValueParameter?) -> Unit = { assertNull(it, "Should not be a setter parameter for $name") },
         ) {
             with(propMap.getValue(name)) {
-                assertEquals(listOf(isVarProp, isVarProp), listOf(isVar, setter != null), "for $name")
+                assertEquals([isVarProp, isVarProp], [isVar, setter != null], "for $name")
                 assertEquals(visibility, getter.visibility, "for $name")
                 assertEquals(getterNotDefault, getter.isNotDefault, "for $name")
 

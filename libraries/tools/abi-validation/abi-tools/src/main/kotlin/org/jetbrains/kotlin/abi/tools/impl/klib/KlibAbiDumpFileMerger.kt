@@ -84,8 +84,8 @@ private class KlibAbiDumpHeader(
  * A class representing a textual KLib ABI dump, either a regular one, or a merged.
  */
 internal class KlibAbiDumpMerger {
-    private val _targets: MutableSet<KlibTarget> = mutableSetOf()
-    private val headerContent: MutableList<String> = mutableListOf()
+    private val _targets: MutableSet<KlibTarget> = []
+    private val headerContent: MutableList<String> = []
     private val topLevelDeclaration: DeclarationContainer = DeclarationContainer("")
 
     /**
@@ -111,7 +111,7 @@ internal class KlibAbiDumpMerger {
         val isMergedFile = lines.determineFileType()
 
         val aliases = mutableMapOf<String, Set<KlibTarget>>()
-        val bcvTargets = mutableSetOf<KlibTarget>()
+        val bcvTargets: MutableSet<KlibTarget> = []
         if (isMergedFile) {
             lines.next() // skip the heading line
             bcvTargets.addAll(lines.parseTargets())
@@ -230,7 +230,7 @@ internal class KlibAbiDumpMerger {
     private fun PeekingLineIterator.parseFileHeader(
         isMergedFile: Boolean,
     ): KlibAbiDumpHeader {
-        val header = mutableListOf<String>()
+        val header: MutableList<String> = []
         var targets: String? = null
         var platform: String? = null
 
@@ -265,7 +265,7 @@ internal class KlibAbiDumpMerger {
             }
         }
         if (isMergedFile) {
-            return KlibAbiDumpHeader(header, emptySet())
+            return KlibAbiDumpHeader(header, [])
         }
 
         // transform a combination of platform name and targets list to a set of KlibTargets
@@ -282,11 +282,11 @@ internal class KlibAbiDumpMerger {
 
         if (platformString == "WASM" && targetsString == null) {
             // For older dumps, there's no way to distinguish Wasm targets without explicitly specifying a target name
-            return setOf(KlibTarget("wasm"))
+            return [KlibTarget("wasm")]
         }
         if (platformString != "NATIVE" && platformString != "WASM") {
             val platformStringLc = platformString.lowercase(getDefault())
-            return setOf(KlibTarget(platformStringLc))
+            return [KlibTarget(platformStringLc)]
         }
 
         check(targetsString != null) { "Dump for a native platform missing targets list." }
@@ -329,7 +329,7 @@ internal class KlibAbiDumpMerger {
             // so we must use it.
             val targets = parseBcvTargetsLine(line)
             val expandedTargets = targets.flatMap {
-                aliases[it.configurableName] ?: listOf(it)
+                aliases[it.configurableName] ?: [it]
             }.toSet()
             parentTargetsStack.add(expandedTargets)
             parent.createOrUpdateChildren(next(), expandedTargets)
@@ -470,7 +470,7 @@ internal class KlibAbiDumpMerger {
  */
 internal class DeclarationContainer(val text: String, val parent: DeclarationContainer? = null) {
     val type: DeclarationType? = if (text.isNotBlank()) DeclarationType.parseFromDeclaration(text) else null
-    val targets: MutableSet<KlibTarget> = mutableSetOf()
+    val targets: MutableSet<KlibTarget> = []
     val children: MutableMap<String, DeclarationContainer> = mutableMapOf()
     var delimiter: String? = null
 
@@ -695,7 +695,7 @@ internal class KlibsTargetsFormatter(klibDump: KlibAbiDumpMerger) {
             compareByDescending<Map.Entry<String, TargetHierarchy.NodeClosure>> { it.value.depth }
                 .thenByDescending { it.key }
         val allTargets = klibDump.targets
-        val aliasesBuilder = mutableListOf<Alias>()
+        val aliasesBuilder: MutableList<Alias> = []
         TargetHierarchy.hierarchyIndex.entries
             .sortedWith(nodesDescendingComparator)
             .forEach {
@@ -733,7 +733,7 @@ internal class KlibsTargetsFormatter(klibDump: KlibAbiDumpMerger) {
     // TODO: optimize the algorithm
     private fun filterOutUnusedGroups(klibDump: KlibAbiDumpMerger, allGroups: MutableList<Alias>) {
         // Collect all target sets that are actually in use
-        val targetSetsInUse = mutableSetOf<Set<KlibTarget>>()
+        val targetSetsInUse: MutableSet<Set<KlibTarget>> = []
         val allTargets = klibDump.targets
         fun visitor(decl: DeclarationContainer) {
             if (decl.targets != allTargets) {
@@ -747,7 +747,7 @@ internal class KlibsTargetsFormatter(klibDump: KlibAbiDumpMerger) {
         // If there are no such declarations - a group has to be removed.
         for (idx in allGroups.size - 1 downTo 0) {
             val alias = allGroups[idx]
-            val updatedTargetSets = mutableSetOf<Set<KlibTarget>>()
+            val updatedTargetSets: MutableSet<Set<KlibTarget>> = []
             // scan actually used target sets
             val targetSetIterator = targetSetsInUse.iterator()
             while (targetSetIterator.hasNext()) {
@@ -788,7 +788,7 @@ internal class KlibsTargetsFormatter(klibDump: KlibAbiDumpMerger) {
 
     fun formatDeclarationTargets(targets: Set<KlibTarget>): String {
         val mutableTargets = targets.toMutableSet()
-        val resultingTargets = mutableListOf<String>()
+        val resultingTargets: MutableList<String> = []
         for (alias in aliases) {
             if (mutableTargets.containsAll(alias.targets)) {
                 mutableTargets.removeAll(alias.targets)

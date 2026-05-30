@@ -150,12 +150,12 @@ class LegacyKlibResolverUserTest : AbstractNativeSimpleTest() {
             override fun fatal(message: String) = kotlin.error("e: $message")
         }
 
-        val knownIrProviders = if (isForKotlinNative) listOf(KLIB_INTEROP_IR_PROVIDER_IDENTIFIER) else emptyList()
+        val knownIrProviders = if (isForKotlinNative) [KLIB_INTEROP_IR_PROVIDER_IDENTIFIER] else []
 
         class KotlinxBenchmarksLibraryResolverSimulation(
             klibs: List<String>
         ) : KotlinLibraryProperResolverWithAttributes<KotlinLibrary>(
-            repositories = emptyList(),
+            repositories = [],
             directLibs = klibs,
             distributionKlib = null,
             localKotlinDir = null,

@@ -69,7 +69,7 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
             ?: error("Expected extension receiver for ${it.render()}")
     }
 
-    val integerClasses = listOf(irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass)
+    val integerClasses = [irBuiltIns.byteClass, irBuiltIns.shortClass, irBuiltIns.intClass, irBuiltIns.longClass]
 
     val progressionElementTypes: Collection<IrType> by lazy {
         listOfNotNull(
@@ -79,14 +79,14 @@ abstract class BackendSymbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbols.
     }
 
     val extensionToString: IrSimpleFunctionSymbol by CallableIds.extensionToString.functionSymbol {
-        it.hasShape(extensionReceiver = true, parameterTypes = listOf(irBuiltIns.anyNType))
+        it.hasShape(extensionReceiver = true, parameterTypes = [irBuiltIns.anyNType])
     }
     val memberToString: IrSimpleFunctionSymbol by CallableIds.memberToString.functionSymbol()
     val extensionStringPlus: IrSimpleFunctionSymbol by CallableIds.extensionStringPlus.functionSymbol {
         it.hasShape(
             extensionReceiver = true,
             regularParameters = 1,
-            parameterTypes = listOf(irBuiltIns.stringType.makeNullable(), irBuiltIns.anyNType)
+            parameterTypes = [irBuiltIns.stringType.makeNullable(), irBuiltIns.anyNType]
         )
     }
     val memberStringPlus: IrSimpleFunctionSymbol by CallableIds.memberPlus.functionSymbol()

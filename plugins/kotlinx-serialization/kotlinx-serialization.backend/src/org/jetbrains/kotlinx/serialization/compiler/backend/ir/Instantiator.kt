@@ -72,18 +72,18 @@ internal class Instantiator(
         var ctor: IrConstructor? = null
 
         val (args, typeArgs) = when (serializerClass.owner.classId) {
-            polymorphicSerializerId -> Args(listOf(classReferenceOf(kType)), listOf(kType))
+            polymorphicSerializerId -> Args([classReferenceOf(kType)], [kType])
             contextSerializerId -> argsForContextSerializer(kType, genericIndex, typeArgumentsAsTypes) ?: return null
             objectSerializerId -> Args(
-                args = listOf(irBuilder.irString(kType.serialName()), irBuilder.irGetObject(kType.classOrUpperBound()!!)),
-                typeArgs = listOf(kType),
+                args = [irBuilder.irString(kType.serialName()), irBuilder.irGetObject(kType.classOrUpperBound()!!)],
+                typeArgs = [kType],
             )
             sealedSerializerId -> return instantiateSealedSerializer(serializerClass, kType)
             enumSerializerId -> return instantiateEnumSerializer(serializerClass, kType)
             referenceArraySerializerId -> {
-                (val origArgs = args, val origTypeArgs = typeArgs) = regularArgs(typeArgumentsAsTypes) ?: return null
-                val args = listOf(generator.wrapperClassReference(typeArgumentsAsTypes.single())) + origArgs
-                val typeArgs = listOf(origTypeArgs[0].makeNotNull()) + origTypeArgs
+                val [origArgs, origTypeArgs] = regularArgs(typeArgumentsAsTypes) ?: return null
+                val args = [generator.wrapperClassReference(typeArgumentsAsTypes.single())] + origArgs
+                val typeArgs = [origTypeArgs[0].makeNotNull()] + origTypeArgs
                 Args(args, typeArgs)
             }
             else -> {
@@ -92,7 +92,7 @@ internal class Instantiator(
                 } else {
                     ctor = findConstructor(serializerClass, needToCopyAnnotations).owner
                     val requiresArgs = ctor.parameters.isNotEmpty()
-                    if (!requiresArgs) Args(emptyList(), emptyList()) else regularArgs(typeArgumentsAsTypes) ?: return null
+                    if (!requiresArgs) Args([], []) else regularArgs(typeArgumentsAsTypes) ?: return null
                 }
             }
         }
@@ -178,7 +178,7 @@ internal class Instantiator(
             // then serializer can't be cached
             return null
         }
-        val typeArgs = listOf(kType)
+        val typeArgs = [kType]
         // modern runtimes always have new signature of context serializer:
         //    serializableClass: KClass<T>,
         //    fallbackSerializer: KSerializer<T>?,
@@ -206,17 +206,17 @@ internal class Instantiator(
 
     context(irBuilder: IrBuilderWithScope) private fun instantiateEnumSerializer(serializerClass: IrClassSymbol, kType: IrSimpleType): IrExpression {
         val enumDescriptor = kType.classOrNull!!
-        val typeArgs = listOf(kType)
+        val typeArgs = [kType]
         // instantiate serializer only inside enum Companion
         if (generator !is SerializableCompanionIrGenerator) {
             // otherwise call Companion.serializer()
-            generator.callSerializerFromCompanion(kType, typeArgs, emptyList(), enumSerializerId)?.let { return it }
+            generator.callSerializerFromCompanion(kType, typeArgs, [], enumSerializerId)?.let { return it }
         }
 
-        val enumArgs = mutableListOf(
+        val enumArgs: MutableList<IrExpression> = [
             irBuilder.irString(kType.serialName()),
             irBuilder.irCall(enumDescriptor.owner.findEnumValuesMethod()),
-        )
+        ]
 
         if (!hasEnumFactories) return instantiateLegacyEnumSerializer(serializerClass, enumArgs, typeArgs)
 
@@ -283,7 +283,7 @@ internal class Instantiator(
         kType: IrSimpleType,
     ): IrExpression {
         val needToCopyAnnotations = true
-        val typeArgs = listOf(kType)
+        val typeArgs = [kType]
 
         // If can call from companion:
         if (serializerClass == kType.classOrUpperBound()?.owner.classSerializer(compilerContext) && generator !is SerializableCompanionIrGenerator) {
@@ -330,7 +330,7 @@ internal class Instantiator(
             )
             val projectedOutCurrentKClass =
                 compilerContext.irBuiltIns.kClassClass.typeWithArguments(
-                    listOf(makeTypeProjection(kType, Variance.OUT_VARIANCE))
+                    [makeTypeProjection(kType, Variance.OUT_VARIANCE)]
                 )
             add(
                 generator.createArrayOfExpression(
@@ -421,10 +421,10 @@ internal class Instantiator(
             val simpleType = (kType as? IrSimpleType) ?: error("Don't know how to work with type ${kType.classFqName}")
 
             if (simpleType.getClass()?.isObject == true) {
-                generator.callSerializerFromObject(simpleType, emptyList())
+                generator.callSerializerFromObject(simpleType, [])
                     ?: error("Can't get serializer from 'serializer()' function for object ${kType.classFqName}")
             } else {
-                generator.callSerializerFromCompanion(simpleType, emptyList(), emptyList(), serializerClassOriginal.owner.classId)
+                generator.callSerializerFromCompanion(simpleType, [], [], serializerClassOriginal.owner.classId)
                     ?: error("Can't get serializer from companion's 'serializer()' function for type ${kType.classFqName}")
             }
         }

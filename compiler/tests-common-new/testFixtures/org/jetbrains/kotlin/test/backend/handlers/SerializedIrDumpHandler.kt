@@ -55,7 +55,7 @@ class SerializedIrDumpHandler(
     private val dumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(KlibBasedCompilerTestDirectives)
+        get() = [KlibBasedCompilerTestDirectives]
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (module.isSkipped) return

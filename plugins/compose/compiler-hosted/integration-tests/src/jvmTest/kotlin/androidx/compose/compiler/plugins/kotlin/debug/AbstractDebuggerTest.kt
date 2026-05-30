@@ -73,15 +73,15 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
         }
 
         private fun startTestProcessServer(): Process {
-            val classpath = listOf(
+            val classpath = [
                 Classpath.jarFor<TestProcessServer>(),
                 Classpath.kotlinStdlibJar()
-            )
+            ]
 
             val javaExec = File(File(SystemProperties.getJavaHome(), "bin"), "java")
             assert(javaExec.exists())
 
-            val command = listOf(
+            val command = [
                 javaExec.absolutePath,
                 "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=127.0.0.1:0",
                 "-ea",
@@ -89,7 +89,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
                 "-Djava.awt.headless=true", // ensure that test process doesn't launch a separate window
                 TestProcessServer::class.qualifiedName,
                 TestProcessServer.DEBUG_TEST
-            )
+            ]
 
             return ProcessBuilder(command).start()
         }
@@ -151,14 +151,14 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
 
     fun collectDebugEvents(@Language("kotlin") source: String): List<LocatableEvent> {
         val classLoader = createClassLoader(
-            listOf(
+            [
                 SourceFile("Runner.kt", RUNNER_SOURCES),
                 SourceFile("Test.kt", source),
-            ),
-            additionalPaths = listOf(
+            ],
+            additionalPaths = [
                 Classpath.kotlinxCoroutinesJar(),
                 Classpath.jarFor("androidx.collection.MutableScatterSet") // androidx.collection
-            )
+            ]
         )
         val testClass = classLoader.loadClass(TEST_CLASS)
         assert(testClass.declaredMethods.any { it.name == CONTENT_METHOD }) {
@@ -171,7 +171,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
 
         val manager = virtualMachine.eventRequestManager()
 
-        val loggedItems = mutableListOf<LocatableEvent>()
+        val loggedItems: MutableList<LocatableEvent> = []
         var inContentMethod = false
         try {
             vmLoop@
@@ -285,7 +285,7 @@ abstract class AbstractDebuggerTest : AbstractCodegenTest() {
 private fun ClassLoader?.extractUrls(): List<URL> {
     return (this as? URLClassLoader)?.let {
         it.urLs.toList() + it.parent.extractUrls()
-    } ?: emptyList()
+    } ?: []
 }
 
 @Language("kotlin")

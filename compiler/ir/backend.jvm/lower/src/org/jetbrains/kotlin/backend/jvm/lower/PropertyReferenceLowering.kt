@@ -89,12 +89,12 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
     private val kPropertyStarType = IrSimpleTypeImpl(
         context.irBuiltIns.kPropertyClass,
         false,
-        listOf(makeTypeProjection(context.irBuiltIns.anyNType, Variance.OUT_VARIANCE)),
-        emptyList()
+        [makeTypeProjection(context.irBuiltIns.anyNType, Variance.OUT_VARIANCE)],
+        []
     )
 
     private val kPropertiesFieldType =
-        context.irBuiltIns.arrayClass.createType(false, listOf(makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)))
+        context.irBuiltIns.arrayClass.createType(false, [makeTypeProjection(kPropertyStarType, Variance.OUT_VARIANCE)])
 
     private val IrClass.isSynthetic
         get() = metadata !is MetadataSource.File && metadata !is MetadataSource.Class && metadata !is MetadataSource.Script
@@ -154,7 +154,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             origin = JvmLoweredDeclarationOrigin.GENERATED_MEMBER_IN_CALLABLE_REFERENCE
         }.apply {
             overriddenSymbols += method.symbol
-            parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
+            parameters = [thisReceiver!!.copyTo(this)] + method.nonDispatchParameters.map { it.copyTo(this) }
             body = context.createJvmIrBuilder(symbol, startOffset, endOffset).buildBody(this@apply)
         }
 
@@ -167,7 +167,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             origin = IrDeclarationOrigin.FAKE_OVERRIDE
         }.apply {
             overriddenSymbols += method.symbol
-            parameters = listOf(thisReceiver!!.copyTo(this)) + method.nonDispatchParameters.map { it.copyTo(this) }
+            parameters = [thisReceiver!!.copyTo(this)] + method.nonDispatchParameters.map { it.copyTo(this) }
         }
 
     private fun propertyReferenceClassFor(expression: IrRichPropertyReference): IrClassSymbol {
@@ -198,7 +198,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
                 else JavaDescriptorVisibilities.PACKAGE_VISIBILITY
         }
 
-        val localProperties = mutableListOf<IrLocalDelegatedPropertySymbol>()
+        val localProperties: MutableList<IrLocalDelegatedPropertySymbol> = []
         val localPropertyIndices = mutableMapOf<IrSymbol, Int>()
 
         fun localPropertyIndex(getter: IrSymbol): Int? =
@@ -399,7 +399,7 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
             visibility = DescriptorVisibilities.LOCAL
         }.apply {
             parent = currentDeclarationParent!!
-            superTypes = listOf(superClass.defaultType)
+            superTypes = [superClass.defaultType]
             createThisReceiverParameter()
             copyAttributes(expression)
         }

@@ -39,7 +39,7 @@ fun createTypeAliasStub(
         typeAlias,
         typeAliasProto.flags,
         arrayListOf(VISIBILITY),
-        additionalModifiers = emptyList(),
+        additionalModifiers = [],
         returnValueStatus = null,
     )
 

@@ -141,7 +141,7 @@ class KaptStubLineInformation {
     }
 
     private fun collectDeclarations(file: JCTree.JCCompilationUnit): List<JCTree> {
-        val declarations = mutableListOf<JCTree>()
+        val declarations: MutableList<JCTree> = []
 
         // Note that super.visit...() is above the declarations saving.
         // This allows us to get the deepest declarations in the beginning of the list.

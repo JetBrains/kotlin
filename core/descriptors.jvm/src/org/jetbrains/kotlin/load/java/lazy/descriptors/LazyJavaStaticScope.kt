@@ -32,7 +32,7 @@ abstract class LazyJavaStaticScope(c: LazyJavaResolverContext) : LazyJavaScope(c
         method: JavaMethod, methodTypeParameters: List<TypeParameterDescriptor>, returnType: KotlinType,
         valueParameters: List<ValueParameterDescriptor>
     ): MethodSignatureData =
-        MethodSignatureData(returnType, null, valueParameters, methodTypeParameters, false, emptyList())
+        MethodSignatureData(returnType, null, valueParameters, methodTypeParameters, false, [])
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
         //no undeclared properties

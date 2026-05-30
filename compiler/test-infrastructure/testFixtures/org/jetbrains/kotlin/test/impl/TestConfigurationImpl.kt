@@ -124,7 +124,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
     final override val failureSuppressors: List<TestFailureSuppressor>
 
     init {
-        val afterAnalysisCheckerConstructors = mutableSetOf<Constructor<AfterAnalysisChecker>>()
+        val afterAnalysisCheckerConstructors: MutableSet<Constructor<AfterAnalysisChecker>> = []
 
         this.steps = steps
             .map { it.createTestStep(testServices) }

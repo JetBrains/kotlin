@@ -120,7 +120,7 @@ internal class PartialLinkageSupportForLinkerImpl(
                     }
                     is DueToOtherClassifier, is InvalidInheritance -> {
                         // these usecases are tested by `js/js.translator/testData/incremental/invalidationWithPL/interfaceBecomeClass/`
-                        candidateClass.superTypes = listOf(anyClass.owner.defaultType)
+                        candidateClass.superTypes = [anyClass.owner.defaultType]
                     }
                 }
             }

@@ -367,7 +367,7 @@ fun <T> TestProject.buildModel(
 ): T {
     Assumptions.assumeFalse(isWindows, "Building model is not working on windws KT-84353")
     val buildParams = commonBuildSetup(
-        buildArguments = emptyList(), // it is actually task names, but for build model they passed separately
+        buildArguments = [], // it is actually task names, but for build model they passed separately
         buildOptions = buildOptions,
         enableBuildCacheDebug = enableBuildCacheDebug,
         enableBuildScan = enableBuildScan,
@@ -506,7 +506,7 @@ open class GradleProject(
     val settingsGradle: Path get() = projectPath.resolve("settings.gradle")
     val settingsGradleKts: Path get() = projectPath.resolve("settings.gradle.kts")
     val gradleProperties: Path get() = projectPath.resolve("gradle.properties")
-    val buildFileNames: Set<String> get() = setOf("build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts")
+    val buildFileNames: Set<String> get() = ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"]
 
     fun classesDir(
         sourceSet: String = "main",
@@ -724,11 +724,11 @@ private fun jdkToolchainConfiguration(gradleVersion: GradleVersion): List<String
         .sortedWith(compareBy { it.toString() })
         .joinToString(separator = ",")
 
-    return listOf(
+    return [
         "${paramType}org.gradle.java.installations.auto-download=false",
         "${paramType}org.gradle.java.installations.auto-detect=false",
         "${paramType}org.gradle.java.installations.paths=$jdkLocations",
-    )
+    ]
 }
 
 private fun collectGradleJvmOptions(
@@ -1132,7 +1132,7 @@ private fun TestProject.setupNonDefaultJdk(pathToJdk: File) {
 }
 
 internal fun TestProject.runShellCommands(path: Path = projectPath, commands: MutableList<List<String>>.() -> Unit = {}) {
-    val commandsList = mutableListOf<List<String>>()
+    val commandsList: MutableList<List<String>> = []
     commands(commandsList)
 
     commandsList.forEach {
@@ -1270,7 +1270,7 @@ internal fun TestProject.enableStableConfigurationCachePreview() {
  * Represents different types of dependency management provided to tests.
  */
 sealed interface DependencyManagement {
-    class DefaultDependencyManagement(val additionalRepos: Set<String> = emptySet()) : DependencyManagement
+    class DefaultDependencyManagement(val additionalRepos: Set<String> = []) : DependencyManagement
     data object DisabledDependencyManagement : DependencyManagement
 }
 
@@ -1284,11 +1284,11 @@ private fun acceptAndroidSdkLicenses(androidHome: File) {
     val sdkLicensesDir = androidHome.resolve("licenses")
     if (!sdkLicensesDir.exists()) sdkLicensesDir.mkdirs()
 
-    val sdkLicenses = listOf(
+    val sdkLicenses = [
         "8933bad161af4178b1185d1a37fbf41ea5269c55",
         "d56f5187479451eabf01fb78af6dfcb131a6481e",
         "24333f8a63b6825ea9c5514f83c2829b004d1fee",
-    )
+    ]
     val sdkPreviewLicense = "84831b9409646a918e30573bab4c9c91346d8abd"
 
     val sdkLicenseFile = sdkLicensesDir.resolve("android-sdk-license")

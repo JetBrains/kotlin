@@ -63,7 +63,7 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
 
 @KaImplementationDetail
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
-    private val backingArguments = mutableListOf<KaTypeProjection>()
+    private val backingArguments: MutableList<KaTypeProjection> = []
 
     @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
     @Suppress("DEPRECATION")

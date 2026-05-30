@@ -85,25 +85,25 @@ abstract class FirAnnotationsPlatformSpecificSupportComponent : FirComposableSes
     }
 
     object Default : FirAnnotationsPlatformSpecificSupportComponent() {
-        override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
+        override val requiredAnnotationsWithArguments: Set<ClassId> = [
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.SinceKotlin,
             StandardClassIds.Annotations.IntroducedAt,
-        )
+        ]
 
         override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
             StandardClassIds.Annotations.WasExperimental,
         )
 
-        override val volatileAnnotations: Set<ClassId> = setOf(
+        override val volatileAnnotations: Set<ClassId> = [
             StandardClassIds.Annotations.Volatile,
-        )
+        ]
 
-        override val repeatableAnnotations: Set<ClassId> = setOf(
+        override val repeatableAnnotations: Set<ClassId> = [
             StandardClassIds.Annotations.Repeatable,
-        )
+        ]
 
         override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
             StandardClassIds.Annotations.Deprecated to true,

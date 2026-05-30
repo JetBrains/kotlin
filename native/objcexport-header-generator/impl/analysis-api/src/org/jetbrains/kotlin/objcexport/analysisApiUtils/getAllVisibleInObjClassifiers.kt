@@ -39,7 +39,7 @@ internal fun KaSession.getAllVisibleInObjClassifiers(symbols: Iterable<KaClassSy
         if (isVisibleInObjC(symbol)) {
             symbol.memberScope.classifiers.filterIsInstance<KaClassSymbol>().asIterable()
         } else {
-            emptyList()
+            []
         }
     }.toList()
 }

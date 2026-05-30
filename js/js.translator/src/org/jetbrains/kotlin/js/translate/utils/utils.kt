@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.js.translate.utils
 
 fun <T, S> List<T>.splitToRanges(classifier: (T) -> S): List<Pair<List<T>, S>> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
 
     var lastIndex = 0
     var lastClass: S = classifier(this[0])
-    val result = mutableListOf<Pair<List<T>, S>>()
+    val result: MutableList<Pair<List<T>, S>> = []
 
     for ([index, e] in asSequence().withIndex().drop(1)) {
         val cls = classifier(e)

@@ -22,10 +22,10 @@ abstract class KtPropertyDelegationMethodsReference(element: KtPropertyDelegate)
     override val resolvesByNames: Collection<Name> get() = NAMES
 
     companion object {
-        private val NAMES = listOf(
+        private val NAMES = [
             OperatorNameConventions.GET_VALUE,
             OperatorNameConventions.SET_VALUE,
             OperatorNameConventions.PROVIDE_DELEGATE
-        )
+        ]
     }
 }

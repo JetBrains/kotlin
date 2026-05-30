@@ -58,7 +58,7 @@ class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBac
         when (declaration) {
             is IrSimpleFunction ->
                 runIf(declaration.shouldExtractAsExportedDefaultImplementation()) {
-                    listOf(declaration, declaration.createCorrespondingStaticImplementationAndModifyCurrent())
+                    [declaration, declaration.createCorrespondingStaticImplementationAndModifyCurrent()]
                 }
 
             is IrProperty ->
@@ -73,7 +73,7 @@ class PrepareExportedDefaultImplementationsLowering(private val context: JsIrBac
                         declaration.setter?.createCorrespondingStaticImplementationAndModifyCurrent()
                             ?.also { it.correspondingPropertySymbol = correspondingDefaultImplementationProperty.symbol }
 
-                    listOf(declaration, correspondingDefaultImplementationProperty)
+                    [declaration, correspondingDefaultImplementationProperty]
                 }
 
             else -> null

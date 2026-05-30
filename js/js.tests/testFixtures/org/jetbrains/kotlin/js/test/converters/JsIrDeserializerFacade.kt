@@ -21,11 +21,11 @@ class JsIrDeserializerFacade(
     testServices: TestServices,
 ) : IrDeserializerCliFacade<JsIrLoadingPipelinePhase, WebLoadedIrPipelineArtifact>(testServices, JsIrLoadingPipelinePhase) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
+        get() = [
             service(::ModuleDescriptorProvider),
             service(::JsIrIncrementalDataProvider),
             service(::LibraryProvider)
-        )
+        ]
 
     override fun transform(
         module: TestModule,

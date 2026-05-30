@@ -32,7 +32,7 @@ import kotlin.test.assertTrue
 
 @DisplayName("FUS statistic")
 class FusStatisticsIT : KGPBaseTest() {
-    private val expectedMetrics = arrayOf(
+    private val expectedMetrics: Array<String> = [
         "OS_TYPE",
         "OS_VERSION",
         "BUILD_FAILED=false",
@@ -44,7 +44,7 @@ class FusStatisticsIT : KGPBaseTest() {
         "KOTLIN_COMPILER_VERSION",
         "KOTLIN_GRADLE_PLUGIN_VERSION",
         "KOTLIN_COMPILER_EXECUTION_POLICY",
-    )
+    ]
 
     private val GradleProject.fusStatisticsDirectory: Path
         get() = projectPath.resolve("kotlin-profile")
@@ -82,12 +82,12 @@ class FusStatisticsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2HtmlDoc(gradleVersion: GradleVersion) {
-        val expectedDokkaFusMetrics = arrayOf(
+        val expectedDokkaFusMetrics: Array<String> = [
             "ENABLED_DOKKA",
             "ENABLE_DOKKA_GENERATE_TASK",
             "ENABLE_DOKKA_GENERATE_PUBLICATION_HTML_TASK",
             "ENABLE_LINK_DOKKA_GENERATE_TASK"
-        )
+        ]
         testDokkaPlugin(gradleVersion, "org.jetbrains.dokka", expectedDokkaFusMetrics)
     }
 
@@ -98,11 +98,11 @@ class FusStatisticsIT : KGPBaseTest() {
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
     fun testDokkaV2Javadoc(gradleVersion: GradleVersion) {
-        val expectedDokkaFusMetrics = arrayOf(
+        val expectedDokkaFusMetrics: Array<String> = [
             "ENABLED_DOKKA_JAVADOC",
             "ENABLE_DOKKA_GENERATE_TASK",
             "ENABLE_DOKKA_GENERATE_PUBLICATION_JAVADOC_TASK",
-        )
+        ]
         testDokkaPlugin(gradleVersion, "org.jetbrains.dokka-javadoc", expectedDokkaFusMetrics)
     }
 
@@ -198,7 +198,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 build("linkDebugExecutableHost", "-Pkotlin.session.logger.root.path=$projectPath") {
                     assertOutputDoesNotContainFusErrors()
                     fusStatisticsDirectory.assertFusReportContains("KOTLIN_INCREMENTAL_NATIVE_ENABLED=true")
-                    fusStatisticsDirectory.assertFusReportContainsMetricWithValues("MPP_PLATFORMS", listOf("common", HostManager.host.name))
+                    fusStatisticsDirectory.assertFusReportContainsMetricWithValues("MPP_PLATFORMS", ["common", HostManager.host.name])
                 }
             }
         }
@@ -315,7 +315,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 build(
                     "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions
-                        .copy(buildReport = listOf(BuildReportType.FILE))
+                        .copy(buildReport = [BuildReportType.FILE])
                         // With isolated projects enabled, it creates 2 profile files,
                         // this behavior is tested in [org.jetbrains.kotlin.gradle.FusPluginIT.withConfigurationCacheAndProjectIsolation]
                         .disableIsolatedProjects(),
@@ -368,7 +368,7 @@ class FusStatisticsIT : KGPBaseTest() {
                     "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
                     buildOptions = defaultBuildOptions
                         .copy(
-                            buildReport = listOf(BuildReportType.FILE),
+                            buildReport = [BuildReportType.FILE],
                             useFirJvmRunner = true,
                         ).disableIsolatedProjects(),
                 ) {
@@ -410,7 +410,7 @@ class FusStatisticsIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 isolatedProjects = isProjectIsolationEnabled,
-                buildReport = listOf(BuildReportType.FILE)
+                buildReport = [BuildReportType.FILE]
             ),
         ) {
             assertNoErrorFilesCreated {
@@ -684,7 +684,7 @@ class FusStatisticsIT : KGPBaseTest() {
                 build(
                     "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath", "-Dorg.gradle.parallel=true",
                     buildOptions = defaultBuildOptions.copy(
-                        buildReport = listOf(BuildReportType.FILE),
+                        buildReport = [BuildReportType.FILE],
                         isolatedProjects = IsolatedProjectsMode.ENABLED,
                     ),
                 ) {

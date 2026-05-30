@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.ir.interpreter.fqName
 
 internal object IntrinsicEvaluator {
     private val fqNameToHandler: Map<String, IntrinsicBase> = buildMap {
-        listOf(
+        [
             EmptyArray, ArrayOf, ArrayOfNulls, ArrayConstructor, EnumValues, EnumValueOf,
             JsPrimitives, SourceLocation, AssertIntrinsic, DataClassArrayToString, Indent
-        ).forEach { intrinsic -> intrinsic.getListOfAcceptableFunctions().forEach { put(it, intrinsic) } }
+        ].forEach { intrinsic -> intrinsic.getListOfAcceptableFunctions().forEach { put(it, intrinsic) } }
     }
 
     fun unwindInstructions(irFunction: IrFunction, environment: IrInterpreterEnvironment): List<Instruction>? {

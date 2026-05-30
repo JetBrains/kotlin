@@ -45,6 +45,6 @@ class KaBaseCompoundArrayAccessCall(
     @KaExperimentalApi
     override val calls: List<KaSingleCall<*, *>>
         get() = withValidityAssertion {
-            listOf(backingGetterCall, backingCompoundAccess.operationCall, backingSetterCall)
+            [backingGetterCall, backingCompoundAccess.operationCall, backingSetterCall]
         }
 }

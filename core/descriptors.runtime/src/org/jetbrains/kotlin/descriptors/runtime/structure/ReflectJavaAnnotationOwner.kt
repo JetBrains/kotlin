@@ -24,7 +24,7 @@ interface ReflectJavaAnnotationOwner : JavaAnnotationOwner {
     val element: AnnotatedElement?
 
     override val annotations: List<ReflectJavaAnnotation>
-        get() = element?.declaredAnnotations?.getAnnotations() ?: emptyList()
+        get() = element?.declaredAnnotations?.getAnnotations() ?: []
 
     override fun findAnnotation(fqName: FqName) =
         element?.declaredAnnotations?.findAnnotation(fqName)

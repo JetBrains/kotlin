@@ -119,7 +119,7 @@ abstract class FirSerializerExtension : SessionAndScopeSessionHolder {
 
     // TODO: add usages
     fun getAnnotationsGeneratedByPlugins(declaration: FirDeclaration): List<FirAnnotation> {
-        return additionalMetadataProvider?.findGeneratedAnnotationsFor(declaration) ?: emptyList()
+        return additionalMetadataProvider?.findGeneratedAnnotationsFor(declaration) ?: []
     }
 
     open fun serializeErrorType(type: ConeErrorType, builder: ProtoBuf.Type.Builder) {

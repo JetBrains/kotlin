@@ -142,11 +142,11 @@ interface SyntheticResolveExtension {
 
     fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
 
-    fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+    fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> = []
 
-    fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+    fun getSyntheticPropertiesNames(thisDescriptor: ClassDescriptor): List<Name> = []
 
-    fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = emptyList()
+    fun getSyntheticNestedClassNames(thisDescriptor: ClassDescriptor): List<Name> = []
 
     /**
      * This method should return either superset of what [getSyntheticNestedClassNames] returns,

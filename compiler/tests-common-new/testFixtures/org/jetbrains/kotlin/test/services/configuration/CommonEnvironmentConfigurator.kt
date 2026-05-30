@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(ConfigurationDirectives)
+        get() = [ConfigurationDirectives]
 
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
@@ -98,8 +98,8 @@ class CommonEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
             if (SEPARATE_KMP_COMPILATION in module.directives) {
                 for ([testModule, cliModule] in hmppModules) {
-                    val dependencies = mutableListOf<String>()
-                    val friends = mutableListOf<String>()
+                    val dependencies: MutableList<String> = []
+                    val friends: MutableList<String> = []
 
                     testModule.allDependencies.forEach { dependencyDescription ->
                         val dependencyOutputDir =

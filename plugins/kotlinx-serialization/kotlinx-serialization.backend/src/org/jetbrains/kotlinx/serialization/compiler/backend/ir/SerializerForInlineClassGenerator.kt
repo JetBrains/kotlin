@@ -44,14 +44,14 @@ class SerializerForInlineClassGenerator(
         val elementCall = formEncodeDecodePropertyCall(irGet(inlineEncoder), saveFunc.dispatchReceiverParameter!!, property, {innerSerial, sti ->
             val f =
                 encoderClass.functionByName("${CallingConventions.encode}${sti.elementMethodPrefix}SerializableValue")
-            f to listOf(
+            f to [
                 innerSerial,
                 value
-            )
+            ]
         }, {
             val f =
                 encoderClass.functionByName("${CallingConventions.encode}${it.elementMethodPrefix}")
-            val args = if (it.elementMethodPrefix != "Unit") listOf(value) else emptyList()
+            val args = if (it.elementMethodPrefix != "Unit") [value] else []
             f to args
         }, null)
 
@@ -74,9 +74,9 @@ class SerializerForInlineClassGenerator(
         val property = serializableProperties.first()
         val inlinedType = property.type
         val actualCall = formEncodeDecodePropertyCall(inlineDecoder, loadFunc.dispatchReceiverParameter!!, property, { innerSerial, sti ->
-            decoderClass.functionByName( "${CallingConventions.decode}${sti.elementMethodPrefix}SerializableValue") to listOf(innerSerial)
+            decoderClass.functionByName( "${CallingConventions.decode}${sti.elementMethodPrefix}SerializableValue") to [innerSerial]
         }, {
-            decoderClass.functionByName("${CallingConventions.decode}${it.elementMethodPrefix}") to listOf()
+            decoderClass.functionByName("${CallingConventions.decode}${it.elementMethodPrefix}") to []
         }, null, returnTypeHint = inlinedType)
         val value = coerceToBox(actualCall, loadFunc.returnType)
         +irReturn(value)
@@ -98,7 +98,7 @@ class SerializerForInlineClassGenerator(
     private fun IrBlockBodyBuilder.coerceToBox(expression: IrExpression, inlineClassBoxType: IrType): IrExpression =
         irInvoke(
             serializableIrClass.constructors.single { it.isPrimary }.symbol,
-            listOf(expression),
+            [expression],
             (inlineClassBoxType as IrSimpleType).arguments.map { it.typeOrNull },
         )
 

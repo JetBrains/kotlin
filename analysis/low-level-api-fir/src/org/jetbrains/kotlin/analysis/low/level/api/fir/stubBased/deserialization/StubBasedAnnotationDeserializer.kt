@@ -58,7 +58,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
     ): List<FirAnnotation> {
         val annotations = ktAnnotated.annotationEntries
         if (annotations.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         return annotations.mapNotNull { deserializeAnnotation(it, useSiteTargetFilter = useSiteTargetFilter) }
@@ -133,7 +133,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 source = KtRealPsiSourceElement(sourceElement)
                 val lookupTag = (value.value as KClassValue.Value.NormalClass).classId.toLookupTag()
                 val referencedType = lookupTag.constructType()
-                val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
+                val resolvedType = StandardClassIds.KClass.constructClassLikeType([referencedType], false)
                 argumentList = buildUnaryArgumentList(
                     buildClassReferenceExpression {
                         classTypeRef = buildResolvedTypeRef { coneType = referencedType }
@@ -209,7 +209,7 @@ internal class StubBasedAnnotationDeserializer(private val session: FirSession) 
                 is ArrayValue -> values.firstNotNullOfOrNull { inferArrayValueType((it as ArrayValue).value) }?.createArrayType()
                 is KClassValue -> {
                     val kClassType = session.builtinTypes.anyType.coneType
-                    StandardClassIds.KClass.constructClassLikeType(arrayOf(kClassType), isMarkedNullable = false)
+                    StandardClassIds.KClass.constructClassLikeType([kClassType], isMarkedNullable = false)
                 }
                 else -> null
             }

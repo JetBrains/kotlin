@@ -82,14 +82,14 @@ class JsDebugRunner(testServices: TestServices) :
             is SourceMapError -> error(parseResult.message)
         }
 
-        writeToFilesAndRunTest(outputDir, listOf(parsedSourceMap), artifactFileName)
+        writeToFilesAndRunTest(outputDir, [parsedSourceMap], artifactFileName)
     }
 
     override fun runSavedCode(outputDir: File) =
         OneShotScriptEngine.V8.run(
-            jsFiles = listOf(artifactFileName, "./test.js"),
+            jsFiles = [artifactFileName, "./test.js"],
             workingDirectory = outputDir,
-            toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
+            toolArgs = ["--enable-inspector", "--allow-natives-syntax"]
         )
 
     // TODO: Support "ignoreList" functionality to escape such filtering

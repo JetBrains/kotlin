@@ -13,7 +13,7 @@ sealed class ReportsData {
 }
 
 class SingleReportsData(val report: UnitStats) : ReportsData() {
-    override val unitStats: Collection<UnitStats> = listOf(report)
+    override val unitStats: Collection<UnitStats> = [report]
 }
 
 class ModulesReportsData(val reports: Map<String, UnitStats>) : ReportsData() {

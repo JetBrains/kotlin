@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.wasm.resolve.diagnostics.*
 //       Refactor useful checkers into common module.
 //       KT-56848
 object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
-    additionalDeclarationCheckers = listOf(
+    additionalDeclarationCheckers = [
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
         WasmExternalInheritanceChecker,
         JsRuntimeAnnotationChecker,
@@ -32,12 +32,12 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
         WasmJsInteropTypesChecker,
         WasmJsExportChecker,
         FirWasmJsAssociatedObjectChecker,
-    ),
-    additionalCallCheckers = listOf(
+    ],
+    additionalCallCheckers = [
         JsModuleCallChecker,
         JsDefinedExternallyCallChecker,
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
-    ),
+    ],
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<WasmJsCallChecker>()
@@ -65,15 +65,15 @@ object WasmJsPlatformConfigurator : PlatformConfiguratorBase(
 //       Refactor useful checkers into common module.
 //       KT-56848
 object WasmWasiPlatformConfigurator : PlatformConfiguratorBase(
-    additionalDeclarationCheckers = listOf(
+    additionalDeclarationCheckers = [
         JsRuntimeAnnotationChecker,
         WasmImportAnnotationChecker,
         WasmWasiExportChecker,
         WasmWasiExternalDeclarationChecker,
-    ),
-    additionalCallCheckers = listOf(
+    ],
+    additionalCallCheckers = [
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true)
-    ),
+    ],
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<WasmNameClashChecker>()

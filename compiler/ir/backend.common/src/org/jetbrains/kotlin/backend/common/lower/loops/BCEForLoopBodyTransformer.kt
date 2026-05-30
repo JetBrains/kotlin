@@ -363,7 +363,7 @@ class BCEForLoopBodyTransformer : ForLoopBodyTransformer() {
         val index = newExpression.arguments[1]!!
         return when (loopHeader) {
             is ProgressionLoopHeader -> with(loopHeader as ProgressionLoopHeader) {
-                replaceOperators(newExpression, index, listOf(mainLoopVariable, inductionVariable))
+                replaceOperators(newExpression, index, [mainLoopVariable, inductionVariable])
             }
 
             is WithIndexLoopHeader -> with(loopHeader as WithIndexLoopHeader) {

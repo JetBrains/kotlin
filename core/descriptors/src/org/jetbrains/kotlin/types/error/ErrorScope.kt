@@ -25,15 +25,15 @@ open class ErrorScope(val kind: ErrorScopeKind, vararg formatParams: String) : M
     override fun getContributedVariables(name: Name, location: LookupLocation): Set<PropertyDescriptor> = ErrorUtils.errorPropertyGroup
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Set<SimpleFunctionDescriptor> =
-        setOf(ErrorFunctionDescriptor(ErrorUtils.errorClass))
+        [ErrorFunctionDescriptor(ErrorUtils.errorClass)]
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter, nameFilter: Function1<Name, Boolean>
-    ): Collection<DeclarationDescriptor> = emptyList()
+    ): Collection<DeclarationDescriptor> = []
 
-    override fun getFunctionNames(): Set<Name> = emptySet()
-    override fun getVariableNames(): Set<Name> = emptySet()
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getFunctionNames(): Set<Name> = []
+    override fun getVariableNames(): Set<Name> = []
+    override fun getClassifierNames(): Set<Name> = []
 
     override fun recordLookup(name: Name, location: LookupLocation) {}
     override fun definitelyDoesNotContainName(name: Name): Boolean = false

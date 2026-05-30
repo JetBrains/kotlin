@@ -32,15 +32,15 @@ abstract class AbstractComposeDiagnosticsTest : AbstractCompilerTest() {
         @Language("kotlin")
         commonText: String? = null,
         ignoreParseErrors: Boolean = false,
-        additionalPaths: List<File> = emptyList(),
+        additionalPaths: List<File> = [],
     ) {
-        val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, mutableListOf())
+        val clearText = CheckerTestUtil.parseDiagnosedRanges(expectedText, [])
         val clearCommonText = commonText?.let {
-            CheckerTestUtil.parseDiagnosedRanges(commonText, mutableListOf())
+            CheckerTestUtil.parseDiagnosedRanges(commonText, [])
         }
 
         val errors = analyze(
-            listOf(SourceFile("test.kt", clearText, ignoreParseErrors)),
+            [SourceFile("test.kt", clearText, ignoreParseErrors)],
             listOfNotNull(clearCommonText?.let { SourceFile("common.kt", it, ignoreParseErrors) }),
             additionalPaths
         ).diagnostics

@@ -36,13 +36,13 @@ class IrModuleDependencyTrackerImpl : IrModuleDependencyTracker {
     }
 
     fun getAllDependencies(module: IrModuleFragment): Set<IrModuleFragment> {
-        val result = mutableSetOf<IrModuleFragment>()
+        val result: MutableSet<IrModuleFragment> = []
         getAllDependencies(module, result)
         return result
     }
 
     override fun addModuleForTracking(module: IrModuleFragment) {
-        val oldValue = trackedModules.put(module, mutableSetOf())
+        val oldValue = trackedModules.put(module, [])
         check(oldValue == null) { "Module ${module.name} is already present in ${this::class}" }
     }
 

@@ -23,10 +23,10 @@ class CheckerContext(
     val file: IrFile,
     private val reportError: (IrValidationError) -> Unit,
 ) {
-    val parentChain: MutableList<IrElement> = mutableListOf()
+    val parentChain: MutableList<IrElement> = []
     val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
     val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
-    val offsetRanges: MutableList<OffsetRange> = mutableListOf()
+    val offsetRanges: MutableList<OffsetRange> = []
 
     var withinAnnotationUsageSubTree: Boolean = false
         private set

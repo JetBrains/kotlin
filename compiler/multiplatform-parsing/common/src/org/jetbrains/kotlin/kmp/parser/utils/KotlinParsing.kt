@@ -1832,7 +1832,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         FIELD;
 
         class Collector {
-            private val collected = booleanArrayOf(false, false, false)
+            private val collected: BooleanArray = [false, false, false]
 
             fun collect(kind: PropertyComponentKind) {
                 collected[kind.ordinal] = true

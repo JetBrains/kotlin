@@ -58,7 +58,7 @@ class SimpleTestClassModel(
 
     override val innerTestClasses: Collection<TestClassModel> by lazy {
         if (!rootFile.isDirectory || !recursive) {
-            return@lazy emptyList()
+            return@lazy []
         }
         rootFile.listFiles().orEmpty().mapNotNull l@{ file ->
             if (!file.isDirectory) return@l null
@@ -111,7 +111,7 @@ class SimpleTestClassModel(
                 filenamePattern,
                 extractTagsFromTestFile(rootFile),
             )
-            return@lazy listOf(methodModel)
+            return@lazy [methodModel]
         }
 
         buildList {

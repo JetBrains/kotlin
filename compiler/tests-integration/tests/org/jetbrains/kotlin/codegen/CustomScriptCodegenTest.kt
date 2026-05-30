@@ -75,8 +75,8 @@ abstract class CustomScriptCodegenTest : CodegenTestCase() {
             ConfigurationKind.ALL,
             TestJdkKind.MOCK_JDK,
             additionalDependencies,
-            emptyList(),
-            emptyList()
+            [],
+            []
         )
 
         if (scriptDefinitions.isNotEmpty()) {

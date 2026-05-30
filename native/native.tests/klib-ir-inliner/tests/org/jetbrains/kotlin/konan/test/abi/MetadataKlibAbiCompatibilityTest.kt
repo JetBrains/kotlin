@@ -25,18 +25,18 @@ class MetadataKlibAbiCompatibilityTest : AbstractNativeSimpleTest() {
     fun testMetadataKlibWithIncompatibleAbiVersion() {
         val dir1 = buildDir.resolve("dir1").apply { createDirectory() }
         val sourceFile1 = dir1.resolve("source1.kt").apply { writeText("fun foo() = Unit") }
-        val library1 = compileKlib(sourceFile1, dir1, extraArgs = listOf(INCOMPATIBLE_ABI_VERSION_ARG, "-Xmetadata-klib"))
+        val library1 = compileKlib(sourceFile1, dir1, extraArgs = [INCOMPATIBLE_ABI_VERSION_ARG, "-Xmetadata-klib"])
 
         val dir2 = buildDir.resolve("dir2").apply { createDirectory() }
         val sourceFile2 = dir2.resolve("source2.kt").apply { writeText("fun bar() = foo()") }
-        compileKlib(sourceFile2, dir2, extraArgs = listOf("-Xmetadata-klib"), dependency = library1)
+        compileKlib(sourceFile2, dir2, extraArgs = ["-Xmetadata-klib"], dependency = library1)
     }
 
     @Test
     fun testKlibWithIncompatibleAbiVersion() {
         val dir1 = buildDir.resolve("dir1").apply { createDirectory() }
         val sourceFile1 = dir1.resolve("source1.kt").apply { writeText("fun foo() = Unit") }
-        val library1 = compileKlib(sourceFile1, dir1, extraArgs = listOf(INCOMPATIBLE_ABI_VERSION_ARG))
+        val library1 = compileKlib(sourceFile1, dir1, extraArgs = [INCOMPATIBLE_ABI_VERSION_ARG])
 
         val dir2 = buildDir.resolve("dir2").apply { createDirectory() }
         val sourceFile2 = dir2.resolve("source2.kt").apply { writeText("fun bar() = foo()") }
@@ -51,7 +51,7 @@ class MetadataKlibAbiCompatibilityTest : AbstractNativeSimpleTest() {
     private fun compileKlib(
         sourceDir: File,
         outputDir: File,
-        extraArgs: List<String> = emptyList(),
+        extraArgs: List<String> = [],
         dependency: TestCompilationArtifact.KLIB? = null,
     ): TestCompilationArtifact.KLIB = compileToLibrary(
         sourcesDir = sourceDir,

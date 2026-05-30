@@ -152,7 +152,7 @@ class JpsStatisticsReportServiceImpl(
             ).process(
                 ReadableFileReportData(
                     finishedModuleStatisticData,
-                    BuildStartParameters(tasks = listOf(jpsBuildTaskName)), emptyList()
+                    BuildStartParameters(tasks = [jpsBuildTaskName]), []
                 ),
                 loggerAdapter
             )

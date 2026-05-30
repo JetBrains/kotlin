@@ -131,12 +131,12 @@ class DefaultLambda(
             if (isReference)
                 info.capturedArgs.singleOrNull()?.let {
                     // See `InlinedLambdaRemapper`
-                    listOf(capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, OBJECT_TYPE, isSuspend = false))
-                } ?: emptyList()
+                    [capturedParamDesc(AsmUtil.RECEIVER_PARAMETER_NAME, OBJECT_TYPE, isSuspend = false)]
+                } ?: []
             else
                 constructor?.findCapturedFieldAssignmentInstructions()?.map { fieldNode ->
                     capturedParamDesc(fieldNode.name, Type.getType(fieldNode.desc), isSuspend = false)
-                }?.toList() ?: emptyList()
+                }?.toList() ?: []
         isBoundCallableReference = isReference && capturedVars.isNotEmpty()
         (val originNode = node, val classSmap = classSMAP) = loadDefaultLambdaBody(classBytes, lambdaClassType, isPropertyReference)
         node = SMAPAndMethodNode(createNodeWithFakeVariables(originNode), classSmap)
@@ -165,10 +165,10 @@ class DefaultLambda(
 
     private companion object {
         val PROPERTY_REFERENCE_SUPER_CLASSES =
-            listOf(
+            [
                 PROPERTY_REFERENCE0, PROPERTY_REFERENCE1, PROPERTY_REFERENCE2,
                 MUTABLE_PROPERTY_REFERENCE0, MUTABLE_PROPERTY_REFERENCE1, MUTABLE_PROPERTY_REFERENCE2
-            ).plus(OPTIMIZED_PROPERTY_REFERENCE_SUPERTYPES)
+            ].plus(OPTIMIZED_PROPERTY_REFERENCE_SUPERTYPES)
                 .mapTo(HashSet(), Type::getInternalName)
     }
 }

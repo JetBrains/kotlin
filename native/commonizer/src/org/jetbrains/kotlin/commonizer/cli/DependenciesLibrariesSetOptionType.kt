@@ -19,7 +19,7 @@ internal abstract class DependenciesLibrariesSetOptionType(
 ) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<List<CommonizerDependency>> {
         if (rawValue.isBlank()) {
-            return Option(this, emptyList())
+            return Option(this, [])
         }
         return Option(this, rawValue.split(";").map(::parseCommonizerDependency))
     }

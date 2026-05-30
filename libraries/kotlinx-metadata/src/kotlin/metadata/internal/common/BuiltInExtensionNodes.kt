@@ -93,7 +93,7 @@ internal class BuiltInValueParameterExtension : KmValueParameterExtension {
 }
 
 internal class BuiltInTypeParameterExtension : KmTypeParameterExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE
@@ -104,7 +104,7 @@ internal class BuiltInTypeParameterExtension : KmTypeParameterExtension {
 }
 
 internal class BuiltInTypeExtension : KmTypeExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE

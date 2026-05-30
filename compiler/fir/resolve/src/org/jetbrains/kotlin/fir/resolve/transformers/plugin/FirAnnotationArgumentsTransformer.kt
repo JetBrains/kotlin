@@ -77,7 +77,7 @@ open class FirAnnotationArgumentsTransformer(
 /**
  *  Set of enum class IDs that are resolved in COMPILER_REQUIRED_ANNOTATIONS phase that need to be rechecked here.
  */
-private val classIdsToCheck: Set<ClassId> = setOf(StandardClassIds.DeprecationLevel, StandardClassIds.AnnotationTarget)
+private val classIdsToCheck: Set<ClassId> = [StandardClassIds.DeprecationLevel, StandardClassIds.AnnotationTarget]
 
 private class FirExpressionTransformerForAnnotationArguments(
     private val annotationArgumentsTransformer: FirAnnotationArgumentsTransformer,

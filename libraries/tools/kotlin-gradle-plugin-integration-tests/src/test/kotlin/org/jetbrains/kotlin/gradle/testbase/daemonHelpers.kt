@@ -41,7 +41,7 @@ fun awaitKotlinDaemonTermination(
     require(maxWaitTime >= periodicCheckTime) { "$periodicCheckTime must be >= $maxWaitTime" }
 
     val endOfWaitTime = TimeSource.Monotonic.markNow() + maxWaitTime
-    var lastRunFiles: List<Path> = emptyList()
+    var lastRunFiles: List<Path> = []
 
     while (endOfWaitTime.hasNotPassedNow()) {
         lastRunFiles = runFilesDirectory.listDirectoryEntries()

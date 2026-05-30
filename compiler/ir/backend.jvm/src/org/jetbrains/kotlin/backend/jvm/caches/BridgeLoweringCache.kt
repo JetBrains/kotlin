@@ -98,7 +98,7 @@ class BridgeLoweringCache(private val context: JvmBackendContext) {
                 parameters = function.parameters.zip(substitutedParameterTypes).map { [param, type] ->
                     param.copyTo(this, IrDeclarationOrigin.BRIDGE, type = type)
                 }
-                overriddenSymbols = listOf(specialBridge.overridden.symbol)
+                overriddenSymbols = [specialBridge.overridden.symbol]
                 parent = function.parent
             }
 

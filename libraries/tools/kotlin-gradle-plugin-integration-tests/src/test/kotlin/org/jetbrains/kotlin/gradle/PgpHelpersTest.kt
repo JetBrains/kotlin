@@ -102,7 +102,7 @@ class PgpHelpersTest : KGPBaseTest() {
                 "--name='Jane Doe <janedoe@example.com>'",
                 "-Psigning.password=abc",
             )
-            val parameters = mutableListOf<Parameters>()
+            val parameters: MutableList<Parameters> = []
 
             runWithKtorService(
                 routingSetup = {
@@ -201,7 +201,7 @@ class PgpHelpersTest : KGPBaseTest() {
 
     private fun TestProject.assertPgpKeysWereGenerated() {
         val expectedFileNames =
-            listOf("secret_" to ".gpg", "secret_" to ".asc", "public_" to ".gpg", "public_" to ".asc", "example_" to ".properties")
+            ["secret_" to ".gpg", "secret_" to ".asc", "public_" to ".gpg", "public_" to ".asc", "example_" to ".properties"]
         val actualFileNames = projectPath.resolve("build/pgp").listDirectoryEntries().map { it.fileName.toString() }
         for (expected in expectedFileNames) {
             assertTrue("File ${expected.first}X${expected.second} not found (where X is key ID).") {

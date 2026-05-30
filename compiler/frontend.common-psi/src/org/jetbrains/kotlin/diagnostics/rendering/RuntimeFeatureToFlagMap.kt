@@ -66,7 +66,7 @@ fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature,
     return compilerArgumentsClass.declaredFields
         .flatMap { field ->
             val name = field.getAnnotationsByType(argumentClass).firstOrNull()?.let { getValueFromArgument(it) as? String }
-                ?: return@flatMap emptyList()
+                ?: return@flatMap []
             field.getFeaturesAndValues(enables).map { it to name }
         }
         .groupBy(keySelector = { it.first.feature }, valueTransform = { ArgumentAndValue(argument = it.second, value = it.first.value) })

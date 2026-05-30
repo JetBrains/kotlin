@@ -24,7 +24,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     fun multiModule(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             module1.compile {
                 assertOutputs("FooKt.class", "Bar.class", "BazKt.class")
@@ -114,7 +114,7 @@ class NonIncrementalCompilationSmokeTest : BaseCompilationTest() {
     fun basicJsCompilation(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jsProject(strategyConfig) {
             val libModule = module("js-ic-basic-lib")
-            val appModule = module("js-ic-basic-app", listOf(libModule))
+            val appModule = module("js-ic-basic-app", [libModule])
             libModule.compile()
             appModule.compile()
             appModule.link {

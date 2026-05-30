@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan
 
 @InternalKotlinNativeApi
-val cKeywords = setOf(
+val cKeywords: Set<String> = [
     // Actual C keywords.
     "auto", "break", "case",
     "char", "const", "continue",
@@ -45,4 +45,4 @@ val cKeywords = setOf(
     "virtual",
     "wchar_t",
     "xor_eq"
-)
+]

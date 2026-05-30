@@ -46,7 +46,7 @@ public sealed interface SirAttribute {
         val name: String
     ) : SirAttribute {
         override val identifier: String get() = "_spi"
-        override val arguments: List<SirArgument> get() = listOf(SirArgument(name))
+        override val arguments: List<SirArgument> get() = [SirArgument(name)]
 
         override fun equals(other: Any?): Boolean {
             if (this === other) return true

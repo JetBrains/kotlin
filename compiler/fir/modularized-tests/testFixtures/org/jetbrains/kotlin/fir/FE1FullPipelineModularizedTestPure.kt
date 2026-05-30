@@ -21,12 +21,12 @@ class FE1FullPipelineModularizedTestPure(config: ModularizedTestConfig) : Abstra
         // TODO: Remove when support for old modularized tests is removed
         if (moduleData.arguments == null) {
             args.apiVersion = API_VERSION
-            args.optIn = arrayOf(
+            args.optIn = [
                 "kotlin.RequiresOptIn",
                 "kotlin.contracts.ExperimentalContracts",
                 "kotlin.io.path.ExperimentalPathApi",
                 "org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI"
-            )
+            ]
             args.multiPlatform = true
             args.noStdlib = true
             args.noReflect = true

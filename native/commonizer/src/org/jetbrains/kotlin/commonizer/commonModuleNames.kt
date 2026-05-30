@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.commonizer
  */
 internal fun CommonizerParameters.commonModuleNames(target: CommonizerTarget): Set<String> {
     val supportedTargets = target.withAllLeaves().mapNotNull(targetProviders::getOrNull)
-    if (supportedTargets.isEmpty()) return emptySet() // Nothing to do
+    if (supportedTargets.isEmpty()) return [] // Nothing to do
 
     val allModuleNames: List<Set<String>> = supportedTargets.toList().map { targetProvider ->
         targetProvider.modulesProvider.moduleInfos.mapTo(HashSet()) { it.name }
@@ -26,7 +26,7 @@ internal fun CommonizerParameters.commonModuleNames(targetProvider: TargetProvid
     return outputTargets
         .filter { target -> (target.allLeaves() intersect targetProvider.target.allLeaves()).isNotEmpty() }
         .map { target -> commonModuleNames(target) }
-        .fold(emptySet()) { acc, names -> acc + names }
+        .fold([]) { acc, names -> acc + names }
 }
 
 

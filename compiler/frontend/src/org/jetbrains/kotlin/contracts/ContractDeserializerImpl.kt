@@ -111,7 +111,7 @@ class ContractDeserializerImpl(
             val primitiveExpression = extractPrimitiveExpression(proto, primitiveType)
 
             val complexType = getComplexType(proto)
-            val childs: MutableList<BooleanExpression> = mutableListOf()
+            val childs: MutableList<BooleanExpression> = []
             childs.addIfNotNull(primitiveExpression)
 
             return when (complexType) {
@@ -200,7 +200,7 @@ class ContractDeserializerImpl(
 
         private fun getPrimitiveType(proto: ProtoBuf.Expression): PrimitiveExpressionType? {
             // Expected to be one element, but can be empty (unknown expression) or contain several elements (invalid data)
-            val expressionTypes: MutableList<PrimitiveExpressionType> = mutableListOf()
+            val expressionTypes: MutableList<PrimitiveExpressionType> = []
 
             // Check for predicates
             when {

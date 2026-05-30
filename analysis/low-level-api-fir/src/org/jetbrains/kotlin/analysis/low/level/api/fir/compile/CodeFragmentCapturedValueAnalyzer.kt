@@ -84,7 +84,7 @@ class CodeFragmentCapturedValueData(
 )
 
 private class CodeFragmentDeclarationCollector : FirDefaultVisitorVoid() {
-    private val collectedSymbols = mutableListOf<FirBasedSymbol<*>>()
+    private val collectedSymbols: MutableList<FirBasedSymbol<*>> = []
 
     val symbols: List<FirBasedSymbol<*>>
         get() = Collections.unmodifiableList(collectedSymbols)
@@ -106,7 +106,7 @@ private class CodeFragmentCapturedValueVisitor(
     private val collectedMappings = LinkedHashMap<CodeFragmentCapturedId, CodeFragmentCapturedSymbol>()
     private val collectedFiles = LinkedHashSet<KtFile>()
 
-    private val assignmentLhs = mutableListOf<FirBasedSymbol<*>>()
+    private val assignmentLhs: MutableList<FirBasedSymbol<*>> = []
 
     val values: List<CodeFragmentCapturedSymbol>
         get() = collectedMappings.values.toList()

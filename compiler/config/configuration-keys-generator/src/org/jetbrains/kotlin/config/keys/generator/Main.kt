@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainerGenerator
 import java.io.File
 
-val allContainers: List<KeysContainer> = listOf(
+val allContainers: List<KeysContainer> = [
     CommonConfigurationKeysContainer,
     CLIConfigurationKeysContainer,
     KlibConfigurationKeysContainer,
@@ -18,7 +18,7 @@ val allContainers: List<KeysContainer> = listOf(
     FrontendConfigurationKeysContainer,
     WasmConfigurationKeysContainer,
     NativeConfigurationKeysContainer,
-)
+]
 
 fun main(args: Array<String>) {
     require(args.size >= 2) {

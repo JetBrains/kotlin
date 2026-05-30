@@ -30,7 +30,7 @@ class IsFunctor(val type: ESType, val isNegated: Boolean) : AbstractFunctor() {
         return if (arg is ESValue)
             invokeWithValue(arg, typeSubstitution)
         else
-            emptyList()
+            []
     }
 
     private fun invokeWithValue(value: ESValue, typeSubstitution: ESTypeSubstitution): List<ConditionalEffect> {
@@ -43,6 +43,6 @@ class IsFunctor(val type: ESType, val isNegated: Boolean) : AbstractFunctor() {
 
         val trueResult = ConditionalEffect(trueIs, ESReturns(ESConstants.trueValue))
         val falseResult = ConditionalEffect(falseIs, ESReturns(ESConstants.falseValue))
-        return listOf(trueResult, falseResult)
+        return [trueResult, falseResult]
     }
 }

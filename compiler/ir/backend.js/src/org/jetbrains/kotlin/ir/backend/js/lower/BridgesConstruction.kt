@@ -72,7 +72,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrSimpleFunction || declaration.isStaticMethodOfClass || declaration.parent !is IrClass) return null
 
-        return generateBridges(declaration)?.let { listOf(declaration) + it }
+        return generateBridges(declaration)?.let { [declaration] + it }
     }
 
     private fun dfsForOverrides(currentFunction: IrSimpleFunction, afterChild: (IrSimpleFunction) -> Unit) {
@@ -94,7 +94,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         if (function.modality == Modality.ABSTRACT) return null
 
         val [bridgesDfsRoots, implementedDfsRoots] =
-            if (function.isRealOrOverridesInterface) function.overriddenSymbols to emptyList()
+            if (function.isRealOrOverridesInterface) function.overriddenSymbols to []
             else function.overriddenSymbols.partition { it.owner.modality == Modality.ABSTRACT }
 
         // If it's a concrete fake override and all of its super-functions are concrete, then every possible bridge is already generated
@@ -104,7 +104,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
         val implementation = findConcreteSuperDeclaration(function)
         val implementationSignature = getFunctionSignature(implementation)
 
-        val implementedBridges = mutableSetOf<Any>()
+        val implementedBridges: MutableSet<Any> = []
         dfsForOverrides(implementedDfsRoots) { override ->
             implementedBridges.add(getFunctionSignature(override))
         }
@@ -123,7 +123,7 @@ abstract class BridgesConstruction(private val context: JsCommonBackendContext) 
             specialBridgeMethods.findSpecialWithOverride(function) ?: Pair(null, null)
         val specialOverrideSignature = specialOverride?.let(::getFunctionSignature)
 
-        val result = mutableListOf<IrDeclaration>()
+        val result: MutableList<IrDeclaration> = []
         for ([bridgeSignature, bridgeMethod] in bridgesToGenerate) {
             result += createBridge(
                 function = function,

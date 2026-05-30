@@ -83,8 +83,8 @@ class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedM
         moduleName: Name,
         libraryList: DependencyListForCliModule
     ): List<SessionWithSources<KtFile>> {
-        return MinimizedFrontendContext(environment, MessageCollector.NONE, emptyList(), configuration).prepareJvmSessions(
-            files = emptyList(),
+        return MinimizedFrontendContext(environment, MessageCollector.NONE, [], configuration).prepareJvmSessions(
+            files = [],
             moduleName,
             environment.getSearchScopeForProjectLibraries(),
             libraryList,
@@ -121,12 +121,12 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
         )
 
         return prepareJsSessions(
-            files = emptyList(),
+            files = [],
             configuration,
             moduleName,
             klibs.all,
             libraryList,
-            extensionRegistrars = emptyList(),
+            extensionRegistrars = [],
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
             icData = null
@@ -158,12 +158,12 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
         )
 
         return prepareWasmSessions(
-            files = emptyList(),
+            files = [],
             configuration,
             moduleName,
             klibs.all,
             libraryList,
-            extensionRegistrars = emptyList(),
+            extensionRegistrars = [],
             isCommonSource = { false },
             fileBelongsToModule = { _, _ -> false },
             icData = null
@@ -183,7 +183,7 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
     private val dumper: MultiModuleInfoDumper = MultiModuleInfoDumper()
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: A) {
         val languageSettingsBuilder = testServices.defaultsProvider.newLanguageSettingsBuilder()
@@ -194,8 +194,8 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         )
 
         val emptyModule = TestModule(
-            name = "dump-${module.name}", files = emptyList(),
-            allDependencies = listOf(DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)),
+            name = "dump-${module.name}", files = [],
+            allDependencies = [DependencyDescription(module, dependencyKind, DependencyRelation.RegularDependency)],
             RegisteredDirectives.Empty, languageSettingsBuilder.build()
         )
         val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(emptyModule)

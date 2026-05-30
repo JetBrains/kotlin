@@ -137,7 +137,7 @@ class EscapedIdentifiersLowering(context: JsIrBackendContext) : BodyLoweringPass
                     .also {
                         it.arguments.add(0, globalThisReceiver)
                         if (function.dispatchReceiverParameter == null) {
-                            function.parameters = listOf(function.dummyDispatchReceiverParameter) + function.parameters
+                            function.parameters = [function.dummyDispatchReceiverParameter] + function.parameters
                         }
                     }
             }

@@ -51,7 +51,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
         val ktFile = testPathFull.resolve(DEFAULT_FILE_NAME)
         if (ktFile.exists()) {
             // Just compile "main.kt" with klib1 and klib2, without running resulting executable
-            val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet()).apply {
+            val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, [], [], []).apply {
                 files += TestFile.createCommitted(ktFile, this)
             }
             // KT-39120 is irrelevant to compiler backend, so executable can be compiled in the simplest way, without splitting to stages.
@@ -87,7 +87,7 @@ abstract class AbstractNativeCInteropKT39120Test : AbstractNativeCInteropBaseTes
     private fun createTestCaseNoTestRun(module: TestModule.Exclusive, compilerArgs: TestCompilerArgs) = TestCase(
         id = TestCaseId.Named(module.name),
         kind = TestKind.STANDALONE_NO_TR,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = compilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),

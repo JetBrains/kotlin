@@ -37,7 +37,7 @@ public abstract class KotlinProjectStructureProviderBase : KotlinProjectStructur
         if (file is KtFile && file.isDangling) {
             val contextModule = computeContextModule(file)
             val resolutionMode = file.danglingFileResolutionMode ?: computeDefaultDanglingFileResolutionMode(file)
-            return KaDanglingFileModuleImpl(listOf(file), contextModule, resolutionMode)
+            return KaDanglingFileModuleImpl([file], contextModule, resolutionMode)
         }
 
         return null

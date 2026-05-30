@@ -33,7 +33,7 @@ class FirReceiverParameterBuilder : FirAnnotationContainerBuilder {
     lateinit var symbol: FirReceiverParameterSymbol
     lateinit var typeRef: FirTypeRef
     lateinit var containingDeclarationSymbol: FirBasedSymbol<*>
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 
     override fun build(): FirReceiverParameter {
         return FirReceiverParameterImpl(

@@ -38,7 +38,7 @@ abstract class KotlinTypePreparator : AbstractTypePreparator() {
                 return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                     type.attributes,
                     newConstructor,
-                    listOf(),
+                    [],
                     false,
                     type.memberScope
                 )

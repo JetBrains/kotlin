@@ -21,7 +21,7 @@ class AnalysisApiBaseInternalApiTest : AbstractAnalysisApiInternalApiTest() {
     fun testInternalApiMarking() = doTest()
 
     override val sourceDirectories: List<SourceDirectory.ForValidation> =
-        listOf(SourceDirectory.ForValidation(sourcePaths = listOf("src")))
+        [SourceDirectory.ForValidation(sourcePaths = ["src"])]
 
     override fun suggestedAnnotation(declaration: KtDeclaration): String = KA_IMPLEMENTATION_DETAIL_ANNOTATION
 }

@@ -22,15 +22,15 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? =
     val enumKind = symbol.classKind == KaClassKind.ENUM_CLASS
     val final = symbol.modality == KaSymbolModality.FINAL
     val name = getObjCClassOrProtocolName(symbol)
-    val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
+    val attributes = (if (enumKind || final) [OBJC_SUBCLASSING_RESTRICTED] else []) + name.toNameAttributes()
     val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
     val origin = analysisSession.getObjCExportStubOrigin(symbol)
     val superProtocols: List<String> = superProtocols(symbol)
     val categoryName: String? = null
-    val generics: List<ObjCGenericTypeDeclaration> = emptyList()
+    val generics: List<ObjCGenericTypeDeclaration> = []
     val superClass = translateSuperClass(symbol)
 
-    val objectMembers = mutableListOf<ObjCExportStub>()
+    val objectMembers: MutableList<ObjCExportStub> = []
     objectMembers += translateToObjCConstructors(symbol)
     objectMembers += getDefaultMembers(symbol, objectMembers)
     objectMembers += with(analysisSession) {
@@ -55,7 +55,7 @@ fun ObjCExportContext.translateToObjCObject(symbol: KaClassSymbol): ObjCClass? =
 
 private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: List<ObjCExportStub>): List<ObjCExportStub> {
 
-    val result = mutableListOf<ObjCExportStub>()
+    val result: MutableList<ObjCExportStub> = []
 
     result.addIfNotNull(addInitIfNeeded(symbol, members))
 
@@ -64,9 +64,9 @@ private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: 
             name = ObjCPropertyNames.objectPropertyName,
             comment = null,
             type = toPropertyType(symbol),
-            propertyAttributes = listOf("class", "readonly"),
+            propertyAttributes = ["class", "readonly"],
             getterName = getObjectPropertySelector(symbol),
-            declarationAttributes = listOf(swiftNameAttribute(ObjCPropertyNames.objectPropertyName)),
+            declarationAttributes = [swiftNameAttribute(ObjCPropertyNames.objectPropertyName)],
             origin = analysisSession.getObjCExportStubOrigin(symbol),
         )
     )
@@ -80,7 +80,7 @@ private fun ObjCExportContext.getDefaultMembers(symbol: KaClassSymbol, members: 
  */
 private fun ObjCExportContext.toPropertyType(symbol: KaClassSymbol) = ObjCClassType(
     className = getObjCClassOrProtocolName(symbol).objCName,
-    typeArguments = emptyList(),
+    typeArguments = [],
     extras = objCTypeExtras {
         requiresForwardDeclaration = true
         originClassId = symbol.classId

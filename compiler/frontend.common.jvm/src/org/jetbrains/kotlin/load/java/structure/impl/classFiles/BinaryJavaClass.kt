@@ -165,7 +165,7 @@ class BinaryJavaClass(
         if (signature != null) {
             parseClassSignature(signature)
         } else {
-            this.typeParameters = emptyList()
+            this.typeParameters = []
             this.supertypes = mutableListOf<JavaClassifierType>().apply {
                 addIfNotNull(superName?.convertInternalNameToClassifierType())
                 interfaces?.forEach {
@@ -191,7 +191,7 @@ class BinaryJavaClass(
     }
 
     private fun String.convertInternalNameToClassifierType(): JavaClassifierType =
-        PlainJavaClassifierType({ context.resolveByInternalName(this) }, emptyList())
+        PlainJavaClassifierType({ context.resolveByInternalName(this) }, [])
 
     override fun visitField(access: Int, name: String, desc: String, signature: String?, value: Any?): FieldVisitor? {
         if (access.isSet(Opcodes.ACC_SYNTHETIC)) return null

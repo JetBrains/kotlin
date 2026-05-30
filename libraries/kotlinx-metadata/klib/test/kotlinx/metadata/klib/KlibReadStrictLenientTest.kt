@@ -47,7 +47,7 @@ class KlibReadStrictLenientTest {
         assertFailsWith<IllegalStateException> { lenient.write() }
     }
 
-    private val previousVersion = KlibMetadataVersion(intArrayOf(2, 0, 0))
+    private val previousVersion = KlibMetadataVersion([2, 0, 0])
     private val currentVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.toArray())
     private val nextVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().toArray())
     private val notSupportedVersion = KlibMetadataVersion(MetadataVersion.INSTANCE.next().next().toArray())
@@ -55,7 +55,7 @@ class KlibReadStrictLenientTest {
     private fun readWithVersion(version: KlibMetadataVersion, lenient: Boolean): KlibModuleMetadata {
         val metadata = KlibModuleMetadata(
             name = "klib",
-            fragments = listOf(KmModuleFragment().apply { fqName = "klib" }),
+            fragments = [KmModuleFragment().apply { fqName = "klib" }],
             metadataVersion = version,
         ).write()
         val provider = object : KlibModuleMetadata.MetadataLibraryProvider {

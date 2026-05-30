@@ -29,9 +29,9 @@ data class FieldWithSymbol(
     val fieldContainer: ClassOrElementRef,
 )
 
-private val additionalSymbolFields = listOf(
+private val additionalSymbolFields = [
     FieldWithSymbol(classifierSymbol, "classifier", SymbolFieldRole.REFERENCED, irSimpleTypeType),
-)
+]
 
 private val Element.fieldsWithSymbols: List<FieldWithSymbol>
     get() = allFields.mapNotNull { field ->
@@ -45,7 +45,7 @@ fun findFieldsWithSymbols(elements: List<Element>, role: SymbolFieldRole): Map<S
         if (element.implementations.isNotEmpty()) {
             element.fieldsWithSymbols
         } else {
-            emptyList()
+            []
         }
     }
     return (elementSymbolFields + additionalSymbolFields)

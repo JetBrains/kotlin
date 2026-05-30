@@ -43,7 +43,7 @@ abstract class AbstractElementConfigurator<Element, Field, Category>
 
     protected abstract fun createElement(name: String, propertyName: String, category: Category): Element
 
-    private val configurationCallbacks = mutableListOf<() -> Element>()
+    private val configurationCallbacks: MutableList<() -> Element> = []
 
     abstract val rootElement: Element
 

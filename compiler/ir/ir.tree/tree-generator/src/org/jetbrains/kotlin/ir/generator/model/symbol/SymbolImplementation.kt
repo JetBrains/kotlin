@@ -17,7 +17,7 @@ class SymbolImplementation(
     var generationCallback: (ImportCollectingPrinter.() -> Unit)? = null
 
     override val allFields: List<SymbolField>
-        get() = emptyList()
+        get() = []
 
     var hasSignature: Boolean = true
 }

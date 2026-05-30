@@ -111,7 +111,7 @@ fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
 
 fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
     val targetDescriptor = if (this is KtReferenceExpression) context[REFERENCE_TARGET, this] else null
-    return targetDescriptor?.let { listOf(it) } ?: context[AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
+    return targetDescriptor?.let { [it] } ?: context[AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
 }
 
 fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =

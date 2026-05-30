@@ -78,7 +78,7 @@ class ProgressionHeaderInfo(
     isReversed: Boolean = false,
     canOverflow: Boolean? = null,
     direction: ProgressionDirection,
-    val additionalStatements: List<IrStatement> = listOf(),
+    val additionalStatements: List<IrStatement> = [],
     val originalLastInclusive: IrExpression? = null
 ) : NumericHeaderInfo(
     progressionType, first, last, step, isLastInclusive,
@@ -266,7 +266,7 @@ internal abstract class HeaderInfoBuilder(
     private val irBuiltIns = context.irBuiltIns
     private val symbols = context.symbols
 
-    protected open val progressionHandlers = listOf(
+    protected open val progressionHandlers = [
         CollectionIndicesHandler(context),
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
@@ -275,7 +275,7 @@ internal abstract class HeaderInfoBuilder(
         DownToHandler(context),
         RangeToHandler(context),
         StepHandler(context, this)
-    )
+    ]
 
     protected abstract val callHandlers: List<HeaderInfoHandler<IrCall, Nothing?>>
     protected abstract val expressionHandlers: List<HeaderInfoHandler<IrExpression, Nothing?>>
@@ -307,7 +307,7 @@ internal abstract class HeaderInfoBuilder(
 
 internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
-    override val callHandlers = listOf(
+    override val callHandlers = [
         ReversedHandler(context, this),
         WithIndexHandler(
             context,
@@ -316,16 +316,16 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
                 scopeOwnerSymbol
             )
         )
-    )
+    ]
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
     // String is subtype of CharSequence and therefore its handler is more specialized.
-    override val expressionHandlers = listOf(
+    override val expressionHandlers = [
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
         CharSequenceIterationHandler(context)
-    )
+    ]
 }
 
 // WithIndexHandler attempts to retrieve the HeaderInfo from the underlying index, using NestedHeaderInfoBuilderForWithIndex instead of
@@ -336,19 +336,19 @@ internal class DefaultHeaderInfoBuilder(context: CommonBackendContext, scopeOwne
 internal class NestedHeaderInfoBuilderForWithIndex(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol) {
     // NOTE: No WithIndexHandler; we cannot lower `iterable.withIndex().withIndex()`.
-    override val callHandlers = listOf(
+    override val callHandlers = [
         ReversedHandler(context, this)
-    )
+    ]
 
     // NOTE: StringIterationHandler MUST come before CharSequenceIterationHandler.
     // String is subtype of CharSequence and therefore its handler is more specialized.
     // Default(Iterable|Sequence)Handler must come last as they handle iterables not handled by more specialized handlers.
-    override val expressionHandlers = listOf(
+    override val expressionHandlers = [
         ArrayIterationHandler(context),
         DefaultProgressionHandler(context),
         StringIterationHandler(context),
         CharSequenceIterationHandler(context),
         DefaultIterableHandler(context),
         DefaultSequenceHandler(context),
-    )
+    ]
 }

@@ -79,7 +79,7 @@ class KotlinJavascriptPackageFragment(
         configuration: DeserializationConfiguration
     ) : DeserializedContainerSource {
         val annotations: List<ClassId> =
-            if (header.annotationCount == 0) emptyList()
+            if (header.annotationCount == 0) []
             else NameResolverImpl(header.strings, header.qualifiedNames).let { nameResolver ->
                 // TODO: read arguments of module annotations
                 header.annotationList.map { annotation -> nameResolver.getClassId(annotation.id) }

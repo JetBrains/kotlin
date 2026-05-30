@@ -49,7 +49,7 @@ fun FirFunction.computeJvmDescriptor(
     for (parameter in valueParameters) {
         typeConversion(parameter.returnTypeRef)?.let { coneType ->
             try {
-                appendConeType(coneType, typeConversion, mutableSetOf())
+                appendConeType(coneType, typeConversion, [])
             } catch (e: ConcurrentModificationException) {
                 errorWithAttachment("CME from appendConeType", cause = e) {
                     withEntry("typeClass", coneType::class.simpleName)
@@ -73,7 +73,7 @@ fun FirFunction.computeJvmDescriptor(
         if (this@computeJvmDescriptor !is FirNamedFunction || returnTypeRef.isVoid()) {
             append("V")
         } else {
-            typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion, mutableSetOf()) }
+            typeConversion(returnTypeRef)?.let { appendConeType(it, typeConversion, []) }
         }
     }
 }
@@ -99,7 +99,7 @@ private val PRIMITIVE_TYPE_OR_ARRAY_SIGNATURE: Map<String, String> = PRIMITIVE_T
 fun ConeKotlinType.computeJvmDescriptorRepresentation(
     typeConversion: (FirTypeRef) -> ConeKotlinType? = FirTypeRef::coneTypeSafe
 ): String = buildString {
-    appendConeType(this@computeJvmDescriptorRepresentation, typeConversion, mutableSetOf())
+    appendConeType(this@computeJvmDescriptorRepresentation, typeConversion, [])
 }
 
 private fun StringBuilder.appendConeType(

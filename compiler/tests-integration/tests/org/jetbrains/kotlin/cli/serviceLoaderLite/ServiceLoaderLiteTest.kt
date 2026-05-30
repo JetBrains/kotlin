@@ -12,22 +12,22 @@ import javax.annotation.processing.Processor
 
 class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
     fun testSimple() = applyForDirAndJar("test", processors("test.Foo")) { file ->
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([file])
         assertEquals("test.Foo", impls.single())
     }
 
     fun testEmpty() = applyForDirAndJar("test") { file ->
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([file])
         assertEquals(0, impls.size)
     }
 
     fun testEmpty2() = applyForDirAndJar("test", Entry("foo", "bar")) { file ->
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([file])
         assertEquals(0, impls.size)
     }
 
     fun testEmpty3() = applyForDirAndJar("test", processors("")) { file ->
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([file])
         assertEquals(0, impls.size)
     }
 
@@ -35,7 +35,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         val processorsContent = buildString { appendLine("test.Foo").appendLine("test.Bar") }
 
         applyForDirAndJar("test", processors(processorsContent)) { file ->
-            val impls = ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
+            val impls = ServiceLoaderLite.findImplementations(Processor::class.java, [file])
             assertEquals(2, impls.size)
             assertTrue("test.Foo" in impls)
             assertTrue("test.Bar" in impls)
@@ -43,7 +43,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
     }
 
     fun testSeveralEntries() = applyForDirAndJar("test", processors("test.Foo"), Entry("foo", "bar")) { file ->
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(file))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([file])
         assertEquals("test.Foo", impls.single())
     }
 
@@ -51,7 +51,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         val jar1 = writeJar("test.jar", processors("test.Foo"))
         val jar2 = writeJar("test2.jar", processors("ap.Bar"))
 
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(jar1, jar2))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([jar1, jar2])
 
         assertEquals(2, impls.size)
         assertTrue("test.Foo" in impls)
@@ -62,7 +62,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         val dir1 = writeDir("test", processors("test.Foo"))
         val dir2 = writeDir("test2", processors("ap.Bar"))
 
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(dir1, dir2))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([dir1, dir2])
 
         assertEquals(2, impls.size)
         assertTrue("test.Foo" in impls)
@@ -73,7 +73,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         val jar = writeJar("test", processors("test.Foo"))
         val dir = writeDir("test2", processors("ap.Bar"))
 
-        val impls = ServiceLoaderLite.findImplementations<Processor>(listOf(jar, dir))
+        val impls = ServiceLoaderLite.findImplementations<Processor>([jar, dir])
 
         assertEquals(2, impls.size)
         assertTrue("test.Foo" in impls)
@@ -83,7 +83,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
     fun testParsingError() {
         applyForDirAndJar("test", processors("5")) { file ->
             assertThrows<ServiceLoadingException> {
-                ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
+                ServiceLoaderLite.findImplementations(Processor::class.java, [file])
             }
         }
     }
@@ -91,7 +91,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
     fun testParsingError2() {
         applyForDirAndJar("test", processors("a b c")) { file ->
             assertThrows<ServiceLoadingException> {
-                ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
+                ServiceLoaderLite.findImplementations(Processor::class.java, [file])
             }
         }
     }
@@ -106,7 +106,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
         }
 
         applyForDirAndJar("test", processors(processorsContent)) { file ->
-            val impls = ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
+            val impls = ServiceLoaderLite.findImplementations(Processor::class.java, [file])
             assertEquals(3, impls.size)
             assertTrue("test.Foo" in impls)
             assertTrue("test.Bar" in impls)
@@ -117,7 +117,7 @@ class ServiceLoaderLiteTest : AbstractServiceLoaderLiteTest() {
     fun testWrongJarName() {
         val file = File(tmpdir, "foo.tar.gz")
         file.writeText("foobar")
-        ServiceLoaderLite.findImplementations(Processor::class.java, listOf(file))
+        ServiceLoaderLite.findImplementations(Processor::class.java, [file])
     }
 }
 

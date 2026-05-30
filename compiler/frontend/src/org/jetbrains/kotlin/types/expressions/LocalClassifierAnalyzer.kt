@@ -121,7 +121,7 @@ class LocalClassifierAnalyzer(
         @Suppress("DEPRECATION_ERROR")
         container.get<LazyTopDownAnalyzer>().analyzeDeclarations(
             TopDownAnalysisMode.LocalDeclarations,
-            listOf(classOrObject),
+            [classOrObject],
             context.dataFlowInfo,
             localContext = context
         )

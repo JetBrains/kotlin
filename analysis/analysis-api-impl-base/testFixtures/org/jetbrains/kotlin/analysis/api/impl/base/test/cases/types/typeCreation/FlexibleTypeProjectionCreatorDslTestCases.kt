@@ -87,7 +87,7 @@ class FlexibleTypeProjectionCreatorDslTestCases(session: KaSession, caretToType:
         return session.typeCreator.flexibleType {
             this.lowerBound = lowerBound
             this.upperBound = upperBound
-            annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
+            annotations([annotationClassId1, annotationClassId2, annotationClassId3])
         }
     }
 

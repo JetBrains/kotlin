@@ -22,7 +22,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
     abstract val visitorType: ClassRef<*>
 
     protected open val annotations: List<Annotation>
-        get() = emptyList()
+        get() = []
 
     open val implementationKind: ImplementationKind
         get() = when (visitorType.kind) {
@@ -31,20 +31,20 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
         }
 
     open val constructorParameters: List<PrimaryConstructorParameter>
-        get() = emptyList()
+        get() = []
 
     open val optIns: List<ClassRef<*>>
-        get() = emptyList()
+        get() = []
 
     /**
      * The result type parameter of the visitor. All visitor methods return result of this type.
      */
-    protected val resultTypeVariable = TypeVariable("R", emptyList(), Variance.OUT_VARIANCE)
+    protected val resultTypeVariable = TypeVariable("R", [], Variance.OUT_VARIANCE)
 
     /**
      * The data type parameter of the visitor. ALl visitor methods accept a parameter of this type.
      */
-    protected val dataTypeVariable = TypeVariable("D", emptyList(), Variance.IN_VARIANCE)
+    protected val dataTypeVariable = TypeVariable("D", [], Variance.IN_VARIANCE)
 
     /**
      * The type parameters of the visitor class. Void visitors have no type parameters,
@@ -102,6 +102,7 @@ abstract class AbstractVisitorPrinter<Element : AbstractElement<Element, Field, 
             typeParameters = if (allowTypeParametersInVisitorMethods) {
                 element.params
             } else {
+                @Suppress("ConvertToCollectionLiterals")
                 emptyList()
             },
             modality = modality,

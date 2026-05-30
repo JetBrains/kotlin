@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
 /**
@@ -36,9 +37,9 @@ internal fun KaSession.getObjCDocumentedAnnotations(list: KaAnnotationList): Lis
         }
 }
 
-private val mustBeDocumentedAnnotationsStopList = setOf(
+private val mustBeDocumentedAnnotationsStopList: Set<FqName> = [
     StandardNames.FqNames.deprecated,
     KonanFqNames.objCEnum,
     KonanFqNames.objCName,
     KonanFqNames.shouldRefineInSwift,
-)
+]

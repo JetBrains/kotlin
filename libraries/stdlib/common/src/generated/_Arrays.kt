@@ -3652,7 +3652,7 @@ public inline fun <T> Array<out T>.dropLastWhile(predicate: (T) -> Boolean): Lis
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3666,7 +3666,7 @@ public inline fun ByteArray.dropLastWhile(predicate: (Byte) -> Boolean): List<By
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3680,7 +3680,7 @@ public inline fun ShortArray.dropLastWhile(predicate: (Short) -> Boolean): List<
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3694,7 +3694,7 @@ public inline fun IntArray.dropLastWhile(predicate: (Int) -> Boolean): List<Int>
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3708,7 +3708,7 @@ public inline fun LongArray.dropLastWhile(predicate: (Long) -> Boolean): List<Lo
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3722,7 +3722,7 @@ public inline fun FloatArray.dropLastWhile(predicate: (Float) -> Boolean): List<
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3736,7 +3736,7 @@ public inline fun DoubleArray.dropLastWhile(predicate: (Double) -> Boolean): Lis
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3750,7 +3750,7 @@ public inline fun BooleanArray.dropLastWhile(predicate: (Boolean) -> Boolean): L
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -3764,7 +3764,7 @@ public inline fun CharArray.dropLastWhile(predicate: (Char) -> Boolean): List<Ch
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -4567,7 +4567,7 @@ public inline fun <C : MutableCollection<in Char>> CharArray.filterTo(destinatio
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4575,7 +4575,7 @@ public fun <T> Array<out T>.slice(indices: IntRange): List<T> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun ByteArray.slice(indices: IntRange): List<Byte> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4583,7 +4583,7 @@ public fun ByteArray.slice(indices: IntRange): List<Byte> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun ShortArray.slice(indices: IntRange): List<Short> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4591,7 +4591,7 @@ public fun ShortArray.slice(indices: IntRange): List<Short> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun IntArray.slice(indices: IntRange): List<Int> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4599,7 +4599,7 @@ public fun IntArray.slice(indices: IntRange): List<Int> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun LongArray.slice(indices: IntRange): List<Long> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4607,7 +4607,7 @@ public fun LongArray.slice(indices: IntRange): List<Long> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun FloatArray.slice(indices: IntRange): List<Float> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4615,7 +4615,7 @@ public fun FloatArray.slice(indices: IntRange): List<Float> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun DoubleArray.slice(indices: IntRange): List<Double> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4623,7 +4623,7 @@ public fun DoubleArray.slice(indices: IntRange): List<Double> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4631,7 +4631,7 @@ public fun BooleanArray.slice(indices: IntRange): List<Boolean> {
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun CharArray.slice(indices: IntRange): List<Char> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -4640,7 +4640,7 @@ public fun CharArray.slice(indices: IntRange): List<Char> {
  */
 public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4653,7 +4653,7 @@ public fun <T> Array<out T>.slice(indices: Iterable<Int>): List<T> {
  */
 public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Byte>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4666,7 +4666,7 @@ public fun ByteArray.slice(indices: Iterable<Int>): List<Byte> {
  */
 public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Short>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4679,7 +4679,7 @@ public fun ShortArray.slice(indices: Iterable<Int>): List<Short> {
  */
 public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Int>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4692,7 +4692,7 @@ public fun IntArray.slice(indices: Iterable<Int>): List<Int> {
  */
 public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Long>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4705,7 +4705,7 @@ public fun LongArray.slice(indices: Iterable<Int>): List<Long> {
  */
 public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Float>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4718,7 +4718,7 @@ public fun FloatArray.slice(indices: Iterable<Int>): List<Float> {
  */
 public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Double>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4731,7 +4731,7 @@ public fun DoubleArray.slice(indices: Iterable<Int>): List<Double> {
  */
 public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Boolean>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4744,7 +4744,7 @@ public fun BooleanArray.slice(indices: Iterable<Int>): List<Boolean> {
  */
 public fun CharArray.slice(indices: Iterable<Int>): List<Char> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<Char>(size)
     for (index in indices) {
         list.add(get(index))
@@ -4941,9 +4941,9 @@ public fun CharArray.sliceArray(indices: IntRange): CharArray {
  */
 public fun <T> Array<out T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     return copyOfRange(0, n).asList()
 }
 
@@ -4956,9 +4956,9 @@ public fun <T> Array<out T>.take(n: Int): List<T> {
  */
 public fun ByteArray.take(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Byte>(n)
     for (item in this) {
@@ -4978,9 +4978,9 @@ public fun ByteArray.take(n: Int): List<Byte> {
  */
 public fun ShortArray.take(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Short>(n)
     for (item in this) {
@@ -5000,9 +5000,9 @@ public fun ShortArray.take(n: Int): List<Short> {
  */
 public fun IntArray.take(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Int>(n)
     for (item in this) {
@@ -5022,9 +5022,9 @@ public fun IntArray.take(n: Int): List<Int> {
  */
 public fun LongArray.take(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Long>(n)
     for (item in this) {
@@ -5044,9 +5044,9 @@ public fun LongArray.take(n: Int): List<Long> {
  */
 public fun FloatArray.take(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Float>(n)
     for (item in this) {
@@ -5066,9 +5066,9 @@ public fun FloatArray.take(n: Int): List<Float> {
  */
 public fun DoubleArray.take(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Double>(n)
     for (item in this) {
@@ -5088,9 +5088,9 @@ public fun DoubleArray.take(n: Int): List<Double> {
  */
 public fun BooleanArray.take(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Boolean>(n)
     for (item in this) {
@@ -5110,9 +5110,9 @@ public fun BooleanArray.take(n: Int): List<Boolean> {
  */
 public fun CharArray.take(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<Char>(n)
     for (item in this) {
@@ -5132,10 +5132,10 @@ public fun CharArray.take(n: Int): List<Char> {
  */
 public fun <T> Array<out T>.takeLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     return copyOfRange(size - n, size).asList()
 }
 
@@ -5148,10 +5148,10 @@ public fun <T> Array<out T>.takeLast(n: Int): List<T> {
  */
 public fun ByteArray.takeLast(n: Int): List<Byte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Byte>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5167,10 +5167,10 @@ public fun ByteArray.takeLast(n: Int): List<Byte> {
  */
 public fun ShortArray.takeLast(n: Int): List<Short> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Short>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5186,10 +5186,10 @@ public fun ShortArray.takeLast(n: Int): List<Short> {
  */
 public fun IntArray.takeLast(n: Int): List<Int> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Int>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5205,10 +5205,10 @@ public fun IntArray.takeLast(n: Int): List<Int> {
  */
 public fun LongArray.takeLast(n: Int): List<Long> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Long>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5224,10 +5224,10 @@ public fun LongArray.takeLast(n: Int): List<Long> {
  */
 public fun FloatArray.takeLast(n: Int): List<Float> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Float>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5243,10 +5243,10 @@ public fun FloatArray.takeLast(n: Int): List<Float> {
  */
 public fun DoubleArray.takeLast(n: Int): List<Double> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Double>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5262,10 +5262,10 @@ public fun DoubleArray.takeLast(n: Int): List<Double> {
  */
 public fun BooleanArray.takeLast(n: Int): List<Boolean> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Boolean>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5281,10 +5281,10 @@ public fun BooleanArray.takeLast(n: Int): List<Boolean> {
  */
 public fun CharArray.takeLast(n: Int): List<Char> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<Char>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -5425,8 +5425,8 @@ public inline fun CharArray.takeLastWhile(predicate: (Char) -> Boolean): List<Ch
 public inline fun <T> Array<out T>.takeWhile(predicate: (T) -> Boolean): List<T> {
     var i = 0
     while (i < size && predicate(this[i])) i++
-    return if (i == 0) emptyList()
-           else if (i == 1) listOf(this[0])
+    return if (i == 0) []
+           else if (i == 1) [this[0]]
            else copyOfRange(0, i).asList()
 }
 
@@ -6951,7 +6951,7 @@ public fun CharArray.reverse(fromIndex: Int, toIndex: Int): Unit {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun <T> Array<out T>.reversed(): List<T> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -6963,7 +6963,7 @@ public fun <T> Array<out T>.reversed(): List<T> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun ByteArray.reversed(): List<Byte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -6975,7 +6975,7 @@ public fun ByteArray.reversed(): List<Byte> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun ShortArray.reversed(): List<Short> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -6987,7 +6987,7 @@ public fun ShortArray.reversed(): List<Short> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun IntArray.reversed(): List<Int> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -6999,7 +6999,7 @@ public fun IntArray.reversed(): List<Int> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun LongArray.reversed(): List<Long> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -7011,7 +7011,7 @@ public fun LongArray.reversed(): List<Long> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun FloatArray.reversed(): List<Float> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -7023,7 +7023,7 @@ public fun FloatArray.reversed(): List<Float> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun DoubleArray.reversed(): List<Double> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -7035,7 +7035,7 @@ public fun DoubleArray.reversed(): List<Double> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun BooleanArray.reversed(): List<Boolean> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -7047,7 +7047,7 @@ public fun BooleanArray.reversed(): List<Boolean> {
  * Use [reversedArray] if you need to get the result in an array.
  */
 public fun CharArray.reversed(): List<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -11420,8 +11420,8 @@ public fun CharArray.toHashSet(): HashSet<Char> {
  */
 public fun <T> Array<out T>.toList(): List<T> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> copyOf().asList()
     }
 }
@@ -11431,8 +11431,8 @@ public fun <T> Array<out T>.toList(): List<T> {
  */
 public fun ByteArray.toList(): List<Byte> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11442,8 +11442,8 @@ public fun ByteArray.toList(): List<Byte> {
  */
 public fun ShortArray.toList(): List<Short> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11453,8 +11453,8 @@ public fun ShortArray.toList(): List<Short> {
  */
 public fun IntArray.toList(): List<Int> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11464,8 +11464,8 @@ public fun IntArray.toList(): List<Int> {
  */
 public fun LongArray.toList(): List<Long> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11475,8 +11475,8 @@ public fun LongArray.toList(): List<Long> {
  */
 public fun FloatArray.toList(): List<Float> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11486,8 +11486,8 @@ public fun FloatArray.toList(): List<Float> {
  */
 public fun DoubleArray.toList(): List<Double> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11497,8 +11497,8 @@ public fun DoubleArray.toList(): List<Double> {
  */
 public fun BooleanArray.toList(): List<Boolean> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11508,8 +11508,8 @@ public fun BooleanArray.toList(): List<Boolean> {
  */
 public fun CharArray.toList(): List<Char> {
     return when (size) {
-        0 -> emptyList()
-        1 -> listOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> this.toMutableList()
     }
 }
@@ -11600,8 +11600,8 @@ public fun CharArray.toMutableList(): MutableList<Char> {
  */
 public fun <T> Array<out T>.toSet(): Set<T> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
     }
 }
@@ -11613,8 +11613,8 @@ public fun <T> Array<out T>.toSet(): Set<T> {
  */
 public fun ByteArray.toSet(): Set<Byte> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Byte>(mapCapacity(size)))
     }
 }
@@ -11626,8 +11626,8 @@ public fun ByteArray.toSet(): Set<Byte> {
  */
 public fun ShortArray.toSet(): Set<Short> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Short>(mapCapacity(size)))
     }
 }
@@ -11639,8 +11639,8 @@ public fun ShortArray.toSet(): Set<Short> {
  */
 public fun IntArray.toSet(): Set<Int> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Int>(mapCapacity(size)))
     }
 }
@@ -11652,8 +11652,8 @@ public fun IntArray.toSet(): Set<Int> {
  */
 public fun LongArray.toSet(): Set<Long> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Long>(mapCapacity(size)))
     }
 }
@@ -11665,8 +11665,8 @@ public fun LongArray.toSet(): Set<Long> {
  */
 public fun FloatArray.toSet(): Set<Float> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Float>(mapCapacity(size)))
     }
 }
@@ -11678,8 +11678,8 @@ public fun FloatArray.toSet(): Set<Float> {
  */
 public fun DoubleArray.toSet(): Set<Double> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Double>(mapCapacity(size)))
     }
 }
@@ -11691,8 +11691,8 @@ public fun DoubleArray.toSet(): Set<Double> {
  */
 public fun BooleanArray.toSet(): Set<Boolean> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Boolean>(mapCapacity(size)))
     }
 }
@@ -11704,8 +11704,8 @@ public fun BooleanArray.toSet(): Set<Boolean> {
  */
 public fun CharArray.toSet(): Set<Char> {
     return when (size) {
-        0 -> emptySet()
-        1 -> setOf(this[0])
+        0 -> []
+        1 -> [this[0]]
         else -> toCollection(LinkedHashSet<Char>(mapCapacity(size.coerceAtMost(128))))
     }
 }
@@ -13643,7 +13643,7 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
-    val set = mutableSetOf<T>()
+    val set: MutableSet<T> = []
     for (e in this) {
         if (otherCollection.contains(e)) {
             set.add(e)
@@ -13790,7 +13790,7 @@ public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
  */
 public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
-    val result = mutableSetOf<T>()
+    val result: MutableSet<T> = []
     for (e in this) {
         if (!otherCollection.contains(e)) {
             result.add(e)
@@ -23270,7 +23270,7 @@ public inline fun CharArray.reduceRightOrNull(operation: (Char, acc: Char) -> Ch
  */
 @SinceKotlin("1.4")
 public inline fun <T, R> Array<out T>.runningFold(initial: R, operation: (acc: R, T) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23294,7 +23294,7 @@ public inline fun <T, R> Array<out T>.runningFold(initial: R, operation: (acc: R
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.runningFold(initial: R, operation: (acc: R, Byte) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23318,7 +23318,7 @@ public inline fun <R> ByteArray.runningFold(initial: R, operation: (acc: R, Byte
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.runningFold(initial: R, operation: (acc: R, Short) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23342,7 +23342,7 @@ public inline fun <R> ShortArray.runningFold(initial: R, operation: (acc: R, Sho
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.runningFold(initial: R, operation: (acc: R, Int) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23366,7 +23366,7 @@ public inline fun <R> IntArray.runningFold(initial: R, operation: (acc: R, Int) 
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.runningFold(initial: R, operation: (acc: R, Long) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23390,7 +23390,7 @@ public inline fun <R> LongArray.runningFold(initial: R, operation: (acc: R, Long
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.runningFold(initial: R, operation: (acc: R, Float) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23414,7 +23414,7 @@ public inline fun <R> FloatArray.runningFold(initial: R, operation: (acc: R, Flo
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.runningFold(initial: R, operation: (acc: R, Double) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23438,7 +23438,7 @@ public inline fun <R> DoubleArray.runningFold(initial: R, operation: (acc: R, Do
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.runningFold(initial: R, operation: (acc: R, Boolean) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23462,7 +23462,7 @@ public inline fun <R> BooleanArray.runningFold(initial: R, operation: (acc: R, B
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.runningFold(initial: R, operation: (acc: R, Char) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -23486,7 +23486,7 @@ public inline fun <R> CharArray.runningFold(initial: R, operation: (acc: R, Char
  */
 @SinceKotlin("1.4")
 public inline fun <T, R> Array<out T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23511,7 +23511,7 @@ public inline fun <T, R> Array<out T>.runningFoldIndexed(initial: R, operation: 
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> ByteArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Byte) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23536,7 +23536,7 @@ public inline fun <R> ByteArray.runningFoldIndexed(initial: R, operation: (index
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> ShortArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Short) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23561,7 +23561,7 @@ public inline fun <R> ShortArray.runningFoldIndexed(initial: R, operation: (inde
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> IntArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Int) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23586,7 +23586,7 @@ public inline fun <R> IntArray.runningFoldIndexed(initial: R, operation: (index:
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> LongArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Long) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23611,7 +23611,7 @@ public inline fun <R> LongArray.runningFoldIndexed(initial: R, operation: (index
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> FloatArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Float) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23636,7 +23636,7 @@ public inline fun <R> FloatArray.runningFoldIndexed(initial: R, operation: (inde
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> DoubleArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Double) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23661,7 +23661,7 @@ public inline fun <R> DoubleArray.runningFoldIndexed(initial: R, operation: (ind
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> BooleanArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Boolean) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23686,7 +23686,7 @@ public inline fun <R> BooleanArray.runningFoldIndexed(initial: R, operation: (in
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun <R> CharArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, Char) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -23709,7 +23709,7 @@ public inline fun <R> CharArray.runningFoldIndexed(initial: R, operation: (index
  */
 @SinceKotlin("1.4")
 public inline fun <S, T : S> Array<out T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator: S = this[0]
     val result = ArrayList<S>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23730,7 +23730,7 @@ public inline fun <S, T : S> Array<out T>.runningReduce(operation: (acc: S, T) -
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.runningReduce(operation: (acc: Byte, Byte) -> Byte): List<Byte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Byte>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23751,7 +23751,7 @@ public inline fun ByteArray.runningReduce(operation: (acc: Byte, Byte) -> Byte):
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.runningReduce(operation: (acc: Short, Short) -> Short): List<Short> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Short>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23772,7 +23772,7 @@ public inline fun ShortArray.runningReduce(operation: (acc: Short, Short) -> Sho
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.runningReduce(operation: (acc: Int, Int) -> Int): List<Int> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Int>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23793,7 +23793,7 @@ public inline fun IntArray.runningReduce(operation: (acc: Int, Int) -> Int): Lis
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.runningReduce(operation: (acc: Long, Long) -> Long): List<Long> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Long>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23814,7 +23814,7 @@ public inline fun LongArray.runningReduce(operation: (acc: Long, Long) -> Long):
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.runningReduce(operation: (acc: Float, Float) -> Float): List<Float> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Float>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23835,7 +23835,7 @@ public inline fun FloatArray.runningReduce(operation: (acc: Float, Float) -> Flo
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.runningReduce(operation: (acc: Double, Double) -> Double): List<Double> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Double>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23856,7 +23856,7 @@ public inline fun DoubleArray.runningReduce(operation: (acc: Double, Double) -> 
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.runningReduce(operation: (acc: Boolean, Boolean) -> Boolean): List<Boolean> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Boolean>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23877,7 +23877,7 @@ public inline fun BooleanArray.runningReduce(operation: (acc: Boolean, Boolean) 
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.runningReduce(operation: (acc: Char, Char) -> Char): List<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Char>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23901,7 +23901,7 @@ public inline fun CharArray.runningReduce(operation: (acc: Char, Char) -> Char):
  */
 @SinceKotlin("1.4")
 public inline fun <S, T : S> Array<out T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator: S = this[0]
     val result = ArrayList<S>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23923,7 +23923,7 @@ public inline fun <S, T : S> Array<out T>.runningReduceIndexed(operation: (index
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.runningReduceIndexed(operation: (index: Int, acc: Byte, Byte) -> Byte): List<Byte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Byte>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23945,7 +23945,7 @@ public inline fun ByteArray.runningReduceIndexed(operation: (index: Int, acc: By
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.runningReduceIndexed(operation: (index: Int, acc: Short, Short) -> Short): List<Short> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Short>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23967,7 +23967,7 @@ public inline fun ShortArray.runningReduceIndexed(operation: (index: Int, acc: S
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.runningReduceIndexed(operation: (index: Int, acc: Int, Int) -> Int): List<Int> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Int>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -23989,7 +23989,7 @@ public inline fun IntArray.runningReduceIndexed(operation: (index: Int, acc: Int
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.runningReduceIndexed(operation: (index: Int, acc: Long, Long) -> Long): List<Long> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Long>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -24011,7 +24011,7 @@ public inline fun LongArray.runningReduceIndexed(operation: (index: Int, acc: Lo
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.runningReduceIndexed(operation: (index: Int, acc: Float, Float) -> Float): List<Float> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Float>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -24033,7 +24033,7 @@ public inline fun FloatArray.runningReduceIndexed(operation: (index: Int, acc: F
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.runningReduceIndexed(operation: (index: Int, acc: Double, Double) -> Double): List<Double> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Double>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -24055,7 +24055,7 @@ public inline fun DoubleArray.runningReduceIndexed(operation: (index: Int, acc: 
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.runningReduceIndexed(operation: (index: Int, acc: Boolean, Boolean) -> Boolean): List<Boolean> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Boolean>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -24077,7 +24077,7 @@ public inline fun BooleanArray.runningReduceIndexed(operation: (index: Int, acc:
 @SinceKotlin("1.4")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.runningReduceIndexed(operation: (index: Int, acc: Char, Char) -> Char): List<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<Char>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -26602,7 +26602,7 @@ public fun CharArray.joinToString(separator: CharSequence = ", ", prefix: CharSe
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun <T> Array<out T>.asIterable(): Iterable<T> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26610,7 +26610,7 @@ public fun <T> Array<out T>.asIterable(): Iterable<T> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ByteArray.asIterable(): Iterable<Byte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26618,7 +26618,7 @@ public fun ByteArray.asIterable(): Iterable<Byte> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun ShortArray.asIterable(): Iterable<Short> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26626,7 +26626,7 @@ public fun ShortArray.asIterable(): Iterable<Short> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun IntArray.asIterable(): Iterable<Int> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26634,7 +26634,7 @@ public fun IntArray.asIterable(): Iterable<Int> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun LongArray.asIterable(): Iterable<Long> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26642,7 +26642,7 @@ public fun LongArray.asIterable(): Iterable<Long> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun FloatArray.asIterable(): Iterable<Float> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26650,7 +26650,7 @@ public fun FloatArray.asIterable(): Iterable<Float> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun DoubleArray.asIterable(): Iterable<Double> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26658,7 +26658,7 @@ public fun DoubleArray.asIterable(): Iterable<Double> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun BooleanArray.asIterable(): Iterable<Boolean> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26666,7 +26666,7 @@ public fun BooleanArray.asIterable(): Iterable<Boolean> {
  * Creates an [Iterable] instance that wraps the original array returning its elements when being iterated.
  */
 public fun CharArray.asIterable(): Iterable<Char> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     return Iterable { this.iterator() }
 }
 
@@ -26676,7 +26676,7 @@ public fun CharArray.asIterable(): Iterable<Char> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun <T> Array<out T>.asSequence(): Sequence<T> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26686,7 +26686,7 @@ public fun <T> Array<out T>.asSequence(): Sequence<T> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun ByteArray.asSequence(): Sequence<Byte> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26696,7 +26696,7 @@ public fun ByteArray.asSequence(): Sequence<Byte> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun ShortArray.asSequence(): Sequence<Short> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26706,7 +26706,7 @@ public fun ShortArray.asSequence(): Sequence<Short> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun IntArray.asSequence(): Sequence<Int> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26716,7 +26716,7 @@ public fun IntArray.asSequence(): Sequence<Int> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun LongArray.asSequence(): Sequence<Long> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26726,7 +26726,7 @@ public fun LongArray.asSequence(): Sequence<Long> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun FloatArray.asSequence(): Sequence<Float> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26736,7 +26736,7 @@ public fun FloatArray.asSequence(): Sequence<Float> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun DoubleArray.asSequence(): Sequence<Double> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26746,7 +26746,7 @@ public fun DoubleArray.asSequence(): Sequence<Double> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun BooleanArray.asSequence(): Sequence<Boolean> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 
@@ -26756,7 +26756,7 @@ public fun BooleanArray.asSequence(): Sequence<Boolean> {
  * @sample samples.collections.Sequences.Building.sequenceFromArray
  */
 public fun CharArray.asSequence(): Sequence<Char> {
-    if (isEmpty()) return emptySequence()
+    if (isEmpty()) return []
     return Sequence { this.iterator() }
 }
 

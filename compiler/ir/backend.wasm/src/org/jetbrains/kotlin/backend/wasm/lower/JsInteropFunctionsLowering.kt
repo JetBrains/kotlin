@@ -46,7 +46,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     val jsRelatedSymbols get() = context.wasmSymbols.jsRelatedSymbols
     val adapters get() = jsRelatedSymbols.jsInteropAdapters
 
-    val additionalDeclarations = mutableListOf<IrDeclaration>()
+    val additionalDeclarations: MutableList<IrDeclaration> = []
     lateinit var currentParent: IrDeclarationParent
     lateinit var currentFile: IrFile
 
@@ -83,7 +83,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 transformExportFunction(declaration)
         }
 
-        return (newDeclarations ?: listOf(declaration)) + additionalDeclarations
+        return (newDeclarations ?: [declaration]) + additionalDeclarations
     }
 
     private fun doubleIfNumber(possiblyNumber: IrType): IrType {
@@ -141,7 +141,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val jsFunAnnotation = function.getAnnotation(FqName("kotlin.JsFun"))
         if (jsFunAnnotation != null) {
             function.annotations = function.annotations.filter { it.symbol != jsFunAnnotation.symbol }
-            jsFunction.annotations = listOf(jsFunAnnotation)
+            jsFunction.annotations = [jsFunAnnotation]
         }
 
         function.parameters.forEachIndexed { index, functionParameter ->
@@ -157,7 +157,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val builder = context.createIrBuilder(function.symbol)
         function.body = createAdapterFunctionBody(builder, function, jsFunction, valueParametersAdapters, resultAdapter)
 
-        return listOf(function, jsFunction)
+        return [function, jsFunction]
     }
 
     /**
@@ -206,14 +206,14 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         val builder: DeclarationIrBuilder = context.createIrBuilder(newFun.symbol)
         newFun.body = createAdapterFunctionBody(builder, newFun, function, valueParametersAdapters, resultAdapter)
 
-        newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = emptyList()).also {
+        newFun.annotations += builder.irAnnotation(jsRelatedSymbols.jsNameConstructor, typeArguments = []).also {
             it.arguments[0] = builder.irString(function.getJsNameOrKotlinName().identifier)
         }
         function.annotations = function.annotations.filter {
             it.symbol != jsRelatedSymbols.jsExportConstructor && it.symbol != jsRelatedSymbols.jsExportDefaultConstructor
         }
 
-        return listOf(function, newFun)
+        return [function, newFun]
     }
 
     private fun createAdapterFunctionBody(
@@ -568,7 +568,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             append(")")
         }
 
-        result.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        result.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = []).also {
             it.arguments[0] = builder.irString(jsCode)
         }
 
@@ -595,7 +595,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             name = Name.identifier("__JsClosureToKotlinClosure_${info.signatureString}")
         }.apply {
             createThisReceiverParameter()
-            superTypes = listOf(functionType)
+            superTypes = [functionType]
             parent = currentParent
         }
 
@@ -688,7 +688,7 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
             append(")")
         }
 
-        result.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        result.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = []).also {
             it.arguments[0] = builder.irString(jsFun)
         }
 

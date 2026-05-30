@@ -25,13 +25,13 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
     private val searchScope: GlobalSearchScope,
     private val builtIns: KotlinBuiltIns = DefaultBuiltIns.Instance,
     private val languageVersionSettings: LanguageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
-    private val syntheticFiles: Collection<KtFile> = emptyList(),
+    private val syntheticFiles: Collection<KtFile> = [],
     private val sdkDependency: M? = null,
     knownDependencyModuleDescriptors: Map<M, ModuleDescriptor> = emptyMap()
 ) : AbstractResolverForProject<M>(
     debugName,
     projectContext,
-    listOf(module) + knownDependencyModuleDescriptors.keys,
+    [module] + knownDependencyModuleDescriptors.keys,
     null,
     EmptyResolverForProject(),
     PackageOracleFactory.OptimisticFactory
@@ -49,7 +49,7 @@ class ResolverForSingleModuleProject<M : ModuleInfo>(
 
     override fun modulesContent(module: M): ModuleContent<M> = when (module) {
         this.module -> ModuleContent(module, syntheticFiles, searchScope)
-        else -> ModuleContent(module, emptyList(), searchScope)
+        else -> ModuleContent(module, [], searchScope)
     }
 
     override fun builtInsForModule(module: M): KotlinBuiltIns = builtIns

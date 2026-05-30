@@ -229,12 +229,12 @@ internal class SirRegularInitFromKtSymbol(
 
         generateFunctionBridge(
             baseBridgeName = baseName,
-            explicitParameters = emptyList(),
+            explicitParameters = [],
             returnType = obj.type,
             kotlinFqName = fqName,
-            kotlinOptIns = ktSymbol.containingDeclaration?.allRequiredOptIns ?: emptyList(),
+            kotlinOptIns = ktSymbol.containingDeclaration?.allRequiredOptIns ?: [],
             selfParameter = null,
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -254,12 +254,12 @@ internal class SirRegularInitFromKtSymbol(
 
         generateFunctionBridge(
             baseBridgeName = baseName,
-            explicitParameters = listOf(obj) + parameters,
+            explicitParameters = [obj] + parameters,
             returnType = returnType,
             kotlinFqName = fqName,
             kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = null,
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
                 SirParameter("", "__error", it)

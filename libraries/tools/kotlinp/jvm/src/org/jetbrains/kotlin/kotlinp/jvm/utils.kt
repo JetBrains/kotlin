@@ -60,7 +60,7 @@ private fun readMetadataVisitor(output: (Metadata) -> Unit): AnnotationVisitor =
 
         private fun stringArrayVisitor(output: (Array<String>) -> Unit): AnnotationVisitor {
             return object : AnnotationVisitor(Opcodes.API_VERSION) {
-                val strings = mutableListOf<String>()
+                val strings: MutableList<String> = []
 
                 override fun visit(name: String?, value: Any?) {
                     (value as? String)?.let(strings::add)

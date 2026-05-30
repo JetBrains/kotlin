@@ -34,10 +34,10 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         else
             ""
 
-        return listOf(
-                "${prefix}const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
-                "${prefix}const void* $symbol = (const void*)&$function;"
-        )
+        return [
+            "${prefix}const void* $symbol __asm(${symbol.quoteAsKotlinLiteral()});",
+            "${prefix}const void* $symbol = (const void*)&$function;"
+        ]
     }
 
     private data class Parameter(val type: String, val name: String)
@@ -149,7 +149,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         val wrapperName = generateFunctionWrapperName("${globalDecl.name}_getter")
         val returnType = globalDecl.type.stringRepresentation
         val wrapperBody = "return ${globalDecl.name};"
-        val wrapper = createWrapper(symbolName, wrapperName, returnType, emptyList(), wrapperBody)
+        val wrapper = createWrapper(symbolName, wrapperName, returnType, [], wrapperBody)
         return CCalleeWrapper(wrapper)
     }
 
@@ -157,7 +157,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         val wrapperName = generateFunctionWrapperName("${globalDecl.name}_getter")
         val returnType = "void*"
         val wrapperBody = "return &${globalDecl.name};"
-        val wrapper = createWrapper(symbolName, wrapperName, returnType, emptyList(), wrapperBody)
+        val wrapper = createWrapper(symbolName, wrapperName, returnType, [], wrapperBody)
         return CCalleeWrapper(wrapper)
     }
 
@@ -166,7 +166,7 @@ internal class CWrappersGenerator(private val context: StubIrContext) {
         val globalType = globalDecl.type.stringRepresentation
         val parameter = Parameter(globalType, "p1")
         val wrapperBody = "${globalDecl.name} = ${parameter.name};"
-        val wrapper = createWrapper(symbolName, wrapperName, "void", listOf(parameter), wrapperBody)
+        val wrapper = createWrapper(symbolName, wrapperName, "void", [parameter], wrapperBody)
         return CCalleeWrapper(wrapper)
     }
 }

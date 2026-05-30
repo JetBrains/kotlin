@@ -31,14 +31,14 @@ class FirTypeAliasBuilder : FirDeclarationBuilder, FirTypeParameterRefsOwnerBuil
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = []
     lateinit var status: FirDeclarationStatus
     var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     lateinit var scopeProvider: FirScopeProvider
     lateinit var name: Name
     lateinit var symbol: FirTypeAliasSymbol
     lateinit var expandedTypeRef: FirTypeRef
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 
     override fun build(): FirTypeAlias {
         return FirTypeAliasImpl(

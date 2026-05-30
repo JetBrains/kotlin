@@ -13,7 +13,7 @@ fun List<Any?>?.toAnnotations() =
     this?.run {
         mapNotNull { it.toAnnotation() }
             .sortedBy { it.desc }
-    } ?: emptyList()
+    } ?: []
 
 fun Any?.toAnnotation(): AnnotationEntry? {
     val ann = this as? AnnotationNode ?: return null

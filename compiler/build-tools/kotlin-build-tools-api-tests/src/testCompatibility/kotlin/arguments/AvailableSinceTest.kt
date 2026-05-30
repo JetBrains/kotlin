@@ -38,14 +38,14 @@ import java.lang.reflect.Method
 import kotlin.io.path.Path
 
 class AvailableSinceTest : BaseCompilationTest() {
-    val versions = listOf(
+    val versions = [
         "2.2.0",
         "2.2.20",
         "2.3.0",
         "2.3.20",
         "2.4.0",
         "2.4.20",
-    ) + KotlinToolchains.loadImplementation(btaClassloader).getCompilerVersion()
+    ] + KotlinToolchains.loadImplementation(btaClassloader).getCompilerVersion()
 
     val overrideVersionMethod: Method by lazy {
         btaClassloader.loadClass("org.jetbrains.kotlin.buildtools.internal.OptionsKt")
@@ -59,7 +59,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.jvm.jvmCompilationOperation(emptyList(), Path("")) {
+                toolchains.jvm.jvmCompilationOperation([], Path("")) {
                     trySet(LOOKUP_TRACKER.availableSinceVersion) {
                         this[LOOKUP_TRACKER] = object : CompilerLookupTracker {
                             override fun recordLookup(
@@ -132,7 +132,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path("")).apply {
+                toolchains.jvm.jvmCompilationOperationBuilder([], Path("")).apply {
                     trySet(BuildOperation.METRICS_COLLECTOR.availableSinceVersion) {
                         this[BuildOperation.METRICS_COLLECTOR] = null as BuildMetricsCollector?
                     }
@@ -149,8 +149,8 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path(""))
-                    .snapshotBasedIcConfigurationBuilder(Path(""), SourcesChanges.Unknown, emptyList()).apply {
+                toolchains.jvm.jvmCompilationOperationBuilder([], Path(""))
+                    .snapshotBasedIcConfigurationBuilder(Path(""), SourcesChanges.Unknown, []).apply {
                         trySet(BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR.availableSinceVersion) {
                             this[BaseIncrementalCompilationConfiguration.ROOT_PROJECT_DIR] = null
                         }
@@ -195,8 +195,8 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path(""))
-                    .snapshotBasedIcConfigurationBuilder(Path(""), SourcesChanges.Unknown, emptyList()).apply {
+                toolchains.jvm.jvmCompilationOperationBuilder([], Path(""))
+                    .snapshotBasedIcConfigurationBuilder(Path(""), SourcesChanges.Unknown, []).apply {
                         trySet(JvmSnapshotBasedIncrementalCompilationConfiguration.PRECISE_JAVA_TRACKING.availableSinceVersion) {
                             this[JvmSnapshotBasedIncrementalCompilationConfiguration.PRECISE_JAVA_TRACKING] = false
                         }
@@ -241,7 +241,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.jvm.discoverScriptExtensionsOperationBuilder(emptyList()).apply {
+                toolchains.jvm.discoverScriptExtensionsOperationBuilder([]).apply {
                     trySet(DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER.availableSinceVersion) {
                         this[DiscoverScriptExtensionsOperation.COMPILER_MESSAGE_RENDERER] = object : CompilerMessageRenderer {
                             override fun render(
@@ -266,7 +266,7 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.js.jsKlibCompilationOperation(emptyList(), Path("")) {
+                toolchains.js.jsKlibCompilationOperation([], Path("")) {
                     trySet(JsKlibCompilationOperation.INCREMENTAL_COMPILATION.availableSinceVersion) {
                         this[JsKlibCompilationOperation.INCREMENTAL_COMPILATION] = null
                     }
@@ -283,8 +283,8 @@ class AvailableSinceTest : BaseCompilationTest() {
         versions.forEach { version ->
             overrideVersionMethod.invoke(null, version)
             with(KotlinToolingVersion(version)) {
-                toolchains.js.jsKlibCompilationOperationBuilder(emptyList(), Path(""))
-                    .historyBasedIcConfigurationBuilder(Path(""), Path(""), SourcesChanges.Unknown, emptyList()).apply {
+                toolchains.js.jsKlibCompilationOperationBuilder([], Path(""))
+                    .historyBasedIcConfigurationBuilder(Path(""), Path(""), SourcesChanges.Unknown, []).apply {
                         trySet(JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR.availableSinceVersion) {
                             this[JsHistoryBasedIncrementalCompilationConfiguration.ROOT_PROJECT_BUILD_DIR] = null
                         }

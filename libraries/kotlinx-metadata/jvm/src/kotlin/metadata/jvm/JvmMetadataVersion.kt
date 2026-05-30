@@ -37,7 +37,7 @@ public class JvmMetadataVersion(public val major: Int, public val minor: Int, pu
     internal constructor(intArray: IntArray) : this(intArray[0], intArray[1], intArray[2])
 
     @JvmName("toIntArray")
-    internal fun toIntArray(): IntArray = intArrayOf(major, minor, patch)
+    internal fun toIntArray(): IntArray = [major, minor, patch]
 
     init {
         require(major >= 0) { "Major version should be not less than 0" }

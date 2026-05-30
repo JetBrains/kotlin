@@ -197,7 +197,7 @@ open class FirSupertypeResolverVisitor(
     private val scopeForLocalClass: PersistentList<FirScope>? = null,
     val localClassesNavigationInfo: LocalClassesNavigationInfo? = null,
     @property:PrivateForInline var useSiteFile: FirFile? = null,
-    containingDeclarations: List<FirDeclaration> = emptyList(),
+    containingDeclarations: List<FirDeclaration> = [],
 ) : FirDefaultVisitor<Unit, Any?>() {
     private val supertypeGenerationExtensions = session.extensionService.supertypeGenerators
 
@@ -295,7 +295,7 @@ open class FirSupertypeResolverVisitor(
     private fun resolveAllSupertypes(
         classLikeDeclaration: FirClassLikeDeclaration,
         supertypeRefs: List<FirTypeRef>,
-        visited: MutableSet<FirClassLikeDeclaration> = mutableSetOf(),
+        visited: MutableSet<FirClassLikeDeclaration> = [],
     ) {
         if (!visited.add(classLikeDeclaration)) return
         val supertypes: List<ConeKotlinType> =
@@ -352,13 +352,13 @@ open class FirSupertypeResolverVisitor(
     ): List<FirResolvedTypeRef> {
         when (val status = supertypeComputationSession.getSupertypesComputationStatus(classLikeDeclaration)) {
             is SupertypeComputationStatus.Computed -> return status.supertypeRefs
-            is SupertypeComputationStatus.Computing -> return listOf(
+            is SupertypeComputationStatus.Computing -> return [
                 createErrorTypeRef(
                     classLikeDeclaration.source,
                     "Loop in supertype definition for ${classLikeDeclaration.symbol.classId}",
                     if (classLikeDeclaration is FirTypeAlias) DiagnosticKind.RecursiveTypealiasExpansion else DiagnosticKind.LoopInSupertype
                 )
-            )
+            ]
             SupertypeComputationStatus.NotComputed -> {}
         }
 
@@ -559,7 +559,7 @@ open class FirSupertypeResolverVisitor(
         resolveRecursively: Boolean,
     ): List<FirResolvedTypeRef> {
         if (expandedTypeRef is FirResolvedTypeRef) {
-            return listOf(expandedTypeRef)
+            return [expandedTypeRef]
         }
 
         return resolveSpecificClassLikeSupertypes(typeAlias) { transformer, scope ->
@@ -581,7 +581,7 @@ open class FirSupertypeResolverVisitor(
                 visitNestedTypeAliases(resolvedTypeRef.coneType)
             }
 
-            listOf(resolvedTypeRef)
+            [resolvedTypeRef]
         }
     }
 
@@ -654,7 +654,7 @@ open class SupertypeComputationSession {
         newClassifiersForBreakingLoops.add(classLikeDeclaration)
     }
 
-    private val newClassifiersForBreakingLoops = mutableListOf<FirClassLikeDeclaration>()
+    private val newClassifiersForBreakingLoops: MutableList<FirClassLikeDeclaration> = []
 
     /**
      * @param supertypeRefs a collection where at least one element is [FirErrorTypeRef] for looped references
@@ -676,8 +676,8 @@ open class SupertypeComputationSession {
      */
     open fun supertypeRefs(declaration: FirClassLikeDeclaration, useSiteSession: FirSession): List<FirTypeRef> = when (declaration) {
         is FirRegularClass -> declaration.superTypeRefs
-        is FirTypeAlias -> listOf(declaration.expandedTypeRef)
-        else -> emptyList()
+        is FirTypeAlias -> [declaration.expandedTypeRef]
+        else -> []
     }
 
     /**
@@ -779,7 +779,7 @@ open class SupertypeComputationSession {
 
             val isSubtypingInvolved = wasSubtypingInvolved || isSubtypingCurrentlyInvolved
             var isErrorInSupertypesFound = false
-            val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
+            val resultSupertypeRefs: MutableList<FirResolvedTypeRef> = []
             for (supertypeRef in supertypeRefs) {
                 if (isTypeAlias) {
                     // For case like typealias S = @S SomeAnnotation
@@ -812,7 +812,7 @@ open class SupertypeComputationSession {
                         }
                     }
 
-                    checkTypeArgumentsRecursively(supertypeRef.coneType, mutableSetOf())
+                    checkTypeArgumentsRecursively(supertypeRef.coneType, [])
                 }
 
                 resultSupertypeRefs.add(
@@ -842,8 +842,8 @@ open class SupertypeComputationSession {
     }
 
     fun breakLoops(session: FirSession, localClassesNavigationInfo: LocalClassesNavigationInfo?) {
-        val visitedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
-        val loopedClassLikeDecls = mutableSetOf<FirClassLikeDeclaration>()
+        val visitedClassLikeDecls: MutableSet<FirClassLikeDeclaration> = []
+        val loopedClassLikeDecls: MutableSet<FirClassLikeDeclaration> = []
         val pathOrderedSet = LinkedHashSet<FirClassLikeDeclaration>()
 
         for (classifier in newClassifiersForBreakingLoops) {

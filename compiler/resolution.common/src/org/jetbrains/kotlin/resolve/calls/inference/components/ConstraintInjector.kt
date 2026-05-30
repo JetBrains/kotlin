@@ -287,7 +287,7 @@ class ConstraintInjector(
 
         private var isIncorporatingConstraintFromDeclaredUpperBound = false
         private var isIncorporatingConstraintFromNoInfer = false
-        private var currentDerivedFromSet: Set<TypeVariableMarker> = emptySet()
+        private var currentDerivedFromSet: Set<TypeVariableMarker> = []
 
         fun extractAllConstraints() = possibleNewConstraints.also { possibleNewConstraints = null }
         fun extractForkPointsData() = forkPointsData.also { forkPointsData = null }
@@ -512,7 +512,7 @@ class ConstraintInjector(
                 b()
             } finally {
                 // NB: `emptySet()` returns a singleton, so no excessive memory here
-                currentDerivedFromSet = emptySet()
+                currentDerivedFromSet = []
                 isIncorporatingConstraintFromDeclaredUpperBound = false
                 isIncorporatingConstraintFromNoInfer = false
             }
@@ -586,7 +586,7 @@ class ConstraintInjector(
             variableConstructorMarker: TypeConstructorMarker
         ): Collection<VariableWithConstraints> =
             c.typeVariableDependencies[variableConstructorMarker]?.mapNotNull { c.notFixedTypeVariables[it] }
-                ?: emptyList()
+                ?: []
 
         override fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker? {
             val typeVariable = c.allTypeVariables[typeConstructor]

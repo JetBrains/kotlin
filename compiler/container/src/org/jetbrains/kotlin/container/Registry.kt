@@ -37,7 +37,7 @@ internal class ComponentRegistry {
         for (entry in newRegistrationMap.entrySet()) {
             val oldEntries = registrationMap[entry.key]
             if (oldEntries != null || entry.value.size > 1) {
-                val list = mutableListOf<ComponentDescriptor>()
+                val list: MutableList<ComponentDescriptor> = []
                 if (oldEntries is Collection<*>) {
                     @Suppress("UNCHECKED_CAST")
                     list.addAll(oldEntries as Collection<ComponentDescriptor>)
@@ -59,8 +59,8 @@ internal class ComponentRegistry {
         @Suppress("UNCHECKED_CAST")
         return when(value) {
             is Collection<*> -> value as Collection<ComponentDescriptor>
-            null -> emptyList()
-            else -> listOf(value as ComponentDescriptor)
+            null -> []
+            else -> [value as ComponentDescriptor]
         }
     }
 

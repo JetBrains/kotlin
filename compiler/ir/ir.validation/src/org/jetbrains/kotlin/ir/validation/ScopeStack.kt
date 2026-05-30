@@ -7,11 +7,11 @@ package org.jetbrains.kotlin.ir.validation
 
 class ScopeStack<E> {
     private class Scope<E>(val isGlobal: Boolean) {
-        val values = mutableSetOf<E>()
+        val values: MutableSet<E> = []
     }
 
     // The outer list is never empty
-    private val scopes = mutableListOf<MutableList<Scope<E>>>(mutableListOf())
+    private val scopes: MutableList<MutableList<Scope<E>>> = [[]]
 
     private fun <R> withNestedScope(isGlobalScope: Boolean, populateScope: MutableSet<E>.() -> Unit = {}, block: () -> R): R =
         scopes.last().temporarilyPushing(Scope(isGlobalScope)) {
@@ -33,7 +33,7 @@ class ScopeStack<E> {
         block: () -> R,
     ): R =
         if (outerScopesAreInvisible) {
-            scopes.temporarilyPushing(scopes.last().filterTo(mutableListOf(), Scope<E>::isGlobal)) {
+            scopes.temporarilyPushing(scopes.last().filterTo([], Scope<E>::isGlobal)) {
                 withNestedScope(isGlobalScope = false, populateScope, block)
             }
         } else {

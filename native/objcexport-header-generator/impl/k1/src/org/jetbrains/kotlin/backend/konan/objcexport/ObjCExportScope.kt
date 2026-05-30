@@ -52,7 +52,7 @@ private class ObjCClassExportScopeImpl constructor(
         if (container is ClassDescriptor && !container.isInterface) {
             container.typeConstructor.parameters
         } else {
-            emptyList<TypeParameterDescriptor>()
+            []
         }
 
     override fun getGenericTypeUsage(typeParameterDescriptor: TypeParameterDescriptor?): ObjCGenericTypeUsage? {

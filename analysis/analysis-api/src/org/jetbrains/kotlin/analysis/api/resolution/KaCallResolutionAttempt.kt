@@ -329,7 +329,7 @@ public inline fun <T> KaCallResolutionAttempt.fold(
     if (call != null) return onSuccess(call)
 
     val attempts = when (this) {
-        is KaCallResolutionError -> listOf(this)
+        is KaCallResolutionError -> [this]
         is KaMultiCallResolutionAttempt -> attempts
         else -> error("Unexpected ${KaCallResolutionAttempt::class.simpleName}: $this")
     }

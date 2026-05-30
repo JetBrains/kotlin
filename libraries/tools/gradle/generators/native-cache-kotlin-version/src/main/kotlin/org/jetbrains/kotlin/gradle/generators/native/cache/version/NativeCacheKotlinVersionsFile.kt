@@ -26,7 +26,7 @@ internal object NativeCacheKotlinVersionsFile {
     ): Set<Triple<Int, Int, Int>> {
 
         // 1. Read existing versions from the file
-        val allVersions = mutableSetOf<Triple<Int, Int, Int>>()
+        val allVersions: MutableSet<Triple<Int, Int, Int>> = []
         if (versionsFilePath.exists()) {
             versionsFilePath.readLines()
                 .filter { it.isNotBlank() }

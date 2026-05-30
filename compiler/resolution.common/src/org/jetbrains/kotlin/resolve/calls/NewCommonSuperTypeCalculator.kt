@@ -138,7 +138,7 @@ object NewCommonSuperTypeCalculator {
                 val equalsModuloFlexibility = AbstractTypeChecker.equalTypes(stateStubTypesNotEqual, it, type) &&
                         !it.typeConstructor().isIntegerLiteralTypeConstructor()
 
-                !equalsModuloFlexibility || AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(it, type))
+                !equalsModuloFlexibility || AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth([it, type])
             }
             if (isNewUniqueType) {
                 uniqueTypes += type
@@ -161,7 +161,7 @@ object NewCommonSuperTypeCalculator {
             val isSubtype = supertypes.any { supertype ->
                 supertype !== potentialSubtype &&
                         AbstractTypeChecker.isSubtypeOf(stateStubTypesNotEqual, potentialSubtype, supertype) &&
-                        !AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth(listOf(potentialSubtype, supertype))
+                        !AbstractFlexibilityChecker.hasDifferentFlexibilityAtDepth([potentialSubtype, supertype])
             }
 
             if (isSubtype) iterator.remove()
@@ -331,7 +331,7 @@ object NewCommonSuperTypeCalculator {
     ): SimpleTypeMarker {
         if (constructor.parametersCount() == 0) return c.createSimpleType(
             constructor,
-            emptyList(),
+            [],
             nullable = false
         )
 

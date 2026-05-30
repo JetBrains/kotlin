@@ -82,7 +82,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
     ): List<OverloadCandidate> {
         initializeBodyResolveContext(resolutionFacade, element)
 
-        val copiedAccess = copyQualifiedAccess(qualifiedAccess, element) ?: return emptyList()
+        val copiedAccess = copyQualifiedAccess(qualifiedAccess, element) ?: return []
         return run {
             bodyResolveComponents.callResolver
                 .collectAllCandidates(
@@ -107,7 +107,7 @@ class AllCandidatesResolver(private val firSession: FirSession) {
         val constructedType = delegatedConstructorCall.constructedTypeRef
             .coneType
             .abbreviatedTypeOrSelf as? ConeClassLikeType
-            ?: return emptyList()
+            ?: return []
 
         return run {
             val callInfo = bodyResolveComponents.callResolver.callInfoForDelegatingConstructorCall(

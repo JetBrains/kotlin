@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.name.Name
 
 object FirNativeIdentifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     // Also includes characters used by IR mangler (see MangleConstant).
-    private val invalidChars = setOf(
+    private val invalidChars: Set<Char> = [
         '.', ';', ',', '(', ')', '[', ']', '{', '}', '/', '<', '>',
         ':', '\\', '$', '&', '~', '*', '?', '#', '|', '§', '%', '@',
-    )
+    ]
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

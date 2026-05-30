@@ -130,7 +130,7 @@ internal fun FirAnnotationCall.toAnnotationObjectIfMatches(
 
     val evalRes = evaluateArguments(session, firFile).orEmpty()
 
-    val errors = mutableListOf<ScriptDiagnostic>()
+    val errors: MutableList<ScriptDiagnostic> = []
 
     fun ConeKotlinType?.isString() = this?.classId?.asFqNameString() == StandardNames.FqNames.string.asString()
     fun ConeKotlinType?.isArray() = this?.classId?.asFqNameString() == StandardNames.FqNames.array.asString()

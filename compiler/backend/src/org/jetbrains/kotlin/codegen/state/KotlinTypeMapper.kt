@@ -236,7 +236,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 // kotlin.reflect.KFunction{n}<P1, ..., Pn, R> is mapped to kotlin.reflect.KFunction<R> (for all n), and
                 // kotlin.Function{n}<P1, ..., Pn, R> is mapped to kotlin.jvm.functions.FunctionN<R> (for n > 22).
                 // So for these classes, we need to skip all type arguments except the very last one
-                writeGenericArguments(signatureVisitor, listOf(arguments.last()), listOf(parameters.last()), mode)
+                writeGenericArguments(signatureVisitor, [arguments.last()], [parameters.last()], mode)
                 return
             }
         }
@@ -396,7 +396,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
 
         val valueParameterTypes =
             if (isDeclarationOfBigArityFunctionInvoke(f) || isDeclarationOfBigArityCreateCoroutineMethod(f)) {
-                listOf(f.builtIns.getArrayType(Variance.INVARIANT, f.builtIns.nullableAnyType))
+                [f.builtIns.getArrayType(Variance.INVARIANT, f.builtIns.nullableAnyType)]
             } else {
                 f.valueParameters.map { it.type }
             }

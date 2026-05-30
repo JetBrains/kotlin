@@ -170,7 +170,7 @@ fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, vararg ex
  */
 fun assertClassDeclarationsContain(classesDir: Path, classFqn: String, expectedDeclarations: Set<String>) {
     val javapPath = "$latestSupportedJdkPath/bin/javap"
-    val result = runProcess(listOf(javapPath, classFqn), classesDir.toFile())
+    val result = runProcess([javapPath, classFqn], classesDir.toFile())
     assert(result.isSuccessful)
     val actualDeclarations = result.output.lines().drop(2).dropLast(1).map { it.trim() }.toSet()
     val diff = expectedDeclarations - actualDeclarations

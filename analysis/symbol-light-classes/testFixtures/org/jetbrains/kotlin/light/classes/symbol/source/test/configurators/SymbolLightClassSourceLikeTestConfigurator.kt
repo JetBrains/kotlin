@@ -17,10 +17,10 @@ abstract class SymbolLightClassSourceLikeTestConfigurator(
 
 object SymbolLightClassSourceJvmTestConfigurator : SymbolLightClassSourceLikeTestConfigurator(
     JvmPlatforms.defaultJvmPlatform,
-    emptyList(),
+    [],
 )
 
 object SymbolLightClassSourceJsTestConfigurator : SymbolLightClassSourceLikeTestConfigurator(
     JsPlatforms.defaultJsPlatform,
-    listOf("kmp"),
+    ["kmp"],
 )

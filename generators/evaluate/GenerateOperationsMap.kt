@@ -22,7 +22,7 @@ import java.io.File
 import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
-private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "subSequence")
+private val EXCLUDED_FUNCTIONS: List<String> = ["rangeTo", "rangeUntil", "hashCode", "subSequence"]
 
 fun main() {
     GeneratorsFileUtil.writeFileIfContentChanged(DEST_FILE, generate())
@@ -93,7 +93,7 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
         Operation(
             className = null,
             name = "Char",
-            parameterTypes = listOf("Int"),
+            parameterTypes = ["Int"],
             isFunction = true,
             customExpression = "Char(value as Int)"
         )
@@ -102,29 +102,29 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
         Operation(
             className = "Char",
             name = "code",
-            parameterTypes = listOf("Char"),
+            parameterTypes = ["Char"],
             isFunction = false
         )
     )
 
-    for (type in listOf("Short", "Byte")) {
-        for (name in listOf("and", "or", "xor")) {
-            binaryOperationsMap.add(Operation(className = null, packageName = "kotlin.experimental", name = name, parameterTypes = listOf(type, type)))
+    for (type in ["Short", "Byte"]) {
+        for (name in ["and", "or", "xor"]) {
+            binaryOperationsMap.add(Operation(className = null, packageName = "kotlin.experimental", name = name, parameterTypes = [type, type]))
         }
-        unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.experimental", name = "inv", parameterTypes = listOf(type), isFunction = true))
+        unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.experimental", name = "inv", parameterTypes = [type], isFunction = true))
     }
 
-    unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "lowercase", parameterTypes = listOf("String")))
-    unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "uppercase", parameterTypes = listOf("String")))
+    unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "lowercase", parameterTypes = ["String"]))
+    unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "uppercase", parameterTypes = ["String"]))
 
-    for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")) {
-        unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = name, parameterTypes = listOf("String")))
+    for (name in ["trim", "trimEnd", "trimIndent", "trimMargin", "trimStart"]) {
+        unaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = name, parameterTypes = ["String"]))
     }
-    binaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "trimMargin", parameterTypes = listOf("String", "String")))
+    binaryOperationsMap.add(Operation(className = null, packageName = "kotlin.text", name = "trimMargin", parameterTypes = ["String", "String"]))
 
     for (type in integerTypes) {
         for (otherType in integerTypes) {
-            val parameters = listOf(type, otherType).map { it.typeName }
+            val parameters = [type, otherType].map { it.typeName }
             binaryOperationsMap.add(Operation(className = null, name = "mod", parameterTypes = parameters))
             binaryOperationsMap.add(Operation(className = null, name = "floorDiv", parameterTypes = parameters))
         }
@@ -132,12 +132,12 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
-            val parameters = listOf(type, otherType).map { it.typeName }
+            val parameters = [type, otherType].map { it.typeName }
             binaryOperationsMap.add(Operation(className = null, name = "mod", parameterTypes = parameters))
         }
     }
 
-    val unsignedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
+    val unsignedClasses = [UInt::class, ULong::class, UByte::class, UShort::class]
     for (unsignedClass in unsignedClasses) {
         unsignedClass.memberFunctions
             .filter { !EXCLUDED_FUNCTIONS.contains(it.name) }
@@ -152,18 +152,18 @@ private fun getOperationMaps(): Pair<ArrayList<Operation>, ArrayList<Operation>>
 
     val uintConversionExtensions = with(OperatorNameConventions) {
         mapOf(
-            "Long" to listOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE).map { it.asString() },
-            "Int" to listOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE).map { it.asString() },
-            "Short" to listOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE).map { it.asString() },
-            "Byte" to listOf(TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE).map { it.asString() },
-            "Double" to listOf(TO_ULONG, TO_UINT).map { it.asString() },
-            "Float" to listOf(TO_ULONG, TO_UINT).map { it.asString() }
+            "Long" to [TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE].map { it.asString() },
+            "Int" to [TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE].map { it.asString() },
+            "Short" to [TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE].map { it.asString() },
+            "Byte" to [TO_ULONG, TO_UINT, TO_USHORT, TO_UBYTE].map { it.asString() },
+            "Double" to [TO_ULONG, TO_UINT].map { it.asString() },
+            "Float" to [TO_ULONG, TO_UINT].map { it.asString() }
         )
     }
 
     for ([type, extensions] in uintConversionExtensions) {
         for ([extension, declaredIn] in extensions.zip(listOf("ULong", "UInt", "UShort", "UByte"))) {
-            unaryOperationsMap.add(Operation(className = null, name = extension, parameterTypes = listOf(type)))
+            unaryOperationsMap.add(Operation(className = null, name = extension, parameterTypes = [type]))
         }
     }
 
@@ -256,13 +256,13 @@ private fun generateBinaryOp(
 
 // TODO: This function will be dropped/rewritten after KT-84626
 private fun generateCanEvalOpFunction(p: Printer, operations: List<Operation>) {
-    p.println("private val knownOps = setOf(")
+    p.println("private val knownOps: Set<String> = [")
     p.pushIndent()
     for (operation in operations) {
         p.println("\"${operation.callableId}(${operation.parameterTypes.joinToString(", ") { it.toCompilTimeTypeFormat() }})\",")
     }
     p.popIndent()
-    p.println(")")
+    p.println("]")
 
     p.println("fun canEvalOp(callableId: CallableId, typeA: CompileTimeType?, typeB: CompileTimeType?): Boolean {")
     p.pushIndent()
@@ -319,7 +319,7 @@ private fun generateBinaryOpCheck(
 }
 
 private fun getBinaryCheckerName(name: String, leftType: String, rightType: String): String? {
-    val integerTypes = listOf("Int", "Short", "Byte", "Long")
+    val integerTypes = ["Int", "Short", "Byte", "Long"]
     if (!integerTypes.contains(leftType) || !integerTypes.contains(rightType)) return null
 
     return when (name) {
@@ -351,7 +351,7 @@ private fun KotlinType.isFpType(): Boolean =
     KotlinBuiltIns.isDouble(this) || KotlinBuiltIns.isFloat(this)
 
 private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
-    listOf((containingDeclaration as ClassDescriptor).defaultType) +
+    [(containingDeclaration as ClassDescriptor).defaultType] +
             valueParameters.map { it.type.makeNotNullable() }
 
 // Formats the type to fit the Enum kotlin.resolve.constants.evaluateCompileTimeType which is all uppercase and doesn't have the concept of

@@ -65,8 +65,8 @@ internal class EnumConstructorsLowering(val context: Context) : ClassLoweringPas
                     if (blockBody.statements.all { it !is IrInstanceInitializerCall }) {
                         blockBody.statements.transformFlat {
                             if (it is IrEnumConstructorCall)
-                                listOf(it, IrInstanceInitializerCallImpl(declaration.startOffset, declaration.startOffset,
-                                        irClass.symbol, context.irBuiltIns.unitType))
+                                [it, IrInstanceInitializerCallImpl(declaration.startOffset, declaration.startOffset,
+                                        irClass.symbol, context.irBuiltIns.unitType)]
                             else null
                         }
                     }

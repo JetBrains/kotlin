@@ -21,6 +21,6 @@ class AbiValidationKonanTargetsTest {
                 it
             }
         }
-        assertEquals(emptyList(), unknowKonanTargets, "There are unrecognized in ABI Validation Konan targets: $unknowKonanTargets")
+        assertEquals([], unknowKonanTargets, "There are unrecognized in ABI Validation Konan targets: $unknowKonanTargets")
     }
 }

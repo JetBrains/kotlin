@@ -96,7 +96,7 @@ abstract class AbstractSignatureParts<TAnnotation : Any> {
         }
 
         val isHeadTypeConstructor = typeParameterForArgument == null
-        val typeAnnotations = type?.annotations ?: emptyList()
+        val typeAnnotations = type?.annotations ?: []
         val typeParameterUse = with(typeSystem) { type?.typeConstructor()?.getTypeParameterClassifier() }
         val typeParameterBounds = containerApplicabilityType == AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS
         val composedAnnotation = when {

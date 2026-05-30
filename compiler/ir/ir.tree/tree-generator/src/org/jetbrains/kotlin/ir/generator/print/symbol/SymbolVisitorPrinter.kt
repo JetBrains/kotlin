@@ -32,7 +32,7 @@ internal abstract class AbstractSymbolVisitorPrinter(
     abstract val implementationKind: ImplementationKind
 
     open val symbolVisitorSuperTypes: List<ClassRef<*>>
-        get() = emptyList()
+        get() = []
 
     protected open fun shouldPrintMethodForSymbol(symbolClass: Symbol, role: SymbolFieldRole): Boolean = true
 
@@ -41,7 +41,7 @@ internal abstract class AbstractSymbolVisitorPrinter(
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
             symbolVisitorMethodName(symbolClass, role),
-            parameters = listOf(containerParameter, symbolParameter),
+            parameters = [containerParameter, symbolParameter],
             returnType = StandardTypes.unit,
             override = symbolVisitorSuperTypes.isNotEmpty(),
         )
@@ -119,10 +119,10 @@ internal abstract class AbstractSymbolVisitorPrinter(
     ) {
         printFunctionDeclaration(
             "visit${role?.baseName ?: ""}Symbol",
-            parameters = listOf(
+            parameters = [
                 FunctionParameter("container", rootElement),
                 FunctionParameter("symbol", IrSymbolTree.rootElement)
-            ),
+            ],
             returnType = StandardTypes.unit,
             override = override,
         )
@@ -133,7 +133,7 @@ internal class DeclaredSymbolVisitorInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolVisitorType: ClassRef<*>,
-) : AbstractSymbolVisitorPrinter(printer, elements, roles = listOf(SymbolFieldRole.DECLARED)) {
+) : AbstractSymbolVisitorPrinter(printer, elements, roles = [SymbolFieldRole.DECLARED]) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -151,7 +151,7 @@ internal class ReferencedSymbolVisitorInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolVisitorType: ClassRef<*>,
-) : AbstractSymbolVisitorPrinter(printer, elements, roles = listOf(SymbolFieldRole.REFERENCED)) {
+) : AbstractSymbolVisitorPrinter(printer, elements, roles = [SymbolFieldRole.REFERENCED]) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -169,12 +169,12 @@ internal class SymbolVisitorInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolVisitorType: ClassRef<*>,
-) : AbstractSymbolVisitorPrinter(printer, elements, roles = emptyList()) {
+) : AbstractSymbolVisitorPrinter(printer, elements, roles = []) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
     override val symbolVisitorSuperTypes: List<ClassRef<*>>
-        get() = listOf(declaredSymbolVisitorType, referencedSymbolVisitorType)
+        get() = [declaredSymbolVisitorType, referencedSymbolVisitorType]
 
     override fun ImportCollectingPrinter.printAdditionalDeclarations() {
         printBaseVisitMethodDeclaration(

@@ -38,7 +38,7 @@ class MutableContextInfo private constructor(
     companion object {
         val EMPTY: MutableContextInfo
             get() = MutableContextInfo(
-                firedEffects = mutableListOf(),
+                firedEffects = [],
                 subtypes = mutableMapOf(),
                 notSubtypes = mutableMapOf(),
                 equalValues = mutableMapOf(),
@@ -93,7 +93,7 @@ class MutableContextInfo private constructor(
         val result = mutableMapOf<ESValue, MutableSet<D>>()
         result.putAll(this)
         that.entries.forEach { [thatKey, thatValue] ->
-            val oldValue = result[thatKey] ?: mutableSetOf()
+            val oldValue = result[thatKey] ?: []
             oldValue.addAll(thatValue)
             result[thatKey] = oldValue
         }
@@ -102,7 +102,7 @@ class MutableContextInfo private constructor(
 
     private fun <D> MutableMap<ESValue, MutableSet<D>>.initAndAdd(key: ESValue, value: D) {
         this.compute(key) { _, maybeValues ->
-            val setOfValues = maybeValues ?: mutableSetOf()
+            val setOfValues = maybeValues ?: []
             setOfValues.add(value)
             setOfValues
         }

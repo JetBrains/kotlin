@@ -182,7 +182,7 @@ object ExpectedActualResolver {
     ): Collection<CallableMemberDescriptor> {
         val scopes = when (val containingDeclaration = containingDeclaration) {
             is PackageFragmentDescriptor -> {
-                listOf(module.getPackage(containingDeclaration.fqName).memberScope)
+                [module.getPackage(containingDeclaration.fqName).memberScope]
             }
             is ClassDescriptor -> {
                 val classes = context.findClassifiersFromModule(containingDeclaration.classId, module, moduleFilter)
@@ -192,7 +192,7 @@ object ExpectedActualResolver {
 
                 classes.map { it.unsubstitutedMemberScope }
             }
-            else -> return emptyList()
+            else -> return []
         }
 
         return when (this) {
@@ -228,7 +228,7 @@ fun MemberDescriptor.findAnyActualsForExpected(
     val actualsGroupedByCompatibility = ExpectedActualResolver.findActualForExpected(this, platformModule, moduleFilter)
     return actualsGroupedByCompatibility?.get(Compatible)
         ?: actualsGroupedByCompatibility?.values?.flatten()
-        ?: emptyList()
+        ?: []
 }
 
 fun MemberDescriptor.findCompatibleExpectsForActual(
@@ -237,12 +237,12 @@ fun MemberDescriptor.findCompatibleExpectsForActual(
     ExpectedActualResolver.findExpectedForActual(this, moduleFilter)?.get(Compatible).orEmpty()
 
 fun DeclarationDescriptor.findExpects(): List<MemberDescriptor> {
-    if (this !is MemberDescriptor) return emptyList()
+    if (this !is MemberDescriptor) return []
     return this.findCompatibleExpectsForActual()
 }
 
 fun DeclarationDescriptor.findActuals(inModule: ModuleDescriptor): List<MemberDescriptor> {
-    if (this !is MemberDescriptor) return emptyList()
+    if (this !is MemberDescriptor) return []
     return this.findCompatibleActualsForExpected(inModule)
 }
 

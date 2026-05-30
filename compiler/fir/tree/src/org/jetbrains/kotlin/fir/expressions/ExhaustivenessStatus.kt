@@ -30,7 +30,7 @@ sealed class ExhaustivenessStatus {
 
     class NotExhaustive(val reasons: List<WhenMissingCase>, val subjectType: ConeKotlinType?) : ExhaustivenessStatus() {
         companion object {
-            val NO_ELSE_BRANCH_REASONS: List<WhenMissingCase> = listOf(WhenMissingCase.Unknown)
+            val NO_ELSE_BRANCH_REASONS: List<WhenMissingCase> = [WhenMissingCase.Unknown]
             fun noElseBranch(subjectType: ConeKotlinType?): NotExhaustive = NotExhaustive(NO_ELSE_BRANCH_REASONS, subjectType)
         }
     }

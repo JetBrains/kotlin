@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.descriptors.annotations.KotlinRetention
 import org.jetbrains.kotlin.diagnostics.reportDiagnosticOnce
@@ -26,8 +27,8 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 class JvmAnnotationsTargetNonExistentAccessorChecker : DeclarationChecker {
     companion object {
-        private val getterUselessTargets = setOf(PROPERTY_GETTER)
-        private val setterUselessTargets = setOf(PROPERTY_SETTER, SETTER_PARAMETER)
+        private val getterUselessTargets: Set<AnnotationUseSiteTarget> = [PROPERTY_GETTER]
+        private val setterUselessTargets: Set<AnnotationUseSiteTarget> = [PROPERTY_SETTER, SETTER_PARAMETER]
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {

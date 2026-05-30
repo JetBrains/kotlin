@@ -126,7 +126,7 @@ class LabelNormalizationMethodTransformer : MethodTransformer() {
             JumpInsnNode(opcode, getNew(label))
 
         private fun LookupSwitchInsnNode.rewriteLabels(): AbstractInsnNode {
-            val switchNode = LookupSwitchInsnNode(getNew(dflt), keys.toIntArray(), emptyArray())
+            val switchNode = LookupSwitchInsnNode(getNew(dflt), keys.toIntArray(), [])
             switchNode.labels = labels.map { getNew(it) }
             return switchNode
         }
@@ -138,7 +138,7 @@ class LabelNormalizationMethodTransformer : MethodTransformer() {
         }
 
         private fun FrameNode.rewriteLabels(): AbstractInsnNode {
-            val frameNode = FrameNode(type, 0, emptyArray(), 0, emptyArray())
+            val frameNode = FrameNode(type, 0, [], 0, [])
             frameNode.local = local.map { if (it is LabelNode) getNewOrOld(it) else it }
             frameNode.stack = stack.map { if (it is LabelNode) getNewOrOld(it) else it }
             return frameNode

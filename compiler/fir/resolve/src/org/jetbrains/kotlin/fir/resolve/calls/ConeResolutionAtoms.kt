@@ -305,7 +305,7 @@ class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expectedType: ConeKotlinType
         get() = revisedExpectedType ?: initialExpectedTypeType
 
-    override val inputTypes: Collection<ConeKotlinType> get() = listOf(initialExpectedTypeType)
+    override val inputTypes: Collection<ConeKotlinType> get() = [initialExpectedTypeType]
     override val outputType: ConeKotlinType? get() = null
     override var revisedExpectedType: ConeKotlinType? = null
         private set
@@ -367,7 +367,7 @@ class ConeResolvedCallableReferenceAtom(
         get() {
             // For not resolved references we don't expose input types because for the first time,
             // we should try resolving them immediately (effectively, they're not fully blown postponed atoms)
-            if (state == State.NOT_RESOLVED_YET) return emptyList()
+            if (state == State.NOT_RESOLVED_YET) return []
             return extractInputOutputTypesFromCallableReferenceExpectedType(expectedType, session)?.inputTypes
                 ?: listOfNotNull(expectedType)
         }
@@ -403,7 +403,7 @@ class ConeSimpleNameForContextSensitiveResolution(
     override val containingCallCandidate: Candidate,
     val fallbackSubAtom: ConeResolutionAtom,
 ) : ConePostponedResolvedAtom() {
-    override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
+    override val inputTypes: Collection<ConeKotlinType> = [expectedType]
     override val outputType: ConeKotlinType?
         get() = null
 }
@@ -414,7 +414,7 @@ class ConeContextSensitiveAlternativeForQualifierAtom @FirIdeOnly constructor(
     override val expectedType: ConeKotlinType,
     override val containingCallCandidate: Candidate,
 ) : ConePostponedResolvedAtom() {
-    override val inputTypes: Collection<ConeKotlinType> = listOf(expectedType)
+    override val inputTypes: Collection<ConeKotlinType> = [expectedType]
     override val outputType: ConeKotlinType?
         get() = null
 

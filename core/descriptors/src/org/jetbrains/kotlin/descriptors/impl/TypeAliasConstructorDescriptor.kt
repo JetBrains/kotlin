@@ -215,7 +215,7 @@ class TypeAliasConstructorDescriptorImpl private constructor(
                         index
                     )
                 }
-            } ?: emptyList()
+            } ?: []
 
             typeAliasConstructor.initialize(
                 receiverParameter,

@@ -64,7 +64,7 @@ internal abstract class SymbolLightField protected constructor(
     }
 
     internal class FieldNameGenerator {
-        private val usedNames: MutableSet<String> = mutableSetOf()
+        private val usedNames: MutableSet<String> = []
 
         fun generateUniqueFieldName(base: String): String {
             if (usedNames.add(base)) return base

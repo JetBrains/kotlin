@@ -159,11 +159,11 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
     private fun generateTestsAndFlavourSuites() {
         println("Generating test files...")
 
-        val folders = arrayOf(
+        val folders: Array<File> = [
             ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/box"),
             ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxJvm"),
             ForTestCompileRuntime.transformTestDataPath("compiler/testData/codegen/boxInline")
-        )
+        ]
 
         generateTestMethodsForDirectories(commonFlavor, reflectFlavor, *folders)
 
@@ -402,7 +402,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
             testInfo = KotlinTestInfo(
                 "org.jetbrains.kotlin.android.tests.AndroidRunner",
                 "test${testDataFile.nameWithoutExtension.replaceFirstChar(Char::uppercaseChar)}",
-                emptySet()
+                []
             )
             startingArtifactFactory = { ResultingArtifact.Source() }
             @OptIn(TestInfrastructureInternals::class)
@@ -438,7 +438,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useDirectives(CodegenTestDirectives)
         class AndroidTransformingPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
             override fun process(file: TestFile, content: String): String {
-                val transformers = Android.forAll + (Android.forSpecificFile[file.originalFile]?.let { listOf(it) } ?: emptyList())
+                val transformers = Android.forAll + (Android.forSpecificFile[file.originalFile]?.let { [it] }.orEmpty())
                 return transformers.fold(content) { text, transformer -> transformer(text) }
             }
         }

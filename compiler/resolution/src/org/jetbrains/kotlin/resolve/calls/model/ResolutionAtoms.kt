@@ -73,7 +73,7 @@ sealed class ResolvedAtom {
 
     // For AllCandidates mode to avoid analyzing postponed arguments
     fun setEmptyAnalyzedResults() {
-        setAnalyzedResults(emptyList())
+        setAnalyzedResults([])
     }
 }
 
@@ -104,16 +104,16 @@ class SamConversionDescription(
 
 class ResolvedExpressionAtom(override val atom: ExpressionKotlinCallArgument) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf())
+        setAnalyzedResults([])
     }
 }
 
 class ResolvedSubCallArgument(override val atom: SubKotlinCallArgument, resolveIndependently: Boolean) : ResolvedAtom() {
     init {
         if (resolveIndependently)
-            setAnalyzedResults(listOf())
+            setAnalyzedResults([])
         else
-            setAnalyzedResults(listOf(atom.callResult))
+            setAnalyzedResults([atom.callResult])
     }
 }
 
@@ -128,7 +128,7 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     override val atom: LambdaKotlinCallArgument,
     override val expectedType: UnwrappedType
 ) : PostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
-    override val inputTypes: Collection<UnwrappedType> get() = listOf(expectedType)
+    override val inputTypes: Collection<UnwrappedType> get() = [expectedType]
     override val outputType: UnwrappedType? get() = null
 
     override var revisedExpectedType: UnwrappedType? = null
@@ -149,7 +149,7 @@ class LambdaWithTypeVariableAsExpectedTypeAtom(
     }
 
     fun setAnalyzed(resolvedLambdaAtom: ResolvedLambdaAtom) {
-        setAnalyzedResults(listOf(resolvedLambdaAtom))
+        setAnalyzedResults([resolvedLambdaAtom])
     }
 }
 
@@ -220,7 +220,7 @@ class EagerCallableReferenceAtom(
     atom: CallableReferenceKotlinCallArgument,
     expectedType: UnwrappedType?
 ) : ResolvedCallableReferenceArgumentAtom(atom, expectedType) {
-    override val inputTypes: Collection<UnwrappedType> get() = emptyList()
+    override val inputTypes: Collection<UnwrappedType> get() = []
     override val outputType: UnwrappedType? get() = null
 
     fun transformToPostponed(): PostponedCallableReferenceAtom = PostponedCallableReferenceAtom(this)
@@ -260,7 +260,7 @@ class ResolvedCollectionLiteralAtom(
     val expectedType: UnwrappedType?
 ) : ResolvedAtom() {
     init {
-        setAnalyzedResults(listOf())
+        setAnalyzedResults([])
     }
 }
 
@@ -325,7 +325,7 @@ class ErrorCallResolutionResult(
 class AllCandidatesResolutionResult(
     val allCandidates: Collection<CandidateWithDiagnostics>,
     constraintSystem: NewConstraintSystem
-) : CallResolutionResult(null, emptyList(), constraintSystem)
+) : CallResolutionResult(null, [], constraintSystem)
 
 data class CandidateWithDiagnostics(val candidate: ResolutionCandidate, val diagnostics: List<KotlinCallDiagnostic>)
 

@@ -333,7 +333,7 @@ public actual class Regex internal constructor(internal val nativePattern: Patte
 
         var match: MatchResult? = find(input)
 
-        if (match == null || limit == 1) return listOf(input.toString())
+        if (match == null || limit == 1) return [input.toString()]
 
         val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
         var lastStart = 0

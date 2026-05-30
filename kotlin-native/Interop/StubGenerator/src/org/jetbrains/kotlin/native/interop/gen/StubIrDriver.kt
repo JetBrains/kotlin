@@ -27,6 +27,7 @@ class StubIrContext(
         val allowPrecompiledHeaders: Boolean,
         val metadataVersion: KlibMetadataVersion,
 ) {
+    @Suppress("ConvertToCollectionLiterals")
     val libraryForCStubs = configuration.library.copy(
             includes = mutableListOf<IncludeInfo>().apply {
                 add(IncludeInfo("stdint.h", null))
@@ -42,7 +43,7 @@ class StubIrContext(
             compilerArgs = configuration.library.compilerArgs,
             additionalPreambleLines = configuration.library.additionalPreambleLines +
                     when (configuration.library.language) {
-                        Language.C, Language.CPP -> emptyList()
+                        Language.C, Language.CPP -> []
                         Language.OBJECTIVE_C -> listOf("void objc_terminate();")
                     }
     ).let {
@@ -106,7 +107,7 @@ class StubIrContext(
         // deprecation, so enabling it for new declarations instead is undesirable.
         // That's why, to make the included Obj-C forward declarations known to the compiler, we have to create a new
         // manifest property for that.
-        val includedForwardDeclarations = mutableListOf<String>()
+        val includedForwardDeclarations: MutableList<String> = []
         includedForwardDeclarations.addAll(exportForwardDeclarations)
 
         // TODO: should we add meta classes?

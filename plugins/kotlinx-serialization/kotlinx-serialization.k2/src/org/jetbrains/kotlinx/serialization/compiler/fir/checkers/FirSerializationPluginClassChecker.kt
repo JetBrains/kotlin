@@ -346,9 +346,9 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         val duplicates = mutableMapOf<Int, MutableList<Int?>>()
         originToProto.forEach { [originNumber, protoNumber] ->
             if (protoNumber != null) {
-                duplicates.getOrPut(protoNumber) { mutableListOf() }.add(originNumber)
+                duplicates.getOrPut(protoNumber) { [] }.add(originNumber)
             } else {
-                duplicates.getOrPut(originNumber) { mutableListOf() }.add(null)
+                duplicates.getOrPut(originNumber) { [] }.add(null)
             }
         }
 
@@ -519,7 +519,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
         }
 
         // check that all names are unique
-        val namesSet = mutableSetOf<String>()
+        val namesSet: MutableSet<String> = []
         for (property in properties.serializableProperties) {
             val name = property.name
             if (!namesSet.add(name)) {
@@ -630,7 +630,7 @@ object FirSerializationPluginClassChecker : FirClassChecker(MppCheckerKind.Commo
      */
     fun CheckerContext.extractArgumentsTypeRefAndSource(typeRef: FirTypeRef, skipStarProjections: Boolean): List<FirTypeRefSource>? {
         if (typeRef !is FirResolvedTypeRef) error("TypeRef should be already resolved in checker: ${typeRef.render()}")
-        val result = mutableListOf<FirTypeRefSource>()
+        val result: MutableList<FirTypeRefSource> = []
         when (val delegatedTypeRef = typeRef.delegatedTypeRef) {
             is FirUserTypeRef -> {
                 val qualifier = delegatedTypeRef.qualifier.last()

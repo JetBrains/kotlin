@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 
 object JvmSimpleNameBacktickChecker : IdentifierChecker {
     // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
-    private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
+    private val DANGEROUS_CHARS: Set<Char> = ['?', '*', '"', '|', '%']
 
     override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
         reportIfNeeded(simpleNameExpression.getReferencedName(), { simpleNameExpression.getIdentifier() }, diagnosticHolder)

@@ -185,7 +185,7 @@ class ScriptJvmK2CompilerImpl(
                 scriptRefinedCompilationConfiguration.asSuccess()
             )
 
-        val allSourceFiles = mutableListOf(script)
+        val allSourceFiles: MutableList<SourceCode> = [script]
         (
             val classpath, val newSources = sources, val sourceDependencies
         ) =
@@ -197,8 +197,8 @@ class ScriptJvmK2CompilerImpl(
         allSourceFiles.addAll(newSources)
 
         val ignoredOptionsReportingState = state.compilerContext.ignoredOptionsReportingState
-        val updatedCompilerOptions = allSourceFiles.flatMapTo(mutableListOf()) {
-            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: emptyList()
+        val updatedCompilerOptions: MutableList<String> = allSourceFiles.flatMapTo([]) {
+            getRefinedConfiguration(it)[ScriptCompilationConfiguration.compilerOptions] ?: []
         }
         if (updatedCompilerOptions.isNotEmpty() && updatedCompilerOptions != state.baseScriptCompilationConfiguration[ScriptCompilationConfiguration.compilerOptions]) {
             compilerConfiguration.updateWithCompilerOptions(
@@ -255,9 +255,10 @@ class ScriptJvmK2CompilerImpl(
 
         if (reportingCtx.messageCollector.hasErrors()) return failure(reportingCtx.diagnosticsCollector)
 
-        val outputs = listOf(resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)).also {
-            it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
-        }
+        val outputs = [resolveAndCheckFir(session, sourcesToFir.values.toList(), reportingCtx.diagnosticsCollector)]
+            .also {
+                it.runPlatformCheckers(reportingCtx.diagnosticsCollector)
+            }
         val frontendOutput = AllModulesFrontendOutput(outputs)
 
         if (reportingCtx.diagnosticsCollector.hasErrors) return failure(reportingCtx.diagnosticsCollector)

@@ -31,7 +31,7 @@ open class AbstractSymbolLightClassesParentingTestBase(
         get() = super.variantChain.withAdditionalVariant("parenting")
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_PARENTING_CHECK by directive(description = "Ignore the test")

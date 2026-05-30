@@ -20,9 +20,9 @@ internal class KaBaseDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : KtDefaultAnnotationArgumentReference(element), KaBaseReference {
     override fun KaSession.resolveToSymbols(): Collection<KaSymbol> {
-        val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return emptyList()
-        val constructorSymbol = annotationEntry.resolveSymbol() ?: return emptyList()
-        val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return emptyList()
+        val annotationEntry = element.getStrictParentOfType<KtAnnotationEntry>() ?: return []
+        val constructorSymbol = annotationEntry.resolveSymbol() ?: return []
+        val firstParam = constructorSymbol.valueParameters.firstOrNull() ?: return []
         return listOfNotNull(firstParam.takeIf { it.psi?.isDefaultAnnotationMethod == true })
     }
 
@@ -37,9 +37,9 @@ internal class KaBaseDefaultAnnotationArgumentReference(
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtValueArgument>
             get() = { element ->
                 if (element.shouldProduceReference()) {
-                    listOf(KaBaseDefaultAnnotationArgumentReference(element))
+                    [KaBaseDefaultAnnotationArgumentReference(element)]
                 } else {
-                    emptyList()
+                    []
                 }
             }
     }

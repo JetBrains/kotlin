@@ -74,7 +74,7 @@ class ConfigurationDslTest {
         val finalConfig = compiledScript.compilationConfiguration
 
         assertEquals(
-            listOf(KotlinType(Int::class), KotlinType(Float::class)),
+            [KotlinType(Int::class), KotlinType(Float::class)],
             finalConfig[ScriptCompilationConfiguration.implicitReceivers]
         )
         assertEquals(
@@ -82,7 +82,7 @@ class ConfigurationDslTest {
             finalConfig[ScriptCompilationConfiguration.providedProperties]
         )
         assertEquals(
-            listOf("-version"),
+            ["-version"],
             finalConfig[ScriptCompilationConfiguration.compilerOptions]
         )
 

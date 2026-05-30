@@ -100,7 +100,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         attributes: List<AnnotationMarker>?
     ): ConeSimpleKotlinType {
         require(constructor is ConeTypeConstructorMarker)
-        var attributesList = attributes?.filterIsInstanceTo<ConeAttribute<*>, _>(mutableListOf())
+        var attributesList: MutableList<ConeAttribute<*>>? = attributes?.filterIsInstanceTo<ConeAttribute<*>, _>([])
         val coneAttributes: ConeAttributes = if (isExtensionFunction || contextParameterCount > 0) {
             require(constructor is ConeClassLikeLookupTag)
             // We don't want to create new instance of ConeAttributes which
@@ -109,13 +109,13 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             if (attributesList.isNullOrEmpty() && contextParameterCount == 0) {
                 ConeAttributes.WithExtensionFunctionType
             } else {
-                if (attributesList == null) attributesList = mutableListOf()
+                if (attributesList == null) attributesList = []
                 if (isExtensionFunction) attributesList += CompilerConeAttributes.ExtensionFunctionType
                 if (contextParameterCount > 0) attributesList += CompilerConeAttributes.ContextFunctionTypeParams(contextParameterCount)
                 ConeAttributes.create(attributesList)
             }
         } else {
-            attributesList?.let { ConeAttributes.create(it) } ?: ConeAttributes.Empty
+            attributesList?.let { ConeAttributes.create(it) } ?: []
         }
         @Suppress("UNCHECKED_CAST")
         return when (constructor) {
@@ -348,7 +348,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
 
     override fun KotlinTypeMarker.removeAnnotations(): ConeKotlinType {
         require(this is ConeKotlinType)
-        return withAttributes(ConeAttributes.Empty)
+        return withAttributes([])
     }
 
     override fun RigidTypeMarker.replaceArguments(newArguments: List<TypeArgumentMarker>): ConeRigidType {

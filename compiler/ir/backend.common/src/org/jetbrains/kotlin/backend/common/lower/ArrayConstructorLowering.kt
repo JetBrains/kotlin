@@ -41,7 +41,7 @@ private class ArrayConstructorTransformer(
                 irConstructor.parameters.size != 2 -> null
                 clazz == context.irBuiltIns.arrayClass -> context.irBuiltIns.arrayOfNulls // Array<T> has no unary constructor: it can only exist for Array<T?>
                 context.irBuiltIns.primitiveArraysToPrimitiveTypes.contains(clazz) -> clazz.constructors.single {
-                    it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
+                    it.owner.hasShape(regularParameters = 1, parameterTypes = [context.irBuiltIns.intType])
                 }
                 else -> null
             }
@@ -85,7 +85,7 @@ private class ArrayConstructorTransformer(
                     +irCall(result.type.getClass()!!.functions.single { it.name == OperatorNameConventions.SET }).apply {
                         arguments[0] = irGet(result)
                         arguments[1] = irGet(tempIndex)
-                        arguments[2] = generator.inline(parent, listOf(tempIndex))
+                        arguments[2] = generator.inline(parent, [tempIndex])
                     }
                     val inc = index.type.getClass()!!.functions.single { it.name == OperatorNameConventions.INC }
                     +irSet(

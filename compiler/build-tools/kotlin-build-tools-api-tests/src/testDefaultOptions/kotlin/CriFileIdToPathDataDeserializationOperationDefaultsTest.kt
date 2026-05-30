@@ -16,7 +16,7 @@ class CriFileIdToPathDataDeserializationOperationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = kotlinToolchains.cri.createCriFileIdToPathDataDeserializationOperation(byteArrayOf())
+        val operation = kotlinToolchains.cri.createCriFileIdToPathDataDeserializationOperation([])
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
     }
 }

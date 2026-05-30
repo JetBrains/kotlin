@@ -37,7 +37,7 @@ class PackagePartsCacheData(
     val proto: ProtoBuf.Package,
     val context: FirDeserializationContext,
     val extra: Extra? = null,
-    val fileAnnotations: List<FirAnnotation> = emptyList(),
+    val fileAnnotations: List<FirAnnotation> = [],
 ) {
     /**
      * Marker interface for 'extra' data that can be attached to a given [PackagePartsCacheData].
@@ -312,7 +312,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     private fun loadFunctionsByCallableId(callableId: CallableId): List<FirNamedFunctionSymbol> {
         return getPackageParts(callableId.packageName).flatMap { part ->
-            val functionIds = part.topLevelFunctionNameIndex[callableId.callableName] ?: return@flatMap emptyList()
+            val functionIds = part.topLevelFunctionNameIndex[callableId.callableName] ?: return@flatMap []
             functionIds.map {
                 val proto = part.proto.getFunction(it)
                 val fir = part.context.memberDeserializer.loadFunction(
@@ -330,7 +330,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
 
     private fun loadPropertiesByCallableId(callableId: CallableId): List<FirPropertySymbol> {
         return getPackageParts(callableId.packageName).flatMap { part ->
-            val propertyIds = part.topLevelPropertyNameIndex[callableId.callableName] ?: return@flatMap emptyList()
+            val propertyIds = part.topLevelPropertyNameIndex[callableId.callableName] ?: return@flatMap []
             propertyIds.map {
                 val proto = part.proto.getProperty(it)
                 val fir = part.context.memberDeserializer.loadProperty(proto)
@@ -420,7 +420,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
     private fun <C : FirCallableSymbol<*>> FirCache<CallableId, List<C>, Nothing?>.getCallables(id: CallableId): List<C> {
         // Don't actually query FirCache when we're sure there are no relevant value
         // It helps to decrease the size of a cache thus leading to better query time
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(id.packageName, id.callableName)) return []
         return getValue(id)
     }
 

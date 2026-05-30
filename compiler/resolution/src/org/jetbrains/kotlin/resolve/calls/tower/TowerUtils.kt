@@ -19,11 +19,11 @@ package org.jetbrains.kotlin.resolve.calls.tower
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
-private val INAPPLICABLE_STATUSES = setOf(
+private val INAPPLICABLE_STATUSES: Set<CandidateApplicability> = [
     CandidateApplicability.INAPPLICABLE,
     CandidateApplicability.INAPPLICABLE_ARGUMENTS_MAPPING_ERROR,
     CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
-)
+]
 
 val CallableDescriptor.isSynthesized: Boolean
     get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)

@@ -25,7 +25,7 @@ import java.io.File
 
 class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives)
+        get() = [JvmEnvironmentConfigurationDirectives]
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
@@ -65,7 +65,7 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
                 extraClasspath = jvmClasspathRoots,
                 assertions = testServices.assertions,
                 useJava11 = true, // Requires jdk.11.home to be set in build.gradle.kts
-                extraJavacOptions = listOf("-parameters") // Preserve parameter names during Java compilation so IR tests match
+                extraJavacOptions = ["-parameters"] // Preserve parameter names during Java compilation so IR tests match
             )
             configuration.addJvmClasspathRoot(compiledJar)
         } catch (e: Throwable) {

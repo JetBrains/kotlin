@@ -44,7 +44,7 @@ internal class KaFe10PsiTypeParameterSymbol(
 
     override val upperBounds: List<KaType>
         get() = withValidityAssertion {
-            descriptor?.upperBounds?.filterNot { it.isNullableAny() }?.map { it.toKtType(analysisContext) } ?: emptyList()
+            descriptor?.upperBounds?.filterNot { it.isNullableAny() }?.map { it.toKtType(analysisContext) } ?: []
         }
 
     override val isReified: Boolean

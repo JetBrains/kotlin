@@ -27,7 +27,7 @@ interface TypeRef {
     fun renderTo(appendable: Appendable, importCollector: ImportCollecting)
 
     val typeAnnotations: List<String>
-        get() = emptyList()
+        get() = []
 
     object Star : TypeRef {
 
@@ -49,7 +49,7 @@ class ClassRef<P : TypeParameterRef> private constructor(
     names: List<String>,
     override val args: Map<P, TypeRef>,
     override val nullable: Boolean = false,
-    override val typeAnnotations: List<String> = emptyList(),
+    override val typeAnnotations: List<String> = [],
 ) : ParametrizedTypeRef<ClassRef<P>, P>, ClassOrElementRef {
     /**
      * Returns a class name created from the given parts. For example, calling this with package name
@@ -60,7 +60,7 @@ class ClassRef<P : TypeParameterRef> private constructor(
         packageName: String,
         vararg simpleNames: String,
         args: Map<P, TypeRef> = emptyMap(),
-        typeAnnotations: List<String> = emptyList(),
+        typeAnnotations: List<String> = [],
     ) : this(kind, listOf(packageName, *simpleNames), args, false, typeAnnotations) {
         require(simpleNames.isNotEmpty()) { "simpleNames must not be empty" }
         require(simpleNames.none { it.isEmpty() }) {
@@ -181,7 +181,7 @@ data class ElementRef<Element : AbstractElement<Element, *, *>>(
 
 data class Lambda(
     val receiver: TypeRefWithNullability?,
-    val parameterTypes: List<TypeRefWithNullability> = emptyList(),
+    val parameterTypes: List<TypeRefWithNullability> = [],
     val returnType: TypeRefWithNullability,
     override val nullable: Boolean = false,
 ) : TypeRefWithNullability {
@@ -294,7 +294,7 @@ fun <Self : ParametrizedTypeRef<Self, PositionTypeParameterRef>> ParametrizedTyp
 
 class TypeVariable(
     name: String,
-    val bounds: List<TypeRef> = emptyList(),
+    val bounds: List<TypeRef> = [],
     val variance: Variance = Variance.INVARIANT,
 ) : NamedTypeParameterRef(name)
 

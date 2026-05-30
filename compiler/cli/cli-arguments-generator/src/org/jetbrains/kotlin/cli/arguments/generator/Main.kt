@@ -54,7 +54,7 @@ class ArgumentsInfo(
     val configuratorName: String? = "${className}Configurator",
     val levelIsFinal: Boolean,
     val originFileName: String = className,
-    val additionalSyntheticArguments: List<String> = emptyList(),
+    val additionalSyntheticArguments: List<String> = [],
     val additionalGenerator: SmartPrinter.() -> Unit = {},
 )
 
@@ -64,7 +64,7 @@ val ArgumentsInfo.isCommonToolsArgs: Boolean
 val ArgumentsInfo.isCommonCompilerArgs: Boolean
     get() = levelName == CompilerArgumentsLevelNames.commonCompilerArguments
 
-val levelToClassNameMap = listOf(
+val levelToClassNameMap = [
     ArgumentsInfo(
         levelName = CompilerArgumentsLevelNames.commonToolArguments,
         className = "CommonToolArguments",
@@ -76,7 +76,7 @@ val levelToClassNameMap = listOf(
         levelName = CompilerArgumentsLevelNames.commonCompilerArguments,
         className = "CommonCompilerArguments",
         levelIsFinal = false,
-        additionalSyntheticArguments = listOf("autoAdvanceLanguageVersion", "autoAdvanceApiVersion"),
+        additionalSyntheticArguments = ["autoAdvanceLanguageVersion", "autoAdvanceApiVersion"],
         additionalGenerator = SmartPrinter::generateDummyImpl,
     ),
     ArgumentsInfo(
@@ -126,13 +126,13 @@ val levelToClassNameMap = listOf(
         levelIsFinal = true,
         originFileName = "KotlinWasmCompilerArguments",
     ),
-).associateBy { it.levelName }
+].associateBy { it.levelName }
 
 // Removed arguments which are still needed in CLI classes but should be hidden
-private val hiddenArguments = setOf(
+private val hiddenArguments: Set<Pair<String, String>> = [
     CompilerArgumentsLevelNames.jsArguments to "output", // Needed by IDEA
     CompilerArgumentsLevelNames.commonCompilerArguments to "Xuse-k2", // Needed by IDEA
-)
+]
 
 private fun generateArgumentsClass(
     genDir: File,
@@ -177,7 +177,7 @@ private fun SmartPrinter.generateArgumentsClass(
     if (Modifier.DEPRECATED in level.modifiers) {
         println("@Deprecated(\"This class was deprecated and will be removed soon.\", level = DeprecationLevel.WARNING)")
     }
-    if (Modifier.DEPRECATED in (parent?.modifiers ?: emptySet())) {
+    if (Modifier.DEPRECATED in (parent?.modifiers ?: [])) {
         println("@Suppress(\"DEPRECATION\")")
     }
     if (!info.levelIsFinal) {
@@ -228,9 +228,9 @@ private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): Li
         arguments.flatMapTo(this) { argument ->
             argument.additionalAnnotations.flatMap {
                 when (it) {
-                    is Enables -> listOf(Enables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
-                    is Disables -> listOf(Disables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
-                    is Deprecated -> emptyList()
+                    is Enables -> [Enables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!]
+                    is Disables -> [Disables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!]
+                    is Deprecated -> []
                     else -> error("Unknown annotation ${it::class}")
                 }
 

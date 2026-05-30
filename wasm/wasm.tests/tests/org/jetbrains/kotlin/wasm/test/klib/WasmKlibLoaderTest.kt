@@ -31,19 +31,19 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
         get() = WasmEnvironmentConfigurator.stdlibPath(target)
 
     override val ownPlatformCheckers: List<KlibPlatformChecker>
-        get() = listOf(
+        get() = [
             KlibPlatformChecker.Wasm(),
             KlibPlatformChecker.Wasm(target.alias)
-        )
+        ]
 
     override val alienPlatformCheckers: List<KlibPlatformChecker>
-        get() = listOf(
+        get() = [
             KlibPlatformChecker.JS,
             KlibPlatformChecker.Wasm(WasmTarget.entries.first { it != target }.alias),
             KlibPlatformChecker.Native(),
             KlibPlatformChecker.Native(KonanTarget.IOS_ARM64.name),
             KlibPlatformChecker.NativeMetadata(KonanTarget.IOS_ARM64.name),
-        )
+        ]
 
     override fun compileKlib(
         asFile: Boolean,
@@ -63,7 +63,7 @@ abstract class AbstractWasmKlibLoaderTest(private val target: WasmTarget) : Abst
             moduleName = sourceFile.nameWithoutExtension
             irModuleName = sourceFile.nameWithoutExtension
             customKlibAbiVersion = abiVersion.toString()
-            freeArgs = listOf(sourceFile.absolutePath)
+            freeArgs = [sourceFile.absolutePath]
         }
 
         val messageCollector = MessageCollectorImpl()

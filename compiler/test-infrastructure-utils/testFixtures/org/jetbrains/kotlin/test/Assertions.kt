@@ -70,7 +70,7 @@ abstract class Assertions {
      * This method is used to unfold an exception in case the exception represents
      * a group of failed exceptions thrown by [assertAll].
      */
-    open fun unfoldException(e: Throwable): List<Throwable> = listOf(e)
+    open fun unfoldException(e: Throwable): List<Throwable> = [e]
 
     fun assertAll(vararg conditions: () -> Unit) {
         assertAll(conditions.toList())

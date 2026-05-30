@@ -166,4 +166,4 @@ fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context>
  *
  * Types are not checked in the IR during validation. But we may (and probably should) reconsider.
  */
-val DEFAULT_IR_ACTIONS: Set<Action<IrElement, LoweringContext>> = setOf(getIrDumper(), getIrValidator(checkTypes = false))
+val DEFAULT_IR_ACTIONS: Set<Action<IrElement, LoweringContext>> = [getIrDumper(), getIrValidator(checkTypes = false)]

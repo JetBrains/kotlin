@@ -108,7 +108,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
         @JvmField val name: String,
         @JvmField val dependenciesSymbols: List<String>,
         @JvmField val friendsSymbols: List<String>,
-        @JvmField val dependsOnSymbols: List<String> = listOf(), // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
+        @JvmField val dependsOnSymbols: List<String> = [], // mimics the name from ModuleStructureExtractorImpl, thought later converted to `-Xfragment-refines` parameter
     ) : Comparable<TestModule> {
 
         val dependencies: MutableList<TestModule> = arrayListOf()

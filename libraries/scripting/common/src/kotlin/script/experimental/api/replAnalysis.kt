@@ -43,7 +43,7 @@ class ReplAnalyzerResult(baseConfigurations: Iterable<ReplAnalyzerResult>, body:
 /**
  * Script compile-time errors and warning with their locations
  */
-val ReplAnalyzerResultKeys.analysisDiagnostics by PropertiesCollection.key<Sequence<ScriptDiagnostic>>(emptySequence())
+val ReplAnalyzerResultKeys.analysisDiagnostics by PropertiesCollection.key<Sequence<ScriptDiagnostic>>([])
 
 /**
  * String representing snippet return value, or null, if script returns nothing

@@ -79,7 +79,7 @@ public class StandaloneAnalysisAPISessionBuilder(
             KotlinCoreApplicationEnvironmentMode.fromUnitTestModeFlag(unitTestMode),
         )
 
-    private val serviceRegistrars = listOf(FirStandaloneServiceRegistrar, StandaloneSessionServiceRegistrar)
+    private val serviceRegistrars = [FirStandaloneServiceRegistrar, StandaloneSessionServiceRegistrar]
 
     init {
         val application = kotlinCoreProjectEnvironment.environment.application

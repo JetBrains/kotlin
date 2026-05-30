@@ -33,7 +33,7 @@ fun Program.produceObjC(config: ObjCConfig): ObjCOutput {
     val context = ObjCTranslationContext(config, GlobalScopeResolver(this))
     context.translate(this)
     return ObjCOutput(
-        filename = "${config.basename}.m", contents = context.contents.toString(), args = listOf("-fobjc-arc")
+        filename = "${config.basename}.m", contents = context.contents.toString(), args = ["-fobjc-arc"]
     )
 }
 
@@ -219,9 +219,9 @@ private class ObjCTranslationContext(
             """.trimMargin()
         )
 
-        val classDefinitions = mutableListOf<Definition.Class>()
-        val functionDefinitions = mutableListOf<Definition.Function>()
-        val globalsDefinitions = mutableListOf<Definition.Global>()
+        val classDefinitions: MutableList<Definition.Class> = []
+        val functionDefinitions: MutableList<Definition.Function> = []
+        val globalsDefinitions: MutableList<Definition.Global> = []
         program.definitions.filter { it.targetLanguage is TargetLanguage.ObjC }.forEach {
             when (it) {
                 is Definition.Class -> classDefinitions.add(it)

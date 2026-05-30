@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.name.Name
  */
 class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBackendContext) : FileLoweringPass {
     lateinit var currentFile: IrFile
-    val addedDeclarations = mutableListOf<IrDeclaration>()
+    val addedDeclarations: MutableList<IrDeclaration> = []
 
     override fun lower(irFile: IrFile) {
         currentFile = irFile
@@ -472,7 +472,7 @@ fun createExternalJsFunction(
         isExternal = true
     }
     val builder = context.createIrBuilder(res.symbol)
-    res.annotations += builder.irAnnotation(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+    res.annotations += builder.irAnnotation(context.wasmSymbols.jsRelatedSymbols.jsFunConstructor, typeArguments = []).also {
         it.arguments[0] = builder.irString(jsCode)
     }
     return res
@@ -504,7 +504,7 @@ class ComplexExternalDeclarationsUsageLowering(val context: WasmBackendContext) 
         private fun process(container: IrDeclarationContainer) {
             container.declarations.transformFlat { member ->
                 if (member is IrFunction && member.topLevelFunctionForNestedExternal != null) {
-                    emptyList()
+                    []
                 } else {
                     member.acceptVoid(this)
                     null

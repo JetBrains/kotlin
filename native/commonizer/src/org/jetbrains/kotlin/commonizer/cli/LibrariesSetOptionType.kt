@@ -18,7 +18,7 @@ internal abstract class LibrariesSetOptionType(
 ) {
     override fun parse(rawValue: String, onError: (reason: String) -> Nothing): Option<List<File>> {
         if (rawValue.isBlank()) {
-            return Option(this, emptyList())
+            return Option(this, [])
         }
         return Option(this, rawValue.split(";").map(::File))
     }

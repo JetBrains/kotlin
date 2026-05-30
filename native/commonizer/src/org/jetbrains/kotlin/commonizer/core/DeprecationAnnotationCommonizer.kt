@@ -95,7 +95,7 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
     private fun buildAnnotationType(classId: CirEntityId) = CirClassType.createInterned(
         classId = classId,
         outerType = null,
-        arguments = emptyList(),
+        arguments = [],
         isMarkedNullable = false
     )
 
@@ -139,7 +139,7 @@ object DeprecationAnnotationCommonizer : AssociativeCommonizer<CirAnnotation> {
 
     private inline fun Map<CirName, CirConstantValue>.getStringArray(name: CirName): List<String>? {
         val elements: List<CirConstantValue> = (this[name] as? CirConstantValue.ArrayValue)?.elements ?: return null
-        if (elements.isEmpty()) return emptyList()
+        if (elements.isEmpty()) return []
 
         val result = ArrayList<String>(elements.size)
         for (element in elements) {

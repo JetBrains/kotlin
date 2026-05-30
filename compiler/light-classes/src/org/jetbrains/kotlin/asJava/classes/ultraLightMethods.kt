@@ -112,9 +112,9 @@ internal abstract class KtUltraLightMethod(
     }
 
     private fun getThrownExceptions(function: FunctionDescriptor): List<ClassDescriptor> {
-        if (function.getKind() == CallableMemberDescriptor.Kind.DELEGATION) return emptyList()
+        if (function.getKind() == CallableMemberDescriptor.Kind.DELEGATION) return []
 
-        val annotation = function.annotations.findAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME) ?: return emptyList()
+        val annotation = function.annotations.findAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME) ?: return []
 
         val value = annotation.allValueArguments.values.firstOrNull()
         return (value as? ArrayValue)?.value?.mapNotNull { constant ->
@@ -294,7 +294,7 @@ internal class KtUltraLightMethodForDescriptor(
     // This means that all data that depends on descriptor evaluated in ctor so the descriptor will be released on the end.
     // Be aware to save descriptor in class instance or any depending references
 
-    private val lazyInitializers = mutableListOf<Lazy<*>>()
+    private val lazyInitializers: MutableList<Lazy<*>> = []
     private inline fun <T> getAndAddLazy(crossinline initializer: () -> T): Lazy<T> =
         lazyPub { initializer() }.also { lazyInitializers.add(it) }
 

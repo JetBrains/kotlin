@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
 import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 
 class ErrorClassDescriptor(name: Name) : ClassDescriptorImpl(
-    ErrorUtils.errorModule, name, Modality.OPEN, ClassKind.CLASS, emptyList(), SourceElement.NO_SOURCE, false, LockBasedStorageManager.NO_LOCKS
+    ErrorUtils.errorModule, name, Modality.OPEN, ClassKind.CLASS, [], SourceElement.NO_SOURCE, false, LockBasedStorageManager.NO_LOCKS
 ) {
     init {
         val errorConstructor = ClassConstructorDescriptorImpl.create(this, Annotations.EMPTY, true, SourceElement.NO_SOURCE)

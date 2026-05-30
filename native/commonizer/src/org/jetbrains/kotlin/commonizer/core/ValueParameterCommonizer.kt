@@ -20,7 +20,7 @@ class ValueParameterCommonizer(returnTypeCommonizer: TypeCommonizer) :
 
     override fun commonizationResult(): CirValueParameter? {
         return CirValueParameter.createInterned(
-            annotations = emptyList(),
+            annotations = [],
             name = name,
             returnType = returnTypeCommonizer.result ?: return null,
             varargElementType = varargElementType,

@@ -23,7 +23,7 @@ import java.io.File
 
 open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun check(thereWereFailures: Boolean) {
         val moduleStructure = testServices.moduleStructure

@@ -26,4 +26,4 @@ class InsnSequence(val from: AbstractInsnNode, val to: AbstractInsnNode?) : Sequ
 }
 
 fun InsnList.asSequence(): Sequence<AbstractInsnNode> =
-    if (size() == 0) emptySequence() else InsnSequence(this)
+    if (size() == 0) [] else InsnSequence(this)

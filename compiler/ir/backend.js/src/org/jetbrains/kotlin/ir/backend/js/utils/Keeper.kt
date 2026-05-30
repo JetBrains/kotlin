@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 class Keeper(private val keep: Set<String>) : IrVisitor<Unit, Keeper.KeepData>() {
-    private val keptDeclarations: MutableSet<IrDeclaration> = mutableSetOf()
+    private val keptDeclarations: MutableSet<IrDeclaration> = []
 
     fun shouldKeep(declaration: IrDeclaration): Boolean {
         return declaration in keptDeclarations ||

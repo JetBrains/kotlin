@@ -53,15 +53,15 @@ class Converter(
     private val idToHProfIdMutableMap: MutableMap<Id, HProfId> = mutableMapOf()
     private val stringToIdMutableMap: MutableMap<String, HProfId> = mutableMapOf()
     private val hprofIdToStringMutableMap: MutableMap<HProfId, String> = mutableMapOf()
-    private val hprofProfileRecords: MutableList<HProfProfile.Record> = mutableListOf()
-    private val hprofHeapDumpRecords: MutableList<HProfHeapDump.Record> = mutableListOf()
+    private val hprofProfileRecords: MutableList<HProfProfile.Record> = []
+    private val hprofHeapDumpRecords: MutableList<HProfHeapDump.Record> = []
     private val hprofExtraClassObjectIds: MutableMap<String, HProfId> = mutableMapOf()
     private val kotlinToJavaHprofIdMutableMap: MutableMap<HProfId, HProfId> = mutableMapOf()
     private val typeIdToSyntheticFieldsMap: MutableMap<Id, List<Field>> = mutableMapOf()
     private var lastClassSerialNumber: SerialNumber = SerialNumber(0)
     private val threadIdToSerialNumberMap: MutableMap<Id, SerialNumber> = mutableMapOf()
     private var nextFreeHProfObjectAddress: Long = 0x20000000L
-    private val syntheticClassNames: MutableSet<String> = mutableSetOf()
+    private val syntheticClassNames: MutableSet<String> = []
 
     fun OutputStream.hprofWriter(): HProfWriter =
             HProfWriter(this, hprofIdSize)
@@ -303,27 +303,27 @@ class Converter(
         addSyntheticClass(
                 ClassName.STRING,
                 extraClassObjectId(ClassName.OBJECT),
-                listOf(
-                        HProfInstanceField(
-                                nameStringId = hprofId("value"),
-                                type = HProfType.OBJECT
-                        )
-                )
+                [
+                    HProfInstanceField(
+                            nameStringId = hprofId("value"),
+                            type = HProfType.OBJECT
+                    )
+                ]
         )
 
         addSyntheticClass(
                 ClassName.EXTRA_OBJECT,
                 extraClassObjectId(ClassName.OBJECT),
-                listOf(
-                        HProfInstanceField(
-                                nameStringId = hprofId("baseObject"),
-                                type = HProfType.OBJECT
-                        ),
-                        HProfInstanceField(
-                                nameStringId = hprofId("associatedObject"),
-                                type = HProfType.LONG
-                        )
-                )
+                [
+                    HProfInstanceField(
+                            nameStringId = hprofId("baseObject"),
+                            type = HProfType.OBJECT
+                    ),
+                    HProfInstanceField(
+                            nameStringId = hprofId("associatedObject"),
+                            type = HProfType.LONG
+                    )
+                ]
         )
 
         if (SYNTHESIZE_JAVA_LANG_STRINGS) {
@@ -359,7 +359,7 @@ class Converter(
     fun addSyntheticClass(
             className: String,
             superClassObjectId: HProfId = HProfId.NULL,
-            instanceFields: List<HProfInstanceField> = listOf(),
+            instanceFields: List<HProfInstanceField> = [],
     ) {
         val classObjectId = extraClassObjectId(className)
         val instanceSize = instanceFields.map { it.type.size }.sum()
@@ -431,7 +431,7 @@ class Converter(
                 HProfStackTrace(
                         serialNumber = stackTraceSerialNumber,
                         threadSerialNumber = threadSerialNumber,
-                        stackFrameIds = listOf(stackFrameId)
+                        stackFrameIds = [stackFrameId]
                 )
         )
 

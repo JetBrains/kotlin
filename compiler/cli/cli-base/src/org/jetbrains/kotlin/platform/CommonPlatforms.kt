@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms.allWasmPlatforms
 
 object CommonPlatforms {
     private object CompatCommonPlatform : TargetPlatform(
-        setOf(
+        [
             unspecifiedJvmPlatform.single(),
             defaultJsPlatform.single(),
             WasmPlatforms.wasmJs.single(),
             WasmPlatforms.wasmWasi.single(),
             unspecifiedNativePlatform.single()
-        )
+        ]
     )
 
     val defaultCommonPlatform: TargetPlatform

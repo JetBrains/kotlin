@@ -49,11 +49,11 @@ val FqName?.isMethodWithDeclarationSiteWildcardsFqName: Boolean
     get() = this in METHODS_WITH_DECLARATION_SITE_WILDCARDS
 
 private fun FqName.child(name: String): FqName = child(Name.identifier(name))
-private val METHODS_WITH_DECLARATION_SITE_WILDCARDS = setOf(
+private val METHODS_WITH_DECLARATION_SITE_WILDCARDS: Set<FqName> = [
     FqNames.mutableCollection.child("addAll"),
     FqNames.mutableList.child("addAll"),
     FqNames.mutableMap.child("putAll")
-)
+]
 
 internal fun extractTypeMappingModeFromAnnotation(
     callableDescriptor: CallableDescriptor?,

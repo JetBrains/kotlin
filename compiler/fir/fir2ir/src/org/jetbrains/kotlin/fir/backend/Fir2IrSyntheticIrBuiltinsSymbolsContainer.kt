@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 
 class Fir2IrSyntheticIrBuiltinsSymbolsContainer {
-    private val primitiveIntegralTypes: List<PrimitiveType> = listOf(BYTE, SHORT, INT, LONG)
-    val primitiveFloatingPointTypes: List<PrimitiveType> = listOf(FLOAT, DOUBLE)
+    private val primitiveIntegralTypes: List<PrimitiveType> = [BYTE, SHORT, INT, LONG]
+    val primitiveFloatingPointTypes: List<PrimitiveType> = [FLOAT, DOUBLE]
     private val primitiveNumericIrTypes: List<PrimitiveType> = primitiveIntegralTypes + primitiveFloatingPointTypes
     val primitiveIrTypesWithComparisons: List<PrimitiveType> = primitiveNumericIrTypes + CHAR
 

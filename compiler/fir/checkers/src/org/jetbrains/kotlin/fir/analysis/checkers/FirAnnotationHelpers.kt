@@ -145,14 +145,14 @@ fun FirAnnotationContainer.getImplicitUseSiteTargetList(): List<AnnotationUseSit
             if (context.findClosest<FirBasedSymbol<*>>().let { it is FirConstructorSymbol && it.isPrimary })
                 UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER
             else
-                emptyList()
+                []
         }
         is FirProperty ->
-            if (this.symbol is FirLocalPropertySymbol) emptyList() else UseSiteTargetsList.T_PROPERTY
+            if (this.symbol is FirLocalPropertySymbol) [] else UseSiteTargetsList.T_PROPERTY
         is FirPropertyAccessor ->
-            if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
+            if (isGetter) [AnnotationUseSiteTarget.PROPERTY_GETTER] else [AnnotationUseSiteTarget.PROPERTY_SETTER]
         else ->
-            emptyList()
+            []
     }
 }
 

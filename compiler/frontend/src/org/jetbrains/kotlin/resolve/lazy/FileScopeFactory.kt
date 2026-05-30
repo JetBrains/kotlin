@@ -110,7 +110,7 @@ class FileScopeFactory(
     }
 
     private val defaultImportResolvers by components.storageManager.createLazyValue {
-        createDefaultImportResolvers(emptyList(), emptyList())
+        createDefaultImportResolvers([], [])
     }
 
     private fun createDefaultImportResolver(
@@ -277,14 +277,14 @@ class FileScopeFactory(
             }
 
             override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-                if (name in excludedNames) return emptyList()
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
+                if (name in excludedNames) return []
                 return scope.getContributedVariables(name, location)
             }
 
             override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
-                if (name in excludedNames) return emptyList()
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
+                if (name in excludedNames) return []
                 return scope.getContributedFunctions(name, location)
             }
 
@@ -294,7 +294,7 @@ class FileScopeFactory(
                 changeNamesForAliased: Boolean
             ): Collection<DeclarationDescriptor> {
                 // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
-                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+                if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
                 return scope.getContributedDescriptors(
                     kindFilter.withoutKinds(DescriptorKindFilter.PACKAGES_MASK),
                     { name -> name !in excludedNames && nameFilter(name) }

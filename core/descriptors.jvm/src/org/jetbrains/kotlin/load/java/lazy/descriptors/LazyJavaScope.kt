@@ -66,7 +66,7 @@ abstract class LazyJavaScope(
         //    when computing getAllPackageNames() we ask the JavaPsiFacade for all subpackages of foo
         //    it, in turn, asks JavaElementFinder for subpackages of Kotlin package foo, which calls getAllPackageNames() recursively
         //    when on recursive call we return an empty collection, recursion collapses gracefully
-        listOf()
+        []
     )
 
     protected val declaredMemberIndex: NotNullLazyValue<DeclaredMemberIndex> = c.storageManager.createLazyValue { computeMemberIndex() }
@@ -88,7 +88,7 @@ abstract class LazyJavaScope(
         c.storageManager.createMemoizedFunction { name ->
             if (mainScope != null) return@createMemoizedFunction mainScope.declaredFunctions(name)
 
-            val result = mutableListOf<SimpleFunctionDescriptor>()
+            val result: MutableList<SimpleFunctionDescriptor> = []
 
             for (method in declaredMemberIndex().findMethodsByName(name)) {
                 val descriptor = resolveMethodToFunctionDescriptor(method)
@@ -270,7 +270,7 @@ abstract class LazyJavaScope(
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-        if (name !in getFunctionNames()) return emptyList()
+        if (name !in getFunctionNames()) return []
         return functions(name)
     }
 
@@ -301,7 +301,7 @@ abstract class LazyJavaScope(
 
         propertyDescriptor.setType(
             propertyType,
-            listOf(),
+            [],
             getDispatchReceiverParameter(),
             null,
             emptyList()
@@ -351,7 +351,7 @@ abstract class LazyJavaScope(
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
-        if (name !in getVariableNames()) return emptyList()
+        if (name !in getVariableNames()) return []
         return properties(name)
     }
 

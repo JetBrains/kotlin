@@ -47,7 +47,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
-    setOf(
+    [
         KtFakeSourceElementKind.FromUseSiteTarget,
         KtFakeSourceElementKind.PropertyFromParameter,
         KtFakeSourceElementKind.ItLambdaParameter,
@@ -55,7 +55,7 @@ private val allowedFakeElementKinds: Set<KtFakeSourceElementKind> =
         KtFakeSourceElementKind.ImplicitJavaAnnotationConstructor,
         KtFakeSourceElementKind.SamConstructor,
         KtFakeSourceElementKind.JavaRecordComponentFunction,
-    )
+    ]
 
 @OptIn(SuspiciousFakeSourceCheck::class)
 internal fun FirElement.getAllowedPsi() = when (val source = source) {

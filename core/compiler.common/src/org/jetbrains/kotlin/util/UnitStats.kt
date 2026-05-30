@@ -61,7 +61,7 @@ data class UnitStats(
     val findKotlinClassStats: SideStats? = null,
 
     // Null/empty if extended measurements are not enabled
-    val gcStats: List<GarbageCollectionStats> = listOf(),
+    val gcStats: List<GarbageCollectionStats> = [],
     val jitTimeMillis: Long? = null,
 
     @property:DeprecatedMeasurementForBackCompatibility

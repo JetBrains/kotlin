@@ -66,10 +66,10 @@ class FirActualizingScope(
         processingFactory: FirScope.(Name, (S) -> Unit) -> Unit,
         processor: (S) -> Unit,
     ) {
-        val expectSymbols = mutableSetOf<S>()
-        val notExpectSymbols = mutableSetOf<S>()
+        val expectSymbols: MutableSet<S> = []
+        val notExpectSymbols: MutableSet<S> = []
         // All matched `expect` callables should be preserved to make it possible to filter them out later if corresponding actuals are found
-        val ignoredExpectSymbols = mutableSetOf<FirBasedSymbol<*>>()
+        val ignoredExpectSymbols: MutableSet<FirBasedSymbol<*>> = []
 
         delegate.processingFactory(name) { symbol ->
             if (symbol.isActual) {

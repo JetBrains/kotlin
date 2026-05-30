@@ -141,7 +141,7 @@ object FirAdaptiveTypeRenderingKey : RenderingContext.Key<Map<ConeKotlinType, St
         // ({6} being the placeholder for the nullability marker which is added by the caller).
         // The actual type arguments are inserted by ConeTypeRendererForReadability.
 
-        val stack = mutableListOf<ClassInfo>()
+        val stack: MutableList<ClassInfo> = []
         var current: FirClassLikeSymbol<*>? = symbol
         var renderTypeArguments = true
         var placeholderIndex = 0

@@ -11,8 +11,8 @@ val SirCallable.allParameters: List<SirParameter>
     get() = when (this) {
         is SirFunction -> listOfNotNull(this.extensionReceiverParameter) + this.parameters
         is SirInit -> this.parameters
-        is SirSetter -> listOf(SirParameter(parameterName = parameterName, type = this.valueType))
-        is SirGetter -> listOf()
+        is SirSetter -> [SirParameter(parameterName = parameterName, type = this.valueType)]
+        is SirGetter -> []
     }
 
 val SirCallable.returnType: SirType
@@ -173,8 +173,8 @@ val SirType.unavailableTypes: List<SirType>
         } + protocols.flatMap { [_, types] -> types.flatMap { it.unavailableTypes } }
         is SirTupleType -> types.flatMap { it.second.unavailableTypes }
         is SirFunctionalType -> (contextTypes + parameterTypes + errorType + returnType).flatMap { it.unavailableTypes }
-        is SirUnsupportedType -> listOf(this)
-        is SirErrorType -> emptyList()
+        is SirUnsupportedType -> [this]
+        is SirErrorType -> []
     }
 
 inline fun MutableList<SirAttribute>.replaceOrAddPropagatedUnavailability(unavailableTypes: () -> List<SirType>) {

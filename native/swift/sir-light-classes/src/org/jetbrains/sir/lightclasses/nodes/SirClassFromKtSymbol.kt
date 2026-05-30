@@ -66,7 +66,7 @@ internal class SirStubClassFromKtSymbol(
     ktSymbol,
     sirSession
 ) {
-    override val declarations: List<SirDeclaration> = emptyList()
+    override val declarations: List<SirDeclaration> = []
 }
 
 internal abstract class SirAbstractClassFromKtSymbol(
@@ -125,7 +125,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
         buildList {
             addAll(this@SirAbstractClassFromKtSymbol.translatedAttributes)
             replaceOrAddPropagatedUnavailability {
-                superClass?.unavailableTypes ?: emptyList()
+                superClass?.unavailableTypes ?: []
             }
         }
     }
@@ -140,21 +140,23 @@ internal abstract class SirAbstractClassFromKtSymbol(
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
         isOverride = true
-        body = SirFunctionBody(listOf(
+        body = SirFunctionBody(
+            [
                 "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);"
-            ))
+            ]
+        )
     }.also { it.parent = this }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
-        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(
+        KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> [
             kotlinBaseInitDeclaration(),
             SirObjectSyntheticInit(ktSymbol, sirSession),
             SirObjectAccessorVariableFromKtSymbol(ktSymbol, sirSession)
-        ).onEach { it.parent = this }
+        ].onEach { it.parent = this }
 
-        else -> listOf(
+        else -> [
             kotlinBaseInitDeclaration()
-        )
+        ]
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
@@ -201,7 +203,7 @@ internal class SirObjectSyntheticInit(
     override val origin: SirOrigin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
     override val visibility: SirVisibility = SirVisibility.PRIVATE
     override val isFailable: Boolean = false
-    override val parameters: List<SirParameter> = emptyList()
+    override val parameters: List<SirParameter> = []
     override val documentation: String? = null
     override val isRequired: Boolean = false
     override val isConvenience: Boolean = false
@@ -215,7 +217,7 @@ internal class SirObjectSyntheticInit(
     }
     override val errorType: SirType get() = SirType.never
     override val isAsync: Boolean get() = false
-    override val bridges: List<SirBridge> get() = emptyList()
+    override val bridges: List<SirBridge> get() = []
     override var body: SirFunctionBody?
         get() = null
         set(_) = Unit
@@ -277,7 +279,7 @@ internal class SirObjectAccessorVariableFromKtSymbol(
 
     override val modality: SirModality = SirModality.FINAL
 
-    override val bridges: List<SirBridge> = emptyList()
+    override val bridges: List<SirBridge> = []
 }
 
 private val KaClassType.isRegularClass: Boolean

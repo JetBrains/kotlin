@@ -63,7 +63,7 @@ internal class FrameworkBuilder(
         infoPlistFile.writeBytes(infoPlistContents.toByteArray())
         if (target.family == Family.OSX) {
             frameworkDirectory.child("Versions/Current").createAsSymlink("A")
-            for (child in listOf(frameworkName, "Headers", "Modules", "Resources")) {
+            for (child in [frameworkName, "Headers", "Modules", "Resources"]) {
                 frameworkDirectory.child(child).createAsSymlink("Versions/Current/$child")
             }
         }

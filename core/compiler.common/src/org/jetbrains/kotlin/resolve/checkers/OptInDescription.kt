@@ -19,11 +19,11 @@ data class OptInDescription(
     companion object {
         val DEFAULT_SEVERITY = Severity.ERROR
 
-        val WRONG_TARGETS_FOR_MARKER = setOf(
+        val WRONG_TARGETS_FOR_MARKER: Set<KotlinTarget> = [
             KotlinTarget.EXPRESSION,
             KotlinTarget.FILE,
             KotlinTarget.TYPE,
             KotlinTarget.TYPE_PARAMETER
-        )
+        ]
     }
 }

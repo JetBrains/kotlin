@@ -27,9 +27,9 @@ abstract class KtLightClassBase protected constructor(
         )
     }
 
-    protected open fun cacheDependencies(): List<Any> = listOf(
+    protected open fun cacheDependencies(): List<Any> = [
         KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
-    )
+    ]
 
     override fun getElementIcon(flags: Int): Icon? = null
 

@@ -65,10 +65,10 @@ open class AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest 
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -100,9 +100,9 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
 
             DiagnosticsDirectives.DIAGNOSTICS with "-warnings"
 
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
@@ -188,11 +188,11 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
         }
 
         assertions.assertAll(
-            listOf(
+            [
                 metadataDumper.checkGoldenData(goldenDataFileExtension = "metadata.txt"),
                 irDumper.checkGoldenData(goldenDataFileExtension = "ir$irFileSuffix.txt"),
                 manifestDumper.checkGoldenData(goldenDataFileExtension = "manifest$irFileSuffix")
-            )
+            ]
         )
     }
 

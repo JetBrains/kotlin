@@ -111,7 +111,7 @@ private fun resolveCollectionLiteralToErrorCall(
         explicitReceiver = null,
         argumentList = collectionLiteral.argumentList,
         isUsedAsGetClassReceiver = false,
-        typeArguments = emptyList(),
+        typeArguments = [],
         session = context.session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations,

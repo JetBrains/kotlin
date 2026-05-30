@@ -172,7 +172,7 @@ class PluginFunctionKindsTransformer(val pluginContext: IrPluginContext) : IrVis
         val irClass = classifier.owner as? IrClass ?: return null
         val fqName = irClass.fqNameWhenAvailable ?: return null
         val fqNameString = fqName.asString()
-        val prefixes = listOf(FULL_INLINEABLE_NAME_PREFIX, FULL_NOT_INLINEABLE_NAME_PREFIX)
+        val prefixes = [FULL_INLINEABLE_NAME_PREFIX, FULL_NOT_INLINEABLE_NAME_PREFIX]
 
         for (prefix in prefixes) {
             if (!fqNameString.startsWith(prefix)) continue

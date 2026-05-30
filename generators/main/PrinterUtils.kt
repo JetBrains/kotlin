@@ -64,7 +64,7 @@ private fun String.isDefaultImport(): Boolean {
     return substringBeforeLast('.') in defaultImportedPackages
 }
 
-private val defaultImportedPackages = setOf(
+private val defaultImportedPackages: Set<String> = [
     "kotlin",
     "kotlin.annotation",
     "kotlin.collections",
@@ -72,7 +72,7 @@ private val defaultImportedPackages = setOf(
     "kotlin.sequences",
     "kotlin.text",
     "kotlin.io",
-)
+]
 
 // -------------------------------- disclaimers --------------------------------
 

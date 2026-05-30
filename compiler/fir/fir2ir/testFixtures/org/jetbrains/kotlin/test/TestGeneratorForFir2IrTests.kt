@@ -20,9 +20,9 @@ fun main(args: Array<String>) {
     val mainClassName = TestGeneratorUtil.getMainClassName()
     val testRoot = args[0]
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
-    val k1BoxTestDir = listOf("multiplatform/k1")
-    val k2BoxTestDir = listOf("multiplatform/k2")
-    val excludedScriptDirs = listOf("script")
+    val k1BoxTestDir = ["multiplatform/k1"]
+    val k2BoxTestDir = ["multiplatform/k2"]
+    val excludedScriptDirs = ["script"]
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testRoot, testDataRoot = "compiler/testData/codegen") {
@@ -134,14 +134,14 @@ fun main(args: Array<String>) {
             testClass<AbstractFirLightTreeJvmIrTextTest> {
                 model(
                     "ir/irText",
-                    excludeDirs = listOf("declarations/multiplatform/k1")
+                    excludeDirs = ["declarations/multiplatform/k1"]
                 )
             }
 
             testClass<AbstractFirPsiJvmIrTextTest> {
                 model(
                     "ir/irText",
-                    excludeDirs = listOf("declarations/multiplatform/k1")
+                    excludeDirs = ["declarations/multiplatform/k1"]
                 )
             }
 
@@ -166,7 +166,7 @@ fun main(args: Array<String>) {
             testClass<AbstractFirBlackBoxCodegenTestSpec> {
                 model(
                     relativeRootPath = "codegen/box",
-                    excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("codegen/box"),
+                    excludeDirs = ["helpers", "templates"] + detectDirsWithTestsMapFileOnly("codegen/box"),
                 )
             }
         }

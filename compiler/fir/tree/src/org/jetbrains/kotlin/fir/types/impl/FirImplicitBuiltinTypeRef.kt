@@ -34,7 +34,7 @@ sealed class FirImplicitBuiltinTypeRef(
         get() = false
 
     override val annotations: List<FirAnnotation>
-        get() = emptyList()
+        get() = []
 
     override val delegatedTypeRef: FirTypeRef?
         get() = null
@@ -160,29 +160,29 @@ class FirImplicitCharIteratorTypeRef(
 class FirImplicitKPropertyTypeRef(
     source: KtSourceElement?,
     typeArgument: ConeTypeProjection
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty, arrayOf(typeArgument))
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty, [typeArgument])
 
 class FirImplicitKProperty0TypeRef(
     source: KtSourceElement?,
     propertyTypeArgument: ConeTypeProjection
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty0, arrayOf(propertyTypeArgument))
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty0, [propertyTypeArgument])
 
 class FirImplicitKMutableProperty0TypeRef(
     source: KtSourceElement?,
     propertyTypeArgument: ConeTypeProjection
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty0, arrayOf(propertyTypeArgument))
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty0, [propertyTypeArgument])
 
 class FirImplicitKProperty1TypeRef(
     source: KtSourceElement?,
     receiverTypeArgument: ConeTypeProjection,
     propertyTypeArgument: ConeTypeProjection
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty1, arrayOf(receiverTypeArgument, propertyTypeArgument))
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KProperty1, [receiverTypeArgument, propertyTypeArgument])
 
 class FirImplicitKMutableProperty1TypeRef(
     source: KtSourceElement?,
     receiverTypeArgument: ConeTypeProjection,
     propertyTypeArgument: ConeTypeProjection
-) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty1, arrayOf(receiverTypeArgument, propertyTypeArgument))
+) : FirImplicitBuiltinTypeRef(source, StandardClassIds.KMutableProperty1, [receiverTypeArgument, propertyTypeArgument])
 
 class FirImplicitKProperty2TypeRef(
     source: KtSourceElement?,
@@ -191,7 +191,7 @@ class FirImplicitKProperty2TypeRef(
     propertyTypeArgument: ConeTypeProjection
 ) : FirImplicitBuiltinTypeRef(
     source, StandardClassIds.KProperty2,
-    arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
+    [dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument]
 )
 
 class FirImplicitKMutableProperty2TypeRef(
@@ -201,7 +201,7 @@ class FirImplicitKMutableProperty2TypeRef(
     propertyTypeArgument: ConeTypeProjection
 ) : FirImplicitBuiltinTypeRef(
     source, StandardClassIds.KMutableProperty2,
-    arrayOf(dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument)
+    [dispatchReceiverTypeArgument, extensionReceiverTypeArgument, propertyTypeArgument]
 )
 
 fun FirImplicitBuiltinTypeRef.withNewSource(newSource: KtSourceElement?): FirImplicitBuiltinTypeRef {

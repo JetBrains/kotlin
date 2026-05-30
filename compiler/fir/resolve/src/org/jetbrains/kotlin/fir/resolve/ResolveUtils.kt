@@ -293,7 +293,7 @@ fun createFunctionType(
     parameters: List<ConeKotlinType>,
     receiverType: ConeKotlinType?,
     rawReturnType: ConeKotlinType,
-    contextParameters: List<ConeKotlinType> = emptyList(),
+    contextParameters: List<ConeKotlinType> = [],
 ): ConeClassLikeType {
     val receiverAndParameterTypes =
         buildList {
@@ -314,7 +314,7 @@ fun createFunctionType(
             }
         )
         receiverType != null -> ConeAttributes.WithExtensionFunctionType
-        else -> ConeAttributes.Empty
+        else -> []
     }
     return ConeClassLikeTypeImpl(
         functionTypeId.toLookupTag(),
@@ -329,7 +329,7 @@ fun createKPropertyType(
     rawReturnType: ConeKotlinType,
     isMutable: Boolean,
 ): ConeLookupTagBasedType {
-    val arguments = if (receiverType != null) listOf(receiverType, rawReturnType) else listOf(rawReturnType)
+    val arguments = if (receiverType != null) [receiverType, rawReturnType] else [rawReturnType]
     val classId = StandardClassIds.reflectByName("K${if (isMutable) "Mutable" else ""}Property${arguments.size - 1}")
     return ConeClassLikeTypeImpl(classId.toLookupTag(), arguments.toTypedArray(), isMarkedNullable = false)
 }
@@ -339,10 +339,10 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     sourceElement: KtSourceElement?,
     explicitParent: FirResolvedQualifier?,
     // Note: we need type arguments here, see e.g. testIncompleteConstructorCall in diagnostic group
-    typeArgumentsForQualifier: List<FirTypeProjection> = emptyList(),
+    typeArgumentsForQualifier: List<FirTypeProjection> = [],
     diagnostic: ConeDiagnostic? = null,
-    nonFatalDiagnostics: List<ConeDiagnostic> = emptyList(),
-    annotations: List<FirAnnotation> = emptyList(),
+    nonFatalDiagnostics: List<ConeDiagnostic> = [],
+    annotations: List<FirAnnotation> = [],
     resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null,
 ): FirResolvedQualifier {
     return buildResolvedQualifierForClass(

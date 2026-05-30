@@ -20,7 +20,7 @@ class FirModuleCapabilities private constructor(
 
     companion object : ConeTypeRegistry<FirModuleCapability, FirModuleCapability>() {
 
-        val Empty: FirModuleCapabilities = FirModuleCapabilities(emptyList())
+        val Empty: FirModuleCapabilities = FirModuleCapabilities([])
 
         fun create(attributes: List<FirModuleCapability>): FirModuleCapabilities {
             return if (attributes.isEmpty()) {

@@ -21,7 +21,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             // this is not the scenario DSL, so the modules are not built at this moment
 

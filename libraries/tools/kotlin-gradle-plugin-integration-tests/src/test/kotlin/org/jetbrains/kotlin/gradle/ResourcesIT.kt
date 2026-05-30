@@ -41,7 +41,7 @@ class ResourcesIT : KGPBaseTest() {
             build("jar") {
                 assertFileInProjectExists("build/libs/simpleProject.jar")
                 projectPath.resolve("build/libs/simpleProject.jar").assertZipArchiveContainsFilesOnce(
-                    listOf(mainResFile.name, additionalResFile.name)
+                    [mainResFile.name, additionalResFile.name]
                 )
             }
         }
@@ -102,7 +102,7 @@ class ResourcesIT : KGPBaseTest() {
             build("jar") {
                 assertFileInProjectExists("build/libs/simpleProject.jar")
                 projectPath.resolve("build/libs/simpleProject.jar").assertZipArchiveContainsFilesOnce(
-                    listOf(mainResFile.name, additionalResFile.name)
+                    [mainResFile.name, additionalResFile.name]
                 )
             }
         }

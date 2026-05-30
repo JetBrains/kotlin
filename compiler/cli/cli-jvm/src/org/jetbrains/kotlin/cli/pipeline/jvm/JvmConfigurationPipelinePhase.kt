@@ -39,8 +39,8 @@ import java.io.File
 
 object JvmConfigurationPipelinePhase : AbstractConfigurationPhase<K2JVMCompilerArguments>(
     name = "JvmConfigurationPipelinePhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(JvmConfigurationUpdater)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [JvmConfigurationUpdater]
 ) {
     override fun executePhase(input: ArgumentsPipelineArtifact<K2JVMCompilerArguments>): ConfigurationPipelineArtifact =
         super.executePhase(input).also {

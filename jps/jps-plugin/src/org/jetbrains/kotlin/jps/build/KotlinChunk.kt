@@ -35,7 +35,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
      * It would be more correct to say [KotlinModuleBuildTarget] instead of "module"
      * but word "module" makes it easier to understand this doc
      */
-    private val _dependencies: MutableList<KotlinModuleBuildTarget.Dependency> = mutableListOf()
+    private val _dependencies: MutableList<KotlinModuleBuildTarget.Dependency> = []
     val dependencies: List<KotlinModuleBuildTarget.Dependency>
         get() = _dependencies.takeIf { areChunkDependenciesCalculated } ?: error("Chunk dependencies are not calculated yet")
 
@@ -46,7 +46,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
      * It would be more correct to say [KotlinModuleBuildTarget] instead of "module"
      * but word "module" makes it easier to understand this doc
      */
-    private val _dependents: MutableList<KotlinModuleBuildTarget.Dependency> = mutableListOf()
+    private val _dependents: MutableList<KotlinModuleBuildTarget.Dependency> = []
     val dependents: List<KotlinModuleBuildTarget.Dependency>
         get() = _dependents.takeIf { areChunkDependenciesCalculated } ?: error("Chunk dependents are not calculated yet")
 
@@ -173,7 +173,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
         }
     }
 
-    fun collectDependentChunksRecursivelyExportedOnly(result: MutableSet<KotlinChunk> = mutableSetOf()) {
+    fun collectDependentChunksRecursivelyExportedOnly(result: MutableSet<KotlinChunk> = []) {
         dependents.forEach {
             if (result.add(it.src.chunk)) {
                 if (it.exported) {
@@ -198,7 +198,7 @@ class KotlinChunk internal constructor(val context: KotlinCompileContext, val ta
     }
 
     private fun addDependentCaches(targetsCaches: Collection<JpsIncrementalCache>) {
-        val dependentChunks = mutableSetOf<KotlinChunk>()
+        val dependentChunks: MutableSet<KotlinChunk> = []
 
         collectDependentChunksRecursivelyExportedOnly(dependentChunks)
 

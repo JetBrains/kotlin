@@ -58,14 +58,14 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
             dependency
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
-        val args = arrayOf(
+        val args: Array<String> = [
             KotlinWasmCompilerArguments::wasmTarget.cliArgument("wasm-js"),
             KotlinWasmCompilerArguments::irProduceJs.cliArgument,
             KotlinWasmCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
             KotlinWasmCompilerArguments::libraries.cliArgument, libraries,
             KotlinWasmCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
             KotlinWasmCompilerArguments::moduleName.cliArgument, outputFile.nameWithoutExtension,
-        )
+        ]
 
         val compilerXmlOutput = ByteArrayOutputStream()
         val exitCode = PrintStream(compilerXmlOutput).use { printStream ->

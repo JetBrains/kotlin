@@ -81,10 +81,10 @@ class ImportedSchemasGenerator(
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val containingClassSymbol = classSymbol.getContainingClassSymbol()
         if (containingClassSymbol != null && session.predicateBasedProvider.matches(predicate, containingClassSymbol)) {
-            return nestedSchemas[containingClassSymbol.name]?.get(classSymbol.name)?.map { Name.identifier(it.name) }?.toSet() ?: emptySet()
+            return nestedSchemas[containingClassSymbol.name]?.get(classSymbol.name)?.map { Name.identifier(it.name) }?.toSet() ?: []
         }
-        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return emptySet()
-        return topLevelSchemas[classSymbol.name]?.schema?.columns()?.map { Name.identifier(it.name) }?.toSet() ?: emptySet()
+        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return []
+        return topLevelSchemas[classSymbol.name]?.schema?.columns()?.map { Name.identifier(it.name) }?.toSet() ?: []
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
@@ -97,24 +97,24 @@ class ImportedSchemasGenerator(
         }?.find { it.name == callableId.callableName.identifier }
 
 
-        if (col == null) return emptyList()
+        if (col == null) return []
         val container = containingClassSymbol ?: owner
         val returnType = when (col) {
             is SimpleColumnGroup -> {
                 val tag = container.classId.createNestedClassId(Name.identifier(col.name))
-                Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(tag.createConeType(session)))
+                Names.DATA_ROW_CLASS_ID.createConeType(session, [tag.createConeType(session)])
             }
             is SimpleDataColumn -> col.type.coneType
             is SimpleFrameColumn -> {
                 val tag = container.classId.createNestedClassId(Name.identifier(col.name))
-                Names.DF_CLASS_ID.createConeType(session, arrayOf(tag.createConeType(session)))
+                Names.DF_CLASS_ID.createConeType(session, [tag.createConeType(session)])
             }
         }
 
         val property = createMemberProperty(context.owner, DataFramePlugin, Name.identifier(col.name), returnType) {
             modality = Modality.ABSTRACT
         }
-        return listOf(property.symbol)
+        return [property.symbol]
     }
 
     fun generateTopLevelExtensions(callableId: CallableId): List<FirPropertySymbol> {
@@ -132,7 +132,7 @@ class ImportedSchemasGenerator(
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return emptySet()
+        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return []
         return nestedSchemas[classSymbol.name]?.keys.orEmpty()
     }
 
@@ -153,11 +153,11 @@ class ImportedSchemasGenerator(
         val marker = ClassId(classSymbol.packageFqName(), classSymbol.name).createNestedClassId(nested)
         val returnType = when (column) {
             is SimpleColumnGroup -> {
-                Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(marker.createConeType(session)))
+                Names.DATA_ROW_CLASS_ID.createConeType(session, [marker.createConeType(session)])
             }
             is SimpleDataColumn -> column.type.coneType
             is SimpleFrameColumn -> {
-                Names.DF_CLASS_ID.createConeType(session, arrayOf(marker.createConeType(session)))
+                Names.DF_CLASS_ID.createConeType(session, [marker.createConeType(session)])
             }
         }
         return returnType

@@ -55,18 +55,18 @@ fun FirTypeRef.resolvedTypeFromPrototype(
  */
 fun List<FirAnnotation>.computeTypeAttributes(
     session: FirSession,
-    predefined: List<ConeAttribute<*>> = emptyList(),
+    predefined: List<ConeAttribute<*>> = [],
     allowExtensionFunctionType: Boolean = true,
     shouldExpandTypeAliases: Boolean
 ): ConeAttributes {
     if (this.isEmpty()) {
-        if (predefined.isEmpty()) return ConeAttributes.Empty
+        if (predefined.isEmpty()) return []
         return ConeAttributes.create(predefined)
     }
-    val attributes = mutableListOf<ConeAttribute<*>>()
+    val attributes: MutableList<ConeAttribute<*>> = []
     var parameterName: ParameterNameTypeAttribute? = null
     attributes += predefined
-    val customAnnotations = mutableListOf<FirAnnotation>()
+    val customAnnotations: MutableList<FirAnnotation> = []
     for (annotation in this) {
         val classId = when (shouldExpandTypeAliases) {
             true -> annotation.tryExpandClassId(session)
@@ -89,7 +89,7 @@ fun List<FirAnnotation>.computeTypeAttributes(
                 if (parameterName == null) {
                     // The name is only available at this stage when reading for metadata but can help cut down on memory use if known.
                     val knownName = annotation.getStringArgument(StandardNames.NAME)?.let { Name.identifier(it) }
-                    parameterName = ParameterNameTypeAttribute(name = knownName, listOf(annotation))
+                    parameterName = ParameterNameTypeAttribute(name = knownName, [annotation])
                 } else {
                     // Preserve all ParameterName annotations to check for repeated errors.
                     parameterName = ParameterNameTypeAttribute(parameterName.name, parameterName.annotations + annotation)

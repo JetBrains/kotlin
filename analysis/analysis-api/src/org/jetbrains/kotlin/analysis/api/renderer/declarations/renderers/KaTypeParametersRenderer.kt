@@ -139,7 +139,7 @@ public interface KaTypeParametersRenderer {
                         if (typeParam.upperBounds.size > 1) {
                             typeParam.upperBounds.map { bound -> typeParam to bound }
                         } else {
-                            emptyList()
+                            []
                         }
                     }.ifEmpty { return }
                 " ".separated(

@@ -42,7 +42,7 @@ class Substitutor(
     override fun visitEqual(equal: ESEqual): Computation? {
         val left = equal.left.accept(this) ?: return null
         val right = equal.right.accept(this) ?: return null
-        return CallComputation(ESBooleanType, equal.functor.invokeWithArguments(listOf(left, right), typeSubstitution, reducer))
+        return CallComputation(ESBooleanType, equal.functor.invokeWithArguments([left, right], typeSubstitution, reducer))
     }
 
     override fun visitAnd(and: ESAnd): Computation? {

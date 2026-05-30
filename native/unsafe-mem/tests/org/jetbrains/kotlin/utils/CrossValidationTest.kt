@@ -91,7 +91,7 @@ class CrossValidationTest {
 
     @Test
     fun testCopyFromByteArrayEquivalence() {
-        val src = byteArrayOf(0x11, 0x22, 0x33, 0x44, 0x55)
+        val src: ByteArray = [0x11, 0x22, 0x33, 0x44, 0x55]
         withSharedMemory(src.size.toLong()) { addr ->
             implA.copyFromByteArray(src, addr, src.size)
             val destB = ByteArray(src.size)
@@ -122,7 +122,7 @@ class CrossValidationTest {
 
     @Test
     fun testCopyFromCharArrayEquivalence() {
-        val src = charArrayOf('H', 'e', 'l', 'l', 'o')
+        val src: CharArray = ['H', 'e', 'l', 'l', 'o']
         val byteLen = src.size * Char.SIZE_BYTES
         withSharedMemory(byteLen.toLong()) { addr ->
             implA.copyFromCharArray(src, addr, src.size)

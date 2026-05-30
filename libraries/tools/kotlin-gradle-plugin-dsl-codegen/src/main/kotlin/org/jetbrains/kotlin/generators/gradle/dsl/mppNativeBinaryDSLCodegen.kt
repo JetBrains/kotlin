@@ -122,11 +122,11 @@ private fun generateTypedGetters(binaryType: BinaryType): String = with(binaryTy
 
 fun generateAbstractKotlinNativeBinaryContainer(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
 
-    val binaryTypes = listOf(
-        binaryType("an executable","Executable", "EXECUTABLE", "executable"),
-        binaryType("a static library","StaticLibrary", "STATIC", "staticLib"),
-        binaryType("a shared library","SharedLibrary", "DYNAMIC", "sharedLib"),
-        binaryType("an Objective-C framework","Framework", "FRAMEWORK", "framework"),
+    val binaryTypes = [
+        binaryType("an executable", "Executable", "EXECUTABLE", "executable"),
+        binaryType("a static library", "StaticLibrary", "STATIC", "staticLib"),
+        binaryType("a shared library", "SharedLibrary", "DYNAMIC", "sharedLib"),
+        binaryType("an Objective-C framework", "Framework", "FRAMEWORK", "framework"),
         binaryType(
             "a test executable",
             "TestExecutable",
@@ -134,7 +134,7 @@ fun generateAbstractKotlinNativeBinaryContainer(withPrinterToFile: (targetFile: 
             "test",
             defaultBaseName = "\"test\""
         )
-    )
+    ]
 
     val className = typeName("org.jetbrains.kotlin.gradle.dsl.AbstractKotlinNativeBinaryContainer")
     val superClassName = typeName("org.gradle.api.DomainObjectSet", nativeBinaryBaseClass.fqName)

@@ -77,7 +77,7 @@ internal class KaFirDataFlowProvider(
 
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
         get() = withPsiValidityAssertion {
-            val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(this) ?: return emptyList()
+            val firQualifiedExpression = getMatchingFirQualifiedAccessExpression(this) ?: return []
 
             listOfNotNull(
                 createImplicitReceiverSmartCast(firQualifiedExpression, KaImplicitReceiverSmartCastKind.DISPATCH),
@@ -454,10 +454,10 @@ internal class KaFirDataFlowProvider(
 
     private class FirElementPathSearcher(statements: Collection<FirElement>) : FirDefaultVisitorVoid() {
         private companion object {
-            val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
+            val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = [
                 KtFakeSourceElementKind.WhenCondition,
                 KtFakeSourceElementKind.SingleExpressionBlock
-            )
+            ]
         }
 
         private val statements = statements.toHashSet()
@@ -520,17 +520,17 @@ internal class KaFirDataFlowProvider(
         val hasMultipleJumpKinds: Boolean
             get() = (firReturnExpressions.size.sign + firBreakExpressions.size.sign + firContinueExpressions.size.sign) > 1
 
-        val variableReassignments = mutableListOf<VariableReassignment>()
+        val variableReassignments: MutableList<VariableReassignment> = []
 
-        val firReturnExpressions = mutableListOf<FirReturnExpression>()
-        val firBreakExpressions = mutableListOf<FirBreakExpression>()
-        val firContinueExpressions = mutableListOf<FirContinueExpression>()
+        val firReturnExpressions: MutableList<FirReturnExpression> = []
+        val firBreakExpressions: MutableList<FirBreakExpression> = []
+        val firContinueExpressions: MutableList<FirContinueExpression> = []
 
-        private val firReturnTargets = mutableSetOf<FirFunction>()
-        private val firLoopJumpTargets = mutableSetOf<FirLoop>()
+        private val firReturnTargets: MutableSet<FirFunction> = []
+        private val firLoopJumpTargets: MutableSet<FirLoop> = []
 
-        private val firFunctionDeclarations = mutableSetOf<FirFunction>()
-        private val firLoopStatements = mutableSetOf<FirLoop>()
+        private val firFunctionDeclarations: MutableSet<FirFunction> = []
+        private val firLoopStatements: MutableSet<FirLoop> = []
 
         override fun visitElement(element: FirElement) {
             element.acceptChildren(this)

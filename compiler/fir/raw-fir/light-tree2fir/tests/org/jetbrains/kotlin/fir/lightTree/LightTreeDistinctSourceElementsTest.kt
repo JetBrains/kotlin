@@ -51,7 +51,7 @@ class LightTreeDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
             }
             val firFile = converter.buildFirFile(code, sourceFile, linesMapping)
 
-            checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in '${file.toRelativeString(root)}'" }
+            checkDistinctSourceElements([firFile]) { _, _ -> "Duplicate source elements in '${file.toRelativeString(root)}'" }
         }
     }
 
@@ -81,7 +81,7 @@ class LightTreeDistinctSourceElementsTest : AbstractRawFirBuilderTestCase() {
                     fileText.toSourceLinesMapping(),
                 )
 
-                checkDistinctSourceElements(listOf(firFile)) { _, _ -> "Duplicate source elements in '$filePath'" }
+                checkDistinctSourceElements([firFile]) { _, _ -> "Duplicate source elements in '$filePath'" }
             }
         }
     }

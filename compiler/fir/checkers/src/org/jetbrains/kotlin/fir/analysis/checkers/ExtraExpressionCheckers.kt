@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
 object ExtraExpressionCheckers : ExpressionCheckers() {
-    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = [
         UselessCallOnNotNullChecker,
-    )
+    ]
 
-    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = setOf(
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = [
         RedundantSingleExpressionStringTemplateChecker,
-    )
+    ]
 }

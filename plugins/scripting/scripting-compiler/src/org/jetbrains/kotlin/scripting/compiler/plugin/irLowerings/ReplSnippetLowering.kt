@@ -35,7 +35,7 @@ val REPL_SNIPPET_RESULT_PROP_NAME = Name.identifier("\$\$result")
 
 internal class ReplSnippetsToClassesLowering(val context: IrPluginContext) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        val snippets = mutableListOf<IrReplSnippet>()
+        val snippets: MutableList<IrReplSnippet> = []
 
         for (irFile in irModule.files) {
             irFile.declarations.filterIsInstanceTo(snippets, IrReplSnippet::class.java)
@@ -215,7 +215,7 @@ private class ReplSnippetToClassTransformer(
     snippetClassReceiver,
     typeRemapper,
     accessCallsGenerator,
-    capturingClasses = emptySet(),
+    capturingClasses = [],
     needsReceiverProcessing = true
 ) {
     override fun visitMemberAccess(expression: IrMemberAccessExpression<*>, data: ScriptLikeToClassTransformerContext): IrExpression {

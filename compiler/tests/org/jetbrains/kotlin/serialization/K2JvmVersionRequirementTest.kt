@@ -51,7 +51,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         customLanguageVersion: LanguageVersion = LanguageVersionSettingsImpl.DEFAULT.languageVersion,
         analysisFlags: Map<AnalysisFlag<*>, Any?> = emptyMap(),
         fqNamesWithRequirements: List<String>,
-        fqNamesWithoutRequirement: List<String> = emptyList(),
+        fqNamesWithoutRequirement: List<String> = [],
         shouldBeSingleRequirement: Boolean = true,
         specificFeatures: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
     ) {
@@ -175,7 +175,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         doTest(
             VersionRequirement.Version(1, 7), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             customLanguageVersion = LanguageVersion.KOTLIN_1_7,
-            fqNamesWithRequirements = listOf(
+            fqNamesWithRequirements = [
                 "test.A.foo",
                 "test.A.w",
                 "test.B.<init>",
@@ -185,11 +185,11 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
                 "test.Outer.R1",
                 "test.Outer.R2",
                 "test.Alias",
-            ),
-            fqNamesWithoutRequirement = listOf(
+            ],
+            fqNamesWithoutRequirement = [
                 "test.Outer",
                 "test.Outer.W",
-            ),
+            ],
         )
     }
 
@@ -197,26 +197,26 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
             ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, 42,
-            fqNamesWithRequirements = listOf(
+            fqNamesWithRequirements = [
                 "test.Klass",
                 "test.Konstructor.<init>",
                 "test.Typealias",
                 "test.function",
                 "test.property"
-            )
+            ]
         )
     }
 
     fun testApiVersionViaAnnotation() {
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message", ProtoBuf.VersionRequirement.VersionKind.API_VERSION, 42,
-            fqNamesWithRequirements = listOf(
+            fqNamesWithRequirements = [
                 "test.Klass",
                 "test.Konstructor.<init>",
                 "test.Typealias",
                 "test.function",
                 "test.property"
-            )
+            ]
         )
     }
 
@@ -224,13 +224,13 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         doTest(
             VersionRequirement.Version(1, 1), DeprecationLevel.WARNING, "message",
             ProtoBuf.VersionRequirement.VersionKind.COMPILER_VERSION, 42,
-            fqNamesWithRequirements = listOf(
+            fqNamesWithRequirements = [
                 "test.Klass",
                 "test.Konstructor.<init>",
                 "test.Typealias",
                 "test.function",
                 "test.property"
-            )
+            ]
         )
     }
 
@@ -238,7 +238,7 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         doTest(
             VersionRequirement.Version(1, 1, 50), DeprecationLevel.HIDDEN, null,
             ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
-            fqNamesWithRequirements = listOf("test.Klass")
+            fqNamesWithRequirements = ["test.Klass"]
         )
     }
 
@@ -246,14 +246,14 @@ open class K2JvmVersionRequirementTest : TestCaseWithTmpdir(), FrontendBackendCo
         doTest(
             VersionRequirement.Version(1, 3), DeprecationLevel.ERROR, null, ProtoBuf.VersionRequirement.VersionKind.LANGUAGE_VERSION, null,
             customLanguageVersion = LanguageVersion.KOTLIN_1_3,
-            fqNamesWithRequirements = listOf(
+            fqNamesWithRequirements = [
                 "test.Outer.Inner.Deep",
                 "test.Outer.Inner.Deep.<init>",
                 "test.Outer.Inner.Deep.f",
                 "test.Outer.Inner.Deep.x",
                 "test.Outer.Nested.g",
                 "test.Outer.Companion"
-            )
+            ]
         )
     }
 }

@@ -19,12 +19,12 @@ internal fun compileAndIndex(
         IncludeInfo(it.absolutePath, integrationModuleName)
     }
 
-    val args = listOf(
+    val args = [
         "-I${files.directory}",
         "-I${getClangResourceDir()}",
         "-isysroot", sysRoot,
         "-F", frameworkPath
-    )
+    ]
 
     val nativeLibrary = NativeLibrary(
         includes = includeInfos,

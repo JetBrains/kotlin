@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.ir.validation.checkers.ensureTypeIs
 
 object IrGetObjectValueTypeChecker : IrElementChecker<IrGetObjectValue>(IrGetObjectValue::class) {
     override fun check(element: IrGetObjectValue, context: CheckerContext) {
-        element.ensureTypeIs(element.symbol.createType(false, emptyList()), context)
+        element.ensureTypeIs(element.symbol.createType(false, []), context)
     }
 }

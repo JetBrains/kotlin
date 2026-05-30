@@ -29,13 +29,13 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
 
         val numberOfTopLevelCallables = numberOfTopLevelProperties + numberOfTopLevelFunctions
 
-        val testData = listOf(
+        val testData = [
             20 to 20,
             40 to 40,
             64 to 5,
             64 to 50,
             64 to 128,
-        )
+        ]
 
         for ([classifiersPerFile, callablesPerFile] in testData) {
             val originalFragment = KmModuleFragment().apply {
@@ -53,7 +53,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
             val chunkedFragments = ChunkedKlibModuleFragmentWriteStrategy(
                 topLevelClassifierDeclarationsPerFile = classifiersPerFile,
                 topLevelCallableDeclarationsPerFile = callablesPerFile
-            ).processPackageParts(listOf(originalFragment))
+            ).processPackageParts([originalFragment])
 
             assertEquals(numberOfClasses, chunkedFragments.sumOf { it.classes.size })
             assertEquals(numberOfClasses, chunkedFragments.sumOf { it.className.size })
@@ -75,7 +75,7 @@ class ChunkedKlibModuleFragmentWriteStrategyTest {
                 val classNames = chunk.className
                 val topLevelClassNames = classNames.mapToSetOrEmpty { it.substringBefore('.') }
                 for (topLevelClassName in topLevelClassNames) {
-                    distributionOfTopLevelClassNamesOverChunks.computeIfAbsent(topLevelClassName) { mutableListOf() } += chunk
+                    distributionOfTopLevelClassNamesOverChunks.computeIfAbsent(topLevelClassName) { [] } += chunk
                 }
             }
 

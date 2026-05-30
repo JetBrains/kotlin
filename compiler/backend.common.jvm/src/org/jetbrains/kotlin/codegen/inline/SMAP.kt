@@ -38,7 +38,7 @@ class SMAP(val fileMappings: List<FileMapping>) {
         // The contract is: if `smap` is the return value of this method, then `SourceMapCopier(SourceMapper(name, smap), smap)`
         // will not change any line numbers in any of the methods passed as an argument.
         fun identityMapping(name: String?, path: String, methods: Collection<MethodNode>): SMAP {
-            if (name.isNullOrEmpty()) return SMAP(emptyList())
+            if (name.isNullOrEmpty()) return SMAP([])
             var start = 0
             var end = 0
             for (node in methods) {
@@ -48,8 +48,8 @@ class SMAP(val fileMappings: List<FileMapping>) {
                     end = max(end, insn.line + 1)
                 }
             }
-            if (start >= end) return SMAP(emptyList())
-            return SMAP(listOf(FileMapping(name, path).apply { mapNewInterval(start, start, end - start) }))
+            if (start >= end) return SMAP([])
+            return SMAP([FileMapping(name, path).apply { mapNewInterval(start, start, end - start) }])
         }
     }
 }

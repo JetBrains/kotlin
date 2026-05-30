@@ -28,7 +28,7 @@ class PendingDiagnosticsReporterImpl(private val delegate: DiagnosticReporter) :
             null -> delegate.report(diagnostic, context)
             else -> {
                 if (context.isDiagnosticSuppressed(diagnostic)) return
-                val pendingDiagnostics = pendingDiagnosticsBySourceFile.getOrPut(filePath) { mutableListOf() }
+                val pendingDiagnostics = pendingDiagnosticsBySourceFile.getOrPut(filePath) { [] }
                 pendingDiagnostics.add(diagnostic)
             }
         }

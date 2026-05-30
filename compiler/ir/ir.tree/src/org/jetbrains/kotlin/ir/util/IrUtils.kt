@@ -52,7 +52,7 @@ fun IrMemberAccessExpression<*>.getAllArgumentsWithIr(): List<Pair<IrValueParame
         is IrPropertyReference if getter != null -> this.getter!!.owner
         is IrPropertyReference if field != null -> {
             val field = field!!.owner
-            return if (field.isStatic) emptyList() else listOf(field.parentAsClass.thisReceiver!! to arguments.single())
+            return if (field.isStatic) [] else [field.parentAsClass.thisReceiver!! to arguments.single()]
         }
         is IrPropertyReference -> error("There should be getter or field to use `getArgumentsWithIr` on IrPropertyReference: ${this.dump()}}")
         else -> error(dump())
@@ -240,7 +240,7 @@ val IrRichCallableReference<*>.invokeFunction: IrSimpleFunction
 val IrBody.statements: List<IrStatement>
     get() = when (this) {
         is IrBlockBody -> statements
-        is IrExpressionBody -> listOf(expression)
+        is IrExpressionBody -> [expression]
         is IrSyntheticBody -> error("Synthetic body contains no statements: $this")
     }
 
@@ -249,7 +249,7 @@ val IrClass.defaultType: IrSimpleType
 
 fun IrClass.isSubclassOf(ancestor: IrClass): Boolean {
 
-    val alreadyVisited = mutableSetOf<IrClass>()
+    val alreadyVisited: MutableSet<IrClass> = []
 
     fun IrClass.hasAncestorInSuperTypes(): Boolean = when {
         this === ancestor -> true
@@ -437,8 +437,8 @@ inline fun <reified T : IrDeclaration> IrDeclarationContainer.findDeclaration(pr
     declarations.find { it is T && predicate(it) } as? T
 
 fun IrValueParameter.hasDefaultValue(): Boolean = DFS.ifAny(
-    listOf(this),
-    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.parameters[current.indexInParameters] } ?: listOf() },
+    [this],
+    { current -> (current.parent as? IrSimpleFunction)?.overriddenSymbols?.map { it.owner.parameters[current.indexInParameters] } ?: [] },
     { current -> current.defaultValue != null }
 )
 
@@ -559,7 +559,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
         else -> null
     }
 
-    val dispatchReceiverTypeArguments = receiverType?.arguments ?: emptyList()
+    val dispatchReceiverTypeArguments = receiverType?.arguments ?: []
 
     if (typeParameters.isEmpty() && dispatchReceiverTypeArguments.isEmpty()) {
         return emptyMap()
@@ -754,7 +754,7 @@ fun IrClass.addSimpleDelegatingConstructor(
 
         constructor.body = factory.createBlockBody(
             startOffset, endOffset,
-            listOf(
+            [
                 IrDelegatingConstructorCallImpl(
                     startOffset, endOffset, irBuiltIns.unitType,
                     superConstructor.symbol, 0
@@ -764,7 +764,7 @@ fun IrClass.addSimpleDelegatingConstructor(
                     }
                 },
                 IrInstanceInitializerCallImpl(startOffset, endOffset, this.symbol, irBuiltIns.unitType)
-            )
+            ]
         )
     }
 
@@ -1136,9 +1136,9 @@ fun IrFunction.isMethodOfAny(): Boolean =
 @UnsafeDuringIrConstructionAPI
 fun IrDeclarationContainer.simpleFunctions() = declarations.flatMap {
     when (it) {
-        is IrSimpleFunction -> listOf(it)
+        is IrSimpleFunction -> [it]
         is IrProperty -> listOfNotNull(it.getter, it.setter)
-        else -> emptyList()
+        else -> []
     }
 }
 
@@ -1166,7 +1166,7 @@ fun IrFunction.createDispatchReceiverParameter(origin: IrDeclarationOrigin? = nu
         parent = this@createDispatchReceiverParameter
     }
 
-    parameters = listOf(new) + parameters
+    parameters = [new] + parameters
 }
 
 fun IrFunction.createDispatchReceiverParameterWithClassParent(declarationOrigin: IrDeclarationOrigin? = null): IrValueParameter =
@@ -1211,7 +1211,7 @@ fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,
     overrideParentDeclarationsList: Map<IrClass, List<IrDeclaration>>,
 ) {
-    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, emptyList())
+    val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, [])
         .buildFakeOverridesForClassUsingOverriddenSymbols(
             clazz = this,
             overrideParentDeclarationsList = overrideParentDeclarationsList,
@@ -1232,7 +1232,7 @@ fun IrFunction.copyFunctionSignatureAsStaticFrom(
     source: IrFunction,
     returnType: IrType = source.returnType,
     dispatchReceiverType: IrType? = source.dispatchReceiverParameter?.type,
-    typeParametersFromContext: List<IrTypeParameter> = listOf(),
+    typeParametersFromContext: List<IrTypeParameter> = [],
 ) {
     assert(typeParameters.isEmpty())
     val newTypeParametersFromContext = copyAndRenameConflictingTypeParametersFrom(
@@ -1275,7 +1275,7 @@ fun IrFactory.createStaticFunctionWithReceivers(
     visibility: DescriptorVisibility = oldFunction.visibility,
     isFakeOverride: Boolean = oldFunction.isFakeOverride,
     copyMetadata: Boolean = true,
-    typeParametersFromContext: List<IrTypeParameter> = listOf(),
+    typeParametersFromContext: List<IrTypeParameter> = [],
     remapMultiFieldValueClassStructure: (IrFunction, IrFunction, Map<IrValueParameter, IrValueParameter>?) -> Unit
 ): IrSimpleFunction {
     return createSimpleFunction(
@@ -1356,7 +1356,7 @@ private fun IrFunction.copyAndRenameConflictingTypeParametersFrom(
     contextParameters: List<IrTypeParameter>,
     existingParameters: Collection<IrTypeParameter>
 ): List<IrTypeParameter> {
-    val newParameters = mutableListOf<IrTypeParameter>()
+    val newParameters: MutableList<IrTypeParameter> = []
 
     val existingNames =
         (contextParameters.map { it.name.asString() } + existingParameters.map { it.name.asString() }).toMutableSet()
@@ -1395,7 +1395,7 @@ val IrSymbol.isSuspend: Boolean
     get() = this is IrSimpleFunctionSymbol && owner.isSuspend
 
 fun <T : IrOverridableDeclaration<*>> T.allOverridden(includeSelf: Boolean = false): List<T> {
-    val result = mutableListOf<T>()
+    val result: MutableList<T> = []
     if (includeSelf) {
         result.add(this)
     }
@@ -1445,7 +1445,7 @@ fun IrFunction.hasShape(
     extensionReceiver: Boolean = false,
     contextParameters: Int = 0,
     regularParameters: Int = 0,
-    parameterTypes: List<IrType?> = emptyList(),
+    parameterTypes: List<IrType?> = [],
 ): Boolean {
     val actualShape = getShapeOfParameters()
     if (actualShape.hasDispatchReceiver != dispatchReceiver) return false

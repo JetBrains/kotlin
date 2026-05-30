@@ -39,7 +39,7 @@ internal class KaFe10UsualClassType(
                 nonInnerQualifiers.mapTo(this) {
                     KaBaseResolvedClassTypeQualifier(
                         it.toKaClassSymbol(analysisContext),
-                        emptyList(),
+                        [],
                     )
                 }
 

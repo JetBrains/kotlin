@@ -36,7 +36,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testFirstBuildNoRebuild() {
-        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
+        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
         val state = map.checkConfigurationState(hashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
         assertEquals(
@@ -48,7 +48,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testSameHashNoRebuild() {
-        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
+        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
         map.updateHash(hashedInputs)
         val state = map.checkConfigurationState(hashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.UpToDate>(state)
@@ -56,8 +56,8 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testDifferentHashTriggersRebuild() {
-        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
-        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(4, 5, 6)))
+        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
+        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [4, 5, 6]))
         map.updateHash(oldHashedInputs)
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
@@ -66,7 +66,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testChangedKeySetToEmpty() {
-        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
+        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
         val newHashedInputs = HashedConfigurationInputs(mapOf())
         map.updateHash(oldHashedInputs)
         val state = map.checkConfigurationState(newHashedInputs)
@@ -80,8 +80,8 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testChangedKeySet() {
-        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
-        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.UNSAFE_INCREMENTAL_CHANGE_KT_62686 to byteArrayOf(1, 2, 3)))
+        val oldHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
+        val newHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.UNSAFE_INCREMENTAL_CHANGE_KT_62686 to [1, 2, 3]))
         map.updateHash(oldHashedInputs)
         val state = map.checkConfigurationState(newHashedInputs)
         assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(state)
@@ -94,7 +94,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
 
     @Test
     fun testUpdateHashPersistsAcrossInstances() {
-        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(1, 2, 3)))
+        val hashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [1, 2, 3]))
         map.updateHash(hashedInputs)
         map.close()
 
@@ -103,7 +103,7 @@ class ConfigurationInputsMapTest : TestWithWorkingDir() {
         map2.use { map2 ->
             val loadedState = map2.checkConfigurationState(hashedInputs)
             assertIs<ConfigurationInputsMap.ConfigurationState.UpToDate>(loadedState)
-            val differentHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to byteArrayOf(99)))
+            val differentHashedInputs = HashedConfigurationInputs(mapOf(RebuildReason.COMPILER_ARGS_CHANGED to [99]))
             val changedState = map2.checkConfigurationState(differentHashedInputs)
             assertIs<ConfigurationInputsMap.ConfigurationState.RequiresRebuild>(changedState)
             assertEquals(

@@ -60,7 +60,7 @@ abstract class AbstractStubType(val originalTypeVariable: NewTypeVariableConstru
     override val memberScope: MemberScope = ErrorUtils.createErrorScope(ErrorScopeKind.STUB_TYPE_SCOPE, originalTypeVariable.toString())
 
     override val arguments: List<TypeProjection>
-        get() = emptyList()
+        get() = []
 
     override val attributes: TypeAttributes
         get() = TypeAttributes.Empty

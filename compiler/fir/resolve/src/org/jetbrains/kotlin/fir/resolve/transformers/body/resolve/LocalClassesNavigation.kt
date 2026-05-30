@@ -22,7 +22,7 @@ class LocalClassesNavigationInfo(
     }
 
     private fun pathForCallable(callableMemberDeclaration: FirCallableDeclaration): List<FirClassLikeDeclaration> {
-        val result = mutableListOf<FirClassLikeDeclaration>()
+        val result: MutableList<FirClassLikeDeclaration> = []
         var current = parentClassForFunction[callableMemberDeclaration]
 
         while (current != null) {
@@ -44,7 +44,7 @@ fun FirClassLikeDeclaration.collectLocalClassesNavigationInfo(): LocalClassesNav
 private class NavigationInfoVisitor : FirDefaultVisitor<Unit, Any?>() {
     val resultingMap: MutableMap<FirCallableDeclaration, FirClassLikeDeclaration> = mutableMapOf()
     val parentForClass: MutableMap<FirClassLikeDeclaration, FirClassLikeDeclaration?> = mutableMapOf()
-    private val currentPath: MutableList<FirClassLikeDeclaration> = mutableListOf()
+    private val currentPath: MutableList<FirClassLikeDeclaration> = []
 
     override fun visitElement(element: FirElement, data: Any?) {}
 

@@ -53,12 +53,12 @@ abstract class LLSourceLikeBaseTestConfigurator(
             }
         }
 
-    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = listOf(
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> = [
         AnalysisApiBaseTestServiceRegistrar,
         AnalysisApiIdeModeTestServiceRegistrar,
         FirStandaloneServiceRegistrar,
         AnalysisApiFirTestServiceRegistrar,
-    )
+    ]
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

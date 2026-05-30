@@ -61,9 +61,9 @@ abstract class AbstractLibraryAbiReaderTest(
         defaultDirectives {
             +WITH_STDLIB
             DUMP_KLIB_ABI with KlibAbiDumpMode.ALL_SIGNATURE_VERSIONS
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
         }
 
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
@@ -112,10 +112,10 @@ abstract class AbstractJsLibraryAbiReaderTest : AbstractLibraryAbiReaderTest(JsP
 open class AbstractJsLibraryAbiReaderWithInlinedFunInKlibTest : AbstractJsLibraryAbiReaderTest() {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
         }
         super.configure(builder)
     }

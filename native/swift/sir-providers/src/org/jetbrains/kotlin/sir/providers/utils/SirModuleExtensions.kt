@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 
 public fun SirModule.updateImport(newImport: SirImport) {
-    updateImports(listOf(newImport))
+    updateImports([newImport])
 }
 
 public fun SirModule.updateImports(newImports: List<SirImport>) {

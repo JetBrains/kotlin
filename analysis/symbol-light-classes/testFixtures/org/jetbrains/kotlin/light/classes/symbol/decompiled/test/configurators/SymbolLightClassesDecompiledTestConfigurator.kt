@@ -23,10 +23,10 @@ abstract class SymbolLightClassesDecompiledTestConfigurator(
 
 object SymbolLightClassesDecompiledJvmTestConfigurator : SymbolLightClassesDecompiledTestConfigurator(
     JvmPlatforms.defaultJvmPlatform,
-    listOf("lib"),
+    ["lib"],
 )
 
 object SymbolLightClassesDecompiledJsTestConfigurator : SymbolLightClassesDecompiledTestConfigurator(
     JsPlatforms.defaultJsPlatform,
-    listOf("kmp.lib"),
+    ["kmp.lib"],
 )

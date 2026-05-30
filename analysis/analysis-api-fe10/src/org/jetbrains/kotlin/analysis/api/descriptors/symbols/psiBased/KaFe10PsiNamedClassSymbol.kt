@@ -75,7 +75,7 @@ internal class KaFe10PsiNamedClassSymbol(
         }
 
     override val contextReceivers: List<KaContextReceiver>
-        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: emptyList() }
+        get() = withValidityAssertion { descriptor?.createContextReceivers(analysisContext) ?: [] }
 
 
     override val classKind: KaClassKind
@@ -99,7 +99,7 @@ internal class KaFe10PsiNamedClassSymbol(
 
     override val superTypes: List<KaType>
         get() = withValidityAssertion {
-            descriptor?.computeSymbolSupertypes()?.map { it.toKtType(analysisContext) } ?: emptyList()
+            descriptor?.computeSymbolSupertypes()?.map { it.toKtType(analysisContext) } ?: []
         }
 
     override val classId: ClassId?

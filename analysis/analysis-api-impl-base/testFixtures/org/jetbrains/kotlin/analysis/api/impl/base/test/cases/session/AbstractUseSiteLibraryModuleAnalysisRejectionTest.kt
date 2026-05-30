@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractUseSiteLibraryModuleAnalysisRejectionTest : AbstractAnalysisApiBasedTest() {
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(LibraryModuleAnalysisTestServiceRegistrar)
+        get() = super.additionalServiceRegistrars + LibraryModuleAnalysisTestServiceRegistrar
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

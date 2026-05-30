@@ -106,7 +106,7 @@ private fun buildCompanionBlockWithBody(parentStub: StubElement<out PsiElement>)
     )
 
     // Parser treats companion keyword as a modifier, so we need to create a modifier list stub for it
-    createModifierListStub(companionBlockStub, listOf(KtTokens.COMPANION_KEYWORD), ProtoBuf.ReturnValueStatus.UNSPECIFIED)
+    createModifierListStub(companionBlockStub, [KtTokens.COMPANION_KEYWORD], ProtoBuf.ReturnValueStatus.UNSPECIFIED)
 
     return KotlinPlaceHolderStubImpl<KtClassBody>(companionBlockStub, KtStubElementTypes.CLASS_BODY)
 }
@@ -192,7 +192,7 @@ abstract class CallableClsStubBuilder(
             callableStub,
             flags,
             flagsToTranslate,
-            additionalModifiers = emptyList(),
+            additionalModifiers = [],
             returnValueStatus = returnValueStatus,
         )
 
@@ -515,7 +515,7 @@ private class PropertyClsStubBuilder(
             typeStubBuilder.createValueParameterListStub(
                 setterStub,
                 propertyProto,
-                listOf(propertyProto.setterValueParameter),
+                [propertyProto.setterValueParameter],
                 protoContainer,
                 AnnotatedCallableKind.PROPERTY_SETTER,
             )
@@ -562,7 +562,7 @@ private class PropertyClsStubBuilder(
             accessorStub,
             accessorFlags,
             ACCESSOR_FLAGS,
-            additionalModifiers = emptyList(),
+            additionalModifiers = [],
             returnValueStatus = null,
         )
 
@@ -577,21 +577,21 @@ private class ConstructorClsStubBuilder(
     outerContext: ClsStubBuilderContext,
     protoContainer: ProtoContainer,
     private val constructorProto: ProtoBuf.Constructor
-) : CallableClsStubBuilder(parent, outerContext, protoContainer, emptyList()) {
+) : CallableClsStubBuilder(parent, outerContext, protoContainer, []) {
     override val receiverType: ProtoBuf.Type?
         get() = null
 
     override val receiverAnnotations: List<AnnotationWithTarget>
-        get() = emptyList()
+        get() = []
 
     override val returnType: ProtoBuf.Type?
         get() = null
 
     override val contextParameters: List<ProtoBuf.ValueParameter>
-        get() = emptyList()
+        get() = []
 
     override val contextReceiverTypes: List<ProtoBuf.Type>
-        get() = emptyList()
+        get() = []
 
     override val callableProto: MessageLite
         get() = constructorProto
@@ -604,7 +604,7 @@ private class ConstructorClsStubBuilder(
         val flags = constructorProto.flags
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
-            flagsToTranslate = listOf(VISIBILITY),
+            flagsToTranslate = [VISIBILITY],
             returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 

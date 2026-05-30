@@ -13,7 +13,7 @@ sealed class CallKind(
      * Stages that will be run after candidate is chosen.
      * Currently only used for collection literals.
      */
-    additionalStages: Array<ResolutionStage> = emptyArray(),
+    additionalStages: Array<ResolutionStage> = [],
 ) {
     val resolutionSequenceWithAdditionalStages: Array<out ResolutionStage> = arrayOf(*resolutionSequence, *additionalStages)
 
@@ -96,7 +96,7 @@ sealed class CallKind(
         CollectTypeVariableUsagesInfo,
         CheckCallModifiers,
         CheckLowPriorityInOverloadResolution,
-        additionalStages = arrayOf(
+        additionalStages = [
             CheckVisibility,
             CheckArguments,
             CheckDispatchReceiver,
@@ -108,7 +108,7 @@ sealed class CallKind(
             CheckLambdaAgainstTypeVariableContradiction,
             InferThrowableTypeParameterToUpperBound,
             CheckIncompatibleTypeVariableUpperBounds,
-        )
+        ]
     )
 
     object DelegatingConstructorCall : CallKind(

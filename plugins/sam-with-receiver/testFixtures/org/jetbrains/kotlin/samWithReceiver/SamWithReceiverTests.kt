@@ -44,7 +44,7 @@ fun TestConfigurationBuilder.configurePlugin() {
 
 class SamWithReceiverEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     companion object {
-        private val TEST_ANNOTATIONS = listOf("SamWithReceiver")
+        private val TEST_ANNOTATIONS = ["SamWithReceiver"]
     }
 
     override fun ExtensionStorage.registerCompilerExtensions(

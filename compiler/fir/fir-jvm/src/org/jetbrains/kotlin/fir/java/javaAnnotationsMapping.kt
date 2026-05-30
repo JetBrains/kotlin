@@ -114,9 +114,9 @@ inline fun buildVarargArgumentsExpressionWithTargets(
         init()
         val elementConeType = ConeClassLikeTypeImpl(
             StandardClassIds.AnnotationTarget.toLookupTag(),
-            emptyArray(),
+            [],
             isMarkedNullable = false,
-            ConeAttributes.Empty
+            [],
         )
         coneTypeOrNull = elementConeType.createOutArrayType()
         coneElementTypeOrNull = elementConeType
@@ -127,7 +127,7 @@ private fun FirAnnotation.targetArgumentExpressions(): List<FirExpression> =
     when (val mapped = argumentMapping.mapping[StandardClassIds.Annotations.ParameterNames.targetAllowedTargets]) {
         is FirVarargArgumentsExpression -> mapped.arguments
         is FirCollectionLiteral -> mapped.argumentList.arguments
-        else -> listOf(this)
+        else -> [this]
     }
 
 internal fun JavaAnnotationOwner.convertAnnotationsToFir(
@@ -135,7 +135,7 @@ internal fun JavaAnnotationOwner.convertAnnotationsToFir(
 ): List<FirAnnotation> = annotations.convertAnnotationsToFir(session, source, isDeprecatedInJavaDoc)
 
 internal object DeprecatedInJavaDocAnnotation : JavaAnnotation {
-    override val arguments: Collection<JavaAnnotationArgument> get() = emptyList()
+    override val arguments: Collection<JavaAnnotationArgument> get() = []
     override val classId: ClassId get() = JvmStandardClassIds.Annotations.Java.Deprecated
     override fun resolve(): JavaClass? = null
 }
@@ -144,7 +144,7 @@ internal fun FirAnnotationContainer.setAnnotationsFromJava(
     session: FirSession, source: KtSourceElement?,
     javaAnnotationOwner: JavaAnnotationOwner,
 ) {
-    val annotations = mutableListOf<FirAnnotation>()
+    val annotations: MutableList<FirAnnotation> = []
     javaAnnotationOwner.annotations.mapTo(annotations) { it.toFirAnnotation(session, source) }
     replaceAnnotations(annotations)
 }
@@ -202,7 +202,7 @@ internal fun JavaAnnotationArgument.toFirExpression(
         is JavaClassObjectAnnotationArgument -> buildGetClassCall {
             val resolvedClassTypeRef = getReferencedType().toFirResolvedTypeRef(session, javaTypeParameterStack, source)
             val resolvedTypeRef = buildResolvedTypeRef {
-                coneType = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)
+                coneType = StandardClassIds.KClass.constructClassLikeType([resolvedClassTypeRef.coneType], false)
             }
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
@@ -367,7 +367,7 @@ private fun buildFirAnnotation(
     }?.toLookupTag()
     val annotationTypeRef = if (lookupTag != null) {
         buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(lookupTag, emptyArray(), isMarkedNullable = false)
+            coneType = ConeClassLikeTypeImpl(lookupTag, [], isMarkedNullable = false)
             this.source = source
         }
     } else {
@@ -404,7 +404,7 @@ private fun buildFirAnnotation(
                     JvmStandardClassIds.Annotations.Java.Target -> {
                         when (val argument = javaAnnotation.arguments.firstOrNull()) {
                             is JavaArrayAnnotationArgument -> argument.getElements().mapJavaTargetArguments()
-                            is JavaEnumValueAnnotationArgument -> listOf(argument).mapJavaTargetArguments()
+                            is JavaEnumValueAnnotationArgument -> [argument].mapJavaTargetArguments()
                             else -> null
                         }?.let {
                             mapOf(StandardClassIds.Annotations.ParameterNames.targetAllowedTargets to it)

@@ -22,7 +22,7 @@ internal class KaFe10SymbolDeclarationOverridesProvider(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseSessionComponent<KaFe10Session>(), KaFe10SessionComponent {
     fun <T : KaSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
-        val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptySequence()
+        val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return []
 
         return getOverriddenDescriptors(descriptor, true)
             .mapNotNull { it.toKtCallableSymbol(analysisContext) }
@@ -31,7 +31,7 @@ internal class KaFe10SymbolDeclarationOverridesProvider(
     }
 
     fun <T : KaSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
-        val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return emptySequence()
+        val descriptor = getSymbolDescriptor(callableSymbol) as? CallableMemberDescriptor ?: return []
 
         return getOverriddenDescriptors(descriptor, false)
             .mapNotNull { it.toKtCallableSymbol(analysisContext) }

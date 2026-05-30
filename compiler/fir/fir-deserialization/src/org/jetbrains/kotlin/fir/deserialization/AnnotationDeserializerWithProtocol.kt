@@ -144,7 +144,7 @@ abstract class AnnotationDeserializerWithProtocol(
             is ProtoBuf.Function -> callableProto.loadAnnotationsFromProtocol(
                 session, protocol.functionExtensionReceiverAnnotation, nameResolver,
             )
-            else -> emptyList()
+            else -> []
         }
     }
 

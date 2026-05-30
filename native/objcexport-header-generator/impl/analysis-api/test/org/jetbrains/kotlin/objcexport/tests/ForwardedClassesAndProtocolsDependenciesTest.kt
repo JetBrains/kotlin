@@ -22,8 +22,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             code = """
             val i: Iterator<Int>
             """,
-            protocols = setOf("KotlinIterator"),
-            classes = emptySet()
+            protocols = ["KotlinIterator"],
+            classes = []
         )
     }
 
@@ -33,8 +33,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             code = """
             val i: Array<Int>
             """,
-            protocols = setOf("KotlinIterator"),
-            classes = setOf("KotlinArray")
+            protocols = ["KotlinIterator"],
+            classes = ["KotlinArray"]
         )
     }
 
@@ -44,8 +44,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             code = """
             val i: StringBuilder
             """,
-            protocols = setOf("KotlinCharSequence", "KotlinAppendable", "KotlinIterator"),
-            classes = setOf("KotlinStringBuilder", "KotlinCharArray", "KotlinCharIterator")
+            protocols = ["KotlinCharSequence", "KotlinAppendable", "KotlinIterator"],
+            classes = ["KotlinStringBuilder", "KotlinCharArray", "KotlinCharIterator"]
         )
     }
 
@@ -60,8 +60,8 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             fun getClass(): ClassB = error("error")
             fun getInterface(): InterfaceB = error("error")
             """,
-            protocols = setOf("InterfaceB", "InterfaceA"),
-            classes = setOf("ClassB", "ClassA")
+            protocols = ["InterfaceB", "InterfaceA"],
+            classes = ["ClassB", "ClassA"]
         )
     }
 
@@ -82,7 +82,7 @@ class ForwardedClassesAndProtocolsDependenciesTest(
             val kaSession = this
             withKtObjCExportSession(KtObjCExportConfiguration()) {
                 with(ObjCExportContext(analysisSession = kaSession, exportSession = this)) {
-                    translateToObjCHeader(listOf(KtObjCExportFile(file)))
+                    translateToObjCHeader([KtObjCExportFile(file)])
                 }
             }
         }

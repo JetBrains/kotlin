@@ -53,17 +53,17 @@ abstract class AbstractJvmIrBackendFacade(testServices: TestServices) : IrBacken
         fun sourceFileInfos(irFile: IrFile, allowNestedMultifileFacades: Boolean): List<SourceFileInfo> =
             when (val fileEntry = irFile.fileEntry) {
                 is PsiIrFileEntry -> {
-                    listOf(
+                    [
                         SourceFileInfo(
                             KtPsiSourceFile(fileEntry.psiFile),
                             JvmFileClassUtil.getFileClassInfoNoResolve(fileEntry.psiFile as KtFile)
                         )
-                    )
+                    ]
                 }
                 is NaiveSourceBasedFileEntryImpl -> {
                     val sourceFile = inputArtifact.sourceFiles.find { it.path == fileEntry.name }
-                    if (sourceFile == null) emptyList() // synthetic files, like CoroutineHelpers.kt, are ignored here
-                    else listOf(SourceFileInfo(sourceFile, getFileClassInfoFromIrFile(irFile, sourceFile.name)))
+                    if (sourceFile == null) [] // synthetic files, like CoroutineHelpers.kt, are ignored here
+                    else [SourceFileInfo(sourceFile, getFileClassInfoFromIrFile(irFile, sourceFile.name))]
                 }
                 is MultifileFacadeFileEntry -> {
                     if (!allowNestedMultifileFacades) error("nested multi-file facades are not allowed")

@@ -14,7 +14,7 @@ import generators.unicode.hexToInt
  * The base class of character ranges builders.
  */
 internal abstract class RangesBuilder {
-    private val ranges = mutableListOf<RangePattern>()
+    private val ranges: MutableList<RangePattern> = []
     private var lastAppendedCharCode = -1
 
     /**

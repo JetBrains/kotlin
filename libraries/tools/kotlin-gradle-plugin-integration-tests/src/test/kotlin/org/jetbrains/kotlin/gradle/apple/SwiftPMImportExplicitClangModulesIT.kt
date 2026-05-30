@@ -51,8 +51,8 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
                         discoverClangModulesImplicitly.set(false)
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf("ExposedTarget", "HiddenTarget"),
-                            importedClangModules = listOf("ExposedTarget"),
+                            products = ["ExposedTarget", "HiddenTarget"],
+                            importedClangModules = ["ExposedTarget"],
                         )
                     }
                 }
@@ -99,7 +99,7 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
                         discoverClangModulesImplicitly.set(false)
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf("ExposedTarget", "HiddenTarget"),
+                            products = ["ExposedTarget", "HiddenTarget"],
                         )
                     }
                 }
@@ -154,8 +154,8 @@ class SwiftPMImportExplicitClangModulesIT : KGPBaseTest() {
                         discoverClangModulesImplicitly.set(false)
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf("ExposedTarget"),
-                            importedClangModules = listOf("ExposedTarget", "NonProductTarget")
+                            products = ["ExposedTarget"],
+                            importedClangModules = ["ExposedTarget", "NonProductTarget"]
                         )
                     }
                 }

@@ -59,15 +59,15 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
             isInner = false,
             isRecord = false,
             annotations = Annotations.EMPTY,
-            declaredTypeParameters = emptyList(),
-            sealedSubclasses = emptyList(),
-            supertypes = listOf(components.module.builtIns.anyType),
+            declaredTypeParameters = [],
+            sealedSubclasses = [],
+            supertypes = [components.module.builtIns.anyType],
             attributes = mapOf(BUILDER_DATA to BuilderData(builder, classDescriptor))
         )
         partsBuilder.addClass(builderDescriptor)
         val builderFunction = classDescriptor.createFunction(
             Name.identifier(builder.builderMethodName),
-            valueParameters = emptyList(),
+            valueParameters = [],
             returnType = builderDescriptor.defaultType,
             modality = Modality.FINAL,
             visibility = visibility,
@@ -78,7 +78,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         if (builder.requiresToBuilder) {
             val toBuilderFunction = classDescriptor.createFunction(
                 Name.identifier(TO_BUILDER),
-                valueParameters = emptyList(),
+                valueParameters = [],
                 returnType = builderDescriptor.defaultType,
                 modality = Modality.FINAL,
                 visibility = visibility
@@ -93,14 +93,14 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         builder: Builder,
         partsBuilder: SyntheticPartsBuilder
     ) {
-        val constructor = builderClass.createJavaConstructor(valueParameters = emptyList(), JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
+        val constructor = builderClass.createJavaConstructor(valueParameters = [], JavaDescriptorVisibilities.PACKAGE_VISIBILITY)
         partsBuilder.addConstructor(constructor)
 
         val visibility = builder.visibility.toDescriptorVisibility()
 
         val buildFunction = builderClass.createFunction(
             Name.identifier(builder.buildMethodName),
-            valueParameters = emptyList(),
+            valueParameters = [],
             returnType = constructingClass.defaultType,
             visibility = visibility
         )
@@ -126,7 +126,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         val setterName = fieldName.toMethodName(builder)
         val setFunction = builderClass.createFunction(
             name = setterName,
-            valueParameters = listOf(LombokValueParameter(fieldName, field.type)),
+            valueParameters = [LombokValueParameter(fieldName, field.type)],
             returnType = builderClass.defaultType,
             modality = Modality.FINAL,
             visibility = builder.visibility.toDescriptorVisibility()
@@ -150,9 +150,9 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
         when (typeName) {
             in LombokNames.SUPPORTED_COLLECTIONS -> {
                 val parameterType = field.parameterType(0) ?: return
-                valueParameters = listOf(
+                valueParameters = [
                     LombokValueParameter(nameInSingularForm, parameterType)
-                )
+                ]
 
                 val builtIns = field.module.builtIns
                 val baseType = when (typeName) {
@@ -161,20 +161,20 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
                 }
 
                 addMultipleParameterType = baseType.withProperNullability(singular.allowNull)
-                    .replace(newArguments = listOf(TypeProjectionImpl(parameterType)),)
+                    .replace(newArguments = [TypeProjectionImpl(parameterType)],)
             }
 
             in LombokNames.SUPPORTED_MAPS -> {
                 val keyType = field.parameterType(0) ?: return
                 val valueType = field.parameterType(1) ?: return
-                valueParameters = listOf(
+                valueParameters = [
                     LombokValueParameter(Name.identifier("key"), keyType),
                     LombokValueParameter(Name.identifier("value"), valueType),
-                )
+                ]
 
                 addMultipleParameterType = field.module.builtIns.map.defaultType
                     .withProperNullability(singular.allowNull)
-                    .replace(newArguments = listOf(TypeProjectionImpl(keyType), TypeProjectionImpl(valueType)))
+                    .replace(newArguments = [TypeProjectionImpl(keyType), TypeProjectionImpl(valueType)])
             }
 
             in LombokNames.SUPPORTED_TABLES -> {
@@ -184,20 +184,20 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
                 val tableDescriptor = field.module.resolveClassByFqName(LombokNames.TABLE, NoLookupLocation.FROM_SYNTHETIC_SCOPE) ?: return
 
-                valueParameters = listOf(
+                valueParameters = [
                     LombokValueParameter(Name.identifier("rowKey"), rowKeyType),
                     LombokValueParameter(Name.identifier("columnKey"), columnKeyType),
                     LombokValueParameter(Name.identifier("value"), valueType),
-                )
+                ]
 
                 addMultipleParameterType = tableDescriptor.defaultType
                     .withProperNullability(singular.allowNull)
                     .replace(
-                        newArguments = listOf(
+                        newArguments = [
                             TypeProjectionImpl(rowKeyType),
                             TypeProjectionImpl(columnKeyType),
                             TypeProjectionImpl(valueType),
-                        )
+                        ]
                     )
             }
 
@@ -218,7 +218,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
         val addMultipleFunction = builderClass.createFunction(
             name = field.name.toMethodName(builder),
-            valueParameters = listOf(LombokValueParameter(field.name, addMultipleParameterType)),
+            valueParameters = [LombokValueParameter(field.name, addMultipleParameterType)],
             returnType = builderType,
             modality = Modality.FINAL,
             visibility = visibility
@@ -227,7 +227,7 @@ class BuilderProcessor(private val config: LombokConfig) : Processor {
 
         val clearFunction = builderClass.createFunction(
             name = Name.identifier("clear${field.name.identifier.capitalize()}"),
-            valueParameters = listOf(),
+            valueParameters = [],
             returnType = builderType,
             modality = Modality.FINAL,
             visibility = visibility

@@ -62,7 +62,7 @@ data class ReturnArgumentsInfo(
     val returnArgumentsExist: Boolean
 ) {
     companion object {
-        val empty = ReturnArgumentsInfo(emptyList(), null, lastExpressionCoercedToUnit = false, returnArgumentsExist = false)
+        val empty = ReturnArgumentsInfo([], null, lastExpressionCoercedToUnit = false, returnArgumentsExist = false)
     }
 }
 

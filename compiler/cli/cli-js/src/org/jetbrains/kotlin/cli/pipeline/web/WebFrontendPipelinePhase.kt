@@ -46,7 +46,7 @@ import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 @OptIn(ExperimentalCompilerApi::class)
 object WebFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, WebFrontendPipelineArtifact>(
     name = "JsFrontendPipelinePhase",
-    postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): WebFrontendPipelineArtifact? {
         val configuration = input.configuration

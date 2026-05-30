@@ -34,7 +34,7 @@ internal class CodeFragmentContextDeclarationCache(
     private val selfSymbols: Set<FirBasedSymbol<*>>,
 ) {
     /** A list of scope caches we accumulated when compiling the code fragment context. */
-    private val collectedLocalScopes = mutableListOf<Fir2IrScopeCache>()
+    private val collectedLocalScopes: MutableList<Fir2IrScopeCache> = []
 
     /**
      * Registers declarations from the scope [cache] if the specified [symbol] is in the local scope of the [contextDeclaration].

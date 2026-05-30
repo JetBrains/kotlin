@@ -75,7 +75,7 @@ abstract class ClasspathSnapshotTestCommon {
         fun SourceFile.compile(tmpDir: TemporaryFolder): List<ClassFile> {
             return if (this is KotlinSourceFile) {
                 preCompiledClassFiles.forEach {
-                    compileKotlin(srcDir = baseDir, classesDir = it.classRoot, classpath = emptyList())
+                    compileKotlin(srcDir = baseDir, classesDir = it.classRoot, classpath = [])
                 }
                 preCompiledClassFiles
             } else {
@@ -86,7 +86,7 @@ abstract class ClasspathSnapshotTestCommon {
         }
 
         /** Compiles the source files in the given directory and returns all generated .class files. */
-        fun compileAll(srcDir: File, tmpDir: TemporaryFolder, classpath: List<File> = emptyList()): List<ClassFile> {
+        fun compileAll(srcDir: File, tmpDir: TemporaryFolder, classpath: List<File> = []): List<ClassFile> {
             val classesDir = srcDir.path.let {
                 File(it.substringBeforeLast("src") + "classes" + it.substringAfterLast("src"))
             }
@@ -108,7 +108,7 @@ abstract class ClasspathSnapshotTestCommon {
          */
         private const val GENERATE_KOTLIN_CLASS_FILES = false
 
-        private val alreadyCompiledKotlinSrcDirs = mutableSetOf<File>()
+        private val alreadyCompiledKotlinSrcDirs: MutableSet<File> = []
 
         private fun compileKotlin(srcDir: File, classesDir: File, classpath: List<File>): List<ClassFile> {
             if (GENERATE_KOTLIN_CLASS_FILES) {
@@ -137,12 +137,12 @@ abstract class ClasspathSnapshotTestCommon {
             val kotlincDir = ForTestCompileRuntime.distKotlincForTests()
             val kotlincBinary = if (isWindows) kotlincDir.resolve("bin/kotlinc.bat") else kotlincDir.resolve("bin/kotlinc")
             check(kotlincBinary.exists()) { "'${kotlincBinary.absolutePath}' not found. Run ./gradlew dist first." }
-            val commandAndArgs = listOf(
+            val commandAndArgs = [
                 kotlincBinary.path,
                 srcDir.path,
                 "-d", classesDir.path,
-                "-classpath", (listOf(srcDir) + classpath).joinToString(File.pathSeparator) { it.path }
-            )
+                "-classpath", ([srcDir] + classpath).joinToString(File.pathSeparator) { it.path }
+            ]
             runCommandInNewProcess(commandAndArgs)
 
             classesDir.resolve("META-INF").deleteRecursively()
@@ -162,8 +162,8 @@ abstract class ClasspathSnapshotTestCommon {
             }
 
             val classpathOption =
-                if (classpath.isNotEmpty()) listOf("-classpath", classpath.joinToString(File.pathSeparator)) else emptyList()
-            compileJavaFiles(javaFiles, listOf("-d", classesDir.path) + classpathOption).assertSuccessful()
+                if (classpath.isNotEmpty()) ["-classpath", classpath.joinToString(File.pathSeparator)] else []
+            compileJavaFiles(javaFiles, ["-d", classesDir.path] + classpathOption).assertSuccessful()
         }
 
         private fun getClassFilesInDir(classesDir: File): List<ClassFile> {
@@ -200,9 +200,9 @@ internal fun snapshotClasspath(
     tmpDir: TemporaryFolder,
     granularity: ClassSnapshotGranularity? = null
 ): ClasspathSnapshot {
-    val classpath = mutableListOf<File>()
+    val classpath: MutableList<File> = []
     val classpathEntrySourceDirs = if (classpathSourceDir.listFiles()!!.size == 1) {
-        listOf(classpathSourceDir)
+        [classpathSourceDir]
     } else {
         classpathSourceDir.listFiles()!!.sortedBy { it.name }
     }

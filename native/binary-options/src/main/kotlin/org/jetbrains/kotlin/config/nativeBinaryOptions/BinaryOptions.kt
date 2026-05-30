@@ -223,7 +223,7 @@ private class ListValueParser<T : Any>(
         val elementValueParser: BinaryOption.ValueParser<T>
 ) : BinaryOption.ValueParser<List<T>> {
     override fun parse(value: String): List<T>? {
-        if (value == "") return emptyList()
+        if (value == "") return []
 
         return value.split(";").map {
             elementValueParser.parse(it) ?: return null

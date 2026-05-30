@@ -86,8 +86,8 @@ abstract class FirSerializerExtensionBase(
         versionRequirementTable: MutableVersionRequirementTable?,
         childSerializer: FirElementSerializer
     ) {
-        val fieldPropertyAnnotations = mutableListOf<FirAnnotation>()
-        val delegatePropertyAnnotations = mutableListOf<FirAnnotation>()
+        val fieldPropertyAnnotations: MutableList<FirAnnotation> = []
+        val delegatePropertyAnnotations: MutableList<FirAnnotation> = []
 
         for (annotation in property.backingField?.allRequiredAnnotations(session, additionalMetadataProvider).orEmpty()) {
             val destination = when (annotation.useSiteTarget) {

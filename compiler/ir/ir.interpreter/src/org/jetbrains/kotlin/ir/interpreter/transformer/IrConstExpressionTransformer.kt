@@ -65,7 +65,7 @@ internal abstract class IrConstExpressionTransformer(
 
     override fun visitStringConcatenation(expression: IrStringConcatenation, data: Data): IrExpression {
         fun IrExpression.wrapInStringConcat(): IrExpression = IrStringConcatenationImpl(
-            this.startOffset, this.endOffset, expression.type, listOf(this@wrapInStringConcat)
+            this.startOffset, this.endOffset, expression.type, [this@wrapInStringConcat]
         )
 
         fun IrExpression.wrapInToStringConcatAndInterpret(): IrExpression =
@@ -77,8 +77,8 @@ internal abstract class IrConstExpressionTransformer(
         // but we must visit this argument in order to apply all possible optimizations.
         val transformed = super.visitStringConcatenation(expression, data) as? IrStringConcatenation ?: return expression
         // here `StringBuilder`'s list is used to optimize memory, everything works without it
-        val folded = mutableListOf<IrExpression>()
-        val buildersList = mutableListOf<StringBuilder>()
+        val folded: MutableList<IrExpression> = []
+        val buildersList: MutableList<StringBuilder> = []
         for (next in transformed.arguments) {
             val last = folded.lastOrNull()
             when {

@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFe10AnnotationList private constructor(
     private val fe10Annotations: Annotations,
     private val analysisContext: Fe10AnalysisContext,
-    private val ignoredAnnotations: Set<ClassId> = emptySet()
+    private val ignoredAnnotations: Set<ClassId> = []
 ) : AbstractList<KaAnnotation>(), KaAnnotationList {
     private val backingAnnotations: List<KaAnnotation> by lazy {
         buildList {
@@ -69,7 +69,7 @@ internal class KaFe10AnnotationList private constructor(
     }
 
     override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
-        if (classId in ignoredAnnotations) return@withValidityAssertion emptyList()
+        if (classId in ignoredAnnotations) return@withValidityAssertion []
 
         fe10Annotations.mapIndexedNotNull { index, annotation ->
             if (annotation.classIdForAnnotation != classId) {
@@ -84,7 +84,7 @@ internal class KaFe10AnnotationList private constructor(
         fun create(
             fe10Annotations: Annotations,
             analysisContext: Fe10AnalysisContext,
-            ignoredAnnotations: Set<ClassId> = emptySet(),
+            ignoredAnnotations: Set<ClassId> = [],
         ): KaAnnotationList {
             return if (!fe10Annotations.isEmpty()) {
                 KaFe10AnnotationList(fe10Annotations, analysisContext, ignoredAnnotations)

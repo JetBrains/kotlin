@@ -39,7 +39,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
             )
 
             val clashedFiles = possibleFinalArtifactToIrFile
-                .getOrPut(finalArtifactValuableParameters.asFinalArtifactParameters()) { mutableListOf() }
+                .getOrPut(finalArtifactValuableParameters.asFinalArtifactParameters()) { [] }
 
             clashedFiles.add(finalArtifactValuableParameters)
         }
@@ -47,9 +47,9 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
         for ([_, clashedFiles] in possibleFinalArtifactToIrFile) {
             if (clashedFiles.size == 1) continue
 
-            val clashedFilesByCaseSensitiveData = buildMap {
+            val clashedFilesByCaseSensitiveData = buildMap<_, MutableList<FinalArtifactValuableParameters>> {
                 for (clashedFile in clashedFiles) {
-                    getOrPut(clashedFile.computedFileName to clashedFile.packageFqn, { mutableListOf() })
+                    getOrPut(clashedFile.computedFileName to clashedFile.packageFqn) { [] }
                         .add(clashedFile)
                 }
             }

@@ -163,7 +163,7 @@ private class ReplRunChecker(testServices: TestServices) : JvmBinaryArtifactHand
 
     private var scriptProcessed = false
     private var currentReplClassloader: GeneratedClassLoader? = null
-    private val classLoadersToDispose: MutableList<GeneratedClassLoader> = mutableListOf()
+    private val classLoadersToDispose: MutableList<GeneratedClassLoader> = []
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
         checkArtifact(info)

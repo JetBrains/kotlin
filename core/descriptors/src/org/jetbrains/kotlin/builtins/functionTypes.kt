@@ -155,7 +155,7 @@ fun KotlinType.getContextReceiverTypesFromFunctionType(): List<KotlinType> {
     assert(isBuiltinFunctionalType) { "Not a function type: $this" }
     val contextReceiversCount = contextFunctionTypeParamsCount()
     return if (contextReceiversCount == 0) {
-        emptyList()
+        []
     } else {
         arguments.subList(0, contextReceiversCount).map { it.type }
     }

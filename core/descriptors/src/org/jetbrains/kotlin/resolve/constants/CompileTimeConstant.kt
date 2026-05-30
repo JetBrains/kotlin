@@ -196,7 +196,7 @@ class IntegerValueTypeConstant(
     }
 
     val unknownIntegerType = KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        TypeAttributes.Empty, typeConstructor, emptyList(), false,
+        TypeAttributes.Empty, typeConstructor, [], false,
         ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, typeConstructor.toString())
     )
 

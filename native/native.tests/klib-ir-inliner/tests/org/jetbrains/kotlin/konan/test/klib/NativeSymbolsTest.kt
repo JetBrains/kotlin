@@ -59,6 +59,6 @@ class NativeSymbolValidationHandler(testServices: TestServices) : IrSecondStageS
     }
 
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(BackendNativeSymbols(errorReportingContext, irBuiltIns, CompilerConfiguration.create()))
+        return [BackendNativeSymbols(errorReportingContext, irBuiltIns, CompilerConfiguration.create())]
     }
 }

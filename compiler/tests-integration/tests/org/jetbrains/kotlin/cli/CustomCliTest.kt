@@ -24,14 +24,14 @@ class CustomCliTest : TestCaseWithTmpdir() {
     fun testArgfileWithNonTrivialWhitespaces() {
         val text = "-include-runtime\r\n\t\t-language-version\n\t2.0\r\n-version"
         val argfile = File(tmpdir, "argfile").apply { writeText(text, Charsets.UTF_8) }
-        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), listOf("@" + argfile.absolutePath))
+        CompilerTestUtil.executeCompilerAssertSuccessful(K2JVMCompiler(), ["@" + argfile.absolutePath])
     }
 
     fun testMainClass() {
         val mainKt = tmpdir.resolve("main.kt").apply {
             writeText(EMPTY_MAIN_FUN)
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "MainKt")
+        compileAndCheckMainClass([mainKt], expectedMainClass = "MainKt")
     }
 
     fun testMultipleMainClasses() {
@@ -42,7 +42,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
             writeText(EMPTY_MAIN_FUN)
         }
 
-        compileAndCheckMainClass(listOf(main1Kt, main2Kt), expectedMainClass = null)
+        compileAndCheckMainClass([main1Kt, main2Kt], expectedMainClass = null)
     }
 
     fun testInvalidContextMainClasses() {
@@ -55,7 +55,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
             )
         }
 
-        compileAndCheckMainClass(listOf(main1Kt), expectedMainClass = null)
+        compileAndCheckMainClass([main1Kt], expectedMainClass = null)
     }
 
     fun testExtensionFunctionMainClass() {
@@ -66,7 +66,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
                 """
             )
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "MainKt")
+        compileAndCheckMainClass([mainKt], expectedMainClass = "MainKt")
     }
 
 
@@ -81,7 +81,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
                 """
             )
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "ObjectMain")
+        compileAndCheckMainClass([mainKt], expectedMainClass = "ObjectMain")
     }
 
     fun testCompanionObjectJvmStaticFunctionMainClass() {
@@ -97,7 +97,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
                 """
             )
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "Test")
+        compileAndCheckMainClass([mainKt], expectedMainClass = "Test")
     }
 
     fun testInterfaceCompanionObjectJvmStaticFunctionMainClass() {
@@ -113,7 +113,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
                 """
             )
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = "Test")
+        compileAndCheckMainClass([mainKt], expectedMainClass = "Test")
     }
 
     fun testMultipleMainsInOneFile() {
@@ -132,11 +132,11 @@ class CustomCliTest : TestCaseWithTmpdir() {
                 """
             )
         }
-        compileAndCheckMainClass(listOf(mainKt), expectedMainClass = null)
+        compileAndCheckMainClass([mainKt], expectedMainClass = null)
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        return listOf(K2JVMCompilerArguments::includeRuntime.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath) + sourceFiles.map { it.absolutePath }
+        return [K2JVMCompilerArguments::includeRuntime.cliArgument, K2JVMCompilerArguments::destination.cliArgument, jarFile.absolutePath] + sourceFiles.map { it.absolutePath }
     }
 
     private fun compileAndCheckMainClass(sourceFiles: List<File>, expectedMainClass: String?, messageRenderer: MessageRenderer? = null) {
@@ -153,7 +153,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
     private fun compileAndGetDiagnostics(sourceFiles: List<File>): List<Diagnostic> {
         val jarFile = tmpdir.resolve("output.jar")
         val args = makeCompilerArgs(sourceFiles, jarFile)
-        val diagnostics = mutableListOf<Diagnostic>()
+        val diagnostics: MutableList<Diagnostic> = []
         CompilerTestUtil.executeCompiler(K2JVMCompiler(), args, LoggingMessageRenderer(diagnostics))
         return diagnostics
     }
@@ -200,7 +200,7 @@ class CustomCliTest : TestCaseWithTmpdir() {
             )
         }
 
-        val diagnostics = compileAndGetDiagnostics(listOf(mainKt))
+        val diagnostics = compileAndGetDiagnostics([mainKt])
         require(diagnostics.size == 1) { "Expected 1 diagnostic, but found ${diagnostics.size}:\n${diagnostics.joinToString("\n")}" }
         val diagnostic = diagnostics.single()
         assertEquals(2, diagnostic.location?.line)

@@ -58,11 +58,11 @@ class DeprecationAnnotationInfoPerUseSiteStorageBuilder {
     private val storage = mutableMapOf<AnnotationUseSiteTarget?, MutableList<DeprecationInfoProvider>>()
 
     fun add(useSite: AnnotationUseSiteTarget?, info: DeprecationInfoProvider) {
-        storage.getOrPut(useSite) { mutableListOf() }.add(info)
+        storage.getOrPut(useSite) { [] }.add(info)
     }
 
     fun add(useSite: AnnotationUseSiteTarget?, infos: Iterable<DeprecationInfoProvider>) {
-        storage.getOrPut(useSite) { mutableListOf() }.addAll(infos)
+        storage.getOrPut(useSite) { [] }.addAll(infos)
     }
 
     fun add(other: DeprecationAnnotationInfoPerUseSiteStorage) {
@@ -84,11 +84,11 @@ inline fun buildDeprecationAnnotationInfoPerUseSiteStorage(builder: DeprecationA
 private fun FirBasedSymbol<*>.getUseSitesForCallSite(callSite: FirElement?): Array<AnnotationUseSiteTarget> {
     return when (this) {
         is FirPropertySymbol -> when (callSite) {
-            is FirVariableAssignment -> arrayOf(AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY)
-            is FirPropertyAccessExpression -> arrayOf(AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY)
-            else -> arrayOf(AnnotationUseSiteTarget.PROPERTY)
+            is FirVariableAssignment -> [AnnotationUseSiteTarget.PROPERTY_SETTER, AnnotationUseSiteTarget.PROPERTY]
+            is FirPropertyAccessExpression -> [AnnotationUseSiteTarget.PROPERTY_GETTER, AnnotationUseSiteTarget.PROPERTY]
+            else -> [AnnotationUseSiteTarget.PROPERTY]
         }
-        else -> arrayOf()
+        else -> []
     }
 }
 

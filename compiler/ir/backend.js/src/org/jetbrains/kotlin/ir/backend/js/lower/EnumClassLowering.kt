@@ -74,10 +74,10 @@ private fun IrEnumEntry.getType(irClass: IrClass) = (correspondingClass ?: irCla
  * Transforms `enum class` into regular `class`.
  */
 class EnumClassConstructorLowering(val context: JsCommonBackendContext) : DeclarationTransformer {
-    private val additionalParameters = listOf(
+    private val additionalParameters = [
         "name" to context.irBuiltIns.stringType,
         "ordinal" to context.irBuiltIns.intType
-    )
+    ]
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         (declaration.parent as? IrClass)?.let { irClass ->
@@ -85,7 +85,7 @@ class EnumClassConstructorLowering(val context: JsCommonBackendContext) : Declar
 
             if (declaration is IrConstructor) {
                 // Add `name` and `ordinal` parameters to enum class constructors
-                return listOf(transformEnumConstructor(declaration, irClass))
+                return [transformEnumConstructor(declaration, irClass)]
             }
 
             if (declaration is IrEnumEntry) {
@@ -301,7 +301,7 @@ class EnumEntryInstancesLowering(val context: JsCommonBackendContext) : Declarat
             val irClass = declaration.parentAsClass
             if (irClass.isInstantiableEnum) {
                 // Create instance variable for each enum entry initialized with `null`
-                return listOf(declaration, createEnumEntryInstanceVariable(irClass, declaration))
+                return [declaration, createEnumEntryInstanceVariable(irClass, declaration)]
             }
         }
         return null
@@ -428,7 +428,7 @@ class EnumEntryCreateGetInstancesFunsLowering(val context: JsCommonBackendContex
                 entryGetInstanceFun.parent = irClass.parent
                 (irClass.parent as IrDeclarationContainer).declarations += entryGetInstanceFun
 
-                return listOf(declaration) // TODO not null?
+                return [declaration] // TODO not null?
             }
         }
 

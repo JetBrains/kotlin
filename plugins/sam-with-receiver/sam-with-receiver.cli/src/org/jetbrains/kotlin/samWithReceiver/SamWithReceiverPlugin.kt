@@ -45,7 +45,7 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION)
+    override val pluginOptions = [ANNOTATION_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(SAM_WITH_RECEIVER_ANNOTATION, value)
@@ -56,7 +56,7 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
 
 class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val annotations = configuration.get(SAM_WITH_RECEIVER_ANNOTATION)?.toMutableList() ?: mutableListOf()
+        val annotations = configuration.get(SAM_WITH_RECEIVER_ANNOTATION)?.toMutableList() ?: []
         configuration.get(SAM_WITH_RECEIVER_PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }

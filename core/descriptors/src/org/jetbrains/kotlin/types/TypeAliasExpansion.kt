@@ -37,6 +37,6 @@ class TypeAliasExpansion private constructor(
         }
 
         fun createWithFormalArguments(typeAliasDescriptor: TypeAliasDescriptor) =
-            create(null, typeAliasDescriptor, emptyList())
+            create(null, typeAliasDescriptor, [])
     }
 }

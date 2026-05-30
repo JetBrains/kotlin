@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test
  */
 @TestMetadata("testData/conflicts")
 class FakeConflictingTestBAGenerated : FakeManagedTest() {
-    override val variantChain = listOf("b", "a")
+    override val variantChain = ["b", "a"]
 
     @Test
     @TestMetadata("ba.kt")

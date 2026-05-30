@@ -997,7 +997,7 @@ fun checkBinaryOp(
     }
     return null
 }
-private val knownOps = setOf(
+private val knownOps: Set<String> = [
     "kotlin/Boolean.not(BOOLEAN)",
     "kotlin/Boolean.toString(BOOLEAN)",
     "kotlin/Byte.dec(BYTE)",
@@ -1612,7 +1612,7 @@ private val knownOps = setOf(
     "kotlin/UShort.times(USHORT, UINT)",
     "kotlin/UShort.times(USHORT, ULONG)",
     "kotlin/UShort.xor(USHORT, USHORT)",
-)
+]
 fun canEvalOp(callableId: CallableId, typeA: CompileTimeType?, typeB: CompileTimeType?): Boolean {
     val types = when {
         typeA != null && typeB != null -> "$typeA, $typeB"

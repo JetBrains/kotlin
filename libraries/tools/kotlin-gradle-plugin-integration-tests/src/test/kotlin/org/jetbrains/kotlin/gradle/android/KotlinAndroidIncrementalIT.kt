@@ -42,13 +42,13 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             )
 
             build("assembleDebug", buildOptions = buildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                val affectedKotlinFiles = listOf(
+                val affectedKotlinFiles = [
                     "app/src/main/kotlin/com/example/KotlinActivity1.kt",
                     "app/src/main/kotlin/com/example/getSomething.kt",
-                )
-                val affectedJavaFiles = listOf(
+                ]
+                val affectedJavaFiles = [
                     "app/src/main/java/com/example/JavaActivity.java",
-                )
+                ]
                 assertCompiledKotlinSources(affectedKotlinFiles.toPaths(), output)
                 assertCompiledJavaSources(affectedJavaFiles.toPaths(), output)
             }
@@ -125,10 +125,10 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            val expectedTasks = listOf(
+            val expectedTasks = [
                 ":app:compileDebugKotlin",
                 ":app:compileDebugJavaWithJavac"
-            )
+            ]
 
             build("assembleDebug") {
                 assertTasksExecuted(expectedTasks)

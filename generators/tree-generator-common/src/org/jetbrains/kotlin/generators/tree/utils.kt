@@ -30,7 +30,7 @@ fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfDe
  * in a breadth first manner.
  */
 fun <Element : AbstractElement<Element, *, *>> Element.elementAncestorsAndSelfBreadthFirst(): Sequence<Element> =
-    listOf(this).bfs { element ->
+    [this].bfs { element ->
         element.elementParents.map { it.element }.iterator()
     }
 

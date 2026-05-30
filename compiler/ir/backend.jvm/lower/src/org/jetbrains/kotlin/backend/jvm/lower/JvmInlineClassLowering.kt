@@ -101,9 +101,9 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
     // If a property is annotated with @JvmStatic, we generate static accessors.
     // Thus, we should expose the accessors. The easiest way to do so is to copy @JvmStatic annotation.
     private fun IrSimpleFunction.copyPropagatedJvmStaticAnnotation(): List<IrAnnotation> {
-        if (!isPropertyAccessor) return emptyList()
-        if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
-        if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return emptyList()
+        if (!isPropertyAccessor) return []
+        if (hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return []
+        if (!propertyIfAccessor.hasAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME)) return []
         return propertyIfAccessor.annotations.filter { it.isAnnotation(JVM_STATIC_ANNOTATION_FQ_NAME) }.map { it.deepCopyWithSymbols() }
     }
 
@@ -233,7 +233,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             +irReturn(irGet(thisVar))
         }
 
-        return listOf(replacement)
+        return [replacement]
     }
 
     private fun IrMemberAccessExpression<*>.buildReplacement(original: IrMemberAccessExpression<*>) {
@@ -353,7 +353,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             isPrimary = false
         }.apply noArg@{
             copyFunctionSignatureFrom(original)
-            parameters = emptyList()
+            parameters = []
             // Only exposed declarations should be annotated with @JvmExposeBoxed in bytecode
             annotations = original.annotations.withJvmExposeBoxedAnnotation(original, context)
             body = context.createIrBuilder(this.symbol).irBlockBody(this) {
@@ -399,7 +399,7 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
             }
 
             return irCall(equalsMethod).apply {
-                arguments.assignFrom(listOf(left, right))
+                arguments.assignFrom([left, right])
             }
         }
 

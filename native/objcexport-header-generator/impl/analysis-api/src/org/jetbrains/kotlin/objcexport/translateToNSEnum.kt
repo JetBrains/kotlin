@@ -27,7 +27,7 @@ internal fun ObjCExportContext.translateNSEnum(
         null,
         null,
         ObjCRawType(nsEnumTypeName.objCName),
-        listOf("readonly")
+        ["readonly"]
     )
 }
 

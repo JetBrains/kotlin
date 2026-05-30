@@ -36,7 +36,7 @@ class FastJarHandler(val fileSystem: FastJarFileSystem, path: String) {
                     // copying the behavior of ArchiveHandler (and therefore ZipHandler)
                     // TODO: consider propagating to compiler error or warning, but take into account that both javac and K1 simply ignore invalid jars in such cases
                     Logger.getInstance(this::class.java).warn("Error while reading zip file: ${file.path}: $e", e)
-                    emptyList()
+                    []
                 }
                 cachedManifest =
                     entries.singleOrNull { StringUtil.equals(MANIFEST_PATH, it.relativePath) }

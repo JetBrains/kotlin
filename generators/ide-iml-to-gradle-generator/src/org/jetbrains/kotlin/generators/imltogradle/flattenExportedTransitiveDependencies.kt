@@ -72,13 +72,14 @@ private object JpsDependencyScopeCompileClasspathComparator : Comparator<JpsJava
     // Let's assume that module A depends on module B (A->B notation)
     // A[src] notation means "source root" of module A. A[test] notation means "test root" of module A.
     // Keeping this in mind let's consider different types of dependencies:
-    val ascending = listOf(
+    val ascending = [
         JpsJavaDependencyScope.RUNTIME,  // Doesn't establish any compile time dependencies
         JpsJavaDependencyScope.TEST,     // Compile time dependencies are: A[test]->B[src], A[test]->B[test] (so TEST > RUNTIME)
         JpsJavaDependencyScope.PROVIDED, // Compile time dependencies are like in TEST + A[src]->B[src] (so PROVIDED > TEST)
-        JpsJavaDependencyScope.COMPILE,  /* Compile time dependencies are like in PROVIDED
-                                            (so it actually doesn't matter in which order PROVIDED and COMPILE go) */
-    )
+        JpsJavaDependencyScope.COMPILE,
+        /* Compile time dependencies are like in PROVIDED
+                                                  (so it actually doesn't matter in which order PROVIDED and COMPILE go) */
+    ]
 
     override fun compare(first: JpsJavaDependencyScope?, second: JpsJavaDependencyScope?): Int {
         val firstIndex = ascending.indexOf(first).takeIf { it != -1 } ?: error("Unknown $first")

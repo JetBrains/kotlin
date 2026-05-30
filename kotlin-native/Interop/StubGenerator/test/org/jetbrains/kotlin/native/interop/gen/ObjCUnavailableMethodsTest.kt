@@ -58,11 +58,11 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
 
     @Test
     fun `unavailable superclass method is inherited by subclasses`() {
-        val base = TestObjCClass("Base", methods = listOf(objCMethod("foo")))
+        val base = TestObjCClass("Base", methods = [objCMethod("foo")])
         val middle = TestObjCClass(
                 "Middle",
                 baseClass = base,
-                unavailableMethods = listOf(unavailableObjCMethod("foo"))
+                unavailableMethods = [unavailableObjCMethod("foo")]
         )
         val derived = TestObjCClass("Derived", baseClass = middle)
 
@@ -75,13 +75,13 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
     fun `unavailability of init in intermediate superclass propagates to subclass`() {
         // NSObject defines init, Middle subclasses NSObject and marks init as unavailable, Derived subclasses Middle.
         // Derived re-imports init (because it is an initializer) and should inherit the unavailability from Middle.
-        val nsObject = TestObjCClass("NSObject", methods = listOf(objCMethod("init", isInit = true)))
+        val nsObject = TestObjCClass("NSObject", methods = [objCMethod("init", isInit = true)])
         val middle = TestObjCClass(
                 "Middle",
                 baseClass = nsObject,
-                unavailableMethods = listOf(unavailableObjCMethod("init"))
+                unavailableMethods = [unavailableObjCMethod("init")]
         )
-        val derived = TestObjCClass("Derived", baseClass = middle, methods = listOf(objCMethod("initWithX", isInit = true)))
+        val derived = TestObjCClass("Derived", baseClass = middle, methods = [objCMethod("initWithX", isInit = true)])
 
         val derivedStub = classStub(derived)
         assertEquals(setOf("init", "initWithX"), derivedStub.objCConstructorSelectors().toSet())
@@ -101,16 +101,16 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
     fun `subclass explicitly re-declaring init overrides inherited unavailability`() {
         // NSObject defines init, Middle marks it unavailable, Derived re-declares it explicitly as available.
         // Derived's explicit declaration must win over Middle's inherited unavailability.
-        val nsObject = TestObjCClass("NSObject", methods = listOf(objCMethod("init", isInit = true)))
+        val nsObject = TestObjCClass("NSObject", methods = [objCMethod("init", isInit = true)])
         val middle = TestObjCClass(
                 "Middle",
                 baseClass = nsObject,
-                unavailableMethods = listOf(unavailableObjCMethod("init"))
+                unavailableMethods = [unavailableObjCMethod("init")]
         )
         val derived = TestObjCClass(
                 "Derived",
                 baseClass = middle,
-                methods = listOf(objCMethod("init", isInit = true))
+                methods = [objCMethod("init", isInit = true)]
         )
 
         val derivedStub = classStub(derived)
@@ -123,13 +123,13 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
     fun `unavailable method in protocol propagates to class`() {
         // BaseProto requires foo, DerivedProto extends BaseProto and marks foo unavailable, Owner adopts DerivedProto.
         // Owner re-imports foo (because DerivedProto requires it through inheritance) and should mark it unavailable.
-        val baseProtocol = TestObjCProtocol("BaseProto", methods = listOf(objCMethod("foo")))
+        val baseProtocol = TestObjCProtocol("BaseProto", methods = [objCMethod("foo")])
         val derivedProtocol = TestObjCProtocol(
                 "DerivedProto",
-                protocols = listOf(baseProtocol),
-                unavailableMethods = listOf(unavailableObjCMethod("foo"))
+                protocols = [baseProtocol],
+                unavailableMethods = [unavailableObjCMethod("foo")]
         )
-        val owner = TestObjCClass("Owner", protocols = listOf(derivedProtocol))
+        val owner = TestObjCClass("Owner", protocols = [derivedProtocol])
 
         val foo = classStub(owner).methods.single { it.name == "foo" }
         assertDeprecatedUnavailable(foo)
@@ -141,16 +141,16 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
         // Per Clang's method-declaration lookup order (class own decls -> adopted protocols left-to-right -> baseClass,
         // first match wins), Derived's direct adoption of P reintroduces foo before the search reaches Base — so foo
         // must be considered available in Derived, not deprecated/unavailable.
-        val protocol = TestObjCProtocol("P", methods = listOf(objCMethod("foo")))
+        val protocol = TestObjCProtocol("P", methods = [objCMethod("foo")])
         val base = TestObjCClass(
                 "Base",
-                protocols = listOf(protocol),
-                unavailableMethods = listOf(unavailableObjCMethod("foo"))
+                protocols = [protocol],
+                unavailableMethods = [unavailableObjCMethod("foo")]
         )
         val derived = TestObjCClass(
                 "Derived",
                 baseClass = base,
-                protocols = listOf(protocol)
+                protocols = [protocol]
         )
 
         val foo = classStub(derived).methods.single { it.name == "foo" }
@@ -159,12 +159,12 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
 
     @Test
     fun `unavailable method declared in class deprecates required protocol method with the same selector`() {
-        val protocol = TestObjCProtocol("SomeDelegate", methods = listOf(objCMethod("layer")))
-        val availableOwner = TestObjCClass("AvailableLayerOwner", protocols = listOf(protocol))
+        val protocol = TestObjCProtocol("SomeDelegate", methods = [objCMethod("layer")])
+        val availableOwner = TestObjCClass("AvailableLayerOwner", protocols = [protocol])
         val unavailableOwner = TestObjCClass(
                 "UnavailableLayerOwner",
-                protocols = listOf(protocol),
-                unavailableMethods = listOf(unavailableObjCMethod("layer"))
+                protocols = [protocol],
+                unavailableMethods = [unavailableObjCMethod("layer")]
         )
 
         assertEquals(listOf("layer"), classStub(availableOwner).methods.map { it.name })
@@ -175,15 +175,15 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
 
     @Test
     fun `unavailable default init is imported as deprecated inherited constructor`() {
-        val nsObject = TestObjCClass("NSObject", methods = listOf(objCMethod("init", isInit = true)))
+        val nsObject = TestObjCClass("NSObject", methods = [objCMethod("init", isInit = true)])
         val regularSubclass = TestObjCClass("RegularSubclass", baseClass = nsObject)
         val unavailableInitSubclass = TestObjCClass(
                 "UnavailableInitSubclass",
                 baseClass = nsObject,
-                unavailableMethods = listOf(
-                        unavailableObjCMethod("init"),
-                        unavailableObjCMethod("new", isClass = true)
-                )
+                unavailableMethods = [
+                    unavailableObjCMethod("init"),
+                    unavailableObjCMethod("new", isClass = true)
+                ]
         )
 
         assertEquals(listOf("init"), classStub(regularSubclass).objCConstructorSelectors())
@@ -203,12 +203,12 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
         val instancetype = ObjCInstanceType(ObjCPointer.Nullability.Unspecified)
         val nsObject = TestObjCClass(
                 "NSObject",
-                methods = listOf(objCMethod("alloc", isClass = true, returnType = instancetype))
+                methods = [objCMethod("alloc", isClass = true, returnType = instancetype)]
         )
         val unavailableAllocSubclass = TestObjCClass(
                 "UnavailableAllocSubclass",
                 baseClass = nsObject,
-                unavailableMethods = listOf(unavailableObjCMethod("alloc", isClass = true))
+                unavailableMethods = [unavailableObjCMethod("alloc", isClass = true)]
         )
 
         val alloc = metaClassStub(unavailableAllocSubclass).methods.single()
@@ -273,7 +273,7 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
             ObjCMethod(
                     selector = selector,
                     encoding = "",
-                    parameters = emptyList<Parameter>(),
+                    parameters = [],
                     returnType = returnType,
                     isVariadic = false,
                     isClass = isClass,
@@ -292,11 +292,11 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
     private class TestObjCClass(
             name: String,
             override val baseClass: ObjCClass? = null,
-            override val protocols: List<ObjCProtocol> = emptyList(),
-            override val methods: List<ObjCMethod> = emptyList(),
-            override val unavailableMethods: List<ObjCUnavailableMethod> = emptyList(),
-            override val properties: List<ObjCProperty> = emptyList(),
-            override val includedCategories: List<ObjCCategory> = emptyList(),
+            override val protocols: List<ObjCProtocol> = [],
+            override val methods: List<ObjCMethod> = [],
+            override val unavailableMethods: List<ObjCUnavailableMethod> = [],
+            override val properties: List<ObjCProperty> = [],
+            override val includedCategories: List<ObjCCategory> = [],
             override val location: Location = testLocation,
             override val isForwardDeclaration: Boolean = false,
             override val binaryName: String? = name,
@@ -304,10 +304,10 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
 
     private class TestObjCProtocol(
             name: String,
-            override val protocols: List<ObjCProtocol> = emptyList(),
-            override val methods: List<ObjCMethod> = emptyList(),
-            override val unavailableMethods: List<ObjCUnavailableMethod> = emptyList(),
-            override val properties: List<ObjCProperty> = emptyList(),
+            override val protocols: List<ObjCProtocol> = [],
+            override val methods: List<ObjCMethod> = [],
+            override val unavailableMethods: List<ObjCUnavailableMethod> = [],
+            override val properties: List<ObjCProperty> = [],
             override val location: Location = testLocation,
             override val isForwardDeclaration: Boolean = false,
             override val binaryName: String? = name,
@@ -323,19 +323,19 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
     private class TestStubsBuildingContext : StubsBuildingContext {
         override val configuration: InteropConfiguration = InteropConfiguration(
                 library = CompilationImpl(
-                        includes = emptyList(),
-                        additionalPreambleLines = emptyList(),
-                        compilerArgs = emptyList(),
+                        includes = [],
+                        additionalPreambleLines = [],
+                        compilerArgs = [],
                         language = Language.OBJECTIVE_C
                 ),
                 pkgName = "test",
-                excludedFunctions = emptySet(),
-                excludedMacros = emptySet(),
-                strictEnums = emptySet(),
-                nonStrictEnums = emptySet(),
-                noStringConversion = emptySet(),
-                exportForwardDeclarations = emptyList(),
-                allowedOverloadsForCFunctions = emptySet(),
+                excludedFunctions = [],
+                excludedMacros = [],
+                strictEnums = [],
+                nonStrictEnums = [],
+                noStringConversion = [],
+                exportForwardDeclarations = [],
+                allowedOverloadsForCFunctions = [],
                 disableDesignatedInitializerChecks = false,
                 disableExperimentalAnnotation = true,
                 target = KonanTarget.MACOS_ARM64,

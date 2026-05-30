@@ -23,18 +23,18 @@ import org.jetbrains.kotlin.util.PrivateForInline
 class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
     @PublishedApi
     @PrivateForInline
-    internal val _parentStack: MutableList<IrDeclarationParent> = mutableListOf()
+    internal val _parentStack: MutableList<IrDeclarationParent> = []
 
     val parentStack: List<IrDeclarationParent>
         get() = _parentStack
 
     @PublishedApi
     @PrivateForInline
-    internal val scopeStack: MutableList<Scope> = mutableListOf()
+    internal val scopeStack: MutableList<Scope> = []
 
     @PublishedApi
     @PrivateForInline
-    internal val containingFirClassStack: MutableList<FirClass> = mutableListOf()
+    internal val containingFirClassStack: MutableList<FirClass> = []
 
     @PublishedApi
     @PrivateForInline
@@ -142,7 +142,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val functionStack: MutableList<IrFunction> = mutableListOf()
+    internal val functionStack: MutableList<IrFunction> = []
 
     inline fun <T : IrFunction, R> withFunction(function: T, f: T.() -> R): R {
         functionStack += function
@@ -155,7 +155,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val propertyStack: MutableList<Pair<IrProperty, FirProperty?>> = mutableListOf()
+    internal val propertyStack: MutableList<Pair<IrProperty, FirProperty?>> = []
 
     inline fun <R> withProperty(property: IrProperty, firProperty: FirProperty? = null, f: IrProperty.() -> R): R {
         propertyStack += (property to firProperty)
@@ -168,7 +168,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val classStack: MutableList<IrClass> = mutableListOf()
+    internal val classStack: MutableList<IrClass> = []
 
     inline fun <R> withClass(klass: IrClass, f: IrClass.() -> R): R {
         classStack += klass
@@ -181,11 +181,11 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val whenSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
+    internal val whenSubjectVariableStack: MutableList<IrVariable> = []
 
     @PublishedApi
     @PrivateForInline
-    internal val safeCallSubjectVariableStack: MutableList<IrVariable> = mutableListOf()
+    internal val safeCallSubjectVariableStack: MutableList<IrVariable> = []
 
     inline fun <T> withWhenSubject(subject: IrVariable?, f: () -> T): T {
         if (subject != null) whenSubjectVariableStack += subject
@@ -265,7 +265,7 @@ class Fir2IrConversionScope(val configuration: Fir2IrConfiguration) {
 
     @PublishedApi
     @PrivateForInline
-    internal val _initBlocksStack: MutableList<IrAnonymousInitializer> = mutableListOf()
+    internal val _initBlocksStack: MutableList<IrAnonymousInitializer> = []
     internal val initBlocksStack: List<IrAnonymousInitializer>
         get() = _initBlocksStack
 

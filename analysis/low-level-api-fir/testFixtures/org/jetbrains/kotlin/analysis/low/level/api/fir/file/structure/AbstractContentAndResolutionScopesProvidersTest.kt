@@ -146,9 +146,9 @@ abstract class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysi
 
         val moduleDataByKaModule = workingModules.associate { module ->
             val kaModule = module.kaModule
-            val inputBaseContentScope = inputData.moduleToInputBaseContentScope[kaModule] ?: listOf()
-            val inputShadowedScope = inputData.moduleToInputShadowedScope[kaModule] ?: listOf()
-            val inputEnlargementScope = inputData.moduleToInputEnlargementScope[kaModule] ?: listOf()
+            val inputBaseContentScope = inputData.moduleToInputBaseContentScope[kaModule] ?: []
+            val inputShadowedScope = inputData.moduleToInputShadowedScope[kaModule] ?: []
+            val inputEnlargementScope = inputData.moduleToInputEnlargementScope[kaModule] ?: []
             val expectedContentScope = computedContentScopesByKaModule[kaModule] ?: TreeSet()
             kaModule to ModuleData(
                 module.moduleName,
@@ -344,7 +344,7 @@ abstract class AbstractContentAndResolutionScopesProvidersTest : AbstractAnalysi
         val expectedContentScope: TreeSet<VirtualFile>,
         val inputEnlargementScope: List<VirtualFile>,
         val inputShadowedScope: List<VirtualFile>,
-        val dependencies: MutableList<ModuleData> = mutableListOf()
+        val dependencies: MutableList<ModuleData> = []
     )
 
     private data class KtTestFileWithVirtualFile(
@@ -406,20 +406,20 @@ private class DummyContentScopeRefiner(
     val shadowedScope: MutableMap<KaModule, List<VirtualFile>> = mutableMapOf(),
 ) : KotlinContentScopeRefiner {
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = enlargementScope[module] ?: return emptyList()
+        val files = enlargementScope[module] ?: return []
         val scope = GlobalSearchScope.filesScope(
             module.project,
             files
         )
-        return listOf(scope)
+        return [scope]
     }
 
     override fun getRestrictionScopes(module: KaModule): List<GlobalSearchScope> {
-        val files = shadowedScope[module] ?: return emptyList()
+        val files = shadowedScope[module] ?: return []
         val scope = GlobalSearchScope.filesScope(
             module.project,
             files
         )
-        return listOf(GlobalSearchScope.notScope(scope))
+        return [GlobalSearchScope.notScope(scope)]
     }
 }

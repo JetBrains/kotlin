@@ -35,7 +35,7 @@ internal class JvmAnnotationImplementationLowering(context: JvmBackendContext) :
 
 class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendContext, file: IrFile) :
     AnnotationImplementationTransformer(jvmContext, jvmContext.symbolTable, file) {
-    private val publicAnnotationImplementationClasses = mutableSetOf<IrClassSymbol>()
+    private val publicAnnotationImplementationClasses: MutableSet<IrClassSymbol> = []
 
     // FIXME: Copied from JvmSingleAbstractMethodLowering
     private val inInlineFunctionScope: Boolean
@@ -78,7 +78,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
             else -> jvmContext.symbols.arrayOfAnyNType
         }
         val requiredSymbol = jvmContext.symbols.arraysClass.owner.findDeclaration<IrFunction> {
-            it.name.asString() == "equals" && it.hasShape(regularParameters = 2, parameterTypes = listOf(targetType, targetType))
+            it.name.asString() == "equals" && it.hasShape(regularParameters = 2, parameterTypes = [targetType, targetType])
         }
         requireNotNull(requiredSymbol) { "Can't find Arrays.equals method for type ${targetType.render()}" }
         return requiredSymbol.symbol
@@ -233,12 +233,12 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         ) {
             val ctorBodyBuilder = irBuiltIns.createIrBuilder(generatedConstructor.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
             val ctorBody = irFactory.createBlockBody(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, [
                     IrDelegatingConstructorCallImpl(
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.unitType, irBuiltIns.anyClass.constructors.single(),
                         typeArgumentsCount = 0,
                     )
-                )
+                ]
             )
 
             generatedConstructor.body = ctorBody
@@ -298,7 +298,7 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                     field.correspondingPropertySymbol = this.symbol
                     backingField = field
                     parent = implClass
-                    overriddenSymbols = listOf(property.symbol)
+                    overriddenSymbols = [property.symbol]
                 }
 
                 prop.addGetter {
@@ -312,11 +312,11 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
                 }.apply {
                     correspondingPropertySymbol = prop.symbol
                     val dispatchReceiverParameter = implClass.thisReceiver!!.copyTo(this, kind = IrParameterKind.DispatchReceiver)
-                    parameters = listOf(dispatchReceiverParameter)
+                    parameters = [dispatchReceiverParameter]
                     body = irBuiltIns.createIrBuilder(symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).irBlockBody {
                         +irReturn(irGetField(irGet(dispatchReceiverParameter), field))
                     }
-                    overriddenSymbols = listOf(property.getter!!.symbol)
+                    overriddenSymbols = [property.getter!!.symbol]
                 }
             }
         }

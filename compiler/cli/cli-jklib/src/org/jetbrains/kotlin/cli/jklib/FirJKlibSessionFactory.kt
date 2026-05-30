@@ -45,7 +45,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
     ): List<FirSymbolProvider> {
         val kotlinClassFinder =
             context.projectEnvironment.getKotlinClassFinder(context.projectEnvironment.getSearchScopeForProjectLibraries())
-        return listOf(
+        return [
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
             OptionalAnnotationClassesProvider(
                 session,
@@ -56,7 +56,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             FirJvmBuiltinsSymbolProvider(session, FirFallbackBuiltinSymbolProvider(session, moduleData, scopeProvider)) {
                 kotlinClassFinder.findBuiltInsData(it)
             }
-        )
+        ]
     }
 
     // ==================================== Shared library session ====================================
@@ -107,7 +107,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             extensionRegistrars,
             createSeparateSharedProvidersInHmppCompilation = false,
             createProviders = { session, kotlinScopeProvider ->
-                listOf(
+                [
                     KlibBasedSymbolProvider(
                         session, moduleDataProvider, kotlinScopeProvider, resolvedLibraries,
                     ),
@@ -119,7 +119,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
                         kotlinClassFinder,
                         projectEnvironment.getFirJavaFacade(session, moduleDataProvider.allModuleData.last(), scope)
                     ),
-                )
+                ]
             }
         )
     }

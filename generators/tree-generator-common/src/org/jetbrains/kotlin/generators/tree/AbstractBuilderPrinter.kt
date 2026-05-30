@@ -286,7 +286,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
         printModifiers(builder, field, fieldIsUseless)
         print("val ", field.name, ": ", actualTypeOfField(field).render())
         if (builder is LeafBuilder<*, *, *>) {
-            print(" = mutableListOf()")
+            print(" = []")
         }
         println()
     }
@@ -322,7 +322,7 @@ abstract class AbstractBuilderPrinter<Element, Implementation, ElementField>(val
         val initParameter = lambdaParameterForBuilderFunction(builder, hasRequiredFields)
         printFunctionWithBlockBody(
             name = builderFunctionName(builder) + "Copy",
-            parameters = listOf(originalParameter, initParameter),
+            parameters = [originalParameter, initParameter],
             returnType = builder.implementation.element,
             typeParameters = builder.implementation.element.params,
             isInline = true,

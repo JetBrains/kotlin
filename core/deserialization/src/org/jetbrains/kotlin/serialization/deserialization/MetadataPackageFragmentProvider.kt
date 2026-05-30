@@ -59,7 +59,7 @@ class MetadataPackageFragmentProvider(
             ErrorReporter.DO_NOTHING,
             LookupTracker.DO_NOTHING,
             FlexibleTypeDeserializer.ThrowException,
-            emptyList(),
+            [],
             notFoundClasses,
             contractDeserializer,
             AdditionalClassPartsProvider.None, PlatformDependentDeclarationFilter.All,
@@ -111,7 +111,7 @@ class MetadataPackageFragment(
                     containerSource = null,
                     components = components,
                     debugName = "scope with top-level callables and type aliases (no classes) for package part $partName of $this",
-                    classNames = { emptyList() },
+                    classNames = { [] },
                 )
             )
         }
@@ -123,7 +123,7 @@ class MetadataPackageFragment(
             BuiltInsBinaryVersion.INSTANCE, // Exact version does not matter here
             containerSource = null, components = components,
             debugName = "scope for all classes of $this",
-            classNames = { emptyList() },
+            classNames = { [] },
         ) {
             override fun hasClass(name: Name): Boolean = hasTopLevelClass(name)
             override fun definitelyDoesNotContainName(name: Name) = false

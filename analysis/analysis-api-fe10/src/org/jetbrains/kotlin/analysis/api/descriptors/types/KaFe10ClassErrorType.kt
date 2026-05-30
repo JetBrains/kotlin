@@ -33,7 +33,7 @@ internal class KaFe10ClassErrorType(
     override val qualifiers: List<KaUnresolvedClassTypeQualifier>
         get() = withValidityAssertion {
             fe10Type.formatParams.first().split('.').map {
-                KaBaseUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), emptyList(), token)
+                KaBaseUnresolvedClassTypeQualifier(Name.guessByFirstCharacter(it), [], token)
             }
         }
 
@@ -46,7 +46,7 @@ internal class KaFe10ClassErrorType(
         get() = withValidityAssertion { fe10Type.debugMessage }
 
     override val candidateSymbols: Collection<KaClassLikeSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { [] }
 
     @Deprecated(
         "Use `isMarkedNullable`, `isNullable` or `hasFlexibleNullability` instead. See KDocs for the migration guide",

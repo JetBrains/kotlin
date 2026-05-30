@@ -141,7 +141,7 @@ sealed class NewAbstractResolvedCall<D : CallableDescriptor> : ResolvedCall<D> {
     protected fun substitutedResultingDescriptor(substitutor: NewTypeSubstitutor?) =
         when (val candidateDescriptor = candidateDescriptor) {
             is ClassConstructorDescriptor, is SyntheticMemberDescriptor<*> -> {
-                val explicitTypeArguments = resolvedCallAtom?.atom?.typeArguments?.filterIsInstance<SimpleTypeArgument>() ?: emptyList()
+                val explicitTypeArguments = resolvedCallAtom?.atom?.typeArguments?.filterIsInstance<SimpleTypeArgument>() ?: []
 
                 candidateDescriptor.substituteInferredVariablesAndApproximate(
                     getSubstitutorWithoutFlexibleTypes(substitutor, explicitTypeArguments),

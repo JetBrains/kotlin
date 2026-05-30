@@ -43,16 +43,16 @@ class ImportedSchemasCompanionGenerator(
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        val containingClassSymbol = classSymbol.getContainingClassSymbol() ?: return emptySet()
+        val containingClassSymbol = classSymbol.getContainingClassSymbol() ?: return []
         return if (classSymbol.isCompanion && session.predicateBasedProvider.matches(predicate, containingClassSymbol)) {
-            setOf(Names.READ, Names.DEFAULT, Names.SCHEMA_KTYPE, SpecialNames.INIT)
+            [Names.READ, Names.DEFAULT, Names.SCHEMA_KTYPE, SpecialNames.INIT]
         } else {
-            emptySet()
+            []
         }
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
-        val metadata = context.metadata() ?: return emptyList()
+        val metadata = context.metadata() ?: return []
         if (callableId.callableName == Names.SCHEMA_KTYPE) {
             val kType = StandardClassIds.KType.constructClassLikeType()
             val property = createMemberProperty(context.owner, ImportedSchemaCompanionKey(metadata), Names.SCHEMA_KTYPE, kType) {
@@ -60,9 +60,9 @@ class ImportedSchemasCompanionGenerator(
                     isOverride = true
                 }
             }
-            return listOf(property.symbol)
+            return [property.symbol]
         }
-        return emptyList()
+        return []
     }
 
     @OptIn(ExperimentalContracts::class)
@@ -74,21 +74,21 @@ class ImportedSchemasCompanionGenerator(
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val metadata = context.metadata() ?: return emptyList()
+        val metadata = context.metadata() ?: return []
         if (callableId.callableName == Names.READ) {
             val type = context.owner.getContainingClassSymbol()?.defaultType()
             val function = createMemberFunction(
                 context.owner,
                 ImportedSchemaCompanionKey(metadata),
                 Names.READ,
-                Names.DF_CLASS_ID.createConeType(session, arrayOf(type!!))
+                Names.DF_CLASS_ID.createConeType(session, [type!!])
             ) {
                 status {
                     isOverride = true
                 }
                 valueParameter(Name.identifier("path"), session.builtinTypes.stringType.coneType)
             }
-            return listOf(function.symbol)
+            return [function.symbol]
         }
 
         if (callableId.callableName == Names.DEFAULT) {
@@ -97,26 +97,26 @@ class ImportedSchemasCompanionGenerator(
                 context.owner,
                 ImportedSchemaCompanionKey(metadata),
                 Names.DEFAULT,
-                Names.DF_CLASS_ID.createConeType(session, arrayOf(type!!))
+                Names.DF_CLASS_ID.createConeType(session, [type!!])
             ) {
                 status {
                     isOverride = true
                 }
             }
-            return listOf(function.symbol)
+            return [function.symbol]
         }
-        return emptyList()
+        return []
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val metadata = context.metadata() ?: return emptyList()
+        val metadata = context.metadata() ?: return []
         val constructor = createConstructor(context.owner, ImportedSchemaCompanionKey(metadata), isPrimary = true)
-        return listOf(constructor.symbol)
+        return [constructor.symbol]
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return emptySet()
-        return setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)
+        if (!session.predicateBasedProvider.matches(predicate, classSymbol)) return []
+        return [SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT]
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -132,7 +132,7 @@ class ImportedSchemasCompanionGenerator(
         if (name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) {
             return createCompanionObject(owner, ImportedSchemaCompanionKey(metadata)) {
                 val type = Names.DATAFRAME_PROVIDER
-                    .constructClassLikeType(arrayOf(owner.defaultType()))
+                    .constructClassLikeType([owner.defaultType()])
                 superType(type)
             }.symbol
         }

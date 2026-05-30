@@ -63,7 +63,7 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
     why a consumer might not be able to provide the same compile classpath as the producer
     (e.g. commonized cinterops, host vs client environment differences).
     */
-    val linkDependencies = if (this.config.metadataKlib) emptyList()
+    val linkDependencies = if (this.config.metadataKlib) []
     else input.serializerOutput.neededLibraries
 
     config.writeDependenciesOfProducedKlibTo?.let { path ->
@@ -92,8 +92,8 @@ fun NativePhaseContext.writeKlib(input: KlibWriterInput) {
                 manifestProperties -= KLIB_PROPERTY_NATIVE_TARGETS
             }
 
-            emptyList()
-        } else listOf(target.visibleName)
+            []
+        } else [target.visibleName]
 
     KlibWriter {
         format(if (dontCompressKlib) KlibFormat.Directory else KlibFormat.ZipArchive)

@@ -54,7 +54,7 @@ internal class FE10LikeConeSubstitutor(
 
     private fun ConeKotlinType.withProjection(projection: ConeTypeProjection): ConeKotlinType {
         if (projection.kind == ProjectionKind.INVARIANT) return this
-        return withAttributes(ConeAttributes.create(listOf(OriginalProjectionTypeAttribute(projection))))
+        return withAttributes(ConeAttributes.create([OriginalProjectionTypeAttribute(projection)]))
     }
 
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {

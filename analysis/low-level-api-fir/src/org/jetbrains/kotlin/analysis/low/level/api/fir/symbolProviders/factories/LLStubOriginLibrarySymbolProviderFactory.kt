@@ -56,9 +56,9 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
         session: LLFirSession,
         packagePartProvider: PackagePartProvider,
         scope: GlobalSearchScope,
-    ): List<FirSymbolProvider> = listOf(
+    ): List<FirSymbolProvider> = [
         LLKotlinStubBasedLibrarySymbolProvider(session, NullDeserializedContainerSourceProvider, scope),
-    )
+    ]
 
     override fun createNativeLibrarySymbolProvider(
         session: LLFirSession,
@@ -71,19 +71,19 @@ internal object LLStubOriginLibrarySymbolProviderFactory : LLLibrarySymbolProvid
     override fun createJsLibrarySymbolProvider(
         session: LLFirSession,
         scope: GlobalSearchScope,
-    ): List<FirSymbolProvider> = listOf(
+    ): List<FirSymbolProvider> = [
         createStubBasedLibrarySymbolProviderForKlib(session, scope),
-    )
+    ]
 
     override fun createWasmLibrarySymbolProvider(
         session: LLFirSession,
         scope: GlobalSearchScope,
-    ): List<FirSymbolProvider> = listOf(
+    ): List<FirSymbolProvider> = [
         createStubBasedLibrarySymbolProviderForKlib(session, scope),
-    )
+    ]
 
     override fun createBuiltinsSymbolProvider(session: LLFirSession): List<FirSymbolProvider> {
-        return listOf(StubBasedBuiltInsSymbolProvider(session))
+        return [StubBasedBuiltInsSymbolProvider(session)]
     }
 }
 
@@ -109,10 +109,10 @@ private class StubBasedBuiltInsSymbolProvider(session: LLFirSession) : LLKotlinS
 
     override val symbolNamesProvider: FirSymbolNamesProvider = FirCompositeCachedSymbolNamesProvider(
         session,
-        listOf(
+        [
             LLFirKotlinSymbolNamesProvider(declarationProvider, allowKotlinPackage),
             syntheticFunctionInterfaceProvider.symbolNamesProvider,
-        ),
+        ],
     )
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {

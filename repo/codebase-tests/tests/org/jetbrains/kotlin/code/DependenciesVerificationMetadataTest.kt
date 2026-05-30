@@ -21,7 +21,7 @@ class DependenciesVerificationMetadataTest {
     @JacksonXmlRootElement(localName = "verification-metadata")
     private data class VerificationMetadata(
         @field:JacksonXmlElementWrapper(localName = "components")
-        val components: List<Component> = listOf(),
+        val components: List<Component> = [],
     )
 
     private data class Component(
@@ -51,7 +51,7 @@ class DependenciesVerificationMetadataTest {
                 registerKotlinModule()
             }
         val verificationMetadata = mapper.readValue<VerificationMetadata>(File("gradle/verification-metadata.xml"))
-        val fails = mutableListOf<String>()
+        val fails: MutableList<String> = []
 
         verificationMetadata.components.forEach { component ->
             component.artifact.forEach { artifact ->

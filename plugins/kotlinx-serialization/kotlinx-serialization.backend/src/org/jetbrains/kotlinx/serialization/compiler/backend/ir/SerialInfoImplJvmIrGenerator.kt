@@ -40,7 +40,7 @@ class SerialInfoImplJvmIrGenerator(
         }.apply {
             parent = createClass(createPackage("kotlin.jvm"), "JvmClassMappingKt", ClassKind.CLASS).owner
             addGetter().apply {
-                annotations = listOf(
+                annotations = [
                     IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
                         arguments[0] = IrConstImpl.string(
                             UNDEFINED_OFFSET,
@@ -49,7 +49,7 @@ class SerialInfoImplJvmIrGenerator(
                             "getJavaClass"
                         )
                     }
-                )
+                ]
                 parameters += createExtensionReceiver(context.irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
@@ -76,7 +76,7 @@ class SerialInfoImplJvmIrGenerator(
         }.apply {
             parent = annotationClass
             createThisReceiverParameter()
-            superTypes = listOf(annotationClass.defaultType)
+            superTypes = [annotationClass.defaultType]
         }
         annotationClass.declarations.add(subclass)
 

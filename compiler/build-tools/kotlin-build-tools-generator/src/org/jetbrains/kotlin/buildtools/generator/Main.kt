@@ -68,7 +68,7 @@ fun main(args: Array<String>) {
 }
 
 private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kotlinVersion: KotlinReleaseVersion): List<Path> {
-    val generatedFiles = mutableListOf<Path>()
+    val generatedFiles: MutableList<Path> = []
 
     arguments.map { localArgs ->
         val allowedLevels = if (localArgs[1] == "*") {
@@ -107,8 +107,8 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
             }
         }
     }.forEach { [generator, allowedLevels] ->
-        val levelsToProcess = mutableListOf(LevelWithParent(kotlinCompilerArguments.topLevel, null))
-        val levelsToSkip = mutableSetOf<String>()
+        val levelsToProcess: MutableList<LevelWithParent> = [LevelWithParent(kotlinCompilerArguments.topLevel, null)]
+        val levelsToSkip: MutableSet<String> = []
 
         if (generator is BtaApiOptionsGenerator) {
             levelsToProcess.addAll(syntheticArgumentInterfaces.filter { allowedLevels == null || it.level.name in allowedLevels }
@@ -139,7 +139,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
                 if (level.name == CompilerArgumentsLevelNames.legacyWasmArguments) {
                     level.nestedLevels
                 } else {
-                    listOf(level)
+                    [level]
                 }.map {
                     LevelWithParent(it, output.argumentTypeName)
                 }
@@ -153,7 +153,7 @@ private fun generateBtaOptions(arguments: List<Array<String>>, genDir: Path, kot
 private fun generateBtaVersion(localArgs: Array<String>, genDir: Path, kotlinVersion: KotlinReleaseVersion): List<Path> {
     require(localArgs[0] == "api")
 
-    val generatedFiles = mutableListOf<Path>()
+    val generatedFiles: MutableList<Path> = []
     val targetPackage = if (localArgs.size > 2) {
         localArgs[2]
     } else null
@@ -182,8 +182,8 @@ private fun SyntheticArgumentInterface.toLevelWithParent(
         name,
         level.arguments.filter { it.restrictedToCompilerPhase == restrictedToCompilerPhase }.toSet(),
         if (syntheticArgumentInterfaces.any { this in it.parentInterfaces }) {
-            setOf(DummyLevel)
-        } else emptySet(),
+            [DummyLevel]
+        } else [],
         level.modifiers
     ),
     parentInterfaces.firstOrNull()?.let {
@@ -192,14 +192,14 @@ private fun SyntheticArgumentInterface.toLevelWithParent(
     parentInterfaces.map { ClassName(targetPackage, it.name) }
 )
 
-val DummyLevel = KotlinCompilerArgumentsLevel("", emptySet(), emptySet(), emptySet())
+val DummyLevel = KotlinCompilerArgumentsLevel("", [], [], [])
 
 internal interface BtaOptionsGenerator {
     val targetPackage: String
     fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: ClassName? = null,
-        additionalInterfaces: List<ClassName> = emptyList(),
+        additionalInterfaces: List<ClassName> = [],
     ): GeneratorOutputs
 }
 
@@ -207,12 +207,12 @@ internal class GeneratorOutputs(val argumentTypeName: ClassName, val generatedFi
 private class LevelWithParent(
     val level: KotlinCompilerArgumentsLevel,
     val parentName: ClassName?,
-    val additionalInterfaces: List<ClassName> = emptyList(),
+    val additionalInterfaces: List<ClassName> = [],
 )
 
 private fun KotlinCompilerArgumentsLevel.findPathToLeaf(leafName: String): Set<KotlinCompilerArgumentsLevel> {
     if (name == leafName) {
-        return setOf(this)
+        return [this]
     }
 
     for (nestedLevel in nestedLevels) {
@@ -221,7 +221,7 @@ private fun KotlinCompilerArgumentsLevel.findPathToLeaf(leafName: String): Set<K
             return setOf(this) + path
         }
     }
-    return emptySet()
+    return []
 }
 
 private fun parseLastKotlinReleaseVersion(kotlinVersionString: String): KotlinReleaseVersion {

@@ -32,15 +32,15 @@ import kotlin.jvm.optionals.getOrNull
 
 abstract class AbstractKotlinCompilerTest {
     companion object {
-        val defaultDirectiveContainers = listOf(
+        val defaultDirectiveContainers = [
             ConfigurationDirectives,
             LanguageSettingsDirectives
-        )
+        ]
 
-        val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = listOf(
+        val defaultPreprocessors: List<Constructor<SourceFilePreprocessor>> = [
             ::MetaInfosCleanupPreprocessor,
             ::JvmInlineSourceTransformer,
-        )
+        ]
 
         private fun configureDebugFlags() {
             AbstractTypeChecker.RUN_SLOW_ASSERTIONS = true

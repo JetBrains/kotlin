@@ -22,13 +22,13 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.NativeRuntimeNames
 import org.jetbrains.kotlin.name.NativeStandardInteropNames
 
-val ANNOTATIONS_TO_TREAT_AS_EXPORTED = listOf(
+val ANNOTATIONS_TO_TREAT_AS_EXPORTED = [
     NativeRuntimeNames.Annotations.symbolNameClassId,
     NativeRuntimeNames.Annotations.gcUnsafeCallClassId,
     NativeRuntimeNames.Annotations.exportForCppRuntimeClassId,
     NativeRuntimeNames.Annotations.cNameClassId,
     NativeRuntimeNames.Annotations.exportForCompilerClassId,
-)
+]
 
 private val ANNOTATIONS_TO_TREAT_AS_EXPORTED_FQNS = ANNOTATIONS_TO_TREAT_AS_EXPORTED.map(ClassId::asSingleFqName)
 
@@ -67,11 +67,11 @@ abstract class AbstractKonanIrMangler(
 
         override fun IrFunction.platformSpecificFunctionMarks(): List<String> = when (origin) {
             IrDeclarationOrigin.LOWERED_SUSPEND_FUNCTION -> listOfSuspendFunctionMark
-            else -> emptyList()
+            else -> []
         }
 
         companion object {
-            val listOfSuspendFunctionMark = listOf(MangleConstant.SUSPEND_FUNCTION_MARK)
+            val listOfSuspendFunctionMark = [MangleConstant.SUSPEND_FUNCTION_MARK]
         }
     }
 }

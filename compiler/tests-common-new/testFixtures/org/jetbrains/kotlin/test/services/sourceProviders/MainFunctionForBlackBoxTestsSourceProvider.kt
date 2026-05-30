@@ -60,10 +60,10 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
         if (REQUIRES_SEPARATE_PROCESS !in module.directives && module.directives.singleOrZeroValue(JDK_KIND)?.requiresSeparateProcess != true) {
-            return emptyList()
+            return []
         }
 
-        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return emptyList()
+        val fileWithBox = module.files.firstOrNull { containsBoxMethod(it.originalContent) } ?: return []
         val suspendModifier = if (containsSuspendBoxMethod(fileWithBox.originalContent)) "suspend " else ""
         val mainBody = generateMainBody()
 
@@ -82,6 +82,6 @@ open class MainFunctionForBlackBoxTestsSourceProvider(testServices: TestServices
         val file = testServices.temporaryDirectoryManager.getOrCreateTempDirectory("src").resolve(BOX_MAIN_FILE_NAME)
         file.writeText(code)
 
-        return listOf(file.toTestFile())
+        return [file.toTestFile()]
     }
 }

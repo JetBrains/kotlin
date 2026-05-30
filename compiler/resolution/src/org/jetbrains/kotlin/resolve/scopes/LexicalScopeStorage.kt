@@ -93,7 +93,7 @@ abstract class LexicalScopeStorage(
     }
 
     protected fun functionsByName(name: Name, descriptorLimit: Int = addedDescriptors.size): List<FunctionDescriptor> {
-        if (descriptorLimit == 0) return emptyList()
+        if (descriptorLimit == 0) return []
 
         var list = functionsByName?.get(name)
         while (list != null) {
@@ -102,7 +102,7 @@ abstract class LexicalScopeStorage(
             }
             list = list.prev
         }
-        return emptyList()
+        return []
     }
 
     private fun addDescriptor(descriptor: DeclarationDescriptor): Int {

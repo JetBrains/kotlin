@@ -138,7 +138,7 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
                                             )
                                         } else {
                                             reporter.reportOn(
-                                                reportSource, noneApplicableFactory!!, listOf(diagnostic.candidate.symbol)
+                                                reportSource, noneApplicableFactory!!, [diagnostic.candidate.symbol]
                                             )
                                         }
                                         return true

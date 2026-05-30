@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.utils.topologicalSort
 
 internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbolsForScripting: JvmSymbolsForScripting) : ModuleLoweringPass {
     override fun lower(irModule: IrModuleFragment) {
-        val scripts = mutableListOf<IrScript>()
+        val scripts: MutableList<IrScript> = []
         val scriptDependencies = mutableMapOf<IrScript, List<IrScript>>()
 
         for (irFile in irModule.files) {
@@ -68,7 +68,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
 
         val symbolRemapper = ScriptsToClassesSymbolRemapper()
 
-        val orderedScripts = topologicalSort(scripts) { scriptDependencies[this] ?: emptyList() }.reversed()
+        val orderedScripts = topologicalSort(scripts) { scriptDependencies[this] ?: [] }.reversed()
         for (irScript in orderedScripts) {
             finalizeScriptClass(irScript, symbolRemapper)
             // TODO fix parents in script classes
@@ -118,7 +118,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
         if (irScript.thisReceiver == null) {
             // This is a placeholder transformed to a proper receiver for script class down below, but it is necessary for
             // collecting captured script instances (see ClosureAnnotator.ClosureCollectorVisitor.processScriptCapturing)
-            val type = IrSimpleTypeImpl(irScript.symbol, false, emptyList(), emptyList())
+            val type = IrSimpleTypeImpl(irScript.symbol, false, [], [])
             irScript.thisReceiver = irScript.createThisReceiverParameter(context, IrDeclarationOrigin.INSTANCE_RECEIVER, type)
         }
 
@@ -132,7 +132,7 @@ internal class ScriptsToClassesLowering(val context: IrPluginContext, val symbol
 
         val targetClassReceiver: IrValueParameter =
             irScript.thisReceiver!!.also {
-                it.type = IrSimpleTypeImpl(irScriptClass.symbol, false, emptyList(), emptyList())
+                it.type = IrSimpleTypeImpl(irScriptClass.symbol, false, [], [])
             }
 
         val accessCallsGenerator =

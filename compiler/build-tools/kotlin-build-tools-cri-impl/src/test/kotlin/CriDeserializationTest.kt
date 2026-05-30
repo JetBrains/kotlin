@@ -16,11 +16,11 @@ class CriDeserializationTest {
 
     @Test
     fun generateProtoSchema() {
-        val descriptors = listOf(
+        val descriptors = [
             LookupEntryImpl.serializer().descriptor,
             FileIdToPathEntryImpl.serializer().descriptor,
             SubtypeEntryImpl.serializer().descriptor,
-        )
+        ]
         val schema = ProtoBufSchemaGenerator.generateSchemaText(descriptors)
         assertEquals(EXPECTED_SCHEMA, schema)
     }

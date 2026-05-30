@@ -34,20 +34,20 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
         support,
     )
 
-    override fun getInterfaces(): Array<PsiClass> = emptyArray()
+    override fun getInterfaces(): Array<PsiClass> = []
 
     override fun createExtendsList(): PsiReferenceList? = null
     override fun createImplementsList(): PsiReferenceList? = null
     override fun getSuperClass(): PsiClass? = PsiClassImplUtil.getSuperClass(this)
-    override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSuperClass(this)?.let { arrayOf(it) } ?: emptyArray()
-    override fun getSuperTypes(): Array<PsiClassType> = arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+    override fun getSupers(): Array<PsiClass> = PsiClassImplUtil.getSuperClass(this)?.let { [it] } ?: []
+    override fun getSuperTypes(): Array<PsiClassType> = [PsiType.getJavaLangObject(manager, resolveScope)]
 
     override fun getTypeParameterList(): PsiTypeParameterList? = null
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
+    override fun getTypeParameters(): Array<PsiTypeParameter> = []
     override fun computeModifiersByPsi(): Set<String> = publicStaticFinal
     override fun computeIsFinal(): Boolean = true
 
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnFields(): List<KtLightField> = []
     override fun isInterface(): Boolean = false
 
     override fun isDeprecated(): Boolean = false
@@ -63,7 +63,7 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
 
     override fun getContainingClass(): KtLightClass? = classOrObject.toLightClass()
 
-    override fun getOwnInnerClasses() = emptyList<PsiClass>()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
     override fun getOwnMethods(): List<KtLightMethod> = _ownMethods.value
 
     private val membersBuilder by lazyPub {
@@ -82,7 +82,7 @@ class KtUltraLightClassForInterfaceDefaultImpls(classOrObject: KtClassOrObject, 
             JavaPsiFacade.getElementFactory(project).createType(containingClass!!)
         }
 
-        val result = mutableListOf<KtLightMethod>()
+        val result: MutableList<KtLightMethod> = []
         fun processClass(psiClass: PsiClass) {
             val declarations = psiClass.safeAs<KtUltraLightClass>()
                 ?.kotlinOrigin
@@ -152,4 +152,4 @@ internal class KtUltraLightReceiverParameterForDefaultImpls(
     override val qualifiedNameForNullabilityAnnotation: String = NotNull::class.java.name
 }
 
-private val publicStaticFinal = setOf(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
+private val publicStaticFinal: Set<String> = [PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL]

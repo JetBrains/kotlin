@@ -95,7 +95,7 @@ class FirCachingCompositeSymbolProvider(
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return []
         return topLevelCallableCache.getValue(CallableId(packageFqName, name))
     }
 

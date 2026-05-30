@@ -36,7 +36,7 @@ internal open class ContextualizedPrinterImpl<T>(
     private val printer: SmartPrinter,
     context: T
 ) : ContextualizedPrinter<T>, IndentingPrinter by printer {
-    private val contexts: MutableList<T> = mutableListOf(context)
+    private val contexts: MutableList<T> = [context]
 
     override val currentContext: T get() = contexts.last()
 

@@ -39,7 +39,7 @@ class PluginsDslIT : KGPBaseTest() {
     fun testApplyAllPlugins(gradleVersion: GradleVersion) {
         project("applyAllPlugins".withPrefix, gradleVersion) {
 
-            val kotlinPluginClasses = setOf(
+            val kotlinPluginClasses: Set<String> = [
                 "org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper",
                 "org.jetbrains.kotlin.gradle.internal.Kapt3GradleSubplugin",
                 "org.jetbrains.kotlin.allopen.gradle.AllOpenGradleSubplugin",
@@ -51,7 +51,7 @@ class PluginsDslIT : KGPBaseTest() {
                 "org.jetbrains.kotlin.powerassert.gradle.PowerAssertGradlePlugin",
                 "org.jetbrains.kotlin.samWithReceiver.gradle.SamWithReceiverGradleSubplugin",
                 "org.jetbrains.kotlinx.serialization.gradle.SerializationGradleSubplugin"
-            )
+            ]
 
             build("build") {
                 val appliedPlugins = "applied plugin class:(.*)".toRegex().findAll(output).map { it.groupValues[1] }.toSet()

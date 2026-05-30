@@ -29,7 +29,7 @@ interface CirCommonizedClassifierNodes {
     fun addTypeAliasNode(typeAliasId: CirEntityId, node: CirTypeAliasNode)
 
     companion object {
-        fun default(allowedDuplicates: Set<CirEntityId> = setOf()) = object : CirCommonizedClassifierNodes {
+        fun default(allowedDuplicates: Set<CirEntityId> = []) = object : CirCommonizedClassifierNodes {
             private val classNodes = CommonizerMap<CirEntityId, CirClassNode>()
             private val typeAliases = CommonizerMap<CirEntityId, CirTypeAliasNode>()
 

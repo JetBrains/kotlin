@@ -102,7 +102,7 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     fun testDependentScripts() {
-        setUpEnvironment(listOf("scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"))
+        setUpEnvironment(["scriptCustom/fibwp.lang.kts", "scriptCustom/fibwprunner.kts"])
 
         val aClass = generateClass("Fibwprunner")
         val constructor = aClass.getConstructor()
@@ -136,12 +136,12 @@ class ScriptGenTest : CodegenTestCase() {
     }
 
     private fun setUpEnvironment(sourcePath: String) {
-        setUpEnvironment(listOf(sourcePath))
+        setUpEnvironment([sourcePath])
     }
 
     private fun setUpEnvironment(sourcePaths: List<String>) {
         val configuration = createConfiguration(
-            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies, emptyList(), emptyList()
+            ConfigurationKind.ALL, TestJdkKind.FULL_JDK, additionalDependencies, [], []
         ).apply {
             @OptIn(MessageCollectorAccess::class) // write access
             messageCollector = PrintingMessageCollector(System.err, MessageRenderer.PLAIN_FULL_PATHS, false)

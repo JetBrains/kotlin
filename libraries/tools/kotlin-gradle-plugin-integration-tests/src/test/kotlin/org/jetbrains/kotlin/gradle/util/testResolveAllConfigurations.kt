@@ -47,10 +47,10 @@ private fun Project.registerResolveAllConfigurationsTask() {
             it.dependsOn(":commonizeNativeDistribution")
         }
 
-        val excludeConfigs = setOf(
+        val excludeConfigs: Set<String> = [
             "default",
             "archives",
-        )
+        ]
         val projectPath = project.path
         val projectRootDir = project.rootDir
 
@@ -61,7 +61,7 @@ private fun Project.registerResolveAllConfigurationsTask() {
         }
 
         it.doFirst { task ->
-            val knownExtensions = setOf("jar", "klib")
+            val knownExtensions: Set<String> = ["jar", "klib"]
             resolvableConfigurations.get().forEach { configuration ->
                 val configurationPath = if (projectPath == ":") ":" + configuration.name else projectPath + ":" + configuration.name
                 try {

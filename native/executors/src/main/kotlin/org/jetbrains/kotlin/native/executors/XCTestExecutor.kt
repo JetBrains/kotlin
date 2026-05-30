@@ -45,7 +45,7 @@ abstract class AbstractXCTestExecutor(
         val stdout = ByteArrayOutputStream()
         val request = ExecuteRequest(
             "/usr/bin/xcrun",
-            args = mutableListOf("--sdk", xcodeTarget, "--show-sdk-platform-path"),
+            args = ["--sdk", xcodeTarget, "--show-sdk-platform-path"],
             stdout = stdout
         )
         hostExecutor.execute(request).assertSuccess()
@@ -68,7 +68,7 @@ abstract class AbstractXCTestExecutor(
         val response = executor.execute(
             request.copy(
                 executableAbsolutePath = xcTestExecutablePath,
-                args = mutableListOf(path.absolutePathString()),
+                args = [path.absolutePathString()],
                 environment = request.environment.toMap(mutableMapOf())
                     .also {
                         it["DYLD_FRAMEWORK_PATH"] = frameworkPath
@@ -96,7 +96,7 @@ class XCTestHostExecutor(configurables: AppleConfigurables) : AbstractXCTestExec
         }
     }
 
-    private fun supportedTargets(): List<KonanTarget> = listOf(HostManager.host)
+    private fun supportedTargets(): List<KonanTarget> = [HostManager.host]
 }
 
 /**
@@ -114,8 +114,8 @@ class XCTestSimulatorExecutor(configurables: AppleConfigurables) :
     }
 
     private fun supportedTargets(): List<KonanTarget> = when (HostManager.host) {
-        KonanTarget.MACOS_X64 -> listOf(KonanTarget.IOS_X64)
-        KonanTarget.MACOS_ARM64 -> listOf(KonanTarget.IOS_SIMULATOR_ARM64)
-        else -> emptyList()
+        KonanTarget.MACOS_X64 -> [KonanTarget.IOS_X64]
+        KonanTarget.MACOS_ARM64 -> [KonanTarget.IOS_SIMULATOR_ARM64]
+        else -> []
     }
 }

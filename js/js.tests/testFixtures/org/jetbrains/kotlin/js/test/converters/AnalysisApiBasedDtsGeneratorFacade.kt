@@ -46,7 +46,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
 
         val tsCompilationStrategy = testServices.moduleStructure.allDirectives[TS_COMPILATION_STRATEGY].last()
         val translationModes = when (tsCompilationStrategy) {
-            TsCompilationStrategy.MERGED -> listOf(TranslationMode.FULL_DEV)
+            TsCompilationStrategy.MERGED -> [TranslationMode.FULL_DEV]
             TsCompilationStrategy.EACH_FILE -> JsEnvironmentConfigurator
                 .getTranslationModesForTest(testServices, module)
                 .filter { !it.production }

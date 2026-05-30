@@ -27,8 +27,8 @@ interface InlineSourceBuilder {
     @ModuleBuilderDsl
     class ModuleBuilder {
         var name: String = "test-module"
-        private var sourceFiles: List<SourceFile> = emptyList()
-        private var dependencies: List<Module> = emptyList()
+        private var sourceFiles: List<SourceFile> = []
+        private var dependencies: List<Module> = []
 
 
         @ModuleBuilderDsl
@@ -73,21 +73,21 @@ fun InlineSourceBuilder.createCirTree(builder: InlineSourceBuilder.ModuleBuilder
 
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirTreeRoot(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit): CirTreeRoot {
-    return CirTreeRoot(listOf(createCirTree(builder)))
+    return CirTreeRoot([createCirTree(builder)])
 }
 
 
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirTreeRootFromSourceCode(@Language("kotlin") sourceCode: String): CirTreeRoot {
-    return CirTreeRoot(listOf(createCirTreeFromSourceCode(sourceCode)))
+    return CirTreeRoot([createCirTreeFromSourceCode(sourceCode)])
 }
 
 @InlineSourceBuilder.ModuleBuilderDsl
 fun InlineSourceBuilder.createCirProvidedClassifiers(module: InlineSourceBuilder.Module): CirProvidedClassifiers {
     val modulesProvider = object : ModulesProvider {
-        override val moduleInfos: Collection<ModulesProvider.ModuleInfo> = listOf(
+        override val moduleInfos: Collection<ModulesProvider.ModuleInfo> = [
             ModulesProvider.ModuleInfo(name = "CirProvidedForTest", cInteropAttributes = null)
-        )
+        ]
 
         override fun loadModuleMetadata(name: String): SerializedMetadata {
             if (name == moduleInfos.single().name) return createMetadata(module).metadata

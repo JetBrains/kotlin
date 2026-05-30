@@ -36,7 +36,7 @@ fun IrType.eraseTypeParameters(): IrType = when (this) {
         when (val owner = classifier.owner) {
             is IrScript -> {
                 assert(arguments.isEmpty()) { "Script can't be generic: " + owner.render() }
-                IrSimpleTypeImpl(classifier, nullability, emptyList(), annotations)
+                IrSimpleTypeImpl(classifier, nullability, [], annotations)
             }
             is IrClass -> IrSimpleTypeImpl(classifier, nullability, arguments.map { it.eraseTypeParameters() }, annotations)
             is IrTypeParameter -> owner.erasedType(isNullable())

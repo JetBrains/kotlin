@@ -6,6 +6,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SetsKt")
 @file:OptIn(kotlin.experimental.ExperimentalTypeInference::class)
+@file:Suppress("ConvertToCollectionLiterals")
 
 package kotlin.collections
 
@@ -106,7 +107,7 @@ public fun <T> linkedSetOf(vararg elements: T): LinkedHashSet<T> = elements.toCo
  * @sample samples.collections.Collections.Sets.setOfNotNull
  */
 @SinceKotlin("1.4")
-public fun <T : Any> setOfNotNull(element: T?): Set<T> = if (element != null) setOf(element) else emptySet()
+public fun <T : Any> setOfNotNull(element: T?): Set<T> = if (element != null) [element] else []
 
 /**
  * Returns a new read-only set only with those given elements, that are not null.
@@ -181,10 +182,10 @@ internal expect inline fun <E> buildSetInternal(capacity: Int, builderAction: Mu
  * @sample samples.collections.Collections.Sets.setOrEmpty
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: emptySet()
+public inline fun <T> Set<T>?.orEmpty(): Set<T> = this ?: []
 
 internal fun <T> Set<T>.optimizeReadOnlySet() = when (size) {
-    0 -> emptySet()
-    1 -> setOf(iterator().next())
+    0 -> []
+    1 -> [iterator().next()]
     else -> this
 }

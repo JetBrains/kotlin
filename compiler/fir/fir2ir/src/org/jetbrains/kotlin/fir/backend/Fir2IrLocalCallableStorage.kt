@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.symbols.IrValueParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 
 class Fir2IrLocalCallableStorage(initialStack: List<Fir2IrScopeCache>) {
-    private val cacheStack = mutableListOf<Fir2IrScopeCache>()
+    private val cacheStack: MutableList<Fir2IrScopeCache> = []
 
     init {
         cacheStack.addAll(initialStack)

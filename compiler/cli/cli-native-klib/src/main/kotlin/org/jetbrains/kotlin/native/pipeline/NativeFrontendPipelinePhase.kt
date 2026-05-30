@@ -30,8 +30,8 @@ import org.jetbrains.kotlin.native.createFirstStageCompilationConfig
 
 object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, NativeFrontendArtifact>(
     name = "NativeFrontendPhase",
-    preActions = setOf(PerformanceNotifications.AnalysisStarted),
-    postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.AnalysisStarted],
+    postActions = [PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): NativeFrontendArtifact {
         val (configuration, rootDisposable) = input
@@ -77,7 +77,7 @@ object NativeFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact
                 val interopModuleData =
                     FirBinaryDependenciesModuleData(
                         Name.special("<regular interop dependencies of $mainModuleName>"),
-                        FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
+                        FirModuleCapabilities.create([ImplicitIntegerCoercionModuleCapability])
                     )
                 dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
             }

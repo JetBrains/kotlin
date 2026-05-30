@@ -95,13 +95,13 @@ internal interface ProblemDiagnostic {
 
 @Serializable
 internal data class ProblemsApiDiagnosticG811(
-    override val locations: List<ProblemsApiLocation> = emptyList(),
-    override val problem: List<TextWrapper> = emptyList(),
+    override val locations: List<ProblemsApiLocation> = [],
+    override val problem: List<TextWrapper> = [],
     override val severity: String = "",
-    private val problemDetails: List<TextWrapper> = emptyList(),
+    private val problemDetails: List<TextWrapper> = [],
     override val contextualLabel: String = "",
-    override val problemId: List<ProblemIdentifier> = emptyList(),
-    private val solutions: List<List<TextWrapper>> = emptyList(),
+    override val problemId: List<ProblemIdentifier> = [],
+    private val solutions: List<List<TextWrapper>> = [],
 ) : ProblemDiagnostic {
     override val problemDetailsActual: String
         get() = problemDetails.firstOrNull()?.text ?: ""
@@ -113,13 +113,13 @@ internal data class ProblemsApiDiagnosticG811(
 
 @Serializable
 internal data class ProblemsApiDiagnosticG94(
-    override val locations: List<ProblemsApiLocation> = emptyList(),
-    override val problem: List<TextWrapper> = emptyList(),
+    override val locations: List<ProblemsApiLocation> = [],
+    override val problem: List<TextWrapper> = [],
     override val severity: String = "",
     private val problemDetails: String = "",
     override val contextualLabel: String = "",
-    override val problemId: List<ProblemIdentifier> = emptyList(),
-    private val solutions: List<String> = emptyList(),
+    override val problemId: List<ProblemIdentifier> = [],
+    private val solutions: List<String> = [],
 ) : ProblemDiagnostic {
     override val problemDetailsActual: String
         get() = problemDetails
@@ -149,5 +149,5 @@ internal data class ProblemsReportSummary(
     val documentationLink: String,
     // Missing since Gradle 9.4
     val documentationLinkCaption: String? = null,
-    val summaries: List<String> = emptyList(),
+    val summaries: List<String> = [],
 )

@@ -34,8 +34,8 @@ class IncrementalProcessorDiscoveryTest {
         }
 
         val info = getIncrementalProcessorsFromClasspath(
-            setOf("Input1Processor4", "Input1Processor3", "Input1Processor2", "Input1Processor1"),
-            listOf(inputJar)
+            ["Input1Processor4", "Input1Processor3", "Input1Processor2", "Input1Processor1"],
+            [inputJar]
         )
 
         assertEquals(
@@ -57,8 +57,8 @@ class IncrementalProcessorDiscoveryTest {
         }
 
         val info = getIncrementalProcessorsFromClasspath(
-            setOf("Input1Processor4", "Input1Processor3", "Input1Processor2", "Input1Processor1"),
-            listOf(inputDir)
+            ["Input1Processor4", "Input1Processor3", "Input1Processor2", "Input1Processor1"],
+            [inputDir]
         )
 
         assertEquals(
@@ -87,8 +87,8 @@ class IncrementalProcessorDiscoveryTest {
         }
 
         val info = getIncrementalProcessorsFromClasspath(
-            setOf("InputJarNonIncrementalProcessor", "InputJarProcessor", "InputDirNonIncrementalProcessor", "InputDirProcessor"),
-            listOf(inputJar, inputDir)
+            ["InputJarNonIncrementalProcessor", "InputJarProcessor", "InputDirNonIncrementalProcessor", "InputDirProcessor"],
+            [inputJar, inputDir]
         )
         assertEquals(
             mapOf(

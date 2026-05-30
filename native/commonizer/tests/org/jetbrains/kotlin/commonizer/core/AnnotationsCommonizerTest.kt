@@ -18,262 +18,262 @@ class AnnotationsCommonizerTest : AbstractCommonizerTest<List<CirAnnotation>, Li
 
     @Test
     fun noAnnotations() = doTestSuccess(
-        expected = emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList()
+        expected = [],
+        [],
+        [],
+        []
     )
 
     @Test
     fun noRelevantAnnotations1() = doTestSuccess(
-        expected = emptyList(),
-        emptyList(),
-        emptyList(),
-        listOf(mockAnnotation("org/sample/Foo"))
+        expected = [],
+        [],
+        [],
+        [mockAnnotation("org/sample/Foo")]
     )
 
     @Test
     fun noRelevantAnnotations2() = doTestSuccess(
-        expected = emptyList(),
-        listOf(mockAnnotation("org/sample/Foo")),
-        emptyList(),
-        emptyList()
+        expected = [],
+        [mockAnnotation("org/sample/Foo")],
+        [],
+        []
     )
 
     @Test
     fun noRelevantAnnotations3() = doTestSuccess(
-        expected = listOf(mockAnnotation("org/sample/Foo")),
-        listOf(mockAnnotation("org/sample/Foo")),
-        listOf(mockAnnotation("org/sample/Foo")),
-        listOf(mockAnnotation("org/sample/Foo"))
+        expected = [mockAnnotation("org/sample/Foo")],
+        [mockAnnotation("org/sample/Foo")],
+        [mockAnnotation("org/sample/Foo")],
+        [mockAnnotation("org/sample/Foo")]
     )
 
     @Test
     fun noRelevantAnnotations4() = doTestSuccess(
-        expected = emptyList(),
-        listOf(mockAnnotation("org/sample/Foo")),
-        listOf(mockAnnotation("org/sample/Bar")),
-        listOf(mockAnnotation("org/sample/Baz"))
+        expected = [],
+        [mockAnnotation("org/sample/Foo")],
+        [mockAnnotation("org/sample/Bar")],
+        [mockAnnotation("org/sample/Baz")]
     )
 
     @Test
     fun noRelevantAnnotations5() = doTestSuccess(
-        expected = listOf(mockAnnotation("kotlin/PublishedApi")),
-        listOf(mockAnnotation("kotlin/PublishedApi")),
-        listOf(mockAnnotation("kotlin/PublishedApi")),
-        listOf(mockAnnotation("kotlin/PublishedApi"))
+        expected = [mockAnnotation("kotlin/PublishedApi")],
+        [mockAnnotation("kotlin/PublishedApi")],
+        [mockAnnotation("kotlin/PublishedApi")],
+        [mockAnnotation("kotlin/PublishedApi")]
     )
 
     @Test
     fun sameMessages() = doTestSuccess(
-        expected = listOf(mockDeprecated(message = "please don't use it because ...")),
-        listOf(mockDeprecated(message = "please don't use it because ...")),
-        listOf(mockDeprecated(message = "please don't use it because ...")),
-        listOf(mockDeprecated(message = "please don't use it because ..."))
+        expected = [mockDeprecated(message = "please don't use it because ...")],
+        [mockDeprecated(message = "please don't use it because ...")],
+        [mockDeprecated(message = "please don't use it because ...")],
+        [mockDeprecated(message = "please don't use it because ...")]
     )
 
     @Test
     fun differentMessages() = doTestSuccess(
-        expected = listOf(mockDeprecated(message = DeprecationAnnotationCommonizer.FALLBACK_MESSAGE)),
-        listOf(mockDeprecated(message = "please don't use it because ...")),
-        listOf(mockDeprecated(message = "it should not be used due to ...")),
-        listOf(mockDeprecated(message = "please don't use it because ..."))
+        expected = [mockDeprecated(message = DeprecationAnnotationCommonizer.FALLBACK_MESSAGE)],
+        [mockDeprecated(message = "please don't use it because ...")],
+        [mockDeprecated(message = "it should not be used due to ...")],
+        [mockDeprecated(message = "please don't use it because ...")]
     )
 
     @Test
     fun sameLevels1() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = WARNING)),
-        listOf(mockDeprecated(level = WARNING)),
-        listOf(mockDeprecated(level = WARNING)),
-        listOf(mockDeprecated(level = WARNING))
+        expected = [mockDeprecated(level = WARNING)],
+        [mockDeprecated(level = WARNING)],
+        [mockDeprecated(level = WARNING)],
+        [mockDeprecated(level = WARNING)]
     )
 
     @Test
     fun sameLevels2() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = ERROR))
+        expected = [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = ERROR)]
     )
 
     @Test
     fun sameLevels3() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = HIDDEN))
+        expected = [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = HIDDEN)]
     )
 
     @Test
     fun differentLevels1() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = WARNING)),
-        listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = WARNING))
+        expected = [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = WARNING)],
+        [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = WARNING)]
     )
 
     @Test
     fun differentLevels2() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = WARNING)),
-        listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = WARNING))
+        expected = [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = WARNING)],
+        [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = WARNING)]
     )
 
     @Test
     fun differentLevels3() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = ERROR))
+        expected = [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = ERROR)]
     )
 
     @Test
     fun differentLevels4() = doTestSuccess(
-        expected = listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = ERROR)),
-        listOf(mockDeprecated(level = HIDDEN)),
-        listOf(mockDeprecated(level = WARNING))
+        expected = [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = ERROR)],
+        [mockDeprecated(level = HIDDEN)],
+        [mockDeprecated(level = WARNING)]
     )
 
     @Test
     fun sameReplaceWith1() = doTestSuccess(
-        expected = listOf(
+        expected = [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        )
+        ]
     )
 
     @Test
     fun sameReplaceWith2() = doTestSuccess(
-        expected = listOf(
+        expected = [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo")
+                replaceWithImports = ["org.sample.Foo"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo")
+                replaceWithImports = ["org.sample.Foo"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo")
+                replaceWithImports = ["org.sample.Foo"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo")
+                replaceWithImports = ["org.sample.Foo"]
             )
-        )
+        ]
     )
 
     @Test
     fun sameReplaceWith3() = doTestSuccess(
-        expected = listOf(
+        expected = [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        )
+        ]
     )
 
     @Test
     fun differentReplaceWith1() = doTestSuccess(
-        expected = listOf(
+        expected = [
             mockDeprecated(
                 replaceWithExpression = "",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Bar",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        )
+        ]
     )
 
     @Test
     fun differentReplaceWith2() = doTestSuccess(
-        expected = listOf(
+        expected = [
             mockDeprecated(
                 replaceWithExpression = "",
-                replaceWithImports = emptyArray()
+                replaceWithImports = []
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo")
+                replaceWithImports = ["org.sample.Foo"]
             )
-        ),
-        listOf(
+        ],
+        [
             mockDeprecated(
                 replaceWithExpression = "org.sample.Foo",
-                replaceWithImports = arrayOf("org.sample.Foo", "org.sample.foo.*")
+                replaceWithImports = ["org.sample.Foo", "org.sample.foo.*"]
             )
-        )
+        ]
     )
 
     override fun createCommonizer() = AnnotationsCommonizer.asCommonizer()
@@ -293,7 +293,7 @@ private fun mockDeprecated(
     message: String = "",
     level: DeprecationLevel = WARNING,
     replaceWithExpression: String = "",
-    replaceWithImports: Array<String> = emptyArray()
+    replaceWithImports: Array<String> = []
 ): CirAnnotation {
     val replaceWith: CirAnnotation? = if (replaceWithExpression.isNotEmpty() || replaceWithImports.isNotEmpty()) {
         mockAnnotation(

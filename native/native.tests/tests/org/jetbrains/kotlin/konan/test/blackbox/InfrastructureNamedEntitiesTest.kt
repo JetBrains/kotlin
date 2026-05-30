@@ -16,10 +16,10 @@ class InfrastructureNamedEntitiesTest {
     @Test
     fun parsePackageName() {
         listOf(
-            "" to emptyList(),
-            "foo" to listOf("foo"),
-            "foo.bar" to listOf("foo", "bar"),
-            "foo.bar.baz" to listOf("foo", "bar", "baz")
+            "" to [],
+            "foo" to ["foo"],
+            "foo.bar" to ["foo", "bar"],
+            "foo.bar.baz" to ["foo", "bar", "baz"]
         ).forEach { [fqn, segments] ->
             assertEquals(segments, PackageName(fqn).segments)
             assertEquals(fqn, PackageName(segments).toString())

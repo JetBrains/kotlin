@@ -32,7 +32,7 @@ internal fun FirDeclarationGenerationExtension.generateExtensionProperty(
     symbol: FirClassSymbol<*>? = null,
     effectiveVisibility: EffectiveVisibility = EffectiveVisibility.Public,
     source: KtSourceElement?,
-    typeParameters: List<FirTypeParameter> = emptyList(),
+    typeParameters: List<FirTypeParameter> = [],
 ): FirProperty {
     val firPropertySymbol = when (callableIdOrSymbol) {
         is CallableIdOrSymbol.Id -> FirRegularPropertySymbol(callableIdOrSymbol.callableId)

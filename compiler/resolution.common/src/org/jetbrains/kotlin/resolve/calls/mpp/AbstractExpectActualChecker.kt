@@ -112,9 +112,9 @@ object AbstractExpectActualChecker {
         val actualClass = computeActualClassFromPotentialActualTypealias(
             expectClassSymbol,
             actualClassLikeSymbol,
-            onNestedTypealias = { return@getClassifiersCompatibility listOf(ExpectActualIncompatibility.NestedTypeAlias) },
+            onNestedTypealias = { return@getClassifiersCompatibility [ExpectActualIncompatibility.NestedTypeAlias] },
             // do not report extra error on erroneous typealias
-            onErroneousTypealias = { return@getClassifiersCompatibility emptyList() },
+            onErroneousTypealias = { return@getClassifiersCompatibility [] },
         )!!
 
         val allowUsingAnyAsActualInterface =
@@ -132,7 +132,7 @@ object AbstractExpectActualChecker {
             }
         }
 
-        if (!equalBy(expectClassSymbol, actualClass) { listOf(it.isCompanion, it.isInner, it.isInlineOrValue) }) {
+        if (!equalBy(expectClassSymbol, actualClass) { [it.isCompanion, it.isInner, it.isInlineOrValue] }) {
             add(ExpectActualIncompatibility.ClassModifiers)
         }
 
@@ -321,7 +321,7 @@ object AbstractExpectActualChecker {
                         }
                     }
                 }
-                emptyList()
+                []
             }
 
             expectMember is CallableSymbolMarker -> getCallablesCompatibility(
@@ -362,7 +362,7 @@ object AbstractExpectActualChecker {
         checkCallablesInvariants(expectDeclaration, actualDeclaration)
 
         if (areEnumConstructors(expectDeclaration, actualDeclaration, expectContainingClass, actualContainingClass)) {
-            return@getCallablesCompatibility emptyList()
+            return@getCallablesCompatibility []
         }
 
         val insideAnnotationClass = expectContainingClass?.classKind == ClassKind.ANNOTATION_CLASS

@@ -13,7 +13,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `ClassSource matching path is included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
+            filter = TestMetadataFilter(["testData/analysis"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
         )
     }
@@ -21,7 +21,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `ClassSource not matching path is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/other")),
+            filter = TestMetadataFilter(["testData/other"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
         )
     }
@@ -29,7 +29,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `MethodSource matching combined path is included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols")),
+            filter = TestMetadataFilter(["testData/analysis/api/symbols"]),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
@@ -37,7 +37,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `MethodSource with partial path match is included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
+            filter = TestMetadataFilter(["testData/analysis"]),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
@@ -45,7 +45,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `MethodSource not matching path is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/other")),
+            filter = TestMetadataFilter(["testData/other"]),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated::testSymbols),
         )
     }
@@ -53,7 +53,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `container type is always included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("nonexistent/path")),
+            filter = TestMetadataFilter(["nonexistent/path"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(type = TestDescriptor.Type.CONTAINER),
         )
     }
@@ -61,7 +61,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `descriptor without source is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
+            filter = TestMetadataFilter(["testData/analysis"]),
             descriptor = descriptorWithSource(source = null),
         )
     }
@@ -69,7 +69,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `multiple includePaths - any match results in included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("nonexistent/path", "testData/analysis", "another/path")),
+            filter = TestMetadataFilter(["nonexistent/path", "testData/analysis", "another/path"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
         )
     }
@@ -77,7 +77,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `multiple includePaths - none match results in excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("nonexistent/path", "another/path", "third/path")),
+            filter = TestMetadataFilter(["nonexistent/path", "another/path", "third/path"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated>(),
         )
     }
@@ -85,7 +85,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `class without TestMetadata annotation is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
+            filter = TestMetadataFilter(["testData/analysis"]),
             descriptor = descriptorFromClass<NoMetadataClass>(),
         )
     }
@@ -93,7 +93,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Nested class matching path is included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions")),
+            filter = TestMetadataFilter(["testData/analysis/api/expressions"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated.Expressions>(),
         )
     }
@@ -101,7 +101,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Nested class not matching path is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/other")),
+            filter = TestMetadataFilter(["testData/other"]),
             descriptor = descriptorFromClass<FakeGoldenAnalysisApiTestGenerated.Expressions>(),
         )
     }
@@ -109,7 +109,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Method in nested class with combined path is included`() {
         assertIncluded(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions/call")),
+            filter = TestMetadataFilter(["testData/analysis/api/expressions/call"]),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated.Expressions::testCall),
         )
     }
@@ -117,7 +117,7 @@ internal class TestMetadataFilterTest : AbstractPostDiscoveryFilterTest() {
     @Test
     fun `Method in nested class not matching path is excluded`() {
         assertExcluded(
-            filter = TestMetadataFilter(listOf("testData/other")),
+            filter = TestMetadataFilter(["testData/other"]),
             descriptor = descriptorFromMethod(FakeGoldenAnalysisApiTestGenerated.Expressions::testCall),
         )
     }

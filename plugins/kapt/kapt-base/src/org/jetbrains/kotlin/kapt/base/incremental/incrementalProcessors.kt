@@ -19,7 +19,7 @@ import javax.tools.FileObject
 import javax.tools.JavaFileManager
 import javax.tools.JavaFileObject
 
-private val ALLOWED_RUNTIME_TYPES = setOf(RuntimeProcType.AGGREGATING.name, RuntimeProcType.ISOLATING.name)
+private val ALLOWED_RUNTIME_TYPES: Set<String> = [RuntimeProcType.AGGREGATING.name, RuntimeProcType.ISOLATING.name]
 
 class IncrementalProcessor(private val processor: Processor, private val kind: DeclaredProcType, private val logger: KaptLogger) :
     Processor by processor {
@@ -128,7 +128,7 @@ internal class AnnotationProcessorDependencyCollector(
     private val warningCollector: (String) -> Unit
 ) {
     private val generatedToSource = mutableMapOf<File, String?>()
-    private val aggregatedTypes = mutableSetOf<String>()
+    private val aggregatedTypes: MutableSet<String> = []
     private val generatedClassFilesToTypes = mutableMapOf<File, String>()
 
     private var isFullRebuild = !runtimeProcType.isIncremental
@@ -144,7 +144,7 @@ internal class AnnotationProcessorDependencyCollector(
                     getTopLevelClassNames(
                         roundEnv.getElementsAnnotatedWith(
                             annotation
-                        )?.filterNotNull() ?: emptyList()
+                        )?.filterNotNull() ?: []
                     )
                 )
             }
@@ -185,7 +185,7 @@ internal class AnnotationProcessorDependencyCollector(
     /** Mapping from generated files to top level class names that cause that file generation. */
     internal fun getGeneratedToSources(): Map<File, String?> = if (isFullRebuild) emptyMap() else generatedToSource
 
-    internal fun getAggregatedTypes(): Set<String> = if (isFullRebuild) emptySet() else aggregatedTypes
+    internal fun getAggregatedTypes(): Set<String> = if (isFullRebuild) [] else aggregatedTypes
 
     internal fun getGeneratedClassFilesToTypes(): Map<File, String> = if (isFullRebuild) emptyMap() else generatedClassFilesToTypes
 

@@ -21,7 +21,7 @@ class JdkApiUsageTest {
         testApiUsage(
             // Do not use the final jar artifact. It's shrunk by proguard.
             ForTestCompileRuntime.getFileFromProperty(TestCompilePaths.KOTLIN_REFLECT_SHADOW_JAR_PATH).toPath(),
-            dependencies = listOf(ForTestCompileRuntime.runtimeJarForTests().toPath())
+            dependencies = [ForTestCompileRuntime.runtimeJarForTests().toPath()]
         )
     }
 
@@ -76,16 +76,16 @@ class JdkApiUsageTest {
     }
 }
 
-private val suppressAnnotations = listOf(
+private val suppressAnnotations = [
     "kotlin.reflect.jvm.internal.SuppressJdk6SignatureCheck",
 
     // The following two fqn refer to the same annotation. The first is before its relocation,
     // the second is after. See kotlin-reflect build script.
     "org.jetbrains.kotlin.SuppressJdk6SignatureCheck",
     "kotlin.reflect.jvm.internal.impl.SuppressJdk6SignatureCheck",
-)
+]
 
-private val undefinedReferencesToIgnore = listOf(
+private val undefinedReferencesToIgnore = [
     "int Integer.compareUnsigned(int, int)",
     "int Integer.remainderUnsigned(int, int)",
     "int Integer.divideUnsigned(int, int)",
@@ -102,7 +102,7 @@ private val undefinedReferencesToIgnore = listOf(
     "int Float.hashCode(float)",
     "int Double.hashCode(double)",
     "int Character.hashCode(char)",
-)
+]
 
 private class TestLogger : Logger {
     private val logger = PrintWriterLogger(System.out)

@@ -149,7 +149,7 @@ private fun wasiWaitUntilUserInputImpl(allocator: MemoryAllocator) {
 
 @OptIn(ExperimentalWasmInterop::class)
 private fun wasiReadLineImpl(allocator: MemoryAllocator): ByteArray? {
-    val arrayBuffers = mutableListOf<ByteArray>()
+    val arrayBuffers: MutableList<ByteArray> = []
     var currentBuffer = ByteArray(BUFFER_SIZE)
     var currentBufferIndex = 0
 

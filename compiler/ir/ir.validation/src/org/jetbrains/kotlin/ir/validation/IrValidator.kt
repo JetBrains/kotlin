@@ -70,7 +70,7 @@ private class IrFileValidator(
     config: IrValidatorConfig,
     private val context: CheckerContext
 ) : IrTreeSymbolsVisitor() {
-    private val contextUpdaters: List<ContextUpdater> = listOf(ParentChainUpdater) + config.checkers.flatMap { it.requiredContextUpdaters }
+    private val contextUpdaters: List<ContextUpdater> = [ParentChainUpdater] + config.checkers.flatMap { it.requiredContextUpdaters }
     private val elementCheckers: List<IrElementChecker<*>> = config.checkers.filterIsInstance<IrElementChecker<*>>()
     private val symbolCheckers: List<IrSymbolChecker> = config.checkers.filterIsInstance<IrSymbolChecker>()
     private val typeCheckers: List<IrTypeChecker> = config.checkers.filterIsInstance<IrTypeChecker>()

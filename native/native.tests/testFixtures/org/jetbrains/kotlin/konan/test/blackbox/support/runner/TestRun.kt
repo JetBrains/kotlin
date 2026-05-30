@@ -41,7 +41,7 @@ class TestExecutable(
                         fail { compilationResult.loggedData.withErrorMessage("Failed to parse test dump file: $testDumpFile", e) }
                     }
                 }
-                else -> emptyList()
+                else -> []
             }
 
             return TestExecutable(
@@ -97,7 +97,7 @@ sealed interface TestRunParameter {
         override fun testMatches(testName: TestName) = this.testName != testName
     }
 
-    class WithGTestPatterns(val positivePatterns: Set<String> = setOf("*"), val negativePatterns: Set<String>) : WithFilter() {
+    class WithGTestPatterns(val positivePatterns: Set<String> = ["*"], val negativePatterns: Set<String>) : WithFilter() {
         val positiveRegexes = positivePatterns.map(::fromGTestPattern)
         val negativeRegexes = negativePatterns.map(::fromGTestPattern)
 

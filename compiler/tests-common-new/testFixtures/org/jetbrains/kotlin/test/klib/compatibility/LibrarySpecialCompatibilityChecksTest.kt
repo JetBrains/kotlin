@@ -132,7 +132,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
         a.basicVersion.major == b.basicVersion.major && a.basicVersion.minor == b.basicVersion.minor
 
     protected abstract val originalLibraryPath: String
-    protected open fun additionalLibraries(): List<String> = listOf()
+    protected open fun additionalLibraries(): List<String> = []
 
     protected abstract fun runCompiler(context: CompilerInvocationContext)
 
@@ -313,7 +313,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
     companion object {
         private val currentKotlinVersion = KotlinVersion.CURRENT
 
-        private val VERSIONS = listOf(
+        private val VERSIONS = [
             0 to "",
             0 to "-dev-1234",
             0 to "-dev-4321",
@@ -323,7 +323,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : DummyLibraryCompiler {
             20 to "-Beta1",
             20 to "-Beta2",
             255 to "-SNAPSHOT",
-        )
+        ]
 
         val SORTED_TEST_COMPILER_VERSION_GROUPS: List<Collection<TestVersion>> =
             VERSIONS.map { [patch, postfix] -> TestVersion(currentKotlinVersion.major, currentKotlinVersion.minor, patch, postfix) }

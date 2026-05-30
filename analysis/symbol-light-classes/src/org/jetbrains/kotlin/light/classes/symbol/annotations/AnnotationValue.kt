@@ -51,7 +51,7 @@ internal fun KaAnnotation.toDumbLightClassAnnotationApplication(relativeIndex: I
         classId,
         useSiteModule = kaModule,
         constructorSymbolPointer = constructorSymbol?.createPointer(),
-        arguments = emptyList(),
+        arguments = [],
         sourcePsi = psi,
     )
 

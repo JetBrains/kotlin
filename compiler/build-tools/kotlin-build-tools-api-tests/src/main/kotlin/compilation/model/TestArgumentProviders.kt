@@ -28,7 +28,7 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
             val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = listOf(
+            val v2Args: List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> = [
                 named(
                     "[v2][${kotlinToolchains.getCompilerVersion()}][in-process]",
                     kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
@@ -36,7 +36,7 @@ class BtaV2StrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider {
                     "[v2][${kotlinToolchains.getCompilerVersion()}][daemon]",
                     kotlinToolchains to kotlinToolchains.daemonExecutionPolicyBuilder().build()
                 )
-            )
+            ]
 
             return v2Args
         }
@@ -83,11 +83,11 @@ class DefaultStrategyAgnosticCompilationTestArgumentProvider : ArgumentsProvider
     companion object {
         fun namedStrategyArguments(): List<Named<Pair<KotlinToolchains, ExecutionPolicy>>> {
             return BtaVersionsCompilationTestArgumentProvider.namedStrategyArguments().flatMap { namedArgument ->
-                listOf(
+                [
                     named(
                         "${namedArgument.name}[in-process]", namedArgument.payload to namedArgument.payload.createInProcessExecutionPolicy()
                     ), named("${namedArgument.name}[daemon]", namedArgument.payload to namedArgument.payload.daemonExecutionPolicy())
-                )
+                ]
             }
         }
     }

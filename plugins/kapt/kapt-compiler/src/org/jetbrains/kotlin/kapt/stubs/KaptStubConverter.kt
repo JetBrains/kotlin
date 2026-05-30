@@ -119,11 +119,11 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         private const val PARAMETER_MODIFIERS = FIELD_MODIFIERS or Flags.PARAMETER or Flags.VARARGS or Opcodes.ACC_FINAL.toLong()
 
-        private val BLACKLISTED_ANNOTATIONS = listOf(
+        private val BLACKLISTED_ANNOTATIONS = [
             "java.lang.Deprecated", "kotlin.Deprecated", // Deprecated annotations
             "java.lang.Synthetic",
             "synthetic.kotlin.jvm.GeneratedByJvmOverloads" // kapt3-related annotation for marking JvmOverloads-generated methods
-        )
+        ]
 
         private val KOTLIN_METADATA_ANNOTATION = Metadata::class.java.name
 
@@ -324,8 +324,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private fun convertImports(firFile: FirFile?, classDeclaration: JCClassDecl): JavacList<JCTree> {
         if (!correctErrorTypes) return JavacList.nil()
 
-        val imports = mutableListOf<JCImport>()
-        val importedShortNames = mutableSetOf<String>()
+        val imports: MutableList<JCImport> = []
+        val importedShortNames: MutableSet<String> = []
 
         val addImport = fun(fqName: FqName, isAllUnder: Boolean) {
             val importedExpr = treeMaker.FqName(fqName.asString())
@@ -596,9 +596,9 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             .takeIf { it.isNotEmpty() }
             ?: return Pair(null, emptyList())
 
-        val classEntries = mutableListOf<KtSuperTypeListEntry>()
-        val interfaceEntries = mutableListOf<KtSuperTypeListEntry>()
-        val otherEntries = mutableListOf<KtSuperTypeListEntry>()
+        val classEntries: MutableList<KtSuperTypeListEntry> = []
+        val interfaceEntries: MutableList<KtSuperTypeListEntry> = []
+        val otherEntries: MutableList<KtSuperTypeListEntry> = []
 
         for (entry in superTypeEntries) {
             val isInterface = isSuperTypeDefinitelyInterface(entry, firClass)
@@ -797,7 +797,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             else -> null
         }
         if (value != null && firInitializer != null)
-            return convertConstantValueArgumentsFir(containingClass, value, listOf(firInitializer))
+            return convertConstantValueArgumentsFir(containingClass, value, [firInitializer])
 
         val propertyType = (origin?.descriptor as? PropertyDescriptor)?.returnType
 
@@ -835,7 +835,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                     ?.defaultValue ?: propertyInitializer
             else propertyInitializer
         val asmValue = evaluateFirExpression(expression) ?: return null
-        return convertConstantValueArgumentsFir(containingClass, asmValue, listOf(expression))
+        return convertConstantValueArgumentsFir(containingClass, asmValue, [expression])
     }
 
     private fun evaluateFirExpression(initialExpression: FirExpression): Any? {
@@ -866,7 +866,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
             }
             is FirPropertyAccessExpression -> result.calleeReference.toResolvedEnumEntrySymbol()?.let { enumEntry ->
                 val enumType = AsmUtil.asmTypeByClassId(enumEntry.callableId.classId!!)
-                arrayOf(enumType.descriptor, enumEntry.name.asString())
+                @Suppress("ConvertToCollectionLiterals") arrayOf(enumType.descriptor, enumEntry.name.asString())
             }
             is FirCollectionLiteral -> {
                 result.argumentList.arguments.map(::evaluateFirExpression)
@@ -901,7 +901,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
         val isOverridden = descriptor.overriddenDescriptors.isNotEmpty()
         val visibleAnnotations = if (isOverridden) {
-            (method.visibleAnnotations ?: emptyList()) + AnnotationNode(Type.getType(Override::class.java).descriptor)
+            (method.visibleAnnotations ?: []) + AnnotationNode(Type.getType(Override::class.java).descriptor)
         } else {
             method.visibleAnnotations
         }
@@ -1225,7 +1225,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         descriptorAnnotations: Annotations
     ): JCModifiers {
         var seenOverride = false
-        val seenAnnotations = mutableSetOf<AnnotationDescriptor>()
+        val seenAnnotations: MutableSet<AnnotationDescriptor> = []
         fun convertAndAdd(list: JavacList<JCAnnotation>, annotation: AnnotationNode): JavacList<JCAnnotation> {
             if (annotation.desc == "Ljava/lang/Override;") {
                 if (seenOverride) return list  // KT-34569: skip duplicate @Override annotations

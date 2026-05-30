@@ -27,10 +27,10 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 object FirJvmPolymorphicSignatureCallChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
-    private val polymorphicSignatureContainers = listOf(
+    private val polymorphicSignatureContainers = [
         ClassId.topLevel(FqName("java.lang.invoke.MethodHandle")),
         ClassId.topLevel(FqName("java.lang.invoke.VarHandle")),
-    )
+    ]
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirFunctionCall) {

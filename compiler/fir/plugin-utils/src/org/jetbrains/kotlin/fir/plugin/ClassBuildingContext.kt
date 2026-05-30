@@ -39,7 +39,7 @@ public class ClassBuildingContext(
     private val classId: ClassId,
     private val classKind: ClassKind,
 ) : DeclarationBuildingContext<FirRegularClass>(session, key, owner) {
-    private val superTypeProviders = mutableListOf<(List<FirTypeParameterRef>) -> ConeKotlinType>()
+    private val superTypeProviders: MutableList<(List<FirTypeParameterRef>) -> ConeKotlinType> = []
 
     /**
      * Adds [type] as supertype for constructed class

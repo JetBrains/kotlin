@@ -105,10 +105,10 @@ object GenerateInRangeExpressionTestData {
         for (function in functions) {
             generateMatrixTestCase(
                 "$namePrefix${function.subdir.replaceFirstChar(Char::uppercase)}.kt",
-                listOf(
+                [
                     "$aExpression${function.infixFunctionName}$bExpression",
                     "$bExpression${function.infixFunctionName}$aExpression"
-                ),
+                ],
                 elementExpressions
             )
         }
@@ -121,18 +121,18 @@ object GenerateInRangeExpressionTestData {
         FileUtil.delete(GENERATED_DIR)
         GENERATED_DIR.mkdirs()
 
-        val charLiterals = listOf("'0'", "'1'", "'2'", "'3'", "'4'")
+        val charLiterals = ["'0'", "'1'", "'2'", "'3'", "'4'"]
 
-        val numbers = listOf("-1", "0", "1", "2", "3", "4")
+        val numbers = ["-1", "0", "1", "2", "3", "4"]
         fun String.wrapNegative() = if (this.startsWith("-")) "($this)" else this
 
         val integerLiterals =
             numbers.flatMap {
-                listOf("${it.wrapNegative()}.toByte()", "${it.wrapNegative()}.toShort()", it, it + "L")
+                ["${it.wrapNegative()}.toByte()", "${it.wrapNegative()}.toShort()", it, it + "L"]
             }
         val floatingPointLiterals =
             numbers.flatMap {
-                listOf(it + "F", it + ".0")
+                [it + "F", it + ".0"]
             }
 
         val unsignedNumbers = numbers.drop(1).map { it + "u" }
@@ -144,25 +144,25 @@ object GenerateInRangeExpressionTestData {
 
         val intBounds = "1" to "3"
         generateRangeOperatorTestCases("int", rangeFunctions, intBounds, integerLiterals)
-        generateRangeOperatorTestCases("int", listOf(DOWN_TO), intBounds, numbers)
+        generateRangeOperatorTestCases("int", [DOWN_TO], intBounds, numbers)
 
         val longBounds = "1L" to "3L"
         generateRangeOperatorTestCases("long", rangeFunctions, longBounds, integerLiterals)
-        generateRangeOperatorTestCases("long", listOf(DOWN_TO), longBounds, numbers.map { it + "L" })
+        generateRangeOperatorTestCases("long", [DOWN_TO], longBounds, numbers.map { it + "L" })
 
         generateRangeOperatorTestCases("uint", allFunctions, "1u" to "3u", unsignedNumbers)
         generateRangeOperatorTestCases("ulong", allFunctions, "1uL" to "3uL", unsignedNumbers.map { it + "L" })
 
-        generateRangeOperatorTestCases("double", listOf(RANGE_TO, RANGE_UNTIL), "1.0" to "3.0", floatingPointLiterals)
+        generateRangeOperatorTestCases("double", [RANGE_TO, RANGE_UNTIL], "1.0" to "3.0", floatingPointLiterals)
 
         val floatBounds = "1.0F" to "3.0F"
-        generateRangeOperatorTestCases("float", listOf(RANGE_TO), floatBounds, floatingPointLiterals)
+        generateRangeOperatorTestCases("float", [RANGE_TO], floatBounds, floatingPointLiterals)
         // only Float in OpenEndRange<Float> operation is supported
-        generateRangeOperatorTestCases("float", listOf(RANGE_UNTIL), floatBounds, floatingPointLiterals.filter { "F" in it })
+        generateRangeOperatorTestCases("float", [RANGE_UNTIL], floatBounds, floatingPointLiterals.filter { "F" in it })
 
         generateMatrixTestCase(
             "arrayIndices.kt",
-            listOf("intArray.indices", "objectArray.indices", "emptyIntArray.indices", "emptyObjectArray.indices"),
+            ["intArray.indices", "objectArray.indices", "emptyIntArray.indices", "emptyObjectArray.indices"],
             integerLiterals,
             """val intArray = intArrayOf(1, 2, 3)
                     |val objectArray = arrayOf(1, 2, 3)
@@ -173,7 +173,7 @@ object GenerateInRangeExpressionTestData {
 
         generateMatrixTestCase(
             "collectionIndices.kt",
-            listOf("collection.indices", "emptyCollection.indices"),
+            ["collection.indices", "emptyCollection.indices"],
             integerLiterals,
             """val collection = listOf(1, 2, 3)
                     |val emptyCollection = listOf<Any>()
@@ -182,7 +182,7 @@ object GenerateInRangeExpressionTestData {
 
         generateMatrixTestCase(
             "charSequenceIndices.kt",
-            listOf("charSequence.indices", "emptyCharSequence.indices"),
+            ["charSequence.indices", "emptyCharSequence.indices"],
             integerLiterals,
             """val charSequence: CharSequence = "123"
                     |val emptyCharSequence: CharSequence = ""

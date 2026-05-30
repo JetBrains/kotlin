@@ -214,7 +214,7 @@ internal class KotlinStandaloneDeclarationIndexImpl : KotlinStandaloneDeclaratio
 private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String> {
     return when (typeElement) {
         is KtUserType -> {
-            val referenceName = typeElement.referencedName ?: return emptyList()
+            val referenceName = typeElement.referencedName ?: return []
 
             buildList {
                 add(referenceName)
@@ -227,8 +227,8 @@ private fun findInheritableSimpleNames(typeElement: KtTypeElement): List<String>
         }
 
         // `typealias T = A?` is inheritable.
-        is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: emptyList()
+        is KtNullableType -> typeElement.innerType?.let(::findInheritableSimpleNames) ?: []
 
-        else -> emptyList()
+        else -> []
     }
 }

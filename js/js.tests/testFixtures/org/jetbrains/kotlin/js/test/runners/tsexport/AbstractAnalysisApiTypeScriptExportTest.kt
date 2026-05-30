@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 abstract class AbstractAnalysisApiTypeScriptExportTest : AbstractKotlinCompilerTest() {
     protected fun TestConfigurationBuilder.configureTypeScriptExport() {
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
             DIAGNOSTICS with "-warnings"
         }
 

@@ -71,14 +71,14 @@ private val floatingPointVars = SubstitutableNumbers(
 )
 
 internal object OptimisticNumbersTypeCommonizer : AssociativeCommonizer<CirClassType> {
-    private val commonizableNumberTypes = listOf(
+    private val commonizableNumberTypes = [
         signedIntegers,
         unsignedIntegers,
         floatingPoints,
         signedVarIntegers,
         unsignedVarIntegers,
         floatingPointVars,
-    )
+    ]
 
     private val commonizableNumberIdentifiers = commonizableNumberTypes.flatMap { it.numbers.keys }.toSet()
 

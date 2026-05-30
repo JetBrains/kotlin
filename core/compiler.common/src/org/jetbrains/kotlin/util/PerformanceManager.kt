@@ -43,13 +43,13 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     private var phaseStartTime: Time? = currentTime()
     private var compilationMXBean: CompilationMXBean? = null
     private var jitStartTime: Long? = null
-    private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = emptyList()
+    private var garbageCollectorMXBeans: List<GarbageCollectorMXBean> = []
 
     private val phaseMeasurements: SortedMap<PhaseType, Time> = sortedMapOf()
     private val phaseSideMeasurements: SortedMap<PhaseSideType, SideStats> = sortedMapOf()
     private var gcMeasurements: SortedMap<String, GarbageCollectionStats> = sortedMapOf()
     private var jitTimeMillis: Long? = null
-    private val extendedStats: MutableList<String> = mutableListOf()
+    private val extendedStats: MutableList<String> = []
 
     private var currentDynamicPhaseTime: Time? = null
     private var currentDynamicPhase: String? = null

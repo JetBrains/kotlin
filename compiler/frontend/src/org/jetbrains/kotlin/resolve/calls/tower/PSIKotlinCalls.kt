@@ -75,8 +75,8 @@ class PSIKotlinCallForVariable(
     override val name: Name
 ) : PSIKotlinCall() {
     override val callKind: KotlinCallKind get() = KotlinCallKind.VARIABLE
-    override val typeArguments: List<TypeArgument> get() = emptyList()
-    override val argumentsInParenthesis: List<KotlinCallArgument> get() = emptyList()
+    override val typeArguments: List<TypeArgument> get() = []
+    override val argumentsInParenthesis: List<KotlinCallArgument> get() = []
     override val externalArgument: KotlinCallArgument? get() = null
 
     override val startingDataFlowInfo: DataFlowInfo get() = baseCall.startingDataFlowInfo

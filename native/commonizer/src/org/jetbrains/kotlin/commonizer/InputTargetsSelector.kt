@@ -18,7 +18,7 @@ internal fun selectInputTargets(inputTargets: Set<CommonizerTarget>, outputTarge
             subsetInputTargets.none { potentialSuperSet -> inputTarget.allLeaves() isProperSubsetOf potentialSuperSet.allLeaves() }
         }
 
-    return outputTarget.allLeaves().fold(setOf()) { selectedInputTargets, outputLeafTarget ->
+    return outputTarget.allLeaves().fold([]) { selectedInputTargets, outputLeafTarget ->
         if (outputLeafTarget in selectedInputTargets.allLeaves()) return@fold selectedInputTargets
         selectedInputTargets + (disjointSubsetInputTargets.firstOrNull { inputTarget -> outputLeafTarget in inputTarget.allLeaves() }
             ?: failedSelectingInputTargets(inputTargets, outputTarget))

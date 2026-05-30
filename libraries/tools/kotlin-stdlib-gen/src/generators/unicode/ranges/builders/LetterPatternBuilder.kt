@@ -45,13 +45,13 @@ internal class LetterRangesBuilder : RangesBuilder() {
     }
 }
 
-private val letterCategoryCodes = listOf(
+private val letterCategoryCodes = [
     CharCategory.UPPERCASE_LETTER.code,
     CharCategory.LOWERCASE_LETTER.code,
     CharCategory.TITLECASE_LETTER.code,
     CharCategory.MODIFIER_LETTER.code,
     CharCategory.OTHER_LETTER.code
-)
+]
 
 private fun bitmask(categoryId: String) = when (categoryId) {
     CharCategory.LOWERCASE_LETTER.code  -> 0b01

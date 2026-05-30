@@ -81,7 +81,7 @@ class Open(val index: Int, override val isUnspecified: Boolean = false) : Item()
  */
 class Scheme(
     val target: Item,
-    val parameters: List<Scheme> = emptyList(),
+    val parameters: List<Scheme> = [],
     val result: Scheme? = null,
     val anyParameters: Boolean = false,
 ) {
@@ -232,8 +232,8 @@ fun deserializeScheme(value: String): Scheme? {
     }
 
     fun <T> list(content: () -> T): List<T> {
-        if (reader.kind != ItemKind.Open) return emptyList()
-        val result = mutableListOf<T>()
+        if (reader.kind != ItemKind.Open) return []
+        val result: MutableList<T> = []
         while (reader.kind == ItemKind.Open) {
             result.add(content())
         }
@@ -270,7 +270,7 @@ fun deserializeScheme(value: String): Scheme? {
         delimited(ItemKind.Open, ItemKind.Close) {
             val target = item()
             val anyParameters = isItem(ItemKind.AnyParameters)
-            val parameters = if (anyParameters) emptyList() else list { scheme() }
+            val parameters = if (anyParameters) [] else list { scheme() }
             val result = optional(ItemKind.ResultPrefix) { scheme() }
             Scheme(target, parameters, result, anyParameters)
         }

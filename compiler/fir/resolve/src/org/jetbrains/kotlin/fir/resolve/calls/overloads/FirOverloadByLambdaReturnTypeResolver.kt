@@ -158,8 +158,8 @@ class FirOverloadByLambdaReturnTypeResolver(
                 ) { substitutor.substituteOrSelf(it) }
             }
 
-            val errorCandidates = mutableSetOf<Candidate>()
-            val successfulCandidates = mutableSetOf<Candidate>()
+            val errorCandidates: MutableSet<Candidate> = []
+            val successfulCandidates: MutableSet<Candidate> = []
 
             for (candidate in candidates) {
                 if (candidate.isSuccessful) {

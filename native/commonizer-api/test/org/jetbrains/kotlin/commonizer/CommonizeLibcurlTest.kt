@@ -34,7 +34,7 @@ public class CommonizeLibcurlTest {
                     KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
-            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64)),
+            outputTargets = [CommonizerTarget(LINUX_ARM64, LINUX_X64)],
             outputDirectory = temporaryOutputDirectory.root,
             logLevel = CommonizerLogLevel.Info
         )
@@ -77,7 +77,7 @@ public class CommonizeLibcurlTest {
                     KonanDistribution(konanHome).platformLibsDir.resolve(LINUX_ARM64.name).listFiles().orEmpty()
                         .map { TargetedCommonizerDependency(LeafCommonizerTarget(LINUX_ARM64), it) }
                         .toSet(),
-            outputTargets = setOf(CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)),
+            outputTargets = [CommonizerTarget(LINUX_ARM64, LINUX_X64, MACOS_X64)],
             outputDirectory = temporaryOutputDirectory.root
         )
 

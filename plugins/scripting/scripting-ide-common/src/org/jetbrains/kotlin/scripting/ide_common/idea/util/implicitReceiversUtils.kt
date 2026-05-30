@@ -113,7 +113,7 @@ private fun List<ReceiverParameterDescriptor>.shadowedByDslMarkers(): Set<Receiv
     for (receiver in this) {
         val dslMarkers = DslMarkerUtils.extractDslMarkerFqNames(receiver.value).all()
         for (marker in dslMarkers) {
-            typesByDslScopes.getOrPut(marker) { mutableListOf() } += receiver
+            typesByDslScopes.getOrPut(marker) { [] } += receiver
         }
     }
 

@@ -21,8 +21,8 @@ class ManglingUtilsTest {
 
     @Test
     fun `test - isSwiftNameProperty`() {
-        assertTrue(objCProperty(declarationAttributes = listOf("swift_name")).isSwiftNameProperty())
-        assertFalse(objCProperty(declarationAttributes = listOf("deprecated")).isSwiftNameProperty())
+        assertTrue(objCProperty(declarationAttributes = ["swift_name"]).isSwiftNameProperty())
+        assertFalse(objCProperty(declarationAttributes = ["deprecated"]).isSwiftNameProperty())
     }
 
     @Test
@@ -30,11 +30,11 @@ class ManglingUtilsTest {
         assertTrue(
             objCMethod(
                 selector = "foo",
-                attributes = listOf("swift_name(\"foo()\")")
+                attributes = ["swift_name(\"foo()\")"]
             ).isSwiftNameMethod()
         )
 
-        assertFalse(objCMethod(selector = "foo", attributes = listOf("deprecated")).isSwiftNameMethod())
+        assertFalse(objCMethod(selector = "foo", attributes = ["deprecated"]).isSwiftNameMethod())
         assertFalse(objCInitMethod().isSwiftNameMethod())
     }
 

@@ -62,7 +62,7 @@ internal class KlibClassExtension : KmClassExtension {
 }
 
 internal class KlibTypeExtension : KmTypeExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override fun hashCode(): Int {
         return annotations.hashCode()
@@ -98,7 +98,7 @@ internal class KlibPropertyExtension : KmPropertyExtension {
 }
 
 internal class KlibConstructorExtension : KmConstructorExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE
@@ -109,7 +109,7 @@ internal class KlibConstructorExtension : KmConstructorExtension {
 }
 
 internal class KlibTypeParameterExtension : KmTypeParameterExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE
@@ -121,7 +121,7 @@ internal class KlibTypeParameterExtension : KmTypeParameterExtension {
 
 internal class KlibEnumEntryExtension : KmEnumEntryExtension {
     var ordinal: Int? = null
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE
@@ -164,7 +164,7 @@ internal class KlibTypeAliasExtension : KmTypeAliasExtension {
 }
 
 internal class KlibValueParameterExtension : KmValueParameterExtension {
-    val annotations: MutableList<KmAnnotation> = mutableListOf()
+    val annotations: MutableList<KmAnnotation> = []
 
     override val type: KmExtensionType
         get() = TYPE

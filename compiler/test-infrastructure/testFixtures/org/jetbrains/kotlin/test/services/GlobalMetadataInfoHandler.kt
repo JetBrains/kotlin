@@ -20,7 +20,7 @@ class GlobalMetadataInfoHandler(
     private lateinit var existingInfosPerFile: Map<TestFile, List<ParsedCodeMetaInfo>>
 
     private val infosPerFile: MutableMap<TestFile, MutableList<CodeMetaInfo>> =
-        mutableMapOf<TestFile, MutableList<CodeMetaInfo>>().withDefault { mutableListOf() }
+        mutableMapOf<TestFile, MutableList<CodeMetaInfo>>().withDefault { [] }
 
     private val existingInfosPerFilePerInfoCache = mutableMapOf<Pair<TestFile, CodeMetaInfo>, List<ParsedCodeMetaInfo>>()
 
@@ -49,7 +49,7 @@ class GlobalMetadataInfoHandler(
     }
 
     fun addMetadataInfosForFile(file: TestFile, codeMetaInfos: List<CodeMetaInfo>) {
-        val infos = infosPerFile.getOrPut(file) { mutableListOf() }
+        val infos = infosPerFile.getOrPut(file) { [] }
         infos += codeMetaInfos
     }
 

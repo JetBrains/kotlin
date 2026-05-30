@@ -44,14 +44,14 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         private val dependencies: MutableMap<CommonizerTarget, MutableList<InlineSourceBuilder.Module>> = LinkedHashMap()
 
-        private var targets: List<Target> = emptyList()
+        private var targets: List<Target> = []
 
         private val inlineSourceBuilderFactory
             get() = DependencyAwareInlineSourceTestFactory(parentInlineSourceBuilder, dependencies.toTargetDependent())
 
 
         fun outputTarget(vararg targets: String) {
-            val outputTargets = outputTargets ?: mutableSetOf()
+            val outputTargets = outputTargets ?: []
             targets.forEach { target ->
                 outputTargets += parseCommonizerTarget(target) as SharedCommonizerTarget
             }
@@ -68,7 +68,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         fun registerDependency(vararg targets: CommonizerTarget, builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             targets.forEach { target ->
-                val dependenciesList = dependencies.getOrPut(target) { mutableListOf() }
+                val dependenciesList = dependencies.getOrPut(target) { [] }
                 val dependency = inlineSourceBuilderFactory[target].createModule {
                     builder()
                     name = "$target-dependency-${dependenciesList.size}-$name"
@@ -109,6 +109,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
         private val settings: MutableSet<MapBasedCommonizerSettings.Setting<*>> = LinkedHashSet()
 
+        @Suppress("ConvertToCollectionLiterals")
         fun build(): Parameters = Parameters(
             outputTargets = outputTargets ?: setOf(SharedCommonizerTarget(targets.map { it.target }.allLeaves())),
             dependencies = dependencies.toTargetDependent(),
@@ -137,7 +138,7 @@ abstract class AbstractInlineSourcesCommonizationTest : KtInlineSourceCommonizer
 
     @InlineSourcesCommonizationTestDsl
     class TargetBuilder(private val target: CommonizerTarget, private val inlineSourceBuilder: InlineSourceBuilder) {
-        private var modules: List<InlineSourceBuilder.Module> = emptyList()
+        private var modules: List<InlineSourceBuilder.Module> = []
 
         fun module(builder: InlineSourceBuilder.ModuleBuilder.() -> Unit) {
             modules = modules + inlineSourceBuilder.createModule(builder)

@@ -32,7 +32,7 @@ class AggregatedStatsCollector(
     }
 
     object AggregatedStatsHeader : StatsOutput.StatsHeader {
-        override fun toList(): List<String> = listOf(
+        override fun toList(): List<String> = [
             "Declaration Type",
             "Lifted Up",
             "Lifted Up, %%",
@@ -43,7 +43,7 @@ class AggregatedStatsCollector(
             "Failed: Other",
             "Failed: Other, %%",
             "Total"
-        )
+        ]
     }
 
     private class AggregatedStatsRow(
@@ -59,7 +59,7 @@ class AggregatedStatsCollector(
 
             fun fraction(amount: Int): Double = if (total > 0) amount.toDouble() / total else 0.0
 
-            return listOf(
+            return [
                 declarationType.alias,
                 liftedUp.toString(),
                 fraction(liftedUp).toString(),
@@ -70,7 +70,7 @@ class AggregatedStatsCollector(
                 failedOther.toString(),
                 fraction(failedOther).toString(),
                 total.toString()
-            )
+            ]
         }
     }
 

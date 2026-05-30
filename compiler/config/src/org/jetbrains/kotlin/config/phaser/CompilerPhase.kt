@@ -16,7 +16,7 @@ import kotlin.system.measureTimeMillis
  * @property phaseCount A unique ID that can show the order in which phases were executed.
  */
 class PhaserState(
-    val alreadyDone: MutableSet<AnyNamedPhase> = mutableSetOf(),
+    val alreadyDone: MutableSet<AnyNamedPhase> = [],
     var depth: Int = 0,
     var phaseCount: Int = 0,
 ) {
@@ -43,7 +43,7 @@ interface CompilerPhase<in Context : LoggingContext, Input, Output> {
      */
     fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output
 
-    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> = emptyList()
+    fun getNamedSubphases(startDepth: Int = 0): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> = []
 }
 
 fun <Context : LoggingContext, Input, Output> CompilerPhase<Context, Input, Output>.invokeToplevel(
@@ -76,11 +76,11 @@ infix operator fun <Data, Context> Action<Data, Context>.plus(other: Action<Data
 
 abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     val name: String,
-    val prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
-    val preconditions: Set<Checker<Input>> = emptySet(),
-    val postconditions: Set<Checker<Output>> = emptySet(),
-    private val preactions: Set<Action<Input, Context>> = emptySet(),
-    private val postactions: Set<Action<Pair<Input, Output>, Context>> = emptySet(),
+    val prerequisite: Set<NamedCompilerPhase<*, *, *>> = [],
+    val preconditions: Set<Checker<Input>> = [],
+    val postconditions: Set<Checker<Output>> = [],
+    private val preactions: Set<Action<Input, Context>> = [],
+    private val postactions: Set<Action<Pair<Input, Output>, Context>> = [],
     protected val nlevels: Int = 0
 ) : CompilerPhase<Context, Input, Output> {
     override fun invoke(phaseConfig: PhaseConfig, phaserState: PhaserState, context: Context, input: Input): Output {
@@ -146,7 +146,7 @@ abstract class NamedCompilerPhase<in Context : LoggingContext, Input, Output>(
     }
 
     override fun getNamedSubphases(startDepth: Int): List<Pair<Int, NamedCompilerPhase<Context, *, *>>> =
-        listOf(startDepth to this)
+        [startDepth to this]
 
     override fun toString() = "Compiler Phase @$name"
 }

@@ -35,13 +35,13 @@ class BrokenMacosTestInterceptor : InvocationInterceptor {
         invocation: Invocation<Void>,
         invocationContext: ReflectiveInvocationContext<Method>,
         extensionContext: ExtensionContext,
-    ) = runTest(invocation, extensionContext, emptyList())
+    ) = runTest(invocation, extensionContext, [])
 
     override fun interceptDynamicTest(
         invocation: Invocation<Void>,
         invocationContext: DynamicTestInvocationContext,
         extensionContext: ExtensionContext,
-    ) = runTest(invocation, extensionContext, emptyList())
+    ) = runTest(invocation, extensionContext, [])
 
     override fun interceptTestTemplateMethod(
         invocation: Invocation<Void>,

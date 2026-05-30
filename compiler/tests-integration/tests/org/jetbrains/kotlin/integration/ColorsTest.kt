@@ -48,7 +48,7 @@ class ColorsTest : TestCaseWithTmpdir() {
         val log = ByteArrayOutputStream()
 
         val arguments = K2JVMCompilerArguments().apply {
-            freeArgs = listOf(tmpdir.absolutePath)
+            freeArgs = [tmpdir.absolutePath]
             destination = tmpdir.absolutePath
         }
 

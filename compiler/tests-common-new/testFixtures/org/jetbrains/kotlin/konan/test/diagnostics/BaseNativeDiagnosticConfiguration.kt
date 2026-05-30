@@ -29,10 +29,10 @@ fun <R : ResultingArtifact.FrontendOutput<R>> TestConfigurationBuilder.baseNativ
     defaultDirectives {
         +JvmEnvironmentConfigurationDirectives.USE_PSI_CLASS_FILES_READING
         +ConfigurationDirectives.WITH_STDLIB
-        LANGUAGE with listOf(
+        LANGUAGE with [
             "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
             "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}",
-        )
+        ]
     }
 
     enableMetaInfoHandler()

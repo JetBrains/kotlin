@@ -14,9 +14,9 @@ import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeExpressionChecker
 import org.jetbrains.kotlin.fir.analysis.native.checkers.NativeTypeCheckers
 
 internal object LLNativeCheckersConfiguration : LLPlatformCheckersConfiguration {
-    override val declarationCheckers: List<DeclarationCheckers> = listOf(NativeDeclarationCheckers)
-    override val expressionCheckers: List<ExpressionCheckers> = listOf(NativeExpressionCheckers)
-    override val typeCheckers: List<TypeCheckers> = listOf(NativeTypeCheckers)
+    override val declarationCheckers: List<DeclarationCheckers> = [NativeDeclarationCheckers]
+    override val expressionCheckers: List<ExpressionCheckers> = [NativeExpressionCheckers]
+    override val typeCheckers: List<TypeCheckers> = [NativeTypeCheckers]
 
-    override val extraDeclarationCheckers: List<DeclarationCheckers> = listOf(NativeDeclarationExtraCheckers)
+    override val extraDeclarationCheckers: List<DeclarationCheckers> = [NativeDeclarationExtraCheckers]
 }

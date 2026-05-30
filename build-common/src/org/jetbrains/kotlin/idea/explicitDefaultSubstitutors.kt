@@ -39,7 +39,7 @@ object JvmTargetDefaultSubstitutor : ExplicitDefaultSubstitutor() {
     private val newDefault: String
         get() = JvmTarget.JVM_1_8.description
 
-    private fun prepareSubstitution(default: String): List<String> = listOf(argument.value, default)
+    private fun prepareSubstitution(default: String): List<String> = [argument.value, default]
 
     override val oldSubstitution: List<String>
         get() = prepareSubstitution(oldDefault)

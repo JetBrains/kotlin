@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.fir.extensions.AnnotationFqn
 sealed class LookupPredicate : AbstractPredicate<LookupPredicate> {
     abstract override val annotations: Set<AnnotationFqn>
     final override val metaAnnotations: Set<AnnotationFqn>
-        get() = emptySet()
+        get() = []
 
     abstract override fun <R, D> accept(visitor: PredicateVisitor<LookupPredicate, R, D>, data: D): R
 

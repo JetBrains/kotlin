@@ -53,10 +53,10 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
     private val javaHome: String = System.getProperty("java.home")
 
     private val compilationClasspath: List<File> by lazy {
-        listOf(
+        [
             ForTestCompileRuntime.runtimeJarForTests(),
             ForTestCompileRuntime.kotlinTestJarForTests(),
-        )
+        ]
     }
 
     private val reflectClasspath: File by lazy { ForTestCompileRuntime.reflectJarForTests() }
@@ -91,11 +91,11 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
         arguments: List<String>,
         classpath: List<File>,
     ): Pair<Int, String> {
-        val cmd = listOf(
+        val cmd = [
             nativeImageExecutable.absolutePath,
             "-Dkotlinc.test.allow.testonly.language.features=true",
             "-cp", classpath.joinToString(File.pathSeparator),
-        ) + arguments
+        ] + arguments
         val builder = ProcessBuilder(cmd).directory(workingDir).redirectErrorStream(true)
         builder.environment().putIfAbsent("JAVA_HOME", javaHome)
         val proc = builder.start()
@@ -143,7 +143,7 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
     ): String? = this[directive].singleOrNull()?.let { "$flagPrefix=${render(it)}" }
 
     private fun invokeBox(classDir: File, boxClass: String, withReflect: Boolean): String? {
-        URLClassLoader(arrayOf(classDir.toURI().toURL()), sharedRuntimeLoader(withReflect)).use { loader ->
+        URLClassLoader([classDir.toURI().toURL()], sharedRuntimeLoader(withReflect)).use { loader ->
             val method = loader.loadClass(boxClass).getMethod("box")
             val thread = Thread.currentThread()
             val previous = thread.contextClassLoader
@@ -169,7 +169,8 @@ abstract class AbstractNativeImageBlackBoxCodegenTest {
 
     private fun sharedRuntimeLoader(withReflect: Boolean): URLClassLoader =
         sharedRuntimeLoaders.computeIfAbsent(withReflect) {
-            val cp = compilationClasspath + if (withReflect) listOf(reflectClasspath) else emptyList()
+            @Suppress("ConvertToCollectionLiterals")
+            val cp = compilationClasspath + if (withReflect) listOf(reflectClasspath) else []
             URLClassLoader(
                 cp.map { it.toURI().toURL() }.toTypedArray(),
                 ClassLoader.getSystemClassLoader().parent,

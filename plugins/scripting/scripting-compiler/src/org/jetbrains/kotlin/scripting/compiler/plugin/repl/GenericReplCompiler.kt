@@ -117,7 +117,7 @@ open class GenericReplCompiler(
             )
 
             val irBackendInput = codegenFactory.convertToIr(
-                generationState, listOf(psiFile), compilerState.analyzerEngine.trace.bindingContext,
+                generationState, [psiFile], compilerState.analyzerEngine.trace.bindingContext,
             )
 
             codegenFactory.generateModule(generationState, irBackendInput)
@@ -136,7 +136,7 @@ open class GenericReplCompiler(
                 scriptDescriptor.name.identifier,
                 classes,
                 resultType != null,
-                classpathAddendum ?: emptyList(),
+                classpathAddendum ?: [],
                 resultType,
                 null
             )
@@ -144,7 +144,7 @@ open class GenericReplCompiler(
     }
 
     private fun ScriptCompilationConfiguration.toDependencies(classpath: List<File>): ScriptDependencies {
-        val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: emptyList()
+        val defaultImports = this[ScriptCompilationConfiguration.defaultImports]?.toList() ?: []
 
         return ScriptDependencies(
             classpath = classpath,
@@ -158,7 +158,7 @@ open class GenericReplCompiler(
         val externalSource = it as? ExternalSourceCode
         externalSource?.externalLocation?.toFileOrNull()
             ?: throw RuntimeException("Unsupported source in requireSources parameter - only local files are supported now (${externalSource?.externalLocation})")
-    } ?: emptyList()
+    } ?: []
 
     private fun URL.toFileOrNull() =
         try {

@@ -87,7 +87,7 @@ class FirJavaMethod @FirImplementationDetail constructor(
     }
 
     override val contextParameters: List<FirValueParameter>
-        get() = emptyList()
+        get() = []
 
     //not used actually, because get 'enhanced' into regular FirSimpleFunction
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
@@ -203,14 +203,14 @@ class FirJavaMethodBuilder : FirFunctionBuilder, FirTypeParametersOwnerBuilder, 
     override lateinit var moduleData: FirModuleData
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
     override lateinit var returnTypeRef: FirTypeRef
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val valueParameters: MutableList<FirValueParameter> = []
     override var body: FirBlock? = null
     override lateinit var status: FirDeclarationStatus
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
     lateinit var name: Name
     lateinit var symbol: FirNamedFunctionSymbol
     override val annotations: MutableList<FirAnnotation> get() = shouldNotBeCalled()
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = []
     override var resolvePhase: FirResolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
     var isFromSource: Boolean by Delegates.notNull()
     var annotationList: FirJavaAnnotationList = FirEmptyJavaAnnotationList

@@ -121,7 +121,7 @@ private fun extraLambdaInfo(
             diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
             ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_CONTEXT_RECEIVER_TYPE)
         }
-    } ?: emptyList()
+    } ?: []
     val parameters = argument.parametersTypes?.mapIndexed { index, parameterType ->
         if (parameterType != null) {
             parameterType
@@ -129,7 +129,7 @@ private fun extraLambdaInfo(
             diagnosticsHolder.addDiagnostic(NotEnoughInformationForLambdaParameter(argument, index))
             ErrorUtils.createErrorType(ErrorTypeKind.UNINFERRED_LAMBDA_PARAMETER_TYPE)
         }
-    } ?: emptyList()
+    } ?: []
 
     val newTypeVariableUsed = returnType == typeVariable.defaultType
     if (newTypeVariableUsed) csBuilder.registerVariable(typeVariable)
@@ -169,7 +169,7 @@ private fun extractLambdaInfoFromFunctionalType(
             // lambda has explicit functional type - use types from it if available
             (parametersTypes?.mapIndexed { index, type ->
                 type.orExpected(index)
-            } ?: emptyList()) to argumentAsFunctionExpression.receiverType
+            } ?: []) to argumentAsFunctionExpression.receiverType
         }
 
         (parametersTypes?.size ?: 0) == expectedParameters.size && receiverFromExpected -> {
@@ -248,7 +248,7 @@ fun ResolvedLambdaAtom.transformToResolvedLambda(
         forceResolution = true,
         returnTypeVariable = returnTypeVariable
     ).also {
-        this.setAnalyzedResults(null, listOf(it))
+        this.setAnalyzedResults(null, [it])
     } as ResolvedLambdaAtom
 }
 

@@ -123,7 +123,7 @@ fun CompilationOutcome.assertOutputs(expectedOutputs: Set<String>, doNotFailOnEx
         }
     }
     assert(filesLeft.isEmpty() && (doNotFailOnExtraFiles || notDeclaredFiles.isEmpty())) {
-        val errors = mutableListOf<String>()
+        val errors: MutableList<String> = []
         if (filesLeft.isNotEmpty()) {
             errors.add("The following files were declared as expected, but not actually produced: $filesLeft")
         }

@@ -322,7 +322,7 @@ class ClassicExpectActualMatchingContext(
         module: ModuleDescriptor,
         moduleFilter: (ModuleDescriptor) -> Boolean
     ): Collection<ClassifierDescriptorWithTypeParameters> {
-        if (classId == null) return emptyList()
+        if (classId == null) return []
 
         fun MemberScope.getAllClassifiers(name: Name): Collection<ClassifierDescriptorWithTypeParameters> =
             getDescriptorsFiltered(DescriptorKindFilter.CLASSIFIERS) { it == name }

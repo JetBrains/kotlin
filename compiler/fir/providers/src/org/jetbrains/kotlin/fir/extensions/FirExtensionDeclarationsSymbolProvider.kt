@@ -83,7 +83,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
         buildMap<FqName, MutableSet<N>> {
             for (extension in extensions) {
                 for (id in extension.ids()) {
-                    getOrPut(packageFqName(id)) { mutableSetOf() }.add(shortName(id))
+                    getOrPut(packageFqName(id)) { [] }.add(shortName(id))
                 }
             }
         }
@@ -174,7 +174,7 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             }
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
-            classNamesInPackageCache.getValue()[packageFqName] ?: emptySet()
+            classNamesInPackageCache.getValue()[packageFqName] ?: []
 
         override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
 

@@ -105,7 +105,7 @@ abstract class VariableFixationFinder(
     context(c: Context)
     fun typeVariableHasProperConstraint(typeVariable: TypeConstructorMarker): Boolean {
         val dependencyProvider = TypeVariableDependencyInformationProvider(
-            c.notFixedTypeVariables, emptyList(), topLevelType = null, c,
+            c.notFixedTypeVariables, [], topLevelType = null, c,
             languageVersionSettings,
         )
 

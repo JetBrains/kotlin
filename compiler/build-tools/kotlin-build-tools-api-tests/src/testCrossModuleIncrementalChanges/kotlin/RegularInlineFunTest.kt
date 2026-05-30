@@ -23,7 +23,7 @@ class RegularInlineFunTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/regular-inline-fun/basic-change/lib")
             val app = module(
                 "ic-scenarios/regular-inline-fun/basic-change/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "nice data")
@@ -31,19 +31,19 @@ class RegularInlineFunTest : BaseCompilationTest() {
             lib.replaceFileWithVersion("com/example/ictest/inlineFun.kt", "changeConstantPool")
 
             // the recompilation of call site is not necessary yet: constant belongs to the outer class, and it's not copied to the caller
-            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
-            app.compile(expectedDirtySet = setOf())
+            lib.compile(expectedDirtySet = ["com/example/ictest/inlineFun.kt"])
+            app.compile(expectedDirtySet = [])
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "even nicer data")
 
             lib.changeFile("com/example/ictest/inlineFun.kt") { it.replace("return item", "return \"bar\"") }
-            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
-            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            lib.compile(expectedDirtySet = ["com/example/ictest/inlineFun.kt"])
+            app.compile(expectedDirtySet = ["com/example/ictest/callSite.kt"])
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "bar")
 
             // and this is different from the second step: now constant belongs to the inline fun itself
             lib.changeFile("com/example/ictest/inlineFun.kt") { it.replace("return \"bar\"", "return \"foo\"") }
-            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
-            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            lib.compile(expectedDirtySet = ["com/example/ictest/inlineFun.kt"])
+            app.compile(expectedDirtySet = ["com/example/ictest/callSite.kt"])
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "foo")
         }
     }
@@ -56,26 +56,26 @@ class RegularInlineFunTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-fun-in-value-class/lib")
             val app = module(
                 "ic-scenarios/inline-fun-in-value-class/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
             app.execute(mainClass = "CallSiteKt", exactOutput = "bar_123")
 
             lib.replaceFileWithVersion("callable.kt", "changeConstant")
 
-            lib.compile(expectedDirtySet = setOf("callable.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["callable.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = "foo_bar_123")
 
             lib.replaceFileWithVersion("callable.kt", "withChainOfInlineFuns")
 
-            lib.compile(expectedDirtySet = setOf("callable.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["callable.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = "123_bar")
 
             lib.replaceFileWithVersion("callable.kt", "withChainOfInlineFunsAndNewConstant")
 
-            lib.compile(expectedDirtySet = setOf("callable.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["callable.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = "123_foo_bar")
         }
     }

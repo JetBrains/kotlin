@@ -101,7 +101,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             superTypeRefs += buildResolvedTypeRef {
                 coneType = ConeClassLikeTypeImpl(
                     ConeClassLikeLookupTagWithFixedSymbol(schemaId, schemaSymbol),
-                    emptyArray(),
+                    [],
                     isMarkedNullable = false
                 )
             }
@@ -110,13 +110,13 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
         val typeRef = buildResolvedTypeRef {
             coneType = ConeClassLikeTypeImpl(
                 lookupTag,
-                arrayOf(
+                [
                     ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagWithFixedSymbol(refinedTypeId, refinedTypeSymbol),
-                        emptyArray(),
+                        [],
                         isMarkedNullable = false
                     )
-                ),
+                ],
                 isMarkedNullable = false
             )
         }
@@ -158,7 +158,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
 
         val scope = localClassId(Name.identifier("Scope1"))
         val scopeSymbol = FirRegularClassSymbol(scope)
-        val columns: List<Column> = listOf(Column(Name.identifier("column"), session.builtinTypes.intType))
+        val columns: List<Column> = [Column(Name.identifier("column"), session.builtinTypes.intType)]
 
         schemaClass.callShapeData = CallShapeData.Schema(columns)
 
@@ -177,7 +177,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
 
         scopeClass.callShapeData = CallShapeData.Scope(schemaClass.symbol, columns)
 
-        refinedType.callShapeData = CallShapeData.RefinedType(listOf(scopeSymbol))
+        refinedType.callShapeData = CallShapeData.RefinedType([scopeSymbol])
 
         val argument = buildAnonymousFunctionExpression {
             val fSymbol = FirAnonymousFunctionSymbol()
@@ -245,7 +245,7 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
                 typeRef = buildResolvedTypeRef {
                     coneType = ConeClassLikeTypeImpl(
                         ConeClassLikeLookupTagImpl(ClassId(FqName("kotlin"), Name.identifier("Function1"))),
-                        typeArguments = arrayOf(receiverType, returnType),
+                        typeArguments = [receiverType, returnType],
                         isMarkedNullable = false
                     )
                 }
@@ -254,10 +254,10 @@ class DataFrameLikeCallsRefinementExtension(session: FirSession) : FirFunctionCa
             }.also { target.bind(it) }
         }
 
-        for (generatedClass in listOf(schemaClass, scopeClass, refinedType)) {
+        for (generatedClass in [schemaClass, scopeClass, refinedType]) {
             generatedClass.anchor = call.source
         }
-        refinedType.generatedClasses = listOf(schemaClass, scopeClass, refinedType).map { it.symbol }
+        refinedType.generatedClasses = [schemaClass, scopeClass, refinedType].map { it.symbol }
         val newCall = buildFunctionCall {
             this.coneTypeOrNull = returnType
             typeArguments += buildTypeProjectionWithVariance {

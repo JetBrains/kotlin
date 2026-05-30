@@ -29,6 +29,6 @@ class NativeSecondStageEnvironmentConfigurator(testServices: TestServices) : Nat
         val includedLibrary = testServices.artifactsProvider.getArtifact(module, ArtifactKinds.KLib).outputFile.absolutePath
 
         configuration.konanLibraries += includedLibrary
-        configuration.konanIncludedLibraries = listOf(includedLibrary)
+        configuration.konanIncludedLibraries = [includedLibrary]
     }
 }

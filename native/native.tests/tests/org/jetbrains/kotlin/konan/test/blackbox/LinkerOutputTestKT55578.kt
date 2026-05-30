@@ -21,7 +21,7 @@ import kotlin.test.assertTrue
 @TestDataPath("\$PROJECT_ROOT")
 @EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
 class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
-    private val defaultCompilerArguments = listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi")
+    private val defaultCompilerArguments = ["-opt-in=kotlinx.cinterop.ExperimentalForeignApi"]
 
     private val testDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/CInterop/KT-55578/")
 
@@ -129,7 +129,7 @@ class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
 
     @Test
     fun `should shadow hint by cli argument`() {
-        val targetLibrary1 = compileKlib(testDir.resolve("userSetupHint1.def"), extraArgs = listOf("-Xuser-setup-hint", cliHint))
+        val targetLibrary1 = compileKlib(testDir.resolve("userSetupHint1.def"), extraArgs = ["-Xuser-setup-hint", cliHint])
         val targetLibrary2 = compileKlib(testDir.resolve("userSetupHint2.def"))
 
         val compilationResult = compileExecutable(testDir.resolve("userSetupHint.kt"), targetLibrary1, targetLibrary2)
@@ -163,9 +163,9 @@ class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
     private fun compileExecutable(
         file: File,
         vararg libraries: KLIB,
-        extraArgs: List<String> = emptyList()
+        extraArgs: List<String> = []
     ): TestCompilationResult<out TestCompilationArtifact.Executable> {
-        val module = TestModule.Exclusive("userSetupHint", emptySet(), emptySet(), emptySet()).apply {
+        val module = TestModule.Exclusive("userSetupHint", [], [], []).apply {
             files += TestFile.createCommitted(file, this)
         }
 
@@ -176,13 +176,13 @@ class LinkerOutputTestKT55578 : AbstractNativeLinkerOutputTest() {
         )
     }
 
-    private fun compileKlib(defFile: File, sourceFile: File? = null, extraArgs: List<String> = emptyList()): KLIB {
+    private fun compileKlib(defFile: File, sourceFile: File? = null, extraArgs: List<String> = []): KLIB {
         val sourceArguments = sourceFile?.let {
-            listOf(
+            [
                 "-Xcompile-source", sourceFile.absolutePath,
                 "-Xccall-mode", "indirect", // Required for -Xcompile-source
-            )
-        } ?: emptyList()
+            ]
+        } ?: []
         return cinteropToLibrary(defFile, buildDir, TestCInteropArgs(extraArgs + sourceArguments))
             .assertSuccess().resultingArtifact
     }

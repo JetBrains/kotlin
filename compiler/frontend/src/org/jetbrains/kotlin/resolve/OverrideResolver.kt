@@ -604,7 +604,7 @@ class OverrideResolver(
             val directOverridden = overriddenDescriptors
 
             // directOverridden may be empty if user tries to delegate implementation of abstract class instead of interface
-            if (directOverridden.isEmpty()) return emptySet()
+            if (directOverridden.isEmpty()) return []
 
             // collects map from the directly overridden descriptor to the set of declarations:
             // -- if directly overridden is not fake, the set consists of one element: this directly overridden

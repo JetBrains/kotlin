@@ -56,7 +56,7 @@ internal class KtUltraLightSuspendContinuationParameter(
         ktType?.asPsiType(support, TypeMappingMode.DEFAULT, method) ?: PsiTypes.nullType()
     }
 
-    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, []) }
 
     override fun getType(): PsiType = psiType
 
@@ -94,7 +94,7 @@ internal abstract class KtUltraLightParameter(
         return another is KtParameter && kotlinOrigin?.isEquivalentTo(another) == true || this == another
     }
 
-    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, emptySet()) }
+    private val lightModifierList by lazyPub { KtUltraLightSimpleModifierList(this, []) }
 
     override fun getModifierList(): PsiModifierList = lightModifierList
 
@@ -254,7 +254,7 @@ internal class KtUltraLightReceiverParameter(
             ?.modifierList
             ?.annotationEntries
             ?.toLightAnnotations(this, AnnotationUseSiteTarget.RECEIVER)
-            ?: emptyList()
+            ?: []
 
     override fun isVarArgs(): Boolean = false
 
@@ -274,7 +274,7 @@ internal class KtUltraLightParameterForDescriptor(
     // This means that all data that depends on descriptor evaluated in ctor so the descriptor will be released on the end.
     // Be aware to save descriptor in class instance or any depending references
 
-    private val lazyInitializers = mutableListOf<Lazy<*>>()
+    private val lazyInitializers: MutableList<Lazy<*>> = []
     private inline fun <T> getAndAddLazy(crossinline initializer: () -> T): Lazy<T> =
         lazyPub { initializer() }.also { lazyInitializers.add(it) }
 

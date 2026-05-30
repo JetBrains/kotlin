@@ -64,10 +64,10 @@ abstract class AbstractJsTest(
                 )
             }
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "-${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "-${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
 
             configureJsArtifactsHandlersStep {
@@ -126,10 +126,10 @@ abstract class AbstractJsCodegenBoxWithInlinedFunInKlibTest(
         with(builder) {
             defaultDirectives {
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
             configureLoweredIrHandlersStep {
                 useHandlers(
@@ -172,10 +172,10 @@ abstract class AbstractJsCodegenInlineWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -186,7 +186,7 @@ abstract class AbstractJsCodegenSplittingInlineWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix: String = "codegen/boxInlineSplittedWithInlinedKlib/",
 ) : AbstractJsCodegenInlineWithInlinedFunInKlibTest(pathToTestDir, testGroupOutputDirPrefix) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -223,10 +223,10 @@ abstract class AbstractJsLineNumberWithInlinedFunInKlibTest : AbstractJsLineNumb
         with(builder) {
             configureLineNumberTests(::JsLineNumberHandler)
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -287,10 +287,10 @@ abstract class AbstractJsSteppingWithInlinedFunInKlibTest(
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -300,7 +300,7 @@ abstract class AbstractJsSteppingSplitTest : AbstractJsSteppingTest(
     testGroupOutputDirPrefix = "debug/steppingSplit/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -318,7 +318,7 @@ abstract class AbstractJsSteppingSplitWithInlinedFunInKlibTest : AbstractJsStepp
     testGroupOutputDirPrefix = "debug/steppingSplitWithInlinedFunInKlib/"
 ) {
     override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
-        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
+        get() = [IGNORE_BACKEND_K2_MULTI_MODULE]
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -346,10 +346,10 @@ abstract class AbstractJsCodegenWasmJsInteropWithInlinedFunInKlibTest : Abstract
         super.configure(builder)
         with(builder) {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }
@@ -363,7 +363,7 @@ fun TestConfigurationBuilder.setUpDefaultDirectivesForJsBoxTest(parser: FirParse
         if (getBoolean("kotlin.js.ir.dce", true)) +JsEnvironmentConfigurationDirectives.RUN_IR_DCE
         +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
         -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-        DiagnosticsDirectives.DIAGNOSTICS with listOf("-infos")
+        DiagnosticsDirectives.DIAGNOSTICS with ["-infos"]
         FirDiagnosticsDirectives.FIR_PARSER with parser
     }
 }

@@ -79,7 +79,7 @@ class FirStatusResolver(
         containingClass: FirClass?,
     ): List<FirProperty> {
         if (containingClass == null) {
-            return emptyList()
+            return []
         }
 
         val scope = containingClass.unsubstitutedScope(withForcedTypeCalculator = false, memberRequiredPhase = null)
@@ -116,7 +116,7 @@ class FirStatusResolver(
         containingClass: FirClass?
     ): List<FirNamedFunction> {
         if (containingClass == null) {
-            return emptyList()
+            return []
         }
 
         return buildList {
@@ -166,7 +166,7 @@ class FirStatusResolver(
         }
 
         classLikeStatusValidation(newStatus = status, declaration = firClass)
-        return resolveStatus(firClass, status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(firClass, status, containingClass, null, isLocal, [])
     }
 
     fun resolveStatus(
@@ -179,7 +179,7 @@ class FirStatusResolver(
         }
 
         classLikeStatusValidation(newStatus = status, declaration = typeAlias)
-        return resolveStatus(typeAlias, status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(typeAlias, status, containingClass, null, isLocal, [])
     }
 
     private fun classLikeStatusValidation(newStatus: FirDeclarationStatus, declaration: FirClassLikeDeclaration) {
@@ -204,7 +204,7 @@ class FirStatusResolver(
         containingClass: FirClass?,
         containingProperty: FirProperty?,
         isLocal: Boolean,
-        overriddenStatuses: List<FirResolvedDeclarationStatus> = emptyList(),
+        overriddenStatuses: List<FirResolvedDeclarationStatus> = [],
     ): FirResolvedDeclarationStatus {
         val status = propertyAccessor.applyExtensionTransformers {
             transformStatus(it, propertyAccessor, containingClass?.symbol, containingProperty, isLocal)
@@ -216,11 +216,11 @@ class FirStatusResolver(
         val status = constructor.applyExtensionTransformers {
             transformStatus(it, constructor, containingClass?.symbol, isLocal)
         }
-        return resolveStatus(constructor, status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(constructor, status, containingClass, null, isLocal, [])
     }
 
     fun resolveStatus(field: FirField, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
-        return resolveStatus(field, field.status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(field, field.status, containingClass, null, isLocal, [])
     }
 
     private fun resolveStatus(
@@ -231,14 +231,14 @@ class FirStatusResolver(
         val status = backingField.applyExtensionTransformers {
             transformStatus(it, backingField, containingClass?.symbol, isLocal)
         }
-        return resolveStatus(backingField, status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(backingField, status, containingClass, null, isLocal, [])
     }
 
     fun resolveStatus(enumEntry: FirEnumEntry, containingClass: FirClass?, isLocal: Boolean): FirResolvedDeclarationStatus {
         val status = enumEntry.applyExtensionTransformers {
             transformStatus(it, enumEntry, containingClass?.symbol, isLocal)
         }
-        return resolveStatus(enumEntry, status, containingClass, null, isLocal, emptyList())
+        return resolveStatus(enumEntry, status, containingClass, null, isLocal, [])
     }
 
     private fun resolveStatus(

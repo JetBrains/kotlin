@@ -52,21 +52,21 @@ class DataSchemaInfoCheckers(
     withImportedSchemasReader: Boolean,
 ) : FirAdditionalCheckersExtension(session) {
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = [
             FunctionCallSchemaReporter,
-        )
-        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
+        ]
+        override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = [
             PropertyAccessSchemaReporter,
-        )
+        ]
     }
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+        override val propertyCheckers: Set<FirPropertyChecker> = [
             PropertySchemaReporter,
-        )
+        ]
         override val namedFunctionCheckers: Set<FirNamedFunctionChecker> =
-            setOf(
+            [
                 FunctionDeclarationSchemaReporter,
-            )
+            ]
         override val regularClassCheckers: Set<FirRegularClassChecker> = setOfNotNull(
             ImportedSchemaInfoChecker.takeIf { withImportedSchemasReader }
         )
@@ -191,10 +191,10 @@ private fun schemaIfDataFrameStructuralType(type: ConeKotlinType): String? {
             val keysSchema = pluginDataFrameSchema(keys)
             val groupedSchema = pluginDataFrameSchema(grouped)
             PluginDataFrameSchema(
-                listOf(
+                [
                     SimpleColumnGroup("keys", keysSchema.columns()),
                     SimpleFrameColumn("groups", groupedSchema.columns())
-                )
+                ]
             )
         }
 

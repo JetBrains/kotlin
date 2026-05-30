@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.objcexport.mangling.unifyName
 
 internal fun ObjCExportContext.translateToObjCFunctionType(type: KaType, returnsVoid: Boolean): ObjCReferenceType {
     if (type !is KaFunctionType) return ObjCIdType
-    val usedNames = mutableSetOf<String>()
+    val usedNames: MutableSet<String> = []
     val objCBlockPointerType = ObjCBlockPointerType(
         returnType = if (returnsVoid) {
             ObjCVoidType

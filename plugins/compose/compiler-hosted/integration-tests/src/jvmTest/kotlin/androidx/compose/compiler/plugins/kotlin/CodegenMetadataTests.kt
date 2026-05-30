@@ -92,13 +92,13 @@ class CodegenMetadataTests : AbstractCodegenTest() {
         val main = loader.loadClass("Main").methods.single { it.name == "main" }
         val delegates = main.invoke(null)
 
-        assertEquals(delegates, listOf("foo", "fooComposable"))
+        assertEquals(delegates, ["foo", "fooComposable"])
     }
 
     companion object {
-        private val additionalPaths = listOf(
+        private val additionalPaths = [
             Classpath.jarFor<kotlin.metadata.jvm.KotlinClassMetadata>(), // kotlin-metadata
             Classpath.jarFor("kotlin.reflect.full.KClasses") // kotlin-reflect
-        )
+        ]
     }
 }

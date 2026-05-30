@@ -61,23 +61,23 @@ class UklibPublicationIT : KGPBaseTest() {
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }
 
-        val expectedFragments = setOf(
+        val expectedFragments: Set<Fragment> = [
             Fragment(
                 identifier = "commonMain",
-                targets = listOf("ios_arm64", "ios_x64", "js_ir", "jvm", "linux_arm64", "linux_x64", "wasm_js", "wasm_wasi")
+                targets = ["ios_arm64", "ios_x64", "js_ir", "jvm", "linux_arm64", "linux_x64", "wasm_js", "wasm_wasi"]
             ),
-            Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-            Fragment(identifier = "iosMain", targets = listOf("ios_arm64", "ios_x64")),
-            Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
-            Fragment(identifier = "jsMain", targets = listOf("js_ir")),
-            Fragment(identifier = "jvmMain", targets = listOf("jvm")),
-            Fragment(identifier = "linuxArm64Main", targets = listOf("linux_arm64")),
-            Fragment(identifier = "linuxMain", targets = listOf("linux_arm64", "linux_x64")),
-            Fragment(identifier = "linuxX64Main", targets = listOf("linux_x64")),
-            Fragment(identifier = "nativeMain", targets = listOf("ios_arm64", "ios_x64", "linux_arm64", "linux_x64")),
-            Fragment(identifier = "wasmJsMain", targets = listOf("wasm_js")),
-            Fragment(identifier = "wasmWasiMain", targets = listOf("wasm_wasi")),
-        )
+            Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+            Fragment(identifier = "iosMain", targets = ["ios_arm64", "ios_x64"]),
+            Fragment(identifier = "iosX64Main", targets = ["ios_x64"]),
+            Fragment(identifier = "jsMain", targets = ["js_ir"]),
+            Fragment(identifier = "jvmMain", targets = ["jvm"]),
+            Fragment(identifier = "linuxArm64Main", targets = ["linux_arm64"]),
+            Fragment(identifier = "linuxMain", targets = ["linux_arm64", "linux_x64"]),
+            Fragment(identifier = "linuxX64Main", targets = ["linux_x64"]),
+            Fragment(identifier = "nativeMain", targets = ["ios_arm64", "ios_x64", "linux_arm64", "linux_x64"]),
+            Fragment(identifier = "wasmJsMain", targets = ["wasm_js"]),
+            Fragment(identifier = "wasmWasiMain", targets = ["wasm_wasi"]),
+        ]
 
         assertPublishedFragments(expectedFragments, publisher)
     }
@@ -93,9 +93,9 @@ class UklibPublicationIT : KGPBaseTest() {
             sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
         }
 
-        val expectedFragments = setOf(
-            Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-        )
+        val expectedFragments: Set<Fragment> = [
+            Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+        ]
 
         assertPublishedFragments(
             expectedFragments,
@@ -125,11 +125,11 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val publishedUklib = readProducedUklib(publishedProject)
 
-        val expectedFragments = setOf(
-            Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-            Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
-            Fragment(identifier = "commonMain", targets = listOf("ios_arm64", "ios_x64")),
-        )
+        val expectedFragments: Set<Fragment> = [
+            Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+            Fragment(identifier = "iosX64Main", targets = ["ios_x64"]),
+            Fragment(identifier = "commonMain", targets = ["ios_arm64", "ios_x64"]),
+        ]
 
         assertPublishedFragments(
             expectedFragments,
@@ -168,11 +168,11 @@ class UklibPublicationIT : KGPBaseTest() {
             publisherConfiguration = PublisherConfiguration(repoPath = "withApple"),
         )
         assertPublishedFragments(
-            setOf(
-                Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-                Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
-                Fragment(identifier = "appleMain", targets = listOf("ios_arm64", "ios_x64")),
-            ),
+            [
+                Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+                Fragment(identifier = "iosX64Main", targets = ["ios_x64"]),
+                Fragment(identifier = "appleMain", targets = ["ios_arm64", "ios_x64"]),
+            ],
             readProducedUklib(publicationWithApple)
         )
 
@@ -180,11 +180,11 @@ class UklibPublicationIT : KGPBaseTest() {
             publisherConfiguration = PublisherConfiguration(repoPath = "withoutApple"),
         )
         assertPublishedFragments(
-            setOf(
-                Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-                Fragment(identifier = "iosX64Main", targets = listOf("ios_x64")),
-                Fragment(identifier = "commonMain", targets = listOf("ios_arm64", "ios_x64")),
-            ),
+            [
+                Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+                Fragment(identifier = "iosX64Main", targets = ["ios_x64"]),
+                Fragment(identifier = "commonMain", targets = ["ios_arm64", "ios_x64"]),
+            ],
             readProducedUklib(incrementalPublicationWithoutApple)
         )
     }
@@ -240,7 +240,7 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val publication = project.publish()
         assertPublishedFragments(
-            setOf(
+            [
                 Fragment(
                     identifier = "commonMain", targets = mutableListOf("linux_arm64", "linux_x64"),
                 ),
@@ -262,7 +262,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 Fragment(
                     identifier = "linuxX64Main_cinterop_foo", targets = mutableListOf("linux_x64"),
                 ),
-            ),
+            ],
             readProducedUklib(publication)
         )
     }
@@ -295,16 +295,16 @@ class UklibPublicationIT : KGPBaseTest() {
                 }
             }
 
-            val iosAttributes = setOf("ios_arm64", "ios_x64")
+            val iosAttributes: Set<String> = ["ios_arm64", "ios_x64"]
             assertEquals(
                 ArchiveUklibTask.UklibWithDuplicateAttributes(
                     mapOf(
-                        iosAttributes to setOf(
+                        iosAttributes to [
                             "iosMain",
                             "appleMain",
                             "nativeMain",
                             "commonMain"
-                        )
+                        ]
                     ),
                 ),
                 catchBuildFailures<ArchiveUklibTask.UklibWithDuplicateAttributes>().buildAndReturn(
@@ -339,10 +339,10 @@ class UklibPublicationIT : KGPBaseTest() {
             }
         }
 
-        val expectedFragments = setOf(
-            Fragment(identifier = "commonMain", targets = listOf("android", "ios_arm64")),
-            Fragment(identifier = "iosArm64Main", targets = listOf("ios_arm64")),
-        )
+        val expectedFragments: Set<Fragment> = [
+            Fragment(identifier = "commonMain", targets = ["android", "ios_arm64"]),
+            Fragment(identifier = "iosArm64Main", targets = ["ios_arm64"]),
+        ]
 
         assertPublishedFragments(
             expectedFragments,
@@ -425,7 +425,7 @@ class UklibPublicationIT : KGPBaseTest() {
                 }
             )
             assertEquals(
-                listOf(
+                [
                     MavenModule(
                         groupId = "dependencyGroup",
                         artifactId = "dependency",
@@ -436,7 +436,7 @@ class UklibPublicationIT : KGPBaseTest() {
                         // scope = "compile"
                         scope = "runtime"
                     ),
-                ),
+                ],
                 parsePom(publishedProject.rootComponent.pom).dependencies().filterNot {
                     it.artifactId == "kotlin-stdlib"
                 },
@@ -468,7 +468,7 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val project = publishUklib(
             gradleVersion = gradleVersion,
-            dependencyRepositories = listOf(producerImplementation, producerApi),
+            dependencyRepositories = [producerImplementation, producerApi],
         ) {
             // FIXME: Allow consuming Uklibs
             jvm()
@@ -482,7 +482,7 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val publisher = project.publishedProject
         assertEquals(
-            listOf(
+            [
                 MavenModule(
                     groupId = "api",
                     artifactId = "empty",
@@ -494,7 +494,7 @@ class UklibPublicationIT : KGPBaseTest() {
                     scope = "runtime"
                 ),
                 MavenModule(groupId = "implementation", artifactId = "empty", version = "1.0", scope = "runtime"),
-            ),
+            ],
             parsePom(publisher.rootComponent.pom).dependencies().filterNot {
                 it.artifactId in setOf(
                     "kotlin-stdlib",
@@ -520,7 +520,7 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val project = publishUklib(
             gradleVersion = gradleVersion,
-            dependencyRepositories = listOf(producer),
+            dependencyRepositories = [producer],
         ) {
             // FIXME: Enable uklib consumption?
             iosArm64()
@@ -534,7 +534,7 @@ class UklibPublicationIT : KGPBaseTest() {
 
         val publisher = project.publishedProject
         assertEquals(
-            listOf(
+            [
                 MavenModule(
                     groupId = "dependency",
                     artifactId = "empty",
@@ -545,7 +545,7 @@ class UklibPublicationIT : KGPBaseTest() {
                     // scope = "compile"
                     scope = "runtime"
                 ),
-            ),
+            ],
             parsePom(publisher.rootComponent.pom).dependencies().filterNot {
                 it.artifactId == "kotlin-stdlib"
             },
@@ -681,7 +681,7 @@ class UklibPublicationIT : KGPBaseTest() {
         template: String = "empty",
         gradleVersion: GradleVersion,
         androidVersion: String? = null,
-        dependencyRepositories: List<PublishedProject> = emptyList(),
+        dependencyRepositories: List<PublishedProject> = [],
         publisherConfig: PublisherConfiguration = PublisherConfiguration(),
         configuration: KotlinMultiplatformExtension.() -> Unit,
     ): ProducedUklib {

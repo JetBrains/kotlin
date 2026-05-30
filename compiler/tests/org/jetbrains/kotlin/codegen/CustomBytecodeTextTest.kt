@@ -43,7 +43,7 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
         assertOrderedEquals(
             "actual bytecode:\n$text",
             getstatics,
-            listOf(
+            [
                 "GETSTATIC MyEnum.${'$'}VALUES : [LMyEnum;",
                 "GETSTATIC MyEnum.${'$'}ENTRIES : Lkotlin/enums/EnumEntries;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;",
@@ -55,7 +55,7 @@ open class CustomBytecodeTextTest : CodegenTestCase() {
                 "GETSTATIC MyEnum.ENTRY3 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY2 : LMyEnum;",
                 "GETSTATIC MyEnum.ENTRY1 : LMyEnum;"
-            )
+            ]
         )
     }
 }

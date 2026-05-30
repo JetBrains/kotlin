@@ -43,8 +43,8 @@ open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, priv
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter,
                                            nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return listOf()
-        if (fqName.isRoot && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return listOf()
+        if (!kindFilter.acceptsKinds(DescriptorKindFilter.PACKAGES_MASK)) return []
+        if (fqName.isRoot && kindFilter.excludes.contains(DescriptorKindExclude.TopLevelPackages)) return []
 
         val subFqNames = moduleDescriptor.getSubPackagesOf(fqName, nameFilter)
         val result = ArrayList<DeclarationDescriptor>(subFqNames.size)
@@ -57,7 +57,7 @@ open class SubpackagesScope(private val moduleDescriptor: ModuleDescriptor, priv
         return result
     }
 
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getClassifierNames(): Set<Name> = []
 
     override fun printScopeStructure(p: Printer) {
         p.println(this::class.java.simpleName, " {")

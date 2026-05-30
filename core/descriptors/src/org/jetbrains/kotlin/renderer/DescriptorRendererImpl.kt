@@ -40,6 +40,7 @@ internal class DescriptorRendererImpl(
 
     private val functionTypeAnnotationsRenderer: DescriptorRendererImpl by lazy {
         withOptions {
+            @Suppress("ConvertToCollectionLiterals")
             excludedTypeAnnotationClasses += listOf(StandardNames.FqNames.extensionFunctionType, StandardNames.FqNames.contextFunctionTypeParams)
         } as DescriptorRendererImpl
     }
@@ -298,7 +299,7 @@ internal class DescriptorRendererImpl(
     }
 
     override fun renderTypeProjection(typeProjection: TypeProjection) = buildString {
-        appendTypeProjections(listOf(typeProjection))
+        appendTypeProjections([typeProjection])
     }
 
     private fun StringBuilder.appendTypeProjections(typeProjections: List<TypeProjection>) {

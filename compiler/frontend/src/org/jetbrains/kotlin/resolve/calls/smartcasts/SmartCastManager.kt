@@ -134,7 +134,7 @@ class SmartCastManager(private val argumentTypeResolver: ArgumentTypeResolver) {
         val expectedTypes = if (c.languageVersionSettings.supportsFeature(LanguageFeature.NewInference))
             expectedType.expandIntersectionTypeIfNecessary()
         else
-            listOf(expectedType)
+            [expectedType]
 
         val builderInferenceSubstitutor = (c.inferenceSession as? BuilderInferenceSession)?.getNotFixedToInferredTypesSubstitutor()
         val collectedTypes = c.dataFlowInfo.getCollectedTypes(dataFlowValue, c.languageVersionSettings).let { types ->

@@ -68,7 +68,7 @@ class JsPerFileCache(
                 optionalCrossModuleImports = optionalCrossModuleImports,
                 reexportedInModuleWithName = reexportedIn,
                 importedWithEffectInModuleWithName = importWithEffectIn,
-                associatedModule = JsIrModule(moduleName, moduleName, listOf(this), reexportedIn, importWithEffectIn)
+                associatedModule = JsIrModule(moduleName, moduleName, [this], reexportedIn, importWithEffectIn)
             )
         }
     }
@@ -100,7 +100,7 @@ class JsPerFileCache(
                 return JsIrModule(
                     jsIrHeader.moduleName,
                     jsIrHeader.externalModuleName,
-                    listOf(if (isExportFileCachedInfo) fragments.exportFragment!! else fragments.mainFragment),
+                    [if (isExportFileCachedInfo) fragments.exportFragment!! else fragments.mainFragment],
                     runIf(isExportFileCachedInfo) { moduleArtifact.moduleSafeName }
                 )
             }
@@ -141,8 +141,8 @@ class JsPerFileCache(
                         else -> cachedFileInfos.asSequence().map { LoadedJsIrModuleHeaders(it.mainFunctionTag, it.jsIrHeader, it.exportFileCachedInfo?.jsIrHeader) }
                     }
 
-                    val mainHeaders = mutableListOf<JsIrModuleHeader>()
-                    val exportHeaders = mutableListOf<JsIrModuleHeader>()
+                    val mainHeaders: MutableList<JsIrModuleHeader> = []
+                    val exportHeaders: MutableList<JsIrModuleHeader> = []
 
                     for (loadedIrModuleHeaders in mainAndExportHeaders) {
                         mainHeaders.add(loadedIrModuleHeaders.mainHeader)
@@ -489,7 +489,7 @@ class JsPerFileCache(
         }
 
         return perFileGenerator.generatePerFileArtifacts(moduleArtifacts)
-            .flatMap { if (it is CachedFileInfo.MainFileCachedInfo) listOfNotNull(it.exportFileCachedInfo, it) else listOf(it) }
+            .flatMap { if (it is CachedFileInfo.MainFileCachedInfo) listOfNotNull(it.exportFileCachedInfo, it) else [it] }
             .onEach { headerToCachedInfo[it.jsIrHeader] = it }
     }
 

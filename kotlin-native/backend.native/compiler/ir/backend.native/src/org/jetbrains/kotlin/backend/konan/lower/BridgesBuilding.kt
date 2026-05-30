@@ -107,7 +107,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
 
     override fun lower(irDeclarationContainer: IrDeclarationContainer) {
         irDeclarationContainer.declarations.transformFlat {
-            listOf(it) + buildWorkerBridges(it).also { bridges ->
+            [it] + buildWorkerBridges(it).also { bridges ->
                 // `buildWorkerBridges` builds bridges for all declarations inside `it` and nested declarations,
                 // so some bridges get incorrect parent. Fix it:
                 bridges.forEach { bridge -> bridge.parent = irDeclarationContainer }
@@ -116,7 +116,7 @@ internal class WorkersBridgesBuilding(val context: Context) : DeclarationContain
     }
 
     private fun buildWorkerBridges(declaration: IrDeclaration): List<IrFunction> {
-        val bridges = mutableListOf<IrFunction>()
+        val bridges: MutableList<IrFunction> = []
         declaration.transformChildrenVoid(object: IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 // Skip nested.
@@ -196,10 +196,10 @@ internal class BridgesBuilding(val context: Context) : ClassLoweringPass {
     private val bridgesPolicy = context.config.bridgesPolicy
 
     override fun lower(irClass: IrClass) {
-        val builtBridges = mutableSetOf<IrSimpleFunction>()
+        val builtBridges: MutableSet<IrSimpleFunction> = []
 
         for (function in irClass.simpleFunctions()) {
-            val set = mutableSetOf<BridgeDirections>()
+            val set: MutableSet<BridgeDirections> = []
             for (overriddenFunction in function.allOverriddenFunctions) {
                 val overriddenFunctionInfo = OverriddenFunctionInfo(function, overriddenFunction, bridgesPolicy)
                 val bridgeDirections = overriddenFunctionInfo.bridgeDirections

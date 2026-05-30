@@ -47,7 +47,7 @@ class Fir2IrFakeOverrideStrategy(
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
 ) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
-    private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
+    private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = []
 
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
         delegatedMemberGenerationStrategy.convertFakeOverrideToDelegateIfNeeded(fakeOverride, clazz)
@@ -109,7 +109,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
     delegatedClassesInfo: Map<IrClassSymbol, Map<IrClassSymbol, IrFieldSymbol>>,
     classActualizationInfo: ClassActualizationInfo?
 ) {
-    private val delegatedInfos: MutableList<DelegatedMemberInfo> = mutableListOf()
+    private val delegatedInfos: MutableList<DelegatedMemberInfo> = []
 
     /**
      * In MPP we need to actualize class symbols in super-interfaces map
@@ -183,7 +183,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         modality = Modality.OPEN
         if (this is IrSimpleFunction) {
             val dispatchReceiver = createDispatchReceiverParameterWithClassParent()
-            parameters = listOf(dispatchReceiver) + nonDispatchParameters
+            parameters = [dispatchReceiver] + nonDispatchParameters
         }
     }
 
@@ -275,7 +275,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
         delegateField: IrField,
         parent: IrClass,
     ) {
-        delegatedProperty.annotations = emptyList()
+        delegatedProperty.annotations = []
         delegatedProperty.getter?.let {
             generateDelegatedFunctionBody(
                 it, delegateTargetFromBaseType.getter!!, classSymbolOfDelegateField,
@@ -377,7 +377,7 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 if (delegateField.type.isSubtypeOfClass(baseType.classOrFail)) return@let it
                 it.implicitCastTo(baseType)
             }
-            arguments.assignFrom(listOf(getField) + delegatedFunction.nonDispatchParameters.map {
+            arguments.assignFrom([getField] + delegatedFunction.nonDispatchParameters.map {
                 IrGetValueImpl(offset, offset, it.type, it.symbol)
             })
             for (index in delegatedFunction.typeParameters.indices) {
@@ -385,8 +385,8 @@ class Fir2IrDelegatedMembersGenerationStrategy(
                 typeArguments[index] = IrSimpleTypeImpl(
                     parameter.symbol,
                     hasQuestionMark = false,
-                    arguments = emptyList(),
-                    annotations = emptyList()
+                    arguments = [],
+                    annotations = []
                 )
             }
         }

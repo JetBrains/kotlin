@@ -20,10 +20,10 @@ internal class PartiallyLinkedMarkerType(
     anyClass: IrClassSymbol,
     val unusableClassifier: ClassifierPartialLinkageStatus.Unusable,
 ) : IrSimpleType() {
-    override val annotations: List<IrAnnotation> get() = emptyList()
+    override val annotations: List<IrAnnotation> get() = []
     override val classifier: IrClassSymbol = anyClass
     override val nullability: SimpleTypeNullability get() = SimpleTypeNullability.MARKED_NULLABLE
-    override val arguments: List<IrTypeArgument> get() = emptyList()
+    override val arguments: List<IrTypeArgument> get() = []
 
     override fun equals(other: Any?): Boolean = (other as? PartiallyLinkedMarkerType)?.unusableClassifier == unusableClassifier
     override fun hashCode(): Int = unusableClassifier.hashCode()

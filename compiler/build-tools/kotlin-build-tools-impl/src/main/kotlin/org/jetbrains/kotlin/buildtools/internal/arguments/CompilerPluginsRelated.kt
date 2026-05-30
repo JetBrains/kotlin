@@ -51,16 +51,16 @@ internal fun applyCompilerPlugins(
     compilerArgs: CommonCompilerArguments,
 ): List<CompilerPlugin> {
     val rawValue = if (compilerArgs.pluginClasspaths.isEmpty() && compilerArgs.pluginConfigurations.isEmpty()) {
-        emptyList()
+        []
     } else {
-        listOf(
+        [
             CompilerPlugin(
                 pluginId = RAW_PLUGIN_ID,
-                classpath = emptyList(),
-                rawArguments = emptyList(),
-                orderingRequirements = emptySet(),
+                classpath = [],
+                rawArguments = [],
+                orderingRequirements = [],
             )
-        )
+        ]
     }
     return currentValue + rawValue
 }

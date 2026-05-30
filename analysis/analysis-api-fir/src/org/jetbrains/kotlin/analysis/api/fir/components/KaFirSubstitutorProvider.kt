@@ -67,7 +67,7 @@ internal class KaFirSubstitutorProvider(
         baseSymbol: FirClassSymbol<*>,
         superSymbol: FirClassSymbol<*>,
     ): List<Pair<ConeClassLikeType, FirRegularClassSymbol>>? {
-        val stack = mutableListOf<Pair<ConeClassLikeType, FirRegularClassSymbol>>()
+        val stack: MutableList<Pair<ConeClassLikeType, FirRegularClassSymbol>> = []
         var result: List<Pair<ConeClassLikeType, FirRegularClassSymbol>>? = null
 
         fun dfs(symbol: FirClassSymbol<*>) {
@@ -115,7 +115,7 @@ internal class KaFirSubstitutorProvider(
         targetType: KaType,
         constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor? = withValidityAssertion {
-        createUnificationSubstitutor(listOf(candidateType to targetType), constructionPolicy)
+        createUnificationSubstitutor([candidateType to targetType], constructionPolicy)
     }
 
     override fun createUnificationSubstitutor(
@@ -130,16 +130,16 @@ internal class KaFirSubstitutorProvider(
              */
             fun KaType.collectTypeArgumentsFromTheSignature(): Set<KaTypeParameterSymbol> {
                 return when (this) {
-                    is KaTypeParameterType -> setOf(symbol)
+                    is KaTypeParameterType -> [symbol]
                     is KaClassType -> this.typeArguments.flatMapTo(mutableSetOf()) { typeProjection ->
-                        typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+                        typeProjection.type?.collectTypeArgumentsFromTheSignature() ?: []
                     }
                     is KaIntersectionType -> this.conjuncts.flatMapTo(mutableSetOf()) { it.collectTypeArgumentsFromTheSignature() }
                     is KaFlexibleType ->
                         (this.lowerBound.collectTypeArgumentsFromTheSignature() + this.upperBound.collectTypeArgumentsFromTheSignature()).toSet()
-                    is KaCapturedType -> this.projection.type?.collectTypeArgumentsFromTheSignature() ?: emptySet()
+                    is KaCapturedType -> this.projection.type?.collectTypeArgumentsFromTheSignature().orEmpty()
                     is KaDefinitelyNotNullType -> this.original.collectTypeArgumentsFromTheSignature()
-                    else -> emptySet()
+                    else -> []
                 }
             }
 
@@ -165,8 +165,8 @@ internal class KaFirSubstitutorProvider(
                 return KaSubstitutor.Empty(analysisSession.token)
             }
 
-            val candidateTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
-            val targetTypeParameters = mutableSetOf<KaTypeParameterSymbol>()
+            val candidateTypeParameters: MutableSet<KaTypeParameterSymbol> = []
+            val targetTypeParameters: MutableSet<KaTypeParameterSymbol> = []
             candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
                 candidateTypeParameters.addAll(candidateType.getAllTypeArgumentDependencies())
                 targetTypeParameters.addAll(targetType.getAllTypeArgumentDependencies())
@@ -216,8 +216,8 @@ internal class KaFirSubstitutorProvider(
 
             val constraintSystem = ConeSimpleConstraintSystemImpl(firSession.inferenceComponents.createConstraintSystem(), firSession)
             val typeSubstitutor = constraintSystem.registerTypeVariables(coneTypeParameterList)
-            val registeredConstraints =
-                mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+            val registeredConstraints: MutableList<Pair<ConeKotlinType, ConeKotlinType>> =
+                []
 
             with(constraintSystem.context) {
                 candidateTypesToTargetTypes.forEach { [candidateType, targetType] ->
@@ -315,7 +315,7 @@ internal class KaFirSubstitutorProvider(
                 val variableForFixation =
                     inferenceComponents.variableFixationFinder.findFirstVariableForFixation(
                         allTypeVariables = notFixedTypeVariables.keys.toList(),
-                        postponedKtPrimitives = emptyList(),
+                        postponedKtPrimitives = [],
                         completionMode = ConstraintSystemCompletionMode.FULL,
                         // Can be any type. Only affects the fixation with completionMode = ConstraintSystemCompletionMode.PARTIAL
                         topLevelType = analysisSession.builtinTypes.nullableAny.coneType,

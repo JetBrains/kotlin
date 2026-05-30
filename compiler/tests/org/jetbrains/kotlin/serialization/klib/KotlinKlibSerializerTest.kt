@@ -58,13 +58,13 @@ class KotlinKlibSerializerTest : TestCaseWithTmpdir() {
             add(ForTestCompileRuntime.stdlibCommonForTests().absolutePath)
         }
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            KotlinMetadataCompiler(), listOf(
+            KotlinMetadataCompiler(), [
                 File(source).absolutePath,
                 "-d", klibFile.absolutePath,
                 "-module-name", klibName,
                 // support for the legacy version of kotlin-stdlib-common (JAR with .kotlin_metadata)
                 "-classpath", classpath.joinToString(File.pathSeparatorChar.toString())
-            )
+            ]
         )
         return klibFile
     }

@@ -126,13 +126,13 @@ internal class LLCombinedPackageDelegationSymbolProvider private constructor(
          * fall back to querying all providers individually.
          */
         private fun buildPackageToProvidersMap(providers: List<FirSymbolProvider>): Map<String, Array<FirSymbolProvider>>? {
-            val providerListsByPackage = buildMap {
+            val providerListsByPackage = buildMap<_, MutableList<FirSymbolProvider>> {
                 providers.forEach { provider ->
                     val packageNames = provider.symbolNamesProvider.getPackageNames() ?: return null
                     packageNames.forEach { packageName ->
                         // We only use the `FqName` here for convenience. It won't be stored.
                         FqName(packageName).forEachFqName { fqName ->
-                            val list = getOrPut(fqName.asString()) { mutableListOf() }
+                            val list = getOrPut(fqName.asString()) { [] }
 
                             // Parent package names may overlap (e.g. 'foo.bar' and 'foo.baz' have the same parent 'foo'), so we have to be
                             // careful not to add the same provider multiple times. Since we're iterating provider by provider, the current

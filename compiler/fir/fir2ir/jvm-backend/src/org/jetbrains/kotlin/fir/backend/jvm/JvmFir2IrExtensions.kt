@@ -45,7 +45,7 @@ class JvmFir2IrExtensions(
 ) : Fir2IrExtensions, JvmGeneratorExtensions {
     override val parametersAreAssignable: Boolean get() = true
     override val externalOverridabilityConditions: List<IrExternalOverridabilityCondition>
-        get() = listOf(IrJavaIncompatibilityRulesOverridabilityCondition())
+        get() = [IrJavaIncompatibilityRulesOverridabilityCondition()]
 
     override val cachedFields: CachedFieldsForObjectInstances =
         CachedFieldsForObjectInstances(IrFactoryImpl, configuration.languageVersionSettings)
@@ -56,7 +56,7 @@ class JvmFir2IrExtensions(
     private val kotlinJvmInternalPackage =
         IrExternalPackageFragmentImpl(DescriptorlessExternalPackageFragmentSymbol(), JvmAnnotationNames.KOTLIN_JVM_INTERNAL)
 
-    private val specialAnnotationConstructors = mutableListOf<IrConstructor>()
+    private val specialAnnotationConstructors: MutableList<IrConstructor> = []
 
     private val rawTypeAnnotationClassConstructor: IrConstructor =
         createSpecialAnnotationClass(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME, kotlinIrInternalPackage).constructors.single()

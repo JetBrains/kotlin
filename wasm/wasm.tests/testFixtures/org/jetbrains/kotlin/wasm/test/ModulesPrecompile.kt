@@ -103,7 +103,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
     compileWasmModule(
         includes = stdlibPath,
-        libraries = listOf(stdlibPath),
+        libraries = [stdlibPath],
         outputName = precompiledStdlibOutputName,
         outputDir = setup.stdlibOutputDir,
     )
@@ -114,7 +114,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
     compileWasmModule(
         includes = kotlinTestPath,
-        libraries = listOf(stdlibPath, kotlinTestPath),
+        libraries = [stdlibPath, kotlinTestPath],
         outputName = precompiledKotlinTestOutputName,
         outputDir = setup.kotlinTestOutputDir
     )

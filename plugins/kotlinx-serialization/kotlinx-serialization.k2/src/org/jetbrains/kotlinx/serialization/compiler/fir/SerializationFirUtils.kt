@@ -254,7 +254,7 @@ fun ConeKotlinType.serializerForType(session: FirSession): ConeKotlinType? {
 }
 
 fun FirRegularClassSymbol.getAllSubstitutedSupertypes(session: FirSession): Set<ConeKotlinType> {
-    val result = mutableSetOf<ConeKotlinType>()
+    val result: MutableSet<ConeKotlinType> = []
 
     fun process(symbol: FirRegularClassSymbol, substitutor: ConeSubstitutor) {
         for (superType in symbol.resolvedSuperTypes) {
@@ -337,6 +337,6 @@ fun createDeprecatedHiddenAnnotation(session: FirSession): FirAnnotation = build
 }
 
 fun FirClassLikeDeclaration.markAsDeprecatedHidden(session: FirSession) {
-    replaceAnnotations(annotations + listOf(createDeprecatedHiddenAnnotation(session)))
+    replaceAnnotations(annotations + createDeprecatedHiddenAnnotation(session))
     replaceDeprecationsProvider(this.getDeprecationsProvider(session))
 }

@@ -45,7 +45,7 @@ class WithProcessor : Processor {
 
         return classDescriptor.createFunction(
             Name.identifier(functionName),
-            listOf(LombokValueParameter(field.name, field.type)),
+            [LombokValueParameter(field.name, field.type)],
             classDescriptor.defaultType,
             visibility = with.visibility.toDescriptorVisibility()
         )

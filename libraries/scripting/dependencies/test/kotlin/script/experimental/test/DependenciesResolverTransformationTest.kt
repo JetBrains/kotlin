@@ -23,7 +23,7 @@ class DependenciesResolverTransformationTest : TestCase() {
         val resolverB = FileSystemDependenciesResolver()
 
         val configurationA = ScriptCompilationConfiguration {
-            val data = RefineConfigurationOnAnnotationsData(emptyList(), DummyConfigurator(resolverA))
+            val data = RefineConfigurationOnAnnotationsData([], DummyConfigurator(resolverA))
             refineConfigurationOnAnnotations.append(data)
         }
         val configurationB = configurationA.withTransformedResolvers { resolverB }

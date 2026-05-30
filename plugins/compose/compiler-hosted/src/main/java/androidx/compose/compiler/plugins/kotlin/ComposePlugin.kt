@@ -240,7 +240,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(
+    override val pluginOptions = [
         LIVE_LITERALS_ENABLED_OPTION,
         LIVE_LITERALS_V2_ENABLED_OPTION,
         GENERATE_FUNCTION_KEY_META_CLASSES_OPTION,
@@ -259,7 +259,7 @@ class ComposeCommandLineProcessor : CommandLineProcessor {
         FEATURE_FLAG_OPTION,
         SKIP_IR_LOWERING_IF_RUNTIME_NOT_FOUND_OPTION,
         TARGET_RUNTIME_VERSION_OPTION,
-    )
+    ]
 
     override fun processOption(
         option: AbstractCliOption,
@@ -442,11 +442,11 @@ enum class FeatureFlag(val featureName: String, val default: Boolean) {
     }
 }
 
-class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
-    private val setForCompatibility = mutableSetOf<FeatureFlag>()
-    private val duplicate = mutableSetOf<FeatureFlag>()
-    private val enabledFeatures = mutableSetOf<FeatureFlag>()
-    private val disabledFeatures = mutableSetOf<FeatureFlag>()
+class FeatureFlags(featureConfiguration: List<String> = []) {
+    private val setForCompatibility: MutableSet<FeatureFlag> = []
+    private val duplicate: MutableSet<FeatureFlag> = []
+    private val enabledFeatures: MutableSet<FeatureFlag> = []
+    private val disabledFeatures: MutableSet<FeatureFlag> = []
 
     init {
         processConfigurationList(featureConfiguration)
@@ -488,7 +488,7 @@ class FeatureFlags(featureConfiguration: List<String> = emptyList()) {
     }
 
     fun validateFeatureFlags(configuration: CompilerConfiguration) {
-        val reported = mutableSetOf<FeatureFlag>()
+        val reported: MutableSet<FeatureFlag> = []
         fun report(feature: FeatureFlag, message: String) {
             if (feature !in reported) {
                 reported.add(feature)
@@ -632,11 +632,11 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
         fun setupJvmConfiguration(configuration: CompilerConfiguration) {
             configuration.put(
                 JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES,
-                listOf(
+                [
                     ComposeClassIds.Composable.asFqNameString(),
                     ComposeClassIds.ComposableInferredTarget.asFqNameString(),
                     ComposeClassIds.FunctionKeyMeta.asFqNameString(),
-                )
+                ]
             )
         }
 
@@ -733,7 +733,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
 
             val featureFlags = FeatureFlags(
                 configuration.get(
-                    ComposeConfiguration.FEATURE_FLAGS, emptyList()
+                    ComposeConfiguration.FEATURE_FLAGS, []
                 )
             )
             featureFlags.validateFeatureFlags(configuration)
@@ -751,7 +751,7 @@ class ComposePluginRegistrar : CompilerPluginRegistrar() {
                 nonSkippingGroupOptimizationEnabled
             )
 
-            val stableTypeMatchers = mutableSetOf<FqNameMatcher>()
+            val stableTypeMatchers: MutableSet<FqNameMatcher> = []
             for (i in stabilityConfigPaths.indices) {
                 val path = stabilityConfigPaths[i]
                 val matchers = try {

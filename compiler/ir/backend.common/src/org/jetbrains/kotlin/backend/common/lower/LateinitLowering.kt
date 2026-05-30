@@ -41,7 +41,7 @@ open class LateinitLowering(
     private val loweringContext: LoweringContext,
     private val uninitializedPropertyAccessExceptionThrower: UninitializedPropertyAccessExceptionThrower,
 ) : FileLoweringPass, IrElementTransformerVoid() {
-    private val visitedLateinitVariables = mutableSetOf<IrVariable>()
+    private val visitedLateinitVariables: MutableSet<IrVariable> = []
 
     constructor(loweringContext: LoweringContext) :
             this(loweringContext, UninitializedPropertyAccessExceptionThrower(loweringContext.symbols))

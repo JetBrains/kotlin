@@ -182,14 +182,14 @@ private class BridgeFunctionDescriptor(
     context(session: SirSession)
     val allParameters
         get() = listOfNotNull(selfParameter) + parameters + listOfNotNull(errorParameter.takeIf { !isAsync }) +
-                (asyncParameters?.toList() ?: emptyList())
+                (asyncParameters?.toList() ?: [])
 
     context(session: SirSession)
     val asyncParameters: Triple<BridgedParameter.In, BridgedParameter.In, BridgedParameter.In>? get() = isAsync.ifTrue {
         Triple(
             BridgedParameter.In(
                 name = "continuation",
-                bridge = Bridge.AsContravariantBlock(parameters = listOf(returnType), returnType = Bridge.AsVoid)
+                bridge = Bridge.AsContravariantBlock(parameters = [returnType], returnType = Bridge.AsVoid)
             ),
             BridgedParameter.In(
                 name = "exception",
@@ -260,9 +260,9 @@ private class BridgeFunctionDescriptor(
                     name = baseBridgeName,
                     KotlinFunctionBridge(
                         createKotlinBridge(typeNamer, kotlinCall),
-                        listOf(exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction) + additionalImports()
+                        [exportAnnotationFqName, cinterop, convertBlockPtrToKotlinFunction] + additionalImports()
                     ),
-                    CFunctionBridge(listOf(cDeclaration()), listOf(foundationHeader, stdintHeader))
+                    CFunctionBridge([cDeclaration()], [foundationHeader, stdintHeader])
                 )
             )
             val allBridges = parameters.mapTo(mutableListOf<Bridge>()) { it.bridge }
@@ -318,14 +318,20 @@ private class BridgeFunctionDescriptor(
 
         val cLevelParams = listOfNotNull(selfParameter) + parameters
 
-        return listOf(
+        return [
             SirReverseFunctionBridge(
                 name = cBridgeName,
-                kotlinFunctionBridge = createReverseKotlinBridge(cLevelParams, cBridgeName, swiftBridgeName, targetClassFqName, targetMethodName),
+                kotlinFunctionBridge = createReverseKotlinBridge(
+                    cLevelParams,
+                    cBridgeName,
+                    swiftBridgeName,
+                    targetClassFqName,
+                    targetMethodName
+                ),
                 swiftFunctionBridge = createReverseSwiftBridge(cLevelParams, swiftBridgeName, swiftDynamicCall, swiftDeprecation),
                 cDeclarationBridge = createReverseCBridge(cLevelParams, swiftBridgeName)
             )
-        )
+        ]
     }
 
     context(session: SirSession)
@@ -342,9 +348,9 @@ private class BridgeFunctionDescriptor(
             }
             append(")")
         }) + ";"
-        val cLines = listOf(cDecl)
+        val cLines = [cDecl]
 
-        return CFunctionBridge(cLines, listOf(foundationHeader, stdintHeader))
+        return CFunctionBridge(cLines, [foundationHeader, stdintHeader])
     }
 
     context(session: SirSession)
@@ -444,7 +450,7 @@ private class BridgeFunctionDescriptor(
 
         return KotlinFunctionBridge(
             kotlinLines,
-            listOf(reverseBridgeAnnotationFqName, importAnnotationFqName, cinterop)
+            [reverseBridgeAnnotationFqName, importAnnotationFqName, cinterop]
         )
     }
 }
@@ -556,7 +562,7 @@ private fun BridgeFunctionDescriptor.swiftInvocationLineForCBridge(typeNamer: Si
 context(session: SirSession)
 private fun BridgeFunctionDescriptor.swiftLinesForCBridgeCallAndTransformation(typeNamer: SirTypeNamer, argumentOverrides: Map<String, String> = emptyMap()): List<String> {
     val swiftInvocation = swiftInvocationLineForCBridge(typeNamer, argumentOverrides)
-    return listOf(returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation))
+    return [returnType.inSwiftSources.kotlinToSwift(typeNamer, swiftInvocation)]
 }
 
 context(session: SirSession)

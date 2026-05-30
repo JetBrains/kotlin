@@ -28,7 +28,7 @@ open internal class FixedLengthQuantifierSet(
 
     override fun matches(startIndex: Int, testString: CharSequence, matchResult: MatchResultImpl): Int {
         var index = startIndex
-        val matches = mutableListOf<Int>()
+        val matches: MutableList<Int> = []
 
         // Process occurrences between 0 and max.
         while (max == Quantifier.INF || matches.size < max) {

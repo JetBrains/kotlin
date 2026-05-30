@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.js.config.artifactConfigurations
 
 object JsCodegenPipelinePhase : PipelinePhase<JsLoweredIrPipelineArtifact, JsBackendPipelineArtifact>(
     name = "JsCodegenPipelinePhase",
-    preActions = setOf(PerformanceNotifications.BackendStarted),
-    postActions = setOf(PerformanceNotifications.BackendFinished),
+    preActions = [PerformanceNotifications.BackendStarted],
+    postActions = [PerformanceNotifications.BackendFinished],
 ) {
     override fun executePhase(input: JsLoweredIrPipelineArtifact): JsBackendPipelineArtifact? =
         try {

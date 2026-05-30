@@ -46,10 +46,10 @@ class FirReplCompilerFacade(
     private var replCompiler: K2ReplCompiler? = null
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::FirModuleInfoProvider))
+        get() = [service(::FirModuleInfoProvider)]
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
     override val inputKind: TestArtifactKind<ResultingArtifact.Source>
         get() = SourcesKind
     override val outputKind: TestArtifactKind<ReplCompilationArtifact>
@@ -85,7 +85,7 @@ class FirReplCompilerFacade(
                 val messageCollector = ScriptDiagnosticsMessageCollector(null)
                 val baseScriptCompilationConfiguration = ScriptCompilationConfiguration {
                     updateClasspath(
-                        listOf(testServices.standardLibrariesPathProvider.runtimeJarForTests())
+                        [testServices.standardLibrariesPathProvider.runtimeJarForTests()]
                     )
                     compilerOptions("-Xrender-internal-diagnostic-names=true")
                     for (languageFeature in module.directives[LanguageSettingsDirectives.LANGUAGE]) {
@@ -164,7 +164,7 @@ internal class ScriptDiagnosticCodeMetaInfo(scriptDiagnostic: ScriptDiagnostic, 
     val message = scriptDiagnostic.message.substringAfter('[').substringBefore(']')
 
     override val renderConfiguration = RenderConfiguration()
-    override val attributes: MutableList<String> = mutableListOf()
+    override val attributes: MutableList<String> = []
 
     override fun asString(): String = renderConfiguration.asString(this)
 

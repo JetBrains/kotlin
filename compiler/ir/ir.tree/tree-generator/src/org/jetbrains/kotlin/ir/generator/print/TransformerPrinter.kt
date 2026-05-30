@@ -21,18 +21,18 @@ internal class TransformerPrinter(
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(
+        get() = [
             irVisitorType.withArgs(rootElement, dataTypeVariable),
             ClassRef<PositionTypeParameterRef>(
                 TypeKind.Interface,
                 Packages.visitors,
                 "IrElementTransformer",
-                typeAnnotations = listOf("Suppress(\"DEPRECATION_ERROR\")")
+                typeAnnotations = ["Suppress(\"DEPRECATION_ERROR\")"]
             ).withArgs(dataTypeVariable), // See KT-75353
-        )
+        ]
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(dataTypeVariable)
+        get() = [dataTypeVariable]
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable

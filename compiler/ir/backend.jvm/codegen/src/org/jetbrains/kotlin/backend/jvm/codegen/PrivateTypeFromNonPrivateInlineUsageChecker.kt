@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.tree.MethodNode
 internal class PrivateTypeFromNonPrivateInlineUsageChecker(
     private val context: JvmBackendContext,
 ) : MethodVisitor(Opcodes.API_VERSION) {
-    private val result: MutableSet<ClassId> = mutableSetOf()
+    private val result: MutableSet<ClassId> = []
     private fun findPrivateClassUsages(node: MethodNode): Collection<ClassId> = result.also { node.accept(this) }
 
     override fun visitLdcInsn(value: Any?) {

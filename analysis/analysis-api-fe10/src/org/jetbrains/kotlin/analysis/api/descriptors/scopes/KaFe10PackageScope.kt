@@ -17,7 +17,7 @@ internal class KaFe10PackageScope(
     scope: MemberScope,
     private val owner: KaPackageSymbol,
     analysisContext: Fe10AnalysisContext
-) : KaFe10ScopeMember(scope, constructorDescriptors = emptyList(), analysisContext) {
+) : KaFe10ScopeMember(scope, constructorDescriptors = [], analysisContext) {
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         val packageFragmentProvider = analysisContext.resolveSession.packageFragmentProvider
         return packageFragmentProvider.getSubPackagesOf(owner.fqName, nameFilter)
@@ -26,5 +26,5 @@ internal class KaFe10PackageScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 }

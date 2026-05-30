@@ -82,10 +82,10 @@ class NotFoundClasses(private val storageManager: StorageManager, private val mo
 
         override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = MemberScope.Empty
         override fun getStaticScope() = MemberScope.Empty
-        override fun getConstructors(): Collection<ClassConstructorDescriptor> = emptySet()
+        override fun getConstructors(): Set<ClassConstructorDescriptor> = []
         override fun getUnsubstitutedPrimaryConstructor(): ClassConstructorDescriptor? = null
         override fun getCompanionObjectDescriptor(): ClassDescriptor? = null
-        override fun getSealedSubclasses(): Collection<ClassDescriptor> = emptyList()
+        override fun getSealedSubclasses(): List<ClassDescriptor> = []
         override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
         override fun toString() = "class $name (not found)"

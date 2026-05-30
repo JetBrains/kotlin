@@ -46,10 +46,10 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         override fun toIr(context: CommonBackendContext, startOffset: Int, endOffset: Int, value: IrExpression)
                 = IrCompositeImpl(
             startOffset, endOffset, context.irBuiltIns.unitType, null,
-            statements = listOf(
+            statements = [
                 value,
                 IrBreakImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
-            )
+            ]
         )
     }
 
@@ -57,10 +57,10 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         override fun toIr(context: CommonBackendContext, startOffset: Int, endOffset: Int, value: IrExpression)
                 = IrCompositeImpl(
             startOffset, endOffset, context.irBuiltIns.unitType, null,
-            statements = listOf(
+            statements = [
                 value,
                 IrContinueImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
-            )
+            ]
         )
     }
 
@@ -77,7 +77,7 @@ class FinallyBlocksLowering(val context: CommonBackendContext, private val throw
         val jumps = mutableMapOf<HighLevelJump, IrReturnTargetSymbol>()
     }
 
-    private val otherScopeStack = mutableListOf<Scope>()
+    private val otherScopeStack: MutableList<Scope> = []
 
     private inline fun <S: Scope, R> using(scope: S, block: (S) -> R): R {
         otherScopeStack.push(scope)

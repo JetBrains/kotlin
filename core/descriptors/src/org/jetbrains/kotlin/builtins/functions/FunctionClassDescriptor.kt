@@ -73,7 +73,7 @@ class FunctionClassDescriptor(
     override fun getUnsubstitutedMemberScope(kotlinTypeRefiner: KotlinTypeRefiner) = memberScope
 
     override fun getCompanionObjectDescriptor() = null
-    override fun getConstructors() = emptyList<ClassConstructorDescriptor>()
+    override fun getConstructors(): List<ClassConstructorDescriptor> = []
     override fun getKind() = ClassKind.INTERFACE
     override fun getModality() = Modality.ABSTRACT
     override fun getUnsubstitutedPrimaryConstructor() = null
@@ -89,7 +89,7 @@ class FunctionClassDescriptor(
     override fun isExternal() = false
     override val annotations: Annotations get() = Annotations.EMPTY
     override fun getSource(): SourceElement = SourceElement.NO_SOURCE
-    override fun getSealedSubclasses() = emptyList<ClassDescriptor>()
+    override fun getSealedSubclasses(): List<ClassDescriptor> = []
     override fun getValueClassRepresentation(): ValueClassRepresentation<SimpleType>? = null
 
     override fun getDeclaredTypeParameters() = parameters
@@ -99,13 +99,13 @@ class FunctionClassDescriptor(
             // For K{Suspend}Function{n}, add corresponding numbered {Suspend}Function{n} class, e.g. {Suspend}Function2 for K{Suspend}Function2
             val supertypes = when (functionTypeKind) {
                 FunctionTypeKind.Function -> // Function$N <: Function
-                    listOf(functionClassId)
+                    [functionClassId]
                 FunctionTypeKind.KFunction -> // KFunction$N <: KFunction
-                    listOf(kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionTypeKind.Function.numberedClassName(arity)))
+                    [kFunctionClassId, ClassId(BUILT_INS_PACKAGE_FQ_NAME, FunctionTypeKind.Function.numberedClassName(arity))]
                 FunctionTypeKind.SuspendFunction -> // SuspendFunction$N<...> <: Function
-                    listOf(functionClassId)
+                    [functionClassId]
                 FunctionTypeKind.KSuspendFunction -> // KSuspendFunction$N<...> <: KFunction
-                    listOf(kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionTypeKind.SuspendFunction.numberedClassName(arity)))
+                    [kFunctionClassId, ClassId(COROUTINES_PACKAGE_FQ_NAME, FunctionTypeKind.SuspendFunction.numberedClassName(arity))]
                 else -> shouldNotBeCalled()
             }
 

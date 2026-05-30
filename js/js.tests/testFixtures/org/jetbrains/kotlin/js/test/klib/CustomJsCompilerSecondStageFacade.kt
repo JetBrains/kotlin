@@ -78,13 +78,13 @@ class CustomJsCompilerSecondStageFacade(
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
-                    listOf(
+                    [
                         K2JSCompilerArguments::libraries.cliArgument,
                         regularAndFriendDependencies.joinToString(File.pathSeparator),
-                    )
+                    ]
                 },
                 runIf(friendDependencies.isNotEmpty()) {
-                    listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                    [K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator))]
                 },
                 customArgs,
             )
@@ -98,7 +98,7 @@ class CustomJsCompilerSecondStageFacade(
             return JsIrArtifact(
                 outputFile = jsArtifactFile,
                 compilerResult = CompilerResult(
-                    listOf(
+                    [
                         CompilationOutputsBuilt(
                             artifactConfiguration = WebArtifactConfiguration(
                                 moduleKind = ModuleKind.PLAIN,
@@ -115,7 +115,7 @@ class CustomJsCompilerSecondStageFacade(
                             tsDefinitions = null,
                             jsProgram = null,
                         )
-                    )
+                    ]
                 )
             )
         } else {

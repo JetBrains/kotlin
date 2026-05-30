@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.konan.ForeignExceptionMode
 import org.jetbrains.kotlin.name.Name
 
 internal class CFunctionBuilder {
-    private val parameters = mutableListOf<CVariable>()
+    private val parameters: MutableList<CVariable> = []
     private lateinit var returnType: CType
 
     var variadic: Boolean = false
@@ -98,7 +98,7 @@ internal class KotlinBridgeBuilder(
                 isHidden = false,
         ).apply {
             parent = bridge
-            bridge.parameters += listOf(this)
+            bridge.parameters += this
         }
     }
 
@@ -174,9 +174,9 @@ internal class KotlinCBridgeBuilder(
 }
 
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: BackendNativeSymbols) {
-    val prepare = mutableListOf<IrStatement>()
-    val arguments = mutableListOf<IrExpression>()
-    val cleanup = mutableListOf<IrBuilderWithScope.() -> IrStatement>()
+    val prepare: MutableList<IrStatement> = []
+    val arguments: MutableList<IrExpression> = []
+    val cleanup: MutableList<IrBuilderWithScope.() -> IrStatement> = []
 
     private var memScope: IrVariable? = null
 
@@ -245,7 +245,7 @@ internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, priv
 }
 
 internal class CCallBuilder {
-    val arguments = mutableListOf<String>()
+    val arguments: MutableList<String> = []
 
     fun build(function: String) = buildString {
         append(function)

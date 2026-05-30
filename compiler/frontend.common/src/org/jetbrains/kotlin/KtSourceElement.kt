@@ -1119,7 +1119,7 @@ sealed class KtPsiSourceElement(val psi: PsiElement) : KtSourceElement() {
 
         override fun getChildren(node: LighterASTNode, nodesRef: Ref<Array<LighterASTNode>>): Int {
             val psi = unwrap(node).psi
-            val children = mutableListOf<PsiElement>()
+            val children: MutableList<PsiElement> = []
             var child = psi.firstChild
             while (child != null) {
                 children += child

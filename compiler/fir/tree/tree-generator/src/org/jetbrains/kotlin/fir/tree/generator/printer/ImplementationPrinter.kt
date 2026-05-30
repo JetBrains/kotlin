@@ -40,7 +40,7 @@ internal class ImplementationPrinter(
     override fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field> = ImplementationFieldPrinter(printer)
 
     private inline fun Implementation.anyParent(condition: (Element) -> Boolean): Boolean {
-        val visited = mutableSetOf<Element>()
+        val visited: MutableSet<Element> = []
         val stack = this.allParents.toMutableList()
 
         while (stack.isNotEmpty()) {

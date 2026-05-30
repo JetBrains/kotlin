@@ -33,7 +33,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.KVisibility
 
 abstract class IrSymbolValidationHandler(testServices: TestServices) : AbstractIrHandler(testServices) {
-    protected open val blackList: List<String> = emptyList()
+    protected open val blackList: List<String> = []
     protected abstract fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols>
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
@@ -116,19 +116,19 @@ abstract class IrPreSerializationSymbolValidationHandler(testServices: TestServi
 
 class IrPreSerializationJsSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(PreSerializationJsSymbols.Impl(irBuiltIns))
+        return [PreSerializationJsSymbols.Impl(irBuiltIns)]
     }
 }
 
 class IrPreSerializationWasmSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(PreSerializationWasmSymbols.Impl(irBuiltIns))
+        return [PreSerializationWasmSymbols.Impl(irBuiltIns)]
     }
 }
 
 class IrPreSerializationNativeSymbolValidationHandler(testServices: TestServices) : IrPreSerializationSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(PreSerializationNativeSymbols.Impl(irBuiltIns))
+        return [PreSerializationNativeSymbols.Impl(irBuiltIns)]
     }
 }
 

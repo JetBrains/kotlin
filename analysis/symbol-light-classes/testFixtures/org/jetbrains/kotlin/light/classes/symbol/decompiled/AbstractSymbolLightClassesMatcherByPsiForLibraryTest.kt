@@ -30,21 +30,21 @@ abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
     override val isTestAgainstCompiledCode: Boolean = true
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doLightClassTest(
         ktFiles: List<KtFile>,
         module: KtTestModule,
         testServices: TestServices,
     ) {
-        val declarationsWithoutLightElementsNames = mutableSetOf<String>()
-        val lightElementsWithoutDeclarationNames = mutableSetOf<String>()
+        val declarationsWithoutLightElementsNames: MutableSet<String> = []
+        val lightElementsWithoutDeclarationNames: MutableSet<String> = []
         for (file in ktFiles) {
             val javaSupport = KotlinAsJavaSupport.getInstance(file.project)
             testServices.assertions.assertTrue(file is KtClsFile)
             file as KtClsFile
             val declarations = mutableMapOf<KtDeclaration, Boolean>()
-            val lightElementsWithoutDeclaration = mutableSetOf<PsiMember>()
+            val lightElementsWithoutDeclaration: MutableSet<PsiMember> = []
             fun collectDeclarations(container: KtDeclarationContainer) {
                 container.declarations.forEach { declaration ->
                     declarations[declaration] = false
@@ -134,7 +134,7 @@ abstract class AbstractSymbolLightClassesMatcherByPsiForLibraryTest :
             checkMember(method)
         }
 
-        val innerClassesToIgnore = mutableSetOf<String>()
+        val innerClassesToIgnore: MutableSet<String> = []
         //do not check generated synthetics, IDE should not resolve there
         innerClassesToIgnore.addIfNotNull("DefaultImpls")
 

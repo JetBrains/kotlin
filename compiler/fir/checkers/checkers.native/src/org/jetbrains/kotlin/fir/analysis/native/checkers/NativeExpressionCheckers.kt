@@ -8,18 +8,18 @@ package org.jetbrains.kotlin.fir.analysis.native.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object NativeExpressionCheckers : ExpressionCheckers() {
-    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(
+    override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = [
         FirNativeForwardDeclarationTypeOperatorChecker,
-    )
-    override val getClassCallCheckers: Set<FirGetClassCallChecker> = setOf(
+    ]
+    override val getClassCallCheckers: Set<FirGetClassCallChecker> = [
         FirNativeForwardDeclarationGetClassCallChecker
-    )
-    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
+    ]
+    override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = [
         FirNativeForwardDeclarationReifiedChecker
-    )
+    ]
 
     override val functionCallCheckers: Set<FirFunctionCallChecker>
-        get() = setOf(
+        get() = [
             FirSuperCallWithDefaultsChecker,
             FirNativeAtomicReferenceToPrimitiveCallChecker,
             FirNativeAtomicArrayToPrimitiveCallChecker,
@@ -27,8 +27,8 @@ object NativeExpressionCheckers : ExpressionCheckers() {
             FirNativeVariadicFunctionPointerChecker,
             FirNativeObjCStringAsVariadicChecker,
             FirNativeVariadicSpreadChecker,
-        )
-    override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = setOf(
+        ]
+    override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> = [
         FirNativeVariadicCallableReferenceChecker,
-    )
+    ]
 }

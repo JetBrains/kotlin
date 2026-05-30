@@ -40,7 +40,7 @@ fun createKotlinJavascriptPackageFragmentProvider(
     configuration: DeserializationConfiguration,
     lookupTracker: LookupTracker
 ): PackageFragmentProvider {
-    val packageFragments: MutableList<PackageFragmentDescriptor> = packageFragmentProtos.mapNotNullTo(mutableListOf()) { proto ->
+    val packageFragments: MutableList<PackageFragmentDescriptor> = packageFragmentProtos.mapNotNullTo([]) { proto ->
         proto.fqName?.let { fqName ->
             KotlinJavascriptPackageFragment(fqName, storageManager, module, proto, header, metadataVersion, configuration)
         }
@@ -79,12 +79,12 @@ fun createKotlinJavascriptPackageFragmentProvider(
         ErrorReporter.DO_NOTHING,
         lookupTracker,
         DynamicTypeDeserializer,
-        emptyList(),
+        [],
         notFoundClasses,
         ContractDeserializerImpl(configuration, storageManager),
         platformDependentDeclarationFilter = PlatformDependentDeclarationFilter.NoPlatformDependent,
         extensionRegistryLite = JsSerializerProtocol.extensionRegistry,
-        samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+        samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = []),
         enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
     )
 

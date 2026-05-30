@@ -31,7 +31,7 @@ abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
               Phase : PipelinePhase<ConfigurationPipelineArtifact, OutputPipelineArtifact> {
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(cliBasedFacadesMarkerRegistrationData)
+        get() = [cliBasedFacadesMarkerRegistrationData]
 
     override fun shouldTransform(module: TestModule): Boolean {
         return shouldRunFirFrontendFacade(module, testServices)

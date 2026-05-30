@@ -64,7 +64,7 @@ fun evalFileWithConfigurations(
 
 
 const val TEST_DATA_ROOT = "libraries/tools/kotlin-main-kts-test/testData"
-val OUT_FROM_IMPORT_TEST = listOf("Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5")
+val OUT_FROM_IMPORT_TEST = ["Hi from common", "Hi from middle", "Hi from main", "sharedVar == 5"]
 
 
 @SmokeTest
@@ -193,7 +193,7 @@ class MainKtsTest {
             }
         }.lines()
 
-        assertEquals(listOf("Hi from sub", "Hi from super", "Hi from random"), out)
+        assertEquals(["Hi from sub", "Hi from super", "Hi from random"], out)
     }
 
     @Test
@@ -278,7 +278,7 @@ class MainKtsTest {
             assertSucceeded(res)
         }.lines()
         assertEquals(
-            listOf("""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"),
+            ["""{"firstName":"James","lastName":"Bond"}""", "User(firstName=James, lastName=Bond)"],
             out
         )
     }

@@ -121,7 +121,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
             directives: RegisteredDirectives
         ): List<File> {
             val provider = testServices.standardLibrariesPathProvider
-            val files = mutableListOf<File>()
+            val files: MutableList<File> = []
             if (configurationKind.withRuntime) {
                 files.add(provider.kotlinTestJarForTests())
             } else if (configurationKind.withMockRuntime) {
@@ -174,10 +174,10 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives, CliDirectives)
+        get() = [JvmEnvironmentConfigurationDirectives, CliDirectives]
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::CompiledClassesManager))
+        get() = [service(::CompiledClassesManager)]
 
     override fun DirectiveToConfigurationKeyExtractor.provideConfigurationKeys() {
         register(STRING_CONCAT, JVMConfigurationKeys.STRING_CONCAT)
@@ -428,7 +428,7 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
 
     protected open fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = dependency.dependencyModule
-        return listOf(testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null))
+        return [testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(friendModule, classFileFactory = null)]
     }
 }
 

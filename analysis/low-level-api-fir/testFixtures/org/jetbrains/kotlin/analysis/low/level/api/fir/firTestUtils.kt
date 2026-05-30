@@ -78,7 +78,7 @@ internal fun TestConfigurationBuilder.useFirSessionConfigurator(configurator: (T
 }
 
 inline fun <reified E : FirElement> FirElement.collectAllElementsOfType(): List<E> {
-    val result = mutableListOf<E>()
+    val result: MutableList<E> = []
     this.accept(object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {
             if (element is E) result += element

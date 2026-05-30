@@ -70,7 +70,7 @@ open class AnalysisResult protected constructor(
         moduleDescriptor: ModuleDescriptor,
         val additionalJavaRoots: List<File>,
         val additionalKotlinRoots: List<File>,
-        val additionalClassPathRoots: List<File> = emptyList(),
+        val additionalClassPathRoots: List<File> = [],
         val addToEnvironment: Boolean = true
     ) : AnalysisResult(bindingContext, moduleDescriptor)
 

@@ -43,7 +43,7 @@ internal interface Complex : State {
 
     fun loadOuterClassesInto(callStack: CallStack, receiver: IrValueSymbol? = null) {
         fun <T> List<T>.takeFromEndWhile(predicate: (T) -> Boolean): List<T> {
-            val list = mutableListOf<T>()
+            val list: MutableList<T> = []
             for (i in this.lastIndex downTo 0) {
                 if (!predicate(this[i]))
                     break

@@ -104,26 +104,26 @@ object KComposableFunction : FunctionTypeKind(
 class ComposeFirCheckersExtension(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
         override val functionCheckers: Set<FirFunctionChecker> =
-            setOf(ComposableFunctionChecker)
+            [ComposableFunctionChecker]
 
         override val propertyCheckers: Set<FirPropertyChecker> =
-            setOf(ComposablePropertyChecker)
+            [ComposablePropertyChecker]
     }
 
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
         override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> =
-            setOf(ComposableAnnotationChecker)
+            [ComposableAnnotationChecker]
     }
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
         override val functionCallCheckers: Set<FirFunctionCallChecker> =
-            setOf(ComposableFunctionCallChecker, ComposableTargetChecker)
+            [ComposableFunctionCallChecker, ComposableTargetChecker]
 
         override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> =
-            setOf(ComposablePropertyAccessExpressionChecker)
+            [ComposablePropertyAccessExpressionChecker]
 
         override val callableReferenceAccessCheckers: Set<FirCallableReferenceAccessChecker> =
-            setOf(ComposablePropertyReferenceChecker)
+            [ComposablePropertyReferenceChecker]
     }
 
 }

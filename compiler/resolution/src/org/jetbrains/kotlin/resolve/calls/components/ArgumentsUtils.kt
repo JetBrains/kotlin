@@ -101,7 +101,7 @@ val ParameterDescriptor.isVararg: Boolean get() = (this as? ValueParameterDescri
  */
 fun ValueParameterDescriptor.hasDefaultValue(): Boolean {
     return DFS.ifAny(
-        listOf(this),
+        [this],
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
         { it.declaresDefaultValue() || it.isActualParameterWithCorrespondingExpectedDefault }
     )

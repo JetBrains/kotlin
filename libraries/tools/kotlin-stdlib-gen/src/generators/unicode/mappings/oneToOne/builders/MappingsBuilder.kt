@@ -14,7 +14,7 @@ import generators.unicode.hexToInt
  * The base class of character mappings builders.
  */
 internal abstract class MappingsBuilder {
-    private val patterns = mutableListOf<MappingPattern>()
+    private val patterns: MutableList<MappingPattern> = []
 
     /**
      * Appends a line from the UnicodeData.txt file.

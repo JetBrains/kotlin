@@ -161,7 +161,7 @@ class ValueParameterCommonizerTest : AbstractCommonizerTest<CirValueParameter, C
                 isCrossinline = isCrossinline,
                 isNoinline = isNoinline,
                 declaresDefaultValue = declaresDefaultValue,
-                annotations = emptyList()
+                annotations = []
             )
         }
     }

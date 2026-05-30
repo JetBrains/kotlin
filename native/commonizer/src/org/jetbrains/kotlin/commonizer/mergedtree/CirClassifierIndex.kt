@@ -82,7 +82,7 @@ private class CirClassifierIndexBuilder {
     operator fun invoke(typeAlias: CirTreeTypeAlias) {
         classifierIds.add(typeAlias.id)
         classifiersById[typeAlias.id] = typeAlias.typeAlias
-        typeAliasesByUnderlyingType.getOrPut(typeAlias.typeAlias.underlyingType.classifierId) { mutableListOf() }.add(typeAlias)
+        typeAliasesByUnderlyingType.getOrPut(typeAlias.typeAlias.underlyingType.classifierId) { [] }.add(typeAlias)
     }
 
     operator fun invoke(clazz: CirTreeClass) {

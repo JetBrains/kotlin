@@ -156,12 +156,12 @@ class JsExportDeclarationChecker(
         }
     }
 
-    private fun KotlinType.isExportableReturn(bindingContext: BindingContext, currentlyProcessed: MutableSet<KotlinType> = mutableSetOf()) =
+    private fun KotlinType.isExportableReturn(bindingContext: BindingContext, currentlyProcessed: MutableSet<KotlinType> = []) =
         isUnit() || isExportable(bindingContext, currentlyProcessed)
 
     private fun KotlinType.isExportable(
         bindingContext: BindingContext,
-        currentlyProcessed: MutableSet<KotlinType> = mutableSetOf()
+        currentlyProcessed: MutableSet<KotlinType> = []
     ): Boolean {
         if (!currentlyProcessed.add(this)) {
             return true

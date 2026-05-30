@@ -42,8 +42,8 @@ val testFederationAffectedDomains: Set<Domain>?
         return raw.split(";").flatMap { value ->
             when (value) {
                 "*" -> Domain.entries
-                "<none>" -> emptyList()
-                else -> listOf(Domain.valueOf(value))
+                "<none>" -> []
+                else -> [Domain.valueOf(value)]
             }
         }.sorted().toSet()
     }

@@ -47,7 +47,7 @@ class MainKtsJsr223Test {
             """.trimIndent())
             Assert.assertNull(res1)
         }.lines()
-        Assert.assertEquals(listOf("Hi from common", "Hi from middle", "5"), out)
+        Assert.assertEquals(["Hi from common", "Hi from middle", "5"], out)
     }
 }
 

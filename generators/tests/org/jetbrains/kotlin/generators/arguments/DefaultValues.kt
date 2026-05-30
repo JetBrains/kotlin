@@ -108,14 +108,14 @@ open class DefaultValues(
         "\"es5\"",
         typeOf<String>(),
         typeOf<String>(),
-        possibleValues = listOf("\"es5\"", "\"es2015\"")
+        possibleValues = ["\"es5\"", "\"es2015\""]
     )
 
     object JsModuleKinds : DefaultValues(
         "null",
         typeOf<JsModuleKind?>(),
         typeOf<String?>(),
-        possibleValues = listOf("\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\""),
+        possibleValues = ["\"plain\"", "\"amd\"", "\"commonjs\"", "\"umd\""],
         fromKotlinOptionConverterProp = """
         this?.let { ${typeOf<JsModuleKind>()}.fromKind(it) }
         """.trimIndent(),
@@ -162,7 +162,7 @@ open class DefaultValues(
         "${typeOf<JsMainFunctionExecutionMode>()}.${JsMainFunctionExecutionMode.CALL.name}",
         typeOf<JsMainFunctionExecutionMode>(),
         typeOf<String>(),
-        possibleValues = listOf("\"" + CALL + "\"", "\"" + NO_CALL + "\""),
+        possibleValues = ["\"" + CALL + "\"", "\"" + NO_CALL + "\""],
         fromKotlinOptionConverterProp = """
         ${typeOf<JsMainFunctionExecutionMode>()}.fromMode(this)
         """.trimIndent(),

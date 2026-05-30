@@ -54,12 +54,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "PluginSandboxNativeTestGenerated",
-                annotations = listOf(
+                annotations = [
                     standalone(),
                     annotation(Tag::class.java, "sandbox-native"),
                     provider<UseExtTestCaseGroupProvider>(),
                     provider<EnforcedHostTarget>(),
-                )
+                ]
             ) {
                 model("box")
             }

@@ -80,20 +80,20 @@ abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(M
         protected val K_CLASS_IS_INTERFACE_NAME: Name = Name.identifier("isInterface")
 
         private val K_PROPERTY_CLASSES: Set<ClassId> =
-            listOf(
+            [
                 StandardNames.FqNames.kProperty0,
                 StandardNames.FqNames.kProperty1,
                 StandardNames.FqNames.kProperty2,
                 StandardNames.FqNames.kMutableProperty0,
                 StandardNames.FqNames.kMutableProperty1,
                 StandardNames.FqNames.kMutableProperty2,
-            ).mapTo(HashSet()) { ClassId.topLevel(it.toSafe()) }
+            ].mapTo(HashSet()) { ClassId.topLevel(it.toSafe()) }
 
         private val ALLOWED_MEMBER_NAMES: Set<Name> =
-            listOf("equals", "hashCode", "toString", "invoke", "name").mapTo(HashSet(), Name::identifier)
+            ["equals", "hashCode", "toString", "invoke", "name"].mapTo(HashSet(), Name::identifier)
 
         private val ALLOWED_CLASSES: Set<ClassId> =
-            listOf("KType", "KTypeParameter", "KTypeProjection", "KTypeProjection.Companion", "KVariance").mapTo(HashSet()) {
+            ["KType", "KTypeParameter", "KTypeProjection", "KTypeProjection.Companion", "KVariance"].mapTo(HashSet()) {
                 ClassId(StandardNames.KOTLIN_REFLECT_FQ_NAME, FqName(it), isLocal = false)
             }
     }

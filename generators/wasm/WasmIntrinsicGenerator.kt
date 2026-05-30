@@ -56,7 +56,7 @@ private fun generateWasmArrays(targetDir: File) {
         writer.generateStandardWasmInternalHeader()
 
         writer.appendLine(wasmArrayForType("Any", true))
-        val types = listOf(
+        val types = [
             "Byte",
             "Char",
             "Short",
@@ -64,7 +64,7 @@ private fun generateWasmArrays(targetDir: File) {
             "Long",
             "Float",
             "Double"
-        )
+        ]
 
         types.forEach { primitive ->
             val isPacked = primitive in setOf(

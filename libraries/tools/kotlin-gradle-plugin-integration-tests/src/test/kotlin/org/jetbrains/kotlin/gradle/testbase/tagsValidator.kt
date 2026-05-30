@@ -48,7 +48,7 @@ class TagsCountValidatorInterceptor : InvocationInterceptor {
     }
 
     private fun Class<*>.classTags(): List<Annotation> {
-        return annotations.filterTestTags() + (superclass?.classTags() ?: emptyList())
+        return annotations.filterTestTags() + (superclass?.classTags() ?: [])
     }
 
     private fun Array<Annotation>.filterTestTags() = filter {

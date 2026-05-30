@@ -40,7 +40,7 @@ object JavaOverrideWithWrongNullabilityOverrideChecker : DeclarationChecker {
         for (overriddenDescriptor in descriptor.overriddenDescriptors) {
             if (overriddenDescriptor !is JavaMethodDescriptor) continue
 
-            val relatedTypeParameters = mutableSetOf<TypeParameterDescriptor>()
+            val relatedTypeParameters: MutableSet<TypeParameterDescriptor> = []
             val overridingUtilWithEnhancementUnwrapped =
                 OverridingUtil
                     .createWithTypePreparatorAndCustomSubtype(typePreparatorUnwrappingEnhancement) { subtype, supertype ->

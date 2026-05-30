@@ -147,7 +147,7 @@ internal object EscapeAnalysis {
     private inline fun <reified T: Comparable<T>> Array<T>.sortedAndDistinct(): Array<T> {
         this.sort()
         if (this.isEmpty()) return this
-        val unique = mutableListOf(this[0])
+        val unique: MutableList<T> = [this[0]]
         for (i in 1 until this.size)
             if (this[i] != this[i - 1])
                 unique.add(this[i])
@@ -236,8 +236,8 @@ internal object EscapeAnalysis {
             }
 
             companion object {
-                fun parameter(index: Int, total: Int) = Node(NodeKind.parameter(index, total), path = emptyArray())
-                fun drain(index: Int) = Node(NodeKind.Drain(index), path = emptyArray())
+                fun parameter(index: Int, total: Int) = Node(NodeKind.parameter(index, total), path = [])
+                fun drain(index: Int) = Node(NodeKind.Drain(index), path = [])
             }
         }
 
@@ -316,8 +316,8 @@ internal object EscapeAnalysis {
                 pointsToAnnotation?.run {
                     assertIsValidFor(numberOfParameters + 1)
                 }
-                val edges = mutableListOf<CompressedPointsToGraph.Edge>()
-                val escapes = mutableListOf<CompressedPointsToGraph.Node>()
+                val edges: MutableList<CompressedPointsToGraph.Edge> = []
+                val escapes: MutableList<CompressedPointsToGraph.Node> = []
                 for (paramFrom in 0..numberOfParameters) {
                     if (escapesAnnotation?.escapesAt(paramFrom) == true)
                         escapes.add(CompressedPointsToGraph.Node.parameter(paramFrom, numberOfParameters + 1))
@@ -334,10 +334,10 @@ internal object EscapeAnalysis {
             }
 
             fun optimistic() =
-                    FunctionEscapeAnalysisResult(0, CompressedPointsToGraph(emptyArray()), emptyArray())
+                    FunctionEscapeAnalysisResult(0, CompressedPointsToGraph([]), [])
 
             fun pessimistic(numberOfParameters: Int) =
-                    FunctionEscapeAnalysisResult(0, CompressedPointsToGraph(emptyArray()),
+                    FunctionEscapeAnalysisResult(0, CompressedPointsToGraph([]),
                             Array(numberOfParameters + 1) { CompressedPointsToGraph.Node.parameter(it, numberOfParameters + 1) })
         }
     }
@@ -464,7 +464,7 @@ internal object EscapeAnalysis {
 
             var pointsToGraphs = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, PointsToGraph>()
             var failedToConverge = false
-            val toAnalyze = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+            val toAnalyze: MutableSet<DataFlowIR.FunctionSymbol.Declared> = []
             toAnalyze.addAll(nodes)
             val numberOfRuns = nodes.associateWith { 0 }.toMutableMap()
             while (!failedToConverge && toAnalyze.isNotEmpty()) {
@@ -613,8 +613,8 @@ internal object EscapeAnalysis {
 
         private fun arrayLengthOf(node: DataFlowIR.Node): Int? {
             var lengthNode: DataFlowIR.Node.SimpleConst<*>? = null
-            val nodes = mutableListOf(node)
-            val visited = mutableSetOf<DataFlowIR.Node>()
+            val nodes: MutableList<DataFlowIR.Node> = [node]
+            val visited: MutableSet<DataFlowIR.Node> = []
             while (true) {
                 val currentNode = nodes.peek() ?: break
                 nodes.pop()
@@ -749,8 +749,8 @@ internal object EscapeAnalysis {
         }
 
         private class PointsToGraphNode(val startDepth: Int, val node: DataFlowIR.Node?) {
-            val edges = mutableListOf<PointsToGraphEdge>()
-            val reversedEdges = mutableListOf<PointsToGraphEdge.Assignment>()
+            val edges: MutableList<PointsToGraphEdge> = []
+            val reversedEdges: MutableList<PointsToGraphEdge.Assignment> = []
 
             fun addAssignmentEdge(to: PointsToGraphNode) {
                 edges += PointsToGraphEdge.Assignment(to)
@@ -799,7 +799,7 @@ internal object EscapeAnalysis {
             val function = moduleDFG.functions[functionSymbol]!!
             val nodes = mutableMapOf<DataFlowIR.Node, PointsToGraphNode>()
 
-            val allNodes = mutableListOf<PointsToGraphNode>()
+            val allNodes: MutableList<PointsToGraphNode> = []
 
             fun newNode(depth: Int, node: DataFlowIR.Node?) =
                     PointsToGraphNode(depth, node).also { allNodes.add(it) }
@@ -815,15 +815,15 @@ internal object EscapeAnalysis {
              * but [b] doesn't, albeit [v] (an escaping node) references it. It's because [v] is not an escape origin.
              */
             // The origins of escaping.
-            val escapeOrigins = mutableSetOf<PointsToGraphNode>()
+            val escapeOrigins: MutableSet<PointsToGraphNode> = []
             // Nodes reachable from either of escape origins going along all edges (assignment and/or field).
-            val reachableFromEscapeOrigins = mutableSetOf<PointsToGraphNode>()
+            val reachableFromEscapeOrigins: MutableSet<PointsToGraphNode> = []
             // Nodes referencing any escape origin only by assignment edges.
-            val referencingEscapeOrigins = mutableSetOf<PointsToGraphNode>()
+            val referencingEscapeOrigins: MutableSet<PointsToGraphNode> = []
 
             fun escapes(node: PointsToGraphNode) = node in reachableFromEscapeOrigins || node in referencingEscapeOrigins
 
-            val ids = (listOf(function.body.rootScope) + function.body.allScopes.flatMap { it.nodes })
+            val ids = ([function.body.rootScope] + function.body.allScopes.flatMap { it.nodes })
                     .withIndex().associateBy({ it.value }, { it.index })
 
             fun lifetimeOf(node: DataFlowIR.Node) = nodes[node]!!.let { it.forcedLifetime ?: lifetimeOf(it) }
@@ -1135,8 +1135,8 @@ internal object EscapeAnalysis {
                 logDigraph(true, { nodeIds[it] != null }, { nodeIds[it].toString() })
 
                 // TODO: Remove redundant edges.
-                val compressedEdges = mutableListOf<CompressedPointsToGraph.Edge>()
-                val escapingNodes = mutableListOf<CompressedPointsToGraph.Node>()
+                val compressedEdges: MutableList<CompressedPointsToGraph.Edge> = []
+                val escapingNodes: MutableList<CompressedPointsToGraph.Node> = []
                 for (from in allNodes) {
                     val fromCompressedNode = nodeIds[from] ?: continue
                     if (from in escapeOrigins)
@@ -1170,13 +1170,13 @@ internal object EscapeAnalysis {
                 // merge two sets: reachable by assignment edges and reachable by reversed assignment edges.
                 // But, there will be a downside - drains will have to be created for each field access,
                 // thus increasing the graph size significantly.
-                val visited = mutableSetOf<PointsToGraphNode>()
-                val drains = mutableListOf<PointsToGraphNode>()
-                val createdDrains = mutableSetOf<PointsToGraphNode>()
+                val visited: MutableSet<PointsToGraphNode> = []
+                val drains: MutableList<PointsToGraphNode> = []
+                val createdDrains: MutableSet<PointsToGraphNode> = []
                 // Create drains.
                 for (node in allNodes.toTypedArray() /* Copy as [allNodes] might change inside */) {
                     if (node in visited) continue
-                    val component = mutableListOf<PointsToGraphNode>()
+                    val component: MutableList<PointsToGraphNode> = []
                     buildComponent(node, visited, component)
                     val drain = trySelectDrain(component)?.also { it.drain = it }
                             ?: newDrain().also { createdDrains += it }
@@ -1184,7 +1184,7 @@ internal object EscapeAnalysis {
                     component.forEach {
                         if (it == drain) return@forEach
                         it.drain = drain
-                        val assignmentEdges = mutableListOf<PointsToGraphEdge>()
+                        val assignmentEdges: MutableList<PointsToGraphEdge> = []
                         for (edge in it.edges) {
                             if (edge is PointsToGraphEdge.Assignment)
                                 assignmentEdges += edge
@@ -1207,7 +1207,7 @@ internal object EscapeAnalysis {
                 // Merge the components multi-edges are pointing at.
                 // TODO: This looks very similar to the system of disjoint sets algorithm.
                 while (true) {
-                    val toMerge = mutableListOf<Pair<PointsToGraphNode, PointsToGraphNode>>()
+                    val toMerge: MutableList<Pair<PointsToGraphNode, PointsToGraphNode>> = []
                     for (drain in drains) {
                         val fields = drain.edges.groupBy { edge ->
                             (edge as? PointsToGraphEdge.Field)?.field
@@ -1224,7 +1224,7 @@ internal object EscapeAnalysis {
                         }
                     }
                     if (toMerge.isEmpty()) break
-                    val possibleDrains = mutableListOf<PointsToGraphNode>()
+                    val possibleDrains: MutableList<PointsToGraphNode> = []
                     for ((first, second) in toMerge) {
                         // Merge components: try to flip one drain to the other if possible,
                         // otherwise just create a new one.
@@ -1314,7 +1314,7 @@ internal object EscapeAnalysis {
             // Drains, other than interesting, can be safely omitted from the result.
             private fun findInterestingDrains(parameters: Array<PointsToGraphNode>): Set<PointsToGraphNode> {
                 // Starting with all reachable from the parameters.
-                val interestingDrains = mutableSetOf<PointsToGraphNode>()
+                val interestingDrains: MutableSet<PointsToGraphNode> = []
                 for (param in parameters) {
                     val drain = param.drain
                     if (drain !in interestingDrains)
@@ -1324,11 +1324,9 @@ internal object EscapeAnalysis {
                 // Then iteratively remove all drains forming kind of a "cactus"
                 // (picking a leaf drain with only one incoming edge at a time).
                 // They can be removed because they don't add any relations between the parameters.
-                val reversedEdges = interestingDrains.associateWith {
-                    mutableListOf<PointsToGraphNode>()
-                }
+                val reversedEdges: Map<PointsToGraphNode, MutableList<PointsToGraphNode>> = interestingDrains.associateWith { [] }
                 val edgesCount = mutableMapOf<PointsToGraphNode, Int>()
-                val leaves = mutableListOf<PointsToGraphNode>()
+                val leaves: MutableList<PointsToGraphNode> = []
                 for (drain in interestingDrains) {
                     var count = 0
                     for (edge in drain.edges) {
@@ -1410,12 +1408,12 @@ internal object EscapeAnalysis {
                 // into account, compare the result with all escaping nodes. Now for each non-marked escape origin
                 // find nodes escaping because of it, take those who aren't escaping through the marked origins,
                 // and add an additional node, pointing at those and mark it as an escape origin.
-                val reachableFromTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
-                val referencingTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
-                val reachableFromNotTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
-                val referencingNotTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
-                val reachableFringeFromNotTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
-                val fringeReferencingNotTakenEscapeOrigins = mutableSetOf<PointsToGraphNode>()
+                val reachableFromTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
+                val referencingTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
+                val reachableFromNotTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
+                val referencingNotTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
+                val reachableFringeFromNotTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
+                val fringeReferencingNotTakenEscapeOrigins: MutableSet<PointsToGraphNode> = []
                 for (escapeOrigin in escapeOrigins) {
                     if (nodeIds[escapeOrigin] == null) {
                         if (escapeOrigin !in reachableFromNotTakenEscapeOrigins)
@@ -1478,7 +1476,7 @@ internal object EscapeAnalysis {
                 // the [v]'s drain, by construction all drains are reachable from all nodes within the corresponding
                 // component, including [v]; this implies that the drain also is referenced from these two nodes,
                 // and therefore it is possible to check only drains rather than all nodes.
-                val connectedNodes = mutableSetOf<Pair<PointsToGraphNode, PointsToGraphNode>>()
+                val connectedNodes: MutableSet<Pair<PointsToGraphNode, PointsToGraphNode>> = []
                 allNodes.filter { nodeIds[it] != null && nodeIds[it.drain] == null /* The drain has been optimized away */ }
                         .forEach { node ->
                             val referencingNodes = findReferencing(node).filter { nodeIds[it] != null }
@@ -1526,7 +1524,7 @@ internal object EscapeAnalysis {
             }
 
             private fun findReferencing(node: PointsToGraphNode): Set<PointsToGraphNode> {
-                val visited = mutableSetOf<PointsToGraphNode>()
+                val visited: MutableSet<PointsToGraphNode> = []
                 findReferencing(node, visited)
                 return visited
             }
@@ -1602,9 +1600,9 @@ internal object EscapeAnalysis {
             private fun buildComponentsClosures(nodeIds: MutableMap<PointsToGraphNode, CompressedPointsToGraph.Node>) {
                 for (node in allNodes) {
                     if (node !in nodeIds) continue
-                    val visited = mutableSetOf<PointsToGraphNode>()
+                    val visited: MutableSet<PointsToGraphNode> = []
                     findReachable(node, visited, true, null)
-                    val visitedInInterestingSubgraph = mutableSetOf<PointsToGraphNode>()
+                    val visitedInInterestingSubgraph: MutableSet<PointsToGraphNode> = []
                     findReachable(node, visitedInInterestingSubgraph, true, nodeIds)
                     visited.removeAll(visitedInInterestingSubgraph)
                     for (reachable in visited)
@@ -1614,7 +1612,7 @@ internal object EscapeAnalysis {
             }
 
             private fun propagateLifetimes() {
-                val visited = mutableSetOf<PointsToGraphNode>()
+                val visited: MutableSet<PointsToGraphNode> = []
 
                 fun propagate(node: PointsToGraphNode) {
                     visited += node
@@ -1648,7 +1646,7 @@ internal object EscapeAnalysis {
 
                 // TODO: To a setting?
                 val allowedToAlloc = 65536
-                val stackArrayCandidates = mutableListOf<ArrayStaticAllocation>()
+                val stackArrayCandidates: MutableList<ArrayStaticAllocation> = []
                 for ([node, ptgNode] in nodes) {
                     if (node.ir == null) continue
 
@@ -1753,7 +1751,7 @@ internal object EscapeAnalysis {
                 var front = nodeIds.keys.toMutableList()
                 do {
                     while (front.isNotEmpty()) {
-                        val nextFront = mutableListOf<PointsToGraphNode>()
+                        val nextFront: MutableList<PointsToGraphNode> = []
                         for (node in front) {
                             val nodeId = nodeIds[node]!!
                             node.edges.filterIsInstance<PointsToGraphEdge.Field>().forEach { edge ->

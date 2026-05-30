@@ -41,7 +41,7 @@ internal class KFunctionState(
      * Non-null values in [boundValues] are always passed as arguments to [irFunction].
      * Other arguments have to be provided at call-site when invoking [invokeSymbol].
      */
-    boundValues: List<State?> = emptyList(),
+    boundValues: List<State?> = [],
 ) : ReflectionState(), StateWithClosure {
     constructor(
         functionReference: IrFunctionReference,
@@ -69,7 +69,7 @@ internal class KFunctionState(
     val invokeSymbol: IrFunctionSymbol
 
     init {
-        val boundParameters = mutableSetOf<IrValueParameter>()
+        val boundParameters: MutableSet<IrValueParameter> = []
         for ([param, value] in (irFunction.parameters zip boundValues)) {
             if (value != null) {
                 boundParameters += param
@@ -119,7 +119,7 @@ internal class KFunctionState(
             ).apply impl@{
                 copyTypeParametersFrom(irFunction)
                 parent = functionClass
-                overriddenSymbols = listOf(invokeFunction.symbol)
+                overriddenSymbols = [invokeFunction.symbol]
 
                 invokeFunction.dispatchReceiverParameter?.let {
                     parameters += it.deepCopyWithSymbols(initialParent = this)
@@ -141,7 +141,7 @@ internal class KFunctionState(
                     }
                 }
 
-                body = listOf(this.createReturn(call, environment.irBuiltIns.nothingType)).wrapWithBlockBody()
+                body = [this.createReturn(call, environment.irBuiltIns.nothingType)].wrapWithBlockBody()
             }
             functionClass.declarations += newFunctionToInvoke
             return newFunctionToInvoke

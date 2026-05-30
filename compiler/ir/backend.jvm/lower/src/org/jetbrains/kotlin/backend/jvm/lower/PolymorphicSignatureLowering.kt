@@ -147,7 +147,7 @@ internal class PolymorphicSignatureLowering(val context: JvmBackendContext) : Ir
                 is IrSpreadElement -> it.expression // `*xs` acts as `xs` (for compatibility?)
                 else -> throw AssertionError("unknown IrVarargElement: $it")
             }
-        } ?: listOf()
+        } ?: []
         val fakeFunction = context.irFactory.buildFun {
             updateFrom(function)
             name = function.name

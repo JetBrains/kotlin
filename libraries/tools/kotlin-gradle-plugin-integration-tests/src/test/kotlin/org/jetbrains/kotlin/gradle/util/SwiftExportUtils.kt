@@ -36,7 +36,7 @@ import kotlin.test.assertTrue
 @OptIn(EnvironmentalVariablesOverride::class)
 internal fun GradleProject.swiftExportEmbedAndSignEnvVariables(
     testBuildDir: Path,
-    archs: List<String> = listOf("arm64"),
+    archs: List<String> = ["arm64"],
     sdk: String = "iphoneos",
     iphoneOsDeploymentTarget: String = "14.1",
 ) = EnvironmentalVariables(
@@ -72,12 +72,12 @@ internal fun KGPBaseTest.publishMultiplatformLibrary(
 }.publish(publisherConfiguration = PublisherConfiguration())
 
 internal fun swiftCompile(workingDir: File, libDir: File, source: File, target: String) = runProcess(
-    listOf(
+    [
         "xcrun", "--sdk", "iphonesimulator", "swiftc", "${source.relativeTo(workingDir).path}",
         "-I", libDir.absolutePath, "-target", target,
         "-Xlinker", "-L", "-Xlinker", libDir.absolutePath, "-Xlinker", "-lShared",
         "-framework", "Foundation", "-framework", "UIKit"
-    ),
+    ],
     workingDir
 )
 
@@ -111,11 +111,11 @@ private fun swiftSymbolgraphExtract(
     moduleName: String,
     target: String,
     sdk: String = "iphoneos",
-    searchPaths: List<File> = emptyList(),
+    searchPaths: List<File> = [],
     outputDir: File = symbolgraphOutputDir(workingDir, moduleName),
 ): ProcessRunResult {
     val sdkPathResult = runProcess(
-        listOf("xcrun", "--sdk", sdk, "--show-sdk-path"),
+        ["xcrun", "--sdk", sdk, "--show-sdk-path"],
         workingDir
     )
     sdkPathResult.assertProcessRunResult { assertTrue(isSuccessful, "Failed to get SDK path") }
@@ -126,14 +126,14 @@ private fun swiftSymbolgraphExtract(
     }
     outputDir.mkdirs()
 
-    val command = mutableListOf(
+    val command: MutableList<String> = [
         "xcrun", "swift", "symbolgraph-extract",
         "-module-name", moduleName,
         "-target", target,
         "-output-dir", outputDir.absolutePath,
         "-sdk", sdkPath,
         "-skip-synthesized-members"
-    )
+    ]
     searchPaths.forEach { path ->
         command.add("-I")
         command.add(path.absolutePath)
@@ -152,7 +152,7 @@ private fun symbolgraphOutputDir(workingDir: File, moduleName: String): File {
 private object SymbolGraphParsing {
     @Serializable
     data class SymbolGraph(
-        val symbols: List<Symbol> = emptyList(),
+        val symbols: List<Symbol> = [],
     )
 
     @Serializable
@@ -225,7 +225,7 @@ private fun demangleUsr(rawUsr: String, workingDir: File): String {
  */
 private fun demangleSingleUsr(rawUsr: String, workingDir: File): String {
     val mangled = if (rawUsr.startsWith("s:")) rawUsr.replaceFirst("s:", "\$s") else rawUsr
-    val result = runProcess(listOf("xcrun", "swift-demangle", "--compact", mangled), workingDir)
+    val result = runProcess(["xcrun", "swift-demangle", "--compact", mangled], workingDir)
     val output = result.output.trim()
     assert(result.isSuccessful) {
         "swift-demangle failed for USR '$rawUsr' (mangled: '$mangled'): ${result.output}"
@@ -306,7 +306,7 @@ internal fun assertAllSwiftModuleSymbols(
     sdk: String = "iphoneos",
     expectedSymbolsByModule: Map<String, Set<SwiftSymbol>>,
 ) {
-    val allDirEntries = builtProductsDir.listFiles() ?: emptyArray()
+    val allDirEntries = builtProductsDir.listFiles() ?: []
     val swiftModuleDirs = allDirEntries.filter { it.isDirectory && it.name.endsWith(".swiftmodule") }
 
     assert(swiftModuleDirs.isNotEmpty()) {
@@ -321,7 +321,7 @@ internal fun assertAllSwiftModuleSymbols(
             moduleName = moduleName,
             target = target,
             sdk = sdk,
-            searchPaths = listOf(builtProductsDir)
+            searchPaths = [builtProductsDir]
         )
     }
 

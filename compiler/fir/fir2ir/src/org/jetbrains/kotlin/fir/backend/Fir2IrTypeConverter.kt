@@ -96,7 +96,7 @@ class Fir2IrTypeConverter(
 
     fun ConeKotlinType.toIrType(
         typeOrigin: ConversionTypeOrigin = ConversionTypeOrigin.DEFAULT,
-        annotations: List<FirAnnotation> = emptyList(),
+        annotations: List<FirAnnotation> = [],
         hasFlexibleNullability: Boolean = false,
         hasFlexibleMutability: Boolean = false,
         hasFlexibleArrayElementVariance: Boolean = false,
@@ -110,7 +110,7 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeLookupTagBasedType -> {
-                val typeAnnotations = mutableListOf<IrAnnotation>()
+                val typeAnnotations: MutableList<IrAnnotation> = []
                 typeAnnotations += with(annotationGenerator) { annotations.toIrAnnotations() }
 
                 val irSymbol =
@@ -291,7 +291,7 @@ class Fir2IrTypeConverter(
             is ConeKotlinTypeProjectionOut -> toIrTypeArgument(this.type, Variance.OUT_VARIANCE)
             is ConeKotlinTypeConflictingProjection -> toIrTypeArgument(this.type, Variance.INVARIANT)
             is ConeKotlinType -> {
-                if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive(mutableSetOf())) {
+                if (this is ConeCapturedType && this in capturedTypeCache && this.isRecursive([])) {
                     // Recursive captured type, e.g., Recursive<R> where R : Recursive<R>, ...
                     // We can return * early here to avoid recursive type conversions.
                     IrStarProjectionImpl
@@ -393,7 +393,7 @@ internal fun ConeKotlinType.approximateForIrOrSelf(): ConeKotlinType {
 }
 
 internal fun createErrorType(message: String = "<error>", isMarkedNullable: Boolean = false): IrErrorType =
-    IrErrorTypeImpl(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, message), emptyList(), Variance.INVARIANT, isMarkedNullable)
+    IrErrorTypeImpl(ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_TYPE, message), [], Variance.INVARIANT, isMarkedNullable)
 
 context(c: Fir2IrComponents)
 fun ConeKotlinType.approximateFunctionTypeInputs(): ConeKotlinType {

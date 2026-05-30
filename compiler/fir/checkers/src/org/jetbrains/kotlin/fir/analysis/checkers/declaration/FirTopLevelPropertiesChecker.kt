@@ -53,7 +53,7 @@ object FirTopLevelPropertiesChecker : FirFileChecker(MppCheckerKind.Common) {
 object FirScriptPropertiesChecker : FirScriptChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirScript) {
-        val topLevelPropertySymbols = mutableListOf<FirPropertySymbol>()
+        val topLevelPropertySymbols: MutableList<FirPropertySymbol> = []
         FirScriptDeclarationsScope(context.session, declaration).processAllCallables { callable ->
             if (callable is FirPropertySymbol) {
                 topLevelPropertySymbols += callable
@@ -89,7 +89,7 @@ private fun FirDeclaration.collectionInitializationInfo(
     if (propertySymbols.isEmpty()) return null
 
     // TODO, KT-59803: merge with `FirPropertyInitializationAnalyzer` for fewer passes.
-    val data = PropertyInitializationInfoData(propertySymbols, conditionallyInitializedProperties = emptySet(), receiver = null, graph)
+    val data = PropertyInitializationInfoData(propertySymbols, conditionallyInitializedProperties = [], receiver = null, graph)
     PropertyInitializationCheckProcessor.check(data, isForInitialization = true)
     return data.getValue(graph.exitNode)[NormalPath]
 }

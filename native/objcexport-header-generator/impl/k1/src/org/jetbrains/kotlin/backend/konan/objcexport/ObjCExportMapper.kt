@@ -253,7 +253,7 @@ fun ObjCExportMapper.isBaseMethod(descriptor: FunctionDescriptor) =
 @InternalKotlinNativeApi
 fun ObjCExportMapper.getBaseMethods(descriptor: FunctionDescriptor): List<FunctionDescriptor> =
     if (isBaseMethod(descriptor)) {
-        listOf(descriptor)
+        [descriptor]
     } else {
         descriptor.overriddenDescriptors.filter { shouldBeExposed(it) }
             .flatMap { getBaseMethods(it.original) }
@@ -267,7 +267,7 @@ fun ObjCExportMapper.isBaseProperty(descriptor: PropertyDescriptor) =
 @InternalKotlinNativeApi
 fun ObjCExportMapper.getBaseProperties(descriptor: PropertyDescriptor): List<PropertyDescriptor> =
     if (isBaseProperty(descriptor)) {
-        listOf(descriptor)
+        [descriptor]
     } else {
         descriptor.overriddenDescriptors
             .flatMap { getBaseProperties(it.original) }
@@ -435,7 +435,7 @@ private fun ObjCExportMapper.bridgeMethodImpl(descriptor: FunctionDescriptor): M
         MethodBridgeReceiver.Instance
     }
 
-    val valueParameters = mutableListOf<MethodBridgeValueParameter>()
+    val valueParameters: MutableList<MethodBridgeValueParameter> = []
     kotlinParameters.forEach {
         valueParameters += bridgeParameter(it)
     }

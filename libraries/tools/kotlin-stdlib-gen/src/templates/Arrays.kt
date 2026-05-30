@@ -503,7 +503,7 @@ object ArrayOps : TemplateGroupBase() {
         body { """return U$arrayType(this.copyOf())""" }
     }
 
-    val f_plusElement = listOf(true, false).map { covariant ->
+    val f_plusElement = [true, false].map { covariant ->
         fn("plusElement(element: T)") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -538,7 +538,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_plus = listOf(true, false).map { covariant ->
+    val f_plus = [true, false].map { covariant ->
         fn("plus(element: T)") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -609,7 +609,7 @@ object ArrayOps : TemplateGroupBase() {
     }
 
 
-    val f_plus_collection = listOf(true, false).map { covariant ->
+    val f_plus_collection = [true, false].map { covariant ->
         fn("plus(elements: Collection<T>)") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -685,7 +685,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_plus_array = listOf(true, false).map { covariant ->
+    val f_plus_array = [true, false].map { covariant ->
         fn("plus(elements: SELF)") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -863,7 +863,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_copyOfRange = listOf(true, false).map { covariant ->
+    val f_copyOfRange = [true, false].map { covariant ->
         fn("copyOfRange(fromIndex: Int, toIndex: Int)") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -979,7 +979,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_copyOf = listOf(true, false).map { covariant ->
+    val f_copyOf = [true, false].map { covariant ->
         fn("copyOf()") {
             if (covariant) {
                 include(ArraysOfObjects)
@@ -1036,7 +1036,7 @@ object ArrayOps : TemplateGroupBase() {
         }
     }
 
-    val f_copyOf_newSize = listOf(true, false).map { covariant ->
+    val f_copyOf_newSize = [true, false].map { covariant ->
         fn("copyOf(newSize: Int)") {
             if (covariant) {
                 include(ArraysOfObjects)

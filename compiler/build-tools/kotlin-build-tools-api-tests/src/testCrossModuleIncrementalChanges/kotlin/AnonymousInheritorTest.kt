@@ -26,7 +26,7 @@ class AnonymousInheritorTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             lib.changeFile("callable.kt") { it.replace("inline fun", "fun") }
@@ -38,8 +38,8 @@ class AnonymousInheritorTest : BaseCompilationTest() {
 
             lib.replaceFileWithVersion("SomeClass.kt", "withOverload")
 
-            lib.compile(expectedDirtySet = setOf("SomeClass.kt", "callable.kt"))
-            app.compile(expectedDirtySet = setOf())
+            lib.compile(expectedDirtySet = ["SomeClass.kt", "callable.kt"])
+            app.compile(expectedDirtySet = [])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }

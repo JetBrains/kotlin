@@ -50,7 +50,7 @@ private class KtObjCExportHeaderGenerator(
     /**
      * The mutable aggregate of the already translated elements
      */
-    private val objCStubs = mutableListOf<ObjCTopLevel>()
+    private val objCStubs: MutableList<ObjCTopLevel> = []
 
     /**
      * An index of all already translated classes. All classes here are also present in [objCStubs]
@@ -66,12 +66,12 @@ private class KtObjCExportHeaderGenerator(
     /**
      * The mutable aggregate of all protocol names that shall later be rendered as forward declarations
      */
-    private val objCProtocolForwardDeclarations = mutableSetOf<String>()
+    private val objCProtocolForwardDeclarations: MutableSet<String> = []
 
     /**
      * The mutable aggregate of all class names that shall later be rendered as forward declarations
      */
-    private val objCClassForwardDeclarations = mutableSetOf<ObjCClassKey>()
+    private val objCClassForwardDeclarations: MutableSet<ObjCClassKey> = []
 
 
     fun ObjCExportContext.translateAll(files: List<KtObjCExportFile>) {
@@ -203,11 +203,11 @@ private class KtObjCExportHeaderGenerator(
         classDeque += stub.closureSequence()
             .flatMap { childStub ->
                 when (childStub) {
-                    is ObjCMethod -> listOf(childStub.returnType)
-                    is ObjCParameter -> listOf(childStub.type)
-                    is ObjCProperty -> listOf(childStub.type)
+                    is ObjCMethod -> [childStub.returnType]
+                    is ObjCParameter -> [childStub.type]
+                    is ObjCProperty -> [childStub.type]
                     is ObjCInterface -> childStub.superClassGenerics
-                    is ObjCTopLevel -> emptyList()
+                    is ObjCTopLevel -> []
                 }
             }.map { type ->
                 /**
@@ -221,7 +221,7 @@ private class KtObjCExportHeaderGenerator(
                 val typeArguments = when (type) {
                     is ObjCClassType -> type.typeArguments
                     is ObjCBlockPointerType -> type.allTypes()
-                    else -> emptyList()
+                    else -> []
                 }
                 typeArguments + type
             }
@@ -265,14 +265,14 @@ private class KtObjCExportHeaderGenerator(
             }
             .toSet()
 
-        val stubs = (if (withObjCBaseDeclarations) exportSession.objCBaseDeclarations() else emptyList()).plus(objCStubs)
+        val stubs = (if (withObjCBaseDeclarations) exportSession.objCBaseDeclarations() else []).plus(objCStubs)
             .plus(listOfNotNull(exportSession.errorInterface.takeIf { hasErrorTypes }))
 
         return ObjCHeader(
             stubs = mangleObjCStubs(stubs.sortedWith(ObjCInterfaceOrder)),
             classForwardDeclarations = mangleClassForwards(classForwardDeclarations).sortedBy { it.className }.toSet(),
             protocolForwardDeclarations = protocolForwardDeclarations.sortedBy { it }.toSet(),
-            additionalImports = emptyList()
+            additionalImports = []
         )
     }
 
@@ -293,7 +293,7 @@ private class KtObjCExportHeaderGenerator(
     private fun addObjCStubIfNotTranslated(
         objCClass: ObjCClass,
         packageFqn: String? = "",
-        auxiliaryDeclarations: List<ObjCTopLevel> = emptyList()
+        auxiliaryDeclarations: List<ObjCTopLevel> = []
     ) {
         val key = ObjCClassKey(objCClass.name, packageFqn, (objCClass as? ObjCInterface)?.categoryName)
         val translatedClass = objCStubsByClassKey[key]

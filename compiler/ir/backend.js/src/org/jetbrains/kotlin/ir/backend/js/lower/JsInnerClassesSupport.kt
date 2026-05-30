@@ -90,12 +90,12 @@ class JsInnerClassesSupport(private val irFactory: IrFactory) : InnerClassesSupp
 
         newConstructor.copyTypeParametersFrom(oldConstructor)
 
-        val newValueParameters = mutableListOf(buildValueParameter(newConstructor) {
+        val newValueParameters: MutableList<IrValueParameter> = [buildValueParameter(newConstructor) {
             origin = SYNTHESIZED_DECLARATION
             name = Name.identifier(Namer.OUTER_NAME)
             type = outerThisType
             kind = IrParameterKind.Regular
-        })
+        }]
 
         for (p in oldConstructor.nonDispatchParameters) {
             newValueParameters += p.copyTo(newConstructor)

@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.types.model.isNullableType
  * Collects the upper bounds as [ConeClassLikeType].
  */
 fun ConeKotlinType?.collectUpperBounds(typeContext: ConeTypeContext): Set<ConeClassLikeType> {
-    if (this == null) return emptySet()
+    if (this == null) return []
 
-    val upperBounds = mutableSetOf<ConeClassLikeType>()
-    val seen = mutableSetOf<ConeKotlinType>()
+    val upperBounds: MutableSet<ConeClassLikeType> = []
+    val seen: MutableSet<ConeKotlinType> = []
     fun collect(type: ConeKotlinType) {
         if (!seen.add(type)) return // Avoid infinite recursion.
 

@@ -47,7 +47,7 @@ fun ConstraintSystemBuilderImpl.incorporateBound(newBound: Bound) {
     for (oldBoundIndex in typeBounds.bounds.indices) {
         addConstraintFromBounds(typeBounds.bounds[oldBoundIndex], newBound)
     }
-    val boundsUsedIn = usedInBounds[typeVariable] ?: emptyList<Bound>()
+    val boundsUsedIn = usedInBounds[typeVariable] ?: []
     for (index in boundsUsedIn.indices) {
         val boundUsedIn = boundsUsedIn[index]
         generateNewBound(boundUsedIn, newBound)

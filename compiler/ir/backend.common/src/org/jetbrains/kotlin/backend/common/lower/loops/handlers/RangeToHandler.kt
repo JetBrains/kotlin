@@ -70,7 +70,7 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         }
     }
 
-    private val allowedMethods = listOf(
+    private val allowedMethods = [
         "kotlin.ByteArray.<get-size>",
         "kotlin.CharArray.<get-size>",
         "kotlin.String.<get-length>",
@@ -87,7 +87,7 @@ internal class RangeToHandler(private val context: CommonBackendContext) : Heade
         "kotlin.collections.MutableSet.<get-size>",
         "kotlin.collections.Map.<get-size>",
         "kotlin.collections.MutableMap.<get-size>",
-    )
+    ]
 
     private fun convertIrCall(irCall: IrCall): IrExpression? {
         fun IrCall.dispatchReceiverName() = (dispatchReceiver as? IrCall)?.symbol?.owner?.fqNameWhenAvailable.toString()

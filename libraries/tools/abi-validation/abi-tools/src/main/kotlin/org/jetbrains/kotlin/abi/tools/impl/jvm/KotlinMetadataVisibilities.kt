@@ -20,7 +20,7 @@ internal class ClassVisibility(
 ) {
     val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
     var companionVisibilities: ClassVisibility? = null
-    val partVisibilities = mutableListOf<ClassVisibility>()
+    val partVisibilities: MutableList<ClassVisibility> = []
 }
 
 internal fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility? =
@@ -96,7 +96,7 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
     var modality: Modality? = null
     var kind: ClassKind? = null
     var _facadeClassName: String? = null
-    val members = mutableListOf<MemberVisibility>()
+    val members: MutableList<MemberVisibility> = []
     var primaryConstructorIsInternal = false
 
     fun addMember(

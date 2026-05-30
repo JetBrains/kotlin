@@ -140,7 +140,7 @@ private fun reportParseTranslationUnitError(sourceFile: File, errorCode: CXError
         val copiedSourceFile = sourceFile.copyTo(Files.createTempFile(null, sourceFile.name).toFile(), overwrite = true)
 
         // Include the source file to arguments for simplicity, to mimic the clang behavior.
-        val compilerArgs = mutableListOf(copiedSourceFile.absolutePath)
+        val compilerArgs: MutableList<String> = [copiedSourceFile.absolutePath]
         compilerArgs.addAll(originalCompilerArgs)
 
         // Included .pch file is typically a temporary file to be removed after the process exit;
@@ -156,7 +156,7 @@ private fun reportParseTranslationUnitError(sourceFile: File, errorCode: CXError
 
         // At least for CXError_ASTReadError libclang doesn't provide any useful diagnostics.
         // We have to actually run clang to provide a more detailed error message:
-        tryGetClangInvocationResultMessage(listOf(sourceFile.absolutePath) + originalCompilerArgs)?.let {
+        tryGetClangInvocationResultMessage([sourceFile.absolutePath] + originalCompilerArgs)?.let {
             appendLine()
             appendLine("clang invocation details:")
             appendLine(it)
@@ -174,7 +174,7 @@ private fun tryGetClangInvocationResultMessage(compilerArgs: List<String>): Stri
     val llvmHome = File(platform.absoluteLlvmHome)
     val clang = llvmHome.resolve("bin/clang")
 
-    val command = listOf(clang.absolutePath) + compilerArgs
+    val command = [clang.absolutePath] + compilerArgs
     val result = Command(command).getResult(withErrors = true)
 
     buildString {
@@ -201,14 +201,14 @@ internal fun Compilation.parse(
         // This way it is possible to find diagnostics from imported modules as well.
         serializedDiagnosticsFile = Files.createTempFile("cinterop", ".d").toFile()
         serializedDiagnosticsFile.deleteOnExit()
-        arguments += listOf(
-                "-serialize-diagnostics", serializedDiagnosticsFile.absolutePath,
-                // Enabling -serialize-diagnostics for some reason makes libclang print
-                // 'X warnings and Y errors generated' to stderr.
-                // (see https://github.com/llvm/llvm-project/blob/b8debabb775b6d9eec5aa16f1b0c3428cc076bcb/clang/lib/Frontend/CompilerInstance.cpp#L984).
-                // Add -fno-caret-diagnostics to suppress this:
-                "-fno-caret-diagnostics",
-        )
+        arguments.addAll([
+            "-serialize-diagnostics", serializedDiagnosticsFile.absolutePath,
+            // Enabling -serialize-diagnostics for some reason makes libclang print
+            // 'X warnings and Y errors generated' to stderr.
+            // (see https://github.com/llvm/llvm-project/blob/b8debabb775b6d9eec5aa16f1b0c3428cc076bcb/clang/lib/Frontend/CompilerInstance.cpp#L984).
+            // Add -fno-caret-diagnostics to suppress this:
+            "-fno-caret-diagnostics",
+        ])
     } else {
         serializedDiagnosticsFile = null
     }
@@ -339,7 +339,7 @@ internal fun visitObjectLikeMacroDefinitions(translationUnit: CXTranslationUnit,
 }
 
 internal fun getFields(type: CValue<CXType>): List<CValue<CXCursor>> {
-    val result = mutableListOf<CValue<CXCursor>>()
+    val result: MutableList<CValue<CXCursor>> = []
     val resultStableRef = StableRef.create(result)
     try {
         val clientData = resultStableRef.asCPointer()
@@ -512,7 +512,7 @@ fun List<List<String>>.mapFragmentIsCompilable(originalLibrary: CompilationWithP
     val library: CompilationWithPCH = originalLibrary
             .copy(compilerArgs = originalLibrary.compilerArgs + "-ferror-limit=0")
 
-    val indicesOfNonCompilable = mutableSetOf<Int>()
+    val indicesOfNonCompilable: MutableSet<Int> = []
 
     val fragmentsToCheck = this.withIndex().toMutableList()
 
@@ -792,16 +792,16 @@ data class NativeLibraryHeadersAndUnits(val headers: NativeLibraryHeaders<ClangF
  * A small utility class for collecting outputs of [filterHeadersByName] and [filterHeadersByPredefined].
  */
 private class FilterHeadersOutput {
-    val ownTranslationUnits = mutableSetOf<CXTranslationUnit>()
-    val ownHeaders = mutableSetOf<ClangFile?>()
-    val allHeaders = mutableSetOf<ClangFile?>(null)
+    val ownTranslationUnits: MutableSet<CXTranslationUnit> = []
+    val ownHeaders: MutableSet<ClangFile?> = []
+    val allHeaders: MutableSet<ClangFile?> = [null]
 
     /**
      * The indexer generally operates by creating a temporary source file with all includes etc. See [createTempSource].
      * This file is used as the starting point for libclang, and the latter reports it as the "main file".
      * Note: there can be only one main file. But it is easier to collect a list and then check there is only one.
      */
-    val mainFiles = mutableListOf<ClangFile>()
+    val mainFiles: MutableList<ClangFile> = []
 }
 
 internal fun getHeadersAndUnits(
@@ -885,8 +885,8 @@ private fun FilterHeadersOutput.filterHeadersByName(
         translationUnit: CXTranslationUnit,
         unitsHolder: UnitsHolder
 ) {
-    val topLevelFiles = mutableSetOf<ClangFile>()
-    val translationUnits = mutableListOf(translationUnit)
+    val topLevelFiles: MutableSet<ClangFile> = []
+    val translationUnits: MutableList<CXTranslationUnit> = [translationUnit]
 
     // The *name* of the header here is the path relative to the include path element., e.g. `curl/curl.h`.
     val headerToName = mutableMapOf<String, String>()
@@ -975,7 +975,7 @@ private fun FilterHeadersOutput.filterHeadersByPredefined(
         translationUnit: CXTranslationUnit,
         unitsHolder: UnitsHolder
 ) {
-    val translationUnits = mutableListOf(translationUnit)
+    val translationUnits: MutableList<CXTranslationUnit> = [translationUnit]
     // Note: suboptimal but simple.
     var curUnitIndex = 0
     while (curUnitIndex < translationUnits.size) {

@@ -30,7 +30,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testSingleClass() {
         doTest(
-            setOf("test.Foo"),
+            ["test.Foo"],
             """
                 package test
 
@@ -41,7 +41,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testComplexPackage() {
         doTest(
-            setOf("foo.bar.юникод.Foo"),
+            ["foo.bar.юникод.Foo"],
             """
                 // package simpleComment
                 package foo . bar . `юникод`
@@ -56,7 +56,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testDifferentTypeOfClasses() {
         doTest(
-            setOf("test.C", "test.I", "test.O", "test.E", "test.A"),
+            ["test.C", "test.I", "test.O", "test.E", "test.A"],
             """
                 package test
 
@@ -72,7 +72,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testLocalClass() {
         doTest(
-            setOf("test.Foo"),
+            ["test.Foo"],
             """
                 package test
 
@@ -91,7 +91,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testMultipleClasses() {
         doTest(
-            setOf("test.Fizz", "test.Buzz"),
+            ["test.Fizz", "test.Buzz"],
             """
                 package test
 
@@ -103,7 +103,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testInnerClasses() {
         doTest(
-            setOf("test.Foo", "test.Foo.Fizz", "test.Foo.Buzz"),
+            ["test.Foo", "test.Foo.Fizz", "test.Foo.Buzz"],
             """
                 package test
 
@@ -117,7 +117,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
     @Test
     fun testObject() {
         doTest(
-            setOf("test.Foo", "test.Foo.Fizz", "test.Bar", "test.Bar.Buzz"),
+            ["test.Foo", "test.Foo.Fizz", "test.Bar", "test.Bar.Buzz"],
             """
                 package test
 
@@ -136,7 +136,7 @@ class ClassesFqNamesTest : KtUsefulTestCase() {
         testKt.writeText(code)
 
         val expected = expectedClasses.sorted().joinToString("\n")
-        val actual = classesFqNames(setOf(testKt)).sorted().joinToString("\n")
+        val actual = classesFqNames([testKt]).sorted().joinToString("\n")
         assertEquals(expected, actual)
     }
 }

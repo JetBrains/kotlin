@@ -38,23 +38,23 @@ class WasmCompiledDeclarationsFileFragment(
 data class MainFunctionWrapper(val fqName: String, val function: IdSignature)
 
 class WasmCompiledLinkerDataFileFragment(
-    val globalLiterals: MutableSet<LiteralGlobalSymbol> = mutableSetOf(),
+    val globalLiterals: MutableSet<LiteralGlobalSymbol> = [],
     val globalLiteralsId: MutableMap<String, WasmSymbol<Int>> = mutableMapOf(),
     val stringLiteralId: MutableMap<String, WasmSymbol<Int>> = mutableMapOf(),
     val constantArrayDataSegmentId: MutableMap<Pair<List<Long>, WasmType>, WasmSymbol<Int>> = mutableMapOf(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
     val jsModuleImports: MutableMap<IdSignature, String> = mutableMapOf(),
     val jsBuiltinsPolyfills: MutableMap<String, String> = mutableMapOf(),
-    val exports: MutableList<WasmExport<*>> = mutableListOf(),
-    val mainFunctionWrappers: MutableList<MainFunctionWrapper> = mutableListOf(),
-    var testFunctionDeclarators: MutableList<IdSignature> = mutableListOf(),
-    val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
-    val equivalentTypes: MutableList<Pair<String, IdSignature>> = mutableListOf(),
-    val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = mutableSetOf(),
-    val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = mutableListOf(),
-    val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
-    val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
-    val wasmReferencedFunctions: MutableSet<IdSignature> = mutableSetOf(),
+    val exports: MutableList<WasmExport<*>> = [],
+    val mainFunctionWrappers: MutableList<MainFunctionWrapper> = [],
+    var testFunctionDeclarators: MutableList<IdSignature> = [],
+    val equivalentFunctions: MutableList<Pair<String, IdSignature>> = [],
+    val equivalentTypes: MutableList<Pair<String, IdSignature>> = [],
+    val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = [],
+    val classAssociatedObjectsInstanceGetters: MutableList<ClassAssociatedObjects> = [],
+    val objectInstanceFieldInitializers: MutableList<IdSignature> = [],
+    val nonConstantFieldInitializers: MutableList<IdSignature> = [],
+    val wasmReferencedFunctions: MutableSet<IdSignature> = [],
 )
 
 abstract class WasmCompiledFileFragment(

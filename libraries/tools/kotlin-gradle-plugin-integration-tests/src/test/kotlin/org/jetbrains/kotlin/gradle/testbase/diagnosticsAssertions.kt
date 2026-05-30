@@ -88,10 +88,10 @@ fun BuildResult.extractProjectsAndTheirDiagnostics(): String = extractProjectsAn
  * filtered because it is a generic diagnostic that has a dedicated test.
  */
 fun BuildResult.extractProjectsAndTheirDiagnosticsInBlocks(): List<String> {
-    val blocks = mutableListOf<String>()
+    val blocks: MutableList<String> = []
     var diagnosticStarted = false
     var stacktraceStarted = false
-    val currentDiagnostic = mutableListOf<String>()
+    val currentDiagnostic: MutableList<String> = []
 
     fun startDiagnostic(line: String, lineIndex: Int) {
         require(!diagnosticStarted) {
@@ -196,16 +196,16 @@ private fun filterKgpUtilityPropertiesFromDiagnostic(diagnosticLines: List<Strin
 
     return if (diagnosticWithUtilityPropertiesFiltered.none { it.startsWith("kotlin.internal") }) {
         // all reported properties were utility-properties, so don't render this diagnostic at all
-        emptyList()
+        []
     } else {
         diagnosticWithUtilityPropertiesFiltered
     }
 }
-private val utilityInternalProperties = listOf(
+private val utilityInternalProperties = [
     KOTLIN_INTERNAL_DIAGNOSTICS_USE_PARSABLE_FORMATTING,
     KOTLIN_INTERNAL_DIAGNOSTICS_SHOW_STACKTRACE,
     KOTLIN_INTERNAL_DIAGNOSTICS_COMPILER_ARGUMENTS_LOG_LEVEL
-)
+]
 
 /*
 Expected format

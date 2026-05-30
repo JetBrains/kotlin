@@ -49,10 +49,10 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
 
     abstract fun isEmpty(): Boolean
 
-    override fun getCallableNames(): Set<Name> = emptySet()
+    override fun getCallableNames(): Set<Name> = []
 
     override val scopeOwnerLookupNames: List<String> =
-        if (klass.isLocal) emptyList()
+        if (klass.isLocal) []
         else SmartList(klass.classId.asFqNameString())
 
     @DelicateScopeAPI

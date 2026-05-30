@@ -28,7 +28,7 @@ fun ClassDescriptor.getForwardDeclarationKindOrNull(): NativeForwardDeclarationK
  */
 val CallableDescriptor.allParameters: List<ParameterDescriptor>
     get() = if (this is ConstructorDescriptor) {
-        listOf(this.constructedClass.thisAsReceiverParameter) + explicitParameters
+        [this.constructedClass.thisAsReceiverParameter] + explicitParameters
     } else {
         explicitParameters
     }

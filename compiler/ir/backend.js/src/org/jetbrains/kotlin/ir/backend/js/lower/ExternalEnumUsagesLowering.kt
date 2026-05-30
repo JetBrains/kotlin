@@ -43,7 +43,7 @@ class ExternalEnumUsagesLowering(val context: JsIrBackendContext) : BodyLowering
 
     private fun classAsReceiver(irClass: IrClass): IrExpression {
         val intrinsic = context.symbols.jsClass
-        return JsIrBuilder.buildCall(intrinsic, context.irBuiltIns.anyType, listOf(irClass.defaultType))
+        return JsIrBuilder.buildCall(intrinsic, context.irBuiltIns.anyType, [irClass.defaultType])
     }
 
     private fun createFieldForEntry(entry: IrEnumEntry, irClass: IrClass): IrField =

@@ -13,5 +13,5 @@ class NoArgsConstructorProcessor : AbstractConstructorProcessor<NoArgsConstructo
 
     override fun getAnnotation(classDescriptor: ClassDescriptor): NoArgsConstructor? = NoArgsConstructor.getOrNull(classDescriptor)
 
-    override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> = emptyList()
+    override fun getPropertiesForParameters(classDescriptor: ClassDescriptor): List<PropertyDescriptor> = []
 }

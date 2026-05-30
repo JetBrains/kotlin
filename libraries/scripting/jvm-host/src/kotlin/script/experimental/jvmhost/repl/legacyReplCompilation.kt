@@ -44,7 +44,7 @@ class JvmReplCompiler(
         @Suppress("DEPRECATION_ERROR")
         val res = internalScriptingRunSuspend {
             replCompiler.compile(
-                listOf(snippet),
+                [snippet],
                 scriptCompilationConfiguration.with {
                     repl {
                         currentLineId(lineId)
@@ -58,9 +58,9 @@ class JvmReplCompiler(
                     lineId,
                     replCompiler.state.history.map { it.id },
                     snippet.name!!,
-                    emptyList(),
+                    [],
                     res.value.get().resultField != null,
-                    emptyList(),
+                    [],
                     res.value.get().resultField?.second?.typeName,
                     res.value
                 )

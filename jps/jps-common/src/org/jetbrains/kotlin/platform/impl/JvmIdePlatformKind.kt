@@ -43,6 +43,7 @@ object JvmIdePlatformKind : IdePlatformKind() {
         return K2JVMCompilerArguments()
     }
 
+    @Suppress("ConvertToCollectionLiterals")
     val platforms: List<TargetPlatform> = JvmTarget.values()
         .map { ver -> JvmPlatforms.jvmPlatformByTargetVersion(ver) } + listOf(JvmPlatforms.unspecifiedJvmPlatform)
 

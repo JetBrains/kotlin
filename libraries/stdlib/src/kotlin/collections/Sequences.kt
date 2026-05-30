@@ -5,6 +5,7 @@
 
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("SequencesKt")
+@file:Suppress("ConvertToCollectionLiterals")
 
 package kotlin.sequences
 
@@ -86,7 +87,7 @@ private object EmptySequence : Sequence<Nothing>, DropTakeSequence<Nothing> {
  */
 @SinceKotlin("1.3")
 @kotlin.internal.InlineOnly
-public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: emptySequence()
+public inline fun <T> Sequence<T>?.orEmpty(): Sequence<T> = this ?: []
 
 
 /**
@@ -410,7 +411,7 @@ internal class SubSequence<T>(
 
     private val count: Int get() = endIndex - startIndex
 
-    override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, startIndex + n, endIndex)
+    override fun drop(n: Int): Sequence<T> = if (n >= count) [] else SubSequence(sequence, startIndex + n, endIndex)
     override fun take(n: Int): Sequence<T> = if (n >= count) this else SubSequence(sequence, startIndex, startIndex + n)
 
     override fun iterator() = object : Iterator<T> {
@@ -454,7 +455,7 @@ internal class TakeSequence<T>(
         require(count >= 0) { "count must be non-negative, but was $count." }
     }
 
-    override fun drop(n: Int): Sequence<T> = if (n >= count) emptySequence() else SubSequence(sequence, n, count)
+    override fun drop(n: Int): Sequence<T> = if (n >= count) [] else SubSequence(sequence, n, count)
     override fun take(n: Int): Sequence<T> = if (n >= count) this else TakeSequence(sequence, n)
 
     override fun iterator(): Iterator<T> = object : Iterator<T> {

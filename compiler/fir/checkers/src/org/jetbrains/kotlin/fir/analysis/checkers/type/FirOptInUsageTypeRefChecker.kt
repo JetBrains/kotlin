@@ -55,7 +55,7 @@ object FirOptInUsageTypeRefChecker : FirResolvedTypeRefChecker(MppCheckerKind.Co
         }
         val isSupertypeRef = typeRef in (context.containingDeclarations.lastOrNull() as? FirClassSymbol)?.resolvedSuperTypeRefs.orEmpty()
         with(FirOptInUsageBaseChecker) {
-            val experimentalities = mutableSetOf<FirOptInUsageBaseChecker.Experimentality>()
+            val experimentalities: MutableSet<FirOptInUsageBaseChecker.Experimentality> = []
             experimentalities.addAll(symbol.loadClassifierExperimentalities(isSupertypeRef))
             if (typeAliasExpandedSymbol != null) {
                 experimentalities.addAll(

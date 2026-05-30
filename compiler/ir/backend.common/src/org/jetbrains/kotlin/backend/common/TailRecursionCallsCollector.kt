@@ -45,13 +45,13 @@ fun collectTailRecursionCalls(
     followRichFunctionReference: (IrRichFunctionReference) -> Boolean
 ): TailCalls {
     if ((irFunction as? IrSimpleFunction)?.isTailrec != true) {
-        return TailCalls(emptySet(), false)
+        return TailCalls([], false)
     }
 
     class VisitorState(val isTailExpression: Boolean, val inOtherFunction: Boolean)
 
     val isUnitReturn = irFunction.returnType.isUnit()
-    val result = mutableSetOf<IrCall>()
+    val result: MutableSet<IrCall> = []
     var someCallsAreInOtherFunctions = false
     val visitor = object : IrVisitor<Unit, VisitorState>() {
         override fun visitElement(element: IrElement, data: VisitorState) {

@@ -58,11 +58,11 @@ abstract class AbstractTypeApproximator(
         // Currently, the known sources of approximation cycles are
         // - captured types with recursive bounds
         // - recursive local types
-        val typesBeingApproximatedToSupertype = mutableSetOf<RigidTypeMarker>()
+        val typesBeingApproximatedToSupertype: MutableSet<RigidTypeMarker> = []
 
         // Non-trivial lower bounds are always brought via explicitly specified/inferred `in` projection where no recursion should happen.
         @AssertionsOnly
-        val typesBeingApproximatedToSubtype = mutableSetOf<RigidTypeMarker>()
+        val typesBeingApproximatedToSubtype: MutableSet<RigidTypeMarker> = []
 
         operator fun plusAssign(other: Cache) {
             resultsForSupertype += other.resultsForSupertype
@@ -306,7 +306,7 @@ abstract class AbstractTypeApproximator(
             // then it their respective super types, etc.
             // Ignore `Any`.
             // If no suitable type is found, return `Any`.
-            val visited = mutableSetOf<RigidTypeMarker>()
+            val visited: MutableSet<RigidTypeMarker> = []
             val queue = ArrayDeque<RigidTypeMarker>().apply { add(type) }
 
             while (queue.isNotEmpty()) {

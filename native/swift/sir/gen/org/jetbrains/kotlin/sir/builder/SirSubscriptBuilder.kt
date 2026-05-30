@@ -19,11 +19,11 @@ class SirSubscriptBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
-    val parameters: MutableList<SirParameter> = mutableListOf()
+    val parameters: MutableList<SirParameter> = []
     lateinit var returnType: SirType
     lateinit var getter: SirGetter
     var setter: SirSetter? = null

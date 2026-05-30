@@ -128,7 +128,7 @@ fun createNamer(
     moduleDescriptor: ModuleDescriptor,
     topLevelNamePrefix: String,
 ): ObjCExportNamer =
-    createNamer(moduleDescriptor, emptyList(), topLevelNamePrefix)
+    createNamer(moduleDescriptor, [], topLevelNamePrefix)
 
 fun createNamer(
     moduleDescriptor: ModuleDescriptor,
@@ -300,11 +300,11 @@ private class ObjCExportNamingHelper(
 
     fun isTypeParameterNameReserved(name: String): Boolean = name in reservedTypeParameterNames
 
-    private val reservedTypeParameterNames = setOf(
+    private val reservedTypeParameterNames: Set<String> = [
         "id", "NSObject", "NSArray", "NSCopying", "NSNumber", "NSInteger",
         "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
         "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar"
-    )
+    ]
 
     fun isSpecialFamily(name: String): Boolean {
         val trimmed = name.dropWhile { it == '_' }
@@ -314,7 +314,7 @@ private class ObjCExportNamingHelper(
     fun startsWithWords(sentence: String, words: String) = sentence.startsWith(words) &&
         (sentence.length == words.length || !sentence[words.length].isLowerCase())
 
-    private val specialFamilyPrefixes = listOf("alloc", "copy", "mutableCopy", "new", "init")
+    private val specialFamilyPrefixes = ["alloc", "copy", "mutableCopy", "new", "init"]
 }
 
 @InternalKotlinNativeApi
@@ -389,11 +389,11 @@ class ObjCExportNamerImpl(
 
         // Try to avoid clashing with critical NSObject instance methods:
 
-        private val reserved = setOf(
+        private val reserved: Set<String> = [
             "retain", "release", "autorelease",
             "class", "superclass",
             "hash"
-        )
+        ]
 
         override fun reserved(name: String) = name in reserved
 
@@ -437,13 +437,13 @@ class ObjCExportNamerImpl(
 
         // Try to avoid clashing with NSObject class methods:
 
-        private val reserved = setOf(
+        private val reserved: Set<String> = [
             "retain", "release", "autorelease",
             "initialize", "load", "alloc", "new", "class", "superclass",
             "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
             "description", "debugDescription", "version", "hash",
             "useStoredAccessor"
-        )
+        ]
 
         override fun reserved(name: String) = (name in reserved) || (name in cKeywords)
     }
@@ -869,7 +869,7 @@ class ObjCExportNamerImpl(
         private fun classNameSet(element: TypeParameterDescriptor): MutableSet<String> {
             require(!local)
             return typeParameterNameClassOverrides.getOrPut(element.containingDeclaration as ClassDescriptor) {
-                mutableSetOf()
+                []
             }
         }
 
@@ -944,7 +944,7 @@ class ObjCExportNamerImpl(
             }
 
             if (!local) {
-                nameToElements.getOrPut(name) { mutableListOf() } += element
+                nameToElements.getOrPut(name) { [] } += element
 
                 elementToName[element] = name
             }
@@ -955,7 +955,7 @@ class ObjCExportNamerImpl(
         fun forceAssign(element: T, name: N) {
             if (name in nameToElements || element in elementToName) error(element)
 
-            nameToElements[name] = mutableListOf(element)
+            nameToElements[name] = [element]
             elementToName[element] = name
         }
     }
@@ -1153,8 +1153,8 @@ private fun KtClassOrObject.getObjCName(): ObjCName {
         fun ValueArgument.getBooleanValue(): Boolean =
             (getArgumentExpression() as? KtConstantExpression)?.text?.toBooleanStrictOrNull() ?: false
 
-        val argNames = setOf("name", "swiftName", "exact")
-        val processedArgs = mutableSetOf<String>()
+        val argNames: Set<String> = ["name", "swiftName", "exact"]
+        val processedArgs: MutableSet<String> = []
         for (argument in annotation.valueArguments) {
             val argName = argument.getArgumentName()?.asName?.asString() ?: (argNames - processedArgs).firstOrNull() ?: break
             when (argName) {

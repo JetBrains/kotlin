@@ -182,7 +182,7 @@ fun annotateByKotlinType(
                 if (inferNullability) {
                     val nullabilityAnnotationQualifier = computeNullabilityQualifier(this@getAnnotationsSequence, psiType)
                     val nullabilityAnnotation = nullabilityAnnotationQualifier?.let {
-                        KtUltraLightSimpleAnnotation(it, emptyList(), psiContext)
+                        KtUltraLightSimpleAnnotation(it, [], psiContext)
                     }
 
                     nullabilityAnnotation?.let(this::add)
@@ -547,8 +547,8 @@ internal fun KtClassOrObject.getExternalDependencies(): List<ModificationTracker
     val outOfBlockTracker = KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
     return if (isLocal) {
         val file = containingKtFile
-        listOf(outOfBlockTracker, ModificationTracker { file.modificationStamp })
+        [outOfBlockTracker, ModificationTracker { file.modificationStamp }]
     } else {
-        listOf(outOfBlockTracker)
+        [outOfBlockTracker]
     }
 }

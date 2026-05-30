@@ -32,11 +32,11 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899(),
         ) {
-            val tasks = arrayOf(
+            val tasks: Array<String> = [
                 ":compileIntegrationTestKotlinJvm",
                 ":compileIntegrationTestKotlinJs",
                 ":compileIntegrationTestKotlinLinux64",
-            )
+            ]
 
             build(*tasks) {
                 assertTasksExecuted(*tasks)
@@ -64,7 +64,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
         testTestRunsApi(
             gradleVersion = gradleVersion,
             targetName = "jvm",
-            expectedExecutedTasks = listOf(":compileIntegrationTestKotlinJvm")
+            expectedExecutedTasks = [":compileIntegrationTestKotlinJvm"]
         )
     }
 
@@ -102,7 +102,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
         testTestRunsApi(
             gradleVersion = gradleVersion,
             targetName = MPPNativeTargets.current,
-            expectedExecutedTasks = listOf(":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"),
+            expectedExecutedTasks = [":linkIntegrationDebugTest${nativeHostTargetName.capitalize()}"],
         )
     }
 
@@ -110,7 +110,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         targetName: String,
         expectedExecutedTasks: List<String>? = null,
-        testTasks: List<String> = listOf(":${targetName}Test", ":${targetName}IntegrationTest"),
+        testTasks: List<String> = [":${targetName}Test", ":${targetName}IntegrationTest"],
     ) {
         project(
             projectName = "new-mpp-associate-compilations",
@@ -131,7 +131,7 @@ class MppDslAssociateCompilationsIT : KGPBaseTest() {
                 expectedExecutedTasks?.forEach { expectedTask ->
                     val executedTask = task(expectedTask)
                     assertTrue(
-                        executedTask?.outcome in listOf(SUCCESS, UP_TO_DATE, FROM_CACHE),
+                        executedTask?.outcome in [SUCCESS, UP_TO_DATE, FROM_CACHE],
                         "Expected task outcome $executedTask was successful, but was ${executedTask?.outcome}"
                     )
                 }

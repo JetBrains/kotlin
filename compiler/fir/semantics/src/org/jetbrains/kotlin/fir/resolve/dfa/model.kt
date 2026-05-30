@@ -51,7 +51,7 @@ infix fun RealVariable.valueNotEq(symbol: FirBasedSymbol<*>): MutableTypeStateme
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.Symbol(symbol)))
 
 infix fun RealVariable.valueNotEq(symbols: List<FirBasedSymbol<*>>): MutableTypeStatement =
-    MutableTypeStatement(this, lowerTypes = symbols.mapTo(mutableSetOf(), DfaType::Symbol))
+    MutableTypeStatement(this, lowerTypes = symbols.mapTo([], DfaType::Symbol))
 
 infix fun RealVariable.valueNotEq(boolean: Boolean): MutableTypeStatement =
     MutableTypeStatement(this, lowerTypes = linkedSetOf(DfaType.BooleanLiteral(boolean)))

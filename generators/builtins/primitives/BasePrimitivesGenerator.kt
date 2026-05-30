@@ -11,13 +11,13 @@ import java.io.PrintWriter
 
 abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltInsGenerator {
     companion object {
-        internal val binaryOperators: List<String> = listOf(
+        internal val binaryOperators: List<String> = [
             "plus",
             "minus",
             "times",
             "div",
             "rem",
-        )
+        ]
 
         internal val unaryPlusMinusOperators: Map<String, String> = mapOf(
             "unaryPlus" to "Returns this value.",
@@ -218,18 +218,18 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     )
 
     open fun primitiveConstants(type: PrimitiveType): List<Any> = when (type) {
-        PrimitiveType.INT -> listOf(java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE)
-        PrimitiveType.BYTE -> listOf(java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE)
-        PrimitiveType.SHORT -> listOf(java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE)
-        PrimitiveType.LONG -> listOf((java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L")
-        PrimitiveType.DOUBLE -> listOf(java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "-(0.0/0.0)")
-        PrimitiveType.FLOAT -> listOf(java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "-(0.0F/0.0F)").map { it as? String ?: "${it}F" }
+        PrimitiveType.INT -> [java.lang.Integer.MIN_VALUE, java.lang.Integer.MAX_VALUE]
+        PrimitiveType.BYTE -> [java.lang.Byte.MIN_VALUE, java.lang.Byte.MAX_VALUE]
+        PrimitiveType.SHORT -> [java.lang.Short.MIN_VALUE, java.lang.Short.MAX_VALUE]
+        PrimitiveType.LONG -> [(java.lang.Long.MIN_VALUE + 1).toString() + "L - 1L", java.lang.Long.MAX_VALUE.toString() + "L"]
+        PrimitiveType.DOUBLE -> [java.lang.Double.MIN_VALUE, java.lang.Double.MAX_VALUE, "1.0/0.0", "-1.0/0.0", "-(0.0/0.0)"]
+        PrimitiveType.FLOAT -> [java.lang.Float.MIN_VALUE, java.lang.Float.MAX_VALUE, "1.0F/0.0F", "-1.0F/0.0F", "-(0.0F/0.0F)"].map { it as? String ?: "${it}F" }
         else -> throw IllegalArgumentException("type: $type")
     }
 
     open fun PrimitiveType.shouldGenerate(): Boolean = true
 
-    protected open val fileAnnotations: List<String> = emptyList()
+    protected open val fileAnnotations: List<String> = []
 
     override fun generate() {
         writer.print(generateFile().build())
@@ -409,7 +409,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
     }
 
     private fun ClassBuilder.generateUnaryOperators(thisKind: PrimitiveType) {
-        for (operatorName in listOf("inc", "dec")) {
+        for (operatorName in ["inc", "dec"]) {
             method {
                 appendDoc(incDecOperatorsDoc(operatorName))
                 signature {
@@ -422,7 +422,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
         for ([operatorName, doc] in unaryPlusMinusOperators) {
             val opReturnType = when (thisKind) {
-                in listOf(PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR) -> PrimitiveType.INT.capitalized
+                in [PrimitiveType.SHORT, PrimitiveType.BYTE, PrimitiveType.CHAR] -> PrimitiveType.INT.capitalized
                 else -> thisKind.capitalized
             }
 
@@ -545,7 +545,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
 
     private fun ClassBuilder.generateConversions(thisKind: PrimitiveType) {
         fun isFpToIntConversionDeprecated(otherKind: PrimitiveType): Boolean {
-            return thisKind in PrimitiveType.floatingPoint && otherKind in listOf(PrimitiveType.BYTE, PrimitiveType.SHORT)
+            return thisKind in PrimitiveType.floatingPoint && otherKind in [PrimitiveType.BYTE, PrimitiveType.SHORT]
         }
 
         fun isCharConversionDeprecated(otherKind: PrimitiveType): Boolean {
@@ -575,7 +575,7 @@ abstract class BasePrimitivesGenerator(private val writer: PrintWriter) : BuiltI
                 "Converts this [$thisName] value to [$otherName].$END_LINE$END_LINE$detail"
             }
 
-            val annotationsToAdd = mutableListOf<String>()
+            val annotationsToAdd: MutableList<String> = []
             if (isFpToIntConversionDeprecated(otherKind)) {
                 annotationsToAdd += "Deprecated(\"Unclear conversion. To achieve the same result convert to Int explicitly and then to $otherName.\", ReplaceWith(\"toInt().to$otherName()\"))"
                 annotationsToAdd += "DeprecatedSinceKotlin(warningSince = \"1.3\", errorSince = \"1.5\")"

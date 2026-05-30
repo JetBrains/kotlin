@@ -64,7 +64,7 @@ internal fun createScriptingAdditionalLibrariesSession(
     }.configure()
     registerCommonComponentsAfterExtensionsAreConfigured()
 
-    val providers = listOf(
+    val providers = [
         JvmClassFileBasedSymbolProvider(
             this@session,
             moduleDataProvider,
@@ -73,11 +73,11 @@ internal fun createScriptingAdditionalLibrariesSession(
             getKotlinClassFinder(),
             getJavaFacade(this@session),
         )
-    )
+    ]
     register(
         StructuredProviders::class,
         StructuredProviders(
-            sourceProviders = emptyList(),
+            sourceProviders = [],
             dependencyProviders = providers,
             sharedProvider = sharedLibrarySession.symbolProvider,
         )

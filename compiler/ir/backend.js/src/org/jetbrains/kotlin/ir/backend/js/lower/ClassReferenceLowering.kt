@@ -126,7 +126,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
         if (primitiveKClass != null)
             return primitiveKClass
 
-        return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, listOf(typeArgument))
+        return JsIrBuilder.buildCall(reflectionSymbols.getKClass, returnType, [typeArgument])
             .apply {
                 arguments[0] = callGetClassByType(typeArgument)
             }
@@ -135,7 +135,7 @@ class JsClassReferenceLowering(context: JsIrBackendContext) : ClassReferenceLowe
     private fun callGetClassByType(type: IrType) =
         JsIrBuilder.buildCall(
             getClassData,
-            typeArguments = listOf(type),
+            typeArguments = [type],
             origin = JsStatementOrigins.CLASS_REFERENCE
         )
 }
@@ -150,9 +150,9 @@ abstract class ClassReferenceLowering(val context: JsCommonBackendContext) : Bod
     private fun callGetKClassFromExpression(returnType: IrType, typeArgument: IrType, argument: IrExpression): IrExpression {
         val primitiveKClass = getFinalPrimitiveKClass(returnType, typeArgument)
         if (primitiveKClass != null)
-            return JsIrBuilder.buildBlock(returnType, listOf(argument, primitiveKClass))
+            return JsIrBuilder.buildBlock(returnType, [argument, primitiveKClass])
 
-        return JsIrBuilder.buildCall(reflectionSymbols.getKClassFromExpression, returnType, listOf(typeArgument)).apply {
+        return JsIrBuilder.buildCall(reflectionSymbols.getKClassFromExpression, returnType, [typeArgument]).apply {
             arguments[0] = argument
         }
     }

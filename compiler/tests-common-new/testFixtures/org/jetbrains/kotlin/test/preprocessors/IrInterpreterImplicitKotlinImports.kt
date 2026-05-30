@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 class IrInterpreterImplicitKotlinImports(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     private fun String.addImplicitKotlinImport(fileName: String): String {
         val additionalImports = when (fileName) {
-            "UByte.kt", "UShort.kt", "UInt.kt", "ULong.kt" -> listOf("kotlin.ranges.*")
-            else -> listOf("kotlin.*", "kotlin.ranges.*", "kotlin.sequences.*", "kotlin.collections.*")
+            "UByte.kt", "UShort.kt", "UInt.kt", "ULong.kt" -> ["kotlin.ranges.*"]
+            else -> ["kotlin.*", "kotlin.ranges.*", "kotlin.sequences.*", "kotlin.collections.*"]
         }.joinToString(separator = "\n") { "import $it" }
 
         val lines = this.split("\n").toMutableList()

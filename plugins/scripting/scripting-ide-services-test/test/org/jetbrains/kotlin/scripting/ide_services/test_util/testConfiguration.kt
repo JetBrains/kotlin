@@ -19,7 +19,7 @@ import kotlin.script.experimental.util.LinkedSnippet
 import kotlin.system.measureTimeMillis
 
 class TestConf {
-    private val runs = mutableListOf<Run>()
+    private val runs: MutableList<Run> = []
 
     fun run(setup: (Run).() -> Unit) {
         val r = Run()
@@ -149,7 +149,7 @@ interface ExpectedOptions<T> {
 }
 
 class ExpectedList<T>(private val runProperty: KProperty0<Unit>) : ExpectedOptions<T> {
-    val list = mutableListOf<T>()
+    val list: MutableList<T> = []
 
     override var mode = ComparisonType.DONT_CHECK
     override var size = 0
@@ -228,7 +228,7 @@ private suspend fun evaluateInRepl(
 
                 res!!.toList()
             } else {
-                emptyList()
+                []
             }
 
             val analysisResult = if (doErrorCheck) {

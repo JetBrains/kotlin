@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualMatchingCompatibil
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
 object AbstractExpectActualAnnotationMatchChecker {
-    private val SKIPPED_CLASS_IDS = setOf(
+    private val SKIPPED_CLASS_IDS: Set<ClassId> = [
         StandardClassIds.Annotations.Deprecated,
         StandardClassIds.Annotations.DeprecatedSinceKotlin,
         StandardClassIds.Annotations.ImplicitlyActualizedByJvmDeclaration,
@@ -34,7 +34,7 @@ object AbstractExpectActualAnnotationMatchChecker {
         StandardClassIds.Annotations.jsNoRuntime,
         OptInNames.OPT_IN_CLASS_ID,
         OptInNames.SUBCLASS_OPT_IN_REQUIRED_CLASS_ID,
-    )
+    ]
 
     class Incompatibility(
         /**
@@ -113,10 +113,10 @@ object AbstractExpectActualAnnotationMatchChecker {
         expectSymbol: PropertySymbolMarker,
         actualSymbol: PropertySymbolMarker,
     ): Incompatibility? {
-        listOf(
+        [
             expectSymbol.getter to actualSymbol.getter,
             expectSymbol.setter to actualSymbol.setter,
-        ).forEach { [expectAccessor, actualAccessor] ->
+        ].forEach { [expectAccessor, actualAccessor] ->
             if (expectAccessor != null && actualAccessor != null) {
                 areAnnotationsSetOnDeclarationsCompatible(expectAccessor, actualAccessor)?.let {
                     // Write containing declarations into diagnostic
@@ -288,7 +288,7 @@ object AbstractExpectActualAnnotationMatchChecker {
             if (expectAnnotation.isRetentionSource && skipSourceAnnotations) {
                 continue
             }
-            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: emptyList()
+            val actualAnnotationsWithSameClassId = actualAnnotationsByName[expectClassId] ?: []
             if (actualAnnotationsWithSameClassId.isEmpty()) {
                 if (skipOptionalAnnotationMismatch && expectAnnotation.isOptionalExpectation) {
                     continue

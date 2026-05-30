@@ -226,20 +226,20 @@ private fun IrDeclaration.isJavaBackedCallable(): Boolean {
     val functions = when (this) {
         is IrSimpleFunction -> {
             // Check if the function a fake override of a Java declaration.
-            listOf(this)
+            [this]
         }
         is IrProperty -> {
             // Check property accessors.
             listOfNotNull(getter, setter)
         }
-        else -> emptyList()
+        else -> []
     }
 
     if (functions.any { it.isFakeOverride }) {
         return ifAnyDFS(
             functions,
             { current ->
-                if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else emptyList()
+                if (current.isFakeOverride) current.overriddenSymbols.map { it.owner } else []
             },
             { current -> current.isDeclaredInJava() },
         )

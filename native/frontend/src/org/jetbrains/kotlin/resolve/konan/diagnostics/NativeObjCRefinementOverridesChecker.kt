@@ -28,7 +28,7 @@ object NativeObjCRefinementOverridesChecker : DeclarationChecker {
             .getContributedDescriptors(DescriptorKindFilter.ALL, MemberScope.Companion.ALL_NAME_FILTER)
             .forEach {
                 if (it !is CallableMemberDescriptor || it.kind.isReal) return@forEach
-                check(declaration, it, context, emptyList(), emptyList())
+                check(declaration, it, context, [], [])
             }
     }
 
@@ -42,8 +42,8 @@ object NativeObjCRefinementOverridesChecker : DeclarationChecker {
         if (descriptor.overriddenDescriptors.isEmpty()) return
         var isHiddenFromObjC = objCAnnotations.isNotEmpty()
         var isRefinedInSwift = swiftAnnotations.isNotEmpty()
-        val supersNotHiddenFromObjC = mutableListOf<CallableMemberDescriptor>()
-        val supersNotRefinedInSwift = mutableListOf<CallableMemberDescriptor>()
+        val supersNotHiddenFromObjC: MutableList<CallableMemberDescriptor> = []
+        val supersNotRefinedInSwift: MutableList<CallableMemberDescriptor> = []
         for (overriddenDescriptor in descriptor.overriddenDescriptors) {
             val [superIsHiddenFromObjC, superIsRefinedInSwift] = overriddenDescriptor.inheritsRefinedAnnotations()
             if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(overriddenDescriptor)

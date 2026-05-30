@@ -62,7 +62,7 @@ class JavaClassImpl(psiClassSource: JavaElementPsiSource<PsiClass>) : JavaClassi
 
     override val permittedTypes: Sequence<JavaClassifierType>
         get() {
-            if (!isSealed) return emptySequence()
+            if (!isSealed) return []
 
             val permitsListTypes = psi.permitsListTypes
             return if (permitsListTypes.isNotEmpty()) {

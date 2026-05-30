@@ -58,7 +58,7 @@ abstract class KotlinJvmReplServiceBase(
     protected val configuration = CompilerConfiguration.create().apply {
         @OptIn(MessageCollectorAccess::class) // write access
         this.messageCollector = messageCollector
-        addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { listOf(it.stdlibPath, it.reflectPath, it.scriptRuntimePath) })
+        addJvmClasspathRoots(PathUtil.kotlinPathsForCompiler.let { [it.stdlibPath, it.reflectPath, it.scriptRuntimePath] })
         addJvmClasspathRoots(templateClasspath)
         configureJdkHomeFromSystemProperty() // needed for IdeaJsr223Test in Kotlin plugin
         configureJdkClasspathRoots()

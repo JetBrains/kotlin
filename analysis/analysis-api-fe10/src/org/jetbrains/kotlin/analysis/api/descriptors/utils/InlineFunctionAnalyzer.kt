@@ -27,8 +27,8 @@ class InlineFunctionAnalyzer(
     private val analysisContext: Fe10AnalysisContext,
     private val analyzeOnlyReifiedInlineFunctions: Boolean,
 ) {
-    private val analyzedElements: MutableSet<KtElement> = mutableSetOf()
-    private val inlineFunctionsWithBody: MutableSet<KtDeclarationWithBody> = mutableSetOf()
+    private val analyzedElements: MutableSet<KtElement> = []
+    private val inlineFunctionsWithBody: MutableSet<KtDeclarationWithBody> = []
 
     /**
      * Collects all inline function calls in an [element] (usually a file) and follows each transitively.
@@ -102,7 +102,7 @@ class InlineFunctionAnalyzer(
      * Returns the set of [KtObjectDeclaration]s which are defined as an object literal in one of the reached inline functions.
      */
     fun inlineObjectDeclarations(): Set<KtObjectDeclaration> {
-        val results = mutableSetOf<KtObjectDeclaration>()
+        val results: MutableSet<KtObjectDeclaration> = []
 
         inlineFunctionsWithBody.forEach { inlineFunction ->
             val body = inlineFunction.bodyExpression ?: return@forEach

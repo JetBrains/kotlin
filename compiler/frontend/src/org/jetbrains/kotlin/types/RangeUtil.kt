@@ -33,7 +33,7 @@ internal const val ULONG_RANGE_FQN = "kotlin.ranges.ULongRange"
 internal const val UINT_PROGRESSION_FQN = "kotlin.ranges.UIntProgression"
 internal const val ULONG_PROGRESSION_FQN = "kotlin.ranges.ULongProgression"
 
-private val ALL_PROGRESSION_AND_RANGES = listOf(
+private val ALL_PROGRESSION_AND_RANGES = [
     CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN,
     INT_RANGE_FQN, INT_PROGRESSION_FQN,
     LONG_RANGE_FQN, LONG_PROGRESSION_FQN,
@@ -42,7 +42,7 @@ private val ALL_PROGRESSION_AND_RANGES = listOf(
     COMPARABLE_RANGE_FQN,
     UINT_RANGE_FQN, UINT_PROGRESSION_FQN,
     ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN
-)
+]
 
 fun getRangeOrProgressionElementType(rangeType: KotlinType, progressionsAndRanges: List<String> = ALL_PROGRESSION_AND_RANGES): KotlinType? {
     val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null

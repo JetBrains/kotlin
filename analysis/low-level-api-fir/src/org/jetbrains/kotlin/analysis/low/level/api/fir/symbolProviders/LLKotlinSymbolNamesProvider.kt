@@ -34,7 +34,7 @@ internal open class LLFirKotlinSymbolNamesProvider(
             ?.excludeKotlinPackageNamesIfNecessary()
 
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> {
-        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
+        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return []
 
         return declarationProvider.getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName)
     }
@@ -48,9 +48,9 @@ internal open class LLFirKotlinSymbolNamesProvider(
             ?.excludeKotlinPackageNamesIfNecessary()
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> {
-        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return emptySet()
+        if (allowKotlinPackage == false && packageFqName.isKotlinPackage()) return []
 
-        return declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { emptySet() }
+        return declarationProvider.getTopLevelCallableNamesInPackage(packageFqName).ifEmpty { [] }
     }
 
     private fun Set<String>.excludeKotlinPackageNamesIfNecessary(): Set<String> {

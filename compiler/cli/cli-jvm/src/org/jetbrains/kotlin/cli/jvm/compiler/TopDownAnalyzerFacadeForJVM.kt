@@ -81,9 +81,9 @@ object TopDownAnalyzerFacadeForJVM {
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider,
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory = ::FileBasedDeclarationProviderFactory,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList(),
-        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
-        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
+        klibList: List<KotlinLibrary> = [],
+        explicitModuleDependencyList: List<ModuleDescriptorImpl> = [],
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = [],
         explicitCompilerEnvironment: TargetEnvironment = CompilerEnvironment
     ): AnalysisResult {
         @Suppress("DEPRECATION_ERROR")
@@ -134,10 +134,10 @@ object TopDownAnalyzerFacadeForJVM {
         declarationProviderFactory: (StorageManager, Collection<KtFile>) -> DeclarationProviderFactory,
         targetEnvironment: TargetEnvironment = CompilerEnvironment,
         sourceModuleSearchScope: GlobalSearchScope = newModuleSearchScope(project, files),
-        klibList: List<KotlinLibrary> = emptyList(),
+        klibList: List<KotlinLibrary> = [],
         implicitsResolutionFilter: ImplicitsExtensionsResolutionFilter? = null,
-        explicitModuleDependencyList: List<ModuleDescriptorImpl> = emptyList(),
-        explicitModuleFriendsList: List<ModuleDescriptorImpl> = emptyList(),
+        explicitModuleDependencyList: List<ModuleDescriptorImpl> = [],
+        explicitModuleFriendsList: List<ModuleDescriptorImpl> = [],
         moduleCapabilities: Map<ModuleCapability<*>, Any?> = emptyMap()
     ): ComponentProvider {
         val jvmTarget = configuration.get(JVMConfigurationKeys.JVM_TARGET, JvmTarget.DEFAULT)
@@ -194,14 +194,14 @@ object TopDownAnalyzerFacadeForJVM {
 
             moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
 
-            dependenciesContext.setDependencies(listOf(dependenciesContext.module, fallbackBuiltIns))
+            dependenciesContext.setDependencies([dependenciesContext.module, fallbackBuiltIns])
             dependenciesContext.initializeModuleContents(
                 CompositePackageFragmentProvider(
-                    listOf(
+                    [
                         moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
                         dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>(),
                         dependenciesContainer.get<OptionalAnnotationPackageFragmentProvider>()
-                    ),
+                    ],
                     "CompositeProvider@TopDownAnalyzerForJvm for dependencies ${dependenciesContext.module}"
                 )
             )
@@ -250,15 +250,15 @@ object TopDownAnalyzerFacadeForJVM {
 
         // TODO: remove dependencyModule from friends
         module.setDependencies(
-            listOf(module, dependencyModule, fallbackBuiltIns) + klibModules + explicitModuleDependencyList,
+            [module, dependencyModule, fallbackBuiltIns] + klibModules + explicitModuleDependencyList,
             setOf(dependencyModule) + explicitModuleFriendsList,
         )
         module.initialize(
             CompositePackageFragmentProvider(
-                listOf(
+                [
                     container.get<KotlinCodeAnalyzer>().packageFragmentProvider,
                     container.get<OptionalAnnotationPackageFragmentProvider>()
-                ) + additionalProviders,
+                ] + additionalProviders,
                 "CompositeProvider@TopDownAnalzyerForJvm for $module"
             )
         )
@@ -337,6 +337,6 @@ private fun getModuleDescriptorByLibrary(
         }
     }
 
-    module.setDependencies(listOf(module) + dependencies + listOfNotNull(dependencyModule))
+    module.setDependencies([module] + dependencies + listOfNotNull(dependencyModule))
     return module
 }

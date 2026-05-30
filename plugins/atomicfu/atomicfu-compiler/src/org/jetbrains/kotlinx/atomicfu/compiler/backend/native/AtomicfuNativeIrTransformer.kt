@@ -28,10 +28,10 @@ class AtomicfuNativeIrTransformer(
 
     private inner class NativeAtomicExtensionsTransformer : AtomicExtensionTransformer() {
 
-        override fun transformedExtensionsForAllAtomicHandlers(atomicExtension: IrFunction): List<IrSimpleFunction> = listOf(
+        override fun transformedExtensionsForAllAtomicHandlers(atomicExtension: IrFunction): List<IrSimpleFunction> = [
             generateExtensionForAtomicHandler(AtomicHandlerType.NATIVE_PROPERTY_REF, atomicExtension),
             generateExtensionForAtomicHandler(AtomicHandlerType.ATOMIC_ARRAY, atomicExtension)
-        )
+        ]
     }
 
     private inner class NativeAtomicPropertiesTransformer : AtomicPropertiesTransformer() {

@@ -151,10 +151,10 @@ private class KJvmReplCompleter(
             descriptors.apply {
                 fun addParameters(descriptor: DeclarationDescriptor) {
                     if (containingCallId == descriptor.name.identifier) {
-                        val params = when (descriptor) {
+                        val params: List<ValueParameterDescriptor> = when (descriptor) {
                             is CallableDescriptor -> descriptor.valueParameters
                             is ClassDescriptor -> descriptor.constructors.flatMap { it.valueParameters }
-                            else -> emptyList()
+                            else -> []
                         }
                         val valueParams = params.filter { it.name.test(false) }
                         addAll(valueParams)
@@ -207,7 +207,7 @@ private class KJvmReplCompleter(
             } else t
         }
 
-        val separatorIndex = stringVal.lastIndexOfAny(charArrayOf('/', '\\'))
+        val separatorIndex = stringVal.lastIndexOfAny(['/', '\\'])
         val dir = if (separatorIndex != -1) {
             stringVal.substring(0, separatorIndex + 1)
         } else {
@@ -245,7 +245,7 @@ private class KJvmReplCompleter(
         options: DescriptorsOptions,
         result: DescriptorsResult?
     ): Sequence<SourceCodeCompletionVariant> {
-        if (result == null) return emptySequence()
+        if (result == null) return []
         result.variants?.let { return it }
 
         with(result) {
@@ -329,14 +329,14 @@ private class KJvmReplCompleter(
             nameFilter, filterOutShadowedDescriptors
         )
 
-        val element = getElementAt(cursor) ?: return emptySequence()
+        val element = getElementAt(cursor) ?: return []
 
-        val descriptorsGetters = listOf(
+        val descriptorsGetters = [
             getDescriptorsSimple,
             getDescriptorsString,
             getDescriptorsQualified,
             getDescriptorsDefault,
-        )
+        ]
 
         val result = descriptorsGetters.firstNotNullOfOrNull { it.get(element, options) }
         return renderResult(element, options, result)
@@ -354,11 +354,11 @@ private class KJvmReplCompleter(
     }
 
     private class DescriptorsResult(
-        val descriptors: MutableList<DeclarationDescriptor> = mutableListOf(),
+        val descriptors: MutableList<DeclarationDescriptor> = [],
         var variants: Sequence<SourceCodeCompletionVariant>? = null,
         var sortNeeded: Boolean = true,
         var targetElement: PsiElement,
-        val containingCallParameters: MutableList<ValueParameterDescriptor> = mutableListOf(),
+        val containingCallParameters: MutableList<ValueParameterDescriptor> = [],
         val addKeywords: Boolean = true,
     )
 

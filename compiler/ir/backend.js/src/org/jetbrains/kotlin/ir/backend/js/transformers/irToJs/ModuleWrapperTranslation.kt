@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.partitionIsInstance
 
 object ModuleWrapperTranslation {
     object Namer {
-        private val RESERVED_IDENTIFIERS = setOf(
+        private val RESERVED_IDENTIFIERS: Set<String> = [
             // keywords
             "await", "break", "case", "catch", "continue", "debugger", "default", "delete", "do", "else", "finally", "for", "function", "if",
             "in", "instanceof", "new", "return", "switch", "throw", "try", "typeof", "var", "void", "while", "with",
@@ -38,7 +38,7 @@ object ModuleWrapperTranslation {
 
             // global identifiers usually declared in know environments (node.js, browser, require.js, WebWorkers, etc)
             "require", "define", "module", "window", "self", "globalThis"
-        )
+        ]
 
         fun requiresEscaping(name: String) =
             !name.isValidES5Identifier() || name in RESERVED_IDENTIFIERS
@@ -96,7 +96,7 @@ object ModuleWrapperTranslation {
         val selector = JsAstUtils.newJsIf(amdTest, amdBody, JsAstUtils.newJsIf(commonJsTest, commonJsBody, plainBlock))
         adapterBody.statements += selector
 
-        return listOf(JsInvocation(adapter, function).makeStmt())
+        return [JsInvocation(adapter, function).makeStmt()]
     }
 
     private fun wrapAmd(
@@ -105,13 +105,13 @@ object ModuleWrapperTranslation {
     ): List<JsStatement> {
         val scope = program.scope
         val defineName = scope.declareName("define")
-        val invocationArgs = listOf(
-            JsArrayLiteral(listOf(JsStringLiteral("exports")) + importedModules.map { JsStringLiteral(it.getRequireName()) }),
+        val invocationArgs = [
+            JsArrayLiteral([JsStringLiteral("exports")] + importedModules.map { JsStringLiteral(it.getRequireName()) }),
             function
-        )
+        ]
 
         val invocation = JsInvocation(defineName.makeRef(), invocationArgs)
-        return listOf(invocation.makeStmt())
+        return [invocation.makeStmt()]
     }
 
     private fun wrapCommonJs(
@@ -124,13 +124,13 @@ object ModuleWrapperTranslation {
         val requireName = scope.declareName("require")
 
         val invocationArgs = importedModules.map { JsInvocation(requireName.makeRef(), JsStringLiteral(it.getRequireName())) }
-        val invocation = JsInvocation(function, listOf(JsNameRef("exports", moduleName.makeRef())) + invocationArgs)
-        return listOf(invocation.makeStmt())
+        val invocation = JsInvocation(function, [JsNameRef("exports", moduleName.makeRef())] + invocationArgs)
+        return [invocation.makeStmt()]
     }
 
     private fun wrapEsModule(function: JsFunction): List<JsStatement> {
         val [alreadyPresentedImportStatements, restStatements] = function.body.statements
-            .flatMap { if (it is JsCompositeBlock) it.statements else listOf(it) }
+            .flatMap { if (it is JsCompositeBlock) it.statements else [it] }
             .partitionIsInstance<JsStatement, JsImport>()
         val [multipleElementsImport, defaultImports] = alreadyPresentedImportStatements.partition { it.target is JsImport.Target.Elements }
 
@@ -149,7 +149,7 @@ object ModuleWrapperTranslation {
         importedModules: List<JsImportedModule>, program: JsProgram
     ): List<JsStatement> {
         val invocation = makePlainInvocation(moduleId, function, importedModules, program)
-        val statements = mutableListOf<JsStatement>()
+        val statements: MutableList<JsStatement> = []
 
         for (importedModule in importedModules) {
             statements += addModuleValidation(moduleId, program, importedModule)
@@ -190,7 +190,7 @@ object ModuleWrapperTranslation {
         val testModuleDefined = JsAstUtils.typeOfIs(moduleRef, JsStringLiteral("undefined"))
         val selfArg = JsConditional(testModuleDefined, JsObjectLiteral(false), moduleRef.deepCopy())
 
-        return JsInvocation(function, listOf(selfArg) + invocationArgs)
+        return JsInvocation(function, [selfArg] + invocationArgs)
     }
 
     private fun makePlainModuleRef(module: JsImportedModule, program: JsProgram): JsExpression {

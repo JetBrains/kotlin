@@ -81,7 +81,7 @@ inline fun <reified T : Annotation> findAnnotationOrNull(context: ExtensionConte
             currentSuperclass
         }
     } else {
-        emptySequence()
+        []
     }
 
     return sequenceOf(
@@ -133,7 +133,7 @@ open class GradleArgumentsProvider : ArgumentsProvider {
             .flatMap { gradleVersion ->
                 if (extraArguments.isNotEmpty()) {
                     extraArguments.asSequence().map { extraArgument -> Arguments.of(gradleVersion, extraArgument) }
-                } else sequenceOf(Arguments.of(gradleVersion))
+                } else [Arguments.of(gradleVersion)]
             }
             .asStream()
     }
@@ -144,7 +144,7 @@ open class GradleArgumentsProvider : ArgumentsProvider {
         val minGradleVersion = GradleVersion.version(versionsAnnotation.minVersion)
         // Max is used for cases when test is annotated with `@GradleTestVersions(minVersion = LATEST)` but MAX_SUPPORTED isn't latest
         val maxGradleVersion = maxOf(GradleVersion.version(versionsAnnotation.maxVersion), minGradleVersion)
-        if (testFederationMode == TestFederationMode.Smoke) return setOf(maxGradleVersion)
+        if (testFederationMode == TestFederationMode.Smoke) return [maxGradleVersion]
 
         val additionalGradleVersions = versionsAnnotation
             .additionalVersions
@@ -263,7 +263,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
             // No Gradle versions fit
             filteredVersions.isEmpty() -> {
                 println("Requested Gradle versions ${this.joinToString()} are not compatible with JDK ${requestedJdk.version}.")
-                emptySet()
+                []
             }
             // Some Gradle versions fit
             filteredVersions.count() <= initialVersionsCount -> {
@@ -282,7 +282,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
         )
 
         // https://docs.gradle.org/current/userguide/compatibility.html#java_runtime
-        private val jdkGradleCompatibilityMatrix = setOf<GradleJavaVersionsRange>(
+        private val jdkGradleCompatibilityMatrix: Set<GradleJavaVersionsRange> = [
             GradleJavaVersionsRange(
                 gradleVersions = GradleVersion.version(TestVersions.Gradle.G_7_6)..GradleVersion.version(TestVersions.Gradle.G_8_2),
                 javaVersions = JavaVersion.VERSION_1_8..JavaVersion.VERSION_19,
@@ -307,7 +307,7 @@ class GradleAndJdkArgumentsProvider : GradleArgumentsProvider() {
                 gradleVersions = GradleVersion.version(TestVersions.Gradle.G_8_14)..GradleVersion.version(TestVersions.Gradle.MAX_SUPPORTED),
                 javaVersions = JavaVersion.VERSION_17..JavaVersion.VERSION_24,
             ),
-        )
+        ]
     }
 }
 
@@ -358,7 +358,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
         )
 
         if (testFederationMode == TestFederationMode.Smoke) {
-            agpVersions = setOf(agpVersions.last())
+            agpVersions = [agpVersions.last()]
         }
 
         val gradleVersions = gradleVersions(context)
@@ -379,7 +379,7 @@ class GradleAndAgpArgumentsProvider : GradleArgumentsProvider() {
                     .filter { it in agpVersion.minSupportedGradleVersion..agpVersion.maxSupportedGradleVersion }
                     .ifEmpty {
                         // Falling back to the minimal supported Gradle version for this AGP version
-                        listOf(agpVersion.minSupportedGradleVersion)
+                        [agpVersion.minSupportedGradleVersion]
                     }
                     .map {
                         AgpTestArguments(it, agpVersion.version, providedJdk)

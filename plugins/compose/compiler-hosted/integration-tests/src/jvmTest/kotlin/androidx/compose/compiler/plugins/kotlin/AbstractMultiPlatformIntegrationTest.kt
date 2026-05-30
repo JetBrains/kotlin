@@ -93,16 +93,16 @@ abstract class AbstractMultiPlatformIntegrationTest : AbstractCompilerTest() {
         jvm: String,
         output: String,
     ) {
-        val optionalArgs = arrayOf(
+        val optionalArgs: Array<String> = [
             "-cp",
             defaultClassPath
                 .filter { it.exists() }
                 .joinToString(File.pathSeparator) { it.absolutePath },
             "-Xplugin=${Classpath.jarFor<ComposePluginRegistrar>().absolutePath}",
             "-Xuse-ir",
-        )
+        ]
 
-        val jvmOnlyArgs = arrayOf("-no-stdlib")
+        val jvmOnlyArgs: Array<String> = ["-no-stdlib"]
 
         val srcDir = sourceDirectory.newFolder("srcs").absolutePath
         val commonSrc = File(srcDir, "common.kt")

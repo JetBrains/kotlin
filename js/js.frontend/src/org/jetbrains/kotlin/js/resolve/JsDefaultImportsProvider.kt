@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
 object JsDefaultImportsProvider : DefaultImportsProvider() {
-    override val platformSpecificDefaultImports: List<ImportPath> = listOf(ImportPath.fromString("kotlin.js.*"))
+    override val platformSpecificDefaultImports: List<ImportPath> = [ImportPath.fromString("kotlin.js.*")]
 
     override val excludedImports: List<FqName> =
-        listOf("Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json").map { FqName("kotlin.js.$it") }
+        ["Promise", "Date", "Console", "Math", "RegExp", "RegExpMatch", "Json", "json"].map { FqName("kotlin.js.$it") }
 }

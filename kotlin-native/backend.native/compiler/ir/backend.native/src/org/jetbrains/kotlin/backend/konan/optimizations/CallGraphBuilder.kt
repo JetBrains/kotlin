@@ -32,7 +32,7 @@ internal class CallGraphNode(val graph: CallGraph, val symbol: DataFlowIR.Functi
 
     class CallSite(val call: DataFlowIR.Node.Call, val node: DataFlowIR.Node, val isVirtual: Boolean, val actualCallee: DataFlowIR.FunctionSymbol)
 
-    val callSites = mutableListOf<CallSite>()
+    val callSites: MutableList<CallSite> = []
 }
 
 internal class CallGraph(val directEdges: Map<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>,
@@ -63,13 +63,13 @@ internal class CallGraphBuilder(
 ) {
     private val directEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, CallGraphNode>()
     private val reversedEdges = mutableMapOf<DataFlowIR.FunctionSymbol.Declared, MutableList<DataFlowIR.FunctionSymbol.Declared>>()
-    private val externalRootFunctions = mutableListOf<DataFlowIR.FunctionSymbol>()
-    private val wholeRootSet = mutableSetOf<DataFlowIR.FunctionSymbol.Declared>()
+    private val externalRootFunctions: MutableList<DataFlowIR.FunctionSymbol> = []
+    private val wholeRootSet: MutableSet<DataFlowIR.FunctionSymbol.Declared> = []
     private val callGraph = CallGraph(directEdges, reversedEdges, externalRootFunctions, wholeRootSet)
 
     private data class HandleFunctionParams(val caller: DataFlowIR.FunctionSymbol.Declared?,
                                             val calleeFunction: DataFlowIR.Function)
-    private val functionStack = mutableListOf<HandleFunctionParams>()
+    private val functionStack: MutableList<HandleFunctionParams> = []
 
     fun build(): CallGraph {
         val rootSet = DevirtualizationAnalysis.computeRootSet(context, irModule, moduleDFG)
@@ -91,7 +91,7 @@ internal class CallGraphBuilder(
 
     private fun addNode(symbol: DataFlowIR.FunctionSymbol.Declared) {
         directEdges[symbol] = CallGraphNode(callGraph, symbol)
-        reversedEdges[symbol] = mutableListOf()
+        reversedEdges[symbol] = []
     }
 
     private inline fun DataFlowIR.FunctionBody.forEachCallSite(block: (DataFlowIR.Node.Call, DataFlowIR.Node) -> Unit): Unit =
@@ -111,7 +111,7 @@ internal class CallGraphBuilder(
                     is DataFlowIR.Node.ArrayRead ->
                         block(DataFlowIR.Node.Call(
                                 callee = node.callee,
-                                arguments = listOf(node.array, node.index),
+                                arguments = [node.array, node.index],
                                 returnType = node.type,
                                 irCallSite = null),
                                 node
@@ -120,7 +120,7 @@ internal class CallGraphBuilder(
                     is DataFlowIR.Node.ArrayWrite ->
                         block(DataFlowIR.Node.Call(
                                 callee = node.callee,
-                                arguments = listOf(node.array, node.index, node.value),
+                                arguments = [node.array, node.index, node.value],
                                 returnType = moduleDFG.symbolTable.mapType(context.irBuiltIns.unitType),
                                 irCallSite = null),
                                 node
@@ -177,7 +177,7 @@ internal class CallGraphBuilder(
                     // Callsite has not been devirtualized - conservatively assume the worst:
                     // any inheritor of the receiver type is possible here.
                     val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
-                    val allPossibleCallees = mutableListOf<DataFlowIR.FunctionSymbol>()
+                    val allPossibleCallees: MutableList<DataFlowIR.FunctionSymbol> = []
                     typeHierarchy.inheritorsOf(call.receiverType).forEachBit {
                         val receiverType = typeHierarchy.allTypes[it]
                         if (receiverType.isAbstract) return@forEachBit

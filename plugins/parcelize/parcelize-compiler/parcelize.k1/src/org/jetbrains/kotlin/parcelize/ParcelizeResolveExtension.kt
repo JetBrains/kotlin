@@ -96,7 +96,7 @@ open class ParcelizeResolveExtension(private val parcelizeAnnotations: List<FqNa
         }
 
         private val parcelizeMethodNames: List<Name> =
-            listOf(Name.identifier(DESCRIBE_CONTENTS.methodName), Name.identifier(WRITE_TO_PARCEL.methodName))
+            [Name.identifier(DESCRIBE_CONTENTS.methodName), Name.identifier(WRITE_TO_PARCEL.methodName)]
     }
 
     open fun isAvailable(element: PsiElement): Boolean {
@@ -106,7 +106,7 @@ open class ParcelizeResolveExtension(private val parcelizeAnnotations: List<FqNa
     override fun getSyntheticCompanionObjectNameIfNeeded(thisDescriptor: ClassDescriptor): Name? = null
 
     override fun getSyntheticFunctionNames(thisDescriptor: ClassDescriptor): List<Name> {
-        return if (thisDescriptor.isParcelize(parcelizeAnnotations)) parcelizeMethodNames else emptyList()
+        return if (thisDescriptor.isParcelize(parcelizeAnnotations)) parcelizeMethodNames else []
     }
 
     override fun generateSyntheticMethods(
@@ -205,7 +205,7 @@ fun Annotated.hasAnyAnnotation(fqNames: List<FqName>): Boolean {
 }
 
 fun getTypeParcelers(annotations: Annotations): List<TypeParcelerMapping> {
-    val serializers = mutableListOf<TypeParcelerMapping>()
+    val serializers: MutableList<TypeParcelerMapping> = []
 
     for (annotation in annotations.filter { it.fqName in ParcelizeNames.TYPE_PARCELER_FQ_NAMES }) {
         val [mappedType, parcelerType] = annotation.type.arguments.takeIf { it.size == 2 } ?: continue

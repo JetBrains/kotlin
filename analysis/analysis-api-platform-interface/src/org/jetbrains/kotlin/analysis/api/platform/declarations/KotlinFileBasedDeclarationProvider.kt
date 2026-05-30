@@ -39,11 +39,11 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
     private fun getDeclarationsByClassId(classId: ClassId): Sequence<KtNamedDeclaration> {
         @OptIn(ClassIdBasedLocality::class)
         if (classId.isLocal) {
-            return emptySequence()
+            return []
         }
 
         if (kotlinFile.packageFqName != classId.packageFqName) {
-            return emptySequence()
+            return []
         }
 
         data class Task(val chunks: List<Name>, val element: KtElement)
@@ -110,27 +110,27 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
     override fun findFilesForFacadeByPackage(packageFqName: FqName): Collection<KtFile> {
         if (kotlinFile.packageFqName != packageFqName) {
-            return emptyList()
+            return []
         }
 
-        return listOf(kotlinFile)
+        return [kotlinFile]
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> {
-        if (kotlinFile.javaFileFacadeFqName != facadeFqName) return emptyList()
+        if (kotlinFile.javaFileFacadeFqName != facadeFqName) return []
 
         for (declaration in topLevelDeclarations) {
             if (declaration !is KtClassLikeDeclaration) {
-                return listOf(kotlinFile)
+                return [kotlinFile]
             }
         }
 
-        return emptyList()
+        return []
     }
 
-    override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = emptyList()
+    override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = []
 
-    override fun computePackageNames(): Set<String> = setOf(kotlinFile.packageFqName.asString())
+    override fun computePackageNames(): Set<String> = [kotlinFile.packageFqName.asString()]
 
     override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
@@ -145,7 +145,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
     private inline fun <reified T : KtNamedDeclaration> getTopLevelDeclarations(packageFqName: FqName, name: Name): Collection<T> {
         if (kotlinFile.packageFqName != packageFqName) {
-            return emptyList()
+            return []
         }
 
         return buildList {
@@ -159,7 +159,7 @@ public class KotlinFileBasedDeclarationProvider(public val kotlinFile: KtFile) :
 
     private inline fun getTopLevelDeclarationNames(packageFqName: FqName, filter: (KtNamedDeclaration) -> Boolean): Set<Name> {
         if (kotlinFile.packageFqName != packageFqName) {
-            return emptySet()
+            return []
         }
 
         return buildSet {

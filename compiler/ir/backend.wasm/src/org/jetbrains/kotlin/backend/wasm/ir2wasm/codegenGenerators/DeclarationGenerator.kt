@@ -546,7 +546,7 @@ class DeclarationGenerator(
 
         val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
-        val initBody = mutableListOf<WasmInstr>()
+        val initBody: MutableList<WasmInstr> = []
         val wasmExpressionGenerator = WasmExpressionBuilder(
             expression = initBody,
             skipCommentInstructions = skipCommentInstructions,

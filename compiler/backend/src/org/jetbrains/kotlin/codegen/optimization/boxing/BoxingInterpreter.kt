@@ -341,11 +341,11 @@ fun AbstractInsnNode.isIteratorMethodCallOfProgression(values: List<BasicValue>)
                 firstArgType != null && isProgressionClass(firstArgType)
     }
 
-private val PROGRESSION_CLASS_FQNS = setOf(
+private val PROGRESSION_CLASS_FQNS: Set<String> = [
     CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN,
     INT_RANGE_FQN, INT_PROGRESSION_FQN,
     LONG_RANGE_FQN, LONG_PROGRESSION_FQN
-)
+]
 
 private fun isProgressionClass(type: Type) =
     type.className in PROGRESSION_CLASS_FQNS
@@ -370,7 +370,7 @@ fun AbstractInsnNode.isAreEqualIntrinsic() =
                 desc == "(Ljava/lang/Object;Ljava/lang/Object;)Z"
     }
 
-private val shouldUseEqualsForWrappers = setOf(Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE)
+private val shouldUseEqualsForWrappers: Set<Type?> = [Type.DOUBLE_TYPE, Type.FLOAT_TYPE, AsmTypes.JAVA_CLASS_TYPE]
 
 fun canValuesBeUnboxedForAreEqual(values: List<BasicValue>, generationState: GenerationState): Boolean = values.none {
     val unboxedType = getUnboxedTypes(it.type, generationState, getMultiFieldValueClassUnboxInfo(it.type, generationState)).singleOrNull()

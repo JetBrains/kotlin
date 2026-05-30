@@ -89,7 +89,7 @@ class BackendJsSymbols(
         it.hasShape(
             extensionReceiver = true,
             regularParameters = 2,
-            parameterTypes = listOf(irBuiltIns.stringType, irBuiltIns.intType, irBuiltIns.intType)
+            parameterTypes = [irBuiltIns.stringType, irBuiltIns.intType, irBuiltIns.intType]
         )
     }
 
@@ -514,7 +514,7 @@ class BackendJsSymbols(
             .filter { it.name != "LONG" && it.name != "CHAR" } // skip due to they have own explicit companions
             .map { it.typeName }
 
-        return numbers + listOf(Name.identifier("String"), Name.identifier("Boolean"))
+        return numbers + Name.identifier("String") + Name.identifier("Boolean")
     }
 
     val newThrowableSymbol by CallableIds.newThrowable.functionSymbol()
@@ -805,5 +805,5 @@ private object CallableIds {
     val enumEntries = CallableId(StandardClassIds.BASE_ENUMS_PACKAGE, Name.identifier("enumEntries"))
     val test = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("test"))
     val suite = CallableId(StandardClassIds.BASE_TEST_PACKAGE, Name.identifier("suite"))
-    val EmptyContinuation = CallableId(FqName.fromSegments(listOf("kotlin", "coroutines", "js", "internal")), Name.identifier("EmptyContinuation"))
+    val EmptyContinuation = CallableId(FqName.fromSegments(["kotlin", "coroutines", "js", "internal"]), Name.identifier("EmptyContinuation"))
 }

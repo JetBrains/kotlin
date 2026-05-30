@@ -38,7 +38,7 @@ class RosettaExecutor(
                 return false
             }
             return hostExecutor.execute(ExecuteRequest("/usr/bin/arch").apply {
-                this.args.addAll(listOf("-x86_64", "/usr/bin/true"))
+                this.args.addAll(["-x86_64", "/usr/bin/true"])
             }).exitCode == 0
         }
     }

@@ -40,11 +40,11 @@ class MutableCheckerContext private constructor(
     allErrorsSuppressed: Boolean
 ) : CheckerContextForProvider(sessionHolder, returnTypeCalculator, allInfosSuppressed, allWarningsSuppressed, allErrorsSuppressed) {
     constructor(sessionHolder: SessionAndScopeSessionHolder, returnTypeCalculator: ReturnTypeCalculator) : this(
-        containingDeclarations = mutableListOf(),
-        callsOrAssignments = mutableListOf(),
-        getClassCalls = mutableListOf(),
-        annotationContainers = mutableListOf(),
-        containingElements = mutableListOf(),
+        containingDeclarations = [],
+        callsOrAssignments = [],
+        getClassCalls = [],
+        annotationContainers = [],
+        containingElements = [],
         isContractBody = false,
         inlineFunctionBodyContext = null,
         inlinableParameterContext = null,

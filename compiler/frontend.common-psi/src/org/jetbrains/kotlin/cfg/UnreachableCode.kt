@@ -46,10 +46,10 @@ interface UnreachableCode {
                     if (isNotEmpty()) this
                     // Specific case like condition in when:
                     // element is dead but its only child is alive and has the same text range
-                    else listOf(element.textRange.endOffset.let { TextRange(it, it) })
+                    else [element.textRange.endOffset.let { TextRange(it, it) }]
                 }
             } else {
-                listOf(element.textRange!!)
+                [element.textRange!!]
             }
         }
 

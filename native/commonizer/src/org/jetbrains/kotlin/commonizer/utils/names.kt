@@ -19,10 +19,10 @@ internal val DEPRECATED_ANNOTATION_CLASS_ID: CirEntityId = CirEntityId.create(DE
 internal const val ANY_CLASS_FULL_NAME: ClassName = "kotlin/Any"
 internal val ANY_CLASS_ID: CirEntityId = CirEntityId.create(ANY_CLASS_FULL_NAME)
 
-internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS: List<CirEntityId> = listOf(
+internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS: List<CirEntityId> = [
     ANY_CLASS_ID,
     CirEntityId.create("kotlin/Nothing")
-)
+]
 
 // illegal Kotlin classifier name, for special purposes only
 internal val NON_EXISTING_CLASSIFIER_ID = CirEntityId.create("$0")
@@ -30,10 +30,10 @@ internal val NON_EXISTING_CLASSIFIER_ID = CirEntityId.create("$0")
 internal val SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_NAMES: List<ClassName> =
     SPECIAL_CLASS_WITHOUT_SUPERTYPES_CLASS_IDS.map(CirEntityId::toString)
 
-private val STANDARD_KOTLIN_PACKAGES: List<CirPackageName> = listOf(
+private val STANDARD_KOTLIN_PACKAGES: List<CirPackageName> = [
     CirPackageName.create(StandardNames.BUILT_INS_PACKAGE_FQ_NAME),
     CirPackageName.create("kotlinx")
-)
+]
 
 private val KOTLIN_NATIVE_SYNTHETIC_PACKAGES: List<CirPackageName> = NativeStandardInteropNames.ForwardDeclarations.syntheticPackages
     .map { packageFqName ->
@@ -49,11 +49,11 @@ internal val OBJCNAMES_PROTOCOLS_PACKAGE = CirPackageName.create(NativeForwardDe
 
 private val CINTEROP_PACKAGE: CirPackageName = CirPackageName.create(NativeStandardInteropNames.cInteropPackage)
 
-private val OBJC_INTEROP_CALLABLE_ANNOTATIONS: List<CirName> = listOf(
+private val OBJC_INTEROP_CALLABLE_ANNOTATIONS: List<CirName> = [
     CirName.create("ObjCMethod"),
     CirName.create("ObjCConstructor"),
     CirName.create("ObjCFactory")
-)
+]
 
 internal val COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID =
     CirEntityId.create(CirPackageName.create("kotlin.commonizer"), CirName.create("ObjCCallable"))

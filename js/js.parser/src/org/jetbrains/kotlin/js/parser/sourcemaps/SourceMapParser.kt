@@ -65,7 +65,7 @@ object SourceMapParser {
                 }
             }
             else {
-                emptyList()
+                []
             }
         }
 
@@ -89,7 +89,7 @@ object SourceMapParser {
                 }
             }
             else {
-                emptyList()
+                []
             }
         }
 
@@ -100,7 +100,7 @@ object SourceMapParser {
                     (it as? JsonString ?: return SourceMapError("'names' array must contain strings")).value
                 }
             } else {
-                emptyList()
+                []
             }
         }
 

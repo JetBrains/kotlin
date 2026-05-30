@@ -32,5 +32,5 @@ class KaBaseCompoundVariableAccessCallResolutionAttempt(
     override val variableCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingVariableCallAttempt }
     override val operationCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
     override val attempts: List<KaSingleCallResolutionAttempt>
-        get() = withValidityAssertion { listOf(backingVariableCallAttempt, backingOperationCallAttempt) }
+        get() = withValidityAssertion { [backingVariableCallAttempt, backingOperationCallAttempt] }
 }

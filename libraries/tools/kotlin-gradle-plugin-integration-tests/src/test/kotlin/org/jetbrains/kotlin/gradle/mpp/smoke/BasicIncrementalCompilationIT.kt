@@ -34,12 +34,12 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val sourceInAppCommon = resolvePath("app", "commonMain", "Unused.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileCommonMainKotlinMetadata",
                 ":app:compileKotlinJvm",
                 ":app:compileKotlinJs",
                 ":app:compileKotlinNative"
-            )
+            ]
         ) {
             assertIncrementalCompilation(listOf(sourceInAppCommon).relativizeTo(projectPath))
         }
@@ -50,7 +50,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val sourceInAppJvm = resolvePath("app", "jvmMain", "UnusedJvm.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinJvm")
+            tasksExpectedToExecute = [":app:compileKotlinJvm"]
         ) {
             assertIncrementalCompilation(listOf(sourceInAppJvm).relativizeTo(projectPath))
         }
@@ -61,7 +61,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val sourceInAppJs = resolvePath("app", "jsMain", "UnusedJs.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinJs"),
+            tasksExpectedToExecute = [":app:compileKotlinJs"],
         ) {
             assertIncrementalCompilation(listOf(sourceInAppJs).relativizeTo(projectPath))
         }
@@ -72,7 +72,7 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         resolvePath("app", "nativeMain", "UnusedNative.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(":app:compileKotlinNative"),
+            tasksExpectedToExecute = [":app:compileKotlinNative"],
         )
 
         /**
@@ -92,10 +92,10 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val sourceInLibJvm = resolvePath("lib", "jvmMain", "UsedInAppJvmAndLibTests.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileKotlinJvm",
                 ":lib:compileKotlinJvm"
-            ),
+            ],
         ) {
             assertIncrementalCompilation(listOf(sourceInLibJvm).relativizeTo(projectPath))
         }
@@ -106,10 +106,10 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         val sourceInLibJs = resolvePath("lib", "jsMain", "UsedInAppJsAndLibTests.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileKotlinJs",
                 ":lib:compileKotlinJs"
-            ),
+            ],
         ) {
             assertIncrementalCompilation(listOf(sourceInLibJs).relativizeTo(projectPath))
         }
@@ -120,10 +120,10 @@ open class BasicIncrementalCompilationIT : KmpIncrementalITBase() {
 
         resolvePath("lib", "nativeMain", "UsedInAppNativeAndLibTests.kt").addPrivateVal()
         checkIncrementalBuild(
-            tasksExpectedToExecute = setOf(
+            tasksExpectedToExecute = [
                 ":app:compileKotlinNative",
                 ":lib:compileKotlinNative"
-            ),
+            ],
         )
     }
 }

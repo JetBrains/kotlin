@@ -29,7 +29,7 @@ class AtomicfuFirCheckers(session: FirSession) : FirAdditionalCheckersExtension(
 
     override val typeCheckers: TypeCheckers = object : TypeCheckers() {
         override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker>
-            get() = setOf(
-            )
+            get() = [
+            ]
     }
 }

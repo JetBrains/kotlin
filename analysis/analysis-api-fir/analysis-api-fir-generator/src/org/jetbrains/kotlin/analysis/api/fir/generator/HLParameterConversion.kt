@@ -13,7 +13,7 @@ import kotlin.reflect.full.createType
 sealed class HLParameterConversion {
     abstract fun convertExpression(expression: String, context: ConversionContext): String
     abstract fun convertType(type: KType): KType
-    open val importsToAdd: List<String> get() = emptyList()
+    open val importsToAdd: List<String> get() = []
 }
 
 object HLIdParameterConversion : HLParameterConversion() {
@@ -36,12 +36,12 @@ class HLCollectionParameterConversion(
 
     override fun convertType(type: KType): KType =
         List::class.createType(
-            arguments = listOf(
+            arguments = [
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
                     type = type.arguments.single().type?.let(mappingConversion::convertType)
                 )
-            )
+            ]
         )
 
     override val importsToAdd get() = mappingConversion.importsToAdd
@@ -69,7 +69,7 @@ class HLMapParameterConversion(
         val keyArgument = type.arguments[0]
         val valueArgument = type.arguments[1]
         return Map::class.createType(
-            arguments = listOf(
+            arguments = [
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
                     type = keyArgument.type?.let(mappingConversionForKeys::convertType)
@@ -78,7 +78,7 @@ class HLMapParameterConversion(
                     variance = KVariance.INVARIANT,
                     type = valueArgument.type?.let(mappingConversionForValues::convertType)
                 )
-            )
+            ]
         )
     }
 
@@ -103,7 +103,7 @@ class HLPairParameterConversion(
         val first = type.arguments.getOrNull(0)?.type ?: return type
         val second = type.arguments.getOrNull(1)?.type ?: return type
         return Pair::class.createType(
-            arguments = listOf(
+            arguments = [
                 KTypeProjection(
                     variance = KVariance.INVARIANT,
                     type = mappingConversionFirst.convertType(first)
@@ -112,7 +112,7 @@ class HLPairParameterConversion(
                     variance = KVariance.INVARIANT,
                     type = mappingConversionSecond.convertType(second)
                 )
-            )
+            ]
         )
     }
 
@@ -123,7 +123,7 @@ class HLPairParameterConversion(
 class HLFunctionCallConversion(
     private val callTemplate: String,
     private val callType: KType,
-    override val importsToAdd: List<String> = emptyList()
+    override val importsToAdd: List<String> = []
 ) : HLParameterConversion() {
     override fun convertExpression(expression: String, context: ConversionContext) =
         callTemplate.replace("{0}", expression)

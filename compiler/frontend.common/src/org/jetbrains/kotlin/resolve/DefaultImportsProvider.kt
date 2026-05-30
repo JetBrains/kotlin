@@ -20,9 +20,9 @@ abstract class DefaultImportsProvider {
     ).map { ImportPath.fromString(it) }
 
     abstract val platformSpecificDefaultImports: List<ImportPath>
-    open val defaultLowPriorityImports: List<ImportPath> get() = emptyList()
+    open val defaultLowPriorityImports: List<ImportPath> get() = []
 
-    open val excludedImports: List<FqName> get() = emptyList()
+    open val excludedImports: List<FqName> get() = []
 
     fun getDefaultImports(includeLowPriorityImports: Boolean): List<ImportPath> {
         return buildList {

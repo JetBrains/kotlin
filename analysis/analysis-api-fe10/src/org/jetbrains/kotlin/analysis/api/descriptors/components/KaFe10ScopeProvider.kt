@@ -65,7 +65,7 @@ internal class KaFe10ScopeProvider(
     override val KaDeclarationContainerSymbol.staticMemberScope: KaScope
         get() = withValidityAssertion {
             val descriptor = getDescriptor<ClassDescriptor>(this) ?: return createEmptyScope()
-            return KaFe10ScopeMember(descriptor.staticScope, emptyList(), analysisContext)
+            return KaFe10ScopeMember(descriptor.staticScope, [], analysisContext)
         }
 
     override val KaDeclarationContainerSymbol.declaredMemberScope: KaScope
@@ -83,7 +83,7 @@ internal class KaFe10ScopeProvider(
 
             return KaFe10ScopeMember(
                 DeclaredMemberScope(descriptor.staticScope, descriptor, forDelegatedMembersOnly = false),
-                emptyList(),
+                [],
                 analysisContext,
             )
         }
@@ -101,7 +101,7 @@ internal class KaFe10ScopeProvider(
             val descriptor = getDescriptor<ClassDescriptor>(this)
                 ?: return createEmptyScope()
 
-            return KaFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), emptyList(), analysisContext)
+            return KaFe10ScopeMember(DeclaredMemberScope(descriptor, forDelegatedMembersOnly = true), [], analysisContext)
         }
 
     private fun createEmptyScope(): KaScope {
@@ -231,18 +231,18 @@ internal class KaFe10ScopeProvider(
         val scopeKind = KaScopeKinds.LocalScope(0) // TODO
         val lexicalScope = position.getResolutionScope(bindingContext)
         if (lexicalScope != null) {
-            val compositeScope = KaBaseCompositeScope.create(listOf(KaFe10ScopeLexical(lexicalScope, analysisContext)), token)
+            val compositeScope = KaBaseCompositeScope.create([KaFe10ScopeLexical(lexicalScope, analysisContext)], token)
             return KaBaseScopeContext(
-                listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
+                [KaScopeWithKindImpl(compositeScope, scopeKind)],
                 collectImplicitReceivers(lexicalScope),
                 token,
             )
         }
 
         val fileScope = analysisContext.resolveSession.fileScopeProvider.getFileResolutionScope(this)
-        val compositeScope = KaBaseCompositeScope.create(listOf(KaFe10ScopeLexical(fileScope, analysisContext)), token)
+        val compositeScope = KaBaseCompositeScope.create([KaFe10ScopeLexical(fileScope, analysisContext)], token)
         return KaBaseScopeContext(
-            listOf(KaScopeWithKindImpl(compositeScope, scopeKind)),
+            [KaScopeWithKindImpl(compositeScope, scopeKind)],
             collectImplicitReceivers(fileScope),
             token,
         )
@@ -253,7 +253,7 @@ internal class KaFe10ScopeProvider(
             val importingScopes = scopeContext(position = this)
                 .scopes
                 .filter { it.kind is KaScopeKind.ImportingScope }
-            return KaBaseScopeContext(importingScopes, implicitValues = emptyList(), token)
+            return KaBaseScopeContext(importingScopes, implicitValues = [], token)
         }
 
     private inline fun <reified T : DeclarationDescriptor> getDescriptor(symbol: KaSymbol): T? {
@@ -268,7 +268,7 @@ internal class KaFe10ScopeProvider(
     }
 
     private fun collectImplicitReceivers(scope: LexicalScope): MutableList<KaImplicitReceiver> {
-        val result = mutableListOf<KaImplicitReceiver>()
+        val result: MutableList<KaImplicitReceiver> = []
 
         for ([index, implicitReceiver] in scope.getImplicitReceiversHierarchy().withIndex()) {
             val type = implicitReceiver.type.toKtType(analysisContext)

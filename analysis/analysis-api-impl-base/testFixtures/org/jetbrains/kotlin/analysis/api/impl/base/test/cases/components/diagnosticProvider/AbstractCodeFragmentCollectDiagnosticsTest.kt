@@ -35,6 +35,6 @@ abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagn
         }
 
         val preparedFile = PreparedFile(codeFragment, mainFile.name)
-        doTestByPreparedFiles(listOf(preparedFile), testServices)
+        doTestByPreparedFiles([preparedFile], testServices)
     }
 }

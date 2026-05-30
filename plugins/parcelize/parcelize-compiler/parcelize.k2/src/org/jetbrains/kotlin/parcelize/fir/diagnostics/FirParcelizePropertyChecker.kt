@@ -113,38 +113,38 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
     ): Set<ConeKotlinType> {
         val session = context.session
         if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
-            return emptySet()
+            return []
         }
 
         val upperBound = type.getErasedUpperBound(session)
         val symbol = upperBound?.toRegularClassSymbol(session)
-            ?: return setOf(type)
+            ?: return [type]
 
         if (symbol.classKind.isSingleton || symbol.classKind.isEnumClass) {
-            return emptySet()
+            return []
         }
 
         val fqName = symbol.classId.asFqNameString()
         if (fqName in BuiltinParcelableTypes.PARCELABLE_BASE_TYPE_FQNAMES) {
-            return emptySet()
+            return []
         }
 
         if (fqName in BuiltinParcelableTypes.PARCELABLE_CONTAINER_FQNAMES) {
-            return upperBound.typeArguments.fold(emptySet()) { acc, arg ->
+            return upperBound.typeArguments.fold([]) { acc, arg ->
                 val elementType = arg.type ?: session.builtinTypes.nullableAnyType.coneType
                 acc union checkParcelableType(elementType, customParcelerTypes, context)
             }
         }
 
         if (type.anySuperTypeConstructor(session) { it.isParcelableSupertype(session) }) {
-            return emptySet()
+            return []
         }
 
         if (symbol.isData && (inDataClass || type.customAnnotations.any { it.fqName(session) == ParcelizeNames.DATA_CLASS_ANNOTATION_FQ_NAME })) {
             val properties = symbol.declaredProperties(context.session).filter { it.fromPrimaryConstructor }
             // Serialization uses the property getters, deserialization uses the constructor.
             if (properties.any { !it.isVisible(context) } || symbol.primaryConstructorIfAny(session)?.isVisible(context) != true) {
-                return setOf(type)
+                return [type]
             }
             val typeMapping = symbol.typeParameterSymbols.zip(type.typeArguments).mapNotNull { [parameter, arg] ->
                 when (arg) {
@@ -154,17 +154,17 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
                 }
             }.toMap()
             val substitutor = substitutorByMap(typeMapping, context.session)
-            return properties.fold(emptySet()) { acc, property ->
+            return properties.fold([]) { acc, property ->
                 val elementType = substitutor.substituteOrSelf(property.resolvedReturnType)
                 acc union checkParcelableType(elementType, customParcelerTypes, context, inDataClass = true)
             }
         }
 
         if (type.anySuperTypeConstructor(session) { it.isSupportedSerializable() }) {
-            return emptySet()
+            return []
         }
 
-        return setOf(type)
+        return [type]
     }
 
     private fun ConeKotlinType.anySuperTypeConstructor(session: FirSession, predicate: (ConeKotlinType) -> Boolean): Boolean =

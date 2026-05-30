@@ -104,10 +104,10 @@ class DeprecationResolver(
     private data class DeprecationInfo(
         val deprecations: List<DescriptorBasedDeprecationInfo>,
         val hasInheritedDeprecations: Boolean,
-        val hiddenInheritedDeprecations: List<DescriptorBasedDeprecationInfo> = emptyList()
+        val hiddenInheritedDeprecations: List<DescriptorBasedDeprecationInfo> = []
     ) {
         companion object {
-            val EMPTY = DeprecationInfo(emptyList(), hasInheritedDeprecations = false, emptyList())
+            val EMPTY = DeprecationInfo([], hasInheritedDeprecations = false, [])
         }
     }
 
@@ -247,7 +247,7 @@ class DeprecationResolver(
     private fun DeclarationDescriptor.getOwnDeprecations(): List<DescriptorBasedDeprecationInfo> {
         // This is a temporary workaround before @DeprecatedSinceKotlin is introduced, see KT-23575
         if (shouldSkipDeprecationOnKotlinIoReadBytes(this, languageVersionSettings)) {
-            return emptyList()
+            return []
         }
 
         val result = SmartList<DescriptorBasedDeprecationInfo>()
@@ -314,7 +314,7 @@ class DeprecationResolver(
         val versionRequirements =
             (target as? DeserializedMemberDescriptor)?.versionRequirements
                 ?: (target as? DeserializedClassDescriptor)?.versionRequirements
-                ?: return emptyList()
+                ?: return []
 
         return versionRequirements.mapNotNull { versionRequirement ->
             if (!versionRequirement.isFulfilled(this.languageVersionSettings))
@@ -327,7 +327,7 @@ class DeprecationResolver(
     companion object {
         val JAVA_DEPRECATED = FqName("java.lang.Deprecated")
 
-        val LIST_DEPRECATED_PROPERTIES = listOf("first", "last")
+        val LIST_DEPRECATED_PROPERTIES = ["first", "last"]
 
         val KOTLIN_LIST_FIRST_LAST = LIST_DEPRECATED_PROPERTIES.map { propertyName ->
             StandardNames.FqNames.list.child(Name.identifier("get${propertyName.replaceFirstChar { it.uppercase() }}"))

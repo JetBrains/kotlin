@@ -33,7 +33,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
     private val defaultLanguageVersion: LanguageVersion,
 ) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CustomKlibCompilerTestDirectives)
+        get() = [CustomKlibCompilerTestDirectives]
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val newFailedAssertions = failedAssertions.flatMap { wrappedException ->
@@ -41,15 +41,15 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                 is WrappedException.FromHandler -> when (wrappedException.handler) {
                     is NoFirCompilationErrorsHandler ->  {
                         if (defaultLanguageVersion < LanguageVersion.LATEST_STABLE)
-                            emptyList()  // Some tests cannot be compiled with previous LV. These are just ignored
+                            []  // Some tests cannot be compiled with previous LV. These are just ignored
                         else
-                            listOf(wrappedException)
+                            [wrappedException]
                     }
                     is BinaryArtifactHandler -> processException(  // Execution error
                         wrappedException,
                         IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE
                     )
-                    else -> listOf(wrappedException)
+                    else -> [wrappedException]
                 }
                 is WrappedException.FromFacade -> when (wrappedException.facade) {
                     is CustomKlibCompilerSecondStageFacade -> processException(
@@ -59,7 +59,7 @@ class CustomKlibCompilerSecondStageTestSuppressor(
                     else -> processException(wrappedException, IGNORE_KLIB_FRONTEND_ERRORS_WITH_CUSTOM_SECOND_STAGE)
                 }
                 is WrappedException.FromAfterAnalysisChecker -> {
-                    listOf(wrappedException)
+                    [wrappedException]
                 }
                 else -> error("Yet unsupported wrapped exception type: ${wrappedException::class.qualifiedName} ")
             }
@@ -83,15 +83,15 @@ class CustomKlibCompilerSecondStageTestSuppressor(
 
     private fun processException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
         if (testServices.versionAndTargetAreIgnored(ignoreDirective, defaultLanguageVersion))
-            return emptyList()
+            return []
 
         if (testServices.moduleStructure.modules.any {
                 it.files.any { file -> JsEnvironmentConfigurationDirectives.RECOMPILE in file.directives }
             }) {
             // Forward compatibility is not guaranteed for incremental caches, so these tests may fail during forward compatibility testing
-            return emptyList()
+            return []
         }
 
-        return listOf(wrappedException)
+        return [wrappedException]
     }
 }

@@ -110,7 +110,7 @@ val isWindows: Boolean
 
 fun String?.toBooleanLenient(): Boolean? = when (this?.lowercase()) {
     null -> false
-    in listOf("", "yes", "true", "on", "y") -> true
-    in listOf("no", "false", "off", "n") -> false
+    in ["", "yes", "true", "on", "y"] -> true
+    in ["no", "false", "off", "n"] -> false
     else -> null
 }

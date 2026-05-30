@@ -62,7 +62,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                             this[key] = exports.compactIfPossible()
                         }
                         else -> {
-                            this[key] = listOf(ExportedNamespace(key.packageFqName.asString(), exports.compactIfPossible()))
+                            this[key] = [ExportedNamespace(key.packageFqName.asString(), exports.compactIfPossible())]
                         }
                     }
                 }
@@ -73,14 +73,14 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
     context(_: KaSession)
     private fun exportTopLevelDeclaration(declaration: KaDeclarationSymbol): List<ExportedDeclaration> {
-        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration)) return emptyList()
+        if (!shouldDeclarationBeExportedImplicitlyOrExplicitly(declaration)) return []
 
         return when (declaration) {
             is KaNamedFunctionSymbol -> listOfNotNull(exportFunction(declaration, parent = null, classTypeParameterScope = emptyMap()))
             is KaPropertySymbol -> exportProperty(declaration, parent = null, classTypeParameterScope = emptyMap())
             is KaNamedClassSymbol -> listOfNotNull(exportClass(declaration, parent = null, outerClassTypeParameterScope = emptyMap()))
-            is KaTypeAliasSymbol -> listOf(ErrorDeclaration("Type alias declarations are not implemented yet"))
-            else -> emptyList()
+            is KaTypeAliasSymbol -> [ErrorDeclaration("Type alias declarations are not implemented yet")]
+            else -> []
         }
     }
 
@@ -184,7 +184,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     name = function.getJsSymbolForOverriddenDeclaration()?.let(ExportedMemberName::WellKnownSymbol)
                         ?: ExportedMemberName.Identifier(function.getExportedIdentifier()),
                     returnType = if (function.isSuspend) {
-                        ExportedType.ClassType(name = FqName("Promise"), arguments = listOf(returnType))
+                        ExportedType.ClassType(name = FqName("Promise"), arguments = [returnType])
                     } else {
                         returnType
                     },
@@ -235,7 +235,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val inlineClassesShouldBeUnboxed = constructedClass.isExternal
 
         val parameters = if (constructor.isPrimary && visibility == ExportedVisibility.PRIVATE) {
-            emptyList()
+            []
         } else {
             exportFunctionParameters(
                 constructor,
@@ -357,7 +357,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         // Frontend will report an error on an attempt to export an extension property.
         // Just to be safe, filter out such properties here as well.
         if (property.receiverType != null) {
-            return emptyList()
+            return []
         }
 
         val parentClass = parent as? KaClassSymbol
@@ -373,7 +373,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val typeParameters = if (parentClass != null && isExportedDefaultImplementation) {
             parentClass.typeParameters.memoryOptimizedMap { classTypeParameterScope[it]!! }
         } else {
-            emptyList()
+            []
         }
         if (customGetterName != null || customSetterName != null) {
             val isMember = parentClass != null && !isExportedDefaultImplementation
@@ -443,15 +443,15 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         val propertyType = when {
             !shouldBeExportedAsObjectWithAccessorsInside -> originalPropertyType
             isObjectGetter -> ExportedType.InlineInterfaceType(
-                listOf(
+                [
                     ExportedFunction(
                         name = ExportedMemberName.Identifier("getInstance"),
                         returnType = originalPropertyType,
-                        parameters = emptyList(),
+                        parameters = [],
                         isMember = true,
                         isProtected = false
                     ).withAttributes(property),
-                )
+                ]
             )
             else -> {
                 val thisParam = runIf(isExportedDefaultImplementation) {
@@ -489,7 +489,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
 
         val name = ExportedMemberName.Identifier(property.getExportedIdentifier())
         if (!isMember || parentClass.classKind == KaClassKind.INTERFACE) {
-            return listOf(
+            return [
                 ExportedField(
                     name = name,
                     type = propertyType,
@@ -501,7 +501,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                     isObjectGetter = isObjectGetter,
                     isOptional = isOptional,
                 ).withAttributes(property)
-            )
+            ]
         } else {
             val accessors: MutableList<ExportedDeclaration> = SmartList(
                 ExportedPropertyGetter(
@@ -546,7 +546,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
             type = ExportedType.LiteralType.NumberLiteralType(ordinal),
         )
 
-        val type = ExportedType.InlineInterfaceType(listOf(nameProperty, ordinalProperty))
+        val type = ExportedType.InlineInterfaceType([nameProperty, ordinalProperty])
 
         return ExportedPropertyGetter(
             name = ExportedMemberName.Identifier(entry.getExportedIdentifier()),
@@ -595,9 +595,9 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         superTypes: List<KaType>,
         typeParameterScope: TypeParameterScope,
     ): ExportedClassDeclarationsInfo {
-        val members = mutableListOf<ExportedDeclaration>()
-        val nestedClasses = mutableListOf<ExportedClass>()
-        val defaultImplementations = mutableListOf<ExportedDeclaration>()
+        val members: MutableList<ExportedDeclaration> = []
+        val nestedClasses: MutableList<ExportedClass> = []
+        val defaultImplementations: MutableList<ExportedDeclaration> = []
         val isImplicitlyExportedClass = klass.isJsImplicitExport()
         val isCompanionObject = klass.classKind == KaClassKind.COMPANION_OBJECT
 
@@ -742,7 +742,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
     private fun exportEnumSpecificMembers(enumClass: KaNamedClassSymbol, members: MutableList<ExportedDeclaration>) {
         members.add(
             ExportedConstructor(
-                parameters = emptyList(),
+                parameters = [],
                 visibility = ExportedVisibility.PRIVATE
             )
         )
@@ -760,12 +760,12 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                         ExportedType.TypeOf(
                             ExportedType.ClassType(
                                 name = it.getExportedFqName(config.generateNamespacesForPackages, config),
-                                arguments = emptyList(),
+                                arguments = [],
                             )
                         )
                     }
                 ),
-                parameters = emptyList(),
+                parameters = [],
                 isMember = true,
                 isStatic = true,
                 isProtected = false,
@@ -779,7 +779,7 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 } else {
                     exportType(enumClass.defaultType, emptyMap())
                 },
-                parameters = listOf(ExportedParameter("value", ExportedType.Primitive.String)),
+                parameters = [ExportedParameter("value", ExportedType.Primitive.String)],
                 isMember = true,
                 isStatic = true,
                 isProtected = false,

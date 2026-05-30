@@ -35,7 +35,7 @@ interface ESReceiver : ESValue {
 
 
 abstract class AbstractESValue(override val type: ESType?) : ESValue {
-    override val effects: List<ESEffect> = listOf()
+    override val effects: List<ESEffect> = []
 }
 
 

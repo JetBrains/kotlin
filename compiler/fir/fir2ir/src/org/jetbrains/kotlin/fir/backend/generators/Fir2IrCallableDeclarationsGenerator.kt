@@ -911,9 +911,9 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         IrScriptImpl(symbol, script.name, IrFactoryImpl, startOffset, endOffset).also { irScript ->
             irScript.origin = SCRIPT_K2_ORIGIN
             irScript.metadata = FirMetadataSource.Script(script)
-            irScript.implicitReceiversParameters = emptyList()
-            irScript.providedProperties = emptyList()
-            irScript.providedPropertiesParameters = emptyList()
+            irScript.implicitReceiversParameters = []
+            irScript.providedProperties = []
+            irScript.providedPropertiesParameters = []
         }
     }
 

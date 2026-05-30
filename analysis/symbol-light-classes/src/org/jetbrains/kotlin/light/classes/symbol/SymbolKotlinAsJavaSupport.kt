@@ -242,7 +242,7 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
 
     override fun getKotlinInternalClasses(fqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         val facadeKtFiles = project.createDeclarationProvider(scope, null).findInternalFilesForFacade(fqName)
-        if (facadeKtFiles.isEmpty()) return emptyList()
+        if (facadeKtFiles.isEmpty()) return []
 
         val partShortName = fqName.shortName().asString()
         val partClassFileShortName = "$partShortName.class"
@@ -463,8 +463,8 @@ internal class SymbolKotlinAsJavaSupport(project: Project) : KotlinAsJavaSupport
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
         var currentName = shortNameOrSpecial()
-        if (currentName.isSpecial) return emptySequence()
-        var currentParent = parentOrNull() ?: return emptySequence()
+        if (currentName.isSpecial) return []
+        var currentParent = parentOrNull() ?: return []
         var currentRelativeName = currentName.asString()
 
         return sequence {

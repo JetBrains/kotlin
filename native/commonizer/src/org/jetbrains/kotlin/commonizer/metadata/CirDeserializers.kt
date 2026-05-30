@@ -80,7 +80,7 @@ object CirDeserializers {
         receiverParameterType: KmType,
         typeResolver: CirTypeResolver
     ): CirExtensionReceiver = CirExtensionReceiver(
-        annotations = emptyList(), // TODO nowhere to read receiver annotations from, see KT-42490
+        annotations = [], // TODO nowhere to read receiver annotations from, see KT-42490
         type = type(receiverParameterType, typeResolver)
     )
 
@@ -108,8 +108,8 @@ object CirDeserializers {
             isDelegate = source.isDelegated,
             getter = propertyGetter(source, typeResolver),
             setter = propertySetter(source, typeResolver),
-            backingFieldAnnotations = emptyList(), // TODO unclear where to read backing/delegate field annotations from, see KT-44625
-            delegateFieldAnnotations = emptyList(), // TODO unclear where to read backing/delegate field annotations from, see KT-44625
+            backingFieldAnnotations = [], // TODO unclear where to read backing/delegate field annotations from, see KT-44625
+            delegateFieldAnnotations = [], // TODO unclear where to read backing/delegate field annotations from, see KT-44625
             compileTimeInitializer = compileTimeInitializer
         )
     }
@@ -258,15 +258,15 @@ object CirDeserializers {
     ): CirClass = CirClass.create(
         annotations = annotations.compactMap { annotation(it, typeResolver) },
         name = name,
-        typeParameters = emptyList(),
-        supertypes = listOf(
+        typeParameters = [],
+        supertypes = [
             CirClassType.createInterned(
                 classId = enumClassId,
                 outerType = null,
-                arguments = emptyList(),
+                arguments = [],
                 isMarkedNullable = false
             )
-        ),
+        ],
         visibility = Visibilities.Public,
         modality = Modality.FINAL,
         kind = ClassKind.ENUM_ENTRY,
@@ -292,7 +292,7 @@ object CirDeserializers {
     fun constructor(source: KmConstructor, containingClass: CirContainingClass, typeResolver: CirTypeResolver): CirClassConstructor =
         CirClassConstructor.create(
             annotations = annotations(source.annotations, typeResolver),
-            typeParameters = emptyList(), // TODO: nowhere to read constructor type parameters from
+            typeParameters = [], // TODO: nowhere to read constructor type parameters from
             visibility = visibility(source.visibility),
             containingClass = containingClass,
             valueParameters = source.valueParameters.compactMap { valueParameter(it, typeResolver) },

@@ -44,8 +44,8 @@ class PropertyCommonizer(
             isDelegate = false,
             getter = CirPropertyGetter.DEFAULT_NO_ANNOTATIONS,
             setter = setter,
-            backingFieldAnnotations = emptyList(),
-            delegateFieldAnnotations = emptyList(),
+            backingFieldAnnotations = [],
+            delegateFieldAnnotations = [],
             compileTimeInitializer = constCompileTimeInitializer ?: CirConstantValue.NullValue
         )
     }

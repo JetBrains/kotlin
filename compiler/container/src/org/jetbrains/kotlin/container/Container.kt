@@ -125,11 +125,11 @@ class StorageComponentContainer(
 }
 
 fun StorageComponentContainer.registerSingleton(klass: Class<*>): StorageComponentContainer {
-    return registerDescriptors(listOf(SingletonTypeComponentDescriptor(this, klass)))
+    return registerDescriptors([SingletonTypeComponentDescriptor(this, klass)])
 }
 
 fun StorageComponentContainer.registerInstance(instance: Any): StorageComponentContainer {
-    return registerDescriptors(listOf(InstanceComponentDescriptor(instance)))
+    return registerDescriptors([InstanceComponentDescriptor(instance)])
 }
 
 inline fun <reified T : Any> StorageComponentContainer.resolve(context: ValueResolveContext = unknownContext): ValueDescriptor? {

@@ -60,7 +60,7 @@ class SourceToOutputFilesMapTest {
 
     @Test
     fun testSetOneGetReturnsOne() {
-        stofMap[fooDotKt] = setOf(fooDotClass)
+        stofMap[fooDotKt] = [fooDotClass]
 
         assertEquals(setOf(fooDotClass), stofMap[fooDotKt])
     }
@@ -76,8 +76,8 @@ class SourceToOutputFilesMapTest {
     @Test
     fun testSetOverwriteGetReturnsNew() {
         val fooKtDotClass = classesDir.resolve("FooKt.class")
-        stofMap[fooDotKt] = setOf(fooDotClass)
-        stofMap[fooDotKt] = setOf(fooKtDotClass)
+        stofMap[fooDotKt] = [fooDotClass]
+        stofMap[fooDotKt] = [fooKtDotClass]
 
         assertEquals(setOf(fooKtDotClass), stofMap[fooDotKt])
     }
@@ -85,16 +85,16 @@ class SourceToOutputFilesMapTest {
     @Test
     fun testSetRelativePathFails() {
         assertFailsWith<IllegalStateException> {
-            stofMap[fooDotKt] = setOf(File("relativePath"))
+            stofMap[fooDotKt] = [File("relativePath")]
         }
         assertFailsWith<IllegalStateException> {
-            stofMap[File("relativePath")] = setOf(fooDotClass)
+            stofMap[File("relativePath")] = [fooDotClass]
         }
     }
 
     @Test
     fun testGetRelativePathFails() {
-        stofMap[fooDotKt] = setOf(fooDotClass)
+        stofMap[fooDotKt] = [fooDotClass]
 
         assertFailsWith<IllegalStateException> {
             stofMap[File("relativePath")]
@@ -103,7 +103,7 @@ class SourceToOutputFilesMapTest {
 
     @Test
     fun testGetAndRemove() {
-        stofMap[fooDotKt] = setOf(fooDotClass)
+        stofMap[fooDotKt] = [fooDotClass]
 
         assertEquals(setOf(fooDotClass), stofMap.getAndRemove(fooDotKt))
         assertNull(stofMap[fooDotKt])

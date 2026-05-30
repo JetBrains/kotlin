@@ -345,16 +345,16 @@ open class CommonizerIT : KGPBaseTest() {
             }
         }
         project.resolveIdeDependencies {
-            val linuxMatchers = arrayOf(
+            val linuxMatchers: Array<IdeaKotlinDependencyMatcher> = [
                 nativeStdlibDependency,
                 IdeaKotlinDependencyMatcher("Platform cinterops matcher") {
                     (it is IdeaKotlinResolvedBinaryDependency)
                             && it.isNativeDistribution
                             && it.klibExtra?.commonizerTarget == null
                             && it.klibExtra?.isInterop == true
-                            && it.klibExtra?.nativeTargets == listOf(LINUX_ARM64.name)
+                            && it.klibExtra?.nativeTargets == [LINUX_ARM64.name]
                 }
-            )
+            ]
             it["commonMain"].assertMatches(
                 kotlinStdlibDependencies,
             )
@@ -933,7 +933,7 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             val testSourceSetsDependingOnMainParameterOption = defaultBuildOptions.copy(
-                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain")
+                freeArgs = ["-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain"]
             )
 
             reportSourceSetCommonizerDependencies(options = testSourceSetsDependingOnMainParameterOption) {

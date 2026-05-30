@@ -20,7 +20,7 @@ class LineProgram(private val encoding: Dwarf.Encoding, private val lineEncoding
     private val directories = DirectoryTable()
 
     private var previousRow = DEFAULT_ROW
-    private val instructions = mutableListOf<LineInstruction>()
+    private val instructions: MutableList<LineInstruction> = []
 
     data class LineRow(
         val file: FileId,
@@ -105,7 +105,7 @@ class LineProgram(private val encoding: Dwarf.Encoding, private val lineEncoding
                 writeByte(lineEncoding.lineBase)
                 writeUByte(lineEncoding.lineRange)
                 writeUByte(OPCODE_BASE)
-                writeBytes(byteArrayOf(0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1))
+                writeBytes([0, 1, 1, 1, 1, 0, 0, 0, 1, 0, 0, 1])
 
                 // Directory entry formats (only ever 1).
                 writeUByte(1u)

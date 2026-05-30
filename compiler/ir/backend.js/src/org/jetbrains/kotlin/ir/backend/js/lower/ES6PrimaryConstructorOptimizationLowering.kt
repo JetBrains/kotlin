@@ -54,7 +54,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             irClass.defaultConstructorForReflection = constructorReplacement
         }
 
-        return listOf(constructorReplacement)
+        return [constructorReplacement]
     }
 
     private fun IrFunction.convertToRegularConstructor(irClass: IrClass): IrConstructor {

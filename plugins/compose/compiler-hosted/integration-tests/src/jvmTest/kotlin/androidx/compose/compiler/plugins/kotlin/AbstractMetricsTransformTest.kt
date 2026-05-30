@@ -29,7 +29,7 @@ abstract class AbstractMetricsTransformTest : AbstractIrTransformTest() {
         source: String,
         verify: ModuleMetrics.() -> Unit,
     ) {
-        val files = listOf(SourceFile("Test.kt", source))
+        val files = [SourceFile("Test.kt", source)]
         lateinit var extension: ComposeIrGenerationExtension
         compileToIr(
             files,

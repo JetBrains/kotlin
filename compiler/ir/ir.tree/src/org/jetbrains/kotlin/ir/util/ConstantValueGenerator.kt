@@ -223,7 +223,7 @@ abstract class ConstantValueGenerator(
         // In that case, wrap it into an array manually. Ideally, this should be fixed in the code which loads Java annotation arguments,
         // but it would require resolving the annotation class on each request of an annotation argument.
         if (KotlinBuiltIns.isArrayOrPrimitiveArray(parameter.type) && value !is ArrayValue) {
-            return ArrayValue(listOf(value)) { parameter.type }
+            return ArrayValue([value]) { parameter.type }
         }
         return value
     }

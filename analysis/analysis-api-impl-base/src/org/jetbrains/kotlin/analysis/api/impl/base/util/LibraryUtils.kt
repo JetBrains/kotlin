@@ -76,7 +76,7 @@ object LibraryUtils {
         root: VirtualFile,
         includeRoot: Boolean,
     ): Collection<VirtualFile> {
-        val files = mutableSetOf<VirtualFile>()
+        val files: MutableSet<VirtualFile> = []
         if (includeRoot) {
             files.add(root)
         }

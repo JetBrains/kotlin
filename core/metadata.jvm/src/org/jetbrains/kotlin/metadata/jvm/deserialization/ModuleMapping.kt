@@ -147,8 +147,8 @@ class ModuleMapping private constructor(
 
         private fun emptyBinaryData(): BinaryModuleData =
             BinaryModuleData(
-                emptyList(),
-                emptyList(),
+                [],
+                [],
                 NameResolverImpl(ProtoBuf.StringTable.getDefaultInstance(), ProtoBuf.QualifiedNameTable.getDefaultInstance())
             )
     }
@@ -223,7 +223,7 @@ class PackageParts(val packageFqName: String) {
         facadeNameToId: MutableMap<String, Int>,
         packageTableBuilder: JvmModuleProtoBuf.Module.Builder
     ) {
-        val packageIds = mutableListOf<Int>()
+        val packageIds: MutableList<Int> = []
         for ([packageInternalName, partsInPackage] in parts.groupBy { it.packageName }.toSortedMap()) {
             val packageFqName = packageInternalName.replace('/', '.')
             if (packageFqName !in packageTableBuilder.jvmPackageNameList) {

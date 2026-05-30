@@ -187,9 +187,9 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
 
     override fun getElementValue(element: KtElement?) = elementsToValues[element]
 
-    override fun getValueElements(value: PseudoValue?): List<KtElement> = elementsToValues.getKeysByValue(value) ?: emptyList()
+    override fun getValueElements(value: PseudoValue?): List<KtElement> = elementsToValues.getKeysByValue(value) ?: []
 
-    override fun getUsages(value: PseudoValue?) = valueUsages[value] ?: mutableListOf()
+    override fun getUsages(value: PseudoValue?): MutableList<Instruction> = valueUsages[value] ?: []
 
     override fun isSideEffectFree(instruction: Instruction) = sideEffectFree.contains(instruction)
 
@@ -206,7 +206,7 @@ class PseudocodeImpl(override val correspondingElement: KtElement, override val 
         label.targetInstructionIndex = mutableInstructionList.size
     }
 
-    private fun getMergedValues(value: PseudoValue) = mergedValues[value] ?: emptySet()
+    private fun getMergedValues(value: PseudoValue) = mergedValues[value] ?: []
 
     private fun addMergedValues(instruction: MergeInstruction) {
         val result = LinkedHashSet<PseudoValue>()

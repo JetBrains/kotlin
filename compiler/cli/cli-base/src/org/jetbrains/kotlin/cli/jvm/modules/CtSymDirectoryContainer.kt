@@ -24,8 +24,8 @@ class CtSymDirectoryContainer(
     private val _isValid by lazy { rootOrPackageParts.all { it.isValid } }
 
     private val _children by lazy {
-        val children = rootOrPackageParts.flatMap { it.children?.toList() ?: emptyList() }
-        if (children.isEmpty()) return@lazy emptyArray()
+        val children = rootOrPackageParts.flatMap { it.children?.toList() ?: [] }
+        if (children.isEmpty()) return@lazy []
 
         val isExported = skipPackageCheck || packages.getOrDefault(currentPackage, false)
         val containers = mutableMapOf<String, Pair<CtSymDirectoryContainer, MutableList<VirtualFile>>>()
@@ -36,7 +36,7 @@ class CtSymDirectoryContainer(
                     var addingEntry: CtSymDirectoryContainer? = null
                     if (skipPackageCheck || packages.contains(childPackage)) {
                         containers.getOrPut(childPackage) {
-                            val list = mutableListOf<VirtualFile>()
+                            val list: MutableList<VirtualFile> = []
                             CtSymDirectoryContainer(
                                 this,
                                 list,

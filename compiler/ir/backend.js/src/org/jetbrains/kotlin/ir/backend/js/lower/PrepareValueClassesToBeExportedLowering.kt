@@ -100,7 +100,7 @@ class PrepareValueClassesToBeExportedLowering(private val context: JsIrBackendCo
         val boxFunction = declaration.generateBoxFunction()
             .also(declaration::exportedValueClassBoxFunction::set)
 
-        return listOf(boxFunction, declaration)
+        return [boxFunction, declaration]
     }
 
     private fun IrClass.generateBoxFunction(): IrSimpleFunction {
@@ -121,7 +121,7 @@ class PrepareValueClassesToBeExportedLowering(private val context: JsIrBackendCo
                     val valueParameter = boxFunction.parameters.single { it.kind == IrParameterKind.Regular }
                     val boxedType = boxFunction.returnType
                     val boxed = irTemporary(
-                        irCall(jsObjectCreateSymbol, boxedType, listOf(boxedType)),
+                        irCall(jsObjectCreateSymbol, boxedType, [boxedType]),
                         "box_container"
                     )
 
@@ -224,7 +224,7 @@ class AutoboxingForExportedValueClassesForExternalsLowering(private val jsContex
         }
 
     private fun IrExpression.autoboxCall(valueClassType: IrType, autoboxIntrinsic: IrSimpleFunctionSymbol) =
-        JsIrBuilder.buildCall(autoboxIntrinsic, valueClassType, typeArguments = listOf(valueClassType, valueClassType))
+        JsIrBuilder.buildCall(autoboxIntrinsic, valueClassType, typeArguments = [valueClassType, valueClassType])
             .also { it.arguments[0] = this }
 
     private inline fun IrExpression.whenExpectAnExportedValueClass(expectedType: IrType, process: () -> IrExpression): IrExpression =

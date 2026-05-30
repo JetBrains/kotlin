@@ -67,7 +67,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol {
-            val result = mutableListOf<PsiMethod>()
+            val result: MutableList<PsiMethod> = []
             val declaredMemberScope = it.declaredMemberScope
 
             createMethods(this@SymbolLightClassForAnonymousObject, declaredMemberScope.callables, result)
@@ -77,7 +77,7 @@ internal class SymbolLightClassForAnonymousObject : SymbolLightClassForClassLike
     }
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
-        val result = mutableListOf<PsiField>()
+        val result: MutableList<PsiField> = []
         val nameGenerator = SymbolLightField.FieldNameGenerator()
 
         withClassSymbol {

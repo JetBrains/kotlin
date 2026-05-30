@@ -14,7 +14,7 @@ class SelectInputTargetsTest {
 
     @Test
     fun `missing leaf targets`() {
-        val inputTargets = setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"))
+        val inputTargets: Set<LeafCommonizerTarget> = [LeafCommonizerTarget("a"), LeafCommonizerTarget("b")]
 
         val exception = assertFailsWith<IllegalArgumentException> {
             selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
@@ -33,40 +33,40 @@ class SelectInputTargetsTest {
 
     @Test
     fun `sample 0`() {
-        val inputTargets = setOf(
+        val inputTargets: Set<CommonizerTarget> = [
             LeafCommonizerTarget("a"),
             LeafCommonizerTarget("b"),
             LeafCommonizerTarget("c"),
             LeafCommonizerTarget("d"),
             SharedCommonizerTarget(LeafCommonizerTarget("c"), LeafCommonizerTarget("d"))
-        )
+        ]
 
         assertEquals(
-            setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b")),
+            [LeafCommonizerTarget("a"), LeafCommonizerTarget("b")],
             selectInputTargets(inputTargets, parseCommonizerTarget("(a, b)") as SharedCommonizerTarget)
         )
 
         assertEquals(
-            setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), LeafCommonizerTarget("c")),
+            [LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), LeafCommonizerTarget("c")],
             selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c)") as SharedCommonizerTarget)
         )
 
         assertEquals(
-            setOf(LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), parseCommonizerTarget("(c, d)")),
+            [LeafCommonizerTarget("a"), LeafCommonizerTarget("b"), parseCommonizerTarget("(c, d)")],
             selectInputTargets(inputTargets, parseCommonizerTarget("(a, b, c, d)") as SharedCommonizerTarget)
         )
     }
 
     @Test
     fun `sample 1`() {
-        val inputTargets = setOf(
+        val inputTargets: Set<CommonizerTarget> = [
             parseCommonizerTarget("(a, b)"),
             parseCommonizerTarget("(a, b, c)"),
             parseCommonizerTarget("(a, b, c, d)"),
             parseCommonizerTarget("(c, d)"),
             parseCommonizerTarget("(c, d, e)"),
             parseCommonizerTarget("f")
-        )
+        ]
 
         assertEquals(
             setOf("(a, b, c, d)", "f").map(::parseCommonizerTarget).toSet(),
@@ -87,23 +87,23 @@ class SelectInputTargetsTest {
     @Test
     fun `empty outputTarget`() {
         assertEquals(
-            emptySet(),
-            selectInputTargets(emptySet(), parseCommonizerTarget("()") as SharedCommonizerTarget)
+            [],
+            selectInputTargets([], parseCommonizerTarget("()") as SharedCommonizerTarget)
         )
     }
 
     @Test
     fun `single leaf outputTarget`() {
         assertEquals(
-            setOf(LeafCommonizerTarget("a")),
-            selectInputTargets(setOf(LeafCommonizerTarget("a")), parseCommonizerTarget("(a)") as SharedCommonizerTarget)
+            [LeafCommonizerTarget("a")],
+            selectInputTargets([LeafCommonizerTarget("a")], parseCommonizerTarget("(a)") as SharedCommonizerTarget)
         )
     }
 
     @Test
     fun `exact output available`() {
         assertEquals(
-            setOf(parseCommonizerTarget("(a, b)"), parseCommonizerTarget("(c, d)")),
+            [parseCommonizerTarget("(a, b)"), parseCommonizerTarget("(c, d)")],
             selectInputTargets(
                 setOf("a", "b", "c", "d", "(a, b)", "(c, d)", "(a, b, c, d)").map(::parseCommonizerTarget).toSet(),
                 parseCommonizerTarget("(a, b, c, d)") as SharedCommonizerTarget

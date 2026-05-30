@@ -76,7 +76,7 @@ internal class JvmDefaultParameterInjector(context: JvmBackendContext) : Default
                     expression.endOffset,
                     targetParameterType,
                     IrStatementOrigin.DEFAULT_VALUE,
-                    listOf(nullConst(startOffset, endOffset, targetParameterType))
+                    [nullConst(startOffset, endOffset, targetParameterType)]
                 )
             }
 

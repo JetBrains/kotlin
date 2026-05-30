@@ -130,7 +130,7 @@ class ResolutionParameters(
     /** THIS IS UNSAFE TO PASS ORIGINAL ARGUMENTS. THEY HAVE TO BE COPIED TO AVOID MUTABILITY ISSUES */
     val argumentList: FirArgumentList = FirEmptyArgumentList,
     val callableReferenceLhsAsType: CallableReferenceLhsAsType? = null,
-    val typeArgumentList: List<FirTypeProjection> = emptyList(),
+    val typeArgumentList: List<FirTypeProjection> = [],
     val allowUnsafeCall: Boolean = false,
     val allowUnstableSmartCast: Boolean = false,
 )

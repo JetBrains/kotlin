@@ -91,7 +91,7 @@ class MemoryOptimizationsTest : KtUsefulTestCase() {
         val memberScope =
             aClass.getMemberScope(
                 TypeConstructorSubstitution.create(
-                    aClass.typeConstructor, listOf(moduleDescriptor.builtIns.stringType.asTypeProjection())
+                    aClass.typeConstructor, [moduleDescriptor.builtIns.stringType.asTypeProjection()]
                 )
             )
 

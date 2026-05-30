@@ -15,11 +15,11 @@ interface TreeNode<T> {
     companion object {
         fun <T> oneLevel(vararg items: T) = oneLevel(listOf(*items))
 
-        fun <T> oneLevel(items: Iterable<T>): List<TreeNode<T>> = listOf(object : TreeNode<T> {
+        fun <T> oneLevel(items: Iterable<T>): List<TreeNode<T>> = [object : TreeNode<T> {
             override val packageSegment get() = PackageName.EMPTY
             override val items = items.toList()
-            override val children get() = emptyList<TreeNode<T>>()
-        })
+            override val children: List<TreeNode<T>> get() = []
+        }]
     }
 }
 
@@ -39,7 +39,7 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageNa
     groupedItems.forEach { [packageName, items] ->
         var node = root
         packageName.segments.forEach { packageSegment ->
-            val packageSegmentAsName = PackageName(listOf(packageSegment))
+            val packageSegmentAsName = PackageName([packageSegment])
             node = node.childrenMap.computeIfAbsent(packageSegmentAsName) { TreeBuilder(packageSegmentAsName) }
         }
         node.items += items
@@ -50,13 +50,13 @@ internal fun <T, R> Collection<T>.buildTree(extractPackageName: (T) -> PackageNa
 
     // Compress the resulting tree.
     return if (meaningfulNode.items.isNotEmpty() || meaningfulNode.childrenMap.isEmpty())
-        listOf(meaningfulNode)
+        [meaningfulNode]
     else
         meaningfulNode.childrenMap.values
 }
 
 private class TreeBuilder<T>(override var packageSegment: PackageName) : TreeNode<T> {
-    override val items = mutableListOf<T>()
+    override val items: MutableList<T> = []
     val childrenMap = hashMapOf<PackageName, TreeBuilder<T>>()
     override val children: Collection<TreeBuilder<T>> get() = childrenMap.values
 }

@@ -144,7 +144,7 @@ public class PropertyBuildingContext(
                     session.moduleData,
                     key.origin,
                     source = null,
-                    mutableListOf(),
+                    [],
                     returnTypeRef,
                     isVar,
                     symbol,

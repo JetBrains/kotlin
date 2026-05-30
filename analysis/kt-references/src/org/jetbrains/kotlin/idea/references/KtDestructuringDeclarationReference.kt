@@ -24,7 +24,7 @@ abstract class KtDestructuringDeclarationReference(
 
     override val resolvesByNames: Collection<Name>
         get() {
-            val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return emptyList()
+            val destructuringParent = element.parent as? KtDestructuringDeclaration ?: return []
             val componentIndex = destructuringParent.entries.indexOf(element) + 1
             return listOfNotNull(
                 element.nameAsName,

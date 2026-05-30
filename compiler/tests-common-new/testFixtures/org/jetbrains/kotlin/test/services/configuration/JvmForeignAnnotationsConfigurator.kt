@@ -41,7 +41,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(ForeignAnnotationsDirectives)
+        get() = [ForeignAnnotationsDirectives]
 
     override fun provideAdditionalAnalysisFlags(
         directives: RegisteredDirectives,
@@ -96,7 +96,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
             useJava11 = useJava11ToCompileIncludedJavaFiles
         )
         configuration.addModularRootIfNotNull(useJava11ToCompileIncludedJavaFiles, "java9_annotations", foreignAnnotationsJar)
-        testServices.register(AdditionalClassPathForJavaCompilationOrAnalysis::class, AdditionalClassPathForJavaCompilationOrAnalysis(listOf(jsr305JarFile.absolutePath)))
+        testServices.register(AdditionalClassPathForJavaCompilationOrAnalysis::class, AdditionalClassPathForJavaCompilationOrAnalysis([jsr305JarFile.absolutePath]))
         configuration.addJvmClasspathRoot(testServices.standardLibrariesPathProvider.jvmAnnotationsForTests())
 
         if (JvmEnvironmentConfigurationDirectives.WITH_JSR305_TEST_ANNOTATIONS in registeredDirectives) {

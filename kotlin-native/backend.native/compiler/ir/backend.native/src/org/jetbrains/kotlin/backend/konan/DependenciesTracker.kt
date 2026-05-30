@@ -80,10 +80,10 @@ internal class DependenciesTrackerImpl(
 ) : DependenciesTracker {
     private data class LibraryFile(val library: KotlinLibrary, val fqName: String, val filePath: String)
 
-    private val usedBitcode = mutableSetOf<KotlinLibrary>()
-    private val usedNativeDependencies = mutableSetOf<KotlinLibrary>()
-    private val usedBitcodeOfFile = mutableSetOf<LibraryFile>()
-    private val usedWeakBitcodeOfFile = mutableSetOf<LibraryFile>()
+    private val usedBitcode: MutableSet<KotlinLibrary> = []
+    private val usedNativeDependencies: MutableSet<KotlinLibrary> = []
+    private val usedBitcodeOfFile: MutableSet<LibraryFile> = []
+    private val usedWeakBitcodeOfFile: MutableSet<LibraryFile> = []
 
     private val allLibraries by lazy { context.config.librariesWithDependencies().toSet() }
 
@@ -178,7 +178,7 @@ internal class DependenciesTrackerImpl(
         private val allLibraries = topSortedLibraries.associateBy { it.uniqueName }
         private val usedBitcode = usedBitcode().groupBy { it.file.library }
 
-        private val moduleDependencies = mutableSetOf<KotlinLibrary>()
+        private val moduleDependencies: MutableSet<KotlinLibrary> = []
         private val fileDependencies = mutableMapOf<KotlinLibrary, MutableSet<DependenciesTracker.FileDependency>>()
 
         val allDependencies: List<DependenciesTracker.ResolvedDependency>
@@ -216,7 +216,7 @@ internal class DependenciesTrackerImpl(
                         moduleDependencies.add(library)
                         addAllDependencies(cache)
                     } else {
-                        fileDependencies.getOrPut(library) { mutableSetOf() }.addAll(filesUsed)
+                        fileDependencies.getOrPut(library) { [] }.addAll(filesUsed)
                         addDependencies(cache, filesUsed)
                     }
                 }
@@ -265,7 +265,7 @@ internal class DependenciesTrackerImpl(
                     addAllDependencies(cachedDependency)
                 }
                 is DependenciesTracker.DependencyKind.CertainFiles -> {
-                    val handledFiles = fileDependencies.getOrPut(library) { mutableSetOf() }
+                    val handledFiles = fileDependencies.getOrPut(library) { [] }
                     val notHandledFiles = kind.files.toMutableSet()
                     notHandledFiles.removeAll(handledFiles)
                     handledFiles.addAll(notHandledFiles)
@@ -279,8 +279,8 @@ internal class DependenciesTrackerImpl(
     private inner class Dependencies {
         val immediateBitcodeDependencies = run {
             val usedBitcode = usedBitcode().groupBy { it.file.library }
-            val bitcodeModuleDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
-            val bitcodeFileDependencies = mutableListOf<DependenciesTracker.ResolvedDependency>()
+            val bitcodeModuleDependencies: MutableList<DependenciesTracker.ResolvedDependency> = []
+            val bitcodeFileDependencies: MutableList<DependenciesTracker.ResolvedDependency> = []
             val libraryToCache = config.cacheSupport.libraryToCache
             val strategy = libraryToCache?.strategy as? CacheDeserializationStrategy.SingleFile
             topSortedLibraries.forEach { library ->
@@ -364,7 +364,7 @@ internal object DependenciesSerializer {
             dependencies.flatMap { (library, kind) ->
                 val libName = library.uniqueName
                 when (kind) {
-                    DependenciesTracker.DependencyKind.WholeModule -> listOf("$libName$DEPENDENCIES_DELIMITER")
+                    DependenciesTracker.DependencyKind.WholeModule -> ["$libName$DEPENDENCIES_DELIMITER"]
                     is DependenciesTracker.DependencyKind.CertainFiles -> kind.files.map { (name, weak) ->
                         if (weak)
                             "$libName$DEPENDENCIES_DELIMITER$name$DEPENDENCY_KIND_DELIMITER$DEPENDENCY_WEAK"
@@ -375,7 +375,7 @@ internal object DependenciesSerializer {
             }
 
     fun deserialize(path: String, dependencies: List<String>): List<DependenciesTracker.UnresolvedDependency> {
-        val wholeModuleDependencies = mutableListOf<String>()
+        val wholeModuleDependencies: MutableList<String> = []
         val fileDependencies = mutableMapOf<String, MutableList<DependenciesTracker.FileDependency>>()
         for (dependency in dependencies) {
             // <lib>| or <lib>|<file> or <lib>|<file>@weak
@@ -388,7 +388,7 @@ internal object DependenciesSerializer {
             else {
                 val kindDelimiterIndex = file.lastIndexOf(DEPENDENCY_KIND_DELIMITER)
                 if (kindDelimiterIndex < 0)
-                    fileDependencies.getOrPut(libName) { mutableListOf() }.add(DependenciesTracker.FileDependency(file, weak = false))
+                    fileDependencies.getOrPut(libName) { [] }.add(DependenciesTracker.FileDependency(file, weak = false))
                 else {
                     val fileName = file.substring(0, kindDelimiterIndex)
                     val kind = file.substring(kindDelimiterIndex + 1, file.length).toLowerCaseAsciiOnly()
@@ -396,7 +396,7 @@ internal object DependenciesSerializer {
                         DEPENDENCY_WEAK -> true
                         else -> error("Unexpected dependency kind $kind at $path for $dependency")
                     }
-                    fileDependencies.getOrPut(libName) { mutableListOf() }.add(DependenciesTracker.FileDependency(fileName, weak))
+                    fileDependencies.getOrPut(libName) { [] }.add(DependenciesTracker.FileDependency(fileName, weak))
                 }
             }
         }
@@ -424,11 +424,12 @@ data class DependenciesTrackingResult(
         private const val ALL_NATIVE_DEPENDENCIES = "ALL_NATIVE_DEPENDENCIES"
         private const val ALL_CACHED_BITCODE_DEPENDENCIES = "ALL_CACHED_BITCODE_DEPENDENCIES"
 
+        @Suppress("ConvertToCollectionLiterals")
         fun serialize(res: DependenciesTrackingResult): List<String> {
             val nativeDepsToLink = DependenciesSerializer.serialize(res.nativeDependenciesToLink.map { DependenciesTracker.ResolvedDependency.wholeModule(it) })
             val allNativeDeps = DependenciesSerializer.serialize(res.allNativeDependencies.map { DependenciesTracker.ResolvedDependency.wholeModule(it) })
             val allCachedBitcodeDeps = DependenciesSerializer.serialize(res.allCachedBitcodeDependencies)
-            return listOf(NATIVE_DEPENDENCIES_TO_LINK) + nativeDepsToLink +
+            return [NATIVE_DEPENDENCIES_TO_LINK] + nativeDepsToLink +
                     listOf(ALL_NATIVE_DEPENDENCIES) + allNativeDeps +
                     listOf(ALL_CACHED_BITCODE_DEPENDENCIES) + allCachedBitcodeDeps
         }

@@ -127,7 +127,7 @@ class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsColl
 
     class RawStatsHeader(private val targetNames: List<String>) : StatsHeader {
         override fun toList() =
-            listOf("ID", "Extension Receiver", "Parameter Names", "Parameter Types", "Declaration Type", "common") + targetNames
+            ["ID", "Extension Receiver", "Parameter Names", "Parameter Types", "Declaration Type", "common"] + targetNames
     }
 
     class RawStatsRow(
@@ -136,14 +136,14 @@ class RawStatsCollector(private val targets: List<CommonizerTarget>) : StatsColl
         val platform: List<PlatformDeclarationStatus>
     ) : StatsRow {
         override fun toList(): List<String> {
-            val result = mutableListOf(
+            val result: MutableList<String> = [
                 statsKey.id,
                 statsKey.extensionReceiver.orEmpty(),
                 statsKey.parameterNames.joinToString(),
                 statsKey.parameterTypes.joinToString(),
                 statsKey.declarationType.alias,
                 common.alias.toString()
-            )
+            ]
 
             platform.mapTo(result) { it.alias.toString() }
 

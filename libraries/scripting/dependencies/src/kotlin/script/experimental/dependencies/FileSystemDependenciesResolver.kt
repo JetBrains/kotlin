@@ -42,7 +42,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
     ): ResultWithDiagnostics<List<File>> {
         if (!acceptsArtifact(artifactCoordinates)) throw IllegalArgumentException("Path is invalid")
 
-        val messages = mutableListOf<String>()
+        val messages: MutableList<String> = []
 
         for (repo in localRepos) {
             // TODO: add coordinates and wildcard matching
@@ -50,7 +50,7 @@ class FileSystemDependenciesResolver(vararg paths: File) : ExternalDependenciesR
             when {
                 !file.exists() -> messages.add("File '$file' not found")
                 !file.isFile && !file.isDirectory -> messages.add("Path '$file' is neither file nor directory")
-                else -> return ResultWithDiagnostics.Success(listOf(file))
+                else -> return ResultWithDiagnostics.Success([file])
             }
         }
         return makeResolveFailureResult(messages, sourceCodeLocation)

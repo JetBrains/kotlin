@@ -64,13 +64,13 @@ import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 
 open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
+        get() = [
             service(::FirModuleInfoProvider),
             service(::FirDiagnosticCollectorService),
-        )
+        ]
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun shouldTransform(module: TestModule): Boolean {
         return shouldRunFirFrontendFacade(module, testServices)
@@ -83,7 +83,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
     override fun analyze(module: TestModule): FirOutputArtifact {
         val isMppSupported = module.languageVersionSettings.supportsFeature(MultiPlatformProjects)
 
-        val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else listOf(module)
+        val sortedModules = if (isMppSupported) sortDependsOnTopologically(module) else [module]
 
         val [moduleDataMap, moduleDataProvider] = initializeModuleData(sortedModules)
 
@@ -420,7 +420,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         targetPlatform.isCommon() || targetPlatform.isJvm() -> {
                             dependencies(configuration.jvmModularRoots.map { it.path })
                             dependencies(configuration.jvmClasspathRoots.map { it.path })
-                            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+                            friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: [])
                         }
                         targetPlatform.isJs() -> {
                             val runtimeKlibsPaths = JsEnvironmentConfigurator.getRuntimePathsForModule(mainModule, testServices)
@@ -446,7 +446,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             if (interopLibs.isNotEmpty()) {
                                 val interopModuleData = FirBinaryDependenciesModuleData(
                                     Name.special("<regular interop dependencies of $mainModuleName>"),
-                                    FirModuleCapabilities.create(listOf(ImplicitIntegerCoercionModuleCapability))
+                                    FirModuleCapabilities.create([ImplicitIntegerCoercionModuleCapability])
                                 )
                                 this@build.dependencies(interopModuleData, interopLibs.map { it.libraryFile.absolutePath })
                             }

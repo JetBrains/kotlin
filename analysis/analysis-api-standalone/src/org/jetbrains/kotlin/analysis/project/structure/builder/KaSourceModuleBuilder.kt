@@ -33,8 +33,8 @@ public class KtSourceModuleBuilder(
     public var languageVersionSettings: LanguageVersionSettings =
         LanguageVersionSettingsImpl(LanguageVersion.LATEST_STABLE, ApiVersion.LATEST)
 
-    private val sourceRoots: MutableList<Path> = mutableListOf()
-    private val sourceVirtualFiles: MutableList<VirtualFile> = mutableListOf()
+    private val sourceRoots: MutableList<Path> = []
+    private val sourceVirtualFiles: MutableList<VirtualFile> = []
 
     public var contentScope: GlobalSearchScope? = null
 
@@ -78,8 +78,8 @@ public class KtSourceModuleBuilder(
             for (root in sourceRoots) {
                 val files = when {
                     root.isDirectory() -> collectSourceFilePaths(root)
-                    root.hasSuitableExtensionToAnalyse() -> listOf(root)
-                    else -> emptyList()
+                    root.hasSuitableExtensionToAnalyse() -> [root]
+                    else -> []
                 }
                 for (file in files) {
                     val virtualFile = localFileSystem.findFileByNioFile(file.toAbsolutePath()) ?: continue

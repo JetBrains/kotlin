@@ -223,7 +223,7 @@ object StandaloneProjectFactory {
         // not `CliJavaModuleResolver`.
         val delegateJavaModuleResolver = CliJavaModuleResolver(
             javaModuleGraph,
-            emptyList(),
+            [],
             javaModuleFinder.systemModules.toList(),
             project,
         )
@@ -278,10 +278,10 @@ object StandaloneProjectFactory {
 
         javaFileManager.initialize(
             rootsIndex,
-            listOf(
+            [
                 createPackagePartsProvider(libraryRoots + jdkRoots, languageVersionSettings)
                     .invoke(ProjectScope.getLibrariesScope(project))
-            ),
+            ],
             SingleJavaFileRootsIndex(singleJavaFileRoots),
             usePsiClassFilesReading = true,
             perfManager = null, // Don't care about pure compiler performance in Analysis API
@@ -314,7 +314,7 @@ object StandaloneProjectFactory {
         // In contrast to `ClasspathRootsResolver.addModularRoots`, we do not need to handle automatic Java modules because JDK modules
         // aren't automatic.
         return javaModuleGraph.getAllDependencies(javaModuleFinder.computeDefaultRootModules()).flatMap { moduleName ->
-            val module = javaModuleFinder.findModule(moduleName) ?: return@flatMap emptyList<JavaRoot>()
+            val module = javaModuleFinder.findModule(moduleName) ?: return@flatMap []
             val result = module.getJavaModuleRoots()
             result
         }
@@ -325,10 +325,10 @@ object StandaloneProjectFactory {
      * errors, [registerJavaPsiFacade] ensures that the Java language level is configured before [findJvmRootsForJavaFiles] is called.
      */
     fun findJvmRootsForJavaFiles(files: List<PsiJavaFile>): List<PsiDirectory> {
-        if (files.isEmpty()) return emptyList()
-        val result = mutableSetOf<PsiDirectory>()
+        if (files.isEmpty()) return []
+        val result: MutableSet<PsiDirectory> = []
         for (file in files) {
-            val packageParts = file.packageName.takeIf { it.isNotEmpty() }?.split('.') ?: emptyList()
+            val packageParts = file.packageName.takeIf { it.isNotEmpty() }?.split('.') ?: []
             var javaDir: PsiDirectory? = file.parent
             for (part in packageParts.reversed()) {
                 if (javaDir?.name == part) {
@@ -352,7 +352,7 @@ object StandaloneProjectFactory {
                 val roots = when (module) {
                     is KaLibraryModule -> module.getJavaRoots(environment)
                     is KaLibrarySourceModule -> module.binaryLibrary.getJavaRoots(environment)
-                    else -> emptyList()
+                    else -> []
                 }
 
                 addAll(roots)

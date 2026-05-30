@@ -15,7 +15,7 @@ abstract class FirPrimaryConstructorSuperTypeCheckerPlatformComponent : FirCompo
     abstract val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId>
 
     object Default : FirPrimaryConstructorSuperTypeCheckerPlatformComponent() {
-        override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> = setOf(StandardClassIds.Enum)
+        override val supertypesThatDontNeedInitializationInSubtypesConstructors: Set<ClassId> = [StandardClassIds.Enum]
     }
 
     class Composed(

@@ -22,8 +22,8 @@ abstract class AbstractFirAnalyzerFacade {
 
 class FirAnalyzerFacade(
     val session: FirSession,
-    val ktFiles: Collection<KtFile> = emptyList(), // may be empty if light tree mode enabled
-    val lightTreeFiles: Collection<KtSourceFile> = emptyList(), // may be empty if light tree mode disabled
+    val ktFiles: Collection<KtFile> = [], // may be empty if light tree mode enabled
+    val lightTreeFiles: Collection<KtSourceFile> = [], // may be empty if light tree mode disabled
     val parser: FirParser,
     val diagnosticReporterForLightTree: DiagnosticReporter? = null
 ) : AbstractFirAnalyzerFacade() {
@@ -33,7 +33,7 @@ class FirAnalyzerFacade(
         get() = _scopeSession!!
 
     override val frontendOutput: AllModulesFrontendOutput
-        get() = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, firFiles!!)))
+        get() = AllModulesFrontendOutput([SingleModuleFrontendOutput(session, scopeSession, firFiles!!)])
 
     private fun buildRawFir() {
         if (firFiles != null) return

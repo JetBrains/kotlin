@@ -50,7 +50,7 @@ abstract class BenchmarkTemplate(
 ) {
     private val workingDir = File(args.first())
     val currentKotlinVersion: String = args[1]
-    private val kotlinVersions = setOf(stableKotlinVersions, currentKotlinVersion)
+    private val kotlinVersions: Set<String> = [stableKotlinVersions, currentKotlinVersion]
     private val gradleProfilerDir = workingDir.resolve("gradle-profiler-${GRADLE_PROFILER_VERSION}")
     private val asyncProfilerDir = workingDir.resolve("async-profiler-${ASYNC_PROFILER_VERSION}")
     private val projectRepoDir = workingDir.resolve(projectName)
@@ -218,7 +218,7 @@ abstract class BenchmarkTemplate(
         val scenariosWithAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isEmpty() }
         val scenariosWithoutAsyncProfilerSupport = scenarioSuite.scenarios.filter { it.cleanupTasks.isNotEmpty() }
 
-        return listOf(
+        return [
             runBenchmark(
                 scenarioSuite = ScenarioSuite(scenariosWithoutAsyncProfilerSupport.toMutableList()),
                 scenarioSuffix = "clean",
@@ -231,7 +231,7 @@ abstract class BenchmarkTemplate(
                 asyncProfilerConfig = asyncProfilerConfig,
                 dryRun = dryRun,
             ),
-        )
+        ]
     }
 
     private fun runBenchmark(
@@ -255,12 +255,12 @@ abstract class BenchmarkTemplate(
             }
 
         val asyncProfilerArgs: Array<String> = asyncProfilerConfig?.let {
-            arrayOf(
+            [
                 "--async-profiler-home", asyncProfilerDir.path,
                 "--async-profiler-event", asyncProfilerConfig.cpuProfiler,
                 "--profile", "async-profiler",
-            )
-        } ?: emptyArray()
+            ]
+        } ?: []
 
         val profilerProcessBuilder = ProcessBuilder()
             .directory(workingDir)
@@ -317,7 +317,7 @@ abstract class BenchmarkTemplate(
         }.reduce { acc, frame -> acc.fullJoin(frame) }
             .drop {
                 // Removing unused rows
-                it["scenario"] in listOf("version", "tasks") ||
+                it["scenario"] in ["version", "tasks"] ||
                         it["scenario"].toString().startsWith("warm-up build")
             }
             .flipColumnsWithRows()
@@ -326,14 +326,14 @@ abstract class BenchmarkTemplate(
                 val configurationTime = it.group.single { it["value"] == "task start" }
                 it.group.concat(
                     dataFrameOf<String, Any>(it.group.columnNames()) { column ->
-                        listOf(
+                        [
                             when {
                                 column == "scenario" -> totalExecutionTime[column]
                                 column == "value" -> "execution only time"
                                 column.startsWith("measured") -> (totalExecutionTime[column] as Double) - (configurationTime[column] as Double)
                                 else -> error(column)
                             }!!
-                        )
+                        ]
                     }
                 )
             }
@@ -581,7 +581,7 @@ abstract class BenchmarkTemplate(
     private fun DataFrame<*>.flipColumnsWithRows(): DataFrame<*> {
         val firstColumn = columns().first()
         return DataFrameBuilder(
-            listOf(firstColumn.name) + firstColumn.values.map { it.toString() }
+            [firstColumn.name] + firstColumn.values.map { it.toString() }
         ).withColumns { columnName ->
             when {
                 columnName == "scenario" -> DataColumn.createValueColumn(

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 @FirBuilderDsl
 class FirComparisonExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var operation: FirOperation
     lateinit var compareToCall: FirFunctionCall
 

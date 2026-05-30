@@ -26,9 +26,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 object FirJsBuiltinNameClashChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
-    private val PROHIBITED_STATIC_NAMES_FOR_INTERFACES = setOf("Symbol", StandardNames.DEFAULT_IMPLS_CLASS_NAME.identifier)
-    private val PROHIBITED_MEMBER_NAMES = setOf("constructor")
-    private val PROHIBITED_STATIC_NAMES = setOf("prototype", "length", "\$metadata\$")
+    private val PROHIBITED_STATIC_NAMES_FOR_INTERFACES: Set<String> = ["Symbol", StandardNames.DEFAULT_IMPLS_CLASS_NAME.identifier]
+    private val PROHIBITED_MEMBER_NAMES: Set<String> = ["constructor"]
+    private val PROHIBITED_STATIC_NAMES: Set<String> = ["prototype", "length", "\$metadata\$"]
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

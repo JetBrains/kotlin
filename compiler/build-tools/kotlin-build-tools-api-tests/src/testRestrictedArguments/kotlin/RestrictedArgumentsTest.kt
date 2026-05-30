@@ -71,7 +71,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             module.checkRestrictedArgument(
                 "-d",
                 errorSince = KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-d", "output/dir")
+                configuredArgs = ["-d", "output/dir"]
             ) {
                 assertLogContainsLines(
                     LogLevel.WARN,
@@ -92,7 +92,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             module.checkRestrictedArgument(
                 "-include-runtime",
                 errorSince = KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-include-runtime")
+                configuredArgs = ["-include-runtime"]
             )
         }
     }
@@ -100,13 +100,13 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-expression emits a warning")
     fun testExpressionWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testExpression(strategyConfig, listOf("-expression=hello"))
+        testExpression(strategyConfig, ["-expression=hello"])
     }
 
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("-e (short for -expression) emits a warning")
     fun testShortExpressionWarningDuringExecution(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        testExpression(strategyConfig, listOf("-e", "hello"))
+        testExpression(strategyConfig, ["-e", "hello"])
     }
 
     private fun testExpression(strategyConfig: CompilerExecutionStrategyConfiguration, actualArgs: List<String>) {
@@ -131,7 +131,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             module.checkRestrictedArgument(
                 "-Xrepl",
                 errorSince = KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-Xrepl"),
+                configuredArgs = ["-Xrepl"],
                 expectedCompilationError = true,
             ) {
                 assertLogContainsLines(LogLevel.ERROR, "Unable to run REPL, no scripting plugin loaded")
@@ -147,7 +147,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             module.checkRestrictedArgument(
                 "-Xenable-incremental-compilation",
                 errorSince = KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-Xenable-incremental-compilation")
+                configuredArgs = ["-Xenable-incremental-compilation"]
             ) {
                 assertLogContainsLines(
                     LogLevel.WARN,
@@ -165,9 +165,9 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.checkRestrictedArguments(
-                listOf("-include-runtime") to KotlinReleaseVersion.v2_5_0,
-                listOf("-Xenable-incremental-compilation") to KotlinReleaseVersion.v2_5_0,
-                configuredArgs = listOf("-include-runtime", "-Xenable-incremental-compilation"),
+                ["-include-runtime"] to KotlinReleaseVersion.v2_5_0,
+                ["-Xenable-incremental-compilation"] to KotlinReleaseVersion.v2_5_0,
+                configuredArgs = ["-include-runtime", "-Xenable-incremental-compilation"],
             )
         }
     }
@@ -178,7 +178,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-no-stdlib"))
+                it.compilerArguments.applyArgumentStrings(["-no-stdlib"])
             }) {
                 assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*is not supported in the Build Tools API.*"))
                 assertLogContainsPatterns(LogLevel.DEBUG, "Kotlin compiler args: .* -no-stdlib .*".toRegex())
@@ -192,7 +192,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xallow-kotlin-package"))
+                it.compilerArguments.applyArgumentStrings(["-Xallow-kotlin-package"])
             }) {
                 assertLogDoesNotContainPatterns(LogLevel.WARN, Regex(".*is not supported in the Build Tools API.*"))
                 assertLogContainsPatterns(LogLevel.DEBUG, "Kotlin compiler args: .* -Xallow-kotlin-package .*".toRegex())
@@ -207,7 +207,7 @@ class RestrictedArgumentsTest : BaseCompilationTest() {
             val module = module("jvm-module-1")
 
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xassertions=jVm"))
+                it.compilerArguments.applyArgumentStrings(["-Xassertions=jVm"])
                 @OptIn(ExperimentalCompilerArgument::class)
                 assertEquals(it.compilerArguments[X_ASSERTIONS], AssertionsMode.JVM)
             }) {

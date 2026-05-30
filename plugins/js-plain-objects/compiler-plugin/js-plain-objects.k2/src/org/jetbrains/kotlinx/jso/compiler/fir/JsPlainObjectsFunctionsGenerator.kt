@@ -109,7 +109,7 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
         get() = this is FirRegularClassSymbol && this in matchedInterfaces
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        return if (classSymbol.isJsPlainObject) setOf(SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT) else emptySet()
+        return if (classSymbol.isJsPlainObject) [SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT] else []
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -155,12 +155,12 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         val outerClass = classSymbol.getContainingClassSymbol()
-        if (!classSymbol.isCompanion || outerClass?.isJsPlainObject != true) return emptySet()
-        return setOf(OperatorNameConventions.INVOKE, StandardNames.DATA_CLASS_COPY)
+        if (!classSymbol.isCompanion || outerClass?.isJsPlainObject != true) return []
+        return [OperatorNameConventions.INVOKE, StandardNames.DATA_CLASS_COPY]
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (context == null) return emptyList()
+        if (context == null) return []
 
         val containingClass = callableId.classId
         val possibleInterface = containingClass?.outerClassId
@@ -170,15 +170,15 @@ class JsPlainObjectsFunctionsGenerator(session: FirSession) : FirDeclarationGene
                 possibleInterface
                     ?.takeIf { context.owner.isCompanion }
                     ?.let { factoryFqNamesToJsPlainObjectsInterface[it.asSingleFqName()] }
-                    ?.let { listOf(createJsPlainObjectCopyFunction(callableId, context.owner, it).symbol) } ?: emptyList()
+                    ?.let { [createJsPlainObjectCopyFunction(callableId, context.owner, it).symbol] } ?: []
             }
             OperatorNameConventions.INVOKE -> {
                 possibleInterface
                     ?.takeIf { context.owner.isCompanion }
                     ?.let { factoryFqNamesToJsPlainObjectsInterface[it.asSingleFqName()] }
-                    ?.let { listOf(createJsPlainObjectFactoryFunction(callableId, context.owner, it).symbol) } ?: emptyList()
+                    ?.let { [createJsPlainObjectFactoryFunction(callableId, context.owner, it).symbol] } ?: []
             }
-            else -> emptyList()
+            else -> []
         }
     }
 

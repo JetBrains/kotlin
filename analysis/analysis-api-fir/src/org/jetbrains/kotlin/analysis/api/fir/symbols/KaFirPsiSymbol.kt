@@ -138,7 +138,7 @@ internal fun KaFirKtBasedSymbol<KtAnnotated, *>.psiOrSymbolAnnotationList(): KaA
 
 internal fun KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.createContextReceivers(): List<KaContextReceiver> {
     val psi = backingPsi
-    if (psi != null && psi.modifierList?.contextParameterList == null) return emptyList()
+    if (psi != null && psi.modifierList?.contextParameterList == null) return []
 
     return firSymbol.createContextReceivers(builder)
 }
@@ -260,12 +260,12 @@ internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperT
         }
 
         else -> when (classId) {
-            StandardClassIds.Any, StandardClassIds.Nothing -> return emptyList()
+            StandardClassIds.Any, StandardClassIds.Nothing -> return []
             else -> null
         }
     }
 
-    return listOf(specialSuperType ?: analysisSession.builtinTypes.any)
+    return [specialSuperType ?: analysisSession.builtinTypes.any]
 }
 
 /**
@@ -350,7 +350,7 @@ internal fun KaFirKtBasedSymbol<KtCallableDeclaration, *>.createKaContextParamet
         val lists = psi.modifierList
             ?.contextParameterLists
             ?.takeIf { it.isNotEmpty() }
-            ?: return emptyList() // no context receivers/parameters
+            ?: return [] // no context receivers/parameters
 
         with(analysisSession) {
             lists.flatMap { list ->

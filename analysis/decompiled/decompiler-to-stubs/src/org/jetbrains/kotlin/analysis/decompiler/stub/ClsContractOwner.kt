@@ -47,6 +47,6 @@ sealed class ClsContractOwner {
             get() = propertyProto.contextParameterList
 
         override val valueParameters: List<ProtoBuf.ValueParameter>
-            get() = if (isGetter) emptyList() else listOf(propertyProto.setterValueParameter)
+            get() = if (isGetter) [] else [propertyProto.setterValueParameter]
     }
 }

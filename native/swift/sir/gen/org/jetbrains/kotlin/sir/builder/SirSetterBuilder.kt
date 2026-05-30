@@ -19,8 +19,8 @@ class SirSetterBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
+    val bridges: MutableList<SirBridge> = []
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
     var isAsync: Boolean = false

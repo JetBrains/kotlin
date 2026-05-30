@@ -39,7 +39,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
         val tokens = builder.tokens
 
         val childrenStack = Stack<MutableList<TestParseNode<out NewParserTestNode>>>().apply {
-            push(mutableListOf())
+            push([])
         }
         var prevTokenIndex = 0
         var lastErrorTokenIndex = -1
@@ -79,7 +79,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
                             tokenStart,
                             tokenEnd,
                             NewParserTestToken(tokenType),
-                            emptyList()
+                            []
                         )
                     }
                 }
@@ -98,7 +98,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
                     val children = if (production.isCollapsed()) {
                         // Ignore collapsed elements
                         prevTokenIndex = production.getEndTokenIndex()
-                        emptyList()
+                        []
                     } else {
                         lastChildren.also { it.appendLeafElements(production.getEndTokenIndex()) }
                     }
@@ -136,7 +136,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
                                 production.getStartOffset(),
                                 production.getEndOffset(),
                                 NewParserTestParseNode(production),
-                                emptyList(), // No children `isErrorMarker` is true only on leaf elements
+                                [], // No children `isErrorMarker` is true only on leaf elements
                             )
                         )
                     }
@@ -150,7 +150,7 @@ class NewTestParser(parseMode: ParseMode) : AbstractTestParser<NewParserTestNode
                     // Element type is known, it's `production.getNodeType()`
 
                     childrenStack.peek().appendLeafElements(production.getStartTokenIndex())
-                    childrenStack.push(mutableListOf())
+                    childrenStack.push([])
                 }
             }
         }

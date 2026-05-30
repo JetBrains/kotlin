@@ -28,4 +28,4 @@ sealed class FirDeclarationNameInvalidCharsProvider : FirComposableSessionCompon
 
 private val FirSession.declarationNameInvalidCharsProvider: FirDeclarationNameInvalidCharsProvider? by FirSession.nullableSessionComponentAccessor()
 
-val FirSession.declarationNameInvalidChars: Set<Char> get() = declarationNameInvalidCharsProvider?.invalidChars ?: emptySet()
+val FirSession.declarationNameInvalidChars: Set<Char> get() = declarationNameInvalidCharsProvider?.invalidChars ?: []

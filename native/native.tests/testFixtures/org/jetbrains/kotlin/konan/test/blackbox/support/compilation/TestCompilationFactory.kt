@@ -122,7 +122,7 @@ class TestCompilationFactory {
     fun testCaseToObjCFrameworkCompilation(
         testCase: TestCase,
         settings: Settings,
-        exportedLibraries: Iterable<KLIB> = emptyList(),
+        exportedLibraries: Iterable<KLIB> = [],
         buildDir: File? = null,
     ): ObjCFrameworkCompilation {
         val cacheKey = ObjCFrameworkCacheKey(testCase.rootModules)
@@ -246,7 +246,7 @@ class TestCompilationFactory {
                         includedKlib = klibCompilations.klib.asKlibDependency(IncludedLibrary),
                         includedKlibStaticCache = klibCompilations.staticCache?.asStaticCacheDependency()
                     ),
-                    emptySet() // No sources.
+                    [] // No sources.
                 )
             }
         }
@@ -363,15 +363,15 @@ class TestCompilationFactory {
         freeCompilerArgs: TestCompilerArgs,
         settings: Settings
     ): CompilationDependencies {
-        val klibDependencies = mutableListOf<CompiledDependency<KLIB>>()
-        val staticCacheDependencies = mutableListOf<CompiledDependency<KLIBStaticCache>>()
-        val staticCacheHeaderDependencies = mutableListOf<CompiledDependency<KLIBStaticCache>>()
+        val klibDependencies: MutableList<CompiledDependency<KLIB>> = []
+        val staticCacheDependencies: MutableList<CompiledDependency<KLIBStaticCache>> = []
+        val staticCacheHeaderDependencies: MutableList<CompiledDependency<KLIBStaticCache>> = []
 
         val produceStaticCache = ProduceStaticCache.decideForRegularKlib(settings)
 
         fun <T : TestCompilationDependencyType<KLIB>> Set<TestModule>.collectDependencies(type: T) =
             forEach { dependencyModule: TestModule ->
-                val klibCompilations = modulesToKlib(setOf(dependencyModule), freeCompilerArgs, produceStaticCache, settings)
+                val klibCompilations = modulesToKlib([dependencyModule], freeCompilerArgs, produceStaticCache, settings)
                 klibDependencies += klibCompilations.klib.asKlibDependency(type)
 
                 staticCacheDependencies.addIfNotNull(klibCompilations.staticCache?.asStaticCacheDependency())
@@ -385,7 +385,7 @@ class TestCompilationFactory {
     }
 
     private fun sortDependsOnTopologically(module: TestModule): List<TestModule> {
-        return topologicalSort(listOf(module), reverseOrder = true) { it.allDependsOnDependencies }
+        return topologicalSort([module], reverseOrder = true) { it.allDependsOnDependencies }
     }
 
     companion object {

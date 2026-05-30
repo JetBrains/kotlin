@@ -216,7 +216,7 @@ internal class PartiallyLinkedIrTreePatcher(
                 // Finish processing of the current class.
                 declaration.typeParameters.forEach { tp ->
                     tp.superTypes.toPartiallyLinkedMarkerTypeOrNull()?.let { newSuperType ->
-                        tp.superTypes = listOf(newSuperType)
+                        tp.superTypes = [newSuperType]
                     }
                 }
 
@@ -421,7 +421,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
             typeParameters.forEach { tp ->
                 tp.superTypes.toPartiallyLinkedMarkerTypeOrNull()?.let { newSuperType ->
-                    tp.superTypes = listOf(newSuperType)
+                    tp.superTypes = [newSuperType]
                     result = newSuperType.unusableClassifier
                 }
             }
@@ -806,7 +806,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // So we need to look up for default value across all overridden functions.
             val functionsToCheckDefaultValues by lazy {
                 when (function) {
-                    is IrConstructor -> listOf(function)
+                    is IrConstructor -> [function]
                     is IrSimpleFunction -> function.allOverridden(includeSelf = true)
                         .filterNot { it.isFakeOverride || it.origin == IrDeclarationOrigin.DELEGATED_MEMBER }
                 }
@@ -1082,7 +1082,7 @@ internal class PartiallyLinkedIrTreePatcher(
 
     private data class DirectChildren(val statements: List<IrStatement>, val hasPartialLinkageRuntimeError: Boolean) {
         companion object {
-            val EMPTY = DirectChildren(emptyList(), false)
+            val EMPTY = DirectChildren([], false)
         }
     }
 
@@ -1091,7 +1091,7 @@ internal class PartiallyLinkedIrTreePatcher(
      * if effectively dead code and do not need to be kept in the IR tree).
      */
     private class DirectChildrenStatementsCollector : IrVisitorVoid() {
-        private val children = mutableListOf<IrStatement>()
+        private val children: MutableList<IrStatement> = []
         private var hasPartialLinkageRuntimeError = false
 
         fun getResult() = DirectChildren(children, hasPartialLinkageRuntimeError)
@@ -1151,7 +1151,7 @@ internal class PartiallyLinkedIrTreePatcher(
         ) : ReturnTargetContext
 
         companion object {
-            val Empty = Default(emptySet())
+            val Empty = Default([])
         }
     }
 

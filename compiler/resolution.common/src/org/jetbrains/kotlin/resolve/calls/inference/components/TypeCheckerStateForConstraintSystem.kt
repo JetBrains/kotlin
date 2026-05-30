@@ -386,7 +386,7 @@ abstract class TypeCheckerStateForConstraintSystem(
         if (dnnSubType == notNullSubType) return false
 
         runForkingPoint {
-            for (variant in listOf(notNullSubType, dnnSubType)) {
+            for (variant in [notNullSubType, dnnSubType]) {
                 fork {
                     addLowerConstraint(typeVariableTypeConstructor, variant, isFromNullabilityConstraint, isNoInfer)
                     true

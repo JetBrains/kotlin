@@ -31,7 +31,7 @@ object FirNativeObjCOverrideInitChecker : FirClassChecker(MppCheckerKind.Platfor
         val session = context.session
 
         fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {
-            val result = mutableListOf<FirConstructorSymbol>()
+            val result: MutableList<FirConstructorSymbol> = []
             session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
             return result
         }

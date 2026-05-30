@@ -61,6 +61,6 @@ private fun getLibrariesPaths(): List<File> {
     val coreLibraryPath = getLibraryJar("kotlinx.atomicfu.AtomicFU") ?: error("kotlinx.atomicfu library is not found")
     val kotlinTestPath = getLibraryJar("kotlin.test.AssertionsKt") ?: error("kotlin.test is not found")
     val kotlinJvm = getLibraryJar("kotlin.jvm.JvmField") ?: error("kotlin-stdlib is not found")
-    return listOf(coreLibraryPath, kotlinTestPath, kotlinJvm)
+    return [coreLibraryPath, kotlinTestPath, kotlinJvm]
 }
 

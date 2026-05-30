@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirArgumentListImpl
 @FirBuilderDsl
 class FirArgumentListBuilder {
     var source: KtSourceElement? = null
-    val arguments: MutableList<FirExpression> = mutableListOf()
+    val arguments: MutableList<FirExpression> = []
 
     fun build(): FirArgumentList {
         return FirArgumentListImpl(

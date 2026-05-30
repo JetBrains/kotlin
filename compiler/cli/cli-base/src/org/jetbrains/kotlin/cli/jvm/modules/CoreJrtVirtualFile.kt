@@ -68,7 +68,7 @@ internal class CoreJrtVirtualFile(
         val paths = try {
             Files.newDirectoryStream(path).use(Iterable<Path>::toList)
         } catch (_: IOException) {
-            emptyList<Path>()
+            []
         }
         return when {
             paths.isEmpty() -> EMPTY_ARRAY

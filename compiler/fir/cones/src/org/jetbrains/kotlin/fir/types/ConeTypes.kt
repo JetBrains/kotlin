@@ -92,7 +92,7 @@ class ConeErrorType(
     val isUninferredParameter: Boolean = false,
     delegatedType: ConeKotlinType? = null,
     override val typeArguments: Array<out ConeTypeProjection> = EMPTY_ARRAY,
-    override val attributes: ConeAttributes = ConeAttributes.Empty,
+    override val attributes: ConeAttributes = [],
     val nullable: Boolean? = null,
     override val lookupTag: ConeClassLikeErrorLookupTag =
         ConeClassLikeErrorLookupTag(delegatedType?.classId ?: ClassId.fromString("<error>"), diagnostic, delegatedType)
@@ -218,7 +218,7 @@ class ConeCapturedTypeConstructor(
 data class ConeCapturedType(
     val isMarkedNullable: Boolean = false,
     val constructor: ConeCapturedTypeConstructor,
-    override val attributes: ConeAttributes = ConeAttributes.Empty,
+    override val attributes: ConeAttributes = [],
 ) : ConeSimpleKotlinType(), CapturedTypeMarker {
 
     override val typeArguments: Array<out ConeTypeProjection>

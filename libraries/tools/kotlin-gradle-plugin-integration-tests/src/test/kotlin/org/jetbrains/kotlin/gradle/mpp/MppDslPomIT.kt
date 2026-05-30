@@ -201,10 +201,10 @@ class MppDslPomIT : KGPBaseTest() {
                 }
             }
 
-            val tasks = arrayOf(
+            val tasks: Array<String> = [
                 ":generatePomFileForJvmPublication",
                 ":generatePomFileForLinuxX64Publication"
-            )
+            ]
 
             fun assertTargetPublicationPomIsCorrect(targetName: String) {
                 assertFileInProjectContains(

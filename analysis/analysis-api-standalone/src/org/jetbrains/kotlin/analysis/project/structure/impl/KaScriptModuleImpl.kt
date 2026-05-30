@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.psi.KtFile
 
 @KaExperimentalApi
 internal class KaScriptModuleImpl(
-    override val directRegularDependencies: List<KaModule> = emptyList(),
-    override val directDependsOnDependencies: List<KaModule> = emptyList(),
-    override val directFriendDependencies: List<KaModule> = emptyList(),
+    override val directRegularDependencies: List<KaModule> = [],
+    override val directDependsOnDependencies: List<KaModule> = [],
+    override val directFriendDependencies: List<KaModule> = [],
     override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     override val project: Project,
     override val file: KtFile,

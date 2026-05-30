@@ -102,10 +102,10 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         // Build KLIB:
         runCompilerViaCLI(
             compilerEdition,
-            listOf(
+            [
                 K2JSCompilerArguments::outputDir.cliArgument, module.klibFile.parentFile.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, module.moduleInfo.moduleName,
-            ),
+            ],
             preprocessedDependencies.toCompilerArgs(),
             compilerArguments,
             kotlinSourceFilePaths
@@ -113,7 +113,7 @@ internal class JsCompilerInvocationTestArtifactBuilder(
     }
 
     private fun composeSourceFile(moduleSourceDir: File, moduleOutputDir: File): MutableList<String> {
-        val kotlinSourceFilePaths = mutableListOf<String>()
+        val kotlinSourceFilePaths: MutableList<String> = []
         moduleSourceDir.walkTopDown().forEach { sourceFile ->
             if (sourceFile.isFile) when (sourceFile.extension) {
                 "kt" -> kotlinSourceFilePaths += sourceFile.absolutePath
@@ -145,14 +145,14 @@ internal class JsCompilerInvocationTestArtifactBuilder(
 
         runCompilerViaCLI(
             compilerEdition,
-            listOf(
+            [
                 K2JSCompilerArguments::irProduceJs.cliArgument,
                 K2JSCompilerArguments::irPerModule.cliArgument,
                 K2JSCompilerArguments::moduleKind.cliArgument, "plain",
                 K2JSCompilerArguments::includes.cliArgument(mainModule.libraryFile.absolutePath),
                 K2JSCompilerArguments::outputDir.cliArgument, binariesDir.absolutePath,
                 K2JSCompilerArguments::moduleName.cliArgument, MAIN_MODULE_NAME,
-            ),
+            ],
             listOf(
                 K2JSCompilerArguments::cacheDirectory.cliArgument,
                 configuration.buildDir.resolve("libs-cache").absolutePath

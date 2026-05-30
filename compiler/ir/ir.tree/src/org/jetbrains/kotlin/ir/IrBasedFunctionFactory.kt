@@ -207,7 +207,7 @@ class IrBasedFunctionFactory(
     override fun functionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return functionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = false, arity, listOf(functionClass), kotlinPackageFragment)
+                createFunctionClass(symbol, isK = false, isSuspend = false, arity, [functionClass], kotlinPackageFragment)
             }
         }
     }
@@ -215,7 +215,7 @@ class IrBasedFunctionFactory(
     override fun suspendFunctionN(arity: Int, declarator: SymbolTable.((IrClassSymbol) -> IrClass) -> IrClass): IrClass {
         return suspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = false, isSuspend = true, arity, listOf(functionClass), kotlinCoroutinesPackageFragment)
+                createFunctionClass(symbol, isK = false, isSuspend = true, arity, [functionClass], kotlinCoroutinesPackageFragment)
             }
         }
     }
@@ -224,7 +224,8 @@ class IrBasedFunctionFactory(
         val functionNClass = functionN(arity).symbol
         return kFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = false, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+                createFunctionClass(symbol, isK = true, isSuspend = false, arity,
+                                    [kFunctionClass, functionNClass], kotlinReflectPackageFragment)
             }
         }
     }
@@ -233,7 +234,8 @@ class IrBasedFunctionFactory(
         val functionNClass = suspendFunctionN(arity).symbol
         return kSuspendFunctionNMap.getOrPut(arity) {
             symbolTable.declarator { symbol ->
-                createFunctionClass(symbol, isK = true, isSuspend = true, arity, listOf(kFunctionClass, functionNClass), kotlinReflectPackageFragment)
+                createFunctionClass(symbol, isK = true, isSuspend = true, arity,
+                                    [kFunctionClass, functionNClass], kotlinReflectPackageFragment)
             }
         }
     }
@@ -372,7 +374,7 @@ class IrBasedFunctionFactory(
 
         klass.superTypes = baseClasses.map { baseClass ->
             val args = when (baseClass) {
-                functionClass, kFunctionClass -> listOf(r.symbol)
+                functionClass, kFunctionClass -> [r.symbol]
                 else -> klass.typeParameters.map { it.symbol }
             }
             baseClass.typeWith(args.map { it.typeWith() })
@@ -388,7 +390,7 @@ class IrBasedFunctionFactory(
         // During the linking process we do not build fake overrides. They will be built by fakeOverrideBuilder later on.
         // After the linking process we must build fake overrides (typeSystem will be set to the correct value) because fakeOverrideBuilder won't be called.
         if (typeSystem == null) return
-        IrFakeOverrideBuilder(typeSystem!!, FunctionTypeFakeOverrideBuilderStrategy(), emptyList())
+        IrFakeOverrideBuilder(typeSystem!!, FunctionTypeFakeOverrideBuilderStrategy(), [])
             .buildFakeOverridesForClass(
                 clazz = this,
                 oldSignatures = false

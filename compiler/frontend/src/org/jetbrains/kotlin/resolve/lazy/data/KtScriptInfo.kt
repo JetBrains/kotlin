@@ -27,12 +27,12 @@ class KtScriptInfo(
 ) : KtClassLikeInfo {
     override fun getContainingPackageFqName() = script.fqName.parent()
     override fun getModifierList() = null
-    override fun getCompanionObjects() = listOf<KtObjectDeclaration>()
+    override fun getCompanionObjects(): List<KtObjectDeclaration> = []
     override fun getScopeAnchor() = script
     override fun getCorrespondingClassOrObject() = null
     override fun getTypeParameterList() = null
-    override fun getPrimaryConstructorParameters() = listOf<KtParameter>()
+    override fun getPrimaryConstructorParameters(): List<KtParameter> = []
     override fun getClassKind() = ClassKind.CLASS
     override fun getDeclarations() = script.declarations
-    override fun getDanglingAnnotations() = listOf<KtAnnotationEntry>()
+    override fun getDanglingAnnotations(): List<KtAnnotationEntry> = []
 }

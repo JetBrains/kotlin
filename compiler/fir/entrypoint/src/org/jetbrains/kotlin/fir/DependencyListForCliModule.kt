@@ -43,9 +43,9 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
     }
 
     class Builder {
-        private val allRegularDependencies: MutableSet<FirBinaryDependenciesModuleData> = mutableSetOf()
-        private val allFriendDependencies: MutableSet<FirBinaryDependenciesModuleData> = mutableSetOf()
-        private val allDependsOnDependencies: MutableSet<FirBinaryDependenciesModuleData> = mutableSetOf()
+        private val allRegularDependencies: MutableSet<FirBinaryDependenciesModuleData> = []
+        private val allFriendDependencies: MutableSet<FirBinaryDependenciesModuleData> = []
+        private val allDependsOnDependencies: MutableSet<FirBinaryDependenciesModuleData> = []
 
         private val filtersMap: MutableMap<FirBinaryDependenciesModuleData, MutableSet<Path>> = mutableMapOf()
 
@@ -105,7 +105,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
         ) {
             destination.add(moduleData)
             if (paths.isEmpty()) return
-            val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
+            val filterSet = filtersMap.getOrPut(moduleData) { [] }
             paths.mapTo(filterSet) { Paths.get(it) }
         }
 
@@ -136,7 +136,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
                 .toMutableMap()
 
             fun Collection<FirBinaryDependenciesModuleData>.filterUsedModules(): MutableList<FirBinaryDependenciesModuleData> =
-                this.filterTo(mutableListOf()) { it in pathFiltersMap }
+                this.filterTo([]) { it in pathFiltersMap }
 
             val regularDependencies = allRegularDependencies.filterUsedModules()
             val friendDependencies = allFriendDependencies.filterUsedModules()

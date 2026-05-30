@@ -350,7 +350,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
         }
     }
 
-    private val mismatches = mutableListOf<Mismatch>()
+    private val mismatches: MutableList<Mismatch> = []
 
     private class Context(pathElement: PathElement, parent: Context? = null) {
         val path: List<PathElement> = parent?.path.orEmpty() + pathElement
@@ -1120,7 +1120,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             config: Config = Config.Default
         ): Result = MetadataDeclarationsComparator(config).compareModules(metadataA, metadataB)
 
-        private val CLASS_FLAGS: Array<KProperty1<KmClass, Any>> = arrayOf(
+        private val CLASS_FLAGS: Array<KProperty1<KmClass, Any>> = [
             KmClass::visibility,
             KmClass::modality,
             KmClass::kind,
@@ -1131,19 +1131,19 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             KmClass::isValue,
             KmClass::isFunInterface,
             KmClass::hasEnumEntries
-        )
+        ]
 
-        private val TYPE_ALIAS_FLAGS: Array<KProperty1<KmTypeAlias, Any>> = arrayOf(
+        private val TYPE_ALIAS_FLAGS: Array<KProperty1<KmTypeAlias, Any>> = [
             KmTypeAlias::visibility
-        )
+        ]
 
-        private val CONSTRUCTOR_FLAGS: Array<KProperty1<KmConstructor, Any>> = arrayOf(
+        private val CONSTRUCTOR_FLAGS: Array<KProperty1<KmConstructor, Any>> = [
             KmConstructor::visibility,
             KmConstructor::isSecondary,
             KmConstructor::hasNonStableParameterNames
-        )
+        ]
 
-        private val FUNCTION_FLAGS: Array<KProperty1<KmFunction, Any>> = arrayOf(
+        private val FUNCTION_FLAGS: Array<KProperty1<KmFunction, Any>> = [
             KmFunction::visibility,
             KmFunction::modality,
             KmFunction::kind,
@@ -1155,9 +1155,9 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             KmFunction::isSuspend,
             KmFunction::isExpect,
             KmFunction::hasNonStableParameterNames
-        )
+        ]
 
-        private val PROPERTY_FLAGS: Array<KProperty1<KmProperty, Any>> = arrayOf(
+        private val PROPERTY_FLAGS: Array<KProperty1<KmProperty, Any>> = [
             KmProperty::visibility,
             KmProperty::modality,
             KmProperty::kind,
@@ -1168,37 +1168,37 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             KmProperty::isExternal,
             KmProperty::isDelegated,
             KmProperty::isExpect
-        )
+        ]
 
-        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty1<KmPropertyAccessorAttributes, Any>> = arrayOf(
+        private val PROPERTY_ACCESSOR_FLAGS: Array<KProperty1<KmPropertyAccessorAttributes, Any>> = [
             KmPropertyAccessorAttributes::visibility,
             KmPropertyAccessorAttributes::modality,
             KmPropertyAccessorAttributes::isNotDefault,
             KmPropertyAccessorAttributes::isExternal,
             KmPropertyAccessorAttributes::isInline
-        )
+        ]
 
-        private val TYPE_FLAGS: Array<KProperty1<KmType, Boolean>> = arrayOf(
+        private val TYPE_FLAGS: Array<KProperty1<KmType, Boolean>> = [
             KmType::isNullable,
             KmType::isSuspend,
             KmType::isDefinitelyNonNull,
-        )
+        ]
 
-        private val TYPE_PARAMETER_FLAGS: Array<KProperty1<KmTypeParameter, Boolean>> = arrayOf(
+        private val TYPE_PARAMETER_FLAGS: Array<KProperty1<KmTypeParameter, Boolean>> = [
             KmTypeParameter::isReified
-        )
+        ]
 
-        private val VALUE_PARAMETER_FLAGS: Array<KProperty1<KmValueParameter, Boolean>> = arrayOf(
+        private val VALUE_PARAMETER_FLAGS: Array<KProperty1<KmValueParameter, Boolean>> = [
             KmValueParameter::declaresDefaultValue,
             KmValueParameter::isCrossinline,
             KmValueParameter::isNoinline
-        )
+        ]
 
         @ExperimentalContracts
-        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty1<KmEffectExpression, Boolean>> = arrayOf(
+        private val EFFECT_EXPRESSION_FLAGS: Array<KProperty1<KmEffectExpression, Boolean>> = [
             KmEffectExpression::isNegated,
             KmEffectExpression::isNullCheckPredicate
-        )
+        ]
 
         /**
          * We need a stable order for overloaded functions.
@@ -1277,7 +1277,7 @@ class MetadataDeclarationsComparator private constructor(private val config: Con
             return mutableMapOf<K, MutableList<T>>().apply {
                 this@groupByIndexed.forEachIndexed { index, element ->
                     val key = keySelector(index, element)
-                    getOrPut(key) { mutableListOf() } += element
+                    getOrPut(key) { [] } += element
                 }
             }
         }

@@ -31,7 +31,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun testStdlibByDefaultJvm(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             removeDependencies(buildGradle)
-            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-stdlib"), listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"))
+            checkTaskCompileClasspath("compileKotlin", ["kotlin-stdlib"], ["kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"])
         }
     }
 
@@ -50,7 +50,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"))
+            checkTaskCompileClasspath("compileKotlin", ["kotlin-stdlib", "kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"])
         }
     }
 
@@ -65,8 +65,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             )
             checkTaskCompileClasspath(
                 "compileKotlin",
-                listOf(),
-                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/)
+                [],
+                checkModulesNotInClasspath = ["kotlin-stdlib" /*any of them*/]
             )
         }
     }
@@ -86,7 +86,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
             checkTaskCompileClasspath(
                 "compileKotlinJs",
-                listOf("kotlin-stdlib-js"),
+                ["kotlin-stdlib-js"],
                 isBuildGradleKts = true
             )
         }
@@ -113,8 +113,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             )
             checkTaskCompileClasspath(
                 "compileKotlinJs",
-                listOf(),
-                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/),
+                [],
+                checkModulesNotInClasspath = ["kotlin-stdlib" /*any of them*/],
                 isBuildGradleKts = true
             )
         }
@@ -140,8 +140,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             removeDependencies(buildGradle)
             checkTaskCompileClasspath(
                 "compileDebugKotlin",
-                listOf("kotlin-stdlib"),
-                listOf("kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8")
+                ["kotlin-stdlib"],
+                ["kotlin-stdlib-jdk7", "kotlin-stdlib-jdk8"]
             )
         }
     }
@@ -168,8 +168,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             )
             checkTaskCompileClasspath(
                 "compileDebugKotlin",
-                emptyList(),
-                checkModulesNotInClasspath = listOf("kotlin-stdlib" /*any of them*/),
+                [],
+                checkModulesNotInClasspath = ["kotlin-stdlib" /*any of them*/],
             )
         }
     }
@@ -187,7 +187,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 "compileCommonMainKotlinMetadata",
                 "compileJvmAndJsMainKotlinMetadata"
             ).forEach { task ->
-                checkTaskCompileClasspath(task, listOf("kotlin-stdlib"), isBuildGradleKts = true)
+                checkTaskCompileClasspath(task, ["kotlin-stdlib"], isBuildGradleKts = true)
             }
         }
     }
@@ -213,8 +213,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             ).forEach { task ->
                 checkTaskCompileClasspath(
                     task,
-                    emptyList(),
-                    checkModulesNotInClasspath = listOf("kotlin-stdlib"),
+                    [],
+                    checkModulesNotInClasspath = ["kotlin-stdlib"],
                     isBuildGradleKts = true
                 )
             }
@@ -237,8 +237,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             // Check that the explicit stdlib overrides the plugin's choice of stdlib-jdk8
             checkTaskCompileClasspath(
                 "compileKotlin",
-                listOf("kotlin-stdlib-${defaultBuildOptions.kotlinVersion}"),
-                listOf("kotlin-stdlib-jdk8")
+                ["kotlin-stdlib-${defaultBuildOptions.kotlinVersion}"],
+                ["kotlin-stdlib-jdk8"]
             )
         }
     }
@@ -276,7 +276,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
             checkTaskCompileClasspath(
                 "compileJvmAllAloneKotlinStandalone",
-                listOf("kotlin-stdlib"),
+                ["kotlin-stdlib"],
                 isBuildGradleKts = true
             )
         }
@@ -289,8 +289,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
         project("wasm-d8-simple-project", gradleVersion) {
             checkTaskCompileClasspath(
                 "compileKotlinWasmJs",
-                checkModulesInClasspath = listOf("kotlin-stdlib-wasm-js"),
-                checkModulesNotInClasspath = listOf("kotlin-stdlib-wasm-wasi"),
+                checkModulesInClasspath = ["kotlin-stdlib-wasm-js"],
+                checkModulesNotInClasspath = ["kotlin-stdlib-wasm-wasi"],
                 isBuildGradleKts = true
             )
         }
@@ -385,10 +385,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
-                listOf("testImplementation"),
+                ["testImplementation"],
                 mapOf(
-                    "compileDebugUnitTestKotlin" to listOf("kotlin-test-junit"),
-                    "compileReleaseUnitTestKotlin" to listOf("kotlin-test-junit")
+                    "compileDebugUnitTestKotlin" to ["kotlin-test-junit"],
+                    "compileReleaseUnitTestKotlin" to ["kotlin-test-junit"]
                 )
             )
         }
@@ -411,8 +411,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildJdk = jdkVersion.location
         ) {
             assertKotlinTestDependency(
-                listOf("androidTestImplementation"),
-                mapOf("compileDebugAndroidTestKotlin" to listOf("kotlin-test-junit"))
+                ["androidTestImplementation"],
+                mapOf("compileDebugAndroidTestKotlin" to ["kotlin-test-junit"])
             )
         }
     }
@@ -423,8 +423,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyJvm(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
             assertKotlinTestDependency(
-                listOf("testImplementation"),
-                mapOf("compileTestKotlin" to listOf("kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-testng"))
+                ["testImplementation"],
+                mapOf("compileTestKotlin" to ["kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-testng"])
             )
         }
     }
@@ -439,8 +439,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             gradleVersion,
         ) {
             assertKotlinTestDependency(
-                listOf("jsTestImplementation"),
-                mapOf("compileTestKotlinJs" to listOf("kotlin-test-js")),
+                ["jsTestImplementation"],
+                mapOf("compileTestKotlinJs" to ["kotlin-test-js"]),
                 isBuildGradleKts = true
             )
         }
@@ -452,10 +452,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyMppCommon(gradleVersion: GradleVersion) {
         project("jvm-and-js-hmpp", gradleVersion) {
             assertKotlinTestDependency(
-                listOf("commonTestImplementation"),
+                ["commonTestImplementation"],
                 mapOf(
-                    "compileTestKotlinJvm" to listOf("kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"),
-                    "compileTestKotlinJs" to listOf("kotlin-test-js")
+                    "compileTestKotlinJvm" to ["kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"],
+                    "compileTestKotlinJs" to ["kotlin-test-js"]
                 ),
                 isBuildGradleKts = true
             )
@@ -468,10 +468,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyMppJvmJs(gradleVersion: GradleVersion) {
         project("jvm-and-js-hmpp", gradleVersion) {
             assertKotlinTestDependency(
-                listOf("jvmAndJsTestApi", "jvmAndJsTestCompileOnly"), // add to the intermediate source set, and to two scopes
+                ["jvmAndJsTestApi", "jvmAndJsTestCompileOnly"], // add to the intermediate source set, and to two scopes
                 mapOf(
-                    "compileTestKotlinJvm" to listOf("kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"),
-                    "compileTestKotlinJs" to listOf("kotlin-test-js")
+                    "compileTestKotlinJvm" to ["kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"],
+                    "compileTestKotlinJs" to ["kotlin-test-js"]
                 ),
                 isBuildGradleKts = true
             )
@@ -484,9 +484,9 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     fun kotlinTestSingleDependencyMppCommonSinglePlatform(gradleVersion: GradleVersion) {
         project("jvm-and-js-hmpp", gradleVersion) {
             assertKotlinTestDependency(
-                listOf("commonTestImplementation"),
+                ["commonTestImplementation"],
                 mapOf(
-                    "compileTestKotlinJvm" to listOf("kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"),
+                    "compileTestKotlinJvm" to ["kotlin-test-${defaultBuildOptions.kotlinVersion}.jar", "kotlin-test-junit"],
                 ),
                 isBuildGradleKts = true
             )
@@ -510,7 +510,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             val expectedModule = "kotlin-test-${testFramework.second}-"
             checkTaskCompileClasspath(
                 "compileTestKotlin",
-                listOf(expectedModule),
+                [expectedModule],
                 testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule
             )
         }
@@ -533,7 +533,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             val expectedModule = "kotlin-test-${testFramework.second}-"
             checkTaskCompileClasspath(
                 "compileTestKotlinJvm",
-                listOf(expectedModule),
+                [expectedModule],
                 testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule,
                 isBuildGradleKts = true
             )
@@ -557,7 +557,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             val expectedModule = "kotlin-test-${testFramework.second}-"
             checkTaskCompileClasspath(
                 "compileTestKotlinJvm",
-                listOf(expectedModule),
+                [expectedModule],
                 testFrameworks.map { "kotlin-test-" + it.second + "-" } - expectedModule,
                 isBuildGradleKts = true
             )
@@ -578,7 +578,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 configurations.getByName("testImplementation").dependencies.remove(dependency)
                 """.trimIndent()
             )
-            checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = listOf("kotlin-test"))
+            checkTaskCompileClasspath("compileTestKotlin", checkModulesNotInClasspath = ["kotlin-test"])
 
             // Add it back after removal:
             buildGradle.appendText(
@@ -587,7 +587,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 dependencies { testImplementation("$kotlinTestMultiplatformDependency") }
                 """.trimIndent()
             )
-            checkTaskCompileClasspath("compileTestKotlin", checkModulesInClasspath = listOf("kotlin-test"))
+            checkTaskCompileClasspath("compileTestKotlin", checkModulesInClasspath = ["kotlin-test"])
         }
     }
 
@@ -641,7 +641,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
                 """.trimIndent()
             }
 
-            checkTaskCompileClasspath("compileKotlin", listOf("kotlin-reflect"))
+            checkTaskCompileClasspath("compileKotlin", ["kotlin-reflect"])
         }
     }
 
@@ -695,8 +695,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     private fun TestProject.checkConfigurationContent(
         configurationName: String,
-        checkModulesInResolutionResult: List<String> = emptyList(),
-        checkModulesNotInResolutionResult: List<String> = emptyList(),
+        checkModulesInResolutionResult: List<String> = [],
+        checkModulesNotInResolutionResult: List<String> = [],
         isBuildGradleKts: Boolean,
     ) {
         val expression = """configurations["$configurationName"].toList()"""
@@ -712,8 +712,8 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
 
     private fun TestProject.checkTaskCompileClasspath(
         taskPath: String,
-        checkModulesInClasspath: List<String> = emptyList(),
-        checkModulesNotInClasspath: List<String> = emptyList(),
+        checkModulesInClasspath: List<String> = [],
+        checkModulesNotInClasspath: List<String> = [],
         isBuildGradleKts: Boolean = false,
     ) {
         val subproject = taskPath.substringBeforeLast(":").takeIf { it.isNotEmpty() && it != taskPath }
@@ -803,10 +803,10 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
     companion object {
         private const val kotlinTestMultiplatformDependency = "org.jetbrains.kotlin:kotlin-test"
 
-        private val testFrameworks = listOf(
+        private val testFrameworks = [
             "useJUnit()" to "junit",
             "useTestNG()" to "testng",
             "useJUnitPlatform()" to "junit5"
-        )
+        ]
     }
 }

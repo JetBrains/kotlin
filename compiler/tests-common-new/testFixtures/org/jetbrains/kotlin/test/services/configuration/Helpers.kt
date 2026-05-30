@@ -43,7 +43,7 @@ fun getDependencies(module: TestModule, testServices: TestServices, kind: Depend
 
 fun getFriendDependencies(module: TestModule, testServices: TestServices): Set<ModuleDescriptorImpl> =
     getDependencies(module, testServices, DependencyRelation.FriendDependency)
-        .filterIsInstanceTo<ModuleDescriptorImpl, MutableSet<ModuleDescriptorImpl>>(mutableSetOf())
+        .filterIsInstanceTo<ModuleDescriptorImpl, MutableSet<ModuleDescriptorImpl>>([])
 
 fun createJsTestPhaseConfig(testServices: TestServices, module: TestModule): PhaseConfig {
     val debugMode = DebugMode.fromSystemProperty("kotlin.js.debugMode")

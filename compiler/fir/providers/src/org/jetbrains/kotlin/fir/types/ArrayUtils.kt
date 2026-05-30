@@ -31,7 +31,7 @@ fun ConeTypeProjection.createArrayType(nullable: Boolean = false, createPrimitiv
         }
     }
 
-    return StandardClassIds.Array.constructClassLikeType(arrayOf(this), nullable)
+    return StandardClassIds.Array.constructClassLikeType([this], nullable)
 }
 
 fun ConeKotlinType.varargElementType(): ConeKotlinType {

@@ -129,7 +129,7 @@ fun ClassDescriptor.getClassFromInternalSerializationPackage(classSimpleName: St
     module.getClassFromInternalSerializationPackage(classSimpleName)
 
 fun ClassDescriptor.toSimpleType(nullable: Boolean = false) =
-    KotlinTypeFactory.simpleType(TypeAttributes.Empty, this.typeConstructor, emptyList(), nullable)
+    KotlinTypeFactory.simpleType(TypeAttributes.Empty, this.typeConstructor, [], nullable)
 
 fun Annotated.annotationsWithArguments(): List<Triple<ClassDescriptor, List<ValueArgument>, List<ValueParameterDescriptor>>> =
     annotations.asSequence()

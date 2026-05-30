@@ -24,7 +24,7 @@ package androidx.compose.compiler.plugins.kotlin.inference
  */
 class LazyScheme(
     scheme: Scheme,
-    context: MutableList<Binding> = mutableListOf(),
+    context: MutableList<Binding> = [],
     val bindings: Bindings = Bindings(),
 ) {
     val target: Binding = scheme.target.toBinding(bindings, context)

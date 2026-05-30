@@ -24,7 +24,7 @@ import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationDesc
 class SerializableProperties(private val serializableClass: ClassDescriptor, val bindingContext: BindingContext) :
     ISerializableProperties<SerializableProperty> {
     private val primaryConstructorParameters: List<ValueParameterDescriptor> =
-        serializableClass.unsubstitutedPrimaryConstructor?.valueParameters ?: emptyList()
+        serializableClass.unsubstitutedPrimaryConstructor?.valueParameters ?: []
 
     override val serializableProperties: List<SerializableProperty>
     override val isExternallySerializable: Boolean

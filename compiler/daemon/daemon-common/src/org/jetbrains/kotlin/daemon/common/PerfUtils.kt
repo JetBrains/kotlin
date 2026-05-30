@@ -36,7 +36,7 @@ interface Profiler {
     fun getCounters(): Map<Any?, PerfCounters>
     fun getTotalCounters(): PerfCounters
 
-    fun beginMeasure(obj: Any?) : List<Long> = listOf()
+    fun beginMeasure(obj: Any?) : List<Long> = []
     fun endMeasure(obj: Any?, startState: List<Long>) {}
 }
 
@@ -95,7 +95,7 @@ inline fun usedMemory(withGC: Boolean): Long {
 }
 
 
-inline fun beginMeasureWallTime() = listOf(System.nanoTime())
+inline fun beginMeasureWallTime() = [System.nanoTime()]
 
 inline fun endMeasureWallTime(perfCounters: PerfCounters, startState: List<Long>) {
     val [startTime] = startState
@@ -107,7 +107,7 @@ inline fun beginMeasureWallAndThreadTimes(threadMXBean: ThreadMXBean): List<Long
     val startTime = System.nanoTime()
     val startThreadTime = threadMXBean.threadCpuTime()
     val startThreadUserTime = threadMXBean.threadUserTime()
-    return listOf(startTime, startThreadTime, startThreadUserTime)
+    return [startTime, startThreadTime, startThreadUserTime]
 }
 
 inline fun endMeasureWallAndThreadTimes(perfCounters: PerfCounters, threadMXBean: ThreadMXBean, startState: List<Long>) {
@@ -125,7 +125,7 @@ inline fun beginMeasureWallAndThreadTimesAndMemory(withGC: Boolean = false, thre
     val startThreadTime = threadMXBean.threadCpuTime()
     val startThreadUserTime = threadMXBean.threadUserTime()
 
-    return listOf(startMem, startTime, startThreadTime, startThreadUserTime)
+    return [startMem, startTime, startThreadTime, startThreadUserTime]
 }
 
 inline fun endMeasureWallAndThreadTimesAndMemory(perfCounters: PerfCounters, withGC: Boolean = false, threadMXBean: ThreadMXBean, startState: List<Long>){

@@ -45,7 +45,7 @@ abstract class StubsTestEngine {
      */
     fun render(stub: KotlinFileStubImpl): String = extractAdditionalStubInfo(stub)
 
-    open val additionalDirectives: List<DirectivesContainer> get() = emptyList()
+    open val additionalDirectives: List<DirectivesContainer> get() = []
 
     private fun checkPsiElementTypeConsistency(assertions: AssertionsService, stubElement: StubElement<*>) {
         val psi = stubElement.psi as? StubBasedPsiElement<*>
@@ -127,7 +127,7 @@ private fun <P : PsiElement, S : StubElement<P>> serializeAndDeserializeStub(
 
 private class StringEnumerator : AbstractStringEnumerator {
     private val values = HashMap<String, Int>()
-    private val strings = mutableListOf<String>()
+    private val strings: MutableList<String> = []
 
     override fun enumerate(value: String?): Int {
         if (value == null) return 0

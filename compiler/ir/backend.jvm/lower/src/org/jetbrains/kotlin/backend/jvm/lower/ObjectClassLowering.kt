@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isObject
 
 internal class ObjectClassLowering(val context: JvmBackendContext) : ClassLoweringPass {
-    private val pendingTransformations = mutableListOf<Function0<Unit>>()
+    private val pendingTransformations: MutableList<() -> Unit> = []
 
     override fun lower(irFile: IrFile) {
         super.lower(irFile)

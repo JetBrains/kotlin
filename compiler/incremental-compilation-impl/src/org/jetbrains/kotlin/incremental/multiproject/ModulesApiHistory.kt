@@ -97,7 +97,7 @@ abstract class ModulesApiHistoryBase(rootProjectDir: File, protected val modules
 
             when {
                 module != null ->
-                    setOf(module.buildHistoryFile)
+                    [module.buildHistoryFile]
                 parent != null && isInProjectBuildDir(parent) -> {
                     val parentHistory = getBuildHistoryForDir(parent)
                     when (parentHistory) {
@@ -123,7 +123,7 @@ class ModulesApiHistoryJvm(rootProjectDir: File, modulesInfo: IncrementalModuleI
     override fun getBuildHistoryFilesForJar(jar: File): Either<Set<File>> {
         val moduleInfoFromJar = modulesInfo.jarToModule[jar]
         if (moduleInfoFromJar != null) {
-            return Either.Success(setOf(moduleInfoFromJar.buildHistoryFile))
+            return Either.Success([moduleInfoFromJar.buildHistoryFile])
         }
 
         val classListFile = modulesInfo.jarToClassListFile[jar] ?: return Either.Error("Unknown jar: $jar")
@@ -150,7 +150,7 @@ class ModulesApiHistoryJvm(rootProjectDir: File, modulesInfo: IncrementalModuleI
     override fun abiSnapshot(jar: File): Either<Set<File>> {
         val abiSnapshot = modulesInfo.jarToModule[jar]?.abiSnapshot ?: modulesInfo.jarToAbiSnapshot[jar]
         return if (abiSnapshot != null)
-            Either.Success(setOf(abiSnapshot))
+            Either.Success([abiSnapshot])
         else
             Either.Error("Failed to find abi snapshot for file ${jar.absolutePath}")
     }
@@ -161,13 +161,13 @@ class ModulesApiHistoryJs(rootProjectDir: File, modulesInfo: IncrementalModuleIn
         val moduleEntry = modulesInfo.jarToModule[jar]
 
         return when {
-            moduleEntry != null -> Either.Success(setOf(moduleEntry.buildHistoryFile))
+            moduleEntry != null -> Either.Success([moduleEntry.buildHistoryFile])
             else -> Either.Error("No module is found for jar $jar")
         }
     }
 
     override fun abiSnapshot(jar: File): Either<Set<File>> {
-        return modulesInfo.jarToModule[jar]?.abiSnapshot?.let { Either.Success(setOf(it)) } ?: Either.Error("Failed to find snapshot for file ${jar.absolutePath}")
+        return modulesInfo.jarToModule[jar]?.abiSnapshot?.let { Either.Success([it]) } ?: Either.Error("Failed to find snapshot for file ${jar.absolutePath}")
 
     }
 }
@@ -230,14 +230,14 @@ class ModulesApiHistoryAndroid(rootProjectDir: File, modulesInfo: IncrementalMod
                 }
             }
         } catch (t: Throwable) {
-            return emptyList()
+            return []
         }
 
         return result
     }
 
     private fun getPossibleModuleNamesForDir(path: File): List<String> {
-        if (!path.isDirectory) return listOf()
+        if (!path.isDirectory) return []
 
         return path.listFiles().filter { it.name.endsWith(".kotlin_module", ignoreCase = true) }.map { it.nameWithoutExtension }
     }

@@ -28,8 +28,8 @@ class DebugInformationGeneratorImpl private constructor(
     }
 
     override fun generateDebugInformation(): DebugInformation {
-        val sourceMapDebugInformation = sourceMapGenerator?.generateDebugInformation() ?: emptyList()
-        val dwarfDebugInformation = dwarfGenerator?.generateDebugInformation() ?: emptyList()
+        val sourceMapDebugInformation = sourceMapGenerator?.generateDebugInformation() ?: []
+        val dwarfDebugInformation = dwarfGenerator?.generateDebugInformation() ?: []
 
         return sourceMapDebugInformation + dwarfDebugInformation
     }

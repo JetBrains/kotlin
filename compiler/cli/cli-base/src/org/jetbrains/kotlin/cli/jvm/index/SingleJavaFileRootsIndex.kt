@@ -133,7 +133,8 @@ class SingleJavaFileRootsIndex(private val roots: List<JavaRoot>) {
         }
 
         companion object {
-            private val CLASS_KEYWORDS = setOf(ElementType.CLASS_KEYWORD, ElementType.INTERFACE_KEYWORD, ElementType.ENUM_KEYWORD)
+            private val CLASS_KEYWORDS: Set<IElementType?> =
+                [ElementType.CLASS_KEYWORD, ElementType.INTERFACE_KEYWORD, ElementType.ENUM_KEYWORD]
         }
     }
 

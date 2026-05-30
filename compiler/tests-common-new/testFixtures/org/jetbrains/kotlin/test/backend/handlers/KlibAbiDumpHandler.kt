@@ -33,7 +33,7 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
     failureDisablesNextSteps = true,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
-    override val directiveContainers get() = listOf(KlibAbiDumpDirectives)
+    override val directiveContainers get() = [KlibAbiDumpDirectives]
 
     private val kotlinPackage = AbiCompoundName(StandardNames.BUILT_INS_PACKAGE_NAME.asString())
     private val dumpers = hashMapOf<AbiSignatureVersion, MultiModuleInfoDumper>()

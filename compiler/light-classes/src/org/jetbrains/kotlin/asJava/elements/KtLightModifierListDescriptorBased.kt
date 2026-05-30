@@ -57,6 +57,7 @@ abstract class KtLightModifierListDescriptorBased<out T : KtLightElement<KtModif
                 else -> KtLightNullabilityAnnotation(modifierListOwner as KtLightElement<*, PsiModifierListOwner>, this)
             }
 
+            @Suppress("ConvertToCollectionLiterals")
             return annotationsForEntries +
                     (if (nullabilityAnnotation.qualifiedName != null) listOf(nullabilityAnnotation) else emptyList())
         }
@@ -83,7 +84,7 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 
     override fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> {
 
-        if (sourceAnnotations.isEmpty()) return listOf(createRetentionRuntimeAnnotation(this))
+        if (sourceAnnotations.isEmpty()) return [createRetentionRuntimeAnnotation(this)]
 
         return mutableListOf<KtLightAbstractAnnotation>().also { result ->
 
@@ -105,12 +106,12 @@ abstract class KtUltraLightModifierList<out T : KtLightElement<KtModifierListOwn
 private fun lightAnnotationsForEntries(lightModifierList: KtLightModifierList<*>): List<KtLightAnnotationForSourceEntry> {
     val lightModifierListOwner = lightModifierList.parent
 
-    if (!isFromSources(lightModifierList)) return emptyList()
+    if (!isFromSources(lightModifierList)) return []
 
     val annotatedKtDeclaration = lightModifierListOwner.kotlinOrigin as? KtDeclaration
 
     if (annotatedKtDeclaration == null || !annotatedKtDeclaration.isValid || !hasAnnotationsInSource(annotatedKtDeclaration)) {
-        return emptyList()
+        return []
     }
 
     return getAnnotationDescriptors(annotatedKtDeclaration, lightModifierListOwner)
@@ -166,7 +167,7 @@ private fun getAnnotationDescriptors(
         annotatedLightElement.isGetter -> descriptor.getter
         annotatedLightElement.isSetter -> descriptor.setter
         else -> descriptor
-    } ?: return emptyList()
+    } ?: return []
 
     val annotations = annotatedDescriptor.annotations.toMutableList()
 

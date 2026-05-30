@@ -53,7 +53,7 @@ internal abstract class KFunctionProxy<R>(
     override fun call(vararg args: Any?): R {
         // TODO check arity
         val invokeFunction = state.invokeSymbol.owner
-        val valueArguments = listOf(state) + invokeFunction.nonDispatchParameters.mapIndexed { argIndex, parameter ->
+        val valueArguments = [state] + invokeFunction.nonDispatchParameters.mapIndexed { argIndex, parameter ->
             environment.convertToState(args[argIndex], parameter.type)
         }
         @Suppress("UNCHECKED_CAST")

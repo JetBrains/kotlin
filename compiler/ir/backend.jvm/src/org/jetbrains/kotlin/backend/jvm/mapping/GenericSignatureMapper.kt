@@ -83,39 +83,39 @@ object GenericSignatureMapper {
     }
 
     private val methodNameToProcessors = mapOf(
-        "contains" to listOf(
+        "contains" to [
             // boolean contains(Object o)
             SignatureProcessor(
                 StandardNames.FqNames.collection,
                 "(Ljava/lang/Object;)Z",
                 SignatureKind.NON_GENERIC
             )
-        ),
-        "containsAll" to listOf(
+        ],
+        "containsAll" to [
             // boolean containsAll(Collection<?> c)
             SignatureProcessor(
                 StandardNames.FqNames.collection,
                 "(Ljava/util/Collection;)Z",
                 SignatureKind.FIXED_COLLECTION_PARAMETER
             ),
-        ),
-        "containsKey" to listOf(
+        ],
+        "containsKey" to [
             // boolean containsKey(Object key)
             SignatureProcessor(
                 StandardNames.FqNames.map,
                 "(Ljava/lang/Object;)Z",
                 SignatureKind.NON_GENERIC
             ),
-        ),
-        "containsValue" to listOf(
+        ],
+        "containsValue" to [
             // boolean containsValue(Object value)
             SignatureProcessor(
                 StandardNames.FqNames.map,
                 "(Ljava/lang/Object;)Z",
                 SignatureKind.NON_GENERIC
             ),
-        ),
-        "get" to listOf(
+        ],
+        "get" to [
             // V get(Object key)
             // Match the first parameter and ensure that there is only a single parameter.
             // The return type is generic in both Kotlin and Java.
@@ -124,8 +124,8 @@ object GenericSignatureMapper {
                 "(Ljava/lang/Object;)",
                 SignatureKind.FIRST_PARAMETER_ERASED
             )
-        ),
-        "getOrDefault" to listOf(
+        ],
+        "getOrDefault" to [
             // V getOrDefault(Object key, V defaultValue)
             // Match the first parameter and ensure that there are two parameters. This check
             // could be more precise, but it's unnecessary since we will check afterwards that
@@ -139,24 +139,24 @@ object GenericSignatureMapper {
             ) { method ->
                 method.argumentTypes.size == 2
             },
-        ),
-        "indexOf" to listOf(
+        ],
+        "indexOf" to [
             // int indexOf(Object o)
             SignatureProcessor(
                 StandardNames.FqNames.list,
                 "(Ljava/lang/Object;)I",
                 SignatureKind.NON_GENERIC
             ),
-        ),
-        "lastIndexOf" to listOf(
+        ],
+        "lastIndexOf" to [
             // int lastIndexOf(Object o)
             SignatureProcessor(
                 StandardNames.FqNames.list,
                 "(Ljava/lang/Object;)I",
                 SignatureKind.NON_GENERIC
             ),
-        ),
-        "remove" to listOf(
+        ],
+        "remove" to [
             // boolean remove(Object o)
             SignatureProcessor(
                 StandardNames.FqNames.mutableCollection,
@@ -180,22 +180,22 @@ object GenericSignatureMapper {
                 "(Ljava/lang/Object;Ljava/lang/Object;)Z",
                 SignatureKind.NON_GENERIC
             ),
-        ),
-        "removeAll" to listOf(
+        ],
+        "removeAll" to [
             // boolean removeAll(Collection<?> c)
             SignatureProcessor(
                 StandardNames.FqNames.mutableCollection,
                 "(Ljava/util/Collection;)Z",
                 SignatureKind.FIXED_COLLECTION_PARAMETER
             ),
-        ),
-        "retainAll" to listOf(
+        ],
+        "retainAll" to [
             // boolean retainAll(Collection<?> c)
             SignatureProcessor(
                 StandardNames.FqNames.mutableCollection,
                 "(Ljava/util/Collection;)Z",
                 SignatureKind.FIXED_COLLECTION_PARAMETER
             ),
-        ),
+        ],
     )
 }

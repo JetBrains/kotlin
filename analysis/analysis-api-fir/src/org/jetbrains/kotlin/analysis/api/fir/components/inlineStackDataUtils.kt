@@ -44,14 +44,14 @@ internal fun retrieveInlineStackData(
 
     if (debuggerExtension == null) return InlineStackData(emptyMap(), emptyMap(), null)
 
-    val unmappedTypeParameters = mutableSetOf<FirTypeParameterSymbol>()
+    val unmappedTypeParameters: MutableSet<FirTypeParameterSymbol> = []
     file.collectCapturedReifiedTypeParameters(unmappedTypeParameters, resolutionFacade)
     val capturedTypeParameters = unmappedTypeParameters.toSet()
 
     // We need to save the order to make a substitution on the correct order later
     val reifiedTypeParametersMapping = linkedMapOf<FirTypeParameterSymbol, FirTypeRef>()
 
-    val unsubstitutedInlineLambdaParameters = mutableSetOf<FirValueParameterSymbol>()
+    val unsubstitutedInlineLambdaParameters: MutableSet<FirValueParameterSymbol> = []
     collectInlineLambdaParameters(file, unsubstitutedInlineLambdaParameters, resolutionFacade.useSiteFirSession)
     val inlineLambdaParameterMapping = mutableMapOf<FirValueParameterSymbol, InlineLambdaArgument>()
 

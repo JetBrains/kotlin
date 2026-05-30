@@ -17,7 +17,7 @@ private object ImportPrinter {
 
     private fun String.isDefaultImport() = substringBeforeLast('.') in defaultImportedPackages
 
-    private val defaultImportedPackages = setOf(
+    private val defaultImportedPackages: Set<String> = [
         "kotlin",
         "kotlin.annotation",
         "kotlin.collections",
@@ -25,7 +25,7 @@ private object ImportPrinter {
         "kotlin.sequences",
         "kotlin.text",
         "kotlin.io",
-    )
+    ]
 }
 
 fun SmartPrinter.printImports(imports: Collection<String>) {

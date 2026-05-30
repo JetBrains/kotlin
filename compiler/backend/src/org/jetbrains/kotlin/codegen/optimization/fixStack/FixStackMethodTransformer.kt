@@ -158,7 +158,7 @@ class FixStackMethodTransformer : MethodTransformer() {
             actions.add { saveStack(methodNode, marker, savedStackDescriptor) }
         } else {
             // marker is dead code
-            localVariablesManager.allocateVariablesForSaveStackMarker(marker, emptyList())
+            localVariablesManager.allocateVariablesForSaveStackMarker(marker, [])
             actions.add { methodNode.instructions.remove(marker) }
         }
     }
@@ -220,7 +220,7 @@ class FixStackMethodTransformer : MethodTransformer() {
             actions.add { saveStack(methodNode, inlineMarker, savedStackDescriptor) }
         } else {
             // before inline marker is dead code
-            localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, emptyList())
+            localVariablesManager.allocateVariablesForBeforeInlineMarker(inlineMarker, [])
             actions.add { methodNode.instructions.remove(inlineMarker) }
         }
     }

@@ -12,7 +12,7 @@ import test.assertArrayContentEquals
 
 internal actual val surrogateCodePointDecoding: String = "\uFFFD".repeat(3)
 
-internal actual val surrogateCharEncoding: ByteArray = byteArrayOf(0xEF.toByte(), 0xBF.toByte(), 0xBD.toByte())
+internal actual val surrogateCharEncoding: ByteArray = [0xEF.toByte(), 0xBF.toByte(), 0xBD.toByte()]
 
 // Native-specific part of stdlib/test/text/StringEncodingTest.kt
 class StringEncodingTestNative {

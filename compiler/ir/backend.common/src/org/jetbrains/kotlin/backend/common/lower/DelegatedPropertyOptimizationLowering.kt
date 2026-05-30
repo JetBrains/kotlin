@@ -33,7 +33,7 @@ private val KPROPERTIES_FOR_DELEGATION by IrDeclarationOriginImpl.Regular
 class DelegatedPropertyOptimizationLowering(val context: CommonBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         var refId = 0
-        val newFields = mutableListOf<IrField>()
+        val newFields: MutableList<IrField> = []
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
             val delegatedProperties = mutableMapOf<IrSymbol, (IrExpression) -> IrExpression>()
 

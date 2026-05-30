@@ -191,7 +191,7 @@ fun FirSession.intersect(schema: List<SimpleCol>, otherSchema: List<SimpleCol>):
     val intersection = mutableMapOf<String, List<SimpleCol>>()
     (schema + otherSchema).forEach {
         intersection.compute(it.name) { _, u ->
-            (u ?: emptyList()) + it
+            (u ?: []) + it
         }
     }
     return intersection.mapNotNull { [name, cols] ->
@@ -199,7 +199,7 @@ fun FirSession.intersect(schema: List<SimpleCol>, otherSchema: List<SimpleCol>):
         val col1 = cols[0]
         val col2 = cols[1]
         if (col1 is SimpleDataColumn && col2 is SimpleDataColumn) {
-            val type = typeContext.commonSuperTypeOrNull(listOf(col1.type.coneType, col2.type.coneType))
+            val type = typeContext.commonSuperTypeOrNull([col1.type.coneType, col2.type.coneType])
             val realType = if (type is ConeIntersectionType) builtinTypes.nullableAnyType.coneType else type
             realType?.let { SimpleDataColumn(name, context(SessionContext(this)) { it.wrap() }) }
         } else if (col1 is SimpleColumnGroup && col2 is SimpleColumnGroup) {
@@ -237,10 +237,10 @@ private fun Arguments.explodeLists(column: SimpleCol): ConeKotlinType = when (co
     }
 
     is SimpleFrameColumn -> {
-        Names.DF_CLASS_ID.createConeType(session, arrayOf(ConeStarProjection))
+        Names.DF_CLASS_ID.createConeType(session, [ConeStarProjection])
     }
 
     is SimpleColumnGroup -> {
-        Names.DATA_ROW_CLASS_ID.createConeType(session, arrayOf(ConeStarProjection))
+        Names.DATA_ROW_CLASS_ID.createConeType(session, [ConeStarProjection])
     }
 }

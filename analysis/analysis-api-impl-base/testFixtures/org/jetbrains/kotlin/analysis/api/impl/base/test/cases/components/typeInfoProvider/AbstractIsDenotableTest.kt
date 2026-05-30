@@ -97,7 +97,7 @@ abstract class AbstractIsDenotableTest : AbstractAnalysisApiBasedTest() {
             module: TestModule,
             testModuleStructure: TestModuleStructure
         ): List<TestFile> {
-            return listOf(this::class.java.classLoader.getResource("helpers/isDenotable/helpers.kt")!!.toTestFile())
+            return [this::class.java.classLoader.getResource("helpers/isDenotable/helpers.kt")!!.toTestFile()]
         }
     }
 }

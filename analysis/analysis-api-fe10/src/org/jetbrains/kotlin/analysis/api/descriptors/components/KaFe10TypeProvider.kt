@@ -170,7 +170,7 @@ internal class KaFe10TypeProvider(
         val elementToAnalyze = position.containingNonLocalDeclaration() ?: position
         val bindingContext = analysisContext.analyze(elementToAnalyze)
 
-        val lexicalScope = position.getResolutionScope(bindingContext) ?: return emptyList()
+        val lexicalScope = position.getResolutionScope(bindingContext) ?: return []
         return lexicalScope.getImplicitReceiversHierarchy().map { it.type.toKtType(analysisContext) }
     }
 
@@ -219,7 +219,7 @@ internal class KaFe10TypeProvider(
             return bConstructor.supertypes.all { areTypesCompatible(a, it) }
         }
 
-        val intersectionType = intersectWrappedTypes(listOf(a, b))
+        val intersectionType = intersectWrappedTypes([a, b])
         val intersectionTypeConstructor = intersectionType.constructor
 
         if (intersectionTypeConstructor is IntersectionTypeConstructor) {
@@ -229,7 +229,7 @@ internal class KaFe10TypeProvider(
             }
 
             val collectedUpperBounds = intersectedTypes.flatMapTo(mutableSetOf()) { getUpperBounds(it) }
-            return areBoundsCompatible(collectedUpperBounds, emptySet())
+            return areBoundsCompatible(collectedUpperBounds, [])
         } else {
             return !intersectionType.isNothing()
         }
@@ -239,7 +239,7 @@ internal class KaFe10TypeProvider(
         when (type) {
             is FlexibleType -> return getUpperBounds(type.upperBound)
             is DefinitelyNotNullType -> return getUpperBounds(type.original)
-            is ErrorType -> return emptyList()
+            is ErrorType -> return []
             is CapturedType -> return type.constructor.supertypes.flatMap { getUpperBounds(it) }
             is NewCapturedType -> return type.constructor.supertypes.flatMap { getUpperBounds(it) }
             is SimpleType -> {
@@ -256,16 +256,16 @@ internal class KaFe10TypeProvider(
                     return typeConstructor.supertypes.flatMap { getUpperBounds(it) }
                 }
 
-                return listOf(type)
+                return [type]
             }
-            else -> return emptyList()
+            else -> return []
         }
     }
 
     private fun areBoundsCompatible(
         upperBounds: Set<KotlinType>,
         lowerBounds: Set<KotlinType>,
-        checkedTypeParameters: MutableSet<TypeParameterDescriptor> = mutableSetOf(),
+        checkedTypeParameters: MutableSet<TypeParameterDescriptor> = [],
     ): Boolean {
         val upperBoundClasses = upperBounds.mapNotNull { getBoundClass(it) }.toSet()
 
@@ -327,7 +327,7 @@ internal class KaFe10TypeProvider(
                             isCompatible = isCompatible && typeParameterOwner.classId != StandardClassIds.KClass
                         }
 
-                        BoundTypeArguments(mutableSetOf(), mutableSetOf(), isCompatible)
+                        BoundTypeArguments([], [], isCompatible)
                     }
 
                     if (boundTypeArgument.variance.allowsOutPosition) {
@@ -348,22 +348,22 @@ internal class KaFe10TypeProvider(
         when (this) {
             is FlexibleType -> return lowerBound.collectLowerBounds()
             is DefinitelyNotNullType -> return original.collectLowerBounds()
-            is ErrorType -> return emptySet()
+            is ErrorType -> return []
             is CapturedType, is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectLowerBounds() }
             is SimpleType -> {
                 val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(this)
                 if (typeParameterDescriptor != null) {
-                    return emptySet()
+                    return []
                 }
 
                 return when (val typeConstructor = this.constructor) {
-                    is NewTypeVariableConstructor -> emptySet()
+                    is NewTypeVariableConstructor -> []
                     is IntersectionTypeConstructor -> typeConstructor.supertypes.flatMapTo(mutableSetOf()) { it.collectLowerBounds() }
                     else -> setOf(this)
                 }
 
             }
-            else -> return emptySet()
+            else -> return []
         }
     }
 
@@ -371,7 +371,7 @@ internal class KaFe10TypeProvider(
         when (this) {
             is FlexibleType -> return lowerBound.collectUpperBounds()
             is DefinitelyNotNullType -> return original.collectUpperBounds()
-            is ErrorType -> return emptySet()
+            is ErrorType -> return []
             is CapturedType, is NewCapturedType -> return constructor.supertypes.flatMapTo(mutableSetOf()) { it.collectUpperBounds() }
             is SimpleType -> {
                 val typeParameterDescriptor = TypeUtils.getTypeParameterDescriptorOrNull(this)
@@ -386,7 +386,7 @@ internal class KaFe10TypeProvider(
                 }
 
             }
-            else -> return emptySet()
+            else -> return []
         }
     }
 
@@ -461,9 +461,9 @@ internal class KaFe10TypeProvider(
     }
 
     private fun collectSuperClasses(type: KotlinType): Set<ClassDescriptor> {
-        val initialClass = getBoundClass(type) ?: return emptySet()
+        val initialClass = getBoundClass(type) ?: return []
 
-        val result = mutableSetOf<ClassDescriptor>()
+        val result: MutableSet<ClassDescriptor> = []
         result.add(initialClass)
 
         val queue = ArrayDeque<ClassDescriptor>()

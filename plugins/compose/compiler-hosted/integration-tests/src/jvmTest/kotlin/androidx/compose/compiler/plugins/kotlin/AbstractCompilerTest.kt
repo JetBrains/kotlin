@@ -64,12 +64,12 @@ abstract class AbstractCompilerTest {
         }
 
         val defaultClassPath by lazy {
-            listOf(
+            [
                 Classpath.kotlinStdlibJar(),
                 Classpath.kotlinxCoroutinesJar(),
                 Classpath.composeRuntimeJar(),
                 Classpath.composeRuntimeAnnotationsJar()
-            )
+            ]
         }
 
         val defaultClassLoader = this::class.java.classLoader
@@ -86,7 +86,7 @@ abstract class AbstractCompilerTest {
 
     @OptIn(ExperimentalCompilerApi::class)
     private fun createCompilerFacade(
-        additionalPaths: List<File> = listOf(),
+        additionalPaths: List<File> = [],
         forcedFirSetting: Boolean? = null,
         additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
@@ -129,14 +129,14 @@ abstract class AbstractCompilerTest {
 
     protected fun analyze(
         platformSources: List<SourceFile>,
-        commonSources: List<SourceFile> = listOf(),
-        additionalPaths: List<File> = emptyList(),
+        commonSources: List<SourceFile> = [],
+        additionalPaths: List<File> = [],
     ): AnalysisResult =
         createCompilerFacade(additionalPaths).analyze(platformSources, commonSources)
 
     protected fun compileToIr(
         sourceFiles: List<SourceFile>,
-        additionalPaths: List<File> = listOf(),
+        additionalPaths: List<File> = [],
         updateConfiguration: (CompilerConfiguration) -> Unit = {},
         registerExtensions: (Project.(CompilerConfiguration) -> Unit)? = null,
     ): IrModuleFragment =
@@ -148,8 +148,8 @@ abstract class AbstractCompilerTest {
 
     protected fun createClassLoader(
         platformSourceFiles: List<SourceFile>,
-        commonSourceFiles: List<SourceFile> = listOf(),
-        additionalPaths: List<File> = listOf(),
+        commonSourceFiles: List<SourceFile> = [],
+        additionalPaths: List<File> = [],
         additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         forcedFirSetting: Boolean? = null,
     ): GeneratedClassLoader {

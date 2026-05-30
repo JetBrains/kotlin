@@ -18,7 +18,7 @@ abstract class AbstractIncrementalJsKlibWithPluginCompilerRunnerTest : AbstractI
             val pluginJar = pluginSandboxJarForTests().path
 
             libraries += "${File.pathSeparator}$annotationsKlib"
-            pluginClasspaths = arrayOf(pluginJar)
+            pluginClasspaths = [pluginJar]
         }
 
     override val buildLogFinder: BuildLogFinder

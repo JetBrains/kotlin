@@ -15,7 +15,7 @@ interface TypeAttributeTranslatorExtension : TypeAttributeTranslator {
         "org.jetbrains.kotlin.extensions.typeAttributeTranslatorExtension",
         TypeAttributeTranslatorExtension::class.java
     ) {
-        val Default = TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator))
+        val Default = TypeAttributeTranslators([DefaultTypeAttributeTranslator])
 
         fun createTranslators(project: Project): TypeAttributeTranslators {
             return TypeAttributeTranslators(getInstances(project) + DefaultTypeAttributeTranslator)

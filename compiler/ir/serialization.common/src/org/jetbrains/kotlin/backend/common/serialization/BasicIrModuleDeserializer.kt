@@ -172,7 +172,7 @@ abstract class BasicIrModuleDeserializer(
          * deserialization in that file have been actually deserialized. Later the file can be enqueued
          * once again to deserialize other top-level declaration(s). This process can be repeated multiple times.
          */
-        private val filesWithPendingTopLevels = mutableSetOf<FileDeserializationState>()
+        private val filesWithPendingTopLevels: MutableSet<FileDeserializationState> = []
 
         /**
          * Enqueue the given file for deserialization of (some) top-level declarations.

@@ -228,7 +228,7 @@ internal class KlibMetadataExtensions : MetadataExtensions {
         writeAnnotations(kmProperty.getter.annotations, c, proto::addAllGetterAnnotation) {
             proto.setExtension(KlibMetadataProtoBuf.propertyGetterAnnotation, it)
         }
-        writeAnnotations(kmProperty.setter?.annotations ?: emptyList(), c, proto::addAllSetterAnnotation) {
+        writeAnnotations(kmProperty.setter?.annotations.orEmpty(), c, proto::addAllSetterAnnotation) {
             proto.setExtension(KlibMetadataProtoBuf.propertySetterAnnotation, it)
         }
         writeAnnotations(kmProperty.extensionReceiverParameterAnnotations, c, proto::addAllExtensionReceiverAnnotation) {

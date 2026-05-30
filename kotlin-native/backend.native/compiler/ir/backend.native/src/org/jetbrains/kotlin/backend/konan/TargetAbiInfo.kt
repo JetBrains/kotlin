@@ -36,26 +36,26 @@ class ExtendOnCallerSideTargetAbiInfo : TargetAbiInfo {
             irType.unwrapToPrimitiveOrReference(
                     eachInlinedClass = { inlinedClass, _ ->
                         when (inlinedClass.classId) {
-                            UnsignedType.UBYTE.classId -> return listOf(LlvmParameterAttribute.ZeroExt)
-                            UnsignedType.USHORT.classId -> return listOf(LlvmParameterAttribute.ZeroExt)
+                            UnsignedType.UBYTE.classId -> return [LlvmParameterAttribute.ZeroExt]
+                            UnsignedType.USHORT.classId -> return [LlvmParameterAttribute.ZeroExt]
                         }
                     },
                     ifPrimitive = { primitiveType, _ ->
                         when (primitiveType) {
-                            KonanPrimitiveType.BOOLEAN -> listOf(LlvmParameterAttribute.ZeroExt)
-                            KonanPrimitiveType.CHAR -> listOf(LlvmParameterAttribute.ZeroExt)
-                            KonanPrimitiveType.BYTE -> listOf(LlvmParameterAttribute.SignExt)
-                            KonanPrimitiveType.SHORT -> listOf(LlvmParameterAttribute.SignExt)
-                            KonanPrimitiveType.INT -> emptyList()
-                            KonanPrimitiveType.LONG -> emptyList()
-                            KonanPrimitiveType.FLOAT -> emptyList()
-                            KonanPrimitiveType.DOUBLE -> emptyList()
-                            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> emptyList()
-                            KonanPrimitiveType.VECTOR128 -> emptyList()
+                            KonanPrimitiveType.BOOLEAN -> [LlvmParameterAttribute.ZeroExt]
+                            KonanPrimitiveType.CHAR -> [LlvmParameterAttribute.ZeroExt]
+                            KonanPrimitiveType.BYTE -> [LlvmParameterAttribute.SignExt]
+                            KonanPrimitiveType.SHORT -> [LlvmParameterAttribute.SignExt]
+                            KonanPrimitiveType.INT -> []
+                            KonanPrimitiveType.LONG -> []
+                            KonanPrimitiveType.FLOAT -> []
+                            KonanPrimitiveType.DOUBLE -> []
+                            KonanPrimitiveType.NON_NULL_NATIVE_PTR -> []
+                            KonanPrimitiveType.VECTOR128 -> []
                         }
                     },
                     ifReference = {
-                        return emptyList()
+                        return []
                     },
             )
         }
@@ -68,9 +68,9 @@ sealed class ExtendOnCalleeSideTargetAbiInfo(private val shouldZeroExtBoolean: B
     override fun defaultParameterAttributesForIrType(irType: IrType): List<LlvmParameterAttribute> {
         return typeAttributesCache.getOrPut(irType) {
             if (shouldZeroExtBoolean && irType.computePrimitiveBinaryTypeOrNull() == PrimitiveBinaryType.BOOLEAN) {
-                listOf(LlvmParameterAttribute.ZeroExt)
+                [LlvmParameterAttribute.ZeroExt]
             } else {
-                emptyList()
+                []
             }
         }
     }

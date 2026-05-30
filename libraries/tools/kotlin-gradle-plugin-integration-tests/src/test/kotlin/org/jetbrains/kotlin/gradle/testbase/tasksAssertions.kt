@@ -206,8 +206,8 @@ fun BuildResult.assertTasksPackedToCache(vararg taskPaths: String) {
  */
 @OptIn(EnvironmentalVariablesOverride::class)
 fun TestProject.buildAndAssertAllTasks(
-    registeredTasks: List<String> = emptyList(),
-    notRegisteredTasks: List<String> = emptyList(),
+    registeredTasks: List<String> = [],
+    notRegisteredTasks: List<String> = [],
     buildOptions: BuildOptions = this.buildOptions,
     environmentVariables: EnvironmentalVariables = EnvironmentalVariables(),
 ) {
@@ -228,8 +228,8 @@ fun TestProject.buildAndAssertAllTasks(
  * or if any of the expected absent tasks are present in the output.
  */
 fun BuildResult.assertTasksInBuildOutput(
-    expectedPresentTasks: List<String> = emptyList(),
-    expectedAbsentTasks: List<String> = emptyList(),
+    expectedPresentTasks: List<String> = [],
+    expectedAbsentTasks: List<String> = [],
 ) {
     val registeredTasks = getAllTasksFromTheOutput()
     expectedPresentTasks.forEach {
@@ -265,7 +265,7 @@ private fun BuildResult.getAllTasksFromTheOutput(): List<String> {
     // with Isolated Projects enabled, task names include a leading colon, so we ignore it
     // https://github.com/gradle/gradle/issues/32852
     val taskPattern = Regex("^:?([:\\w]+) - (.*)$")
-    val tasks = mutableListOf<String>()
+    val tasks: MutableList<String> = []
 
     output.lines().forEach { line ->
         if (line.matches(taskPattern)) {

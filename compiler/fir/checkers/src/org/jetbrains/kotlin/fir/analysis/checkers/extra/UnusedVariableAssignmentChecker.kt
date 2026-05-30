@@ -90,7 +90,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
         }
         data.graph.traverse(RemoveVisibleWrites(ownData))
 
-        val variablesWithUnobservedWrites = mutableSetOf<FirPropertySymbol>()
+        val variablesWithUnobservedWrites: MutableSet<FirPropertySymbol> = []
         for (statement in ownData.unreadWrites) {
             if (statement is FirVariableAssignment) {
                 val variableSymbol = statement.calleeReference?.toResolvedPropertySymbol() ?: continue
@@ -331,7 +331,7 @@ object UnusedVariableAssignmentChecker : AbstractFirPropertyInitializationChecke
 
 private class VariableAssignmentData(val localProperties: Set<FirPropertySymbol>) {
     var writesByNode: Map<CFGNode<*>, PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>> = emptyMap()
-    val unreadWrites: MutableSet<FirStatement /* FirProperty | FirVariableAssignment */> = mutableSetOf()
+    val unreadWrites: MutableSet<FirStatement /* FirProperty | FirVariableAssignment */> = []
     val variableScopes: MutableMap<FirPropertySymbol, ControlFlowGraph> = hashMapOf()
     val variablesWithoutReads: MutableMap<FirPropertySymbol, FirProperty> = mutableMapOf()
 }

@@ -86,7 +86,7 @@ private fun Collection<File>.filterNewClasspath(known: Collection<ScriptDependen
     if (isEmpty()) return null
 
     val knownClasspath = known?.flatMapTo(hashSetOf<File>()) {
-        (it as? JvmDependency)?.classpath ?: emptyList()
+        (it as? JvmDependency)?.classpath ?: []
     }
     return filterNot { knownClasspath?.contains(it) == true }.takeIf { it.isNotEmpty() }
 }

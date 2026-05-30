@@ -21,87 +21,87 @@ class KmpModuleSorterTest : TestWithMockProject() {
         val a = createKtModule("A")
         val b = createKtModule("B")
         val c = createKtModule("C")
-        val d = createKtModule("D", directRegularDependencies = listOf(a, b, c))
-        assertEquals(listOf(a, b, c), buildDependenciesToTest(d))
+        val d = createKtModule("D", directRegularDependencies = [a, b, c])
+        assertEquals([a, b, c], buildDependenciesToTest(d))
     }
 
     @Test
     fun testOnlyKmpDependencies() {
         val p1CommonMain = createKtModule("p1.commonMain")
-        val p1NativeMain = createKtModule("p1.nativeMain", directDependsOnDependencies = listOf(p1CommonMain))
-        val p1IosMain = createKtModule("p1.iosMain", directDependsOnDependencies = listOf(p1NativeMain))
-        val p2IosMain = createKtModule("p2.iosMain", directRegularDependencies = listOf(p1CommonMain, p1NativeMain, p1IosMain))
+        val p1NativeMain = createKtModule("p1.nativeMain", directDependsOnDependencies = [p1CommonMain])
+        val p1IosMain = createKtModule("p1.iosMain", directDependsOnDependencies = [p1NativeMain])
+        val p2IosMain = createKtModule("p2.iosMain", directRegularDependencies = [p1CommonMain, p1NativeMain, p1IosMain])
 
-        assertEquals(listOf(p1IosMain, p1NativeMain, p1CommonMain), buildDependenciesToTest(p2IosMain))
+        assertEquals([p1IosMain, p1NativeMain, p1CommonMain], buildDependenciesToTest(p2IosMain))
     }
 
     @Test
     fun testMixedKmpAndUsualDependenciesShuffled() {
         val a = createKtModule("A")
         val b1 = createKtModule("B1")
-        val b2 = createKtModule("B2", directDependsOnDependencies = listOf(b1))
-        val b3 = createKtModule("B3", directDependsOnDependencies = listOf(b2))
+        val b2 = createKtModule("B2", directDependsOnDependencies = [b1])
+        val b3 = createKtModule("B3", directDependsOnDependencies = [b2])
         val c = createKtModule("C")
         val d1 = createKtModule("D1")
-        val d2 = createKtModule("D2", directDependsOnDependencies = listOf(d1))
+        val d2 = createKtModule("D2", directDependsOnDependencies = [d1])
 
         val p2IosMain = createKtModule(
-            "p2.iosMain", directRegularDependencies = listOf(
+            "p2.iosMain", directRegularDependencies = [
                 a, b2, c, b1, d2, b3, d1
-            )
+            ]
         )
 
-        assertEquals(listOf(a, b3, c, b2, d2, b1, d1), this.buildDependenciesToTest(p2IosMain))
+        assertEquals([a, b3, c, b2, d2, b1, d1], this.buildDependenciesToTest(p2IosMain))
     }
 
     @Test
     fun testDependsOnDependenciesFromSelfAndOtherProject() {
         val p1Common = createKtModule("p1.common")
-        val p1Intermediate = createKtModule("p1.intermediate", directDependsOnDependencies = listOf(p1Common))
-        val p1Platform = createKtModule("p1.platform", directDependsOnDependencies = listOf(p1Intermediate))
-        val p2Common = createKtModule("p2.common", directRegularDependencies = listOf(p1Common))
+        val p1Intermediate = createKtModule("p1.intermediate", directDependsOnDependencies = [p1Common])
+        val p1Platform = createKtModule("p1.platform", directDependsOnDependencies = [p1Intermediate])
+        val p2Common = createKtModule("p2.common", directRegularDependencies = [p1Common])
         val p2Intermediate = createKtModule(
             "p2.intermediate",
-            directDependsOnDependencies = listOf(p2Common),
-            directRegularDependencies = listOf(p1Common, p1Intermediate),
+            directDependsOnDependencies = [p2Common],
+            directRegularDependencies = [p1Common, p1Intermediate],
         )
         val p2Platform = createKtModule(
             "p2.platform",
-            directDependsOnDependencies = listOf(p2Intermediate),
-            directRegularDependencies = listOf(p1Common, p1Intermediate, p1Platform)
+            directDependsOnDependencies = [p2Intermediate],
+            directRegularDependencies = [p1Common, p1Intermediate, p1Platform]
         )
 
-        assertEquals(listOf(p1Common), this.buildDependenciesToTest(p2Common))
-        assertEquals(listOf(p1Intermediate, p1Common, p2Common), this.buildDependenciesToTest(p2Intermediate))
-        assertEquals(listOf(p1Platform, p1Intermediate, p1Common, p2Intermediate, p2Common), this.buildDependenciesToTest(p2Platform))
+        assertEquals([p1Common], this.buildDependenciesToTest(p2Common))
+        assertEquals([p1Intermediate, p1Common, p2Common], this.buildDependenciesToTest(p2Intermediate))
+        assertEquals([p1Platform, p1Intermediate, p1Common, p2Intermediate, p2Common], this.buildDependenciesToTest(p2Platform))
     }
 
     @Test
     fun testPartsOfTheGroupAreMergedCorrectly1() {
         val m1 = createKtModule("m1")
-        val m2 = createKtModule("m2", directDependsOnDependencies = listOf(m1))
-        val m3 = createKtModule("m3", directDependsOnDependencies = listOf(m2))
-        val m4 = createKtModule("m4", directDependsOnDependencies = listOf(m3))
+        val m2 = createKtModule("m2", directDependsOnDependencies = [m1])
+        val m3 = createKtModule("m3", directDependsOnDependencies = [m2])
+        val m4 = createKtModule("m4", directDependsOnDependencies = [m3])
 
-        val c = createKtModule("c", directRegularDependencies = listOf(m1, m3, m4, m2))
-        val d = createKtModule("d", directRegularDependencies = listOf(m2, m4, m3, m1))
-        assertEquals(listOf(m4, m3, m2, m1), buildDependenciesToTest(c))
-        assertEquals(listOf(m4, m3, m2, m1), buildDependenciesToTest(d))
+        val c = createKtModule("c", directRegularDependencies = [m1, m3, m4, m2])
+        val d = createKtModule("d", directRegularDependencies = [m2, m4, m3, m1])
+        assertEquals([m4, m3, m2, m1], buildDependenciesToTest(c))
+        assertEquals([m4, m3, m2, m1], buildDependenciesToTest(d))
     }
 
     @Test
     fun testPartsOfTheGroupAreMergedCorrectly2() {
         val m1 = createKtModule("m1")
-        val m2 = createKtModule("m2", directDependsOnDependencies = listOf(m1))
-        val m3 = createKtModule("m3", directDependsOnDependencies = listOf(m2))
-        val m4 = createKtModule("m4", directDependsOnDependencies = listOf(m3))
-        val m5 = createKtModule("m5", directDependsOnDependencies = listOf(m4))
-        val m6 = createKtModule("m6", directDependsOnDependencies = listOf(m5))
+        val m2 = createKtModule("m2", directDependsOnDependencies = [m1])
+        val m3 = createKtModule("m3", directDependsOnDependencies = [m2])
+        val m4 = createKtModule("m4", directDependsOnDependencies = [m3])
+        val m5 = createKtModule("m5", directDependsOnDependencies = [m4])
+        val m6 = createKtModule("m6", directDependsOnDependencies = [m5])
 
-        val c = createKtModule("c", directRegularDependencies = listOf(m3, m4, m6, m5, m2, m1))
-        val d = createKtModule("d", directRegularDependencies = listOf(m1, m2, m5, m6, m4, m3))
-        assertEquals(listOf(m6, m5, m4, m3, m2, m1), buildDependenciesToTest(c))
-        assertEquals(listOf(m6, m5, m4, m3, m2, m1), buildDependenciesToTest(d))
+        val c = createKtModule("c", directRegularDependencies = [m3, m4, m6, m5, m2, m1])
+        val d = createKtModule("d", directRegularDependencies = [m1, m2, m5, m6, m4, m3])
+        assertEquals([m6, m5, m4, m3, m2, m1], buildDependenciesToTest(c))
+        assertEquals([m6, m5, m4, m3, m2, m1], buildDependenciesToTest(d))
     }
 
     // See [org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionFactory#collectDependencySymbolProviders]
@@ -116,9 +116,9 @@ class KmpModuleSorterTest : TestWithMockProject() {
 
     private fun createKtModule(
         name: String,
-        directRegularDependencies: List<KaModule> = emptyList(),
-        directDependsOnDependencies: List<KaModule> = emptyList(),
-        directFriendDependencies: List<KaModule> = emptyList(),
+        directRegularDependencies: List<KaModule> = [],
+        directDependsOnDependencies: List<KaModule> = [],
+        directFriendDependencies: List<KaModule> = [],
     ): KaModule {
         return KaSourceModuleImpl(
             name, CommonPlatforms.defaultCommonPlatform, LanguageVersionSettingsImpl.DEFAULT, project, GlobalSearchScope.EMPTY_SCOPE

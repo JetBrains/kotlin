@@ -69,7 +69,7 @@ class KotlinDeclarationInCompiledFileSearcher {
             // Compiled code cannot have more than one companion object, so we can pick the first one
             container.declarations to container.companionObjects.firstOrNull()?.declarations.orEmpty()
         } else {
-            container.declarations to emptyList()
+            container.declarations to []
         }
 
         val declarations = regularDeclarations + companionDeclarations
@@ -206,11 +206,11 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doPropertyMatch(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
         if (member.typeParameters.size != property.typeParameters.size) return false
 
-        val ktTypes = mutableListOf<KtTypeReference>()
+        val ktTypes: MutableList<KtTypeReference> = []
         property.extractContextParameters(ktTypes)
         property.typeReference?.let { ktTypes.add(it) }
 
-        val psiTypes = mutableListOf<PsiType>()
+        val psiTypes: MutableList<PsiType> = []
         member.parameterList.parameters.forEach { psiTypes.add(it.type) }
         if (!setter) {
             val returnType = member.returnType ?: return false
@@ -235,13 +235,13 @@ class KotlinDeclarationInCompiledFileSearcher {
 
     private fun doPropertyMatchByName(member: PsiMethod, property: KtProperty, setter: Boolean): Boolean {
         if (!doTypeParametersMatchByName(member, property)) return false
-        val names = mutableListOf<String>()
+        val names: MutableList<String> = []
         property.extractContextParameterNames(names)
         if (setter) {
             names.addIfNotNull(property.setter?.parameter?.name)
         }
 
-        val psiNames = mutableListOf<String>()
+        val psiNames: MutableList<String> = []
         member.parameterList.parameters.forEach { psiNames.add(it.name) }
 
         if (names.size != psiNames.size) return false
@@ -254,7 +254,7 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doParametersMatch(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
         if (!doTypeParameters(member, ktNamedFunction)) return false
 
-        val ktTypes = mutableListOf<KtTypeReference>()
+        val ktTypes: MutableList<KtTypeReference> = []
         ktNamedFunction.extractContextParameters(ktTypes)
 
         return compareParameters(
@@ -281,7 +281,7 @@ class KotlinDeclarationInCompiledFileSearcher {
     private fun doParametersMatchByName(member: PsiMethod, ktNamedFunction: KtFunction): Boolean {
         if (!doTypeParametersMatchByName(member, ktNamedFunction)) return false
 
-        val names = mutableListOf<String>()
+        val names: MutableList<String> = []
         ktNamedFunction.extractContextParameterNames(names)
 
         return compareParameters(
@@ -351,7 +351,7 @@ class KotlinDeclarationInCompiledFileSearcher {
         val boundsByName = ktNamedFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
         member.typeParameters.zip(ktNamedFunction.typeParameters) { psiTypeParam, ktTypeParameter ->
             if (psiTypeParam.name.toString() != ktTypeParameter.name) return false
-            val psiBounds = mutableListOf<KtTypeReference>()
+            val psiBounds: MutableList<KtTypeReference> = []
             psiBounds.addIfNotNull(ktTypeParameter.extendsBound)
             boundsByName[ktTypeParameter.name]?.forEach {
                 psiBounds.addIfNotNull(it.boundTypeReference)

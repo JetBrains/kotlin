@@ -59,7 +59,7 @@ public fun <T : Any, C : MutableCollection<in T>> Optional<T>.toCollection(desti
  */
 @SinceKotlin("1.8")
 public fun <T : Any> Optional<out T>.toList(): List<T> =
-    if (isPresent) listOf(get()) else emptyList()
+    if (isPresent) [get()] else []
 
 /**
  * Returns a new read-only set of this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty set.
@@ -69,7 +69,7 @@ public fun <T : Any> Optional<out T>.toList(): List<T> =
  */
 @SinceKotlin("1.8")
 public fun <T : Any> Optional<out T>.toSet(): Set<T> =
-    if (isPresent) setOf(get()) else emptySet()
+    if (isPresent) [get()] else []
 
 /**
  * Returns a new sequence for this [Optional]'s value if [present][Optional.isPresent], or otherwise an empty sequence.
@@ -78,4 +78,4 @@ public fun <T : Any> Optional<out T>.toSet(): Set<T> =
  */
 @SinceKotlin("1.8")
 public fun <T : Any> Optional<out T>.asSequence(): Sequence<T> =
-    if (isPresent) sequenceOf(get()) else emptySequence()
+    if (isPresent) [get()] else []

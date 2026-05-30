@@ -57,9 +57,9 @@ private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
 
 fun SimpleCol.asDataColumn(): DataColumn<*> {
     val column = when (this) {
-        is SimpleDataColumn -> DataColumn.createByType(this.name, listOf(this.type))
+        is SimpleDataColumn -> DataColumn.createByType(this.name, [this.type])
         is SimpleColumnGroup -> DataColumn.createColumnGroup(this.name, this.columns().map()).asDataColumn()
-        is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, listOf(this.columns().map()))
+        is SimpleFrameColumn -> DataColumn.createFrameColumn(this.name, [this.columns().map()])
     }
     return column
 }

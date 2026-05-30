@@ -104,7 +104,7 @@ sealed class LHSResult {
             }
 
             val unboundReceiver = TransientReceiver(resolvedType)
-            unboundDetailedReceiver = ReceiverValueWithSmartCastInfo(unboundReceiver, emptySet(), isStable = true)
+            unboundDetailedReceiver = ReceiverValueWithSmartCastInfo(unboundReceiver, [], isStable = true)
         }
     }
 

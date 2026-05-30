@@ -46,7 +46,7 @@ class SpecialFakeOverrideSymbolsResolver() : SymbolRemapper.Empty() {
      * [processClass] function add all valid pairs for this class to the map.
      */
     private val cachedFakeOverrides = mutableMapOf<Pair<IrClassSymbol, IrSymbol>, IrSymbol>()
-    private val processedClasses = mutableSetOf<IrClass>()
+    private val processedClasses: MutableSet<IrClass> = []
 
     override fun getReferencedFunction(symbol: IrFunctionSymbol): IrFunctionSymbol {
         return symbol.remap()
@@ -99,7 +99,7 @@ class SpecialFakeOverrideSymbolsResolver() : SymbolRemapper.Empty() {
     }
 
     private fun processDeclaration(classSymbol: IrClassSymbol, declaration: IrOverridableDeclaration<*>) {
-        for (overridden in declaration.collectOverrides(mutableSetOf())) {
+        for (overridden in declaration.collectOverrides([])) {
             cachedFakeOverrides[classSymbol to overridden] = declaration.symbol
         }
     }

@@ -12,6 +12,6 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 
 class FirJsPlainObjectsCheckersComponent(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val classCheckers: Set<FirClassChecker> = setOf(FirJsPlainObjectsPluginClassChecker)
+        override val classCheckers: Set<FirClassChecker> = [FirJsPlainObjectsPluginClassChecker]
     }
 }

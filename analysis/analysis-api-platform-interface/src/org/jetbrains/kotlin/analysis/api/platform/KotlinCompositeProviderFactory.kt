@@ -33,7 +33,7 @@ public class KotlinCompositeProviderFactory<P : KotlinComposableProvider>(
             @Suppress("UNCHECKED_CAST")
             when (provider) {
                 is KotlinCompositeProvider<*> -> (provider as KotlinCompositeProvider<P>).providers
-                else -> listOf(provider)
+                else -> [provider]
             }
         }
 }

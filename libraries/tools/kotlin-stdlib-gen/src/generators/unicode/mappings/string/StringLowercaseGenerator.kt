@@ -21,8 +21,8 @@ internal class StringLowercaseGenerator(
     private val target: KotlinTarget,
 ) : StringCasingGenerator(unicodeDataLines) {
 
-    private val casedRanges = mutableListOf<IntRange>()
-    private val caseIgnorableRanges = mutableListOf<IntRange>()
+    private val casedRanges: MutableList<IntRange> = []
+    private val caseIgnorableRanges: MutableList<IntRange> = []
 
     init {
         val casedRangesBuilder = CasedRangesBuilder()
@@ -54,7 +54,7 @@ internal class StringLowercaseGenerator(
     }
 
     fun generate() {
-        check(contextDependentMappings.size == 1 || contextDependentMappings[0].conditionList == listOf("Final_Sigma")) {
+        check(contextDependentMappings.size == 1 || contextDependentMappings[0].conditionList == ["Final_Sigma"]) {
             "The locale-agnostic conditional mappings $contextDependentMappings are not handled."
         }
 

@@ -47,14 +47,14 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
         isForMetadataCompilation: Boolean,
     ): KotlinResolvedModuleDescriptors {
 
-        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+        val moduleDescriptors: MutableList<ModuleDescriptorImpl> = []
 
         @Suppress("NAME_SHADOWING")
         var builtIns = builtIns
 
-        val friendModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
-        val refinesModuleDescriptors = mutableSetOf<ModuleDescriptorImpl>()
-        val includedLibraryDescriptors = mutableSetOf<ModuleDescriptorImpl>()
+        val friendModuleDescriptors: MutableSet<ModuleDescriptorImpl> = []
+        val refinesModuleDescriptors: MutableSet<ModuleDescriptorImpl> = []
+        val includedLibraryDescriptors: MutableSet<ModuleDescriptorImpl> = []
 
         // Build module descriptors.
         resolvedLibraries.forEach { library ->
@@ -227,7 +227,7 @@ class ForwardDeclarationsPackageFragmentDescriptor(
                 name,
                 Modality.FINAL,
                 classKind,
-                listOf(supertype),
+                [supertype],
                 SourceElement.NO_SOURCE,
                 false,
                 LockBasedStorageManager.NO_LOCKS

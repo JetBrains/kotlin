@@ -504,8 +504,8 @@ internal fun AbstractInsnNode.isThrowIntrinsic() =
                 name in THROW_INTRINSIC_METHOD_NAMES
     }
 
-internal val THROW_INTRINSIC_METHOD_NAMES =
-    setOf(
+internal val THROW_INTRINSIC_METHOD_NAMES: Set<String> =
+    [
         "throwNpe",
         "throwUninitializedProperty",
         "throwUninitializedPropertyAccessException",
@@ -514,7 +514,7 @@ internal val THROW_INTRINSIC_METHOD_NAMES =
         "throwIllegalState",
         "throwParameterIsNullException",
         "throwUndefinedForReified"
-    )
+    ]
 
 internal fun InsnList.popReferenceValueBefore(insn: AbstractInsnNode) {
     val prev = insn.previous

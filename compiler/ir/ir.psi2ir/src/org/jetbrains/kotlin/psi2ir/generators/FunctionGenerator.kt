@@ -58,7 +58,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
         return declareSimpleFunction(
             ktFunction,
             null,
-            emptyList(),
+            [],
             IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA,
             lambdaDescriptor,
             parentLoopResolver
@@ -72,7 +72,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             ?.let {
                 declareSimpleFunctionInner(it, ktElement, IrDeclarationOrigin.FAKE_OVERRIDE)
                     .buildWithScope { irFunction ->
-                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null, emptyList())
+                        generateFunctionParameterDeclarationsAndReturnType(irFunction, ktElement, null, [])
                     }
             }
 
@@ -320,7 +320,7 @@ internal class FunctionGenerator(declarationGenerator: DeclarationGenerator) : D
             else
                 descriptor.typeParameters
         declarationGenerator.generateScopedTypeParameterDeclarations(irFunction, typeParameters)
-        generateValueParameterDeclarations(irFunction, null, null, emptyList(), withDefaultValues = false)
+        generateValueParameterDeclarations(irFunction, null, null, [], withDefaultValues = false)
     }
 
     private fun generateValueParameterDeclarations(

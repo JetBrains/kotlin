@@ -108,22 +108,24 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
         // Possible alternative: generate executable in buildDir and move or copy DLL there.
         // It might make sense in case of multiple dynamic libraries, but let's keep things simple for now.
         val executableFile = File(binaryLibrary.libraryFile.parentFile, clangExecutableName)
-        val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
+        val includeDirectories = binaryLibrary.headerFile?.let { [it.parentFile] } ?: []
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
+
+        @Suppress("ConvertToCollectionLiterals")
         val clangResult = compileWithClang(
             clangMode = clangMode,
             sourceFiles = cSources,
             includeDirectories = includeDirectories,
             outputFile = executableFile,
-            libraryDirectories = listOf(binaryLibrary.libraryFile.parentFile),
-            libraries = listOf(libraryName),
+            libraryDirectories = [binaryLibrary.libraryFile.parentFile],
+            libraries = [libraryName],
             additionalClangFlags = testRunSettings.getKindSpecificClangFlags(binaryLibrary) + listOf("-Wall", "-Werror"),
         ).assertSuccess()
 
         val testExecutable = TestExecutable(
             clangResult.resultingArtifact,
             loggedCompilationToolCall = clangResult.loggedData,
-            testNames = listOf(TestName("TMP")),
+            testNames = [TestName("TMP")],
         )
 
         runExecutableAndVerify(testCase, testExecutable)
@@ -131,18 +133,20 @@ abstract class AbstractNativeCExportTest() : AbstractNativeSimpleTest() {
 
     private fun generateCExportTestCase(testPathFull: File, sources: List<File>, goldenData: File? = null, regexes: File? = null, exitCode: String? = null): TestCase {
         val moduleName: String = testPathFull.name
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, [], [], [])
         sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
         return TestCase(
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs(listOf(
-                "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
-                "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
-                "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
-            )),
+            modules = [module],
+            freeCompilerArgs = TestCompilerArgs(
+                [
+                    "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
+                    "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
+                    "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
+                ]
+            ),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {
                 copy(

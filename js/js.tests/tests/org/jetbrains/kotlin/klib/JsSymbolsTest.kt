@@ -48,9 +48,9 @@ class JsSymbolsTest : AbstractSymbolsValidationTest(
 
 private class JsSymbolValidationHandler(testServices: TestServices) : IrSecondStageSymbolValidationHandler(testServices) {
     override fun getSymbols(irBuiltIns: IrBuiltIns): List<PreSerializationSymbols> {
-        return listOf(
+        return [
             BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = true),
             BackendJsSymbols(irBuiltIns, StageController(), compileLongAsBigint = false),
-        )
+        ]
     }
 }

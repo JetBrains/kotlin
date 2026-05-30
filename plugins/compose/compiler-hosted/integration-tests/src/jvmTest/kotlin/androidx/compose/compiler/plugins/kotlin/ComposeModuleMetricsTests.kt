@@ -24,7 +24,7 @@ class ComposeModuleMetricsTests : AbstractMetricsTransformTest() {
         // Tests in this file are about testing the output, so we want non-skippable composables
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.StrongSkipping.disabledName)
+            [FeatureFlag.StrongSkipping.disabledName]
         )
     }
 

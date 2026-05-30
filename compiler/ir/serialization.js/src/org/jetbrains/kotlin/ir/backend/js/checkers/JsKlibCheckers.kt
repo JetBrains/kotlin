@@ -22,23 +22,23 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 
 object JsKlibCheckers {
-    private val moduleChecker = listOf(JsKlibFileClashChecker)
+    private val moduleChecker = [JsKlibFileClashChecker]
 
-    private val exportedDeclarationsCheckers = listOf(
+    private val exportedDeclarationsCheckers = [
         JsKlibEsModuleExportsChecker,
         JsKlibOtherModuleExportsChecker
-    )
+    ]
 
-    private val callCheckers = listOf(
+    private val callCheckers = [
         JsKlibJsCodeCallChecker
-    )
+    ]
 
     fun makeChecker(
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
         doCheckCalls: Boolean,
         doModuleLevelChecks: Boolean,
-        cleanFiles: List<SerializedIrFile> = listOf(),
+        cleanFiles: List<SerializedIrFile> = [],
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
     ): IrVisitorVoid {
         return object : IrVisitorVoid() {

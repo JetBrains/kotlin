@@ -26,8 +26,8 @@ object CLIConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.cli.c
             DeprecationLevel.ERROR,
         ),
         comment = "Used by kotest, Realm, Dokka, KSP compiler plugins.",
-        importsToAdd = listOf("org.jetbrains.kotlin.config.CommonConfigurationKeys"),
-        annotations = listOf(MessageCollectorAccess())
+        importsToAdd = ["org.jetbrains.kotlin.config.CommonConfigurationKeys"],
+        annotations = [MessageCollectorAccess()]
     )
 
     val ORIGINAL_MESSAGE_COLLECTOR_KEY by key<MessageCollector>(

@@ -75,31 +75,31 @@ class ControlFlowGraphBuilder private constructor(
     private val notCompletedFunctionCalls: Stack<MutableList<FunctionCallExitNode>>,
 ) {
     constructor() : this(
-        graphs = stackOf(),
-        lastNodes = stackOf(),
+        graphs = [],
+        lastNodes = [],
         exitTargetsForReturn = mutableMapOf(),
         enterToLocalClassesMembers = mutableMapOf(),
         nonDirectJumps = listMultimapOf(),
-        argumentListSplitNodes = stackOf(),
+        argumentListSplitNodes = [],
         postponedAnonymousFunctionNodes = mutableMapOf(),
         anonymousFunctionCaptureNodes = mutableMapOf(),
-        postponedLambdaExits = stackOf(),
+        postponedLambdaExits = [],
         loopConditionEnterNodes = mutableMapOf(),
         loopExitNodes = mutableMapOf(),
-        whenExitNodes = stackOf(),
-        tryExitNodes = stackOf(),
-        catchNodes = stackOf(),
-        catchBlocksInProgress = stackOf(),
-        finallyEnterNodes = stackOf(),
-        finallyBlocksInProgress = stackOf(),
-        finallyBlocksInProgressSet = mutableSetOf(),
+        whenExitNodes = [],
+        tryExitNodes = [],
+        catchNodes = [],
+        catchBlocksInProgress = [],
+        finallyEnterNodes = [],
+        finallyBlocksInProgress = [],
+        finallyBlocksInProgressSet = [],
         collectionLiteralNodes = mutableMapOf(),
-        exitFunctionCallArgumentsNodes = stackOf(),
-        exitSafeCallNodes = stackOf(),
-        exitElvisExpressionNodes = stackOf(),
-        elvisRhsEnterNodes = stackOf(),
-        equalityOperatorCallLhsExitNodes = stackOf(),
-        notCompletedFunctionCalls = stackOf(),
+        exitFunctionCallArgumentsNodes = [],
+        exitSafeCallNodes = [],
+        exitElvisExpressionNodes = [],
+        elvisRhsEnterNodes = [],
+        equalityOperatorCallLhsExitNodes = [],
+        notCompletedFunctionCalls = [],
     )
 
     /**
@@ -125,8 +125,7 @@ class ControlFlowGraphBuilder private constructor(
             },
             anonymousFunctionCaptureNodes = anonymousFunctionCaptureNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
             postponedLambdaExits = postponedLambdaExits.createSnapshot { lambdas ->
-                val newExits = lambdas.exits.mapTo(mutableListOf()) { Pair(copier[it.first], it.second) }
-                PostponedLambdas(lambdas.lambdas, newExits)
+                PostponedLambdas(lambdas.lambdas, lambdas.exits.mapTo([]) { Pair(copier[it.first], it.second) })
             },
             loopConditionEnterNodes = loopConditionEnterNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
             loopExitNodes = loopExitNodes.mapValuesTo(mutableMapOf()) { copier[it.value] },
@@ -138,14 +137,14 @@ class ControlFlowGraphBuilder private constructor(
             finallyBlocksInProgress = finallyBlocksInProgress.createSnapshot(copier::get),
             finallyBlocksInProgressSet = finallyBlocksInProgressSet.toMutableSet(),
             collectionLiteralNodes = collectionLiteralNodes.mapValuesTo(mutableMapOf()) { [_, value] ->
-                value.mapTo(mutableListOf(), copier::get)
+                value.mapTo([], copier::get)
             },
             exitFunctionCallArgumentsNodes = exitFunctionCallArgumentsNodes.createSnapshot { it?.let(copier::get) },
             exitSafeCallNodes = exitSafeCallNodes.createSnapshot(copier::get),
             exitElvisExpressionNodes = exitElvisExpressionNodes.createSnapshot(copier::get),
             elvisRhsEnterNodes = elvisRhsEnterNodes.createSnapshot(copier::get),
             equalityOperatorCallLhsExitNodes = equalityOperatorCallLhsExitNodes.createSnapshot(copier::get),
-            notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo(mutableListOf(), copier::get) },
+            notCompletedFunctionCalls = notCompletedFunctionCalls.createSnapshot { it.mapTo([], copier::get) },
         )
     }
 
@@ -432,7 +431,7 @@ class ControlFlowGraphBuilder private constructor(
         return Triple(exitNode, postponedExitNode, graph)
     }
 
-    private fun splitDataFlowForPostponedLambdas(lambdas: Set<FirFunctionSymbol<*>> = emptySet()) {
+    private fun splitDataFlowForPostponedLambdas(lambdas: Set<FirFunctionSymbol<*>> = []) {
         postponedLambdaExits.push(PostponedLambdas(lambdas))
     }
 
@@ -546,7 +545,7 @@ class ControlFlowGraphBuilder private constructor(
         val enterNode = lastNodes.pop() as FileEnterNode
         val exitNode = currentGraph.exitNode as FileExitNode
 
-        val properties = mutableListOf<ControlFlowGraph>()
+        val properties: MutableList<ControlFlowGraph> = []
         enterNode.fir.declarations.forEachGraphOwner {
             val graph = it.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
             if (it is FirProperty) properties.add(graph)
@@ -656,8 +655,8 @@ class ControlFlowGraphBuilder private constructor(
         val isLocalClass = klass.isLocal
         var primaryConstructor: FirConstructor? = null
         val secondaryConstructors = mutableMapOf<FirConstructor, ControlFlowGraph>()
-        val calledInPlace = mutableListOf<ControlFlowGraph>()
-        val calledLater = mutableListOf<ControlFlowGraph>()
+        val calledInPlace: MutableList<ControlFlowGraph> = []
+        val calledLater: MutableList<ControlFlowGraph> = []
         klass.declarations.forEachGraphOwner {
             val graph = it.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
             when (it) {
@@ -825,7 +824,7 @@ class ControlFlowGraphBuilder private constructor(
             withFirEntry("script", script)
         }
 
-        val calledInPlace = mutableListOf<ControlFlowGraph>()
+        val calledInPlace: MutableList<ControlFlowGraph> = []
 
         script.declarations.forEachGraphOwner {
             val graph = it.controlFlowGraphReference?.controlFlowGraph ?: return@forEachGraphOwner
@@ -1023,7 +1022,7 @@ class ControlFlowGraphBuilder private constructor(
         val node = createWhenEnterNode(whenExpression)
         addNewSimpleNode(node)
         whenExitNodes.push(createWhenExitNode(whenExpression))
-        notCompletedFunctionCalls.push(mutableListOf())
+        notCompletedFunctionCalls.push([])
         splitDataFlowForPostponedLambdas()
         return node
     }
@@ -1193,7 +1192,7 @@ class ControlFlowGraphBuilder private constructor(
             addEdge(enterTryExpressionNode, finallyEnterNodes.top(), label = UncaughtExceptionPath)
         }
 
-        notCompletedFunctionCalls.push(mutableListOf())
+        notCompletedFunctionCalls.push([])
         splitDataFlowForPostponedLambdas()
         return enterTryExpressionNode to enterTryMainBlockNode
     }
@@ -1374,7 +1373,7 @@ class ControlFlowGraphBuilder private constructor(
         return createResolvedQualifierNode(resolvedQualifier).also(this::addNewSimpleNode)
     }
 
-    fun enterCall(lambdas: Set<FirFunctionSymbol<*>> = emptySet()) {
+    fun enterCall(lambdas: Set<FirFunctionSymbol<*>> = []) {
         splitDataFlowForPostponedLambdas(lambdas)
     }
 
@@ -1719,7 +1718,7 @@ class ControlFlowGraphBuilder private constructor(
     fun registerCollectionLiteralNode(node: CFGNodeWithRevisableFunctionCall) {
         when (val fir = node.fir) {
             is FirCollectionLiteral -> {
-                collectionLiteralNodes.getOrPut(fir) { mutableListOf() }.add(node)
+                collectionLiteralNodes.getOrPut(fir) { [] }.add(node)
             }
             else -> {}
         }
@@ -1727,7 +1726,7 @@ class ControlFlowGraphBuilder private constructor(
 
     private data class PostponedLambdas(
         val lambdas: Set<FirFunctionSymbol<*>>,
-        val exits: MutableList<Pair<CFGNode<*>, EdgeKind>> = mutableListOf(),
+        val exits: MutableList<Pair<CFGNode<*>, EdgeKind>> = [],
     )
 }
 

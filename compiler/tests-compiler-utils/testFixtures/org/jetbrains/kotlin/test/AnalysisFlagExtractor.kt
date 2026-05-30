@@ -87,10 +87,10 @@ private fun MutableList<PatternWithExtractor<*>>.createPattern(
     return BooleanPatternWithExtractor(directive, configurationKey).also { this += it }
 }
 
-private val FLAG_CLASSES: List<Class<*>> = listOf(
+private val FLAG_CLASSES: List<Class<*>> = [
     CLIConfigurationKeys::class.java,
     JVMConfigurationKeys::class.java
-)
+]
 
 private val FLAG_NAMESPACE_TO_CLASS: Map<String, Class<*>> = mapOf(
     "CLI" to CLIConfigurationKeys::class.java,

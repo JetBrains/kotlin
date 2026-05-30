@@ -209,7 +209,7 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
         description: FirResolvedContractDescription,
     ) {
         val callsInPlaceEffects = description.effects.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
-        val seenParameterIndices = mutableSetOf<Int>()
+        val seenParameterIndices: MutableSet<Int> = []
 
         for (effect in callsInPlaceEffects) {
             val parameterIndex = effect.valueParameterReference.parameterIndex

@@ -67,7 +67,7 @@ class AsGroupByDefault : AbstractInterpreter<GroupBy>() {
 class NamedValue(val name: String, val type: ConeKotlinType)
 
 class GroupByDsl {
-    val columns = mutableListOf<NamedValue>()
+    val columns: MutableList<NamedValue> = []
 }
 
 class AggregateDslInto : AbstractInterpreter<Unit>() {
@@ -121,7 +121,7 @@ fun KotlinTypeFacade.aggregate(
         type.classId != ClassId(FqName("org.jetbrains.kotlinx.dataframe.aggregation"), Name.identifier("NamedValue")) &&
         type.classId != ClassId(FqName("org.jetbrains.kotlinx.dataframe.impl.api"), Name.identifier("AggregatedPivot"))
     ) {
-        listOf(simpleColumnOf("aggregated", type))
+        [simpleColumnOf("aggregated", type)]
     } else {
         val dsl = GroupByDsl()
         val calls = buildList {
@@ -173,13 +173,13 @@ fun createPluginDataFrameSchema(
             val newGroup = if (remainingPath.isEmpty()) {
                 column
             } else {
-                SimpleColumnGroup(groupName, addToHierarchy(remainingPath, column, emptyList()))
+                SimpleColumnGroup(groupName, addToHierarchy(remainingPath, column, []))
             }
             updatedColumns + newGroup
         }
     }
 
-    var rootColumns: List<SimpleCol> = emptyList()
+    var rootColumns: List<SimpleCol> = []
 
     if (moveToTop) {
         rootColumns = keys.map { it.column }
@@ -210,7 +210,7 @@ class GroupByInto : AbstractSchemaModificationInterpreter() {
     val Arguments.column: String by arg()
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = listOf(SimpleFrameColumn(column, receiver.groups.columns()))
+        val grouped = [SimpleFrameColumn(column, receiver.groups.columns())]
         return PluginDataFrameSchema(
             receiver.keys.columns() + grouped
         )
@@ -222,7 +222,7 @@ class GroupByToDataFrame : AbstractSchemaModificationInterpreter() {
     val Arguments.groupedColumnName: String? by arg(defaultValue = Present(null))
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
-        val grouped = listOf(SimpleFrameColumn(groupedColumnName ?: "group", receiver.groups.columns()))
+        val grouped = [SimpleFrameColumn(groupedColumnName ?: "group", receiver.groups.columns())]
         return PluginDataFrameSchema(
             receiver.keys.columns() + grouped
         )

@@ -35,18 +35,18 @@ class ScriptingWithCliCompilerTest {
 
     @Test
     fun testResultValue() {
-        runWithK2JVMCompiler("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
+        runWithK2JVMCompiler("$TEST_DATA_DIR/integration/intResult.kts", ["10"])
     }
 
     @Test
     fun testResultValueViaKotlinc() {
-        runWithKotlinc("$TEST_DATA_DIR/integration/intResult.kts", listOf("10"))
+        runWithKotlinc("$TEST_DATA_DIR/integration/intResult.kts", ["10"])
     }
 
     @Test
     fun testStandardScriptWithDeps() {
         runWithK2JVMCompiler(
-            "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"),
+            "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", ["Hello from standard kts!"],
             classpath = getMainKtsClassPath()
         )
     }
@@ -55,7 +55,7 @@ class ScriptingWithCliCompilerTest {
     fun testCompileMainKtsWithDependsOn() {
         withTempDir { tmpdir ->
             runWithK2JVMCompiler(
-                arrayOf(
+                [
                     K2JVMCompilerArguments::destination.cliArgument,
                     tmpdir.absolutePath,
                     K2JVMCompilerArguments::classpath.cliArgument,
@@ -63,7 +63,7 @@ class ScriptingWithCliCompilerTest {
                     K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                     K2JVMCompilerArguments::useFirLT.cliArgument("false"),
                     "$TEST_DATA_DIR/integration/hello-resolve-junit.main.kts",
-                ),
+                ],
             )
         }
     }
@@ -71,7 +71,7 @@ class ScriptingWithCliCompilerTest {
     @Test
     fun testStandardScriptWithDepsViaKotlinc() {
         runWithKotlinc(
-            "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", listOf("Hello from standard kts!"),
+            "$TEST_DATA_DIR/integration/withDependencyOnCompileClassPath.kts", ["Hello from standard kts!"],
             classpath = getMainKtsClassPath()
         )
     }
@@ -79,14 +79,14 @@ class ScriptingWithCliCompilerTest {
     @Test
     fun testExpression() {
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 "-expression",
                 "val x = 7; println(x * 6); for (arg in args) println(arg)",
                 "--",
                 "hi",
                 "there"
-            ),
-            listOf("42", "hi", "there")
+            ],
+            ["42", "hi", "there"]
         )
     }
 
@@ -94,21 +94,21 @@ class ScriptingWithCliCompilerTest {
     fun testExpressionAsMainKts() {
         // testing that without specifying default to .main.kts, the annotation is unresolved
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
-            ),
+            ],
             expectedExitCode = 1,
-            expectedSomeErrPatterns = listOf(
+            expectedSomeErrPatterns = [
                 "unresolved reference\\W*CompilerOptions"
-            ),
+            ],
         )
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
                 "-expression=@file:CompilerOptions(\"-Xunknown1\")"
-            ),
+            ],
             expectedExitCode = 0,
         )
     }
@@ -120,56 +120,56 @@ class ScriptingWithCliCompilerTest {
 
         // testing that without specifying default to .main.kts the script with extension .txt is not recognized
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 "-P",
                 "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
-            ),
+            ],
             expectedExitCode = 1,
-            expectedSomeErrPatterns = listOf(
+            expectedSomeErrPatterns = [
                 "unrecognized script type: someScript.+"
-            )
+            ]
         )
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument(".main.kts"),
                 "-P",
                 "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
-            ),
+            ],
             expectedExitCode = 1,
-            expectedSomeErrPatterns = listOf(
+            expectedSomeErrPatterns = [
                 "error: invalid argument: -abracadabra"
-            )
+            ]
         )
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator),
                 K2JVMCompilerArguments::defaultScriptExtension.cliArgument("main.kts"),
                 "-P",
                 "plugin:kotlin.scripting:disable-script-compilation-cache=true",
                 K2JVMCompilerArguments::script.cliArgument,
                 scriptFile.path
-            ),
+            ],
             expectedExitCode = 1,
-            expectedSomeErrPatterns = listOf(
+            expectedSomeErrPatterns = [
                 "error: invalid argument: -abracadabra"
-            )
+            ]
         )
     }
 
     @Test
     fun testExpressionWithComma() {
         runWithK2JVMCompiler(
-            arrayOf(
+            [
                 "-expression",
                 "listOf(1,2)"
-            ),
-            listOf("\\[1, 2\\]"),
+            ],
+            ["\\[1, 2\\]"],
         )
     }
 
@@ -177,12 +177,12 @@ class ScriptingWithCliCompilerTest {
     fun testJdkModules() {
         // actually tests anything on JDKs 9+, on pre-9 it always works because JDK is not modularized anyway
         runWithKotlinc(
-            arrayOf(
+            [
                 "-Xadd-modules=java.sql",
                 "-expression",
                 "println(javax.sql.DataSource::class.java)"
-            ),
-            listOf("interface javax.sql.DataSource")
+            ],
+            ["interface javax.sql.DataSource"]
         )
     }
 
@@ -191,10 +191,10 @@ class ScriptingWithCliCompilerTest {
         val [_, err, _] = captureOutErrRet {
             CLICompiler.doMainNoExit(
                 K2JVMCompiler(),
-                arrayOf(
+                [
                     K2JVMCompilerArguments::script.cliArgument,
                     "$TEST_DATA_DIR/integration/exceptionWithCause.kts"
-                )
+                ]
             )
         }
         val filteredErr = err.linesSplitTrim().filterNot { it.startsWith("WARN: ") }
@@ -218,7 +218,7 @@ class ScriptingWithCliCompilerTest {
             val ret =
                 CLICompiler.doMainNoExit(
                     K2JVMCompiler(),
-                    arrayOf(
+                    [
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
                         K2JVMCompilerArguments::useFirLT.cliArgument("false"),
@@ -227,7 +227,7 @@ class ScriptingWithCliCompilerTest {
                         K2JVMCompilerArguments::noStdlib.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScript.kt",
                         scriptPath,
-                    )
+                    ]
                 )
             assertEquals(ExitCode.OK.code, ret.code)
             val [out, _, _] = captureOutErrRet {
@@ -246,7 +246,7 @@ class ScriptingWithCliCompilerTest {
             val [_, err, ret] = captureOutErrRet {
                 CLICompiler.doMainNoExit(
                     K2JVMCompiler(),
-                    arrayOf(
+                    [
                         "-P", "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                         K2JVMCompilerArguments::classpath.cliArgument, getMainKtsClassPath().joinToString(File.pathSeparator), K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
                         K2JVMCompilerArguments::useFirLT.cliArgument("false"),
@@ -254,7 +254,7 @@ class ScriptingWithCliCompilerTest {
                         K2JVMCompilerArguments::verbose.cliArgument,
                         "$TEST_DATA_DIR/compiler/mixedCompilation/nonScriptAccessingScript.kt",
                         SIMPLE_TEST_SCRIPT
-                    )
+                    ]
                 )
             }
             assertTrue(err.contains("error: unresolved reference 'SimpleScript_main'"), "Expecting an error about unresolved 'SimpleScript_main', got:\n$err")
@@ -271,7 +271,7 @@ class ScriptingWithCliCompilerTest {
                 val [_, err, ret] = captureOutErrRet {
                     CLICompiler.doMainNoExit(
                         K2JVMCompiler(),
-                        arrayOf(
+                        [
                             "-P",
                             "plugin:kotlin.scripting:disable-script-definitions-autoloading=true",
                             K2JVMCompilerArguments::classpath.cliArgument,
@@ -281,7 +281,7 @@ class ScriptingWithCliCompilerTest {
                             K2JVMCompilerArguments::allowAnyScriptsInSourceRoots.cliArgument,
                             K2JVMCompilerArguments::verbose.cliArgument,
                             fileArg
-                        )
+                        ]
                     )
                 }
                 assertEquals(ExitCode.OK.code, ret.code)
@@ -305,11 +305,11 @@ class ScriptingWithCliCompilerTest {
 
         val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
         runWithKotlinc(
-            arrayOf(
+            [
                 "-Xplugin=" + ForTestCompileRuntime.allOpenCompilerPluginForTests().path,
                 "-P", "${quoteForWin}plugin:org.jetbrains.kotlin.allopen:annotation=AllOpen$quoteForWin",
                 "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
-            ), listOf("OK")
+            ], ["OK"]
         )
     }
 
@@ -320,17 +320,17 @@ class ScriptingWithCliCompilerTest {
 
         val quoteForWin = if (SystemInfo.isWindows) "\"" else ""
         runWithKotlinc(
-            arrayOf(
+            [
                 "-Xcompiler-plugin=${quoteForWin}${ForTestCompileRuntime.allOpenCompilerPluginForTests().path}=annotation=AllOpen$quoteForWin",
                 "-script", "$TEST_DATA_DIR/integration/withAllOpenPlugin.kts",
-            ), listOf("OK")
+            ], ["OK"]
         )
     }
 
     private fun getMainKtsClassPath(): List<File> {
-        return listOf(
+        return [
             ForTestCompileRuntime.mainKtsJar()
-        )
+        ]
     }
 }
 

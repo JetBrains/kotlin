@@ -29,6 +29,6 @@ class ReflectJavaPrimitiveType(override val reflectType: Class<*>) : ReflectJava
             JvmPrimitiveType.get(reflectType.name).primitiveType
 
     // TODO: support type use annotations in reflection
-    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override val annotations: Collection<JavaAnnotation> = []
     override val isDeprecatedInJavaDoc = false
 }

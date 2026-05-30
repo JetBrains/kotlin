@@ -92,9 +92,9 @@ class IrInlineIntrinsicsSupport(
         // TODO: generate correct signature for functions and property accessors which have inline class types in the signature.
         SignatureString.generateSignatureString(v, function, classCodegen)
         v.iconst(declaration.getCallableReferenceTopLevelFlag())
+        @Suppress("ConvertToCollectionLiterals")
         val parameterTypes =
-            (if (withArity) listOf(INT_TYPE) else emptyList()) +
-                    listOf(JAVA_CLASS_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE, INT_TYPE)
+            (if (withArity) [INT_TYPE] else []) + listOf(JAVA_CLASS_TYPE, JAVA_STRING_TYPE, JAVA_STRING_TYPE, INT_TYPE)
         v.invokespecial(
             implClass.internalName, "<init>",
             Type.getMethodDescriptor(VOID_TYPE, *parameterTypes.toTypedArray()),

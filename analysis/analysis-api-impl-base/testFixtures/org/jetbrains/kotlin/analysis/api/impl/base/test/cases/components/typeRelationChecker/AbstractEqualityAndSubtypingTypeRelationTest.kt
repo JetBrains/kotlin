@@ -30,7 +30,7 @@ abstract class AbstractEqualityAndSubtypingTypeRelationTest : AbstractTypeRelati
     )
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(EqualityAndSubtypingTestDirectives)
+        get() = super.additionalDirectives + EqualityAndSubtypingTestDirectives
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

@@ -18,7 +18,7 @@ class DiscoverScriptExtensionsOperationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = kotlinToolchains.jvm.discoverScriptExtensionsOperationBuilder(emptyList()).build()
+        val operation = kotlinToolchains.jvm.discoverScriptExtensionsOperationBuilder([]).build()
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
         // we cannot directly acquire objectInstance as it's coupled with the classloader
         val defaultCompilerMessageRenderer = btaClassloader.loadClass(DefaultCompilerMessageRendererClassName).kotlin.objectInstance

@@ -53,7 +53,7 @@ class DeserializationComponents(
     val extensionRegistryLite: ExtensionRegistryLite,
     val kotlinTypeChecker: NewKotlinTypeChecker = NewKotlinTypeChecker.Default,
     val samConversionResolver: SamConversionResolver,
-    val typeAttributeTranslators: List<TypeAttributeTranslator> = listOf(DefaultTypeAttributeTranslator),
+    val typeAttributeTranslators: List<TypeAttributeTranslator> = [DefaultTypeAttributeTranslator],
     val enumEntriesDeserializationSupport: EnumEntriesDeserializationSupport = EnumEntriesDeserializationSupport.Default,
 ) {
     val classDeserializer: ClassDeserializer = ClassDeserializer(this)
@@ -70,7 +70,7 @@ class DeserializationComponents(
     ): DeserializationContext =
         DeserializationContext(
             this, nameResolver, descriptor, typeTable, versionRequirementTable, metadataVersion, containerSource,
-            parentTypeDeserializer = null, typeParameters = listOf()
+            parentTypeDeserializer = null, typeParameters = []
         )
 }
 

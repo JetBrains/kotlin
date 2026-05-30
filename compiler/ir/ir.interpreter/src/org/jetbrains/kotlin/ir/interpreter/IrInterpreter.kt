@@ -498,23 +498,23 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
                 is DoubleArray -> value.toList()
                 is BooleanArray -> value.toList()
                 is Array<*> -> value.toList()
-                else -> listOf(value)
+                else -> [value]
             }.reversed()
         }
 
         // TODO use wrap???
         val args = expression.elements.flatMap {
             return@flatMap when (val result = callStack.popState()) {
-                is Wrapper -> listOf(result.value)
+                is Wrapper -> [result.value]
                 is Primitive -> when {
-                    expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> listOf(result)
+                    expression.varargElementType.isArray() || expression.varargElementType.isPrimitiveArray() -> [result]
                     else -> arrayToList(result.value)
                 }
                 is Common -> when {
                     result.irClass.defaultType.isUnsignedArray() -> arrayToList((result.fields.values.single() as Primitive).value)
-                    else -> listOf(result.asProxy(callInterceptor))
+                    else -> [result.asProxy(callInterceptor)]
                 }
-                else -> listOf(result)
+                else -> [result]
             }
         }.reversed()
 
@@ -556,7 +556,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretStringConcatenation(expression: IrStringConcatenation) {
-        val result = mutableListOf<String>()
+        val result: MutableList<String> = []
         repeat(expression.arguments.size) {
             result += when (val state = callStack.popState()) {
                 is Primitive -> state.value.toString()

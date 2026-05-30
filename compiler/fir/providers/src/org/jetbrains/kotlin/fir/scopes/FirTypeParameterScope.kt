@@ -24,7 +24,7 @@ abstract class FirTypeParameterScope : FirContainingNamesAwareScope() {
         matchedTypeParameters.forEach { processor(it.symbol, ConeSubstitutor.Empty) }
     }
 
-    override fun getCallableNames(): Set<Name> = emptySet()
+    override fun getCallableNames(): Set<Name> = []
 
     override fun getClassifierNames(): Set<Name> = typeParameters.keys
 

@@ -49,16 +49,16 @@ sealed class FirJsNameClashClassMembersChecker(mppKind: MppCheckerKind) : FirCla
     }
 
     private class StableNamesCollector {
-        val jsStableNames = mutableSetOf<FirJsStableName>()
+        val jsStableNames: MutableSet<FirJsStableName> = []
         val overrideIntersections = hashMapOf<FirCallableSymbol<*>, HashSet<FirCallableSymbol<*>>>()
 
-        private val allSymbols = mutableSetOf<FirCallableSymbol<*>>()
+        private val allSymbols: MutableSet<FirCallableSymbol<*>> = []
 
         private fun FirTypeScope.collectOverriddenLeaves(classMemberSymbol: FirCallableSymbol<*>): Set<FirCallableSymbol<*>> {
             val startMemberWithScope = MemberWithBaseScope(classMemberSymbol, this)
             val visitedSymbols = hashSetOf(startMemberWithScope)
-            val symbolsToProcess = mutableListOf(startMemberWithScope)
-            val leaves = mutableSetOf<FirCallableSymbol<*>>()
+            val symbolsToProcess: MutableList<MemberWithBaseScope<FirCallableSymbol<*>>> = [startMemberWithScope]
+            val leaves: MutableSet<FirCallableSymbol<*>> = []
             while (symbolsToProcess.isNotEmpty()) {
                 (val processingSymbol = member, val scope = baseScope) = symbolsToProcess.popLast()
                 val overriddenMembers = scope.getDirectOverriddenMembersWithBaseScopeSafe(processingSymbol)

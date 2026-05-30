@@ -22,7 +22,7 @@ object SourceStubsTestEngine : StubsTestEngine() {
     override fun validate(testServices: TestServices, file: KtFile, fileStub: KotlinFileStubImpl) {
         super.validate(testServices, file, fileStub)
 
-        val violations = mutableListOf<String>()
+        val violations: MutableList<String> = []
         checkPsiConsistencies(violations, fileStub)
         val violationsDump = violations.ifNotEmpty { joinToString("\n", postfix = "\n") }
         testContext.assertEqualsToTestOutputFile(

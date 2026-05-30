@@ -24,7 +24,7 @@ class KtLightPsiJavaCodeReferenceElement(
 
     override fun getReferenceNameElement(): PsiElement? = null
 
-    override fun getTypeParameters(): Array<PsiType> = emptyArray()
+    override fun getTypeParameters(): Array<PsiType> = []
 
     override fun getReferenceName(): String? = customReferenceName
 
@@ -32,7 +32,7 @@ class KtLightPsiJavaCodeReferenceElement(
 
     override fun processVariants(processor: PsiScopeProcessor) = Unit
 
-    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = emptyArray()
+    override fun multiResolve(incompleteCode: Boolean): Array<JavaResolveResult> = []
 
     override fun getQualifiedName(): String? = null
 
@@ -67,5 +67,5 @@ private class LazyPsiReferenceDelegate(
 
     override fun isReferenceTo(element: PsiElement): Boolean = delegate?.isReferenceTo(element) ?: false
 
-    override fun getVariants(): Array<Any> = delegate?.variants ?: emptyArray()
+    override fun getVariants(): Array<Any> = delegate?.variants ?: []
 }

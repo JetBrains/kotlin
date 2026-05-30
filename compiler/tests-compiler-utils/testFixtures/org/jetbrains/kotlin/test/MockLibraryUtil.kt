@@ -51,7 +51,7 @@ object MockLibraryUtil {
     fun compileKotlin(
         sourcesPath: String,
         outDir: File,
-        extraOptions: List<String> = emptyList(),
+        extraOptions: List<String> = [],
         vararg extraClasspath: String,
     ) {
         compileKotlinSources(sourcesPath, outDir, extraOptions, *extraClasspath)
@@ -62,10 +62,10 @@ object MockLibraryUtil {
         jarName: String,
         addSources: Boolean = false,
         allowKotlinSources: Boolean = true,
-        extraOptions: List<String> = emptyList(),
-        extraJavacOptions: List<String> = emptyList(),
-        extraClasspath: List<String> = emptyList(),
-        extraModulepath: List<String> = emptyList(),
+        extraOptions: List<String> = [],
+        extraJavacOptions: List<String> = [],
+        extraClasspath: List<String> = [],
+        extraModulepath: List<String> = [],
         useJava11: Boolean = false,
     ): File {
         return compileLibraryToJar(
@@ -86,10 +86,10 @@ object MockLibraryUtil {
         sourcesPath: String,
         jarName: String,
         addSources: Boolean = false,
-        extraOptions: List<String> = emptyList(),
-        extraJavacOptions: List<String> = emptyList(),
-        extraClasspath: List<String> = emptyList(),
-        extraModulepath: List<String> = emptyList(),
+        extraOptions: List<String> = [],
+        extraJavacOptions: List<String> = [],
+        extraClasspath: List<String> = [],
+        extraModulepath: List<String> = [],
         assertions: Assertions,
         useJava11: Boolean = false
     ): File {
@@ -111,10 +111,10 @@ object MockLibraryUtil {
         jarName: String,
         addSources: Boolean = false,
         allowKotlinSources: Boolean = true,
-        extraOptions: List<String> = emptyList(),
-        extraJavacOptions: List<String> = emptyList(),
-        extraClasspath: List<String> = emptyList(),
-        extraModulepath: List<String> = emptyList(),
+        extraOptions: List<String> = [],
+        extraJavacOptions: List<String> = [],
+        extraClasspath: List<String> = [],
+        extraModulepath: List<String> = [],
         useJava11: Boolean = false,
     ): File {
         assertTrue("Module path can be used only for compilation using javac 9 and higher", useJava11 || extraModulepath.isEmpty())
@@ -130,7 +130,7 @@ object MockLibraryUtil {
 
         val javaFiles = FileUtil.findFilesByMask(Pattern.compile(".*\\.java"), srcFile)
         if (javaFiles.isNotEmpty()) {
-            val classpath = mutableListOf<String>()
+            val classpath: MutableList<String> = []
             classpath += kotlinPathsForDistDirectoryForTestsOrNull?.stdlibPath?.path
                 ?: ForTestCompileRuntime.runtimeJarForTests().path
             classpath += extraClasspath
@@ -198,10 +198,10 @@ object MockLibraryUtil {
     fun compileKotlinSources(
         sourcesPath: String,
         outDir: File,
-        extraOptions: List<String> = emptyList(),
+        extraOptions: List<String> = [],
         vararg extraClasspath: String
     ) {
-        val classpath = mutableListOf<String>()
+        val classpath: MutableList<String> = []
         if (File(sourcesPath).isDirectory) {
             classpath += sourcesPath
         }
@@ -217,6 +217,6 @@ object MockLibraryUtil {
     }
 
     fun compileKotlinModule(buildFilePath: String) {
-        runJvmCompiler(listOf(K2JVMCompilerArguments::noStdlib.cliArgument, K2JVMCompilerArguments::buildFile.cliArgument, buildFilePath))
+        runJvmCompiler([K2JVMCompilerArguments::noStdlib.cliArgument, K2JVMCompilerArguments::buildFile.cliArgument, buildFilePath])
     }
 }

@@ -16,13 +16,13 @@
 
 package org.jetbrains.kotlin.native.interop.gen
 
-val kotlinKeywords = setOf(
-        "as", "break", "class", "continue", "do", "dynamic", "else", "false", "for", "fun", "if", "in",
-        "interface", "is", "null", "object", "package", "return", "super", "this", "throw",
-        "true", "try", "typealias", "val", "var", "when", "while",
-        // While not technically keywords, those shall be escaped as well.
-        "_", "__", "___"
-)
+val kotlinKeywords: Set<String> = [
+    "as", "break", "class", "continue", "do", "dynamic", "else", "false", "for", "fun", "if", "in",
+    "interface", "is", "null", "object", "package", "return", "super", "this", "throw",
+    "true", "try", "typealias", "val", "var", "when", "while",
+    // While not technically keywords, those shall be escaped as well.
+    "_", "__", "___"
+]
 
 /**
  * The expression written in native language.
@@ -52,7 +52,7 @@ fun String.asSimpleName(): String = if (this in kotlinKeywords || this.contains(
  * in normal code, and keep mangling easy readable.
  */
 internal fun mangleSimple(name: String): String {
-    val reserved = setOf("Companion")
+    val reserved: Set<String> = ["Companion"]
     val postfix = "\$"
     return if (name in reserved)
         "$name$postfix"
@@ -84,7 +84,7 @@ private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Ch
     addAll('a' .. 'z')
     addAll('A' .. 'Z')
     addAll('0' .. '9')
-    addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'))
+    addAll(['_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'])
 }
 
 val annotationForUnableToImport

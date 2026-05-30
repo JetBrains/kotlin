@@ -141,11 +141,11 @@ private fun PathNode.createsCycle(): Boolean {
 
 
 internal object LinkFollowing {
-    private val nofollowLinkOption = arrayOf(LinkOption.NOFOLLOW_LINKS)
-    private val followLinkOption = emptyArray<LinkOption>()
+    private val nofollowLinkOption: Array<LinkOption> = [LinkOption.NOFOLLOW_LINKS]
+    private val followLinkOption: Array<LinkOption> = []
 
-    private val nofollowVisitOption = emptySet<FileVisitOption>()
-    private val followVisitOption = setOf(FileVisitOption.FOLLOW_LINKS)
+    private val nofollowVisitOption: Set<FileVisitOption> = []
+    private val followVisitOption: Set<FileVisitOption> = [FileVisitOption.FOLLOW_LINKS]
 
     fun toLinkOptions(followLinks: Boolean): Array<LinkOption> =
         if (followLinks) followLinkOption else nofollowLinkOption

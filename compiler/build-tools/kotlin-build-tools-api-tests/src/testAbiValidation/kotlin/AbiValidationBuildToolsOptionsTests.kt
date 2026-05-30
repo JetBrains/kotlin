@@ -27,7 +27,7 @@ class AbiValidationBuildToolsOptionsTests {
     @DisplayName("Check default values of options in DumpJvmAbiToStringOperation")
     fun testDumpJvmDefault() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(StringBuilder(), emptyList())
+        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(StringBuilder(), [])
 
         assertEquals(null, operation[DumpJvmAbiToStringOperation.PATTERN_FILTERS])
     }
@@ -36,12 +36,12 @@ class AbiValidationBuildToolsOptionsTests {
     @DisplayName("Check passing option values in DumpJvmAbiToStringOperation")
     fun testDumpJvm() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(StringBuilder(), emptyList()) {
+        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(StringBuilder(), []) {
             this[DumpJvmAbiToStringOperation.PATTERN_FILTERS] = filters {
-                this[AbiFilters.INCLUDE_NAMED] = setOf("INCLUDE_NAMED")
-                this[AbiFilters.INCLUDE_ANNOTATED_WITH] = setOf("INCLUDE_ANNOTATED_WITH")
-                this[AbiFilters.EXCLUDE_NAMED] = setOf("EXCLUDE_NAMED")
-                this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = setOf("EXCLUDE_ANNOTATED_WITH")
+                this[AbiFilters.INCLUDE_NAMED] = ["INCLUDE_NAMED"]
+                this[AbiFilters.INCLUDE_ANNOTATED_WITH] = ["INCLUDE_ANNOTATED_WITH"]
+                this[AbiFilters.EXCLUDE_NAMED] = ["EXCLUDE_NAMED"]
+                this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = ["EXCLUDE_ANNOTATED_WITH"]
             }
         }
         val filters = operation[DumpJvmAbiToStringOperation.PATTERN_FILTERS]
@@ -57,15 +57,15 @@ class AbiValidationBuildToolsOptionsTests {
     @DisplayName("Check that mutating the builder does not affect the already built operation for DumpJvmAbiToStringOperation")
     fun testDumpJvmImmutability() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), emptyList())
+        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), [])
 
         jvmBuilder[DumpJvmAbiToStringOperation.PATTERN_FILTERS] = jvmBuilder.filters {
-            this[AbiFilters.INCLUDE_NAMED] = setOf("FIRST")
+            this[AbiFilters.INCLUDE_NAMED] = ["FIRST"]
         }
         val operation1 = jvmBuilder.build()
 
         jvmBuilder[DumpJvmAbiToStringOperation.PATTERN_FILTERS] = jvmBuilder.filters {
-            this[AbiFilters.INCLUDE_NAMED] = setOf("SECOND")
+            this[AbiFilters.INCLUDE_NAMED] = ["SECOND"]
         }
         val operation2 = jvmBuilder.build()
 
@@ -97,12 +97,12 @@ class AbiValidationBuildToolsOptionsTests {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
         val operation = toolchain.abiValidation.dumpKlibAbiToStringOperation(StringBuilder(), mapOf()) {
             this[DumpKlibAbiToStringOperation.PATTERN_FILTERS] = filters {
-                this[AbiFilters.INCLUDE_NAMED] = setOf("INCLUDE_NAMED")
-                this[AbiFilters.INCLUDE_ANNOTATED_WITH] = setOf("INCLUDE_ANNOTATED_WITH")
-                this[AbiFilters.EXCLUDE_NAMED] = setOf("EXCLUDE_NAMED")
-                this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = setOf("EXCLUDE_ANNOTATED_WITH")
+                this[AbiFilters.INCLUDE_NAMED] = ["INCLUDE_NAMED"]
+                this[AbiFilters.INCLUDE_ANNOTATED_WITH] = ["INCLUDE_ANNOTATED_WITH"]
+                this[AbiFilters.EXCLUDE_NAMED] = ["EXCLUDE_NAMED"]
+                this[AbiFilters.EXCLUDE_ANNOTATED_WITH] = ["EXCLUDE_ANNOTATED_WITH"]
             }
-            this[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = setOf(KlibTargetId(KlibTargetType.LINUX_ARM64, "customName"))
+            this[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = [KlibTargetId(KlibTargetType.LINUX_ARM64, "customName")]
             this[DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE] = Paths.get(".")
         }
 
@@ -127,16 +127,16 @@ class AbiValidationBuildToolsOptionsTests {
         val builder = toolchain.abiValidation.dumpKlibAbiToStringOperationBuilder(StringBuilder(), mapOf())
 
         builder[DumpKlibAbiToStringOperation.PATTERN_FILTERS] = builder.filters {
-            this[AbiFilters.INCLUDE_NAMED] = setOf("FIRST")
+            this[AbiFilters.INCLUDE_NAMED] = ["FIRST"]
         }
-        builder[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = setOf(KlibTargetId(KlibTargetType.LINUX_ARM64, "first"))
+        builder[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = [KlibTargetId(KlibTargetType.LINUX_ARM64, "first")]
         builder[DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE] = Paths.get("first")
         val operation1 = builder.build()
 
         builder[DumpKlibAbiToStringOperation.PATTERN_FILTERS] = builder.filters {
-            this[AbiFilters.INCLUDE_NAMED] = setOf("SECOND")
+            this[AbiFilters.INCLUDE_NAMED] = ["SECOND"]
         }
-        builder[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = setOf(KlibTargetId(KlibTargetType.LINUX_X64, "second"))
+        builder[DumpKlibAbiToStringOperation.TARGETS_TO_INFER] = [KlibTargetId(KlibTargetType.LINUX_X64, "second")]
         builder[DumpKlibAbiToStringOperation.REFERENCE_DUMP_FILE] = Paths.get("second")
         val operation2 = builder.build()
 
@@ -160,7 +160,7 @@ class AbiValidationBuildToolsOptionsTests {
     fun testFiltersDefault() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
 
-        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), emptyList())
+        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), [])
         val jvmFilters = jvmBuilder.filters {}
         assertEquals(emptySet<String>(), jvmFilters[AbiFilters.INCLUDE_NAMED])
         assertEquals(emptySet<String>(), jvmFilters[AbiFilters.EXCLUDE_NAMED])
@@ -179,13 +179,13 @@ class AbiValidationBuildToolsOptionsTests {
     @DisplayName("Check that mutating the builder does not affect the already built AbiFilters")
     fun testFiltersImmutability() {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
-        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), emptyList())
+        val jvmBuilder = toolchain.abiValidation.dumpJvmAbiToStringOperationBuilder(StringBuilder(), [])
         val filtersBuilder = jvmBuilder.filtersBuilder()
 
-        filtersBuilder[AbiFilters.INCLUDE_NAMED] = setOf("FIRST")
+        filtersBuilder[AbiFilters.INCLUDE_NAMED] = ["FIRST"]
         val filters1 = filtersBuilder.build()
 
-        filtersBuilder[AbiFilters.INCLUDE_NAMED] = setOf("SECOND")
+        filtersBuilder[AbiFilters.INCLUDE_NAMED] = ["SECOND"]
         val filters2 = filtersBuilder.build()
 
         assertEquals(setOf("FIRST"), filters1[AbiFilters.INCLUDE_NAMED])
@@ -198,7 +198,7 @@ class AbiValidationBuildToolsOptionsTests {
         val toolchain = KotlinToolchains.loadImplementation(btaClassloader)
 
         val dump = StringBuilder()
-        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(dump, emptyList())
+        val operation = toolchain.abiValidation.dumpJvmAbiToStringOperation(dump, [])
         toolchain.createBuildSession().use { it.executeOperation(operation) }
 
         assertEquals("", dump.toString())

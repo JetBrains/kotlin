@@ -61,9 +61,9 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
     private fun buildTypeEdges(declaration: FirRegularClass, session: FirSession): Map<ConeKotlinType, Set<ConeKotlinType>> {
         val edges = mutableMapOf<ConeKotlinType, MutableSet<ConeKotlinType>>()
 
-        val visitedSymbols = mutableSetOf<FirClassifierSymbol<*>>()
+        val visitedSymbols: MutableSet<FirClassifierSymbol<*>> = []
         fun visit(coneType: ConeKotlinType) {
-            val constituentTypes = mutableSetOf<ConeKotlinType>()
+            val constituentTypes: MutableSet<ConeKotlinType> = []
             for (type in coneType.collectUpperBounds(session.typeContext)) {
                 type.forEachType { constituentTypes.add(it) }
             }
@@ -80,8 +80,8 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
                 for (i in parameters.indices) {
                     if (type.typeArguments[i].kind != ProjectionKind.INVARIANT) {
                         val parameter = parameters[i].toConeType()
-                        edges.getOrPut(coneType) { mutableSetOf() }.add(parameter)
-                        edges.getOrPut(parameter) { mutableSetOf() }
+                        edges.getOrPut(coneType) { [] }.add(parameter)
+                        edges.getOrPut(parameter) { [] }
                     }
                 }
             }
@@ -95,7 +95,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
     private fun isInCycle(start: ConeKotlinType, edges: Map<ConeKotlinType, Set<ConeKotlinType>>): Boolean {
         var containsCycle = false
 
-        val dfsNeighbors = DFS.Neighbors<ConeKotlinType> { edges[it] ?: emptyList() }
+        val dfsNeighbors = DFS.Neighbors<ConeKotlinType> { edges[it] ?: [] }
 
         val dfsVisited = object : DFS.VisitedWithSet<ConeKotlinType>() {
             override fun checkAndMarkVisited(current: ConeKotlinType): Boolean {
@@ -111,7 +111,7 @@ object FirFiniteBoundRestrictionChecker : FirRegularClassChecker(MppCheckerKind.
             override fun result() {}
         }
 
-        DFS.dfs(listOf(start), dfsNeighbors, dfsVisited, dfsHandler)
+        DFS.dfs([start], dfsNeighbors, dfsVisited, dfsHandler)
 
         return containsCycle
     }

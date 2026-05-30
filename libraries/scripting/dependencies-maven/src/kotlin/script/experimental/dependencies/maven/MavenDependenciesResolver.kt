@@ -57,7 +57,7 @@ class MavenDependenciesResolver(
         }
 
         return try {
-            val dependencyScopes = options.dependencyScopes ?: listOf(JavaScopes.COMPILE, JavaScopes.RUNTIME)
+            val dependencyScopes = options.dependencyScopes ?: [JavaScopes.COMPILE, JavaScopes.RUNTIME]
             val kind = when (options.partialResolution) {
                 true -> ResolutionKind.TRANSITIVE_PARTIAL
                 false, null -> when (options.transitive) {
@@ -108,7 +108,7 @@ class MavenDependenciesResolver(
         val usernameRaw = options.username
         val passwordRaw = options.password
 
-        val reports = mutableListOf<ScriptDiagnostic>()
+        val reports: MutableList<ScriptDiagnostic> = []
         fun getFinalValue(optionName: String, rawValue: String?): String? {
             return tryResolveEnvironmentVariable(rawValue, optionName, sourceCodeLocation)
                 .onFailure { reports.addAll(it.reports) }
@@ -173,7 +173,7 @@ class MavenDependenciesResolver(
                 }
             }
 
-            return makeResolveFailureResult(listOf(message), location, exception)
+            return makeResolveFailureResult([message], location, exception)
         }
 
         private class LRU1Cache<T : Any, R>(private val calculate: (T) -> R) : (T) -> R {

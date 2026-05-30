@@ -75,7 +75,7 @@ interface ManagedTest {
      * @see assertEqualsToTestDataFile
      * @see ManagedTestAssertions.assertEqualsToTestDataFile
      */
-    val variantChain: TestVariantChain get() = emptyList()
+    val variantChain: TestVariantChain get() = []
 }
 
 /**

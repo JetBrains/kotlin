@@ -57,10 +57,10 @@ class CustomNativeCompilerFirstStageFacade(testServices: TestServices) : CustomK
                     K2NativeCompilerArguments::optIn.cliArgument("kotlin.native.internal.InternalForKotlinNativeTests"),
                 ),
                 regularAndFriendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
+                    [K2NativeCompilerArguments::libraries.cliArgument, it]
                 },
                 friendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::friendModules.cliArgument, it)
+                    [K2NativeCompilerArguments::friendModules.cliArgument, it]
                 },
                 module.directives[FREE_COMPILER_ARGS],
                 customArgs,

@@ -63,7 +63,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
 
         val testPackage = extractTestPackage(testServices)
-        val exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        val exportedDeclarations: Set<FqName> = [FqName.fromSegments(listOfNotNull(testPackage, "box"))]
 
         with(configuration) {
             configureWith(testServices.moduleStructure.allDirectives)

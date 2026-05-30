@@ -55,7 +55,7 @@ public interface KaErrorCallInfo : KaCallInfo {
 public val KaCallInfo.calls: List<KaCall>
     get() = when (this) {
         is KaErrorCallInfo -> candidateCalls
-        is KaSuccessCallInfo -> listOf(call)
+        is KaSuccessCallInfo -> [call]
     }
 
 /**

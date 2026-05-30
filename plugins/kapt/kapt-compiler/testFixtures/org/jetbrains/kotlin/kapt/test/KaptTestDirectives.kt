@@ -23,9 +23,9 @@ object KaptTestDirectives : SimpleDirectivesContainer() {
     val NON_EXISTENT_CLASS by directive("Generate stub for class error.NonExistentClass")
     val EXPECTED_ERROR by stringDirective("The following error is expected in this test", multiLine = true)
 
-    val flagDirectives = listOf(
+    val flagDirectives = [
         SHOW_PROCESSOR_STATS, VERBOSE, INFO_AS_WARNINGS, USE_LIGHT_ANALYSIS, CORRECT_ERROR_TYPES,
         DUMP_DEFAULT_PARAMETER_VALUES, MAP_DIAGNOSTIC_LOCATIONS, STRICT, INCLUDE_COMPILE_CLASSPATH,
         INCREMENTAL_APT, STRIP_METADATA,
-    )
+    ]
 }

@@ -64,11 +64,11 @@ class IncludedHeadersTests : IndexerTestsBase() {
             headers = foo.h
         """.trimIndent())
 
-        val expected = setOf(
-                headerId(fooH),
-                headerId(barH),
-                HeaderId("builtins")
-        )
+        val expected: Set<HeaderId> = [
+            headerId(fooH),
+            headerId(barH),
+            HeaderId("builtins")
+        ]
         checkIncludedHeaders(defFile, expected)
     }
 
@@ -83,7 +83,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
             headerFilter = foo.h
         """.trimIndent())
 
-        checkIncludedHeaders(defFile, setOf(headerId(fooH)))
+        checkIncludedHeaders(defFile, [headerId(fooH)])
     }
 
     @Test
@@ -99,7 +99,7 @@ class IncludedHeadersTests : IndexerTestsBase() {
             modules = Foo
         """.trimIndent())
 
-        checkIncludedHeaders(defFile, setOf(headerId(fooH)))
+        checkIncludedHeaders(defFile, [headerId(fooH)])
     }
 
     @Test
@@ -117,6 +117,6 @@ class IncludedHeadersTests : IndexerTestsBase() {
             """.trimIndent()
         )
 
-        checkIncludedHeaders(defFile, setOf(headerId(fooH)))
+        checkIncludedHeaders(defFile, [headerId(fooH)])
     }
 }

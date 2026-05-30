@@ -27,11 +27,11 @@ interface LLDiagnosticProvider {
 
 internal object LLEmptyDiagnosticProvider : LLDiagnosticProvider {
     override fun diagnostics(file: KtFile, filter: DiagnosticCheckerFilter): Sequence<KtPsiDiagnostic> {
-        return emptySequence()
+        return []
     }
 
     override fun getDiagnostics(element: KtElement, filter: DiagnosticCheckerFilter): List<KtPsiDiagnostic> {
-        return emptyList()
+        return []
     }
 }
 

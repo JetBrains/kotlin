@@ -36,7 +36,7 @@ sealed class RenderingContext {
 
     object Empty : RenderingContext() {
         override fun <T> get(key: Key<T>): T {
-            return key.compute(emptyList(), DiagnosticContext.Default)
+            return key.compute([], DiagnosticContext.Default)
         }
     }
 

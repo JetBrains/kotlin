@@ -64,7 +64,7 @@ internal fun ObjCExportContext.buildObjCMethod(
     val isMethodInstance = bridge.isInstance
 
     fun buildAttributes(mangleNameAttribute: (String) -> String = { it }): List<String> {
-        val attributes = mutableListOf<String>()
+        val attributes: MutableList<String> = []
         val swiftNameAttribute = symbol.getSwiftPrivateAttribute() ?: swiftNameAttribute(mangleNameAttribute(swiftName))
         attributes += swiftNameAttribute
 
@@ -210,7 +210,7 @@ internal object Predefined {
  */
 internal fun splitSelector(selector: String): List<String> {
     return if (!selector.endsWith(":")) {
-        listOf(selector)
+        [selector]
     } else {
         selector.trimEnd(':').split(':').map { "$it:" }
     }

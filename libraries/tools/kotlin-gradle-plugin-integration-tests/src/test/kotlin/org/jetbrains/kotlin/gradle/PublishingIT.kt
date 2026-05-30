@@ -71,7 +71,7 @@ class PublishingIT : KGPBaseTest() {
 
         val pom = parsePom(project.publishJava(PublisherConfiguration()).rootComponent.pom)
         assertEquals(
-            setOf(
+            [
                 MavenModule(
                     groupId = KOTLIN_MODULE_GROUP,
                     artifactId = "kotlin-stdlib",
@@ -90,7 +90,7 @@ class PublishingIT : KGPBaseTest() {
                     version = guavaVersion,
                     scope = "runtime",
                 ),
-            ),
+            ],
             pom.dependencies().toSet(),
         )
         assertEquals(
@@ -146,14 +146,14 @@ class PublishingIT : KGPBaseTest() {
 
             val pom = parsePom(publish(publisherConfiguration = PublisherConfiguration()).rootComponent.pom)
             assertEquals(
-                setOf(
+                [
                     MavenModule(
                         groupId = KOTLIN_MODULE_GROUP,
                         artifactId = "kotlin-stdlib",
                         version = buildOptions.kotlinVersion,
                         scope = "compile",
                     ),
-                ),
+                ],
                 pom.dependencies().toSet(),
             )
         }

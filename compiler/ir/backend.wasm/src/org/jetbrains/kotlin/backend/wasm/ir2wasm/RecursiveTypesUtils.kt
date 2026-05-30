@@ -55,7 +55,7 @@ internal class RecursiveGroupBuilder(private val resolver: (WasmHeapType.Type) -
     }
 }
 
-private val indexes = arrayOf(
+private val indexes: Array<WasmType> = [
     WasmI32,
     WasmI64,
     WasmF32,
@@ -72,11 +72,11 @@ private val indexes = arrayOf(
     WasmI31Ref,
     WasmStructRef,
     WasmArrayRef,
-)
+]
 
 internal fun encodeIndex(index: ULong): List<WasmStructFieldDeclaration> {
     var current = index
-    val result = mutableListOf<WasmStructFieldDeclaration>()
+    val result: MutableList<WasmStructFieldDeclaration> = []
     val indexesSize = indexes.size.toUInt()
 
     var wasI31 = false

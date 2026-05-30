@@ -24,13 +24,13 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 @FirBuilderDsl
 class FirComponentCallBuilder : FirCallBuilder, FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
-    val contextArguments: MutableList<FirExpression> = mutableListOf()
-    val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
+    val contextArguments: MutableList<FirExpression> = []
+    val typeArguments: MutableList<FirTypeProjection> = []
     var dispatchReceiver: FirExpression? = null
     var extensionReceiver: FirExpression? = null
     override var source: KtSourceElement? = null
-    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    val nonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     override var argumentList: FirArgumentList = FirEmptyArgumentList
     lateinit var explicitReceiver: FirExpression
     var componentIndex: Int by kotlin.properties.Delegates.notNull<Int>()

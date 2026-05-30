@@ -42,8 +42,8 @@ internal class ClassSuperTypeCommonizer(
 ) : SingleInvocationCommonizer<Supertypes> {
 
     override fun invoke(values: List<Supertypes>): Supertypes {
-        if (values.isEmpty()) return emptyList()
-        if (values.all { it.isEmpty() }) return emptyList()
+        if (values.isEmpty()) return []
+        if (values.all { it.isEmpty() }) return []
 
         val supertypesTrees = resolveSupertypesTree(values)
         val supertypesGroups = buildSupertypesGroups(supertypesTrees)
@@ -95,7 +95,7 @@ internal class ClassSuperTypeCommonizer(
      * represent a 'ClassKind' (to avoid commonizing with two abstract class supertypes)
      */
     private fun buildSupertypesGroups(trees: List<SupertypesTree>): List<SupertypesGroup> {
-        val groups = mutableListOf<SupertypesGroup>()
+        val groups: MutableList<SupertypesGroup> = []
         var allowClassTypes = true
 
         trees.flatMap { tree -> tree.allNodes }.forEach { node ->

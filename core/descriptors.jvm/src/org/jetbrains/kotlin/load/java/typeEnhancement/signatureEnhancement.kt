@@ -172,7 +172,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
             if (bound.contains { it is RawType }) return@map bound
 
             SignatureParts(typeParameter, false, context, AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS)
-                .enhance(bound, emptyList()) ?: bound
+                .enhance(bound, []) ?: bound
         }
     }
 
@@ -184,7 +184,7 @@ class SignatureEnhancement(private val typeEnhancement: JavaTypeEnhancement) {
         SignatureParts(
             typeContainer = null, isCovariant = false,
             context, AnnotationQualifierApplicabilityType.TYPE_USE, skipRawTypeArguments = true
-        ).enhance(type, emptyList()) ?: type
+        ).enhance(type, []) ?: type
 
     private fun KotlinType.containsFunctionN(): Boolean =
         TypeUtils.contains(this) {
@@ -244,7 +244,7 @@ private class SignatureParts(
         get() = containerContext.components.settings.typeEnhancementImprovementsInStrictMode
 
     override val containerAnnotations: Iterable<AnnotationDescriptor>
-        get() = typeContainer?.annotations ?: emptyList()
+        get() = typeContainer?.annotations ?: []
 
     override val containerDefaultTypeQualifiers: JavaTypeQualifiersByElementType?
         get() = containerContext.defaultTypeQualifiers

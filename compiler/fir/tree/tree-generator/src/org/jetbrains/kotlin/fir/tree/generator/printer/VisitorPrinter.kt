@@ -19,7 +19,7 @@ internal class VisitorPrinter(
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(resultTypeVariable, dataTypeVariable)
+        get() = [resultTypeVariable, dataTypeVariable]
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>> =
         listOfNotNull(firVisitorType.takeIf { visitSuperTypeByDefault }?.withArgs(resultTypeVariable, dataTypeVariable))

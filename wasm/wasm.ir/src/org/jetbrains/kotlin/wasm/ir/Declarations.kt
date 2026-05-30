@@ -16,25 +16,25 @@ abstract class DeclarationResolver {
 
 class WasmModule(
     val resolver: DeclarationResolver,
-    val recGroups: List<List<WasmTypeDeclaration>> = emptyList(),
-    val importsInOrder: List<WasmNamedModuleField> = emptyList(),
-    val importedFunctions: List<WasmFunction.Imported> = emptyList(),
-    val importedMemories: List<WasmMemory> = emptyList(),
-    val importedTables: List<WasmTable> = emptyList(),
-    val importedGlobals: List<WasmGlobal> = emptyList(),
-    val importedTags: List<WasmTag> = emptyList(),
+    val recGroups: List<List<WasmTypeDeclaration>> = [],
+    val importsInOrder: List<WasmNamedModuleField> = [],
+    val importedFunctions: List<WasmFunction.Imported> = [],
+    val importedMemories: List<WasmMemory> = [],
+    val importedTables: List<WasmTable> = [],
+    val importedGlobals: List<WasmGlobal> = [],
+    val importedTags: List<WasmTag> = [],
 
-    val definedFunctions: List<WasmFunction.Defined> = emptyList(),
-    val tables: List<WasmTable> = emptyList(),
-    val memories: List<WasmMemory> = emptyList(),
-    val globals: List<WasmGlobal> = emptyList(),
-    val exports: List<WasmExport<*>> = emptyList(),
-    val elements: List<WasmElement> = emptyList(),
-    val tags: List<WasmTag> = emptyList(),
+    val definedFunctions: List<WasmFunction.Defined> = [],
+    val tables: List<WasmTable> = [],
+    val memories: List<WasmMemory> = [],
+    val globals: List<WasmGlobal> = [],
+    val exports: List<WasmExport<*>> = [],
+    val elements: List<WasmElement> = [],
+    val tags: List<WasmTag> = [],
 
     val startFunction: WasmFunction? = null,
 
-    val data: List<WasmData> = emptyList(),
+    val data: List<WasmData> = [],
     val dataCount: Boolean = true,
 )
 
@@ -66,11 +66,11 @@ sealed class WasmFunction(
     class Defined(
         name: String,
         type: WasmHeapType.Type.FunctionType,
-        val locals: MutableList<WasmLocal> = mutableListOf(),
-        val instructions: MutableList<WasmInstr> = mutableListOf(),
+        val locals: MutableList<WasmLocal> = [],
+        val instructions: MutableList<WasmInstr> = [],
         val startLocation: SourceLocation = SourceLocation.IgnoredLocation,
         val endLocation: SourceLocation = SourceLocation.IgnoredLocation,
-        val functionAnnotations: MutableSet<WasmFunctionAnnotation> = mutableSetOf(),
+        val functionAnnotations: MutableSet<WasmFunctionAnnotation> = [],
     ) : WasmFunction(name, type)
 
     class Imported(

@@ -193,8 +193,8 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val ktFile = createKtFile(file.toRelativeString(root))
             val firFile: FirFile = ktFile.toFirFile()
-            val psiSetViaFir = mutableSetOf<KtElement>()
-            val psiSetDirect = mutableSetOf<KtElement>()
+            val psiSetViaFir: MutableSet<KtElement> = []
+            val psiSetDirect: MutableSet<KtElement> = []
             firFile.accept(object : FirVisitorVoid() {
                 override fun visitElement(element: FirElement) {
                     val psi = element.psi as? KtElement

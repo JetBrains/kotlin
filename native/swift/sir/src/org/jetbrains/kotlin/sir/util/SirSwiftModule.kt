@@ -13,10 +13,10 @@ import org.jetbrains.kotlin.sir.builder.*
  * A module representing the swift standard library
  */
 object SirSwiftModule : SirModule() {
-    override val imports: MutableList<SirImport> = mutableListOf()
+    override val imports: MutableList<SirImport> = []
 
     override val name: String get() = "Swift"
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = []
 
     val bool = struct("Bool")
 
@@ -64,8 +64,8 @@ object SirSwiftModule : SirModule() {
 
 object SirSwiftConcurrencyModule : SirModule() { // Some swift standard library definitions are actually re-exported from other modules
     override val name: String get() = "_Concurrency"
-    override val imports: MutableList<SirImport> = mutableListOf()
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+    override val imports: MutableList<SirImport> = []
+    override val declarations: MutableList<SirDeclaration> = []
 
     val asyncSequence = protocol("AsyncSequence")
 }

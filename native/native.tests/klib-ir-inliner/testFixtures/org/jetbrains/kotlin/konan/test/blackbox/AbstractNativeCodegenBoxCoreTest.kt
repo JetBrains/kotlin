@@ -40,15 +40,15 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
         super.configure(builder)
         commonConfiguration {
             defaultDirectives {
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
-                OPT_IN with listOf(
+                ]
+                OPT_IN with [
                     "kotlin.native.internal.InternalForKotlinNative",
                     "kotlin.native.internal.InternalForKotlinNativeTests",
                     "kotlin.experimental.ExperimentalNativeApi"
-                )
+                ]
             }
 
             commonConfigurationForNativeCodegenTest()

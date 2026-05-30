@@ -72,10 +72,10 @@ abstract class AbstractWasmJsIrTextTest :
         with(builder) {
             defaultDirectives {
                 +CHECK_SAME_ABI_AFTER_INLINING
-                LANGUAGE with listOf(
+                LANGUAGE with [
                     "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                     "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                )
+                ]
             }
         }
     }

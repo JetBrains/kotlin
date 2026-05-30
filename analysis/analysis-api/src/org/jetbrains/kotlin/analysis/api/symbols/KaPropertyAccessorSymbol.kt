@@ -30,7 +30,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
     final override val isActual: Boolean get() = withValidityAssertion { false }
 
     @KaExperimentalApi
-    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { [] }
 
     /**
      * Whether the accessor is implicitly generated.
@@ -132,7 +132,7 @@ public sealed class KaPropertyAccessorSymbol : KaFunctionSymbol() {
 @SubclassOptInRequired(KaImplementationDetail::class)
 public abstract class KaPropertyGetterSymbol : KaPropertyAccessorSymbol() {
     final override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { [] }
 
     final override val hasStableParameterNames: Boolean
         get() = withValidityAssertion { true }
@@ -153,7 +153,7 @@ public abstract class KaPropertySetterSymbol : KaPropertyAccessorSymbol() {
     public abstract val parameter: KaValueParameterSymbol
 
     final override val valueParameters: List<KaValueParameterSymbol>
-        get() = withValidityAssertion { listOf(parameter) }
+        get() = withValidityAssertion { [parameter] }
 
     abstract override fun createPointer(): KaSymbolPointer<KaPropertySetterSymbol>
 }

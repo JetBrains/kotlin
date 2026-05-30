@@ -217,7 +217,7 @@ open class IrTypeMapper(private val context: JvmBackendContext) : KotlinTypeMapp
         val arguments = type.arguments
 
         if (isBigArityFunction(classifier, arguments) || classifier.symbol.isKFunction() || classifier.symbol.isKSuspendFunction()) {
-            writeGenericArguments(sw, listOf(arguments.last()), listOf(parameters.last()), mode)
+            writeGenericArguments(sw, [arguments.last()], [parameters.last()], mode)
             return
         }
 

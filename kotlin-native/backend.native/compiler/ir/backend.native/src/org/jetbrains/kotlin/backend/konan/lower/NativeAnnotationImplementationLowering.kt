@@ -81,17 +81,19 @@ private class NativeAnnotationImplementationTransformer(context: Context, irFile
          * as default values can be not available. {@see chooseConstructor} for details
          */
         constructor.body = context.irFactory.createBlockBody(
-                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(
-                IrDelegatingConstructorCallImpl(
-                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, delegate.symbol,
-                        typeArgumentsCount = 0,
-                ).apply {
-                    constructor.parameters.forEach { param ->
-                        arguments[delegate.parameters.single { it.name == param.name }] =
-                                IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, param.symbol)
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                [
+                    IrDelegatingConstructorCallImpl(
+                            SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, context.irBuiltIns.unitType, delegate.symbol,
+                            typeArgumentsCount = 0,
+                    ).apply {
+                        constructor.parameters.forEach { param ->
+                            arguments[delegate.parameters.single { it.name == param.name }] =
+                                    IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, param.symbol)
+                        }
                     }
-                }
-        ))
+                ]
+        )
 
     }
 

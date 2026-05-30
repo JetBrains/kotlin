@@ -36,7 +36,7 @@ fun printHierarchyGraph(model: Model) {
                 println("    ${it.typeName} [color=${it.kind!!.toColor()}]")
             }
             println()
-            val edges = mutableSetOf<Edge>()
+            val edges: MutableSet<Edge> = []
             elements.forEach { element ->
                 element.allParents.forEach { parent ->
                     edges += Edge(parent.typeName, element.typeName)

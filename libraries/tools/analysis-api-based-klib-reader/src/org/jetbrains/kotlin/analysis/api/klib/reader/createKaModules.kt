@@ -38,11 +38,11 @@ public class KaModules<Config> internal constructor(
 public fun <Config> createKaModulesForStandaloneAnalysis(
     inputs: Collection<KlibInputModule<Config>>,
     targetPlatform: TargetPlatform,
-    platformLibraries: Collection<KlibInputModule<Config>> = emptyList(),
+    platformLibraries: Collection<KlibInputModule<Config>> = [],
 ): KaModules<Config> {
     lateinit var binaryModules: Map<KaLibraryModule, KlibInputModule<Config>>
     lateinit var fakeSourceModule: KaSourceModule
-    var platformLibraryModules: List<KaLibraryModule> = emptyList()
+    var platformLibraryModules: List<KaLibraryModule> = []
     buildStandaloneAnalysisAPISession {
         buildKtModuleProvider {
             platform = targetPlatform

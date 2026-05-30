@@ -38,7 +38,7 @@ fun buildArgumentListForErrorCall(
 
 object FirEmptyArgumentList : FirAbstractArgumentList() {
     override val arguments: List<FirExpression>
-        get() = emptyList()
+        get() = []
 
     override val source: KtSourceElement?
         get() = null

@@ -55,14 +55,14 @@ val JAVAX_PARAMETERS_ARE_NONNULL_BY_DEFAULT_ANNOTATION_FQ_NAME = FqName("javax.a
 
 val JAVAX_PARAMETERS_ARE_NULLABLE_BY_DEFAULT_ANNOTATION_FQ_NAME = FqName("javax.annotation.ParametersAreNullableByDefault")
 
-val BUILT_IN_TYPE_QUALIFIER_ANNOTATIONS = setOf(
+val BUILT_IN_TYPE_QUALIFIER_ANNOTATIONS: Set<FqName> = [
     JAVAX_NONNULL_ANNOTATION_FQ_NAME,
     JAVAX_CHECK_FOR_NULL_ANNOTATION_FQ_NAME
-)
+]
 
 // nullability/nullness annotations
 
-val NOT_NULL_ANNOTATIONS: Set<FqName> = setOf(
+val NOT_NULL_ANNOTATIONS: Set<FqName> = [
     // JetBrains
     JvmAnnotationNames.JETBRAINS_NOT_NULL_ANNOTATION,
     // JSpecify
@@ -89,9 +89,9 @@ val NOT_NULL_ANNOTATIONS: Set<FqName> = setOf(
     FqName("lombok.NonNull"),
     // Jakarta
     FqName("jakarta.annotation.Nonnull"),
-)
+]
 
-val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
+val NULLABLE_ANNOTATIONS: Set<FqName> = [
     // JetBrains
     JvmAnnotationNames.JETBRAINS_NULLABLE_ANNOTATION,
     // JSpecify
@@ -122,13 +122,13 @@ val NULLABLE_ANNOTATIONS: Set<FqName> = setOf(
     FqName("jakarta.annotation.Nullable"),
     // vertx
     FqName("io.vertx.codegen.annotations.Nullable"),
-)
+]
 
-val FORCE_FLEXIBILITY_ANNOTATIONS: Set<FqName> = setOf(
+val FORCE_FLEXIBILITY_ANNOTATIONS: Set<FqName> = [
     // JSpecify
     JSPECIFY_OLD_NULLNESS_UNSPECIFIED_ANNOTATION_FQ_NAME,
     JSPECIFY_NULLNESS_UNSPECIFIED_ANNOTATION_FQ_NAME,
-)
+]
 
 val NULLABILITY_ANNOTATIONS: Set<FqName> = mutableSetOf<FqName>() +
         NOT_NULL_ANNOTATIONS +
@@ -140,17 +140,17 @@ val NULLABILITY_ANNOTATIONS: Set<FqName> = mutableSetOf<FqName>() +
 
 // mutability annotations
 
-val READ_ONLY_ANNOTATIONS: Set<FqName> = setOf(
+val READ_ONLY_ANNOTATIONS: Set<FqName> = [
     JvmAnnotationNames.JETBRAINS_READONLY_ANNOTATION,
     JvmAnnotationNames.READONLY_ANNOTATION,
     JvmAnnotationNames.JETBRAINS_UNMODIFIABLE_ANNOTATION,
     JvmAnnotationNames.JETBRAINS_UNMODIFIABLE_VIEW_ANNOTATION,
-)
+]
 
-val MUTABLE_ANNOTATIONS: Set<FqName> = setOf(
+val MUTABLE_ANNOTATIONS: Set<FqName> = [
     JvmAnnotationNames.JETBRAINS_MUTABLE_ANNOTATION,
     JvmAnnotationNames.MUTABLE_ANNOTATION
-)
+]
 
 // "java.lang.annotation -> kotlin.annotation" mapping
 

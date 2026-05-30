@@ -119,7 +119,7 @@ fun KotlinMultiplatformExtension.configureStandardResourcesAndAssetsPublication(
     targets.matching {
         publication.canPublishResources(it)
     }.configureEach { target ->
-        val fontsFilter = if (target is KotlinAndroidTarget) listOf("fonts/*") else emptyList()
+        val fontsFilter = if (target is KotlinAndroidTarget) ["fonts/*"] else []
         val sourceSetPathProvider: (KotlinSourceSet) -> (Provider<File>) = { sourceSet ->
             project.provider { project.file("src/${sourceSet.name}/multiplatformResources") }
         }
@@ -129,7 +129,7 @@ fun KotlinMultiplatformExtension.configureStandardResourcesAndAssetsPublication(
             resourcePathForSourceSet = { sourceSet ->
                 KotlinTargetResourcesPublication.ResourceRoot(
                     resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
-                    includes = emptyList(),
+                    includes = [],
                     excludes = fontsFilter,
                 )
             },
@@ -142,7 +142,7 @@ fun KotlinMultiplatformExtension.configureStandardResourcesAndAssetsPublication(
                     KotlinTargetResourcesPublication.ResourceRoot(
                         resourcesBaseDirectory = sourceSetPathProvider(sourceSet),
                         includes = fontsFilter,
-                        excludes = emptyList(),
+                        excludes = [],
                     )
                 },
                 relativeResourcePlacement = project.relativeResourcePlacement(),

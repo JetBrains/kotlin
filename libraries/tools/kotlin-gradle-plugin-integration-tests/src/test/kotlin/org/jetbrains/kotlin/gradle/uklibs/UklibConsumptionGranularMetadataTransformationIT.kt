@@ -70,10 +70,10 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
 
         val expectedTransformations = mapOf<String, List<List<String>>>(
             // producer is missing macOS targets for these source sets
-            "macosMain" to mutableListOf(),
-            "appleMain" to mutableListOf(),
-            "commonMain" to mutableListOf(),
-            "iosMain" to mutableListOf(
+            "macosMain" to [],
+            "appleMain" to [],
+            "commonMain" to [],
+            "iosMain" to [
                 mutableListOf(
                     "iosMain",
                     "producer-empty-1.0-iosMain-.klib",
@@ -90,8 +90,8 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     "iosMain",
                     "producer-empty-1.0-commonMain-.klib",
                 ),
-            ),
-            "linuxMain" to mutableListOf(
+            ],
+            "linuxMain" to [
                 mutableListOf(
                     "linuxMain",
                     "producer-empty-1.0-linuxMain-.klib",
@@ -104,7 +104,7 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
                     "linuxMain",
                     "producer-empty-1.0-commonMain-.klib",
                 ),
-            ),
+            ],
         )
         assertEquals(
             expectedTransformations.prettyPrinted,
@@ -232,14 +232,14 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             }
 
             assertEquals(
-                listOf(
-                    listOf("consumerIosMain", "uklib-direct-empty-1.0-directProducerIosMain-"),
-                    listOf("consumerIosMain", "uklib-transitive-empty-1.0-transitiveProducerIosMain-"),
-                    listOf("consumerAppleMain", "uklib-direct-empty-1.0-directProducerAppleMain-"),
-                    listOf("consumerAppleMain", "uklib-transitive-empty-1.0-transitiveProducerAppleMain-"),
-                    listOf("consumerCommonMain", "uklib-direct-empty-1.0-directProducerCommonMain-"),
-                    listOf("consumerCommonMain", "uklib-transitive-empty-1.0-transitiveProducerCommonMain-"),
-                ),
+                [
+                    ["consumerIosMain", "uklib-direct-empty-1.0-directProducerIosMain-"],
+                    ["consumerIosMain", "uklib-transitive-empty-1.0-transitiveProducerIosMain-"],
+                    ["consumerAppleMain", "uklib-direct-empty-1.0-directProducerAppleMain-"],
+                    ["consumerAppleMain", "uklib-transitive-empty-1.0-transitiveProducerAppleMain-"],
+                    ["consumerCommonMain", "uklib-direct-empty-1.0-directProducerCommonMain-"],
+                    ["consumerCommonMain", "uklib-transitive-empty-1.0-transitiveProducerCommonMain-"],
+                ],
                 metadataTransformationOutputClasspath("consumerIosMain").relativeTransformationPathComponents(),
             )
         }
@@ -320,14 +320,14 @@ class UklibConsumptionGranularMetadataTransformationIT : KGPBaseTest() {
             }
 
             assertEquals(
-                listOf(
-                    listOf("commonMain", "uklib-producer-empty-1.0-sixMain-"),
-                    listOf("commonMain", "uklib-producer-empty-1.0-fiveMain-"),
-                    listOf("commonMain", "uklib-producer-empty-1.0-fourMain-"),
-                    listOf("commonMain", "uklib-producer-empty-1.0-threeMain-"),
-                    listOf("commonMain", "uklib-producer-empty-1.0-twoMain-"),
-                    listOf("commonMain", "uklib-producer-empty-1.0-oneMain-"),
-                ),
+                [
+                    ["commonMain", "uklib-producer-empty-1.0-sixMain-"],
+                    ["commonMain", "uklib-producer-empty-1.0-fiveMain-"],
+                    ["commonMain", "uklib-producer-empty-1.0-fourMain-"],
+                    ["commonMain", "uklib-producer-empty-1.0-threeMain-"],
+                    ["commonMain", "uklib-producer-empty-1.0-twoMain-"],
+                    ["commonMain", "uklib-producer-empty-1.0-oneMain-"],
+                ],
                 metadataTransformationOutputClasspath("commonMain")
                     .filterNot { "kotlin-stdlib" in it.name }
                     .relativeTransformationPathComponents(),

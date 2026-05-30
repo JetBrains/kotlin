@@ -53,7 +53,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     protected open fun getCachedFileContent(kotlinClass: KotlinJvmBinaryClass): ByteArray? = null
 
     override fun loadClassAnnotations(container: ProtoContainer.Class): List<A> {
-        if (noAnnotationsInBytecode(container.classProto.flags)) return emptyList()
+        if (noAnnotationsInBytecode(container.classProto.flags)) return []
         val kotlinClass = container.toBinaryClass() ?: error("Class for loading annotations is not found: ${container.debugFqName()}")
 
         val result = ArrayList<A>(1)
@@ -72,13 +72,13 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
 
     override fun loadCallableAnnotations(container: ProtoContainer, proto: MessageLite, kind: AnnotatedCallableKind): List<A> {
         val flags = proto.getCallableAnnotationFlags(kind)
-        if (noAnnotationsInBytecode(flags)) return emptyList()
+        if (noAnnotationsInBytecode(flags)) return []
 
         if (kind == AnnotatedCallableKind.PROPERTY) {
             return loadPropertyAnnotations(container, proto as ProtoBuf.Property, PropertyRelatedElement.PROPERTY)
         }
 
-        val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
+        val signature = getCallableSignature(proto, container.nameResolver, container.typeTable, kind) ?: return []
         return findClassAndLoadMemberAnnotations(container, signature)
     }
 
@@ -103,7 +103,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         val isMovedFromInterfaceCompanion = JvmProtoBufUtil.isMovedFromInterfaceCompanion(proto)
         if (element == PropertyRelatedElement.PROPERTY) {
             val syntheticFunctionSignature =
-                getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true) ?: return emptyList()
+                getPropertySignature(proto, container.nameResolver, container.typeTable, synthetic = true) ?: return []
             return findClassAndLoadMemberAnnotations(
                 container, syntheticFunctionSignature, property = true, isConst = isConst,
                 isMovedFromInterfaceCompanion = isMovedFromInterfaceCompanion
@@ -111,11 +111,11 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
         }
 
         val fieldSignature =
-            getPropertySignature(proto, container.nameResolver, container.typeTable, field = true) ?: return emptyList()
+            getPropertySignature(proto, container.nameResolver, container.typeTable, field = true) ?: return []
 
         // TODO: check delegate presence in some other way
         val isDelegated = JvmAbi.DELEGATED_PROPERTY_NAME_SUFFIX in fieldSignature.signature
-        if (isDelegated != (element == PropertyRelatedElement.DELEGATE_FIELD)) return emptyList()
+        if (isDelegated != (element == PropertyRelatedElement.DELEGATE_FIELD)) return []
 
         return findClassAndLoadMemberAnnotations(
             container, fieldSignature, property = true, field = true, isConst = isConst,
@@ -151,9 +151,9 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
                     kotlinClassFinder, metadataVersion
                 )
             )
-                ?: return listOf()
+                ?: return []
 
-        return getAnnotationsContainer(kotlinClass).memberAnnotations[signature] ?: listOf()
+        return getAnnotationsContainer(kotlinClass).memberAnnotations[signature] ?: []
     }
 
     override fun loadValueParameterAnnotations(
@@ -198,7 +198,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     private fun loadParameterAnnotations(
         container: ProtoContainer, callableProto: MessageLite, kind: AnnotatedCallableKind, parameterIndex: Int,
     ): List<A> {
-        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind) ?: return emptyList()
+        val methodSignature = getCallableSignature(callableProto, container.nameResolver, container.typeTable, kind) ?: return []
         val paramSignature = MemberSignature.fromMethodSignatureAndParameterIndex(methodSignature, parameterIndex)
         return findClassAndLoadMemberAnnotations(container, paramSignature)
     }
@@ -224,7 +224,7 @@ abstract class AbstractBinaryClassAnnotationLoader<A : Any, S : AbstractBinaryCl
     }
 
     private fun loadAnnotationsIfPresentInBytecode(flags: Int, loadAnnotations: () -> List<A>): List<A> =
-        if (noAnnotationsInBytecode(flags)) emptyList() else loadAnnotations()
+        if (noAnnotationsInBytecode(flags)) [] else loadAnnotations()
 
     private fun noAnnotationsInBytecode(flags: Int): Boolean =
         !Flags.HAS_ANNOTATIONS.get(flags)

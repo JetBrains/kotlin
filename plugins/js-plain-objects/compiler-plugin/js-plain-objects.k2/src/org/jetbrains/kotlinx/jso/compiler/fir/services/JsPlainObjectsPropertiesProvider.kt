@@ -61,7 +61,7 @@ class JsPlainObjectsPropertiesProvider(session: FirSession) : FirExtensionSessio
     @OptIn(SymbolInternals::class)
     private fun createJsPlainObjectProperties(classSymbol: FirClassSymbol<*>): List<ClassProperty> =
         if (!classSymbol.hasAnnotation(JsPlainObjectsAnnotations.jsPlainObjectAnnotationClassId, session)) {
-            emptyList()
+            []
         } else {
             buildList {
                 val memberScope = classSymbol.declaredMemberScope(session, null)

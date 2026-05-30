@@ -83,7 +83,7 @@ public class KaDanglingFileModuleImpl(
         get() = contextModule.directDependsOnDependencies
 
     override val directFriendDependencies: List<KaModule>
-        get() = listOf(contextModule) + contextModule.directFriendDependencies
+        get() = [contextModule] + contextModule.directFriendDependencies
 
     override val transitiveDependsOnDependencies: List<KaModule>
         get() = contextModule.transitiveDependsOnDependencies

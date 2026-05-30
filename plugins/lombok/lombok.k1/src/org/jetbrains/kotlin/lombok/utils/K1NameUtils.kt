@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.lombok.config.LombokAnnotations.Accessors
 fun PropertyDescriptor.toAccessorBaseName(config: Accessors): String? {
     val isPrimitiveBoolean = type.isPrimitiveBoolean()
     return if (config.prefix.isEmpty()) {
-        val prefixes = if (isPrimitiveBoolean) listOf(AccessorNames.IS) else emptyList()
+        val prefixes = if (isPrimitiveBoolean) [AccessorNames.IS] else []
         toPropertyName(name.identifier, prefixes)
     } else {
         val id = name.identifier

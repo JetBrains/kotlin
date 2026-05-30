@@ -98,7 +98,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
 
         wrapperIrFunction.body = when (target) {
             is IrConstructor -> {
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(call))
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, [call])
             }
             is IrSimpleFunction -> {
                 context.irFactory.createExpressionBody(

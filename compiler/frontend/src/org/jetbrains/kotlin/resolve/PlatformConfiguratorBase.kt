@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.DelegationFilter
 import org.jetbrains.kotlin.types.DynamicTypesSettings
 
-private val DEFAULT_DECLARATION_CHECKERS = listOf(
+private val DEFAULT_DECLARATION_CHECKERS = [
     ExpectActualInTheSameModuleChecker,
     ActualClassifierMustHasTheSameMembersAsNonFinalExpectClassifierChecker,
     ExpectActualClassifiersAreInBetaChecker,
@@ -63,9 +63,9 @@ private val DEFAULT_DECLARATION_CHECKERS = listOf(
     VolatileAnnotationChecker,
     ActualTypealiasToSpecialAnnotationChecker,
     StubForBuilderInferenceParameterTypeChecker,
-)
+]
 
-private val DEFAULT_CALL_CHECKERS = listOf(
+private val DEFAULT_CALL_CHECKERS = [
     CapturingInClosureChecker(), InlineCheckerWrapper(), SynchronizedByValueChecker(), SafeCallChecker(), TrailingCommaCallChecker,
     DeprecatedCallChecker, CallReturnsArrayOfNothingChecker(), InfixCallChecker(), OperatorCallChecker(),
     ConstructorHeaderCallChecker, ProtectedConstructorCallChecker, ApiVersionCallChecker,
@@ -82,15 +82,15 @@ private val DEFAULT_CALL_CHECKERS = listOf(
     ResolutionToPrivateConstructorOfSealedClassChecker, EqualityCallChecker, UnsupportedUntilOperatorChecker,
     BuilderInferenceAssignmentChecker, IncorrectCapturedApproximationCallChecker, CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker,
     CustomEnumEntriesMigrationCallChecker, EnumEntriesUnsupportedChecker,
-)
-private val DEFAULT_TYPE_CHECKERS = emptyList<AdditionalTypeChecker>()
-private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = listOf(
+]
+private val DEFAULT_TYPE_CHECKERS: List<AdditionalTypeChecker> = []
+private val DEFAULT_CLASSIFIER_USAGE_CHECKERS = [
     DeprecatedClassifierUsageChecker(), ApiVersionClassifierUsageChecker, MissingDependencyClassChecker.ClassifierUsage,
     OptionalExpectationUsageChecker()
-)
-private val DEFAULT_ANNOTATION_CHECKERS = listOf<AdditionalAnnotationChecker>(ReturnValueAnnotationChecker)
+]
+private val DEFAULT_ANNOTATION_CHECKERS: List<AdditionalAnnotationChecker> = [ReturnValueAnnotationChecker]
 
-private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>(
+private val DEFAULT_CLASH_RESOLVERS: List<PlatformExtensionsClashResolver<*>> = [
     IdentifierCheckerClashesResolver(),
 
     /**
@@ -106,7 +106,7 @@ private val DEFAULT_CLASH_RESOLVERS = listOf<PlatformExtensionsClashResolver<*>>
     PlatformExtensionsClashResolver.FirstWins(AbsentDescriptorHandler::class.java),
 
     PlatformDiagnosticSuppressorClashesResolver()
-)
+]
 
 fun StorageComponentContainer.configureDefaultCheckers() {
     DEFAULT_DECLARATION_CHECKERS.forEach { useInstance(it) }
@@ -120,13 +120,13 @@ fun StorageComponentContainer.configureDefaultCheckers() {
 
 abstract class PlatformConfiguratorBase(
     private val dynamicTypesSettings: DynamicTypesSettings? = null,
-    private val additionalDeclarationCheckers: List<DeclarationChecker> = emptyList(),
-    private val additionalCallCheckers: List<CallChecker> = emptyList(),
-    private val additionalAssignmentCheckers: List<AssignmentChecker> = emptyList(),
-    private val additionalTypeCheckers: List<AdditionalTypeChecker> = emptyList(),
-    private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = emptyList(),
-    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = emptyList(),
-    private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = emptyList(),
+    private val additionalDeclarationCheckers: List<DeclarationChecker> = [],
+    private val additionalCallCheckers: List<CallChecker> = [],
+    private val additionalAssignmentCheckers: List<AssignmentChecker> = [],
+    private val additionalTypeCheckers: List<AdditionalTypeChecker> = [],
+    private val additionalClassifierUsageCheckers: List<ClassifierUsageChecker> = [],
+    private val additionalAnnotationCheckers: List<AdditionalAnnotationChecker> = [],
+    private val additionalClashResolvers: List<PlatformExtensionsClashResolver<*>> = [],
     private val identifierChecker: IdentifierChecker? = null,
     private val overloadFilter: OverloadFilter? = null,
     private val platformToKotlinClassMapper: PlatformToKotlinClassMapper? = null,

@@ -54,7 +54,7 @@ class SimpleKey(
         get() = type.name
 
     override val types: List<KType>
-        get() = listOf(type)
+        get() = [type]
 }
 
 sealed class CollectionKey : Key()
@@ -72,7 +72,7 @@ class ListKey(
         get() = "List<${elementType.name}>"
 
     override val types: List<KType>
-        get() = listOf(elementType)
+        get() = [elementType]
 }
 
 class MapKey(
@@ -89,7 +89,7 @@ class MapKey(
         get() = "Map<${keyType.name}, ${valueType.name}>"
 
     override val types: List<KType>
-        get() = listOf(keyType, valueType)
+        get() = [keyType, valueType]
 }
 
 class SetKey(
@@ -105,7 +105,7 @@ class SetKey(
         get() = "Set<${elementType.name}>"
 
     override val types: List<KType>
-        get() = listOf(elementType)
+        get() = [elementType]
 }
 
 class DeprecatedKey(
@@ -123,14 +123,14 @@ class DeprecatedKey(
     override val typeString: String
         get() = type.name
     override val types: List<KType>
-        get() = listOf(type)
+        get() = [type]
 }
 
 abstract class KeysContainer(val packageName: String, val className: String) {
 
     @PrivateForInline
     @PublishedApi
-    internal val _keys = mutableListOf<Key>()
+    internal val _keys: MutableList<Key> = []
 
     @OptIn(PrivateForInline::class)
     val keys: List<Key> = _keys
@@ -140,11 +140,11 @@ abstract class KeysContainer(val packageName: String, val className: String) {
         comment: String? = null,
         defaultValue: String? = null,
         lazyDefaultValue: String? = null,
-        importsToAdd: List<String> = emptyList(),
+        importsToAdd: List<String> = [],
         accessorName: String? = null,
         throwOnNull: Boolean = true,
-        optIns: List<Annotation> = emptyList(),
-        annotations: List<Annotation> = emptyList(),
+        optIns: List<Annotation> = [],
+        annotations: List<Annotation> = [],
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name
@@ -202,10 +202,10 @@ abstract class KeysContainer(val packageName: String, val className: String) {
     inline fun <reified T : Any> deprecatedKey(
         initializer: String,
         deprecation: Deprecated,
-        importsToAdd: List<String> = emptyList(),
+        importsToAdd: List<String> = [],
         comment: String? = null,
-        optIns: List<Annotation> = emptyList(),
-        annotations: List<Annotation> = emptyList(),
+        optIns: List<Annotation> = [],
+        annotations: List<Annotation> = [],
     ): PropertyDelegateProvider<Any?, ReadOnlyProperty<Any?, Key>> {
         return PropertyDelegateProvider { _, property ->
             val name = property.name

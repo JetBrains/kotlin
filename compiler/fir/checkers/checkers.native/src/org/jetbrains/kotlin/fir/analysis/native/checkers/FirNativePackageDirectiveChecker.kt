@@ -22,7 +22,7 @@ object FirNativePackageDirectiveChecker : FirFileChecker(MppCheckerKind.Common) 
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFile) {
-        declaration.packageDirective.source?.forEachChildOfType(setOf(REFERENCE_EXPRESSION), depth = -1) {
+        declaration.packageDirective.source?.forEachChildOfType([REFERENCE_EXPRESSION], depth = -1) {
             checkNameAndReport(
                 Name.identifier(it.text.toString()),
                 it

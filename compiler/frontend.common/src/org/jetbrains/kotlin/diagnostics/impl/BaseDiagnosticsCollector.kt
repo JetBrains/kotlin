@@ -19,7 +19,7 @@ abstract class BaseDiagnosticsCollector : DiagnosticReporter() {
 
     object DoNothing : BaseDiagnosticsCollector() {
         override val diagnostics: List<KtDiagnostic>
-            get() = emptyList()
+            get() = []
         override val diagnosticsByFile: Map<KtSourceFile?, List<KtDiagnostic>>
             get() = emptyMap()
 

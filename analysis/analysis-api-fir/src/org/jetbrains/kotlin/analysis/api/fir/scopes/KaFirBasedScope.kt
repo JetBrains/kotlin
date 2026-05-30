@@ -44,7 +44,7 @@ internal abstract class KaFirBasedScope<S : FirScope>(
         }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 }
 

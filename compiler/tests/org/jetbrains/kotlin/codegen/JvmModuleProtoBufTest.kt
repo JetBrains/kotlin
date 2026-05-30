@@ -28,7 +28,7 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
         relativeDirectory: String,
         compileWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
         loadWith: LanguageVersion = LanguageVersion.LATEST_STABLE,
-        extraOptions: List<String> = emptyList(),
+        extraOptions: List<String> = [],
         messageRenderer: MessageRenderer? = null,
     ) {
         val directory = KtTestUtil.getTestDataFileLocatedInCompilerTestData(relativeDirectory).absolutePath
@@ -36,14 +36,14 @@ class JvmModuleProtoBufTest : KtUsefulTestCase() {
 
         val moduleName = "main"
         CompilerTestUtil.executeCompilerAssertSuccessful(
-            K2JVMCompiler(), listOf(
+            K2JVMCompiler(), [
                 directory,
                 K2JVMCompilerArguments::destination.cliArgument, tmpdir.path,
                 K2JVMCompilerArguments::moduleName.cliArgument, moduleName,
                 K2JVMCompilerArguments::noStdlib.cliArgument,
                 K2JVMCompilerArguments::classpath.cliArgument, ForTestCompileRuntime.runtimeJarForTests().path,
                 CommonCompilerArguments::languageVersion.cliArgument, compileWith.versionString,
-            ) + extraOptions,
+            ] + extraOptions,
             messageRenderer
         )
 

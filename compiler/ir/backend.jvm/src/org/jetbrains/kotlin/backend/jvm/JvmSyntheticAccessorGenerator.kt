@@ -52,7 +52,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
             accessor.copyValueParametersToStatic(source, IrDeclarationOrigin.SYNTHETIC_ACCESSOR)
             if (source.constructedClass.modality == Modality.SEALED) {
                 for (accessorValueParameter in accessor.parameters) {
-                    accessorValueParameter.annotations = emptyList()
+                    accessorValueParameter.annotations = []
                 }
             }
 
@@ -66,7 +66,7 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
 
             accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                listOf(createDelegatingConstructorCall(accessor, source.symbol))
+                [createDelegatingConstructorCall(accessor, source.symbol)]
             )
         }
     }
@@ -185,8 +185,8 @@ class JvmSyntheticAccessorGenerator(context: JvmBackendContext) :
                     declaration.metadata = null
                 }
                 accessor.annotations += declaration.annotations
-                declaration.annotations = emptyList()
-                declaration.parameters.forEach { it.annotations = emptyList() }
+                declaration.annotations = []
+                declaration.parameters.forEach { it.annotations = [] }
             }
         }
 

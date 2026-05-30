@@ -30,7 +30,7 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
     val receiver = descriptor.extensionReceiverParameter?.type
     val contextReceiversTypes = descriptor.contextReceiverParameters.mapNotNull { it.type }
     val parameters = if (descriptor is VariableDescriptor) {
-        emptyList()
+        []
     } else {
         reflectionType.getValueParameterTypesFromCallableReflectionType(
             receiver != null && !hasBoundExtensionReceiver
@@ -64,7 +64,7 @@ fun <T> FlatSignature.Companion.create(
     return FlatSignature(
         origin,
         descriptor.typeParameters,
-        valueParameterTypes = contextReceiverTypes + extensionReceiverType?.let { listOf(TypeWithConversion(it)) }.orEmpty() + parameterTypes,
+        valueParameterTypes = contextReceiverTypes + extensionReceiverType?.let { [TypeWithConversion(it)] }.orEmpty() + parameterTypes,
         hasExtensionReceiver = extensionReceiverType != null,
         contextReceiverCount = contextReceiverTypes.size,
         hasVarargs = descriptor.valueParameters.any { it.varargElementType != null },

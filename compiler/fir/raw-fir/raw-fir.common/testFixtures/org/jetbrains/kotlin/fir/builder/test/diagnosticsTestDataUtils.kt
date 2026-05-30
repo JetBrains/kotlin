@@ -49,17 +49,17 @@ fun splitTestDataIntoFiles(filePath: String, text: String): List<Pair<String, St
     val idx = text.indexOf(fileDirective)
     if (idx > 0 && text[idx - 1] != '\n') {
         //try to avoid splitting of sources
-        return emptyList()
+        return []
     }
     if (idx >= 0) {
-        val result = mutableListOf<Pair<String, String>>()
+        val result: MutableList<Pair<String, String>> = []
         val strings = text.drop(idx).drop(fileDirective.length).split(fileDirective)
         for (string in strings) {
             val newLineIdx = string.indexOf("\n")
-            if (newLineIdx < 0) return emptyList()
+            if (newLineIdx < 0) return []
             result.add(Pair(string.substring(0, newLineIdx).trim(), string.substring(newLineIdx)))
         }
         return result
     }
-    return listOf(Pair(filePath, text))
+    return [Pair(filePath, text)]
 }

@@ -53,7 +53,7 @@ class DescriptorSerializer private constructor(
     private val versionRequirementTable: MutableVersionRequirementTable?,
     private val serializeTypeTableToFunction: Boolean,
     private val languageVersionSettings: LanguageVersionSettings,
-    val plugins: List<DescriptorSerializerPlugin> = emptyList(),
+    val plugins: List<DescriptorSerializerPlugin> = [],
     val typeAttributeTranslators: TypeAttributeTranslators? = null,
 ) {
     private val contractSerializer = ContractSerializer()

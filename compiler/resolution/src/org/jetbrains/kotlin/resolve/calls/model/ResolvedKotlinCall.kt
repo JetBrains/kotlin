@@ -22,13 +22,13 @@ sealed class ResolvedCallArgument {
 
     object DefaultArgument : ResolvedCallArgument() {
         override val arguments: List<KotlinCallArgument>
-            get() = emptyList()
+            get() = []
 
     }
 
     class SimpleArgument(val callArgument: KotlinCallArgument) : ResolvedCallArgument() {
         override val arguments: List<KotlinCallArgument>
-            get() = listOf(callArgument)
+            get() = [callArgument]
 
     }
 

@@ -32,7 +32,7 @@ private val ALLOCATOR_NAMES = Allocator.entries.map { it.name }
 private val THREAD_STATE_CHECKER_NAMES = ThreadStateChecker.entries.map { it.name }
 private val FAMILY_NAMES = Family.entries.map { it.name }
 private val ARCHITECTURE_NAMES = Architecture.entries.map { it.name }
-private val BOOLEAN_NAMES = listOf(true.toString(), false.toString())
+private val BOOLEAN_NAMES = [true.toString(), false.toString()]
 private val KLIB_IR_INLINER_NAMES = KlibIrInlinerMode.entries.map { it.name }
 
 internal val List<TargetBackend>.containsNativeOrAny: Boolean
@@ -61,7 +61,7 @@ fun Settings.isDisabledNative(registeredDirectives: RegisteredDirectives) =
 // Any null element makes whole result as `true`.
 internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, directive: StringDirective): Boolean {
     val directiveValues = registeredDirectives[directive]
-    if ((directiveValues.isEmpty() || directiveValues == listOf("")) && directive in registeredDirectives) {
+    if ((directiveValues.isEmpty() || directiveValues == [""]) && directive in registeredDirectives) {
         return true  // Directive without value is treated as unconditional
     }
 

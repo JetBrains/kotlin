@@ -35,7 +35,7 @@ open class ProjectExtensionDescriptor<T : Any>(name: String, extensionClass: Cla
 
     fun getInstances(project: Project): List<T> {
         val projectArea = project.extensionArea
-        if (!projectArea.hasExtensionPoint(extensionPointName.name)) return listOf()
+        if (!projectArea.hasExtensionPoint(extensionPointName.name)) return []
 
         return projectArea.getExtensionPoint(extensionPointName).extensions.toList()
     }

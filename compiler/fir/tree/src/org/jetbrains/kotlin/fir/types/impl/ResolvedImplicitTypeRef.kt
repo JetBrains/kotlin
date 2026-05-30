@@ -27,7 +27,7 @@ class ResolvedImplicitTypeRef(
         get() = false
 
     override val source: KtSourceElement? get() = null
-    override val annotations: List<FirAnnotation> get() = emptyList()
+    override val annotations: List<FirAnnotation> get() = []
 
     override fun replaceAnnotations(newAnnotations: List<FirAnnotation>) {
     }

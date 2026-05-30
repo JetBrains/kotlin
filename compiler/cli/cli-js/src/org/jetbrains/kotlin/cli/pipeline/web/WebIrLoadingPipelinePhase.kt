@@ -27,8 +27,8 @@ abstract class WebIrLoadingPipelinePhase(
     name: String
 ) : PipelinePhase<ConfigurationPipelineArtifact, WebLoadedIrPipelineArtifact>(
     name,
-    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
-    postActions = setOf(PerformanceNotifications.TranslationToIrFinished),
+    preActions = [PerformanceNotifications.TranslationToIrStarted],
+    postActions = [PerformanceNotifications.TranslationToIrFinished],
 ) {
     protected abstract fun createIrFactory(): IrFactory
 

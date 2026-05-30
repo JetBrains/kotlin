@@ -46,7 +46,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
     @BtaV2StrategyAgnosticCompilationTest
     @DisplayName("Custom renderer receives compiler diagnostic identifier")
     fun customRendererReceivesDiagnosticIdentifier(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        val diagnosticIds = mutableListOf<String?>()
+        val diagnosticIds: MutableList<String?> = []
         val renderer = object : CompilerMessageRendererWithDiagnosticId {
             override fun render(severity: Severity, message: String, location: SourceLocation?, diagnosticId: String?): String {
                 diagnosticIds += diagnosticId
@@ -64,7 +64,7 @@ class KotlinLoggerCustomRendererTest : BaseCompilationTest() {
                 assertTrue(errorLines.any { "[CUSTOM ERROR][UNRESOLVED_REFERENCE]" in it }) {
                     "Expected custom-rendered unresolved reference error at ERROR level, got: $errorLines"
                 }
-                assertEquals(listOf("UNRESOLVED_REFERENCE"), diagnosticIds.filterNotNull().distinct())
+                assertEquals(["UNRESOLVED_REFERENCE"], diagnosticIds.filterNotNull().distinct())
             }
         }
     }

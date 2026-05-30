@@ -67,9 +67,9 @@ internal class NativeGenerationState(
 
     var klibHash: FingerprintHash = FingerprintHash(Hash128Bits(0U, 0U))
 
-    val inlineFunctionBodies = mutableListOf<SerializedInlineFunctionReference>()
-    val classFields = mutableListOf<SerializedClassFields>()
-    val eagerInitializedFiles = mutableListOf<SerializedEagerInitializedFile>()
+    val inlineFunctionBodies: MutableList<SerializedInlineFunctionReference> = []
+    val classFields: MutableList<SerializedClassFields> = []
+    val eagerInitializedFiles: MutableList<SerializedEagerInitializedFile> = []
     var coroutinesLivenessAnalysisPhasePerformed = false
 
     lateinit var fileLowerState: FileLowerState

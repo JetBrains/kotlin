@@ -36,7 +36,7 @@ class FirScriptDeclarationsScope(
                 else -> continue
             }
 
-            result.getOrPut(name) { mutableListOf() } += statement.symbol
+            result.getOrPut(name) { [] } += statement.symbol
         }
 
         result
@@ -69,7 +69,7 @@ class FirScriptDeclarationsScope(
         name: Name,
         processor: (D) -> Unit
     ) {
-        val symbols = callablesIndex[name] ?: emptyList()
+        val symbols = callablesIndex[name] ?: []
         for (symbol in symbols) {
             if (symbol is D) {
                 processor(symbol)

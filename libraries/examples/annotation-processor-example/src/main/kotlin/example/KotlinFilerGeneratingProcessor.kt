@@ -38,6 +38,6 @@ class KotlinFilerGeneratingProcessor : AbstractProcessor() {
     override fun getSupportedSourceVersion() = SourceVersion.RELEASE_6
 
     override fun getSupportedAnnotationTypes(): Set<String> {
-        return setOf(KotlinFilerGenerated::class.java.canonicalName)
+        return [KotlinFilerGenerated::class.java.canonicalName]
     }
 }

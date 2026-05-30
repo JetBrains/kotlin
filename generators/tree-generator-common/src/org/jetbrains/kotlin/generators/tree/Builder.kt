@@ -12,9 +12,9 @@ sealed class Builder<ElementField, Element> : FieldContainer<ElementField>, Type
         where ElementField : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
 
-    val parents: MutableList<IntermediateBuilder<ElementField, Element>> = mutableListOf()
+    val parents: MutableList<IntermediateBuilder<ElementField, Element>> = []
 
-    val usedTypes: MutableList<Importable> = mutableListOf()
+    val usedTypes: MutableList<Importable> = []
 
     abstract val uselessFields: List<ElementField>
 
@@ -69,7 +69,7 @@ class IntermediateBuilder<Field, Element>(
 ) : Builder<Field, Element>()
         where Field : AbstractField<*>,
               Element : AbstractElement<Element, *, *> {
-    val fields: MutableList<Field> = mutableListOf()
+    val fields: MutableList<Field> = []
     var materializedElement: Element? = null
     var isSealed: Boolean = false
 
@@ -82,5 +82,5 @@ class IntermediateBuilder<Field, Element>(
         }.values.toList()
     }
 
-    override val uselessFields: List<Field> = emptyList()
+    override val uselessFields: List<Field> = []
 }

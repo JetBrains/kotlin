@@ -28,7 +28,7 @@ class MppKotlinDslClasspathModeIT : KGPBaseTest() {
             }
 
             val classpathModeOptions = defaultBuildOptions.copy(
-                freeArgs = listOf("-Dorg.gradle.kotlin.dsl.provider.mode=classpath"),
+                freeArgs = ["-Dorg.gradle.kotlin.dsl.provider.mode=classpath"],
                 logLevel = LogLevel.QUIET,
             )
 

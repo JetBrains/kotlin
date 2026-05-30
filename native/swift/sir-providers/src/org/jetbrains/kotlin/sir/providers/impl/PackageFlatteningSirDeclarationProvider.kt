@@ -24,7 +24,7 @@ public class SirTrampolineDeclarationsProviderImpl(
 
     private fun generateDeclarations(declaration: SirDeclaration): List<SirDeclaration> = generatedDeclarations.getOrPut(declaration) {
         if (targetPackageFqName == null)
-            return emptyList()
+            return []
 
 
         with(sirSession) {

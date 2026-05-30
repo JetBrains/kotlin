@@ -93,7 +93,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         impl(import)
 
         impl(resolvedImport) {
-            delegateFields(listOf("aliasName", "aliasSource", "importedFqName", "isAllUnder"), "delegate")
+            delegateFields(["aliasName", "aliasSource", "importedFqName", "isAllUnder"], "delegate")
 
             default("source") {
                 delegate = "delegate"
@@ -738,12 +738,12 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(contractElementDeclaration)
 
-        val implementationsWithoutStatusAndTypeParameters = listOf(
+        val implementationsWithoutStatusAndTypeParameters = [
             "FirValueParameterImpl",
             "FirDefaultSetterValueParameter",
             "FirErrorPropertyImpl",
             "FirErrorFunctionImpl"
-        )
+        ]
 
         configureFieldInAllImplementations(
             "status",
@@ -770,7 +770,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             defaultNull(it)
         }
 
-        val implementationWithConfigurableTypeRef = listOf(
+        val implementationWithConfigurableTypeRef = [
             "FirTypeProjectionWithVarianceImpl",
             "FirCallableReferenceAccessImpl",
             "FirThisReceiverExpressionImpl",
@@ -793,7 +793,7 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
             "FirGetClassCallImpl",
             "FirSmartCastExpressionImpl",
             "FirInaccessibleReceiverExpressionImpl"
-        )
+        ]
         configureFieldInAllImplementations(
             fieldName = "typeRef",
             implementationPredicate = { it.typeName !in implementationWithConfigurableTypeRef },

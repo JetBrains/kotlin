@@ -115,9 +115,9 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
         PrimitiveType.DOUBLE to doubleType
     )
 
-    override val primitiveIrTypes = listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
+    override val primitiveIrTypes = [booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType]
+    override val primitiveIrTypesWithComparisons = [charType, byteType, shortType, intType, floatType, longType, doubleType]
+    override val primitiveFloatingPointIrTypes = [floatType, doubleType]
 
     private fun primitiveIterator(primitiveType: PrimitiveType): IrClassSymbol {
         val classId = ClassId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("${primitiveType.typeName}Iterator"))

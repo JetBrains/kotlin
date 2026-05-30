@@ -47,7 +47,7 @@ class FirJvmBuiltinsSymbolProvider(
     )
 
     override val symbolNamesProvider: FirSymbolNamesProvider
-        get() = FirCompositeSymbolNamesProvider.fromSymbolProviders(listOf(classpathBuiltinSymbolProvider, fallbackBuiltinSymbolProvider))
+        get() = FirCompositeSymbolNamesProvider.fromSymbolProviders([classpathBuiltinSymbolProvider, fallbackBuiltinSymbolProvider])
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? {
         return classpathBuiltinSymbolProvider.getClassLikeSymbolByClassId(classId)

@@ -62,7 +62,7 @@ open class WasmCompilerWithICMultimodule(
             definedTypes = codeFileFragment.definedTypes,
         )
 
-        val referencedModules = mutableSetOf<String>()
+        val referencedModules: MutableSet<String> = []
 
         val moduleReferencedTypes = ModuleReferencedTypes()
         val typeContext = WasmTrackedTypeCodegenContext(

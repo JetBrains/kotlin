@@ -38,7 +38,7 @@ enum class DeserializedContainerAbiStability {
  * @property isInvisible True if this container is "invisible" because it has a pre-release flag.
  * @property poisoningFeatures The list of manually enabled language features that caused raising the pre-release flag.
  */
-data class PreReleaseInfo(val isInvisible: Boolean, val poisoningFeatures: List<String> = emptyList()) {
+data class PreReleaseInfo(val isInvisible: Boolean, val poisoningFeatures: List<String> = []) {
     companion object {
         val DEFAULT_VISIBLE = PreReleaseInfo(isInvisible = false)
     }

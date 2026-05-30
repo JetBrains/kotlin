@@ -459,11 +459,11 @@ fun <T> B(foo: T, bar: String) { }
             """
                 ),
             ),
-            additionalPaths = listOf(
+            additionalPaths = [
                 Classpath.composeFoundationJar(),
                 Classpath.composeUiJar(),
                 Classpath.composeUiGraphicsJar(),
-            )
+            ]
         )
     }
 
@@ -493,9 +493,9 @@ fun <T> B(foo: T, bar: String) { }
     }
 
     companion object {
-        private val additionalPaths = listOf(
+        private val additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeFoundationLayoutJar()
-        )
+        ]
     }
 }

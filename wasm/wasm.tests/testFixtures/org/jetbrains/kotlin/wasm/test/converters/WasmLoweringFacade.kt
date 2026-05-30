@@ -97,7 +97,7 @@ class WasmLoweringFacade(
         }
 
         val testPackage = extractTestPackage(testServices)
-        val exportedBoxDeclaration = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        val exportedBoxDeclaration: Set<FqName> = [FqName.fromSegments(listOfNotNull(testPackage, "box"))]
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 

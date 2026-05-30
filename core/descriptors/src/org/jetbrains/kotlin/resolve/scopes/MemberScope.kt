@@ -50,9 +50,9 @@ interface MemberScope : ResolutionScope {
 
         override fun definitelyDoesNotContainName(name: Name): Boolean = true
 
-        override fun getFunctionNames() = emptySet<Name>()
-        override fun getVariableNames() = emptySet<Name>()
-        override fun getClassifierNames() = emptySet<Name>()
+        override fun getFunctionNames(): Set<Name> = []
+        override fun getVariableNames(): Set<Name> = []
+        override fun getClassifierNames(): Set<Name> = []
     }
 
     companion object {
@@ -83,13 +83,13 @@ fun MemberScope.getDescriptorsFiltered(
         kindFilter: DescriptorKindFilter = DescriptorKindFilter.ALL,
         nameFilter: (Name) -> Boolean = ALL_NAME_FILTER
 ): Collection<DeclarationDescriptor> {
-    if (kindFilter.kindMask == 0) return listOf()
+    if (kindFilter.kindMask == 0) return []
     return getContributedDescriptors(kindFilter, nameFilter).filter { kindFilter.accepts(it) && nameFilter(it.name) }
 }
 
 class DescriptorKindFilter(
         kindMask: Int,
-        val excludes: List<DescriptorKindExclude> = listOf()
+        val excludes: List<DescriptorKindExclude> = []
 ) {
     val kindMask: Int
 
@@ -106,7 +106,7 @@ class DescriptorKindFilter(
             = kindMask and kinds != 0
 
     infix fun exclude(exclude: DescriptorKindExclude): DescriptorKindFilter
-            = DescriptorKindFilter(kindMask, excludes + listOf(exclude))
+            = DescriptorKindFilter(kindMask, excludes + exclude)
 
     fun withoutKinds(kinds: Int): DescriptorKindFilter
             = DescriptorKindFilter(kindMask and kinds.inv(), excludes)

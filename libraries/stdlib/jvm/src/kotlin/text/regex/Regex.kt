@@ -253,7 +253,7 @@ internal constructor(private val nativePattern: Pattern) : Serializable {
         requireNonNegativeLimit(limit)
 
         val matcher = nativePattern.matcher(input)
-        if (limit == 1 || !matcher.find()) return listOf(input.toString())
+        if (limit == 1 || !matcher.find()) return [input.toString()]
 
         val result = ArrayList<String>(if (limit > 0) limit.coerceAtMost(10) else 10)
         var lastStart = 0

@@ -226,7 +226,7 @@ class DoubleColonExpressionResolver(
     }
 
     private fun KtExpression.getQualifierChainParts(): List<KtExpression>? {
-        if (this !is KtQualifiedExpression) return listOf(this)
+        if (this !is KtQualifiedExpression) return [this]
 
         val result = ArrayDeque<KtExpression>()
         var finger: KtQualifiedExpression = this

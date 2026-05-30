@@ -38,11 +38,11 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
 
         val outputDir = buildDir.resolve("output").apply { createDirectory() }
 
-        val correctVersions = arrayOf(
+        val correctVersions: Array<String> = [
             "0.0.0", "255.255.255",
             "0.10.200", "10.200.0", "200.0.10",
             "2.2.0", "2.3.0"
-        )
+        ]
         for (version in correctVersions) {
             val klibDir = compileToLibrary(
                 sourcesDir = sourceFile,
@@ -51,7 +51,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                     K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version,
                     K2NativeCompilerArguments::nopack.cliArgument,
                 ),
-                dependencies = emptyList(),
+                dependencies = [],
             ).guessKlibArtifactFile()
 
             val manifest = klibDir.resolve("default/manifest")
@@ -63,10 +63,10 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
             assertEquals(version, versionBumped)
         }
 
-        val incorrectVersions = arrayOf(
+        val incorrectVersions: Array<String> = [
             "0", "0.1", "0.1.", "0.1.2.", "..", "0 .1. 2",
             "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
+        ]
         for (version in incorrectVersions) {
             try {
                 compileToLibrary(
@@ -76,7 +76,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                         K2NativeCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version,
                         K2NativeCompilerArguments::nopack.cliArgument,
                     ),
-                    dependencies = emptyList(),
+                    dependencies = [],
                 )
                 fail { "Compilation should fail" }
             } catch (cte: CompilationToolException) {
@@ -91,10 +91,10 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
         val dir = buildDir.resolve("dir").apply { createDirectory() }
         val sourceFile = dir.resolve("source.kt").apply { writeText("fun foo() = Unit") }
 
-        val correctVersions = arrayOf(
+        val correctVersions: Array<String> = [
             "0.0.0", "255.255.255",
             "1.4.1", "2.1.0", "2.2.0", "2.3.0"
-        )
+        ]
         for (version in correctVersions) {
             val klibDir = compileToLibrary(
                 sourcesDir = sourceFile,
@@ -103,7 +103,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                     K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version,
                     K2NativeCompilerArguments::nopack.cliArgument,
                 ),
-                dependencies = emptyList(),
+                dependencies = [],
             ).guessKlibArtifactFile()
 
             val manifest = klibDir.resolve("default/manifest")
@@ -115,12 +115,12 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
             assertEquals(version, versionBumped)
         }
 
-        val incorrectVersions = arrayOf(
+        val incorrectVersions: Array<String> = [
             "0.1.", "0.1.2.", "..", "0 .1. 2",
             // These test cases should be uncommented after fixing KT-76247
             // "0", "0.1", "0.1.2.3",
             // "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
+        ]
         for (version in incorrectVersions) {
             try {
                 compileToLibrary(
@@ -130,7 +130,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
                         K2NativeCompilerArguments::metadataVersion.cliArgument + "=" + version,
                         K2NativeCompilerArguments::nopack.cliArgument,
                     ),
-                    dependencies = emptyList(),
+                    dependencies = [],
                 )
                 fail { "Compilation should fail" }
             } catch (cte: CompilationToolException) {
@@ -165,7 +165,7 @@ class NativeKlibCliArgumentsTest : AbstractNativeSimpleTest() {
             sourcesDir = sourcesDir,
             outputDir = binariesDir,
             freeCompilerArgs = TestCompilerArgs("-Xexport-kdoc"),
-            dependencies = emptyList(),
+            dependencies = [],
         ).guessKlibArtifactFile()
 
         assertTrue(klibFile.exists()) { "Klib file should exist" }

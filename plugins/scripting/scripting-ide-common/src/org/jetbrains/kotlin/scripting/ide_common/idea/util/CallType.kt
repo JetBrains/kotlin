@@ -258,8 +258,8 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     when (this) {
         is CallTypeAndReceiver.CALLABLE_REFERENCE -> {
             if (receiver != null) {
-                return when (val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] ?: return emptyList()) {
-                    is DoubleColonLHS.Type -> listOf(ReceiverType(lhs.type, 0))
+                return when (val lhs = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] ?: return []) {
+                    is DoubleColonLHS.Type -> [ReceiverType(lhs.type, 0)]
 
                     is DoubleColonLHS.Expression -> {
                         val receiverValue = ExpressionReceiver.create(receiver, lhs.type, bindingContext)
@@ -271,7 +271,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
                     }
                 }
             } else {
-                return emptyList()
+                return []
             }
         }
 
@@ -290,7 +290,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
             } else {
                 val resolutionScope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
                 val classDescriptor =
-                    resolutionScope.ownerDescriptor.parentsWithSelf.firstIsInstanceOrNull<ClassDescriptor>() ?: return emptyList()
+                    resolutionScope.ownerDescriptor.parentsWithSelf.firstIsInstanceOrNull<ClassDescriptor>() ?: return []
                 classDescriptor.typeConstructor.supertypesWithAny().map { ReceiverType(it, 0) }
             }
         }
@@ -322,7 +322,7 @@ fun CallTypeAndReceiver<*, *>.receiverTypesWithIndex(
     }
 
     val expressionReceiver = receiverExpression?.let {
-        val receiverType = extractReceiverTypeFrom(bindingContext, receiverExpression) ?: return emptyList()
+        val receiverType = extractReceiverTypeFrom(bindingContext, receiverExpression) ?: return []
         ExpressionReceiver.create(receiverExpression, receiverType, bindingContext)
     }
 
@@ -378,6 +378,6 @@ private fun receiverValueTypes(
             dataFlowValueFactory
         )
     } else {
-        listOf(receiverValue.type)
+        [receiverValue.type]
     }
 }

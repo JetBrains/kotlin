@@ -190,7 +190,7 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
             setSourceRange(createFor)
         }.apply {
             createThisReceiverParameter()
-            superTypes = listOf(superType) memoryOptimizedPlus getAdditionalSupertypes(superType)
+            superTypes = [superType] memoryOptimizedPlus getAdditionalSupertypes(superType)
             parent = enclosingContainer!!
         }
 
@@ -233,11 +233,11 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
         }.apply {
             val overriddenMethodOfAny = superMethod.findOverriddenMethodOfAny()
             overriddenSymbols = if (overriddenMethodOfAny == null)
-                listOf(superMethod.symbol)
+                [superMethod.symbol]
             else subclass.superTypes.mapNotNull { superType ->
                 superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
             }
-            parameters = (listOf(subclass.thisReceiver!!) + superMethod.nonDispatchParameters)
+            parameters = ([subclass.thisReceiver!!] + superMethod.nonDispatchParameters)
                 .memoryOptimizedMap { it.copyTo(this) }
             body = context.createIrBuilder(symbol).irBlockBody {
                 +irReturn(
@@ -273,8 +273,8 @@ abstract class SingleAbstractMethodLowering(val context: CommonBackendContext) :
 
     private fun getAdditionalSupertypes(supertype: IrType) =
         if (supertype.needEqualsHashCodeMethods)
-            listOf(context.symbols.functionAdapter.typeWith())
-        else emptyList()
+            [context.symbols.functionAdapter.typeWith()]
+        else []
 }
 
 /**
@@ -308,7 +308,7 @@ class SamEqualsHashCodeMethodsGenerator(
 
     private fun generateGetFunctionDelegate() {
         klass.addFunction(getFunctionDelegate.name.asString(), getFunctionDelegate.returnType).apply {
-            overriddenSymbols = listOf(getFunctionDelegate.symbol)
+            overriddenSymbols = [getFunctionDelegate.symbol]
             body = context.createIrBuilder(symbol).run {
                 irBlockBody {
                     +irReturn(obtainFunctionDelegate(irGet(dispatchReceiverParameter!!)))

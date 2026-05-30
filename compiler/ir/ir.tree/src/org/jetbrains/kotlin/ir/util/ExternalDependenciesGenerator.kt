@@ -29,7 +29,7 @@ class ExternalDependenciesGenerator(
         irProviders.filterIsInstance<DeclarationStubGenerator>().singleOrNull()?.run { unboundSymbolGeneration = true }
 
         // Deserializing a reference may lead to new unbound references, so we loop until none are left.
-        var unbound = emptySet<IrSymbol>()
+        var unbound: Set<IrSymbol> = []
         do {
             val prevUnbound = unbound
             unbound = symbolTable.descriptorExtension.allUnboundSymbols

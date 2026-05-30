@@ -45,7 +45,7 @@ internal class XCTestHelpers : Closeable {
     data class Device(val name: String, val udid: String) {
         fun install(application: File) {
             runProcessAndReturnStdoutWithoutTimeout(
-                listOf("/usr/bin/xcrun", "simctl", "install", udid, application.path)
+                ["/usr/bin/xcrun", "simctl", "install", udid, application.path]
             )
         }
 
@@ -80,7 +80,7 @@ internal class XCTestHelpers : Closeable {
         return Device(
             testSimulatorName,
             runProcessAndReturnStdoutWithoutTimeout(
-                listOf("/usr/bin/xcrun", "simctl", "create", testSimulatorName, deviceIdentifier)
+                ["/usr/bin/xcrun", "simctl", "create", testSimulatorName, deviceIdentifier]
             ).lines().single { it.isNotEmpty() }
         )
     }
@@ -97,7 +97,7 @@ internal class XCTestHelpers : Closeable {
     private fun simulators(): Simulators {
         return json.decodeFromString<Simulators>(
             runProcessAndReturnStdoutWithoutTimeout(
-                listOf("/usr/bin/xcrun", "simctl", "list", "devices", "-j")
+                ["/usr/bin/xcrun", "simctl", "list", "devices", "-j"]
             )
         )
     }
@@ -113,7 +113,7 @@ internal class XCTestHelpers : Closeable {
         }.forEach {
             logger.info("Cleaning up simulator ${it.name} (${it.udid})")
             processOutputWithTimeout(
-                listOf("/usr/bin/xcrun", "simctl", "delete", it.udid),
+                ["/usr/bin/xcrun", "simctl", "delete", it.udid],
                 timeout = SHUTDOWN_TIMEOUT_SECONDS,
                 unit = TimeUnit.SECONDS,
                 logger = logger
@@ -137,7 +137,7 @@ internal class XCTestHelpers : Closeable {
 internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
     // The 'bootstatus' command with '-b' will boot the device if not already booted,
     // and then wait for the boot to complete. This is the command that can hang.
-    val bootCommand = listOf("/usr/bin/xcrun", "simctl", "bootstatus", udid, "-b")
+    val bootCommand = ["/usr/bin/xcrun", "simctl", "bootstatus", udid, "-b"]
 
     retry(logger) { attempt ->
         logger.info("Attempt $attempt/$BOOT_RETRIES to boot simulator $name ($udid)...")
@@ -173,7 +173,7 @@ internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
             // Always try to shut down the simulator
             try {
                 processOutputWithTimeout(
-                    listOf("/usr/bin/xcrun", "simctl", "shutdown", udid),
+                    ["/usr/bin/xcrun", "simctl", "shutdown", udid],
                     timeout = SHUTDOWN_TIMEOUT_SECONDS,
                     unit = TimeUnit.SECONDS,
                     logger = logger
@@ -191,7 +191,7 @@ internal fun XCTestHelpers.Device.boot(logger: Logger = XCTestHelpers.logger) {
 private fun updateCache(logger: Logger = XCTestHelpers.logger) {
     logger.info("Attempting to update dyld_shared_cache for all runtimes. This may take a few minutes...")
     processOutputWithTimeout(
-        arguments = listOf("/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all"),
+        arguments = ["/usr/bin/xcrun", "simctl", "runtime", "dyld_shared_cache", "update", "--all"],
         timeout = BOOT_TIMEOUT_MINUTES, // Reuse the same timeout, as this can be slow
         unit = TimeUnit.MINUTES,
         redirectErrorStream = true,

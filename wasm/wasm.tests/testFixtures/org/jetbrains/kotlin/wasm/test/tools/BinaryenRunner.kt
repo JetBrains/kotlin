@@ -42,7 +42,7 @@ sealed interface WasmOptimizer {
 
                 savedOutput = File.createTempFile("binaryen_output_$timestamp", ".wasm")
 
-                val processBuilder = ProcessBuilder(*(command + listOf("-o", savedOutput.absolutePath, savedInput.absolutePath)))
+                val processBuilder = ProcessBuilder(*command, "-o", savedOutput.absolutePath, savedInput.absolutePath)
                     .redirectErrorStream(true)
                 val process = processBuilder.start()
 

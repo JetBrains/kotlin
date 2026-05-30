@@ -38,7 +38,7 @@ abstract class SimpleTestFailureSuppressor(testServices: TestServices) : TestFai
     abstract fun testIsMuted(): Boolean
 
     final override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        return if (testIsMuted()) emptyList() else failedAssertions
+        return if (testIsMuted()) [] else failedAssertions
     }
 }
 
@@ -52,7 +52,7 @@ abstract class TestFailureSuppressorBySingleDirective(
         require(suppressDirective in directivesContainer)
     }
 
-    override val directiveContainers: List<DirectivesContainer> = listOf(directivesContainer)
+    override val directiveContainers: List<DirectivesContainer> = [directivesContainer]
 
     override fun checkIfTestShouldBeUnmuted() {
         if (testIsMuted()) {

@@ -10,10 +10,10 @@ import java.nio.file.Path
 
 typealias KotlinErrorPaths = Set<Path>
 
-internal fun GradleProject.getErrorPaths(): KotlinErrorPaths = setOf(
+internal fun GradleProject.getErrorPaths(): Set<Path> = [
     projectPersistentCache.resolve("errors"),
     projectPath.resolve(".gradle/kotlin/errors")
-)
+]
 
 internal fun BuildResult.assertNoErrorFileCreatedInOutput() {
     assertOutputDoesNotContain("errors were stored into file")

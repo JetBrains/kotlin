@@ -133,7 +133,7 @@ class StringConcatGenerator(
                     "makeConcat",
                     Type.getMethodDescriptor(JAVA_STRING_TYPE, *items.map { it.type }.toTypedArray()),
                     bootstrap,
-                    arrayOf()
+                    []
                 )
             }
             //clear old template

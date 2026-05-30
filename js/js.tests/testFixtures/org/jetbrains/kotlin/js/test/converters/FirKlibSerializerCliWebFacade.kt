@@ -30,7 +30,7 @@ class FirKlibSerializerCliJsFacade(
     firstTimeCompilation: Boolean = true,
 ) : FirKlibSerializerCliWebFacade(testServices, firstTimeCompilation) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::JsIrIncrementalDataProvider))
+        get() = [service(::JsIrIncrementalDataProvider)]
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib {
         val [klibArtifact, output] = super.sharedTransform(module, inputArtifact)

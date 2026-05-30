@@ -1001,7 +1001,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         require(operation != ASSIGN)
 
         augmentedAssignment.transformAnnotations(transformer, ContextIndependent)
-        dataFlowAnalyzer.enterCallArguments(augmentedAssignment, listOf(augmentedAssignment.rightArgument))
+        dataFlowAnalyzer.enterCallArguments(augmentedAssignment, [augmentedAssignment.rightArgument])
         val leftArgument = augmentedAssignment.leftArgument
             .transformAsExplicitReceiver(ResolutionMode.ReceiverResolution, isUsedAsGetClassReceiver = false)
         val rightArgument = augmentedAssignment.rightArgument.transformSingle(transformer, ResolutionMode.ContextDependent)
@@ -1119,7 +1119,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val assignmentCallCandidate = requireNotNull(assignCallReference?.candidate)
             return chooseAssign().also {
                 val errorReference = buildErrorNamedReferenceWithNoName(
-                    ConeOperatorAmbiguityError(listOf(operatorCallCandidate, assignmentCallCandidate)),
+                    ConeOperatorAmbiguityError([operatorCallCandidate, assignmentCallCandidate]),
                     source = augmentedAssignment.source
                 )
                 it.replaceCalleeReference(errorReference)
@@ -1736,7 +1736,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
         }
 
-        transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType(arrayOf(typeOfExpression), false)
+        transformedGetClassCall.resultType = StandardClassIds.KClass.constructClassLikeType([typeOfExpression], false)
         dataFlowAnalyzer.exitGetClassCall(transformedGetClassCall)
         return transformedGetClassCall
     }
@@ -2045,7 +2045,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
         indexedAccessAugmentedAssignment.transformAnnotations(transformer, data)
 
-        dataFlowAnalyzer.enterCallArguments(indexedAccessAugmentedAssignment, listOf(indexedAccessAugmentedAssignment.rhs))
+        dataFlowAnalyzer.enterCallArguments(indexedAccessAugmentedAssignment, [indexedAccessAugmentedAssignment.rhs])
         // transformedLhsCall: a.get(index)
         val transformedLhsCall = indexedAccessAugmentedAssignment.lhsGetCall.transformSingle(transformer, ContextIndependent)
             .also { it.setIndexedAccessAugmentedAssignSource(fakeSourceElementKind) }
@@ -2122,7 +2122,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             val secondCandidate = secondReference?.candidate
             requireNotNull(firstCandidate)
             requireNotNull(secondCandidate)
-            return reportError(ConeOperatorAmbiguityError(listOf(firstCandidate, secondCandidate)))
+            return reportError(ConeOperatorAmbiguityError([firstCandidate, secondCandidate]))
         }
 
         fun reportUnresolvedReference(): FirStatement {
@@ -2399,7 +2399,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
                 // We remove the type so that it will be set during completion to the CST of the arguments.
                 collectionLiteral.replaceConeTypeOrNull(
                     (data as? ResolutionMode.WithExpectedType)?.expectedType
-                        ?: StandardClassIds.Array.constructClassLikeType(arrayOf(StandardTypes.Any))
+                        ?: StandardClassIds.Array.constructClassLikeType([StandardTypes.Any])
                 )
                 val syntheticIdCall = components.syntheticCallGenerator.generateSyntheticIdCall(
                     collectionLiteral,

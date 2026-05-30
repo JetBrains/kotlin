@@ -66,7 +66,7 @@ internal class NativeConstantReflectionIrBuilder(
                 if (symbol.owner.isInterface)
                     irKClassUnsupported(symbols, "KClass for Objective-C protocols is not supported yet")
                 else
-                    irConstantObject(symbols.kObjectiveCKClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+                    irConstantObject(symbols.kObjectiveCKClassImplIntrinsicConstructor, [], [symbol.starProjectedType])
 
             symbol.owner.isObjCClass() ->
                 irKClassUnsupported(symbols, "KClass for Kotlin subclasses of Objective-C classes is not supported yet")
@@ -74,7 +74,7 @@ internal class NativeConstantReflectionIrBuilder(
             symbol.owner.isNativePointedChild() ->
                 irKClassUnsupported(symbols, "KClass for interop types is not supported yet")
 
-            else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, emptyList(), listOf(symbol.starProjectedType))
+            else -> irConstantObject(symbols.kClassImplIntrinsicConstructor, [], [symbol.starProjectedType])
         }
     }
 
@@ -97,7 +97,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
         val onRecursiveUpperBound: IrBuilder.(String) -> Unit,
 ) : IrBuilder(context, startOffset, endOffset) {
     fun irKType(type: IrType): E =
-            irKType(type, mutableSetOf())
+            irKType(type, [])
 
     private class RecursiveBoundsException(message: String) : Throwable(message)
 
@@ -109,7 +109,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
             // Represent as non-denotable type:
             return irKTypeImpl(
                     kClassifier = null,
-                    irTypeArguments = emptyList(),
+                    irTypeArguments = [],
                     isMarkedNullable = false,
             )
         }
@@ -172,7 +172,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
             "classifier" to (kClassifier ?: irConstantNull()),
             "arguments" to irKTypeProjectionsList(irTypeArguments),
             "isMarkedNullable" to irConstantBoolean(isMarkedNullable),
-    ), emptyList())
+    ), [])
 
     private fun irKTypeProjectionsList(
             irTypeArguments: List<Pair<Variance, E>?>,
@@ -207,7 +207,7 @@ internal abstract class NativeReflectionIrBuilderBase<E : IrExpression>(
     protected abstract fun irCreateInstance(
             clazz: IrClass,
             elements: Map<String, E>,
-            typeArguments: List<IrType> = emptyList()
+            typeArguments: List<IrType> = []
     ): E
 
     abstract fun irKClass(symbol: IrClassSymbol): E

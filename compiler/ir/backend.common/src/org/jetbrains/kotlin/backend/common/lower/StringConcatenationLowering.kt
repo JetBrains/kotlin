@@ -60,14 +60,14 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
                 it.hasShape(
                     dispatchReceiver = true,
                     regularParameters = 1,
-                    parameterTypes = listOf(null, context.irBuiltIns.anyType.makeNullable())
+                    parameterTypes = [null, context.irBuiltIns.anyType.makeNullable()]
                 )
     }
 
     private val appendFunctions: Map<IrType, IrSimpleFunction?> =
         typesWithSpecialAppendFunction.associate { type ->
             type to stringBuilder.functions.toList().atMostOne {
-                it.name == nameAppend && it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, type))
+                it.name == nameAppend && it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = [null, type])
             }
         }
 

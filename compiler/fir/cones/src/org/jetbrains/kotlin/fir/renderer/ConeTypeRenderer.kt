@@ -43,7 +43,7 @@ open class ConeTypeRenderer(
             builder.append(" ")
         }
 
-        var contextParameters: List<ConeTypeProjection> = emptyList()
+        var contextParameters: List<ConeTypeProjection> = []
         var receiverParameter: ConeTypeProjection? = null
         var regularParameters: List<ConeTypeProjection> = type.typeArguments.asList()
 

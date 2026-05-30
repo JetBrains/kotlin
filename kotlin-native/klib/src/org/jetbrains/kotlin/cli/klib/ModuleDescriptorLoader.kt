@@ -30,7 +30,7 @@ internal class ModuleDescriptorLoader(private val output: KlibToolOutput) {
             storageManager,
         )
 
-        val defaultModules = mutableListOf<ModuleDescriptorImpl>()
+        val defaultModules: MutableList<ModuleDescriptorImpl> = []
         if (!module.isNativeStdlib()) {
             val stdlib = loadKlib(KotlinNativePaths.homePath.resolve("klib/common/stdlib").absolutePath, output) ?: return null
             defaultModules += KlibFactories.DefaultDeserializedDescriptorFactory.createDescriptor(

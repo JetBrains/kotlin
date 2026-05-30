@@ -77,7 +77,7 @@ fun ResolvedCall<*>.getImplicitReceivers(): Collection<ReceiverValue> =
         ExplicitReceiverKind.NO_EXPLICIT_RECEIVER -> listOfNotNull(extensionReceiver, dispatchReceiver)
         ExplicitReceiverKind.DISPATCH_RECEIVER -> listOfNotNull(extensionReceiver)
         ExplicitReceiverKind.EXTENSION_RECEIVER -> listOfNotNull(dispatchReceiver)
-        ExplicitReceiverKind.BOTH_RECEIVERS -> emptyList()
+        ExplicitReceiverKind.BOTH_RECEIVERS -> []
     }
 
 private fun ResolvedCall<*>.hasSafeNullableReceiver(context: CallResolutionContext<*>): Boolean {
@@ -96,9 +96,9 @@ fun ResolvedCall<*>.getDispatchReceiverWithSmartCast(): ReceiverValue? =
     getReceiverValueWithSmartCast(dispatchReceiver, smartCastDispatchReceiverType)
 
 fun KtCallElement.getArgumentByParameterIndex(index: Int, context: BindingContext): List<ValueArgument> {
-    val resolvedCall = getResolvedCall(context) ?: return emptyList()
-    val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return emptyList()
-    return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: emptyList()
+    val resolvedCall = getResolvedCall(context) ?: return []
+    val parameterToProcess = resolvedCall.resultingDescriptor.valueParameters.getOrNull(index) ?: return []
+    return resolvedCall.valueArguments[parameterToProcess]?.arguments ?: []
 }
 
 fun CallableDescriptor.isNotSimpleCall(): Boolean =

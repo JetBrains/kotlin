@@ -65,7 +65,7 @@ class KlibSerializerNativeCliFacade(
     testServices: TestServices
 ) : IrBackendFacade<BinaryArtifacts.KLib>(testServices, ArtifactKinds.KLib) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = super.additionalServices + listOf(service(::ModuleDescriptorProvider))
+        get() = super.additionalServices + service(::ModuleDescriptorProvider)
 
     override fun transform(
         module: TestModule,

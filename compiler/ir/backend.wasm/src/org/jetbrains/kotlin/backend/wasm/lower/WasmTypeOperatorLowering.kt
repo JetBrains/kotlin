@@ -226,7 +226,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return builder.irCall(
                 symbols.unboxIntrinsic,
                 toType,
-                typeArguments = listOf(fromType, toType)
+                typeArguments = [fromType, toType]
             ).also {
                 it.arguments[0] = value
             }
@@ -236,7 +236,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             return builder.irCall(
                 symbols.boxIntrinsic,
                 toType,
-                typeArguments = listOf(fromType, toType)
+                typeArguments = [fromType, toType]
             ).also {
                 it.arguments[0] = value
             }

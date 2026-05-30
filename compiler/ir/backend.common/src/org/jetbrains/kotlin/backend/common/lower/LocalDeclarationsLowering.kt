@@ -438,7 +438,7 @@ open class LocalDeclarationsLowering(
                         it.typeArguments[tpIndex++] = typeArgument
                     }
                     if (remapCapturedTypesInExtractedLocalDeclarations) {
-                        val contextTypeParameters = localClasses[oldCallee.constructedClass]?.closure?.capturedTypeParameters ?: emptyList()
+                        val contextTypeParameters = localClasses[oldCallee.constructedClass]?.closure?.capturedTypeParameters ?: []
                         for (contextTP in contextTypeParameters) {
                             it.typeArguments[tpIndex++] = contextTP.defaultType
                         }
@@ -638,7 +638,7 @@ open class LocalDeclarationsLowering(
             val usedCaptureFields = createFieldsForCapturedValues(localClassContext)
             irClass.declarations += usedCaptureFields
 
-            irClass.capturedFields = (irClass.capturedFields ?: emptyList()) + usedCaptureFields
+            irClass.capturedFields = (irClass.capturedFields ?: []) + usedCaptureFields
 
             for (constructorContext in constructorsCallingSuper) {
                 val blockBody = constructorContext.declaration.body as? IrBlockBody
@@ -801,7 +801,7 @@ open class LocalDeclarationsLowering(
             // Inline lambdas wouldn't be popped up (see visitRichFunctionReference in LocalDeclarationPopupLowering),
             // so we don't need to capture types in them, as they would be anyway available in scope.
             val newTypeParameters =
-                if (oldDeclaration.origin == IrDeclarationOrigin.INLINE_LAMBDA) emptyList()
+                if (oldDeclaration.origin == IrDeclarationOrigin.INLINE_LAMBDA) []
                 else newDeclaration.copyTypeParameters(capturedTypeParameters)
             localFunctionContext.capturedTypeParameterToTypeParameter.putAll(
                 capturedTypeParameters.zip(newTypeParameters)
@@ -870,7 +870,7 @@ open class LocalDeclarationsLowering(
             val parametersMapping = (oldDeclaration.parameters zip transformedParameters).toMap()
             context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
 
-            val generatedNames = mutableSetOf<String>()
+            val generatedNames: MutableSet<String> = []
             val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
                 buildValueParameter(newDeclaration) {
@@ -879,7 +879,7 @@ open class LocalDeclarationsLowering(
                     endOffset = UNDEFINED_OFFSET
                     origin =
                         if (p is IrValueParameter &&
-                            p.kind in listOf(IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver) &&
+                            p.kind in [IrParameterKind.DispatchReceiver, IrParameterKind.ExtensionReceiver] &&
                             newDeclaration is IrConstructor
                         ) BOUND_RECEIVER_PARAMETER
                         else BOUND_VALUE_PARAMETER
@@ -970,7 +970,7 @@ open class LocalDeclarationsLowering(
 
         private fun createFieldsForCapturedValues(localClassContext: LocalClassContext): List<IrField> {
             val classDeclaration = localClassContext.declaration
-            val generatedNames = mutableSetOf<String>()
+            val generatedNames: MutableSet<String> = []
             return localClassContext.capturedValueToField.mapNotNull { [capturedValue, field] ->
                 val symbol = field.symbolIfUsed ?: return@mapNotNull null
                 val origin = if (capturedValue is IrValueParameter && capturedValue.isCrossinline)

@@ -10,25 +10,25 @@ import kotlin.test.assertEquals
 class KotlinToolchainsV1AdapterTest {
     @Test
     fun fixForFirCheck_noChange() {
-        val argumentsList = listOf("abc", "def", "ghi")
+        val argumentsList = ["abc", "def", "ghi"]
         assertEquals(argumentsList, argumentsList.fixForFirCheck())
     }
 
     @Test
     fun fixForFirCheck_languageVersion() {
-        val argumentsList = listOf("abc", "-language-version", "1.9", "def")
-        assertEquals(listOf("abc", "-language-version=1.9", "def"), argumentsList.fixForFirCheck())
+        val argumentsList = ["abc", "-language-version", "1.9", "def"]
+        assertEquals(["abc", "-language-version=1.9", "def"], argumentsList.fixForFirCheck())
 
-        val argumentsList2 = listOf("abc", "def", "-language-version", "1.9")
-        assertEquals(listOf("abc", "def", "-language-version=1.9"), argumentsList2.fixForFirCheck())
+        val argumentsList2 = ["abc", "def", "-language-version", "1.9"]
+        assertEquals(["abc", "def", "-language-version=1.9"], argumentsList2.fixForFirCheck())
     }
 
     @Test
     fun fixForFirCheck_xFirIc() {
-        val argumentsList = listOf("abc", "-Xuse-fir-ic=true", "def")
-        assertEquals(listOf("abc", "-Xuse-fir-ic", "def"), argumentsList.fixForFirCheck())
+        val argumentsList = ["abc", "-Xuse-fir-ic=true", "def"]
+        assertEquals(["abc", "-Xuse-fir-ic", "def"], argumentsList.fixForFirCheck())
 
-        val argumentsList2 = listOf("abc", "def", "-Xuse-fir-ic=true")
-        assertEquals(listOf("abc", "def", "-Xuse-fir-ic"), argumentsList2.fixForFirCheck())
+        val argumentsList2 = ["abc", "def", "-Xuse-fir-ic=true"]
+        assertEquals(["abc", "def", "-Xuse-fir-ic"], argumentsList2.fixForFirCheck())
     }
 }

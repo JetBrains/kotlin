@@ -23,27 +23,27 @@ private fun getCompilerPlugin(plugin: KnownCompilerPlugin, arguments: List<Compi
         pluginId = plugin.pluginId,
         classpath = classpath,
         rawArguments = arguments,
-        orderingRequirements = emptySet(),
+        orderingRequirements = [],
     )
 }
 
 internal val NOARG_PLUGIN =
-    getCompilerPlugin(KnownCompilerPlugin.NOARG, listOf(CompilerPluginOption("annotation", "GenerateNoArgsConstructor")))
+    getCompilerPlugin(KnownCompilerPlugin.NOARG, [CompilerPluginOption("annotation", "GenerateNoArgsConstructor")])
 internal val NOARG_JPA_PLUGIN =
     getCompilerPlugin(
         KnownCompilerPlugin.NOARG,
-        listOf(CompilerPluginOption("preset", "jpa"), CompilerPluginOption("annotation", "GenerateNoArgsConstructor"))
+        [CompilerPluginOption("preset", "jpa"), CompilerPluginOption("annotation", "GenerateNoArgsConstructor")]
     )
 internal val ASSIGNMENT_PLUGIN =
-    getCompilerPlugin(KnownCompilerPlugin.ASSIGNMENT, listOf(CompilerPluginOption("annotation", "GenerateAssignment")))
+    getCompilerPlugin(KnownCompilerPlugin.ASSIGNMENT, [CompilerPluginOption("annotation", "GenerateAssignment")])
 
 internal fun scriptingPlugin(templateClass: KClass<*>) =
     getCompilerPlugin(
         KnownCompilerPlugin.SCRIPTING,
-        listOf(
+        [
             CompilerPluginOption(
                 "script-definitions",
                 templateClass.qualifiedName ?: error("Cannot retrieve FQN for $templateClass")
             )
-        )
+        ]
     )

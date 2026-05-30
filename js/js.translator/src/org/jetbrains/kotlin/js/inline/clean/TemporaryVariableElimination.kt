@@ -101,17 +101,17 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private val definitions = mutableMapOf<JsName, Int>()
     private val usages = mutableMapOf<JsName, Int>()
     private val definedValues = mutableMapOf<JsName, JsExpression>()
-    private val temporary = mutableSetOf<JsName>()
-    private val capturedInClosure = mutableSetOf<JsName>()
+    private val temporary: MutableSet<JsName> = []
+    private val capturedInClosure: MutableSet<JsName> = []
     private var hasChanges = false
     private val localVariables = function.collectLocalVariables()
 
     // During `perform` phase we collect all variables we should substitute and all statements we should remove later,
     // when cleaning-up
-    private val namesToSubstitute = mutableSetOf<JsName>()
-    private val statementsToRemove = mutableSetOf<JsNode>()
+    private val namesToSubstitute: MutableSet<JsName> = []
+    private val statementsToRemove: MutableSet<JsNode> = []
 
-    private val namesWithSideEffects = mutableSetOf<JsName>()
+    private val namesWithSideEffects: MutableSet<JsName> = []
 
     fun apply(): Boolean {
         analyze()
@@ -123,7 +123,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
     private fun analyze() {
         object : RecursiveJsVisitor() {
             val currentScope = function.parameters.asSequence().map { it.name }.toMutableSet()
-            var localVars = mutableSetOf<JsName>()
+            var localVars: MutableSet<JsName> = []
 
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 (x.expression as? JsBinaryOperation)?.let { expression ->
@@ -218,7 +218,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
             private inline fun <T> withNewScope(block: () -> T): T {
                 val localVarsBackup = localVars
                 try {
-                    localVars = mutableSetOf()
+                    localVars = []
                     return block()
                 } finally {
                     currentScope -= localVars
@@ -235,7 +235,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
 
     private fun perform() {
         object : RecursiveJsVisitor() {
-            val lastAssignedVars = mutableListOf<Pair<JsName, JsNode>>()
+            val lastAssignedVars: MutableList<Pair<JsName, JsNode>> = []
 
             override fun visitExpressionStatement(x: JsExpressionStatement) {
                 val expression = x.expression
@@ -421,7 +421,7 @@ internal class TemporaryVariableElimination(private val function: JsFunction) {
      */
     private inner class SubstitutionCandidateFinder : RecursiveJsVisitor() {
         // Contains all found references to local temporary variables before side effect occurred.
-        val substitutableVariableReferences = mutableListOf<JsName>()
+        val substitutableVariableReferences: MutableList<JsName> = []
 
         var sideEffectOccurred = false
 

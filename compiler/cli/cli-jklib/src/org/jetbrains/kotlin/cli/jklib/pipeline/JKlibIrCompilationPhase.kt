@@ -77,7 +77,7 @@ import org.jetbrains.kotlin.types.KotlinType
 object JKlibIrCompilationPhase :
     PipelinePhase<JKlibSerializationArtifact, JKlibIrCompilationArtifact>(
         name = "JKlibIrCompilationPhase",
-        postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
+        postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
     ) {
 
     override fun executePhase(input: JKlibSerializationArtifact): JKlibIrCompilationArtifact {
@@ -168,7 +168,7 @@ object JKlibIrCompilationPhase :
         )
 
         linker.init(null)
-        ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, [linker]).generateUnboundSymbolsAsDependencies()
         linker.postProcess(inOrAfterLinkageStep = true)
 
         // TODO(KT-86160): remove this when we have a proper solution for this issue.
@@ -238,15 +238,15 @@ object JKlibIrCompilationPhase :
         moduleClassResolver.compiledCodeResolver = dependenciesContainer.get()
 
         dependenciesContext.setDependencies(
-            listOf(dependenciesContext.module, builtIns.builtInsModule)
+            [dependenciesContext.module, builtIns.builtInsModule]
         )
         dependenciesContext.initializeModuleContents(
             CompositePackageFragmentProvider(
-                listOf(
+                [
                     moduleClassResolver.compiledCodeResolver.packageFragmentProvider,
                     dependenciesContainer.get<JvmBuiltInsPackageFragmentProvider>(),
                     dependenciesContainer.get<OptionalAnnotationPackageFragmentProvider>(),
-                ),
+                ],
                 "CompositeProvider@TopDownAnalyzerForJvm for dependencies ${dependenciesContext.module}",
             )
         )
@@ -282,7 +282,7 @@ object JKlibIrCompilationPhase :
                     delegate.getFunctionsNames(classDescriptor)
             },
             // ClassDescriptorFactories for intrinsic builtin classes.
-            fictitiousClassDescriptorFactories = listOf(
+            fictitiousClassDescriptorFactories = [
                 // TODO(KT-86369): Investigate if we need to wire up BuiltInFictitiousFunctionClassFactory in the list. J2CL is currently
                 //  passing definitions for these classes and we could remove those and use BuiltInFictitiousFunctionClassFactory instead.
                 object : ClassDescriptorFactory {
@@ -299,7 +299,7 @@ object JKlibIrCompilationPhase :
                     override fun getAllContributedClassesIfPossible(packageFqName: FqName): Collection<ClassDescriptor> =
                         delegate.getAllContributedClassesIfPossible(packageFqName)
                 }
-            )
+            ]
         )
 
         val dependencyDescriptorsByKlib = sortedDependencies.associateWith { klib ->

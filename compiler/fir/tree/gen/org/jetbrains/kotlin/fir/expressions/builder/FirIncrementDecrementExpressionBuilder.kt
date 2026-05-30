@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.name.Name
 class FirIncrementDecrementExpressionBuilder : FirAnnotationContainerBuilder, FirExpressionBuilder {
     override var source: KtSourceElement? = null
     override var coneTypeOrNull: ConeKotlinType? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     var isPrefix: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     lateinit var operationName: Name
     lateinit var expression: FirExpression

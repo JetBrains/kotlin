@@ -22,7 +22,7 @@ class KtUltraLightClassForFacade(
     private val filesWithSupports: Collection<Pair<KtFile, KtUltraLightSupport>>,
 ) : KtLightClassForFacadeBase(facadeClassFqName, files) {
     private val _modifierListForSimpleFacade: PsiModifierList by lazyPub {
-        KtUltraLightSimpleModifierList(owner = this, modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.FINAL))
+        KtUltraLightSimpleModifierList(owner = this, modifiers = [PsiModifier.PUBLIC, PsiModifier.FINAL])
     }
 
     private val _givenAnnotations: List<KtLightAbstractAnnotation>? by lazyPub {
@@ -39,7 +39,7 @@ class KtUltraLightClassForFacade(
     }
 
     override val givenAnnotations: List<KtLightAbstractAnnotation>?
-        get() = if (multiFileClass) emptyList() else _givenAnnotations
+        get() = if (multiFileClass) [] else _givenAnnotations
 
     override fun createModifierListForSimpleFacade(): PsiModifierList = _modifierListForSimpleFacade
 
@@ -82,10 +82,10 @@ class KtUltraLightClassForFacade(
                             forceStatic = true,
                             onlyJvmStatic = false,
                         )
-                    } else emptyList()
+                    } else []
                 }
 
-                else -> emptyList()
+                else -> []
             }
             result.addAll(methods)
         }

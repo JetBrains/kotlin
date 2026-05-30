@@ -40,10 +40,10 @@ object FirAnnotationExpressionChecker : FirAnnotationCallChecker(MppCheckerKind.
     private val deprecatedSinceKotlinFqName = FqName("kotlin.DeprecatedSinceKotlin")
     private val sinceKotlinFqName = FqName("kotlin.SinceKotlin")
 
-    private val annotationFqNamesWithVersion = setOf(
+    private val annotationFqNamesWithVersion: Set<FqName> = [
         RequireKotlinConstants.FQ_NAME,
         sinceKotlinFqName,
-    )
+    ]
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirAnnotationCall) {

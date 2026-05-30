@@ -37,11 +37,11 @@ class JvmAdditionalClassPartsProvider : AdditionalClassPartsProvider {
     ): List<KotlinType> {
         if (thisDescriptor.isJvmRecord() && existingSupertypes.none(::isJavaLangRecordType)) {
             thisDescriptor.module.resolveTopLevelClass(JAVA_LANG_RECORD_FQ_NAME, NoLookupLocation.FOR_DEFAULT_IMPORTS)?.defaultType?.let {
-                return listOf(it)
+                return [it]
             }
         }
 
-        return emptyList()
+        return []
     }
 }
 

@@ -61,7 +61,7 @@ internal class Linker(
     ): List<Command> {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
-        val includedBinariesLibraries = config.libraryToCache?.let { listOf(it.klib) }
+        val includedBinariesLibraries = config.libraryToCache?.let { [it.klib] }
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
         val includedBinaries = includedBinariesLibraries.map { it.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths.orEmpty() }.flatten()
 
@@ -74,7 +74,7 @@ internal class Linker(
             return args
         }
 
-        val result = mutableListOf<String>()
+        val result: MutableList<String> = []
         for (arg in args) {
             // If user passes compiler arguments to us - transform them to linker ones.
             if (arg.startsWith("-Wl,")) {
@@ -102,7 +102,7 @@ internal class Linker(
                 val name = bundleDir.name.removeSuffix(config.produce.suffix())
                 require(target.family.isAppleFamily)
                 val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
-                additionalLinkerArgs = listOf("-bundle", "-dead_strip")
+                additionalLinkerArgs = ["-bundle", "-dead_strip"]
                 val bundlePath = bundleDir.child(bundleRelativePath)
                 bundlePath.parentFile.mkdirs()
                 executable = bundlePath.absolutePath
@@ -117,7 +117,7 @@ internal class Linker(
                     Family.OSX -> "Versions/A/$dylibName"
                     else -> error(target)
                 }
-                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+                additionalLinkerArgs = ["-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath"]
                 val dylibPath = framework.child(dylibRelativePath)
                 dylibPath.parentFile.mkdirs()
                 executable = dylibPath.absolutePath
@@ -125,12 +125,11 @@ internal class Linker(
             else -> {
                 additionalLinkerArgs = if (target.family.isAppleFamily) {
                     when (config.produce) {
-                        CompilerOutputKind.DYNAMIC_CACHE ->
-                            listOf("-install_name", outputFiles.dynamicCacheInstallName)
-                        else -> listOf("-dead_strip")
+                        CompilerOutputKind.DYNAMIC_CACHE -> ["-install_name", outputFiles.dynamicCacheInstallName]
+                        else -> ["-dead_strip"]
                     }
                 } else {
-                    emptyList()
+                    []
                 }
                 executable = outputFiles.nativeBinaryFile
             }

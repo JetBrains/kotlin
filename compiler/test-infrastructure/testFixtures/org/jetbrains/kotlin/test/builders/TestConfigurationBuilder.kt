@@ -22,33 +22,33 @@ abstract class TestConfigurationBuilderBase<Self : TestConfigurationBuilderBase<
     val defaultsProviderBuilder: DefaultsProviderBuilder = DefaultsProviderBuilder()
     lateinit var assertions: AssertionsService
 
-    protected val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = mutableListOf()
-    protected val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = mutableListOf()
-    protected val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = mutableListOf()
-    protected val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = mutableListOf()
+    protected val sourcePreprocessors: MutableList<Constructor<SourceFilePreprocessor>> = []
+    protected val additionalMetaInfoProcessors: MutableList<Constructor<AdditionalMetaInfoProcessor>> = []
+    protected val environmentConfigurators: MutableList<Constructor<AbstractEnvironmentConfigurator>> = []
+    protected val preAnalysisHandlers: MutableList<Constructor<PreAnalysisHandler>> = []
 
-    protected val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = mutableListOf()
-    protected val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = mutableListOf()
+    protected val additionalSourceProviders: MutableList<Constructor<AdditionalSourceProvider>> = []
+    protected val moduleStructureTransformers: MutableList<Constructor<ModuleStructureTransformer>> = []
 
-    protected val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = mutableListOf()
-    protected val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = mutableListOf()
-    protected val failureSuppressors: MutableList<Constructor<TestFailureSuppressor>> = mutableListOf()
+    protected val metaTestConfigurators: MutableList<Constructor<MetaTestConfigurator>> = []
+    protected val afterAnalysisCheckers: MutableList<Constructor<AfterAnalysisChecker>> = []
+    protected val failureSuppressors: MutableList<Constructor<TestFailureSuppressor>> = []
 
     protected var metaInfoHandlerEnabled: Boolean = false
 
-    protected val directives: MutableList<DirectivesContainer> = mutableListOf()
+    protected val directives: MutableList<DirectivesContainer> = []
     val defaultRegisteredDirectivesBuilder: RegisteredDirectivesBuilder = RegisteredDirectivesBuilder()
 
-    protected val configurationsByPositiveTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = mutableListOf()
-    protected val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = mutableListOf()
-    protected val additionalServices: MutableList<ServiceRegistrationData> = mutableListOf()
+    protected val configurationsByPositiveTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = []
+    protected val configurationsByNegativeTestDataCondition: MutableList<Pair<Regex, Self.() -> Unit>> = []
+    protected val additionalServices: MutableList<ServiceRegistrationData> = []
 
     protected var compilerConfigurationProvider: ((TestServices, Disposable, List<AbstractEnvironmentConfigurator>) -> CompilerConfigurationProvider)? =
         null
-    protected var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = mutableListOf()
+    protected var runtimeClasspathProviders: MutableList<Constructor<RuntimeClasspathProvider>> = []
 
-    protected val globalDefaultsConfigurators: MutableList<DefaultsProviderBuilder.() -> Unit> = mutableListOf()
-    protected val defaultDirectiveConfigurators: MutableList<RegisteredDirectivesBuilder.() -> Unit> = mutableListOf()
+    protected val globalDefaultsConfigurators: MutableList<DefaultsProviderBuilder.() -> Unit> = []
+    protected val defaultDirectiveConfigurators: MutableList<RegisteredDirectivesBuilder.() -> Unit> = []
 
     // ------------------------------------------------------------------------------------------------------------
 
@@ -196,7 +196,7 @@ sealed class OneStageTestConfigurationBuilderBase<Self, C> : TestConfigurationBu
     private typealias StepBuilder = TestStepBuilder<*, *, Step>
 
     @PrivateForInline
-    val steps: MutableList<StepBuilder> = mutableListOf()
+    val steps: MutableList<StepBuilder> = []
 
     @PrivateForInline
     val namedSteps: MutableMap<String, StepBuilder> = mutableMapOf()
@@ -207,7 +207,7 @@ class NonGroupingStageTestConfigurationBuilder :
     OneStageTestConfigurationBuilderBase<NonGroupingStageTestConfigurationBuilder, NonGroupingStageTestConfiguration>() {
     lateinit var testInfo: KotlinTestInfo
     lateinit var startingArtifactFactory: (TestModule) -> ResultingArtifact<*>
-    private val groupingTestIsolators: MutableList<Constructor<GroupingTestIsolator>> = mutableListOf()
+    private val groupingTestIsolators: MutableList<Constructor<GroupingTestIsolator>> = []
 
     fun useGroupingTestIsolators(vararg isolators: Constructor<GroupingTestIsolator>) {
         groupingTestIsolators += isolators
@@ -351,7 +351,7 @@ typealias TestConfigurationBuilder = NonGroupingStageTestConfigurationBuilder
 class GroupingStageTestConfigurationBuilder :
     OneStageTestConfigurationBuilderBase<GroupingStageTestConfigurationBuilder, GroupingStageTestConfiguration>() {
     lateinit var testInfo: KotlinTestInfo
-    val mergerWorkers: MutableList<Constructor<GroupingStageInputsMerger.Worker>> = mutableListOf()
+    val mergerWorkers: MutableList<Constructor<GroupingStageInputsMerger.Worker>> = []
 
     fun <I : ResultingArtifact<I>, O : ResultingArtifact<O>> facadeStep(
         facade: Constructor<AbstractGroupingStageTestFacade<I, O>>,

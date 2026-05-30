@@ -32,7 +32,7 @@ class Parse : AbstractSchemaModificationInterpreter() {
 class ParseString : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.options by ignore()
-    val Arguments.columns: List<String> by arg(defaultValue = Present(emptyList()))
+    val Arguments.columns: List<String> by arg(defaultValue = Present([]))
 
     override fun Arguments.interpret(): PluginDataFrameSchema =
         receiver

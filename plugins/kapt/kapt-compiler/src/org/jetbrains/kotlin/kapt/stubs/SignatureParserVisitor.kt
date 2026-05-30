@@ -199,8 +199,8 @@ class SignatureParser(private val treeMaker: KaptTreeMaker) {
         val kind = node.kind
         return when (kind) {
             ClassType -> {
-                val typeArgs = mutableListOf<SignatureNode>()
-                val innerClasses = mutableListOf<SignatureNode>()
+                val typeArgs: MutableList<SignatureNode> = []
+                val innerClasses: MutableList<SignatureNode> = []
                 node.split(typeArgs, TypeArgument, innerClasses, InnerClass)
 
                 var expression = makeExpressionForClassTypeWithArguments(treeMaker.FqName(node.name!!), typeArgs)
@@ -364,12 +364,12 @@ private class SignatureParserVisitor : SignatureVisitor(Opcodes.API_VERSION) {
     }
 
     override fun visitTypeArgument() {
-        popUntil(listOf(ClassType, InnerClass))
+        popUntil([ClassType, InnerClass])
         push(TypeArgument)
     }
 
     override fun visitTypeArgument(variance: Char): SignatureVisitor {
-        popUntil(listOf(ClassType, InnerClass))
+        popUntil([ClassType, InnerClass])
         push(TypeArgument, name = variance.toString())
         return super.visitTypeArgument(variance)
     }

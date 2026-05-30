@@ -24,8 +24,8 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
     fun testNullArgumentCallSiteTracksParameterType(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val moduleC = module("ic-scenarios/kt-85740/module-c")
-            val moduleB = module("ic-scenarios/kt-85740/module-b", dependencies = listOf(moduleC))
-            val moduleA = module("ic-scenarios/kt-85740/module-a", dependencies = listOf(moduleB, moduleC))
+            val moduleB = module("ic-scenarios/kt-85740/module-b", dependencies = [moduleC])
+            val moduleA = module("ic-scenarios/kt-85740/module-a", dependencies = [moduleB, moduleC])
 
             // Remove class C from module-c. This simulates removing the module that provides C
             // from module-a's dependency list: C.class will be gone from module-c's output, so
@@ -34,7 +34,7 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
 
             // Recompile module-c: the IC detects the source deletion, removes C.class from the
             // output, and produces no new class files.
-            moduleC.compile(expectedDirtySet = setOf())
+            moduleC.compile(expectedDirtySet = [])
 
             // Do NOT recompile module-b. B.class still exists and its method descriptor still
             // references C (as a parameter type). This mirrors the real scenario where module-b
@@ -55,7 +55,7 @@ class NullableParamTypeLookupTest : BaseCompilationTest() {
                     LogLevel.ERROR,
                     ".*/a.kt:3:13 Cannot access class 'C'. Check your module classpath for missing or conflicting dependencies.".toRegex()
                 )
-                assertCompiledSources(setOf("a.kt"))
+                assertCompiledSources(["a.kt"])
             }
         }
     }

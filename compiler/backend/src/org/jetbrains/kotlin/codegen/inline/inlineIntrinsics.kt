@@ -29,7 +29,7 @@ fun generateInlineIntrinsicForIr(descriptor: FunctionDescriptor): SMAPAndMethodN
         descriptor.isBuiltInSuspendCoroutineUninterceptedOrReturn() ->
             createMethodNodeForSuspendCoroutineUninterceptedOrReturn()
         else -> null
-    }?.let { SMAPAndMethodNode(it, SMAP(listOf())) }
+    }?.let { SMAPAndMethodNode(it, SMAP([])) }
 
 internal fun getSpecialEnumFunDescriptor(type: Type, isValueOf: Boolean): String =
     if (isValueOf) Type.getMethodDescriptor(type, JAVA_STRING_TYPE)

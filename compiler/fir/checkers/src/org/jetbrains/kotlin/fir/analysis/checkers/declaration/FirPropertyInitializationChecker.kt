@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 object FirPropertyInitializationChecker : FirClassChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirClass) {
-        val declaredLater = mutableSetOf<FirPropertySymbol>()
+        val declaredLater: MutableSet<FirPropertySymbol> = []
         val visitor = object : FirVisitorVoid() {
             override fun visitElement(element: FirElement) = element.acceptChildren(this)
 

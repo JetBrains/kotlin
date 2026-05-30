@@ -41,7 +41,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
                             _cachedDefinitions = seq
                             seq
                         } else {
-                            emptySequence()
+                            []
                         }
                     }
                 }
@@ -78,7 +78,7 @@ abstract class LazyScriptDefinitionProvider : ScriptDefinitionProvider {
 
     companion object {
         // TODO: find a common place for storing kotlin-related extensions and reuse values from it everywhere
-        protected val nonScriptFilenameSuffixes = arrayOf(".kt", ".java")
+        protected val nonScriptFilenameSuffixes: Array<String> = [".kt", ".java"]
     }
 }
 

@@ -73,11 +73,11 @@ class DeserializationComponentsForJava(
         components = DeserializationComponents(
             storageManager, moduleDescriptor, configuration, classDataFinder, annotationAndConstantLoader, packageFragmentProvider,
             LocalClassifierTypeSettings.Default, errorReporter, lookupTracker, JavaFlexibleTypeDeserializer,
-            emptyList(), notFoundClasses, contractDeserializer,
+            [], notFoundClasses, contractDeserializer,
             additionalClassPartsProvider = jvmBuiltIns?.customizer ?: AdditionalClassPartsProvider.None,
             platformDependentDeclarationFilter = jvmBuiltIns?.customizer ?: PlatformDependentDeclarationFilter.NoPlatformDependent,
             extensionRegistryLite = JvmProtoBufUtil.EXTENSION_REGISTRY,
-            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, emptyList()),
+            kotlinTypeChecker = kotlinTypeChecker, samConversionResolver = SamConversionResolverImpl(storageManager, []),
             typeAttributeTranslators = typeAttributeTranslators.translators,
             enumEntriesDeserializationSupport = JvmEnumEntriesDeserializationSupport,
         )
@@ -130,13 +130,13 @@ class DeserializationComponentsForJava(
 
             val builtinsProvider = JvmBuiltInsPackageFragmentProvider(
                 storageManager, jvmBuiltInsKotlinClassFinder, module, notFoundClasses, builtIns.customizer, builtIns.customizer,
-                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default, SamConversionResolverImpl(storageManager, emptyList())
+                DeserializationConfiguration.Default, NewKotlinTypeChecker.Default, SamConversionResolverImpl(storageManager, [])
             )
 
             module.setDependencies(module)
             module.initialize(
                 CompositePackageFragmentProvider(
-                    listOf(javaDescriptorResolver.packageFragmentProvider, builtinsProvider),
+                    [javaDescriptorResolver.packageFragmentProvider, builtinsProvider],
                     "CompositeProvider@RuntimeModuleData for $module"
                 )
             )
@@ -165,7 +165,7 @@ fun makeLazyJavaPackageFragmentProvider(
     val javaResolverComponents = JavaResolverComponents(
         storageManager, javaClassFinder, reflectKotlinClassFinder, deserializedDescriptorResolver,
         SignaturePropagator.DO_NOTHING, errorReporter, JavaResolverCache.EMPTY,
-        JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, emptyList()), javaSourceElementFactory,
+        JavaPropertyInitializerEvaluator.DoNothing, SamConversionResolverImpl(storageManager, []), javaSourceElementFactory,
         singleModuleClassResolver, packagePartProvider, SupertypeLoopChecker.EMPTY, LookupTracker.DO_NOTHING, module,
         ReflectionTypes(module, notFoundClasses), AnnotationTypeQualifierResolver(javaTypeEnhancementState),
         SignatureEnhancement(JavaTypeEnhancement(JavaResolverSettings.Default)),
@@ -197,6 +197,6 @@ fun makeDeserializationComponentsForJava(
         storageManager, module, DeserializationConfiguration.Default, javaClassDataFinder,
         binaryClassAnnotationAndConstantLoader, lazyJavaPackageFragmentProvider, notFoundClasses,
         errorReporter, LookupTracker.DO_NOTHING, ContractDeserializer.DEFAULT, NewKotlinTypeChecker.Default,
-        TypeAttributeTranslators(listOf(DefaultTypeAttributeTranslator))
+        TypeAttributeTranslators([DefaultTypeAttributeTranslator])
     )
 }

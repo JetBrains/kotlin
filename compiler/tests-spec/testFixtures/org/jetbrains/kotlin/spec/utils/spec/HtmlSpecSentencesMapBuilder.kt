@@ -37,7 +37,7 @@ object HtmlSpecSentencesMapBuilder {
                     if (!element.parents().`is`(PARAGRAPH_SELECTORS)) return@forEach
                     val sentenceLocation =
                         currentSectionsPath.map { it.second }.toMutableSet().apply { add(paragraphCounter.toString()) }.joinToString()
-                    sentencesByLocation.putIfAbsent(sentenceLocation, mutableListOf())
+                    sentencesByLocation.putIfAbsent(sentenceLocation, [])
                     sentencesByLocation[sentenceLocation]!!.add(element.text())
                 }
             }

@@ -113,7 +113,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
 
                 val clazz = buildClass(expression, irBuilder.scope.getLocalDeclarationParent())
                 val constructor = clazz.primaryConstructor!!
-                val newExpression = irBuilder.irCallConstructor(constructor.symbol, emptyList()).apply {
+                val newExpression = irBuilder.irCallConstructor(constructor.symbol, []).apply {
                     origin = getConstructorCallOrigin(expression)
                     for ((index, value) in expression.boundValues.withIndex()) {
                         arguments[index] = value
@@ -148,7 +148,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
         val superClassType = getSuperClassType(functionReference)
         val superInterfaceType = functionReference.type.removeProjections()
         functionReferenceClass.superTypes =
-            listOf(superClassType, superInterfaceType) memoryOptimizedPlus getAdditionalInterfaces(functionReference)
+            [superClassType, superInterfaceType] memoryOptimizedPlus getAdditionalInterfaces(functionReference)
         val constructor = functionReferenceClass.addConstructor {
             origin = getConstructorOrigin(functionReference)
             isPrimary = true
@@ -251,7 +251,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
             this.parameters += nonDispatchParameters
             val overriddenMethodOfAny = superFunction.findOverriddenMethodOfAny()
             overriddenSymbols = if (overriddenMethodOfAny == null)
-                listOf(superFunction.symbol)
+                [superFunction.symbol]
             else functionReferenceClass.superTypes.mapNotNull { superType ->
                 superType.classOrFail.owner.functions.firstOrNull { it.overrides(overriddenMethodOfAny) }?.symbol
             }
@@ -301,7 +301,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
     protected open fun getExtraConstructorParameters(
         constructor: IrConstructor,
         reference: IrRichFunctionReference,
-    ): List<IrValueParameter> = emptyList()
+    ): List<IrValueParameter> = []
 
     protected open fun IrBuilderWithScope.getExtraConstructorArgument(
         parameter: IrValueParameter,
@@ -316,7 +316,7 @@ abstract class AbstractFunctionReferenceLowering<C : CommonBackendContext>(val c
 
     protected abstract fun getReferenceClassName(reference: IrRichFunctionReference): Name
     protected abstract fun getSuperClassType(reference: IrRichFunctionReference): IrType
-    protected open fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> = emptyList()
+    protected open fun getAdditionalInterfaces(reference: IrRichFunctionReference): List<IrType> = []
     protected abstract fun getClassOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getConstructorOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin
     protected abstract fun getInvokeMethodOrigin(reference: IrRichFunctionReference): IrDeclarationOrigin

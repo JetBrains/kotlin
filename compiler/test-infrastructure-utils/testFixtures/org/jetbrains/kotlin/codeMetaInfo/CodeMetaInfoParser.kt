@@ -50,7 +50,7 @@ object CodeMetaInfoParser {
         val openings = ArrayDeque<Opening>()
         val stackOfOpenings = ArrayDeque<Opening>()
         val closingOffsets = mutableMapOf<Opening, Int>()
-        val result = mutableListOf<ParsedCodeMetaInfo>()
+        val result: MutableList<ParsedCodeMetaInfo> = []
 
         var counter = 0
 
@@ -87,7 +87,7 @@ object CodeMetaInfoParser {
             val allMetaInfos = openingMatchResult.tags
             tagRegex.findAll(allMetaInfos).map { it.groups }.forEach {
                 val tag = it[1]!!.value
-                val attributes = it[3]?.value?.split(";") ?: emptyList()
+                val attributes = it[3]?.value?.split(";") ?: []
                 val description = it[5]?.value
 
                 val distinctAttributes = attributes.distinct()

@@ -18,5 +18,5 @@ class FirBuiltinAnnotationDeserializer(
         typeProto.loadAnnotationsFromProtocol(session, protocol.typeAnnotation, nameResolver)
 
     override fun loadTypeParameterAnnotations(typeParameterProto: ProtoBuf.TypeParameter, nameResolver: NameResolver): List<FirAnnotation> =
-        emptyList()
+        []
 }

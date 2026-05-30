@@ -339,7 +339,7 @@ class FunctionDescriptorResolver(
                     valueParameterDescriptor.varargElementType, SourceElement.NO_SOURCE
                 )
                 trace.record(BindingContext.AUTO_CREATED_IT, it)
-                return listOf(it)
+                return [it]
             }
             if (function.valueParameters.size != expectedValueParameters.size) {
                 trace.report(EXPECTED_PARAMETERS_NUMBER_MISMATCH.on(function, expectedParameterTypes!!.size, expectedParameterTypes))
@@ -372,7 +372,7 @@ class FunctionDescriptorResolver(
         if (functionTypeExpected()) {
             this.getContextReceiverTypesFromFunctionType().map { ContextReceiverTypeWithLabel(it, label = null)}
         } else {
-            emptyList()
+            []
         }
 
     private fun KotlinType.getValueParameters(owner: FunctionDescriptor): List<ValueParameterDescriptor>? =

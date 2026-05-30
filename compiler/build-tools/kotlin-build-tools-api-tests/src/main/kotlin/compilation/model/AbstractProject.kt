@@ -32,7 +32,7 @@ abstract class AbstractProject<O : BaseCompilationOperation, B : BaseCompilation
 
     abstract fun module(
         moduleName: String,
-        dependencies: List<Dependency> = emptyList(),
+        dependencies: List<Dependency> = [],
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         stdlibClasspath: List<Path>? = null,
         moduleCompilationConfigAction: (B) -> Unit = {},

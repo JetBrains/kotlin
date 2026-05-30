@@ -157,13 +157,13 @@ object FirNullSymbolNamesProvider : FirSymbolNamesProvider() {
  * A [FirSymbolNamesProvider] for symbol providers which don't contain *any* symbols.
  */
 object FirEmptySymbolNamesProvider : FirSymbolNamesProvider() {
-    override fun getPackageNames(): Set<String> = emptySet()
+    override fun getPackageNames(): Set<String> = []
 
     override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
-    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = []
 
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = []
 
     override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = false
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
@@ -171,8 +171,8 @@ object FirEmptySymbolNamesProvider : FirSymbolNamesProvider() {
 
 abstract class FirSymbolNamesProviderWithoutCallables : FirSymbolNamesProvider() {
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
-    override fun getPackageNamesWithTopLevelCallables(): Set<String> = emptySet()
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = emptySet()
+    override fun getPackageNamesWithTopLevelCallables(): Set<String> = []
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = []
     override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
 }
 

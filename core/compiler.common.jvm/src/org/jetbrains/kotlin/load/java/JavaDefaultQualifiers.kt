@@ -16,17 +16,17 @@ data class JavaDefaultQualifiers(
     val preferQualifierOverSupertype: Boolean = false,
 )
 
-val APPLICABILITY_OF_JSPECIFY_DEFAULTS = listOf(
+val APPLICABILITY_OF_JSPECIFY_DEFAULTS = [
     AnnotationQualifierApplicabilityType.FIELD,
     AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE,
     AnnotationQualifierApplicabilityType.VALUE_PARAMETER,
     AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS,
     AnnotationQualifierApplicabilityType.TYPE_USE
-)
+]
 
-val APPLICABILITY_OF_JAVAX_DEFAULTS = listOf(
+val APPLICABILITY_OF_JAVAX_DEFAULTS = [
     AnnotationQualifierApplicabilityType.VALUE_PARAMETER
-)
+]
 
 val JSPECIFY_DEFAULT_ANNOTATIONS = mapOf(
     JSPECIFY_OLD_NULL_MARKED_ANNOTATION_FQ_NAME to

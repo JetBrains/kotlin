@@ -78,8 +78,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
 
     private fun getClassListFromFileAnnotation(annotationFqName: FqName): List<IrClassSymbol> {
-        val annotation = currentClass.fileParent.annotations.findAnnotation(annotationFqName) ?: return emptyList()
-        val vararg = annotation.arguments[0] as? IrVararg ?: return emptyList()
+        val annotation = currentClass.fileParent.annotations.findAnnotation(annotationFqName) ?: return []
+        val vararg = annotation.arguments[0] as? IrVararg ?: return []
         return vararg.elements
             .mapNotNull { (it as? IrClassReference)?.symbol as? IrClassSymbol }
     }
@@ -203,16 +203,16 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
                 property, { innerSerial, sti ->
                     val f =
                         kOutputClass.functionByName("${CallingConventions.encode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}")
-                    f to listOf(
+                    f to [
                         irGet(localSerialDesc),
                         irInt(index),
                         innerSerial,
                         property.irGet()
-                    )
+                    ]
                 }, {
                     val f =
                         kOutputClass.functionByName("${CallingConventions.encode}${it.elementMethodPrefix}${CallingConventions.elementPostfix}")
-                    val args: MutableList<IrExpression> = mutableListOf(irGet(localSerialDesc), irInt(index))
+                    val args: MutableList<IrExpression> = [irGet(localSerialDesc), irInt(index)]
                     if (it.elementMethodPrefix != "Unit") args.add(property.irGet())
                     f to args
                 },
@@ -269,8 +269,8 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             genericGetter
         )
         val [functionToCall, args: List<IrExpression>] = if (innerSerial != null) whenHaveSerializer(innerSerial, sti) else whenDoNot(sti)
-        val typeArgs = if (functionToCall.owner.typeParameters.isNotEmpty()) listOf(property.type) else listOf()
-        return irInvoke(functionToCall, listOf(encoder) + args, typeArgs, returnTypeHint)
+        val typeArgs = if (functionToCall.owner.typeParameters.isNotEmpty()) [property.type] else []
+        return irInvoke(functionToCall, [encoder] + args, typeArgs, returnTypeHint)
     }
 
     context(irBuilder: IrBuilderWithScope) internal fun callSerializerFromCompanion(
@@ -302,7 +302,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
             // Note that [typeArgs] may be unused if we short-cut to e.g. SealedClassSerializer
             return irInvoke(
                 symbol,
-                listOf(irBuilder.irGetObject(companionClass)) + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
+                [irBuilder.irGetObject(companionClass)] + adjustedArgs.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
                 adjustedTypeArgs.takeIf { it.size == typeParameters.size }.orEmpty(),
             )
         }
@@ -321,7 +321,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         with(serializerProviderFunction as IrFunction) {
             return irInvoke(
                 symbol,
-                listOf(irBuilder.irGetObject(baseClass)) + args.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
+                [irBuilder.irGetObject(baseClass)] + args.takeIf { it.size == nonDispatchParameters.size }.orEmpty(),
             )
         }
     }
@@ -366,14 +366,14 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         nullableProp: IrPropertySymbol
     ): IrExpression = if (type.isMarkedNullable()) {
         val resultType = type.makeNotNull()
-        val typeArguments = listOf(resultType)
+        val typeArguments = [resultType]
         val callee = nullableProp.owner.getter!!
 
         val returnType = callee.returnType.substitute(callee.typeParameters, typeArguments)
 
         irInvoke(
             callee = callee.symbol,
-            arguments = listOf(expression),
+            arguments = [expression],
             typeArguments = typeArguments,
             returnTypeHint = returnType
         )
@@ -388,9 +388,9 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
         val kSerClass = compilerContext.finderForBuiltins().findClass(ClassId(SerializationPackages.packageFqName, SerialEntityNames.KSERIALIZER_NAME))
             ?: error("Couldn't find class ${SerialEntityNames.KSERIALIZER_NAME}")
         return IrSimpleTypeImpl(
-            kSerClass, hasQuestionMark = false, arguments = listOf(
+            kSerClass, hasQuestionMark = false, arguments = [
                 makeTypeProjection(type, variance)
-            ), annotations = emptyList()
+            ], annotations = []
         )
     }
 

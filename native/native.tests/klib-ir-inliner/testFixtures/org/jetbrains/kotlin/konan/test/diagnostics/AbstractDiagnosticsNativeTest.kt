@@ -126,10 +126,10 @@ abstract class AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
         }
     }
 }

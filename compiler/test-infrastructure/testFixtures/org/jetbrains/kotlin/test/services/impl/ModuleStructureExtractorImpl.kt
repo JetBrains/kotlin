@@ -34,9 +34,9 @@ class ModuleStructureExtractorImpl(
     private val environmentConfigurators: List<AbstractEnvironmentConfigurator>
 ) : ModuleStructureExtractor(testServices, additionalSourceProviders, moduleStructureTransformers) {
     companion object {
-        private val allowedExtensionsForFiles = listOf(".kt", ".kts", ".java", ".js", ".mjs", ".config", ".xml",
+        private val allowedExtensionsForFiles = [".kt", ".kts", ".java", ".js", ".mjs", ".config", ".xml",
             ".def", ".h", ".modulemap"  // native cinterop file extensions
-        ) + CINTEROP_SOURCE_EXTENSIONS
+        ] + CINTEROP_SOURCE_EXTENSIONS
 
         /*
          * ([^()\n]+) module name
@@ -77,9 +77,9 @@ class ModuleStructureExtractorImpl(
             )
             val extractor = ModuleStructureExtractorImpl(
                 testServices,
-                additionalSourceProviders = emptyList(),
-                moduleStructureTransformers = emptyList(),
-                environmentConfigurators = emptyList()
+                additionalSourceProviders = [],
+                moduleStructureTransformers = [],
+                environmentConfigurators = []
             )
             return extractor.splitTestDataByModules(testDataFile.canonicalPath, directivesContainer)
         }
@@ -90,7 +90,7 @@ class ModuleStructureExtractorImpl(
         directivesContainer: DirectivesContainer,
     ): TestModuleStructure {
         val testDataFile = File(testDataFileName)
-        val extractor = ModuleStructureExtractorWorker(listOf(testDataFile), directivesContainer)
+        val extractor = ModuleStructureExtractorWorker([testDataFile], directivesContainer)
         var result = extractor.splitTestDataByModules()
         for (transformer in moduleStructureTransformers) {
             result = try {
@@ -119,14 +119,14 @@ class ModuleStructureExtractorImpl(
 
         private var currentModuleName: String? = null
         private var currentModuleLanguageVersionSettingsBuilder: LanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
-        private var dependenciesOfCurrentModule = mutableListOf<DependencyDescription>()
-        private var filesOfCurrentModule = mutableListOf<TestFile>()
+        private var dependenciesOfCurrentModule: MutableList<DependencyDescription> = []
+        private var filesOfCurrentModule: MutableList<TestFile> = []
         private val mutableFilesListPerModule = mutableMapOf<TestModule, MutableList<TestFile>>()
 
         private var currentFileName: String? = null
         private var currentSnippetNumber: Int = 1
         private var firstFileInModule: Boolean = true
-        private var linesOfCurrentFile = mutableListOf<String>()
+        private var linesOfCurrentFile: MutableList<String> = []
         private var endLineNumberOfLastFile = -1
 
         private var directivesBuilder = RegisteredDirectivesParser(directivesContainer, assertions)
@@ -135,7 +135,7 @@ class ModuleStructureExtractorImpl(
 
         private var globalDirectives: RegisteredDirectives? = null
 
-        private val modules = mutableListOf<TestModule>()
+        private val modules: MutableList<TestModule> = []
 
         private val moduleStructureDirectiveBuilder = RegisteredDirectivesParser(ModuleStructureDirectives, assertions)
 
@@ -174,7 +174,7 @@ class ModuleStructureExtractorImpl(
         }
 
         private fun checkCycles(modules: List<TestModule>) {
-            val visited = mutableSetOf<String>()
+            val visited: MutableSet<String> = []
             for (module in modules) {
                 val moduleName = module.name
                 visited.add(moduleName)
@@ -266,9 +266,9 @@ class ModuleStructureExtractorImpl(
             val matchResult = moduleDirectiveRegex.matchEntire(moduleDirectiveString)
                 ?: error("\"$moduleDirectiveString\" doesn't matches with pattern \"moduleName(dep1, dep2)\"")
             val [name, _, dependencies, _, friends, _, dependsOn] = matchResult.destructured
-            val dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
-            val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
-            val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: emptyList()
+            val dependenciesNames = dependencies.takeIf { it.isNotBlank() }?.split(" ") ?: []
+            val friendsNames = friends.takeIf { it.isNotBlank() }?.split(" ") ?: []
+            val dependsOnNames = dependsOn.takeIf { it.isNotBlank() }?.split(" ") ?: []
 
             val intersection = buildSet {
                 addAll(dependenciesNames intersect friendsNames)
@@ -388,8 +388,8 @@ class ModuleStructureExtractorImpl(
             firstFileInModule = true
             currentModuleName = null
             currentModuleLanguageVersionSettingsBuilder = initLanguageSettingsBuilder()
-            filesOfCurrentModule = mutableListOf()
-            dependenciesOfCurrentModule = mutableListOf()
+            filesOfCurrentModule = []
+            dependenciesOfCurrentModule = []
             resetDirectivesBuilder()
             moduleDirectivesBuilder = directivesBuilder
         }
@@ -400,7 +400,7 @@ class ModuleStructureExtractorImpl(
 
         private fun resetFileCaches() {
             if (!firstFileInModule) {
-                linesOfCurrentFile = mutableListOf()
+                linesOfCurrentFile = []
             }
             if (firstFileInModule) {
                 moduleDirectivesBuilder = directivesBuilder

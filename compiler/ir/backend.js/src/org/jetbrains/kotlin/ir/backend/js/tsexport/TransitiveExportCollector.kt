@@ -26,7 +26,7 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
     private val typesCaches = hashMapOf<ClassWithAppliedArguments, Set<IrType>>()
 
     fun collectSuperTypesTransitiveHierarchyFor(type: IrSimpleType): Set<IrType> {
-        val classSymbol = type.classOrNull ?: return emptySet()
+        val classSymbol = type.classOrNull ?: return []
 
         return typesCaches.getOrPut(ClassWithAppliedArguments(classSymbol, type.arguments)) {
             type.collectSuperTypesTransitiveHierarchy(type.calculateTypeSubstitutionMap(emptyMap()))
@@ -34,7 +34,7 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
     }
 
     private fun IrSimpleType.collectSuperTypesTransitiveHierarchy(typeSubstitutionMap: SubstitutionMap): Set<IrType> {
-        val classifier = classOrNull ?: return emptySet()
+        val classifier = classOrNull ?: return []
 
         return classifier.superTypes()
             .flatMap { (it as? IrSimpleType)?.collectTransitiveHierarchy(typeSubstitutionMap) ?: emptySet() }
@@ -50,15 +50,15 @@ class TransitiveExportCollector(val context: JsIrBackendContext) {
     }
 
     private fun IrSimpleType.collectTransitiveHierarchy(typeSubstitutionMap: SubstitutionMap): Set<IrType> {
-        val owner = classifier.owner as? IrClass ?: return emptySet()
+        val owner = classifier.owner as? IrClass ?: return []
         val substitutionMap = calculateTypeSubstitutionMap(typeSubstitutionMap)
 
         return when {
-            isBuiltInClass(owner) || isJsStdLibClass(owner) -> emptySet()
+            isBuiltInClass(owner) || isJsStdLibClass(owner) -> []
             // We exclude external interfaces here because they can describe things that don't exist in the TypeScript environment.
             // So adding them into the d.ts file will cause an invalid definition file with TS2552 compilation error.
             owner.isExported(context) || isStdLibClass(owner) && owner.isExternal && !owner.isInterface
-                -> setOf(substitute(substitutionMap))
+                -> [substitute(substitutionMap)]
             owner.isJsImplicitExport() -> setOfNotNull(
                 substitute(typeSubstitutionMap),
                 takeIf { !owner.isInterface }?.findNearestExportedClass(substitutionMap)

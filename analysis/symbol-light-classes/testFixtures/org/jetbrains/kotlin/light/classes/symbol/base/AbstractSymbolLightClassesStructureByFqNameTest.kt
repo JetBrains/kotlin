@@ -21,7 +21,7 @@ abstract class AbstractSymbolLightClassesStructureByFqNameTest(
     stopIfCompilationErrorDirectivePresent: Boolean,
 ) : AbstractSymbolLightClassesStructureTestBase(configurator, stopIfCompilationErrorDirectivePresent) {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doLightClassTest(ktFiles: List<KtFile>, module: KtTestModule, testServices: TestServices) {
         val result = prettyPrint {

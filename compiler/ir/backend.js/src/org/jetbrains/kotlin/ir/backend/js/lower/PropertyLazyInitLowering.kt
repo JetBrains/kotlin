@@ -129,7 +129,7 @@ class PropertyLazyInitLowering(
         body = irFactory.createBlockBody(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            listOf(buildBodyWithIfGuard(initializers, initializedField))
+            [buildBodyWithIfGuard(initializers, initializedField)]
         )
     }
 
@@ -284,10 +284,10 @@ private fun IrDeclaration.isCompatibleDeclaration(context: JsCommonBackendContex
         !it.isExternal && it.isForLazyInit() && !it.hasAnnotation(context.propertyLazyInitialization.eagerInitialization)
     } ?: true && withPersistentSafe { origin in compatibleOrigins } == true
 
-private val compatibleOrigins = listOf(
+private val compatibleOrigins = [
     IrDeclarationOrigin.DEFINED,
     IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
     IrDeclarationOrigin.PROPERTY_DELEGATE,
     IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR,
     IrDeclarationOrigin.PROPERTY_BACKING_FIELD,
-)
+]

@@ -205,7 +205,7 @@ class ReceiverBasedMfvcNodeInstance(
         }
 
         return when (node) {
-            is LeafMfvcNode -> listOf(makeGetterExpression(scope, currentClass, registerPossibleExtraBoxCreation))
+            is LeafMfvcNode -> [makeGetterExpression(scope, currentClass, registerPossibleExtraBoxCreation)]
             is RootMfvcNode -> makeRecursiveResult(node)
             is IntermediateMfvcNode -> if (isInsideRecursion || node.hasPureUnboxMethod) {
                 makeRecursiveResult(node) // use real getter for fields

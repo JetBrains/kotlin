@@ -83,7 +83,7 @@ internal object TargetHierarchy {
     )
 
     private fun Node.collectLeafs(to: MutableMap<String, NodeClosure>, depth: Int): Set<String> {
-        val leafs = mutableSetOf<String>()
+        val leafs: MutableSet<String> = []
         if (children.isEmpty()) {
             leafs.add(name)
         } else {
@@ -106,6 +106,6 @@ internal object TargetHierarchy {
     }
 
     fun targets(targetOrGroup: String): Set<String> {
-        return hierarchyIndex[targetOrGroup]?.allLeafs ?: emptySet()
+        return hierarchyIndex[targetOrGroup]?.allLeafs ?: []
     }
 }

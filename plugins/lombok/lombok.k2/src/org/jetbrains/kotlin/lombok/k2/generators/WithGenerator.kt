@@ -39,15 +39,15 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
         session.firCachesFactory.createCache(::createWith)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        if (!classSymbol.isSuitableJavaClass()) return emptySet()
-        return cache.getValue(classSymbol)?.keys ?: emptySet()
+        if (!classSymbol.isSuitableJavaClass()) return []
+        return cache.getValue(classSymbol)?.keys ?: []
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
         val owner = context?.owner
-        if (owner == null || !owner.isSuitableJavaClass()) return emptyList()
-        val getter = cache.getValue(owner)?.get(callableId.callableName) ?: return emptyList()
-        return listOf(getter.symbol)
+        if (owner == null || !owner.isSuitableJavaClass()) return []
+        val getter = cache.getValue(owner)?.get(callableId.callableName) ?: return []
+        return [getter.symbol]
     }
 
     private fun createWith(classSymbol: FirClassSymbol<*>): Map<Name, FirJavaMethod>? {
@@ -58,7 +58,7 @@ class WithGenerator(session: FirSession) : FirDeclarationGenerationExtension(ses
 
             val function = classSymbol.createJavaMethod(
                 name = withName,
-                valueParameters = listOf(ConeLombokValueParameter(field.name, field.returnTypeRef)),
+                valueParameters = [ConeLombokValueParameter(field.name, field.returnTypeRef)],
                 returnTypeRef = buildResolvedTypeRef {
                     coneType = classSymbol.defaultType()
                 },

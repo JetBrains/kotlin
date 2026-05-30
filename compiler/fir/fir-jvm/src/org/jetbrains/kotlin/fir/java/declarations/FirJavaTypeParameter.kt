@@ -63,9 +63,9 @@ class FirJavaTypeParameter(
                 it.toFirJavaTypeRef(session, fakeSource)
             }.ifEmpty {
                 val builtinTypes = session.builtinTypes
-                listOf(buildResolvedTypeRef {
+                [buildResolvedTypeRef {
                     coneType = ConeFlexibleType(builtinTypes.anyType.coneType, builtinTypes.nullableAnyType.coneType, isTrivial = true)
-                })
+                }]
             }
         }
     )
@@ -184,7 +184,7 @@ class FirJavaTypeParameter(
             return null
         }
 
-        return currentState.bounds.mapTo(mutableListOf()) {
+        return currentState.bounds.mapTo([]) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND
             ) as FirResolvedTypeRef
@@ -228,7 +228,7 @@ class FirJavaTypeParameter(
             return null
         }
 
-        return currentState.bounds.mapTo(mutableListOf()) {
+        return currentState.bounds.mapTo([]) {
             it.resolveIfJavaType(
                 moduleData.session, javaTypeParameterStack, source, FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND
             ) as FirResolvedTypeRef

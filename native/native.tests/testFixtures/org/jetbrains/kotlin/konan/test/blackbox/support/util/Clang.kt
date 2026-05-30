@@ -60,11 +60,11 @@ fun AbstractNativeSimpleTest.compileWithClang(
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
-    includeDirectories: List<File> = emptyList(),
-    frameworkDirectories: List<File> = emptyList(),
-    libraryDirectories: List<File> = emptyList(),
-    libraries: List<String> = emptyList(),
-    additionalClangFlags: List<String> = emptyList(),
+    includeDirectories: List<File> = [],
+    frameworkDirectories: List<File> = [],
+    libraryDirectories: List<File> = [],
+    libraries: List<String> = [],
+    additionalClangFlags: List<String> = [],
     fmodules: Boolean = true
 ): TestCompilationResult<out TestCompilationArtifact.Executable> = compileWithClang(
     testRunSettings = testRunSettings,
@@ -86,11 +86,11 @@ fun compileWithClang(
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
-    includeDirectories: List<File> = emptyList(),
-    frameworkDirectories: List<File> = emptyList(),
-    libraryDirectories: List<File> = emptyList(),
-    libraries: List<String> = emptyList(),
-    additionalClangFlags: List<String> = emptyList(),
+    includeDirectories: List<File> = [],
+    frameworkDirectories: List<File> = [],
+    libraryDirectories: List<File> = [],
+    libraries: List<String> = [],
+    additionalClangFlags: List<String> = [],
     fmodules: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.Executable> {
     val configurables = testRunSettings.configurables
@@ -112,11 +112,11 @@ fun compileWithClang(
             }
         )
         addAll(sourceFiles.map { it.absolutePath })
-        addAll(includeDirectories.flatMap { listOf("-I", it.absolutePath) })
+        addAll(includeDirectories.flatMap { ["-I", it.absolutePath] })
         add("-g")
         if (fmodules) add("-fmodules")
-        addAll(frameworkDirectories.flatMap { listOf("-F", it.absolutePath) })
-        addAll(libraryDirectories.flatMap { listOf("-L", it.absolutePath) }.toTypedArray())
+        addAll(frameworkDirectories.flatMap { ["-F", it.absolutePath] })
+        addAll(libraryDirectories.flatMap { ["-L", it.absolutePath] }.toTypedArray())
         addAll(libraries.map { "-l$it" })
         if (configurables.target.family == Family.LINUX)
             add("-lpthread") // libpthread.so.0: error adding symbols: DSO missing from command line. Maybe because of old llvm.
@@ -128,7 +128,7 @@ fun compileWithClang(
         }
         if (configurables.target.family.isAppleFamily && clangDistribution == ClangDistribution.Llvm && clangMode == ClangMode.CXX) {
             // Prevent KT-70603 by removing llvm-dev C++ stdlib from the search path
-            addAll(listOf("-stdlib++-isystem", "${configurables.absoluteTargetSysRoot}/usr/include/c++/v1"))
+            addAll(["-stdlib++-isystem", "${configurables.absoluteTargetSysRoot}/usr/include/c++/v1"])
         }
         addAll(additionalClangFlags)
         add("-o")
@@ -159,7 +159,7 @@ fun compileWithClang(
         toolName = "CLANG",
         parameters = CommandParameters(
             commandName = "CLANG",
-            command = listOf(clangPath) + clangArguments
+            command = [clangPath] + clangArguments
         ),
         exitCode = compilationToolCallResult.exitCode,
         toolOutput = compilationToolCallResult.toolOutput,
@@ -180,11 +180,11 @@ internal fun AbstractNativeSimpleTest.compileWithClangToStaticLibrary(
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
-    includeDirectories: List<File> = emptyList(),
-    frameworkDirectories: List<File> = emptyList(),
-    libraryDirectories: List<File> = emptyList(),
-    libraries: List<String> = emptyList(),
-    additionalClangFlags: List<String> = emptyList(),
+    includeDirectories: List<File> = [],
+    frameworkDirectories: List<File> = [],
+    libraryDirectories: List<File> = [],
+    libraries: List<String> = [],
+    additionalClangFlags: List<String> = [],
 ): TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> = compileWithClangToStaticLibrary(
     testRunSettings = testRunSettings,
     clangDistribution = clangDistribution,
@@ -204,11 +204,11 @@ fun compileWithClangToStaticLibrary(
     clangMode: ClangMode = ClangMode.C,
     sourceFiles: List<File>,
     outputFile: File,
-    includeDirectories: List<File> = emptyList(),
-    frameworkDirectories: List<File> = emptyList(),
-    libraryDirectories: List<File> = emptyList(),
-    libraries: List<String> = emptyList(),
-    additionalClangFlags: List<String> = emptyList(),
+    includeDirectories: List<File> = [],
+    frameworkDirectories: List<File> = [],
+    libraryDirectories: List<File> = [],
+    libraries: List<String> = [],
+    additionalClangFlags: List<String> = [],
 ): TestCompilationResult<out TestCompilationArtifact.BinaryLibrary> {
     val llvmAr = ClangArgs.Native(testRunSettings.configurables).llvmAr().first()
     val objFile = File("${outputFile.absolutePath}.o")
@@ -222,7 +222,7 @@ fun compileWithClangToStaticLibrary(
         frameworkDirectories,
         libraryDirectories,
         libraries,
-        additionalClangFlags = additionalClangFlags + listOf("-c"),
+        additionalClangFlags = additionalClangFlags + "-c",
         fmodules = false, // with `-fmodules`, ld cannot find symbol `_assert`
     )
     val loggedData = when (compilationResult) {

@@ -106,7 +106,7 @@ private class KlibMetadataDependencyContainer(
         add(builtIns.builtInsModule)
     }
 
-    private val mutableDependenciesForAllModules = mutableListOf<ModuleInfo>()
+    private val mutableDependenciesForAllModules: MutableList<ModuleInfo> = []
 
     private val moduleDescriptorsForKotlinLibraries: Map<KotlinLibrary, ModuleDescriptorImpl> =
         kotlinLibraries.keysToMap { library ->

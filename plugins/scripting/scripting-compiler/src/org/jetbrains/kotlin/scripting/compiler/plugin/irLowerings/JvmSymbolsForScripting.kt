@@ -49,7 +49,7 @@ class JvmSymbolsForScripting(
     }.apply {
         parent = kotlinJvm
         addGetter().apply {
-            parameters = listOf(createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType))
+            parameters = [createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)]
             returnType = javaLangClass.defaultType
         }
     }.symbol

@@ -12,7 +12,7 @@ import java.io.File
 data class ReadableFileReportData<B : BuildTimeMetric, P : BuildPerformanceMetric>(
     val statisticsData: List<CompileStatisticsData<B, P>>,
     val startParameters: BuildStartParameters,
-    val failureMessages: List<String> = emptyList(),
+    val failureMessages: List<String> = [],
     val version: Int = 1
 )
 

@@ -204,12 +204,12 @@ internal class XcodeProject(private val workDir: Path) {
         private const val ENTITLEMENTS = "$PROJECT_NAME.app.xcent"
 
         // Those variables make Xcode skip its code signing that we do by ourselves manually and using ad-hoc technique
-        private val XCODE_CODESIGN_PARAMETERS = listOf(
+        private val XCODE_CODESIGN_PARAMETERS = [
             "CODE_SIGN_IDENTITY=",
             "CODE_SIGN_ENTITLEMENTS=",
             "CODE_SIGNING_REQUIRED=NO",
             "CODE_SIGNING_ALLOWED=NO"
-        )
+        ]
 
         private val lock = Any()
     }

@@ -23,7 +23,7 @@ class DefaultForwardCompatibilityExecutionPolicyAgnosticCompilationTestArgumentP
     companion object {
         fun namedStrategyArguments(): List<Named<CompilerExecutionStrategyConfiguration>> {
             val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-            return listOf(
+            return [
                 named(
                     "[${kotlinToolchains.getCompilerVersion()}][daemon]",
                     kotlinToolchains to kotlinToolchains.daemonExecutionPolicy {}
@@ -32,7 +32,7 @@ class DefaultForwardCompatibilityExecutionPolicyAgnosticCompilationTestArgumentP
                     "[${kotlinToolchains.getCompilerVersion()}][in-process]",
                     kotlinToolchains to kotlinToolchains.createInProcessExecutionPolicy()
                 ),
-            )
+            ]
         }
     }
 }

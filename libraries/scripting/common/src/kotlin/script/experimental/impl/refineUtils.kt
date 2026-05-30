@@ -41,7 +41,7 @@ inline fun <Configuration : PropertiesCollection, RefineData> Configuration.simp
     key: PropertiesCollection.Key<List<RefineData>>,
     refineFn: (Configuration, RefineData) -> ResultWithDiagnostics<Configuration>
 ): ResultWithDiagnostics<Configuration> {
-    val diagnostics = mutableListOf<ScriptDiagnostic>()
+    val diagnostics: MutableList<ScriptDiagnostic> = []
 
     val configuration = this[key]
         ?.fold(this) { config, refineData ->

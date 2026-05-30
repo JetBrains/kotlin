@@ -119,7 +119,7 @@ class JvmSharedVariablesManager(
         return with(originalDeclaration) {
             IrCompositeImpl(
                 startOffset, endOffset, irBuiltIns.unitType, null,
-                listOf(sharedVariableDeclaration, sharedVariableInitialization)
+                [sharedVariableDeclaration, sharedVariableInitialization]
             )
         }
     }

@@ -38,12 +38,12 @@ class LastSessionDaemonTest : BaseDaemonSessionTest() {
             compileService,
             sessionId,
             CompileService.TargetPlatform.JVM,
-            arrayOf(
+            [
                 K2JVMCompilerArguments::includeRuntime.cliArgument,
                 File(getHelloAppBaseDir(), "hello.kt").absolutePath,
                 K2JVMCompilerArguments::destination.cliArgument,
                 outputDirectory.absolutePath
-            ),
+            ],
             testMessageCollector
         )
         assertEquals(0, exitCode)

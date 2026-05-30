@@ -129,7 +129,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                     returnTypeRef = when (val typeRef = field.returnTypeRef) {
                         is FirJavaTypeRef -> buildJavaTypeRef {
                             type = substitutor.substituteOrSelf(typeRef.type)
-                            annotationBuilder = { emptyList() }
+                            annotationBuilder = { [] }
                             source = classSymbol.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
                         }
                         else -> typeRef
@@ -188,11 +188,11 @@ private class JavaTypeParameterTypeStub(
     override val classifier: JavaTypeParameter,
 ) : JavaClassifierType {
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = []
     override val isDeprecatedInJavaDoc: Boolean
         get() = false
     override val typeArguments: List<JavaType?>
-        get() = emptyList()
+        get() = []
     override val isRaw: Boolean
         get() = false
     override val classifierQualifiedName: String

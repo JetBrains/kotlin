@@ -51,9 +51,9 @@ abstract class AbstractAtomicfuTransformer(
         internal const val OBJ = "obj\$$ATOMICFU"
         internal const val ATOMIC_HANDLER = "handler\$$ATOMICFU"
 
-        private val ATOMICFU_LOOP_FUNCTIONS = setOf("loop", "update", "getAndUpdate", "updateAndGet")
-        private val ATOMIC_TYPES = setOf("AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef")
-        private val ATOMIC_ARRAY_TYPES = setOf("AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray")
+        private val ATOMICFU_LOOP_FUNCTIONS: Set<String> = ["loop", "update", "getAndUpdate", "updateAndGet"]
+        private val ATOMIC_TYPES: Set<String> = ["AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef"]
+        private val ATOMIC_ARRAY_TYPES: Set<String> = ["AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray"]
     }
 
     abstract val atomicfuSymbols: AbstractAtomicSymbols
@@ -131,7 +131,7 @@ abstract class AbstractAtomicfuTransformer(
     abstract inner class AtomicPropertiesTransformer : IrTransformer<IrFunction?>() {
 
         override fun visitClass(declaration: IrClass, data: IrFunction?): IrStatement {
-            val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
+            val declarationsToBeRemoved: MutableList<IrDeclaration> = []
             declaration.declarations.withIndex().filter { it.value.isAtomicfuTypeProperty() }.forEach {
                 transformAtomicProperty(it.value as IrProperty, it.index, declarationsToBeRemoved)
             }
@@ -140,7 +140,7 @@ abstract class AbstractAtomicfuTransformer(
         }
 
         override fun visitFile(declaration: IrFile, data: IrFunction?): IrFile {
-            val declarationsToBeRemoved = mutableListOf<IrDeclaration>()
+            val declarationsToBeRemoved: MutableList<IrDeclaration> = []
             declaration.declarations.withIndex().filter { it.value.isAtomicfuTypeProperty() }.forEach {
                 transformAtomicProperty(it.value as IrProperty, it.index, declarationsToBeRemoved)
             }

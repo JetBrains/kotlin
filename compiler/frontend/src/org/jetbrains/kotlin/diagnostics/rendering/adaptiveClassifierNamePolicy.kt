@@ -102,13 +102,13 @@ private fun collectMentionedClassifiersFqNames(contextObjects: Iterable<Any?>, r
     }
     contextObjects.filterIsInstance<CallableDescriptor>().forEach {
         collectMentionedClassifiersFqNames(
-            listOf(
+            [
                 it.typeParameters,
                 it.returnType,
                 it.valueParameters,
                 it.dispatchReceiverParameter?.type,
                 it.extensionReceiverParameter?.type
-            ), result
+            ], result
         )
     }
 }

@@ -63,7 +63,7 @@ sealed class FirMultipleDefaultsInheritedFromSupertypesChecker(mppKind: MppCheck
         declaration: FirClass,
         function: FirNamedFunctionSymbol,
     ) {
-        val overriddenFunctions = mutableSetOf<FirNamedFunctionSymbol>()
+        val overriddenFunctions: MutableSet<FirNamedFunctionSymbol> = []
         function.processOverriddenFunctionsSafe { overridden ->
             // default values of actual functions are located in corresponding expect functions
             val overriddenWithDefaults = overridden.getSingleMatchedExpectForActualOrNull() as? FirNamedFunctionSymbol ?: overridden

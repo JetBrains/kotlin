@@ -49,15 +49,15 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
         }
 
         override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<SimpleFunctionDescriptor> {
-            if (isAugmentedAssignmentConvention(name)) return listOf()
+            if (isAugmentedAssignmentConvention(name)) return []
             if (call.callType == Call.CallType.INVOKE
                 && call.valueArgumentList == null && call.functionLiteralArguments.isEmpty()
             ) {
                 // this means that we are looking for "imaginary" invokes,
                 // e.g. in `+d` we are looking for property "plus" with member "invoke"
-                return listOf()
+                return []
             }
-            return listOf(createDynamicFunction(owner, name, call))
+            return [createDynamicFunction(owner, name, call)]
         }
 
         /*
@@ -79,8 +79,8 @@ class DynamicCallableDescriptors(private val storageManager: StorageManager, bui
 
         override fun getContributedVariables(name: Name, location: LookupLocation): Collection<PropertyDescriptor> {
             return if (call.valueArgumentList == null && call.valueArguments.isEmpty()) {
-                listOf(createDynamicProperty(owner, name, call))
-            } else listOf()
+                [createDynamicProperty(owner, name, call)]
+            } else []
         }
     }
 

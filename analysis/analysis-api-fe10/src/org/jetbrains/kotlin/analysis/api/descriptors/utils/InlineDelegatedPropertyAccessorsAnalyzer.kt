@@ -56,7 +56,7 @@ fun MutableSet<KtFile>.collectReachableInlineDelegatedPropertyAccessors() {
 internal fun List<KtFile>.collectReachableInlineDelegatedPropertyAccessors(): List<KtFile> {
     if (isEmpty()) return this
 
-    val allFiles = mutableSetOf<KtFile>()
+    val allFiles: MutableSet<KtFile> = []
     allFiles.addAll(this)
     allFiles.collectReachableInlineDelegatedPropertyAccessors()
     return allFiles.toList()

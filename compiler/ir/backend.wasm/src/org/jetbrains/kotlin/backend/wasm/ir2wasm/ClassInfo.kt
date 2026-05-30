@@ -119,8 +119,8 @@ class ClassMetadata(
         val virtualFunctions = klass.declarations
             .asSequence()
             .filterVirtualFunctions()
-        val virtualFunctionsMetadata = mutableListOf<VirtualMethodMetadata>()
-        val visitedSignature = mutableSetOf<WasmSignature>()
+        val virtualFunctionsMetadata: MutableList<VirtualMethodMetadata> = []
+        val visitedSignature: MutableSet<WasmSignature> = []
         for (function in virtualFunctions) {
             val signature = function.wasmSignature(irBuiltIns)
             if (!visitedSignature.add(signature)) {
@@ -137,7 +137,7 @@ class ClassMetadata(
         val superClassVirtualMethods = superClass?.virtualMethods
         if (superClassVirtualMethods.isNullOrEmpty()) return@run virtualFunctionsMetadata
 
-        val result = mutableListOf<VirtualMethodMetadata>()
+        val result: MutableList<VirtualMethodMetadata> = []
 
         val signatureToVirtualFunction = virtualFunctionsMetadata.associateBy { it.signature }
         superClassVirtualMethods.mapTo(result) { signatureToVirtualFunction[it.signature] ?: it }

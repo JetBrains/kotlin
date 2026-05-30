@@ -118,13 +118,13 @@ interface ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSystemC
     fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker>
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
-        get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()
+        get() = (this as? FunctionSymbolMarker)?.valueParameters ?: []
 
     val CallableSymbolMarker.contextParameters: List<ValueParameterSymbolMarker>
         get() = when (this) {
             is FunctionSymbolMarker -> contextParameters
             is PropertySymbolMarker -> contextParameters
-            else -> emptyList()
+            else -> []
         }
 
     val ValueParameterSymbolMarker.isVararg: Boolean

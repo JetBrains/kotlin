@@ -54,7 +54,7 @@ interface LexicalScope : HierarchicalScope {
         override val implicitReceiver: ReceiverParameterDescriptor?
             get() = null
         override val contextReceiversGroup: List<ReceiverParameterDescriptor>
-            get() = emptyList()
+            get() = []
 
         override val kind: LexicalScopeKind
             get() = LexicalScopeKind.EMPTY
@@ -135,7 +135,7 @@ interface ImportingScope : HierarchicalScope {
             p.println("ImportingScope.Empty")
         }
 
-        override fun computeImportedNames() = emptySet<Name>()
+        override fun computeImportedNames(): Set<Name> = []
 
         override fun definitelyDoesNotContainName(name: Name) = true
     }
@@ -145,13 +145,13 @@ abstract class BaseHierarchicalScope(override val parent: HierarchicalScope?) : 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> = emptyList()
+    ): Collection<DeclarationDescriptor> = []
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptyList()
+    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = []
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptyList()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = []
 }
 
 abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalScope(parent), ImportingScope {
@@ -171,7 +171,7 @@ abstract class BaseImportingScope(parent: ImportingScope?) : BaseHierarchicalSco
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean,
         changeNamesForAliased: Boolean
-    ): Collection<DeclarationDescriptor> = emptyList()
+    ): Collection<DeclarationDescriptor> = []
 }
 
 class CompositePrioritizedImportingScope(

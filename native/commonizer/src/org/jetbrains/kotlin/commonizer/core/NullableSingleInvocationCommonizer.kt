@@ -10,7 +10,7 @@ interface NullableSingleInvocationCommonizer<T> {
 }
 
 fun <T : Any> NullableSingleInvocationCommonizer<T>.asCommonizer(): Commonizer<T, T?> = object : Commonizer<T, T?> {
-    private val collectedValues = mutableListOf<T>()
+    private val collectedValues: MutableList<T> = []
 
     override val result: T?
         get() = this@asCommonizer.invoke(collectedValues)

@@ -54,8 +54,8 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
     }
 
     companion object {
-        private val boxAndUnboxNames = setOf("box", "unbox")
-        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+        private val boxAndUnboxNames: Set<String> = ["box", "unbox"]
+        private val equalsAndHashCodeNames: Set<String> = ["equals", "hashCode"]
         private val javaLangFqName = FqName("java.lang")
         private val cloneableFqName = FqName("Cloneable")
     }
@@ -92,7 +92,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         var primaryConstructor: FirConstructorSymbol? = null
         var primaryConstructorParametersByName = mapOf<Name, FirValueParameterSymbol>()
         val primaryConstructorPropertiesByName = hashMapOf<Name, FirPropertySymbol>()
-        var primaryConstructorParametersSymbolsSet = setOf<FirValueParameterSymbol>()
+        var primaryConstructorParametersSymbolsSet: Set<FirValueParameterSymbol> = []
         val isCustomEqualsSupported = LanguageFeature.CustomEqualsInValueClasses.isEnabled()
 
         declaration.constructors(context.session).forEach { innerDeclaration ->

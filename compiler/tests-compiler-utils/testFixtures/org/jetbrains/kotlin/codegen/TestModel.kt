@@ -159,10 +159,10 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
     )
 
     private fun parseSteps(firstId: Int, lastId: Int): List<ProjectInfo.ProjectBuildStep> {
-        val order = mutableListOf<String>()
-        val dirtyJsFiles = mutableListOf<String>()
-        val dirtyJsModules = mutableListOf<String>()
-        val language = mutableListOf<String>()
+        val order: MutableList<String> = []
+        val dirtyJsFiles: MutableList<String> = []
+        val dirtyJsModules: MutableList<String> = []
+        val language: MutableList<String> = []
 
         loop { line ->
             val splitIndex = line.indexOf(':')
@@ -198,15 +198,15 @@ class ProjectInfoParser(infoFile: File, private val target: ModelTarget = ModelT
     }
 
     override fun parse(entryName: String): ProjectInfo {
-        val libraries = mutableListOf<String>()
-        val steps = mutableListOf<ProjectInfo.ProjectBuildStep>()
-        val ignoredGranularities = mutableSetOf<JsGenerationGranularity>()
+        val libraries: MutableList<String> = []
+        val steps: MutableList<ProjectInfo.ProjectBuildStep> = []
+        val ignoredGranularities: MutableSet<JsGenerationGranularity> = []
         var muted = false
         var callMain = false
         var checkTypeScriptDefinitions = false
         var moduleKind = ModuleKind.ES
-        val ignoreBackends = mutableSetOf<TargetBackend>()
-        val targetBackends = mutableSetOf<TargetBackend>()
+        val ignoreBackends: MutableSet<TargetBackend> = []
+        val targetBackends: MutableSet<TargetBackend> = []
 
         loop { line ->
             lineCounter++
@@ -278,7 +278,7 @@ class ModuleInfoParser(
 ) : InfoParser<ModuleInfo>(infoFile) {
 
     private fun parseModifications(): List<ModuleInfo.Modification> {
-        val modifications = mutableListOf<ModuleInfo.Modification>()
+        val modifications: MutableList<ModuleInfo.Modification> = []
 
         loop { line ->
             val matcher3 = MODIFICATION_PATTERN.matcher(line)
@@ -305,13 +305,13 @@ class ModuleInfoParser(
 
     private fun parseSteps(firstId: Int, lastId: Int): List<ModuleInfo.ModuleStep> {
         val expectedFileStats = mutableMapOf<String, Set<String>>()
-        val regularDependencies = mutableSetOf<String>()
-        val friendDependencies = mutableSetOf<String>()
-        val modifications = mutableListOf<ModuleInfo.Modification>()
-        val expectedDTS = mutableSetOf<String>()
+        val regularDependencies: MutableSet<String> = []
+        val friendDependencies: MutableSet<String> = []
+        val modifications: MutableList<ModuleInfo.Modification> = []
+        val expectedDTS: MutableSet<String> = []
         var rebuildKlib = true
         var compilerCodename: String? = null
-        val arguments = mutableListOf<String>()
+        val arguments: MutableList<String> = []
 
         loop { line ->
             if (line.matches(STEP_PATTERN.toRegex()))
