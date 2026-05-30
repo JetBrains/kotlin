@@ -58,8 +58,8 @@ object AllEqualSampleGenerator {
     ) {
         val equal = config.sampleEqualValue
         val other = config.sampleOtherValue
-        val (sameDecl, sameRef) = valOrInline(isSequence, ctor, "sameValues", "$equal, $equal, $equal")
-        val (mixedDecl, mixedRef) = valOrInline(isSequence, ctor, "mixedValues", "$equal, $equal, $other")
+        val [sameDecl, sameRef] = valOrInline(isSequence, ctor, "sameValues", "$equal, $equal, $equal")
+        val [mixedDecl, mixedRef] = valOrInline(isSequence, ctor, "mixedValues", "$equal, $equal, $other")
         appendLine(
             """
     @Sample
@@ -84,8 +84,8 @@ $mixedDecl        assertPrints($mixedRef.allEqual(), "false")
         val args = selectorValues.joinToString(", ")
         val singleElement = selectorValues.first()
         val firstSelector = config.sampleSelectorAssertions.first().first
-        val (valuesDecl, valuesRef) = valOrInline(isSequence, ctor, "values", args)
-        val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { (selector, expected) ->
+        val [valuesDecl, valuesRef] = valOrInline(isSequence, ctor, "values", args)
+        val assertionLines = config.sampleSelectorAssertions.joinToString("\n") { [selector, expected] ->
             "        assertPrints($valuesRef.allEqualBy { $selector }, \"$expected\")"
         }
         appendLine(
