@@ -1990,9 +1990,9 @@ public inline fun <T, K> Iterable<T>.allEqualBy(selector: (T) -> K): Boolean {
     val first = iterator.next()
     if (!iterator.hasNext()) return true
     val firstKey = selector(first)
-    while (iterator.hasNext()) {
+    do {
         if (firstKey != selector(iterator.next())) return false
-    }
+    } while (iterator.hasNext())
     return true
 }
 
