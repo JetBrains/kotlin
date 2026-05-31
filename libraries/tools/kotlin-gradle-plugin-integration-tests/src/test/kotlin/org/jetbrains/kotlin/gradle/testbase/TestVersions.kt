@@ -121,6 +121,6 @@ interface TestVersions {
 
     object Compose {
         val composeSnapshotId = System.getProperty("composeSnapshotId")
-        val composeSnapshotVersion = System.getProperty("composeSnapshotVersion")
+        val composeVersion = System.getProperty("composeVersion")
     }
 }

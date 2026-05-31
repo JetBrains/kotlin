@@ -63,6 +63,5 @@ fun RepositoryHandler.composeGoogleMaven(composeStableVersion: String) {
 
 fun Project.composeRuntime() = compose("runtime", "runtime", composeRuntimeVersion())
 fun Project.composeRuntimeAnnotations() = compose("runtime", "runtime-annotation", composeRuntimeVersion())
-fun Project.composeRuntimeTestUtils() = compose("runtime", "runtime-test-utils", composeRuntimeVersion())
 fun Project.compose(group: String, module: String, version: String = composeStableVersion()) =
     "androidx.compose.$group:$module:$version"

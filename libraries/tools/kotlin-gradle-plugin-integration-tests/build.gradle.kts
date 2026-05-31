@@ -55,6 +55,7 @@ fun createConfigurationToBeConsumedInTests(name: String, dependencyProject: Stri
 
 createConfigurationToBeConsumedInTests("applePrivacyManifestPlugin", ":kotlin-privacy-manifests-plugin")
 createConfigurationToBeConsumedInTests("sandboxPlugin", ":plugins:plugin-sandbox")
+createConfigurationToBeConsumedInTests("composeCompilerRuntimeTestUtils", ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils")
 
 dependencies {
     testImplementation(testFixtures(project(":kotlin-gradle-plugin"))) {
@@ -430,7 +431,7 @@ tasks.withType<Test>().configureEach {
 
     systemProperty("kotlinVersion", rootProject.extra["kotlinVersion"] as String)
     systemProperty("runnerGradleVersion", gradle.gradleVersion)
-    systemProperty("composeSnapshotVersion", composeRuntimeSnapshot.versions.runtime.version.get())
+    systemProperty("composeVersion", composeRuntimeSnapshot.versions.runtime.version.get())
     systemProperty("composeSnapshotId", composeRuntimeSnapshot.versions.snapshot.id.get())
 
     val classpathVariables = configurationToBeConsumedInTests
