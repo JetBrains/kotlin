@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.test.model.DeserializerFacade
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.diagnostics.impl.DiagnosticsCollectorImpl
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
+
 
 @Suppress("UNCHECKED_CAST")
 class JKlibIrCompilationCliFacade(testServices: TestServices) :
@@ -48,12 +50,6 @@ class JKlibDeserializedIrBackendInput(
     override val irBuiltIns: IrBuiltIns
         get() = compilationArtifact.pluginContext.irBuiltIns
 
-    // Bypassing full mangler initialization since IR text verification doesn't necessitate linking steps.
     override val irMangler: KotlinMangler.IrMangler
-        get() = object : KotlinMangler.IrMangler {
-            override fun IrDeclaration.mangleString(compatibleMode: Boolean): String = ""
-            override fun IrDeclaration.isExported(compatibleMode: Boolean): Boolean = true
-            override fun IrDeclaration.signatureString(compatibleMode: Boolean): String = ""
-            override val String.hashMangle: Long get() = 0L
-        }
+        get() = JKlibIrMangler()
 }
