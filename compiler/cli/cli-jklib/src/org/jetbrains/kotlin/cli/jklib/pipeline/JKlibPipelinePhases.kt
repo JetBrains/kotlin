@@ -51,6 +51,16 @@ import org.jetbrains.kotlin.util.metadataVersion
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil
 import java.io.File
+import org.jetbrains.kotlin.ir.backend.jklib.JKlibIrMangler
+import org.jetbrains.kotlin.fir.backend.jvm.FirJvmVisibilityConverter
+import org.jetbrains.kotlin.backend.jvm.JvmIrTypeSystemContext
+import org.jetbrains.kotlin.backend.jvm.JvmIrSpecialAnnotationSymbolProvider
+import org.jetbrains.kotlin.builtins.DefaultBuiltIns
+import org.jetbrains.kotlin.fir.backend.jvm.FirDirectJavaActualDeclarationExtractor
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.fir.backend.Fir2IrExtensions
+import org.jetbrains.kotlin.fir.backend.Fir2IrConfiguration
+
 
 
 val JKLIB_OUTPUT_DESTINATION = CompilerConfigurationKey.create<String>("jklib output destination")
@@ -262,7 +272,7 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
         val fir2IrExtensions = JvmFir2IrExtensions(configuration)
         val irGenerationExtensions = configuration.getCompilerExtensions(IrGenerationExtension)
 
-        val fir2IrResult = firResult.convertToIrAndActualizeForJvm(
+        val fir2IrResult = firResult.convertToIrAndActualizeForJKlib(
             fir2IrExtensions,
             configuration,
             diagnosticsReporter,
@@ -277,6 +287,31 @@ object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, J
             input.rootDisposable,
         )
     }
+}
+
+fun AllModulesFrontendOutput.convertToIrAndActualizeForJKlib(
+    fir2IrExtensions: Fir2IrExtensions,
+    configuration: CompilerConfiguration,
+    diagnosticsReporter: BaseDiagnosticsCollector,
+    irGeneratorExtensions: Collection<IrGenerationExtension>,
+): Fir2IrActualizedResult {
+    val fir2IrConfiguration = Fir2IrConfiguration.forJvmCompilation(configuration, diagnosticsReporter)
+
+    return convertToIrAndActualize(
+        fir2IrExtensions,
+        fir2IrConfiguration,
+        irGeneratorExtensions,
+        JKlibIrMangler(),
+        FirJvmVisibilityConverter,
+        DefaultBuiltIns.Instance,
+        ::JvmIrTypeSystemContext,
+        JvmIrSpecialAnnotationSymbolProvider,
+        if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
+            { emptyList() }
+        } else {
+            { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
+        },
+    )
 }
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
