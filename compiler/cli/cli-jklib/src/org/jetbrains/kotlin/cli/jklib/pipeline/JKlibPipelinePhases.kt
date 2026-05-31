@@ -94,7 +94,6 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             )
         }
 
-        // TODO(KT-84899): Reuse code from K2JVM
         with(configuration) {
             if (arguments.noJdk) {
                 put(JVMConfigurationKeys.NO_JDK, true)
@@ -102,41 +101,6 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 configureJdkHomeFromSystemProperty()
             }
             configureJdkClasspathRoots()
-            val paths = PathUtil.kotlinPathsForCompiler
-            if (!arguments.noStdlib) {
-                getLibraryFromHome(
-                    paths,
-                    KotlinPaths::stdlibPath,
-                    PathUtil.KOTLIN_JAVA_STDLIB_JAR,
-                    configuration,
-                    "'-no-stdlib'",
-                )?.let { file ->
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
-                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
-                }
-                getLibraryFromHome(
-                    paths,
-                    KotlinPaths::scriptRuntimePath,
-                    PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-                    configuration,
-                    "'-no-stdlib'",
-                )?.let { file ->
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
-                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.script.runtime")
-                }
-            }
-            if (!arguments.noReflect && !arguments.noStdlib) {
-                getLibraryFromHome(
-                    paths,
-                    KotlinPaths::reflectPath,
-                    PathUtil.KOTLIN_JAVA_REFLECT_JAR,
-                    configuration,
-                    "'-no-reflect' or '-no-stdlib'",
-                )?.let { file ->
-                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
-                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.reflect")
-                }
-            }
             arguments.klibLibraries?.let { libraries ->
                 put(
                     JVMConfigurationKeys.KLIB_PATHS,
