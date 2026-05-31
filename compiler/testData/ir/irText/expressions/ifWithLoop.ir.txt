@@ -8,7 +8,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_0 type:kotlin.collections.IntIterator [val]
-              CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+              CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                 ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                   ARG <this>: CONST Int type=kotlin.Int value=0
                   ARG other: CONST Int type=kotlin.Int value=2
@@ -27,7 +27,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_1 type:kotlin.collections.IntIterator [val]
-              CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+              CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                 ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                   ARG <this>: CONST Int type=kotlin.Int value=0
                   ARG other: CONST Int type=kotlin.Int value=3
@@ -47,7 +47,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_2 type:kotlin.collections.IntIterator [val]
-              CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+              CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                 ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                   ARG <this>: CONST Int type=kotlin.Int value=0
                   ARG other: CONST Int type=kotlin.Int value=4
@@ -66,7 +66,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
           if: CONST Boolean type=kotlin.Boolean value=true
           then: BLOCK type=kotlin.Unit origin=FOR_LOOP
             VAR FOR_LOOP_ITERATOR name:tmp_3 type:kotlin.collections.IntIterator [val]
-              CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+              CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                 ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                   ARG <this>: CONST Int type=kotlin.Int value=0
                   ARG other: CONST Int type=kotlin.Int value=5
@@ -169,7 +169,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
               ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=FOR_LOOP
               VAR FOR_LOOP_ITERATOR name:tmp_5 type:kotlin.collections.IntIterator [val]
-                CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+                CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                   ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     ARG <this>: CONST Int type=kotlin.Int value=0
                     ARG other: CONST Int type=kotlin.Int value=14
@@ -188,7 +188,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=FOR_LOOP
               VAR FOR_LOOP_ITERATOR name:tmp_6 type:kotlin.collections.IntIterator [val]
-                CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+                CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                   ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     ARG <this>: CONST Int type=kotlin.Int value=0
                     ARG other: CONST Int type=kotlin.Int value=15
@@ -213,7 +213,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
               ARG arg1: CONST Int type=kotlin.Int value=1
             then: BLOCK type=kotlin.Unit origin=FOR_LOOP
               VAR FOR_LOOP_ITERATOR name:tmp_8 type:kotlin.collections.IntIterator [val]
-                CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+                CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                   ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     ARG <this>: CONST Int type=kotlin.Int value=0
                     ARG other: CONST Int type=kotlin.Int value=16
@@ -232,7 +232,7 @@ FILE fqName:<root> fileName:/ifWithLoop.kt
             if: CONST Boolean type=kotlin.Boolean value=true
             then: BLOCK type=kotlin.Unit origin=FOR_LOOP
               VAR FOR_LOOP_ITERATOR name:tmp_9 type:kotlin.collections.IntIterator [val]
-                CALL 'public open fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
+                CALL 'public final fun iterator (): kotlin.collections.IntIterator declared in kotlin.ranges.IntRange' type=kotlin.collections.IntIterator origin=FOR_LOOP_ITERATOR
                   ARG <this>: CALL 'public final fun rangeTo (other: kotlin.Int): kotlin.ranges.IntRange declared in kotlin.Int' type=kotlin.ranges.IntRange origin=RANGE
                     ARG <this>: CONST Int type=kotlin.Int value=0
                     ARG other: CONST Int type=kotlin.Int value=17

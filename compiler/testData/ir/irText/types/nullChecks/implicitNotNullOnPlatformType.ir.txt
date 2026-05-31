@@ -10,10 +10,27 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
       VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
       overridden:
         public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in kotlin.collections.Set
+    FUN FAKE_OVERRIDE name:forEach visibility:public modality:OPEN returnType:kotlin.Unit [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Iterable<kotlin.String>
+      VALUE_PARAMETER kind:Regular name:p0 index:1 type:@[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] kotlin.String?>?
+      overridden:
+        public open fun forEach (p0: @[FlexibleNullability] java.util.function.Consumer<in @[FlexibleNullability] E of kotlin.collections.Set?>?): kotlin.Unit declared in kotlin.collections.Set
     FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
         public open fun hashCode (): kotlin.Int declared in kotlin.collections.Set
+    FUN FAKE_OVERRIDE name:parallelStream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.String>
+      overridden:
+        public open fun parallelStream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.Set> declared in kotlin.collections.Set
+    FUN FAKE_OVERRIDE name:spliterator visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] kotlin.String?> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Set<kotlin.String>
+      overridden:
+        public open fun spliterator (): @[EnhancedNullability] java.util.Spliterator<@[FlexibleNullability] E of kotlin.collections.Set?> declared in kotlin.collections.Set
+    FUN FAKE_OVERRIDE name:stream visibility:public modality:OPEN returnType:@[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] kotlin.String> [fake_override]
+      VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.collections.Collection<kotlin.String>
+      overridden:
+        public open fun stream (): @[EnhancedNullability] java.util.stream.Stream<@[EnhancedNullability] E of kotlin.collections.Set> declared in kotlin.collections.Set
     FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
       overridden:
@@ -22,7 +39,7 @@ FILE fqName:<root> fileName:/implicitNotNullOnPlatformType.kt
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.MySet
       VALUE_PARAMETER kind:Regular name:element index:1 type:kotlin.String
       overridden:
-        public abstract fun contains (element: E of kotlin.collections.Set): kotlin.Boolean declared in kotlin.collections.Set
+        public abstract fun contains (element: @[UnsafeVariance] E of kotlin.collections.Set): kotlin.Boolean declared in kotlin.collections.Set
       BLOCK_BODY
         RETURN type=kotlin.Nothing from='public open fun contains (element: kotlin.String): kotlin.Boolean declared in <root>.MySet'
           CALL 'public final fun TODO (): kotlin.Nothing declared in kotlin' type=kotlin.Nothing origin=null
