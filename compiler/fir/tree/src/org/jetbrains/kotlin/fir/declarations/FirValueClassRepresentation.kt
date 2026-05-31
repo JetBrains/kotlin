@@ -46,7 +46,7 @@ private val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresenta
  *         parameter; otherwise, `null`.
  */
 fun FirRegularClassSymbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.toInlineRepresentation(treatFullValueClassesWithOneFieldAsBasic = treatFullValueClassesWithOneFieldAsBasic)
+    valueClassRepresentation?.toInlineRepresentation(treatFullValueClassesWithOneFieldAsBasic)
 
 val FirRegularClassSymbol.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>
