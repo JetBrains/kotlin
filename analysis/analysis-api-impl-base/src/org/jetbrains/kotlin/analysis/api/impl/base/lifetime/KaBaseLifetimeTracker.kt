@@ -18,7 +18,7 @@ internal class KaBaseLifetimeTracker : KaLifetimeTracker {
     override val currentToken: KaLifetimeToken? get() = lifetimeOwnersStack.get().lastOrNull()
 
     fun beforeEnteringAnalysis(session: KaSession) {
-        lifetimeOwnersStack.set(lifetimeOwnersStack.get().add(session.token))
+        lifetimeOwnersStack.set(lifetimeOwnersStack.get().adding(session.token))
     }
 
     fun afterLeavingAnalysis(session: KaSession) {
@@ -27,7 +27,7 @@ internal class KaBaseLifetimeTracker : KaLifetimeTracker {
         check(last == session.token) {
             "The last token on the stack should be the same as the one from the outgoing session."
         }
-        lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
+        lifetimeOwnersStack.set(stack.removingAt(stack.lastIndex))
     }
 
     companion object {

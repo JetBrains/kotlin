@@ -208,7 +208,7 @@ public class PrettyPrinter(public val indentSize: Int = 2) : Appendable {
             callsInPlace(print, InvocationKind.EXACTLY_ONCE)
         }
         val currentPrefixes = prefixes
-        prefixes = prefixes.add(prefix)
+        prefixes = prefixes.adding(prefix)
         try {
             print()
         } finally {

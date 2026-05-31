@@ -61,30 +61,30 @@ class PersistentCheckerContext private constructor(
     )
 
     override fun addDeclaration(declaration: FirDeclaration): PersistentCheckerContext =
-        copy(containingDeclarations = containingDeclarations.add(declaration.symbol))
+        copy(containingDeclarations = containingDeclarations.adding(declaration.symbol))
 
     override fun dropDeclaration() {}
 
     override fun addCallOrAssignment(qualifiedAccessOrAnnotationCall: FirStatement): PersistentCheckerContext =
         copy(
             qualifiedAccessOrAssignmentsOrAnnotationCalls =
-            callsOrAssignments.add(qualifiedAccessOrAnnotationCall)
+            callsOrAssignments.adding(qualifiedAccessOrAnnotationCall)
         )
 
     override fun dropCallOrAssignment() {}
 
     override fun addGetClassCall(getClassCall: FirGetClassCall): PersistentCheckerContext =
-        copy(getClassCalls = getClassCalls.add(getClassCall))
+        copy(getClassCalls = getClassCalls.adding(getClassCall))
 
     override fun dropGetClassCall() {}
 
     override fun addAnnotationContainer(annotationContainer: FirAnnotationContainer): PersistentCheckerContext =
-        copy(annotationContainers = annotationContainers.add(annotationContainer))
+        copy(annotationContainers = annotationContainers.adding(annotationContainer))
 
     override fun dropAnnotationContainer() {}
 
     override fun addElement(element: FirElement): PersistentCheckerContext =
-        copy(containingElements = containingElements.add(element))
+        copy(containingElements = containingElements.adding(element))
 
     override fun dropElement() {}
 
@@ -96,7 +96,7 @@ class PersistentCheckerContext private constructor(
     ): CheckerContextForProvider {
         if (diagnosticNames.isEmpty()) return this
         return copy(
-            suppressedDiagnostics = suppressedDiagnostics.addAll(diagnosticNames),
+            suppressedDiagnostics = suppressedDiagnostics.addingAll(diagnosticNames),
             allInfosSuppressed = this.allInfosSuppressed || allInfosSuppressed,
             allWarningsSuppressed = this.allWarningsSuppressed || allWarningsSuppressed,
             allErrorsSuppressed = this.allErrorsSuppressed || allErrorsSuppressed

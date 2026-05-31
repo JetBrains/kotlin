@@ -690,7 +690,7 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
      */
     fun beforeTransformingChildren(parentDeclaration: FirDeclaration): PersistentList<FirDeclaration> {
         val current = owners
-        owners = owners.add(parentDeclaration)
+        owners = owners.adding(parentDeclaration)
         return current
     }
 

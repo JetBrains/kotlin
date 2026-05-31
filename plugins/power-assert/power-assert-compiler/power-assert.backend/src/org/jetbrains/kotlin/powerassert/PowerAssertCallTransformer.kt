@@ -210,12 +210,12 @@ class PowerAssertCallTransformer(
                 val root = roots[index]
                 val child = root.children.singleOrNull()
                 if (child == null) {
-                    val newArguments = arguments.add(originalCall.arguments[index])
+                    val newArguments = arguments.adding(originalCall.arguments[index])
                     return recursive(index + 1, newArguments, argumentVariables)
                 } else {
                     return builder.buildDiagramNesting(sourceFile, child) { argument, newVariables ->
-                        val newArguments = arguments.add(argument)
-                        val newArgumentVariables = argumentVariables.put(root.parameter, newVariables)
+                        val newArguments = arguments.adding(argument)
+                        val newArgumentVariables = argumentVariables.putting(root.parameter, newVariables)
                         recursive(index + 1, newArguments, newArgumentVariables)
                     }
                 }

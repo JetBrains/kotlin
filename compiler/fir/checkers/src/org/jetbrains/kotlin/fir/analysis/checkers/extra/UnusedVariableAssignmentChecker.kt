@@ -349,16 +349,16 @@ private value class VariableWriteData(val value: PersistentMap<FirPropertySymbol
     operator fun get(symbol: FirPropertySymbol): PersistentSet<CFGNode<*>>? = value[symbol]
 
     operator fun plus(other: VariableWriteData): VariableWriteData {
-        return VariableWriteData(value.merge(other.value, PersistentSet<CFGNode<*>>::addAll))
+        return VariableWriteData(value.merge(other.value, PersistentSet<CFGNode<*>>::addingAll))
     }
 
     fun add(symbol: FirPropertySymbol, node: CFGNode<*>): VariableWriteData {
         val nodes = value[symbol] ?: persistentSetOf()
-        return VariableWriteData(value.put(symbol, nodes.add(node)))
+        return VariableWriteData(value.putting(symbol, nodes.adding(node)))
     }
 
     fun remove(symbol: FirPropertySymbol): VariableWriteData? {
-        val newValue = value.remove(symbol)
+        val newValue = value.removing(symbol)
         return when {
             newValue.isEmpty() -> null
             else -> VariableWriteData(newValue)
@@ -376,7 +376,7 @@ private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.add(
     node: CFGNode<*>,
 ): PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData> {
     return transformValues { oldData ->
-        oldData.put(type, oldData[type]?.add(symbol, node) ?: VariableWriteData(symbol, node))
+        oldData.putting(type, oldData[type]?.add(symbol, node) ?: VariableWriteData(symbol, node))
     }
 }
 
@@ -401,9 +401,9 @@ private fun PathAwareControlFlowInfo<PropertyAccessType, VariableWriteData>.over
     return transformValues {
         val data = when (val data = it[PropertyAccessType.InPlace]) {
             null -> VariableWriteData(symbol, nodes)
-            else -> VariableWriteData(data.value.put(symbol, nodes))
+            else -> VariableWriteData(data.value.putting(symbol, nodes))
         }
-        it.put(PropertyAccessType.InPlace, data)
+        it.putting(PropertyAccessType.InPlace, data)
     }
 }
 
