@@ -21,7 +21,7 @@ private object FirValueClassRepresentationKey : FirDeclarationDataKey()
 var FirRegularClass.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
         by FirDeclarationDataRegistry.data(FirValueClassRepresentationKey)
 
-private val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
+val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<ConeRigidType>?
     get() {
         lazyResolveToPhase(FirResolvePhase.STATUS)
         return fir.valueClassRepresentation
