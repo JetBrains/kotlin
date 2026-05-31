@@ -212,8 +212,8 @@ class PrettyResultsHandler(
 ) : ResultHandler(runResult, checks, testRun, loggedParameters) {
     companion object {
         @Suppress("RegExpRepeatedSpace")
-        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)\.__launcher__Kt.runTest""".toRegex()
-        val failedRegexWithTCLogger = """-\s+(.*)\.__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
+        val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
     }
 
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
