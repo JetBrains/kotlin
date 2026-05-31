@@ -335,7 +335,7 @@ class ComposeIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
@@ -391,7 +391,7 @@ class ComposeIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "composeMultiModule/dep",
             gradleVersion = gradleVersion,
@@ -436,6 +436,7 @@ class ComposeIT : KGPBaseTest() {
                 assertTasksExecuted(":compileReleaseKotlin")
             }
         }
+        val runtimeTestUtilsClasspath = System.getProperty("composeCompilerRuntimeTestUtilsClasspath")
         project(
             projectName = "composeMultiModule",
             gradleVersion = gradleVersion,
@@ -451,7 +452,8 @@ class ComposeIT : KGPBaseTest() {
                 |
                 |dependencies {
                 |    implementation("androidx.compose.runtime:runtime:$composeSnapshotVersion")
-                |    implementation("androidx.compose.runtime:runtime-test-utils:$composeSnapshotVersion")
+                |    implementation(files("$runtimeTestUtilsClasspath"))
+                |    implementation(kotlin("test-junit"))
                 |    
                 |    implementation("com.example:dep:1.0")
                 |}
@@ -853,7 +855,7 @@ class ComposeIT : KGPBaseTest() {
         providedJdk: JdkVersions.ProvidedJdk,
     ) {
         val composeSnapshotId = TestVersions.Compose.composeSnapshotId
-        val composeSnapshotVersion = TestVersions.Compose.composeSnapshotVersion
+        val composeSnapshotVersion = TestVersions.Compose.composeVersion
         project(
             projectName = "composeMultiModule/dep",
             gradleVersion = gradleVersion,

@@ -618,7 +618,8 @@ include(
     ":plugins:compose-compiler-plugin:compiler-hosted",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests",
     ":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes",
-    ":plugins:compose-compiler-plugin:group-mapping"
+    ":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils",
+    ":plugins:compose-compiler-plugin:group-mapping",
 )
 
 if (buildProperties.isInIdeaSync.get()) {
@@ -975,6 +976,8 @@ project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests").pr
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests")
 project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes").projectDir =
     file("$rootDir/plugins/compose/compiler-hosted/integration-tests/protobuf-test-classes")
+project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils").projectDir =
+    file("$rootDir/plugins/compose/compiler-hosted/runtime-test-utils")
 project(":plugins:compose-compiler-plugin:group-mapping").projectDir = file("$rootDir/plugins/compose/group-mapping")
 
 if (buildProperties.isInIdeaSync.get()) {

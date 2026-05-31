@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.implementation
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -57,6 +59,7 @@ dependencies {
     // Compose compiler deps
     testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
     testImplementation(project(":plugins:compose-compiler-plugin:group-mapping"))
+    testImplementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
 
     // protobuf dependencies for tests
     testImplementation(libs.protobuf.java.lite)
@@ -68,7 +71,6 @@ dependencies {
     // runtime tests
     testImplementationArtifactOnly(composeRuntime())
     testImplementationArtifactOnly(composeRuntimeAnnotations())
-    testImplementationArtifactOnly(composeRuntimeTestUtils())
     testImplementation(libs.androidx.collections)
 
     // other compose

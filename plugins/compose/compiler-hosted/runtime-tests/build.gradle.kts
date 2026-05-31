@@ -51,7 +51,7 @@ kotlin {
 
                 // external deps
                 implementation(composeRuntime()) { isTransitive = false }
-                implementation(composeRuntimeTestUtils()) { isTransitive = false }
+                implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:runtime-test-utils"))
                 implementation(libs.androidx.collections)
             }
         }
