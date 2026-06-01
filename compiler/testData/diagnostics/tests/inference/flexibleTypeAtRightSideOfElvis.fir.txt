@@ -26,3 +26,8 @@ FILE: main.kt
 
         ^testWithStatic4 R|<local>/x|
     }
+    public final fun testWithFlexibleMutable(x1: R|kotlin/collections/List<kotlin/String>?|): R|kotlin/collections/List<kotlin/String>| {
+        lval x: R|kotlin/collections/List<kotlin/String>?|
+        R|<local>/x| = R|<local>/x1| ?: Q|JavaClass|.R|/JavaClass.LIST*s|
+        ^testWithFlexibleMutable R|<local>/x|
+    }
