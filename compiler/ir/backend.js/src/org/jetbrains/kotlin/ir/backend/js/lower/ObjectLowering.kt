@@ -43,11 +43,16 @@ import org.jetbrains.kotlin.utils.addToStdlib.safeAs
  * class's superclass companion first, so the initialization order matches the JVM (parent companion
  * before child companion). JS leaves this false to preserve existing behavior.
  * But see KT-40768 and KT-86422.
+ *
+ * @param initializeObjectEnumParent When true, a reference to a
+ * nested object inside an enum class will cause that enum class's init
+ * block to execute.
  */
 @PhasePrerequisites(EnumClassCreateInitializerLowering::class)
 class ObjectDeclarationLowering(
     val context: JsCommonBackendContext,
     private val initializeParentCompanions: Boolean = false,
+    private val initializeObjectEnumParent: Boolean = true,
 ) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (declaration !is IrClass || declaration.kind != ClassKind.OBJECT || declaration.isEffectivelyExternal())
@@ -69,7 +74,13 @@ class ObjectDeclarationLowering(
 
         val primaryConstructor = declaration.primaryConstructor ?: declaration.syntheticPrimaryConstructor!!
 
-        val initEntryInstancesFun = declaration.parent.safeAs<IrClass>()?.initEntryInstancesFun
+        // When initializeObjectEnumParent is disabled, any reference to a nested (non-companion)
+        // object should not execute the init block of its parent enum class.
+        val initEntryInstancesFun = if (initializeObjectEnumParent || declaration.isCompanion) {
+            declaration.parent.safeAs<IrClass>()?.initEntryInstancesFun
+        } else {
+            null
+        }
 
         // When initializeParentCompanions is enabled, a companion object's getInstance() will first
         // ensure the enclosing class's superclass companion is initialized. This matches the JVM
