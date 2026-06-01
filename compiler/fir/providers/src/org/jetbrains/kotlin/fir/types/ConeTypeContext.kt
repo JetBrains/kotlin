@@ -442,13 +442,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun intersectTypes(types: Collection<SimpleTypeMarker>): ConeSimpleKotlinType {
         @Suppress("UNCHECKED_CAST")
         return ConeTypeIntersector.intersectTypes(
-            this as ConeInferenceContext, types as Collection<ConeSimpleKotlinType>
+            this, types as Collection<ConeSimpleKotlinType>
         ) as ConeSimpleKotlinType
     }
 
     override fun intersectTypes(types: Collection<KotlinTypeMarker>): ConeKotlinType {
         @Suppress("UNCHECKED_CAST")
-        return ConeTypeIntersector.intersectTypes(this as ConeInferenceContext, types as Collection<ConeKotlinType>)
+        return ConeTypeIntersector.intersectTypes(this, types as Collection<ConeKotlinType>)
     }
 
     override fun KotlinTypeMarker.isNullableType(considerTypeVariableBounds: Boolean): Boolean {
