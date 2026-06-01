@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.parcelize
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.ir.util.superTypes
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.TYPE_PARCELER_FQ_NAMES
 import org.jetbrains.kotlin.parcelize.ParcelizeNames.WRITE_WITH_FQ_NAMES
 
@@ -35,10 +33,7 @@ fun IrParcelerScope?.getCustomSerializer(irType: IrType): IrParcelSerializer? {
     }
     writeWithArgumentType?.getClass()?.let { parceler ->
         val customSerializer = IrCustomParcelSerializer(parceler)
-        val parcelerSupertype = writeWithArgumentType.superTypes()
-            .single { it.classOrNull?.owner?.classId in ParcelizeNames.PARCELER_CLASS_IDS } as IrSimpleType
-        val parcelerTypeArgument = parcelerSupertype.arguments.single().typeOrFail
-        return if (irType.isNullable() && !parcelerTypeArgument.isNullable()) IrNullAwareParcelSerializer(customSerializer)
+        return if (irType.isNullable() && !writeWithArgumentType.isNullable()) IrNullAwareParcelSerializer(customSerializer)
         else customSerializer
     }
 
