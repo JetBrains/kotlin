@@ -148,7 +148,7 @@ private open class NativeArgsProvider @Inject constructor(
 
     // XCTest depends on platform libraries, so platform libraries must be available.
     @get:Input
-    protected val dependOnPlatformLibs = xcTestEnabled.map { it || requirePlatformLibs }
+    protected val dependOnPlatformLibs = xcTestEnabled.orElse(requirePlatformLibs)
 
     @get:Input
     protected val teamcity: Boolean = project.kotlinBuildProperties.isTeamcityBuild.get()
