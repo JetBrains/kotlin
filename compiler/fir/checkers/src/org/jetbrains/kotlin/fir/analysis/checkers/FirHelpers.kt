@@ -154,6 +154,7 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     // Recursion in Value Classes with nullable types (e.g. `value class VC(val x: VC?, ...)`) is supported only for Multi-Field Full Value Classes
     // Generally, there is no need to disallow it for Single-field value classes as well, so there is KT-86498 for that.
     // Below we forbid recursion for all other cases
+    // Reminder: Single-field value class is basic if it has @JvmInline annotation or if the FullValueClasses feature is disabled
     val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
         null -> false
         is BasicValueClassRepresentation -> true
