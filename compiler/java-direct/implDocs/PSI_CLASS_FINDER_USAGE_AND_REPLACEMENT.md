@@ -728,12 +728,36 @@ Java classes. After Phase 2 the contract narrows; the audit must update each:
 
 | Caller | Today | After Phase 2 |
 |---|---|---|
-| `FirJvmConflictsChecker` (`FirJvmConflictsChecker.kt:37`) | `session.javaSymbolProvider.getClassLikeSymbolByClassId(...)` | `session.symbolProvider.getClassLikeSymbolByClassId(...)`, then check `symbol.origin is FirDeclarationOrigin.Java` (source) **or** the deserializer's binary-Java origin. |
-| `FirDirectJavaActualDeclarationExtractor` (`FirDirectJavaActualDeclarationExtractor.kt:31-43`) | Same | Same — actualization for a Java *binary* `expect class` actualizer is now satisfied via the deserializer rather than `JavaSymbolProvider`. |
+| `FirJvmConflictsChecker` (`FirJvmConflictsChecker.kt:37`) | `session.javaSymbolProvider.getClassLikeSymbolByClassId(...)` | `session.getJavaClassLikeSymbolByClassId(...)` — the helper described in the §6.1 update below. |
+| `FirDirectJavaActualDeclarationExtractor` (`FirDirectJavaActualDeclarationExtractor.kt:31-43`) | Same | Same helper, plus the existing `FirDeclarationOrigin.Java.Source` filter on `extract` (only Java source-class actualizations are valid; binary Java classes are not actualizers). |
 | `KaFirJavaInteroperabilityComponent` (`KaFirJavaInteroperabilityComponent.kt:250`) | LL-only — out of scope (1.6) | Unchanged. LL keeps its own `LLFirJavaSymbolProvider` chain. |
-| Lombok `AbstractBuilderGenerator` (`AbstractBuilderGenerator.kt:164, 271`) | Same | Same as `FirJvmConflictsChecker`. The binary builder lookup falls naturally through the deserializer. |
+| Lombok `AbstractBuilderGenerator` (`AbstractBuilderGenerator.kt:164, 271`) | Same | Same helper as `FirJvmConflictsChecker` (the builder-discovery lookup targets a Lombok-annotated source class). |
 
 The audit itself is the dominant cost of Phase 2. It is paid once.
+
+> **Update 2026-05-28 / 2026-06-01 — §2.4.4 landed via a Java-targeted lookup helper, not via
+> `session.symbolProvider` + origin filter.** The original prescription above used
+> `session.symbolProvider.getClassLikeSymbolByClassId(...)` then an
+> `origin is FirDeclarationOrigin.Java` filter. That **does not work** for the redeclaration /
+> actualization cases these three callers are diagnosing:
+> `FirCompositeSymbolProvider.getClassLikeSymbolByClassId` uses `firstNotNullOfOrNull`, so
+> whenever a Kotlin class shares the `ClassId` with a Java class (the entire point of these
+> diagnostics) the Kotlin source provider wins and the Java symbol is hidden. A first cut of
+> §6.1 using this prescription produced 12 `JavaUsingAst*TestGenerated` regressions and was
+> reverted. The landed shape is a thin Java-targeted lookup helper:
+>
+> ```kotlin
+> // compiler/fir/fir-jvm/src/.../java/JavaSymbolProvider.kt
+> fun FirSession.getJavaClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
+>     javaSymbolProvider?.getClassLikeSymbolByClassId(classId)
+> ```
+>
+> Today the helper wraps `javaSymbolProvider?.getClassLikeSymbolByClassId(classId)` directly
+> (zero behavioral delta vs the pre-§6.1 chain). It is the single extension point if/when
+> binary-Java visibility for these three callers is needed in the future — extend the helper
+> with a targeted deserializer lookup (scoped to the current session, filtered on
+> `!classId.isLocal`); the three call sites pick up the new behavior transparently. The three
+> callers use the helper today and behave identically to their pre-§6.1 state.
 
 ### 2.4.5 Why this dissolves the cycle and the abstraction
 

@@ -1,10 +1,19 @@
 # Direct Injection of `java-direct` into the FIR Source Session — Stages 1 / 1.5 / 1.6
 
-> **Status.** Stages **1**, **1.5**, and **1.6** all landed on branch `rr/ic/direct-java`. Tests:
-> `JavaUsingAstBoxTestGenerated` 1181/1181 + `JavaUsingAstPhasedTestGenerated` 1519/1519 =
-> 2700/2700, 0 failures, 0 errors. Stage 2 (= Phase 2 of
-> [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md))
-> is the next step.
+> **Status.** Stages **1**, **1.5**, **1.6**, and **Stage 2 (§6.1 – §6.5)** all landed on
+> branch `rr/ic/direct-java`. Tests: `JavaUsingAstBoxTestGenerated` 1181/1181 +
+> `JavaUsingAstPhasedTestGenerated` 1520/1520 = **2701/2701 green**, 0 failures, 0 errors,
+> plus `PhasedJvmDiagnosticLightTreeTestGenerated.*` 10787/10787 green as PSI regression gate.
+> **Phase 2 of [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+> is now complete** — `CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt` are
+> deleted; `BinaryJavaClassFinder`'s body is absorbed into
+> `compiler/java-direct/src/.../JvmBinaryClassFinderInputsOverIndex.kt`
+> (`JvmBinaryClassFinderInputs`-only surface, no `JavaClassFinder` surface); the
+> library-session facade is collapsed to a private `NoOpJavaClassFinder` in
+> `JavaDirectFacadeBuilder.kt` and the source-session facade uses `JavaClassFinderOverAstImpl`
+> alone (which now `override fun isInSourceIndex(classId) = isClassInIndex(classId)` to
+> preserve §6.2's source-only gate). Phase 3 (source-only PSI/AST switch) is the next
+> independent effort.
 >
 > **Stage 1.6** replaced the per-session `FirJvmSessionFactory.Context.javaFacadeBuilder` seam
 > introduced in Stage 1 with a direct lambda parameter on both
@@ -555,6 +564,46 @@ After §6.2 + §6.3:
 
 `compiler/java-direct/src/.../CombinedJavaClassFinder.kt` and `.../BinaryJavaClassFinder.kt`
 deleted. Logic absorbed into `JvmClassFileBasedSymbolProvider` via §6.3.
+
+> **Update 2026-06-01 — §6.4 library-side + §6.5 landed.** With §6.3 in place, every binary
+> lookup the deserializer needs on the `java-direct` library session is already routed
+> through `JvmBinaryClassFinderInputs` — the only remaining facade consumer is
+> `convertJavaClassToFir` (no `JavaClassFinder` access), and `FirJavaFacade.packageCache`
+> read once per class for `javaPackage`. §6.4 library-side collapses the library-session
+> facade to a private `NoOpJavaClassFinder` (in `JavaDirectFacadeBuilder.kt`) that returns
+> `null`/empty from every method:
+>
+> - `findPackage` returns `null` — observationally identical to the pre-§6.5
+>   `BinaryJavaPackage(fqName)` (empty `annotations`); every downstream consumer of
+>   `FirJavaClass.javaPackage` normalises both shapes through `?.annotations?.orEmpty()`.
+> - `findClass` returns `null` — preserves the pre-§6.5 chain on the deserializer's
+>   `binaryClassFinderInputs?.findBinaryClass(...) ?: javaFacade.findClass(...)` Elvis
+>   fallback. The adapter legitimately returns `null` for `@Metadata`-carrying class files
+>   (Kotlin classes are handled by the Kotlin branch of `extractClassMetadata`), and the
+>   pre-§6.5 fallback to `FirJavaFacade.findClass` also applied the same `@Metadata` `takeIf`
+>   filter and returned `null`. Making the no-op throw to enforce a "should never be called"
+>   contract was tried first and regressed 1903/2701 java-direct tests — see the iteration
+>   log key-learnings.
+>
+> §6.5 deletes `CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt`. The
+> `BinaryJavaClassFinder` body is absorbed into a new
+> `compiler/java-direct/src/.../JvmBinaryClassFinderInputsOverIndex.kt` (≈+223 LoC) that
+> exposes **only** the `JvmBinaryClassFinderInputs` surface (no `JavaClassFinder`) — the
+> deserializer is the only consumer post-§6.3. `JavaClassFinderOverAstImpl` additionally
+> gains a 1-line `override fun isInSourceIndex(classId) = isClassInIndex(classId)` to
+> preserve §6.2's `JavaSymbolProvider` source-only gate after `CombinedJavaClassFinder`'s
+> override is gone. `createJavaDirectSourceJavaFacadeBuilder` simplifies to a 2-branch
+> scope dispatch (library → `NoOpJavaClassFinder`, source → `JavaClassFinderOverAstImpl`)
+> as originally specified above; the old PSI fallback and the `binaryFinderForScope` helper
+> are gone. Validation: **2701/2701** `JavaUsingAst{Phased,Box}TestGenerated` green;
+> **10787/10787** `PhasedJvmDiagnosticLightTreeTestGenerated.*` green (PSI regression gate
+> confirms zero delta on the non-java-direct path — `binaryClassFinderInputs = null`
+> default still routes through `FirJavaFacade` for PSI / LL / IC / scripting / jklib paths).
+> See [`../ITERATION_RESULTS.md`](../ITERATION_RESULTS.md) §"Stage 2 §6.4 (library-side) +
+> §6.5 — Delete `CombinedJavaClassFinder.kt` and `BinaryJavaClassFinder.kt` — 2026-06-01"
+> for the full design + key-learnings entry. **Stage 2 = Phase 2 of
+> [`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md)
+> is now complete.**
 
 ### 6.6 (Optional, Phase 3 territory) Source-only PSI/AST switch
 ([`PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`](PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md) §2.5)

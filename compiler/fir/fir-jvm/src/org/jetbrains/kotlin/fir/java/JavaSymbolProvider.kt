@@ -46,14 +46,16 @@ open class JavaSymbolProvider(
             symbol
         }
 
-    // Stage 2 §6.2 (`compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`):
+    // Stage 2 §6.2 + §6.5 (`compiler/java-direct/implDocs/DIRECT_INJECTION_STAGE_1_2026_05_20.md`):
     // narrow `JavaSymbolProvider` to Java *source* classes only. The class-id gate moves from
     // `javaFacade.hasTopLevelClassOf(classId)` (source∪binary) to `javaFacade.isInSourceIndex(classId)`
-    // (source half of `CombinedJavaClassFinder`; identical for single-side finders via the defaults
-    // on `JavaClassFinder`). Binary Java classes flow through `JvmClassFileBasedSymbolProvider`,
-    // which still consults the combined facade until §6.3 moves binary lookups inline there. The
-    // source∪binary names union is reconstituted at the composite-symbol-names-provider layer,
-    // where this source-only set is joined with `JvmClassFileBasedSymbolProvider.knownTopLevelClassesInPackage`.
+    // — on `java-direct` this delegates to `JavaClassFinderOverAstImpl.isClassInIndex`; on
+    // non-`java-direct` single-side finders the default returns `true` and narrowing is a no-op.
+    // Binary Java classes flow through `JvmClassFileBasedSymbolProvider` via the deserializer-owned
+    // `JvmBinaryClassFinderInputs` adapter (`JvmBinaryClassFinderInputsOverIndex` on the java-direct
+    // path, fallback to `FirJavaFacade` elsewhere). The source∪binary names union is reconstituted
+    // at the composite-symbol-names-provider layer, where this source-only set is joined with
+    // `JvmClassFileBasedSymbolProvider.knownTopLevelClassesInPackage`.
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirRegularClassSymbol? =
         if (javaFacade.isInSourceIndex(classId)) getClassLikeSymbolByClassId(classId, null) else null
 

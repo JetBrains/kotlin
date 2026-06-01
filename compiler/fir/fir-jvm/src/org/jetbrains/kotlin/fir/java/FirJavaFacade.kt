@@ -93,9 +93,11 @@ abstract class FirJavaFacade(session: FirSession, private val classFinder: JavaC
     // `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
     //
     // Surface the new `JavaClassFinder` source-only probes through the facade so
-    // `JavaSymbolProvider` can scope itself to Java sources. For non-combined finders the
-    // defaults coincide with the combined methods above — narrowing is a no-op there. For
-    // `CombinedJavaClassFinder` these delegate to the source half only.
+    // `JavaSymbolProvider` can scope itself to Java sources. For non-source finders the
+    // defaults coincide with the combined methods above — narrowing is a no-op there. The
+    // `java-direct` source finder (`JavaClassFinderOverAstImpl`) overrides `isInSourceIndex`
+    // to delegate to its own index, gating `JavaSymbolProvider` to source Java classes only
+    // post Stage 2 §6.5.
 
     /** @see JavaClassFinder.isInSourceIndex */
     fun isInSourceIndex(classId: ClassId): Boolean = classFinder.isInSourceIndex(classId)

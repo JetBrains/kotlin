@@ -78,6 +78,19 @@ class JavaClassFinderOverAstImpl internal constructor(
         return packageIndexer.ensurePackageIndexed(classId.packageFqName).containsKey(topLevelName)
     }
 
+    // ---- Source-only probes (Stage 2 §6.2 / §6.5 of
+    // `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
+    //
+    // After §6.5 removed `CombinedJavaClassFinder`, `JavaSymbolProvider` reads
+    // `isInSourceIndex` / `hasPackageInSources` / `sourceClassNamesInPackage` directly off this
+    // finder. Override `isInSourceIndex` to keep the §6.2 narrowing (the default on
+    // [JavaClassFinder] is `true` for non-combined finders); [hasPackageInSources] and
+    // [sourceClassNamesInPackage] already match the desired source-only semantics via their
+    // defaults (`findPackage` / `knownClassNamesInPackage`), which on this finder are
+    // source-only by construction.
+
+    override fun isInSourceIndex(classId: ClassId): Boolean = isClassInIndex(classId)
+
     override fun findClass(request: JavaClassFinder.Request): JavaClass? =
         classCache.getOrPutIfNotNull(request.classId) { findClasses(request).firstOrNull() }
 

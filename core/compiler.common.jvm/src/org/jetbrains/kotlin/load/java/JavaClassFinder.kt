@@ -46,11 +46,14 @@ interface JavaClassFinder {
     // ---- Source-only probes (Stage 2 §6.2 of `compiler/java-direct/implDocs/PSI_CLASS_FINDER_USAGE_AND_REPLACEMENT.md`) ----
     //
     // These let `JavaSymbolProvider` see *only* the Java source half of a finder, leaving binary
-    // Java lookups to flow through `JvmClassFileBasedSymbolProvider`. For non-combined finders
-    // (PSI, reflect, javac, plain binary) the defaults coincide with the existing methods, since
-    // those finders are themselves a single "side" — the narrowing is a no-op for them.
+    // Java lookups to flow through `JvmClassFileBasedSymbolProvider`. For non-source finders
+    // (PSI, reflect, javac) the defaults coincide with the existing methods, since those
+    // finders are themselves a single "side" — the narrowing is a no-op for them.
     //
-    // `CombinedJavaClassFinder` overrides these to delegate to its `sourceFinder` only.
+    // After Stage 2 §6.5 the `java-direct` source finder (`JavaClassFinderOverAstImpl`)
+    // overrides `isInSourceIndex` to delegate to its index, so `JavaSymbolProvider` sees source
+    // Java classes only on that path; binary classes are routed through the deserializer-owned
+    // `JvmBinaryClassFinderInputs` adapter (`compiler/java-direct/.../JvmBinaryClassFinderInputsOverIndex`).
 
     /**
      * Cheap (index-level) check whether [classId] could be served by the Java source half of this finder.
