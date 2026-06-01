@@ -1,3 +1,6 @@
+import org.jetbrains.kotlin.testFederation.SmokeTestConfig
+import org.jetbrains.kotlin.testFederation.smokeTestConfig
+
 plugins {
     kotlin("jvm")
     id("project-tests-convention")
@@ -38,5 +41,7 @@ projectTests {
     objCExportHeaderGeneratorTestTask(
         "test",
         allowUnsafe = true, // KT-85212
-    )
+    ) {
+        smokeTestConfig = SmokeTestConfig.RunAllTests
+    }
 }
