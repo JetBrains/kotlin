@@ -81,7 +81,7 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
  *         parameter; otherwise, `null`.
  */
 @ValueClassBackendAgnosticApi
-fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
+fun <T : RigidTypeMarker> ValueClassRepresentation<T>.interpretAsInlineClassRepresentationOrNull(
     treatFullValueClassesWithOneFieldAsBasic: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
     is InlineClassRepresentation -> this

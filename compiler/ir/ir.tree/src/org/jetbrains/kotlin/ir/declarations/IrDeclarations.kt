@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrAttribute
-import org.jetbrains.kotlin.descriptors.toInlineRepresentation
+import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrElementBase
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -61,7 +61,7 @@ fun IrElement.copyAttributes(other: IrElement, includeAll: Boolean = false) {
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic: Boolean): Boolean =
-    valueClassRepresentation?.toInlineRepresentation(treatFullValueClassesWithOneFieldAsBasic) != null
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic) != null
 
 val IrClass.isJvmInlineMultiFieldValueClass: Boolean
     get() = valueClassRepresentation is JvmInlineMultiFieldValueClassRepresentation
@@ -120,7 +120,7 @@ val IrClass.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValu
  */
 @ValueClassBackendAgnosticApi
 fun IrClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<IrSimpleType>? =
-    valueClassRepresentation?.toInlineRepresentation(treatFullValueClassesWithOneFieldAsBasic)
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic)
 
 
 @DeprecatedForRemovalCompilerApi(CompilerVersionOfApiDeprecation._2_1_20)

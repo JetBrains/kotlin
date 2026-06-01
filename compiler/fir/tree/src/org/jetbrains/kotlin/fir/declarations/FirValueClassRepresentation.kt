@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentat
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
-import org.jetbrains.kotlin.descriptors.toInlineRepresentation
+import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -52,7 +52,7 @@ val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<Con
  */
 @ValueClassBackendAgnosticApi
 fun FirRegularClassSymbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<ConeRigidType>? =
-    valueClassRepresentation?.toInlineRepresentation(treatFullValueClassesWithOneFieldAsBasic)
+    valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic)
 
 val FirRegularClassSymbol.jvmInlineMultiFieldValueClassRepresentation: JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>?
     get() = valueClassRepresentation as? JvmInlineMultiFieldValueClassRepresentation<ConeRigidType>
