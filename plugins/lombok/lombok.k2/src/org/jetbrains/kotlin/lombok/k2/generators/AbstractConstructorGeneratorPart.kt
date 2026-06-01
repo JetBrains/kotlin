@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.builder.buildReturnExpression
 import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.java.declarations.*
-import org.jetbrains.kotlin.fir.plugin.generateNoArgDelegatingConstructorCall
+import org.jetbrains.kotlin.fir.plugin.tryGeneratingNoArgDelegatingConstructorCall
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -137,7 +137,7 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
                 FirConstructorBuilder().apply {
                     isLocal = false
                     origin = FirDeclarationOrigin.Plugin(ConstructorGeneratorKey)
-                    delegatedConstructor = targetClassSymbol.generateNoArgDelegatingConstructorCall(session)
+                    delegatedConstructor = targetClassSymbol.tryGeneratingNoArgDelegatingConstructorCall(session) ?: return
                 }
             }
 

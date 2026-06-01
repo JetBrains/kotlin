@@ -136,7 +136,7 @@ public fun FirExtension.createConstructor(
         }
     }.build().also {
         if (generateDelegatedNoArgConstructorCall) {
-            it.populateNoArgDelegatingConstructorCall(session)
+            it.tryPopulatingNoArgDelegatingConstructorCall(session)
         }
     }
 }
@@ -160,13 +160,18 @@ public fun FirExtension.createDefaultPrivateConstructor(
     }
 }
 
-private fun FirConstructor.populateNoArgDelegatingConstructorCall(session: FirSession) {
+private fun FirConstructor.tryPopulatingNoArgDelegatingConstructorCall(session: FirSession) {
     val owner = returnTypeRef.coneType.toClassSymbol(session)
     requireNotNull(owner)
-    replaceDelegatedConstructor(owner.generateNoArgDelegatingConstructorCall(session))
+    replaceDelegatedConstructor(owner.tryGeneratingNoArgDelegatingConstructorCall(session))
 }
 
-public fun FirClassSymbol<*>.generateNoArgDelegatingConstructorCall(session: FirSession): FirDelegatedConstructorCall {
+/**
+ * Attempts to generate a no-argument delegating constructor call for the given class symbol.
+ *
+ * It returns `null` if the correct delegated constructor call can't be generated for some reason.
+ */
+public fun FirClassSymbol<*>.tryGeneratingNoArgDelegatingConstructorCall(session: FirSession): FirDelegatedConstructorCall? {
     return buildDelegatedConstructorCall {
         val superClasses = resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
         val singleSupertype = when (superClasses.size) {
@@ -178,8 +183,7 @@ public fun FirClassSymbol<*>.generateNoArgDelegatingConstructorCall(session: Fir
         val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
         val superConstructorSymbol = superSymbol.declaredMemberScope(session, memberRequiredPhase = null)
             .getDeclaredConstructors()
-            .firstOrNull { it.valueParameterSymbols.isEmpty() }
-            ?: error("No arguments constructor for class $singleSupertype not found")
+            .firstOrNull { it.valueParameterSymbols.isEmpty() } ?: return null
         calleeReference = buildResolvedNamedReference {
             name = superConstructorSymbol.name
             resolvedSymbol = superConstructorSymbol

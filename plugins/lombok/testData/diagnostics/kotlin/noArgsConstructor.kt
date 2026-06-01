@@ -43,4 +43,12 @@ class NoArgsConstructorWithValPropertyAndInitializer {
     val y: Int = 42
 }
 
+abstract class A(val x: String)
+
+@NoArgsConstructor
+class B(x: String) : A(x)
+
+fun test() {
+    <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.
+}
 
