@@ -4,17 +4,21 @@ FILE: ConstructorExample.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val boolean: R|kotlin/Boolean| = R|<local>/boolean|
+        public final var boolean: R|kotlin/Boolean| = R|<local>/boolean|
             public get(): R|kotlin/Boolean|
+            public set(value: R|kotlin/Boolean|): R|kotlin/Unit|
 
-        public final val char: R|kotlin/Char| = R|<local>/char|
+        public final var char: R|kotlin/Char| = R|<local>/char|
             public get(): R|kotlin/Char|
+            public set(value: R|kotlin/Char|): R|kotlin/Unit|
 
-        public final val int: R|kotlin/Int| = R|<local>/int|
+        public final var int: R|kotlin/Int| = R|<local>/int|
             public get(): R|kotlin/Int|
+            public set(value: R|kotlin/Int|): R|kotlin/Unit|
 
-        public final val str: R|kotlin/String| = R|<local>/str|
+        public final var str: R|kotlin/String| = R|<local>/str|
             public get(): R|kotlin/String|
+            public set(value: R|kotlin/String|): R|kotlin/Unit|
 
         public constructor(): R|ConstructorExample| {
             super<R|kotlin/Any|>()
@@ -26,10 +30,24 @@ FILE: ConstructorExample.kt
             super<R|kotlin/Any|>()
         }
 
-        public final val param: R|T| = R|<local>/param|
+        public final var param: R|T| = R|<local>/param|
             public get(): R|T|
+            public set(value: R|T|): R|kotlin/Unit|
 
         public constructor<T>(): R|ConstructorExampleWithGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    @R|lombok/NoArgsConstructor|(force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleWithForce : R|kotlin/Any| {
+        public constructor(int: R|kotlin/Int|): R|ConstructorExampleWithForce| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val int: R|kotlin/Int| = R|<local>/int|
+            public get(): R|kotlin/Int|
+
+        public constructor(): R|ConstructorExampleWithForce| {
             super<R|kotlin/Any|>()
         }
 
@@ -42,5 +60,6 @@ FILE: ConstructorExample.kt
         R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExample.str|)
         lval zeroObjectWithGenerics: R|ConstructorExampleWithGenerics<kotlin/Int>| = R|/ConstructorExampleWithGenerics|<R|kotlin/Int|>()
         R|/assertEquals|<R|kotlin/Int?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|SubstitutionOverride</ConstructorExampleWithGenerics.param: R|kotlin/Int|>|)
+        R|/assertEquals|<R|kotlin/Int|>(Int(0), R|/ConstructorExampleWithForce|().R|/ConstructorExampleWithForce.int|)
         ^box String(OK)
     }

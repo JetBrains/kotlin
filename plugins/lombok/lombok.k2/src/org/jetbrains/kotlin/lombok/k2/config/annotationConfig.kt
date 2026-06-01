@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.ACCESSORS_PREFIX_
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.SETTER_PREFIX
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_CONSTRUCTOR
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.STATIC_NAME
+import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FORCE
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.CALL_SUPER
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.COMMONS_LOG_FLAG_USAGE_CONFIG
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.FLOGGER_LOG_FLAG_USAGE_CONFIG
@@ -191,6 +192,7 @@ object ConeLombokAnnotations {
     class NoArgsConstructor(
         override val visibility: Visibility?,
         override val staticName: String?,
+        val force: Boolean,
         annotation: FirAnnotation,
     ) : ConstructorAnnotation, ConeLombokAnnotation(annotation) {
         companion object : ConeAnnotationCompanion<NoArgsConstructor>(LombokNames.NO_ARGS_CONSTRUCTOR_ID) {
@@ -198,6 +200,7 @@ object ConeLombokAnnotations {
                 return NoArgsConstructor(
                     visibility = annotation.getVisibility(ACCESS),
                     staticName = annotation.getNonBlankStringArgument(STATIC_NAME),
+                    force = annotation.getBooleanArgument(FORCE) ?: false,
                     annotation = annotation,
                 )
             }

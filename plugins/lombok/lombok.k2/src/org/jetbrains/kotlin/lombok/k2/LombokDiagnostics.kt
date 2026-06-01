@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryToRendererMap
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.TO_STRING
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.error0
 import org.jetbrains.kotlin.diagnostics.error1
 import org.jetbrains.kotlin.diagnostics.errorWithoutSource
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_CALL_SUPER_
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_EXCLUDE_AND_INCLUDE
 import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.TO_STRING_FUNCTION_ALREADY_EXISTS
+import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics.NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtAnnotationEntry
 import org.jetbrains.kotlin.psi.KtExpression
@@ -54,6 +56,7 @@ object LombokFirDiagnostics : KtDiagnosticsContainer() {
     val TO_STRING_CALL_SUPER_NOT_CALLED by warning0<KtAnnotationEntry>()
     val TO_STRING_EXCLUDE_AND_INCLUDE by warning0<KtAnnotationEntry>()
     val TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT by warning0<KtExpression>()
+    val NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED by error0<KtAnnotationEntry>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = LombokFirDiagnosticsMessages
 }
@@ -94,6 +97,11 @@ object LombokFirDiagnosticsMessages : BaseDiagnosticRendererFactory() {
             TO_STRING_DO_NOT_USE_GETTERS_IRRELEVANT,
             "The 'doNotUseGetters' parameter has no effect in Kotlin. " +
                     "Unlike Java, Kotlin properties do not distinguish between direct field access and getter calls."
+        )
+        map.put(
+            NO_ARGS_CONSTRUCTOR_FORCE_REQUIRED,
+            "Class contains required properties. " +
+                    "Use '@NoArgsConstructor(force = true)' to force-initialize them to default values (0 / false / null)."
         )
     }
 }

@@ -4,10 +4,13 @@
 import lombok.NoArgsConstructor
 
 @NoArgsConstructor
-open class ConstructorExample(val boolean: Boolean, val char: Char, val int: Int, val str: String)
+open class ConstructorExample(var boolean: Boolean, var char: Char, var int: Int, var str: String)
 
 @NoArgsConstructor
-class ConstructorExampleWithGenerics<T>(val param: T)
+class ConstructorExampleWithGenerics<T>(var param: T)
+
+@NoArgsConstructor(force = true)
+class ConstructorExampleWithForce(val int: Int)
 
 fun box(): String {
     val zeroObject = ConstructorExample()
@@ -18,6 +21,8 @@ fun box(): String {
 
     val zeroObjectWithGenerics = ConstructorExampleWithGenerics<Int>()
     assertEquals(null, zeroObjectWithGenerics.param)
+
+    assertEquals(0, ConstructorExampleWithForce().int)
 
     return "OK"
 }

@@ -1,5 +1,5 @@
 FILE: noArgsConstructorStatic.kt
-    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)]) public final class ConstructorExampleStatic : R|kotlin/Any| {
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStatic : R|kotlin/Any| {
         public constructor(boolean: R|kotlin/Boolean|, char: R|kotlin/Char|, int: R|kotlin/Int|, str: R|kotlin/String|): R|ConstructorExampleStatic| {
             super<R|kotlin/Any|>()
         }
@@ -32,7 +32,7 @@ FILE: noArgsConstructorStatic.kt
         }
 
     }
-    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)]) public final class ConstructorExampleStaticWithCompanion : R|kotlin/Any| {
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithCompanion : R|kotlin/Any| {
         public constructor(any: R|kotlin/Any|): R|ConstructorExampleStaticWithCompanion| {
             super<R|kotlin/Any|>()
         }
@@ -60,7 +60,7 @@ FILE: noArgsConstructorStatic.kt
         }
 
     }
-    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)]) public final class ConstructorExampleStaticWithGenerics<T> : R|kotlin/Any| {
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)], force = Boolean(true) [evaluated = Boolean(true)]) public final class ConstructorExampleStaticWithGenerics<T> : R|kotlin/Any| {
         public constructor<T>(param: R|T|): R|ConstructorExampleStaticWithGenerics<T>| {
             super<R|kotlin/Any|>()
         }
