@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClassFin
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension
 import java.lang.ref.SoftReference
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.metadata.*
@@ -39,7 +40,21 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
         }))
     })
 
-    // TODO (KT-80710): `invoke` function.
+    functions.add(KmFunction("invoke").apply {
+        for (i in 1..arity) {
+            valueParameters.add(KmValueParameter("p$i").apply {
+                type = KmType().apply {
+                    classifier = KmClassifier.TypeParameter(i)
+                }
+            })
+        }
+        returnType = KmType().apply {
+            classifier = KmClassifier.TypeParameter(returnTypeParameterId)
+        }
+        modality = Modality.ABSTRACT
+        visibility = Visibility.PUBLIC
+        isOperator = true
+    })
 }
 
 internal fun createCloneableKmClass(): KmClass = KmClass().apply {
@@ -55,6 +70,34 @@ internal fun createCloneableKmClass(): KmClass = KmClass().apply {
             classifier = KmClassifier.Class("kotlin/Any")
         }
     })
+}
+
+internal fun createEnumValuesKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("values").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class("kotlin/Array")
+        arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {
+            classifier = KmClassifier.Class(klass.classId.asString())
+        })
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
+}
+
+internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("valueOf").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class(klass.classId.asString())
+    }
+    valueParameters += KmValueParameter("value").apply {
+        type = KmType().apply {
+            classifier = KmClassifier.Class("kotlin/String")
+        }
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
 }
 
 private class BuiltinClassCache(fragment: KmModuleFragment?) {

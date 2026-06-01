@@ -5,19 +5,25 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.PrimitiveType
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.parameterizedTypeArguments
 import org.jetbrains.kotlin.descriptors.runtime.structure.primitiveByWrapper
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.isCompilerInternalSyntheticAnnotation
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import java.lang.reflect.WildcardType
+import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.LazyThreadSafetyMode.PUBLICATION
 import kotlin.coroutines.Continuation
 import kotlin.jvm.internal.CallableReference
@@ -84,11 +90,15 @@ internal class TypeParameterTable private constructor(
                 KTypeParameterImpl(unbound, km.name, km.variance.toKVariance(), km.isReified)
             }
             val map = kmTypeParameters.withIndex().associate { (index, km) -> km.id to kTypeParameters[index] }
+            // If we're creating type parameters of a callable that is a fake override, their upper bounds should be substituted with the
+            // callable's type substitutor.
+            val substitutor = (container as? ReflectKCallable<*>)?.overriddenStorage?.getTypeSubstitutor(kTypeParameters, container.name)
             return TypeParameterTable(kTypeParameters, map, parent).also { table ->
                 for ((i, typeParameter) in kTypeParameters.withIndex()) {
                     typeParameter.upperBounds = kmTypeParameters[i].upperBounds.map {
                         // Upper bounds of type parameters should always have underlying wrapper (not primitive) classes.
-                        it.toKType(classLoader, table, forceWrapperClass = true)
+                        val type = it.toKType(classLoader, table, forceWrapperClass = true)
+                        substitutor?.substituteTopLevelType(type) ?: type
                     }.ifEmpty { listOf(StandardKTypes.NULLABLE_ANY) }
                 }
             }
@@ -217,7 +227,7 @@ private fun KmClassifier.toClassifier(
         }
 }
 
-internal class ErrorTypeParameter(private val id: Int) : KClassifier {
+internal class ErrorTypeParameter(private val id: Int) : KClassifier, TypeConstructorMarker {
     override fun toString(): String = "[Error type parameter $id]"
 }
 
@@ -340,10 +350,10 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
     )
 }
 
-internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
-    val signature = function.signature?.toString()
-        ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
-    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
+internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl, kmClass: KmClass?): KotlinKFunction {
+    // In JVM metadata, functions always have `signature`. In builtins metadata, they don't, so we compute it manually.
+    val signature = function.signature ?: function.mapSignature(container, kmClass)
+    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {
@@ -352,4 +362,91 @@ internal fun createUnboundConstructor(constructor: KmConstructor, container: KDe
             "No signature for constructor (${constructor.valueParameters.size} parameters, declared in $container)"
         )
     return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, constructor)
+}
+
+private fun KmFunction.mapSignature(container: KDeclarationContainerImpl, kmClass: KmClass?): JvmMethodSignature =
+    mapSignature(
+        name, typeParameters + kmClass?.typeParameters.orEmpty(), contextParameters, receiverParameterType, valueParameters, returnType,
+        container,
+    )
+
+private fun mapSignature(
+    name: String,
+    typeParameters: List<KmTypeParameter>,
+    contextParameters: List<KmValueParameter>,
+    receiverParameterType: KmType?,
+    valueParameters: List<KmValueParameter>,
+    returnType: KmType,
+    container: KDeclarationContainerImpl,
+): JvmMethodSignature {
+    val allTypeParameters: Lazy<Map<Int, KmTypeParameter>> = lazy(NONE) {
+        val result = typeParameters.associateByTo(mutableMapOf()) { it.id }
+        var declaration: KDeclarationContainer? = container
+        while (declaration is KClassImpl<*>) {
+            val kmClass = declaration.kmClass ?: break
+            kmClass.typeParameters.associateByTo(result) { it.id }
+            declaration = declaration.java.enclosingClass?.kotlin
+        }
+        result
+    }
+    val c = ReflectTypeMappingContext(allTypeParameters) { "`$name` in $container" }
+    val desc = buildString {
+        append("(")
+        contextParameters.forEach { mapType(it.type, c) }
+        receiverParameterType?.let { mapType(it, c) }
+        valueParameters.forEach { mapType(it.type, c) }
+        append(")")
+        if (returnType.isNonNullUnit) append("V") else mapType(returnType, c)
+    }
+    return JvmMethodSignature(name, desc)
+}
+
+private class ReflectTypeMappingContext(
+    val typeParameters: Lazy<Map<Int, KmTypeParameter>>,
+    val memberNameForDebug: () -> String,
+)
+
+private val KmType.isNonNullUnit: Boolean
+    get() = (classifier as? KmClassifier.Class)?.name == "kotlin/Unit" && !isNullable && flexibleTypeUpperBound == null
+
+private fun StringBuilder.mapType(type: KmType, c: ReflectTypeMappingContext, wrapPrimitives: Boolean = false): StringBuilder {
+    return when (val classifier = type.classifier) {
+        is KmClassifier.Class -> if (classifier.name == "kotlin/Array") {
+            append("[")
+            val (variance, type) = type.arguments.single()
+            if (variance == KmVariance.IN || type == null) {
+                append("Ljava/lang/Object;")
+            } else {
+                mapType(type, c, wrapPrimitives = true)
+            }
+        } else {
+            mapClass(classifier.name, wrapPrimitives || type.isNullable)
+        }
+        is KmClassifier.TypeParameter -> {
+            val typeParameter = c.typeParameters.value[classifier.id] ?: throw KotlinReflectionInternalError(
+                "Unknown type parameter ${classifier.id} when computing signature for ${c.memberNameForDebug()}"
+            )
+            val upperBound = typeParameter.upperBounds.firstOrNull() // TODO: representative upper bound?
+            if (upperBound != null) {
+                mapType(upperBound, c)
+            } else {
+                append("Ljava/lang/Object;")
+            }
+        }
+        is KmClassifier.TypeAlias ->
+            throw KotlinReflectionInternalError("Type alias types cannot appear outside of abbreviation: ${c.memberNameForDebug()}")
+    }
+}
+
+private fun StringBuilder.mapClass(name: ClassName, wrapPrimitives: Boolean): StringBuilder {
+    if (wrapPrimitives) {
+        val primitiveType = name.toClassId().takeIf { it.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME }
+            ?.let { PrimitiveType.getByShortName(it.relativeClassName.asString()) }?.let(JvmPrimitiveType::get)
+        if (primitiveType != null) {
+            return append("L").append(primitiveType.wrapperFqName.asString().replace('.', '/')).append(";")
+        }
+    }
+    // ClassMapperLite always maps `kotlin/Unit` to "V", which is correct only in return position.
+    if (name == "kotlin/Unit") return append("Lkotlin/Unit;")
+    return append(ClassMapperLite.mapClass(name))
 }

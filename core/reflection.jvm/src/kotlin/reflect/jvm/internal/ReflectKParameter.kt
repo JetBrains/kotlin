@@ -45,7 +45,10 @@ internal abstract class ReflectKParameter : KParameter {
 
 internal class InstanceParameter(override val callable: ReflectKCallable<*>, klass: KClass<*>) : ReflectKParameter() {
     override val index: Int get() = 0
-    override val type: KType = klass.createDefaultType()
+    override val type: KType = klass.createDefaultType {
+        if (callable.overriddenStorage.isFakeOverride) klass.java
+        else callable.caller.parameterTypes.first()
+    }
     override val name: String? get() = null
     override val kind: KParameter.Kind get() = KParameter.Kind.INSTANCE
     override val isOptional: Boolean get() = false

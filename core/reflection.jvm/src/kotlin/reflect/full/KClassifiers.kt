@@ -18,10 +18,10 @@
 
 package kotlin.reflect.full
 
+import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KClassifier
 import kotlin.reflect.KType
-import kotlin.reflect.KTypeParameter
 import kotlin.reflect.KTypeProjection
 import kotlin.reflect.jvm.internal.KClassImpl
 import kotlin.reflect.jvm.internal.types.SimpleKType
@@ -60,6 +60,7 @@ internal fun KClassifier.createTypeImpl(
     nullable: Boolean = false,
     annotations: List<Annotation> = emptyList(),
     mutableCollectionClass: KClass<*>? = null,
+    computeJavaType: (() -> Type)? = null,
 ): KType {
     if (useK1Implementation) {
         return createK1KType(arguments, nullable, mutableCollectionClass)
@@ -75,6 +76,7 @@ internal fun KClassifier.createTypeImpl(
         isNothingType = false,
         isSuspendFunctionType = false,
         mutableCollectionClass,
+        computeJavaType,
     )
 }
 

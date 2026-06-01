@@ -116,7 +116,7 @@ internal class KPackageImpl(
                         result.add(createUnboundProperty(property, this@KPackageImpl))
                     }
                     for (function in pkg.functions) {
-                        result.add(createUnboundFunction(function, this@KPackageImpl))
+                        result.add(createUnboundFunction(function, this@KPackageImpl, kmClass = null))
                     }
                 }
                 result.toList()

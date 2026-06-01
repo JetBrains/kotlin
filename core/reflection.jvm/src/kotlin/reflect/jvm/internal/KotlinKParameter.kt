@@ -23,23 +23,20 @@ internal class KotlinKParameter(
         kmParameter.name.takeUnless { it.startsWith("<") }
 
     override val type: KType by lazy(PUBLICATION) {
-        kmParameter.type.toKType(callable.container.jClass.safeClassLoader, typeParameterTable) {
-            require(callable.container is KPackageImpl || callable.isConstructor) {
-                // For class callables, we'll also need to tweak instance receiver parameter type (see `DescriptorKParameter`).
-                "Only constructors and top-level callables are supported for now: ${callable.container}/${callable.name} $name"
-            }
+        callable.substituteType(kmParameter.type.toKType(callable.container.jClass.safeClassLoader, typeParameterTable) {
             callable.caller.parameterTypes[index]
-        }
+        })
     }
 
-    override val isOptional: Boolean
-        get() {
-            require(callable is KotlinKProperty<*> || callable.container is KPackageImpl || callable.isConstructor) {
-                // For class functions, we'll also need to check the flag for parameters from inherited functions.
-                "Only constructors and top-level callables are supported for now: ${callable.container}/${callable.name} $name"
-            }
-            return kmParameter.declaresDefaultValue
-        }
+    override val isOptional: Boolean by lazy(PUBLICATION) {
+        if (kmParameter.declaresDefaultValue) return@lazy true
+        val overridden = (callable as? KotlinKFunction)?.overridden ?: return@lazy false
+        // If this parameter's callable has bound receiver(s), its index needs to be adjusted because functions returned by
+        // `ReflectKFunction.overridden` are always unbound.
+        // TODO(KT-86452): make sure to update this code once bound references with context receivers are supported.
+        val unboundIndex = if (callable.isBound) index + 1 else index
+        overridden.any { it.parameters[unboundIndex].isOptional }
+    }
 
     override val declaresDefaultValue: Boolean
         get() = kmParameter.declaresDefaultValue

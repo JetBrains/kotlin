@@ -30,7 +30,7 @@ internal abstract class KotlinKFunction(
     protected abstract val contextParameters: List<KmValueParameter>
     protected abstract val extensionReceiverType: KmType?
     protected abstract val valueParameters: List<KmValueParameter>
-    protected abstract val typeParameterTable: TypeParameterTable
+    abstract val typeParameterTable: TypeParameterTable
     protected abstract val jvmSignature: JvmMethodSignature
 
     override val allParameters: List<KParameter> by lazy(PUBLICATION) {
@@ -53,18 +53,11 @@ internal abstract class KotlinKFunction(
 
     override val arity: Int get() = caller.arity
 
-    override val overridden: Collection<ReflectKFunction>
-        get() {
-            require(container is KPackageImpl) {
-                "Only top-level functions are supported for now: $container/$name $signature"
-            }
-            return emptyList()
-        }
+    override val overridden: Collection<ReflectKFunction> by lazy(PUBLICATION) {
+        computeOverriddenFunctions(this)
+    }
 
     override val caller: Caller<*> by lazy(PUBLICATION) {
-        require(isConstructor || container is KPackageImpl) {
-            "Only constructors and top-level functions are supported for now: $container/$name $signature"
-        }
         val signature = jvmSignature
         val member: Member? =
             if (isConstructor && !container.isInlineClass()) {
@@ -75,15 +68,19 @@ internal abstract class KotlinKFunction(
 
         when (member) {
             is Constructor<*> -> createConstructorCaller(member, isDefault = false)
-            is Method -> createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
+            is Method -> when {
+                !Modifier.isStatic(member.modifiers) ->
+                    createInstanceMethodCaller(member)
+                member.getDeclaredAnnotation(JvmStatic::class.java) != null ->
+                    createJvmStaticInObjectCaller(member)
+                else ->
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = false)
+            }
             else -> throw KotlinReflectionInternalError("Could not compute caller for function: $this")
         }.createValueClassAwareCallerIfNeeded(this, isDefault = false, forbidUnboxingForIndices = emptyList())
     }
 
     override val callerWithDefaults: Caller<*>? by lazy(PUBLICATION) {
-        require(isConstructor || container is KPackageImpl) {
-            "Only constructors and top-level functions are supported for now: $container/$name $signature"
-        }
         val signature = jvmSignature
         val preventUnboxingForIndices = mutableListOf<Int>()
         val member: Member? =
@@ -93,7 +90,18 @@ internal abstract class KotlinKFunction(
                 val patchingResult = patchJvmDescriptorByExtraBoxing(this, jvmSignature.descriptor)
                 preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultConstructor(patchingResult.newDescriptor) as Member?
-            } else {
+            } else run {
+                getFunctionWithDefaultParametersForValueClassOverride()?.let { defaultImplsFunction ->
+                    val defaultImplsFunctionName = defaultImplsFunction.signature.substringBefore('(')
+                    val defaultImplsFunctionDesc = defaultImplsFunction.signature.substring(defaultImplsFunctionName.length)
+                    val patchingResult =
+                        patchJvmDescriptorByExtraBoxing(defaultImplsFunction, defaultImplsFunctionDesc)
+                    preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
+                    return@run container.findDefaultMethod(
+                        defaultImplsFunctionName, patchingResult.newDescriptor, true, extensionReceiverType != null,
+                    )
+                }
+
                 val patchingResult = patchJvmDescriptorByExtraBoxing(this, signature.descriptor)
                 preventUnboxingForIndices.addAll(patchingResult.boxedIndices)
                 container.findDefaultMethod(
@@ -104,7 +112,15 @@ internal abstract class KotlinKFunction(
 
         when (member) {
             is Constructor<*> -> createConstructorCaller(member, isDefault = true)
-            is Method -> createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
+            is Method -> when {
+                // Note that static $default methods for @JvmStatic functions are generated differently in objects and companion objects.
+                // In objects, $default's signature does _not_ contain the additional object instance parameter,
+                // as opposed to companion objects where the first parameter is the companion object instance.
+                (caller.member as? Method)?.getDeclaredAnnotation(JvmStatic::class.java) != null && !(container as KClass<*>).isCompanion ->
+                    createJvmStaticInObjectCaller(member)
+                else ->
+                    createStaticMethodCaller(member, isCallByToValueClassMangledMethod = caller.isBoundInstanceCallWithValueClasses)
+            }
             else -> null
         }?.createValueClassAwareCallerIfNeeded(this, isDefault = true, forbidUnboxingForIndices = preventUnboxingForIndices)
     }
@@ -115,10 +131,9 @@ internal abstract class KotlinKFunction(
     // boundReceiver is unboxed receiver when the receiver is inline class.
     // However, when the expected dispatch receiver type is an interface,
     // the member belongs to the interface/DefaultImpls, so the receiver should not be unboxed.
-    private fun useBoxedBoundReceiver(member: Method): Boolean {
-        require(container is KPackageImpl) { "Only top-level functions are supported for now: $container/$name $signature" }
-        return false
-    }
+    private fun useBoxedBoundReceiver(member: Method): Boolean =
+        allParameters.firstOrNull { it.kind == KParameter.Kind.INSTANCE }?.type?.isInlineClassType == true &&
+                member.parameterTypes.firstOrNull()?.isInterface == true
 
     private fun createStaticMethodCaller(member: Method, isCallByToValueClassMangledMethod: Boolean): Caller<*> =
         if (isBound)
@@ -126,6 +141,12 @@ internal abstract class KotlinKFunction(
                 member, isCallByToValueClassMangledMethod, if (useBoxedBoundReceiver(member)) rawBoundReceiver else boundReceiver
             )
         else CallerImpl.Method.Static(member)
+
+    private fun createJvmStaticInObjectCaller(member: Method): Caller<*> =
+        if (isBound) CallerImpl.Method.BoundJvmStaticInObject(member) else CallerImpl.Method.JvmStaticInObject(member)
+
+    private fun createInstanceMethodCaller(member: Method): Caller<*> =
+        if (isBound) CallerImpl.Method.BoundInstance(member, boundReceiver) else CallerImpl.Method.Instance(member)
 
     private fun createConstructorCaller(member: Constructor<*>, isDefault: Boolean): CallerImpl<Constructor<*>> {
         return if (!isDefault && this is KotlinKConstructor && shouldHideConstructorDueToValueClassTypeValueParameters(this)) {

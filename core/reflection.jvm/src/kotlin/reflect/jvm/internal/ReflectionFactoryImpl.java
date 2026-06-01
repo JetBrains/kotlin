@@ -98,20 +98,18 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
                 return new KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, KCallableOverriddenStorage.EMPTY);
             }
             else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
-                if (isJava) {
-                    ReflectKFunction result = (ReflectKFunction) CollectionsKt.firstOrNull(
-                            ((KClassImpl<?>) container).getData().getValue().getMembersByName(name),
-                            it -> ((ReflectKFunction) it).getSignature().equals(signature)
+                ReflectKFunction result = (ReflectKFunction) CollectionsKt.firstOrNull(
+                        ((KClassImpl<?>) container).getData().getValue().getMembersByName(name),
+                        it -> ((ReflectKFunction) it).getSignature().equals(signature)
+                );
+                if (result == null) {
+                    throw new KotlinReflectionInternalError(
+                            "Function '" + name + "' (JVM signature: " + signature + ") not resolved in " + container
                     );
-                    if (result == null) {
-                        throw new KotlinReflectionInternalError(
-                                "Function '" + name + "' (JVM signature: " + signature + ") not resolved in " + container
-                        );
-                    }
-                    return boundReceiver == CallableReference.NO_RECEIVER
-                           ? result
-                           : (KFunction<?>) result.shallowCopy(container, result.getOverriddenStorage(), boundReceiver);
                 }
+                return boundReceiver == CallableReference.NO_RECEIVER
+                       ? result
+                       : (KFunction<?>) result.shallowCopy(container, result.getOverriddenStorage(), boundReceiver);
             }
         }
         return new DescriptorKFunction(container, name, signature, boundReceiver);
@@ -249,7 +247,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         if (klass instanceof ClassBasedDeclarationContainer) {
             return CachesKt.getOrCreateKType(((ClassBasedDeclarationContainer) klass).getJClass(), arguments, isMarkedNullable);
         }
-        return KClassifiers.createTypeImpl(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList(), null);
+        return KClassifiers.createTypeImpl(klass, arguments, isMarkedNullable, Collections.<Annotation>emptyList(), null, null);
     }
 
     @Override

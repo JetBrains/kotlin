@@ -5,6 +5,7 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -15,6 +16,8 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
+import kotlin.metadata.ClassKind
+import kotlin.metadata.kind
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.KProperty
@@ -55,9 +58,26 @@ private fun KClassImpl<*>.collectDeclaredMemberNamesTransitively(result: Mutable
 
 internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> = buildList {
     val kClass = this@computeDeclaredMembersByName
-    if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
+    if (useK1Implementation || isComplicatedBuiltinSubclass) {
         addAll(getDescriptorBasedMembers(memberScope, DECLARED, name))
         addAll(getDescriptorBasedMembers(staticScope, DECLARED, name))
+    } else if (kmClass != null) {
+        val kmClass = kmClass!!
+        for (function in kmClass.functions) {
+            if (function.name == name) {
+                add(createUnboundFunction(function, kClass, kmClass))
+            }
+        }
+        if (kmClass.kind == ClassKind.ENUM_CLASS) {
+            if (name == StandardNames.ENUM_VALUES.asString()) {
+                add(createUnboundFunction(createEnumValuesKmFunction(kClass), kClass, kmClass))
+            }
+            if (name == StandardNames.ENUM_VALUE_OF.asString()) {
+                add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass, kmClass))
+            }
+        }
+        getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
+        getDescriptorBasedMembers(staticScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
     } else {
         getDeclaredNonStaticMethodsFromJavaClass(name).filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
         getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
@@ -103,8 +123,18 @@ internal fun KClassImpl<*>.computeMembersByName(name: String): Collection<Reflec
     }
 
 internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
-    if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
+    if (useK1Implementation || isComplicatedBuiltinSubclass) {
         getMemberNamesFromDescriptors()
+    } else if (kmClass != null) buildSet {
+        for (function in kmClass!!.functions) {
+            add(function.name)
+        }
+        if (kmClass!!.kind == ClassKind.ENUM_CLASS) {
+            add(StandardNames.ENUM_VALUES.asString())
+            add(StandardNames.ENUM_VALUE_OF.asString())
+        }
+        memberScope.getVariableNames().mapTo(this, Name::asString)
+        staticScope.getVariableNames().mapTo(this, Name::asString)
     } else buildSet {
         if (!jClass.isAnnotation) {
             for (method in jClass.declaredMethods) {
