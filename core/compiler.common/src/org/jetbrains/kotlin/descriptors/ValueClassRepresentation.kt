@@ -60,7 +60,8 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
 
 
 /**
- * Determines whether the current [ValueClassRepresentation] is compatible with being a single-field value class.
+ * Casts or converts the [ValueClassRepresentation] to [InlineClassRepresentation] depending on the [treatFullValueClassesWithOneFieldAsBasic],
+ * which specifies whether a single-field full value class is compatible with being an inline class or not.
  *
  * **Full** value classes are value classes described in [this KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md).
  *
@@ -76,7 +77,7 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
  *                                                 Therefore, full value classes with one field are actually preexisting value classes on other platforms.
  *                                                 `false` must be used for JVM, `true` for other backends.
  * @return An [InlineClassRepresentation] if the class has a compatible value class
- *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
+ *         representation and meets the conditions specified by the [treatFullValueClassesWithOneFieldAsBasic]
  *         parameter; otherwise, `null`.
  */
 @ValueClassBackendAgnosticApi
