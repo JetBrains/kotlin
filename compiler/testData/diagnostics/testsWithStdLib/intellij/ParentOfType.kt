@@ -1,4 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE_FEATURE_TOGGLED: FixesForIntersectionTypesIn25
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 import kotlin.reflect.KClass
 
 fun <T : Number> Any.parentOfTypes(vararg classes: KClass<out T>): T? {

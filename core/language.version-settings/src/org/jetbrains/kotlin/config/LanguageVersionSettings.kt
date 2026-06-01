@@ -528,6 +528,7 @@ enum class LanguageFeature(
     ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds(KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-358"),
     ForbidUselessTypeArgumentsIn25(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-390"),
     ExplicitContextArguments(sinceVersion = KOTLIN_2_5, issue = "KT-81684"),
+    FixesForIntersectionTypesIn25(sinceVersion = KOTLIN_2_5, issue = "KT-86629"),
     AllowEagerSupertypeAccessibilityChecks(sinceVersion = KOTLIN_2_5, enabledInProgressiveMode = true, "KTLC-398"),
     WrapContinuationForTailCallFunctions(KOTLIN_2_5, sinceApiVersion = ApiVersion.KOTLIN_2_5, "KT-74051"),
     ForbidOperatorEqualsInEnumEntriesAndAnonymousObjects(KOTLIN_2_5, enabledInProgressiveMode = true, "KT-86143"),

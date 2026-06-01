@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -22,6 +23,8 @@ import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.diagnostics.ConeRecursiveTypeParameterDuringErasureError
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
+import org.jetbrains.kotlin.fir.isEnabled
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
@@ -138,9 +141,10 @@ fun ConeKotlinType.makeConeTypeDefinitelyNotNullOrNotNull(
     }
 
     if (this is ConeIntersectionType) {
-        return ConeIntersectionType(intersectedTypes.map {
-            it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck)
-        })
+        return mapTypes { it.makeConeTypeDefinitelyNotNullOrNotNull(typeContext, avoidComprehensiveCheck) }
+            .applyIf(!typeContext.session.languageVersionSettings.supportsFeature(LanguageFeature.FixesForIntersectionTypesIn25)) {
+                withUpperBound(null)
+            }
     }
     return ConeDefinitelyNotNullType.create(this, typeContext, avoidComprehensiveCheck)
         ?: this.withNullability(nullable = false, typeContext, preserveAttributes = preserveAttributes)
@@ -631,17 +635,42 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
     fun findCorrespondingCapturedArgumentsForType(type: ConeKotlinType) =
         capturedArgumentsByComponents.find { typeToCapture -> typeToCapture.isSuitableForType(type) }?.capturedArguments
 
-    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeRigidType): List<ConeKotlinType>? {
+    fun replaceArgumentsWithCapturedArgumentsByIntersectionComponents(typeToReplace: ConeRigidType): ConeKotlinType? {
         return if (typeToReplace is ConeIntersectionType) {
-            typeToReplace.intersectedTypes.map { componentType ->
+            var wasComponentChanged = false
+            val components = typeToReplace.intersectedTypes.map { componentType ->
                 val capturedArguments = findCorrespondingCapturedArgumentsForType(componentType)
                     ?: return@map componentType
+                wasComponentChanged = true
                 componentType.withArguments(capturedArguments)
-            }.takeUnless { it == typeToReplace.intersectedTypes }
+            }
+
+            val upperBoundForApproximation = typeToReplace.upperBoundForApproximation.takeIf {
+                LanguageFeature.FixesForIntersectionTypesIn25.isEnabled()
+            }
+            val capturedUpperBoundArguments = upperBoundForApproximation?.let(::findCorrespondingCapturedArgumentsForType)
+
+            // If all components and the upper bound are unchanged, return null
+            if (!wasComponentChanged && capturedUpperBoundArguments == null) {
+                return null
+            }
+
+            c.intersectTypes(components)
+                .let {
+                    if (it is ConeIntersectionType) {
+                        val capturedUpperBoundForApproximation =
+                            (capturedUpperBoundArguments?.let(upperBoundForApproximation::withArguments)
+                                ?: upperBoundForApproximation)
+                        capturedUpperBoundForApproximation?.let(it::withUpperBound) ?: it
+                    } else {
+                        it
+                    }
+                }
+                .withNullability(typeToReplace.canBeNull(c.session), c)
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
                 ?: return null
-            listOf(typeToReplace.withArguments(capturedArguments))
+            typeToReplace.withArguments(capturedArguments)
         }
     }
 
@@ -662,8 +691,7 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
                     // testData/codegen/box/reflection/typeOf/rawTypes_after.kt.
                     // Therefore, we return null if nothing was captured for either bound.
                     mapTypesOrNull(c) {
-                        c.intersectTypes(replaceArgumentsWithCapturedArgumentsByIntersectionComponents(it) ?: return null)
-                            .withNullability(it.canBeNull(c.session), c)
+                        replaceArgumentsWithCapturedArgumentsByIntersectionComponents(it) ?: return null
                     }
                 }
                 // None of these types have arguments that could be captured.
@@ -675,9 +703,7 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
         }
         is ConeIntersectionType -> {
             capturedArgumentsByComponents = this.captureArgumentsForIntersectionType() ?: return null
-            c.intersectTypes(
-                replaceArgumentsWithCapturedArgumentsByIntersectionComponents(this) ?: return null
-            ).withNullability(canBeNull(c.session), c)
+            replaceArgumentsWithCapturedArgumentsByIntersectionComponents(this) ?: return null
         }
         is ConeSimpleKotlinType -> {
             c.captureFromArgumentsInternal(this, CaptureStatus.FROM_EXPRESSION)
@@ -747,7 +773,7 @@ private fun ConeKotlinType.captureArgumentsForIntersectionType(): List<CapturedA
                 }
             }
 
-            is ConeIntersectionType -> intersectedTypes
+            is ConeIntersectionType -> upperBoundForApproximation?.let { intersectedTypes + it } ?: intersectedTypes
             else -> error("Should not be here")
         }
 

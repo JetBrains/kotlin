@@ -140,7 +140,7 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
     }
 }
 
-fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType): ConeIntersectionType {
+fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType?): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
