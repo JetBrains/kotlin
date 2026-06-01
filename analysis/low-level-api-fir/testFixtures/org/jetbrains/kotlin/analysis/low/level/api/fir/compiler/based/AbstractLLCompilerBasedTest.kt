@@ -46,10 +46,12 @@ import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.isKtFile
 import org.jetbrains.kotlin.test.services.service
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.TestInfo
 
+@AffectedByAnalysisApi
 abstract class AbstractLLCompilerBasedTest : AbstractKotlinCompilerTest() {
     private var _disposable: Disposable? = null
     protected val disposable: Disposable get() = _disposable!!

@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.psi.psiUtil.nextLeaf
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 import org.jetbrains.kotlin.test.TestDataAssertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
+import org.jetbrains.kotlin.testFederation.AffectedByAnalysisApi
 import java.io.File
 
 /**
@@ -32,6 +33,7 @@ import java.io.File
  *
  * See [AbstractAnalysisApiCodebaseDumpFileComparisonTest] and [AbstractAnalysisApiCodebaseValidationTest]
  */
+@AffectedByAnalysisApi
 abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDisposable() {
     protected fun doTest() {
         val environment = createProjectEnvironment(
