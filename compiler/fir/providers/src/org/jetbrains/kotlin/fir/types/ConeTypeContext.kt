@@ -354,7 +354,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun captureFromExpression(type: KotlinTypeMarker): ConeKotlinType? {
         require(type is ConeKotlinType)
-        return captureFromExpressionInternal(type)
+        return type.captureFromExpressionInternal()
     }
 
     override fun captureFromArguments(type: RigidTypeMarker, status: CaptureStatus): ConeRigidType? {
