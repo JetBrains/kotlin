@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceWithVersion
 import org.junit.jupiter.api.Disabled
@@ -126,74 +125,6 @@ open class IncrementalK2JavaChangeDefaultIT : IncrementalJavaChangeDefaultIT() {
 
 @DisplayName("Default incremental compilation with default precise java tracking on K2 using Fir Runner")
 class IncrementalK2JavaChangeDefaultWithFirIT : IncrementalK2JavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-}
-
-@DisplayName("Default incremental compilation via Build Tools API")
-open class IncrementalK2JavaChangeBuildToolsApiDaemonIT : IncrementalJavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.DAEMON)
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
-    }
-}
-
-@DisplayName("Default incremental compilation via Build Tools API")
-class IncrementalK2JavaChangeWithFirRunnerAndBuildToolsApiDaemonIT : IncrementalK2JavaChangeBuildToolsApiDaemonIT() {
-    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
-}
-
-@DisplayName("Incremental compilation via Build Tools API using in-process strategy")
-open class IncrementalK2JavaChangeBuildToolsApiInProcessIT : IncrementalJavaChangeDefaultIT() {
-    override val defaultBuildOptions = super.defaultBuildOptions.copy(runViaBuildToolsApi = true, compilerExecutionStrategy = KotlinCompilerExecutionStrategy.IN_PROCESS)
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody_tracked(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testAbiChangeInLib_changeMethodSignature(gradleVersion: GradleVersion) {
-        super.testAbiChangeInLib_changeMethodSignature(gradleVersion)
-    }
-
-    @Disabled("KT-57147")
-    @GradleTest
-    override fun testNonAbiChangeInLib_changeMethodBody(gradleVersion: GradleVersion) {
-        super.testNonAbiChangeInLib_changeMethodBody(gradleVersion)
-    }
-}
-
-@DisplayName("Incremental compilation via Build Tools API using in-process strategy and FIR runner")
-class IncrementalK2JavaChangeUsingFirRunnerBuildToolsApiInProcessIT : IncrementalK2JavaChangeBuildToolsApiInProcessIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)
 }
 
