@@ -141,7 +141,9 @@ class FirParcelizeAnnotationChecker(private val parcelizeAnnotationClassIds: Lis
         val expectedType = parcelerSuperType.typeArguments.singleOrNull()?.type
             ?.withAttributes(ConeAttributes.Empty) ?: return
 
-        if (!targetType.isSubtypeOf(expectedType, context.session)) {
+        val nonNullableTargetType =
+            if (targetType.isMarkedNullable) targetType.withNullability(nullable = false, context.session.typeContext) else targetType
+        if (!nonNullableTargetType.isSubtypeOf(expectedType, context.session)) {
             val reportElement = annotationCall.typeArguments.singleOrNull()?.source ?: annotationCall.source
             reporter.reportOn(reportElement, KtErrorsParcelize.PARCELER_TYPE_INCOMPATIBLE, parcelerType, targetType, context)
         }
