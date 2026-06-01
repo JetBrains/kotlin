@@ -1,4 +1,4 @@
-// LANGUAGE: +FullValueClasses
+// LANGUAGE: +FullValueClasses, -ForbidValueClassRecursionViaTypeParameters
 // CHECK_BYTECODE_LISTING
 
 // Take a look at testData/codegen/box/fullValueClasses/forbiddenRecursive.kt for forbidden recursive samples which though work on JVM.
