@@ -6,6 +6,7 @@ Compiler:
     - "compiler/**"
     - "core/**"
     - "build-common/**"
+    - "plugins/plugin-sandbox/**"
   fullyAffectedBy:
     - Unknown
     - CoreLibs

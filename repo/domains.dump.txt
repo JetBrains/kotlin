@@ -63,6 +63,7 @@ Compiler:
  - compiler/util-klib-abi
  - compiler/util-klib-metadata
  - core
+ - plugins/plugin-sandbox
 
 Wasm:
  - wasm
@@ -108,7 +109,23 @@ SwiftExport:
  - native/swift
 
 CompilerPlugins:
- - plugins
+ - plugins/allopen
+ - plugins/assign-plugin
+ - plugins/atomicfu
+ - plugins/compose
+ - plugins/js-plain-objects
+ - plugins/jvm-abi-gen
+ - plugins/kapt
+ - plugins/kotlin-dataframe
+ - plugins/kotlinx-serialization
+ - plugins/lombok
+ - plugins/noarg
+ - plugins/parcelize
+ - plugins/plugins-interactions-testing
+ - plugins/power-assert
+ - plugins/sam-with-receiver
+ - plugins/scripting
+ - plugins/test-plugins
 
 Gradle:
  - libraries/tools/gradle
