@@ -15,7 +15,10 @@ abstract class NodeJsExtension(
     private val project: Project,
     private val nodeJsEnvSpec: BaseNodeJsEnvSpec,
     private val nodejsPropertyName: String,
+    private val nodejsVersionName: String,
 ) {
+    val nodeJsVersion: String
+        get() = project.property(nodejsVersionName) as String
 
     val nodeJsExecutablePath: Provider<String> = nodeJsEnvSpec.executable.also {
         project.extra[nodejsPropertyName] = it

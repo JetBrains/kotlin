@@ -29,6 +29,7 @@ plugins {
     id("nodejs-cache-redirector-configuration")
     id("d8-configuration")
     id("binaryen-configuration")
+    id("nodejs-configuration")
 }
 
 description = "Kotlin Standard Library"

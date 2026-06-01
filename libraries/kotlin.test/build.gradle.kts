@@ -22,6 +22,7 @@ plugins {
     id("signing-convention")
     id("nodejs-cache-redirector-configuration")
     id("binaryen-configuration")
+    id("nodejs-configuration")
 }
 
 description = "Kotlin Test Library"

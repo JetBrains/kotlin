@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     idea
     id("nodejs-cache-redirector-configuration")
+    id("nodejs-configuration")
 }
 
 description = "Kotlin-test integration tests for JS"
