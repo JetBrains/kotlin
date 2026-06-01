@@ -43,6 +43,8 @@ import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicReference
 
+private fun TempFiles.createBitcodeFile(fileName: String) = create(fileName, ".bc").javaFile()
+
 internal fun PhaseEngine<NativeBackendPhaseContext>.runFrontend(config: NativeSecondStageCompilationConfig, environment: KotlinCoreEnvironment): FrontendPhaseOutput.Full? {
     val languageVersion = config.languageVersionSettings.languageVersion
     val kotlinSourceRoots = environment.configuration.kotlinSourceRoots
@@ -193,11 +195,11 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                 backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
-                    val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+                    val bitcodeFile = tempFiles.createBitcodeFile(generationState.llvmModuleName)
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
-                                bitcodeAdapter = tempFiles.create("api", ".bc").javaFile(),
+                                bitcodeAdapter = tempFiles.createBitcodeFile("api"),
                                 header = outputFiles.cAdapterHeader.javaFile(),
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
                         )
@@ -277,7 +279,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
 ) {
     useContext(context) { bitcodeEngine ->
         val tempFiles = createTempFiles(context.config, null)
-        val bitcodeFile = tempFiles.create(context.config.shortModuleName ?: "out", ".bc").javaFile()
+        val bitcodeFile = tempFiles.createBitcodeFile(context.config.shortModuleName ?: "out")
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
