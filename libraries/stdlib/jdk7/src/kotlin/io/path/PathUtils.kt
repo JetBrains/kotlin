@@ -208,7 +208,7 @@ private object PathRelativizer {
 @kotlin.internal.InlineOnly
 @IgnorableReturnValue
 public inline fun Path.copyTo(target: Path, overwrite: Boolean = false): Path {
-    val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
+    val options: Array<CopyOption> = if (overwrite) [StandardCopyOption.REPLACE_EXISTING] else []
     return Files.copy(this, target, *options)
 }
 
@@ -594,7 +594,7 @@ public inline fun Path.moveTo(target: Path, vararg options: CopyOption): Path =
 @kotlin.internal.InlineOnly
 @IgnorableReturnValue
 public inline fun Path.moveTo(target: Path, overwrite: Boolean = false): Path {
-    val options = if (overwrite) arrayOf<CopyOption>(StandardCopyOption.REPLACE_EXISTING) else emptyArray()
+    val options: Array<CopyOption> = if (overwrite) [StandardCopyOption.REPLACE_EXISTING] else []
     return Files.move(this, target, *options)
 }
 
@@ -1108,7 +1108,7 @@ public fun Path.walk(vararg options: PathWalkOption): Sequence<Path> = PathTreeW
 @WasExperimental(ExperimentalPathApi::class)
 @SinceKotlin("2.1")
 public fun Path.visitFileTree(visitor: FileVisitor<Path>, maxDepth: Int = Int.MAX_VALUE, followLinks: Boolean = false): Unit {
-    val options = if (followLinks) setOf(FileVisitOption.FOLLOW_LINKS) else setOf()
+    val options: Set<FileVisitOption> = if (followLinks) [FileVisitOption.FOLLOW_LINKS] else []
     Files.walkFileTree(this, options, maxDepth, visitor)
 }
 

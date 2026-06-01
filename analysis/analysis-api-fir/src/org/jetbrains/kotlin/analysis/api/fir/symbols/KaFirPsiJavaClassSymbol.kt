@@ -127,7 +127,7 @@ internal class KaFirPsiJavaClassSymbol(
 
     override val companionObject: KaNamedClassSymbol? get() = withValidityAssertion { null }
 
-    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
+    override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { [] }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Slow Operations (requiring access to the underlying FIR class symbol)

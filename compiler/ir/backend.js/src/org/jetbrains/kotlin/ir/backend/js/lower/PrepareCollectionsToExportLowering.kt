@@ -34,23 +34,23 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 private class ExportedCollectionsInfo(context: JsIrBackendContext) {
-    val exportedMethodNames = setOf(
+    val exportedMethodNames: Set<String> = [
         "asJsReadonlyArrayView",
         "asJsArrayView",
         "asJsReadonlySetView",
         "asJsSetView",
         "asJsReadonlyMapView",
         "asJsMapView"
-    )
+    ]
 
-    val exportableSymbols = setOf(
+    val exportableSymbols: Set<IrClassSymbol> = [
         context.irBuiltIns.listClass,
         context.irBuiltIns.mutableListClass,
         context.irBuiltIns.setClass,
         context.irBuiltIns.mutableSetClass,
         context.irBuiltIns.mapClass,
         context.irBuiltIns.mutableMapClass,
-    )
+    ]
 }
 
 val CONVERTERS_TO_JS_COLLECTIONS by IrDeclarationOriginImpl.Regular

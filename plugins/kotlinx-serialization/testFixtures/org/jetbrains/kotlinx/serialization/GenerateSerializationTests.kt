@@ -7,6 +7,7 @@ package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.generators.dsl.TestGroup
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.tests.klibIrInliner
 import org.jetbrains.kotlin.generators.tests.provider
@@ -123,6 +124,6 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun serializationNative() = arrayOf(
+private fun serializationNative(): Array<AnnotationModel> = [
     annotation(Tag::class.java, "serialization-native"),
-)
+]

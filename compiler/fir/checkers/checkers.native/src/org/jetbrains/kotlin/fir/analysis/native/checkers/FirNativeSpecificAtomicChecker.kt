@@ -57,12 +57,12 @@ object FirNativeSpecificAtomicChecker : FirCallableDeclarationChecker(MppChecker
     }
 
     private val CONCURRENT_PACKAGE = FqName("kotlin.concurrent")
-    private val CONCURRENT_NAME_SET = listOf(
+    private val CONCURRENT_NAME_SET = [
         "AtomicIntArray",
         "AtomicLongArray",
         "AtomicArray",
         "AtomicInt",
         "AtomicLong",
         "AtomicReference",
-    ).mapTo(mutableSetOf()) { Name.identifier(it) }.toSet()
+    ].mapTo(mutableSetOf()) { Name.identifier(it) }.toSet()
 }

@@ -26,10 +26,10 @@ class ParcelizeUtilSourcesProvider(testServices: TestServices, baseDir: String =
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
+        if (ENABLE_PARCELIZE !in module.directives) return []
 
         // Only provide the additional files for a JVM only module. In multiplatform tests, this ensures that the
         // additional files are only provided once and in the right module.
-        return if (module.isLeafModuleInMppGraph(testModuleStructure)) listOf(libraryPath.toTestFile()) else listOf()
+        return if (module.isLeafModuleInMppGraph(testModuleStructure)) [libraryPath.toTestFile()] else []
     }
 }

@@ -27,7 +27,7 @@ class PackagePartScopeCache(private val resolver: DeserializedDescriptorResolver
                     val classId = ClassId.topLevel(JvmClassName.byInternalName(partName).fqNameForTopLevelClassMaybeWithDollars)
                     kotlinClassFinder.findKotlinClass(classId, resolver.components.configuration.metadataVersion)
                 }
-            else listOf(fileClass)
+            else [fileClass]
 
         val packageFragment = EmptyPackageFragmentDescriptor(resolver.components.moduleDescriptor, fqName)
 

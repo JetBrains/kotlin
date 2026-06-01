@@ -174,7 +174,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
             val groupedByLinesSteppingTestLoggedData = buildList {
                 val dummy = ProcessedStep("DUMMY", "DUMMY", Location(-1, -1))
                 var lastStep = dummy
-                var columns = mutableListOf<Int>()
+                val columns: MutableList<Int> = []
 
                 for (step in debuggerSteps.plus(lastStep)) {
                     if (!preserveSteppingOnTheSamePlace && lastStep == step) continue
@@ -185,7 +185,7 @@ abstract class D8BasedDebugRunner<A : ResultingArtifact.Binary<A>>(
                         val aggregatedColumns = runIf(includeColumnInformation) { " (${columns.joinToString(", ")})" }.orEmpty()
                         val formatedSteppingExpectation = formatAsSteppingTestExpectation(fileName, lineNumber, functionName, false)
                         push(SteppingTestLoggedData(lineNumber, false, formatedSteppingExpectation + aggregatedColumns))
-                        columns = mutableListOf()
+                        columns.clear()
                     }
 
                     columns.push(step.location.column)

@@ -125,7 +125,7 @@ interface K1ExpectActualMatchingContext<T : DeclarationSymbolMarker> : TypeSyste
     fun FunctionSymbolMarker.allOverriddenDeclarationsRecursive(): Sequence<CallableSymbolMarker>
 
     val CallableSymbolMarker.valueParameters: List<ValueParameterSymbolMarker>
-        get() = (this as? FunctionSymbolMarker)?.valueParameters ?: emptyList()
+        get() = (this as? FunctionSymbolMarker)?.valueParameters ?: []
 
     val ValueParameterSymbolMarker.isVararg: Boolean
     val ValueParameterSymbolMarker.isNoinline: Boolean

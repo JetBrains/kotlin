@@ -92,7 +92,7 @@ fun TestConfigurationBuilder.configureIrActualizerDiagnosticsTest() {
  * The list of `UNUSED_*` diagnostics which are disabled by default
  * within diagnostic tests.
  */
-val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
+val DEFAULT_UNUSED_DIAGNOSTICS = [
     "UNUSED_VARIABLE",
     "UNUSED_PARAMETER",
     "UNUSED_ANONYMOUS_PARAMETER",
@@ -102,7 +102,7 @@ val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
     "UNUSED_CHANGED_VALUE",
     "UNUSED_EXPRESSION",
     "UNUSED_LAMBDA_EXPRESSION",
-)
+]
 
 /**
  * Setups the base configuration for diagnostic tests

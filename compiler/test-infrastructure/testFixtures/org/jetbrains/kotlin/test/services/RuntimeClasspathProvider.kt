@@ -14,9 +14,9 @@ abstract class RuntimeClasspathProvider(val testServices: TestServices) {
 
 abstract class RuntimeClasspathJsProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        return listOf(
+        return [
             File(System.getProperty("kotlin.js.dom.api.compat")!!)
-        )
+        ]
     }
 }
 

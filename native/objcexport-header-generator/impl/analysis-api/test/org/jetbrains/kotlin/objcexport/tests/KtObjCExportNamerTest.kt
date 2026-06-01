@@ -89,10 +89,10 @@ class KtObjCExportNamerTest(
             val type2 = with(analysisSession) { buildClassType(StandardClassIds.Double) }
             val returnType = with(analysisSession) { buildClassType(StandardClassIds.Float) }
 
-            val valueParams = listOf(
+            val valueParams = [
                 bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),
                 bridgeParameter(type2) to KtObjCParameterData(Name.identifier("doubleParam"), false, type2, false)
-            )
+            ]
 
             withOverriddenSignature(symbol, "bar", returnType, valueParams) {
 

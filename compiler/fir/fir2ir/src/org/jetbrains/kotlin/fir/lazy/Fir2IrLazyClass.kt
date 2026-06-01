@@ -129,7 +129,7 @@ class Fir2IrLazyClass(
         if (fir.isSealed) {
             fir.getIrSymbolsForSealedSubclasses()
         } else {
-            emptyList()
+            []
         }
     }
 
@@ -144,7 +144,7 @@ class Fir2IrLazyClass(
 
     @UnsafeDuringIrConstructionAPI
     override val declarations: MutableList<IrDeclaration> by lazyVar(lock) {
-        val result = mutableListOf<IrDeclaration>()
+        val result: MutableList<IrDeclaration> = []
         // NB: it's necessary to take all callables from scope,
         // e.g. to avoid accessing un-enhanced Java declarations with FirJavaTypeRef etc. inside
         val scope = fir.unsubstitutedScope()

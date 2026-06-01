@@ -37,7 +37,7 @@ object Clone : CallBasedIntrinsicMethod() {
         val newSignature = signature.newReturnType(AsmTypes.OBJECT_TYPE)
         val argTypes0 = expression.argTypes(classCodegen)
         // Don't upcast receiver to java.lang.Cloneable, since 'clone' is protected in java.lang.Object.
-        val argTypes = if (isSuperCall || argTypes0[0] == CLONEABLE_TYPE) listOf(AsmTypes.OBJECT_TYPE) else argTypes0
+        val argTypes = if (isSuperCall || argTypes0[0] == CLONEABLE_TYPE) [AsmTypes.OBJECT_TYPE] else argTypes0
         return IntrinsicFunction.create(expression, newSignature, classCodegen, argTypes) { mv ->
             mv.visitMethodInsn(opcode, "java/lang/Object", "clone", "()Ljava/lang/Object;", false)
         }

@@ -29,7 +29,7 @@ fun main(args: Array<String>) {
                 val init: TestClass.() -> Unit = {
                     model(
                         "diagnostics/tests", pattern = TestGeneratorUtil.KT,
-                        excludeDirsRecursively = listOf("multiplatform", "jvm"),
+                        excludeDirsRecursively = ["multiplatform", "jvm"],
                         excludedPattern = excludedCustomTestdataPattern,
                     )
                     model(
@@ -65,7 +65,7 @@ fun main(args: Array<String>) {
                 model(
                     "diagnostics/foreignAnnotationsTests/tests",
                     excludedPattern = excludedCustomTestdataPattern,
-                    excludeDirs = listOf("externalAnnotations"),
+                    excludeDirs = ["externalAnnotations"],
                 )
                 model("diagnostics/foreignAnnotationsTests/java8Tests", excludedPattern = excludedCustomTestdataPattern)
                 model("diagnostics/foreignAnnotationsTests/java11Tests", excludedPattern = excludedCustomTestdataPattern)
@@ -97,12 +97,12 @@ fun main(args: Array<String>) {
         }
 
         testGroup(testRoot, "compiler/") {
-            fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = emptyList()) {
-                val relativeRootPaths = listOf(
+            fun TestClass.phasedModel(allowKts: Boolean, excludeDirsRecursively: List<String> = []) {
+                val relativeRootPaths = [
                     "testData/diagnostics/tests",
                     "testData/diagnostics/testsWithAnyBackend",
                     "testData/diagnostics/testsWithStdLib",
-                )
+                ]
                 val pattern = when (allowKts) {
                     true -> TestGeneratorUtil.KT_OR_KTS
                     false -> TestGeneratorUtil.KT
@@ -111,7 +111,7 @@ fun main(args: Array<String>) {
                 for (path in relativeRootPaths) {
                     model(
                         path,
-                        excludeDirs = listOf("declarations/multiplatform/k1"),
+                        excludeDirs = ["declarations/multiplatform/k1"],
                         skipTestAllFilesCheck = true,
                         pattern = pattern.canFreezeIDE,
                         excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
@@ -137,14 +137,14 @@ fun main(args: Array<String>) {
             testClass<AbstractFirPsiDiagnosticTestSpec> {
                 model(
                     "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludeDirs = ["helpers"] + detectDirsWithTestsMapFileOnly("diagnostics"),
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
                 )
             }
             testClass<AbstractFirLightTreeDiagnosticTestSpec> {
                 model(
                     "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludeDirs = ["helpers"] + detectDirsWithTestsMapFileOnly("diagnostics"),
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
                 )
             }

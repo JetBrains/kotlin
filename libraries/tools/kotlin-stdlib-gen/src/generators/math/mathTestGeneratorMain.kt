@@ -21,7 +21,7 @@ fun main(args: Array<String>) {
 
     generateUtils(baseDir.resolve("mathTestUtils.kt"))
 
-    val trigonometryFunctions = listOf(
+    val trigonometryFunctions = [
         MathTestsGenerator.ModelFunction1(::sin),
         MathTestsGenerator.ModelFunction1(::cos),
         MathTestsGenerator.ModelFunction1(::tan, exact = false),
@@ -34,17 +34,17 @@ fun main(args: Array<String>) {
         MathTestsGenerator.ModelFunction1(::asinh, exact = false),
         MathTestsGenerator.ModelFunction1(::acosh, exact = false),
         MathTestsGenerator.ModelFunction1(::atanh, exact = false),
-    )
+    ]
     MathTestsGenerator(
         outputFile = baseDir.resolve("trigonometry.kt"),
-        testPoints = listOf(0.0, 1.0, PI),
+        testPoints = [0.0, 1.0, PI],
         functions = trigonometryFunctions
     ).generate()
 
     //workaround about method with receiver
     fun powWrapper(x: Double, y: Double): Double = x.pow(y)
 
-    val powerFunctions = listOf(
+    val powerFunctions = [
         MathTestsGenerator.ModelFunction2(::hypot),
         MathTestsGenerator.ModelFunction1(::sqrt),
         MathTestsGenerator.ModelFunction1(::exp, exact = false),
@@ -55,23 +55,23 @@ fun main(args: Array<String>) {
         MathTestsGenerator.ModelFunction1(::log2, exact = false, customTestPoint = 2.0),
         MathTestsGenerator.ModelFunction1(::ln1p, customTestPoint = E),
         MathTestsGenerator.ModelFunction2(::powWrapper, exact = false),
-    )
+    ]
     MathTestsGenerator(
         outputFile = baseDir.resolve("powers.kt"),
-        testPoints = listOf(0.0, 1.0),
+        testPoints = [0.0, 1.0],
         functions = powerFunctions
     ).generate()
 
 
-    val roundingFunctions = listOf(
+    val roundingFunctions = [
         MathTestsGenerator.ModelFunction1(::ceil),
         MathTestsGenerator.ModelFunction1(::floor),
         MathTestsGenerator.ModelFunction1(::truncate),
         MathTestsGenerator.ModelFunction1(::round),
-    )
+    ]
     MathTestsGenerator(
         outputFile = baseDir.resolve("roundings.kt"),
-        testPoints = listOf(0.4, 0.5, 0.6, 1.0),
+        testPoints = [0.4, 0.5, 0.6, 1.0],
         functions = roundingFunctions
     ).generate()
 

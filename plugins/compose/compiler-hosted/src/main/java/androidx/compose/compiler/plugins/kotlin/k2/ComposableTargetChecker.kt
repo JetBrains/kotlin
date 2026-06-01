@@ -162,13 +162,13 @@ fun FirCallableSymbol<*>.toScheme(): Scheme =
 
 @OptIn(SymbolInternals::class)
 context(context: CheckerContext)
-fun FirCallableSymbol<*>.methodOverrides() = (fir as? FirFunction)?.getDirectOverriddenFunctions(context) ?: emptyList()
+fun FirCallableSymbol<*>.methodOverrides() = (fir as? FirFunction)?.getDirectOverriddenFunctions(context) ?: []
 
 context(context: CheckerContext)
 fun FirCallableSymbol<*>.parameters(): List<FirValueParameterSymbol> =
     (this as? FirFunctionSymbol<*>)?.let {
         valueParameterSymbols.filter { it.isComposable(context) }
-    } ?: emptyList()
+    } ?: []
 
 @OptIn(SymbolInternals::class)
 context(session: FirSession)

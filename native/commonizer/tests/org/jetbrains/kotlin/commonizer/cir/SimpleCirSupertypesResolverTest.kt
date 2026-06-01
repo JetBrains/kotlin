@@ -26,7 +26,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             """.trimIndent()
         )
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(index, CirProvidedClassifiers.EMPTY)
         val supertypes = resolver.supertypes(mockClassType("X"))
@@ -48,7 +48,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             """.trimIndent()
         )
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(index, CirProvidedClassifiers.EMPTY)
         val supertypes = resolver.supertypes(mockClassType("/Outer.X"))
@@ -69,7 +69,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             """.trimIndent()
         )
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(index, CirProvidedClassifiers.EMPTY)
         val supertypes = resolver.supertypes(mockClassType("X"))
@@ -93,7 +93,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             """.trimIndent()
         )
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(index, CirProvidedClassifiers.EMPTY)
         val supertypes = resolver.supertypes(mockClassType("X", nullable = true))
@@ -109,14 +109,14 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             source("""class X: A""")
         }
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(
             index, CirProvidedClassifiersByModules(
                 false, mapOf(
                     CirEntityId.create("A") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
-                        supertypes = emptyList(),
+                        typeParameters = [],
+                        supertypes = [],
                         visibility = Visibilities.Public,
                         kind = ClassKind.INTERFACE
                     )
@@ -143,14 +143,14 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             )
         }
 
-        val root = CirTreeRoot(listOf(module))
+        val root = CirTreeRoot([module])
         val index = CirClassifierIndex(root)
         val resolver = SimpleCirSupertypesResolver(
             index, CirProvidedClassifiersByModules(
                 false, mapOf(
                     CirEntityId.create("A") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
-                        supertypes = emptyList(),
+                        typeParameters = [],
+                        supertypes = [],
                         visibility = Visibilities.Public,
                         kind = ClassKind.INTERFACE
                     )
@@ -158,7 +158,7 @@ class SimpleCirSupertypesResolverTest : KtInlineSourceCommonizerTestCase() {
             )
         )
         val supertypes = resolver.supertypes(mockClassType("X"))
-        kotlin.test.assertEquals(setOf("/A", "/B"), supertypes.map { it.safeAs<CirClassType>()?.classifierId.toString() }.toSet())
+        kotlin.test.assertEquals(["/A", "/B"], supertypes.map { it.safeAs<CirClassType>()?.classifierId.toString() }.toSet())
 
         supertypes.forEach { supertype ->
             kotlin.test.assertNull(supertype.outerType, "Expected no outerType")

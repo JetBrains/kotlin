@@ -116,7 +116,7 @@ internal fun LinkKlibsContext.linkKlibs(
     )
 
     val irDeserializer = run {
-        val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { listOf(it) }.orEmpty()).distinct()
+        val exportedDependencies = (moduleDescriptor.getExportedDependencies(config) + libraryToCacheModule?.let { [it] }.orEmpty()).distinct()
         val irProviderForCEnumsAndCStructs =
                 IrProviderForCEnumAndCStructStubs(generatorContext)
         val cInteropModuleDeserializerFactory = KonanCInteropModuleDeserializerFactory(
@@ -132,7 +132,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 .map { it.uniqueName }
 
         val friendModulesMap = (
-                listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
+                [moduleDescriptor.name.asStringStripSpecialMarkers()] +
                         config.includedLibraries.map { it.uniqueName }
                 ).associateWith { friendModules }
 
@@ -154,7 +154,7 @@ internal fun LinkKlibsContext.linkKlibs(
                 partialLinkageConfig = config.configuration.partialLinkageConfig,
                 irDiagnosticReporter = irDiagnosticReporter,
                 libraryBeingCached = config.libraryToCache,
-                externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
+                externalOverridabilityConditions = [IrObjCOverridabilityCondition],
         ).also { linker ->
 
             // context.config.librariesWithDependencies could change at each iteration.
@@ -197,7 +197,7 @@ internal fun LinkKlibsContext.linkKlibs(
             }
         }
     }
-    val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), listOf(irDeserializer))
+    val mainModule = translator.generateModuleFragment(generatorContext, environment.getSourceFiles(), [irDeserializer])
 
     irDeserializer.postProcess(inOrAfterLinkageStep = true)
 
@@ -228,9 +228,9 @@ internal fun LinkKlibsContext.linkKlibs(
         }
     }
 
-    mainModule.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(mainModule.descriptor)) }
+    mainModule.files.forEach { it.metadata = DescriptorMetadataSource.File([mainModule.descriptor]) }
     modules.values.forEach { module ->
-        module.files.forEach { it.metadata = DescriptorMetadataSource.File(listOf(module.descriptor)) }
+        module.files.forEach { it.metadata = DescriptorMetadataSource.File([module.descriptor]) }
     }
 
     return if (libraryToCache == null) {

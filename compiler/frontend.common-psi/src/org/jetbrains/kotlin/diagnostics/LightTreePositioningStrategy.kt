@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.diagnostics
 import com.intellij.lang.LighterASTNode
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.TokenType
+import com.intellij.psi.tree.IElementType
 import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtSourceElement
@@ -52,7 +53,7 @@ fun markRange(
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     originalNode: LighterASTNode
 ): List<TextRange> {
-    return listOf(markSingleElement(from, to, startOffset, endOffset, tree, originalNode))
+    return [markSingleElement(from, to, startOffset, endOffset, tree, originalNode)]
 }
 
 fun markSingleElement(
@@ -70,18 +71,18 @@ fun markSingleElement(
     return TextRange(startDelta + startOffset, endDelta + endOffset)
 }
 
-private val DOC_AND_COMMENT_TOKENS = setOf(
+private val DOC_AND_COMMENT_TOKENS: Set<IElementType?> = [
     WHITE_SPACE, KtTokens.IDENTIFIER,
     KtTokens.EOL_COMMENT, KtTokens.BLOCK_COMMENT, KtTokens.SHEBANG_COMMENT, KtTokens.DOC_COMMENT
-)
+]
 
-private val FILLER_TOKENS = setOf(
+private val FILLER_TOKENS: Set<IElementType?> = [
     KtTokens.WHITE_SPACE,
     KtTokens.EOL_COMMENT,
     KtTokens.BLOCK_COMMENT,
     KtTokens.SHEBANG_COMMENT,
     KtTokens.DOC_COMMENT,
-)
+]
 
 private fun LighterASTNode.nonFillerFirstChildOrSelf(tree: FlyweightCapableTreeStructure<LighterASTNode>): LighterASTNode =
     getChildren(tree).firstOrNull { !it.isFiller() } ?: this

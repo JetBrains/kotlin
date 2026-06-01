@@ -116,16 +116,16 @@ class CustomWasmJsCompilerSecondStageFacade private constructor(
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularAndFriendDependencies.isNotEmpty()) {
-                    listOf(
+                    [
                         CommonJsAndWasmCompilerArguments::libraries.cliArgument,
                         regularAndFriendDependencies.joinToString(File.pathSeparator),
-                    )
+                    ]
                 },
                 runIf(friendDependencies.isNotEmpty()) {
-                    listOf(CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                    [CommonJsAndWasmCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator))]
                 },
                 runIf(USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives) {
-                    listOf(KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument)
+                    [KotlinWasmCompilerArguments::wasmUseNewExceptionProposal.cliArgument]
                 },
                 customLanguageFeatures
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },

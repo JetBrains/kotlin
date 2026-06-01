@@ -34,7 +34,7 @@ private annotation class StrategyAgnosticSnapshotterTest
 private class StrategyAgnosticSnapshotterTestArgumentProvider : ArgumentsProvider {
     override fun provideArguments(context: ExtensionContext): Stream<out Arguments> {
         return namedStrategyArguments().flatMap { namedStrategyArg ->
-            sequenceOf(
+            [
                 Arguments.of(
                     namedStrategyArg,
                     ClassSnapshotGranularity.CLASS_LEVEL,
@@ -55,7 +55,7 @@ private class StrategyAgnosticSnapshotterTestArgumentProvider : ArgumentsProvide
                     ClassSnapshotGranularity.CLASS_MEMBER_LEVEL,
                     named("use inlined classes", true)
                 ),
-            )
+            ]
         }.stream()
     }
 }
@@ -147,7 +147,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
             val lib = module("empty")
             val app = module(
                 "empty2",
-                dependencies = listOf(lib),
+                dependencies = [lib],
                 snapshotConfig = SnapshotConfig(granularity, snapshotInlinedClasses)
             )
 
@@ -167,8 +167,8 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
                 )
             }
 
-            lib.compile(expectedDirtySet = setOf("calc.kt"))
-            app.compile(expectedDirtySet = emptySet())
+            lib.compile(expectedDirtySet = ["calc.kt"])
+            app.compile(expectedDirtySet = [])
         }
     }
 
@@ -184,7 +184,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
             val lib = module("empty")
             val app = module(
                 "empty2",
-                dependencies = listOf(lib),
+                dependencies = [lib],
                 snapshotConfig = SnapshotConfig(granularity, snapshotInlinedClasses)
             )
 
@@ -204,8 +204,8 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
                 )
             }
 
-            lib.compile(expectedDirtySet = setOf("calc.kt"))
-            app.compile(expectedDirtySet = emptySet())
+            lib.compile(expectedDirtySet = ["calc.kt"])
+            app.compile(expectedDirtySet = [])
         }
     }
 
@@ -221,7 +221,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
             val lib = module("empty")
             val app = module(
                 "empty2",
-                dependencies = listOf(lib),
+                dependencies = [lib],
                 snapshotConfig = SnapshotConfig(granularity, snapshotInlinedClasses)
             )
 
@@ -241,8 +241,8 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
                 )
             }
 
-            lib.compile(expectedDirtySet = setOf("calc.kt"))
-            app.compile(expectedDirtySet = emptySet()) // no change expected
+            lib.compile(expectedDirtySet = ["calc.kt"])
+            app.compile(expectedDirtySet = []) // no change expected
 
             lib.changeFile("calc.kt") {
                 it.replace(
@@ -257,11 +257,11 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
                 )
             }
 
-            lib.compile(expectedDirtySet = setOf("calc.kt"))
+            lib.compile(expectedDirtySet = ["calc.kt"])
 
-            val expectedDirtySet = when (granularity) {
-                ClassSnapshotGranularity.CLASS_MEMBER_LEVEL -> emptySet()
-                ClassSnapshotGranularity.CLASS_LEVEL -> setOf("callSite.kt")
+            val expectedDirtySet: Set<String> = when (granularity) {
+                ClassSnapshotGranularity.CLASS_MEMBER_LEVEL -> []
+                ClassSnapshotGranularity.CLASS_LEVEL -> ["callSite.kt"]
             }
             app.compile(expectedDirtySet = expectedDirtySet)
             // why does it behave differently? because of snapshotDiff logic. external classes are initially filtered by the classAbiHash.
@@ -285,7 +285,7 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
             val lib = module("empty")
             val app = module(
                 "empty2",
-                dependencies = listOf(lib),
+                dependencies = [lib],
                 snapshotConfig = SnapshotConfig(granularity, snapshotInlinedClasses)
             )
 
@@ -319,8 +319,8 @@ class ClasspathSnapshottingWithDebugInfoTest : BaseCompilationTest() {
                 )
             }
 
-            lib.compile(expectedDirtySet = setOf("calc.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt")) // not ideal
+            lib.compile(expectedDirtySet = ["calc.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"]) // not ideal
             /*
              * so KT-62556 is unrelated after all: here the difference begins with
              *

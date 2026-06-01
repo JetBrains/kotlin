@@ -57,12 +57,12 @@ private fun metadataObject(): Metadata {
     return createMetadata(METADATA_KIND_CLASS, VOID, VOID, VOID, VOID, VOID)
 }
 
-private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array<dynamic>>(
+private val propertyRefClassMetadataCache: Array<Array<dynamic>> = [
     //                 immutable     ,     mutable
-    arrayOf<dynamic>(metadataObject(), metadataObject()), // 0
-    arrayOf<dynamic>(metadataObject(), metadataObject()), // 1
-    arrayOf<dynamic>(metadataObject(), metadataObject())  // 2
-)
+    [metadataObject(), metadataObject()], // 0
+    [metadataObject(), metadataObject()], // 1
+    [metadataObject(), metadataObject()]  // 2
+]
 
 @UsedFromCompilerGeneratedCode
 internal fun constructCallableReference(

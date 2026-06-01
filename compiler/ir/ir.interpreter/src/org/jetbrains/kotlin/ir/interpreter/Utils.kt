@@ -94,7 +94,7 @@ internal fun getPrimitiveClass(irType: IrType, asObject: Boolean = false): Class
 fun IrFunction.getFirstNonInterfaceOverridden(): IrFunction {
     if (this !is IrSimpleFunction) return this
 
-    return generateSequence(listOf(this)) {
+    return generateSequence([this]) {
         it.firstOrNull()?.overriddenSymbols?.map { overriddenSymbol -> overriddenSymbol.owner }
     }.flatten().first { overriddenFunction ->
         if (overriddenFunction.isFakeOverride) return@first false
@@ -106,7 +106,7 @@ fun IrFunction.getFirstNonInterfaceOverridden(): IrFunction {
 fun IrFunction.getLastOverridden(): IrFunction {
     if (this !is IrSimpleFunction) return this
 
-    return generateSequence(listOf(this)) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
+    return generateSequence([this]) { it.firstOrNull()?.overriddenSymbols?.map { it.owner } }.flatten().last()
 }
 
 internal fun List<Any?>.toPrimitiveStateArray(type: IrType): Primitive {
@@ -129,7 +129,7 @@ fun IrFunctionAccessExpression.getVarargType(index: Int): IrType? {
     val type = this.symbol.owner.parameters[index].type as? IrSimpleType ?: return null
     return type.buildSimpleType {
         val typeParameter = varargType.classifierOrFail.owner as IrTypeParameter
-        arguments = listOf(makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE))
+        arguments = [makeTypeProjection(typeArguments[typeParameter.index]!!, Variance.OUT_VARIANCE)]
     }
 }
 
@@ -337,10 +337,10 @@ internal fun IrEnumEntry.toState(irBuiltIns: IrBuiltIns): Common {
     val enumClassObject = Common(this.correspondingClass ?: enumClass)
 
     if (enumEntries.isNotEmpty()) {
-        val valueArguments = listOf(
+        val valueArguments = [
             Primitive(this.name.asString(), irBuiltIns.stringType),
             Primitive(enumEntries.indexOf(this), irBuiltIns.intType)
-        )
+        ]
         irBuiltIns.enumClass.owner.declarations.filterIsInstance<IrProperty>().zip(valueArguments).forEach { [property, argument] ->
             enumClassObject.setField(property.symbol, argument)
         }

@@ -39,12 +39,12 @@ class CasesPublicAPITest {
 
     @Test
     fun companions() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.companions.PrivateApi"))
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = ["cases.companions.PrivateApi"])
     }
 
     @Test
     fun default() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.default.PrivateApi"))
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = ["cases.default.PrivateApi"])
     }
 
     @Test
@@ -76,11 +76,11 @@ class CasesPublicAPITest {
     fun marker() {
         snapshotAPIAndCompare(
             testName.methodName,
-            excludedAnnotatedWith = setOf(
+            excludedAnnotatedWith = [
                 "cases.marker.HiddenField",
                 "cases.marker.HiddenProperty",
                 "cases.marker.HiddenMethod"
-            )
+            ]
         )
     }
 
@@ -91,7 +91,7 @@ class CasesPublicAPITest {
 
     @Test
     fun packageAnnotations() {
-        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = setOf("cases.packageAnnotations.PrivateApi"))
+        snapshotAPIAndCompare(testName.methodName, excludedAnnotatedWith = ["cases.packageAnnotations.PrivateApi"])
     }
 
     @Test
@@ -131,22 +131,22 @@ class CasesPublicAPITest {
 
     @Test
     fun repeatable() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.repeatable.RepeatableAnnotation.Container"))
+        snapshotAPIAndCompare(testName.methodName, excludedClasses = ["cases.repeatable.RepeatableAnnotation.Container"])
     }
 
     @Test
     fun included() {
-        snapshotAPIAndCompare(testName.methodName, includedClasses = setOf("cases.included.subpackage.*"))
+        snapshotAPIAndCompare(testName.methodName, includedClasses = ["cases.included.subpackage.*"])
     }
 
     @Test
     fun root() {
-        snapshotAPIAndCompareRoot(testName.methodName, excludedClasses = setOf("RootClass1", "*Tests"), includedClasses = setOf("*"))
+        snapshotAPIAndCompareRoot(testName.methodName, excludedClasses = ["RootClass1", "*Tests"], includedClasses = ["*"])
     }
 
     @Test
     fun file() {
-        snapshotAPIAndCompare(testName.methodName, excludedClasses = setOf("cases.file.FileFacade1Kt"))
+        snapshotAPIAndCompare(testName.methodName, excludedClasses = ["cases.file.FileFacade1Kt"])
     }
 
     @Test
@@ -161,10 +161,10 @@ class CasesPublicAPITest {
 
     private fun snapshotAPIAndCompareRoot(
         testClassRelativePath: String,
-        includedClasses: Set<String> = emptySet(),
-        excludedClasses: Set<String> = emptySet(),
-        includedAnnotatedWith: Set<String> = emptySet(),
-        excludedAnnotatedWith: Set<String> = emptySet(),
+        includedClasses: Set<String> = [],
+        excludedClasses: Set<String> = [],
+        includedAnnotatedWith: Set<String> = [],
+        excludedAnnotatedWith: Set<String> = [],
     ) {
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 
@@ -176,10 +176,10 @@ class CasesPublicAPITest {
 
     private fun snapshotAPIAndCompare(
         testClassRelativePath: String,
-        includedClasses: Set<String> = emptySet(),
-        excludedClasses: Set<String> = emptySet(),
-        includedAnnotatedWith: Set<String> = emptySet(),
-        excludedAnnotatedWith: Set<String> = emptySet(),
+        includedClasses: Set<String> = [],
+        excludedClasses: Set<String> = [],
+        includedAnnotatedWith: Set<String> = [],
+        excludedAnnotatedWith: Set<String> = [],
     ) {
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
 

@@ -97,7 +97,7 @@ internal class AnnotationsAndParameterCollectorMethodVisitor(
     private var visibleAnnotableParameterCount = parametersCountInMethodDesc
     private var invisibleAnnotableParameterCount = parametersCountInMethodDesc
 
-    val freshlySupportedPositions = setOf(TypeReference.METHOD_TYPE_PARAMETER, TypeReference.METHOD_TYPE_PARAMETER_BOUND)
+    val freshlySupportedPositions: Set<Int> = [TypeReference.METHOD_TYPE_PARAMETER, TypeReference.METHOD_TYPE_PARAMETER_BOUND]
 
     override fun visitAnnotationDefault(): AnnotationVisitor =
         BinaryJavaAnnotationVisitor(context, signatureParser) {
@@ -177,7 +177,7 @@ class BinaryJavaAnnotation private constructor(
             signatureParser: BinaryClassSignatureParser,
             isFreshlySupportedTypeUseAnnotation: Boolean = false
         ): Pair<JavaAnnotation, AnnotationVisitor> {
-            val arguments = mutableListOf<JavaAnnotationArgument>()
+            val arguments: MutableList<JavaAnnotationArgument> = []
             val annotation = BinaryJavaAnnotation(desc, context, arguments, isFreshlySupportedTypeUseAnnotation)
 
             return annotation to BinaryJavaAnnotationVisitor(context, signatureParser, arguments)
@@ -345,7 +345,7 @@ class BinaryJavaAnnotationVisitor(
     }
 
     override fun visitArray(name: String?): AnnotationVisitor {
-        val result = mutableListOf<JavaAnnotationArgument>()
+        val result: MutableList<JavaAnnotationArgument> = []
         addArgument(PlainJavaArrayAnnotationArgument(name, result))
 
         return BinaryJavaAnnotationVisitor(context, signatureParser, result)

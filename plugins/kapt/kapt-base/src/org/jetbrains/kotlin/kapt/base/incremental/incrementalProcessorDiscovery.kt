@@ -10,8 +10,8 @@ import java.io.InputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 
-private val INCREMENTAL_DECLARED_TYPES =
-    setOf(DeclaredProcType.AGGREGATING.name, DeclaredProcType.ISOLATING.name, DeclaredProcType.DYNAMIC.name)
+private val INCREMENTAL_DECLARED_TYPES: Set<String> =
+    [DeclaredProcType.AGGREGATING.name, DeclaredProcType.ISOLATING.name, DeclaredProcType.DYNAMIC.name]
 private const val INCREMENTAL_ANNOTATION_FLAG = "META-INF/gradle/incremental.annotation.processors"
 
 /** Checks the incremental annotation processor information for the annotation processor classpath. */
@@ -37,15 +37,15 @@ private fun processSingleClasspathEntry(rootFile: File): Map<String, DeclaredPro
             if (markerFile.exists()) {
                 markerFile.bufferedReader().readLines()
             } else {
-                emptyList()
+                []
             }
         }
         rootFile.extension == "jar" -> ZipFile(rootFile).use { zipFile ->
             val content: InputStream? = zipFile.getInputStream(ZipEntry(INCREMENTAL_ANNOTATION_FLAG))
 
-            content?.bufferedReader()?.readLines() ?: emptyList()
+            content?.bufferedReader()?.readLines() ?: []
         }
-        else -> emptyList()
+        else -> []
     }
 
     val nameToType = mutableMapOf<String, DeclaredProcType>()

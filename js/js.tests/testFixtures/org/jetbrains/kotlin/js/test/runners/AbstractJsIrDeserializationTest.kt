@@ -39,10 +39,10 @@ abstract class AbstractJsIrDeserializationTest(
         with(builder) {
             defaultDirectives {
                 runIf(useIrInlinerAtFirstCompilationPhase) {
-                    LANGUAGE with listOf(
+                    LANGUAGE with [
                         "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                         "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-                    )
+                    ]
                 }
                 +LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
                 FirDiagnosticsDirectives.FIR_PARSER with FirParser.LightTree

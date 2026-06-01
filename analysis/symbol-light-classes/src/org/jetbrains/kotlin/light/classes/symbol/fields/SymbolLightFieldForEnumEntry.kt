@@ -90,9 +90,9 @@ internal class SymbolLightFieldForEnumEntry(
         val psiType = PsiImmediateClassType(containingClass, PsiSubstitutor.EMPTY)
         val typeElement = LightTypeElementWithParent(lightParent = this, psiType)
         psiType.annotateByTypeAnnotationProvider(
-            annotations = sequenceOf(
-                listOf(SymbolLightSimpleAnnotation(fqName = NotNull::class.java.name, parent = typeElement))
-            )
+            annotations = [
+                [SymbolLightSimpleAnnotation(fqName = NotNull::class.java.name, parent = typeElement)]
+            ]
         )
 
         return psiType

@@ -37,7 +37,7 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
     ): List<ConeKotlinType> {
-        if (classLikeDeclaration !is FirRegularClass) return emptyList()
+        if (classLikeDeclaration !is FirRegularClass) return []
         when (classLikeDeclaration.classKind) {
             ClassKind.CLASS,
             ClassKind.INTERFACE,
@@ -45,10 +45,10 @@ class SomeAdditionalSupertypeGenerator(session: FirSession) : FirSupertypeGenera
 
             ClassKind.ENUM_CLASS,
             ClassKind.ENUM_ENTRY,
-            ClassKind.ANNOTATION_CLASS -> return emptyList()
+            ClassKind.ANNOTATION_CLASS -> return []
         }
-        if (resolvedSupertypes.any { it.coneType.classId == myInterfaceClassId }) return emptyList()
-        return listOf(myInterfaceClassId.constructClassLikeType(emptyArray(), isMarkedNullable = false))
+        if (resolvedSupertypes.any { it.coneType.classId == myInterfaceClassId }) return []
+        return [myInterfaceClassId.constructClassLikeType([], isMarkedNullable = false)]
     }
 
     override fun needTransformSupertypes(declaration: FirClassLikeDeclaration): Boolean {

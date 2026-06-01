@@ -14,7 +14,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 open class KotlinExceptionWithAttachments : RuntimeException, KotlinExceptionWithAttachmentsBase {
-    override val mutableAttachments = mutableListOf<Attachment>()
+    override val mutableAttachments: MutableList<Attachment> = []
 
     override fun withAttachment(name: String, content: Any?): KotlinExceptionWithAttachments {
         return super.withAttachment(name, content) as KotlinExceptionWithAttachments

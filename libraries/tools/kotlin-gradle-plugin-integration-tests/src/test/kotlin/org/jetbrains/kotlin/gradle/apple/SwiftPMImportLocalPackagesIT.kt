@@ -73,7 +73,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -171,7 +171,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -227,7 +227,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -300,7 +300,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -347,12 +347,12 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
 
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(validLocalPackageRelativePath),
-                            products = listOf(validTargetName),
+                            products = [validTargetName],
                         )
                     }
                 }
@@ -470,7 +470,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -543,7 +543,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -623,7 +623,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -713,7 +713,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -799,7 +799,7 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                         watchosMinimumDeploymentTarget.set("26.1") // WA for KT-86215 invalid default watchOS minimum deployment target version
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }

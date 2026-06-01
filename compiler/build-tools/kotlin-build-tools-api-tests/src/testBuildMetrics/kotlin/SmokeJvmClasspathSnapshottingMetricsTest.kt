@@ -53,16 +53,16 @@ class SmokeJvmClasspathSnapshottingMetricsTest : BaseCompilationTest() {
     }
 
     companion object {
-        private val baseExpectedMetricNames = setOf(
+        private val baseExpectedMetricNames: Set<String> = [
             "Classpath entry snapshot transform -> Load classes (paths only)",
             "Classpath entry snapshot transform -> Snapshot classes -> Load contents of classes",
             "Classpath entry snapshot transform -> Snapshot classes -> Snapshot Java classes",
             "Classpath entry snapshot transform -> Snapshot classes -> Snapshot Kotlin classes",
             "Classpath entry snapshot transform -> Snapshot classes",
-        )
+        ]
 
-        private val parseInlineLocalClassMetricNames = setOf(
+        private val parseInlineLocalClassMetricNames: Set<String> = [
             "Classpath entry snapshot transform -> Snapshot classes -> Snapshot inlined classes",
-        )
+        ]
     }
 }

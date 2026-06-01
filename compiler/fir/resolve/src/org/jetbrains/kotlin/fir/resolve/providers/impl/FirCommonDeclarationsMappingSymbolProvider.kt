@@ -39,7 +39,7 @@ class FirCommonDeclarationsMappingSymbolProvider(
     val commonSymbolProvider: FirSymbolProvider,
     val platformSymbolProvider: FirSymbolProvider,
 ) : FirSymbolProvider(session) {
-    private val providers: List<FirSymbolProvider> = listOf(commonSymbolProvider, platformSymbolProvider)
+    private val providers: List<FirSymbolProvider> = [commonSymbolProvider, platformSymbolProvider]
 
     data class ClassPair(val commonClass: FirClassLikeSymbol<*>?, val platformClass: FirClassLikeSymbol<*>?)
 

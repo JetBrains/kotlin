@@ -52,7 +52,7 @@ fun BuildResult.assertOutputDoesNotContain(
         printBuildOutput()
 
         // In case if notExpectedSubString is multiline string
-        val occurrences = mutableListOf<Pair<Int, Int>>()
+        val occurrences: MutableList<Pair<Int, Int>> = []
         var startIndex = output.indexOf(notExpectedSubString)
         var endIndex = startIndex + notExpectedSubString.length
         do {
@@ -138,7 +138,7 @@ fun BuildResult.assertOutputContainsExactlyTimes(
  * @param additionalExpectedWarningIds Additional diagnostic IDs to suppress in warning checks.
  */
 fun BuildResult.assertNoBuildWarnings(
-    additionalExpectedWarningIds: Set<String> = emptySet(),
+    additionalExpectedWarningIds: Set<String> = [],
 ) {
     val expectedWarningIds = setOf(
         KotlinToolingDiagnostics.InternalKotlinGradlePluginPropertiesUsed.id,

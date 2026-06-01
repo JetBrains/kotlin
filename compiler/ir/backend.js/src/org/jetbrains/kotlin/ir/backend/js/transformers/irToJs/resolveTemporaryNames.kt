@@ -138,7 +138,7 @@ private fun JsNode.computeScopes(): Scope {
 }
 
 private class Scope {
-    val declaredNames = mutableSetOf<JsName>()
-    val usedNames = mutableSetOf<JsName>()
-    val children = mutableSetOf<Scope>()
+    val declaredNames: MutableSet<JsName> = []
+    val usedNames: MutableSet<JsName> = []
+    val children: MutableSet<Scope> = []
 }

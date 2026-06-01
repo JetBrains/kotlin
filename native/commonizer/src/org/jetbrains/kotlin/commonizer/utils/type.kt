@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.commonizer.utils
 import kotlin.metadata.*
 
 internal inline val KmTypeParameter.filteredUpperBounds: List<KmType>
-    get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: emptyList()
+    get() = upperBounds.takeUnless { it.singleOrNull()?.isNullableAny == true } ?: []
 
 internal inline val KmClass.filteredSupertypes: List<KmType>
-    get() = supertypes.takeUnless { it.singleOrNull()?.isAny == true } ?: emptyList()
+    get() = supertypes.takeUnless { it.singleOrNull()?.isAny == true } ?: []
 
 private inline val KmType.isNullableAny: Boolean
     get() = (classifier as? KmClassifier.Class)?.name == ANY_CLASS_FULL_NAME && this.isNullable

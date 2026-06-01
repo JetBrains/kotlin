@@ -17,7 +17,7 @@ fun parseBinaryOptions(
     reportWarning: (String) -> Unit,
     reportError: (String) -> Unit,
 ): List<BinaryOptionWithValue<*>> {
-    val keyValuePairs = parseKeyValuePairs(argumentValue, reportError) ?: return emptyList()
+    val keyValuePairs = parseKeyValuePairs(argumentValue, reportError) ?: return []
 
     return keyValuePairs.mapNotNull { [key, value] ->
         val option = BinaryOptions.getByName(key)

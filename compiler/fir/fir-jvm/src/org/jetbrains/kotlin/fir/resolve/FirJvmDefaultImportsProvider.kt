@@ -25,5 +25,5 @@ object FirJvmDefaultImportsProvider : DefaultImportsProvider() {
     }
 
     override val defaultLowPriorityImports: List<ImportPath> =
-        listOf(ImportPath.fromString("java.lang.*"))
+        [ImportPath.fromString("java.lang.*")]
 }

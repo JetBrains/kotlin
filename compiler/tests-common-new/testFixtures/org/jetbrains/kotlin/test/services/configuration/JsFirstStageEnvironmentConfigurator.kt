@@ -34,10 +34,10 @@ class JsFirstStageEnvironmentConfigurator(testServices: TestServices) : JsEnviro
         val friends = module.friendDependencies.map { getKlibArtifactFile(testServices, it.dependencyModule.name).absolutePath }
 
         val libraries = when (val targetBackend = testServices.defaultsProvider.targetBackend) {
-            null -> listOf(
+            null -> [
                 testServices.standardLibrariesPathProvider.fullJsStdlib().absolutePath,
                 testServices.standardLibrariesPathProvider.kotlinTestJsKLib().absolutePath
-            )
+            ]
             TargetBackend.JS_IR, TargetBackend.JS_IR_ES6 -> getRuntimePathsForModule(module, testServices) + dependencies + friends
             else -> error("Unsupported target backend: $targetBackend")
         }

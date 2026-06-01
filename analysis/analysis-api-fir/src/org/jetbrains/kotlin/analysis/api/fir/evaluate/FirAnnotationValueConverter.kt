@@ -149,7 +149,7 @@ internal object FirAnnotationValueConverter {
                         // arrayOf call with a single vararg argument.
                         if (resolvedSymbol.callableId.asSingleFqName() in ArrayFqNames.ARRAY_CALL_FQ_NAMES)
                             argumentList.arguments.singleOrNull()?.convertConstantExpression(builder)
-                                ?: KaArrayAnnotationValueImpl(emptyList(), sourcePsi, token)
+                                ?: KaArrayAnnotationValueImpl([], sourcePsi, token)
                         else null
                     }
 
@@ -223,7 +223,7 @@ internal object FirAnnotationValueConverter {
                 lazyArguments = if (argumentMapping.isNotEmpty())
                     lazy { toNamedConstantValue(builder.analysisSession, argumentMapping, builder) }
                 else
-                    lazyOf(emptyList()),
+                    lazyOf([]),
                 constructorSymbol = with(builder.analysisSession) {
                     builder.functionBuilder.buildConstructorSymbol(resolvedSymbol)
                 },
@@ -237,7 +237,7 @@ internal object FirAnnotationValueConverter {
         this as? KtCallElement ?: (this as? KtDotQualifiedExpression)?.selectorExpression as? KtCallElement
 
     private fun computeErrorCallClassId(call: FirGetClassCall): ClassId? {
-        val qualifierParts = mutableListOf<String?>()
+        val qualifierParts: MutableList<String?> = []
 
         fun process(expression: FirExpression) {
             val errorType = expression.resolvedType as? ConeErrorType

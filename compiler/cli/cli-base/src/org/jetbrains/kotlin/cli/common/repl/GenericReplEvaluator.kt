@@ -77,7 +77,7 @@ open class GenericReplEvaluator(
 
             val constructorParams: Array<Class<*>> =
                 arrayOf<Class<*>>(Array<Any>::class.java) +
-                        (useScriptArgs?.mapIndexed { i, it -> useScriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: emptyList())
+                        (useScriptArgs?.mapIndexed { i, it -> useScriptArgsTypes?.getOrNull(i) ?: it?.javaClass ?: Any::class.java } ?: [])
 
             val constructorArgs: Array<out Any?> = arrayOf(
                 historyActor.effectiveHistory.map { it.instance }.takeIf { it.isNotEmpty() }?.toTypedArray() ?: emptyArray<Any?>(),

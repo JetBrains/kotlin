@@ -129,7 +129,7 @@ sealed class CFGNode<out E : FirElement>(val owner: ControlFlowGraph, val level:
      */
     private var _alternateFlows: MutableMap<FlowPath, PersistentFlow>? = null
     open val alternateFlowPaths: Set<FlowPath>
-        get() = _alternateFlows?.keys ?: emptySet()
+        get() = _alternateFlows?.keys ?: []
 
     open fun getAlternateFlow(path: FlowPath): PersistentFlow? {
         return _alternateFlows?.get(path)
@@ -1000,7 +1000,7 @@ object FirStub : FirExpression() {
     override val source: KtSourceElement? get() = null
     @UnresolvedExpressionTypeAccess
     override val coneTypeOrNull: ConeKotlinType = StandardTypes.Nothing
-    override val annotations: List<FirAnnotation> get() = listOf()
+    override val annotations: List<FirAnnotation> get() = []
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirExpression = this

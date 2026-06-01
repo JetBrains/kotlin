@@ -62,23 +62,23 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds1() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin/String")),
-        mockTypeParam(upperBounds = listOf("kotlin/String")),
-        mockTypeParam(upperBounds = listOf("kotlin/Int"))
+        mockTypeParam(upperBounds = ["kotlin/String"]),
+        mockTypeParam(upperBounds = ["kotlin/String"]),
+        mockTypeParam(upperBounds = ["kotlin/Int"])
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds2() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
-        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
-        mockTypeParam(upperBounds = listOf("kotlin/String"))
+        mockTypeParam(upperBounds = ["kotlin/String", "kotlin/Int"]),
+        mockTypeParam(upperBounds = ["kotlin/String", "kotlin/Int"]),
+        mockTypeParam(upperBounds = ["kotlin/String"])
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
     fun differentUpperBounds3() = doTestFailure(
-        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
-        mockTypeParam(upperBounds = listOf("kotlin/String", "kotlin/Int")),
-        mockTypeParam(upperBounds = listOf("kotlin/Int", "kotlin/String"))
+        mockTypeParam(upperBounds = ["kotlin/String", "kotlin/Int"]),
+        mockTypeParam(upperBounds = ["kotlin/String", "kotlin/Int"]),
+        mockTypeParam(upperBounds = ["kotlin/Int", "kotlin/String"])
     )
 
     internal companion object {
@@ -86,9 +86,9 @@ class TypeParameterCommonizerTest : AbstractCommonizerTest<CirTypeParameter, Cir
             name: String = "T",
             isReified: Boolean = false,
             variance: Variance = Variance.INVARIANT,
-            upperBounds: List<String> = listOf("kotlin/Any")
+            upperBounds: List<String> = ["kotlin/Any"]
         ) = CirTypeParameter(
-            annotations = emptyList(),
+            annotations = [],
             name = CirName.create(name),
             isReified = isReified,
             variance = variance,

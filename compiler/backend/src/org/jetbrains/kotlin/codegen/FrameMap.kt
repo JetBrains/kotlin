@@ -98,7 +98,7 @@ open class FrameMapBase<T : Any> {
             return "inconsistent"
         }
 
-        val descriptors = mutableListOf<Triple<T, Int, Int>>()
+        val descriptors: MutableList<Triple<T, Int, Int>> = []
 
         for (descriptor0 in myVarIndex.keys) {
             @Suppress("UNCHECKED_CAST") val descriptor = descriptor0 as T

@@ -34,11 +34,11 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
     fun `approximation of intersection type with upper bound`() {
         runWithSession { session ->
             val intersectionType = ConeIntersectionType(
-                listOf(
+                [
                     ConeIntegerLiteralConstantTypeImpl.create(1, false, { true }),
-                    ConeClassLikeTypeImpl(StandardClassIds.CharSequence.toLookupTag(), arrayOf(), false)
-                ),
-                ConeClassLikeTypeImpl(StandardClassIds.Number.toLookupTag(), emptyArray(), false)
+                    ConeClassLikeTypeImpl(StandardClassIds.CharSequence.toLookupTag(), [], false)
+                ],
+                ConeClassLikeTypeImpl(StandardClassIds.Number.toLookupTag(), [], false)
             )
 
             val approximatedType = session.typeApproximator.approximateToSuperType(

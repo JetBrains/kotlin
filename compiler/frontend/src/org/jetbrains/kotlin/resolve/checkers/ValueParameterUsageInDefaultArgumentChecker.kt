@@ -20,7 +20,7 @@ object ValueParameterUsageInDefaultArgumentChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtFunction || descriptor !is FunctionDescriptor) return
         val allParameters = descriptor.valueParameters
-        val declaredParameters = mutableListOf<ValueParameterDescriptor>()
+        val declaredParameters: MutableList<ValueParameterDescriptor> = []
         // We can don't check last parameter, because all other parameters already declared
         for ([parameter, parameterDescriptor] in declaration.valueParameters.zip(allParameters).dropLast(1)) {
             checkParameter(parameter, allParameters, declaredParameters, context)

@@ -78,12 +78,12 @@ private class SirEnumFromKtSymbol(
         (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        listOf(
+        [
             KotlinRuntimeSupportModule.kotlinBridgeable,
             SirSwiftModule.caseIterable,
             SirSwiftModule.losslessStringConvertible,
             SirSwiftModule.rawRepresentable
-        )
+        ]
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
@@ -104,20 +104,20 @@ private class SirEnumFromKtSymbol(
             .toList()
     }
 
-    private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
+    private fun syntheticDeclarations(): List<SirDeclaration> = [
         kotlinBaseInitDeclaration(),
         kotlinBridgeableExternalRcRef(),
         description(),
         failableInitFromString(),
         rawValue(),
         failableInitFromInteger(),
-    )
+    ]
 
     private val ordinalBridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
         val enumFqName = ktSymbol.classId!!.asSingleFqName()
         generateFunctionBridge(
             baseBridgeName = enumFqName.baseBridgeName + "_ordinal",
-            explicitParameters = emptyList(),
+            explicitParameters = [],
             returnType = SirNominalType(SirSwiftModule.int32),
             kotlinFqName = enumFqName.child(Name.identifier("ordinal")),
             kotlinOptIns = ktSymbol.allRequiredOptIns,
@@ -125,7 +125,7 @@ private class SirEnumFromKtSymbol(
                 argumentName = "self",
                 type = SirNominalType(this@SirEnumFromKtSymbol),
             ),
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,
@@ -149,13 +149,13 @@ private class SirEnumFromKtSymbol(
             "case ${index++}: self = .${it.name}"
         } + defaultBranch(separator)
         body = SirFunctionBody(
-            listOf(
+            [
                 """
                     switch $ordinalBridgeName(__externalRCRefUnsafe) {
                     $caseSelector
                     }
                 """.trimIndent()
-            )
+            ]
         )
     }.also { it.parent = this }
 
@@ -167,13 +167,13 @@ private class SirEnumFromKtSymbol(
             "case .${it.name}: ${it.nativeCaseRepresentation()}"
         } + defaultBranch(separator)
         body = SirFunctionBody(
-            listOf(
+            [
                 """
                     return switch self {
                     $caseSelector
                     }
                 """.trimIndent()
-            )
+            ]
         )
     }.also { it.parent = this }
 
@@ -189,13 +189,13 @@ private class SirEnumFromKtSymbol(
                 "case .${it.name}: \"${it.name}\""
             } + defaultBranch(separator)
             body = SirFunctionBody(
-                listOf(
+                [
                     """
                         switch self {
                         $caseSelector
                         }
                     """.trimIndent()
-                )
+                ]
             )
         }
     }.also { it.parent = this }
@@ -212,14 +212,14 @@ private class SirEnumFromKtSymbol(
             """case "${it.name}": self = .${it.name}"""
         }
         body = SirFunctionBody(
-            listOf(
+            [
                 """
                         switch description {
                         $caseSelector
                         default: return nil
                         }
                     """.trimIndent()
-            )
+            ]
         )
     }.also { it.parent = this }
 
@@ -233,13 +233,13 @@ private class SirEnumFromKtSymbol(
                 "case .${it.name}: ${index++}"
             } + defaultBranch(separator)
             body = SirFunctionBody(
-                listOf(
+                [
                     """
                         switch self {
                         $caseSelector
                         }
                     """.trimIndent()
-                )
+                ]
             )
         }
     }.also { it.parent = this }
@@ -253,12 +253,12 @@ private class SirEnumFromKtSymbol(
             )
         )
         body = SirFunctionBody(
-            listOf(
+            [
                 """
                     guard 0..<${cases.size} ~= rawValue else { return nil }
                     self = $name.allCases[Int(rawValue)]
                 """.trimIndent()
-            )
+            ]
         )
     }.also { it.parent = this }
 
@@ -292,7 +292,7 @@ private class SirEnumCaseFromKtSymbol(
             error("Changing SirEnumCase.parent is prohibited")
         }
     override val attributes: List<SirAttribute>
-        get() = emptyList()
+        get() = []
 
     fun nativeCaseRepresentation(): String =
         "${ktSymbol.callableId!!.asSingleFqName().baseBridgeName}()"
@@ -302,12 +302,12 @@ private class SirEnumCaseFromKtSymbol(
         val baseName = fqName.baseBridgeName
         generateFunctionBridge(
             baseBridgeName = baseName,
-            explicitParameters = emptyList(),
+            explicitParameters = [],
             returnType = SirType.any,
             kotlinFqName = fqName,
             kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = null,
-            contextParameters = emptyList(),
+            contextParameters = [],
             extensionReceiverParameter = null,
             errorParameter = null,
             isAsync = false,

@@ -37,7 +37,7 @@ internal class SimpleCirSupertypesResolver(
                 return dependencies.supertypesFromProvidedClass(type, classifier)
             }
         }
-        return emptySet()
+        return []
     }
 
     private fun supertypesFromCirClass(type: CirClassType, classifier: CirClass): Set<CirClassType> {

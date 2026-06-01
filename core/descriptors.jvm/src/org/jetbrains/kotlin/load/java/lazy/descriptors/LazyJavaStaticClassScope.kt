@@ -47,7 +47,7 @@ class LazyJavaStaticClassScope(
         declaredMemberIndex().getMethodNames().toMutableSet().apply {
             addAll(ownerDescriptor.getParentJavaStaticClassScope()?.getFunctionNames().orEmpty())
             if (jClass.isEnum) {
-                addAll(listOf(StandardNames.ENUM_VALUE_OF, StandardNames.ENUM_VALUES))
+                addAll([StandardNames.ENUM_VALUE_OF, StandardNames.ENUM_VALUES])
             }
             addAll(c.components.syntheticPartsProvider.getStaticFunctionNames(ownerDescriptor, c))
         }
@@ -60,7 +60,7 @@ class LazyJavaStaticClassScope(
             }
         }
 
-    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = emptySet()
+    override fun computeClassNames(kindFilter: DescriptorKindFilter, nameFilter: ((Name) -> Boolean)?): Set<Name> = []
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? {
         // We don't need to track lookups here because we find nested/inner classes in LazyJavaClassMemberScope
@@ -93,7 +93,7 @@ class LazyJavaStaticClassScope(
     }
 
     override fun computeNonDeclaredProperties(name: Name, result: MutableCollection<PropertyDescriptor>) {
-        val propertiesFromSupertypes = flatMapJavaStaticSupertypesScopes(ownerDescriptor, mutableSetOf()) {
+        val propertiesFromSupertypes = flatMapJavaStaticSupertypesScopes(ownerDescriptor, []) {
             it.getContributedVariables(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS)
         }
 
@@ -127,7 +127,7 @@ class LazyJavaStaticClassScope(
     }
 
     private fun getStaticFunctionsFromJavaSuperClasses(name: Name, descriptor: ClassDescriptor): Set<SimpleFunctionDescriptor> {
-        val staticScope = descriptor.getParentJavaStaticClassScope() ?: return emptySet()
+        val staticScope = descriptor.getParentJavaStaticClassScope() ?: return []
         return staticScope.getContributedFunctions(name, NoLookupLocation.WHEN_GET_SUPER_MEMBERS).toSet()
     }
 
@@ -136,13 +136,14 @@ class LazyJavaStaticClassScope(
         result: MutableSet<R>,
         onJavaStaticScope: (MemberScope) -> Collection<R>
     ): Set<R> {
-        DFS.dfs(listOf(root),
-                {
+        DFS.dfs(
+            [root],
+            {
                     it.typeConstructor.supertypes.asSequence().mapNotNull { supertype ->
                         supertype.constructor.declarationDescriptor as? ClassDescriptor
                     }.asIterable()
                 },
-                object : DFS.AbstractNodeHandler<ClassDescriptor, Unit>() {
+            object : DFS.AbstractNodeHandler<ClassDescriptor, Unit>() {
                     override fun beforeChildren(current: ClassDescriptor): Boolean {
                         if (current === root) return true
                         val staticScope = current.staticScope

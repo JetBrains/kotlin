@@ -48,7 +48,7 @@ internal object CustomTypeMappers {
      * Don't forget to update [hiddenTypes] after adding new one.
      */
     private val predefined: Map<ClassId, CustomTypeMapper> = with(StandardNames.FqNames) {
-        val result = mutableListOf<CustomTypeMapper>()
+        val result: MutableList<CustomTypeMapper> = []
 
         result += Collection(list, "NSArray")
         result += Collection(mutableList, "NSMutableArray")
@@ -101,7 +101,7 @@ internal object CustomTypeMappers {
      * Currently contains super types of classes handled by custom type mappers.
      * Note: can be generated programmatically, but requires stdlib in this case.
      */
-    val hiddenTypes: Set<ClassId> = listOf(
+    val hiddenTypes: Set<ClassId> = [
         "kotlin.Any",
         "kotlin.CharSequence",
         "kotlin.Comparable",
@@ -111,7 +111,7 @@ internal object CustomTypeMappers {
         "kotlin.collections.Iterable",
         "kotlin.collections.MutableCollection",
         "kotlin.collections.MutableIterable"
-    ).map { ClassId.topLevel(FqName(it)) }.toSet()
+    ].map { ClassId.topLevel(FqName(it)) }.toSet()
 
     private class Simple(
         override val mappedClassId: ClassId,

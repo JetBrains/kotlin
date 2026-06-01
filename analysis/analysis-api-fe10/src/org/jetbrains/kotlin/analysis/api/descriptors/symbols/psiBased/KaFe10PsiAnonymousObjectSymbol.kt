@@ -33,7 +33,7 @@ internal class KaFe10PsiAnonymousObjectSymbol(
 
     override val superTypes: List<KaType>
         get() = withValidityAssertion {
-            descriptor?.typeConstructor?.supertypes?.map { it.toKtType(analysisContext) } ?: emptyList()
+            descriptor?.typeConstructor?.supertypes?.map { it.toKtType(analysisContext) } ?: []
         }
 
     override fun createPointer(): KaSymbolPointer<KaAnonymousObjectSymbol> = withValidityAssertion {

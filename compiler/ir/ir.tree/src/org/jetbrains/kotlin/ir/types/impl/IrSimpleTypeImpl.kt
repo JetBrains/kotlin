@@ -65,8 +65,8 @@ private class IrSimpleTypeOnlyClassifierImpl(
     classifier: IrClassifierSymbol,
     nullability: SimpleTypeNullability,
 ) : IrAbstractSimpleType(classifier, nullability) {
-    override val annotations: List<IrAnnotation> get() = emptyList()
-    override val arguments: List<IrTypeArgument> get() = emptyList()
+    override val annotations: List<IrAnnotation> get() = []
+    override val arguments: List<IrTypeArgument> get() = []
 }
 
 private class IrSimpleTypeFullImpl(
@@ -130,8 +130,8 @@ class IrSimpleTypeBuilder {
     var kotlinType: KotlinType? = null
     var classifier: IrClassifierSymbol? = null
     var nullability = SimpleTypeNullability.NOT_SPECIFIED
-    var arguments: List<IrTypeArgument> = emptyList()
-    var annotations: List<IrAnnotation> = emptyList()
+    var arguments: List<IrTypeArgument> = []
+    var annotations: List<IrAnnotation> = []
 
     var captureStatus: CaptureStatus? = null
     var capturedLowerType: IrType? = null

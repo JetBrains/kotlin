@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kmp.utils
 
 class Stack<T> {
-    private val elements = mutableListOf<T>()
+    private val elements: MutableList<T> = []
 
     fun push(item: T) {
         elements.add(item)

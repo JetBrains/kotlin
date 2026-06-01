@@ -43,7 +43,7 @@ class ClassPathTest {
     fun testExtractFromFat() {
         val collection =
             createTempFile(directory = tempDir, "col", ".jar").apply { createCollectionJar(emulatedCollectionFiles, "BOOT-INF") }
-        val cl = URLClassLoader(arrayOf(collection.toUri().toURL()), null)
+        val cl = URLClassLoader([collection.toUri().toURL()], null)
         val cp = classpathFromClassloader(cl, true)
         assertTrue(cp != null && cp.isNotEmpty())
 
@@ -71,11 +71,11 @@ class ClassPathTest {
     fun testFilterClasspath() {
         val tempDir = createTempDirectory().toRealPath()
         try {
-            val files = listOf(
+            val files = [
                 (tempDir / "projX/classes"),
                 (tempDir / "projX/test-classes"),
                 (tempDir / "projY/classes")
-            )
+            ]
             files.forEach { it.createDirectories() }
 
             val classloader = URLClassLoader(files.map { it.toUri().toURL() }.toTypedArray(), null)
@@ -100,15 +100,15 @@ class ClassPathTest {
     }
 }
 
-private val emulatedCollectionFiles = arrayOf(
+private val emulatedCollectionFiles: Array<String> = [
     "classes/a/b.class",
     "lib/c-d.jar"
-)
+]
 
-private val emulatedClasspath = arrayOf(
+private val emulatedClasspath: Array<String> = [
     "module1/classes/kotlin/main/",
     "module2/classes/java/test/"
-)
+]
 
 fun Path.createCollectionJar(fileNames: Array<String>, infDirName: String) {
     this.outputStream().use { fileStream ->

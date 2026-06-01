@@ -403,7 +403,7 @@ class CoroutineTransformerMethodVisitor(
     // range so that the local variable is only defined when initialized.
     private fun initializeFakeInlinerVariables(methodNode: MethodNode, stateLabels: List<LabelNode>) {
         for (stateLabel in stateLabels) {
-            val newRecords = mutableListOf<LocalVariableNode>()
+            val newRecords: MutableList<LocalVariableNode> = []
             for (record in methodNode.localVariables) {
                 if (JvmAbi.isFakeLocalVariableForInline(record.name) &&
                     methodNode.instructions.indexOf(record.start) < methodNode.instructions.indexOf(stateLabel) &&
@@ -481,7 +481,7 @@ class CoroutineTransformerMethodVisitor(
                     getstatic("kotlin/Unit", "INSTANCE", "Lkotlin/Unit;")
                 }
             )
-            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+            methodNode.instructions.removeAll([marker.previous, marker])
         }
     }
 
@@ -739,8 +739,8 @@ class CoroutineTransformerMethodVisitor(
         return methodNode.instructions.asSequence().filter {
             isBeforeSuspendMarker(it)
         }.mapNotNull { start ->
-            val ends = mutableSetOf<AbstractInsnNode>()
-            if (collectSuspensionPointEnds(start, mutableSetOf(), ends)) return@mapNotNull null
+            val ends: MutableSet<AbstractInsnNode> = []
+            if (collectSuspensionPointEnds(start, [], ends)) return@mapNotNull null
             // Ignore suspension points, if the suspension call begin is alive and suspension call end is dead
             // (e.g., an inlined suspend function call ends with throwing a exception -- see KT-15017),
             // (also see boxInline/suspend/stateMachine/unreachableSuspendMarker.kt)
@@ -755,16 +755,16 @@ class CoroutineTransformerMethodVisitor(
         fun isSuspensionMarkerToRemove(insn: AbstractInsnNode) =
             isBeforeSuspendMarker(insn) || isAfterSuspendMarker(insn) || isBeforeSuspendUnitCallMarker(insn) || isBeforeSuspendGenericCallMarker(insn)
         for (marker in methodNode.instructions.asSequence().filter { isSuspensionMarkerToRemove(it) }.toList()) {
-            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+            methodNode.instructions.removeAll([marker.previous, marker])
         }
     }
 
     private fun dropUnboxInlineClassMarkers(methodNode: MethodNode, suspensionPoints: List<SuspensionPoint>) {
         for (marker in methodNode.instructions.asSequence().filter { isBeforeUnboxInlineClassMarker(it) }.toList()) {
-            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+            methodNode.instructions.removeAll([marker.previous, marker])
         }
         for (marker in methodNode.instructions.asSequence().filter { isAfterUnboxInlineClassMarker(it) }.toList()) {
-            methodNode.instructions.removeAll(listOf(marker.previous.previous, marker.previous, marker))
+            methodNode.instructions.removeAll([marker.previous.previous, marker.previous, marker])
         }
         for (suspension in suspensionPoints) {
             methodNode.instructions.removeAll(suspension.unboxInlineClassInstructions)
@@ -773,7 +773,7 @@ class CoroutineTransformerMethodVisitor(
 
     private fun dropSuspendLambdaParameterMarkers(methodNode: MethodNode) {
         for (marker in methodNode.instructions.asSequence().filter { isSuspendLambdaParameterMarker(it) }.toList()) {
-            methodNode.instructions.removeAll(listOf(marker.previous, marker))
+            methodNode.instructions.removeAll([marker.previous, marker])
         }
     }
 
@@ -785,13 +785,13 @@ class CoroutineTransformerMethodVisitor(
      * When a variable becomes dead, we have to clean it up - spilling null into continuation.
      */
     private fun spillVariables(suspensionPoints: List<SuspensionPoint>, methodNode: MethodNode): List<List<SpilledVariableAndField>> {
-        if (suspensionPoints.isEmpty()) return emptyList()
+        if (suspensionPoints.isEmpty()) return []
 
         val frames: Array<out Frame<BasicValue>?> = performSpilledVariableFieldTypesAnalysis(methodNode, containingClassInternalName)
 
         val suspendLambdaParameters =
             if (config.nullOutSpilledCoroutineLocalsUsingStdlibFunction) methodNode.collectSuspendLambdaParameterSlots()
-            else emptyList()
+            else []
 
         val maxVarsCountByType = mutableMapOf<Type, Int>()
         var initialSpilledVariablesCount = 0
@@ -805,11 +805,11 @@ class CoroutineTransformerMethodVisitor(
         val livenessFrames = analyzeLiveness(methodNode)
 
         // References shall be cleaned up after unspill (during spill in next suspension point) to prevent memory leaks,
-        val referencesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
+        val referencesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>> = []
         // while primitives shall not
-        val primitivesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
+        val primitivesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>> = []
         // both references and primitives
-        val variablesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
+        val variablesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>> = []
 
         // Collect information about spillable variables, that we use to determine which variables we need to cleanup
         for (suspension in suspensionPoints) {
@@ -1077,7 +1077,7 @@ class CoroutineTransformerMethodVisitor(
     ): MutableList<SpillableVariable> {
         val frame = frames[suspensionCallBeginIndex].sure { "Suspension points containing in dead code must be removed" }
         val localsCount = frame.locals
-        val variablesToSpill = mutableListOf<SpillableVariable>()
+        val variablesToSpill: MutableList<SpillableVariable> = []
 
         val livenessFrame = livenessFrames[suspensionCallBeginIndex]
 
@@ -1185,11 +1185,11 @@ class CoroutineTransformerMethodVisitor(
         referencesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
         primitivesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
     ): MutableList<List<SpilledVariableAndField>> {
-        val spilledToVariableMapping = mutableListOf<List<SpilledVariableAndField>>()
+        val spilledToVariableMapping: MutableList<List<SpilledVariableAndField>> = []
         for (suspensionPointIndex in suspensionPoints.indices) {
             val suspension = suspensionPoints[suspensionPointIndex]
 
-            val spilledToVariable = mutableListOf<SpilledVariableAndField>()
+            val spilledToVariable: MutableList<SpilledVariableAndField> = []
 
             referencesToSpillBySuspensionPointIndex[suspensionPointIndex].mapNotNullTo(spilledToVariable) { spillableVariable ->
                 calculateSpilledVariableAndField(methodNode, suspension, spillableVariable)
@@ -1213,7 +1213,7 @@ class CoroutineTransformerMethodVisitor(
     ): MutableList<Pair<Int, Int>> {
         val predSuspensionPoints = calculateSuspensionPointPredecessorsMapping(methodNode, suspensionPoints)
 
-        val referencesToCleanBySuspensionPointIndex = mutableListOf<Pair<Int, Int>>() // current to pred
+        val referencesToCleanBySuspensionPointIndex: MutableList<Pair<Int, Int>> = [] // current to pred
         for (suspensionPointIndex in suspensionPoints.indices) {
             val suspensionPoint = suspensionPoints[suspensionPointIndex]
             // If we spill a variable - we are sure it is dead or visible
@@ -1252,9 +1252,9 @@ class CoroutineTransformerMethodVisitor(
         instructions: InsnList,
         suspension: SuspensionPoint,
     ): List<SuspensionPoint> {
-        val visited = mutableSetOf<AbstractInsnNode>()
-        val current = mutableListOf(suspension.suspensionCallBegin)
-        val result = mutableListOf<SuspensionPoint>()
+        val visited: MutableSet<AbstractInsnNode> = []
+        val current: MutableList<AbstractInsnNode> = [suspension.suspensionCallBegin]
+        val result: MutableList<SuspensionPoint> = []
 
         while (current.isNotEmpty()) {
             val insn = current.popLast()
@@ -1469,12 +1469,12 @@ class CoroutineTransformerMethodVisitor(
                         "Try catch block ${instructions.indexOf(it.start)}:${instructions.indexOf(it.end)} containing marker before " +
                                 "suspension point $beginIndex should also contain the marker after suspension point $endIndex"
                     }
-                    listOf(
+                    [
                         TryCatchBlockNode(it.start, firstLabel, it.handler, it.type),
                         TryCatchBlockNode(secondLabel, it.end, it.handler, it.type)
-                    )
+                    ]
                 } else
-                    listOf(it)
+                    [it]
             }
 
         suspensionPoint.tryCatchBlocksContinuationLabel = secondLabel
@@ -1614,8 +1614,8 @@ internal class SuspensionPoint(
     val unboxInlineClassInstructions: List<AbstractInsnNode> = findUnboxInlineClassInstructions()
 
     private fun findUnboxInlineClassInstructions(): List<AbstractInsnNode> {
-        val beforeMarker = suspensionCallEnd.next?.next ?: return emptyList()
-        if (!isBeforeUnboxInlineClassMarker(beforeMarker)) return emptyList()
+        val beforeMarker = suspensionCallEnd.next?.next ?: return []
+        if (!isBeforeUnboxInlineClassMarker(beforeMarker)) return []
         val afterMarker = beforeMarker.findNextOrNull { isAfterUnboxInlineClassMarker(it) }
             ?: error("Before unbox inline class marker without after unbox inline class marker")
         return InsnSequence(beforeMarker.next, afterMarker.previous.previous).toList()
@@ -1664,7 +1664,7 @@ private fun getAllParameterTypes(desc: String, hasDispatchReceiver: Boolean, thi
 internal fun replaceFakeContinuationsWithRealOnes(methodNode: MethodNode, continuationIndex: Int) {
     val fakeContinuations = methodNode.instructions.asSequence().filter(::isFakeContinuationMarker).toList()
     for (fakeContinuation in fakeContinuations) {
-        methodNode.instructions.removeAll(listOf(fakeContinuation.previous.previous, fakeContinuation.previous))
+        methodNode.instructions.removeAll([fakeContinuation.previous.previous, fakeContinuation.previous])
         methodNode.instructions.set(fakeContinuation, VarInsnNode(Opcodes.ALOAD, continuationIndex))
     }
 }
@@ -1822,7 +1822,7 @@ private fun MethodNode.extendCompletionsRange(completion: LocalVariableNode, slo
 // however, building a state-machine changes starting and ending labels.
 // Fix them up.
 private fun MethodNode.extendParameterRanges() {
-    val toDelete = mutableSetOf<LocalVariableNode>()
+    val toDelete: MutableSet<LocalVariableNode> = []
     val startingLabel = getOrCreateStartingLabel()
     val endingLabel = getOrCreateEndingLabel()
     for (slot in 0..getLastParameterIndex(desc, access)) {

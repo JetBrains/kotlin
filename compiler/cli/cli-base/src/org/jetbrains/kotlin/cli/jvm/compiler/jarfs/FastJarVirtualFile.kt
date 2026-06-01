@@ -23,7 +23,7 @@ internal class FastJarVirtualFile(
 ) : VirtualFile(), LibraryContainerAwareVirtualFile {
 
     private var myChildrenArray = EMPTY_ARRAY
-    private val myChildrenList: MutableList<VirtualFile> = mutableListOf()
+    private val myChildrenList: MutableList<VirtualFile> = []
 
     init {
         parent?.myChildrenList?.add(this)

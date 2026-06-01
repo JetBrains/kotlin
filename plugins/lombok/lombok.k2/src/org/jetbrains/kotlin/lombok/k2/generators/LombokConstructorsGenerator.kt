@@ -23,34 +23,34 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 @OptIn(DirectDeclarationsAccess::class)
 class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
-    private val parts: List<AbstractConstructorGeneratorPart<*>> = listOf(
+    private val parts: List<AbstractConstructorGeneratorPart<*>> = [
         AllArgsConstructorGeneratorPart(session),
         NoArgsConstructorGeneratorPart(session),
         RequiredArgsConstructorGeneratorPart(session)
-    )
+    ]
 
     private val cache: FirCache<FirClassSymbol<*>, Collection<FirFunctionSymbol<*>>?, Nothing?> =
         session.firCachesFactory.createCache(::createConstructors)
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
-        if (!classSymbol.isSuitableJavaClass()) return emptySet()
+        if (!classSymbol.isSuitableJavaClass()) return []
         return cache.getValue(classSymbol)?.mapTo(mutableSetOf()) {
             when (it) {
                 is FirConstructorSymbol -> SpecialNames.INIT
                 else -> it.callableId.callableName
             }
-        } ?: emptySet()
+        } ?: []
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val owner = context?.owner ?: return emptyList()
-        if (!owner.isSuitableJavaClass()) return emptyList()
+        val owner = context?.owner ?: return []
+        if (!owner.isSuitableJavaClass()) return []
         return cache.getValue(owner)?.filterIsInstance<FirNamedFunctionSymbol>().orEmpty()
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val owner = context.owner
-        if (!owner.isSuitableJavaClass()) return emptyList()
+        if (!owner.isSuitableJavaClass()) return []
         return cache.getValue(owner)?.filterIsInstance<FirConstructorSymbol>().orEmpty()
     }
 

@@ -62,7 +62,7 @@ open class VfsBasedProjectEnvironment(
 ) : AbstractProjectEnvironment {
 
     constructor(project: Project, fileSystem: VirtualFileSystem, getPackagePartProviderFn: (GlobalSearchScope) -> PackagePartProvider) :
-            this(project, listOf(fileSystem), getPackagePartProviderFn)
+            this(project, [fileSystem], getPackagePartProviderFn)
 
     override fun getKotlinClassFinder(fileSearchScope: AbstractProjectFileSearchScope): KotlinClassFinder =
         VirtualFileFinderFactory.getInstance(project).create(fileSearchScope.asPsiSearchScope())

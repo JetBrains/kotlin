@@ -84,7 +84,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         this@irBlockBody.irCall(
                             getContinuationSymbol,
                             getContinuationSymbol.owner.returnType,
-                            listOf(originalFunction.returnType)
+                            [originalFunction.returnType]
                         )
                 },
             )
@@ -229,12 +229,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                         .apply { superTypes = superTypes memoryOptimizedPlus parameter.superTypes }
                 }
 
-                parameters = listOf(createDispatchReceiverParameterWithClassParent()) +
+                parameters = [createDispatchReceiverParameterWithClassParent()] +
                         stateMachineFunction.nonDispatchParameters.map { parameter ->
                             parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                         }
 
-                overriddenSymbols = listOf(stateMachineFunction.symbol)
+                overriddenSymbols = [stateMachineFunction.symbol]
             }
 
             buildStateMachine(function, this@CoroutineBuilder.function, argumentToPropertiesMap)
@@ -272,7 +272,7 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                 val createValueParameters = (unboundArgs + create1CompletionParameter).memoryOptimizedMap { parameter ->
                     parameter.copyTo(this, DECLARATION_ORIGIN_COROUTINE_IMPL)
                 }
-                parameters = listOf(createDispatchReceiverParameterWithClassParent()) + createValueParameters
+                parameters = [createDispatchReceiverParameterWithClassParent()] + createValueParameters
 
                 superCreateFunction?.let {
                     overriddenSymbols = ArrayList<IrSimpleFunctionSymbol>(it.overriddenSymbols.size + 1).apply {

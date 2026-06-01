@@ -86,7 +86,7 @@ private constructor(
         private const val TOTAL_BITS = 64
         private val USABLE_BITS = java.lang.Long.numberOfLeadingZeros(USED_BITS_MASK)
 
-        private val EMPTY_KIND_ARRAY = emptyArray<TowerGroupKind>()
+        private val EMPTY_KIND_ARRAY: Array<TowerGroupKind> = []
 
         private const val DEBUG = false // enables tower group debugging
 
@@ -100,7 +100,7 @@ private constructor(
 
         private fun debugKindArrayOf(kind: TowerGroupKind): Array<TowerGroupKind> {
             return if (DEBUG) {
-                arrayOf(kind)
+                [kind]
             } else {
                 EMPTY_KIND_ARRAY
             }
@@ -240,8 +240,8 @@ private constructor(
         // like `explicitReceiver.myPropertyOfExtensionFunctionType()`
         // or TowerGroup.Implicit(depth).InvokeExtensionWithImplicitReceiver in case of implicit extension receiver value
         // like `with(myReceiver) { myPropertyOfExtensionFunctionType() }`
-        val receiverDebugKinds = receiverGroup?.debugKinds ?: emptyArray()
-        val otherReceiverDebugKinds = other.receiverGroup?.debugKinds ?: emptyArray()
+        val receiverDebugKinds = receiverGroup?.debugKinds ?: []
+        val otherReceiverDebugKinds = other.receiverGroup?.debugKinds ?: []
 
         // Maximums define how far resolution algorithm should go to find the candidate
         val thisMax = maxOf(debugKinds, receiverDebugKinds, DEBUG_KINDS_COMPARATOR)

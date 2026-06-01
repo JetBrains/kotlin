@@ -51,7 +51,7 @@ internal fun JCTree.annotations(): Collection<JCTree.JCAnnotation> = when (this)
     is JCTree.JCVariableDecl -> mods?.annotations
     is JCTree.JCTypeParameter -> annotations
     else -> null
-} ?: emptyList<JCTree.JCAnnotation>()
+} ?: []
 
 fun Collection<JavaAnnotation>.filterTypeAnnotations(): Collection<JavaAnnotation> {
     val filteredAnnotations = arrayListOf<JavaAnnotation>()

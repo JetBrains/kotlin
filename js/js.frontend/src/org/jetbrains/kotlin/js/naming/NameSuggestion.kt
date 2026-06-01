@@ -88,7 +88,7 @@ open class NameSuggestion {
 
         // Dynamic declarations always require stable names as defined in Kotlin source code
         if (descriptor.isDynamic()) {
-            return SuggestedName(listOf(descriptor.name.asString()), true, descriptor, descriptor.containingDeclaration!!)
+            return SuggestedName([descriptor.name.asString()], true, descriptor, descriptor.containingDeclaration!!)
         }
 
         when (descriptor) {
@@ -144,7 +144,7 @@ open class NameSuggestion {
                         }
                     }
 
-                    return SuggestedName(listOf(name), false, descriptor, scope)
+                    return SuggestedName([name], false, descriptor, scope)
                 }
         }
 
@@ -169,7 +169,7 @@ open class NameSuggestion {
         // The exception are secondary constructors which get suggested name with '_init' suffix and are put in
         // the class's parent scope.
         //
-        val parts = mutableListOf<String>()
+        val parts: MutableList<String> = []
 
         // For some strange reason we get FAKE_OVERRIDE for final functions called via subtype's receiver
         var current: DeclarationDescriptor = descriptor
@@ -206,7 +206,7 @@ open class NameSuggestion {
         parts.reverse()
         val unmangledName = parts.joinToString("$")
         (val id = name, val stable) = mangleNameIfNecessary(unmangledName, fixedDescriptor, bindingContext)
-        return SuggestedName(listOf(id), stable, fixedDescriptor, current)
+        return SuggestedName([id], stable, fixedDescriptor, current)
     }
 
     // For regular names suggest its string representation

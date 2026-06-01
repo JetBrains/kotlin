@@ -25,7 +25,7 @@ class IrTreeVerifierHandler(
     artifactKind: BackendKind<IrBackendInput>,
 ) : AbstractIrHandler(testServices, artifactKind) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (CodegenTestDirectives.DUMP_IR !in module.directives) return

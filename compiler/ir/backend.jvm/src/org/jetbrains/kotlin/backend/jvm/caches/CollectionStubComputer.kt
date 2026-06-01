@@ -65,7 +65,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
 
     private val preComputedStubs: Collection<StubsForCollectionClass> by lazy {
         with(context.irBuiltIns) {
-            listOf(
+            [
                 LazyStubsForCollectionClass(collectionClass, mutableCollectionClass),
                 LazyStubsForCollectionClass(setClass, mutableSetClass),
                 LazyStubsForCollectionClass(listClass, mutableListClass),
@@ -74,7 +74,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
                 LazyStubsForCollectionClass(iterableClass, mutableIterableClass),
                 LazyStubsForCollectionClass(iteratorClass, mutableIteratorClass),
                 LazyStubsForCollectionClass(listIteratorClass, mutableListIteratorClass)
-            )
+            ]
         }
     }
 
@@ -84,7 +84,7 @@ class CollectionStubComputer(val context: JvmBackendContext) {
         }
 
     private fun computeStubsForCollectionClasses(irClass: IrClass): List<StubsForCollectionClass> {
-        if (irClass.isFromJava()) return emptyList()
+        if (irClass.isFromJava()) return []
         val stubs = preComputedStubs.filter {
             irClass.symbol.isStrictSubtypeOfClass(it.readOnlyClass) && !irClass.symbol.isSubtypeOfClass(it.mutableClass)
         }

@@ -48,7 +48,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
 
         private fun constructSyntheticTestClass(): ByteArray {
             return with(ClassWriter(ClassWriter.COMPUTE_MAXS or ClassWriter.COMPUTE_FRAMES)) {
-                visit(49, Opcodes.ACC_PUBLIC, JUNIT_GENERATED_TEST_CLASS_FQNAME.replace('.', '/'), null, "java/lang/Object", emptyArray())
+                visit(49, Opcodes.ACC_PUBLIC, JUNIT_GENERATED_TEST_CLASS_FQNAME.replace('.', '/'), null, "java/lang/Object", [])
                 visitSource(null, null)
 
                 with(visitAnnotation("Lorg/junit/runner/RunWith;", true)) {
@@ -107,7 +107,7 @@ class ParcelizeRuntimeClasspathProvider(testServices: TestServices) : RuntimeCla
     }
 
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (ENABLE_PARCELIZE !in module.directives) return emptyList()
+        if (ENABLE_PARCELIZE !in module.directives) return []
         val kotlinRuntimeJar = testServices.standardLibrariesPathProvider.runtimeJarForTests()
 
         val robolectricClasspath = System.getProperty("robolectric.classpath")

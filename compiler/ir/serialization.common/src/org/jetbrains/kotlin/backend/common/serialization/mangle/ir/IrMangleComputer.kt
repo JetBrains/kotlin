@@ -236,7 +236,7 @@ open class IrMangleComputer(
                 mangleValueParameter(builder, it, null)
             }
 
-            val typeParameters = accessor?.typeParameters ?: emptyList()
+            val typeParameters = accessor?.typeParameters ?: []
 
             typeParameters.collectForMangler(builder, MangleConstant.TYPE_PARAMETERS) {
                 mangleTypeParameter(this, it.symbol, it.index, null)

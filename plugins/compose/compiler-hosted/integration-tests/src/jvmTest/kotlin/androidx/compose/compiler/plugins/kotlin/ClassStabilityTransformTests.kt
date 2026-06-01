@@ -660,7 +660,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.A")
+        externalTypes = ["dependency.A"]
     )
 
     @Test
@@ -672,7 +672,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo : A
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.A")
+        externalTypes = ["dependency.A"]
     )
 
     @Test
@@ -684,7 +684,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.*")
+        externalTypes = ["dependency.*"]
     )
 
     @Test
@@ -700,7 +700,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val b: B, val c: B.C)
         """,
         stability = "Runtime(B)",
-        externalTypes = setOf("dependency.A", "dependency.B.*")
+        externalTypes = ["dependency.A", "dependency.B.*"]
     )
 
     @Test
@@ -716,7 +716,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val b: A.B, val c: A.B.C)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.**")
+        externalTypes = ["dependency.**"]
     )
 
     @Test
@@ -732,7 +732,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val b: A.B, val c: A.B.C)
         """,
         stability = "Runtime(A),Runtime(B)",
-        externalTypes = setOf("dependency.**.C")
+        externalTypes = ["dependency.**.C"]
     )
 
     @Test
@@ -751,7 +751,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val ba: A.Ba, val bb: A.Bb, val ca: A.Ba.C, val cb: A.Bb.C)
         """,
         stability = "Runtime(A)",
-        externalTypes = setOf("dependency.A.B**")
+        externalTypes = ["dependency.A.B**"]
     )
 
     @Test
@@ -767,7 +767,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val b: A.B, val c: A.B.C)
         """,
         stability = "Runtime(A)",
-        externalTypes = setOf("dependency.**.*")
+        externalTypes = ["dependency.**.*"]
     )
 
     @Test
@@ -783,7 +783,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A, val b: A.B, val c: A.B.C)
         """,
         stability = "Stable",
-        externalTypes = setOf("**")
+        externalTypes = ["**"]
     )
 
     @Test
@@ -795,7 +795,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val a: A)
         """,
         stability = "Stable",
-        externalTypes = setOf("*.A")
+        externalTypes = ["*.A"]
     )
 
     @Test
@@ -814,7 +814,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Foo(val c: A.B.C, val e: A.D.E)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.*.B.*", "dependency.A.D.E")
+        externalTypes = ["dependency.*.B.*", "dependency.A.D.E"]
     )
 
     @Test
@@ -826,7 +826,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Test<T>(val foo: Foo<T>)
         """,
         stability = "Parameter(T)",
-        externalTypes = setOf("dependency.Foo")
+        externalTypes = ["dependency.Foo"]
     )
 
     @Test
@@ -838,7 +838,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Test<X, Y>(val foo: Foo<X, Y>)
         """,
         stability = "Parameter(X)",
-        externalTypes = setOf("dependency.Foo<*,_>")
+        externalTypes = ["dependency.Foo<*,_>"]
     )
 
     @Test
@@ -852,7 +852,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Test(val foo: Foo<A, B>)
         """,
         stability = "Runtime(B)",
-        externalTypes = setOf("dependency.Foo<_,*>")
+        externalTypes = ["dependency.Foo<_,*>"]
     )
 
     @Test
@@ -865,7 +865,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Test(val foo: Foo<A>)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.Foo", "dependency.A")
+        externalTypes = ["dependency.Foo", "dependency.A"]
     )
 
     @Test
@@ -877,7 +877,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class Test(val foo: A)
         """,
         stability = "Stable",
-        externalTypes = setOf("dependency.b.c.d.A"),
+        externalTypes = ["dependency.b.c.d.A"],
         packageName = "dependency.b.c.d"
     )
 
@@ -1257,7 +1257,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             data class A(val list: List<B>)
         """.trimIndent(),
         expression = "A(listOf())",
-        externalTypes = setOf("kotlin.collections.List"),
+        externalTypes = ["kotlin.collections.List"],
         stability = "Stable"
     )
 
@@ -1268,7 +1268,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class A(val child: List<A>?)
         """.trimIndent(),
         expression = "A(null)",
-        externalTypes = setOf("kotlin.collections.List"),
+        externalTypes = ["kotlin.collections.List"],
         stability = "Unstable"
     )
 
@@ -1785,7 +1785,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         @Language("kotlin")
         classDefSrc: String,
         stability: String,
-        externalTypes: Set<String> = emptySet(),
+        externalTypes: Set<String> = [],
         transform: (IrClass) -> Unit = {},
     ) {
         val source = """
@@ -1802,7 +1802,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             $classDefSrc
         """.trimIndent()
 
-        val files = listOf(SourceFile("Test.kt", source))
+        val files = [SourceFile("Test.kt", source)]
         val irModule = compileToIr(files, additionalPaths, registerExtensions = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
         })
@@ -1827,7 +1827,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         classDefSrc: String,
         stability: String,
         dumpClasses: Boolean = false,
-        externalTypes: Set<String> = emptySet(),
+        externalTypes: Set<String> = [],
         packageName: String = "dependency",
     ) {
         val irModule = buildModule(
@@ -1933,13 +1933,13 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
     @Test
     fun testWithOtherCompilerPlugins() {
         compileToIr(
-            listOf(
+            [
                 SourceFile(
                     "Test.kt",
                     """
                     """
                 )
-            ),
+            ],
             registerExtensions = {
                 registerExtensionsForTest(this, it) {
                     with(ComposePluginRegistrar.Companion) {
@@ -1955,7 +1955,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
                                         }.apply {
                                             thisReceiver = buildReceiverParameter {
                                                 origin = IrDeclarationOrigin.INSTANCE_RECEIVER
-                                                type = IrSimpleTypeImpl(symbol, false, emptyList(), emptyList())
+                                                type = IrSimpleTypeImpl(symbol, false, [], [])
                                             }
                                         }
                                     )
@@ -1978,9 +1978,9 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             class D(val c: C)
         """.trimIndent()
 
-        val files = listOf(SourceFile("Test.kt", testFileSource))
+        val files = [SourceFile("Test.kt", testFileSource)]
         val irModule = compileToIr(files, additionalPaths)
-        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, setOf())
+        val stabilityInferencer = StabilityInferencer(isTargetJvm = true, irModule.descriptor, [])
 
         val testIrFile = irModule.files.last()
         val [aClass, bClass, cClass, dClass] = testIrFile.declarations.filterIsInstance<IrClass>()
@@ -2023,7 +2023,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
         expression: String,
         stability: String,
         dumpClasses: Boolean = false,
-        externalTypes: Set<String> = emptySet(),
+        externalTypes: Set<String> = [],
     ) {
         val irModule = buildModule(
             externalSrc,
@@ -2104,7 +2104,7 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
             $localSrc
         """.trimIndent()
 
-        val files = listOf(SourceFile("Test.kt", source))
+        val files = [SourceFile("Test.kt", source)]
         return compileToIr(files, additionalPaths + classesDirectory.root, updateConfiguration = {
             it.put(ComposeConfiguration.TEST_STABILITY_CONFIG_KEY, externalTypes)
         })
@@ -2125,11 +2125,11 @@ class ClassStabilityTransformTests : AbstractIrTransformTest() {
     )
 
     companion object {
-        val additionalPaths = listOf(
+        val additionalPaths = [
             Classpath.jarFor<kotlinx.collections.immutable.ImmutableSet<*>>(), // kotlinx-collections
             Classpath.jarFor<com.google.common.collect.ImmutableSet<*>>(), // guava
             Classpath.jarFor<dagger.Lazy<*>>(), // dagger
             Classpath.jarFor<StabilityTestProtos>() // protobuf-test-classes
-        )
+        ]
     }
 }

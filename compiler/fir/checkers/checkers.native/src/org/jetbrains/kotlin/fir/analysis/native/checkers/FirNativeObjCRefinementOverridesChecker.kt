@@ -53,11 +53,11 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
         val baseScope = declaration.unsubstitutedScope()
         baseScope.processAllFunctions { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllFunctions
-            check(baseScope, symbol, declaration, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, [], [])
         }
         baseScope.processAllProperties { symbol ->
             if (!symbol.isIntersectionOverride) return@processAllProperties
-            check(baseScope, symbol, declaration, emptyList(), emptyList())
+            check(baseScope, symbol, declaration, [], [])
         }
     }
 
@@ -74,8 +74,8 @@ sealed class FirNativeObjCRefinementOverridesChecker(mppKind: MppCheckerKind) : 
             if (overriddenMemberSymbols.isEmpty()) return
             var isHiddenFromObjC = objCAnnotations.isNotEmpty()
             var isRefinedInSwift = swiftAnnotations.isNotEmpty()
-            val supersNotHiddenFromObjC = mutableListOf<FirCallableSymbol<*>>()
-            val supersNotRefinedInSwift = mutableListOf<FirCallableSymbol<*>>()
+            val supersNotHiddenFromObjC: MutableList<FirCallableSymbol<*>> = []
+            val supersNotRefinedInSwift: MutableList<FirCallableSymbol<*>> = []
             for ((val symbol = member, val scope = baseScope) in overriddenMemberSymbols) {
                 val [superIsHiddenFromObjC, superIsRefinedInSwift] = symbol.inheritsRefinedAnnotations(context.session, scope)
                 if (superIsHiddenFromObjC) isHiddenFromObjC = true else supersNotHiddenFromObjC.add(symbol)

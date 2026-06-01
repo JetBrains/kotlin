@@ -150,8 +150,8 @@ class Fir2IrBuiltinSymbolsContainer(
             type = IrSimpleTypeImpl(
                 classifier = irSymbol,
                 nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-                arguments = emptyList(),
-                annotations = emptyList()
+                arguments = [],
+                annotations = []
             ),
             constructorSymbol,
             typeArgumentsCount = 0,

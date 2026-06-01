@@ -18,9 +18,9 @@ import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 @OptIn(KaExperimentalApi::class)
 internal class KaNotUnderContentRootModuleImpl(
     override val name: String,
-    override val directRegularDependencies: List<KaModule> = emptyList(),
-    override val directDependsOnDependencies: List<KaModule> = emptyList(),
-    override val directFriendDependencies: List<KaModule> = emptyList(),
+    override val directRegularDependencies: List<KaModule> = [],
+    override val directDependsOnDependencies: List<KaModule> = [],
+    override val directFriendDependencies: List<KaModule> = [],
     override val targetPlatform: TargetPlatform = JvmPlatforms.defaultJvmPlatform,
     override val file: PsiFile? = null,
     override val moduleDescription: String,

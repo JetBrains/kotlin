@@ -38,8 +38,8 @@ import java.io.IOException
 
 object JsConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
     name = "JsConfigurationPhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(CommonJsConfigurationUpdater, JsConfigurationUpdater)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [CommonJsConfigurationUpdater, JsConfigurationUpdater]
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
@@ -48,8 +48,8 @@ object JsConfigurationPhase : AbstractConfigurationPhase<K2JSCompilerArguments>(
 
 object WasmConfigurationPhase : AbstractConfigurationPhase<KotlinWasmCompilerArguments>(
     name = "WasmConfigurationPhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(CommonWasmConfigurationUpdater, WasmConfigurationUpdater)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [CommonWasmConfigurationUpdater, WasmConfigurationUpdater]
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)

@@ -238,7 +238,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         class IndexedField(val offset: Long, val field: ClassLayoutBuilder.FieldInfo)
 
-        val packedFields = mutableListOf<IndexedField>()
+        val packedFields: MutableList<IndexedField> = []
         for (field in fields) {
             val size = LLVMStoreSizeOfType(llvm.runtime.targetData, field.type.toLLVMType(llvm))
             check(size == 1L || size == 2L || size == 4L || size % 8 == 0L)

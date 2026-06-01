@@ -26,13 +26,13 @@ class FatFrameworkIT : KGPBaseTest() {
     fun smokeIos(gradleVersion: GradleVersion) {
         nativeProject("native-fat-framework/smoke", gradleVersion) {
             checkSmokeBuild(
-                archs = listOf("x64", "arm64"),
+                archs = ["x64", "arm64"],
                 targetPrefix = "ios",
                 expectedPlistPlatform = "iPhoneOS"
             )
 
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/smoke").absolutePathString()
-            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
+            runProcess(["file", binary], projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
@@ -52,12 +52,12 @@ class FatFrameworkIT : KGPBaseTest() {
                     .checkedReplace("iosX64()", "watchosX64()")
             }
             checkSmokeBuild(
-                archs = listOf("x64", "arm64", "deviceArm64"),
+                archs = ["x64", "arm64", "deviceArm64"],
                 targetPrefix = "watchos",
                 expectedPlistPlatform = "WatchOS"
             )
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/smoke").absolutePathString()
-            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
+            runProcess(["file", binary], projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64_32\\):\\s+Mach-O dynamically linked shared library arm64_32_v8".toRegex()))
@@ -78,13 +78,13 @@ class FatFrameworkIT : KGPBaseTest() {
                     .checkedReplace("iosX64()", "macosX64()")
             }
             checkSmokeBuild(
-                archs = listOf("x64", "arm64"),
+                archs = ["x64", "arm64"],
                 targetPrefix = "macos",
                 expectedPlistPlatform = "MacOSX",
                 true
             )
             val binary = projectPath.resolve("build/fat-framework/smoke.framework/Versions/A/smoke").absolutePathString()
-            runProcess(listOf("file", binary), projectPath.toFile()).assertProcessRunResult {
+            runProcess(["file", binary], projectPath.toFile()).assertProcessRunResult {
                 assertTrue(isSuccessful)
                 assertTrue(output.contains("\\(for architecture x86_64\\):\\s+Mach-O 64-bit dynamically linked shared library x86_64".toRegex()))
                 assertTrue(output.contains("\\(for architecture arm64\\):\\s+Mach-O 64-bit dynamically linked shared library arm64".toRegex()))
@@ -177,7 +177,7 @@ class FatFrameworkIT : KGPBaseTest() {
 
             build("fat") {
                 val binary = projectPath.resolve("build/fat-framework/custom.framework/custom").absolutePathString()
-                runProcess(listOf("otool", "-D", binary), projectPath.toFile()).assertProcessRunResult {
+                runProcess(["otool", "-D", binary], projectPath.toFile()).assertProcessRunResult {
                     assertTrue(isSuccessful)
                     assertTrue { output.lines().any { it.contains("@rpath/custom.framework/custom") } }
                 }

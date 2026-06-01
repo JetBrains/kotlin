@@ -101,7 +101,7 @@ object FirOptInUsageBaseChecker {
 
     context(context: CheckerContext)
     fun FirConstructorSymbol.loadExperimentalitiesFromConstructor(): Set<Experimentality> {
-        val result = mutableSetOf<Experimentality>()
+        val result: MutableSet<Experimentality> = []
         loadExperimentalitiesFromAnnotationTo(context.session, result)
         return result
     }
@@ -145,7 +145,7 @@ object FirOptInUsageBaseChecker {
     fun loadExperimentalitiesFromTypeArguments(
         typeArguments: List<FirTypeProjection>,
     ): Set<Experimentality> {
-        if (typeArguments.isEmpty()) return emptySet()
+        if (typeArguments.isEmpty()) return []
         return loadExperimentalitiesFromConeArguments(typeArguments.map { it.toConeTypeProjection() })
     }
 
@@ -153,7 +153,7 @@ object FirOptInUsageBaseChecker {
     fun loadExperimentalitiesFromConeArguments(
         typeArguments: List<ConeTypeProjection>,
     ): Set<Experimentality> {
-        if (typeArguments.isEmpty()) return emptySet()
+        if (typeArguments.isEmpty()) return []
         val result = SmartSet.create<Experimentality>()
         typeArguments.forEach {
             if (!it.isStarProjection) it.type?.addExperimentalities(result)
@@ -171,7 +171,7 @@ object FirOptInUsageBaseChecker {
     fun FirBasedSymbol<*>.loadExperimentalitiesForQualifier(
         companionObjectSymbol: FirClassLikeSymbol<*>?
     ): Pair<Set<Experimentality>, Set<Experimentality>> {
-        val visited = mutableSetOf<FirBasedSymbol<*>>()
+        val visited: MutableSet<FirBasedSymbol<*>> = []
         val allExperimentalities =
             loadExperimentalities(
                 knownExperimentalities = null,
@@ -180,7 +180,7 @@ object FirOptInUsageBaseChecker {
                 fromSupertype = false,
             )
 
-        if (companionObjectSymbol == null) return allExperimentalities to emptySet()
+        if (companionObjectSymbol == null) return allExperimentalities to []
 
         // copy here because loadExperimentalities mutates its first argument
         val hardExperimentalities = allExperimentalities.toCollection(SmartSet.create())
@@ -198,14 +198,14 @@ object FirOptInUsageBaseChecker {
     context(context: CheckerContext)
     fun FirBasedSymbol<*>.loadExperimentalities(fromSetter: Boolean): Set<Experimentality> {
         return loadExperimentalities(
-            knownExperimentalities = null, visited = mutableSetOf(), fromSetter, fromSupertype = false
+            knownExperimentalities = null, visited = [], fromSetter, fromSupertype = false
         )
     }
 
     context(context: CheckerContext)
     fun FirClassLikeSymbol<*>.loadExperimentalitiesFromSupertype(): Set<Experimentality> =
         loadExperimentalities(
-            knownExperimentalities = null, visited = mutableSetOf(),
+            knownExperimentalities = null, visited = [],
             fromSetter = false, fromSupertype = true
         )
 
@@ -310,7 +310,7 @@ object FirOptInUsageBaseChecker {
     context(context: CheckerContext)
     private fun ConeKotlinType?.addExperimentalities(
         result: SmartSet<Experimentality>,
-        visited: MutableSet<FirBasedSymbol<*>> = mutableSetOf(),
+        visited: MutableSet<FirBasedSymbol<*>> = [],
     ) {
         if (this !is ConeClassLikeType) return
         lookupTag.toSymbol()?.loadExperimentalities(

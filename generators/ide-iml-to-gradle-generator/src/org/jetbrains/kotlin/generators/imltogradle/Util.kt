@@ -22,7 +22,7 @@ import java.util.*
 
 fun String.trimMarginWithInterpolations(): String {
     val regex = Regex("""^(\s*\|)(\s*).*$""")
-    val out = mutableListOf<String>()
+    val out: MutableList<String> = []
     var prevIndent = ""
     for (line in lines()) {
         val matchResult = regex.matchEntire(line)

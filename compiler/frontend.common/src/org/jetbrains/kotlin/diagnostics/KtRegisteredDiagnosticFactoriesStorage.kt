@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
  * Contains all diagnostic factories that could be used in the current compilation
  */
 class KtRegisteredDiagnosticFactoriesStorage {
-    private val factories = mutableSetOf<BaseDiagnosticRendererFactory>()
+    private val factories: MutableSet<BaseDiagnosticRendererFactory> = []
 
     fun registerDiagnosticContainers(vararg containers: KtDiagnosticsContainer) {
         registerDiagnosticContainers(containers.toList())

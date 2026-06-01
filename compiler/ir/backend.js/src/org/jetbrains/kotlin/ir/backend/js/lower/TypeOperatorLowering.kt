@@ -106,7 +106,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 assert(expression.operator == IrTypeOperator.IMPLICIT_NOTNULL)
                 assert(expression.typeOperand.isNullable() xor expression.argument.type.isNullable())
 
-                val newStatements = mutableListOf<IrStatement>()
+                val newStatements: MutableList<IrStatement> = []
 
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val irNullCheck = nullCheck(argument())
@@ -140,7 +140,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 val toType = expression.typeOperand
                 val failResult = if (isSafe) litNull else JsIrBuilder.buildCall(throwCCE)
 
-                val newStatements = mutableListOf<IrStatement>()
+                val newStatements: MutableList<IrStatement> = []
 
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
@@ -193,7 +193,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 assert((expression.operator == IrTypeOperator.NOT_INSTANCEOF) == inverted)
 
                 val toType = expression.typeOperand
-                val newStatements = mutableListOf<IrStatement>()
+                val newStatements: MutableList<IrStatement> = []
 
                 val argument = cacheValue(expression.argument, newStatements, declaration)
                 val check = generateTypeCheck(argument, toType)
@@ -276,7 +276,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                 return when {
                     toType is IrDynamicType -> argument
                     toType.isAny() -> generateIsObjectCheck(argument)
-                    toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, listOf(argument, litFalse))
+                    toType.isNothing() -> JsIrBuilder.buildComposite(context.irBuiltIns.booleanType, [argument, litFalse])
                     toType.isSuspendFunction() -> generateSuspendFunctionCheck(argument, toType)
                     isTypeOfCheckingType(toType) -> generateTypeOfCheck(argument, toType)
 //                    toType.isChar() -> generateCheckForChar(argument)
@@ -407,7 +407,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
 
             private fun lowerCoercionToUnit(expression: IrTypeOperatorCall): IrExpression {
                 assert(expression.operator === IrTypeOperator.IMPLICIT_COERCION_TO_UNIT)
-                return expression.run { IrCompositeImpl(startOffset, endOffset, unit, null, listOf(argument, unitValue)) }
+                return expression.run { IrCompositeImpl(startOffset, endOffset, unit, null, [argument, unitValue]) }
             }
 
             private fun lowerIntegerCoercion(expression: IrTypeOperatorCall, declaration: IrDeclarationParent): IrExpression {
@@ -421,7 +421,7 @@ class TypeOperatorLowering(val context: JsIrBackendContext) : BodyLoweringPass {
                     shr(shl(and(arg, mask), shift), shift.shallowCopy())
                 }
 
-                val newStatements = mutableListOf<IrStatement>()
+                val newStatements: MutableList<IrStatement> = []
                 val argument = cacheValue(expression.argument, newStatements, declaration)
 
                 val casted = when {

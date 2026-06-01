@@ -72,11 +72,11 @@ class AnnotationsStringFormTest {
             KmAnnotationArgument.EnumValue("foo/bar", "BAZ") to "EnumValue(foo/bar.BAZ)",
             KmAnnotationArgument.AnnotationValue(KmAnnotation("com/my/Bar", mapOf())) to "AnnotationValue(@com/my/Bar())",
             KmAnnotationArgument.ArrayValue(
-                listOf(
+                [
                     KmAnnotationArgument.IntValue(1),
                     KmAnnotationArgument.IntValue(2),
                     KmAnnotationArgument.IntValue(3)
-                )
+                ]
             ) to "ArrayValue([IntValue(1), IntValue(2), IntValue(3)])",
             KmAnnotationArgument.KClassValue("com/my/Bar") to "KClassValue(com/my/Bar)",
             KmAnnotationArgument.ArrayKClassValue("com/my/Bar", 1) to "ArrayKClassValue(kotlin/Array<com/my/Bar>)"
@@ -87,7 +87,7 @@ class AnnotationsStringFormTest {
     @Test
     fun testIrlValues() {
         // Annotations are stored directly in metadata only for types and type aliases
-        class Holder(val e: @MyAnn("foo", MyAnnNested(E.B, arrayOf("a", "b", "c")), WithKClass(E::class)) String)
+        class Holder(val e: @MyAnn("foo", MyAnnNested(E.B, ["a", "b", "c"]), WithKClass(E::class)) String)
 
         val md = Holder::class.java.readMetadataAsKmClass()
         val annotation = md.properties.first().returnType.annotations.single()

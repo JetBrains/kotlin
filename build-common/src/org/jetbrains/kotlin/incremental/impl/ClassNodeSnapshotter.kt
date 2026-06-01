@@ -29,8 +29,8 @@ object ClassNodeSnapshotter {
         val originalVisibleAnnotations = classNode.visibleAnnotations
         val originalInvisibleAnnotations = classNode.invisibleAnnotations
 
-        classNode.fields = emptyList()
-        classNode.methods = emptyList()
+        classNode.fields = []
+        classNode.methods = []
         if (alsoExcludeKotlinMetaData) {
             classNode.visibleAnnotations = originalVisibleAnnotations?.filterNot {
                 it.desc == "Lkotlin/Metadata;"

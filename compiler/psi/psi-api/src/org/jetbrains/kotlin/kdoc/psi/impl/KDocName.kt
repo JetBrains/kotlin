@@ -53,7 +53,7 @@ class KDocName(node: ASTNode) : KtElementImpl(node), KtResolvable {
 
     fun getQualifiedName(): List<String> {
         val qualifier = getQualifier()
-        val nameAsList = listOf(getNameText())
+        val nameAsList = [getNameText()]
         return if (qualifier != null) qualifier.getQualifiedName() + nameAsList else nameAsList
     }
 

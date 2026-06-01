@@ -41,7 +41,7 @@ interface KotlinScope {
 data class Classifier(
         val pkg: String,
         val topLevelName: String,
-        private val nestedNames: List<String> = emptyList()
+        private val nestedNames: List<String> = []
 ) {
 
     companion object {
@@ -78,13 +78,13 @@ data class Classifier(
 }
 
 val Classifier.type
-    get() = KotlinClassifierType(this, arguments = emptyList(), nullable = false, underlyingType = null)
+    get() = KotlinClassifierType(this, arguments = [], nullable = false, underlyingType = null)
 
 fun Classifier.typeWith(vararg arguments: KotlinTypeArgument) =
         KotlinClassifierType(this, arguments.toList(), nullable = false, underlyingType = null)
 
 fun Classifier.typeAbbreviation(expandedType: KotlinType) =
-        KotlinClassifierType(this, arguments = emptyList(), nullable = false, underlyingType = expandedType)
+        KotlinClassifierType(this, arguments = [], nullable = false, underlyingType = expandedType)
 
 interface KotlinTypeArgument {
     /**
@@ -266,7 +266,7 @@ abstract class KotlinFile(
     }
 
     private val importedNameToPkg = mutableMapOf<String, String>()
-    private val declaredProperties = mutableSetOf<String>()
+    private val declaredProperties: MutableSet<String> = []
 
     override fun reference(classifier: Classifier): String = if (classifier.topLevelName in namesToBeDeclared) {
         if (classifier.pkg == this.pkg) {
@@ -296,7 +296,7 @@ abstract class KotlinFile(
         return importedNameToPkg.getOrPut(classifier.topLevelName) { classifier.pkg } == classifier.pkg
     }
 
-    private val alreadyDeclared = mutableSetOf<String>()
+    private val alreadyDeclared: MutableSet<String> = []
 
     override fun declare(classifier: Classifier): String {
         if (classifier.pkg != this.pkg) {

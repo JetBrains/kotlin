@@ -38,8 +38,8 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (context != null) return emptyList()
-        if (callableId.callableName != TEST_FUN_NAME) return emptyList()
+        if (context != null) return []
+        if (callableId.callableName != TEST_FUN_NAME) return []
         val function = createTopLevelFunction(
             TopLevelPrivateSuspendFunctionGeneratorKey, callableId, session.builtinTypes.unitType.coneType,
         ) {
@@ -47,7 +47,7 @@ internal class TopLevelPrivateSuspendFunctionGenerator(session: FirSession) : Fi
             status { isSuspend = true }
             withGeneratedDefaultBody()
         }
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
     override fun getTopLevelCallableIds(): Set<CallableId> {

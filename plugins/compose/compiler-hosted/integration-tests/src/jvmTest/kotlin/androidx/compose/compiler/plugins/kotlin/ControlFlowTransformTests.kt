@@ -2140,10 +2140,10 @@ class ControlFlowTransformTests : AbstractControlFlowTransformTests() {
                 minLines: Int = 1,
             ) {}
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeFoundationLayoutJar()
-        )
+        ]
     )
 
     @Test

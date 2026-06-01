@@ -33,15 +33,15 @@ class RuntimeTestsK2 {
 
 private fun createRuntimeRunners(): List<Runner> {
     AbstractCompilerTest.setSystemProperties()
-    val compilers = mutableListOf(
+    val compilers: MutableList<RuntimeTestCompiler> = [
         RuntimeTestCompiler(sourceInformation = false, optimizeNonSkippingGroups = false),
         RuntimeTestCompiler(sourceInformation = true, optimizeNonSkippingGroups = false),
         RuntimeTestCompiler(sourceInformation = false, optimizeNonSkippingGroups = true),
         RuntimeTestCompiler(sourceInformation = true, optimizeNonSkippingGroups = true)
-    )
+    ]
 
     val iterator = compilers.iterator()
-    val result = mutableListOf<Runner>()
+    val result: MutableList<Runner> = []
     while (iterator.hasNext()) {
         val compiler = iterator.next()
         val classes = compiler.compileRuntimeClasses()
@@ -74,9 +74,9 @@ private class RuntimeTestCompiler(
         if (optimizeNonSkippingGroups) {
             put(
                 ComposeConfiguration.FEATURE_FLAGS,
-                listOf(
+                [
                     FeatureFlag.OptimizeNonSkippingGroups.featureName,
-                )
+                ]
             )
         }
     }
@@ -98,7 +98,7 @@ private class RuntimeTestCompiler(
         val generatedClassLoader = createClassLoader(
             commonSourceFiles = commonSources.map { it.toSourceFile(sourceRoot.commonSourceRoot()) },
             platformSourceFiles = jvmSources.map { it.toSourceFile(sourceRoot.jvmSourceRoot()) },
-            additionalPaths = listOf(
+            additionalPaths = [
                 Classpath.composeTestUtilsJar(),
                 Classpath.kotlinxCoroutinesJar(),
                 Classpath.jarFor<kotlinx.coroutines.test.TestDispatcher>(), // kotlinx-coroutines-test
@@ -106,7 +106,7 @@ private class RuntimeTestCompiler(
                 Classpath.jarFor<kotlin.test.Asserter>(), // kotlin-test
                 Classpath.jarFor<Test>(), // junit
                 Classpath.jarFor<SmokeTest>() // test-federation-runtime
-            )
+            ]
         )
 
         val parent = generatedClassLoader.parent
@@ -116,7 +116,7 @@ private class RuntimeTestCompiler(
                     loadedClasses += it
                 }
 
-            val loadedClasses = mutableListOf<Class<*>>()
+            val loadedClasses: MutableList<Class<*>> = []
         }
         generatedClassLoader.allGeneratedFiles.forEach { generatedFile ->
             if (generatedFile.relativePath.endsWith(".class")) {

@@ -23,5 +23,5 @@ class CallComputation(override val type: ESType?, override val effects: List<ESE
 
 object UNKNOWN_COMPUTATION : Computation {
     override val type: ESType? = null
-    override val effects: List<ESEffect> = emptyList()
+    override val effects: List<ESEffect> = []
 }

@@ -328,8 +328,8 @@ class FirSignatureEnhancement(
         val hasReceiver = representative?.receiverParameter != null
 
         var newReceiverTypeRef: FirResolvedTypeRef? = null
-        val enhancedContextParameterTypes = mutableListOf<FirResolvedTypeRef>()
-        val enhancedValueParameterTypes = mutableListOf<FirResolvedTypeRef>()
+        val enhancedContextParameterTypes: MutableList<FirResolvedTypeRef> = []
+        val enhancedValueParameterTypes: MutableList<FirResolvedTypeRef> = []
 
         for ([index, valueParameter] in firMethod.valueParameters.withIndex()) {
             val enhancedType = enhanceValueParameterType(
@@ -783,7 +783,7 @@ class FirSignatureEnhancement(
     ): FirResolvedTypeRef = EnhancementSignatureParts(
         session, typeQualifierResolver, typeParameter, isCovariant = false, forceOnlyHeadTypeConstructor,
         AnnotationQualifierApplicabilityType.TYPE_PARAMETER_BOUNDS, contextQualifiers
-    ).enhance(bound, emptyList(), FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND)
+    ).enhance(bound, [], FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_AFTER_FIRST_ROUND)
 
 
     fun enhanceSuperTypes(nonEnhancedSuperTypes: List<FirTypeRef>): List<FirTypeRef> {
@@ -837,7 +837,7 @@ class FirSignatureEnhancement(
         EnhancementSignatureParts(
             session, typeQualifierResolver, null, isCovariant = false, forceOnlyHeadTypeConstructor = false,
             AnnotationQualifierApplicabilityType.TYPE_USE, contextQualifiers
-        ).enhance(type, emptyList(), FirJavaTypeConversionMode.SUPERTYPE)
+        ).enhance(type, [], FirJavaTypeConversionMode.SUPERTYPE)
 
     // ================================================================================================
 
@@ -864,7 +864,7 @@ class FirSignatureEnhancement(
         defaultQualifiers: JavaTypeQualifiersByElementType?,
         predefinedEnhancementInfo: PredefinedFunctionEnhancementInfo?,
     ): FirResolvedTypeRef {
-        return enhanceReturnType(owner, emptyList(), defaultQualifiers, predefinedEnhancementInfo).first!!
+        return enhanceReturnType(owner, [], defaultQualifiers, predefinedEnhancementInfo).first!!
     }
 
     /**

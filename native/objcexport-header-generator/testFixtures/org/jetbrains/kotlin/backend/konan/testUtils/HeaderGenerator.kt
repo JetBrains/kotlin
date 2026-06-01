@@ -26,13 +26,13 @@ interface HeaderGenerator {
          *
          * Some of those dependencies can also be exported, see [exportedDependencies]
          */
-        val dependencies: List<Library> = listOf(),
+        val dependencies: List<Library> = [],
 
         /**
          * Any dependency listed in [dependencies] which module name is present in this set is considered 'exported' and
          * will result in the entire public API surface of the said library to be translated in the header
          */
-        val exportedDependencies: Set<Library> = emptySet(),
+        val exportedDependencies: Set<Library> = [],
 
         val explicitMethodFamily: Boolean = false,
 

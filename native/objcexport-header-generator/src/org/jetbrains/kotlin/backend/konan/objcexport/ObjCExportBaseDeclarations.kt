@@ -25,9 +25,9 @@ fun objCBaseDeclarations(
                     comment = null,
                     isInstanceMethod = true,
                     returnType = ObjCInstanceType,
-                    selectors = listOf("init"),
-                    parameters = emptyList(),
-                    attributes = listOf("unavailable")
+                    selectors = ["init"],
+                    parameters = [],
+                    attributes = ["unavailable"]
                 )
             }
             add {
@@ -36,8 +36,8 @@ fun objCBaseDeclarations(
                     comment = null,
                     isInstanceMethod = false,
                     returnType = ObjCInstanceType,
-                    selectors = listOf("new"),
-                    parameters = emptyList(), attributes = listOf("unavailable")
+                    selectors = ["new"],
+                    parameters = [], attributes = ["unavailable"]
                 )
             }
             add {
@@ -46,9 +46,9 @@ fun objCBaseDeclarations(
                     comment = null,
                     isInstanceMethod = false,
                     returnType = ObjCVoidType,
-                    selectors = listOf("initialize"),
-                    parameters = emptyList(),
-                    attributes = listOf("objc_requires_super")
+                    selectors = ["initialize"],
+                    parameters = [],
+                    attributes = ["objc_requires_super"]
                 )
             }
         })
@@ -58,21 +58,21 @@ fun objCBaseDeclarations(
     add {
         ObjCInterfaceImpl(
             objCNameOfAny.objCName,
-            superProtocols = listOf("NSCopying"),
+            superProtocols = ["NSCopying"],
             categoryName = "${objCNameOfAny.objCName}Copying",
             origin = null,
             comment = null,
-            generics = emptyList(),
-            attributes = emptyList(),
-            members = emptyList(),
+            generics = [],
+            attributes = [],
+            members = [],
             superClass = null,
-            superClassGenerics = emptyList()
+            superClassGenerics = []
         )
     }
 
     // TODO: only if appears
     add {
-        val generics = listOf("ObjectType")
+        val generics = ["ObjectType"]
         objCInterface(
             objCNameOfMutableSet,
             generics = generics,
@@ -83,7 +83,7 @@ fun objCBaseDeclarations(
 
     // TODO: only if appears
     add {
-        val generics = listOf("KeyType", "ObjectType")
+        val generics = ["KeyType", "ObjectType"]
         objCInterface(
             objCNameOfMutableMap,
             generics = generics,
@@ -103,21 +103,21 @@ fun objCBaseDeclarations(
                         name = "kotlinException",
                         origin = null,
                         type = ObjCNullableReferenceType(ObjCIdType),
-                        propertyAttributes = listOf("readonly"),
+                        propertyAttributes = ["readonly"],
                         setterName = null,
                         getterName = null,
                         comment = null,
-                        declarationAttributes = emptyList()
+                        declarationAttributes = []
                     )
                 }
             },
-            attributes = emptyList(),
+            attributes = [],
             comment = null,
             origin = null,
-            superProtocols = emptyList(),
-            generics = emptyList(),
+            superProtocols = [],
+            generics = [],
             superClass = null,
-            superClassGenerics = emptyList()
+            superClassGenerics = []
         )
     }
 
@@ -130,10 +130,10 @@ private fun MutableList<ObjCTopLevel>.genKotlinNumbers(
 ) {
     val members = buildList {
         NSNumberKind.entries.forEach {
-            add(nsNumberFactory(it, listOf("unavailable")))
+            add(nsNumberFactory(it, ["unavailable"]))
         }
         NSNumberKind.entries.forEach {
-            add(nsNumberInit(it, listOf("unavailable")))
+            add(nsNumberInit(it, ["unavailable"]))
         }
     }
     add {
@@ -171,28 +171,28 @@ private fun genKotlinNumber(
     )
 }
 
-private fun nsNumberInit(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
+private fun nsNumberInit(kind: NSNumberKind, attributes: List<String> = []): ObjCMethod {
     return ObjCMethod(
         origin = null,
         comment = null,
         isInstanceMethod = false,
         returnType = ObjCInstanceType,
-        selectors = listOf(kind.factorySelector),
-        parameters = listOf(
+        selectors = [kind.factorySelector],
+        parameters = [
             ObjCParameter(name = "value", origin = null, type = kind.objCType, todo = null)
-        ),
+        ],
         attributes = attributes
     )
 }
 
-private fun nsNumberFactory(kind: NSNumberKind, attributes: List<String> = emptyList()): ObjCMethod {
+private fun nsNumberFactory(kind: NSNumberKind, attributes: List<String> = []): ObjCMethod {
     return ObjCMethod(
         origin = null,
         comment = null,
         isInstanceMethod = true,
         returnType = ObjCInstanceType,
-        selectors = listOf(kind.initSelector),
-        parameters = listOf(ObjCParameter("value", null, kind.objCType, todo = null)),
+        selectors = [kind.initSelector],
+        parameters = [ObjCParameter("value", null, kind.objCType, todo = null)],
         attributes = attributes
     )
 }
@@ -216,12 +216,12 @@ private fun objCInterface(
 
 private fun objCInterface(
     name: ObjCExportClassOrProtocolName,
-    generics: List<ObjCGenericTypeDeclaration> = emptyList(),
+    generics: List<ObjCGenericTypeDeclaration> = [],
     superClass: String? = null,
-    superClassGenerics: List<ObjCNonNullReferenceType> = emptyList(),
-    superProtocols: List<String> = emptyList(),
-    members: List<ObjCExportStub> = emptyList(),
-    attributes: List<String> = emptyList(),
+    superClassGenerics: List<ObjCNonNullReferenceType> = [],
+    superProtocols: List<String> = [],
+    members: List<ObjCExportStub> = [],
+    attributes: List<String> = [],
     comment: ObjCComment? = null,
 ): ObjCInterface = ObjCInterfaceImpl(
     name = name.objCName,
@@ -240,7 +240,7 @@ private fun objCProtocol(
     name: ObjCExportClassOrProtocolName,
     superProtocols: List<String>,
     members: List<ObjCExportStub>,
-    attributes: List<String> = emptyList(),
+    attributes: List<String> = [],
     comment: ObjCComment? = null,
 ): ObjCProtocol = ObjCProtocolImpl(
     name = name.objCName,

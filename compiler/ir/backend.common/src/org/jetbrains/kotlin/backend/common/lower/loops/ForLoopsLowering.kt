@@ -263,7 +263,7 @@ private class RangeLoopTransformer(
                 mainLoopVariable.endOffset,
                 context.irBuiltIns.unitType,
                 IrStatementOrigin.FOR_LOOP_NEXT,
-                loopHeader.initializeIteration(listOf(mainLoopVariable), loopVariableComponents, this, this@RangeLoopTransformer.context)
+                loopHeader.initializeIteration([mainLoopVariable], loopVariableComponents, this, this@RangeLoopTransformer.context)
             )
         }
 
@@ -399,7 +399,7 @@ private class RangeLoopTransformer(
         var mainLoopVariable: IrVariable? = null
         var mainLoopVariableIndex = -1
         val loopVariableComponents = mutableMapOf<Int, MutableList<IrVariable>>()
-        val loopVariableComponentIndices = mutableListOf<Int>()
+        val loopVariableComponentIndices: MutableList<Int> = []
         for ([i, stmt] in statements.withIndex()) {
             if (stmt !is IrVariable) continue
             val initializer = stmt.initializer?.let {
@@ -452,15 +452,15 @@ private class RangeLoopTransformer(
                     mainLoopVariableIndex = i
                 }
                 is IrStatementOrigin.COMPONENT_N -> {
-                    loopVariableComponents.getOrPut(origin.index) { mutableListOf() }.add(stmt)
+                    loopVariableComponents.getOrPut(origin.index) { [] }.add(stmt)
                     loopVariableComponentIndices.add(i)
                 }
                 IrStatementOrigin.GET_PROPERTY -> {
                     when {
                         initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_INDEX_NAME) ->
-                            loopVariableComponents.getOrPut(1) { mutableListOf() }.add(stmt)
+                            loopVariableComponents.getOrPut(1) { [] }.add(stmt)
                         initializer.symbol.owner.hasEqualFqName(STDLIB_INDEXED_VALUE_GET_VALUE_NAME) ->
-                            loopVariableComponents.getOrPut(2) { mutableListOf() }.add(stmt)
+                            loopVariableComponents.getOrPut(2) { [] }.add(stmt)
                     }
                     loopVariableComponentIndices.add(i)
                 }

@@ -60,10 +60,10 @@ abstract class AbstractFir2IrResultsConverter(
     protected abstract val klibFactories: KlibMetadataFactories
 
     final override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
+        get() = [
             service(::FirDiagnosticCollectorService),
             service(::LibraryProvider),
-        )
+        ]
 
     final override fun transform(module: TestModule, inputArtifact: FirOutputArtifact): IrBackendInput? =
         try {
@@ -151,7 +151,7 @@ abstract class AbstractFir2IrResultsConverter(
         val stdlib: KotlinLibrary? = libraries.firstOrNull { it.isAnyPlatformStdlib }
 
         var builtIns: KotlinBuiltIns? = null
-        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+        val dependencies: MutableList<ModuleDescriptorImpl> = []
 
         fun loadDescriptor(library: KotlinLibrary): ModuleDescriptorImpl =
             testServices.libraryProvider.getOrCreateStdlibByPath(library.libraryFile.absolutePath) {
@@ -171,7 +171,7 @@ abstract class AbstractFir2IrResultsConverter(
                 Pair(moduleDescriptor, library)
             } as ModuleDescriptorImpl
 
-        val moduleDescriptors = mutableListOf<ModuleDescriptorImpl>()
+        val moduleDescriptors: MutableList<ModuleDescriptorImpl> = []
         if (stdlib != null) {
             val stdlibModuleDescriptor = loadDescriptor(stdlib)
             moduleDescriptors += stdlibModuleDescriptor

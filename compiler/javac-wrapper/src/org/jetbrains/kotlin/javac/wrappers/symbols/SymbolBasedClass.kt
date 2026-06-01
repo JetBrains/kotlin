@@ -112,7 +112,7 @@ class SymbolBasedClass(
         get() = false
 
     override val permittedTypes: Sequence<JavaClassifierType>
-        get() = emptySequence()
+        get() = []
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
@@ -144,7 +144,7 @@ class SymbolBasedClass(
         get() = false
 
     override val recordComponents: Collection<JavaRecordComponent>
-        get() = emptyList()
+        get() = []
 
     override fun hasDefaultConstructor() = false // default constructors are explicit in symbols
 

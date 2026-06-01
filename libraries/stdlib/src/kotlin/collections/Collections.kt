@@ -7,6 +7,7 @@
 @file:kotlin.jvm.JvmMultifileClass
 @file:kotlin.jvm.JvmName("CollectionsKt")
 @file:OptIn(kotlin.experimental.ExperimentalTypeInference::class, kotlin.js.ExperimentalJsFileName::class)
+@file:Suppress("ConvertToCollectionLiterals")
 
 package kotlin.collections
 
@@ -131,7 +132,7 @@ public fun <T> arrayListOf(vararg elements: T): ArrayList<T> =
  * Returns a new read-only list either of single given element, if it is not null, or empty list if the element is null. The returned list is serializable (JVM).
  * @sample samples.collections.Collections.Lists.listOfNotNull
  */
-public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) listOf(element) else emptyList()
+public fun <T : Any> listOfNotNull(element: T?): List<T> = if (element != null) [element] else []
 
 /**
  * Returns a new read-only list only of those given elements, that are not null.  The returned list is serializable (JVM).
@@ -262,14 +263,14 @@ public inline fun <T> Collection<T>?.isNullOrEmpty(): Boolean {
  * @sample samples.collections.Collections.Collections.collectionOrEmpty
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: emptyList()
+public inline fun <T> Collection<T>?.orEmpty(): Collection<T> = this ?: []
 
 /**
  * Returns this List if it's not `null` and the empty list otherwise.
  * @sample samples.collections.Collections.Lists.listOrEmpty
  */
 @kotlin.internal.InlineOnly
-public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: emptyList()
+public inline fun <T> List<T>?.orEmpty(): List<T> = this ?: []
 
 /**
  * Returns this collection if it's not empty
@@ -307,8 +308,8 @@ public fun <T> Iterable<T>.shuffled(random: Random): List<T> = toMutableList().a
 
 
 internal fun <T> List<T>.optimizeReadOnlyList() = when (size) {
-    0 -> emptyList()
-    1 -> listOf(this[0])
+    0 -> []
+    1 -> [this[0]]
     else -> this
 }
 
@@ -488,7 +489,7 @@ internal fun throwCountOverflow() { throw ArithmeticException("Count overflow ha
 
 
 internal fun collectionToArrayCommonImpl(collection: Collection<*>): Array<Any?> {
-    if (collection.isEmpty()) return emptyArray<Any?>()
+    if (collection.isEmpty()) return []
 
     val destination = arrayOfNulls<Any>(collection.size)
 

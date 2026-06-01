@@ -28,7 +28,7 @@ internal class ExceptionState private constructor(
         get() = getField(causeProperty.symbol) as? ExceptionState
 
     private lateinit var exceptionFqName: String
-    private val exceptionHierarchy = mutableListOf<String>()
+    private val exceptionHierarchy: MutableList<String> = []
     private val messageProperty = irClass.getOriginalPropertyByName("message")
     private val causeProperty = irClass.getOriginalPropertyByName("cause")
 
@@ -123,7 +123,7 @@ internal class ExceptionState private constructor(
 
         private fun evaluateAdditionalStackTrace(e: Throwable, environment: IrInterpreterEnvironment): List<String> {
             // TODO do we really need this?... It will point to JVM stdlib
-            val additionalStack = mutableListOf<String>()
+            val additionalStack: MutableList<String> = []
             if (e.stackTrace.any { it.className == "java.lang.invoke.MethodHandle" }) {
                 for ([index, stackTraceElement] in e.stackTrace.withIndex()) {
                     if (stackTraceElement.methodName == "invokeWithArguments") {
@@ -147,7 +147,7 @@ internal class ExceptionState private constructor(
             }
 
             if (environment.configuration.collapseStackTraceFromJDK && additionalStack.isNotEmpty()) {
-                return listOf("at <JDK>")
+                return ["at <JDK>"]
             }
             return additionalStack
         }

@@ -36,7 +36,7 @@ internal class KaFe10JvmTypeMapperContext(private val resolveSession: ResolveSes
                 val classifier = type.constructor.declarationDescriptor as? ClassifierDescriptorWithTypeParameters
                     ?: throw IllegalArgumentException(type.toString())
 
-                NestedType(PossiblyInnerType(classifier, type.arguments, null), emptyList())
+                NestedType(PossiblyInnerType(classifier, type.arguments, null), [])
             } else {
                 NestedType(innerTypesAsList[indexOfParameterizedType], innerTypesAsList.drop(indexOfParameterizedType + 1))
             }

@@ -35,7 +35,7 @@ fun serializeSingleFirFile(
     )
     val packageProto = packageSerializer.packagePartProto(file, actualizedExpectDeclarations).build()
 
-    val classesProto = mutableListOf<Pair<ProtoBuf.Class, Int>>()
+    val classesProto: MutableList<Pair<ProtoBuf.Class, Int>> = []
 
     fun FirClass.makeClassProtoWithNested() {
         if (!isNotExpectOrShouldBeSerialized(actualizedExpectDeclarations) ||

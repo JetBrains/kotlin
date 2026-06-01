@@ -531,7 +531,7 @@ class AnonymousObjectTransformer(
 
         constructorParamBuilder.addThis(oldObjectType, false)
 
-        val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: emptyArray()
+        val paramTypes = transformationInfo.constructorDesc?.let { Type.getArgumentTypes(it) } ?: []
         for (type in paramTypes) {
             val functionalArgument = indexToFunctionalArgument[constructorParamBuilder.nextParameterOffset]
             val fieldEquivalent = capturedParams[constructorParamBuilder.nextParameterOffset]
@@ -550,7 +550,7 @@ class AnonymousObjectTransformer(
         //TODO: some of such parameters could be skipped - we should perform additional analysis
         val allRecapturedParameters = ArrayList<CapturedParamDesc>()
         if (!topLevelInCrossinlineLambda) {
-            val capturedOuterThisTypes = mutableSetOf<String>()
+            val capturedOuterThisTypes: MutableSet<String> = []
             for (info in capturedLambdas) {
                 for (desc in info.capturedVars) {
                     val recapturedParamInfo = constructorParamBuilder.addCapturedParam(

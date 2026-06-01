@@ -58,13 +58,13 @@ class PerformanceTest : KtUsefulTestCase() {
         val startTimeNanos = System.nanoTime()
 
         entryPoint(
-            arrayOf(
+            [
                 "native-dist-commonize",
                 "-distribution-path", NATIVE_DISTRIBUTION_PATH,
                 "-output-path", outputDir.absolutePath,
                 "-targets", COMMONIZED_TARGETS.joinToString(","),
                 "-output-targets", "(${COMMONIZED_TARGETS.joinToString(",")})"
-            )
+            ]
         )
 
         val finishTimeNanos = System.nanoTime()
@@ -75,7 +75,7 @@ class PerformanceTest : KtUsefulTestCase() {
 
     companion object DefaultCommonizationParameters {
         private const val NATIVE_DISTRIBUTION_PATH = "/path/to/kotlin/native" // Adjust as necessary.
-        private val COMMONIZED_TARGETS = listOf("ios_arm64", "ios_x64", "ios_simulator_arm64") // Adjust as necessary.
+        private val COMMONIZED_TARGETS = ["ios_arm64", "ios_x64", "ios_simulator_arm64"] // Adjust as necessary.
 
         private fun formatTime(millis: Long): String = when {
             millis < 1000 -> "${millis}ms"

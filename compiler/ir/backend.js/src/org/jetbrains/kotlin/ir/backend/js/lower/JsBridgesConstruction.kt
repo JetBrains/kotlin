@@ -131,7 +131,7 @@ class JsBridgesConstruction(val context: JsIrBackendContext) : BridgesConstructi
         firstTrailingParameterIndexVar: Lazy<IrVariable>
     ): IrVariable {
         val varargElement = bridge.parameters[varargIndex]
-        val sliceIntrinsicArgs = mutableListOf<IrExpression>(irCall(jsArguments))
+        val sliceIntrinsicArgs: MutableList<IrExpression> = [irCall(jsArguments)]
         var sliceIntrinsic = jsArrayLike2Array
         if (varargIndex != 0 || numberOfTrailingParameters > 0) {
             val nonDispatchVarargIndex = varargIndex - if (bridge.dispatchReceiverParameter != null) 1 else 0

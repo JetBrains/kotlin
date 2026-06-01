@@ -62,7 +62,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                     parent = klass
                     parameters += createDispatchReceiverParameterWithClassParent()
                     parameters += createExtensionReceiver(context.irBuiltIns.stringType)
-                    body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, [])
                     context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
                 }
             }
@@ -80,7 +80,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                         name = Name.identifier("c")
                         type = context.irBuiltIns.stringType
                     }
-                    body = context.irFactory.createBlockBody(startOffset, endOffset, emptyList())
+                    body = context.irFactory.createBlockBody(startOffset, endOffset, [])
                     context.metadataDeclarationRegistrar.registerFunctionAsMetadataVisible(this)
                 }
             }
@@ -117,7 +117,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
             }
             ctor.body = context.irFactory.createBlockBody(
                 ctor.startOffset, ctor.endOffset,
-                listOf(
+                [
                     IrDelegatingConstructorCallImpl(
                         ctor.startOffset, ctor.endOffset, context.irBuiltIns.unitType,
                         superConstructor.symbol, 0,
@@ -128,7 +128,7 @@ class AllPropertiesConstructorIrGenerator(val context: IrPluginContext) : IrVisi
                                 arguments[index] = IrGetValueImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, parameter.symbol)
                             }
                     }
-                )
+                ]
             )
             context.metadataDeclarationRegistrar.registerConstructorAsMetadataVisible(ctor)
         }

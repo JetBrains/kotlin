@@ -69,7 +69,7 @@ internal fun getSourceFilePaths(
 internal fun collectSourceFilePaths(root: Path): List<Path> {
     // NB: [Files#walk] throws an exception if there is an issue during IO.
     // With [Files#walkFileTree] with a custom visitor, we can take control of exception handling.
-    val result = mutableListOf<Path>()
+    val result: MutableList<Path> = []
     Files.walkFileTree(
         /* start = */ root,
         /* options = */ setOf(FileVisitOption.FOLLOW_LINKS),

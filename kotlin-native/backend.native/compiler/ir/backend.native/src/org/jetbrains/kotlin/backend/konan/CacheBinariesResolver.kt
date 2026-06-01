@@ -35,8 +35,8 @@ internal fun resolveCacheBinaries(
         cachedLibraries: CachedLibraries,
         dependenciesTrackingResult: DependenciesTrackingResult,
 ): ResolvedCacheBinaries {
-    val staticCaches = mutableListOf<String>()
-    val dynamicCaches = mutableListOf<String>()
+    val staticCaches: MutableList<String> = []
+    val dynamicCaches: MutableList<String> = []
 
     dependenciesTrackingResult.allCachedBitcodeDependencies.forEach { dependency ->
         val library = dependency.library

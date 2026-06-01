@@ -95,8 +95,8 @@ class IrBuiltInsOverFir(
             type = IrSimpleTypeImpl(
                 classifier = classSymbol,
                 nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-                arguments = emptyList(),
-                annotations = emptyList()
+                arguments = [],
+                annotations = []
             ),
             constructorSymbol,
             typeArgumentsCount = 0,
@@ -116,7 +116,7 @@ class IrBuiltInsOverFir(
                 name = BuiltInOperatorNames.IEEE754_EQUALS,
                 symbol = syntheticSymbolsContainer.ieee754equalsFunByOperandType.getValue(primitiveType),
                 returnType = booleanType,
-                valueParameterTypes = arrayOf("arg0" to fpType.makeNullable(), "arg1" to fpType.makeNullable()),
+                valueParameterTypes = ["arg0" to fpType.makeNullable(), "arg1" to fpType.makeNullable()],
                 isIntrinsicConst = true
             )
             primitiveClass to operator
@@ -126,7 +126,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.EQEQEQ,
         symbol = syntheticSymbolsContainer.eqeqeqSymbol,
         returnType = booleanType,
-        valueParameterTypes = arrayOf("" to anyNType, "" to anyNType),
+        valueParameterTypes = ["" to anyNType, "" to anyNType],
         isIntrinsicConst = false
     )
 
@@ -134,7 +134,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.EQEQ,
         symbol = syntheticSymbolsContainer.eqeqSymbol,
         returnType = booleanType,
-        valueParameterTypes = arrayOf("" to anyNType, "" to anyNType),
+        valueParameterTypes = ["" to anyNType, "" to anyNType],
         isIntrinsicConst = true
     )
 
@@ -142,7 +142,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.THROW_CCE,
         symbol = null,
         returnType = nothingType,
-        valueParameterTypes = arrayOf<Pair<String, IrType>>(),
+        valueParameterTypes = [],
         isIntrinsicConst = false
     )
 
@@ -150,7 +150,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.THROW_ISE,
         symbol = null,
         returnType = nothingType,
-        valueParameterTypes = arrayOf<Pair<String, IrType>>(),
+        valueParameterTypes = [],
         isIntrinsicConst = false
     )
 
@@ -158,7 +158,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.ANDAND,
         symbol = null,
         returnType = booleanType,
-        valueParameterTypes = arrayOf("" to booleanType, "" to booleanType),
+        valueParameterTypes = ["" to booleanType, "" to booleanType],
         isIntrinsicConst = true
     )
 
@@ -166,7 +166,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.OROR,
         symbol = null,
         returnType = booleanType,
-        valueParameterTypes = arrayOf("" to booleanType, "" to booleanType),
+        valueParameterTypes = ["" to booleanType, "" to booleanType],
         isIntrinsicConst = true
     )
 
@@ -174,7 +174,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
         symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
         returnType = nothingType,
-        valueParameterTypes = arrayOf<Pair<String, IrType>>(),
+        valueParameterTypes = [],
         isIntrinsicConst = false
     )
 
@@ -182,7 +182,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION,
         symbol = null,
         returnType = nothingType,
-        valueParameterTypes = arrayOf("" to stringType),
+        valueParameterTypes = ["" to stringType],
         isIntrinsicConst = false
     )
 
@@ -190,7 +190,7 @@ class IrBuiltInsOverFir(
         name = "dataClassArrayMemberHashCode",
         symbol = null,
         returnType = intType,
-        valueParameterTypes = arrayOf("" to anyType),
+        valueParameterTypes = ["" to anyType],
         isIntrinsicConst = false
     )
 
@@ -199,7 +199,7 @@ class IrBuiltInsOverFir(
         name = "dataClassArrayMemberToString",
         symbol = null,
         returnType = stringType,
-        valueParameterTypes = arrayOf("" to anyNType),
+        valueParameterTypes = ["" to anyNType],
         isIntrinsicConst = false
     )
 
@@ -214,15 +214,15 @@ class IrBuiltInsOverFir(
             index = 0,
             isReified = true
         ).apply {
-            superTypes = listOf(anyType)
+            superTypes = [anyType]
         }
 
         createFunction(
             name = BuiltInOperatorNames.CHECK_NOT_NULL,
             symbol = syntheticSymbolsContainer.checkNotNullSymbol,
-            returnType = IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList(), emptyList()),
-            valueParameterTypes = arrayOf("" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, emptyList(), emptyList())),
-            typeParameters = listOf(typeParameter),
+            returnType = IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.DEFINITELY_NOT_NULL, [], []),
+            valueParameterTypes = ["" to IrSimpleTypeImpl(typeParameter.symbol, hasQuestionMark = true, [], [])],
+            typeParameters = [typeParameter],
             origin = BUILTIN_OPERATOR,
             isIntrinsicConst = false,
         )
@@ -232,7 +232,7 @@ class IrBuiltInsOverFir(
         name = "linkageErrorSymbol",
         symbol = null,
         returnType = nothingType,
-        valueParameterTypes = arrayOf("" to anyNType),
+        valueParameterTypes = ["" to anyNType],
         isIntrinsicConst = false
     )
 
@@ -269,7 +269,7 @@ class IrBuiltInsOverFir(
         symbol: IrSimpleFunctionSymbol?,
         returnType: IrType,
         valueParameterTypes: Array<out Pair<String, IrType>>,
-        typeParameters: List<IrTypeParameter> = emptyList(),
+        typeParameters: List<IrTypeParameter> = [],
         origin: IrDeclarationOrigin = BUILTIN_OPERATOR,
         isIntrinsicConst: Boolean,
     ): IrSimpleFunctionSymbol {
@@ -317,7 +317,7 @@ class IrBuiltInsOverFir(
                 name = name,
                 symbol = symbols.getValue(primitiveType),
                 returnType = booleanType,
-                valueParameterTypes = arrayOf("" to irType, "" to irType),
+                valueParameterTypes = ["" to irType, "" to irType],
                 isIntrinsicConst = true
             )
         }

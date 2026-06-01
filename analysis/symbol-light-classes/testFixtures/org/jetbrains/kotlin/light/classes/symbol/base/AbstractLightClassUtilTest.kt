@@ -38,7 +38,7 @@ abstract class AbstractLightClassUtilTest : AbstractAnalysisApiBasedTest() {
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val EXPECTED by stringDirective(description = "Expected light classes")

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.diagnostics.DiagnosticFactoryWithPsiElement
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.resolve.calls.checkers.AssignmentChecker
@@ -24,7 +25,8 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 
 object JvmSyntheticAssignmentChecker : AssignmentChecker {
 
-    private val TYPE_MISMATCH_ERRORS = setOf(Errors.TYPE_MISMATCH, Errors.CONSTANT_EXPECTED_TYPE_MISMATCH, Errors.NULL_FOR_NONNULL_TYPE)
+    private val TYPE_MISMATCH_ERRORS: Set<DiagnosticFactoryWithPsiElement<*, *>> =
+        [Errors.TYPE_MISMATCH, Errors.CONSTANT_EXPECTED_TYPE_MISMATCH, Errors.NULL_FOR_NONNULL_TYPE]
 
     override fun check(assignmentExpression: KtBinaryExpression, context: CallCheckerContext) {
         val left = assignmentExpression.left ?: return
@@ -37,8 +39,8 @@ object JvmSyntheticAssignmentChecker : AssignmentChecker {
         if (receiverType.constructor !== unsubstitutedReceiverType.constructor) return
         val propertyType = resolvedCall.candidateDescriptor.returnType ?: return
 
-        val substitutionParameters = mutableListOf<TypeParameterDescriptor>()
-        val substitutionArguments = mutableListOf<TypeProjection>()
+        val substitutionParameters: MutableList<TypeParameterDescriptor> = []
+        val substitutionArguments: MutableList<TypeProjection> = []
         for ([unsubstitutedArgument, substitutedArgument] in unsubstitutedReceiverType.arguments.zip(receiverType.arguments)) {
             val typeParameter = unsubstitutedArgument.type.constructor.declarationDescriptor as? TypeParameterDescriptor ?: continue
             substitutionParameters += typeParameter

@@ -19,7 +19,7 @@ class DropNulls0 : AbstractSchemaModificationInterpreter() {
             fillNullsImpl(
                 receiver.columns(impliedColumnsResolver = columns),
                 columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
-                emptyList()
+                []
             )
         )
     }
@@ -34,8 +34,8 @@ class DropNulls1 : AbstractSchemaModificationInterpreter() {
         return PluginDataFrameSchema(
             fillNullsImpl(
                 receiver.columns(),
-                receiver.columns().mapToSetOrEmpty { listOf(it.name) },
-                emptyList()
+                receiver.columns().mapToSetOrEmpty { [it.name] },
+                []
             )
         )
     }
@@ -52,7 +52,7 @@ class DropNa0 : AbstractSchemaModificationInterpreter() {
             fillNullsImpl(
                 receiver.columns(impliedColumnsResolver = columns),
                 columns.resolve(receiver).mapTo(mutableSetOf()) { it.path.path },
-                emptyList()
+                []
             )
         )
     }
@@ -67,8 +67,8 @@ class DropNa1 : AbstractSchemaModificationInterpreter() {
         return PluginDataFrameSchema(
             fillNullsImpl(
                 receiver.columns(),
-                receiver.columns().mapToSetOrEmpty { listOf(it.name) },
-                emptyList()
+                receiver.columns().mapToSetOrEmpty { [it.name] },
+                []
             )
         )
     }

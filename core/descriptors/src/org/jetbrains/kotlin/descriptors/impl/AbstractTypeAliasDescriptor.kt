@@ -64,7 +64,7 @@ abstract class AbstractTypeAliasDescriptor(
 
 
     fun getTypeAliasConstructors(): Collection<TypeAliasConstructorDescriptor> {
-        val classDescriptor = this.classDescriptor ?: return emptyList()
+        val classDescriptor = this.classDescriptor ?: return []
 
         return classDescriptor.constructors.mapNotNull {
             TypeAliasConstructorDescriptorImpl.createIfAvailable(storageManager, this, it)

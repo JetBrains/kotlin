@@ -47,7 +47,7 @@ private class RepositoryFileTestContextProvider : TestTemplateInvocationContextP
                 }
 
                 override fun getAdditionalExtensions(): List<Extension> {
-                    return listOf(object : ParameterResolver {
+                    return [object : ParameterResolver {
                         override fun supportsParameter(
                             parameterContext: ParameterContext?,
                             extensionContext: ExtensionContext?,
@@ -61,7 +61,7 @@ private class RepositoryFileTestContextProvider : TestTemplateInvocationContextP
                         ): Any? {
                             return file
                         }
-                    })
+                    }]
                 }
             }
         }

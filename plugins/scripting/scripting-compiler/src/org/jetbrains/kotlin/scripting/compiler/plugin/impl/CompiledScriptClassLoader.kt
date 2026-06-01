@@ -27,7 +27,7 @@ class CompiledScriptClassLoader(parent: ClassLoader?, private val entries: Map<S
 
         val url = entries[name]?.let { BytesUrlUtils.createBytesUrl(it) } ?: return fromParent
 
-        return Collections.enumeration(listOf(url) + fromParent.asSequence())
+        return Collections.enumeration([url] + fromParent.asSequence())
     }
 
     override fun findResource(name: String?): URL? =

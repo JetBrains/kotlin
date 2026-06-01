@@ -39,7 +39,7 @@ abstract class LLDBSessionSpec {
 
         // Ideally, we should just check that stderr is empty.
         // Tracked in KT-86532.
-        for (prefix in listOf(PYTHON_EXCEPTION_HEADER, "warning:")) {
+        for (prefix in [PYTHON_EXCEPTION_HEADER, "warning:"]) {
             assertFalse(prefix in output) {
                 "Unexpected output in debugger: ${output.substring(output.indexOf(prefix))}"
             }
@@ -70,11 +70,11 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
 
         val meaningfulBlocks = if (nativeTargets.testTarget == nativeTargets.hostTarget) {
             // TODO: why are these two leading blocks only checked for the host target?
-            val expectedPrefix = listOf(
+            val expectedPrefix = [
                 "(lldb) target create",
                 "(lldb) command script import",
                 "(lldb) command script import",
-            )
+            ]
             expectedPrefix.forEachIndexed { index, expected ->
                 val actual = blocks.getOrElse(index) { "" }
                 assertTrue(actual.startsWith(expected)) { "Missing block $expected. Got: $actual" }
@@ -120,7 +120,7 @@ internal class ReplLLDBSessionSpec private constructor(private val expectedSteps
     }
 
     private fun findMismatch(patterns: List<String>, actualLines: List<String>): String? {
-        val indices = mutableListOf<Int>()
+        val indices: MutableList<Int> = []
         for (pattern in patterns) {
             val idx = actualLines.indexOfFirst { match(pattern, it) }
             if (idx == -1) {

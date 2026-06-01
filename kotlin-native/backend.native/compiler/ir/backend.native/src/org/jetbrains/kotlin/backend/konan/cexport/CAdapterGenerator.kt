@@ -89,9 +89,9 @@ private fun functionImplName(descriptor: DeclarationDescriptor, default: String,
 internal data class SignatureElement(val name: String, val type: KotlinType)
 
 internal class ExportedElementScope(val kind: ScopeKind, val name: String) {
-    val elements = mutableListOf<ExportedElement>()
-    val scopes = mutableListOf<ExportedElementScope>()
-    private val scopeNames = mutableSetOf<String>()
+    val elements: MutableList<ExportedElement> = []
+    val scopes: MutableList<ExportedElementScope> = []
+    private val scopeNames: MutableSet<String> = []
     private val scopeNamesMap = mutableMapOf<Pair<DeclarationDescriptor, Boolean>, String>()
 
     override fun toString(): String {
@@ -184,7 +184,7 @@ internal class ExportedElement(
         val params = ArrayList(original.explicitParameters
                 .filter { it.type.includeToSignature() }
                 .map { SignatureElement(uniqueNames[it]!!, it.type) })
-        return listOf(returned) + params
+        return [returned] + params
     }
 
     fun makeBridgeSignature(): List<String> {
@@ -205,7 +205,7 @@ internal class ExportedElement(
         if (typeTranslator.isMappedToReference(returnedType) || typeTranslator.isMappedToString(returnedType)) {
             params += "KObjHeader**"
         }
-        return listOf(typeTranslator.translateTypeBridge(returnedType)) + params
+        return [typeTranslator.translateTypeBridge(returnedType)] + params
     }
 
 
@@ -385,7 +385,7 @@ internal class CAdapterGenerator(
         private val configuration: CompilerConfiguration,
         private val typeTranslator: CAdapterTypeTranslator,
 ) : DeclarationDescriptorVisitor<Boolean, Void?> {
-    private val scopes = mutableListOf<ExportedElementScope>()
+    private val scopes: MutableList<ExportedElementScope> = []
     internal val prefix = typeTranslator.prefix
     private val paramNamesRecorded = mutableMapOf<String, Int>()
 
@@ -498,8 +498,8 @@ internal class CAdapterGenerator(
 
     override fun visitTypeParameterDescriptor(descriptor: TypeParameterDescriptor, ignored: Void?) = true
 
-    private val seenPackageFragments = mutableSetOf<PackageFragmentDescriptor>()
-    private var currentPackageFragments: List<PackageFragmentDescriptor> = emptyList()
+    private val seenPackageFragments: MutableSet<PackageFragmentDescriptor> = []
+    private var currentPackageFragments: List<PackageFragmentDescriptor> = []
     private val packageScopes = mutableMapOf<FqName, ExportedElementScope>()
 
     override fun visitModuleDeclaration(descriptor: ModuleDescriptor, ignored: Void?): Boolean {
@@ -533,7 +533,7 @@ internal class CAdapterGenerator(
     }
 
 
-    private val moduleDescriptors = mutableSetOf<ModuleDescriptor>()
+    private val moduleDescriptors: MutableSet<ModuleDescriptor> = []
 
     fun buildExports(moduleDescriptor: ModuleDescriptor): CAdapterExportedElements {
         scopes.push(ExportedElementScope(ScopeKind.TOP, "kotlin"))

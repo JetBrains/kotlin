@@ -103,7 +103,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
     }
 
     private var currentFunction: IrFunction? = null
-    private val irBuilders = mutableListOf<DeclarationIrBuilder>()
+    private val irBuilders: MutableList<DeclarationIrBuilder> = []
 
     override fun visitField(declaration: IrField): IrStatement {
         irBuilders.push(context.createIrBuilder(declaration.symbol))
@@ -291,7 +291,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
     private val symbols = context.symbols
     private val irBuiltIns = context.irBuiltIns
 
-    private val builtSpecialFunctions = mutableListOf<IrFunction>()
+    private val builtSpecialFunctions: MutableList<IrFunction> = []
 
     override fun visitFile(declaration: IrFile): IrFile {
         declaration.transformChildrenVoid(this)
@@ -337,7 +337,7 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
         else {
             builder.at(expression)
                     .irCall(symbols.reinterpret, field.type,
-                            listOf(parentClass.defaultType, field.type)
+                            [parentClass.defaultType, field.type]
                     ).apply {
                         arguments[0] = expression.receiver!!
                     }

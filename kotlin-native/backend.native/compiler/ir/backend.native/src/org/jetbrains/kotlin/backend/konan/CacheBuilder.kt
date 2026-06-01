@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.konan.library.isExplicitlySpecifiedByUserInCLIArgume
 import org.jetbrains.kotlin.konan.library.isImplicitlyLoadedFromKotlinNativeDistribution
 
 internal fun KotlinLibrary.getAllTransitiveDependencies(allLibraries: Map<String, KotlinLibrary>): List<KotlinLibrary> {
-    val allDependencies = mutableSetOf<KotlinLibrary>()
+    val allDependencies: MutableSet<KotlinLibrary> = []
 
     fun traverseDependencies(library: KotlinLibrary) {
         library.unresolvedDependencies.forEach {
@@ -72,7 +72,7 @@ class CacheBuilder(
     private val dependableLibraries = mutableMapOf<KotlinLibrary, MutableList<KotlinLibrary>>()
 
     private fun findAllDependable(libraries: List<KotlinLibrary>): Set<KotlinLibrary> {
-        val visited = mutableSetOf<KotlinLibrary>()
+        val visited: MutableSet<KotlinLibrary> = []
 
         fun dfs(library: KotlinLibrary) {
             visited.add(library)
@@ -93,8 +93,8 @@ class CacheBuilder(
         get() = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
 
     fun build() {
-        val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
-        val icedLibraries = mutableListOf<KotlinLibrary>()
+        val externalLibrariesToCache: MutableList<KotlinLibrary> = []
+        val icedLibraries: MutableList<KotlinLibrary> = []
 
         allLibraries.forEach { library ->
             // For MinGW target avoid compiling caches for anything except stdlib.
@@ -114,11 +114,11 @@ class CacheBuilder(
             }
             library.unresolvedDependencies.forEach dependenciesLoop@{
                 val dependency = uniqueNameToLibrary[it.path] ?: return@dependenciesLoop
-                dependableLibraries.getOrPut(dependency) { mutableListOf() }.add(library)
+                dependableLibraries.getOrPut(dependency) { [] }.add(library)
             }
         }
 
-        externalLibrariesToCache.forEach { buildLibraryCache(it, true, emptyList()) }
+        externalLibrariesToCache.forEach { buildLibraryCache(it, true, []) }
 
         if (!icEnabled) return
 
@@ -127,9 +127,9 @@ class CacheBuilder(
 
         val libraryFilesWithFqNames = mutableMapOf<KotlinLibrary, List<FileWithFqName>>()
 
-        val changedFiles = mutableListOf<LibraryFile>()
-        val removedFiles = mutableListOf<LibraryFile>()
-        val addedFiles = mutableListOf<LibraryFile>()
+        val changedFiles: MutableList<LibraryFile> = []
+        val removedFiles: MutableList<LibraryFile> = []
+        val addedFiles: MutableList<LibraryFile> = []
         val reversedPerFileDependencies = mutableMapOf<LibraryFile, MutableList<LibraryFile>>()
         val reversedWholeLibraryDependencies = mutableMapOf<KotlinLibrary, MutableList<LibraryFile>>()
         for (library in icedLibraries) {
@@ -162,16 +162,16 @@ class CacheBuilder(
                         changedFiles.add(libraryFile)
 
                     val dependencies = cache.getFileDependencies(cachedFile)
-                    for (dependency in dependencies) {
-                        val dependentLibrary = uniqueNameToLibrary[dependency.libName]
-                                ?: error("Unknown dependent library ${dependency.libName}")
-                        when (val kind = dependency.kind) {
+                    for ((libName, kind) in dependencies) {
+                        val dependentLibrary = uniqueNameToLibrary[libName]
+                                ?: error("Unknown dependent library $libName")
+                        when (kind) {
                             is DependenciesTracker.DependencyKind.WholeModule ->
-                                reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { mutableListOf() }.add(libraryFile)
+                                reversedWholeLibraryDependencies.getOrPut(dependentLibrary) { [] }.add(libraryFile)
                             is DependenciesTracker.DependencyKind.CertainFiles ->
                                 kind.files.forEach { (name, weak) ->
                                     if (!weak)
-                                        reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, name)) { mutableListOf() }.add(libraryFile)
+                                        reversedPerFileDependencies.getOrPut(LibraryFile(dependentLibrary, name)) { [] }.add(libraryFile)
                                 }
                         }
                     }
@@ -195,7 +195,7 @@ class CacheBuilder(
         configuration.reportLog( "    CHANGED FILES:")
         changedFiles.forEach { configuration.reportLog( "        $it") }
 
-        val dirtyFiles = mutableSetOf<LibraryFile>()
+        val dirtyFiles: MutableSet<LibraryFile> = []
 
         fun dfs(libraryFile: LibraryFile) {
             dirtyFiles += libraryFile
@@ -232,7 +232,7 @@ class CacheBuilder(
             }.orEmpty()
 
             when {
-                library in needFullRebuild -> buildLibraryCache(library, false, emptyList())
+                library in needFullRebuild -> buildLibraryCache(library, false, [])
                 caches[library] == null || filesToCache.isNotEmpty() -> buildLibraryCache(library, false, filesToCache)
             }
         }
@@ -423,11 +423,11 @@ class CacheBuilder(
             if (generateTestRunner != TestRunnerKind.NONE && libraryPath in this@CacheBuilder.includedLibraries) {
                 konanFriendLibraries = config.friendModuleFiles.map { it.absolutePath }
                 this.generateTestRunner = generateTestRunner
-                konanIncludedLibraries = listOf(libraryPath)
+                konanIncludedLibraries = [libraryPath]
                 configuration.testDumpOutputPath?.let { testDumpOutputPath = it }
             }
             this.cachedLibraries = cachedLibraries
-            cacheDirectories = listOf(libraryCacheDirectory.absolutePath)
+            cacheDirectories = [libraryCacheDirectory.absolutePath]
             this.makePerFileCache = makePerFileCache
             if (filesToCache.isNotEmpty())
                 this.filesToCache = filesToCache

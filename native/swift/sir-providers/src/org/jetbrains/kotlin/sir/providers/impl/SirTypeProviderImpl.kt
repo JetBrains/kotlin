@@ -204,10 +204,10 @@ public class SirTypeProviderImpl(
                     }
                     // We're being lazy here importing all spi's preventively
                     val spi = this@extractImport.attributes.filterIsInstance<SirAttribute.SPI>()
-                    processTypeImports(listOf(SirImport(sirModule.name, spi = spi)))
+                    processTypeImports([SirImport(sirModule.name, spi = spi)])
                 }
                 is KotlinRuntimeElement -> {
-                    processTypeImports(listOf(SirImport(KotlinRuntimeModule.name)))
+                    processTypeImports([SirImport(KotlinRuntimeModule.name)])
                 }
                 else -> {}
             }
@@ -282,13 +282,13 @@ public class SirTypeProviderImpl(
         val STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/StateFlow")
         val MUTABLE_STATE_FLOW_CLASS_ID = ClassId.fromString("kotlinx/coroutines/flow/MutableStateFlow")
 
-        val FLOW_CLASS_IDS = listOf(
+        val FLOW_CLASS_IDS = [
             FLOW_CLASS_ID,
             SHARED_FLOW_CLASS_ID, MUTABLE_SHARED_FLOW_CLASS_ID,
             STATE_FLOW_CLASS_ID, MUTABLE_STATE_FLOW_CLASS_ID,
-        )
+        ]
 
-        val COLLECTION_CLASS_IDS = setOf(StandardClassIds.Set, StandardClassIds.Map, StandardClassIds.List)
+        val COLLECTION_CLASS_IDS: Set<ClassId> = [StandardClassIds.Set, StandardClassIds.Map, StandardClassIds.List]
     }
 }
 

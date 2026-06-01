@@ -82,14 +82,14 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }.apply {
-            parameters = listOf(
+            parameters = [
                 createExtensionReceiver(TestIrBuiltins.stringType),
                 buildValueParameter(this) {
                     name = Name.identifier("p0")
                     type = TestIrBuiltins.anyType
                     kind = IrParameterKind.Regular
                 }
-            )
+            ]
         }
         val functionCall =
             IrCallImpl(
@@ -116,7 +116,7 @@ class IrValidatorTest {
         packageFqName: FqName = FqName("org.sample"),
         maxOffset: Int = 75,
     ): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = maxOffset)
+        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = [0, 10, 25], maxOffset = maxOffset)
         return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also(module::addFile)
     }
 
@@ -128,14 +128,14 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }.apply {
-            parameters = listOf(
+            parameters = [
                 createExtensionReceiver(TestIrBuiltins.stringType),
                 buildValueParameter(this) {
                     name = Name.identifier("p0")
                     type = TestIrBuiltins.anyType
                     kind = IrParameterKind.Regular
                 }
-            )
+            ]
         }
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
@@ -208,7 +208,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.NONE,
             buildInvalidIrExpressionWithNoLocations(),
-            emptyList(),
+            [],
         )
     }
 
@@ -217,7 +217,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             buildInvalidIrExpressionWithNoLocations(),
-            listOf(
+            [
                 Message(
                     WARNING,
                     $$"""
@@ -230,7 +230,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -239,7 +239,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             buildInvalidIrTreeWithLocations(),
-            listOf(
+            [
                 Message(
                     WARNING,
                     $$"""
@@ -252,7 +252,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 1, 10, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -262,7 +262,7 @@ class IrValidatorTest {
             testValidation(
                 IrVerificationMode.ERROR,
                 buildValidIrTree(),
-                emptyList(),
+                [],
             )
         }
         assertEquals(
@@ -277,7 +277,7 @@ class IrValidatorTest {
             testValidation(
                 IrVerificationMode.ERROR,
                 buildInvalidIrExpressionWithNoLocations(),
-                listOf(
+                [
                     Message(
                         ERROR,
                         $$"""
@@ -285,7 +285,7 @@ class IrValidatorTest {
                         """.trimIndent(),
                         CompilerMessageLocation.create(null, 0, 0, null),
                     ),
-                ),
+                ],
             )
         }
         assertEquals(
@@ -306,7 +306,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             buildInvalidIrExpressionWithNoLocations(),
-            listOf(
+            [
                 Message(
                     ERROR,
                     $$"""
@@ -319,7 +319,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -328,7 +328,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             buildInvalidIrTreeWithLocations(),
-            listOf(
+            [
                 Message(
                     ERROR,
                     $$"""
@@ -341,7 +341,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 1, 10, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -350,7 +350,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             buildInvalidIrTreeWithLocations(),
-            listOf(
+            [
                 Message(
                     WARNING,
                     $$"""
@@ -386,7 +386,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
                 ),
-            ),
+            ],
             config = IrValidatorConfig()
                 .withTypeChecks()
         )
@@ -403,7 +403,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             klass,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -413,7 +413,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -433,7 +433,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             klass,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -447,7 +447,7 @@ class IrValidatorTest {
                         inside CLASS CLASS name:MyClass modality:FINAL visibility:public superTypes:[]""".trimIndent(),
                     null,
                 )
-            ),
+            ],
         )
     }
 
@@ -477,7 +477,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file2,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -489,7 +489,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("b.kt", 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -534,7 +534,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file2,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -546,7 +546,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("b.kt", 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -582,7 +582,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file2,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -594,7 +594,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("b.kt", 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -610,12 +610,12 @@ class IrValidatorTest {
         val subclass = IrFactoryImpl.buildClass {
             name = Name.identifier("MySubclass")
         }
-        subclass.superTypes = listOf(IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+        subclass.superTypes = [IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])]
         file2.addChild(subclass)
         testValidation(
             IrVerificationMode.ERROR,
             file2,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -625,7 +625,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("b.kt", 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -651,7 +651,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -663,7 +663,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 4, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -705,7 +705,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -727,7 +727,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -768,7 +768,7 @@ class IrValidatorTest {
             body = createBlockBody(
                 startOffset,
                 endOffset,
-                listOf(
+                [
                     IrGetFieldImpl(startOffset, endOffset, topLevelField.symbol, topLevelField.type),
                     IrSetFieldImpl(startOffset, endOffset, topLevelField.symbol, TestIrBuiltins.unitType).apply {
                         value = fortyTwo()
@@ -777,7 +777,7 @@ class IrValidatorTest {
                     IrSetFieldImpl(startOffset, endOffset, memberField.symbol, TestIrBuiltins.unitType).apply {
                         value = fortyTwo()
                     },
-                ),
+                ],
             )
 
             file2.addChild(this)
@@ -786,7 +786,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file2,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -831,7 +831,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("file2.kt", 1, 4, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -839,7 +839,7 @@ class IrValidatorTest {
     fun `dynamic receiver of field access is reported`() = with(IrFactoryImpl) {
         fun IrElement.fortyTwo() = IrConstImpl.int(startOffset, endOffset, TestIrBuiltins.intType, 42)
         val dynamicType = IrDynamicTypeImpl(
-            annotations = emptyList(),
+            annotations = [],
             variance = Variance.INVARIANT
         )
 
@@ -878,10 +878,10 @@ class IrValidatorTest {
             body = createBlockBody(
                 startOffset,
                 endOffset,
-                listOf(
+                [
                     IrGetFieldImpl(startOffset, endOffset, memberField.symbol, memberField.type, receiver = receiver1),
                     IrSetFieldImpl(startOffset, endOffset, memberField.symbol, receiver2, fortyTwo(), TestIrBuiltins.unitType)
-                ),
+                ],
             )
             file.addChild(this)
         }
@@ -889,7 +889,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -912,7 +912,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("file.kt", 1, 4, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -928,14 +928,14 @@ class IrValidatorTest {
         }
         val field = IrFactoryImpl.buildField {
             name = Name.identifier("myField")
-            type = IrSimpleTypeImpl(tp.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+            type = IrSimpleTypeImpl(tp.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])
             visibility = DescriptorVisibilities.PRIVATE
         }
         file.addChild(field)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -945,7 +945,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -969,10 +969,10 @@ class IrValidatorTest {
         val outerType = IrSimpleTypeImpl(
             outerClass.symbol,
             SimpleTypeNullability.NOT_SPECIFIED,
-            listOf(
-                IrSimpleTypeImpl(outerTP.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
-            ),
-            emptyList()
+            [
+                IrSimpleTypeImpl(outerTP.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])
+            ],
+            []
         )
         outerClass.createThisReceiverParameter()
         file.addChild(outerClass)
@@ -992,16 +992,16 @@ class IrValidatorTest {
                 returnType = IrSimpleTypeImpl(
                     outerClass.symbol,
                     SimpleTypeNullability.NOT_SPECIFIED,
-                    listOf(
-                        IrSimpleTypeImpl(outerTP.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
-                    ),
-                    emptyList()
+                    [
+                        IrSimpleTypeImpl(outerTP.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])
+                    ],
+                    []
                 )
             }.apply {
                 body = IrFactoryImpl.createBlockBody(
                     startOffset,
                     endOffset,
-                    listOf(
+                    [
                         IrReturnImpl(
                             startOffset,
                             endOffset,
@@ -1009,7 +1009,7 @@ class IrValidatorTest {
                             symbol,
                             IrGetValueImpl(startOffset, endOffset, outerClass.thisReceiver!!.symbol)
                         )
-                    ),
+                    ],
                 )
             }
 
@@ -1018,7 +1018,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1058,7 +1058,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 2, 3, null),
                 ),
-            )
+            ]
         )
     }
 
@@ -1076,7 +1076,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -1087,7 +1087,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1105,7 +1105,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -1116,7 +1116,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1147,7 +1147,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -1160,7 +1160,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1191,7 +1191,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -1204,7 +1204,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1243,7 +1243,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -1255,7 +1255,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1263,7 +1263,7 @@ class IrValidatorTest {
     fun `dispatch receivers with dynamic type are reported`() {
         val file = createIrFile()
         val dynamicType: IrDynamicType = IrDynamicTypeImpl(
-            annotations = emptyList(),
+            annotations = [],
             variance = Variance.INVARIANT
         )
         val function = IrFactoryImpl.buildFun {
@@ -1299,7 +1299,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1309,7 +1309,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -1334,7 +1334,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1353,7 +1353,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 ),
-            )
+            ]
         )
     }
 
@@ -1378,7 +1378,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1409,7 +1409,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 ),
-            )
+            ]
         )
     }
 
@@ -1434,7 +1434,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     $$"""
@@ -1453,7 +1453,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1497,7 +1497,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1507,7 +1507,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1532,7 +1532,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1551,7 +1551,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null)
                 )
-            )
+            ]
         )
     }
 
@@ -1596,7 +1596,7 @@ class IrValidatorTest {
         val body = IrFactoryImpl.createBlockBody(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
-            statements = listOf(incorrectSetValueExpression, correctSetValueExpression)
+            statements = [incorrectSetValueExpression, correctSetValueExpression]
         )
         function.body = body
         file.addChild(function)
@@ -1604,7 +1604,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1616,7 +1616,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -1630,7 +1630,7 @@ class IrValidatorTest {
         val body = IrFactoryImpl.createBlockBody(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
-            statements = listOf()
+            statements = []
         )
 
         val incorrectLoop = IrWhileLoopImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, null).apply {
@@ -1649,23 +1649,23 @@ class IrValidatorTest {
             endOffset = UNDEFINED_OFFSET,
             type = TestIrBuiltins.unitType,
             origin = null,
-            statements = listOf(incorrectBreak, incorrectContinue)
+            statements = [incorrectBreak, incorrectContinue]
         )
         correctLoop.body = IrBlockImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             type = TestIrBuiltins.unitType,
             origin = null,
-            statements = listOf(correctBreak, correctContinue)
+            statements = [correctBreak, correctContinue]
         )
 
-        body.statements.addAll(listOf(incorrectLoop, correctLoop))
+        body.statements.addAll([incorrectLoop, correctLoop])
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1703,7 +1703,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -1775,7 +1775,7 @@ class IrValidatorTest {
         )
 
         body.statements.addAll(
-            listOf(
+            [
                 variable,
                 incorrectGetField,
                 incorrectSetField,
@@ -1785,7 +1785,7 @@ class IrValidatorTest {
                 incorrectGetValue,
                 correctSetValue,
                 correctGetValue
-            )
+            ]
         )
         function.body = body
         file.addChild(field)
@@ -1793,7 +1793,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1838,7 +1838,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -1851,7 +1851,7 @@ class IrValidatorTest {
         val subclass = IrFactoryImpl.buildClass {
             name = Name.identifier("MySubclass")
         }.apply {
-            superTypes = listOf(IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList()))
+            superTypes = [IrSimpleTypeImpl(klass.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])]
         }
 
         val privateFunction = IrFactoryImpl.buildFun {
@@ -1868,7 +1868,7 @@ class IrValidatorTest {
             returnType = TestIrBuiltins.unitType
         }.apply {
             parent = subclass
-            overriddenSymbols = listOf(privateFunction.symbol)
+            overriddenSymbols = [privateFunction.symbol]
         }
         subclass.declarations.add(privateFunctionOverride)
 
@@ -1886,7 +1886,7 @@ class IrValidatorTest {
             returnType = TestIrBuiltins.unitType
         }.apply {
             parent = subclass
-            overriddenSymbols = listOf(publicFunction.symbol)
+            overriddenSymbols = [publicFunction.symbol]
         }
         subclass.declarations.add(publicFunctionOverride)
 
@@ -1902,7 +1902,7 @@ class IrValidatorTest {
             name = Name.identifier("p1")
         }.apply {
             parent = subclass
-            overriddenSymbols = listOf(privateProperty.symbol)
+            overriddenSymbols = [privateProperty.symbol]
         }
         subclass.declarations.add(privatePropertyOverride)
 
@@ -1918,7 +1918,7 @@ class IrValidatorTest {
             name = Name.identifier("p2")
         }.apply {
             parent = subclass
-            overriddenSymbols = listOf(publicProperty.symbol)
+            overriddenSymbols = [publicProperty.symbol]
         }
         subclass.declarations.add(publicPropertyOverride)
 
@@ -1927,7 +1927,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -1948,7 +1948,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -1992,13 +1992,13 @@ class IrValidatorTest {
             )
         )
 
-        body.statements.addAll(listOf(incorrectCoercion, correctCoercion))
+        body.statements.addAll([incorrectCoercion, correctCoercion])
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2010,7 +2010,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2038,13 +2038,13 @@ class IrValidatorTest {
             type = TestIrBuiltins.intType.makeNullable()
         )
 
-        body.statements.addAll(listOf(nullConstWithNonNullableType, nullConstWithNullableType))
+        body.statements.addAll([nullConstWithNonNullableType, nullConstWithNullableType])
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2056,7 +2056,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2088,17 +2088,17 @@ class IrValidatorTest {
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
             symbol = myObject.symbol,
-            type = myObject.symbol.createType(false, listOf())
+            type = myObject.symbol.createType(false, [])
         )
 
-        body.statements.addAll(listOf(incorrectGetObjectValue, correctGetObjectValue))
+        body.statements.addAll([incorrectGetObjectValue, correctGetObjectValue])
         function.body = body
         file.addChild(myObject)
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2110,7 +2110,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2181,21 +2181,21 @@ class IrValidatorTest {
         )
 
         body.statements.addAll(
-            listOf(
+            [
                 incorrectCast,
                 correctCast,
                 incorrectSafeCast,
                 correctSafeCast,
                 incorrectInstanceOf,
                 correctInstanceOf
-            )
+            ]
         )
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2229,7 +2229,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2265,14 +2265,14 @@ class IrValidatorTest {
             argument = createTrueConst() // Boolean is a subtype of Any
         )
 
-        body.statements.addAll(listOf(redundantImplicitCast, nonRedundantImplicitCast))
+        body.statements.addAll([redundantImplicitCast, nonRedundantImplicitCast])
         function.body = body
         file.addChild(function)
 
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -2284,7 +2284,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
             config = defaultValidationConfig.withCheckers(IrTypeOperatorRedundancyChecker)
         )
     }
@@ -2305,13 +2305,13 @@ class IrValidatorTest {
 
         val correctCall = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.unitType, function.symbol)
 
-        body.statements.addAll(listOf(incorrectCall, correctCall))
+        body.statements.addAll([incorrectCall, correctCall])
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2323,7 +2323,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2336,7 +2336,7 @@ class IrValidatorTest {
         }
         val constructor = IrFactoryImpl.buildConstructor {
             isPrimary = true
-            returnType = myClass.symbol.createType(false, listOf())
+            returnType = myClass.symbol.createType(false, [])
         }.apply {
             parent = myClass
         }
@@ -2365,14 +2365,14 @@ class IrValidatorTest {
             typeArgumentsCount = 0
         )
 
-        body.statements.addAll(listOf(incorrectDelegatingConstructorCall, correctDelegatingConstructorCall))
+        body.statements.addAll([incorrectDelegatingConstructorCall, correctDelegatingConstructorCall])
         function.body = body
         file.addChild(myClass)
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2384,7 +2384,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2418,14 +2418,14 @@ class IrValidatorTest {
             type = TestIrBuiltins.unitType
         )
 
-        body.statements.addAll(listOf(incorrectInstanceInitializerCall, correctInstanceInitializerCall))
+        body.statements.addAll([incorrectInstanceInitializerCall, correctInstanceInitializerCall])
         function.body = body
         file.addChild(myClass)
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2437,7 +2437,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2469,13 +2469,13 @@ class IrValidatorTest {
             value = createTrueConst()
         )
 
-        body.statements.addAll(listOf(incorrectReturn, correctReturn))
+        body.statements.addAll([incorrectReturn, correctReturn])
         function.body = body
         file.addChild(function)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2487,7 +2487,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2521,14 +2521,14 @@ class IrValidatorTest {
             value = IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.nothingType, errorFunction.symbol)
         )
 
-        body.statements.addAll(listOf(incorrectThrow, correctThrow))
+        body.statements.addAll([incorrectThrow, correctThrow])
         function.body = body
         file.addChild(function)
         file.addChild(errorFunction)
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2540,7 +2540,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2569,7 +2569,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.ERROR,
             file,
-            listOf(
+            [
                 Message(
                     ERROR,
                     """
@@ -2590,7 +2590,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            )
+            ]
         )
     }
 
@@ -2611,7 +2611,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2621,7 +2621,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 0, 0, null),
                 )
-            ),
+            ],
         )
     }
 
@@ -2666,7 +2666,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -2697,7 +2697,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 5, null),
                 ),
-            ),
+            ],
         )
     }
 
@@ -2890,7 +2890,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -3170,7 +3170,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(file.fileEntry.name, 3, 686, null),
                 ),
-            )
+            ]
         )
     }
 
@@ -3181,14 +3181,14 @@ class IrValidatorTest {
         val klass = IrFactoryImpl.buildClass {
             name = Name.identifier("MyClass")
         }.apply {
-            sealedSubclasses = listOf(IrClassSymbolImpl())
+            sealedSubclasses = [IrClassSymbolImpl()]
         }
 
         val function1 = IrFactoryImpl.buildFun {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }.apply {
-            overriddenSymbols = listOf(IrSimpleFunctionSymbolImpl())
+            overriddenSymbols = [IrSimpleFunctionSymbolImpl()]
         }
 
         val function2 = IrFactoryImpl.buildFun {
@@ -3200,13 +3200,13 @@ class IrValidatorTest {
 
         val function3 = IrFactoryImpl.buildFun {
             name = Name.identifier("baz")
-            returnType = IrSimpleTypeImpl(IrClassSymbolImpl(), SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+            returnType = IrSimpleTypeImpl(IrClassSymbolImpl(), SimpleTypeNullability.NOT_SPECIFIED, [], [])
         }
 
         val property = IrFactoryImpl.buildProperty {
             name = Name.identifier("p")
         }.apply {
-            overriddenSymbols = listOf(IrPropertySymbolImpl())
+            overriddenSymbols = [IrPropertySymbolImpl()]
         }
 
         file.addChild(klass)
@@ -3218,7 +3218,7 @@ class IrValidatorTest {
         testValidation(
             IrVerificationMode.WARNING,
             file,
-            listOf(
+            [
                 Message(
                     WARNING,
                     """
@@ -3264,7 +3264,7 @@ class IrValidatorTest {
                     """.trimIndent(),
                     CompilerMessageLocation.create(null, 0, 0, null),
                 ),
-            ),
+            ],
         )
     }
 }

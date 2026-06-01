@@ -46,11 +46,11 @@ class DirtyFilesContainer(
         val fqNamesWithSubtypes = dirtyClassesFqNames.flatMap {
             withSubtypes(
                 it,
-                listOf(caches.platformCache)
+                [caches.platformCache]
             )
         }
         val dirtyFilesFromFqNames =
-            mapClassesFqNamesToFiles(listOf(caches.platformCache), fqNamesWithSubtypes, reporter)
+            mapClassesFqNamesToFiles([caches.platformCache], fqNamesWithSubtypes, reporter)
         // reason is null, because files are reported in mapClassesFqNamesToFiles
         add(dirtyFilesFromFqNames, reason = null)
     }

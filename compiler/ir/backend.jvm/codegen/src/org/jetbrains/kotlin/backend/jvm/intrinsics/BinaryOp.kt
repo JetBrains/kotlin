@@ -39,9 +39,9 @@ class BinaryOp(private val opcode: Int) : CallBasedIntrinsicMethod() {
         val returnType = signature.returnType
         val intermediateResultType = numberFunctionOperandType(returnType)
         val argTypes = if (!expression.symbol.owner.parentAsClass.defaultType.isChar()) {
-            listOf(intermediateResultType, if (shift()) Type.INT_TYPE else intermediateResultType)
+            [intermediateResultType, if (shift()) Type.INT_TYPE else intermediateResultType]
         } else {
-            listOf(Type.CHAR_TYPE, signature.parameters[0])
+            [Type.CHAR_TYPE, signature.parameters[0]]
         }
 
         return IntrinsicFunction.create(expression, signature, classCodegen, argTypes) {

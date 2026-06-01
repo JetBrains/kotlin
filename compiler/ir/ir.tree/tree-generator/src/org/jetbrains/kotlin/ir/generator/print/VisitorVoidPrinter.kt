@@ -20,7 +20,7 @@ internal class VisitorVoidPrinter(
         get() = irVisitorType
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType))
+        get() = [visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType)]
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false

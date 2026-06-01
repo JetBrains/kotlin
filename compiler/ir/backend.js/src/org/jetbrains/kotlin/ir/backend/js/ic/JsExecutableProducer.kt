@@ -49,14 +49,14 @@ class JsExecutableProducer(
             generateCallToMain = true,
             outJsProgram = outJsProgram
         )
-        return BuildResult(out, listOf(artifactConfiguration.moduleName))
+        return BuildResult(out, [artifactConfiguration.moduleName])
     }
 
     private fun <CacheInfo : JsMultiArtifactCache.CacheInfo> buildMultiArtifactExecutable(
         outJsProgram: Boolean,
         jsMultiArtifactCache: JsMultiArtifactCache<CacheInfo>
     ): BuildResult {
-        val rebuildModules = mutableListOf<String>()
+        val rebuildModules: MutableList<String> = []
         stopwatch.startNext("JS code cache loading")
         val cachedProgram = jsMultiArtifactCache.loadProgramHeadersFromCache()
 

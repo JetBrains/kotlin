@@ -32,7 +32,7 @@ internal class DirectInvokeLowering(private val context: JvmBackendContext) : Fi
         if (!function.symbol.isFunctionalTypeInvoke) return super.visitCall(expression)
 
         val result = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
-            val lambdaParams = mutableSetOf<IrVariable>()
+            val lambdaParams: MutableSet<IrVariable> = []
             irBlock {
                 assert(expression.arguments.isNotEmpty()) { "`invoke` call must have an invokable argument" }
                 val arguments = if (receiver.origin == IrStatementOrigin.LAMBDA) {

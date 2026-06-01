@@ -41,12 +41,12 @@ private fun ImportCollectingPrinter.transformFunctionDeclaration(
     val dataTP = TypeVariable("D")
     printFunctionDeclaration(
         name = "transform$transformName",
-        parameters = listOf(
+        parameters = [
             FunctionParameter("transformer", firTransformerType.withArgs(dataTP)),
             FunctionParameter("data", dataTP),
-        ),
+        ],
         returnType = returnType,
-        typeParameters = listOf(dataTP),
+        typeParameters = [dataTP],
         modality = Modality.ABSTRACT.takeIf {
             implementationKind == ImplementationKind.AbstractClass || implementationKind == ImplementationKind.SealedClass
         },
@@ -67,7 +67,7 @@ fun ImportCollectingPrinter.replaceFunctionDeclaration(
 
     printFunctionDeclaration(
         name = "replace$capName",
-        parameters = listOf(FunctionParameter("new$capName", typeWithNullable)),
+        parameters = [FunctionParameter("new$capName", typeWithNullable)],
         returnType = StandardTypes.unit,
         modality = Modality.ABSTRACT.takeIf {
             implementationKind == ImplementationKind.AbstractClass || implementationKind == ImplementationKind.SealedClass

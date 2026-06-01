@@ -38,7 +38,7 @@ class FirCliMetadataFrontendFacade(
         firOutputs: List<SingleModuleFrontendOutput>
     ): List<FirOutputPartForDependsOnModule> {
         val analyzedModule = firOutputs.single()
-        return listOf(analyzedModule.toTestOutputPart(module, testServices))
+        return [analyzedModule.toTestOutputPart(module, testServices)]
     }
 }
 

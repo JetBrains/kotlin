@@ -57,12 +57,12 @@ class ScriptingCompilerPluginTest {
         setIdeaIoUseFallback()
     }
 
-    val runtimeClasspath: List<File> = listOf(
+    val runtimeClasspath: List<File> = [
         ForTestCompileRuntime.runtimeJarForTests(),
         ForTestCompileRuntime.scriptRuntimeJarForTests(),
         ForTestCompileRuntime.reflectJarForTests(),
-    )
-    val scriptingClasspath: List<File> = listOf(ForTestCompileRuntime.getFileFromProperty("kotlin.scripting.common.jar"))
+    ]
+    val scriptingClasspath: List<File> = [ForTestCompileRuntime.getFileFromProperty("kotlin.scripting.common.jar")]
 
     private fun createEnvironment(
         sources: List<String>,
@@ -120,7 +120,7 @@ class ScriptingCompilerPluginTest {
                 val scriptsOut = File(tmpdir, "testLazyScriptDefinition/out/scripts")
                 val scriptsSrc = File(TEST_DATA_DIR, "lazyDefinitions/scripts")
                 val scriptsOut2 = File(tmpdir, "testLazyScriptDefinition/out/scripts2")
-                val defClasses = listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars")
+                val defClasses = ["TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"]
 
                 val messageCollector = MessageCollectorImpl()
 
@@ -138,9 +138,9 @@ class ScriptingCompilerPluginTest {
                 messageCollector.clear()
 
                 loadScriptTemplatesFromClasspath(
-                    listOf("TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"),
-                    listOf(defsOut),
-                    emptyList(),
+                    ["TestScriptWithReceivers", "TestScriptWithSimpleEnvVars"],
+                    [defsOut],
+                    [],
                     this::class.java.classLoader,
                     defaultJvmScriptingHostConfiguration,
                     messageCollector.reporter
@@ -166,7 +166,7 @@ class ScriptingCompilerPluginTest {
 
                 val lazyDefsSeq =
                     discoverScriptTemplatesInClasspath(
-                        listOf(defsOut),
+                        [defsOut],
                         this::class.java.classLoader,
                         defaultJvmScriptingHostConfiguration,
                         messageCollector.reporter
@@ -234,7 +234,7 @@ class ScriptingCompilerPluginTest {
             withDisposable { disposable ->
                 val defsOut = File(tmpdir, "testLazyScriptDefinition/out/otherAnn")
                 val defsSrc = File(TEST_DATA_DIR, "lazyDefinitions/definitions")
-                val defClasses = listOf("TestScriptWithOtherAnnotation")
+                val defClasses = ["TestScriptWithOtherAnnotation"]
 
                 val messageCollector = MessageCollectorImpl()
 
@@ -257,7 +257,7 @@ class ScriptingCompilerPluginTest {
                 messageCollector.clear()
 
                 discoverScriptTemplatesInClasspath(
-                    listOf(defsOut),
+                    [defsOut],
                     this::class.java.classLoader,
                     defaultJvmScriptingHostConfiguration,
                     messageCollector.reporter

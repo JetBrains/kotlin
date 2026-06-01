@@ -57,7 +57,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     object Directives : SimpleDirectivesContainer() {
         val APPROXIMATE_TYPE by stringDirective("approximate expression type")

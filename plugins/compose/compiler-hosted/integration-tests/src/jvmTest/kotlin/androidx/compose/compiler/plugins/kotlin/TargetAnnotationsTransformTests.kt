@@ -257,10 +257,10 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest() {
             )
         }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeUiUnitJar(),
-        )
+        ]
     )
 
     @Test
@@ -312,13 +312,13 @@ class TargetAnnotationsTransformTests : AbstractIrTransformTest() {
         @Composable
         fun T(value: String) { }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeUiUnitJar(),
             Classpath.composeUiGraphicsJar(),
             Classpath.composeUiTextJar(),
             Classpath.composeFoundationTextJar()
-        )
+        ]
     )
 
     @Suppress("unused")

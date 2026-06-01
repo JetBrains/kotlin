@@ -36,7 +36,7 @@ class IrInlineDeclarationChecker(
         val file: IrFile,
         val insideEffectivelyPrivateDeclaration: Boolean = false,
         val inlineFunction: IrFunction? = null,
-        val inliningPath: List<IrInlinedFunctionBlock> = listOf()
+        val inliningPath: List<IrInlinedFunctionBlock> = []
     ) {
         fun insideDeclaration(declaration: IrDeclaration, inlineFunction: IrFunction? = this.inlineFunction): InlineFunctionInfo {
             if (this.inlineFunction != null) return this

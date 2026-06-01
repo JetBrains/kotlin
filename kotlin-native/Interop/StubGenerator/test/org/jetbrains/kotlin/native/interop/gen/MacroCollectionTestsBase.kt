@@ -50,7 +50,7 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
     private fun index(
             files: List<Pair<String, String>>,
             defFileContents: String,
-            additionalCompilerArgs: Array<String> = emptyArray(),
+            additionalCompilerArgs: Array<String> = [],
     ): IndexerResult {
         val testFiles = testFiles()
         files.forEach { [name, contents] ->
@@ -58,10 +58,10 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
         }
         val defFile = testFiles.file("test.def", defFileContents)
         val searchPath = testFiles.directory
-        val args = if (isModular) {
-            arrayOf("-compiler-option", "-fmodules", "-compiler-option", "-I${searchPath}")
+        val args: Array<String> = if (isModular) {
+            ["-compiler-option", "-fmodules", "-compiler-option", "-I${searchPath}"]
         } else {
-            arrayOf("-compiler-option", "-I${searchPath}")
+            ["-compiler-option", "-I${searchPath}"]
         }
         val library = buildNativeLibraryFrom(defFile, args + additionalCompilerArgs)
 
@@ -72,7 +72,7 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
         )
     }
 
-    private fun index(headerContents: String, additionalCompilerArgs: Array<String> = emptyArray()): IndexerResult {
+    private fun index(headerContents: String, additionalCompilerArgs: Array<String> = []): IndexerResult {
         val headerName = "header.h"
         val files = buildList {
             add(headerName to headerContents)
@@ -172,7 +172,7 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
     fun `skips command-line macros`() {
         val index = index(
                 headerContents = "#define MACRO_IN_FILE 1",
-                additionalCompilerArgs = arrayOf("-compiler-option", "-DMACRO_FROM_COMMAND_LINE=42"),
+                additionalCompilerArgs = ["-compiler-option", "-DMACRO_FROM_COMMAND_LINE=42"],
         ).index
 
         val names = macroNames(index)
@@ -182,13 +182,13 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
 
     @Test
     fun `filters out macros outside selected headers or modules`() {
-        val commonFiles = listOf(
-                "main.h" to """
+        val commonFiles = [
+            "main.h" to """
                     #include "outside.h"
                     #define MACRO_INSIDE 1
                 """.trimIndent(),
-                "outside.h" to "#define MACRO_OUTSIDE 2"
-        )
+            "outside.h" to "#define MACRO_OUTSIDE 2"
+        ]
         val index = if (isModular) {
             index(
                     files = commonFiles + listOf(
@@ -224,10 +224,10 @@ abstract class MacroCollectionTestsBase : InteropTestsBase() {
 
     @Test
     fun `collects macros from multiple selected headers or modules`() {
-        val commonFiles = listOf(
-                "first.h" to "#define MACRO_FIRST 1",
-                "second.h" to "#define MACRO_SECOND 2",
-        )
+        val commonFiles = [
+            "first.h" to "#define MACRO_FIRST 1",
+            "second.h" to "#define MACRO_SECOND 2",
+        ]
         val index = if (isModular) {
             index(
                     files = commonFiles + listOf(

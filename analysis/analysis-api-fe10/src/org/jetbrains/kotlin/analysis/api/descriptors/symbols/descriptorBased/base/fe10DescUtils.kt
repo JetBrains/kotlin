@@ -460,7 +460,7 @@ internal fun List<ConstantValue<*>>.expandArrayAnnotationValue(
         // to be expanded here. (It should have the array element type instead.)
         (constantValue as ArrayValue).value.expandArrayAnnotationValue(containingArrayType, analysisContext)
     } else {
-        listOf(constantValue.toKaAnnotationValue(analysisContext))
+        [constantValue.toKaAnnotationValue(analysisContext)]
     }
 }
 
@@ -557,8 +557,8 @@ internal fun CallableMemberDescriptor.calculateCallableId(allowLocal: Boolean): 
     }
     var current: DeclarationDescriptor = containingDeclaration
 
-    val localName = mutableListOf<String>()
-    val className = mutableListOf<String>()
+    val localName: MutableList<String> = []
+    val className: MutableList<String> = []
 
     while (true) {
         when (current) {
@@ -646,7 +646,7 @@ internal val ClassifierDescriptor.maybeLocalClassId: ClassId
 internal fun ClassDescriptor.computeSymbolSupertypes(): Collection<KotlinType> {
     val classId = this.classId
     if (classId == StandardClassIds.Any || classId == StandardClassIds.Nothing) {
-        return emptyList()
+        return []
     }
 
     val supertypes = typeConstructor.supertypes
@@ -655,7 +655,7 @@ internal fun ClassDescriptor.computeSymbolSupertypes(): Collection<KotlinType> {
     }
 
     val hasClassSupertype = supertypes.any { (it.constructor.declarationDescriptor as? ClassDescriptor)?.kind == ClassKind.CLASS }
-    return if (hasClassSupertype) supertypes else listOf(builtIns.anyType) + supertypes
+    return if (hasClassSupertype) supertypes else [builtIns.anyType] + supertypes
 }
 
 

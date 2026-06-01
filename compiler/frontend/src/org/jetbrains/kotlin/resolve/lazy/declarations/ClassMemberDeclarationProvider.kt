@@ -25,6 +25,6 @@ interface ClassMemberDeclarationProvider : DeclarationProvider {
     val ownerInfo: KtClassLikeInfo? // is null for synthetic classes/object that don't present in the source code
 
     val correspondingClassOrObject: KtPureClassOrObject? get() = ownerInfo?.correspondingClassOrObject
-    val primaryConstructorParameters: List<KtParameter> get() = ownerInfo?.primaryConstructorParameters ?: emptyList()
-    val companionObjects: List<KtObjectDeclaration> get() = ownerInfo?.companionObjects ?: emptyList()
+    val primaryConstructorParameters: List<KtParameter> get() = ownerInfo?.primaryConstructorParameters ?: []
+    val companionObjects: List<KtObjectDeclaration> get() = ownerInfo?.companionObjects ?: []
 }

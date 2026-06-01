@@ -32,7 +32,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
     override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> {
         val annotations = predicate.annotations
-        if (annotations.isEmpty()) return emptyList()
+        if (annotations.isEmpty()) return []
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
         }
@@ -198,7 +198,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
 
         val ownersForDeclaration: MutableMap<FirDeclaration, PersistentList<FirDeclaration>> = mutableMapOf()
 
-        val filesWithPluginAnnotations: MutableSet<FirFile> = mutableSetOf()
+        val filesWithPluginAnnotations: MutableSet<FirFile> = []
     }
 }
 
@@ -210,7 +210,7 @@ fun FirAnnotation.markedWithMetaAnnotation(
 ): Boolean {
     containingDeclaration.symbol.lazyResolveToPhase(FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS)
     return annotationTypeRef.coneTypeSafe<ConeKotlinType>()
-        .markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself, mutableSetOf())
+        .markedWithMetaAnnotationImpl(session, metaAnnotations, includeItself, [])
 }
 
 fun ConeKotlinType?.markedWithMetaAnnotationImpl(

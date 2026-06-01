@@ -23,9 +23,9 @@ internal fun TestGroupSuite.generateModularizedTests(
         testClass<AbstractIsolatedFulPipelineTestRunner>(
             "${testDataProjectName}FullPipelineTestsGenerated",
             annotations =
-                listOf(
+                [
                     annotation(Execution::class.java, ExecutionMode.CONCURRENT)
-                )
+                ]
         ) {
             model(pattern = "^model-(.+)\\.xml$")
         }

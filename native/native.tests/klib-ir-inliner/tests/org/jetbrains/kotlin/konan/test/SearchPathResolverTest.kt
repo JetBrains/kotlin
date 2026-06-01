@@ -33,7 +33,7 @@ class SearchPathResolverTest {
     private fun doTest(targetPropertyName: String) {
         KonanTarget.predefinedTargets.values.forEach { currentTarget ->
             val resolver = KonanLibraryProperResolver(
-                directLibs = emptyList(),
+                directLibs = [],
                 target = currentTarget,
                 distributionKlib = null,
                 skipCurrentDir = true,
@@ -69,7 +69,7 @@ class SearchPathResolverTest {
                 versions(DUMMY_VERSIONS)
                 platformAndTargets(
                     builtInsPlatform = BuiltInsPlatform.NATIVE,
-                    targetNames = (if (targetPropertyName == KLIB_PROPERTY_NATIVE_TARGETS) targetList else listOf(mainTarget)).map { it.toString() },
+                    targetNames = (if (targetPropertyName == KLIB_PROPERTY_NATIVE_TARGETS) targetList else [mainTarget]).map { it.toString() },
                 )
                 customProperties {
                     if (targetPropertyName != KLIB_PROPERTY_NATIVE_TARGETS) {
@@ -85,7 +85,7 @@ class SearchPathResolverTest {
 
     companion object {
         private val DUMMY_VERSIONS = KotlinLibraryVersioning(null, null, null)
-        private val DUMMY_METADATA = SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray())
+        private val DUMMY_METADATA = SerializedMetadata([], [], [], MetadataVersion.INSTANCE.toArray())
 
         private fun randomTargetsIncluding(number: Int, requiredTarget: KonanTarget): List<KonanTarget> {
             require(number >= 1)

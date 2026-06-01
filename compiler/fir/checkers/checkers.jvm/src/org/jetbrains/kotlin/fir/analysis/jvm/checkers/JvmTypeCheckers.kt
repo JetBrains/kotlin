@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirFunctionalTypePara
 import org.jetbrains.kotlin.fir.analysis.jvm.checkers.type.FirJvmModuleAccessibilityTypeChecker
 
 object JvmTypeCheckers : TypeCheckers() {
-    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = setOf(
+    override val functionTypeRefCheckers: Set<FirFunctionTypeRefChecker> = [
         FirFunctionalTypeParameterNameChecker,
-    )
+    ]
 
-    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = [
         FirDynamicUnsupportedChecker,
         FirJvmModuleAccessibilityTypeChecker,
         FirArrayOfNullableNothingTypeChecker,
-    )
+    ]
 }

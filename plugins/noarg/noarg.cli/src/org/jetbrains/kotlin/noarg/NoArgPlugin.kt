@@ -55,7 +55,7 @@ class NoArgCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION, INVOKE_INITIALIZERS_OPTION)
+    override val pluginOptions = [ANNOTATION_OPTION, PRESET_OPTION, INVOKE_INITIALIZERS_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(NOARG_ANNOTATION, value)

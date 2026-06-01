@@ -189,12 +189,12 @@ class OptInUsageChecker : CallChecker {
         fun DeclarationDescriptor.loadOptIns(
             context: BindingContext,
             languageVersionSettings: LanguageVersionSettings,
-            visited: MutableSet<DeclarationDescriptor> = mutableSetOf(),
+            visited: MutableSet<DeclarationDescriptor> = [],
             useFutureError: Boolean = false,
             useMarkersFromContainer: Boolean = true,
             fromSupertype: Boolean = false,
         ): Set<OptInDescription> {
-            if (!visited.add(this)) return emptySet()
+            if (!visited.add(this)) return []
             val result = SmartSet.create<OptInDescription>()
             if (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE) {
                 for (overridden in overriddenDescriptors) {
@@ -274,7 +274,7 @@ class OptInUsageChecker : CallChecker {
             warningsOnly: Boolean = false
         ): Set<OptInDescription> =
             when {
-                this?.isError != false -> emptySet()
+                this?.isError != false -> []
                 this is AbbreviatedType -> abbreviation.constructor.declarationDescriptor?.loadOptIns(
                     context, languageVersionSettings, visitedClassifiers,
                     useFutureError = warningsOnly || !languageVersionSettings.supportsFeature(LanguageFeature.OptInContagiousSignatures)
@@ -314,7 +314,7 @@ class OptInUsageChecker : CallChecker {
         }
 
         private fun AnnotationDescriptor.loadSubclassOptInRequired(module: ModuleDescriptor): List<OptInDescription> {
-            if (this.fqName != SUBCLASS_OPT_IN_REQUIRED_FQ_NAME) return emptyList()
+            if (this.fqName != SUBCLASS_OPT_IN_REQUIRED_FQ_NAME) return []
             val markerClasses = getOptInAnnotationArgs(this)
             return markerClasses.mapNotNull { constant ->
                 val klass = constant as? KClassValue ?: return@mapNotNull null

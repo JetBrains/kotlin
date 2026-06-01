@@ -36,7 +36,7 @@ internal class KaFirFileScope(
 
     @OptIn(DirectDeclarationsAccess::class)
     private val backingCallableNames: Set<Name> by cached {
-        val result = mutableSetOf<Name>()
+        val result: MutableSet<Name> = []
         owner.firSymbol.fir.declarations
             .mapNotNullTo(result) { firDeclaration ->
                 when (firDeclaration) {
@@ -53,7 +53,7 @@ internal class KaFirFileScope(
 
     @OptIn(DirectDeclarationsAccess::class)
     private val _classifierNames: Set<Name> by cached {
-        val result = mutableSetOf<Name>()
+        val result: MutableSet<Name> = []
         owner.firSymbol.fir.declarations
             .mapNotNullTo(result) { firDeclaration ->
                 (firDeclaration as? FirRegularClass)?.name
@@ -82,7 +82,7 @@ internal class KaFirFileScope(
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
@@ -104,15 +104,15 @@ internal class KaFirFileScope(
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 }

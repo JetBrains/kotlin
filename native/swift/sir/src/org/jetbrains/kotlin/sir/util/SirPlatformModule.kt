@@ -10,6 +10,6 @@ import org.jetbrains.kotlin.sir.SirImport
 import org.jetbrains.kotlin.sir.SirModule
 
 class SirPlatformModule(override val name: String) : SirModule() {
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
-    override val imports: MutableList<SirImport> = mutableListOf()
+    override val declarations: MutableList<SirDeclaration> = []
+    override val imports: MutableList<SirImport> = []
 }

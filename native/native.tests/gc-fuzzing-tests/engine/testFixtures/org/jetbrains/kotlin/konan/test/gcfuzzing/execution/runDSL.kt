@@ -44,15 +44,15 @@ fun AbstractNativeSimpleTest.runDSL(
     val cinterop = cinteropToLibrary(
         dslGeneratedDir.resolve(dslOutput.cinterop.defFilename),
         baseDir,
-        freeCompilerArgs = TestCompilerArgs(compilerArgs = emptyList(), cinteropArgs = dslOutput.cinterop.args),
+        freeCompilerArgs = TestCompilerArgs(compilerArgs = [], cinteropArgs = dslOutput.cinterop.args),
     ).assertSuccess()
     val objcFrameworkTestCase = generateObjCFrameworkTestCase(
         TestKind.STANDALONE_NO_TR,
         TestCase.NoTestRunnerExtras(),
         dslOutput.kotlin.frameworkName,
-        listOf(dslGeneratedDir.resolve(dslOutput.kotlin.filename)),
+        [dslGeneratedDir.resolve(dslOutput.kotlin.filename)],
         TestCompilerArgs(dslOutput.kotlin.args),
-        setOf(TestModule.Given(cinterop.resultingArtifact.klibFile)),
+        [TestModule.Given(cinterop.resultingArtifact.klibFile)],
         checks = TestRunChecks(
             executionTimeoutCheck = ExecutionTimeout.ShouldNotExceed(executionTimeout),
             testFiltering = TestFiltering(TestOutputFilter.NO_FILTERING),
@@ -70,17 +70,18 @@ fun AbstractNativeSimpleTest.runDSL(
         )
         .result.assertSuccess()
     codesign(objCFramework.resultingArtifact.frameworkDir.absolutePath)
+    @Suppress("ConvertToCollectionLiterals")
     val finalExecutable = compileWithClang(
-        sourceFiles = listOf(dslGeneratedDir.resolve(dslOutput.objc.filename)),
+        sourceFiles = [dslGeneratedDir.resolve(dslOutput.objc.filename)],
         outputFile = baseDir.resolve("main.exe"),
         additionalClangFlags = dslOutput.objc.args + listOf("-framework", dslOutput.kotlin.frameworkName),
-        frameworkDirectories = listOf(baseDir),
-        includeDirectories = listOf(baseDir.resolve("${dslOutput.kotlin.frameworkName}.framework").resolve("Headers"))
+        frameworkDirectories = [baseDir],
+        includeDirectories = [baseDir.resolve("${dslOutput.kotlin.frameworkName}.framework").resolve("Headers")]
     ).assertSuccess()
     val testExecutable = TestExecutable(
         finalExecutable.resultingArtifact,
         finalExecutable.loggedData,
-        listOf(TestName(testName))
+        [TestName(testName)]
     )
     runExecutableAndVerify(objcFrameworkTestCase, testExecutable)
 }

@@ -103,7 +103,7 @@ class BatchingPackageInserter(testServices: TestServices) : ReversibleSourceFile
             additionalBasePackage,
             transformHelpersPackage = true
         )
-        ktFiles.values.forEach { it.accept(patcher, emptySet()) }
+        ktFiles.values.forEach { it.accept(patcher, []) }
         for ([testFile, ktFile] in ktFiles) {
             filesContent[testFile] = ktFile.text
         }
@@ -446,7 +446,7 @@ private val charactersAllowedInKotlinStringLiterals: Set<Char> = mutableSetOf<Ch
     addAll('a'..'z')
     addAll('A'..'Z')
     addAll('0'..'9')
-    addAll(listOf('_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'))
+    addAll(['_', '@', ':', ';', '.', ',', '{', '}', '=', '[', ']', '^', '#', '*', ' ', '(', ')'])
 }
 
 private fun KtElement.collectAccessibleDeclarationNames(): Set<Name> {
@@ -476,7 +476,7 @@ private fun KtElement.collectAccessibleDeclarationNames(): Set<Name> {
 }
 
 private fun KtDotQualifiedExpression.collectNames(): List<Name> {
-    val output = mutableListOf<Name>()
+    val output: MutableList<Name> = []
 
     fun KtExpression.recurse(): Boolean {
         children.forEach { child ->
@@ -517,7 +517,7 @@ private fun KtDotQualifiedExpression.collectNames(): List<Name> {
     return output
 }
 
-private fun KtUserType.collectNames(output: MutableList<Name> = mutableListOf()): List<Name> {
+private fun KtUserType.collectNames(output: MutableList<Name> = []): List<Name> {
     children.forEach { child ->
         when (child) {
             is KtUserType -> child.collectNames(output)

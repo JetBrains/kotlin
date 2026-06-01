@@ -52,7 +52,7 @@ class GetterProcessor(private val config: LombokConfig) : Processor {
                 }
             classDescriptor.createFunction(
                 Name.identifier(functionName),
-                emptyList(),
+                [],
                 field.returnType,
                 visibility = getter.visibility.toDescriptorVisibility()
             )

@@ -84,7 +84,7 @@ abstract class LoggedData {
         private val environment: JVMEnvironment = JVMEnvironment() // Capture environment.
     ) : LoggedData() {
         override fun computeText() = buildString {
-            appendArguments("COMPILER ARGUMENTS:", listOf(home.dir.resolve("bin/kotlinc-native").path) + compilerArgs)
+            appendArguments("COMPILER ARGUMENTS:", [home.dir.resolve("bin/kotlinc-native").path] + compilerArgs)
             appendLine()
             appendLine(environment)
         }
@@ -284,7 +284,7 @@ abstract class LoggedData {
         val dummyCompilerCall = CompilationToolCall(
             toolName = "Compiler",
             input = null,
-            parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("DummyFile")), arrayOf()),
+            parameters = LoggedData.CompilerParameters(KotlinNativeHome(dir = File("DummyFile")), []),
             exitCode = ExitCode.OK,
             toolOutput = "",
             toolOutputHasErrors = false,

@@ -51,7 +51,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
 
         transformConstructorBody(irConstructor, result)
 
-        return listOf(result)
+        return [result]
     }
 
 
@@ -67,9 +67,9 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
         function.body = delegateToStaticMethod(function, staticMethod)
 
         if (function.overriddenSymbols.isEmpty())  // Function is used only in unboxed context
-            return listOf(staticMethod)
+            return [staticMethod]
 
-        return listOf(function, staticMethod)
+        return [function, staticMethod]
     }
 
     private fun transformPrimaryConstructor(irConstructor: IrConstructor): List<IrDeclaration> {
@@ -154,7 +154,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
             }
         }
 
-        return listOf(irConstructor, initFunction)
+        return [irConstructor, initFunction]
     }
 
     private fun transformConstructorBody(irConstructor: IrConstructor, staticMethod: IrSimpleFunction) {
@@ -288,7 +288,7 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                         val typeParameters = extractTypeParameters(function.parentAsClass) + function.typeParameters
                         for ([index, typeParameter] in typeParameters.withIndex()) {
                             typeArguments[index] =
-                                IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, emptyList(), emptyList())
+                                IrSimpleTypeImpl(typeParameter.symbol, SimpleTypeNullability.NOT_SPECIFIED, [], [])
                         }
                     }
                 )

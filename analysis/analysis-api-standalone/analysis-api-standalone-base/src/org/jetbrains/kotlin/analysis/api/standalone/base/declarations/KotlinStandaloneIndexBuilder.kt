@@ -120,7 +120,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         indexStubRecursively(stub)
     }
 
-    private val decompiledFilesFromBinaryRoots = mutableSetOf<IndexableFile>()
+    private val decompiledFilesFromBinaryRoots: MutableSet<IndexableFile> = []
 
     fun collectDecompiledFilesFromBinaryRoot(binaryRoot: VirtualFile, isSharedRoot: Boolean) {
         if (isSharedRoot && cacheService != null) {
@@ -215,7 +215,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         }
     }
 
-    private val decompiledFilesFromBuiltins = mutableSetOf<IndexableFile>()
+    private val decompiledFilesFromBuiltins: MutableSet<IndexableFile> = []
 
     fun collectDecompiledFilesFromBuiltins() {
         for (virtualFile in BuiltinsVirtualFileProvider.getInstance().getBuiltinVirtualFiles()) {
@@ -232,7 +232,7 @@ internal class KotlinStandaloneIndexBuilder private constructor(
         }
     }
 
-    private val providedSourceFiles = mutableSetOf<KtFile>()
+    private val providedSourceFiles: MutableSet<KtFile> = []
 
     fun collectSourceFiles(sourceFiles: Collection<KtFile>) {
         providedSourceFiles += sourceFiles

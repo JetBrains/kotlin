@@ -20,7 +20,7 @@ abstract class AbstractErrorResistanceTest : AbstractAnalysisApiBasedTest() {
     override val configurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(ErrorResistanceServiceRegistrar)
+        get() = super.additionalServiceRegistrars + ErrorResistanceServiceRegistrar
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         withResolutionFacade(mainFile) { resolutionFacade ->

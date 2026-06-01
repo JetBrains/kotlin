@@ -66,7 +66,7 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
         }
 
         val argumentStringValues = when {
-            property.returnType.classifier == Boolean::class -> listOf(rawPropertyValue?.toString() ?: false.toString())
+            property.returnType.classifier == Boolean::class -> [rawPropertyValue?.toString() ?: false.toString()]
 
             (property.returnType.classifier as? KClass<*>)?.java?.isArray == true ->
                 getArgumentStringValue(argumentAnnotation, rawPropertyValue as Array<*>?, compactArgumentValues)
@@ -74,7 +74,7 @@ internal fun <T : CommonToolArguments> toArgumentStrings(
             property.returnType.classifier == List::class ->
                 getArgumentStringValue(argumentAnnotation, (rawPropertyValue as List<*>?)?.toTypedArray(), compactArgumentValues)
 
-            else -> listOf(rawPropertyValue.toString())
+            else -> [rawPropertyValue.toString()]
         }
 
         val argumentName = if (shortArgumentKeys && argumentAnnotation.shortName.isNotEmpty()) argumentAnnotation.shortName
@@ -116,10 +116,10 @@ private fun shouldHandleArgFileInValues(argumentValue: String, allowArgFileInVal
 }
 
 private fun getArgumentStringValue(argumentAnnotation: Argument, values: Array<*>?, compactArgumentValues: Boolean): List<String> {
-    if (values.isNullOrEmpty()) return emptyList()
+    if (values.isNullOrEmpty()) return []
     val delimiter = argumentAnnotation.resolvedDelimiter
     return if (delimiter.isNullOrEmpty() || !compactArgumentValues) values.map { it.toString() }
-    else listOf(values.joinToString(delimiter))
+    else [values.joinToString(delimiter)]
 }
 
 private fun <T : CommonToolArguments> KClass<T>.newArgumentsInstance(): T {

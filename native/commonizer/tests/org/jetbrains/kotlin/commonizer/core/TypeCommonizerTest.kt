@@ -114,11 +114,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with same name`() {
         assertEquals(
             mockClassType("kotlin/collections/List"), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/List")
-                )
+                ]
             )
         )
     }
@@ -126,11 +126,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/fictitiousPackageName/List")
-                )
+                ]
             )
         )
     }
@@ -138,11 +138,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with different names - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/Set")
-                )
+                ]
             )
         )
     }
@@ -150,11 +150,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with different names - 3`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List"),
                     mockClassType("kotlin/collections/List"),
                     mockClassType("org/sample/Foo")
-                )
+                ]
             )
         )
     }
@@ -162,11 +162,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlinx package with same name`() {
         assertEquals(
             mockClassType("kotlinx/cinterop/CPointer"), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlinx/cinterop/CPointer"),
                     mockClassType("kotlinx/cinterop/CPointer"),
                     mockClassType("kotlinx/cinterop/CPointer")
-                )
+                ]
             )
         )
     }
@@ -174,11 +174,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlinx package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlinx/cinterop/CPointer"),
                     mockClassType("kotlinx/cinterop/CPointer"),
                     mockClassType("kotlin/fictitiousPackageName/CPointer")
-                )
+                ]
             )
         )
     }
@@ -186,11 +186,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with same name`() {
         assertEquals(
             mockClassType("org/sample/Foo"), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo"),
                     mockClassType("org/sample/Foo"),
                     mockClassType("org/sample/Foo")
-                )
+                ]
             )
         )
     }
@@ -198,10 +198,10 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with different names - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo"),
                     mockClassType("org/fictitiousPackageName/Foo")
-                )
+                ]
             )
         )
     }
@@ -209,10 +209,10 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with different names - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo"),
                     mockClassType("org/sample/Bar")
-                )
+                ]
             )
         )
     }
@@ -220,10 +220,10 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with different names - 3`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo"),
                     mockClassType("kotlin/String")
-                )
+                ]
             )
         )
     }
@@ -231,11 +231,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with same nullability - 1`() {
         assertEquals(
             mockClassType("kotlin/collections/List", nullable = false), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List", nullable = false),
                     mockClassType("kotlin/collections/List", nullable = false),
                     mockClassType("kotlin/collections/List", nullable = false)
-                )
+                ]
             )
         )
     }
@@ -243,11 +243,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with same nullability - 2`() {
         assertEquals(
             mockClassType("kotlin/collections/List", nullable = true), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List", nullable = true),
                     mockClassType("kotlin/collections/List", nullable = true),
                     mockClassType("kotlin/collections/List", nullable = true)
-                )
+                ]
             )
         )
     }
@@ -255,11 +255,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with different nullability - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List", nullable = false),
                     mockClassType("kotlin/collections/List", nullable = false),
                     mockClassType("kotlin/collections/List", nullable = true)
-                )
+                ]
             )
         )
     }
@@ -267,11 +267,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in Kotlin package with different nullability - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("kotlin/collections/List", nullable = true),
                     mockClassType("kotlin/collections/List", nullable = true),
                     mockClassType("kotlin/collections/List", nullable = false)
-                )
+                ]
             )
         )
     }
@@ -279,11 +279,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with same nullability - 1`() {
         assertEquals(
             mockClassType("org/sample/Foo", nullable = false), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo", nullable = false),
                     mockClassType("org/sample/Foo", nullable = false),
                     mockClassType("org/sample/Foo", nullable = false)
-                )
+                ]
             )
         )
     }
@@ -291,11 +291,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with same nullability - 2`() {
         assertEquals(
             mockClassType("org/sample/Foo", nullable = true), createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo", nullable = true),
                     mockClassType("org/sample/Foo", nullable = true),
                     mockClassType("org/sample/Foo", nullable = true)
-                )
+                ]
             )
         )
     }
@@ -303,11 +303,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with different nullability - 1`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo", nullable = false),
                     mockClassType("org/sample/Foo", nullable = false),
                     mockClassType("org/sample/Foo", nullable = true)
-                )
+                ]
             )
         )
     }
@@ -315,11 +315,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
     fun `test class types in user package with different nullability - 2`() {
         assertEquals(
             null, createCommonizer().invoke(
-                listOf(
+                [
                     mockClassType("org/sample/Foo", nullable = true),
                     mockClassType("org/sample/Foo", nullable = true),
                     mockClassType("org/sample/Foo", nullable = false)
-                )
+                ]
             )
         )
     }
@@ -338,11 +338,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
 
         assertEquals(mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") }, commonizer(
-            listOf(
+            [
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") }
-            )))
+            ]))
     }
 
     fun `test ta types in Kotlin package with different names`() {
@@ -369,11 +369,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
         assertEquals(
             mockClassType("kotlin/sequences/SequenceScope"), commonizer(
-                listOf(
+                [
                     mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                     mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                     mockTAType("kotlin/sequences/FictitiousTypeAlias") { mockClassType("kotlin/sequences/SequenceScope") }
-                )))
+                ]))
     }
 
     fun `test ta types in Kotlin package with different classes`() {
@@ -407,11 +407,11 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             }
         )
         assertEquals(null, commonizer(
-            listOf(
+            [
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope") },
                 mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/FictitiousClass") }
-            )))
+            ]))
     }
 
     fun `test multilevel ta types in Kotlin package with same name and right hand side class`() {
@@ -449,26 +449,27 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
         )
         assertEquals(mockTAType("kotlin/FictitiousTypeAlias") {
             mockClassType("kotlin/FictitiousClass")
-        }, commonizer(listOf(
+        }, commonizer(
+            [
 
-            mockTAType("kotlin/FictitiousTypeAlias") {
-                mockClassType("kotlin/FictitiousClass")
-            },
+                          mockTAType("kotlin/FictitiousTypeAlias") {
+                              mockClassType("kotlin/FictitiousClass")
+                          },
 
-            mockTAType("kotlin/FictitiousTypeAlias") {
-                mockTAType("kotlin/FictitiousTypeAliasL2") {
-                    mockClassType("kotlin/FictitiousClass")
-                }
-            },
+                          mockTAType("kotlin/FictitiousTypeAlias") {
+                              mockTAType("kotlin/FictitiousTypeAliasL2") {
+                                  mockClassType("kotlin/FictitiousClass")
+                              }
+                          },
 
-            mockTAType("kotlin/FictitiousTypeAlias") {
-                mockTAType("kotlin/FictitiousTypeAliasL2") {
-                    mockTAType("kotlin/FictitiousTypeAliasL3") {
-                        mockClassType("kotlin/FictitiousClass")
-                    }
-                }
-            }
-        )))
+                          mockTAType("kotlin/FictitiousTypeAlias") {
+                              mockTAType("kotlin/FictitiousTypeAliasL2") {
+                                  mockTAType("kotlin/FictitiousTypeAliasL3") {
+                                      mockClassType("kotlin/FictitiousClass")
+                                  }
+                              }
+                          }
+                      ]))
     }
 
     fun `test multilevel ta types in user package with same name and right hand side class - 1`() {
@@ -506,7 +507,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
             mockTAType("org/sample/FAlias") {
                 mockClassType("org/sample/F")
             }, commonizer(
-                listOf(
+                [
                     mockTAType("org/sample/FAlias") {
                         mockClassType("org/sample/F")
                     },
@@ -517,7 +518,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                         mockTAType("org/sample/FAliasL2") {
                             mockClassType("org/sample/F")
                         }
-                    })
+                    }]
             )
         )
     }
@@ -541,7 +542,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                     mockClassType("org/sample/Foo")
                 }
             }, commonizer(
-                listOf(
+                [
                     mockTAType("org/sample/FooAlias") {
                         mockTAType("org/sample/FooAliasL2") {
                             mockClassType("org/sample/Foo")
@@ -557,7 +558,7 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                         mockTAType("org/sample/FooAliasL2") {
                             mockClassType("org/sample/Foo")
                         }
-                    })
+                    }]
             )
         )
     }
@@ -592,11 +593,27 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                 )
             }
         )
-        assertEquals(null, commonizer(listOf(
-            mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) },
-            mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = false) },
-            mockTAType("kotlin/sequences/SequenceBuilder") { mockClassType("kotlin/sequences/SequenceScope", nullable = true) }
-        )))
+        assertEquals(null, commonizer(
+            [
+                mockTAType("kotlin/sequences/SequenceBuilder") {
+                    mockClassType(
+                        "kotlin/sequences/SequenceScope",
+                        nullable = false
+                    )
+                },
+                mockTAType("kotlin/sequences/SequenceBuilder") {
+                    mockClassType(
+                        "kotlin/sequences/SequenceScope",
+                        nullable = false
+                    )
+                },
+                mockTAType("kotlin/sequences/SequenceBuilder") {
+                    mockClassType(
+                        "kotlin/sequences/SequenceScope",
+                        nullable = true
+                    )
+                }
+            ]))
     }
 
     fun `test ta types in user package with same nullability`() {
@@ -611,17 +628,39 @@ class TypeCommonizerTest : AbstractInlineSourcesCommonizationTest() {
                 )
             }
         )
-        assertEquals(mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }, commonizer(listOf(
-            mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
-            mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") },
-            mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }
-        )))
+        assertEquals(mockTAType("org/sample/FooAlias", nullable = true) { mockClassType("org/sample/Foo") }, commonizer(
+            [
+                mockTAType(
+                    "org/sample/FooAlias",
+                    nullable = true
+                ) {
+                    mockClassType(
+                        "org/sample/Foo"
+                    )
+                },
+                mockTAType(
+                    "org/sample/FooAlias",
+                    nullable = true
+                ) {
+                    mockClassType(
+                        "org/sample/Foo"
+                    )
+                },
+                mockTAType(
+                    "org/sample/FooAlias",
+                    nullable = true
+                ) {
+                    mockClassType(
+                        "org/sample/Foo"
+                    )
+                }
+            ]))
     }
 
 
     companion object {
         fun areEqual(classifiers: CirKnownClassifiers, a: CirType, b: CirType): Boolean =
-            TypeCommonizer(classifiers, DefaultCommonizerSettings).invoke(listOf(a, b)) != null
+            TypeCommonizer(classifiers, DefaultCommonizerSettings).invoke([a, b]) != null
     }
 }
 

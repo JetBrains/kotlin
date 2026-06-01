@@ -79,10 +79,10 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
         val doWhileCondition =
             IrCompositeImpl(
                 stepStartOffset, stepEndOffset, context.irBuiltIns.booleanType, null,
-                listOf(
+                [
                     inductionVariableUpdate,
                     IrConstImpl.boolean(stepStartOffset, stepEndOffset, context.irBuiltIns.booleanType, true)
-                )
+                ]
             )
         doWhileLoop.condition = doWhileCondition
 
@@ -103,12 +103,12 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
 
         return IrWhenImpl(
             conditionStartOffset, conditionEndOffset, context.irBuiltIns.unitType, null,
-            listOf(
+            [
                 IrBranchImpl(
                     negatedCondition,
                     IrBreakImpl(conditionStartOffset, conditionEndOffset, context.irBuiltIns.nothingType, doWhileLoop)
                 )
-            )
+            ]
         )
     }
 
@@ -145,11 +145,11 @@ class JavaLikeCounterLoopBuilder(private val context: CommonBackendContext) {
         doWhileLoop.condition = IrCompositeImpl(
             loopConditionStartOffset, loopConditionEndOffset, loopCondition.type,
             origin = null,
-            statements = listOf(
+            statements = [
                 createNegatedConditionCheck(doWhileLoop.condition, doWhileLoop),
                 updateInductionVar,
                 IrConstImpl.boolean(loopConditionStartOffset, loopConditionEndOffset, context.irBuiltIns.booleanType, true)
-            )
+            ]
         )
     }
 }

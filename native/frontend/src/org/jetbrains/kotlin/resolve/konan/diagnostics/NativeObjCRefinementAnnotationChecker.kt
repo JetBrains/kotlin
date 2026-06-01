@@ -41,8 +41,8 @@ internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMe
 
 object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
-    private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
-    private val refinesInSwiftSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY)
+    private val hidesFromObjCSupportedTargets: Array<KotlinTarget> = [KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS]
+    private val refinesInSwiftSupportedTargets: Array<KotlinTarget> = [KotlinTarget.FUNCTION, KotlinTarget.PROPERTY]
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is ClassDescriptor || descriptor.kind != ClassKind.ANNOTATION_CLASS) return

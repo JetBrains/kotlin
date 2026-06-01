@@ -21,7 +21,7 @@ import java.io.File
 class WasiBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    internal val vmsToCheck: List<WasmVM> = listOf(WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime)
+    internal val vmsToCheck: List<WasmVM> = [WasmVM.NodeJs, WasmVM.WasmEdge, WasmVM.Wasmtime]
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -92,7 +92,7 @@ class WasiBoxRunner(
             processExceptions(exceptions)
 
             // TODO KT-71504: support size tests for WASI target and ignoring utility files
-            val filesToIgnoreInSizeChecks = emptySet<File>()
+            val filesToIgnoreInSizeChecks: Set<File> = []
             when (mode) {
                 "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
                 "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)

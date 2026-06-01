@@ -56,7 +56,7 @@ fun FirConstructorSymbol.getObjCInitMethod(session: FirSession): FirFunctionSymb
     this.resolvedAnnotationsWithClassIds.getAnnotationByClassId(NativeStandardInteropNames.objCConstructorClassId, session)?.let { annotation ->
         val initSelector: String = annotation.constStringArgument("initSelector")
         val classSymbol = containingClassLookupTag()?.toSymbol(session) as FirClassSymbol<*>
-        val initSelectors = mutableListOf<FirFunctionSymbol<*>>()
+        val initSelectors: MutableList<FirFunctionSymbol<*>> = []
         session.declaredMemberScope(classSymbol, memberRequiredPhase = null)
             .processAllFunctions {
                 if (it.decodeObjCMethodAnnotation(session)?.selector == initSelector)
@@ -122,7 +122,7 @@ fun FirClassSymbol<*>.isObjCClass(session: FirSession): Boolean = classId.packag
 
 private fun FirClassSymbol<*>.selfOrAnySuperClass(session: FirSession, predicate: (ConeClassLikeLookupTag) -> Boolean): Boolean =
     predicate(toLookupTag()) ||
-            lookupSuperTypes(listOf(this), lookupInterfaces = true, deep = true, session, substituteTypes = false)
+            lookupSuperTypes([this], lookupInterfaces = true, deep = true, session, substituteTypes = false)
                 .any { predicate(it.lookupTag) }
 
 internal fun FirFunctionSymbol<*>.getInitMethodIfObjCConstructor(session: FirSession): FirFunctionSymbol<*>? =

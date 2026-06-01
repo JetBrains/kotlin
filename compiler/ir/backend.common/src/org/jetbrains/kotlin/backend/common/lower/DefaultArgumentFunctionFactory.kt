@@ -70,7 +70,7 @@ abstract class DefaultArgumentFunctionFactory(
         skipInlineMethods: Boolean,
         skipExternalMethods: Boolean
     ): IrFunction? {
-        val visited = mutableSetOf<IrFunction>()
+        val visited: MutableSet<IrFunction> = []
 
         fun IrFunction.dfsImpl(): IrFunction? {
             visited += this

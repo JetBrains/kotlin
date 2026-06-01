@@ -20,19 +20,19 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
         get() = StandardLibrariesPathProviderForKotlinProject.defaultJsStdlib().path
 
     override val ownPlatformCheckers: List<KlibPlatformChecker>
-        get() = listOf(
+        get() = [
             KlibPlatformChecker.JS
-        )
+        ]
 
     override val alienPlatformCheckers: List<KlibPlatformChecker>
-        get() = listOf(
+        get() = [
             KlibPlatformChecker.Wasm(),
             KlibPlatformChecker.Wasm(WasmTarget.JS.alias),
             KlibPlatformChecker.Wasm(WasmTarget.WASI.alias),
             KlibPlatformChecker.Native(),
             KlibPlatformChecker.Native(KonanTarget.IOS_ARM64.name),
             KlibPlatformChecker.NativeMetadata(KonanTarget.IOS_ARM64.name),
-        )
+        ]
 
     override fun compileKlib(
         asFile: Boolean,
@@ -51,7 +51,7 @@ class JsKlibLoaderTest : AbstractKlibLoaderTest() {
             moduleName = sourceFile.nameWithoutExtension
             irModuleName = sourceFile.nameWithoutExtension
             customKlibAbiVersion = abiVersion.toString()
-            freeArgs = listOf(sourceFile.absolutePath)
+            freeArgs = [sourceFile.absolutePath]
         }
     }
 }

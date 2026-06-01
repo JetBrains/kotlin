@@ -18,10 +18,10 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 // Originally based on JvmSimpleNameBacktickChecker.
 class NativeIdentifierChecker(private val languageVersionSettings: LanguageVersionSettings) : IdentifierChecker, DeclarationChecker {
     // Also includes characters used by IR mangler (see MangleConstant).
-    private val invalidChars = setOf(
+    private val invalidChars: Set<Char> = [
         '.', ';', ',', '(', ')', '[', ']', '{', '}', '/', '<', '>',
         ':', '\\', '$', '&', '~', '*', '?', '#', '|', '§', '%', '@',
-    )
+    ]
 
     override fun checkIdentifier(simpleNameExpression: KtSimpleNameExpression, diagnosticHolder: DiagnosticSink) {
         reportIfNeeded(simpleNameExpression.getReferencedName(), { simpleNameExpression.getIdentifier() }, diagnosticHolder)

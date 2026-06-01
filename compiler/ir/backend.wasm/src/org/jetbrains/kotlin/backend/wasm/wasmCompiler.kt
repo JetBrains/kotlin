@@ -101,7 +101,7 @@ fun linkIr(
     )
 
     // Create stubs
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, [irLinker]).generateUnboundSymbolsAsDependencies()
 
     // Sort dependencies after IR linkage.
     val sortedModuleDependencies = irLinker.moduleDependencyTracker.reverseTopoOrder(moduleDependencies)
@@ -121,7 +121,7 @@ fun linkIr(
 fun compileToLoweredIr(
     configuration: CompilerConfiguration,
     irLinker: KotlinIrLinker,
-    exportedDeclarations: Set<FqName> = emptySet(),
+    exportedDeclarations: Set<FqName> = [],
     allModules: List<IrModuleFragment>,
     context: WasmBackendContext,
 ): LoweredIrWithExtraArtifacts {
@@ -133,7 +133,7 @@ fun compileToLoweredIr(
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
         val exportModelToDtsTranslator = ExportModelToTsDeclarations(ModuleKind.ES)
         val fragment = exportModelToDtsTranslator.generateTypeScriptFragment(exportModel.declarations)
-        TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", listOf(fragment)))
+        TypeScriptFragment(exportModelToDtsTranslator.generateTypeScript("", [fragment]))
     }
 
     lowerPreservingTags(
@@ -281,13 +281,13 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
     wasmIrToBinary.appendWasmModule()
 
     val jsWrapper: String
-    val dynamicJsModules = mutableListOf<DynamicJsModule>()
+    val dynamicJsModules: MutableList<DynamicJsModule> = []
 
     if (isWasmJsTarget) {
-        val jsModuleImports = mutableSetOf<String>()
-        val jsFuns = mutableSetOf<JsCodeSnippet>()
-        val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
-        val jsPolyfills = mutableListOf<String>()
+        val jsModuleImports: MutableSet<String> = []
+        val jsFuns: MutableSet<JsCodeSnippet> = []
+        val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = []
+        val jsPolyfills: MutableList<String> = []
         wasmCompiledFileFragments.forEach { fragment ->
             (fragment as? WasmCompiledCodeFileFragment)?.linkerData?.let { linkerData ->
                 jsModuleImports.addAll(linkerData.jsModuleImports.values.distinct())
@@ -323,7 +323,7 @@ fun compileWasmIrToBinary(moduleConfiguration: WasmIrModuleConfiguration, linked
         val importObject = generateImportObject(
             jsModuleImports = jsModuleImports,
             jsModuleAndQualifierReferences = jsModuleAndQualifierReferences,
-            dependencyModules = multimoduleParameters?.dependencyModules ?: emptySet(),
+            dependencyModules = multimoduleParameters?.dependencyModules ?: [],
             baseFileName = baseFileName,
             jsFuns = jsFuns,
             stdlibModule = stdlibModule,

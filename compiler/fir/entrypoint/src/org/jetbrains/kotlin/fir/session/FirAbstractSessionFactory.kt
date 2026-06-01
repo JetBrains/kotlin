@@ -190,7 +190,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
             register(
                 StructuredProviders::class,
                 StructuredProviders(
-                    sourceProviders = emptyList(),
+                    sourceProviders = [],
                     dependencyProviders = providers,
                     sharedProvider = when {
                         createSeparateSharedProviders -> FirEmptySymbolProvider(this)
@@ -374,9 +374,9 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                  *
                  * For more information see KDoc for [FirCommonDeclarationsMappingSymbolProvider]
                  */
-                val binaryProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
-                val binaryProvidersFromPlatformModule = mutableListOf<FirSymbolProvider>()
-                val sourceProvidersFromCommonModules = mutableListOf<FirSymbolProvider>()
+                val binaryProvidersFromCommonModules: MutableList<FirSymbolProvider> = []
+                val binaryProvidersFromPlatformModule: MutableList<FirSymbolProvider> = []
+                val sourceProvidersFromCommonModules: MutableList<FirSymbolProvider> = []
                 for ([dependencyModuleData, providers] in providersFromDependencies) {
                     when (dependencyModuleData.session.kind) {
                         // dependency session of the current module
@@ -392,9 +392,9 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                             // dependency providers, so it's necessary to leave only actual binary providers
                             binaryProvidersFromCommonModules += providers.dependencyProviders.flatMap {
                                 when {
-                                    it.session.kind == FirSession.Kind.Library -> listOf(it)
+                                    it.session.kind == FirSession.Kind.Library -> [it]
                                     it is FirCommonDeclarationsMappingSymbolProvider -> it.platformSymbolProvider.flatten()
-                                    else -> emptyList()
+                                    else -> []
                                 }
                             }
                         }
@@ -439,7 +439,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         }
 
         return StructuredProviders(
-            sourceProviders = emptyList(),
+            sourceProviders = [],
             dependencyProviders,
             sharedProvider
         )
@@ -464,7 +464,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
     }
 
     private fun FirSymbolProvider.flatten(predicate: (FirSymbolProvider) -> Boolean): List<FirSymbolProvider> {
-        val result = mutableListOf<FirSymbolProvider>()
+        val result: MutableList<FirSymbolProvider> = []
 
         fun FirSymbolProvider.collectProviders() {
             when {

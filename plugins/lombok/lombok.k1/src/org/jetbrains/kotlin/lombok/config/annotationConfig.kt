@@ -53,7 +53,7 @@ object LombokAnnotations {
         val fluent: Boolean = false,
         val chain: Boolean = false,
         val noIsPrefix: Boolean = false,
-        val prefix: List<String> = emptyList()
+        val prefix: List<String> = []
     ) {
         companion object : AnnotationAndConfigCompanion<Accessors>(LombokNames.ACCESSORS) {
 
@@ -70,7 +70,7 @@ object LombokAnnotations {
                 val prefix =
                     annotation?.getStringArrayArgument("prefix")
                         ?: config.getMultiString("lombok.accessors.prefix")
-                        ?: emptyList()
+                        ?: []
 
                 return Accessors(fluent, chain, noIsPrefix, prefix)
             }

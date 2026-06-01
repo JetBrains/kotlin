@@ -155,7 +155,7 @@ private fun getFeaturedLibraries(
     allowDefaultLibs: Boolean
 ) : List<KotlinLibrary> {
     val remainingFeaturedLibraries = featuredLibraryFiles.toMutableSet()
-    val result = mutableListOf<KotlinLibrary>()
+    val result: MutableList<KotlinLibrary> = []
     //TODO: please add type checks before cast.
     val libraries = resolvedLibraries.getFullList()
 

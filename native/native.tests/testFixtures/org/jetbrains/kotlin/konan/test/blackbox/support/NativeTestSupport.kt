@@ -303,7 +303,7 @@ object NativeTestSupport {
 
     private fun computeBinaryOptions(enforcedProperties: EnforcedProperties): ExplicitBinaryOptions =
         ClassLevelProperty.BINARY_OPTIONS.readValue(
-            enforcedProperties, { it.split(",") }, emptyList()
+            enforcedProperties, { it.split(",") }, []
         ).let(::ExplicitBinaryOptions)
 
     private fun computeAllocator(enforcedProperties: EnforcedProperties): Allocator {
@@ -378,7 +378,7 @@ object NativeTestSupport {
             ClassLevelProperty.COMPILER_PLUGINS.readValue(
                 enforcedProperties,
                 { it.split(File.pathSeparatorChar).mapToSet(::File) },
-                default = emptySet()
+                default = []
             )
         )
 
@@ -387,7 +387,7 @@ object NativeTestSupport {
             ClassLevelProperty.CUSTOM_KLIBS.readValue(
                 enforcedProperties,
                 { it.split(File.pathSeparatorChar).mapToSet(::File) },
-                default = emptySet()
+                default = []
             )
         )
 
@@ -535,7 +535,7 @@ object NativeTestSupport {
                     nestedClass.getAnnotation(TestMetadata::class.java)?.testRoot()
                 }
             }
-            else -> setOf(outermostTestMetadata.testRoot())
+            else -> [outermostTestMetadata.testRoot()]
         }
 
         val baseDir: File = when (testRoots.size) {
@@ -657,11 +657,11 @@ object NativeTestSupport {
 
         return SimpleTestRunSettings(
             parent = testClassSettings,
-            listOf(
+            [
                 computeSimpleTestInstances(),
                 computeBinariesForSimpleTests(testClassSettings.get(), testClassSettings.get()),
                 RegisteredDirectives::class to defaultDirectives(testClassSettings)
-            )
+            ]
         )
     }
 

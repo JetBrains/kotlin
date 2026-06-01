@@ -73,7 +73,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
 
         val kotlinFiles = root.walkTopDown().filter { it.isFile }.filter { it.extension == "kt" }.toList()
         val dependencyKlibs = configuration.dependencies.flatMap { it.klibs }
-        val moduleDescriptors = setOf(createModuleDescriptor(environment, kotlinFiles, dependencyKlibs))
+        val moduleDescriptors: Set<ModuleDescriptor> = [createModuleDescriptor(environment, kotlinFiles, dependencyKlibs)]
 
         // Parse objc-entry-points file if present
         val entryPoints = File(root, "objc-entry-points")
@@ -123,7 +123,7 @@ class Fe10HeaderGeneratorImpl(private val disposable: Disposable) : HeaderGenera
             objcGenerics = true,
             objcExportBlockExplicitParameterNames = configuration.objcExportBlockExplicitParameterNames,
             shouldExportKDoc = true,
-            additionalImports = emptyList()
+            additionalImports = []
         )
     }
 }

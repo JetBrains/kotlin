@@ -50,21 +50,21 @@ class KaptOptions(
 
     class Builder {
         var projectBaseDir: File? = null
-        val compileClasspath: MutableList<File> = mutableListOf()
-        val javaSourceRoots: MutableList<File> = mutableListOf()
+        val compileClasspath: MutableList<File> = []
+        val javaSourceRoots: MutableList<File> = []
 
-        val changedFiles: MutableList<File> = mutableListOf()
-        val compiledSources: MutableList<File> = mutableListOf()
+        val changedFiles: MutableList<File> = []
+        val compiledSources: MutableList<File> = []
         var incrementalCache: File? = null
-        val classpathChanges: MutableList<String> = mutableListOf()
+        val classpathChanges: MutableList<String> = []
 
         var sourcesOutputDir: File? = null
         var classesOutputDir: File? = null
         var stubsOutputDir: File? = null
         var incrementalDataOutputDir: File? = null
 
-        val processingClasspath: MutableList<File> = mutableListOf()
-        val processors: MutableList<String> = mutableListOf()
+        val processingClasspath: MutableList<File> = []
+        val processors: MutableList<String> = []
 
         val processingOptions: MutableMap<String, String> = mutableMapOf()
         val javacOptions: MutableMap<String, String> = mutableMapOf()
@@ -89,7 +89,7 @@ class KaptOptions(
                 processingClasspath, processors, processingOptions, javacOptions, KaptFlags.fromSet(flags),
                 mode, detectMemoryLeaks,
                 processingClassLoader = null,
-                separateClassloaderForProcessors = emptySet(),
+                separateClassloaderForProcessors = [],
                 processorsStatsReportFile = processorsStatsReportFile,
                 fileReadHistoryReportFile = fileReadHistoryReportFile
             )
@@ -171,7 +171,7 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
                     toReprocess
                 }
             } else {
-                emptyList()
+                []
             }
         }
     }
@@ -179,7 +179,7 @@ fun KaptOptions.collectJavaSourceFiles(sourcesToReprocess: SourcesToReprocess = 
 
 fun collectAggregatedTypes(sourcesToReprocess: SourcesToReprocess = SourcesToReprocess.FullRebuild): List<String> {
     return when (sourcesToReprocess) {
-        is SourcesToReprocess.FullRebuild -> emptyList()
+        is SourcesToReprocess.FullRebuild -> []
         is SourcesToReprocess.Incremental -> {
             sourcesToReprocess.unchangedAggregatedTypes
         }

@@ -41,7 +41,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
                     val icConfig = compilationOperation.snapshotBasedIcConfiguration(
                         workingDirectory = module1.icCachesDir,
                         sourcesChanges = SourcesChanges.Unknown,
-                        dependenciesSnapshotFiles = emptyList(),
+                        dependenciesSnapshotFiles = [],
                         shrunkClasspathSnapshot = customSnapshotFile,
                     ) {}
                     compilationOperation[INCREMENTAL_COMPILATION] =
@@ -73,7 +73,7 @@ class SnapshotPathSmokeTest : BaseCompilationTest() {
                     val icConfig = compilationOperation.snapshotBasedIcConfiguration(
                         workingDirectory = icWorkDir,
                         sourcesChanges = SourcesChanges.Unknown,
-                        dependenciesSnapshotFiles = emptyList(),
+                        dependenciesSnapshotFiles = [],
                     ) {}
                     compilationOperation[INCREMENTAL_COMPILATION] =
                         icConfig

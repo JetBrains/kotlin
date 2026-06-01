@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserBaseVisitor
 
 internal class AntlrJsCommentsCollector(private val tokenStream: CommonTokenStream) : JavaScriptParserBaseVisitor<Unit>() {
-    private val consumedCommentIndexes = mutableSetOf<Int>()
+    private val consumedCommentIndexes: MutableSet<Int> = []
 
     override fun visitStatement(ctx: JavaScriptParser.StatementContext) {
         ctx.collectCommentsBeforeNode()
@@ -52,7 +52,7 @@ internal class AntlrJsCommentsCollector(private val tokenStream: CommonTokenStre
     private fun JavaScriptRuleContext.collectCommentsBeforeNode() {
         val beforeCommentTokens = tokenStream
             .getHiddenTokensToLeft(start.tokenIndex, JavaScriptLexer.COMMENTS)
-            ?.filter { it.tokenIndex !in consumedCommentIndexes } ?: emptyList()
+            ?.filter { it.tokenIndex !in consumedCommentIndexes } ?: []
         commentsBefore.clear()
         beforeCommentTokens.forEach { token ->
             commentsBefore += token
@@ -63,7 +63,7 @@ internal class AntlrJsCommentsCollector(private val tokenStream: CommonTokenStre
     private fun JavaScriptRuleContext.collectCommentsAfterNode() {
         val afterCommentTokens = tokenStream
             .getHiddenTokensToRight(stop.tokenIndex, JavaScriptLexer.COMMENTS)
-            ?.filter { it.tokenIndex !in consumedCommentIndexes } ?: emptyList()
+            ?.filter { it.tokenIndex !in consumedCommentIndexes } ?: []
         commentsAfter.clear()
         afterCommentTokens.forEach { token ->
             commentsAfter += token

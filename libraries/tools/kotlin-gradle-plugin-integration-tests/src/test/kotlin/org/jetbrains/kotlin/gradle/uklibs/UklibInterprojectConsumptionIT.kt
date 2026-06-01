@@ -95,7 +95,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
             assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
                 mutableMapOf(
                     ":producer" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "klib",
                                 "org.gradle.category" to "library",
@@ -105,17 +105,17 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "ios_arm64",
                             ),
-                        ),
+                        ],
                         configuration = "uklibApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = [
+                        ],
                         configuration = "fallbackVariant_KT-81412",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = [
+                        ],
                         configuration = "nativeApiElements",
                     ),
                 ).prettyPrinted,
@@ -127,7 +127,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
             assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
                 mutableMapOf(
                     ":producer" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "klib",
                                 "org.gradle.category" to "library",
@@ -137,11 +137,11 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "js_ir",
                             ),
-                        ),
+                        ],
                         configuration = "uklibApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "klib",
                                 "org.gradle.category" to "library",
@@ -151,11 +151,11 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.jetbrains.kotlin.js.compiler" to "ir",
                                 "org.jetbrains.kotlin.platform.type" to "js",
                             ),
-                        ),
+                        ],
                         configuration = "jsApiElements-published",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib-js:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "klib",
                                 "org.gradle.category" to "library",
@@ -166,12 +166,12 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.jetbrains.kotlin.klib.packaging" to "packed",
                                 "org.jetbrains.kotlin.platform.type" to "js",
                             ),
-                        ),
+                        ],
                         configuration = "jsApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = [
+                        ],
                         configuration = "jsApiElements",
                     ),
                 ).prettyPrinted,
@@ -183,7 +183,7 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
             assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
                 mutableMapOf(
                     ":producer" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
@@ -193,16 +193,16 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.jetbrains.kotlin.uklibState" to "decompressed",
                                 "org.jetbrains.kotlin.uklibView" to "jvm",
                             ),
-                        ),
+                        ],
                         configuration = "uklibApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = [
+                        ],
                         configuration = "fallbackVariant_KT-81412",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
@@ -211,18 +211,18 @@ class UklibInterprojectConsumptionIT : KGPBaseTest() {
                                 "org.gradle.usage" to "java-api",
                                 "org.jetbrains.kotlin.platform.type" to "jvm",
                             ),
-                        ),
+                        ],
                         configuration = "jvmApiElements",
                     ),
                     "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
                             ),
-                        ),
+                        ],
                         configuration = "compile",
                     ),
                 ).prettyPrinted,

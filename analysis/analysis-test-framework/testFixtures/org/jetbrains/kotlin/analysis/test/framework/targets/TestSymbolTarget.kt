@@ -97,7 +97,7 @@ sealed interface TestSymbolTarget {
     data class FieldTarget(val callableId: CallableId) : TestSymbolTarget
 
     companion object {
-        private val identifiers = arrayOf(
+        private val identifiers: Array<String> = [
             "package:",
             "callable:",
             "property:",
@@ -115,7 +115,7 @@ sealed interface TestSymbolTarget {
             "getter:",
             "setter:",
             "field:"
-        )
+        ]
 
         /**
          * Parses a [TestSymbolTarget] from the given test data file's content.
@@ -206,7 +206,7 @@ private fun extractCallableHeadAndParameters(content: String): Pair<String, List
     val callableIdText = content.substring(0, leftParenIndex)
     val parameterText = content.substring(leftParenIndex + 1, content.length - 1).trim()
     val parameterNames = if (parameterText.isEmpty()) {
-        emptyList()
+        []
     } else {
         parameterText.split(',').map { Name.identifier(it.trim()) }
     }

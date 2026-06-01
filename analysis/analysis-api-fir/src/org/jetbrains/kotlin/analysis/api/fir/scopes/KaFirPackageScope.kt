@@ -52,7 +52,7 @@ internal class KaFirPackageScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         sequence {

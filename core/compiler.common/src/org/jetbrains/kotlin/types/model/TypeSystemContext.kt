@@ -399,7 +399,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
             }
         )
 
-        return createCapturedType(starProjection, listOf(superType), lowerType = null, CaptureStatus.FROM_EXPRESSION)
+        return createCapturedType(starProjection, [superType], lowerType = null, CaptureStatus.FROM_EXPRESSION)
     }
 
     fun createSubstitutorForSuperTypes(baseType: KotlinTypeMarker): TypeSubstitutorMarker?

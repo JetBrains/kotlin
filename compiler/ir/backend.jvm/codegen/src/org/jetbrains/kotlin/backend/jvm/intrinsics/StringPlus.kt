@@ -18,7 +18,7 @@ object StringPlus : CallBasedIntrinsicMethod() {
         signature: JvmMethodSignature,
         classCodegen: ClassCodegen
     ): IntrinsicFunction =
-        IntrinsicFunction.create(expression, signature, classCodegen, listOf(AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE)) {
+        IntrinsicFunction.create(expression, signature, classCodegen, [AsmTypes.JAVA_STRING_TYPE, AsmTypes.OBJECT_TYPE]) {
             it.invokestatic(
                 IntrinsicMethods.INTRINSICS_CLASS_NAME,
                 "stringPlus",

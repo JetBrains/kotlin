@@ -26,103 +26,103 @@ class CirEntityIdTest {
         listOf(
             TestRow(
                 rawEntityId = "",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = emptyList()
+                packageSegments = [],
+                rawRelativeNameSegments = []
             ),
             TestRow(
                 rawEntityId = "/",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = emptyList()
+                packageSegments = [],
+                rawRelativeNameSegments = []
             ),
             TestRow(
                 rawEntityId = "foo/",
-                packageSegments = arrayOf("foo"),
-                rawRelativeNameSegments = emptyList()
+                packageSegments = ["foo"],
+                rawRelativeNameSegments = []
             ),
             TestRow(
                 rawEntityId = "foo/bar/",
-                packageSegments = arrayOf("foo", "bar"),
-                rawRelativeNameSegments = emptyList()
+                packageSegments = ["foo", "bar"],
+                rawRelativeNameSegments = []
             ),
             TestRow(
                 rawEntityId = "foo/bar/baz/",
-                packageSegments = arrayOf("foo", "bar", "baz"),
-                rawRelativeNameSegments = emptyList()
+                packageSegments = ["foo", "bar", "baz"],
+                rawRelativeNameSegments = []
             ),
             TestRow(
                 rawEntityId = "My",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My"]
             ),
             TestRow(
                 rawEntityId = "My.Test",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My", "Test")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My", "Test"]
             ),
             TestRow(
                 rawEntityId = "My.Test.Class",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My", "Test", "Class")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My", "Test", "Class"]
             ),
             TestRow(
                 rawEntityId = "/My",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My"]
             ),
             TestRow(
                 rawEntityId = "/My.Test",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My", "Test")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My", "Test"]
             ),
             TestRow(
                 rawEntityId = "/My.Test.Class",
-                packageSegments = emptyArray(),
-                rawRelativeNameSegments = listOf("My", "Test", "Class")
+                packageSegments = [],
+                rawRelativeNameSegments = ["My", "Test", "Class"]
             ),
             TestRow(
                 rawEntityId = "foo/My",
-                packageSegments = arrayOf("foo"),
-                rawRelativeNameSegments = listOf("My")
+                packageSegments = ["foo"],
+                rawRelativeNameSegments = ["My"]
             ),
             TestRow(
                 rawEntityId = "foo/My.Test",
-                packageSegments = arrayOf("foo"),
-                rawRelativeNameSegments = listOf("My", "Test")
+                packageSegments = ["foo"],
+                rawRelativeNameSegments = ["My", "Test"]
             ),
             TestRow(
                 rawEntityId = "foo/My.Test.Class",
-                packageSegments = arrayOf("foo"),
-                rawRelativeNameSegments = listOf("My", "Test", "Class")
+                packageSegments = ["foo"],
+                rawRelativeNameSegments = ["My", "Test", "Class"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/My",
-                packageSegments = arrayOf("foo", "bar"),
-                rawRelativeNameSegments = listOf("My")
+                packageSegments = ["foo", "bar"],
+                rawRelativeNameSegments = ["My"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/My.Test",
-                packageSegments = arrayOf("foo", "bar"),
-                rawRelativeNameSegments = listOf("My", "Test")
+                packageSegments = ["foo", "bar"],
+                rawRelativeNameSegments = ["My", "Test"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/My.Test.Class",
-                packageSegments = arrayOf("foo", "bar"),
-                rawRelativeNameSegments = listOf("My", "Test", "Class")
+                packageSegments = ["foo", "bar"],
+                rawRelativeNameSegments = ["My", "Test", "Class"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/baz/My",
-                packageSegments = arrayOf("foo", "bar", "baz"),
-                rawRelativeNameSegments = listOf("My")
+                packageSegments = ["foo", "bar", "baz"],
+                rawRelativeNameSegments = ["My"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/baz/My.Test",
-                packageSegments = arrayOf("foo", "bar", "baz"),
-                rawRelativeNameSegments = listOf("My", "Test")
+                packageSegments = ["foo", "bar", "baz"],
+                rawRelativeNameSegments = ["My", "Test"]
             ),
             TestRow(
                 rawEntityId = "foo/bar/baz/My.Test.Class",
-                packageSegments = arrayOf("foo", "bar", "baz"),
-                rawRelativeNameSegments = listOf("My", "Test", "Class")
+                packageSegments = ["foo", "bar", "baz"],
+                rawRelativeNameSegments = ["My", "Test", "Class"]
             )
         ).forEach { testRow ->
             with(testRow) {

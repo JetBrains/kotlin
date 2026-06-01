@@ -36,7 +36,7 @@ public interface KaRendererOtherModifiersProvider {
                 return if (condition(analysisSession, symbol)) {
                     self.getOtherModifiers(analysisSession, symbol)
                 } else {
-                    emptyList()
+                    []
                 }
             }
         }

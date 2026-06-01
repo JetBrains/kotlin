@@ -108,7 +108,7 @@ object CompilerRunnerUtil {
         val method = klass.getMethod("classesFqNames", Set::class.java)
         @Suppress("UNCHECKED_CAST")
         method.invoke(klass, files) as? Set<String>
-    } ?: emptySet()
+    } ?: []
 
     private fun <T> withCompilerClassloader(
         environment: JpsCompilerEnvironment,

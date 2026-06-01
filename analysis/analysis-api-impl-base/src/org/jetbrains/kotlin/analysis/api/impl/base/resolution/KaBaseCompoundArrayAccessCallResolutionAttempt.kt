@@ -43,5 +43,5 @@ class KaBaseCompoundArrayAccessCallResolutionAttempt(
     override val operationCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingOperationCallAttempt }
     override val setterCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingSetterCallAttempt }
     override val attempts: List<KaSingleCallResolutionAttempt>
-        get() = withValidityAssertion { listOf(backingGetterCallAttempt, backingOperationCallAttempt, backingSetterCallAttempt) }
+        get() = withValidityAssertion { [backingGetterCallAttempt, backingOperationCallAttempt, backingSetterCallAttempt] }
 }

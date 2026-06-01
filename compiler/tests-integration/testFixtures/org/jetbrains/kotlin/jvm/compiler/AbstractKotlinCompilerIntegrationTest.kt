@@ -48,13 +48,13 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     protected fun compileLibrary(
         libraryName: String,
         destination: File = File(tmpdir, "$libraryName.jar"),
-        additionalOptions: List<String> = emptyList(),
+        additionalOptions: List<String> = [],
         compileJava: (sourceDir: File, javaFiles: List<File>, outputDir: File) -> JavaCompilationResult = { _, javaFiles, outputDir ->
-            compileJavaFiles(javaFiles, listOf("-d", outputDir.path))
+            compileJavaFiles(javaFiles, ["-d", outputDir.path])
         },
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) },
         manifest: Manifest? = null,
-        extraClassPath: List<File> = emptyList(),
+        extraClassPath: List<File> = [],
         cleanupAfterCompilation: Boolean = false,
     ): File {
         val sourceDir = File(testDataDirectory, libraryName)
@@ -109,7 +109,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
      */
     protected fun compileJsLibrary(
         libraryName: String,
-        additionalOptions: List<String> = emptyList(),
+        additionalOptions: List<String> = [],
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) }
     ): File {
         val destination = File(tmpdir, libraryName)
@@ -127,7 +127,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
      */
     protected fun compileCommonLibrary(
         libraryName: String,
-        additionalOptions: List<String> = emptyList(),
+        additionalOptions: List<String> = [],
         checkKotlinOutput: (String) -> Unit = { actual -> assertEquals(normalizeOutput("" to ExitCode.OK), actual) }
     ): File {
         val destination = File(tmpdir, libraryName)
@@ -137,7 +137,7 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
             compiler = KotlinMetadataCompiler(),
             additionalOptions = additionalOptions + "-Xtarget-platform=JVM,JS,WasmJs,WasmWasi,Native",
             expectedFileName = null,
-            classpath = listOf(StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests()),
+            classpath = [StandardLibrariesPathProviderForKotlinProject.commonStdlibForTests()],
         )
         checkKotlinOutput(normalizeOutput(output))
         return destination
@@ -163,14 +163,14 @@ abstract class AbstractKotlinCompilerIntegrationTest : TestCaseWithTmpdir() {
     protected open fun compileKotlin(
         fileName: String,
         output: File,
-        classpath: List<File> = emptyList(),
+        classpath: List<File> = [],
         compiler: CLICompiler<*> = K2JVMCompiler(),
-        additionalOptions: List<String> = emptyList(),
+        additionalOptions: List<String> = [],
         expectedFileName: String? = "output.txt",
-        additionalSources: List<String> = emptyList(),
+        additionalSources: List<String> = [],
         sanitizeCompilerOutput: (String) -> String = { it },
     ): Pair<String, ExitCode> {
-        val args = mutableListOf<String>()
+        val args: MutableList<String> = []
         val sourceFile = File(testDataDirectory, fileName)
         assert(sourceFile.exists()) { "Source file does not exist: ${sourceFile.absolutePath}" }
         args.add(sourceFile.path)

@@ -86,7 +86,7 @@ abstract class AbstractFirJKlibIrTextTest : AbstractKotlinCompilerWithTargetBack
 
 class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(ConfigurationDirectives)
+        get() = [ConfigurationDirectives]
 
     override fun shouldSkipTest(): Boolean {
         return testServices.moduleStructure.allDirectives.contains(ConfigurationDirectives.WITH_STDLIB)
@@ -95,7 +95,7 @@ class WithStdlibSkipper(testServices: TestServices) : MetaTestConfigurator(testS
 
 class WithReflectSkipper(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives)
+        get() = [JvmEnvironmentConfigurationDirectives]
 
     override fun shouldSkipTest(): Boolean {
         return testServices.moduleStructure.allDirectives.contains(JvmEnvironmentConfigurationDirectives.WITH_REFLECT)

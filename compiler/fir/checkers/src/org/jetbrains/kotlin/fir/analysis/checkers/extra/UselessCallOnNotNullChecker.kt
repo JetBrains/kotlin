@@ -35,7 +35,7 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppChec
         return calleeReference.toResolvedNamedFunctionSymbol()?.callableId
     }
 
-    private val triggerOn = setOf(
+    private val triggerOn: Set<CallableId> = [
         CallableId(StandardClassIds.BASE_COLLECTIONS_PACKAGE, Name.identifier("orEmpty")),
         CallableId(StandardClassIds.BASE_SEQUENCES_PACKAGE, Name.identifier("orEmpty")),
         CallableId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("orEmpty")),
@@ -44,6 +44,6 @@ object UselessCallOnNotNullChecker : FirQualifiedAccessExpressionChecker(MppChec
         CallableId(StandardClassIds.BASE_TEXT_PACKAGE, Name.identifier("isNullOrEmpty")),
         CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("isNullOrBlank")),
         CallableId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("isNullOrEmpty")),
-    )
+    ]
 
 }

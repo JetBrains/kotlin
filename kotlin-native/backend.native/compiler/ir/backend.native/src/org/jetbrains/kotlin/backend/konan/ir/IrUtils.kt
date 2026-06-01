@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.name.NativeRuntimeNames
  */
 internal val IrClass.implementedInterfaces: List<IrClass>
     get() {
-        val superClassImplementedInterfaces = this.getSuperClassNotAny()?.implementedInterfaces ?: emptyList()
+        val superClassImplementedInterfaces = this.getSuperClassNotAny()?.implementedInterfaces ?: []
         val superInterfaces = this.getSuperInterfaces()
         val superInterfacesImplementedInterfaces = superInterfaces.flatMap { it.implementedInterfaces }
         return (superClassImplementedInterfaces +
@@ -175,13 +175,13 @@ private val Cast: BridgeDirectionBuilder = { index, from, to ->
     }
 }
 
-private val bridgeDirectionBuilders = arrayOf(
-        arrayOf(None, null, null, null, null),
-        arrayOf(null, None, Drop, Drop, Drop),
-        arrayOf(null, Drop, None, Unbox, Unbox),
-        arrayOf(null, Drop, Box, None, Cast),
-        arrayOf(null, Drop, Box, Cast, Cast),
-)
+private val bridgeDirectionBuilders: Array<Array<BridgeDirectionBuilder?>> = [
+    [None, null, null, null, null],
+    [null, None, Drop, Drop, Drop],
+    [null, Drop, None, Unbox, Unbox],
+    [null, Drop, Box, None, Cast],
+    [null, Drop, Box, Cast, Cast],
+]
 
 private fun IrFunction.bridgeDirectionToAt(overriddenFunction: IrFunction, index: ParameterIndex, policy: BridgesPolicy): BridgeDirection {
     (val fromErasedType = erasedType, val fromKind = kind) = typeWithKindAt(index)

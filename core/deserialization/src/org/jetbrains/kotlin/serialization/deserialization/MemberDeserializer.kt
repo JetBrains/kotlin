@@ -121,9 +121,9 @@ class MemberDeserializer(private val c: DeserializationContext) {
                     isInline,
                     property.kind, null, SourceElement.NO_SOURCE
                 )
-                val setterLocal = local.childContext(setter, listOf())
+                val setterLocal = local.childContext(setter, [])
                 val valueParameters = setterLocal.memberDeserializer.valueParameters(
-                    listOf(proto.setterValueParameter), proto, AnnotatedCallableKind.PROPERTY_SETTER
+                    [proto.setterValueParameter], proto, AnnotatedCallableKind.PROPERTY_SETTER
                 )
                 setter.initialize(valueParameters.single())
                 setter
@@ -279,7 +279,7 @@ class MemberDeserializer(private val c: DeserializationContext) {
             c.containerSource
         )
 
-        val local = c.childContext(descriptor, listOf())
+        val local = c.childContext(descriptor, [])
         descriptor.initialize(
             local.memberDeserializer.valueParameters(proto.valueParameterList, proto, AnnotatedCallableKind.FUNCTION),
             ProtoEnumFlags.descriptorVisibility(Flags.VISIBILITY.get(proto.flags))

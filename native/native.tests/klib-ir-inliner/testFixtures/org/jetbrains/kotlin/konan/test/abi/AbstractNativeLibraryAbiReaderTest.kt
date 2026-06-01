@@ -42,10 +42,10 @@ open class AbstractNativeLibraryAbiReaderTest :
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
+            ]
             // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
             // `Any`, `String`, `println`, etc.
             +ConfigurationDirectives.WITH_STDLIB

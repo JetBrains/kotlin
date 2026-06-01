@@ -49,7 +49,7 @@ class FirNameAwareOnlyCallablesScope(val delegate: FirContainingNamesAwareScope)
 
     override fun getCallableNames(): Set<Name> = delegate.getCallableNames()
 
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getClassifierNames(): Set<Name> = []
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirNameAwareOnlyCallablesScope? {

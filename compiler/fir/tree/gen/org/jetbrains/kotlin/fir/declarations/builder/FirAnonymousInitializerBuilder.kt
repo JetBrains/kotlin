@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousInitializerSymbol
 class FirAnonymousInitializerBuilder : FirDeclarationBuilder, FirAnnotationContainerBuilder {
     override var source: KtSourceElement? = null
     override var resolvePhase: FirResolvePhase = FirResolvePhase.RAW_FIR
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()

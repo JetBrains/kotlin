@@ -85,7 +85,7 @@ fun MfvcNode.createInstanceFromValueDeclarations(
     val valueDeclarations = mapLeaves {
         scope.savableStandaloneVariable(
             type = it.type,
-            name = listOf(name, it.fullFieldName).joinToString("-"),
+            name = [name, it.fullFieldName].joinToString("-"),
             origin = origin,
             saveVariable = saveVariable,
             isVar = isVar,
@@ -168,8 +168,8 @@ class NameableMfvcNodeImpl(
             .map { it.asStringStripSpecialMarkers() }
             .let {
                 when (methodFullNameMode) {
-                    UnboxFunction -> listOf(KotlinTypeMapper.UNBOX_JVM_METHOD_NAME) + it
-                    Getter -> listOf(JvmAbi.getterName(it.first())) + it.subList(1, nameParts.size)
+                    UnboxFunction -> [KotlinTypeMapper.UNBOX_JVM_METHOD_NAME] + it
+                    Getter -> [JvmAbi.getterName(it.first())] + it.subList(1, nameParts.size)
                 }
             }
             .joinToString("-")
@@ -225,7 +225,7 @@ sealed class MfvcNodeWithSubnodes(val subnodes: List<NameableMfvcNode>) : MfvcNo
     val allInnerUnboxMethods: List<IrSimpleFunction> = subnodes.flatMap { subnode ->
         when (subnode) {
             is MfvcNodeWithSubnodes -> subnode.allUnboxMethods
-            is LeafMfvcNode -> listOf(subnode.unboxMethod)
+            is LeafMfvcNode -> [subnode.unboxMethod]
         }
     }
 
@@ -291,7 +291,7 @@ val List<NameableMfvcNode>.subnodeIndices: Map<NameableMfvcNode, IntRange>
         }
     }
 
-inline fun <R> MfvcNode.mapLeaves(crossinline f: (LeafMfvcNode) -> R): List<R> = flatMapLeaves { listOf(f(it)) }
+inline fun <R> MfvcNode.mapLeaves(crossinline f: (LeafMfvcNode) -> R): List<R> = flatMapLeaves { [f(it)] }
 
 fun <R> MfvcNode.flatMapLeaves(f: (LeafMfvcNode) -> List<R>): List<R> = when (this) {
     is MfvcNodeWithSubnodes -> subnodes.flatMap { it.flatMapLeaves(f) }
@@ -355,7 +355,7 @@ class LeafMfvcNode(
         accessType: AccessType,
         saveVariable: (IrVariable) -> Unit,
     ) = ReceiverBasedMfvcNodeInstance(
-        scope, this, typeArguments, receiver, listOf(field), unboxMethod, accessType, saveVariable
+        scope, this, typeArguments, receiver, [field], unboxMethod, accessType, saveVariable
     )
 
     override fun toString(): String = "$fullFieldName: ${type.render()}"
@@ -364,7 +364,7 @@ class LeafMfvcNode(
 val MfvcNode.fields: List<IrField?>
     get() = when (this) {
         is MfvcNodeWithSubnodes -> this.fields
-        is LeafMfvcNode -> listOf(field)
+        is LeafMfvcNode -> [field]
     }
 
 /**
@@ -397,7 +397,7 @@ class IntermediateMfvcNode(
         validateGettingAccessorParameters(unboxMethod)
     }
 
-    override val allUnboxMethods = allInnerUnboxMethods + listOf(unboxMethod)
+    override val allUnboxMethods = allInnerUnboxMethods + unboxMethod
 
     override val boxMethod: IrSimpleFunction
         get() = rootNode.boxMethod

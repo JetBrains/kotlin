@@ -111,7 +111,7 @@ internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.
     icOptionsConfigAction: (IC) -> Unit,
     val dependencies: List<ScenarioModule>,
 ) : BaseScenarioModule<B, IC>(module, outputs, strategyConfig, icOptionsConfigAction) {
-    private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+    private var sourcesChanges = SourcesChanges.Known([], [])
 
     override fun replaceFileWithVersion(fileName: String, version: String) {
         super.replaceFileWithVersion(fileName, version)
@@ -147,7 +147,7 @@ internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.
 
     override fun getSourcesChanges() =
         sourcesChanges + dependencies.filterIsInstance<ExternallyTrackedScenarioModuleImpl<*, *>>().map { it.getOutputChanges() }
-            .fold(SourcesChanges.Known(emptyList(), emptyList())) { acc, changes -> acc + changes }
+            .fold(SourcesChanges.Known([], [])) { acc, changes -> acc + changes }
 
     operator fun SourcesChanges.Known.plus(other: SourcesChanges.Known): SourcesChanges.Known = SourcesChanges.Known(
         this.modifiedFiles + other.modifiedFiles,
@@ -162,7 +162,7 @@ internal class ExternallyTrackedScenarioModuleImpl<B : BaseCompilationOperation.
             assertions()
 
             if (actualResult == CompilationResult.COMPILATION_SUCCESS) {
-                sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
+                sourcesChanges = SourcesChanges.Known([], [])
             }
         }
     }

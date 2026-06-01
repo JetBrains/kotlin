@@ -33,6 +33,6 @@ internal class ExtensionInvokeCallReceiver(
             "Extension 'invoke' call should have null as its 1st value argument, got: ${callBuilder.irValueArgumentsByIndex[0]}"
         }
         callBuilder.irValueArgumentsByIndex[0] = extensionInvokeReceiver.load()
-        return builder.withReceivers(functionReceiver, null, emptyList())
+        return builder.withReceivers(functionReceiver, null, [])
     }
 }

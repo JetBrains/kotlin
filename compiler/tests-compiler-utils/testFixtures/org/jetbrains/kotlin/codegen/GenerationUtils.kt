@@ -100,7 +100,7 @@ object GenerationUtils {
         val firAnalyzerFacade = FirAnalyzerFacade(
             session,
             files,
-            emptyList(),
+            [],
             FirParser.Psi,
         )
 

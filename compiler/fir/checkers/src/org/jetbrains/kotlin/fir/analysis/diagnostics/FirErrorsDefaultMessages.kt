@@ -3590,7 +3590,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
                     object : RenderingContext.Key<List<String>>("contextParameters") {
                         override fun compute(objectsToRender: Collection<Any?>, diagnosticContext: DiagnosticBaseContext): List<String> {
                             @Suppress("UNCHECKED_CAST")
-                            val symbols = objectsToRender.last() as? List<FirValueParameterSymbol> ?: return emptyList()
+                            val symbols = objectsToRender.last() as? List<FirValueParameterSymbol> ?: return []
 
                             return symbols
                                 .map { if (it.name.isSpecial) "contextOf<${it.resolvedReturnType.renderReadable()}>()" else it.name.identifier }

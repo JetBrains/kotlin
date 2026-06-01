@@ -45,7 +45,7 @@ data class ObjCNullableReferenceType(
 
 data class ObjCClassType(
     val className: String,
-    val typeArguments: List<ObjCNonNullReferenceType> = emptyList(),
+    val typeArguments: List<ObjCNonNullReferenceType> = [],
     override val extras: Extras = emptyExtras()
 ) : ObjCNonNullReferenceType() {
 

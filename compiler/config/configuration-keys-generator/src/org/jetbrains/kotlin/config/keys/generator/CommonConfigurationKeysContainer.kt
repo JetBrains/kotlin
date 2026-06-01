@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.util.PerformanceManager
 object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.config", "CommonConfigurationKeys") {
     val LANGUAGE_VERSION_SETTINGS by key<LanguageVersionSettings>(
         defaultValue = "LanguageVersionSettingsImpl.DEFAULT",
-        importsToAdd = listOf("org.jetbrains.kotlin.config.LanguageVersionSettingsImpl")
+        importsToAdd = ["org.jetbrains.kotlin.config.LanguageVersionSettingsImpl"]
     )
 
     val DISABLE_INLINE by key<Boolean>()
@@ -50,7 +50,7 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
     val MESSAGE_COLLECTOR_KEY by key<MessageCollector>(
         defaultValue = "MessageCollector.NONE",
         accessorName = "messageCollector",
-        annotations = listOf(MessageCollectorAccess())
+        annotations = [MessageCollectorAccess()]
     )
 
     val VERIFY_IR by key<IrVerificationMode>()

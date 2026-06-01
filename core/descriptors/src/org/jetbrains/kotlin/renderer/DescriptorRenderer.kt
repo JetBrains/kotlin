@@ -105,7 +105,7 @@ abstract class DescriptorRenderer {
 
         @JvmField
         val WITHOUT_MODIFIERS: DescriptorRenderer = withOptions {
-            modifiers = emptySet()
+            modifiers = []
         }
 
         @JvmField
@@ -116,19 +116,19 @@ abstract class DescriptorRenderer {
         @JvmField
         val COMPACT: DescriptorRenderer = withOptions {
             withDefinedIn = false
-            modifiers = emptySet()
+            modifiers = []
         }
 
         @JvmField
         val COMPACT_WITHOUT_SUPERTYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
-            modifiers = emptySet()
+            modifiers = []
             withoutSuperTypes = true
         }
 
         @JvmField
         val COMPACT_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
-            modifiers = emptySet()
+            modifiers = []
             classifierNamePolicy = ClassifierNamePolicy.SHORT
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.ONLY_NON_SYNTHESIZED
         }
@@ -136,7 +136,7 @@ abstract class DescriptorRenderer {
         @JvmField
         val ONLY_NAMES_WITH_SHORT_TYPES: DescriptorRenderer = withOptions {
             withDefinedIn = false
-            modifiers = emptySet()
+            modifiers = []
             classifierNamePolicy = ClassifierNamePolicy.SHORT
             withoutTypeParameters = true
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
@@ -268,10 +268,10 @@ interface DescriptorRendererOptions {
 }
 
 object ExcludedTypeAnnotations {
-    val internalAnnotationsForResolve = setOf(
+    val internalAnnotationsForResolve: Set<FqName> = [
         FqName("kotlin.internal.NoInfer"),
         FqName("kotlin.internal.Exact")
-    )
+    ]
 }
 
 enum class RenderingFormat {

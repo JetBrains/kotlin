@@ -275,7 +275,7 @@ class IrBuiltInsOverDescriptors(
     }
 
     private fun defineComparisonOperator(name: String, operandType: IrType) =
-        defineOperator(name, booleanType, listOf(operandType, operandType), isIntrinsicConst = true)
+        defineOperator(name, booleanType, [operandType, operandType], isIntrinsicConst = true)
 
     private fun List<IrType>.defineComparisonOperatorForEachIrType(name: String) =
         associate { it.classifierOrFail to defineComparisonOperator(name, it) }
@@ -410,10 +410,10 @@ class IrBuiltInsOverDescriptors(
     )
 
     // TODO switch to IrType
-    val primitiveTypes = listOf(bool, char, byte, short, int, float, long, double)
-    override val primitiveIrTypes = listOf(booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveIrTypesWithComparisons = listOf(charType, byteType, shortType, intType, floatType, longType, doubleType)
-    override val primitiveFloatingPointIrTypes = listOf(floatType, doubleType)
+    val primitiveTypes = [bool, char, byte, short, int, float, long, double]
+    override val primitiveIrTypes = [booleanType, charType, byteType, shortType, intType, floatType, longType, doubleType]
+    override val primitiveIrTypesWithComparisons = [charType, byteType, shortType, intType, floatType, longType, doubleType]
+    override val primitiveFloatingPointIrTypes = [floatType, doubleType]
 
     override val byteIterator = getPrimitiveIterator(PrimitiveType.BYTE)
     override val charIterator = getPrimitiveIterator(PrimitiveType.CHAR)
@@ -479,7 +479,7 @@ class IrBuiltInsOverDescriptors(
             it.classifierOrFail to defineOperator(
                 BuiltInOperatorNames.IEEE754_EQUALS,
                 booleanType,
-                listOf(it.makeNullable(), it.makeNullable()),
+                [it.makeNullable(), it.makeNullable()],
                 isIntrinsicConst = true
             )
         }.toMap()
@@ -488,25 +488,25 @@ class IrBuiltInsOverDescriptors(
         builtIns.boolean.unsubstitutedMemberScope.getContributedFunctions(Name.identifier("not"), NoLookupLocation.FROM_BACKEND).single()
     override val booleanNotSymbol = booleanNot.toIrSymbol()
 
-    override val eqeqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQEQ, booleanType, listOf(anyNType, anyNType))
-    override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, listOf(anyNType, anyNType), isIntrinsicConst = true)
-    override val throwCceSymbol = defineOperator(BuiltInOperatorNames.THROW_CCE, nothingType, listOf())
-    override val throwIseSymbol = defineOperator(BuiltInOperatorNames.THROW_ISE, nothingType, listOf())
-    override val andandSymbol = defineOperator(BuiltInOperatorNames.ANDAND, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
-    override val ororSymbol = defineOperator(BuiltInOperatorNames.OROR, booleanType, listOf(booleanType, booleanType), isIntrinsicConst = true)
+    override val eqeqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQEQ, booleanType, [anyNType, anyNType])
+    override val eqeqSymbol = defineOperator(BuiltInOperatorNames.EQEQ, booleanType, [anyNType, anyNType], isIntrinsicConst = true)
+    override val throwCceSymbol = defineOperator(BuiltInOperatorNames.THROW_CCE, nothingType, [])
+    override val throwIseSymbol = defineOperator(BuiltInOperatorNames.THROW_ISE, nothingType, [])
+    override val andandSymbol = defineOperator(BuiltInOperatorNames.ANDAND, booleanType, [booleanType, booleanType], isIntrinsicConst = true)
+    override val ororSymbol = defineOperator(BuiltInOperatorNames.OROR, booleanType, [booleanType, booleanType], isIntrinsicConst = true)
     override val noWhenBranchMatchedExceptionSymbol =
-        defineOperator(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType, listOf())
+        defineOperator(BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION, nothingType, [])
     override val illegalArgumentExceptionSymbol =
-        defineOperator(BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothingType, listOf(stringType))
+        defineOperator(BuiltInOperatorNames.ILLEGAL_ARGUMENT_EXCEPTION, nothingType, [stringType])
 
     override val checkNotNullSymbol = defineCheckNotNullOperator()
 
-    private fun TypeConstructor.makeNonNullType() = KotlinTypeFactory.simpleType(TypeAttributes.Empty, this, listOf(), false)
-    private fun TypeConstructor.makeNullableType() = KotlinTypeFactory.simpleType(TypeAttributes.Empty, this, listOf(), true)
+    private fun TypeConstructor.makeNonNullType() = KotlinTypeFactory.simpleType(TypeAttributes.Empty, this, [], false)
+    private fun TypeConstructor.makeNullableType() = KotlinTypeFactory.simpleType(TypeAttributes.Empty, this, [], true)
 
-    override val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", intType, listOf(anyType))
+    override val dataClassArrayMemberHashCodeSymbol = defineOperator("dataClassArrayMemberHashCode", intType, [anyType])
 
-    override val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", stringType, listOf(anyNType))
+    override val dataClassArrayMemberToStringSymbol = defineOperator("dataClassArrayMemberToString", stringType, [anyNType])
 
     override val intTimesSymbol: IrSimpleFunctionSymbol =
         builtIns.int.unsubstitutedMemberScope.findFirstFunction("times") {
@@ -542,7 +542,7 @@ class IrBuiltInsOverDescriptors(
                     it.descriptor.valueParameters.size == 1 && KotlinBuiltIns.isInt(it.descriptor.valueParameters[0].type)
         }
 
-    override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
+    override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, [stringType])
 
     override val enumClass = builtIns.enum.toIrSymbol()
 

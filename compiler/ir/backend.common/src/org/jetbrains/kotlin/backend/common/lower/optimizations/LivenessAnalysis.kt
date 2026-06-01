@@ -26,7 +26,7 @@ object LivenessAnalysis {
         LivenessAnalysisVisitor(filter).run(body)
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
-        val result = mutableListOf<IrElement>()
+        val result: MutableList<IrElement> = []
         acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
@@ -42,7 +42,7 @@ object LivenessAnalysis {
      * Each visitXXX takes live variables ~after~ the [element] and returns live variables ~before~ the [element].
      */
     private class LivenessAnalysisVisitor(val filter: (IrElement) -> Boolean) : IrVisitor<BitSet, BitSet>() {
-        private val variables = mutableListOf<IrVariable>()
+        private val variables: MutableList<IrVariable> = []
         private val variableIds = mutableMapOf<IrVariable, Int>()
         private val filteredElementEndsLV = mutableMapOf<IrElement, BitSet>()
         private val returnableBlockEndsLV = mutableMapOf<IrReturnableBlock, BitSet>()

@@ -117,7 +117,7 @@ object CheckerTestUtil {
         moduleDescriptor: ModuleDescriptorImpl?,
         diagnosedRanges: MutableMap<IntRange, MutableSet<String>>? = null
     ): MutableList<ActualDiagnostic> {
-        val diagnostics: MutableList<ActualDiagnostic> = mutableListOf()
+        val diagnostics: MutableList<ActualDiagnostic> = []
 
         bindingContext.diagnostics.forEach { diagnostic ->
             if (PsiTreeUtil.isAncestor(root, diagnostic.psiElement, false)) {
@@ -157,7 +157,7 @@ object CheckerTestUtil {
         moduleDescriptor: ModuleDescriptorImpl?,
         diagnosedRanges: Map<IntRange, MutableSet<String>>?
     ): List<ActualDiagnostic> {
-        val debugAnnotations = mutableListOf<ActualDiagnostic>()
+        val debugAnnotations: MutableList<ActualDiagnostic> = []
 
         DebugInfoUtil.markDebugAnnotations(
             root,
@@ -174,18 +174,18 @@ object CheckerTestUtil {
         // this code is used in tests and in internal action 'copy current file as diagnostic test'
         //noinspection unchecked
 
-        val factoryListForDiagnosticsOnExpression = listOf(
-            BindingContext.EXPRESSION_TYPE_INFO to listOf(DebugInfoDiagnosticFactory1.EXPRESSION_TYPE),
-            BindingContext.SMARTCAST to listOf(DebugInfoDiagnosticFactory0.SMARTCAST),
-            BindingContext.IMPLICIT_RECEIVER_SMARTCAST to listOf(DebugInfoDiagnosticFactory0.IMPLICIT_RECEIVER_SMARTCAST),
-            BindingContext.SMARTCAST_NULL to listOf(DebugInfoDiagnosticFactory0.CONSTANT),
-            BindingContext.LEAKING_THIS to listOf(DebugInfoDiagnosticFactory0.LEAKING_THIS),
-            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN to listOf(DebugInfoDiagnosticFactory0.IMPLICIT_EXHAUSTIVE)
-        )
+        val factoryListForDiagnosticsOnExpression = [
+            BindingContext.EXPRESSION_TYPE_INFO to [DebugInfoDiagnosticFactory1.EXPRESSION_TYPE],
+            BindingContext.SMARTCAST to [DebugInfoDiagnosticFactory0.SMARTCAST],
+            BindingContext.IMPLICIT_RECEIVER_SMARTCAST to [DebugInfoDiagnosticFactory0.IMPLICIT_RECEIVER_SMARTCAST],
+            BindingContext.SMARTCAST_NULL to [DebugInfoDiagnosticFactory0.CONSTANT],
+            BindingContext.LEAKING_THIS to [DebugInfoDiagnosticFactory0.LEAKING_THIS],
+            BindingContext.IMPLICIT_EXHAUSTIVE_WHEN to [DebugInfoDiagnosticFactory0.IMPLICIT_EXHAUSTIVE]
+        ]
 
-        val factoryListForDiagnosticsOnCall = listOf(
-            BindingContext.RESOLVED_CALL to listOf(DebugInfoDiagnosticFactory1.CALL, DebugInfoDiagnosticFactory1.CALLABLE_OWNER)
-        )
+        val factoryListForDiagnosticsOnCall = [
+            BindingContext.RESOLVED_CALL to [DebugInfoDiagnosticFactory1.CALL, DebugInfoDiagnosticFactory1.CALLABLE_OWNER]
+        ]
 
         renderDiagnosticsByFactoryList(
             factoryListForDiagnosticsOnExpression, root, bindingContext, configuration,
@@ -455,7 +455,7 @@ object CheckerTestUtil {
         if (rangesToDiagnosticNames != null) {
             ranges.forEach {
                 val range = it.start..it.end
-                rangesToDiagnosticNames.putIfAbsent(range, mutableSetOf())
+                rangesToDiagnosticNames.putIfAbsent(range, [])
                 rangesToDiagnosticNames[range]!! += it.getDiagnostics().map { it.name }
             }
         }
@@ -477,7 +477,7 @@ object CheckerTestUtil {
             diagnostics,
             emptyMap(),
             { it.text },
-            emptyList(),
+            [],
             false,
             false
         )
@@ -562,7 +562,7 @@ object CheckerTestUtil {
         renderDiagnosticMessages: Boolean
     ): Boolean {
         var isSkip = true
-        val diagnosticsAsText = mutableListOf<String>()
+        val diagnosticsAsText: MutableList<String> = []
 
         when (currentDescriptor) {
             is TextDiagnosticDescriptor -> diagnosticsAsText.add(currentDescriptor.textDiagnostic.asString())
@@ -598,7 +598,7 @@ object CheckerTestUtil {
     private fun closeDiagnosticString(result: StringBuffer) = result.append("<!>")
 
     private fun getActualSortedDiagnosticDescriptors(diagnostics: Collection<ActualDiagnostic>) =
-        getSortedDiagnosticDescriptors(diagnostics, emptyList()).filterIsInstance(ActualDiagnosticDescriptor::class.java)
+        getSortedDiagnosticDescriptors(diagnostics, []).filterIsInstance(ActualDiagnosticDescriptor::class.java)
 
     private fun getSortedDiagnosticDescriptors(
         diagnostics: Collection<ActualDiagnostic>,
@@ -677,7 +677,7 @@ object CheckerTestUtil {
         if (smartCast != null && expression is KtReferenceExpression) {
             val declaredType = (bindingContext[BindingContext.REFERENCE_TARGET, expression] as? CallableDescriptor)?.returnType
             if (declaredType != null) {
-                return Pair(result, setOf(declaredType))
+                return Pair(result, [declaredType])
             }
         }
         return Pair(result, null)

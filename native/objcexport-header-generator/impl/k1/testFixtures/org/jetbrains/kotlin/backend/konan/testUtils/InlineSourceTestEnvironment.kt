@@ -57,10 +57,10 @@ interface InlineSourceCodeCollector {
 }
 
 fun InlineSourceTestEnvironment.createModuleDescriptor(@Language("kotlin") sourceCode: String): ModuleDescriptor =
-    createModuleDescriptor(kotlinCoreEnvironment, testTempDir, listOf(sourceCode))
+    createModuleDescriptor(kotlinCoreEnvironment, testTempDir, [sourceCode])
 
 fun InlineSourceTestEnvironment.createModuleDescriptor(build: InlineSourceCodeCollector.() -> Unit): ModuleDescriptor {
-    val sources = mutableListOf<String>()
+    val sources: MutableList<String> = []
     object : InlineSourceCodeCollector {
         override fun source(sourceCode: String) {
             sources.add(sourceCode)

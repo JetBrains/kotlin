@@ -28,10 +28,10 @@ class ComposePausableCompositionTests(
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "pausableEnabled = {0}")
-        fun data() = arrayOf<Any>(
+        fun data(): Array<Any> = [
             arrayOf(false),
             arrayOf(true),
-        )
+        ]
     }
 
     override fun CompilerConfiguration.updateConfiguration() {
@@ -39,7 +39,7 @@ class ComposePausableCompositionTests(
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.PausableComposition.name(pausableEnabled))
+            [FeatureFlag.PausableComposition.name(pausableEnabled)]
         )
     }
 

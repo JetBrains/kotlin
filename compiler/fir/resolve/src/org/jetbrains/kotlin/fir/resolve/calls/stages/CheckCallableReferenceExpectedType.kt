@@ -123,7 +123,7 @@ private fun buildResultingTypeAndAdaptation(
                     unboundReferenceTarget
                 )
 
-            val parameters = mutableListOf<ConeKotlinType>()
+            val parameters: MutableList<ConeKotlinType> = []
             if (fir.receiverParameter == null && receiverType != null) {
                 parameters += receiverType
             }
@@ -272,7 +272,7 @@ private fun BodyResolveComponents.getCallableReferenceAdaptation(
     var isThereVararg = mappedVarargElements.isNotEmpty()
     for (valueParameter in function.valueParameters) {
         if (valueParameter.isVararg && valueParameter !in mappedArguments) {
-            mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument(emptyList())
+            mappedArguments[valueParameter] = ResolvedCallArgument.VarargArgument([])
             isThereVararg = true
         }
     }

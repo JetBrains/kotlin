@@ -32,7 +32,7 @@ private inline fun InstructionAdapter.unrollArrayIfFewerThan(n: Int, limit: Int,
         element(i)
         astore(type)
     }
-    return arrayOf(AsmUtil.getArrayType(type))
+    return [AsmUtil.getArrayType(type)]
 }
 
 fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeOf(
@@ -60,7 +60,7 @@ private fun <KT : KotlinTypeMarker> TypeSystemCommonBackendContext.generateTypeO
         return
     } else {
         generateNonReifiedTypeParameter(v, typeParameter, intrinsicsSupport)
-        arrayOf(K_CLASSIFIER_TYPE)
+        [K_CLASSIFIER_TYPE]
     }
 
     val methodName = if (type.isMarkedNullable()) "nullableTypeOf" else "typeOf"

@@ -16,15 +16,15 @@ import org.jetbrains.kotlinx.serialization.matrix.impl.serializerName
 fun CombinationContext.enumsTestMatrix() {
     val enums = defineEnums(
         SerializerKind.entries.toSet(),
-        setOf(FILE_ROOT, NESTED)
+        [FILE_ROOT, NESTED]
     ) {
         entries("A", "B")
         descriptorAccessing(*DescriptorAccessing.entries.toTypedArray())
     }
 
     val enumsWithAnnotations = defineEnums(
-        setOf(GENERATED),
-        setOf(FILE_ROOT)
+        [GENERATED],
+        [FILE_ROOT]
     ) {
         entries("A", "B")
         serialInfo(*SerialInfo.entries.toTypedArray())

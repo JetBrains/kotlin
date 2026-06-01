@@ -140,7 +140,7 @@ internal class SirFunctionFromKtPropertySymbol(
 
         val baseName = fqName.baseBridgeName + suffix
 
-        val contextParameters = contextParameters?.second ?: emptyList()
+        val contextParameters = contextParameters?.second ?: []
         val extensionReceiverParameter = extensionReceiverParameter?.let {
             SirParameter("", "receiver", it.type)
         }

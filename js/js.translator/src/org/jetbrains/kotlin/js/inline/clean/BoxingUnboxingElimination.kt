@@ -66,7 +66,7 @@ class BoxingUnboxingElimination(private val root: JsBlock) {
                 get() = when (this) {
                     is JsExpressionHasArguments -> arguments
                     is JsNameRef -> listOfNotNull(qualifier)
-                    else -> emptyList()
+                    else -> []
                 }
         }
 

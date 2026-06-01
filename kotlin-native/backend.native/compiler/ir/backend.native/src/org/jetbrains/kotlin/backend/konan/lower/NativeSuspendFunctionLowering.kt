@@ -58,7 +58,7 @@ internal class NativeSuspendFunctionsLowering(
 
         (val tailSuspendCalls = callSites, val hasNotTailSuspendCalls) = collectTailSuspendCalls(context, function)
         return if (hasNotTailSuspendCalls) {
-            listOf<IrDeclaration>(buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function)
+            [buildCoroutine(function, isSuspendLambdaInvokeMethod = false), function]
         } else {
             // Otherwise, no suspend calls at all or all of them are tail calls - no need in a state machine.
             // Have to simplify them though (convert them to proper return statements).
@@ -208,7 +208,7 @@ internal class NativeSuspendFunctionsLowering(
             val irBuilder = context.createIrBuilder(irFunction.symbol, expression.startOffset, expression.endOffset)
             irBuilder.run {
                 val children = when (expression) {
-                    is IrSetField -> listOf(expression.receiver, expression.value)
+                    is IrSetField -> [expression.receiver, expression.value]
                     is IrMemberAccessExpression<*> -> expression.arguments
                     else -> throw Error("Unexpected expression: $expression")
                 }
@@ -220,7 +220,7 @@ internal class NativeSuspendFunctionsLowering(
                     hasSuspendCallInTail[i] = hasSuspendCallInTail[i + 1] || children[i].let { it != null && it.hasSuspendCalls() }
 
                 val newChildren = arrayOfNulls<IrExpression?>(numberOfChildren)
-                val tempStatements = mutableListOf<IrStatement>()
+                val tempStatements: MutableList<IrStatement> = []
                 // No constructor argument is first since the call will be lowered to (val inst = alloc(); call(inst, *args); inst)
                 // and therefore an actual first argument will be the just allocated instance.
                 var first = expression !is IrConstructorCall

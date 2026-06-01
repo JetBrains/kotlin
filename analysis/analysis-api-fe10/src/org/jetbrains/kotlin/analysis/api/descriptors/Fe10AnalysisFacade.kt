@@ -38,7 +38,7 @@ interface Fe10AnalysisFacade {
     fun analyze(elements: List<KtElement>, mode: AnalysisMode = AnalysisMode.FULL): BindingContext
 
     fun analyze(element: KtElement, mode: AnalysisMode = AnalysisMode.FULL): BindingContext {
-        return analyze(listOf(element), mode)
+        return analyze([element], mode)
     }
 
     fun getOrigin(file: VirtualFile): KaSymbolOrigin

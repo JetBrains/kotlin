@@ -1129,7 +1129,7 @@ public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: 
  */
 public fun CharSequence.indexOf(char: Char, startIndex: Int = 0, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
-        indexOfAny(charArrayOf(char), startIndex, ignoreCase)
+        indexOfAny([char], startIndex, ignoreCase)
     else
         nativeIndexOf(char, startIndex)
 }
@@ -1159,7 +1159,7 @@ public fun CharSequence.indexOf(string: String, startIndex: Int = 0, ignoreCase:
  */
 public fun CharSequence.lastIndexOf(char: Char, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int {
     return if (ignoreCase || this !is String)
-        lastIndexOfAny(charArrayOf(char), startIndex, ignoreCase)
+        lastIndexOfAny([char], startIndex, ignoreCase)
     else
         nativeLastIndexOf(char, startIndex)
 }
@@ -1497,7 +1497,7 @@ private fun CharSequence.split(delimiter: String, ignoreCase: Boolean, limit: In
     var currentOffset = 0
     var nextIndex = indexOf(delimiter, currentOffset, ignoreCase)
     if (nextIndex == -1 || limit == 1) {
-        return listOf(this.toString())
+        return [this.toString()]
     }
 
     val isLimited = limit > 0

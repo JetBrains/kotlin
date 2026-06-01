@@ -13,7 +13,7 @@ class JvmNameResolver(
     strings: Array<String>
 ) : JvmNameResolverBase(
     strings,
-    types.localNameList.run { if (isEmpty()) emptySet() else toSet() },
+    types.localNameList.run { if (isEmpty()) [] else toSet() },
     types.recordList.toExpandedRecordsList()
 )
 

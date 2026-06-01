@@ -16,13 +16,13 @@ sealed class ResolvedCallArgument<out T> {
 
     object DefaultArgument : ResolvedCallArgument<Nothing>() {
         override val arguments: List<Nothing>
-            get() = emptyList()
+            get() = []
 
     }
 
     class SimpleArgument<T>(val callArgument: T) : ResolvedCallArgument<T>() {
         override val arguments: List<T>
-            get() = listOf(callArgument)
+            get() = [callArgument]
 
     }
 

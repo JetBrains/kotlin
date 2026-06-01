@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.commonizer.cir.CirClass
 class CirMemberContext private constructor(internal val classes: List<CirClass>) {
 
     companion object {
-        val empty = CirMemberContext(emptyList())
+        val empty = CirMemberContext([])
     }
 
     fun withContextOf(clazz: CirClass) = CirMemberContext(classes = classes + clazz)

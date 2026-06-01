@@ -47,8 +47,8 @@ object FirNativeObjCRefinementChecker : FirCallableDeclarationChecker(MppChecker
     }
 
     private fun FirCallableDeclaration.findRefinedAnnotations(session: FirSession): Pair<List<FirAnnotation>, List<FirAnnotation>> {
-        val objCAnnotations = mutableListOf<FirAnnotation>()
-        val swiftAnnotations = mutableListOf<FirAnnotation>()
+        val objCAnnotations: MutableList<FirAnnotation> = []
+        val swiftAnnotations: MutableList<FirAnnotation> = []
         for (annotation in annotations) {
             val metaAnnotations = annotation.toAnnotationClassLikeSymbol(session)?.resolvedAnnotationsWithClassIds.orEmpty()
             for (metaAnnotation in metaAnnotations) {

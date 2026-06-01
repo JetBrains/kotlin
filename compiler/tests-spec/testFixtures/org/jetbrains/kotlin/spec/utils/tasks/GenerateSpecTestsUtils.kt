@@ -12,7 +12,7 @@ import java.nio.file.Files
 
 // `baseDir` is used in Kotlin plugin from IJ infra
 fun detectDirsWithTestsMapFileOnly(dirName: String, baseDir: String = "."): List<String> {
-    val excludedDirs = mutableListOf<String>()
+    val excludedDirs: MutableList<String> = []
 
     File("${baseDir}/$SPEC_TESTDATA_PATH/$dirName").walkTopDown().forEach { file ->
         val listFiles = Files.walk(file.toPath()).filter(Files::isRegularFile)

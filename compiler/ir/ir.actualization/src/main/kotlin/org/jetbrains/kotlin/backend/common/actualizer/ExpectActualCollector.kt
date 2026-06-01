@@ -154,7 +154,7 @@ private class ExpectTopLevelDeclarationCollector {
                 for (declaration in file.declarations) {
                     if (declaration.isExpect && declaration.isTopLevel) {
                         fun addCallable(callableId: CallableId) {
-                            val list = expectTopLevelCallables.getOrPut(callableId) { mutableListOf() }
+                            val list = expectTopLevelCallables.getOrPut(callableId) { [] }
                             list.add(declaration.symbol)
                         }
 
@@ -212,7 +212,7 @@ private class ActualDeclarationsCollector(
     private val actualTopLevels: MutableMap<CallableId, MutableList<IrSymbol>> = mutableMapOf()
     private val actualSymbolsToFile: MutableMap<IrSymbol, IrFile?> = mutableMapOf()
 
-    private val visitedActualClasses = mutableSetOf<IrClass>()
+    private val visitedActualClasses: MutableSet<IrClass> = []
     private var currentFile: IrFile? = null
 
     private fun collect(element: IrElement) {
@@ -339,7 +339,7 @@ private class ActualDeclarationsCollector(
     ) {
         if (callableId.classId == null) {
             actualTopLevels
-                .getOrPut(callableId) { mutableListOf() }
+                .getOrPut(callableId) { [] }
                 .add(callableDeclaration.symbol)
             if (writeActualSymbolToFile) {
                 actualSymbolsToFile[callableDeclaration.symbol] = currentFile

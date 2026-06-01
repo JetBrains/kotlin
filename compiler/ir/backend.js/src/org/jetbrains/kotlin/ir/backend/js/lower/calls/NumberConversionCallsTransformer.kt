@@ -28,7 +28,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, OperatorNameConventions.TO_LONG, symbols.longFromInt)
         }
 
-        for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
+        for (type in [irBuiltIns.floatType, irBuiltIns.doubleType]) {
             add(type, OperatorNameConventions.TO_BYTE, symbols.jsNumberToByte)
             add(type, OperatorNameConventions.TO_DOUBLE, ::useDispatchReceiver)
             add(type, OperatorNameConventions.TO_FLOAT, ::useDispatchReceiver)

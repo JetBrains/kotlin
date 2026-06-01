@@ -52,7 +52,7 @@ data class JavaSourceRootData<Path : Any>(val path: Path, val packagePrefix: Str
 internal fun String.fixPath(rootPath: String): File = File(rootPath, this.removePrefix("/"))
 
 internal fun loadModuleDumpFile(file: File, config: ModularizedTestConfig): List<ModuleData> {
-    val modules = mutableListOf<ModuleData>()
+    val modules: MutableList<ModuleData> = []
     var arguments: CommonCompilerArguments? = null
 
     val xmlFactory = XMLInputFactory.newInstance()
@@ -89,11 +89,11 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
     val timestamp = xr.getAttributeValue(null, "timestamp")?.toLongOrNull() ?: 0L
     val jdkHome = xr.getAttributeValue(null, "jdkHome")
 
-    val javaSourceRoots = mutableListOf<JavaSourceRootData<String>>()
-    val classpath = mutableListOf<String>()
-    val sources = mutableListOf<String>()
-    val friendDirs = mutableListOf<String>()
-    val optInAnnotations = mutableListOf<String>()
+    val javaSourceRoots: MutableList<JavaSourceRootData<String>> = []
+    val classpath: MutableList<String> = []
+    val sources: MutableList<String> = []
+    val friendDirs: MutableList<String> = []
+    val optInAnnotations: MutableList<String> = []
     var modularJdkRoot: String? = null
     var isCommon = false
 
@@ -160,7 +160,7 @@ private fun readModule(xr: XMLStreamReader, config: ModularizedTestConfig): Modu
 
 private fun readCompilerArguments(xr: XMLStreamReader): CommonCompilerArguments {
     // reader is positioned at START_ELEMENT <compilerArguments>
-    val argList = mutableListOf<String>()
+    val argList: MutableList<String> = []
     var oldFormatArgs: CommonCompilerArguments? = null
     while (xr.hasNext()) {
         when (xr.next()) {
@@ -246,7 +246,7 @@ private fun readCompilerArgumentsOldVariant(xr: XMLStreamReader): CommonCompiler
 
 private fun readStringArray(xr: XMLStreamReader): MutableList<String> {
     // reader is positioned at START_ELEMENT <array>/<list>
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
     while (xr.hasNext()) {
         when (xr.next()) {
             XMLStreamConstants.START_ELEMENT -> if (xr.localName == "option") {
@@ -272,6 +272,7 @@ private fun setOptionReflective(args: Any, name: String, value: Any) {
     val classifier = returnType.classifier as? KClass<*>
 
     val converted: Any? = try {
+        @Suppress("ConvertToCollectionLiterals")
         when (classifier) {
             Boolean::class -> when (value) {
                 is Boolean -> value

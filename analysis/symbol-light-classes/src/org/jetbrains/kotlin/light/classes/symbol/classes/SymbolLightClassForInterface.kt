@@ -47,7 +47,7 @@ internal open class SymbolLightClassForInterface : SymbolLightClassForInterfaceO
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
-            val result = mutableListOf<PsiMethod>()
+            val result: MutableList<PsiMethod> = []
 
             val visibleDeclarations = classSymbol.declaredMemberScope.callables.filter { acceptCallableSymbol(it) }
 

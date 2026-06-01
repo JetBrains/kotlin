@@ -50,7 +50,7 @@ interface DiagnosticSuppressor {
 
 abstract class KotlinSuppressCache(project: Project?) : AbstractKotlinSuppressCache<PsiElement>() {
 
-    private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: emptyList()
+    private val diagnosticSuppressors: List<DiagnosticSuppressor> = project?.let { DiagnosticSuppressor.getInstances(it) } ?: []
 
     val filter: (Diagnostic) -> Boolean = { diagnostic: Diagnostic ->
         !isSuppressed(DiagnosticSuppressRequest(diagnostic))
@@ -128,7 +128,7 @@ class BindingContextSuppressCache(val context: BindingContext) : KotlinSuppressC
 
         return descriptor?.annotations?.toList()
             ?: (annotated as? KtAnnotated)?.annotationEntries?.mapNotNull { context.get(BindingContext.ANNOTATION, it) }
-            ?: emptyList()
+            ?: []
     }
 
     override fun isSuppressedByExtension(suppressor: DiagnosticSuppressor, diagnostic: Diagnostic): Boolean {

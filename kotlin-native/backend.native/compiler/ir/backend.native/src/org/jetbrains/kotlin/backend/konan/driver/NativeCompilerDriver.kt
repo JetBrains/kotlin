@@ -128,7 +128,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             llvmModule = parseBitcodeFile(engine.context, engine.context.diagnosticReporter, llvmContext, bitcodeFilePath)
             val context = BitcodePostProcessingContextImpl(config, llvmModule, llvmContext)
             val depsPath = config.readSerializedDependencies
-            val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult(emptyList(), emptyList(), emptyList()).also {
+            val dependencies = if (depsPath.isNullOrEmpty()) DependenciesTrackingResult([], [], []).also {
                 config.configuration.report(CliDiagnostics.KONAN_ARGUMENT_WARNING, "No backend dependencies provided.")
             } else DependenciesTrackingResult.deserialize(depsPath, File(depsPath).readStrings(), config)
             engine.runBitcodeBackend(context, dependencies)

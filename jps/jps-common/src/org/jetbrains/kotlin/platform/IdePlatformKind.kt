@@ -47,14 +47,14 @@ abstract class IdePlatformKind {
 
         // For using only in JPS
         private val JPS_KINDS
-            get() = listOf(
+            get() = [
                 JvmIdePlatformKind,
                 JsIdePlatformKind,
                 WasmJsIdePlatformKind,
                 WasmWasiIdePlatformKind,
                 CommonIdePlatformKind,
                 NativeIdePlatformKind
-            )
+            ]
 
         val ALL_KINDS by lazy {
             val kinds = extension?.getInstances() ?: return@lazy JPS_KINDS

@@ -46,7 +46,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         ): List<WebArtifactConfiguration> {
             val moduleKind = configuration.moduleKind ?: error("Missing module kind")
             val translationModes = if (incrementalEnabled(testServices)) {
-                listOf(TranslationMode.FULL_DEV, TranslationMode.PER_MODULE_DEV)
+                [TranslationMode.FULL_DEV, TranslationMode.PER_MODULE_DEV]
             } else {
                 getTranslationModesForTest(testServices, module)
             }
@@ -119,7 +119,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         configuration.keep = module.directives[KEEP]
 
         val testPackage = extractTestPackage(testServices, ignoreEsModules = false)
-        configuration.additionalExportedDeclarationNames = setOf(testPackage.child(Name.identifier("box")))
+        configuration.additionalExportedDeclarationNames = [testPackage.child(Name.identifier("box"))]
         configuration.artifactConfigurations = getArtifactConfigurations(testServices, module, configuration, firstTimeCompilation = true)
 
         if (GENERATE_STRICT_IMPLICIT_EXPORT in module.directives) {

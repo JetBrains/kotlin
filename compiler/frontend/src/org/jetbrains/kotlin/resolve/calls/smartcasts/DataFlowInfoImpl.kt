@@ -180,7 +180,7 @@ internal class DataFlowInfoImpl private constructor(
             typesForB += b.type
         }
 
-        return create(this, nullabilityUpdate, listOf(Tuple2(a, typesForB)), a)
+        return create(this, nullabilityUpdate, [Tuple2(a, typesForB)], a)
     }
 
     override fun equate(
@@ -265,7 +265,7 @@ internal class DataFlowInfoImpl private constructor(
         return create(
             this,
             nullabilityInfo,
-            listOf(Tuple2(value, listOf(type)))
+            [Tuple2(value, [type])]
         )
     }
 

@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.js.inline.util.collectors.InstanceCollector
 import org.jetbrains.kotlin.js.translate.utils.JsAstUtils
 
 fun collectUsedNames(scope: JsNode): Set<JsName> {
-    val references = mutableSetOf<JsName>()
+    val references: MutableSet<JsName> = []
 
     object : RecursiveJsVisitor() {
         override fun visitBreak(x: JsBreak) { }
@@ -54,7 +54,7 @@ fun collectUsedNames(scope: JsNode): Set<JsName> {
 fun collectDefinedNames(scope: JsNode) = collectDefinedNames(scope, false)
 
 fun collectDefinedNames(scope: JsNode, skipLabelsAndCatches: Boolean): Set<JsName> {
-    val names = mutableSetOf<JsName>()
+    val names: MutableSet<JsName> = []
 
     object : RecursiveJsVisitor() {
         override fun visit(x: JsVars.JsVar) {

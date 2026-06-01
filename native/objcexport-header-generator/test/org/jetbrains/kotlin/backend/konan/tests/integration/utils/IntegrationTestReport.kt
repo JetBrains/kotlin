@@ -139,7 +139,7 @@ internal fun compareProtocolsOrClasses(
 }
 
 private fun compareMethods(k1: ObjCClassOrProtocol, k2: ObjCClassOrProtocol): List<IntegrationTestReport.Issue> {
-    val result = mutableListOf<IntegrationTestReport.Issue>()
+    val result: MutableList<IntegrationTestReport.Issue> = []
 
     k1.methods.forEachIndexed { i1, m1 ->
         val m2 = k2.methods.getOrNull(i1)
@@ -188,7 +188,7 @@ private fun compareMethods(k1: ObjCClassOrProtocol, k2: ObjCClassOrProtocol): Li
 }
 
 private fun compareProperties(k1: ObjCClassOrProtocol, k2: ObjCClassOrProtocol): List<IntegrationTestReport.Issue> {
-    val result = mutableListOf<IntegrationTestReport.Issue>()
+    val result: MutableList<IntegrationTestReport.Issue> = []
 
     k1.properties.forEachIndexed { i1, p1 ->
         val p2 = k2.properties.getOrNull(i1)
@@ -218,7 +218,7 @@ private fun compareProtocolsOrClasses(
     k2: Map<String, ObjCClassOrProtocol>,
 ): List<IntegrationTestReport.Issue> {
 
-    val result = mutableListOf<IntegrationTestReport.Issue>()
+    val result: MutableList<IntegrationTestReport.Issue> = []
 
     k1.forEach { [name, k1Container] ->
 

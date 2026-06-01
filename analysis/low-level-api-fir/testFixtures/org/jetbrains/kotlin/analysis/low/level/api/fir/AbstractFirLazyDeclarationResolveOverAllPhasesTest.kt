@@ -75,7 +75,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
                     val designation = LLFirResolveDesignationCollector.getDesignationToResolve(elementToResolve)
                     listOfNotNull(firFile, designation?.firFile).distinct()
                 }
-                OutputRenderingMode.ONLY_TARGET_DECLARATION -> emptyList()
+                OutputRenderingMode.ONLY_TARGET_DECLARATION -> []
             }
 
             val basePhase = elementToResolve.resolvePhase
@@ -150,7 +150,7 @@ abstract class AbstractFirLazyDeclarationResolveOverAllPhasesTest : AbstractFirL
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val PRE_RESOLVED_PHASE by enumDirective<FirResolvePhase>("Describes which phase should have pre-resolved element")

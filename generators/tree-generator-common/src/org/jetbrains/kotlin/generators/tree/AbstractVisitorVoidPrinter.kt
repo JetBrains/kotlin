@@ -16,7 +16,7 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
               Field : AbstractField<Field> {
 
     final override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     final override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
@@ -26,7 +26,7 @@ abstract class AbstractVisitorVoidPrinter<Element, Field>(
     abstract val visitorSuperClass: ClassRef<PositionTypeParameterRef>
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType))
+        get() = [visitorSuperClass.withArgs(StandardTypes.unit, visitorDataType)]
 
     abstract val useAbstractMethodForRootElement: Boolean
 

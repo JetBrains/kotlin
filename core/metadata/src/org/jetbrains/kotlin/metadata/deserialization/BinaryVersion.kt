@@ -23,7 +23,7 @@ abstract class BinaryVersion(private vararg val numbers: Int) {
             throw IllegalArgumentException("BinaryVersion with length more than $MAX_LENGTH are not supported. Provided length ${numbers.size}.")
         else
             numbers.asList().subList(3, numbers.size).toList()
-    } else emptyList()
+    } else []
 
     abstract fun isCompatibleWithCurrentCompilerVersion(): Boolean
 

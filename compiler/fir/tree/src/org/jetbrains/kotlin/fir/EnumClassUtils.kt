@@ -82,13 +82,13 @@ fun generateValuesFunction(
             source = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.ValuesFunction.ReturnType)
             coneType = ConeClassLikeTypeImpl(
                 StandardClassIds.Array.toLookupTag(),
-                arrayOf(
+                [
                     ConeClassLikeTypeImpl(
                         classSymbol.toLookupTag(),
                         ConeTypeProjection.EMPTY_ARRAY,
                         isMarkedNullable = false
                     )
-                ),
+                ],
                 isMarkedNullable = false
             )
         }
@@ -150,7 +150,7 @@ fun generateValueOfFunction(
             source = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.ValueOfFunction.ReturnType)
             coneType = ConeClassLikeTypeImpl(
                 classSymbol.toLookupTag(),
-                emptyArray(),
+                [],
                 isMarkedNullable = false
             )
         }
@@ -175,7 +175,7 @@ fun generateValueOfFunction(
                 source = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.ValueOfFunction.ParameterType)
                 coneType = ConeClassLikeTypeImpl(
                     StandardClassIds.String.toLookupTag(),
-                    emptyArray(),
+                    [],
                     isMarkedNullable = false
                 )
             }
@@ -237,13 +237,13 @@ fun generateEntriesGetter(
             source = classSource?.fakeElement(KtFakeSourceElementKind.EnumGeneratedDeclaration.EntriesProperty.ReturnType)
             coneType = ConeClassLikeTypeImpl(
                 StandardClassIds.EnumEntries.toLookupTag(),
-                arrayOf(
+                [
                     ConeClassLikeTypeImpl(
                         classSymbol.toLookupTag(),
                         ConeTypeProjection.EMPTY_ARRAY,
                         isMarkedNullable = false
                     )
-                ),
+                ],
                 isMarkedNullable = false
             )
         }

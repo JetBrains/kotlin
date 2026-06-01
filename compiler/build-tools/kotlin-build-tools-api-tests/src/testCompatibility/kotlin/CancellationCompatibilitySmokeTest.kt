@@ -61,9 +61,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         assumeTrue(hasCancellationSupport)
         runSingleShotDaemonTest(kotlinToolchains, additionalDaemonConfiguration = {
-            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
+            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = [
                 "Dkotlin.daemon.wait.before.compilation.for.tests=true"
-            )
+            ]
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
@@ -71,7 +71,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                 val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
-                    val allowedExtensions = setOf("kt", "kts", "java")
+                    val allowedExtensions: Set<String> = ["kt", "kts", "java"]
                     val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(
                         sourcesDirectory.walk().filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                             .toList(),
@@ -124,9 +124,9 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
         val hasCancellationSupport = hasCancellationSupport(kotlinToolchains.getCompilerVersion())
         assumeTrue(hasCancellationSupport)
         runSingleShotDaemonTest(kotlinToolchains, additionalDaemonConfiguration = {
-            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = listOf(
+            this[ExecutionPolicy.WithDaemon.JVM_ARGUMENTS] = [
                 "-Dkotlin.daemon.wait.before.compilation.for.tests=true"
-            )
+            ]
         }, additionalCleanupActions = { daemonRunPath ->
             daemonRunPath.resolve("daemon-test-start").deleteIfExists()
         }) { daemonPolicy, daemonRunPath ->
@@ -134,7 +134,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                 val module1 = module("jvm-module-1")
                 val operationWasCancelled = AtomicBoolean(false)
                 with(module1) {
-                    val allowedExtensions = setOf("kt", "kts", "java")
+                    val allowedExtensions: Set<String> = ["kt", "kts", "java"]
                     val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperationBuilder(
                         sourcesDirectory.walk().filter { path -> path.pathString.run { allowedExtensions.any { endsWith(".$it") } } }
                             .toList(),
@@ -149,7 +149,7 @@ class CancellationCompatibilitySmokeTest : BaseCompilationTest() {
                     val snapshotIcConfig = compilationOperation.snapshotBasedIcConfigurationBuilder(
                         icCachesDir,
                         SourcesChanges.Unknown,
-                        emptyList(),
+                        [],
                     )
                     compilationOperation[JvmCompilationOperation.INCREMENTAL_COMPILATION] = snapshotIcConfig.build()
 

@@ -63,9 +63,9 @@ object Filtering : TemplateGroupBase() {
             if (this is Collection<*>) {
                 val resultSize = size - n
                 if (resultSize <= 0)
-                    return emptyList()
+                    return []
                 if (resultSize == 1)
-                    return listOf(last())
+                    return [last()]
 
                 list = ArrayList<T>(resultSize)
                 if (this is List<T>) {
@@ -145,10 +145,10 @@ object Filtering : TemplateGroupBase() {
         body {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             if (this is Collection<T>) {
                 if (n >= size) return toList()
-                if (n == 1) return listOf(first())
+                if (n == 1) return [first()]
             }
             var count = 0
             val list = ArrayList<T>(n)
@@ -185,7 +185,7 @@ object Filtering : TemplateGroupBase() {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
             return when {
-                n == 0 -> emptySequence()
+                n == 0 -> []
                 this is DropTakeSequence -> this.take(n)
                 else -> TakeSequence(this, n)
             }
@@ -195,9 +195,9 @@ object Filtering : TemplateGroupBase() {
         body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             if (n >= size) return toList()
-            if (n == 1) return listOf(this[0])
+            if (n == 1) return [this[0]]
             var count = 0
             val list = ArrayList<T>(n)
             for (item in this) {
@@ -213,9 +213,9 @@ object Filtering : TemplateGroupBase() {
         body(ArraysOfObjects) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             if (n >= size) return toList()
-            if (n == 1) return listOf(this[0])
+            if (n == 1) return [this[0]]
             return copyOfRange(0, n).asList()
             """
         }
@@ -284,10 +284,10 @@ object Filtering : TemplateGroupBase() {
         body(ArraysOfPrimitives, ArraysOfUnsigned) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             val size = size
             if (n >= size) return toList()
-            if (n == 1) return listOf(this[size - 1])
+            if (n == 1) return [this[size - 1]]
 
             val list = ArrayList<T>(n)
             for (index in size - n until size)
@@ -300,10 +300,10 @@ object Filtering : TemplateGroupBase() {
         body(ArraysOfObjects) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             val size = size
             if (n >= size) return toList()
-            if (n == 1) return listOf(this[size - 1])
+            if (n == 1) return [this[size - 1]]
             return copyOfRange(size - n, size).asList()
             """
         }
@@ -311,10 +311,10 @@ object Filtering : TemplateGroupBase() {
         body(Lists) {
             """
             require(n >= 0) { "Requested element count $n is less than zero." }
-            if (n == 0) return emptyList()
+            if (n == 0) return []
             val size = size
             if (n >= size) return toList()
-            if (n == 1) return listOf(last())
+            if (n == 1) return [last()]
 
             val list = ArrayList<T>(n)
             if (this is RandomAccess) {
@@ -443,8 +443,8 @@ object Filtering : TemplateGroupBase() {
             """
             var i = 0
             while (i < ${f.code.size} && predicate(this[i])) i++
-            return if (i == 0) emptyList()
-                   else if (i == 1) listOf(this[0])
+            return if (i == 0) []
+                   else if (i == 1) [this[0]]
                    else copyOfRange(0, i).asList()
             """
         }
@@ -471,7 +471,7 @@ object Filtering : TemplateGroupBase() {
                     return take(index + 1)
                 }
             }
-            return emptyList()
+            return []
             """
         }
         body(Lists) {
@@ -484,7 +484,7 @@ object Filtering : TemplateGroupBase() {
                     }
                 }
             }
-            return emptyList()
+            return []
             """
         }
 
@@ -535,13 +535,13 @@ object Filtering : TemplateGroupBase() {
         body(Lists) {
             """
             if (isEmpty())
-                return emptyList()
+                return []
             val iterator = listIterator(size)
             while (iterator.hasPrevious()) {
                 if (!predicate(iterator.previous())) {
                     val _ = iterator.next()
                     val expectedSize = size - iterator.nextIndex()
-                    if (expectedSize == 0) return emptyList()
+                    if (expectedSize == 0) return []
                     return ArrayList<T>(expectedSize).apply {
                         while (iterator.hasNext())
                             add(iterator.next())
@@ -919,7 +919,7 @@ object Filtering : TemplateGroupBase() {
         body {
             """
             val size = indices.collectionSizeOrDefault(10)
-            if (size == 0) return emptyList()
+            if (size == 0) return []
             val list = ArrayList<T>(size)
             for (index in indices) {
                 list.add(get(index))
@@ -956,13 +956,13 @@ object Filtering : TemplateGroupBase() {
         returns("List<T>")
         body(Lists) {
             """
-            if (indices.isEmpty()) return listOf()
+            if (indices.isEmpty()) return []
             return this.subList(indices.start, indices.endInclusive + 1).toList()
             """
         }
         body(ArraysOfPrimitives, ArraysOfObjects, ArraysOfUnsigned) {
             """
-            if (indices.isEmpty()) return listOf()
+            if (indices.isEmpty()) return []
             return copyOfRange(indices.start, indices.endInclusive + 1).asList()
             """
         }

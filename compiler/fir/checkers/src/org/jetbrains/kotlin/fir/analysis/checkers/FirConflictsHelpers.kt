@@ -99,11 +99,11 @@ private fun isAtLeastOneExpect(first: FirBasedSymbol<*>, second: FirBasedSymbol<
     first.resolvedStatus?.isExpect == true || second.resolvedStatus?.isExpect == true
 
 private class DeclarationBuckets {
-    val namedFunctions = mutableListOf<Pair<FirNamedFunctionSymbol, String>>()
-    val constructors = mutableListOf<Pair<FirConstructorSymbol, String>>()
-    val classLikes = mutableListOf<Pair<FirClassLikeSymbol<*>, String>>()
-    val properties = mutableListOf<Pair<FirPropertySymbol, String>>()
-    val extensionProperties = mutableListOf<Pair<FirPropertySymbol, String>>()
+    val namedFunctions: MutableList<Pair<FirNamedFunctionSymbol, String>> = []
+    val constructors: MutableList<Pair<FirConstructorSymbol, String>> = []
+    val classLikes: MutableList<Pair<FirClassLikeSymbol<*>, String>> = []
+    val properties: MutableList<Pair<FirPropertySymbol, String>> = []
+    val extensionProperties: MutableList<Pair<FirPropertySymbol, String>> = []
 }
 
 context(context: CheckerContext)
@@ -486,7 +486,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
     // visibility of callables, as classifiers of any visibility can conflict.
     if (
         conflicting is FirCallableDeclaration &&
-        !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
+        !session.visibilityChecker.isVisible(conflicting, session, containingFile, [], dispatchReceiver = null)
     ) return
 
     when (getConflictState(declaration, conflictingSymbol)) {

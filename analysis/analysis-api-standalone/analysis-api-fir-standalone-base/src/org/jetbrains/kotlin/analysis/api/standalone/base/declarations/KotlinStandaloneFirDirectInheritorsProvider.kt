@@ -41,16 +41,16 @@ internal class KotlinStandaloneFirDirectInheritorsProvider(private val project: 
         scope: GlobalSearchScope,
         includeLocalInheritors: Boolean,
     ): Iterable<KtClassOrObject> {
-        val classId = ktClass.getClassId() ?: return emptyList()
+        val classId = ktClass.getClassId() ?: return []
         val baseModule = KotlinProjectStructureProvider.getModule(project, ktClass, useSiteModule = null)
-        val baseFirClass = classId.toFirSymbol(baseModule)?.fir as? FirClass ?: return emptyList()
+        val baseFirClass = classId.toFirSymbol(baseModule)?.fir as? FirClass ?: return []
 
-        val baseClassNames = mutableSetOf(classId.shortClassName)
+        val baseClassNames: MutableSet<Name> = [classId.shortClassName]
         calculateAliases(classId.shortClassName, baseClassNames)
 
         val possibleInheritors = baseClassNames.flatMap { standaloneDeclarationProviderFactory.getDirectInheritorCandidates(it) }
         if (possibleInheritors.isEmpty()) {
-            return emptyList()
+            return []
         }
         return possibleInheritors.filter { isValidInheritor(it, baseFirClass, scope, includeLocalInheritors) }
     }

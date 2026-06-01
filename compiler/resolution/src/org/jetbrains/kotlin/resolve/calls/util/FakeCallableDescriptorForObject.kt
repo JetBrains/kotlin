@@ -39,7 +39,7 @@ open class FakeCallableDescriptorForObject(
 
     fun getReferencedObject(): ClassDescriptor = classDescriptor.getClassObjectReferenceTarget()
 
-    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = emptyList()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = []
 
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
 

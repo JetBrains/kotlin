@@ -45,7 +45,7 @@ class ProtoPath(val file: String, val generateDebug: Boolean = true) {
     }
 }
 
-val PROTO_PATHS: List<ProtoPath> = listOf(
+val PROTO_PATHS: List<ProtoPath> = [
     ProtoPath("core/metadata/src/metadata.proto"),
     ProtoPath("core/metadata/src/builtins.proto"),
     ProtoPath("core/metadata/src/properties_order_extension.proto", generateDebug = false),
@@ -56,10 +56,10 @@ val PROTO_PATHS: List<ProtoPath> = listOf(
     ProtoPath("build-common/src/java_descriptors.proto"),
     ProtoPath("compiler/util-klib/src/KlibMetadataProtoBuf.proto"),
     ProtoPath("compiler/ir/serialization.common/src/KotlinIr.proto", false),
-)
+]
 
 private val EXT_OPTIONS_PROTO_PATH = ProtoPath("core/metadata/src/ext_options.proto")
-private val PROTOBUF_PROTO_PATHS = listOf("./", "core/metadata/src")
+private val PROTOBUF_PROTO_PATHS = ["./", "core/metadata/src"]
 
 fun main() {
     try {
@@ -106,7 +106,7 @@ private fun checkVersion() {
 
 private fun execProtoc(protoPath: String, outPath: String) {
     val commandLine =
-        listOf(PROTOC_EXE, protoPath, "--java_out=$outPath") +
+        [PROTOC_EXE, protoPath, "--java_out=$outPath"] +
                 PROTOBUF_PROTO_PATHS.map { "--proto_path=$it" }
     println("running ${commandLine.joinToString(" ")}")
     val (stdout, stderr) = execAndGetOutput(*commandLine.toTypedArray())
@@ -178,7 +178,7 @@ private fun modifyForDebug(protoPath: ProtoPath): String {
             "option java_outer_classname = \"${protoPath.debugClassName}\""
         ) // give different name for class
         .replace("option optimize_for = LITE_RUNTIME;", "") // using default instead
-    (listOf(EXT_OPTIONS_PROTO_PATH) + PROTO_PATHS).forEach {
+    ([EXT_OPTIONS_PROTO_PATH] + PROTO_PATHS).forEach {
         val file = it.file
         val newFile = file.replace(".proto", ".debug.proto")
         text = text.replace(file, newFile)

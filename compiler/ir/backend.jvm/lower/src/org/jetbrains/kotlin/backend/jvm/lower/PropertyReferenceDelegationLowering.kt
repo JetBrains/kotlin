@@ -227,7 +227,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 symbol,
                 parentAsClass.isFacadeClass
             ).apply {
-                body = context.irFactory.createBlockBody(startOffset, endOffset, listOf(it.remapReceiver(null, null)))
+                body = context.irFactory.createBlockBody(startOffset, endOffset, [it.remapReceiver(null, null)])
             }
         }
         return listOfNotNull(this, delegateMethod, receiverBlock)

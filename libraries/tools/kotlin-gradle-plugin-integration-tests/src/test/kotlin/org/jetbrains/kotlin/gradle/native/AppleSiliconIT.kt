@@ -94,19 +94,19 @@ class AppleSiliconIT : KGPBaseTest() {
                     else -> fail("Unexpected host $host")
                 }
 
-                val armTests = listOf(
+                val armTests = [
                     ":iosSimulatorArm64Test",
                     ":macosArm64Test",
                     ":tvosSimulatorArm64Test",
                     ":watchosSimulatorArm64Test",
-                )
+                ]
 
-                val x64Tests = listOf(
+                val x64Tests = [
                     ":iosX64Test",
                     ":macosX64Test",
                     ":tvosX64Test",
                     ":watchosX64Test",
-                )
+                ]
 
                 when (host) {
                     KonanTarget.MACOS_ARM64 -> {

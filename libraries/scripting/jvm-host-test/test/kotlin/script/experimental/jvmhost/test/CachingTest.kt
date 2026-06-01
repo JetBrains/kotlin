@@ -34,10 +34,10 @@ import kotlin.test.*
 class CachingTest {
 
     val simpleScript = "val x = 1\nprintln(\"x = \$x\")".toScriptSource()
-    val simpleScriptExpectedOutput = listOf("x = 1")
+    val simpleScriptExpectedOutput = ["x = 1"]
 
     val scriptWithImport = "println(\"Hello from imported \$helloScriptName script!\")".toScriptSource()
-    val scriptWithImportExpectedOutput = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+    val scriptWithImportExpectedOutput = ["Hello from helloWithVal script!", "Hello from imported helloWithVal script!"]
 
     @Test
     fun testMemoryCache() {
@@ -434,7 +434,7 @@ private fun ByteArray.toHexString(): String = joinToString("", transform = { "%0
 
 private fun Class<*>.supertypes(): MutableList<Class<*>> = when {
     superclass == null -> interfaces.toMutableList()
-    interfaces.isEmpty() -> mutableListOf(superclass)
+    interfaces.isEmpty() -> [superclass]
     else -> ArrayList<Class<*>>(interfaces.size + 1).apply {
         interfaces.toCollection(this@apply)
         add(superclass)

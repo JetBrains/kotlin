@@ -289,22 +289,22 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             if (shouldGenerateObjectWithGetInstance)
                 FqName(MetadataConstructor)
             else
-                FqName.fromSegments(listOf(name, Metadata, MetadataConstructor))
+                FqName.fromSegments([name, Metadata, MetadataConstructor])
 
         val substitutionOfObjectTypeToItsShapeClass = mapOf<ExportedType, ExportedType>(
             ExportedType.TypeOf(
                 ExportedType.ClassType(
                     FqName(name),
-                    emptyList(),
+                    [],
                     classId = originalClassId,
                 )
             )
-                    to ExportedType.ClassType(FqName(MetadataConstructor), emptyList())
+                    to ExportedType.ClassType(FqName(MetadataConstructor), [])
         )
 
         val [staticMembers, instanceMembers] = if (shouldGenerateObjectWithGetInstance) {
             members.partition { it is ExportedMember && it.isStatic }
-        } else emptyList<ExportedDeclaration>() to members
+        } else Pair([], members)
 
         val classContainingShape = ExportedRegularClass(
             name = MetadataConstructor,
@@ -312,11 +312,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             isAbstract = true,
             isExternal = isExternal,
             requireMetadata = false,
-            typeParameters = emptyList(),
-            nestedClasses = emptyList(),
+            typeParameters = [],
+            nestedClasses = [],
             superClasses = superClasses.map { it.replaceTypes(substitutionOfObjectTypeToItsShapeClass) },
             superInterfaces = superInterfaces,
-            members = instanceMembers + ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
+            members = instanceMembers + ExportedConstructor([], ExportedVisibility.PRIVATE),
             originalClassId = originalClassId,
         )
 
@@ -327,11 +327,11 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             isExternal = isExternal,
             requireMetadata = false,
             typeParameters = typeParameters,
-            nestedClasses = if (shouldGenerateObjectWithGetInstance) emptyList() else nestedClasses,
+            nestedClasses = if (shouldGenerateObjectWithGetInstance) [] else nestedClasses,
             superClasses = listOfNotNull(
-                ExportedType.ObjectsParentType(ExportedType.ClassType(constructorTypeReference, emptyList()))
+                ExportedType.ObjectsParentType(ExportedType.ClassType(constructorTypeReference, []))
             ),
-            members = listOf(ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE)),
+            members = [ExportedConstructor([], ExportedVisibility.PRIVATE)],
             originalClassId = originalClassId,
         )
 
@@ -344,31 +344,31 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 requireMetadata = false,
                 typeParameters = typeParameters,
                 nestedClasses = nestedClasses,
-                superClasses = emptyList(),
-                members = listOf(
+                superClasses = [],
+                members = [
                     ExportedField(
                         name = ExportedMemberName.Identifier(getInstance),
                         type = ExportedType.Function(
-                            emptyList(),
+                            [],
                             ExportedType.TypeOf(
-                                ExportedType.ClassType(FqName.fromSegments(listOf(name, Metadata, MetadataType)), emptyList())
+                                ExportedType.ClassType(FqName.fromSegments([name, Metadata, MetadataType]), [])
                             )
                         ),
                         isMember = true,
                         mutable = false,
                         isStatic = true,
                     ),
-                    ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
-                ) + staticMembers,
+                    ExportedConstructor([], ExportedVisibility.PRIVATE),
+                ] + staticMembers,
                 originalClassId = originalClassId,
             )
         }
 
         val metadataMembers =
-            if (shouldGenerateObjectWithGetInstance) listOf(classContainingType, classContainingShape) else listOf(classContainingShape)
+            if (shouldGenerateObjectWithGetInstance) [classContainingType, classContainingShape] else [classContainingShape]
 
         val objectClass = (extraClassWithGetInstanceMethod ?: classContainingType).generateTypeScriptString(indent, prefix)
-        val objectMetadata = ExportedNamespace(name, listOf(generateMetadataNamespace(metadataMembers))).toTypeScript(indent, prefix)
+        val objectMetadata = ExportedNamespace(name, [generateMetadataNamespace(metadataMembers)]).toTypeScript(indent, prefix)
 
         return "$objectClass\n$objectMetadata${generateDefaultExportIfNeed(name, indent)}"
     }
@@ -422,7 +422,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 mutable = false,
                 isQualified = true
             )
-            generateMetadataNamespace(listOf(constructorProperty))
+            generateMetadataNamespace([constructorProperty])
         })
 
         val realNestedDeclarations = metadataNamespace + namespaceMembers + nestedClasses
@@ -453,7 +453,7 @@ public class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             val originallyDefinedSuperClass = implicitlyExportedClassesString.takeIf { it.isNotEmpty() }?.let { "/* $it */ " }.orEmpty()
             val transitivelyDefinedSuperClass = when (val parentType = single { it !is ExportedType.ImplicitlyExportedType }) {
                 is ExportedType.ClassType -> ExportedType.ClassType(
-                    FqName.fromSegments(listOf(parentType.name.asString(), Metadata, MetadataConstructor)),
+                    FqName.fromSegments([parentType.name.asString(), Metadata, MetadataConstructor]),
                     parentType.arguments,
                     parentType.classId,
                 )

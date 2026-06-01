@@ -34,14 +34,14 @@ class JsIrProgramFragment(val name: String, val packageFqn: String) : IrICProgra
     val optionalCrossModuleImports = hashSetOf<String>()
     val declarations = JsCompositeBlock()
     val exports = JsCompositeBlock()
-    val importedModules = mutableListOf<JsImportedModule>()
+    val importedModules: MutableList<JsImportedModule> = []
     val imports = mutableMapOf<String, JsStatement>()
     var dts: TypeScriptFragment? = null
     val classes = mutableMapOf<JsName, JsIrIcClassModel>()
     val initializers = JsCompositeBlock()
     val eagerInitializers = JsCompositeBlock()
     var mainFunctionTag: String? = null
-    val definitions = mutableSetOf<String>()
+    val definitions: MutableSet<String> = []
     val polyfills = JsCompositeBlock()
     var testEnvironment: JsIrProgramTestEnvironment? = null
 }
@@ -55,7 +55,7 @@ class JsIrModule(
 ) : IrICModule() {
     fun makeModuleHeader(): JsIrModuleHeader {
         val nameBindings = mutableMapOf<String, String>()
-        val definitions = mutableSetOf<String>()
+        val definitions: MutableSet<String> = []
         val optionalCrossModuleImports = hashSetOf<String>()
         var hasDeclarationsToReexport = false
         var hasAnEffectInside = false
@@ -98,7 +98,7 @@ class JsIrModuleHeader(
 class JsIrProgram(private var modules: List<JsIrModule>) {
     fun asCrossModuleDependencies(moduleKind: ModuleKind): List<Pair<JsIrModule, CrossModuleReferences>> {
         val resolver = CrossModuleDependenciesResolver(moduleKind, modules.map { it.makeModuleHeader() })
-        modules = emptyList()
+        modules = []
         val crossModuleReferences = resolver.resolveCrossModuleDependencies()
         return crossModuleReferences.entries.map {
             val module = it.key.associatedModule ?: error("Internal error: module ${it.key.moduleName} is not loaded")
@@ -109,7 +109,7 @@ class JsIrProgram(private var modules: List<JsIrModule>) {
 
     fun asFragments(): List<JsIrProgramFragment> {
         val fragments = modules.flatMap { it.fragments }
-        modules = emptyList()
+        modules = []
         return fragments
     }
 }
@@ -122,8 +122,8 @@ class CrossModuleDependenciesResolver(private val moduleKind: ModuleKind, privat
             JsIrModuleCrossModuleReferenceBuilder(
                 moduleKind,
                 it,
-                reexportModuleToHeader[it.moduleName] ?: emptyList(),
-                importedInModuleWithEffect[it.moduleName] ?: emptyList(),
+                reexportModuleToHeader[it.moduleName] ?: [],
+                importedInModuleWithEffect[it.moduleName] ?: [],
             )
         }
         val definitionModule = mutableMapOf<String, JsIrModuleCrossModuleReferenceBuilder>()
@@ -168,8 +168,8 @@ private class JsIrModuleCrossModuleReferenceBuilder(
     val transitiveExportFrom: List<JsIrModuleHeader>,
     val importWithEffectFrom: List<JsIrModuleHeader>,
 ) {
-    val imports = mutableListOf<CrossModuleRef>()
-    val exports = mutableSetOf<String>()
+    val imports: MutableList<CrossModuleRef> = []
+    val exports: MutableSet<String> = []
 
     lateinit var exportNames: Map<String, String> // tag -> index
 
@@ -306,7 +306,7 @@ class CrossModuleReferences(
     }
 
     companion object {
-        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, listOf(), emptyList(), emptyList(), emptyMap(), emptyMap())
+        fun Empty(moduleKind: ModuleKind) = CrossModuleReferences(moduleKind, [], [], [], emptyMap(), emptyMap())
     }
 }
 

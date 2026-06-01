@@ -13,7 +13,7 @@ class BinaryCodecTest {
     @SmokeTest
     @Test
     fun core() {
-        runSpecTests("core", wasmTestSuitePath, emptyList())
+        runSpecTests("core", wasmTestSuitePath, [])
     }
 
     @Test
@@ -34,7 +34,7 @@ class BinaryCodecTest {
     @Test
     @Ignore
     fun `reference-types`() =
-        testProposal("reference-types", ignoreFiles = listOf("ref_func.wast"))
+        testProposal("reference-types", ignoreFiles = ["ref_func.wast"])
 
     @Test
     @Ignore

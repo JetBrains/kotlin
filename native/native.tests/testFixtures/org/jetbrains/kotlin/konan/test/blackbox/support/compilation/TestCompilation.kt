@@ -78,13 +78,13 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
     /**
      * IR validation options passed to the compiler.
      */
-    protected open val irValidationCompilerOptions = listOf(
+    protected open val irValidationCompilerOptions = [
         // Enable basic IR validation before all lowerings (IrValidationBeforeLoweringPhase)
         // and after all lowerings (IrValidationAfterLoweringPhase).
         "-Xverify-ir=error",
         // Additionally, validate IR after each compilation phase
         "-Xphases-to-validate-after=all"
-    )
+    ]
 
     private fun ArgsBuilder.applyCommonArgs() {
         add("-kotlin-home", home.dir.absolutePath)
@@ -322,7 +322,7 @@ abstract class SourceBasedCompilation<A : TestCompilationArtifact>(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.path })
-            addFlattened(friends) { friend -> listOf("-l", friend.path) }
+            addFlattened(friends) { friend -> ["-l", friend.path] }
         }
         add(dependencies.includedLibraries) { include -> "-Xinclude=${include.path}" }
         super.applyDependencies(argsBuilder)
@@ -381,10 +381,10 @@ class LibraryCompilation(
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
         addFlattened(dependencies.libraries) { library ->
-            listOf(
+            [
                 "-l",
                 library.headerKlib.takeIf { useHeaders && it.exists() }?.path ?: library.path
-            )
+            ]
         }
     }
 }
@@ -395,7 +395,7 @@ class ObjCFrameworkCompilation(
     sourceModules: Collection<TestModule>,
     dependencies: Iterable<TestCompilationDependency<*>>,
     expectedArtifact: ObjCFramework,
-    val exportedLibraries: Iterable<KLIB> = emptyList(),
+    val exportedLibraries: Iterable<KLIB> = [],
 ) : SourceBasedCompilation<ObjCFramework>(
     targets = settings.get(),
     home = settings.get(),
@@ -425,7 +425,7 @@ class ObjCFrameworkCompilation(
     }
 
     override fun applyDependencies(argsBuilder: ArgsBuilder) = with(argsBuilder) {
-        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+        addFlattened(dependencies.libraries) { library -> ["-l", library.path] }
         exportedLibraries.forEach {
             assertTrue(it in dependencies.libraries)
             add("-Xexport-library=${it.path}")
@@ -483,7 +483,7 @@ class BinaryLibraryCompilation(
 
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+        addFlattened(dependencies.libraries) { library -> ["-l", library.path] }
     }
 }
 
@@ -495,7 +495,7 @@ class CInteropCompilation(
     settings: Settings,
     freeCompilerArgs: TestCompilerArgs,
     defFile: File,
-    sources: List<File> = emptyList(),
+    sources: List<File> = [],
     dependencies: Iterable<CompiledDependency<KLIB>>,
     expectedArtifact: KLIB
 ) : TestCompilation<KLIB>() {
@@ -511,16 +511,16 @@ class CInteropCompilation(
                     "cpp", "mm" -> ClangMode.CXX
                     else -> error("unexpected file extension: $it")
                 },
-                sourceFiles = listOf(it),
+                sourceFiles = [it],
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),
-                includeDirectories = listOf(defFile.parentFile),
-                additionalClangFlags = listOf(
+                includeDirectories = [defFile.parentFile],
+                additionalClangFlags = [
                     if (freeCompilerArgs.objcArc) {
                         "-fobjc-arc"
                     } else {
                         "-fno-objc-arc"
                     }
-                )
+                ]
             ).assertSuccess().resultingArtifact.libraryFile
         }
 
@@ -610,21 +610,21 @@ class SwiftCompilation<T : TestCompilationArtifact>(
 
         val args = buildList {
             addAll(
-                listOf(
+                [
                     "-sdk", configs.absoluteTargetSysRoot,
                     "-target", swiftTarget,
                     "-o", outputFile(expectedArtifact).absolutePath,
                     "-g", // Xcode seems to pass -g even for optimized builds by default.
                     "-Xcc", "-Werror", // To fail compilation on warnings in framework header.
-                )
+                ]
             )
             if (configs.targetTriple.isMacabi) {
                 addAll(
                     // Since the sysroot is for macOS, we should point the compiler to the directory with iOS system frameworks.
-                    listOf(
+                    [
                         "-Fsystem", "${configs.absoluteTargetSysRoot}/System/iOSSupport/System/Library/Frameworks",
                         "-Xcc", "-isystem", "-Xcc", "${configs.absoluteTargetSysRoot}/System/iOSSupport/usr/include",
-                    )
+                    ]
                 )
             }
             addAll(sources.map { it.absolutePath })
@@ -668,13 +668,13 @@ class SwiftCompilation<T : TestCompilationArtifact>(
     // so that we test the same Kotlin+Swift flags combination as used in production.
     private fun swiftcOptimizationModeFlags(optimizationMode: OptimizationMode): List<String> {
         return when (optimizationMode) {
-            OptimizationMode.DEBUG -> listOf(
+            OptimizationMode.DEBUG -> [
                 "-Xcc", "-DDEBUG=1", // -DDEBUG=1 for Clang, e.g. for C and Objective-C code
                 "-D", "DEBUG", // for Swift
                 "-Onone", // Optimization level
-            )
-            OptimizationMode.OPT -> listOf("-enable-default-cmo", "-O")
-            OptimizationMode.NO -> emptyList()
+            ]
+            OptimizationMode.OPT -> ["-enable-default-cmo", "-O"]
+            OptimizationMode.NO -> []
         }
         // TODO: swiftc has more variants of optimization flags, see
         //   https://youtrack.jetbrains.com/issue/KT-65436/K-N-ObjCExport-tests-use-various-optimization-flags-for-swiftc
@@ -710,7 +710,7 @@ abstract class FinalBinaryCompilation<A : TestCompilationArtifact>(
 ) {
     override fun applyDependencies(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         super.applyDependencies(argsBuilder)
-        addFlattened(dependencies.libraries) { library -> listOf("-l", library.path) }
+        addFlattened(dependencies.libraries) { library -> ["-l", library.path] }
     }
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder) {
@@ -835,7 +835,7 @@ class StaticCacheCompilation(
         class ForIncludedLibraryWithTests(val expectedExecutableArtifact: Executable, val extras: WithTestRunnerExtras) : Options
     }
 
-    override val sourceModules get() = emptyList<TestModule>()
+    override val sourceModules: List<TestModule> get() = []
 
     private val makePerFileCache: Boolean = makePerFileCacheOverride ?: settings.get<CacheMode>().makePerFileCaches
 
@@ -875,7 +875,7 @@ class StaticCacheCompilation(
         dependencies.friends.takeIf(Collection<*>::isNotEmpty)?.let { friends ->
             add("-friend-modules", friends.joinToString(File.pathSeparator) { friend -> friend.getHeaderKlibPathOrDefaultPath() })
         }
-        addFlattened(dependencies.cachedLibraries) { lib -> listOf("-l", lib.klib.getHeaderKlibPathOrDefaultPath()) }
+        addFlattened(dependencies.cachedLibraries) { lib -> ["-l", lib.klib.getHeaderKlibPathOrDefaultPath()] }
         super.applyDependencies(argsBuilder)
     }
 
@@ -905,10 +905,10 @@ internal class TestBundleCompilation(
 ) {
     private val partialLinkageConfig: UsedPartialLinkageConfig = settings.get()
 
-    override val irValidationCompilerOptions: List<String> = listOf(
+    override val irValidationCompilerOptions: List<String> = [
         "-Xverify-ir=warning",
         "-Xphases-to-validate-after=all"
-    )
+    ]
 
     override fun applySpecificArgs(argsBuilder: ArgsBuilder): Unit = with(argsBuilder) {
         add(
@@ -959,10 +959,10 @@ class CategorizedDependencies(uncategorizedDependencies: Iterable<TestCompilatio
     val failures: Set<TestCompilationResult.Failure> by lazy {
         uncategorizedDependencies.flatMapToSet { dependency ->
             when (val result = (dependency as? TestCompilation<*>)?.result) {
-                is TestCompilationResult.Failure -> listOf(result)
+                is TestCompilationResult.Failure -> [result]
                 is TestCompilationResult.DependencyFailures -> result.causes
-                is TestCompilationResult.Success -> emptyList()
-                null -> emptyList()
+                is TestCompilationResult.Success -> []
+                null -> []
             }
         }
     }

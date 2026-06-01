@@ -48,7 +48,7 @@ object GenerateSteppedRangesCodegenTestData {
 
     private class TestBuilder(
         firstLast: Pair<Any, Any>,
-        val operations: MutableList<Operation> = mutableListOf(),
+        val operations: MutableList<Operation> = [],
         expectedValuesOrFailIfNull: List<Any>? = null
     ) {
         val first = firstLast.first

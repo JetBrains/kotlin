@@ -71,7 +71,7 @@ object AsyncProfilerHelper {
                 val apiJar = directory.resolve("async-profiler.jar")
                 if (!apiJar.exists())
                     error("To use async-profiler, either add it to the compiler classpath, or put async-profiler.jar at this path: $apiJar")
-                val classLoader = URLClassLoader(arrayOf(apiJar.toURI().toURL()), null)
+                val classLoader = URLClassLoader([apiJar.toURI().toURL()], null)
                 classLoader.loadClass(fqName)
             }
         }

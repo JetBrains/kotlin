@@ -51,7 +51,7 @@ abstract class KtLightModifierList<out T : KtLightElement<KtModifierListOwner, P
 
     override fun toString() = "Light modifier list of $owner"
 
-    open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> = emptyList()
+    open fun nonSourceAnnotationsForAnnotationType(sourceAnnotations: List<PsiAnnotation>): List<KtLightAbstractAnnotation> = []
 
     abstract fun computeAnnotations(): List<KtLightAbstractAnnotation>
 }

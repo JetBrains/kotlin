@@ -50,7 +50,7 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("testData/builti
                     TestModuleKind.LibraryBinary,
                     testModule,
                     KaBuiltinsModuleImpl(testModule.targetPlatform(testServices), project),
-                    listOf(psiFile),
+                    [psiFile],
                 )
             }
         }

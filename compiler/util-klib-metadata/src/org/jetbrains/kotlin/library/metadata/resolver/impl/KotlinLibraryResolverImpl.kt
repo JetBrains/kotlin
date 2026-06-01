@@ -192,8 +192,8 @@ class KotlinLibraryResolverResultImpl(
     private val all: List<KotlinResolvedLibrary>
             by lazy {
                 buildList {
-                    val visiting = mutableSetOf<KotlinResolvedLibrary>()
-                    val visited = mutableSetOf<KotlinResolvedLibrary>()
+                    val visiting: MutableSet<KotlinResolvedLibrary> = []
+                    val visited: MutableSet<KotlinResolvedLibrary> = []
                     fun dfs(current: KotlinResolvedLibrary) {
                         if (current in visited) return
                         if (current in visiting) error("Cyclic dependency in library graph for: ${current.library.location}")

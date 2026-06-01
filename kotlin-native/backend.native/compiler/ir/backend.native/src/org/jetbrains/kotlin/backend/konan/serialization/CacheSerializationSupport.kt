@@ -54,7 +54,7 @@ internal class InlineFunctionSerializer(private val deserializer: KonanPartialMo
         val symbolDeserializer = fileDeserializationState.fileDeserializer.symbolDeserializer
         val protoDeclaration = fileReader.declaration(declarationIndex)
 
-        val outerClasses: List<IrClass> = (irFunction.parent as? IrClass)?.getOuterClasses(takeOnlyInner = false) ?: emptyList()
+        val outerClasses: List<IrClass> = (irFunction.parent as? IrClass)?.getOuterClasses(takeOnlyInner = false).orEmpty()
         require((outerClasses.getOrNull(0)?.parent ?: irFunction.parent) is IrFile) {
             "Local inline functions are not supported: ${irFunction.render()}"
         }
@@ -187,6 +187,8 @@ internal fun buildSerializedClassFields(
     require(outerClasses.first().parent is IrFile) { "Local classes are not supported: ${irClass.render()}" }
 
     var protoClass = protoDeclaration.irClass
+
+    @Suppress("ConvertToCollectionLiterals")
     val protoClasses = mutableListOf(protoClass)
     for (classIndex in outerClasses.indices) {
         if (classIndex < outerClasses.size - 1) {
@@ -195,7 +197,7 @@ internal fun buildSerializedClassFields(
         }
     }
 
-    val protoFields = mutableListOf<ProtoField>()
+    val protoFields: MutableList<ProtoField> = []
     for (i in 0 until protoClass.declarationCount) {
         val declaration = protoClass.getDeclaration(i)
         if (declaration.declaratorCase == ProtoDeclaration.DeclaratorCase.IR_FIELD)
@@ -322,7 +324,7 @@ internal class ClassFieldsDeserializer(
 
 private fun IrClass.getOuterClasses(takeOnlyInner: Boolean): List<IrClass> {
     var outerClass = this
-    val outerClasses = mutableListOf(outerClass)
+    val outerClasses: MutableList<IrClass> = [outerClass]
     while (outerClass.isInner || !takeOnlyInner) {
         outerClass = outerClass.parent as? IrClass ?: break
         outerClasses.add(outerClass)
@@ -435,7 +437,7 @@ internal object ClassFieldsSerializer {
                 stream.writeInt(field.alignment)
             }
         }
-        return IrArrayWriter(listOf(signatures, signatureStrings, stream.buf), false).writeIntoMemory()
+        return IrArrayWriter([signatures, signatureStrings, stream.buf], false).writeIntoMemory()
     }
 
     fun deserializeTo(data: ByteArray, result: MutableList<SerializedClassFields>) {

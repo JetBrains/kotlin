@@ -21,7 +21,7 @@ class MissingSupertypesResolver(
     }
 
     private fun doGetMissingClassifiers(descriptor: ClassifierDescriptor): Set<ClassifierDescriptor> {
-        val missingSuperClassifiers = mutableSetOf<ClassifierDescriptor>()
+        val missingSuperClassifiers: MutableSet<ClassifierDescriptor> = []
         val type = descriptor.defaultType
 
         for (supertype in type.supertypes()) {

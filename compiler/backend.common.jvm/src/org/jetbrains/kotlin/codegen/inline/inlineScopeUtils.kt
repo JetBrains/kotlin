@@ -14,7 +14,7 @@ fun String.dropInlineScopeInfo(): String =
 
 fun String.getInlineScopeInfo(): InlineScopeInfo? {
     val inlineScopeInfoSuffix = substringAfter(INLINE_SCOPE_NUMBER_SEPARATOR)
-    val numbers = arrayOf(StringBuilder(), StringBuilder(), StringBuilder())
+    val numbers: Array<StringBuilder> = [StringBuilder(), StringBuilder(), StringBuilder()]
     var currentIndex = 0
     for (char in inlineScopeInfoSuffix) {
         if (char == INLINE_SCOPE_NUMBER_SEPARATOR) {

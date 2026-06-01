@@ -5,15 +5,15 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 import org.jetbrains.kotlinx.dataframe.plugin.impl.data.ColumnWithPathApproximation
 
 fun PluginDataFrameSchema.flatten(includeFrames: Boolean): List<ColumnWithPathApproximation> {
-    if (columns().isEmpty()) return emptyList()
-    val columns = mutableListOf<ColumnWithPathApproximation>()
-    flattenImpl(columns(), emptyList(), columns, includeFrames)
+    if (columns().isEmpty()) return []
+    val columns: MutableList<ColumnWithPathApproximation> = []
+    flattenImpl(columns(), [], columns, includeFrames)
     return columns
 }
 
 fun flattenImpl(columns: List<SimpleCol>, path: List<String>, flatList: MutableList<ColumnWithPathApproximation>, includeFrames: Boolean) {
     columns.forEach { column ->
-        val fullPath = path + listOf(column.name)
+        val fullPath = path + column.name
         when (column) {
             is SimpleColumnGroup -> {
                 flatList.add(ColumnWithPathApproximation(ColumnPath(fullPath), column))

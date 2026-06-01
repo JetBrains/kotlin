@@ -222,10 +222,10 @@ abstract class KtLightClassImpl(
             return false
         }
 
-        private val ktTokenToPsiModifier = listOf(
+        private val ktTokenToPsiModifier = [
             KtTokens.PUBLIC_KEYWORD to PsiModifier.PUBLIC,
             KtTokens.INTERNAL_KEYWORD to PsiModifier.PUBLIC,
             KtTokens.PROTECTED_KEYWORD to PsiModifier.PROTECTED,
-        )
+        ]
     }
 }

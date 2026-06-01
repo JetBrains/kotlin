@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractLLLazyBodiesCalculatorTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private val lazyChecker = object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {

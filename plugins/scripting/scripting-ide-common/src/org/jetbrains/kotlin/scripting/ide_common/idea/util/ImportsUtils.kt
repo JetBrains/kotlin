@@ -51,7 +51,7 @@ fun KotlinType.canBeReferencedViaImport(): Boolean {
 
 // for cases when class qualifier refers companion object treats it like reference to class itself
 fun KtReferenceExpression.getImportableTargets(bindingContext: BindingContext): Collection<DeclarationDescriptor> {
-    val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { listOf(it) }
+    val targets = bindingContext[BindingContext.SHORT_REFERENCE_TO_COMPANION_OBJECT, this]?.let { [it] }
         ?: getReferenceTargets(bindingContext)
     return targets.map { it.getImportableDescriptor() }.toSet()
 }

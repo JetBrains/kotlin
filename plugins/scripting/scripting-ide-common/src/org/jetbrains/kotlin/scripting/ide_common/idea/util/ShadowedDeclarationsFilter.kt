@@ -76,7 +76,7 @@ class ShadowedDeclarationsFilter(
 
     fun <TDescriptor : DeclarationDescriptor> filterEqualSignatureGroup(
         descriptors: Collection<TDescriptor>,
-        descriptorsToImport: Collection<TDescriptor> = emptyList()
+        descriptorsToImport: Collection<TDescriptor> = []
     ): Collection<TDescriptor> {
         if (descriptors.size == 1) return descriptors
 
@@ -85,13 +85,13 @@ class ShadowedDeclarationsFilter(
         } ?: return descriptors
 
         if (first is ClassDescriptor) { // for classes with the same FQ-name we simply take the first one
-            return listOf(first)
+            return [first]
         }
 
         // Optimization: if the descriptors are structurally equivalent then there is no need to run resolve.
         // This can happen when the classpath contains multiple copies of the same library.
         if (descriptors.all { DescriptorEquivalenceForOverrides.areEquivalent(first, it, allowCopiesFromTheSameDeclaration = true) }) {
-            return listOf(first)
+            return [first]
         }
 
         val isFunction = first is FunctionDescriptor
@@ -152,9 +152,9 @@ class ShadowedDeclarationsFilter(
 
             override fun getValueArguments() = arguments
 
-            override fun getFunctionLiteralArguments() = emptyList<LambdaArgument>()
+            override fun getFunctionLiteralArguments(): List<LambdaArgument> = []
 
-            override fun getTypeArguments() = emptyList<KtTypeProjection>()
+            override fun getTypeArguments(): List<KtTypeProjection> = []
 
             override fun getTypeArgumentList() = null
 

@@ -15,10 +15,10 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
 
     @Test
     fun emptyValueParameters() = doTestSuccess(
-        expected = emptyList(),
-        emptyList(),
-        emptyList(),
-        emptyList()
+        expected = [],
+        [],
+        [],
+        []
     )
 
     @Test
@@ -57,7 +57,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
             "b" to "kotlin/Int",
             "c" to "org/sample/Foo"
         ),
-        emptyList()
+        []
     )
 
     @Test(expected = IllegalCommonizerStateException::class)
@@ -136,7 +136,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
     fun mismatchedParameterTypes() {
         assertEquals(
             null, createCommonizer().commonize(
-                listOf(
+                [
                     mockValueParams(
                         "a" to "kotlin/String",
                         "b" to "kotlin/Int",
@@ -152,7 +152,7 @@ class ValueParameterListCommonizerTest : AbstractCommonizerTest<List<CirValuePar
                         "b" to "kotlin/String",
                         "c" to "org/sample/Bar"
                     )
-                )
+                ]
             )
         )
     }

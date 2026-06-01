@@ -40,7 +40,7 @@ class ScriptWithCustomDefEnvironmentConfigurator(testServices: TestServices) : E
         }
     }
 
-    override val directiveContainers: List<DirectivesContainer> = listOf(ScriptingTestDirectives)
+    override val directiveContainers: List<DirectivesContainer> = [ScriptingTestDirectives]
 }
 
 class ScriptWithCustomDefRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {

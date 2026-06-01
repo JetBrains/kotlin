@@ -322,23 +322,23 @@ class StaticExpressionDetectionTests : AbstractIrTransformTest() {
             }
         """.trimIndent()
 
-        val files = listOf(
+        val files = [
             SourceFile("Other.kt", otherFileExtraSrc),
             SourceFile("Test.kt", testSource),
-        )
+        ]
         val irModule = compileToIr(
             files,
             additionalPaths = if (includeUiImports) {
-                listOf(
+                [
                     Classpath.composeUiJar(),
                     Classpath.composeUiUnitJar(),
                     Classpath.composeUiGraphicsJar(),
                     Classpath.composeUiTextJar(),
                     Classpath.composeFoundationTextJar(),
                     Classpath.composeFoundationLayoutJar()
-                )
+                ]
             } else {
-                emptyList()
+                []
             }
         )
 

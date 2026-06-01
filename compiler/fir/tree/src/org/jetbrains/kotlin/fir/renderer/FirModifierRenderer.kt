@@ -90,9 +90,9 @@ abstract class FirModifierRenderer {
     }
 
     companion object {
-        private val visibilitiesToRenderEffectiveSet = setOf(
+        private val visibilitiesToRenderEffectiveSet: Set<Visibility> = [
             Visibilities.Private, Visibilities.PrivateToThis, Visibilities.Internal,
             Visibilities.Protected, Visibilities.Public, Visibilities.Local
-        )
+        ]
     }
 }

@@ -66,7 +66,7 @@ sealed class TestStepBuilder<InputArtifact, OutputArtifact, out FacadeStep>
                   InputArtifactKind : TestArtifactKind<InputArtifact>,
                   Handler : AnalysisHandlerBase<InputArtifact>,
                   HandlersStep : TestStep<InputArtifact, Nothing> {
-        private val handlers: MutableList<Constructor<Handler>> = mutableListOf()
+        private val handlers: MutableList<Constructor<Handler>> = []
 
         fun useHandlers(vararg constructor: Constructor<Handler>) {
             handlers += constructor

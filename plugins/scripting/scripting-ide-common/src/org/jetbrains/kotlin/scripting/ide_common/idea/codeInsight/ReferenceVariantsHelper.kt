@@ -47,7 +47,7 @@ class ReferenceVariantsHelper(
     private val resolutionFacade: ResolutionFacade,
     private val moduleDescriptor: ModuleDescriptor,
     private val visibilityFilter: (DeclarationDescriptor) -> Boolean,
-    private val notProperties: Set<FqNameUnsafe> = setOf()
+    private val notProperties: Set<FqNameUnsafe> = []
 ) {
     fun getReferenceVariants(
         expression: KtSimpleNameExpression,
@@ -165,8 +165,8 @@ class ReferenceVariantsHelper(
             is CallTypeAndReceiver.SUPER_MEMBERS -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.SAFE -> receiverExpression = callTypeAndReceiver.receiver
             is CallTypeAndReceiver.INFIX -> receiverExpression = callTypeAndReceiver.receiver
-            is CallTypeAndReceiver.OPERATOR -> return emptyList()
-            is CallTypeAndReceiver.UNKNOWN -> return emptyList()
+            is CallTypeAndReceiver.OPERATOR -> return []
+            is CallTypeAndReceiver.UNKNOWN -> return []
             else -> throw RuntimeException() //TODO: see KT-9394
         }
 
@@ -200,7 +200,7 @@ class ReferenceVariantsHelper(
             }
 
             val explicitReceiverTypes = if (useReceiverType != null) {
-                listOf(useReceiverType)
+                [useReceiverType]
             } else {
                 callTypeAndReceiver.receiverTypes(
                     bindingContext,
@@ -235,7 +235,7 @@ class ReferenceVariantsHelper(
                 if (it is CallableMemberDescriptor && it.kind == CallableMemberDescriptor.Kind.FAKE_OVERRIDE)
                     it.overriddenDescriptors
                 else
-                    listOf(it)
+                    [it]
             }
         }
 
@@ -249,7 +249,7 @@ class ReferenceVariantsHelper(
         nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         if (receiverExpression != null) {
-            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
+            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return []
             return qualifier.staticScope.collectStaticMembers(resolutionFacade, kindFilter, nameFilter)
         } else {
             val scope = contextElement.getResolutionScope(bindingContext, resolutionFacade)
@@ -273,7 +273,7 @@ class ReferenceVariantsHelper(
             val isStatic = bindingContext[BindingContext.DOUBLE_COLON_LHS, receiver] is DoubleColonLHS.Type
 
             val explicitReceiverTypes = if (useReceiverType != null) {
-                listOf(useReceiverType)
+                [useReceiverType]
             } else {
                 callTypeAndReceiver.receiverTypes(
                     bindingContext,
@@ -317,7 +317,7 @@ class ReferenceVariantsHelper(
         nameFilter: (Name) -> Boolean
     ): Collection<DeclarationDescriptor> {
         if (receiverExpression != null) {
-            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return emptyList()
+            val qualifier = bindingContext[BindingContext.QUALIFIER, receiverExpression] ?: return []
             val staticDescriptors = qualifier.staticScope.collectStaticMembers(resolutionFacade, kindFilter, nameFilter)
 
             val objectDescriptor =

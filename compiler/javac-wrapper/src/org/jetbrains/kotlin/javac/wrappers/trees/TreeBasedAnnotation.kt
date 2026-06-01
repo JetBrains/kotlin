@@ -98,7 +98,7 @@ class TreeBasedJavaClassObjectAnnotationArgument(
 ) : TreeBasedAnnotationArgument(name, javac), JavaClassObjectAnnotationArgument {
 
     override fun getReferencedType(): JavaType =
-        TreeBasedType.create(type, compilationUnit, javac, emptyList(), onElement)
+        TreeBasedType.create(type, compilationUnit, javac, [], onElement)
 
 }
 

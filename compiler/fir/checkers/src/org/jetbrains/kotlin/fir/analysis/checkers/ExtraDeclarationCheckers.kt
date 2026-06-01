@@ -11,29 +11,29 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
 object ExtraDeclarationCheckers : DeclarationCheckers() {
-    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(
+    override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = [
         FirAnonymousUnusedParamChecker,
-    )
+    ]
 
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = [
         RedundantVisibilityModifierSyntaxChecker,
         RedundantModalityModifierSyntaxChecker,
-    )
+    ]
 
-    override val propertyCheckers: Set<FirPropertyChecker> = setOf(
+    override val propertyCheckers: Set<FirPropertyChecker> = [
         RedundantSetterParameterTypeChecker,
-    )
+    ]
 
-    override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = setOf(
+    override val variableAssignmentCfaBasedCheckers: Set<AbstractFirPropertyInitializationChecker> = [
         CanBeValChecker,
         UnusedVariableAssignmentChecker,
-    )
+    ]
 
-    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = setOf(
+    override val controlFlowAnalyserCheckers: Set<FirControlFlowChecker> = [
         UnreachableCodeChecker,
-    )
+    ]
 
-    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = setOf(
+    override val namedFunctionCheckers: Set<FirNamedFunctionChecker> = [
         RedundantReturnUnitType,
-    )
+    ]
 }

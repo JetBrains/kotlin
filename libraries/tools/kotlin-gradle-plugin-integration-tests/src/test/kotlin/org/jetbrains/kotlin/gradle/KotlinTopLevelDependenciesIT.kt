@@ -54,7 +54,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                 }
             }
             assertEquals(
-                emptyList(),
+                [],
                 collectFusEvents(
                     "assemble",
                     buildAction = BuildActions.build
@@ -69,7 +69,7 @@ class KotlinTopLevelDependenciesIT : KGPBaseTest() {
                 BuildActions.build
             }
             assertEquals(
-                listOf("${fusEventName}=true"),
+                ["${fusEventName}=true"],
                 collectFusEvents(
                     "assemble",
                     buildAction = action

@@ -31,7 +31,7 @@ internal fun AbstractNativeSimpleTest.lipoCreate(
 
     val parameters = CommandParameters(
         commandName = "LIPO",
-        command = listOf(lipoPath) + arguments.toList()
+        command = [lipoPath] + arguments.toList()
     )
 
     fun loggedData(output: String = "") = LoggedData.CompilationToolCall(
@@ -52,7 +52,7 @@ internal fun AbstractNativeSimpleTest.lipoCreate(
         )
     }
 
-    val universalMagic = listOf(0xca, 0xfe, 0xba, 0xbe)
+    val universalMagic = [0xca, 0xfe, 0xba, 0xbe]
     val actualMagic = FileInputStream(outputFile).use { stream -> (0..<universalMagic.count()).map { stream.read() } }
     if (actualMagic != universalMagic) {
         return TestCompilationResult.CompilationToolFailure(

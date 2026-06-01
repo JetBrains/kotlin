@@ -92,19 +92,19 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         private val companionObjectValue = mapOf<String, Any>("kotlin.text.Regex\$Companion" to Regex.Companion)
 
         // TODO remove later; used for tests only
-        private val intrinsicClasses = setOf(
+        private val intrinsicClasses: Set<String> = [
             "kotlin.text.StringBuilder", "kotlin.Pair", "kotlin.collections.ArrayList",
             "kotlin.collections.HashMap", "kotlin.collections.LinkedHashMap",
             "kotlin.collections.HashSet", "kotlin.collections.LinkedHashSet",
             "kotlin.text.RegexOption", "kotlin.text.Regex", "kotlin.text.Regex.Companion", "kotlin.text.MatchGroup",
-        )
+        ]
 
-        private val intrinsicJavaClasses = setOf(
+        private val intrinsicJavaClasses: Set<String> = [
             "java.lang.StringBuilder", "java.util.ArrayList",
             "java.util.LinkedHashMap", "java.util.LinkedHashSet",
             "java.lang.Exception", "java.util.NoSuchElementException", "java.lang.NullPointerException",
             "java.lang.IllegalArgumentException", "java.lang.ArithmeticException", "java.lang.UnsupportedOperationException",
-        )
+        ]
 
         private val intrinsicFunctionToHandler = mapOf(
             "Array.kotlin.collections.asList()" to "kotlin.collections.ArraysKt",
@@ -115,7 +115,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
             "Array.kotlin.collections.copyToArrayOfAny(Boolean)" to "kotlin.collections.CollectionsKt",
         )
 
-        private val ranges = setOf("kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange")
+        private val ranges: Set<String> = ["kotlin.ranges.CharRange", "kotlin.ranges.IntRange", "kotlin.ranges.LongRange"]
 
         private fun IrFunction.getSignature(fqName: String = this.fqName): String {
             val [receiverParameters, otherParameters] = parameters
@@ -262,7 +262,7 @@ internal class Wrapper(val value: Any, override val irClass: IrClass, environmen
         }
 
         private fun IrFunction.getOriginalOverriddenSymbols(): MutableList<IrFunctionSymbol> {
-            val overriddenSymbols = mutableListOf<IrFunctionSymbol>()
+            val overriddenSymbols: MutableList<IrFunctionSymbol> = []
             if (this is IrSimpleFunction) {
                 val pool = this.overriddenSymbols.toMutableList()
                 val iterator = pool.listIterator()

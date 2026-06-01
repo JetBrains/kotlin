@@ -43,7 +43,7 @@ class JavaClassesTrackerImpl(
     val javaClassesUpdates: Collection<SerializedJavaClassWithSource>
         get() = classToSourceSerialized.values
 
-    private val classDescriptors: MutableList<JavaClassDescriptor> = mutableListOf()
+    private val classDescriptors: MutableList<JavaClassDescriptor> = []
 
     override fun reportClass(classDescriptor: JavaClassDescriptor) {
         val classId = classDescriptor.classId!!

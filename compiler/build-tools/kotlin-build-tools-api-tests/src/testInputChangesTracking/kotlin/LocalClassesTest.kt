@@ -43,7 +43,7 @@ class LocalClassesTest : BaseCompilationTest() {
 
             module.replaceFileWithVersion("Foo.kt", "changeLocalClass")
 
-            module.compile(expectedDirtySet = setOf("Foo.kt"))
+            module.compile(expectedDirtySet = ["Foo.kt"])
         }
     }
 }

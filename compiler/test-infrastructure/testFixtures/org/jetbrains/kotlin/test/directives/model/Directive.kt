@@ -52,7 +52,7 @@ class ValueDirective<T : Any>(
 abstract class RegisteredDirectives : Iterable<Directive> {
     companion object {
         // Made lazy to break a class initialization cycle (similar to KT-82886)
-        val Empty by lazy { RegisteredDirectivesImpl(emptyList(), emptyMap(), emptyMap()) }
+        val Empty by lazy { RegisteredDirectivesImpl([], emptyMap(), emptyMap()) }
     }
 
     abstract operator fun contains(directive: Directive): Boolean
@@ -76,12 +76,12 @@ class RegisteredDirectivesImpl(
     }
 
     override operator fun get(directive: StringDirective): List<String> {
-        return stringDirectives[directive] ?: emptyList()
+        return stringDirectives[directive] ?: []
     }
 
     override fun <T : Any> get(directive: ValueDirective<T>): List<T> {
         @Suppress("UNCHECKED_CAST")
-        return valueDirectives[directive] as List<T>? ?: emptyList()
+        return valueDirectives[directive] as List<T>? ?: []
     }
 
     override fun isEmpty(): Boolean {

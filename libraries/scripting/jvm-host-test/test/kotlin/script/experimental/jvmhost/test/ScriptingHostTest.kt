@@ -119,7 +119,7 @@ class ScriptingHostTest {
             if (isRunningTestOnK2) BasicJvmScriptingHost(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
             else BasicJvmScriptingHost.createLegacy(evaluator = BasicJvmScriptClassFilesGenerator(outDir))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
-        val classloader = URLClassLoader(arrayOf(outDir.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
+        val classloader = URLClassLoader([outDir.toURI().toURL()], ScriptingHostTest::class.java.classLoader)
         val scriptClass = classloader.loadClass("SavedScript")
         val output = captureOut {
             scriptClass.newInstance()
@@ -137,7 +137,7 @@ class ScriptingHostTest {
             else BasicJvmScriptingHost.createLegacy(evaluator = BasicJvmScriptJarGenerator(outJar))
         host.eval("println(\"$greeting\")".toScriptSource(name = "SavedScript.kts"), compilationConfiguration, null).throwOnFailure()
         Thread.sleep(100)
-        val classloader = URLClassLoader(arrayOf(outJar.toURI().toURL()), ScriptingHostTest::class.java.classLoader)
+        val classloader = URLClassLoader([outJar.toURI().toURL()], ScriptingHostTest::class.java.classLoader)
         val scriptClass = classloader.loadClass("SavedScript")
         val output = captureOut {
             scriptClass.newInstance()
@@ -189,7 +189,7 @@ class ScriptingHostTest {
         checkInvokeMain(Thread.currentThread().contextClassLoader)
 
         val outputFromProcess = runScriptFromJar(outJar)
-        assertEquals(listOf(greeting), outputFromProcess)
+        assertEquals([greeting], outputFromProcess)
     }
 
     @Test
@@ -207,7 +207,7 @@ class ScriptingHostTest {
 
     @Test
     fun testSimpleImport() {
-        val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+        val greeting = ["Hello from helloWithVal script!", "Hello from imported helloWithVal script!"]
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val compilationConfiguration = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             makeSimpleConfigurationWithTestImport()
@@ -220,7 +220,7 @@ class ScriptingHostTest {
 
     @Test
     fun testSimpleImportWithImplicitReceiver() {
-        val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+        val greeting = ["Hello from helloWithVal script!", "Hello from imported helloWithVal script!"]
         val script = "println(\"Hello from imported \$helloScriptName script!\")"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -241,7 +241,7 @@ class ScriptingHostTest {
 
     @Test
     fun testSimpleImportWithImplicitReceiverRef() {
-        val greeting = listOf("Hello from helloWithVal script!", "Hello from imported helloWithVal script!")
+        val greeting = ["Hello from helloWithVal script!", "Hello from imported helloWithVal script!"]
         val script = "println(\"Hello from imported \${(::helloScriptName).get()} script!\")"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -282,7 +282,7 @@ class ScriptingHostTest {
 
     @Test
     fun testScriptWithImplicitReceiverWithGeneric() {
-        val result = listOf<String>("")
+        val result: List<String> = [""]
         val script = "5"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -417,7 +417,7 @@ class ScriptingHostTest {
 
     @Test
     fun testScriptWithImplicitReceiversWithSameShortName() {
-        val result = listOf("42")
+        val result = ["42"]
         val script = "println(v1 + v2)"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -454,17 +454,17 @@ class ScriptingHostTest {
                 )
             }
         )
-        definition.evalScriptAndCheckOutput("println(v)", listOf("first"))
+        definition.evalScriptAndCheckOutput("println(v)", ["first"])
 
         if (IS_COMPILING_WITH_K2) {
             // this is not supported in K1
-            definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", listOf("second"))
+            definition.evalScriptAndCheckOutput("println(this@TestClass2.v)", ["second"])
         }
     }
 
     @Test
     fun testScriptWithImplicitReceiverAndBaseClassWithSameNamedProperty() {
-        val result = listOf("base")
+        val result = ["base"]
         val script = "println(v)"
         val definition = createJvmScriptDefinitionFromTemplate<SimpleScriptTemplate>(
             compilation = {
@@ -487,7 +487,7 @@ class ScriptingHostTest {
 
     @Test
     fun testScriptImplicitReceiversTransitiveVisibility() {
-        val result = listOf("42")
+        val result = ["42"]
         val script = """
             import kotlin.script.experimental.jvmhost.test.forScript.p1.TestClass
 
@@ -567,14 +567,14 @@ class ScriptingHostTest {
 
     @Test
     fun testDiamondImportWithoutSharing() {
-        val greeting = listOf("Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3")
+        val greeting = ["Hi from common", "Hi from middle", "Hi from common", "sharedVar == 3"]
         val output = doDiamondImportTest()
         assertEquals(greeting, output)
     }
 
     @Test
     fun testDiamondImportWithSharing() {
-        val greeting = listOf("Hi from common", "Hi from middle", "sharedVar == 5")
+        val greeting = ["Hi from common", "Hi from middle", "sharedVar == 5"]
         val output = doDiamondImportTest(
             ScriptEvaluationConfiguration {
                 enableScriptsInstancesSharing()
@@ -872,7 +872,7 @@ class ScriptingHostTest {
 
 internal fun runScriptFromJar(jar: File): List<String> {
     val javaExecutable = File(File(System.getProperty("java.home"), "bin"), "java")
-    val args = listOf(javaExecutable.absolutePath, "-jar", jar.path)
+    val args = [javaExecutable.absolutePath, "-jar", jar.path]
     val processBuilder = ProcessBuilder(args)
     processBuilder.redirectErrorStream(true)
     val r = run {
@@ -982,10 +982,10 @@ internal fun captureOutAndErr(body: () -> Unit): Pair<String, String> {
     return outStream.toString().trim() to errStream.toString().trim()
 }
 
-private val UNRESOLVED_CLASS_MESSAGES = arrayOf(
+private val UNRESOLVED_CLASS_MESSAGES: Array<String> = [
     "unable to load class kotlin.script.experimental.jvmhost.test.forScript.NotExistent", // K1
     "Unresolved reference 'kotlin.script.experimental.jvmhost.test.forScript.NotExistent'.", // K2
-)
+]
 
 private val IS_COMPILING_WITH_K2 =
     System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true

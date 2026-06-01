@@ -27,7 +27,7 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
     data class RawDirective(val name: String, val values: List<String>?, val rawValue: String?)
     data class ParsedDirective(val directive: Directive, val values: List<*>)
 
-    private val simpleDirectives = mutableListOf<SimpleDirective>()
+    private val simpleDirectives: MutableList<SimpleDirective> = []
     private val stringValueDirectives = mutableMapOf<StringDirective, MutableList<String>>()
     private val valueDirectives = mutableMapOf<ValueDirective<*>, MutableList<Any>>()
 
@@ -62,20 +62,20 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
         (val name, val rawValues = values, val rawValueString = rawValue) = rawDirective
         val directive = container[name] ?: return null
 
-        val values: List<*> = when (directive) {
+        val values: List<Any?> = when (directive) {
             is SimpleDirective -> {
                 if (rawValues != null) {
                     assertions.fail {
                         "Directive $directive should have no arguments, but ${rawValues.joinToString(", ")} are passed"
                     }
                 }
-                emptyList<Any?>()
+                []
             }
 
             is StringDirective -> {
                 when (directive.multiLine) {
                     true -> listOfNotNull(rawValueString)
-                    false -> rawValues ?: emptyList()
+                    false -> rawValues ?: []
                 }
             }
 
@@ -90,7 +90,7 @@ class RegisteredDirectivesParser(private val container: DirectivesContainer, pri
                 } else {
                     // rawValueString is non-null whenever rawValues is non-null.
                     val raw = rawValueString!!
-                    listOf(directive.extractValue(raw) ?: assertions.fail { "$raw is not valid value for $directive" })
+                    [directive.extractValue(raw) ?: assertions.fail { "$raw is not valid value for $directive" }]
                 }
             }
         }

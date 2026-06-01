@@ -35,7 +35,7 @@ class AllUnderImportScope private constructor(
 
 
     private val excludedNames: Set<Name> = if (excludedImportNames.isEmpty()) { // optimization
-        emptySet<Name>()
+        []
     } else {
         val fqName = DescriptorUtils.getFqNameSafe(descriptor)
         // toSet() is used here instead mapNotNullTo(hashSetOf()) because it results in not keeping empty sets as separate instances
@@ -88,12 +88,12 @@ class AllUnderImportScope private constructor(
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        if (name in excludedNames) return emptyList()
+        if (name in excludedNames) return []
         return flatMapScopes(scope1, scope2) { it.getContributedVariables(name, location) }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        if (name in excludedNames) return emptyList()
+        if (name in excludedNames) return []
         return flatMapScopes(scope1, scope2) { it.getContributedFunctions(name, location) }
     }
 

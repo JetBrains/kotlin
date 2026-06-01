@@ -57,7 +57,7 @@ class IrInterpreterConstGetterPreprocessor : IrInterpreterPreprocessor() {
         return if (receiver.shouldDropConstReceiver()) {
             this
         } else {
-            IrCompositeImpl(startOffset, endOffset, this.type, null, listOf(receiver, this))
+            IrCompositeImpl(startOffset, endOffset, this.type, null, [receiver, this])
         }
     }
 

@@ -75,7 +75,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, wasmTarget)
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
-        configuration.targetPlatform = WasmPlatforms.wasmPlatformByTargets(listOf(configuration.wasmTarget))
+        configuration.targetPlatform = WasmPlatforms.wasmPlatformByTargets([configuration.wasmTarget])
         configuration.wasmGenerateClosedWorldMultimodule = arguments.wasmGenerateClosedWorldMultimodule
     }
 }

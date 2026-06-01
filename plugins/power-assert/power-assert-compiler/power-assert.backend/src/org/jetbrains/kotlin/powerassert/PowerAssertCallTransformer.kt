@@ -213,14 +213,14 @@ class PowerAssertCallTransformer(
 
     private fun findCallBuilders(function: IrFunction, original: IrCall): List<CallBuilder> {
         val values = function.parameters
-        if (values.isEmpty()) return emptyList()
+        if (values.isEmpty()) return []
 
         val finder = context.finderForSource(sourceFile.irFile)
         // Java static functions require searching by class
         val parentClassFunctions = (
                 function.parentClassId
                     ?.let { finder.findClass(it) }
-                    ?.functions ?: emptySequence()
+                    ?.functions ?: []
                 )
             .filter { it.owner.kotlinFqName == function.kotlinFqName }
             .toList()

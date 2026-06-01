@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 import org.jetbrains.kotlin.incremental.*
@@ -18,7 +19,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     System.setProperty("java.awt.headless", "true")
 
-    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val jvmOnlyBoxTests = ["compileKotlinAgainstKotlin"]
     val k1BoxTestDir = "multiplatform/k1"
     val k2BoxTestDir = "multiplatform/k2"
     val irInterpreterTests = "involvesIrInterpreter"
@@ -91,11 +92,11 @@ fun main(args: Array<String>) {
 
         testGroup(testsRoot, "js/js.translator/testData/box", testRunnerMethodName = "runTest0") {
             testClass<AbstractPsiJsBoxTest> {
-                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = ["es6classes"])
             }
 
             testClass<AbstractLightTreeJsBoxTest> {
-                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = listOf("es6classes"))
+                model(pattern = "^([^_](.+))\\.kt$", excludeDirs = ["es6classes"])
             }
 
             testClass<AbstractJsES6BoxTest>(annotations = listOf(*es6())) {
@@ -302,13 +303,13 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/ir/irText", testRunnerMethodName = "runTest0") {
             testClass<AbstractLightTreeJsIrTextTest> {
                 model(
-                    excludeDirs = listOf("declarations/multiplatform/k1")
+                    excludeDirs = ["declarations/multiplatform/k1"]
                 )
             }
 
             testClass<AbstractPsiJsIrTextTest> {
                 model(
-                    excludeDirs = listOf("declarations/multiplatform/k1")
+                    excludeDirs = ["declarations/multiplatform/k1"]
                 )
             }
         }
@@ -322,6 +323,6 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun es6() = arrayOf(
+private fun es6(): Array<AnnotationModel> = [
     annotation(Tag::class.java, "es6")
-)
+]

@@ -21,6 +21,6 @@ internal class StdlibRepository(
     }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
-        return setOf(stdlib)
+        return [stdlib]
     }
 }

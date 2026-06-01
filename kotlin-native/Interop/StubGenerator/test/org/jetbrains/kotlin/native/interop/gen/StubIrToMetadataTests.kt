@@ -21,14 +21,14 @@ class StubIrToMetadataTests {
     }
 
     private fun createTrivialFunction(name: String): FunctionStub {
-        val cDeclaration = FunctionDecl(name, emptyList(), intType, false, DirectAccess.Symbol(name))
+        val cDeclaration = FunctionDecl(name, [], intType, false, DirectAccess.Symbol(name))
         val origin = StubOrigin.Function(cDeclaration)
         return FunctionStub(
                 name = cDeclaration.name,
                 returnType = intStubType,
-                parameters = listOf(),
+                parameters = [],
                 origin = origin,
-                annotations = mutableListOf(),
+                annotations = [],
                 external = true,
                 receiver = null,
                 modality = MemberStubModality.FINAL
@@ -51,8 +51,8 @@ class StubIrToMetadataTests {
     ): BridgeBuilderResult {
         val nativeBridges = object : NativeBridges {
             override fun isSupported(nativeBacked: NativeBacked): Boolean = true
-            override val kotlinLines: Sequence<String> = emptySequence()
-            override val nativeLines: Sequence<String> = emptySequence()
+            override val kotlinLines: Sequence<String> = []
+            override val nativeLines: Sequence<String> = []
         }
         val kotlinFile = object : KotlinFile(fqName, namesToBeDeclared) {
             override val mappingBridgeGenerator: MappingBridgeGenerator
@@ -63,14 +63,14 @@ class StubIrToMetadataTests {
                 nativeBridges = nativeBridges,
                 propertyAccessorBridgeBodies = emptyMap(),
                 functionBridgeBodies = emptyMap(),
-                excludedStubs = emptySet()
+                excludedStubs = []
         )
     }
 
     private fun createMetadata(
             fqName: String,
-            functions: List<FunctionStub> = emptyList(),
-            properties: List<PropertyStub> = emptyList()
+            functions: List<FunctionStub> = [],
+            properties: List<PropertyStub> = []
     ): KmModuleFragment {
         val stubContainer = SimpleStubContainer(functions = functions, properties = properties)
         val bridgeBuilderResult = createFakeBridgeBuilderResult(fqName, stubContainer.computeNamesToBeDeclared(fqName))
@@ -81,7 +81,7 @@ class StubIrToMetadataTests {
     fun `single simple function`() {
         val packageName = "single_function"
         val function = createTrivialFunction("hello")
-        val metadata = createMetadata(packageName, functions = listOf(function))
+        val metadata = createMetadata(packageName, functions = [function])
         with (metadata) {
             assertEquals(packageName, packageName)
             assertTrue(classes.isEmpty())
@@ -100,7 +100,7 @@ class StubIrToMetadataTests {
     @Test
     fun `single constant`() {
         val property = createTrivialIntegerConstantProperty("meaning", 42)
-        val metadata = createMetadata("single_property", properties = listOf(property))
+        val metadata = createMetadata("single_property", properties = [property])
         with (metadata) {
             assertNotNull(pkg)
             assertTrue(pkg!!.properties.size == 1)

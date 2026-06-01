@@ -61,14 +61,14 @@ internal abstract class SirClassOperatorTrampolineFunction(
     override val errorType: SirType get() = source.errorType
     override val isAsync: Boolean get() = source.isAsync
     override val parameters: List<SirParameter>
-        get() = listOf(
+        get() = [
             SirParameter(argumentName = "this", type = selfType)
-        ) + source.parameters
+        ] + source.parameters
 
     override val fixity: SirFixity?
         get() = SirFixity.INFIX
 
-    override val bridges: List<SirBridge> get() = emptyList()
+    override val bridges: List<SirBridge> get() = []
 
     override var body: SirFunctionBody?
         get() = SirFunctionBody(buildList {
@@ -109,9 +109,9 @@ internal class SirComparisonOperatorTrampolineFunction(
 
     override var body: SirFunctionBody?
         get() = SirFunctionBody(
-            listOf(
+            [
                 super.body!!.statements.single() + " $name 0"
-            )
+            ]
         )
         set(_) = Unit
 }
@@ -139,9 +139,9 @@ internal class SirSubscriptTrampoline(
             parent = this@SirSubscriptTrampoline
             origin = SirOrigin.Trampoline(getterFunction)
             body = SirFunctionBody(
-                listOf(
+                [
                     "_get(${parameters.joinToString { it.forward ?: error("unreachable") }})"
-                )
+                ]
             )
         }
     }
@@ -152,9 +152,9 @@ internal class SirSubscriptTrampoline(
                 origin = SirOrigin.Trampoline(setterFunction)
                 parameterName = setterFunction.parameters.last().name ?: "newValue"
                 body = SirFunctionBody(
-                    listOf(
+                    [
                         "_set(${parameters.joinToString { it.forward ?: error("unreachable") }}, ${setterFunction.parameters.last().forward})"
-                    )
+                    ]
                 )
             }
         }

@@ -47,7 +47,7 @@ private class VariableValues {
     val elementData = mutableMapOf<IrValueDeclaration, Variable>()
 
     fun addEmpty(variable: IrValueDeclaration, loop: IrLoop?) {
-        elementData[variable] = Variable(loop, mutableSetOf())
+        elementData[variable] = Variable(loop, [])
     }
 
     fun add(variable: IrValueDeclaration, element: IrExpression) =
@@ -64,8 +64,8 @@ private class VariableValues {
 
     // Computes closure of all possible values for given variable.
     private fun computeValueClosure(value: IrValueDeclaration): Set<IrExpression> {
-        val result = mutableSetOf<IrExpression>()
-        val seen = mutableSetOf<IrValueDeclaration>()
+        val result: MutableSet<IrExpression> = []
+        val seen: MutableSet<IrValueDeclaration> = []
         dfs(value, seen, result)
         return result
     }
@@ -207,14 +207,14 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
         val expressions = mutableMapOf<IrExpression, IrLoop?>()
         val parentLoops = mutableMapOf<IrLoop, IrLoop?>()
         val variableValues = VariableValues()
-        val returnValues = mutableListOf<IrExpression>()
-        val thrownValues = mutableListOf<IrExpression>()
-        val catchParameters = mutableSetOf<IrVariable>()
+        val returnValues: MutableList<IrExpression> = []
+        val thrownValues: MutableList<IrExpression> = []
+        val catchParameters: MutableSet<IrVariable> = []
         val liveVariables = mutableMapOf<IrCall, List<IrVariable>>()
 
-        private val suspendableExpressionStack = mutableListOf<IrSuspendableExpression>()
-        private val loopStack = mutableListOf<IrLoop>()
-        private val liveVariablesStack = mutableListOf<List<IrVariable>>()
+        private val suspendableExpressionStack: MutableList<IrSuspendableExpression> = []
+        private val loopStack: MutableList<IrLoop> = []
+        private val liveVariablesStack: MutableList<List<IrVariable>> = []
         private val currentLoop get() = loopStack.peek()
 
         override fun visitElement(element: IrElement) {
@@ -305,11 +305,11 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             }
 
             if (expression is IrReturnableBlock) {
-                returnableBlockValues.put(expression, mutableListOf())
+                returnableBlockValues.put(expression, [])
             }
             if (expression is IrSuspendableExpression) {
                 suspendableExpressionStack.push(expression)
-                suspendableExpressionValues.put(expression, mutableListOf())
+                suspendableExpressionValues.put(expression, [])
             }
             if (expression is IrSuspensionPoint) {
                 suspendableExpressionValues[suspendableExpressionStack.peek()!!]!!.add(expression)
@@ -431,8 +431,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             val liveVariables: Map<IrCall, List<IrVariable>>,
     ) {
 
-        private val rootScope = DataFlowIR.Node.Scope(0, emptyList())
-        private val allParameters = (declaration as? IrFunction)?.allParameters ?: emptyList()
+        private val rootScope = DataFlowIR.Node.Scope(0, [])
+        private val allParameters = (declaration as? IrFunction)?.allParameters.orEmpty()
         private val templateParameters = allParameters.withIndex().associateBy({ it.value },
                 { Scoped(DataFlowIR.Node.Parameter(it.index), rootScope) }
         )
@@ -450,7 +450,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         if (parentLoop == null)
                             rootScope
                         else transformLoop(parentLoop, parentLoops[parentLoop])
-                val scope = DataFlowIR.Node.Scope(parentScope.depth + 1, emptyList())
+                val scope = DataFlowIR.Node.Scope(parentScope.depth + 1, [])
                 parentScope.nodes += scope
                 scopes[loop] = scope
                 return scope
@@ -506,7 +506,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
             return DataFlowIR.Function(
                     symbol = symbolTable.mapFunction(declaration),
                     body = DataFlowIR.FunctionBody(
-                            rootScope, listOf(rootScope) + scopes.values, returnsNode, throwsNode)
+                            rootScope, [rootScope] + scopes.values, returnsNode, throwsNode)
             )
         }
 
@@ -555,8 +555,8 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     +"Converting expression"
                     +ir2stringWhole(expression)
                 }
-                val values = mutableListOf<IrExpression>()
-                val edges = mutableListOf<DataFlowIR.Edge>()
+                val values: MutableList<IrExpression> = []
+                val edges: MutableList<DataFlowIR.Edge> = []
                 var highestScope: DataFlowIR.Node.Scope? = null
                 expressionValuesExtractor.forEachValue(expression) {
                     values += it
@@ -587,7 +587,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                             edge.node
                         else
                             DataFlowIR.Node.Variable(
-                                    values = listOf(edge),
+                                    values = [edge],
                                     type = symbolTable.mapType(expression.type),
                                     kind = DataFlowIR.VariableKind.Temporary
                             )
@@ -677,7 +677,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         restoreCoroutineState -> // This is a no-op for all analyses so far.
                             DataFlowIR.Node.StaticCall(
                                     symbolTable.mapFunction(symbols.theUnitInstance.owner),
-                                    emptyList(),
+                                    [],
                                     symbolTable.mapType(unitType),
                                     null
                             )

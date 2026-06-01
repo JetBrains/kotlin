@@ -17,7 +17,7 @@ object TestAnnotationRenderer {
     }
 
     fun renderAnnotationsWithMeta(analysisSession: KaSession, annotations: KaAnnotationList) = buildString {
-        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = setOf(), indent = 0)
+        renderAnnotationsRecursive(analysisSession, annotations, currentMetaAnnotations = [], indent = 0)
     }
 
     private fun StringBuilder.renderAnnotationsRecursive(

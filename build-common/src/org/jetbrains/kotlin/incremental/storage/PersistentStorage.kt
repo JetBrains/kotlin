@@ -73,7 +73,7 @@ interface AppendablePersistentStorage<KEY, E> : PersistentStorage<KEY, Collectio
 
     /** Adds the given [element] to the collection corresponding to the given [key]. */
     fun append(key: KEY, element: E) {
-        append(key, listOf(element))
+        append(key, [element])
     }
 }
 

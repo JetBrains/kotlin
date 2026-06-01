@@ -32,7 +32,7 @@ internal abstract class ArtifactBuilder<T>(
     private val buildDir = test.buildDir
     var outputDir: String = ""
 
-    private val sources = mutableListOf<Pair<String, String>>()
+    private val sources: MutableList<Pair<String, String>> = []
     private val dependencies = dependencies.toMutableList()
 
     infix fun String.copyTo(to: String) {
@@ -65,7 +65,7 @@ internal class LibraryBuilder(
     targetSrc: String,
     dependencies: List<TestCompilationDependency<*>>
 ) : ArtifactBuilder<TestCompilationArtifact.KLIB>(test, rootDir, targetSrc, dependencies) {
-    private val freeCompilerArgs = mutableListOf<String>()
+    private val freeCompilerArgs: MutableList<String> = []
 
     operator fun String.unaryPlus() {
         freeCompilerArgs.add(this)
@@ -88,7 +88,7 @@ internal class ExecutableBuilder(
     val tryPassSystemCacheDirectory: Boolean,
     dependencies: List<TestCompilationDependency<*>>
 ) : ArtifactBuilder<CompiledExecutable>(test, rootDir, targetSrc, dependencies) {
-    private val freeCompilerArgs = mutableListOf<String>()
+    private val freeCompilerArgs: MutableList<String> = []
 
     operator fun String.unaryPlus() {
         freeCompilerArgs.add(this)
@@ -152,7 +152,7 @@ fun AbstractNativeSimpleTest.cinteropToLibrary(
         settings = testRunSettings,
         freeCompilerArgs = freeCompilerArgs,
         defFile = testCase.modules.single().files.single().location,
-        dependencies = emptyList(),
+        dependencies = [],
         expectedArtifact = getLibraryArtifact(testCase, outputDir)
     ).result
 }
@@ -219,7 +219,7 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
 ): TestCase {
     val moduleName: String = sourcesRoot?.name?.removeSuffix(".kt") ?: LAUNCHER_MODULE_NAME
-    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(moduleName, [], [], [])
 
     sourcesRoot?.walkTopDown()
         ?.filter { it.isFile && it.extension == "kt" }
@@ -228,7 +228,7 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleModule(
     return TestCase(
         id = TestCaseId.Named(moduleName),
         kind = TestKind.STANDALONE,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
@@ -246,13 +246,13 @@ fun AbstractNativeSimpleTest.generateTestCaseWithSingleFile(
     extras: TestCase.Extras = TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
     checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
 ): TestCase {
-    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(moduleName, [], [], [])
     module.files += TestFile.createCommitted(sourceFile, module)
 
     return TestCase(
         id = TestCaseId.Named(moduleName),
         kind = testKind,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = checks,
@@ -267,13 +267,13 @@ internal fun AbstractNativeSimpleTest.generateCInteropTestCaseFromSingleDefFile(
     freeCompilerArgs: TestCompilerArgs,
 ): TestCase {
     val moduleName: String = defFile.name
-    val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(moduleName, [], [], [])
     module.files += TestFile.createCommitted(defFile, module)
 
     return TestCase(
         id = TestCaseId.Named(moduleName),
         kind = TestKind.STANDALONE,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
@@ -292,13 +292,13 @@ fun AbstractNativeSimpleTest.generateObjCFrameworkTestCase(
     givenDependencies: Set<TestModule.Given>? = null,
     checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
 ): TestCase {
-    val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+    val module = TestModule.Exclusive(DEFAULT_MODULE_NAME, [], [], [])
     sources.forEach { module.files += TestFile.createCommitted(it, module) }
 
     return TestCase(
         id = TestCaseId.Named(moduleName),
         kind = kind,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = freeCompilerArgs,
         nominalPackageName = PackageName(moduleName),
         checks = checks,
@@ -378,8 +378,8 @@ private fun normalizeOutput(output: String, exitCode: ExitCode): String {
 internal fun AbstractNativeSimpleTest.compileLibrary(
     settings: Settings,
     source: File,
-    freeCompilerArgs: List<String> = emptyList(),
-    dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
+    freeCompilerArgs: List<String> = [],
+    dependencies: List<TestCompilationArtifact.KLIB> = [],
     packed: Boolean = true,
 ): TestCompilationResult<out TestCompilationArtifact.KLIB> {
     val testCompilerArgs = if (packed) TestCompilerArgs(freeCompilerArgs) else TestCompilerArgs(freeCompilerArgs + "-nopack")

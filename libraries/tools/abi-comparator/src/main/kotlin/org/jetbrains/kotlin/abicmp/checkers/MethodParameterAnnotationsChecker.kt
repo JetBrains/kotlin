@@ -26,8 +26,8 @@ class MethodParameterAnnotationsChecker(
         val paramAnnsList1 = parameterAnnotationsProperty.get(method1)?.toList().orEmpty()
         val paramAnnsList2 = parameterAnnotationsProperty.get(method2)?.toList().orEmpty()
         for (i in 0 until max(paramAnnsList1.size, paramAnnsList2.size)) {
-            val anns1 = paramAnnsList1.getOrElse(i) { emptyList() }.toAnnotations()
-            val anns2 = paramAnnsList2.getOrElse(i) { emptyList() }.toAnnotations()
+            val anns1 = paramAnnsList1.getOrElse(i) { [] }.toAnnotations()
+            val anns2 = paramAnnsList2.getOrElse(i) { [] }.toAnnotations()
             val annDiff = compareAnnotations(anns1, anns2) ?: continue
             report.addValueParameterAnnotationDiffs(this, i, annDiff)
         }

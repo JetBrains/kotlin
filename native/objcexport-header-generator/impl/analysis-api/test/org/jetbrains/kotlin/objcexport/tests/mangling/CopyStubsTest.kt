@@ -13,21 +13,21 @@ class CopyStubsTest {
             comment = ObjCComment("comment"),
             origin = ObjCExportStubOrigin.Binary(null, null),
             type = ObjCInstanceType,
-            propertyAttributes = listOf("propertyAttrs"),
+            propertyAttributes = ["propertyAttrs"],
             setterName = "setterName",
             getterName = "getterName",
-            declarationAttributes = listOf("declarationAttrs")
+            declarationAttributes = ["declarationAttrs"]
         )
         val copy = objCProperty.copy(name = "foo", propertyAttributes = "get=foo_", declarationAttributes = null)
         assertTrue {
             copy.name == "foo" &&
-                    copy.comment?.contentLines == listOf("comment") &&
+                    copy.comment?.contentLines == ["comment"] &&
                     copy.origin == ObjCExportStubOrigin.Binary(null, null) &&
                     copy.type == ObjCInstanceType &&
-                    copy.propertyAttributes == listOf("propertyAttrs", "get=foo_") &&
+                    copy.propertyAttributes == ["propertyAttrs", "get=foo_"] &&
                     copy.setterName == "setterName" &&
                     copy.getterName == "getterName" &&
-                    copy.declarationAttributes == listOf("declarationAttrs")
+                    copy.declarationAttributes == ["declarationAttrs"]
         }
     }
 
@@ -38,24 +38,24 @@ class CopyStubsTest {
             origin = ObjCExportStubOrigin.Binary(null, null),
             isInstanceMethod = true,
             returnType = ObjCInstanceType,
-            selectors = listOf("foo:"),
-            parameters = listOf(ObjCParameter("p0", null, ObjCVoidType, null)),
-            attributes = listOf("swift_name")
+            selectors = ["foo:"],
+            parameters = [ObjCParameter("p0", null, ObjCVoidType, null)],
+            attributes = ["swift_name"]
         )
         val copy = objCMethod.copy(
-            mangledSelectors = listOf("foo_"),
-            mangledParameters = listOf("p0:"),
+            mangledSelectors = ["foo_"],
+            mangledParameters = ["p0:"],
             swiftNameAttribute = "swift_name(foo_(p0))",
             containingStubName = "ContainingStub",
         )
         assertTrue {
-            copy.comment?.contentLines == listOf("comment") &&
+            copy.comment?.contentLines == ["comment"] &&
                     copy.origin == ObjCExportStubOrigin.Binary(null, null) &&
                     copy.isInstanceMethod == true &&
                     copy.returnType == ObjCInstanceType &&
-                    copy.selectors == listOf("foo_") &&
+                    copy.selectors == ["foo_"] &&
                     copy.parameters.first().name == "p0" &&
-                    copy.attributes == listOf("swift_name(foo_(p0))")
+                    copy.attributes == ["swift_name(foo_(p0))"]
         }
     }
 }

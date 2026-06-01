@@ -33,7 +33,7 @@ class FirInferenceLogsHandler(
     testServices: TestServices
 ) : FirAnalysisHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     private val inferenceLoggers = mutableMapOf<FirSession, FirInferenceLogger>()
 

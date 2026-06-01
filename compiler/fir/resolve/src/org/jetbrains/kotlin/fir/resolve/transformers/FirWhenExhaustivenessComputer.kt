@@ -32,12 +32,12 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 object FirWhenExhaustivenessComputer {
-    private val exhaustivenessCheckers = listOf(
+    private val exhaustivenessCheckers = [
         WhenOnBooleanExhaustivenessChecker,
         WhenOnEnumExhaustivenessChecker,
         WhenOnSealedClassExhaustivenessChecker,
         WhenOnNothingExhaustivenessChecker
-    )
+    ]
 
     context(_: SessionHolder)
     fun computeAllMissingCases(whenExpression: FirWhenExpression): List<WhenMissingCase> {
@@ -104,7 +104,7 @@ object FirWhenExhaustivenessComputer {
             is ConeDefinitelyNotNullType if LanguageFeature.ImprovedExhaustivenessChecksIn21.isEnabled()
                 -> original.unwrapTypeParameterAndIntersectionTypes()
                 .map { it.makeConeTypeDefinitelyNotNullOrNotNull(c.session.typeContext) }
-            else -> listOf(this)
+            else -> [this]
         }
     }
 
@@ -240,7 +240,7 @@ object FirWhenExhaustivenessComputer {
             return null
         }
 
-        val whenMissingCases = mutableListOf<WhenMissingCase>()
+        val whenMissingCases: MutableList<WhenMissingCase> = []
         whenMissingCases.collectMissingCases(checkers, whenExpression, unwrappedSubjectType)
 
         return if (whenMissingCases.isEmpty()) {
@@ -443,7 +443,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         destination: MutableCollection<WhenMissingCase>
     ) {
         val allSubclasses = subjectType.toClassSymbol()?.collectAllSubclasses(c.session) ?: return
-        val checkedSubclasses = mutableSetOf<FirClassSymbol<*>>()
+        val checkedSubclasses: MutableSet<FirClassSymbol<*>> = []
         val info = Info(allSubclasses, checkedSubclasses, c.session)
 
         if (LanguageFeature.DataFlowBasedExhaustiveness.isEnabled()) {
@@ -569,8 +569,8 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
         }
 
         private fun FirBasedSymbol<*>.collectAllSuperclasses(session: FirSession, info: Info): Set<FirClassSymbol<*>> {
-            if (this !is FirClassSymbol<*>) return emptySet()
-            if (this !in info.allSubclasses) return emptySet()
+            if (this !is FirClassSymbol<*>) return []
+            if (this !in info.allSubclasses) return []
             val lookupTag = this.toLookupTag()
             return info.allSubclasses.filterIsInstance<FirRegularClassSymbol>().filterTo(mutableSetOf()) {
                 it.isSubclassOf(lookupTag, session, isStrict = true, lookupInterfaces = true)
@@ -585,7 +585,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
     private fun FirClassSymbol<*>.collectAllSubclassesTo(
         destination: MutableSet<FirClassSymbol<*>>,
         session: FirSession,
-        visited: MutableSet<FirRegularClassSymbol> = mutableSetOf(),
+        visited: MutableSet<FirRegularClassSymbol> = [],
     ) {
         if (this !is FirRegularClassSymbol) {
             destination.add(this)
@@ -673,7 +673,7 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         // If NullIsMissing was *not* reported, the subject can safely be converted to a not-null type.
         val convertedSubjectType = subjectType.withNullability(nullable = false, typeContext = c.session.typeContext)
 
-        val checkedTypes = mutableSetOf<ConeKotlinType>()
+        val checkedTypes: MutableSet<ConeKotlinType> = []
         whenExpression.accept(ConditionChecker(c.session), checkedTypes)
 
         // If there are no cases that check for self-type or super-type, report an Unknown missing case,

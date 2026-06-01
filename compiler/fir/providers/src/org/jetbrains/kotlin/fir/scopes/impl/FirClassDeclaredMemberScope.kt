@@ -68,7 +68,7 @@ class FirClassDeclaredMemberScopeImpl(
                 else -> continue
             }
 
-            result.getOrPut(name) { mutableListOf() } += declaration.symbol
+            result.getOrPut(name) { [] } += declaration.symbol
             hasStatic = hasStatic || declaration.isStatic
         }
 
@@ -94,7 +94,7 @@ class FirClassDeclaredMemberScopeImpl(
         name: Name,
         processor: (D) -> Unit
     ) {
-        val symbols = callablesIndex.callablesByName[name] ?: emptyList()
+        val symbols = callablesIndex.callablesByName[name] ?: []
         for (symbol in symbols) {
             if (symbol is D) {
                 processor(symbol)

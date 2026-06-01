@@ -34,7 +34,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      */
     fun module(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioModule> = [],
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},
@@ -60,7 +60,7 @@ interface Scenario<B : BaseCompilationOperation.Builder, IC : BaseIncrementalCom
      */
     fun trackedModule(
         moduleName: String,
-        dependencies: List<ScenarioModule> = emptyList(),
+        dependencies: List<ScenarioModule> = [],
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationConfigAction: (B) -> Unit = {},
         icOptionsConfigAction: (IC) -> Unit = {},

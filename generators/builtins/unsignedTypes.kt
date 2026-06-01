@@ -24,7 +24,7 @@ fun generateUnsignedTypes(
         generate(File(targetDir, "kotlin/${type.capitalized}Array.kt")) { UnsignedArrayGenerator(type, it) }
     }
 
-    for (type in listOf(UnsignedType.UINT, UnsignedType.ULONG)) {
+    for (type in [UnsignedType.UINT, UnsignedType.ULONG]) {
         generate(File(targetDir, "kotlin/${type.capitalized}Range.kt")) { UnsignedRangeGenerator(type, it) }
     }
 }
@@ -207,7 +207,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
 
 
     private fun generateUnaryOperators() {
-        for (name in listOf("inc", "dec")) {
+        for (name in ["inc", "dec"]) {
             out.printDoc(BasePrimitivesGenerator.incDecOperatorsDoc(name), "    ")
             out.println("    @kotlin.internal.InlineOnly")
             out.println("    public inline operator fun $name(): $className = $className(data.$name())")

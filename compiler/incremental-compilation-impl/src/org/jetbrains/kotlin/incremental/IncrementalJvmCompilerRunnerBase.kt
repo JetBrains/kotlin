@@ -114,7 +114,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
         val result = HashSet<File>()
 
         fun partsByFacadeName(facadeInternalName: String): List<File> {
-            val parts = cache.getStableMultifileFacadeParts(facadeInternalName) ?: emptyList()
+            val parts = cache.getStableMultifileFacadeParts(facadeInternalName) ?: []
             return parts.flatMap { cache.sourcesByInternalName(it) }
         }
 
@@ -199,7 +199,7 @@ abstract class IncrementalJvmCompilerRunnerBase(
          * When we stop using IJ for JVM dependencies traversal, we can remove this hack (OSIP-191).
          */
         if (compilationMode is CompilationMode.Incremental) {
-            args.classpathAsList = listOf(args.destinationAsFile) + args.classpathAsList
+            args.classpathAsList = [args.destinationAsFile] + args.classpathAsList
         }
     }
 

@@ -11,8 +11,8 @@ import java.nio.file.Path
 
 @KtModuleBuilderDsl
 public abstract class KtBinaryModuleBuilder : KtModuleBuilder() {
-    private val binaryRoots: MutableList<Path> = mutableListOf()
-    private val binaryVirtualFiles: MutableList<VirtualFile> = mutableListOf()
+    private val binaryRoots: MutableList<Path> = []
+    private val binaryVirtualFiles: MutableList<VirtualFile> = []
 
     public var contentScope: GlobalSearchScope? = null
 

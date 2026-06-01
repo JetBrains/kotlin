@@ -67,7 +67,7 @@ abstract class AbstractKlibAbiDumpBeforeInliningSavingHandler(
     failureDisablesNextSteps = true,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
-    override val directiveContainers get() = listOf(KlibAbiConsistencyDirectives)
+    override val directiveContainers get() = [KlibAbiConsistencyDirectives]
 
     private val dumper = MultiModuleInfoDumper()
 
@@ -132,7 +132,7 @@ class KlibAbiDumpAfterInliningVerifyingHandler(testServices: TestServices) : Bin
 ) {
     private val dumper = MultiModuleInfoDumper()
 
-    override val directiveContainers get() = listOf(KlibAbiConsistencyDirectives)
+    override val directiveContainers get() = [KlibAbiConsistencyDirectives]
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.KLib) {
         if (!shouldCheckAbiConsistency(module)) return

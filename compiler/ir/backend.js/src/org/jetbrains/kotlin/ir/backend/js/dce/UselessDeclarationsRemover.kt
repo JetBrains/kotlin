@@ -60,7 +60,7 @@ class UselessDeclarationsRemover(
         }
 
         declaration.superTypes = declaration.superTypes
-            .flatMap { it.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
+            .flatMap { it.classOrNull?.collectUsedSuperTypes() ?: [] }
             .distinct()
             .memoryOptimizedMap { it.defaultType }
 
@@ -74,10 +74,10 @@ class UselessDeclarationsRemover(
     private fun IrClassSymbol.collectUsedSuperTypes(): Set<IrClassSymbol> {
         return savedTypesCache.getOrPut(this) {
             if (owner in usefulDeclarations || context.keeper.shouldKeep(owner)) {
-                setOf(this)
+                [this]
             } else {
                 owner.superTypes
-                    .flatMap { it.takeIf { !it.isAny() }?.classOrNull?.collectUsedSuperTypes() ?: emptyList() }
+                    .flatMap { it.takeIf { !it.isAny() }?.classOrNull?.collectUsedSuperTypes() ?: [] }
                     .toHashSet()
             }
         }
@@ -101,7 +101,7 @@ class UselessDeclarationsRemover(
                 processWithDiagnostic(dceRuntimeDiagnostic)
                 null
             }
-            else -> emptyList()
+            else -> []
         }
     }
 

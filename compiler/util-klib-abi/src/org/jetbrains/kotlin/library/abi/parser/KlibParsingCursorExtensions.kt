@@ -109,7 +109,7 @@ internal fun Cursor.parseClassModifier(peek: Boolean = false): String? =
     parseSymbol(classModifierSymbols, peek)
 
 internal fun Cursor.parseClassModifiers(): Set<String> {
-    val modifiers = mutableSetOf<String>()
+    val modifiers: MutableSet<String> = []
     while (parseClassModifier(peek = true) != null) {
         modifiers.add(parseClassModifier()!!)
     }
@@ -122,7 +122,7 @@ internal fun Cursor.parseFunctionModifier(peek: Boolean = false): String? =
     parseSymbol(functionModifierSymbols, peek)
 
 internal fun Cursor.parseFunctionModifiers(): Set<String> {
-    val modifiers = mutableSetOf<String>()
+    val modifiers: MutableSet<String> = []
     while (parseFunctionModifier(peek = true) != null) {
         modifiers.add(parseFunctionModifier()!!)
     }
@@ -159,7 +159,7 @@ internal fun Cursor.parseAbiType(peek: Boolean = false): AbiType? {
         return it
     }
     val abiQualifiedName = cursor.parseAbiQualifiedName() ?: return null
-    val typeArgs = cursor.parseTypeArgs() ?: emptyList()
+    val typeArgs = cursor.parseTypeArgs() ?: []
     val nullability = cursor.parseNullability(assumeNotNull = true)
     return SimpleTypeImpl(
         ClassReferenceImpl(abiQualifiedName),
@@ -172,7 +172,7 @@ internal fun Cursor.parseTypeArgs(): List<AbiTypeArgument>? {
     val typeArgsString = parseTypeParamsString() ?: return null
     val subCursor = Cursor(typeArgsString)
     subCursor.parseSymbol(openAngleBracketSymbol) ?: return null
-    val typeArgs = mutableListOf<AbiTypeArgument>()
+    val typeArgs: MutableList<AbiTypeArgument> = []
     while (subCursor.parseTypeArg(peek = true) != null) {
         typeArgs.add(subCursor.parseTypeArg()!!)
         subCursor.parseSymbol(commaSymbol)
@@ -197,7 +197,7 @@ internal fun Cursor.parseAbiVariance(): AbiVariance {
 
 internal fun Cursor.parseTypeReference(): AbiType? {
     val typeParamReference = parseTag() ?: return null
-    val typeArgs = parseTypeArgs() ?: emptyList()
+    val typeArgs = parseTypeArgs() ?: []
     val nullability = parseNullability()
     return SimpleTypeImpl(
         TypeParameterReferenceImpl(typeParamReference),
@@ -225,7 +225,7 @@ internal fun Cursor.parseNullability(assumeNotNull: Boolean = false): AbiTypeNul
 
 internal fun Cursor.parseSuperTypes(): MutableSet<AbiType> {
     parseSymbol(colonSymbol)
-    val superTypes = mutableSetOf<AbiType>()
+    val superTypes: MutableSet<AbiType> = []
     while (parseAbiQualifiedName(peek = true) != null) {
         superTypes.add(parseAbiType()!!)
         parseSymbol(commaSymbol)
@@ -237,7 +237,7 @@ internal fun Cursor.parseTypeParams(peek: Boolean = false): List<AbiTypeParamete
     val typeParamsString = parseTypeParamsString(peek) ?: return null
     val subCursor = Cursor(typeParamsString)
     subCursor.parseSymbol(openAngleBracketSymbol)
-    val typeParams = mutableListOf<AbiTypeParameter>()
+    val typeParams: MutableList<AbiTypeParameter> = []
     while (subCursor.parseTypeParam(peek = true) != null) {
         typeParams.add(subCursor.parseTypeParam()!!)
         subCursor.parseSymbol(commaSymbol)
@@ -251,7 +251,7 @@ internal fun Cursor.parseTypeParam(peek: Boolean = false): AbiTypeParameter? {
     cursor.parseSymbol(colonSymbol)
     val variance = cursor.parseAbiVariance()
     val isReified = cursor.parseSymbol(reifiedSymbol) != null
-    val upperBounds = mutableListOf<AbiType>()
+    val upperBounds: MutableList<AbiType> = []
     while (null != cursor.parseAbiType(peek = true)) {
         upperBounds.add(cursor.parseAbiType()!!)
         cursor.parseSymbol(ampersandSymbol) ?: break
@@ -268,7 +268,7 @@ internal fun Cursor.parseTypeParam(peek: Boolean = false): AbiTypeParameter? {
 internal fun Cursor.parseValueParameters(
     kind: AbiValueParameterKind = AbiValueParameterKind.REGULAR
 ): List<AbiValueParameter>? {
-    val valueParams = mutableListOf<AbiValueParameter>()
+    val valueParams: MutableList<AbiValueParameter> = []
     parseSymbol(openParenSymbol) ?: return null
     if (parseSymbol(closeParenSymbol) != null) {
         return valueParams
@@ -303,7 +303,7 @@ internal fun Cursor.parseValueParameter(
 }
 
 internal fun Cursor.parseValueParameterModifiers(): Set<String> {
-    val modifiers = mutableSetOf<String>()
+    val modifiers: MutableSet<String> = []
     while (parseValueParameterModifier(peek = true) != null) {
         modifiers.add(parseValueParameterModifier()!!)
     }
@@ -325,7 +325,7 @@ internal fun Cursor.parseCompanionExtensionsClass(): AbiClassifierReference.Clas
 }
 
 internal fun Cursor.parseContextAndReceiverParams(): List<AbiValueParameter> {
-    val contextAndReceiverParams = mutableListOf<AbiValueParameter>()
+    val contextAndReceiverParams: MutableList<AbiValueParameter> = []
     var inOpenParen = parseSymbol(openParenSymbol) != null
     parseContextParams()?.let { contextAndReceiverParams.addAll(it) }
     val afterClosedParen = parseSymbol(closeParenSymbol) != null
@@ -490,16 +490,16 @@ private const val nullableSymbolSymbol = "?"
 private const val notNullSymbolSymbol = "!!"
 private const val openParenSymbol = "("
 private const val closeParenSymbol = ")"
-private val getterOrSetterSymbols = listOf(getterNamePrefix, setterNamePrefix)
-private val propertyKindSymbols = listOf("const val", "val", "var")
-private val classModifierSymbols = listOf("inner", "value", "fun", "open")
-private val functionKindSymbols = listOf("constructor", "fun")
-private val functionModifierSymbols = listOf("inline", "suspend", "companion")
-private val abiVarianceSymbols = listOf("out", "in")
-private val valueParameterModifierSymbols = listOf("crossinline", "noinline")
-private val abiModalitySymbols = listOf("final", "open", "abstract", "sealed")
-private val classKindSymbols = listOf("class", "interface", "object", "enum class", "annotation class")
-private val symbolsFollowingIdentifiersWithSpaces = listOf(":", "|", "/", "=", "{", "&")
+private val getterOrSetterSymbols = [getterNamePrefix, setterNamePrefix]
+private val propertyKindSymbols = ["const val", "val", "var"]
+private val classModifierSymbols = ["inner", "value", "fun", "open"]
+private val functionKindSymbols = ["constructor", "fun"]
+private val functionModifierSymbols = ["inline", "suspend", "companion"]
+private val abiVarianceSymbols = ["out", "in"]
+private val valueParameterModifierSymbols = ["crossinline", "noinline"]
+private val abiModalitySymbols = ["final", "open", "abstract", "sealed"]
+private val classKindSymbols = ["class", "interface", "object", "enum class", "annotation class"]
+private val symbolsFollowingIdentifiersWithSpaces = [":", "|", "/", "=", "{", "&"]
 private val anythingButSlashRegex = Regex("^[^/]*")
 private val uniqueNameRegex = Regex("[a-zA-Z\\-.:]+")
 private val anyCharRegex = Regex(".")

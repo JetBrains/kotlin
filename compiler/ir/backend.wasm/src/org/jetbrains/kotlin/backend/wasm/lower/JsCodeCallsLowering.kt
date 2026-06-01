@@ -91,11 +91,11 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
                 }
                 +irReturn(call)
             }
-            return listOf(function, externalFun)
+            return [function, externalFun]
         }
 
         val builder = context.createIrBuilder(function.symbol)
-        function.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = emptyList()).also {
+        function.annotations += builder.irAnnotation(jsRelatedSymbols.jsFunConstructor, typeArguments = []).also {
             it.arguments[0] = builder.irString(jsFunCode)
         }
         function.body = null
@@ -117,7 +117,7 @@ class JsCodeCallsLowering(val context: WasmBackendContext) : FileLoweringPass {
         }
         val builder = context.createIrBuilder(field.symbol)
         initializer.expression = builder.irCall(externalFun)
-        return listOf(property, externalFun)
+        return [property, externalFun]
     }
 
     private fun IrExpression.getJsCode(): String? {

@@ -566,7 +566,7 @@ public inline fun <T, C : MutableCollection<in T>> Sequence<T>.filterTo(destinat
 public fun <T> Sequence<T>.take(n: Int): Sequence<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
     return when {
-        n == 0 -> emptySequence()
+        n == 0 -> []
         this is DropTakeSequence -> this.take(n)
         else -> TakeSequence(this, n)
     }
@@ -989,10 +989,10 @@ public fun <T> Sequence<T>.toHashSet(): HashSet<T> {
 public fun <T> Sequence<T>.toList(): List<T> {
     val it = iterator()
     if (!it.hasNext())
-        return emptyList()
+        return []
     val element = it.next()
     if (!it.hasNext())
-        return listOf(element)
+        return [element]
     val dst = ArrayList<T>()
     dst.add(element)
     while (it.hasNext()) dst.add(it.next())
@@ -1018,10 +1018,10 @@ public fun <T> Sequence<T>.toMutableList(): MutableList<T> {
 public fun <T> Sequence<T>.toSet(): Set<T> {
     val it = iterator()
     if (!it.hasNext())
-        return emptySet()
+        return []
     val element = it.next()
     if (!it.hasNext())
-        return setOf(element)
+        return [element]
     val dst = LinkedHashSet<T>()
     dst.add(element)
     while (it.hasNext()) dst.add(it.next())

@@ -175,7 +175,7 @@ open class IrFileSerializer(
         serializeForKlibAbi_2_3 = !settings.abiCompatibilityLevel.isAtLeast(KlibAbiCompatibilityLevel.ABI_LEVEL_2_4),
     )
 
-    protected val protoBodyArray = mutableListOf<XStatementOrExpression>()
+    protected val protoBodyArray: MutableList<XStatementOrExpression> = []
 
     protected val protoDebugInfoMap = hashMapOf<String, Int>()
     protected val protoDebugInfoArray = arrayListOf<String>()
@@ -1644,7 +1644,7 @@ open class IrFileSerializer(
     private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
         return when {
             relevantLinesRange == null -> entry.lineStartOffsetsForSerialization
-            relevantLinesRange.start < 0 || relevantLinesRange.endInclusive < 0 -> emptyList() // No real offsets.
+            relevantLinesRange.start < 0 || relevantLinesRange.endInclusive < 0 -> [] // No real offsets.
             else -> entry.lineStartOffsetsForSerialization.slice(
                 (relevantLinesRange.start - entry.firstRelevantLineIndex)..(relevantLinesRange.endInclusive - entry.firstRelevantLineIndex)
             )
@@ -1727,7 +1727,7 @@ open class IrFileSerializer(
     }
 
     fun serializeIrFile(file: IrFile): SerializedIrFile = inFile(file) {
-        val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
+        val topLevelDeclarations: MutableList<SerializedDeclaration> = []
 
         val proto = ProtoFile.newBuilder()
             .addAllFqName(serializeFqName(file.packageFqName.asString()))

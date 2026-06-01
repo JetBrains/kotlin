@@ -77,7 +77,7 @@ open class BasicReplStageHistory<T>(override val lock: ReentrantReadWriteLock = 
         } else {
             currentGeneration.incrementAndGet()
             currentLineNumber.set(id.no + 1)
-            emptyList()
+            []
         }
     }
 }

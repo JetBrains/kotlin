@@ -36,7 +36,7 @@ class NewConstraintSystemImpl(
     private val utilContext = constraintInjector.constraintIncorporator.utilContext
     private val inferenceLogger = constraintInjector.inferenceLogger
 
-    private val postponedComputationsAfterAllVariablesAreFixed = mutableListOf<() -> Unit>()
+    private val postponedComputationsAfterAllVariablesAreFixed: MutableList<() -> Unit> = []
 
     private val storage = MutableConstraintStorage()
     private var state = State.BUILDING
@@ -225,7 +225,7 @@ class NewConstraintSystemImpl(
     @K1Deprecation
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return listOf(type.typeConstructor())
+        val variableWithConstraints = notFixedTypeVariables[type.typeConstructor()] ?: return [type.typeConstructor()]
 
         return variableWithConstraints.constraints.mapNotNull {
             if (it.kind == ConstraintKind.LOWER) return@mapNotNull null
@@ -880,7 +880,7 @@ class NewConstraintSystemImpl(
         constraintOwner: TypeConstructorMarker,
         referencedVariable: TypeConstructorMarker,
     ) {
-        typeVariableDependencies.getOrPut(referencedVariable) { mutableSetOf() }
+        typeVariableDependencies.getOrPut(referencedVariable) { [] }
             .add(constraintOwner)
     }
 

@@ -60,7 +60,7 @@ object LabelResolver {
     }
 
     fun getLabelNamesIfAny(element: PsiElement, addClassNameLabels: Boolean): List<Name> {
-        val result = mutableListOf<Name>()
+        val result: MutableList<Name> = []
         when (element) {
             is KtLabeledExpression -> result.addIfNotNull(element.getLabelNameAsName())
             // TODO: Support context receivers in function literals

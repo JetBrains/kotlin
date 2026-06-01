@@ -281,7 +281,7 @@ class FirCallResolver(
         val argumentList = (qualifiedAccess as? FirFunctionCall)?.argumentList ?: FirEmptyArgumentList
         val typeArguments = if (qualifiedAccess is FirFunctionCall || forceCallKind == CallKind.Function) {
             qualifiedAccess.typeArguments
-        } else emptyList()
+        } else []
 
         val callKind = when {
             forceCallKind != null -> forceCallKind
@@ -346,7 +346,7 @@ class FirCallResolver(
         resolutionContext: ResolutionContext = transformer.resolutionContext,
     ): Pair<Set<Candidate>, CandidateApplicability> {
         fun chooseMostSpecific(list: List<Candidate>): Set<Candidate> {
-            list.singleOrNull()?.let { return setOf(it) }
+            list.singleOrNull()?.let { return [it] }
             return conflictResolver.chooseMaximallySpecificCandidates(list)
         }
 
@@ -681,7 +681,7 @@ class FirCallResolver(
         val typeArguments = constructedType?.typeArguments
             ?.take(symbol?.fir?.typeParameters?.count { it is FirTypeParameter } ?: 0)
             ?.map { it.toFirTypeProjection() }
-            ?: emptyList()
+            ?: []
 
         return CallInfo(
             delegatedConstructorCall,
@@ -841,7 +841,7 @@ class FirCallResolver(
         )
         val applicability = components.resolutionStageRunner.processCandidate(candidate, transformer.resolutionContext)
         return ResolutionResult(
-            callInfo, applicability, candidates = listOf(candidate), forwardedDiagnostics = emptyList(),
+            callInfo, applicability, candidates = [candidate], forwardedDiagnostics = [],
             metInapplicableCandidate = applicability == CandidateApplicability.INAPPLICABLE,
         )
     }

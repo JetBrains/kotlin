@@ -61,7 +61,7 @@ fun KtElement.toLightElements(): List<PsiNamedElement> = when (this) {
 
     is KtTypeParameter -> toPsiTypeParameters()
     is KtFile -> listOfNotNull(findFacadeClass())
-    else -> listOf()
+    else -> []
 }
 
 fun PsiElement.toLightMethods(): List<PsiMethod> = when (this) {
@@ -70,8 +70,8 @@ fun PsiElement.toLightMethods(): List<PsiMethod> = when (this) {
     is KtParameter -> LightClassUtil.getLightClassPropertyMethods(this).toList()
     is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(this)
     is KtClass -> listOfNotNull(toLightClass()?.constructors?.firstOrNull())
-    is PsiMethod -> listOf(this)
-    else -> listOf()
+    is PsiMethod -> [this]
+    else -> []
 }
 
 fun PsiElement.getRepresentativeLightMethod(): PsiMethod? = when (this) {
@@ -84,10 +84,10 @@ fun PsiElement.getRepresentativeLightMethod(): PsiMethod? = when (this) {
 }
 
 fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
-    val paramList = getNonStrictParentOfType<KtParameterList>() ?: return emptyList()
+    val paramList = getNonStrictParentOfType<KtParameterList>() ?: return []
 
     val paramIndex = paramList.parameters.indexOf(this)
-    if (paramIndex < 0) return emptyList()
+    if (paramIndex < 0) return []
     val owner = paramList.parent
     val lightParamIndex = if (owner is KtDeclaration && owner.isExtensionDeclaration()) paramIndex + 1 else paramIndex
 
@@ -95,7 +95,7 @@ fun KtParameter.toPsiParameters(): Collection<PsiParameter> {
         is KtFunction -> LightClassUtil.getLightClassMethods(owner)
         is KtPropertyAccessor -> LightClassUtil.getLightClassAccessorMethods(owner)
         else -> null
-    } ?: return emptyList()
+    } ?: return []
 
     return methods.mapNotNull { it.parameterList.parameters.getOrNull(lightParamIndex) }
 }
@@ -113,10 +113,10 @@ fun KtParameter.toLightGetter(): PsiMethod? = LightClassUtil.getLightClassProper
 fun KtParameter.toLightSetter(): PsiMethod? = LightClassUtil.getLightClassPropertyMethods(this).setter
 
 fun KtTypeParameter.toPsiTypeParameters(): List<PsiTypeParameter> {
-    val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return listOf()
+    val paramList = getNonStrictParentOfType<KtTypeParameterList>() ?: return []
 
     val paramIndex = paramList.parameters.indexOf(this)
-    val ktDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return listOf()
+    val ktDeclaration = paramList.getNonStrictParentOfType<KtDeclaration>() ?: return []
     val lightOwners = ktDeclaration.toLightElements()
 
     return lightOwners.mapNotNull { lightOwner ->
@@ -187,7 +187,7 @@ private fun PsiAnnotation.withNestedAnnotations(): Sequence<PsiAnnotation> {
     fun handleValue(memberValue: PsiAnnotationMemberValue?): Sequence<PsiAnnotation> = when (memberValue) {
         is PsiArrayInitializerMemberValue -> memberValue.initializers.asSequence().flatMap { handleValue(it) }
         is PsiAnnotation -> memberValue.withNestedAnnotations()
-        else -> emptySequence()
+        else -> []
     }
 
     return sequenceOf(this) + parameterList.attributes.asSequence().flatMap { handleValue(it.value) }
@@ -231,7 +231,7 @@ fun accessorNameByPropertyName(name: String, accessor: KtLightMethod): String? =
 }
 
 fun getAccessorNamesCandidatesByPropertyName(name: String): List<String> {
-    return listOf(JvmAbi.setterName(name), JvmAbi.getterName(name))
+    return [JvmAbi.setterName(name), JvmAbi.getterName(name)]
 }
 
 private val PsiMethod.canBeGetter: Boolean
@@ -263,12 +263,12 @@ private val PsiMethod.isTopLevelDeclaration: Boolean get() = unwrapped?.isTopLev
 val PsiMethod.syntheticAccessors: Collection<Name> get() = syntheticAccessors()
 
 fun PsiMethod.syntheticAccessors(withoutOverrideCheck: Boolean = false): Collection<Name> {
-    if (!probablyCanHaveSyntheticAccessors(withoutOverrideCheck)) return emptyList()
+    if (!probablyCanHaveSyntheticAccessors(withoutOverrideCheck)) return []
 
     return when {
         canBeGetter -> listOfNotNull(getterName)
         canBeSetter -> setterNames.orEmpty()
-        else -> emptyList()
+        else -> []
     }
 }
 

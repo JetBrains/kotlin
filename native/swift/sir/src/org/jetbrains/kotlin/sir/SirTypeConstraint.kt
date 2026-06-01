@@ -11,11 +11,11 @@ sealed interface SirTypeConstraint {
 
     data class Equality(
         override val constraint: SirType,
-        override val subjectPath: List<String> = emptyList(),
+        override val subjectPath: List<String> = [],
     ) : SirTypeConstraint
 
     data class Conformance(
         override val constraint: SirType,
-        override val subjectPath: List<String> = emptyList(),
+        override val subjectPath: List<String> = [],
     ) : SirTypeConstraint
 }

@@ -63,6 +63,6 @@ class KotlinJsr223DefaultScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
                 }
             },
             scriptDefinition.evaluationConfiguration
-        ) { ScriptArgsWithTypes(arrayOf(it.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()), arrayOf(Bindings::class)) }
+        ) { ScriptArgsWithTypes([it.getBindings(ScriptContext.ENGINE_SCOPE).orEmpty()], [Bindings::class]) }
 }
 

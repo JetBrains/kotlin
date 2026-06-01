@@ -53,9 +53,9 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
     ): FirClassLikeSymbol<*>? = null
 
     // Can be called on STATUS stage
-    open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = emptyList()
-    open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = emptyList()
-    open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = emptyList()
+    open fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> = []
+    open fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> = []
+    open fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> = []
 
     // Can be called on IMPORTS stage
     open fun hasPackage(packageFqName: FqName): Boolean = false
@@ -69,14 +69,14 @@ abstract class FirDeclarationGenerationExtension(session: FirSession) : FirExten
      * If you want to generate constructor for some class, then you need to return `SpecialNames.INIT` in
      *   set of callable names for this class
      */
-    open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = emptySet()
-    open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = emptySet()
+    open fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> = []
+    open fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> = []
 
     @ExperimentalTopLevelDeclarationsGenerationApi
-    open fun getTopLevelCallableIds(): Set<CallableId> = emptySet()
+    open fun getTopLevelCallableIds(): Set<CallableId> = []
 
     @ExperimentalTopLevelDeclarationsGenerationApi
-    open fun getTopLevelClassIds(): Set<ClassId> = emptySet()
+    open fun getTopLevelClassIds(): Set<ClassId> = []
 
     fun interface Factory : FirExtension.Factory<FirDeclarationGenerationExtension>
 

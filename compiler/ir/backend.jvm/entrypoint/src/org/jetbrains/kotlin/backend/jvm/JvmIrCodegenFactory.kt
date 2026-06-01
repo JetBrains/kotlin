@@ -169,7 +169,7 @@ class JvmIrCodegenFactory(
     ): BackendInput {
         val enableIdSignatures =
             configuration.getBoolean(JVMConfigurationKeys.LINK_VIA_SIGNATURES) ||
-                    configuration[JVMConfigurationKeys.KLIB_PATHS, emptyList()].isNotEmpty()
+                    configuration[JVMConfigurationKeys.KLIB_PATHS, []].isNotEmpty()
         val [mangler, symbolTable] =
             if (externalSymbolTable != null) externalMangler!! to externalSymbolTable
             else {
@@ -254,7 +254,7 @@ class JvmIrCodegenFactory(
         }
 
         val dependencies = if (ideCodegenSettings.doNotLoadDependencyModuleHeaders || irProvider !is KotlinIrLinker) {
-            emptyList()
+            []
         } else {
             psi2irContext.moduleDescriptor.collectAllDependencyModulesTransitively().map {
                 val kotlinLibrary = (it.getCapability(KlibModuleOrigin.CAPABILITY) as? DeserializedKlibModuleOrigin)?.library
@@ -263,10 +263,10 @@ class JvmIrCodegenFactory(
         }
 
         val irProviders = if (ideCodegenSettings.shouldStubAndNotLinkUnboundSymbols) {
-            listOf(stubGenerator)
+            [stubGenerator]
         } else {
             val stubGeneratorForMissingClasses = DeclarationStubGeneratorForNotFoundClasses(stubGenerator)
-            listOf(irProvider, stubGeneratorForMissingClasses)
+            [irProvider, stubGeneratorForMissingClasses]
         }
 
         if (ideCodegenSettings.shouldReferenceUndiscoveredExpectSymbols) {
@@ -400,10 +400,10 @@ class JvmIrCodegenFactory(
         // Generate multifile facades first, to compute and store JVM signatures of const properties which are later used
         // when serializing metadata in the multifile parts.
         // TODO: consider dividing codegen itself into separate phases (bytecode generation, metadata serialization) to avoid this
-        for (generateMultifileFacades in listOf(true, false)) {
+        for (generateMultifileFacades in [true, false]) {
             if (executor != null) {
-                val tasks = mutableListOf<CompletableFuture<Void>>()
-                val childrenStats = mutableListOf<UnitStats>()
+                val tasks: MutableList<CompletableFuture<Void>> = []
+                val childrenStats: MutableList<UnitStats> = []
 
                 for (irFile in module.files) {
                     tasks.add(

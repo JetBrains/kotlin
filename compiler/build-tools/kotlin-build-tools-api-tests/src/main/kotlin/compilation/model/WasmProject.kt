@@ -25,7 +25,7 @@ class WasmProject(
     defaultStrategyConfig,
     projectDirectory,
 ) {
-    private val registeredModules = mutableSetOf<WasmModule>()
+    private val registeredModules: MutableSet<WasmModule> = []
 
     override fun module(
         moduleName: String,
@@ -45,9 +45,9 @@ class WasmProject(
             dependencies = dependencies,
             defaultStrategyConfig = defaultStrategyConfig,
             moduleCompilationConfigAction = moduleCompilationConfigAction,
-            stdlibKlibLocation = stdlibClasspath ?: listOf(
+            stdlibKlibLocation = stdlibClasspath ?: [
                 currentKotlinWasmStdlibKlibLocation
-            ),
+            ],
             registeredModules = registeredModules,
         )
         registeredModules.add(module)

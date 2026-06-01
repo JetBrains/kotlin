@@ -236,7 +236,7 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
     private fun ConeKotlinType.findVisibilityExposure(
         base: EffectiveVisibility,
         ignoreInternalExposure: Boolean = false,
-        visitedTypes: MutableSet<ConeKotlinType> = mutableSetOf(),
+        visitedTypes: MutableSet<ConeKotlinType> = [],
     ): SymbolWithRelation? {
         if (!visitedTypes.add(this)) return null
 

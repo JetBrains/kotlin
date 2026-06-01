@@ -167,7 +167,7 @@ data class GoldenTransformTestInfo(
 }
 
 private fun String.quotedSplit(): List<String> {
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
     var current = 0
 
     while (current < length) {

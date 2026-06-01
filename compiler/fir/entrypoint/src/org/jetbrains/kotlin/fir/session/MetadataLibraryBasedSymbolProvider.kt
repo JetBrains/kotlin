@@ -97,11 +97,11 @@ abstract class MetadataLibraryBasedSymbolProvider<L>(
     override fun computePackagePartsInfos(packageFqName: FqName): List<PackagePartsCacheData> {
         val packageStringName = if (packageFqName.isRoot) "" else packageFqName.asString()
 
-        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return emptyList()
+        val librariesWithFragment = fragmentNamesInLibraries[packageStringName] ?: return []
 
         return librariesWithFragment.flatMap { resolvedLibrary ->
 
-            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap emptyList()
+            val moduleData = moduleData(resolvedLibrary) ?: return@flatMap []
 
             metadataProvider(resolvedLibrary).getPackageFragmentNames(packageStringName).map {
                 val fragment = getPackageFragment(resolvedLibrary, packageStringName, it)

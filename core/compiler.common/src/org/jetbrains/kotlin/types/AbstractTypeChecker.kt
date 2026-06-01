@@ -466,8 +466,8 @@ object AbstractTypeChecker {
                 // Additional filtering to drop EnhancedNullability (and maybe other attributes, see KT-83981)
                 // More precisely, here we keep withoutEquivalent set,
                 // but always drop one type from pairs like [Generic<Type> / Generic<@EnhancedNullability Type>]
-                val result = mutableSetOf<RigidTypeMarker>()
-                val cleanedSet = mutableSetOf<RigidTypeMarker>()
+                val result: MutableSet<RigidTypeMarker> = []
+                val cleanedSet: MutableSet<RigidTypeMarker> = []
                 for (supertype in withoutEquivalent) {
                     @OptIn(K2Only::class)
                     val cleaned = state.kotlinTypePreparator.clearTypeFromUnnecessaryAttributes(supertype)
@@ -715,13 +715,13 @@ object AbstractTypeChecker {
             return it
         }
 
-        if (!superConstructor.isClassTypeConstructor() && subType.isClassType()) return emptyList()
+        if (!superConstructor.isClassTypeConstructor() && subType.isClassType()) return []
 
         if (superConstructor.isCommonFinalClassConstructor()) {
             return if (c.areEqualTypeConstructors(subType.typeConstructor(), superConstructor))
-                listOf(c.captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType)
+                [c.captureFromArguments(subType, CaptureStatus.FOR_SUBTYPING) ?: subType]
             else
-                emptyList()
+                []
         }
 
         val result: MutableList<RigidTypeMarker> = SmartList()

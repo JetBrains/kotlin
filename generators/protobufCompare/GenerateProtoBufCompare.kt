@@ -211,7 +211,7 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.shouldSkip }
-        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: []
 
         p.println()
         p.println("fun $typeName.$HASH_CODE_NAME(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> Int, typeById: (Int) -> ProtoBuf.Type): Int {")
@@ -257,7 +257,7 @@ class GenerateProtoBufCompare {
         val typeName = descriptor.typeName
 
         val fields = descriptor.fields.filter { !it.shouldSkip }
-        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: []
 
         p.println("open fun $CHECK_EQUALS_NAME(old: $typeName, new: $typeName): Boolean {")
         p.pushIndent()
@@ -276,7 +276,7 @@ class GenerateProtoBufCompare {
         val className = typeName.replace(".", "")
 
         val fields = descriptor.fields.filter { !it.shouldSkip }
-        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: emptyList()
+        val extFields = extensions[descriptor]?.filter { !it.shouldSkip } ?: []
         val allFields = fields + extFields
 
         p.println("enum class ${className}Kind {")

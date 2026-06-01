@@ -87,7 +87,7 @@ internal class SymbolLightClassForFacade(
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withFileSymbols { fileSymbols ->
-            val result = mutableListOf<PsiMethod>()
+            val result: MutableList<PsiMethod> = []
             val methodsAndProperties = sequence<KaCallableSymbol> {
                 for (fileSymbol in fileSymbols) {
                     for (callableSymbol in fileSymbol.fileScope.callables) {
@@ -131,7 +131,7 @@ internal class SymbolLightClassForFacade(
     }
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
-        val result = mutableListOf<PsiField>()
+        val result: MutableList<PsiField> = []
         val nameGenerator = SymbolLightField.FieldNameGenerator()
         withFileSymbols { fileSymbols ->
             for (fileSymbol in fileSymbols) {
@@ -171,7 +171,7 @@ internal class SymbolLightClassForFacade(
 
     override fun getInterfaces(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
     override fun getInnerClasses(): Array<out PsiClass> = PsiClass.EMPTY_ARRAY
-    override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
     override fun getAllInnerClasses(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
     override fun findInnerClassByName(@NonNls name: String, checkBases: Boolean): PsiClass? = null
     override fun isInheritorDeep(baseClass: PsiClass, classToByPass: PsiClass?): Boolean = false
@@ -198,8 +198,8 @@ internal class SymbolLightClassForFacade(
         return JavaPsiFacade.getInstance(project).findClass(CommonClassNames.JAVA_LANG_OBJECT, resolveScope)
     }
 
-    override fun getSupers(): Array<PsiClass> = superClass?.let { arrayOf(it) } ?: PsiClass.EMPTY_ARRAY
-    override fun getSuperTypes(): Array<PsiClassType> = arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+    override fun getSupers(): Array<PsiClass> = superClass?.let { [it] } ?: PsiClass.EMPTY_ARRAY
+    override fun getSuperTypes(): Array<PsiClassType> = [PsiType.getJavaLangObject(manager, resolveScope)]
 
     override fun equals(other: Any?): Boolean {
         return this === other || other is SymbolLightClassForFacade &&

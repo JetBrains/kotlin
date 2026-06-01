@@ -53,11 +53,11 @@ internal class LLDiagnosticParameterChecker(testServices: TestServices) : FirAna
     }
 
     private fun KtPsiDiagnostic.allParameters(): List<Any?> = when (this) {
-        is KtPsiDiagnosticWithParameters1<*> -> listOf(a)
-        is KtPsiDiagnosticWithParameters2<*, *> -> listOf(a, b)
-        is KtPsiDiagnosticWithParameters3<*, *, *> -> listOf(a, b, c)
-        is KtPsiDiagnosticWithParameters4<*, *, *, *> -> listOf(a, b, c, d)
-        is KtPsiSimpleDiagnostic -> emptyList()
+        is KtPsiDiagnosticWithParameters1<*> -> [a]
+        is KtPsiDiagnosticWithParameters2<*, *> -> [a, b]
+        is KtPsiDiagnosticWithParameters3<*, *, *> -> [a, b, c]
+        is KtPsiDiagnosticWithParameters4<*, *, *, *> -> [a, b, c, d]
+        is KtPsiSimpleDiagnostic -> []
         else -> errorWithAttachment("Unexpected diagnostic ${this::class}, $factoryName") {
             withPsiEntry("onElement", psiElement)
         }

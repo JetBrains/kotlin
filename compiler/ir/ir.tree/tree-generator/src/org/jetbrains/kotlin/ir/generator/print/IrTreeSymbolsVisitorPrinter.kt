@@ -26,7 +26,7 @@ internal class IrTreeSymbolsVisitorPrinter(
     rootElement: Element
 ) : TypeVisitorVoidPrinter(printer, visitorType, rootElement) {
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(typeVisitorVoidType, symbolVisitorType)
+        get() = [typeVisitorVoidType, symbolVisitorType]
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.AbstractClass

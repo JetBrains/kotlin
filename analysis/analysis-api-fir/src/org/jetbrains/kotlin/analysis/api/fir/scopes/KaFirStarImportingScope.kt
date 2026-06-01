@@ -29,7 +29,7 @@ internal class KaFirStarImportingScope(
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     // todo cache?
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
@@ -44,7 +44,7 @@ internal class KaFirStarImportingScope(
     }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {

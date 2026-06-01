@@ -40,7 +40,7 @@ import org.jetbrains.kotlin.test.testFramework.runWriteAction
 
 abstract class AbstractInBlockModificationTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val selectedElement = testServices.expressionMarkerProvider.getBottommostSelectedElementOfTypeByDirective(

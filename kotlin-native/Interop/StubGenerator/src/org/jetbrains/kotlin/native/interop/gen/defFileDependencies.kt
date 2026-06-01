@@ -14,8 +14,8 @@ import java.io.File
 import kotlin.streams.toList
 
 fun defFileDependencies(args: Array<String>, runFromDaemon: Boolean) {
-    val defFiles = mutableListOf<File>()
-    val targets = mutableListOf<String>()
+    val defFiles: MutableList<File> = []
+    val targets: MutableList<String> = []
 
     var index = 0
     while (index < args.size) {
@@ -45,7 +45,7 @@ private fun makeDependencyAssigner(targets: List<String>, defFiles: List<File>, 
 
 private fun makeDependencyAssignerForTarget(target: String, defFiles: List<File>, runFromDaemon: Boolean): SingleTargetDependencyAssigner {
     val cinteropArguments = CInteropArguments()
-    cinteropArguments.argParser.parse(arrayOf())
+    cinteropArguments.argParser.parse([])
     val tool = prepareTool(target, KotlinPlatform.NATIVE, runFromDaemon, konanDataDir = cinteropArguments.konanDataDir)
     val libraries = defFiles.parallelStream().map {
         it to buildNativeLibrary(
@@ -79,7 +79,7 @@ private fun patchDepends(file: File, newDepends: List<String>) {
             append(it)
         }
     }
-    val newDefFileLines = listOf(dependsLine) + defFileLines.filter { !it.startsWith("depends =") }
+    val newDefFileLines = [dependsLine] + defFileLines.filter { !it.startsWith("depends =") }
 
     file.bufferedWriter().use { writer ->
         newDefFileLines.forEach { writer.appendLine(it) }
@@ -138,7 +138,7 @@ private class SingleTargetDependencyAssigner(
         val result = mutableMapOf<File, Set<String>>()
 
         defFiles@ for ([defFile, headers] in pendingDefFilesToHeaders) {
-            val depends = mutableSetOf<String>()
+            val depends: MutableSet<String> = []
 
             headers@ for (header in (headers.ownHeaders + headers.importedHeaders)) {
                 val dependency = processedHeadersToDefFiles[header]

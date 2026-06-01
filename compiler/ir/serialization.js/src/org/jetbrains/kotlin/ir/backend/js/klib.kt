@@ -75,7 +75,7 @@ private fun deserializeDependencies(
     filesToLoad: Set<String>?,
     mapping: (KotlinLibrary) -> ModuleDescriptor
 ): IrModuleDependencies {
-    val all: MutableList<IrModuleFragment> = mutableListOf()
+    val all: MutableList<IrModuleFragment> = []
     var stdlib: IrModuleFragment? = null
     var included: IrModuleFragment? = null
 
@@ -191,7 +191,7 @@ fun loadIrForSingleModule(
     check(stdlibFragment != null)
 
     irLinker.init(null)
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, [irLinker]).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
     val isStdlibCompilation = mainFragment == stdlibFragment
@@ -257,7 +257,7 @@ private fun getIrModuleInfoForKlib(
     )
 
     irLinker.init(null)
-    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    ExternalDependenciesGenerator(symbolTable, [irLinker]).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
     return IrModuleInfo(
@@ -307,13 +307,13 @@ fun serializeModuleIntoKlib(
             configuration = configuration,
             diagnosticReporter = diagnosticReporter,
             cleanFiles = cleanFiles,
-            dependencies = emptyList(),
+            dependencies = [],
             createModuleSerializer = { irDiagnosticReporter ->
                 JsIrModuleSerializer(
                     settings = IrSerializationSettings(configuration),
                     irDiagnosticReporter,
                     irBuiltIns,
-                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: emptyList()) }
+                ) { JsIrFileMetadata(moduleJsExportNames[it]?.values?.toSmartList() ?: []) }
             },
             metadataSerializer = metadataSerializer,
             processCompiledFileData = incrementalResultsConsumer?.let { icConsumer ->
@@ -372,7 +372,7 @@ fun serializeModuleIntoKlib(
                     targetNames = if (builtInsPlatform == BuiltInsPlatform.WASM)
                         listOfNotNull(/* in the future there might be multiple WASM targets */wasmTarget?.alias)
                     else
-                        emptyList()
+                        []
                 )
                 customProperties { this += properties }
             }
@@ -414,7 +414,7 @@ fun IncrementalDataProvider.getSerializedData(nonCompiledSources: Set<File>): Li
 
     assert(compiledIrFiles.size == compiledMetaFiles.size)
 
-    val storage = mutableListOf<KotlinFileSerializedData>()
+    val storage: MutableList<KotlinFileSerializedData> = []
 
     for (f in compiledIrFiles.keys) {
         if (f in nonCompiledSources) continue

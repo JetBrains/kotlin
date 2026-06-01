@@ -91,7 +91,7 @@ abstract class BuildMetaInfo {
     private fun serializeMapToString(myList: Map<String, String>) = myList.map { "${it.key}=${it.value}" }.joinToString("\n")
     fun serializeArgsToString(args: CommonCompilerArguments) = serializeMapToString(createPropertiesMapFromCompilerArguments(args))
 
-    open val excludedProperties = listOf(
+    open val excludedProperties = [
         "languageVersion",
         "apiVersion",
         "pluginClasspaths",
@@ -117,9 +117,9 @@ abstract class BuildMetaInfo {
         "verbosePhases",
         "version",
         "configurator",
-    )
+    ]
 
-    open val argumentsListForSpecialCheck = listOf(
+    open val argumentsListForSpecialCheck = [
         "allowAnyScriptsInSourceRoots",
         "allowKotlinPackage",
         "allowResultReturnType",
@@ -129,5 +129,5 @@ abstract class BuildMetaInfo {
         "suppressVersionWarnings",
         "suppressWarnings",
         CustomKeys.IS_EAP.name
-    )
+    ]
 }

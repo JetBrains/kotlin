@@ -52,12 +52,12 @@ class LazyJavaTypeParameterDescriptor(
     private fun computeNotEnhancedBounds(): List<KotlinType> {
         val bounds = javaTypeParameter.upperBounds
         if (bounds.isEmpty()) {
-            return listOf(
+            return [
                 KotlinTypeFactory.flexibleType(
                     c.module.builtIns.anyType,
                     c.module.builtIns.nullableAnyType
                 )
-            )
+            ]
         }
         return bounds.map {
             c.typeResolver.transformJavaType(it, TypeUsage.COMMON.toAttributes(upperBoundForTypeParameter = this))

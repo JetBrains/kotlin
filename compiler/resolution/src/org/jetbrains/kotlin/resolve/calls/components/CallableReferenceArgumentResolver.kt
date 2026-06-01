@@ -30,7 +30,7 @@ class CallableReferenceArgumentResolver(val callableReferenceOverloadConflictRes
 
             resolvedAtom.setAnalyzedResults(
                 candidate = null,
-                subResolvedAtoms = listOf(resolvedAtom.transformToPostponed())
+                subResolvedAtoms = [resolvedAtom.transformToPostponed()]
             )
             return
         }

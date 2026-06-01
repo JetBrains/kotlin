@@ -119,7 +119,7 @@ internal class PreCodegenInliner(
                         continue
                     }
 
-                    val functionsToInline = mutableSetOf<IrFunction>()
+                    val functionsToInline: MutableSet<IrFunction> = []
                     for (callSite in callSites) {
                         val calleeSymbol = callSite.actualCallee as DataFlowIR.FunctionSymbol.Declared
                         if (nodeColors[calleeSymbol] != NodeColor.BLACK) continue

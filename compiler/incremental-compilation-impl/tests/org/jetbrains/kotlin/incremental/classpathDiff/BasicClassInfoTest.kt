@@ -27,7 +27,7 @@ class BasicClassInfoTest {
         val classIds = compiledClasses.map { BasicClassInfo.compute(it).classId }
 
         assertEquals(
-            listOf(
+            [
                 classId("com.example", "TopLevelClass", local = false),
                 classId("com.example", "TopLevelClass$1", local = true),
                 classId("com.example", "TopLevelClass$1LocalClass", local = true),
@@ -40,7 +40,7 @@ class BasicClassInfoTest {
                 classId("com.example", "TopLevelClass.InnerClassWith\$Sign", local = false),
                 classId("com.example", "TopLevelClass.InnerClassWith\$Sign.InnerClassWith\$SignLevel2", local = false),
                 classId("com.example", "TopLevelClass.StaticNestedClass", local = false)
-            ),
+            ],
             classIds
         )
     }
@@ -53,7 +53,7 @@ class BasicClassInfoTest {
         }
         val classesDir = tmpDir.newFolder()
 
-        compileJavaFiles(listOf(sourceFile), listOf("-d", classesDir.path)).assertSuccessful()
+        compileJavaFiles([sourceFile], ["-d", classesDir.path]).assertSuccessful()
 
         return classesDir.walk().toList()
             .filter { it.isFile }

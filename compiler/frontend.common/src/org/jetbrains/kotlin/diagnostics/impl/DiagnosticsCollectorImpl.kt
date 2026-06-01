@@ -26,7 +26,7 @@ class DiagnosticsCollectorImpl : BaseDiagnosticsCollector() {
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         if (diagnostic != null && !context.isDiagnosticSuppressed(diagnostic)) {
-            diagnosticsByFile.getOrPut(context.containingFile) { mutableListOf() }.run {
+            diagnosticsByFile.getOrPut(context.containingFile) { [] }.run {
                 add(diagnostic)
                 hasErrors = hasErrors || diagnostic.severity.isError
                 hasWarningsForWError = hasWarningsForWError || diagnostic.severity.isErrorWhenWError

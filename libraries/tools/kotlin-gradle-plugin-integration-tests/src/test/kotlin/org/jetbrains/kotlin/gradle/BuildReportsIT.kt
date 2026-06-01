@@ -39,7 +39,7 @@ import kotlin.test.assertContains
 class BuildReportsIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions
         get() = super.defaultBuildOptions.copy(
-            buildReport = listOf(BuildReportType.FILE)
+            buildReport = [BuildReportType.FILE]
         )
 
     private val GradleProject.reportFile: Path
@@ -146,9 +146,9 @@ class BuildReportsIT : KGPBaseTest() {
             languageVersion = KotlinVersion.DEFAULT.version,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
-            freeCompilerArgs = listOf(
+            freeCompilerArgs = [
                 "-Xklib-ir-inliner=full",
-            ),
+            ],
             buildReportOutput = BuildReportType.JSON,
         ) {
             validateJsonReport(
@@ -189,8 +189,8 @@ class BuildReportsIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         languageVersion: String = KotlinVersion.KOTLIN_2_0.version,
         disableIsolatedProjects: Boolean = false,
-        freeCompilerArgs: List<String> = listOf(),
-        expectedReportLines: List<String> = listOf(),
+        freeCompilerArgs: List<String> = [],
+        expectedReportLines: List<String> = [],
         buildReportOutput: BuildReportType = BuildReportType.FILE,
         reportValidation: TestProject.(String) -> Unit = { languageVersion ->
             validateBuildReportFile(
@@ -203,11 +203,11 @@ class BuildReportsIT : KGPBaseTest() {
             isolatedProjects = IsolatedProjectsMode.DISABLED
         ) else defaultBuildOptions
 
-        project(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = listOf(buildReportOutput))) {
+        project(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = [buildReportOutput])) {
 
-            val buildArguments = if (buildReportOutput == BuildReportType.JSON)
-                arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
-            else arrayOf(task)
+            val buildArguments: Array<String> = if (buildReportOutput == BuildReportType.JSON)
+                [task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}"]
+            else [task]
 
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             addCompilerArgs(freeCompilerArgs)
@@ -221,11 +221,11 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             project,
             gradleVersion,
-            buildOptions = buildOptions.copy(languageVersion = languageVersion, buildReport = listOf(buildReportOutput))
+            buildOptions = buildOptions.copy(languageVersion = languageVersion, buildReport = [buildReportOutput])
         ) {
-            val buildArguments = if (buildReportOutput == BuildReportType.JSON)
-                arrayOf(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}")
-            else arrayOf(task)
+            val buildArguments: Array<String> = if (buildReportOutput == BuildReportType.JSON)
+                [task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}"]
+            else [task]
             if (!isWithJavaSupported && project == "mppJvmWithJava") buildGradle.replaceText("withJava()", "")
             addCompilerArgs(freeCompilerArgs)
             build(*buildArguments) {
@@ -264,9 +264,9 @@ class BuildReportsIT : KGPBaseTest() {
             gradleVersion,
             // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
             disableIsolatedProjects = true,
-            freeCompilerArgs = listOf(
+            freeCompilerArgs = [
                 "-Xklib-ir-inliner=full",
-            ),
+            ],
             buildReportOutput = BuildReportType.JSON,
             reportValidation = {
                 validateJsonReport(taskName = null, *nativeBuildExpectedMetrics)
@@ -279,8 +279,8 @@ class BuildReportsIT : KGPBaseTest() {
         task: String,
         gradleVersion: GradleVersion,
         disableIsolatedProjects: Boolean = false,
-        freeCompilerArgs: List<String> = listOf(),
-        additionalReportLines: List<String> = listOf(),
+        freeCompilerArgs: List<String> = [],
+        additionalReportLines: List<String> = [],
         buildReportOutput: BuildReportType = BuildReportType.FILE,
         reportValidation: TestProject.() -> Unit = {
             validateBuildReportFile(
@@ -294,7 +294,7 @@ class BuildReportsIT : KGPBaseTest() {
             isolatedProjects = IsolatedProjectsMode.DISABLED
         ) else defaultBuildOptions
 
-        nativeProject(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = listOf(buildReportOutput))) {
+        nativeProject(project, gradleVersion, buildOptions = buildOptions.copy(buildReport = [buildReportOutput])) {
             addNativeCompilerArgs(freeCompilerArgs)
             build(task, "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
                 assertBuildReportPathIsPrinted()
@@ -321,7 +321,7 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    val nativeBuildExpectedMetrics = arrayOf(
+    val nativeBuildExpectedMetrics: Array<BuildTimeMetric> = [
         CustomBuildTimeMetric.createIfDoesNotExistAndReturn("InlineFunctionSerializationPreProcessing"),
         CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrBeforeLowering"),
         CustomBuildTimeMetric.createIfDoesNotExistAndReturn("ValidateIrAfterLowering"),
@@ -333,23 +333,24 @@ class BuildReportsIT : KGPBaseTest() {
         IR_SERIALIZATION,
         IR_LOWERING,
         BACKEND
-    )
+    ]
 
-    val nativeBuildFileExpectedContents = listOf(
+    val nativeBuildFileExpectedContents = [
         "Time metrics:",
         "Size metrics:",
-    ) + nativeBuildExpectedMetrics.map { "${it.readableString}:" }
+    ] + nativeBuildExpectedMetrics.map { "${it.readableString}:" }
 
-    val baseExpectedBuildTimeMetrics = listOf(
+    val baseExpectedBuildTimeMetrics = [
         RUN_COMPILATION,
         INCREMENTAL_COMPILATION_DAEMON,
-    )
-    val baseExpectedPerformanceBuildMetrics = listOf(
+    ]
+    val baseExpectedPerformanceBuildMetrics = [
         CACHE_DIRECTORY_SIZE,
         COMPILE_ITERATION,
         SNAPSHOT_SIZE
-    )
+    ]
 
+    @Suppress("ConvertToCollectionLiterals")
     private fun baseBuildFileExpectedContents(kotlinLanguageVersion: String) =
         (baseExpectedBuildTimeMetrics + baseExpectedPerformanceBuildMetrics).map { "${it.readableString}:" } + listOf(
             //region Metrics
@@ -366,6 +367,7 @@ class BuildReportsIT : KGPBaseTest() {
             //endregion
         )
 
+    @Suppress("ConvertToCollectionLiterals")
     private fun nonIncrementalBuildFileExpectedContents(kotlinLanguageVersion: String) =
         baseBuildFileExpectedContents(kotlinLanguageVersion) + listOf(
             //region for non-incremental builds
@@ -390,7 +392,7 @@ class BuildReportsIT : KGPBaseTest() {
 
         fun validateTotalCachesSizeMetric() {
             val cachesDirectories = Files.walk(projectPath).use { files ->
-                val knownCachesDirectories = setOf("caches-jvm", "caches-js")
+                val knownCachesDirectories: Set<String> = ["caches-jvm", "caches-js"]
                 files.asSequence().filter { Files.isDirectory(it) && it.name in knownCachesDirectories }.toList()
             }
             val actualCacheDirectoriesSize = cachesDirectories.sumOf { files ->
@@ -407,7 +409,7 @@ class BuildReportsIT : KGPBaseTest() {
         fun validateSnapshotSizeMetric() {
             // traverse only the `build` directory files, because Gradle also contains a file with the name `last-build.bin`
             val actualSnapshotSize = Files.walk(projectPath.resolve("build")).use { files ->
-                val knownSnapshotFiles = setOf("last-build.bin", "build-history.bin", "abi-snapshot.bin")
+                val knownSnapshotFiles: Set<String> = ["last-build.bin", "build-history.bin", "abi-snapshot.bin"]
                 files.asSequence().filter { Files.isRegularFile(it) && it.name in knownSnapshotFiles }.map { Files.size(it) }.sum()
             }
             // the first found line of the report should contain a sum of the metric per all the tasks
@@ -453,7 +455,7 @@ class BuildReportsIT : KGPBaseTest() {
     @GradleTest
     @JvmGradlePluginTests
     fun testFileReportWithoutKotlinTask(gradleVersion: GradleVersion) {
-        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.JSON))) {
+        project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.JSON])) {
             val jsonReportPath = projectPath.resolve("report")
             build("assemble", "--dry-run", "-Pkotlin.build.report.json.directory=${jsonReportPath.pathString}") {
                 assertBuildReportPathIsPrinted()
@@ -474,7 +476,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testSingleBuildMetricsFileValidation(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+            buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.SINGLE_FILE])
         ) {
             buildAndFail("compileKotlin") {
                 assertOutputContains("Can't configure single file report: 'kotlin.build.report.single_file' property is mandatory")
@@ -491,7 +493,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testSingleBuildMetricsFile(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+            buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.SINGLE_FILE])
         ) {
             val newMetricsPath = projectPath.resolve("metrics.bin")
             build(
@@ -529,7 +531,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testSingleBuildMetricsFileSmoke(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.SINGLE_FILE))
+            buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.SINGLE_FILE])
         ) {
             val metricsFile = projectPath.resolve("metrics.bin").toFile()
             build(
@@ -555,7 +557,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = listOf(BuildReportType.BUILD_SCAN))
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = [BuildReportType.BUILD_SCAN])
         ) {
             build(
                 "compileKotlin",
@@ -577,7 +579,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = listOf(BuildReportType.BUILD_SCAN))
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG, buildReport = [BuildReportType.BUILD_SCAN])
         ) {
             build(
                 "compileKotlin",
@@ -600,7 +602,7 @@ class BuildReportsIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
                 isolatedProjects = IsolatedProjectsMode.ENABLED,
-                buildReport = listOf(BuildReportType.FILE, BuildReportType.JSON)
+                buildReport = [BuildReportType.FILE, BuildReportType.JSON]
             )
         ) {
             build(
@@ -629,10 +631,10 @@ class BuildReportsIT : KGPBaseTest() {
         ) {
 
             val lookupsTab = projectPath.resolve("build/kotlin/compileKotlin/cacheable/caches-jvm/lookups/lookups.tab")
-            val kotlinErrorPaths = setOf(
+            val kotlinErrorPaths: Set<Path> = [
                 projectPersistentCache.resolve("errors"),
                 projectPath.resolve(".gradle/kotlin/errors")
-            )
+            ]
 
             buildGradle.appendText(
                 """
@@ -757,7 +759,7 @@ class BuildReportsIT : KGPBaseTest() {
     fun testBuildScanMetricsValidation(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
-            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.BUILD_SCAN))
+            buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.BUILD_SCAN])
         ) {
             buildAndFail(
                 "compileKotlin", "-Pkotlin.build.report.build_scan.metrics=unknown_prop"
@@ -821,7 +823,7 @@ class BuildReportsIT : KGPBaseTest() {
             build(
                 "compileKotlin",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON),
+                    buildReport = [BuildReportType.JSON],
                 )
             ) {
                 val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
@@ -836,7 +838,7 @@ class BuildReportsIT : KGPBaseTest() {
             build(
                 "compileKotlin",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON),
+                    buildReport = [BuildReportType.JSON],
                 )
             ) {
                 val jsonReport = projectPath.getSingleFileInDir(defaultReportPath)
@@ -857,12 +859,12 @@ class BuildReportsIT : KGPBaseTest() {
     fun testJsonBuildReport(gradleVersion: GradleVersion) {
         project("incrementalMultiproject", gradleVersion) {
             val relativeJsonReportPath = "report"
-            val listOfSubprojects = listOf("app", "lib")
+            val listOfSubprojects = ["app", "lib"]
             build(
                 "compileKotlin",
                 "-Pkotlin.build.report.json.directory=$relativeJsonReportPath",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON),
+                    buildReport = [BuildReportType.JSON],
                     logLevel = LogLevel.DEBUG,
                 )
             ) {
@@ -884,7 +886,7 @@ class BuildReportsIT : KGPBaseTest() {
                 "compileKotlin",
                 "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}",
                 buildOptions = defaultBuildOptions.copy(
-                    buildReport = listOf(BuildReportType.JSON),
+                    buildReport = [BuildReportType.JSON],
                     incremental = true,
                     logLevel = LogLevel.DEBUG,
                 )
@@ -934,7 +936,7 @@ class BuildReportsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
-                buildReport = listOf(BuildReportType.FILE)
+                buildReport = [BuildReportType.FILE]
             )
         ) {
             val reportFolder = projectPath.resolve("build/reports/kotlin-build").toFile()
@@ -964,7 +966,7 @@ class BuildReportsIT : KGPBaseTest() {
             "incrementalMultiproject", gradleVersion,
             buildOptions = defaultBuildOptions.copy(
                 isolatedProjects = IsolatedProjectsMode.ENABLED,
-                buildReport = listOf(BuildReportType.BUILD_SCAN)
+                buildReport = [BuildReportType.BUILD_SCAN]
             )
         ) {
             build(
@@ -987,7 +989,7 @@ class BuildReportsIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(
                 logLevel = LogLevel.DEBUG,
                 configurationCache = BuildOptions.ConfigurationCacheValue.UNSPECIFIED,
-                buildReport = listOf(BuildReportType.BUILD_SCAN),
+                buildReport = [BuildReportType.BUILD_SCAN],
                 // KT-68847 Support build reports for build scan with project isolation
                 isolatedProjects = IsolatedProjectsMode.DISABLED,
             )
@@ -1037,7 +1039,7 @@ class BuildReportsIT : KGPBaseTest() {
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true
                 ),
-                buildReport = listOf(BuildReportType.JSON)
+                buildReport = [BuildReportType.JSON]
             )
         ) {
             build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
@@ -1069,7 +1071,7 @@ class BuildReportsIT : KGPBaseTest() {
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true
                 ),
-                buildReport = listOf(BuildReportType.JSON)
+                buildReport = [BuildReportType.JSON]
             )
         ) {
             build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
@@ -1105,7 +1107,7 @@ class BuildReportsIT : KGPBaseTest() {
                 nativeOptions = defaultBuildOptions.nativeOptions.copy(
                     incremental = true
                 ),
-                buildReport = listOf(BuildReportType.JSON)
+                buildReport = [BuildReportType.JSON]
             )
         ) {
             buildScriptInjection {
@@ -1157,7 +1159,7 @@ class BuildReportsIT : KGPBaseTest() {
     private fun doTestMetricsAfterIncrementalChange(gradleVersion: GradleVersion, executionStrategy: KotlinCompilerExecutionStrategy) {
         project("simpleProject", gradleVersion, buildOptions = defaultBuildOptions.copy(compilerExecutionStrategy = executionStrategy)) {
             build("assemble") {
-                validateBuildReportFile(nonIncrementalBuildFileExpectedContents(KotlinVersion.DEFAULT.version), emptyList())
+                validateBuildReportFile(nonIncrementalBuildFileExpectedContents(KotlinVersion.DEFAULT.version), [])
             }
             reportFile.deleteExisting()
             val helloWorldSource = kotlinSourcesDir().resolve("helloWorld.kt")
@@ -1166,7 +1168,7 @@ class BuildReportsIT : KGPBaseTest() {
                 val helloWorldSourcePath = helloWorldSource.toRealPath().absolutePathString()
                 val helloWorldBinaryPath = kotlinClassesDir().resolve("demo/KotlinGreetingJoiner.class").toRealPath().absolutePathString()
                 validateBuildReportFile(
-                    baseBuildFileExpectedContents(KotlinVersion.DEFAULT.version), listOf(
+                    baseBuildFileExpectedContents(KotlinVersion.DEFAULT.version), [
                         "Compile iteration:",
                         "${helloWorldSource.relativeTo(projectPath)} <- was modified since last time",
                         "Source changes: Known(modified=[$helloWorldSourcePath], removed=[], forDependencies=false)",
@@ -1174,7 +1176,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "Moving $helloWorldBinaryPath to the stash as",
                         executionStrategy.asFinishLogMessage,
                         "[ClasspathSnapshot] Shrunk current classpath snapshot after compilation (shrink mode = UnchangedLookupsUnchangedClasspath), no updates since previous run"
-                    )
+                    ]
                 )
             }
         }
@@ -1183,7 +1185,7 @@ class BuildReportsIT : KGPBaseTest() {
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
         private fun compilerPerformanceMetrics(): List<BuildTimeMetric> = allBuildTimeMetricsByParentMap[COMPILER_PERFORMANCE]!!
-            .flatMap { allBuildTimeMetricsByParentMap[it] ?: listOf(it) }
+            .flatMap { allBuildTimeMetricsByParentMap[it] ?: [it] }
             .filter { it !is CustomBuildTimeMetric }
 
         private fun Collection<BuildPerformanceMetric>.assertContainsValues(vararg expectedValues: String) {
@@ -1200,6 +1202,6 @@ class BuildReportsIT : KGPBaseTest() {
         }
 
         private fun BuildPerformanceMetric.getAllChildren(): List<BuildPerformanceMetric> =
-            allBuildTimeMetricsByParentMap[this]?.flatMap { it.getAllChildren() + it } ?: emptyList()
+            allBuildTimeMetricsByParentMap[this]?.flatMap { it.getAllChildren() + it } ?: []
     }
 }

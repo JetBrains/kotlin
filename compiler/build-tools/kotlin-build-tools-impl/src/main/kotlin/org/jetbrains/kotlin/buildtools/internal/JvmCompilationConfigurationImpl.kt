@@ -20,7 +20,7 @@ internal data class AggregatedIcConfiguration<P : IncrementalCompilationApproach
 )
 
 internal class JvmCompilationConfigurationImpl(
-    override var kotlinScriptFilenameExtensions: Set<String> = emptySet(),
+    override var kotlinScriptFilenameExtensions: Set<String> = [],
     override var logger: KotlinLogger = DefaultKotlinLogger,
 ) : JvmCompilationConfiguration {
     internal var aggregatedIcConfiguration: AggregatedIcConfiguration<*>? = null

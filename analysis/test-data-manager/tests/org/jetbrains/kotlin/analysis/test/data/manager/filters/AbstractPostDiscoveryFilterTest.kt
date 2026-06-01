@@ -66,11 +66,11 @@ internal abstract class AbstractPostDiscoveryFilterTest {
         override fun getSource(): Optional<TestSource> = Optional.ofNullable(source)
         override fun getParent(): Optional<TestDescriptor> = Optional.empty()
         override fun setParent(parent: TestDescriptor?) {}
-        override fun getChildren(): MutableSet<out TestDescriptor> = mutableSetOf()
+        override fun getChildren(): MutableSet<TestDescriptor> = []
         override fun addChild(descriptor: TestDescriptor) {}
         override fun removeChild(descriptor: TestDescriptor) {}
         override fun removeFromHierarchy() {}
-        override fun getTags(): MutableSet<TestTag> = mutableSetOf()
+        override fun getTags(): MutableSet<TestTag> = []
         override fun findByUniqueId(uniqueId: UniqueId): Optional<out TestDescriptor> = Optional.empty()
     }
 }

@@ -79,10 +79,10 @@ fun IrType.removeAnnotations(): IrType =
     when (this) {
         is IrSimpleType ->
             toBuilder().apply {
-                annotations = emptyList()
+                annotations = []
             }.buildSimpleType()
         is IrDynamicType ->
-            IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+            IrDynamicTypeImpl([], Variance.INVARIANT)
         else ->
             this
     }
@@ -151,7 +151,7 @@ fun IrClassSymbol.createType(hasQuestionMark: Boolean, arguments: List<IrTypeArg
         this,
         hasQuestionMark,
         arguments,
-        emptyList()
+        []
     )
 
 @ObsoleteDescriptorBasedAPI
@@ -173,8 +173,8 @@ val IrClassSymbol.defaultTypeWithoutArguments: IrSimpleType
     get() = IrSimpleTypeImpl(
         classifier = this,
         nullability = SimpleTypeNullability.DEFINITELY_NOT_NULL,
-        arguments = emptyList(),
-        annotations = emptyList(),
+        arguments = [],
+        annotations = [],
     )
 
 val IrClassifierSymbol.defaultType: IrSimpleType
@@ -188,8 +188,8 @@ val IrTypeParameterSymbol.defaultType: IrSimpleType
     get() = IrSimpleTypeImpl(
         classifier = this,
         nullability = SimpleTypeNullability.NOT_SPECIFIED,
-        arguments = emptyList(),
-        annotations = emptyList()
+        arguments = [],
+        annotations = []
     )
 
 val IrTypeParameter.defaultType: IrSimpleType
@@ -200,7 +200,7 @@ val IrClassSymbol.starProjectedType: IrSimpleType
         this,
         SimpleTypeNullability.NOT_SPECIFIED,
         arguments = owner.typeConstructorParameters.map { IrStarProjectionImpl }.toList(),
-        annotations = emptyList()
+        annotations = []
     )
 
 val IrClass.typeConstructorParameters: Sequence<IrTypeParameter>
@@ -245,11 +245,11 @@ fun IrClassifierSymbol.typeWith(arguments: List<IrType>): IrSimpleType =
         this,
         SimpleTypeNullability.NOT_SPECIFIED,
         arguments.memoryOptimizedMap { makeTypeProjection(it, Variance.INVARIANT) },
-        emptyList()
+        []
     )
 
 fun IrClassifierSymbol.typeWithArguments(arguments: List<IrTypeArgument>): IrSimpleType =
-    IrSimpleTypeImpl(this, SimpleTypeNullability.NOT_SPECIFIED, arguments, emptyList())
+    IrSimpleTypeImpl(this, SimpleTypeNullability.NOT_SPECIFIED, arguments, [])
 
 fun IrClass.typeWith(arguments: List<IrType>) = this.symbol.typeWith(arguments)
 

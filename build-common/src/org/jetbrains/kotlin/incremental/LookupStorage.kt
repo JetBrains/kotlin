@@ -92,8 +92,8 @@ open class LookupStorage(
     fun get(lookupSymbol: LookupSymbol): Collection<String> {
         val key = LookupSymbolKey(lookupSymbol.name, lookupSymbol.scope)
         val fileIds = lookupMap[key] ?: return emptySet()
-        val paths = mutableSetOf<String>()
-        val filtered = mutableSetOf<Int>()
+        val paths: MutableSet<String> = []
+        val filtered: MutableSet<Int> = []
 
         for (fileId in fileIds) {
             val path = idToFile[fileId]?.path

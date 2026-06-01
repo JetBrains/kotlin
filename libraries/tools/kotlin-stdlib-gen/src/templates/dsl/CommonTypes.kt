@@ -34,8 +34,8 @@ enum class Family {
     val code = CodeExtension(this)
 
     companion object {
-        val primitiveSpecializations = setOf(ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives)
-        val defaultFamilies = setOf(Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives)
+        val primitiveSpecializations: Set<Family> = [ArraysOfPrimitives, RangesOfPrimitives, ProgressionsOfPrimitives, Primitives]
+        val defaultFamilies: Set<Family> = [Iterables, Sequences, ArraysOfObjects, ArraysOfPrimitives]
     }
 }
 
@@ -58,15 +58,15 @@ enum class PrimitiveType {
     val capacityUnsigned by lazy { descendingByDomainCapacityUnsigned.indexOf(this).let { if (it < 0) it else descendingByDomainCapacityUnsigned.size - it } }
 
     companion object {
-        val unsignedPrimitives = setOf(UInt, ULong, UByte, UShort)
+        val unsignedPrimitives: Set<PrimitiveType> = [UInt, ULong, UByte, UShort]
         val defaultPrimitives = PrimitiveType.entries.toSet() - unsignedPrimitives
-        val numericPrimitives = setOf(Int, Long, Byte, Short, Double, Float)
-        val integralPrimitives = setOf(Int, Long, Byte, Short, Char)
-        val floatingPointPrimitives = setOf(Double, Float)
-        val rangePrimitives = setOf(Int, Long, Char, UInt, ULong)
+        val numericPrimitives: Set<PrimitiveType> = [Int, Long, Byte, Short, Double, Float]
+        val integralPrimitives: Set<PrimitiveType> = [Int, Long, Byte, Short, Char]
+        val floatingPointPrimitives: Set<PrimitiveType> = [Double, Float]
+        val rangePrimitives: Set<PrimitiveType> = [Int, Long, Char, UInt, ULong]
 
-        val descendingByDomainCapacity = listOf(Double, Float, Long, Int, Short, Char, Byte)
-        val descendingByDomainCapacityUnsigned = listOf(ULong, UInt, UShort, UByte)
+        val descendingByDomainCapacity = [Double, Float, Long, Int, Short, Char, Byte]
+        val descendingByDomainCapacityUnsigned = [ULong, UInt, UShort, UByte]
 
         fun maxByCapacity(fromType: PrimitiveType, toType: PrimitiveType): PrimitiveType =
             (if (fromType in unsignedPrimitives) descendingByDomainCapacityUnsigned else descendingByDomainCapacity)

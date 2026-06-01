@@ -20,7 +20,7 @@ import com.intellij.openapi.util.io.FileUtil
 import java.io.File
 import kotlin.math.max
 
-private val COMMANDS = listOf("new", "touch", "delete")
+private val COMMANDS = ["new", "touch", "delete"]
 private val COMMANDS_AS_REGEX_PART = COMMANDS.joinToString("|")
 private val COMMANDS_AS_MESSAGE_PART = COMMANDS.joinToString("/") { "\".$it\"" }
 
@@ -157,7 +157,7 @@ fun getModificationsToPerform(
     }
     if (!haveFilesWithoutNumbers && !haveFilesWithNumbers) {
         if (allowNoFilesWithSuffixInTestData) {
-            return listOf(listOf())
+            return [[]]
         }
         else {
             throw IllegalStateException("Bad test data format: no files ending with ${COMMANDS_AS_MESSAGE_PART} found")
@@ -165,7 +165,7 @@ fun getModificationsToPerform(
     }
 
     if (haveFilesWithoutNumbers) {
-        return listOf(getModificationsForIteration(".new", ".touch", ".delete"))
+        return [getModificationsForIteration(".new", ".touch", ".delete")]
     }
     else {
         return (1..10)

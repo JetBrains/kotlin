@@ -43,7 +43,7 @@ abstract class AbstractTestValidator(private val testInfo: AbstractSpecTest, pri
 
     fun validateTestType() {
         val computedTestTypes = computeTestTypes()
-        val invalidTestCases = mutableSetOf<Int>()
+        val invalidTestCases: MutableSet<Int> = []
         var invalidTestCasesReason: SpecTestValidationFailedReason? = null
 
         for ([caseNumber, case] in testInfo.cases.byNumbers) {

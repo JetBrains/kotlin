@@ -90,7 +90,7 @@ private fun StringBuilder.appendDiagram(
         }
 
         // Collect values that need to always be rendered at the end of a row.
-        val trailingDiagramValues = mutableSetOf<DiagramValue>()
+        val trailingDiagramValues: MutableSet<DiagramValue> = []
         for (value in rowValues) {
             when {
                 // In the case when a value display spans multiple lines,

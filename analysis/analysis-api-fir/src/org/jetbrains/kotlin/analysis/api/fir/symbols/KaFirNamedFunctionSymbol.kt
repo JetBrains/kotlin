@@ -77,7 +77,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
     override val contractEffects: List<KaContractEffectDeclaration>
         get() = withValidityAssertion {
             if (backingPsi != null && !backingPsi.mayHaveContract() && !backingPsi.hasContractEffectList()) {
-                emptyList()
+                []
             } else {
                 firSymbol.resolvedContractDescription?.effects
                     ?.map(FirEffectDeclaration::effect)

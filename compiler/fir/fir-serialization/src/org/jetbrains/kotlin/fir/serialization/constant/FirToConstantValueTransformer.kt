@@ -156,7 +156,7 @@ fun Map<Name, ConstantValue<*>>.fillEmptyArray(
         if (!parameterSymbol.resolvedReturnTypeRef.coneType.fullyExpandedType(session).isArrayType) return@mapNotNull null
         val parameterWithPotentialDefault = expectConstructor?.valueParameterSymbols?.firstOrNull { it.name == parameterSymbol.name } ?: parameterSymbol
         if (parameterWithPotentialDefault.hasDefaultValue) return@mapNotNull null
-        parameterSymbol.name to ArrayValue(emptyList())
+        parameterSymbol.name to ArrayValue([])
     }
     return this + additionalEmptyArrays
 }
@@ -165,11 +165,11 @@ private val constantIntrinsicCalls = OperatorNameConventions.NUMBER_CONVERSIONS 
 
 private object FirToConstantValueChecker : FirDefaultVisitor<Boolean, FirSession>() {
     // `null` value is not treated as a const
-    private val supportedConstKinds = setOf<ConstantValueKind>(
+    private val supportedConstKinds: Set<ConstantValueKind> = [
         ConstantValueKind.Boolean, ConstantValueKind.Char, ConstantValueKind.String, ConstantValueKind.Float, ConstantValueKind.Double,
         ConstantValueKind.Byte, ConstantValueKind.UnsignedByte, ConstantValueKind.Short, ConstantValueKind.UnsignedShort,
         ConstantValueKind.Int, ConstantValueKind.UnsignedInt, ConstantValueKind.Long, ConstantValueKind.UnsignedLong,
-    )
+    ]
 
     override fun visitElement(element: FirElement, data: FirSession): Boolean {
         return false

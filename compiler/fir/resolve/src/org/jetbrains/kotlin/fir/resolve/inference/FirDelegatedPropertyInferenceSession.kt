@@ -38,7 +38,7 @@ class FirDelegatedPropertyInferenceSession(
     private val delegateExpression: FirExpression?,
 ) : FirInferenceSession() {
 
-    private val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = mutableListOf()
+    private val partiallyResolvedCalls: MutableList<Pair<FirResolvable, Candidate>> = []
 
     private val components: BodyResolveComponents
         get() = resolutionContext.bodyResolveComponents

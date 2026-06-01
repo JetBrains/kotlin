@@ -25,17 +25,17 @@ import org.jetbrains.kotlin.name.Name
 class ReflectJavaPackage(override val fqName: FqName) : ReflectJavaElement(), JavaPackage {
     override fun getClasses(nameFilter: (Name) -> Boolean): Collection<JavaClass> {
         // A package at runtime can't know what classes it has and has not
-        return listOf()
+        return []
     }
 
     override val subPackages: Collection<JavaPackage>
         get() {
             // A package at runtime can't know what sub packages it has and has not
-            return listOf()
+            return []
         }
 
     // TODO: support it if possible
-    override val annotations get() = emptyList<JavaAnnotation>()
+    override val annotations: List<JavaAnnotation> get() = []
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? = null
 

@@ -80,7 +80,7 @@ class FirJavaConstructor @FirImplementationDetail constructor(
     }
 
     override val contextParameters: List<FirValueParameter>
-        get() = emptyList()
+        get() = []
 
     override val isLocal: Boolean
         get() = false

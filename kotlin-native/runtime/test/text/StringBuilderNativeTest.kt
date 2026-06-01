@@ -196,7 +196,7 @@ class StringBuilderNativeTest {
         repeat(times) { sb.append(12345678L + it) }
         assertEquals(expected, sb.toString())
 
-        val cornerCase = listOf(0L, -1L, Long.MIN_VALUE, Long.MAX_VALUE)
+        val cornerCase = [0L, -1L, Long.MIN_VALUE, Long.MAX_VALUE]
         val expectedCornerCase = cornerCase.fold("") { res, e -> res + e }
         for (v in cornerCase) sb.append(v)
         assertEquals(expected + expectedCornerCase, sb.toString())

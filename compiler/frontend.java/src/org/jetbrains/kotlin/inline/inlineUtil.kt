@@ -48,8 +48,8 @@ data class InlinePropertyAccessor(
 ) : InlineFunctionOrAccessor
 
 fun inlineFunctionsAndAccessors(header: KotlinClassHeader, excludePrivateMembers: Boolean = false): List<InlineFunctionOrAccessor> {
-    val data = header.data ?: return emptyList()
-    val strings = header.strings ?: return emptyList()
+    val data = header.data ?: return []
+    val strings = header.strings ?: return []
 
     return when (header.kind) {
         KotlinClassHeader.Kind.CLASS -> {
@@ -63,7 +63,7 @@ fun inlineFunctionsAndAccessors(header: KotlinClassHeader, excludePrivateMembers
             inlineFunctions(packageProto.functionList, nameResolver, packageProto.typeTable, excludePrivateMembers) +
                     inlinePropertyAccessors(packageProto.propertyList, nameResolver, excludePrivateMembers)
         }
-        else -> emptyList()
+        else -> []
     }
 }
 
@@ -88,7 +88,7 @@ private fun inlinePropertyAccessors(
     nameResolver: NameResolver,
     excludePrivateAccessors: Boolean = false
 ): List<InlinePropertyAccessor> {
-    val inlineAccessors = mutableListOf<InlinePropertyAccessor>()
+    val inlineAccessors: MutableList<InlinePropertyAccessor> = []
     properties.forEach { property ->
         val propertySignature = property.getExtensionOrNull(JvmProtoBuf.propertySignature) ?: return@forEach
         if (property.hasGetterFlags() && Flags.IS_INLINE_ACCESSOR.get(property.getterFlags)

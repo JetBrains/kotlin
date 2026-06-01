@@ -176,11 +176,11 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
             checkPackageExistence("java.lang", isKotlinOnly = false, isPlatform = true)
             checkPackageExistence("java.io", isKotlinOnly = false, isPlatform = true)
 
-            checkSubpackages("foo", emptyList())
-            checkSubpackages("bar", emptyList())
-            checkSubpackages("kotlin", listOf("collections", "jvm", "js"))
-            checkSubpackages("kotlin.collections", listOf("unsigned", "jdk8"))
-            checkSubpackages("java", listOf("lang", "io"))
+            checkSubpackages("foo", [])
+            checkSubpackages("bar", [])
+            checkSubpackages("kotlin", ["collections", "jvm", "js"])
+            checkSubpackages("kotlin.collections", ["unsigned", "jdk8"])
+            checkSubpackages("java", ["lang", "io"])
         }
     }
 
@@ -220,9 +220,9 @@ class StandaloneBehaviorTest : AbstractStandaloneTest() {
             checkPackageExistence("java.lang", isKotlinOnly = false, isPlatform = false)
             checkPackageExistence("java.io", isKotlinOnly = false, isPlatform = false)
 
-            checkSubpackages("foo", emptyList())
-            checkSubpackages("bar", emptyList())
-            checkSubpackages("kotlin", listOf("collections", "jvm", "js"))
+            checkSubpackages("foo", [])
+            checkSubpackages("bar", [])
+            checkSubpackages("kotlin", ["collections", "jvm", "js"])
         }
     }
 

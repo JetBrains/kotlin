@@ -64,8 +64,8 @@ internal fun readAndCleanupTestResults(
     }
 
     val doc = JDOMUtil.load(xmlString.reader())
-    val skipAttrs = setOf("timestamp", "hostname", "time", "message")
-    val skipContentsOf = setOf("failure")
+    val skipAttrs: Set<String> = ["timestamp", "hostname", "time", "message"]
+    val skipContentsOf: Set<String> = ["failure"]
 
     fun cleanup(e: Element) {
         if (e.name in skipContentsOf) e.text = "..."

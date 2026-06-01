@@ -104,7 +104,7 @@ abstract class KotlinModuleBuildTarget<BuildMetaInfoType : BuildMetaInfo> intern
 
     val friendBuildTargets: List<KotlinModuleBuildTarget<*>>
         get() {
-            val result = mutableListOf<KotlinModuleBuildTarget<*>>()
+            val result: MutableList<KotlinModuleBuildTarget<*>> = []
 
             if (isTests) {
                 result.addIfNotNull(kotlinContext.targetsBinding[module.productionBuildTarget])

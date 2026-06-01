@@ -24,7 +24,7 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "lib.foo", context)
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo"), textImports)
+        assertEquals(["import lib.foo"], textImports)
     }
 
     fun testSingleImportDirectiveExplicitImportKeyword() {
@@ -32,7 +32,7 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", "import lib.foo", context)
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo"), textImports)
+        assertEquals(["import lib.foo"], textImports)
     }
 
     fun testMultipleImportDirectives() {
@@ -41,7 +41,7 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", importString, context)
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo", "import lib.bar"), textImports)
+        assertEquals(["import lib.foo", "import lib.bar"], textImports)
     }
 
     fun testMultipleImportDirectives2() {
@@ -50,7 +50,7 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         val codeFragment = KtExpressionCodeFragment(project, "fragment.kt", "foo()", importString, context)
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.bar", "import lib.foo"), textImports)
+        assertEquals(["import lib.bar", "import lib.foo"], textImports)
     }
 
     fun testMultipleImportDirectivesAdding() {
@@ -60,7 +60,7 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         codeFragment.addImportsFromString("import lib.baz")
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo", "import lib.bar", "import lib.baz"), textImports)
+        assertEquals(["import lib.foo", "import lib.bar", "import lib.baz"], textImports)
     }
 
     fun testClone() {
@@ -72,10 +72,10 @@ class KtCodeFragmentTest : KotlinTestWithEnvironment() {
         codeFragmentClone.addImportsFromString("lib.baz")
 
         val textImports = codeFragment.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo", "import lib.bar"), textImports)
+        assertEquals(["import lib.foo", "import lib.bar"], textImports)
 
         val textImportsClone = codeFragmentClone.importDirectives.map { it.text }
-        assertEquals(listOf("import lib.foo", "import lib.baz"), textImportsClone)
+        assertEquals(["import lib.foo", "import lib.baz"], textImportsClone)
     }
 
     @OptIn(K1Deprecation::class)

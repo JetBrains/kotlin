@@ -29,8 +29,8 @@ class KaResolveExtensionProviderForTest(
     private val hasResolveExtension: (KaModule) -> Boolean = { true }
 ) : KaResolveExtensionProvider() {
     override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> {
-        if (!hasResolveExtension(module)) return emptyList()
-        return listOf(KaResolveExtensionForTest(files, packages, shadowedScope))
+        if (!hasResolveExtension(module)) return []
+        return [KaResolveExtensionForTest(files, packages, shadowedScope)]
     }
 
     fun register(testServices: TestServices) {
@@ -70,7 +70,7 @@ class KaResolveExtensionFileForTests(
 
     private object ResolveExtensionNavigationTargetProviderForTest : KaResolveExtensionNavigationTargetsProvider() {
         override fun KaSession.getNavigationTargets(element: KtElement): Collection<PsiElement> =
-            listOf(KtResolveExtensionNavigationTargetPsiElementForTest(element))
+            [KtResolveExtensionNavigationTargetPsiElementForTest(element)]
     }
 
     override fun createNavigationTargetsProvider(): KaResolveExtensionNavigationTargetsProvider =

@@ -295,7 +295,7 @@ internal class ClassMemberGenerator(
                     if (fieldSymbol != null && !configuration.skipBodies) {
                         body = factory.createBlockBody(
                             startOffset, endOffset,
-                            listOf(
+                            [
                                 if (isSetter) {
                                     IrSetFieldImpl(startOffset, endOffset, fieldSymbol, builtins.unitType).apply {
                                         setReceiver(declaration)
@@ -312,7 +312,7 @@ internal class ClassMemberGenerator(
                                         IrGetFieldImpl(startOffset, endOffset, fieldSymbol, fieldType).setReceiver(declaration)
                                     )
                                 }
-                            )
+                            ]
                         )
                     }
                     declarationStorage.leaveScope(this.symbol)

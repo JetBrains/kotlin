@@ -129,7 +129,7 @@ fun <T : Any, DefaultType: DefaultRequiredType> MultipleOption<T, MultipleOption
         MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequiredType>(
             OptionDescriptor(
                 optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
-                description, defaultValue?.toList() ?: listOf(),
+                description, defaultValue?.toList().orEmpty(),
                 required, true, delimiter, deprecatedWarning
             ), owner
         )
@@ -208,7 +208,7 @@ fun <T : Any, OptionType : MultipleOptionType>
         MultipleOption<T, OptionType, DefaultRequiredType.Required>(
             OptionDescriptor(
                 optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
-                description, defaultValue?.toList() ?: listOf(),
+                description, defaultValue?.toList().orEmpty(),
                 true, multiple, delimiter, deprecatedWarning
             ), owner
         )
@@ -256,7 +256,7 @@ fun <T : Any, DefaultRequired: DefaultRequiredType> MultipleOption<T, MultipleOp
         MultipleOption<T, MultipleOptionType.RepeatedDelimited, DefaultRequired>(
             OptionDescriptor(
                 optionFullFormPrefix, optionShortFromPrefix, type, fullName, shortName,
-                description, defaultValue?.toList() ?: listOf(),
+                description, defaultValue?.toList().orEmpty(),
                 required, multiple, delimiterValue, deprecatedWarning
             ), owner
         )

@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
 
-private val EXCLUDED_PACKAGES = listOf("java.*", "sun.*", "kotlin.*", "jdk.internal.*", "com.azul.*")
+private val EXCLUDED_PACKAGES = ["java.*", "sun.*", "kotlin.*", "jdk.internal.*", "com.azul.*"]
 
 abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServices) {
     companion object {
@@ -244,7 +244,7 @@ class LocalVariableDebugRunner(testServices: TestServices) : DebugRunner(testSer
             frame.visibleVariables().map { variable -> toRecord(frame, variable) }
         } catch (e: AbsentInformationException) {
             // Local variable table completely absent - not distinguished from an empty table.
-            listOf()
+            []
         }
         val data =
             if (isIndyLambda(location)) {

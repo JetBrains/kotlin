@@ -34,7 +34,7 @@ import java.util.*
  */
 internal class RedundantLocalsEliminationMethodTransformer(private val suspensionPoints: List<SuspensionPoint>) : MethodTransformer() {
     override fun transform(internalClassName: String, methodNode: MethodNode) {
-        val interpreter = UnitSourceInterpreter(methodNode.localVariables?.mapTo(mutableSetOf()) { it.index } ?: setOf())
+        val interpreter = UnitSourceInterpreter(methodNode.localVariables?.mapTo(mutableSetOf()) { it.index }.orEmpty())
         val frames = interpreter.run(internalClassName, methodNode)
 
         val unreachableInstructions = methodNode.instructions.asSequence().zip(frames.asSequence())
@@ -46,7 +46,7 @@ internal class RedundantLocalsEliminationMethodTransformer(private val suspensio
         deleteRedundantLocals(methodNode, unreachableInstructions)
 
         // Mark all unused instructions for deletion (except for labels which are used in debug information)
-        val toDelete = mutableSetOf<AbstractInsnNode>()
+        val toDelete: MutableSet<AbstractInsnNode> = []
         toDelete.addAll(unreachableInstructions.filter { it !is LabelNode })
 
         // Mark all spillable "GETSTATIC kotlin/Unit.INSTANCE" instructions for deletion
@@ -82,7 +82,7 @@ private class UnitValue(val insns: Set<AbstractInsnNode>) : BasicValue(AsmTypes.
 // arguments to POP and unused ASTORE instructions.
 private class UnitSourceInterpreter(private val localVariables: Set<Int>) : BasicInterpreter(API_VERSION) {
     // All unit values with visible use-sites.
-    val unspillableUnitValues = mutableSetOf<AbstractInsnNode>()
+    val unspillableUnitValues: MutableSet<AbstractInsnNode> = []
 
     // Map from unit values to ASTORE/POP use-sites.
     val unitUsageInformation = mutableMapOf<AbstractInsnNode, MutableSet<AbstractInsnNode>>()
@@ -94,7 +94,7 @@ private class UnitSourceInterpreter(private val localVariables: Set<Int>) : Basi
     private fun collectUnitUsage(use: AbstractInsnNode, value: UnitValue) {
         for (def in value.insns) {
             if (def !in unspillableUnitValues) {
-                unitUsageInformation.getOrPut(def) { mutableSetOf() } += use
+                unitUsageInformation.getOrPut(def) { [] } += use
             }
         }
     }

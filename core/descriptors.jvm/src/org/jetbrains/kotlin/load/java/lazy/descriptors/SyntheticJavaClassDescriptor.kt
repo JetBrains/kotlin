@@ -46,7 +46,8 @@ class SyntheticJavaClassDescriptor(
 
     companion object {
         @JvmStatic
-        private val PUBLIC_METHOD_NAMES_IN_OBJECT = setOf("equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString")
+        private val PUBLIC_METHOD_NAMES_IN_OBJECT: Set<String> =
+            ["equals", "hashCode", "getClass", "wait", "notify", "notifyAll", "toString"]
     }
 
     private val jClass = FakeJavaClass()
@@ -156,7 +157,7 @@ class SyntheticJavaClassDescriptor(
         override val isFromSource: Boolean
             get() = false
         override val annotations: Collection<JavaAnnotation>
-            get() = emptyList()
+            get() = []
         override val isDeprecatedInJavaDoc: Boolean
             get() = false
 
@@ -171,13 +172,13 @@ class SyntheticJavaClassDescriptor(
         override val visibility: Visibility
             get() = this@SyntheticJavaClassDescriptor.visibility.delegate
         override val typeParameters: List<JavaTypeParameter>
-            get() = emptyList()
+            get() = []
         override val fqName: FqName
             get() = this@SyntheticJavaClassDescriptor.fqNameSafe
         override val supertypes: Collection<JavaClassifierType>
-            get() = emptyList()
+            get() = []
         override val innerClassNames: Collection<Name>
-            get() = emptyList()
+            get() = []
 
         override fun findInnerClass(name: Name): JavaClass? = null
 
@@ -194,17 +195,17 @@ class SyntheticJavaClassDescriptor(
         override val isSealed: Boolean
             get() = modality == Modality.SEALED
         override val permittedTypes: Sequence<JavaClassifierType>
-            get() = emptySequence()
+            get() = []
         override val lightClassOriginKind: LightClassOriginKind?
             get() = null
         override val methods: Collection<JavaMethod>
-            get() = emptyList()
+            get() = []
         override val fields: Collection<JavaField>
-            get() = emptyList()
+            get() = []
         override val constructors: Collection<JavaConstructor>
-            get() = emptyList()
+            get() = []
         override val recordComponents: Collection<JavaRecordComponent>
-            get() = emptyList()
+            get() = []
 
         override fun hasDefaultConstructor(): Boolean = false
     }

@@ -24,8 +24,8 @@ import org.jetbrains.kotlin.js.config.*
 
 object JsIrLoweringPipelinePhase : PipelinePhase<WebLoadedIrPipelineArtifact, JsLoweredIrPipelineArtifact>(
     name = "JsIrLoweringPipelinePhase",
-    preActions = setOf(PerformanceNotifications.IrLoweringStarted),
-    postActions = setOf(PerformanceNotifications.IrLoweringFinished),
+    preActions = [PerformanceNotifications.IrLoweringStarted],
+    postActions = [PerformanceNotifications.IrLoweringFinished],
 ) {
     override fun executePhase(input: WebLoadedIrPipelineArtifact): JsLoweredIrPipelineArtifact? =
         try {

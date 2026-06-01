@@ -99,8 +99,8 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
 
     fun IrBuilderWithScope.irGetObjCClassCompanion(declaration: IrClass): IrExpression {
         require(declaration.isCompanion && (declaration.parent as IrClass).isObjCClass())
-        return irCallWithSubstitutedType(symbols.interopInterpretObjCPointer, listOf(declaration.defaultType)).apply {
-            arguments[0] = irCallWithSubstitutedType(symbols.interopGetObjCClass, listOf((declaration.parent as IrClass).defaultType))
+        return irCallWithSubstitutedType(symbols.interopInterpretObjCPointer, [declaration.defaultType]).apply {
+            arguments[0] = irCallWithSubstitutedType(symbols.interopGetObjCClass, [(declaration.parent as IrClass).defaultType])
         }
     }
 
@@ -126,16 +126,16 @@ internal class ObjectClassLowering(val generationState: NativeGenerationState) :
                 if (declaration.hasConstStateAndNoSideEffects() && !declaration.annotations.hasAnnotation(KonanFqNames.threadLocal)) {
                     builder.irConstantObject(
                             declaration,
-                            emptyList()
+                            []
                     )
                 } else {
                     builder.irBlock {
                         // we need to make object available for rereading from the same thread while initializing
-                        val uninitializedInstanceCall = irCallWithSubstitutedType(symbols.createUninitializedInstance, listOf(declaration.defaultType))
+                        val uninitializedInstanceCall = irCallWithSubstitutedType(symbols.createUninitializedInstance, [declaration.defaultType])
                         +irSetField(null, field, uninitializedInstanceCall, origin = IrStatementOriginFieldPreInit)
                         +irCall(symbols.initInstance).apply {
                             arguments[0] = irGetField(null, field)
-                            arguments[1] = irCallConstructor(primaryConstructor.symbol, emptyList())
+                            arguments[1] = irCallConstructor(primaryConstructor.symbol, [])
                         }
                         +irGetField(null, field)
                     }

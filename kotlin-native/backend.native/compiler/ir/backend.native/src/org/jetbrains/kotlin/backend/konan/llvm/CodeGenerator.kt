@@ -84,7 +84,7 @@ internal sealed class ExceptionHandler {
     ): Unit = with(functionGenerationContext) {
         call(
                 llvm.throwExceptionFunction,
-                listOf(kotlinException),
+                [kotlinException],
                 Lifetime.IRRELEVANT,
                 this@ExceptionHandler
         )
@@ -236,7 +236,7 @@ internal object VirtualTablesLookup {
             appendingTo(slowPathBB) {
                 val actualInterfaceTableSize = sub(llvm.kImmInt32Zero, interfaceTableSize) // -interfaceTableSize
                 val slowValue = call(llvm.lookupInterfaceTableRecord,
-                        listOf(interfaceTable, actualInterfaceTableSize, llvm.int32(interfaceId)))
+                        [interfaceTable, actualInterfaceTableSize, llvm.int32(interfaceId)])
                 br(takeResBB)
                 addPhiIncoming(resultPhi, currentBlock to slowValue)
             }
@@ -245,12 +245,12 @@ internal object VirtualTablesLookup {
     }
 
     fun FunctionGenerationContext.checkIsSubtype(objTypeInfo: LLVMValueRef, dstClass: IrClass) = if (!context.ghaEnabled()) {
-        call(llvm.isSubtypeFunction, listOf(objTypeInfo, codegen.typeInfoValue(dstClass)))
+        call(llvm.isSubtypeFunction, [objTypeInfo, codegen.typeInfoValue(dstClass)])
     } else {
         val dstHierarchyInfo = context.getLayoutBuilder(dstClass).hierarchyInfo
         if (!dstClass.isInterface) {
             call(llvm.isSubclassFastFunction,
-                    listOf(objTypeInfo, llvm.int32(dstHierarchyInfo.classIdLo), llvm.int32(dstHierarchyInfo.classIdHi)))
+                    [objTypeInfo, llvm.int32(dstHierarchyInfo.classIdLo), llvm.int32(dstHierarchyInfo.classIdHi)])
         } else {
             // Essentially: typeInfo.itable[place(interfaceId)].id == interfaceId
             val interfaceId = dstHierarchyInfo.interfaceId
@@ -263,7 +263,7 @@ internal object VirtualTablesLookup {
         assert(LLVMTypeOf(receiver) == llvm.pointerType)
 
         val typeInfoPtr: LLVMValueRef = if (irFunction.getObjCMethodInfo() != null)
-            call(llvm.getObjCKotlinTypeInfo, listOf(receiver))
+            call(llvm.getObjCKotlinTypeInfo, [receiver])
         else
             loadTypeInfo(receiver)
 
@@ -412,7 +412,7 @@ internal class StackLocalsManagerImpl(
             get() = arraySize != null
     }
 
-    private val stackLocals = mutableListOf<StackLocal>()
+    private val stackLocals: MutableList<StackLocal> = []
 
     fun isEmpty() = stackLocals.isEmpty()
 
@@ -451,7 +451,7 @@ internal class StackLocalsManagerImpl(
         val name = "local#${irClass.name}${count}#internal"
         // Create new type or get already created.
         context.declaredLocalArrays.getOrPut(name) {
-            val fieldTypes = listOf(kArrayHeader, LLVMArrayType(arrayToElementType[irClass.symbol]!!, count))
+            val fieldTypes = [kArrayHeader, LLVMArrayType(arrayToElementType[irClass.symbol]!!, count)]
             val classType = LLVMStructCreateNamed(LLVMGetModuleContext(llvm.module), name)!!
             LLVMStructSetBody(classType, fieldTypes.toCValues(), fieldTypes.size, 1)
             classType
@@ -512,7 +512,7 @@ internal class StackLocalsManagerImpl(
     private fun clean(stackLocal: StackLocal, refsOnly: Boolean) = with(functionGenerationContext) {
         if (stackLocal.isArray) {
             if (stackLocal.irClass.symbol == context.irBuiltIns.arrayClass) {
-                call(llvm.zeroArrayRefsFunction, listOf(stackLocal.objHeaderPtr))
+                call(llvm.zeroArrayRefsFunction, [stackLocal.objHeaderPtr])
             } else if (!refsOnly) {
                 val arrayType = localArrayType(stackLocal.irClass, stackLocal.arraySize!!)
                 memset(structGep(arrayType, stackLocal.stackAllocationPtr, 1, "arrayBody"),
@@ -530,7 +530,7 @@ internal class StackLocalsManagerImpl(
                     if (refsOnly)
                         storeHeapRef(llvm.kNull, fieldPtr)
                     else
-                        call(llvm.zeroHeapRefFunction, listOf(fieldPtr))
+                        call(llvm.zeroHeapRefFunction, [fieldPtr])
                 }
             }
 
@@ -762,7 +762,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
-        call(llvm.updateReturnRefFunction, listOf(address, value))
+        call(llvm.updateReturnRefFunction, [address, value])
     }
 
     private fun updateRef(value: LLVMValueRef, address: LLVMValueRef, onStack: Boolean,
@@ -770,12 +770,12 @@ internal abstract class FunctionGenerationContext(
         require(alignment == null || alignment % runtime.pointerAlignment == 0)
         if (onStack) {
             require(!isVolatile) { "Stack ref update can't be volatile"}
-            call(llvm.updateStackRefFunction, listOf(address, value))
+            call(llvm.updateStackRefFunction, [address, value])
         } else {
             if (isVolatile) {
-                call(llvm.UpdateVolatileHeapRef, listOf(address, value))
+                call(llvm.UpdateVolatileHeapRef, [address, value])
             } else {
-                call(llvm.updateHeapRefFunction, listOf(address, value))
+                call(llvm.updateHeapRefFunction, [address, value])
             }
         }
     }
@@ -787,17 +787,17 @@ internal abstract class FunctionGenerationContext(
             "Attempt to switch the thread state when runtime is forbidden"
         }
         when (state) {
-            Native -> call(llvm.Kotlin_mm_switchThreadStateNative, emptyList())
-            Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, emptyList())
+            Native -> call(llvm.Kotlin_mm_switchThreadStateNative, [])
+            Runnable -> call(llvm.Kotlin_mm_switchThreadStateRunnable, [])
         }.let {} // Force exhaustive.
     }
 
     fun memset(pointer: LLVMValueRef, value: Byte, size: Int, isVolatile: Boolean = false) =
             call(llvm.memsetFunction,
-                    listOf(pointer,
-                            llvm.int8(value),
-                            llvm.int32(size),
-                            llvm.int1(isVolatile)))
+                    [pointer,
+                        llvm.int8(value),
+                        llvm.int32(size),
+                        llvm.int1(isVolatile)])
 
     fun call(llvmCallable: LlvmCallable, args: List<LLVMValueRef>,
              resultLifetime: Lifetime = Lifetime.IRRELEVANT,
@@ -893,7 +893,7 @@ internal abstract class FunctionGenerationContext(
     }
 
     fun allocInstance(typeInfo: LLVMValueRef, lifetime: Lifetime, resultSlot: LLVMValueRef?) : LLVMValueRef =
-            call(llvm.allocInstanceFunction, listOf(typeInfo), lifetime, resultSlot = resultSlot)
+            call(llvm.allocInstanceFunction, [typeInfo], lifetime, resultSlot = resultSlot)
 
     fun allocInstance(irClass: IrClass, lifetime: Lifetime, resultSlot: LLVMValueRef?) =
         if (lifetime == Lifetime.STACK)
@@ -919,14 +919,14 @@ internal abstract class FunctionGenerationContext(
                 stackLocalsManager.allocArray(irClass, count)
             }
             else -> {
-                call(llvm.allocArrayFunction, listOf(typeInfo, count), lifetime, exceptionHandler, resultSlot = resultSlot)
+                call(llvm.allocArrayFunction, [typeInfo, count], lifetime, exceptionHandler, resultSlot = resultSlot)
             }
         }
     }
 
     fun unreachable(): LLVMValueRef? {
         if (context.config.debug) {
-            call(llvm.llvmTrap, emptyList())
+            call(llvm.llvmTrap, [])
         }
         val res = LLVMBuildUnreachable(builder)
         currentPositionHolder.setAfterTerminator()
@@ -1037,7 +1037,7 @@ internal abstract class FunctionGenerationContext(
         if (switchThreadState) {
             switchThreadState(Runnable)
         }
-        call(llvm.setCurrentFrameFunction, listOf(slotsPhi!!))
+        call(llvm.setCurrentFrameFunction, [slotsPhi!!])
         setCurrentFrameIsCalled = true
 
         return landingpad
@@ -1071,7 +1071,7 @@ internal abstract class FunctionGenerationContext(
             val typeId = extractValue(landingpad, 1)
             val isKotlinException = icmpEq(
                     typeId,
-                    call(llvm.llvmEhTypeidFor, listOf(kotlinExceptionRtti.llvm))
+                    call(llvm.llvmEhTypeidFor, [kotlinExceptionRtti.llvm])
             )
 
             if (wrapExceptionMode) {
@@ -1082,7 +1082,7 @@ internal abstract class FunctionGenerationContext(
                 appendingTo(foreignExceptionBlock) {
                     val isObjCException = icmpEq(
                             typeId,
-                            call(llvm.llvmEhTypeidFor, listOf(objcNSExceptionRtti.llvm))
+                            call(llvm.llvmEhTypeidFor, [objcNSExceptionRtti.llvm])
                     )
                     condBr(isObjCException, forwardNativeExceptionBlock, fatalForeignExceptionBlock)
 
@@ -1115,12 +1115,12 @@ internal abstract class FunctionGenerationContext(
     fun terminateWithCurrentException(landingpad: LLVMValueRef) {
         val exceptionRecord = extractValue(landingpad, 0)
         // So `std::terminate` is called from C++ catch block:
-        call(llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+        call(llvm.cxaBeginCatchFunction, [exceptionRecord])
         terminate()
     }
 
     fun terminate() {
-        call(llvm.cxxStdTerminate, emptyList())
+        call(llvm.cxxStdTerminate, [])
 
         // Note: unreachable instruction to be generated here, but debug information is improper in this case.
         val loopBlock = basicBlock("loop", position()?.start)
@@ -1159,14 +1159,14 @@ internal abstract class FunctionGenerationContext(
 
         // __cxa_begin_catch returns pointer to C++ exception object.
         val beginCatch = llvm.cxaBeginCatchFunction
-        val exceptionRawPtr = call(beginCatch, listOf(exceptionRecord))
+        val exceptionRawPtr = call(beginCatch, [exceptionRecord])
 
         // Pointer to Kotlin exception object:
-        val exceptionPtr = call(llvm.Kotlin_getExceptionObject, listOf(exceptionRawPtr), Lifetime.GLOBAL)
+        val exceptionPtr = call(llvm.Kotlin_getExceptionObject, [exceptionRawPtr], Lifetime.GLOBAL)
 
         // __cxa_end_catch performs some C++ cleanup, including calling `ExceptionObjHolder` class destructor.
         val endCatch = llvm.cxaEndCatchFunction
-        call(endCatch, listOf())
+        call(endCatch, [])
 
         return exceptionPtr
     }
@@ -1175,20 +1175,20 @@ internal abstract class FunctionGenerationContext(
         val exceptionRecord = extractValue(landingpadResult, 0, "er")
 
         // __cxa_begin_catch returns pointer to C++ exception object.
-        val exceptionRawPtr = call(llvm.cxaBeginCatchFunction, listOf(exceptionRecord))
+        val exceptionRawPtr = call(llvm.cxaBeginCatchFunction, [exceptionRecord])
 
         // This will take care of ARC - need to be done in the catching scope, i.e. before __cxa_end_catch
         val exception = call(context.symbols.createForeignException.owner.llvmFunction,
-                listOf(exceptionRawPtr),
+                [exceptionRawPtr],
                 Lifetime.GLOBAL, exceptionHandler)
 
-        call(llvm.cxaEndCatchFunction, listOf())
+        call(llvm.cxaEndCatchFunction, [])
         return exception
     }
 
     fun generateFrameCheck() {
         if (!context.shouldOptimize())
-            call(llvm.checkCurrentFrameFunction, listOf(slotsPhi!!))
+            call(llvm.checkCurrentFrameFunction, [slotsPhi!!])
     }
 
     inline fun ifThenElse(
@@ -1261,7 +1261,7 @@ internal abstract class FunctionGenerationContext(
         return switch
     }
 
-    fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef = call(llvm.getTypeInfo, listOf(objPtr))
+    fun loadTypeInfo(objPtr: LLVMValueRef): LLVMValueRef = call(llvm.getTypeInfo, [objPtr])
 
     /**
      * Note: the same code is generated as IR in [org.jetbrains.kotlin.backend.konan.lower.EnumUsageLowering].
@@ -1271,7 +1271,7 @@ internal abstract class FunctionGenerationContext(
         val getterId = context.enumsSupport.enumEntriesMap(enumClass)[enumEntry.name]!!.getterId
         return call(
                 context.enumsSupport.getValueGetter(enumClass).llvmFunction,
-                listOf(llvm.int32(getterId)),
+                [llvm.int32(getterId)],
                 Lifetime.GLOBAL,
                 exceptionHandler
         )
@@ -1290,9 +1290,9 @@ internal abstract class FunctionGenerationContext(
                 val getClass = llvm.externalNativeRuntimeFunction(
                         "object_getClass",
                         LlvmRetType(llvm.pointerType, isObjectType = false),
-                        listOf(LlvmParamType(llvm.pointerType))
+                        [LlvmParamType(llvm.pointerType)]
                 )
-                call(getClass, listOf(objCClass), exceptionHandler = exceptionHandler)
+                call(getClass, [objCClass], exceptionHandler = exceptionHandler)
             } else {
                 getObjCClass(irClass.getExternalObjCClassBinaryName())
             }
@@ -1311,7 +1311,7 @@ internal abstract class FunctionGenerationContext(
             return this.ifThenElse(storedClassIsNotNull, storedClass) {
                 call(
                         llvm.createKotlinObjCClass,
-                        listOf(classInfo),
+                        [classInfo],
                         exceptionHandler = exceptionHandler
                 )
             }
@@ -1410,18 +1410,18 @@ internal abstract class FunctionGenerationContext(
             startLocation?.let { debugLocation(it, it) }
             if (needsRuntimeInit || switchToRunnable) {
                 check(!forbidRuntime) { "Attempt to init runtime where runtime usage is forbidden" }
-                call(llvm.initRuntimeIfNeeded, emptyList())
+                call(llvm.initRuntimeIfNeeded, [])
             }
             if (switchToRunnable) {
                 switchThreadState(Runnable)
             }
             if (needSlots || needCleanupLandingpadAndLeaveFrame) {
-                call(llvm.enterFrameFunction, listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
+                call(llvm.enterFrameFunction, [slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)])
             } else {
                 check(!setCurrentFrameIsCalled)
             }
             if (!forbidRuntime && needSafePoint) {
-                call(llvm.Kotlin_mm_safePointFunctionPrologue, emptyList())
+                call(llvm.Kotlin_mm_safePointFunctionPrologue, [])
             }
             resetDebugLocation()
             br(entryBb)
@@ -1597,8 +1597,7 @@ internal abstract class FunctionGenerationContext(
     private fun releaseVars() {
         if (needCleanupLandingpadAndLeaveFrame || needSlots) {
             check(!forbidRuntime) { "Attempt to leave a frame where runtime usage is forbidden" }
-            call(llvm.leaveFrameFunction,
-                    listOf(slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)))
+            call(llvm.leaveFrameFunction, [slotsPhi!!, llvm.int32(vars.skipSlots), llvm.int32(slotCount)])
         }
     }
 }

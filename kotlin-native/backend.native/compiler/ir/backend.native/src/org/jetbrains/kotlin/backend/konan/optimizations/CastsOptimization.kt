@@ -124,7 +124,7 @@ private class DivergingAnalysisError(message: String) : Throwable(message)
 @Suppress("ConvertArgumentToSet")
 private object Predicates {
     fun disjunctionOf(vararg terms: LeafIndexWithValue): Predicate =
-            Conjunction(listOf(Disjunction(CustomBitSet().apply { terms.forEach { set(it.bitIndex) } })))
+            Conjunction([Disjunction(CustomBitSet().apply { terms.forEach { set(it.bitIndex) } })])
 
     fun isSubtypeOf(
             variable: IrValueDeclaration, type: IrType,
@@ -204,7 +204,7 @@ private object Predicates {
     }
 
     private val removedMarker = Disjunction(CustomBitSet().apply { set(0) })
-    private val removedMarkerSingletonList = listOf(removedMarker)
+    private val removedMarkerSingletonList = [removedMarker]
 
     // TODO: Support type hierarchy here (KT-77671).
     fun or(leftPredicate: Predicate, rightPredicate: Predicate): Predicate = when {
@@ -332,7 +332,7 @@ private object Predicates {
         Predicate.Empty -> Predicate.False
         is Conjunction -> when {
             predicate.terms.size == 1 -> {
-                val terms = mutableListOf<Disjunction>()
+                val terms: MutableList<Disjunction> = []
                 predicate.terms.first().terms.forEachBit { bit ->
                     terms.add(Disjunction(CustomBitSet().apply { set(bit xor 1 /* invert the term */) }))
                 }
@@ -340,7 +340,7 @@ private object Predicates {
             }
             else -> {
                 or(
-                        invert(Conjunction(listOf(predicate.terms.first()))),
+                        invert(Conjunction([predicate.terms.first()])),
                         invert(Conjunction(predicate.terms.drop(1)))
                 )
             }
@@ -466,13 +466,13 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val typeCheckResults = mutableMapOf<IrTypeOperatorCall, TypeCheckResult>()
         val visitor = object : IrVisitor<VisitorResult, Predicate>() {
-            val leafTerms = mutableListOf<LeafTerm>()
+            val leafTerms: MutableList<LeafTerm> = []
             val simpleTermsMap = mutableMapOf<Pair<IrValueDeclaration, IrClass?>, Int>()
             val complexTermsMap = mutableMapOf<IrElement, Int>()
             val complexTermsMask = CustomBitSet()
 
             // It's convenient to think of the predicate as a stack of sub-predicates which get anded to get the result.
-            val upperLevelPredicates = mutableListOf<Predicate>()
+            val upperLevelPredicates: MutableList<Predicate> = []
 
             val variableValueCounters = mutableMapOf<IrVariable, Int>()
             val phantomVariables = mutableMapOf<IrExpression, IrVariable>()
@@ -849,7 +849,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
             }
 
             private fun IrElement.getImmediateChildren(): List<IrElement> {
-                val result = mutableListOf<IrElement>()
+                val result: MutableList<IrElement> = []
                 acceptChildrenVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         result.add(element)
@@ -918,7 +918,7 @@ internal class CastsOptimization(val context: Context) : BodyLoweringPass {
                 val savedVariableAliases = variableAliases.toMutableMap()
 
                 fun forgetChangedVariables(irElement: IrElement) {
-                    val changedVariables = mutableSetOf<IrVariable>()
+                    val changedVariables: MutableSet<IrVariable> = []
                     for ([variable, alias] in variableAliases) {
                         val savedAlias = savedVariableAliases[variable]
                         if (savedAlias != null && savedAlias != alias)

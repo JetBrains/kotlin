@@ -31,7 +31,7 @@ class TestDataContextTest {
     @Test
     fun `golden only`() {
         assertTestDataContext(
-            prefixes = emptyList(),
+            prefixes = [],
             expectedReadable = "test.txt",
             expectedWriteTarget = "test.txt",
         )
@@ -40,7 +40,7 @@ class TestDataContextTest {
     @Test
     fun `single prefix`() {
         assertTestDataContext(
-            prefixes = listOf("js"),
+            prefixes = ["js"],
             expectedReadable = "test.js.txt, test.txt",
             expectedWriteTarget = "test.js.txt",
         )
@@ -49,7 +49,7 @@ class TestDataContextTest {
     @Test
     fun `multiple prefixes`() {
         assertTestDataContext(
-            prefixes = listOf("knm", "js"),
+            prefixes = ["knm", "js"],
             expectedReadable = "test.js.txt, test.knm.txt, test.txt",
             expectedWriteTarget = "test.js.txt",
         )
@@ -60,7 +60,7 @@ class TestDataContextTest {
     @Test
     fun `compound extension - golden only`() {
         assertTestDataContext(
-            prefixes = emptyList(),
+            prefixes = [],
             extension = ".pretty.txt",
             expectedReadable = "test.pretty.txt",
             expectedWriteTarget = "test.pretty.txt",
@@ -70,7 +70,7 @@ class TestDataContextTest {
     @Test
     fun `compound extension - single prefix`() {
         assertTestDataContext(
-            prefixes = listOf("js"),
+            prefixes = ["js"],
             extension = ".pretty.txt",
             expectedReadable = "test.js.pretty.txt, test.pretty.txt",
             expectedWriteTarget = "test.js.pretty.txt",
@@ -80,7 +80,7 @@ class TestDataContextTest {
     @Test
     fun `compound extension - multiple prefixes`() {
         assertTestDataContext(
-            prefixes = listOf("knm", "js"),
+            prefixes = ["knm", "js"],
             extension = ".pretty.txt",
             expectedReadable = "test.js.pretty.txt, test.knm.pretty.txt, test.pretty.txt",
             expectedWriteTarget = "test.js.pretty.txt",

@@ -10,7 +10,7 @@ class ParseSwiftNameAttributeTest {
     @Test
     fun `test - no parameters`() {
         assertEquals(
-            ObjCMemberDetails("foo", emptyList()),
+            ObjCMemberDetails("foo", []),
             parseSwiftMethodNameAttribute("swift_name(\"foo()\")")
         )
     }
@@ -18,7 +18,7 @@ class ParseSwiftNameAttributeTest {
     @Test
     fun `test - multiple parameters`() {
         assertEquals(
-            ObjCMemberDetails("foo", listOf("p0:", "p1:")),
+            ObjCMemberDetails("foo", ["p0:", "p1:"]),
             parseSwiftMethodNameAttribute("swift_name(\"foo(p0:p1:)\")")
         )
     }
@@ -26,7 +26,7 @@ class ParseSwiftNameAttributeTest {
     @Test
     fun `test - receiver`() {
         assertEquals(
-            ObjCMemberDetails("foo", listOf("_:", "p0:")),
+            ObjCMemberDetails("foo", ["_:", "p0:"]),
             parseSwiftMethodNameAttribute("swift_name(\"foo(_:p0:)\")")
         )
     }
@@ -48,16 +48,16 @@ class ParseSwiftNameAttributeTest {
     @Test
     fun `test - building non mangled selectors with no parameters`() {
         assertEquals(
-            listOf("foo"),
-            buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, ""))
+            ["foo"],
+            buildMangledSelectors(ObjCMemberDetails("foo", [], false, ""))
         )
     }
 
     @Test
     fun `test - building mangled selectors with no parameters`() {
         assertEquals(
-            listOf("foo_"),
-            buildMangledSelectors(ObjCMemberDetails("foo", emptyList(), false, "_"))
+            ["foo_"],
+            buildMangledSelectors(ObjCMemberDetails("foo", [], false, "_"))
         )
     }
 
@@ -65,11 +65,11 @@ class ParseSwiftNameAttributeTest {
     fun `test - building mangled selectors with 1 parameter`() {
         val attr = ObjCMemberDetails(
             name = "foo",
-            parameters = listOf("p0:"),
+            parameters = ["p0:"],
             postfix = "_"
         )
         assertEquals(
-            listOf("fooP0_:"),
+            ["fooP0_:"],
             buildMangledSelectors(attr)
         )
     }
@@ -78,11 +78,11 @@ class ParseSwiftNameAttributeTest {
     fun `test - building mangled selectors with 2 parameters`() {
         val attr = ObjCMemberDetails(
             name = "foo",
-            parameters = listOf("p0:", "p1:"),
+            parameters = ["p0:", "p1:"],
             postfix = "_"
         )
         assertEquals(
-            listOf("fooP0:", "p1_:"),
+            ["fooP0:", "p1_:"],
             buildMangledSelectors(attr)
         )
     }
@@ -91,11 +91,11 @@ class ParseSwiftNameAttributeTest {
     fun `test - building mangled selectors with 3 parameters`() {
         val attr = ObjCMemberDetails(
             name = "foo",
-            parameters = listOf("p0:", "p1:", "p2:"),
+            parameters = ["p0:", "p1:", "p2:"],
             postfix = "_"
         )
         assertEquals(
-            listOf("fooP0:", "p1:", "p2_:"),
+            ["fooP0:", "p1:", "p2_:"],
             buildMangledSelectors(attr)
         )
     }
@@ -105,12 +105,12 @@ class ParseSwiftNameAttributeTest {
         assertEquals(
             ObjCMemberDetails(
                 name = "foo",
-                parameters = listOf("p0:"),
+                parameters = ["p0:"],
                 postfix = "__"
             ),
             ObjCMemberDetails(
                 name = "foo",
-                parameters = listOf("p0:"),
+                parameters = ["p0:"],
                 postfix = "_"
             ).mangleAttribute()
         )
@@ -120,12 +120,12 @@ class ParseSwiftNameAttributeTest {
     fun `test - method name with mangling prefix`() {
 
         assertEquals(
-            ObjCMemberDetails("_pack", emptyList()),
+            ObjCMemberDetails("_pack", []),
             parseSwiftMethodNameAttribute("swift_name(\"_pack()\")")
         )
 
         assertEquals(
-            ObjCMemberDetails("_foo", listOf("bar:")),
+            ObjCMemberDetails("_foo", ["bar:"]),
             parseSwiftMethodNameAttribute("swift_name(\"_foo(bar)\")")
         )
     }
@@ -139,16 +139,16 @@ class ParseSwiftNameAttributeTest {
 
     @Test
     fun `test - swift name parameters parsing`() {
-        assertEquals(emptyList(), parseSwiftNameParameters("foo()"))
-        assertEquals(listOf("a:"), parseSwiftNameParameters("foo(a:)"))
-        assertEquals(listOf("a:", "b:"), parseSwiftNameParameters("foo(a:b:)"))
+        assertEquals([], parseSwiftNameParameters("foo()"))
+        assertEquals(["a:"], parseSwiftNameParameters("foo(a:)"))
+        assertEquals(["a:", "b:"], parseSwiftNameParameters("foo(a:b:)"))
     }
 
     @Test
     fun `test - invalid swift_name method format`() {
-        assertEquals(emptyList(), parseSwiftNameParameters("foo"))
-        assertEquals(emptyList(), parseSwiftNameParameters(""))
-        assertEquals(emptyList(), parseSwiftNameParameters("foo("))
-        assertEquals(emptyList(), parseSwiftNameParameters("foo)"))
+        assertEquals([], parseSwiftNameParameters("foo"))
+        assertEquals([], parseSwiftNameParameters(""))
+        assertEquals([], parseSwiftNameParameters("foo("))
+        assertEquals([], parseSwiftNameParameters("foo)"))
     }
 }

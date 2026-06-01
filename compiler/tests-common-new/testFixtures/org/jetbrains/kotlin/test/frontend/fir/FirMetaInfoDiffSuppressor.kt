@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirMetaInfoDiffSuppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     private val ignoreErrors: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS in it.directives }
     private val ignoreDiff: Boolean get() = testServices.moduleStructure.modules.any { IGNORE_FIR_DIAGNOSTICS_DIFF in it.directives }

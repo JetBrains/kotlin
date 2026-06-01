@@ -61,7 +61,7 @@ object KlibTestUtil {
         sourceFiles: Collection<File>,
         libraryName: String,
         klibFile: File,
-        additionalArguments: List<String> = emptyList(),
+        additionalArguments: List<String> = [],
     ) {
         require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
@@ -163,7 +163,7 @@ object KlibTestUtil {
             storageManager = LockBasedStorageManager.NO_LOCKS,
             builtIns = DefaultBuiltIns.Instance,
         )
-        module.setDependencies(listOf(DefaultBuiltIns.Instance.builtInsModule, module))
+        module.setDependencies([DefaultBuiltIns.Instance.builtInsModule, module])
 
         return module
     }
@@ -182,12 +182,12 @@ private fun createDependencyContainerForStdlibIfKlib(
     projectContext: ProjectContext,
 ): CommonDependenciesContainerImpl? {
     val stdlibKlib = loadMetadataKlibs(
-        libraryPaths = listOf(stdlibFilePath.toString()),
+        libraryPaths = [stdlibFilePath.toString()],
         configuration = environment.configuration,
     ).all.singleOrNull() ?: return null
 
     val stdlibModuleDescriptor = createAndInitializeKlibBasedStdlibCommonDescriptor(stdlibKlib, environment, projectContext)
-    return CommonDependenciesContainerImpl(listOf(stdlibModuleDescriptor))
+    return CommonDependenciesContainerImpl([stdlibModuleDescriptor])
 }
 
 private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
@@ -219,10 +219,10 @@ private fun createAndInitializeKlibBasedStdlibCommonDescriptor(
 
     stdlibCommonDescriptor.initialize(
         CompositePackageFragmentProvider(
-            listOf(
+            [
                 klibPackageFragmentProvider,
                 DefaultBuiltIns.Instance.builtInsModule.packageFragmentProvider,
-            ),
+            ],
             "Test provider for .knm metadata and built-in declarations of kotlin-stdlib-common"
         )
     )
@@ -234,7 +234,7 @@ private class CommonDependenciesContainerImpl(dependencies: Collection<ModuleDes
     private class ModuleInfoImpl(val module: ModuleDescriptor) : ModuleInfo {
         override val name: Name get() = module.name
 
-        override fun dependencies(): List<ModuleInfo> = listOf(this)
+        override fun dependencies(): List<ModuleInfo> = [this]
         override fun dependencyOnBuiltIns(): ModuleInfo.DependencyOnBuiltIns = ModuleInfo.DependencyOnBuiltIns.LAST
 
         override val platform: TargetPlatform get() = CommonPlatforms.defaultCommonPlatform
@@ -253,6 +253,6 @@ private class CommonDependenciesContainerImpl(dependencies: Collection<ModuleDes
     override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit
     override fun packageFragmentProviderForModuleInfo(moduleInfo: ModuleInfo): PackageFragmentProvider? = null
 
-    override val friendModuleInfos: List<ModuleInfo> get() = emptyList()
-    override val refinesModuleInfos: List<ModuleInfo> get() = emptyList()
+    override val friendModuleInfos: List<ModuleInfo> get() = []
+    override val refinesModuleInfos: List<ModuleInfo> get() = []
 }

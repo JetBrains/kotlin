@@ -62,7 +62,7 @@ class PathPartInfo(val key: String) {
  * This is primarily used by the [LiveLiteralTransformer] to create unique and durable keys for
  * all of the constant literals in an IR source tree.
  */
-class DurableKeyVisitor(private var keys: MutableSet<String> = mutableSetOf()) {
+class DurableKeyVisitor(private var keys: MutableSet<String> = []) {
     private var current: PathPartInfo = PathPartInfo.ROOT
     private var parent: PathPartInfo? = null
     private var sibling: PathPartInfo? = null
@@ -136,7 +136,7 @@ class DurableKeyVisitor(private var keys: MutableSet<String> = mutableSetOf()) {
      * this scope. Inside of this scope, the previous scope will be completely ignored.
      */
     fun <T> root(
-        keys: MutableSet<String> = mutableSetOf(),
+        keys: MutableSet<String> = [],
         block: () -> T,
     ): T {
         val prevKeys = this.keys

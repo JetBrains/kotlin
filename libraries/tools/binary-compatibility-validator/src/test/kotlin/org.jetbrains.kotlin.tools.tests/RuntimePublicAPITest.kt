@@ -20,7 +20,7 @@ class RuntimePublicAPITest {
     val testName = TestName()
 
     @Test fun kotlinStdlibRuntimeMerged() {
-        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", listOf("kotlin.jvm.internal"))
+        snapshotAPIAndCompare("../../stdlib/build/libs", "kotlin-stdlib", ["kotlin.jvm.internal"])
     }
 
     @Test fun kotlinStdlibJdk7() {
@@ -32,15 +32,15 @@ class RuntimePublicAPITest {
     }
 
     @Test fun kotlinReflect() {
-        snapshotAPIAndCompare("../../reflect/build/libs", "kotlin-reflect(?!-[-a-z]+)", nonPublicPackages = listOf("kotlin.reflect.jvm.internal"))
+        snapshotAPIAndCompare("../../reflect/build/libs", "kotlin-reflect(?!-[-a-z]+)", nonPublicPackages = ["kotlin.reflect.jvm.internal"])
     }
 
     private fun snapshotAPIAndCompare(
         basePath: String,
         jarPattern: String,
-        publicPackages: List<String> = emptyList(),
-        nonPublicPackages: List<String> = emptyList(),
-        nonPublicAnnotations: List<String> = emptyList()
+        publicPackages: List<String> = [],
+        nonPublicPackages: List<String> = [],
+        nonPublicAnnotations: List<String> = []
     ) {
         val base = File(basePath).absoluteFile.normalize()
         val jarFile = getJarFile(base, jarPattern, System.getProperty("kotlinVersion"))

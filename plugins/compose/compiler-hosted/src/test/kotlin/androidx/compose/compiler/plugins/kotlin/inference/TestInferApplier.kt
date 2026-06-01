@@ -75,7 +75,7 @@ class TestInferApplier {
     }
 
     private fun errorReporter(): Pair<ErrorReporter<Node>, List<Call>> {
-        val errors = mutableListOf<Call>()
+        val errors: MutableList<Call> = []
         return object : ErrorReporter<Node> {
             override fun reportCallError(node: Node, expected: String, received: String) {
                 val call = node as? Call ?: (node as? ResolvedExpression)?.node as? Call ?: return
@@ -125,8 +125,8 @@ class TestInferApplier {
     }
 
     private fun expectCorrectInference(findScheme: (Node) -> Scheme) {
-        val expectations = mutableListOf<String>()
-        val results = mutableListOf<String>()
+        val expectations: MutableList<String> = []
+        val results: MutableList<String> = []
         fun expect(name: String, schemeText: String) {
             val function = data[name] ?: error("Could not find $name")
             val scheme = findScheme(function)

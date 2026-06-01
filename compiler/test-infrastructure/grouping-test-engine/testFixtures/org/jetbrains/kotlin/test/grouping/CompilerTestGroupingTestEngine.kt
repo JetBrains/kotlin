@@ -217,7 +217,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
             for ([tokens, batch] in groupedByTokens) {
                 if (BatchToken.Isolated in tokens) {
                     for (info in batch) {
-                        add(listOf(info))
+                        add([info])
                     }
                 } else {
                     add(batch)
@@ -287,7 +287,7 @@ class CompilerTestGroupingTestEngine : TestEngine {
                     nonGroupingRunner.failuresInterceptor.withAssertionCatching(wrapper, block)
                 }
             )
-            groupingRunner.run(listOf(nonGroupingStageOutput))
+            groupingRunner.run([nonGroupingStageOutput])
 
             /*
              * Exceptions from facades were reported to the failures interceptor of the grouping runner.

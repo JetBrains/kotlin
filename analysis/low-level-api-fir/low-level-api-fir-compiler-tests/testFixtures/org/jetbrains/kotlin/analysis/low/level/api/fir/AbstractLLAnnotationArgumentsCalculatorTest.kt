@@ -31,7 +31,7 @@ import java.util.*
  */
 abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBasedTest<List<AnnotationResult>>() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val STUB_DIFFERENCE by directive("Indicates that stub-based and AST-based annotations differ")
@@ -58,7 +58,7 @@ abstract class AbstractLLAnnotationArgumentsCalculatorTest : AbstractLLStubBased
 
     private fun TestServices.assertConsistency(astBasedAnnotations: List<AnnotationResult>, stubBasedAnnotations: List<AnnotationResult>) {
         val stubDifferenceExpected = Directives.STUB_DIFFERENCE in moduleStructure.allDirectives
-        val differentStubBasedAnnotations = mutableListOf<AnnotationResult>()
+        val differentStubBasedAnnotations: MutableList<AnnotationResult> = []
 
         for (stubBasedAnnotation in stubBasedAnnotations) {
             val astBasedAnnotation = astBasedAnnotations[stubBasedAnnotation.globalIndex]

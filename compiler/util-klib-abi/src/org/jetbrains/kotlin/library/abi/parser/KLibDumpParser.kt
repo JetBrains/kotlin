@@ -37,9 +37,9 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
 
     /** Cursor to keep track of current location within the dump */
     private val cursor = Cursor(klibDump)
-    private val declarations: MutableList<AbiDeclaration> = mutableListOf()
+    private val declarations: MutableList<AbiDeclaration> = []
     private var uniqueName: String = ""
-    private var signatureVersions: MutableSet<AbiSignatureVersion> = mutableSetOf()
+    private var signatureVersions: MutableSet<AbiSignatureVersion> = []
 
     /**
      * Parse the klib dump text.
@@ -61,7 +61,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
             manifest =
                 LibraryManifest(
                     platform = null,
-                    platformTargets = emptyList(),
+                    platformTargets = [],
                     compilerVersion = null,
                     abiVersion = null,
                     irProviderName = null,
@@ -78,7 +78,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
         val isValue = modifiers.contains("value")
         val isFunction = modifiers.contains("fun")
         val kind = cursor.parseClassKind() ?: throw parseException("Failed to parse class kind")
-        val typeParams = cursor.parseTypeParams() ?: emptyList()
+        val typeParams = cursor.parseTypeParams() ?: []
         // if we are a nested class the name won't be qualified, and we will need to use the
         // [parentQualifiedName] to complete it
         val abiQualifiedName = parseAbiQualifiedName(parentQualifiedName)
@@ -89,7 +89,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
                 cursor.nextLine()
                 parseChildDeclarations(abiQualifiedName)
             } else {
-                emptyList()
+                []
             }
         return AbiClassImpl(
             qualifiedName = abiQualifiedName,
@@ -207,7 +207,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
     private fun parseChildDeclarations(
         parentQualifiedName: AbiQualifiedName?
     ): List<AbiDeclaration> {
-        val childDeclarations = mutableListOf<AbiDeclaration>()
+        val childDeclarations: MutableList<AbiDeclaration> = []
         // end of parent container is marked by a closing bracket, collect all declarations
         // until we see one.
         while (cursor.parseCloseClassBody(peek = true) == null) {
@@ -227,7 +227,7 @@ class KlibDumpParser(klibDump: String, private val filePath: String? = null) {
         val isSuspend = modifiers.contains("suspend")
         val isCompanion = modifiers.contains("companion")
         cursor.parseFunctionKind()
-        val typeParams = cursor.parseTypeParams() ?: emptyList()
+        val typeParams = cursor.parseTypeParams() ?: []
         val companionExtensionsClass = runIf(isCompanion) { cursor.parseCompanionExtensionsClass() }
         val contextAndReceiverParams = cursor.parseContextAndReceiverParams()
         val abiQualifiedName =

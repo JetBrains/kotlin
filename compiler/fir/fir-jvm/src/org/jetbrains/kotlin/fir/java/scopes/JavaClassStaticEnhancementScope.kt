@@ -19,7 +19,7 @@ class JavaClassStaticEnhancementScope(
     private val useSiteStaticScope: JavaClassStaticUseSiteScope,
 ) : FirDelegatingContainingNamesAwareScope(useSiteStaticScope) {
     private val signatureEnhancement = FirSignatureEnhancement(owner.fir, session) {
-        emptyList()
+        []
     }
 
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {

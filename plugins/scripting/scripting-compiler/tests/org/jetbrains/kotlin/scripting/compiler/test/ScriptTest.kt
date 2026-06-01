@@ -41,7 +41,7 @@ class ScriptTest {
         val aClass = compileScript("fib_std.kts")
         assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass, listOf("4", "comment"))
+            val anObj = tryConstructClassFromStringArgs(aClass, ["4", "comment"])
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (comment)$FIB_SCRIPT_OUTPUT_TAIL", out)
@@ -52,7 +52,7 @@ class ScriptTest {
         val aClass = compileScript("fib_std.kts")
         assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            val anObj = tryConstructClassFromStringArgs(aClass, [])
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out)
@@ -63,15 +63,15 @@ class ScriptTest {
         val aClass = compileScript("fib_std.kts", saveClassesDir = tmpdir)
         assertNotNull(aClass)
         val out1 = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            val anObj = tryConstructClassFromStringArgs(aClass, [])
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out1)
-        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass.classLoader)
+        val savedClassLoader = URLClassLoader([tmpdir.toURI().toURL()], aClass.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         assertNotNull(aClassSaved)
         val out2 = captureOut {
-            val anObjSaved = tryConstructClassFromStringArgs(aClassSaved, emptyList())
+            val anObjSaved = tryConstructClassFromStringArgs(aClassSaved, [])
             assertNotNull(anObjSaved)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out2)
@@ -81,7 +81,7 @@ class ScriptTest {
     fun testUseCompilerInternals() {
         val scriptClass = compileScript("use_compiler_internals.kts")!!
         assertEquals("OK", captureOut {
-            tryConstructClassFromStringArgs(scriptClass, emptyList())!!
+            tryConstructClassFromStringArgs(scriptClass, [])!!
         })
     }
 
@@ -90,7 +90,7 @@ class ScriptTest {
         val aClass = compileScript("kt42530.kts")
         assertNotNull(aClass)
         val out = captureOut {
-            val anObj = tryConstructClassFromStringArgs(aClass, emptyList())
+            val anObj = tryConstructClassFromStringArgs(aClass, [])
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("[(1, a)]", out)

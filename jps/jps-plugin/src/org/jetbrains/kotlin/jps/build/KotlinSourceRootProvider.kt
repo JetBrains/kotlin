@@ -28,10 +28,10 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
         target: BuildTarget<JavaSourceRootDescriptor>,
         dataPaths: BuildDataPaths,
     ): List<JavaSourceRootDescriptor> {
-        val moduleBuildTarget = target as? ModuleBuildTarget ?: return listOf()
+        val moduleBuildTarget = target as? ModuleBuildTarget ?: return []
         val module = moduleBuildTarget.module
 
-        val result = mutableListOf<JavaSourceRootDescriptor>()
+        val result: MutableList<JavaSourceRootDescriptor> = []
 
         // Add source roots with type KotlinSourceRootType.
         //
@@ -86,7 +86,7 @@ class KotlinSourceRootProvider : AdditionalRootsProviderService<JavaSourceRootDe
                         javaSourceRootProperties?.isForGeneratedSources ?: false,
                         false,
                         javaSourceRootProperties?.packagePrefix ?: "",
-                        setOf()
+                        []
                     )
                 )
             }

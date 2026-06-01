@@ -67,7 +67,7 @@ class WithIndexLoopHeader(
                             it.hasShape(
                                 dispatchReceiver = true,
                                 regularParameters = 1,
-                                parameterTypes = listOf(null, context.irBuiltIns.intType)
+                                parameterTypes = [null, context.irBuiltIns.intType]
                             )
                 }
                 incrementIndexStatement =

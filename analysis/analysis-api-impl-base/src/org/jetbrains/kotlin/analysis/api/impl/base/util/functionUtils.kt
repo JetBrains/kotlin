@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @KaImplementationDetail
 val kotlinFunctionInvokeCallableIds = (0..23).flatMapTo(hashSetOf()) { arity ->
-    listOf(
+    [
         CallableId(StandardNames.getFunctionClassId(arity), OperatorNameConventions.INVOKE),
         CallableId(StandardNames.getSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE),
         CallableId(StandardNames.getKFunctionClassId(arity), OperatorNameConventions.INVOKE),
         CallableId(StandardNames.getKSuspendFunctionClassId(arity), OperatorNameConventions.INVOKE)
-    )
+    ]
 }

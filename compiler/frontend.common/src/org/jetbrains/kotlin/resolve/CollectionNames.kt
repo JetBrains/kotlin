@@ -15,12 +15,12 @@ object CollectionNames {
         val MUTABLE_SET_OF: Name = Name.identifier("mutableSetOf")
         val SEQUENCE_OF: Name = Name.identifier("sequenceOf")
 
-        val NAMES: List<Name> = listOf(
+        val NAMES: List<Name> = [
             LIST_OF,
             MUTABLE_LIST_OF,
             SET_OF,
             MUTABLE_SET_OF,
             SEQUENCE_OF,
-        )
+        ]
     }
 }

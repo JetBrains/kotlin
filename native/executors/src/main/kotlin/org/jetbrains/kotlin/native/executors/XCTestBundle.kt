@@ -74,7 +74,7 @@ internal sealed interface XCTestBundle {
 
             val writeArgsRequest = ExecuteRequest(
                 executableAbsolutePath = "/usr/libexec/PlistBuddy",
-                args = mutableListOf("-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist)
+                args = ["-c", "Add :KotlinNativeTestArgs string ${args.joinToString(" ")}", infoPlist]
             )
             HostExecutor().execute(writeArgsRequest).assertSuccess()
         }

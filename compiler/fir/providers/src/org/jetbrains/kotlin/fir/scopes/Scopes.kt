@@ -39,7 +39,7 @@ fun debugCollectOverrides(symbol: FirCallableSymbol<*>, session: FirSession, sco
 fun debugCollectOverrides(symbol: FirCallableSymbol<*>, scope: FirTypeScope): Map<Any, Any> {
     fun process(scope: FirTypeScope, symbol: FirCallableSymbol<*>): Map<Any, Any> {
         val result = mutableMapOf<Any, Any>()
-        val resultList = mutableListOf<Any>()
+        val resultList: MutableList<Any> = []
         when (symbol) {
             is FirNamedFunctionSymbol -> scope.processDirectOverriddenFunctionsWithBaseScope(symbol) { baseSymbol, baseScope ->
                 resultList.add(process(baseScope, baseSymbol))
@@ -69,7 +69,7 @@ fun FirNamedFunctionSymbol.overriddenFunctions(
         memberRequiredPhase = FirResolvePhase.STATUS,
     )
 
-    val overriddenFunctions = mutableSetOf<FirFunctionSymbol<*>>()
+    val overriddenFunctions: MutableSet<FirFunctionSymbol<*>> = []
     firTypeScope.processFunctionsByName(callableId.callableName) { }
     firTypeScope.processOverriddenFunctions(this) {
         overriddenFunctions.add(it)

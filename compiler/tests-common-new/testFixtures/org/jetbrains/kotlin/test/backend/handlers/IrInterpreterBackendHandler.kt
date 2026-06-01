@@ -75,7 +75,7 @@ private class Evaluator(
                     else -> original.startOffset
                 }
                 val metaInfo = IrInterpreterCodeMetaInfo(startOffset, this.endOffset, message, isError)
-                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, listOf(metaInfo))
+                globalMetadataInfoHandler.addMetadataInfosForFile(testFile, [metaInfo])
                 return if (this !is IrErrorExpression) this else original
             }
 

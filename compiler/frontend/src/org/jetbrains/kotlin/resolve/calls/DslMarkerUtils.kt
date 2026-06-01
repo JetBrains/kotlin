@@ -37,13 +37,13 @@ object DslMarkerUtils {
             ?.getUserData(FunctionTypeAnnotationsKey)
             ?.let(Annotations::extractDslMarkerFqNames)
             ?.toSet()
-            ?: emptySet()
+            ?: []
 
         return DslMarkersFromReceiver(errorLevel, deprecationLevel)
     }
 
     fun extractDslMarkerFqNames(kotlinType: KotlinType): Set<FqName> {
-        val result = mutableSetOf<FqName>()
+        val result: MutableSet<FqName> = []
 
         result.addAll(kotlinType.annotations.extractDslMarkerFqNames())
 

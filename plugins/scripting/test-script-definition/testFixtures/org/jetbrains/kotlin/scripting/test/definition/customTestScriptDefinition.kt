@@ -44,7 +44,7 @@ class ConfigurableTestScriptConfiguration : ScriptCompilationConfiguration(
                             @Suppress("UNCHECKED_CAST")
                             (it as List<String>).forEach {
                                 it.split(Regex(" *: *")).let {
-                                    providedProperties.append(listOf(it.first() to KotlinType(it.last())))
+                                    providedProperties.append([it.first() to KotlinType(it.last())])
                                 }
                             }
                         }

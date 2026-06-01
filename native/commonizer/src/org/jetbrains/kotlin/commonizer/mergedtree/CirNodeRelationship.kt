@@ -21,9 +21,9 @@ internal sealed class CirNodeRelationship {
                         Composite(this.relationships + other.relationships)
                     } else Composite(this.relationships + other)
                 } else if (other is Composite) {
-                    return Composite(listOf(this) + other.relationships)
+                    return Composite([this] + other.relationships)
                 }
-                return Composite(listOf(this, other))
+                return Composite([this, other])
             }
         }
     }

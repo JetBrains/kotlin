@@ -40,7 +40,7 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
                             val annotation = CirAnnotation.createInterned(
                                 CirClassType.createInterned(
                                     classId = first.type.classifierId,
-                                    outerType = null, arguments = emptyList(), isMarkedNullable = false
+                                    outerType = null, arguments = [], isMarkedNullable = false
                                 ),
                                 buildMap {
                                     for ([key, value] in first.constantValueArguments) {
@@ -87,7 +87,7 @@ object AnnotationsCommonizer : AssociativeCommonizer<List<CirAnnotation>> {
     private val objCCallableAnnotation = CirAnnotation.createInterned(
         CirClassType.createInterned(
             classId = COMMONIZER_OBJC_INTEROP_CALLABLE_ANNOTATION_ID,
-            outerType = null, arguments = emptyList(), isMarkedNullable = false
+            outerType = null, arguments = [], isMarkedNullable = false
         ),
         constantValueArguments = emptyMap(),
         annotationValueArguments = emptyMap()

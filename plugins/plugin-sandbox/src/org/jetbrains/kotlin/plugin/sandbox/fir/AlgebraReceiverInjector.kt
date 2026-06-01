@@ -43,10 +43,10 @@ class AlgebraReceiverInjector(session: FirSession) : FirExpressionResolutionExte
         sessionHolder: SessionAndScopeSessionHolder,
         containingCallableSymbol: FirBasedSymbol<*>,
     ): List<ImplicitExtensionReceiverValue> {
-        if (functionCall.calleeReference.name != INJECT_ALGEBRA_NAME) return emptyList()
-        val typeProjection = functionCall.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return emptyList()
+        if (functionCall.calleeReference.name != INJECT_ALGEBRA_NAME) return []
+        val typeProjection = functionCall.typeArguments.firstOrNull() as? FirTypeProjectionWithVariance ?: return []
         val argumentType = typeProjection.typeRef.coneType
-        val algebraType = ALGEBRA_CLASS_ID.createConeType(session, arrayOf(argumentType))
+        val algebraType = ALGEBRA_CLASS_ID.createConeType(session, [argumentType])
         val receiverParameter = buildReceiverParameter {
             resolvePhase = FirResolvePhase.BODY_RESOLVE
             moduleData = session.moduleData
@@ -63,6 +63,6 @@ class AlgebraReceiverInjector(session: FirSession) : FirExpressionResolutionExte
             sessionHolder.session,
             sessionHolder.scopeSession
         )
-        return listOf(extensionReceiverValue)
+        return [extensionReceiverValue]
     }
 }

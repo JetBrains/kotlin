@@ -240,7 +240,7 @@ object ECMA426BasedSourceMapParser {
      */
     private fun getOptionalListOfStrings(obj: JsonObject, key: String): ParsingResult<List<String>> {
         // 1. Let list be a new empty List.
-        val list = mutableListOf<String>()
+        val list: MutableList<String> = []
         // 2. Let values be JSONObjectGet(object, key).
         val values = jsonObjectGet(obj, key)
         // 3. If values is missing, return list.
@@ -272,7 +272,7 @@ object ECMA426BasedSourceMapParser {
      */
     private fun getOptionalListOfOptionalStrings(obj: JsonObject, key: String): ParsingResult<List<String?>> {
         // 1. Let list be a new empty List.
-        val list = mutableListOf<String?>()
+        val list: MutableList<String?> = []
         // 2. Let values be JSONObjectGet(object, key).
         val values = jsonObjectGet(obj, key)
         // 3. If values is missing, return list.
@@ -307,7 +307,7 @@ object ECMA426BasedSourceMapParser {
      */
     private fun getOptionalListOfArrayIndexes(obj: JsonObject, key: String): ParsingResult<List<UInt>> {
         // 1. Let list be a new empty List.
-        val list = mutableListOf<UInt>()
+        val list: MutableList<UInt> = []
         // 2. Let values be JSONObjectGet(object, key).
         val values = jsonObjectGet(obj, key)
         // 3. If values is missing, return list.
@@ -608,7 +608,7 @@ object ECMA426BasedSourceMapParser {
         sources: List<DecodedSourceRecord>
     ): ParsingResult<List<DecodedMappingRecord>> {
         // 1. Let mappings be a new empty List.
-        val mappings = mutableListOf<DecodedMappingRecord>()
+        val mappings: MutableList<DecodedMappingRecord> = []
         // 2. Let mappingsNode be the root Parse Node when parsing rawMappings using MappingsField as the goal symbol.
         val mappingsParser = MappingsParser(rawMappings)
         // 3. If parsing failed, then
@@ -640,7 +640,7 @@ object ECMA426BasedSourceMapParser {
         ignoreList: List<UInt>
     ): ParsingResult<List<DecodedSourceRecord>> {
         // 1. Let decodedSources be a new empty List.
-        val decodedSources = mutableListOf<DecodedSourceRecord>()
+        val decodedSources: MutableList<DecodedSourceRecord> = []
         // 2. Let sourcesContentCount be the number of elements in sourcesContent.
         val sourcesContentCount = sourcesContent.size
         // 3. Let sourceUrlPrefix be "".

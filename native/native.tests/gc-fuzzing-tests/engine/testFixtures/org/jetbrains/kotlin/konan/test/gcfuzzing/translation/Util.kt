@@ -34,7 +34,7 @@ fun GlobalScopeResolver.initObjCDeclaration(contents: LineBuilder, definition: D
 
 class SelectorBuilder(private val lineBuilder: LineBuilder) {
     private var selector: (LineBuilder.() -> Unit)? = null
-    private val args = mutableListOf<Pair<String, LineBuilder.() -> Unit>>()
+    private val args: MutableList<Pair<String, LineBuilder.() -> Unit>> = []
 
     fun selector(block: LineBuilder.() -> Unit) {
         selector = block
@@ -137,7 +137,7 @@ fun LineBuilder.functionCall(block: FunctionCallBuilder.() -> Unit) = FunctionCa
 }
 
 class ParensBuilder(private val lineBuilder: LineBuilder) {
-    private val args = mutableListOf<LineBuilder.() -> Unit>()
+    private val args: MutableList<LineBuilder.() -> Unit> = []
 
     fun arg(block: LineBuilder.() -> Unit) {
         args.add(block)

@@ -45,8 +45,8 @@ class NestedClassGeneratorWithSupertypesDependantOnAnnotationArgument(session: F
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return when {
-            classSymbol in session.myComponent.matchedClasses -> setOf(GENERATED)
-            else -> emptySet()
+            classSymbol in session.myComponent.matchedClasses -> [GENERATED]
+            else -> []
         }
     }
 
@@ -88,7 +88,7 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         classLikeDeclaration: FirClassLikeDeclaration,
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
-    ): List<ConeKotlinType> = emptyList()
+    ): List<ConeKotlinType> = []
 
     @ExperimentalSupertypesGenerationApi
     override fun computeAdditionalSupertypesForGeneratedNestedClass(
@@ -96,11 +96,11 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
         require(klass.origin.key == NestedClassGeneratorWithSupertypesDependantOnAnnotationArgumentGeneratorKey)
-        val container = klass.getContainingDeclaration(session) ?: return emptyList()
-        val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return emptyList()
-        val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return emptyList()
-        val qualifierParts = createQualifier(getClassCall.argument) ?: return emptyList()
-        return listOf(
+        val container = klass.getContainingDeclaration(session) ?: return []
+        val annotation = container.annotations.getAnnotationByClassId(ANNOTATION_ID, session) as? FirAnnotationCall ?: return []
+        val getClassCall = annotation.arguments.singleOrNull() as? FirGetClassCall ?: return []
+        val qualifierParts = createQualifier(getClassCall.argument) ?: return []
+        return [
             typeFromQualifierParts(
                 isMarkedNullable = false,
                 source = klass.source!!,
@@ -110,11 +110,11 @@ class NestedClassSupertypesDependantOnAnnotationArgumentAdder(session: FirSessio
                     part(name)
                 }
             }
-        )
+        ]
     }
 
     private fun createQualifier(argument: FirExpression): List<Name>? {
-        val result = mutableListOf<Name>()
+        val result: MutableList<Name> = []
 
         fun createQualifierImpl(argument: FirExpression?) {
             if (argument !is FirPropertyAccessExpression) return

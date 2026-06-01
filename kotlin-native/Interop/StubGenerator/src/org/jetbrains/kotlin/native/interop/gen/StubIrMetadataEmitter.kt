@@ -112,9 +112,11 @@ internal class ModuleMetadataEmitter(
                     typeParametersInterner = Interner(data.typeParametersInterner),
                     bridgeBuilderResult = data.bridgeBuilderResult
             )
+
+            @Suppress("ConvertToCollectionLiterals")
             val children = element.children + if (element is ClassStub.Companion) {
                 listOf(ConstructorStub(isPrimary = true, visibility = VisibilityModifier.PRIVATE, origin = StubOrigin.Synthetic.DefaultConstructor))
-            } else emptyList()
+            } else []
             val elements = KmElements(children.mapNotNull { it.accept(this, classVisitingContext) })
             val kmClass = data.withMappingExtensions {
                 KmClass().also { km ->
@@ -137,7 +139,7 @@ internal class ModuleMetadataEmitter(
                 }
             }
             // Metadata stores classes as flat list.
-            return listOf(kmClass) + elements.classes
+            return [kmClass] + elements.classes
         }
 
         override fun visitTypealias(element: TypealiasStub, data: VisitingContext): KmTypeAlias =
@@ -157,7 +159,7 @@ internal class ModuleMetadataEmitter(
                     } else {
                         element.copy(
                                 external = false,
-                                annotations = mutableListOf(AnnotationStub.Deprecated.unableToImport)
+                                annotations = [AnnotationStub.Deprecated.unableToImport]
                         )
                     }
                     KmFunction(function.name).also { km ->
@@ -175,7 +177,7 @@ internal class ModuleMetadataEmitter(
                     val property = when (val bridgeSupportedKind = element.bridgeSupportedKind) {
                         null -> element.copy(
                                 kind = PropertyStub.Kind.Val(PropertyAccessor.Getter.SimpleGetter()),
-                                annotations = mutableListOf(AnnotationStub.Deprecated.unableToImport)
+                                annotations = [AnnotationStub.Deprecated.unableToImport]
                         )
                         element.kind -> element
                         else -> element.copy(kind = bridgeSupportedKind)
@@ -197,7 +199,7 @@ internal class ModuleMetadataEmitter(
                         km.getter.annotations += when (kind) {
                             is PropertyStub.Kind.Val -> kind.getter.annotations.map { it.map() }
                             is PropertyStub.Kind.Var -> kind.getter.annotations.map { it.map() }
-                            is PropertyStub.Kind.Constant -> emptyList()
+                            is PropertyStub.Kind.Constant -> []
                         }
                         if (kind is PropertyStub.Kind.Constant) {
                             km.compileTimeValue = kind.constant.mapToAnnotationArgument()
@@ -511,7 +513,7 @@ private class MappingExtensions(
                     km.varargElementType = kmType
                     km.type = ClassifierStubType(
                             Classifier.topLevel("kotlin", "Array"),
-                            listOf(TypeArgumentStub(type))
+                            [TypeArgumentStub(type)]
                     ).map()
                 } else {
                     km.type = kmType

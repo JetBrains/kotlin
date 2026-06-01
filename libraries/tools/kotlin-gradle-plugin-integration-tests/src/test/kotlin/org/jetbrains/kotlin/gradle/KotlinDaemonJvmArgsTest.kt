@@ -36,7 +36,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("assemble") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx758m")
+                    ["-Xmx758m"]
                 )
             }
         }
@@ -59,7 +59,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("assemble") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx1g", "--Xms128m")
+                    ["-Xmx1g", "--Xms128m"]
                 )
             }
         }
@@ -83,7 +83,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("assemble") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx486m", "--Xms256m")
+                    ["-Xmx486m", "--Xms256m"]
                 )
             }
         }
@@ -117,7 +117,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("assemble") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx486m", "--Xms256m", "--Duser.country=US")
+                    ["-Xmx486m", "--Xms256m", "--Duser.country=US"]
                 )
             }
         }
@@ -157,10 +157,10 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("build") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx486m", "--Xms256m")
+                    ["-Xmx486m", "--Xms256m"]
                 )
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx1g", "--Xms512m")
+                    ["-Xmx1g", "--Xms512m"]
                 )
             }
         }
@@ -194,7 +194,7 @@ class KotlinDaemonJvmArgsTest : KGPDaemonsBaseTest() {
 
             build("assemble") {
                 assertKotlinDaemonJvmOptions(
-                    listOf("-Xmx758m", "--Duser.country=US")
+                    ["-Xmx758m", "--Duser.country=US"]
                 )
             }
         }

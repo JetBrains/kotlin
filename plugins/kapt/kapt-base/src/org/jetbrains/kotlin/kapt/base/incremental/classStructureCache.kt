@@ -49,13 +49,13 @@ class JavaClassCache : Serializable {
         for (sourceInfo in sourceCache.values) {
             if (sourceInfo !is SourceFileStructure) continue
             for (mentionedType in sourceInfo.getMentionedTypes()) {
-                val dependants = dependencyCache[mentionedType] ?: mutableSetOf()
+                val dependants = dependencyCache[mentionedType] ?: []
                 dependants.add(sourceInfo.sourceFile)
                 dependencyCache[mentionedType] = dependants
             }
             // Treat referred constants as ABI dependencies until we start supporting per-constant classpath updates.
             for (mentionedConstants in sourceInfo.getMentionedConstants().keys) {
-                val dependants = dependencyCache[mentionedConstants] ?: mutableSetOf()
+                val dependants = dependencyCache[mentionedConstants] ?: []
                 dependants.add(sourceInfo.sourceFile)
                 dependencyCache[mentionedConstants] = dependants
             }
@@ -64,7 +64,7 @@ class JavaClassCache : Serializable {
         for (sourceInfo in sourceCache.values) {
             if (sourceInfo !is SourceFileStructure) continue
             for (privateType in sourceInfo.getPrivateTypes()) {
-                val dependants = nonTransitiveCache[privateType] ?: mutableSetOf()
+                val dependants = nonTransitiveCache[privateType] ?: []
                 dependants.add(sourceInfo.sourceFile)
                 nonTransitiveCache[privateType] = dependants
             }
@@ -116,7 +116,7 @@ class JavaClassCache : Serializable {
             }
         }
 
-        val allDirtyTypes = mutableSetOf<String>()
+        val allDirtyTypes: MutableSet<String> = []
         var currentDirtyTypes = getTypesForFiles(changes.sourceChanges).toMutableSet()
 
         changes.dirtyFqNamesFromClasspath.forEach { classpathChange ->
@@ -124,7 +124,7 @@ class JavaClassCache : Serializable {
         }
 
         while (currentDirtyTypes.isNotEmpty()) {
-            val nextRound = mutableSetOf<String>()
+            val nextRound: MutableSet<String> = []
             for (dirtyType in currentDirtyTypes) {
                 allDirtyTypes.add(dirtyType)
                 findImpactedTypes(dirtyType, nextRound, allDirtyTypes)
@@ -149,7 +149,7 @@ class JavaClassCache : Serializable {
     }
 
     fun invalidateDataForTypes(impactedTypes: MutableSet<String>) {
-        val allSources = mutableSetOf<URI>()
+        val allSources: MutableSet<URI> = []
         sourceCache.forEach { [fileUri, typeInfo] ->
             if (typeInfo.declaredTypes.any { it in impactedTypes }) {
                 allSources.add(fileUri)
@@ -184,19 +184,19 @@ class ClassFileStructure(
     override val sourceFile: URI,
     declaredType: String
 ) : JavaFileStructure, Serializable {
-    override val declaredTypes: Set<String> = setOf(declaredType)
+    override val declaredTypes: Set<String> = [declaredType]
 }
 
 class SourceFileStructure(
     override val sourceFile: URI
 ) : JavaFileStructure, Serializable {
 
-    private val _declaredTypes: MutableSet<String> = mutableSetOf()
+    private val _declaredTypes: MutableSet<String> = []
 
-    private val mentionedTypes: MutableSet<String> = mutableSetOf()
-    private val privateTypes: MutableSet<String> = mutableSetOf()
+    private val mentionedTypes: MutableSet<String> = []
+    private val privateTypes: MutableSet<String> = []
 
-    private val mentionedAnnotations: MutableSet<String> = mutableSetOf()
+    private val mentionedAnnotations: MutableSet<String> = []
     private val mentionedConstants: MutableMap<String, MutableSet<String>> = mutableMapOf()
 
     override val declaredTypes: Set<String> = _declaredTypes

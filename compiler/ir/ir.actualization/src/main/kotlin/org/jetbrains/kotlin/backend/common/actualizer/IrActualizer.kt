@@ -36,7 +36,7 @@ class IrActualizer(
     expectActualTracker: ExpectActualTracker?,
     val mainFragment: IrModuleFragment,
     val dependentFragments: List<IrModuleFragment>,
-    extraActualClassExtractors: List<IrExtraActualDeclarationExtractor> = emptyList(),
+    extraActualClassExtractors: List<IrExtraActualDeclarationExtractor> = [],
     private val missingActualProvider: IrMissingActualDeclarationProvider?,
     actualizerMapContributor: IrActualizerMapContributor?,
     private val hmppSchemeEnabled: Boolean,
@@ -124,7 +124,7 @@ class IrActualizer(
         dependentFragments: List<IrModuleFragment>,
         expectActualMap: IrExpectActualMap,
     ): List<IrDeclaration> {
-        val removedExpectDeclarations = mutableListOf<IrDeclaration>()
+        val removedExpectDeclarations: MutableList<IrDeclaration> = []
         for (fragment in dependentFragments) {
             for (file in fragment.files) {
                 file.declarations.removeIf {

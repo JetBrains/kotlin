@@ -25,11 +25,11 @@ class InlineSourceBuilderImpl(private val disposable: Disposable) : InlineSource
         val moduleMetadata = artifact.metadata
         val stdlibNameAndMetadata = loadStdlibMetadata(configuration)
 
-        val classifiers = listOf(
+        val classifiers = [
             CirFictitiousFunctionClassifiers,
             CirProvidedClassifiers.by(MockModulesProvider.create(moduleMetadata named module.name)),
             CirProvidedClassifiers.by(MockModulesProvider.create(stdlibNameAndMetadata)),
-        ) + module.dependencies.map {
+        ] + module.dependencies.map {
             val dependencyMetadata = dependencyToMetadata[it] ?: error("Dependency metadata should have been computed recursively")
             val provider = MockModulesProvider.create(dependencyMetadata)
             CirProvidedClassifiers.by(provider)

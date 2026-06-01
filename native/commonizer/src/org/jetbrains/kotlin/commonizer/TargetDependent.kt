@@ -42,7 +42,7 @@ sealed interface TargetDependent<T> : Iterable<T> {
     }
 
     object Empty : TargetDependent<Any?> {
-        override val targets: List<CommonizerTarget> = emptyList()
+        override val targets: List<CommonizerTarget> = []
         override fun get(target: CommonizerTarget) = throwMissingTarget(target)
     }
 }

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.generators.tests.analysis.api.generateAnalysisApiTes
 
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        AnalysisApiTestGenerator(this, listOf(AnalysisApiFirTestConfiguratorFactory)).run {
+        AnalysisApiTestGenerator(this, [AnalysisApiFirTestConfiguratorFactory]).run {
             generateAnalysisApiTests()
 
             group("imports") {

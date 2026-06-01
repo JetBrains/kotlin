@@ -82,7 +82,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
     private fun replaceVariables(node: MethodNode, variablesForReplacement: Map<LocalVariableNode, List<LocalVariableNode>>) {
         if (variablesForReplacement.isEmpty()) return
         node.localVariables = node.localVariables.flatMap { oldVar ->
-            variablesForReplacement[oldVar]?.also { newVars -> for (newVar in newVars) newVar.index += oldVar.index } ?: listOf(oldVar)
+            variablesForReplacement[oldVar]?.also { newVars -> for (newVar in newVars) newVar.index += oldVar.index } ?: [oldVar]
         }.toMutableList()
     }
 
@@ -359,7 +359,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
                 val isStore = insn.opcode == Opcodes.ASTORE
                 val singleUnboxedType = value.unboxedTypes.singleOrNull()
                 if (singleUnboxedType == null) {
-                    val newInstructions = mutableListOf<VarInsnNode>()
+                    val newInstructions: MutableList<VarInsnNode> = []
                     var offset = 0
                     for (unboxedType in value.unboxedTypes) {
                         val opcode = unboxedType.getOpcode(if (isStore) Opcodes.ISTORE else Opcodes.ILOAD)

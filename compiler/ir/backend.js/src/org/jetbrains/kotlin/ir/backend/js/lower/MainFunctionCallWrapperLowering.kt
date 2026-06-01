@@ -103,7 +103,7 @@ class MainFunctionCallWrapperLowering(private val context: JsIrBackendContext) :
                         arguments[0] = it.toIrConst(context.irBuiltIns.stringType)
                     }
                 } ?: JsIrBuilder.buildArray(
-                    elements = emptyList(),
+                    elements = [],
                     type = parameters[0].type,
                     elementType = context.irBuiltIns.stringType
                 )

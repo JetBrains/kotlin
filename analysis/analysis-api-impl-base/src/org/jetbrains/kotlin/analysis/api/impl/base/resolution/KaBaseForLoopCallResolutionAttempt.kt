@@ -35,5 +35,5 @@ class KaBaseForLoopCallResolutionAttempt(
     override val hasNextCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingHasNextCallAttempt }
     override val nextCallAttempt: KaSingleCallResolutionAttempt get() = withValidityAssertion { backingNextCallAttempt }
     override val attempts: List<KaSingleCallResolutionAttempt>
-        get() = withValidityAssertion { listOf(backingIteratorCallAttempt, backingHasNextCallAttempt, backingNextCallAttempt) }
+        get() = withValidityAssertion { [backingIteratorCallAttempt, backingHasNextCallAttempt, backingNextCallAttempt] }
 }

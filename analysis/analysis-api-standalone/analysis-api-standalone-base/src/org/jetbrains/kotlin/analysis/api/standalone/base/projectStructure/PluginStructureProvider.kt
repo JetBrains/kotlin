@@ -145,21 +145,21 @@ object PluginStructureProvider {
     /**
      * The list of extension points that are forbidden to be registered automatically.
      */
-    private val forbiddenExtensionPointNames = listOf(
+    private val forbiddenExtensionPointNames = [
         "org.jetbrains.kotlin.defaultErrorMessages",
-    )
+    ]
 
     /**
      * The list of extension points that are safe to be registered automatically
      */
-    private val allowedExtensionPointNames = listOf(
+    private val allowedExtensionPointNames = [
         "org.jetbrains.kotlin.analysis.additionalKDocResolutionProvider",
         "org.jetbrains.kotlin.kaAdditionalKDocResolutionProvider",
         "org.jetbrains.kotlin.kotlinContentScopeRefiner",
         "org.jetbrains.kotlin.kotlinGlobalSearchScopeMergeStrategy",
         "org.jetbrains.kotlin.psiReferenceProvider",
         "com.intellij.psi.classFileDecompiler",
-    )
+    ]
 
     private val MockComponentManager.classLoader
         get() = loadClass<Any>(PluginDesignation::class.java.name, fakePluginDescriptor).classLoader

@@ -60,7 +60,7 @@ class FirReplSnippetResolveExtensionImpl(
 
     private fun getImportsFromHistory(currentSnippet: FirReplSnippet): List<FirImport> =
         replHistoryProvider.getSnippets().flatMap { snippet ->
-            if (currentSnippet == snippet) emptyList()
+            if (currentSnippet == snippet) []
             else snippet.moduleData.session.firProvider.getFirReplSnippetContainerFile(snippet)?.imports.orEmpty()
         }
 

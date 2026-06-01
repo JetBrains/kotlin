@@ -24,7 +24,7 @@ class SpecTestsConsistencyTest : TestCase() {
 
         @JvmStatic
         fun getTestFiles(): Stream<String> {
-            val testFiles = mutableListOf<String>()
+            val testFiles: MutableList<String> = []
 
             TestArea.entries.forEach { testArea ->
                 val testDataPath =

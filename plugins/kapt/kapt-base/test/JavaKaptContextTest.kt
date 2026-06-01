@@ -45,7 +45,7 @@ class JavaKaptContextTest {
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
         }.build()
 
-        KaptContext(options, true, logger).doAnnotationProcessing(listOf(javaSourceFile), listOf(processor))
+        KaptContext(options, true, logger).doAnnotationProcessing([javaSourceFile], [processor])
     }
 
     @Test
@@ -90,7 +90,7 @@ class JavaKaptContextTest {
                 throw RuntimeException(exceptionMessage)
             }
 
-            override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
+            override fun getSupportedAnnotationTypes(): Set<String> = ["test.MyAnnotation"]
         }
 
         try {

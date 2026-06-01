@@ -25,7 +25,8 @@ import java.rmi.server.UnicastRemoteObject
 internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: CompilationOptions
     get() {
         val ktsExtensionsAsArray = if (kotlinScriptFilenameExtensions.isEmpty()) null else kotlinScriptFilenameExtensions.toTypedArray()
-        val reportCategories = arrayOf(ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
+        val reportCategories: Array<Int> =
+            [ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code] // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportSeverity = if (logger.isDebugEnabled) {
             ReportSeverity.DEBUG.code
         } else {
@@ -35,9 +36,9 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
         return when (val options = aggregatedIcConfiguration?.options) {
             is ClasspathSnapshotBasedIncrementalJvmCompilationConfiguration -> {
                 val sourcesChanges = aggregatedIcConfiguration.sourcesChanges
-                val requestedCompilationResults = arrayOf(
+                val requestedCompilationResults: Array<Int> = [
                     CompilationResultCategory.IC_COMPILE_ITERATION.code,
-                )
+                ]
 
                 @Suppress("UNCHECKED_CAST")
                 val classpathChanges =
@@ -67,7 +68,7 @@ internal val JvmCompilationConfigurationImpl.asDaemonCompilationOptions: Compila
                 targetPlatform = CompileService.TargetPlatform.JVM,
                 reportCategories = reportCategories,
                 reportSeverity = reportSeverity,
-                requestedCompilationResults = emptyArray(),
+                requestedCompilationResults = [],
                 kotlinScriptExtensions = ktsExtensionsAsArray,
             )
             else -> error(

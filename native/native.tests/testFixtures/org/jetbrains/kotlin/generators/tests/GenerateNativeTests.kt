@@ -27,18 +27,18 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseExtTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model()
             }
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated",
-                annotations = listOf(
+                annotations = [
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
-                )
+                ]
             ) {
                 model()
             }
@@ -48,10 +48,10 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirInfrastructureTestGenerated",
-                annotations = listOf(
+                annotations = [
                     infrastructure(),
                     provider<UseExtTestCaseGroupProvider>()
-                )
+                ]
             ) {
                 model("samples")
                 model("samples2")
@@ -71,12 +71,12 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/caches/ic") {
             testClass<AbstractNativeIncrementalCompilationTest>(
                 suiteTestClassName = "NativeIncrementalCompilationTestGenerated",
-                annotations = listOf(
+                annotations = [
                     forceHostTarget(),
                     forceDebugMode()
-                )
+                ]
             ) {
-                val nestedDirs = listOf("basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped")
+                val nestedDirs = ["basic", "classKind", "constants", "dependencies", "generics", "inline", "members", "ungrouped"]
                 nestedDirs.forEach {
                     model(it, pattern = "^([^_](.+))$", recursive = false)
                 }
@@ -120,11 +120,11 @@ fun main(args: Array<String>) {
                 model("experimental/cases", pattern = "^([^_](.+))$", recursive = false)
             }
 
-            val macroCollectionVariants = listOf(
+            val macroCollectionVariants = [
                 "Legacy" to AbstractNativeCInteropFModulesLegacyMacroCollectionTest::class.java,
                 "Libclangext" to AbstractNativeCInteropFModulesLibclangextMacroCollectionTest::class.java,
                 "LibclangextParallel" to AbstractNativeCInteropFModulesLibclangextParallelMacroCollectionTest::class.java,
-            )
+            ]
             macroCollectionVariants.forEach { [variantName, testKClass] ->
                 testClass(
                     testKClass = testKClass,
@@ -148,12 +148,12 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/lldb") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeLldbTestGenerated",
-                annotations = listOf(
+                annotations = [
                     debugger(),
                     provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
-                )
+                ]
             ) {
                 model()
             }
@@ -162,13 +162,13 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/debug/stepping") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeSteppingTestGenerated",
-                annotations = listOf(
+                annotations = [
                     debugger(),
                     stepping(),
                     provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
-                )
+                ]
             ) {
                 model()
             }
@@ -177,14 +177,14 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/debug/stepping") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "NativeSteppingWithInlinedFunInKlibGenerated",
-                annotations = listOf(
+                annotations = [
                     debugger(),
                     stepping(),
                     provider<UseExtTestCaseGroupProvider>(),
                     forceDebugMode(),
                     forceHostTarget(),
                     klibIrInliner(),
-                )
+                ]
             ) {
                 model()
             }
@@ -235,10 +235,10 @@ fun main(args: Array<String>) {
                     val suiteTestClassName = "FirCExport${binaryKind.key}${cinterfaceMode.key}TestGenerated"
                     testClass<AbstractNativeCExportTest>(
                         suiteTestClassName,
-                        annotations = listOf(
+                        annotations = [
                             binaryKind.value,
                             cinterfaceMode.value,
-                        )
+                        ]
                     ) {
                         model(cinterfaceMode.key, pattern = "^([^_](.+))$", recursive = false)
                     }
@@ -297,14 +297,14 @@ fun standalone() = annotation(
     "propertyValue" to "STANDALONE"
 )
 
-fun standaloneNoTR() = arrayOf(
+fun standaloneNoTR(): Array<AnnotationModel> = [
     annotation(Tag::class.java, "standalone"),
     annotation(
         EnforcedProperty::class.java,
         "property" to ClassLevelProperty.TEST_KIND,
         "propertyValue" to "STANDALONE_NO_TR"
     )
-)
+]
 
 private fun stepping() = annotation(
     EnforcedProperty::class.java,
@@ -324,8 +324,8 @@ private fun cinterfaceMode(mode: String = "V1") = annotation(
     "propertyValue" to mode
 )
 
-private fun gc() = arrayOf(
+private fun gc(): Array<AnnotationModel> = [
     annotation(Tag::class.java, "gc"),
-)
+]
 
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)

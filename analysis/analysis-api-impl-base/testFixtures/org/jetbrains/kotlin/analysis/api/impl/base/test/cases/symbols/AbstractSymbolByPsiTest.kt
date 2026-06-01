@@ -21,7 +21,7 @@ abstract class AbstractSymbolByPsiTest : AbstractSymbolTest() {
 
         return SymbolsData(
             allDeclarationSymbols,
-            listOf(ktFile.symbol),
+            [ktFile.symbol],
         )
     }
 }

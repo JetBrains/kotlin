@@ -58,7 +58,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 returnType = context.irBuiltIns.unitType
                 origin = JsIrBuilder.SYNTHESIZED_DECLARATION
             }.apply {
-                body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+                body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, [])
             }
         }
 
@@ -81,7 +81,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
         parentFunction: IrSimpleFunction,
         ignored: Boolean = false,
     ): IrSimpleFunction {
-        val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, emptyList())
+        val body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, [])
 
         val function = context.irFactory.buildFun {
             this.name = Name.identifier("$name test fun")
@@ -216,7 +216,7 @@ class TestGenerator(val context: JsCommonBackendContext) {
                     endOffset = UNDEFINED_OFFSET,
                     type = testFun.returnType,
                     operator = IrTypeOperator.CAST,
-                    typeOperand = promiseSymbol.typeWithArguments(listOf(IrStarProjectionImpl)),
+                    typeOperand = promiseSymbol.typeWithArguments([IrStarProjectionImpl]),
                     argument = returnStatement.value
                 )
             }

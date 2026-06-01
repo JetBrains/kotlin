@@ -25,7 +25,7 @@ class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : Abstract
                     val erasedType = argument.type?.let(this::substituteOrSelf)
 
                     return type.withArguments(
-                        arrayOf(erasedType?.toTypeProjection(argument.kind) ?: ConeStarProjection)
+                        [erasedType?.toTypeProjection(argument.kind) ?: ConeStarProjection]
                     )
                 }
 

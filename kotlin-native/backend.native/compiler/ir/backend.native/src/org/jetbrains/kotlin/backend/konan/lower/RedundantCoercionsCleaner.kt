@@ -62,7 +62,7 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
 
     private class TransformerState(val coercion: IrCall) {
         var folded = false
-        val casts = mutableListOf<IrTypeOperatorCall>()
+        val casts: MutableList<IrTypeOperatorCall> = []
 
         fun copy() = TransformerState(coercion).also {
             it.folded = folded
@@ -173,8 +173,8 @@ internal class RedundantCoercionsCleaner(val context: Context) : FileLoweringPas
         }
 
         val returnableBlockStates = mutableMapOf<IrReturnableBlock, TransformerState>()
-        val foldedReturnableBlocks = mutableSetOf<IrReturnableBlock>()
-        val foldedReturns = mutableSetOf<IrReturn>()
+        val foldedReturnableBlocks: MutableSet<IrReturnableBlock> = []
+        val foldedReturns: MutableSet<IrReturn> = []
 
         override fun visitReturn(expression: IrReturn, data: TransformerState?): IrExpression {
             val returnableBlock = expression.returnTargetSymbol.owner as? IrReturnableBlock

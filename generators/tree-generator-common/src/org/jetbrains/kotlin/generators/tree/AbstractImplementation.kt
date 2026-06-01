@@ -21,7 +21,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
               Field : AbstractField<Field> {
 
     override val allParents: List<Element>
-        get() = listOf(element)
+        get() = [element]
 
     val namePrefix: String
         get() = element.namePrefix
@@ -48,7 +48,7 @@ abstract class AbstractImplementation<Implementation, Element, Field>(
      *
      * Note that classes referenced in field types will be imported automatically.
      */
-    val additionalImports = mutableListOf<Importable>()
+    val additionalImports: MutableList<Importable> = []
 
     var kDoc: String? = null
 

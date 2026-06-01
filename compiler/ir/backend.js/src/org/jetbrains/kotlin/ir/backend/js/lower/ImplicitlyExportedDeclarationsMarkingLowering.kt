@@ -40,7 +40,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
             is IrFunction -> declaration.collectImplicitlyExportedDeclarations()
             is IrClass -> declaration.collectImplicitlyExportedDeclarations()
             is IrProperty -> declaration.collectImplicitlyExportedDeclarations()
-            else -> emptySet()
+            else -> []
         }
 
         implicitlyExportedDeclarations.forEach { it.markWithJsImplicitExportOrUpgrade() }
@@ -71,16 +71,16 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
     }
 
     private fun IrProperty.collectImplicitlyExportedDeclarations(): Set<IrDeclaration> {
-        val getterImplicitlyExportedDeclarations = getter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val setterImplicitlyExportedDeclarations = setter?.collectImplicitlyExportedDeclarations() ?: emptySet()
-        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true) ?: emptySet()
+        val getterImplicitlyExportedDeclarations = getter?.collectImplicitlyExportedDeclarations() ?: []
+        val setterImplicitlyExportedDeclarations = setter?.collectImplicitlyExportedDeclarations() ?: []
+        val fieldImplicitlyExportedDeclarations = backingField?.type?.collectImplicitlyExportedDeclarations(includeArguments = true) ?: []
 
         return getterImplicitlyExportedDeclarations + setterImplicitlyExportedDeclarations + fieldImplicitlyExportedDeclarations
     }
 
     private fun IrType.collectImplicitlyExportedDeclarations(includeArguments: Boolean = false): Set<IrDeclaration> {
         if (this is IrDynamicType || this !is IrSimpleType)
-            return emptySet()
+            return []
 
         val nonNullType = makeNotNull() as IrSimpleType
         val classifier = nonNullType.classifier
@@ -91,7 +91,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
                     nonNullType.isAny() ||
                     nonNullType.isNothing() ||
                     nonNullType.isUnit()
-                -> emptySet()
+                -> []
 
             classifier is IrTypeParameterSymbol -> classifier.owner.superTypes
                 .flatMap { it.collectImplicitlyExportedDeclarations() }
@@ -99,7 +99,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
 
             classifier is IrClassSymbol -> {
                 val klass = classifier.owner
-                val result = mutableSetOf<IrDeclaration>()
+                val result: MutableSet<IrDeclaration> = []
 
                 val isSpeciallyExportedType = nonNullType.isSpeciallyExportedType()
 
@@ -119,7 +119,7 @@ class ImplicitlyExportedDeclarationsMarkingLowering(private val context: JsIrBac
                 result
             }
 
-            else -> emptySet()
+            else -> []
         }
     }
 

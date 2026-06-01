@@ -68,7 +68,7 @@ object StandardNames {
     const val K_FUNCTION_PREFIX = "KFunction"
     const val K_SUSPEND_FUNCTION_PREFIX = "KSuspendFunction"
 
-    @JvmField val PREFIXES = listOf(K_PROPERTY_PREFIX, K_MUTABLE_PROPERTY_PREFIX, K_FUNCTION_PREFIX, K_SUSPEND_FUNCTION_PREFIX)
+    @JvmField val PREFIXES = [K_PROPERTY_PREFIX, K_MUTABLE_PROPERTY_PREFIX, K_FUNCTION_PREFIX, K_SUSPEND_FUNCTION_PREFIX]
 
     @JvmField
     val BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin")
@@ -107,7 +107,7 @@ object StandardNames {
     val NON_EXISTENT_CLASS = FqName("error.NonExistentClass")
 
     @JvmField
-    val BUILT_INS_PACKAGE_FQ_NAMES = setOf(
+    val BUILT_INS_PACKAGE_FQ_NAMES: Set<FqName> = [
         BUILT_INS_PACKAGE_FQ_NAME,
         COLLECTIONS_PACKAGE_FQ_NAME,
         RANGES_PACKAGE_FQ_NAME,
@@ -116,7 +116,7 @@ object StandardNames {
         KOTLIN_INTERNAL_FQ_NAME,
         COROUTINES_PACKAGE_FQ_NAME,
         CONCURRENT_ATOMICS_PACKAGE_FQ_NAME
-    )
+    ]
 
     object FqNames {
         @JvmField val any: FqNameUnsafe = fqNameUnsafe("Any")

@@ -18,7 +18,7 @@ class CheckersConfiguration(
     init {
         val parents: MutableMap<KClass<*>, List<KClass<*>>> = mutableMapOf()
         for (firKClass in aliases.keys) {
-            val allParents = mutableListOf<KClass<*>>()
+            val allParents: MutableList<KClass<*>> = []
             bfs(
                 firKClass,
                 childrenExtractor = { it.allSuperclasses }
@@ -36,7 +36,7 @@ class CheckersConfiguration(
 
 private fun <T> bfs(start: T, childrenExtractor: (T) -> Collection<T>, process: (T) -> Boolean) {
     val queue = ArrayDeque<T>()
-    val visited = mutableSetOf<T>()
+    val visited: MutableSet<T> = []
     val levels = mutableMapOf(start to 0)
     queue.addLast(start)
     var levelToStop: Int? = null

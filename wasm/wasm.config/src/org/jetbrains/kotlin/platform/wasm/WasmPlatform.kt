@@ -43,7 +43,7 @@ object WasmPlatforms {
     fun wasmPlatformByTargetVersion(targetVersion: WasmTarget): TargetPlatform =
         platforms[targetVersion]!!
 
-    val allWasmPlatforms: List<TargetPlatform> = listOf(unspecifiedWasmPlatform) + platforms.values
+    val allWasmPlatforms: List<TargetPlatform> = [unspecifiedWasmPlatform] + platforms.values
 
     fun wasmPlatformByTargets(targets: Collection<WasmTarget>): TargetPlatform {
         val platforms = targets.map { wasmPlatformByTargetVersion(it) }
@@ -57,7 +57,7 @@ object WasmPlatforms {
     fun wasmPlatformByTargetNames(targets: Collection<String>): TargetPlatform =
         wasmPlatformByTargets(targets.mapNotNull { WasmTarget.fromName(it) })
 
-    object Default : TargetPlatform(setOf(WasmPlatformUnspecifiedTarget))
+    object Default : TargetPlatform([WasmPlatformUnspecifiedTarget])
 }
 
 fun TargetPlatform?.isWasm(): Boolean = this?.singleOrNull() is WasmPlatform

@@ -80,10 +80,10 @@ class ObjCInteropFacade(
                     "cpp", "mm" -> ClangMode.CXX
                     else -> error("unexpected file extension: $it")
                 },
-                sourceFiles = listOf(it),
+                sourceFiles = [it],
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),
-                includeDirectories = listOf(defRealFileFolder),
-                additionalClangFlags = listOf("-fobjc-arc")
+                includeDirectories = [defRealFileFolder],
+                additionalClangFlags = ["-fobjc-arc"]
             ).assertSuccess().resultingArtifact.libraryFile
         }
         val freeCInteropArgs = module.directives[FREE_CINTEROP_ARGS]

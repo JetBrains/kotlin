@@ -50,10 +50,10 @@ interface ParcelSerializer {
     }
 
     companion object {
-        private val WRITE_WITH_FQ_NAMES = listOf(
+        private val WRITE_WITH_FQ_NAMES = [
             FqName("kotlinx.parcelize.WriteWith"),
             FqName("kotlinx.android.parcel.WriteWith"),
-        )
+        ]
 
         private fun KotlinTypeMapper.mapTypeSafe(type: KotlinType, forceBoxed: Boolean) = when {
             type.isError -> Type.getObjectType("java/lang/Object")

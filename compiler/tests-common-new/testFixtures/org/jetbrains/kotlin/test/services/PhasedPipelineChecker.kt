@@ -23,7 +23,7 @@ class PhasedPipelineChecker(
         get() = Order.P4
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestPhaseDirectives)
+        get() = [TestPhaseDirectives]
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         latestPhaseDirectiveOr { return failedAssertions + it }
@@ -36,7 +36,7 @@ class PhasedPipelineChecker(
 
         return nonSuppressibleFailures + when {
             suppressibleFailures.isEmpty() && !hasNonSuppressibleFailuresFromFacade && !hasFailuresInNonLeafModule -> checkPhaseConsistency()
-            else -> emptyList()
+            else -> []
         }
     }
 
@@ -95,15 +95,15 @@ class PhasedPipelineChecker(
 
     private fun checkPhaseConsistency(): List<WrappedException> {
         val directives = testServices.moduleStructure.allDirectives
-        if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return emptyList()
+        if (DISABLE_NEXT_PHASE_SUGGESTION in directives) return []
         val expectedLastPhase = directives[LATEST_PHASE_IN_PIPELINE].first()
         val targetedPhase = getTargetedPhase()
         if (targetedPhase == expectedLastPhase) {
-            return emptyList()
+            return []
         }
         if (targetedPhase != null && targetedPhase > expectedLastPhase) {
             val message = "RUN_PIPELINE_TILL ($targetedPhase) cannot be greater than $LATEST_PHASE_IN_PIPELINE ($expectedLastPhase)"
-            return listOf(WrappedException.FromAfterAnalysisChecker(IllegalStateException(message)))
+            return [WrappedException.FromAfterAnalysisChecker(IllegalStateException(message))]
         }
 
         return createDiffsForAllTestDataFiles("Phase $targetedPhase could be promoted to $expectedLastPhase") {
@@ -138,15 +138,15 @@ class PhasedPipelineChecker(
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val originalFile = testDataFile.originalTestDataFile
         val filesList = when {
-            testDataFile.extension == "nkt" -> listOf(testDataFile)
-            else -> listOf(
+            testDataFile.extension == "nkt" -> [testDataFile]
+            else -> [
                 originalFile,
                 originalFile.firTestDataFile,
                 originalFile.llFirTestDataFile,
                 originalFile.latestLVTestDataFile,
                 originalFile.reversedTestDataFile,
                 originalFile.partialBodyTestDataFile,
-            )
+            ]
         }
         return filesList.filter { it.exists() }.mapNotNull { file ->
             val contentWithNewDirective = newContent(file.readText())
@@ -171,8 +171,8 @@ class PhasedPipelineChecker(
     )
 
     private fun sortFailures(failedAssertions: List<WrappedException>): SortedFailures {
-        val suppressibleFailures = mutableListOf<WrappedException>()
-        val nonSuppressibleFailures = mutableListOf<WrappedException>()
+        val suppressibleFailures: MutableList<WrappedException> = []
+        val nonSuppressibleFailures: MutableList<WrappedException> = []
         val targetedPhase = getTargetedPhase()!!
         var hasFailuresInNonLeafModule = false
         var hasNonSuppressibleFailuresFromFacade = false

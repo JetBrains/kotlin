@@ -36,7 +36,7 @@ data class IncrementalJsArtifact(val originalArtifact: BinaryArtifacts.Js, val r
 class WasmCompilationSet(
     val compiledModule: WasmModule,
     val compilerResult: WasmCompilerResult,
-    val compilationDependencies: List<WasmCompilationSet> = emptyList(),
+    val compilationDependencies: List<WasmCompilationSet> = [],
 )
 
 class WasmCompilationSetsBinaryArtifact(

@@ -96,7 +96,7 @@ internal class KlibDumpImpl : KlibDump {
             "Can't use an explicit target name with a multi-target dump. " +
                     "new target: $target, targets in the dump: $targets"
         }
-        merger.overrideTargets(setOf(target))
+        merger.overrideTargets([target])
     }
 
     override fun print(file: File): File = file.apply { bufferedWriter().use { print(it) } }
@@ -110,13 +110,13 @@ internal class KlibDumpImpl : KlibDump {
         return if (matchingTargets.isNotEmpty()) {
             // case 1
             val retained = copy().also { it.retain(matchingTargets) }
-            inferAbi(target, listOf(retained), previousDump)
+            inferAbi(target, [retained], previousDump)
         } else {
             val targetFromReference = previousDump.targets.firstOrNull { it.targetName == target.targetName }
             if (targetFromReference != null) {
                 // case 2
                 val copy = previousDump.copy()
-                copy.retain(listOf(targetFromReference))
+                copy.retain([targetFromReference])
                 copy
             } else if (previousDump.targets.isNotEmpty()) {
                 // case 3
@@ -177,7 +177,7 @@ private fun findMatchingTargets(
         // Otherwise, walk up the target hierarchy.
         currentGroup = TargetHierarchy.parent(currentGroup)
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -221,7 +221,7 @@ internal fun inferAbi(
         merger.retainCommonAbi()
     }
     commonDump.merge(retainedDump)
-    commonDump.merger.overrideTargets(setOf(unsupportedTarget))
+    commonDump.merger.overrideTargets([unsupportedTarget])
     return commonDump
 }
 

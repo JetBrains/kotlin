@@ -493,7 +493,7 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     companion object {
         internal fun getOrderedNotAnalyzedPostponedArguments(candidate: Candidate): List<ConePostponedResolvedAtom> {
             val callSite = candidate.callInfo.callSite as FirExpression
-            return getOrderedNotAnalyzedPostponedArguments(listOf(ConeAtomWithCandidate(callSite, candidate)))
+            return getOrderedNotAnalyzedPostponedArguments([ConeAtomWithCandidate(callSite, candidate)])
         }
 
         private fun getOrderedNotAnalyzedPostponedArguments(topLevelAtoms: List<ConeResolutionAtom>): List<ConePostponedResolvedAtom> {

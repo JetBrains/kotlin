@@ -96,7 +96,7 @@ class KotlinDirtySourceFilesHolder(
         byTarget[target]?.dirty ?: mapOf()
 
     fun getRemovedFiles(target: ModuleBuildTarget): Collection<File> =
-        byTarget[target]?.removed ?: listOf()
+        byTarget[target]?.removed ?: []
 
     val allDirtyFiles: Set<File>
         get() = byTarget.flatMapTo(mutableSetOf()) { it.value.dirty.keys }

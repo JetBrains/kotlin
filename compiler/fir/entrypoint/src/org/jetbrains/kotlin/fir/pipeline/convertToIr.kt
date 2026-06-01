@@ -378,7 +378,7 @@ private class Fir2IrPipeline(
         modules: List<IrModuleFragment>,
         resolver: SpecialFakeOverrideSymbolsResolver
     ) {
-        val builtFakeOverridesClasses = mutableSetOf<IrClass>()
+        val builtFakeOverridesClasses: MutableSet<IrClass> = []
         fun buildFakeOverrides(clazz: IrClass) {
             if (!builtFakeOverridesClasses.add(clazz)) return
             for (c in clazz.superTypes) {

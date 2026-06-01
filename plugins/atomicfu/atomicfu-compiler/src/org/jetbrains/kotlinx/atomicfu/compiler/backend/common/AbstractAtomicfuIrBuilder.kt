@@ -82,7 +82,7 @@ abstract class AbstractAtomicfuIrBuilder(
         } ?: error("No $functionName function found in ${atomicHandlerClassSymbol.owner.render()}")
         return irCallFunction(
             functionSymbol,
-            listOf(getAtomicHandler) + valueArguments,
+            [getAtomicHandler] + valueArguments,
             valueType
         )
     }
@@ -403,7 +403,7 @@ abstract class AbstractAtomicfuIrBuilder(
                 if (isStatic) null else (parentContainer as? IrClass)?.thisReceiver?.deepCopyWithSymbols(this)
             )
             body = factory.createBlockBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, [
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         irBuiltIns.nothingType,
@@ -421,7 +421,7 @@ abstract class AbstractAtomicfuIrBuilder(
                             }
                         )
                     )
-                )
+                ]
             )
         }
     }
@@ -441,7 +441,7 @@ abstract class AbstractAtomicfuIrBuilder(
             val arg = parameters.last()
             val value = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET,arg.type,arg.symbol)
             body = factory.createBlockBody(
-                UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, [
                     IrReturnImpl(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         irBuiltIns.nothingType,
@@ -460,7 +460,7 @@ abstract class AbstractAtomicfuIrBuilder(
                             irBuiltIns.unitType
                         )
                     )
-                )
+                ]
             )
         }
     }
@@ -513,7 +513,7 @@ abstract class AbstractAtomicfuIrBuilder(
                             atomicHandlerType = atomicHandlerType,
                             getAtomicHandler = atomicHandlerParam.getAtomicHandler(atomicHandlerType),
                             functionName = "get",
-                            valueArguments = if (extraArg != null) listOf(irGet(extraArg)) else emptyList(),
+                            valueArguments = if (extraArg != null) [irGet(extraArg)] else [],
                             valueType = valueType
                         ),
                         nameHint = "atomicfu\$cur", false
@@ -577,7 +577,7 @@ abstract class AbstractAtomicfuIrBuilder(
                             atomicHandlerType = atomicHandlerType,
                             getAtomicHandler = getAtomicHandler.deepCopyWithSymbols(),
                             functionName = "get",
-                            valueArguments = if (extraArg != null) listOf(irGet(extraArg)) else emptyList(),
+                            valueArguments = if (extraArg != null) [irGet(extraArg)] else [],
                             valueType = valueType
                         ),
                         nameHint = "atomicfu\$cur", false

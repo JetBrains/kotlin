@@ -211,7 +211,7 @@ internal class WasmVarargExpressionLowering(
             }
 
         val segments: List<VarargSegmentBuilder> = sequence {
-            val currentElements = mutableListOf<IrVariable>()
+            val currentElements: MutableList<IrVariable> = []
 
             for ([el, tempVar] in irVararg.elements.zip(elementVars)) {
                 when (el) {

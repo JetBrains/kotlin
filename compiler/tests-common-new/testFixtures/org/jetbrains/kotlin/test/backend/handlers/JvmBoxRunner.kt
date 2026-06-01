@@ -215,7 +215,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 "${mainFile.nameWithoutExtension}Kt"
             ).joinToString(".")
 
-            listOf(mainFqName)
+            [mainFqName]
         }
 
         val process = launchSeparateJvmProcess(javaExe, module, classPath, mainClassAndArguments)
@@ -359,8 +359,8 @@ fun generatedTestClassLoader(
 }
 
 fun computeTestRuntimeClasspath(testServices: TestServices, rootModule: TestModule): MutableList<File> {
-    val visited = mutableSetOf<TestModule>()
-    val result = mutableListOf<File>()
+    val visited: MutableSet<TestModule> = []
+    val result: MutableList<File> = []
 
     fun computeClasspath(module: TestModule, isRoot: Boolean) {
         if (!visited.add(module)) return

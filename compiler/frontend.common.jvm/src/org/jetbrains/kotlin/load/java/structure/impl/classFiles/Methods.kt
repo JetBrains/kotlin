@@ -133,7 +133,7 @@ abstract class BinaryJavaMethodBase(
             val returnType = signatureParser.mapAsmType(Type.getReturnType(desc), context)
             val parameterTypes = Type.getArgumentTypes(desc).map { signatureParser.mapAsmType(it, context) }
 
-            return MethodInfo(returnType, emptyList(), parameterTypes)
+            return MethodInfo(returnType, [], parameterTypes)
         }
 
         private fun parseMethodSignature(
@@ -148,7 +148,7 @@ abstract class BinaryJavaMethodBase(
             iterator.next()
             var paramTypes: List<JavaType>
             if (iterator.current() == ')') {
-                paramTypes = emptyList()
+                paramTypes = []
             } else {
                 paramTypes = mutableListOf()
                 while (iterator.current() != ')' && iterator.current() != CharacterIterator.DONE) {

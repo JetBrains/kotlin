@@ -49,9 +49,9 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     companion object {
         private val renderer = DescriptorRenderer.withOptions {
             withDefinedIn = false
-            excludedAnnotationClasses = setOf(
+            excludedAnnotationClasses = [
                 FqName(ExpectedLoadErrorsUtil.ANNOTATION_CLASS_NAME)
-            )
+            ]
             overrideRenderingPolicy = OverrideRenderingPolicy.RENDER_OPEN_OVERRIDE
             parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
             includePropertyConstant = false
@@ -80,7 +80,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
 
         compileFile(file, text, jdkKind)
 
-        val classLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
+        val classLoader = URLClassLoader([tmpdir.toURI().toURL()], ForTestCompileRuntime.runtimeAndReflectJarClassLoader())
 
         val actual = createReflectedPackageView(classLoader)
 
@@ -142,7 +142,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
                     LOG.info("root: $root")
                 }
                 val ktFile = KtTestUtil.createFile(file.path, text, environment.project)
-                GenerationUtils.compileFilesTo(listOf(ktFile), environment, tmpdir)
+                GenerationUtils.compileFilesTo([ktFile], environment, tmpdir)
             }
         }
     }
@@ -184,7 +184,7 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
     }
 
     private fun adaptJavaSource(text: String): String {
-        val typeAnnotations = arrayOf("NotNull", "Nullable", "ReadOnly", "Mutable")
+        val typeAnnotations: Array<String> = ["NotNull", "Nullable", "ReadOnly", "Mutable"]
         val adaptedSource = typeAnnotations.fold(text) { result, annotation -> result.replace("@$annotation", "") }
         if ("@Retention" !in adaptedSource) {
             return adaptedSource.replace(
@@ -213,11 +213,11 @@ abstract class AbstractJvmRuntimeDescriptorLoaderTest : TestCaseWithTmpdir() {
             get() = LoadDescriptorUtil.TEST_PACKAGE_FQNAME
         override val memberScope: MemberScope
             get() = scope
-        override val fragments: List<PackageFragmentDescriptor> = listOf(
+        override val fragments: List<PackageFragmentDescriptor> = [
             object : PackageFragmentDescriptorImpl(module, fqName) {
                 override fun getMemberScope(): MemberScope = scope
             }
-        )
+        ]
 
         override fun <R, D> accept(visitor: DeclarationDescriptorVisitor<R, D>, data: D): R =
             visitor.visitPackageViewDescriptor(this, data)

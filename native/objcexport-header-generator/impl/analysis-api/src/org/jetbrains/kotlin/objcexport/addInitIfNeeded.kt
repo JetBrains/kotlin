@@ -28,9 +28,9 @@ internal fun ObjCExportContext.addInitIfNeeded(symbol: KaClassSymbol, members: L
             origin = analysisSession.getObjCExportStubOrigin(symbol),
             isInstanceMethod = false,
             returnType = ObjCInstanceType,
-            selectors = listOf(getObjectInstanceSelector(symbol)),
-            parameters = emptyList(),
-            attributes = listOf(initAttribute),
+            selectors = [getObjectInstanceSelector(symbol)],
+            parameters = [],
+            attributes = [initAttribute],
         )
     } else {
         null

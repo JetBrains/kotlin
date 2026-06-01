@@ -44,12 +44,12 @@ public interface KaNamedClassSymbolRenderer {
         ) {
             printer {
                 val keywords = when (symbol.classKind) {
-                    KaClassKind.CLASS -> listOf(KtTokens.CLASS_KEYWORD)
-                    KaClassKind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD, KtTokens.CLASS_KEYWORD)
-                    KaClassKind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD, KtTokens.CLASS_KEYWORD)
-                    KaClassKind.OBJECT -> listOf(KtTokens.OBJECT_KEYWORD)
-                    KaClassKind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD, KtTokens.OBJECT_KEYWORD)
-                    KaClassKind.INTERFACE -> listOf(KtTokens.INTERFACE_KEYWORD)
+                    KaClassKind.CLASS -> [KtTokens.CLASS_KEYWORD]
+                    KaClassKind.ENUM_CLASS -> [KtTokens.ENUM_KEYWORD, KtTokens.CLASS_KEYWORD]
+                    KaClassKind.ANNOTATION_CLASS -> [KtTokens.ANNOTATION_KEYWORD, KtTokens.CLASS_KEYWORD]
+                    KaClassKind.OBJECT -> [KtTokens.OBJECT_KEYWORD]
+                    KaClassKind.COMPANION_OBJECT -> [KtTokens.COMPANION_KEYWORD, KtTokens.OBJECT_KEYWORD]
+                    KaClassKind.INTERFACE -> [KtTokens.INTERFACE_KEYWORD]
                     KaClassKind.ANONYMOUS_OBJECT -> error("${KaNamedClassSymbol::class.simpleName} cannot be ${KaAnonymousObjectSymbol::class.simpleName}")
                 }
 

@@ -50,7 +50,7 @@ data class LlvmPipelineConfig(
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
-        val saveIrAfterPasses: List<String> = emptyList(),
+        val saveIrAfterPasses: List<String> = [],
         val saveIrDirectory: java.io.File? = null,
 ) {
     /**
@@ -80,7 +80,7 @@ data class LlvmPipelineConfig(
                 }
             }
         }
-        val saveIrAfterPasses = if (saveIrDirectory == null) emptyList() else passes
+        val saveIrAfterPasses = if (saveIrDirectory == null) [] else passes
         return copy(saveIrAfterPasses = saveIrAfterPasses, saveIrDirectory = saveIrDirectory)
     }
 }
@@ -339,14 +339,14 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
 class ModuleOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-default"
-    override val passes = listOf(config.modulePasses ?: "default<$optimizationFlag>")
+    override val passes = [config.modulePasses ?: "default<$optimizationFlag>"]
 }
 
 class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-lto"
     override val passes =
-            if (config.ltoPasses != null) listOf(config.ltoPasses)
+            if (config.ltoPasses != null) [config.ltoPasses]
             else buildList {
                 if (config.internalize) {
                     add("internalize")
@@ -364,7 +364,7 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
 class ThreadSanitizerPipeline(config: LlvmPipelineConfig, performanceManager: PerformanceManager?, logger: LoggingContext? = null) :
         LlvmOptimizationPipeline(config, performanceManager, logger) {
     override val pipelineName = "llvm-tsan"
-    override val passes = listOf("tsan-module,function(tsan)")
+    override val passes = ["tsan-module,function(tsan)"]
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
         getFunctions(module)

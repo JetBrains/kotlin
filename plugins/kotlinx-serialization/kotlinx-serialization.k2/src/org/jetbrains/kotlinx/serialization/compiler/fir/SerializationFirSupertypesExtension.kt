@@ -69,21 +69,21 @@ class SerializationFirSupertypesExtension(session: FirSession) : FirSupertypeGen
 
         return when {
             session.predicateBasedProvider.matches(serializerFor, classLikeDeclaration) -> {
-                if (resolvedSupertypes.any { it.coneType.classId == kSerializerClassId || it.coneType.classId == generatedSerializerClassId }) return emptyList()
-                val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return emptyList()
+                if (resolvedSupertypes.any { it.coneType.classId == kSerializerClassId || it.coneType.classId == generatedSerializerClassId }) return []
+                val getClassArgument = classLikeDeclaration.getSerializerFor(session) ?: return []
                 val serializerConeType = resolveConeTypeFromArgument(getClassArgument, typeResolver)
 
-                listOf(kSerializerClassId.constructClassLikeType(arrayOf(serializerConeType), isMarkedNullable = false))
+                [kSerializerClassId.constructClassLikeType([serializerConeType], isMarkedNullable = false)]
             }
             isSerializableObjectAndNeedsFactory(classLikeDeclaration) || isCompanionAndNeedsFactory(classLikeDeclaration) -> {
                 val serializerFactoryClassId = ClassId(
                     SerializationPackages.internalPackageFqName,
                     SerialEntityNames.SERIALIZER_FACTORY_INTERFACE_NAME
                 )
-                if (resolvedSupertypes.any { it.coneType.classId == serializerFactoryClassId }) return emptyList()
-                listOf(serializerFactoryClassId.constructClassLikeType(emptyArray(), false))
+                if (resolvedSupertypes.any { it.coneType.classId == serializerFactoryClassId }) return []
+                [serializerFactoryClassId.constructClassLikeType([], false)]
             }
-            else -> emptyList()
+            else -> []
         }
     }
 

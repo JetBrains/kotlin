@@ -14,10 +14,10 @@ import org.jetbrains.kotlin.fir.analysis.extensions.FirAdditionalCheckersExtensi
 
 class FirSerializationCheckersComponent(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val classCheckers: Set<FirClassChecker> = setOf(FirSerializationPluginClassChecker)
+        override val classCheckers: Set<FirClassChecker> = [FirSerializationPluginClassChecker]
     }
 
     override val expressionCheckers: ExpressionCheckers = object : ExpressionCheckers() {
-        override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(FirSerializationPluginCallChecker)
+        override val functionCallCheckers: Set<FirFunctionCallChecker> = [FirSerializationPluginCallChecker]
     }
 }

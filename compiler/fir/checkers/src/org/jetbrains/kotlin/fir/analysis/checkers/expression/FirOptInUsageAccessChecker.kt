@@ -44,7 +44,7 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
             when (expression) {
                 is FirVariableAssignment -> {
                     val experimentalities = resolvedSymbol.loadExperimentalities(fromSetter = true) +
-                            loadExperimentalitiesFromTypeArguments(emptyList())
+                            loadExperimentalitiesFromTypeArguments([])
                     reportNotAcceptedExperimentalities(experimentalities, expression.lValue)
                 }
                 is FirQualifiedAccessExpression -> {
@@ -69,15 +69,15 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
 
     context(context: CheckerContext)
     fun loadExperimentalitiesFromExplicitField(expression: FirStatement): Set<Experimentality> {
-        if (expression !is FirPropertyAccessExpression) return emptySet()
-        val reference = expression.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return emptySet()
-        val property = reference.toResolvedPropertySymbol()?.takeIf { it.hasExplicitBackingField } ?: return emptySet()
+        if (expression !is FirPropertyAccessExpression) return []
+        val reference = expression.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return []
+        val property = reference.toResolvedPropertySymbol()?.takeIf { it.hasExplicitBackingField } ?: return []
         val field = reference.tryAccessExplicitFieldSymbol(context.inlineFunctionBodyContext?.inlineFunction, context.session)
-            ?: return emptySet()
+            ?: return []
 
         return when (property.backingFieldSymbol) {
             field -> field.loadExperimentalities(fromSetter = false)
-            else -> emptySet()
+            else -> []
         }
     }
 }

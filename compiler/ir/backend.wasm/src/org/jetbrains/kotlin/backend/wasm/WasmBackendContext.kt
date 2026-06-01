@@ -76,7 +76,7 @@ class WasmBackendContext(
         val kotlinClosureToJsConverters = mutableMapOf<Int, IrSimpleFunction>()
         val jsClosureCallers = mutableMapOf<String, IrSimpleFunction>()
         val jsToKotlinClosures = mutableMapOf<String, IrSimpleFunction>()
-        val jsModuleAndQualifierReferences = mutableSetOf<JsModuleAndQualifierReference>()
+        val jsModuleAndQualifierReferences: MutableSet<JsModuleAndQualifierReference> = []
 
         // Map<Class, List<Pair<AnnotationClass, AnnotationObject>>>
         val classAssociatedObjects: MutableMap<IrClass, MutableList<Pair<IrClass, IrClass>>> = mutableMapOf()
@@ -97,7 +97,7 @@ class WasmBackendContext(
 
     // Functions that are reachable from JavaScript (e.g., closure call trampolines passed as funcref).
     // They receive a WasmFunctionAnnotation.JsCalled annotation so Binaryen does not treat them as unreachable.
-    val jsCalledFunctions = mutableSetOf<IrFunctionSymbol>()
+    val jsCalledFunctions: MutableSet<IrFunctionSymbol> = []
 
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
@@ -147,7 +147,7 @@ class WasmBackendContext(
 
     companion object {
         internal const val SPECIAL_INTERFACE_TABLE_SIZE = 22
-        private fun getSpecialITableTypes(context: WasmBackendContext) = listOf(
+        private fun getSpecialITableTypes(context: WasmBackendContext) = [
             context.irBuiltIns.collectionClass,
             context.irBuiltIns.setClass,
             context.irBuiltIns.listClass,
@@ -171,7 +171,7 @@ class WasmBackendContext(
             context.wasmSymbols.sequence!!,
             context.wasmSymbols.appendable,
             //FUNCTION_INTERFACE_CLASS
-        )
+        ]
     }
 
     internal val specialSlotITableTypes by lazy {

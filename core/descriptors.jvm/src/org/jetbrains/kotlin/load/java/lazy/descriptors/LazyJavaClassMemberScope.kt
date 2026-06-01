@@ -164,7 +164,7 @@ class LazyJavaClassMemberScope(
                         // If 'accessorName' is current function we return only it just because we check exactly
                         // that current method is override of accessor
                         if (function.name == accessorName)
-                            listOf(function)
+                            [function]
                         else
                             searchMethodsByNameWithoutBuiltinMagic(accessorName) + searchMethodsInSupertypesWithoutBuiltinMagic(accessorName)
                     } && (property.isVar || !JvmAbi.isSetterName(function.name.asString()))
@@ -334,7 +334,7 @@ class LazyJavaClassMemberScope(
 
         // Merge functions with same signatures
         val mergedFunctionFromSuperTypes = resolveOverridesForNonStaticMembers(
-            name, functionsFromSupertypes, emptyList(), ownerDescriptor, ErrorReporter.DO_NOTHING,
+            name, functionsFromSupertypes, [], ownerDescriptor, ErrorReporter.DO_NOTHING,
             c.components.kotlinTypeChecker.overridingUtil
         )
 
@@ -596,7 +596,7 @@ class LazyJavaClassMemberScope(
         propertyDescriptor.initialize(getter, null)
 
         val returnType = givenType ?: computeMethodReturnType(method, c.childForMethod(propertyDescriptor, method))
-        propertyDescriptor.setType(returnType, listOf(), getDispatchReceiverParameter(), null, listOf())
+        propertyDescriptor.setType(returnType, [], getDispatchReceiverParameter(), null, listOf())
         getter.initialize(returnType)
 
         return propertyDescriptor
@@ -622,7 +622,7 @@ class LazyJavaClassMemberScope(
 
         val propertyDescriptor = JavaForKotlinOverridePropertyDescriptor(ownerDescriptor, getterMethod, setterMethod, overriddenProperty)
 
-        propertyDescriptor.setType(getterMethod.returnType!!, listOf(), getDispatchReceiverParameter(), null, listOf())
+        propertyDescriptor.setType(getterMethod.returnType!!, [], getDispatchReceiverParameter(), null, listOf())
 
         val getter = DescriptorFactory.createGetter(
             propertyDescriptor, getterMethod.annotations, /* isDefault = */false,

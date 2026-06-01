@@ -46,7 +46,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
 
     class BlockElement(
         val name: String,
-        val items: MutableList<BlockItemElement> = mutableListOf(),
+        val items: MutableList<BlockItemElement> = [],
         val owner: BlockOwner,
     ) : LoggingElement()
 
@@ -64,7 +64,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         val origins: List<ConstraintElement>,
     ) : BlockItemElement()
 
-    class InitialConstraintElement(val constraint: String, val position: String) : ConstraintElement(emptyList())
+    class InitialConstraintElement(val constraint: String, val position: String) : ConstraintElement([])
 
     /**
      * Represents constraints on type variables.
@@ -77,7 +77,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
 
     class FixationLogRecordElement(val record: FixationLogRecord) : BlockItemElement()
 
-    val topLevelElements: MutableList<BlockElement> = mutableListOf<BlockElement>()
+    val topLevelElements: MutableList<BlockElement> = []
 
     private var currentSystem: ConstraintSystemMarker? = null
 
@@ -214,7 +214,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
             else -> error("Unexpected readiness type: ${readiness::class}")
         }
 
-    var origins: List<ConstraintElement> = listOf()
+    var origins: List<ConstraintElement> = []
 
     private inline fun <T> withOriginatingElements(elements: List<ConstraintElement>, block: () -> T): T {
         val oldOrigins = origins
@@ -227,7 +227,7 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
     }
 
     override fun <T> withOrigin(constraint: InitialConstraint, block: () -> T): T =
-        withOriginatingElements(listOf(cachedElementFor(constraint)), block)
+        withOriginatingElements([cachedElementFor(constraint)], block)
 
     override fun <T> withOrigins(
         variable1: TypeVariableMarker,
@@ -236,10 +236,10 @@ open class FirInferenceLogger : InferenceLogger(), FirSessionComponent {
         constraint2: Constraint,
         block: () -> T
     ): T {
-        val elements = listOf(
+        val elements = [
             cachedElementFor(variable1, constraint1),
             cachedElementFor(variable2, constraint2),
-        )
+        ]
         return withOriginatingElements(elements, block)
     }
 

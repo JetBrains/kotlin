@@ -469,7 +469,7 @@ fun IrBuilder.irConstantArray(type: IrType, elements: List<IrConstantValue>) =
 fun IrBuilder.irConstantObject(
     constructor: IrConstructorSymbol,
     arguments: List<IrConstantValue>,
-    typeArguments: List<IrType> = emptyList()
+    typeArguments: List<IrType> = []
 ): IrConstantValue {
     return IrConstantObjectImpl(
         startOffset, endOffset,
@@ -482,7 +482,7 @@ fun IrBuilder.irConstantObject(
 fun IrBuilder.irConstantObject(
     clazz: IrClass,
     arguments: List<IrConstantValue>,
-    typeArguments: List<IrType> = emptyList()
+    typeArguments: List<IrType> = []
 ): IrConstantValue {
     return irConstantObject(clazz.primaryConstructor?.symbol!!, arguments, typeArguments)
 }
@@ -490,7 +490,7 @@ fun IrBuilder.irConstantObject(
 fun IrBuilder.irConstantObject(
     clazz: IrClass,
     elements: Map<String, IrConstantValue>,
-    typeArguments: List<IrType> = emptyList()
+    typeArguments: List<IrType> = []
 ): IrConstantValue {
     return irConstantObject(
         clazz,

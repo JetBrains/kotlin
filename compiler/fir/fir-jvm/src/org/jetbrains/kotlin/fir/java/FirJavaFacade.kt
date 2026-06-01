@@ -223,7 +223,7 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
      * as we cannot control how Java resolution will access [declarations].
      */
     override val declarations: List<FirDeclaration> by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        val declarations = mutableListOf<FirDeclaration>()
+        val declarations: MutableList<FirDeclaration> = []
         val firJavaClass = classSymbol.fir as FirJavaClass
         val parentClassSymbol = firJavaClass.containingClassSymbol as? FirRegularClassSymbol
         val javaTypeParameterStack = firJavaClass.classJavaTypeParameterStack
@@ -392,7 +392,7 @@ class FirLazyJavaDeclarationList(javaClass: JavaClass, classSymbol: FirRegularCl
             }
         }
 
-        declarations.ifEmpty { emptyList() }
+        declarations.ifEmpty { [] }
     }
 }
 

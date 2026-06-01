@@ -16,7 +16,7 @@ class JvmBytecodeBinaryVersion(vararg numbers: Int) {
     val minor: Int = numbers.getOrNull(1) ?: -1
     val patch: Int = numbers.getOrNull(2) ?: -1
 
-    fun toArray(): IntArray = intArrayOf(major, minor, patch)
+    fun toArray(): IntArray = [major, minor, patch]
 
     override fun toString(): String = buildString {
         append(major)

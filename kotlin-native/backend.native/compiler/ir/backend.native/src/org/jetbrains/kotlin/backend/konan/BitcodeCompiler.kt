@@ -54,7 +54,7 @@ internal class BitcodeCompiler(
         val flags = overrideClangOptions.takeIf(List<String>::isNotEmpty)
                 ?: mutableListOf<String>().apply {
                     addNonEmpty(configurables.clangFlags)
-                    addNonEmpty(listOf("-triple", targetTriple.toString()))
+                    addNonEmpty(["-triple", targetTriple.toString()])
                     addNonEmpty(when {
                         optimize -> configurables.clangOptFlags
                         debug -> configurables.clangDebugFlags
@@ -72,9 +72,9 @@ internal class BitcodeCompiler(
     }
 
     private fun RelocationModeFlags.Mode.translateToClangCc1Flag() = when (this) {
-        RelocationModeFlags.Mode.PIC -> listOf("-mrelocation-model", "pic")
-        RelocationModeFlags.Mode.STATIC -> listOf("-mrelocation-model", "static")
-        RelocationModeFlags.Mode.DEFAULT -> emptyList()
+        RelocationModeFlags.Mode.PIC -> ["-mrelocation-model", "pic"]
+        RelocationModeFlags.Mode.STATIC -> ["-mrelocation-model", "static"]
+        RelocationModeFlags.Mode.DEFAULT -> []
     }
 
     /**

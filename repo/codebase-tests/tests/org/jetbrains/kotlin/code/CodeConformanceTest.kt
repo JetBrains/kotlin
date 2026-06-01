@@ -21,7 +21,7 @@ class CodeConformanceTest {
 
         private val nonSourcesMatcher = FileMatcher(
             File("."),
-            listOf(
+            [
                 ".idea",
                 "compiler/fir/lightTree/testData",
                 "compiler/psi/psi-impl/testData/psi/kdoc/TwoTags.kt",
@@ -38,16 +38,16 @@ class CodeConformanceTest {
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
                 "kotlin-native/performance",
                 "kotlin-native/samples",
-            )
+            ]
         )
 
         private val COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER = FileMatcher(
             File("."),
-            listOf(
+            [
                 "dependencies",
                 "kotlin-native", "libraries/stdlib/native-wasm", // Have a separate licences manager
                 "repo/codebase-tests/tests/org/jetbrains/kotlin/code/CodeConformanceTest.kt",
-            )
+            ]
         )
     }
 
@@ -64,6 +64,7 @@ class CodeConformanceTest {
             .map { it.path }
             .toList()
 
+        @Suppress("ConvertToCollectionLiterals")
         val targetDirs = kgpDirs + listOf(
             "build-common/src",
             "compiler/build-tools/kotlin-build-statistics/src",
@@ -93,7 +94,7 @@ class CodeConformanceTest {
     fun testNoDirectPathToStringConversion() {
         val absolutePathStringPattern = Pattern.compile("\\.absolutePathString\\(\\)", Pattern.MULTILINE)
 
-        val targetDirs = listOf(
+        val targetDirs = [
             "compiler/build-tools/kotlin-build-tools-api/src",
             "compiler/build-tools/kotlin-build-tools-api/gen",
             "compiler/build-tools/kotlin-build-tools-impl/src",
@@ -101,7 +102,7 @@ class CodeConformanceTest {
             "compiler/build-tools/kotlin-build-tools-compat/src",
             "compiler/build-tools/kotlin-build-tools-compat/gen",
             "compiler/build-tools/kotlin-build-tools-cri-impl/src",
-        )
+        ]
 
         targetDirs.map {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))
@@ -127,13 +128,13 @@ class CodeConformanceTest {
 
     @Test
     fun testNoBadSubstringsInProjectCode() {
-        class FileTestCase(val message: String, allowedFiles: List<String> = emptyList(), val filter: (File, String) -> Boolean) {
+        class FileTestCase(val message: String, allowedFiles: List<String> = [], val filter: (File, String) -> Boolean) {
             val allowedMatcher = FileMatcher(File("."), allowedFiles)
         }
 
         val atAuthorPattern = Pattern.compile("/\\*.+@author.+\\*/", Pattern.DOTALL)
 
-        @Suppress("SpellCheckingInspection") val tests = listOf(
+        @Suppress("SpellCheckingInspection") val tests = [
             FileTestCase(
                 "%d source files contain @author javadoc tag.\nPlease remove them or exclude in this test:\n%s"
             ) { _, source ->
@@ -164,9 +165,9 @@ class CodeConformanceTest {
                         "post-processing of kotlin-reflect.jar by jarjar.\n" +
                         "Most probably you meant to use classes from org.jetbrains.kotlin.**.\n" +
                         "Please change references in these files or exclude them in this test:\n%s",
-                allowedFiles = listOf(
+                allowedFiles = [
                     "libraries/tools/jdk-api-validator/src/test/JdkApiUsageTest.kt"
-                )
+                ]
             ) { _, source ->
                 "kotlin.reflect.jvm.internal.impl" in source
             },
@@ -174,9 +175,9 @@ class CodeConformanceTest {
                 "%d source files contain references to package org.objectweb.asm.\n" +
                         "Package org.jetbrains.org.objectweb.asm should be used instead to avoid troubles with different asm versions in classpath. " +
                         "Please consider changing the package in these files:\n%s",
-                allowedFiles = listOf(
+                allowedFiles = [
                     "plugins/compose/group-mapping/"
-                )
+                ]
             ) { _, source ->
                 " org.objectweb.asm" in source
             },
@@ -187,11 +188,11 @@ class CodeConformanceTest {
             ) { _, source ->
                 "gnu.trove" in source
             },
-        )
+        ]
 
         val testCaseToMatchedFiles: Map<FileTestCase, MutableList<File>> = mutableMapOf<FileTestCase, MutableList<File>>()
             .apply {
-                tests.forEach { testCase -> this[testCase] = mutableListOf() }
+                tests.forEach { testCase -> this[testCase] = [] }
             }
 
         nonSourcesMatcher.excludeWalkTopDown(SOURCES_FILE_PATTERN).forEach { sourceFile ->
@@ -236,7 +237,7 @@ class CodeConformanceTest {
 
     @Test
     fun testThirdPartyCopyrights() {
-        val filesWithUnlistedCopyrights = mutableListOf<String>()
+        val filesWithUnlistedCopyrights: MutableList<String> = []
         val knownThirdPartyCode = loadKnownThirdPartyCodeList()
         val copyrightRegex = Regex("""\bCopyright\b""")
         val root = COPYRIGHT_EXCLUDED_FILES_AND_DIRS_MATCHER.root
@@ -307,22 +308,22 @@ class CodeConformanceTest {
 
         val root = nonSourcesMatcher.root
 
-        val repoCheckers = listOf(
+        val repoCheckers = [
             RepoAllowList(
                 // Please use redirector for importing in tests
                 "https://redirector.kotlinlang.org/maven/dev", root,
-                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+                ["repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"]
             ),
             RepoAllowList(
                 "kotlin/ktor", root,
-                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+                ["repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"]
             ),
             RepoAllowList(
                 "bintray.com", root,
-                setOf("repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"),
+                ["repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts"],
                 exclude = "jcenter.bintray.com"
             )
-        )
+        ]
 
         data class RepoOccurrence(val repo: String, val file: File)
         data class RepoOccurrences(val repo: String, val files: Collection<File>)
@@ -347,7 +348,7 @@ class CodeConformanceTest {
                     }
                     occurrences
                 } else {
-                    listOf()
+                    []
                 }
             }
             .groupBy { it.repo }
@@ -407,9 +408,9 @@ class CodeConformanceTest {
     @Test
     fun testNoHardcodedPathSeparatorInSSOT() {
         val pattern = Pattern.compile("""(?<![\\$])\$\{File\.pathSeparator\}""")
-        val targetDirs = listOf(
+        val targetDirs = [
             "compiler/arguments/src/org/jetbrains/kotlin/arguments/dsl/types"
-        )
+        ]
 
         targetDirs.flatMap {
             FileUtil.findFilesByMask(KOTLIN_FILE_PATTERN, File(it))

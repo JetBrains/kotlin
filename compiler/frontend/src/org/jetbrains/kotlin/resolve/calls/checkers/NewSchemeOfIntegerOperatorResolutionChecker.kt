@@ -115,10 +115,10 @@ object NewSchemeOfIntegerOperatorResolutionChecker : CallChecker {
         return descriptor.fqNameSafe in literalOperatorsFqNames
     }
 
-    private val literalOperatorsFqNames: Set<FqName> = listOf(
+    private val literalOperatorsFqNames: Set<FqName> = [
         "plus", "minus", "times", "div", "rem", "plus", "minus",
         "times", "div", "rem", "shl", "shr", "ushr", "and", "or",
         "xor", "unaryPlus", "unaryMinus", "inv",
-    ).mapTo(mutableSetOf()) { FqName.fromSegments(listOf("kotlin", "Int", it)) }
+    ].mapTo(mutableSetOf()) { FqName.fromSegments(["kotlin", "Int", it]) }
 }
 

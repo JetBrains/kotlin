@@ -139,7 +139,7 @@ private fun createRetentionJavaAnnotation(owner: PsiElement): PsiAnnotation = Sy
     arguments = javaRetentionArguments(kotlinRetentionName = null),
 )
 
-private fun javaRetentionArguments(kotlinRetentionName: String?): List<AnnotationArgument> = listOf(
+private fun javaRetentionArguments(kotlinRetentionName: String?): List<AnnotationArgument> = [
     AnnotationArgument(
         name = StandardNames.DEFAULT_VALUE_PARAMETER,
         value = AnnotationValue.EnumValue(
@@ -150,7 +150,7 @@ private fun javaRetentionArguments(kotlinRetentionName: String?): List<Annotatio
             sourcePsi = null,
         )
     )
-)
+]
 
 private fun retentionMapping(name: String): String = when (name) {
     AnnotationRetention.BINARY.name -> RetentionPolicy.CLASS.name
@@ -178,9 +178,9 @@ private fun SymbolLightLazyAnnotation.tryConvertToRepeatableJavaAnnotation(
 )
 
 private fun SymbolLightJavaAnnotation.computeRepeatableJavaAnnotationArguments(): List<AnnotationArgument> {
-    val annotationClassId = originalLightAnnotation.annotationsProvider.ownerClassId() ?: return emptyList()
+    val annotationClassId = originalLightAnnotation.annotationsProvider.ownerClassId() ?: return []
 
-    return listOf(
+    return [
         AnnotationArgument(
             name = StandardNames.DEFAULT_VALUE_PARAMETER,
             value = AnnotationValue.KClass(
@@ -189,7 +189,7 @@ private fun SymbolLightJavaAnnotation.computeRepeatableJavaAnnotationArguments()
                 sourcePsi = null,
             )
         )
-    )
+    ]
 }
 
 private fun GranularAnnotationsBox.tryConvertToTargetJavaAnnotation(
@@ -219,10 +219,10 @@ private fun SymbolLightJavaAnnotation.computeTargetJavaAnnotationArguments(): Li
         .arguments
         .firstOrNull()
         ?.value as? AnnotationValue.Array
-        ?: return emptyList()
+        ?: return []
 
     val javaTargetNames = allowedKotlinTargets.values.mapNotNullTo(linkedSetOf(), AnnotationValue::mapToJavaTarget)
-    return listOf(
+    return [
         AnnotationArgument(
             name = StandardNames.DEFAULT_VALUE_PARAMETER,
             value = AnnotationValue.Array(
@@ -238,7 +238,7 @@ private fun SymbolLightJavaAnnotation.computeTargetJavaAnnotationArguments(): Li
                 sourcePsi = null,
             )
         )
-    )
+    ]
 }
 
 private fun AnnotationValue.mapToJavaTarget(): String? {
@@ -265,7 +265,7 @@ private fun GranularAnnotationsBox.tryConvertToJavaAnnotation(
     javaQualifier: String,
     kotlinQualifier: String,
     owner: PsiElement,
-    argumentsComputer: SymbolLightJavaAnnotation.() -> List<AnnotationArgument> = { emptyList() },
+    argumentsComputer: SymbolLightJavaAnnotation.() -> List<AnnotationArgument> = { [] },
 ): PsiAnnotation? {
     if (qualifiedName != javaQualifier) return null
     if (hasAnnotation(owner, javaQualifier)) return null
@@ -288,7 +288,7 @@ private fun SymbolLightLazyAnnotation.tryConvertToJavaAnnotation(
     javaQualifier: String,
     kotlinQualifier: String,
     owner: PsiElement,
-    argumentsComputer: SymbolLightJavaAnnotation.() -> List<AnnotationArgument> = { emptyList() },
+    argumentsComputer: SymbolLightJavaAnnotation.() -> List<AnnotationArgument> = { [] },
 ): PsiAnnotation? {
     if (qualifiedName != kotlinQualifier) return null
     return SymbolLightJavaAnnotation(

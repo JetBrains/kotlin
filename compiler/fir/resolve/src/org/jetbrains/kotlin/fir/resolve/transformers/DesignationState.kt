@@ -33,9 +33,9 @@ class DesignationState private constructor(
                 reverse()
             } else buildList<FirDeclaration> {
                 val firProvider = regularClass.moduleData.session.firProvider
-                val outerClasses = generateSequence(symbol.classId) { classId ->
+                val outerClasses: MutableList<FirClassLikeDeclaration?> = generateSequence(symbol.classId) { classId ->
                     classId.outerClassId
-                }.mapTo(mutableListOf()) { classId ->
+                }.mapTo([]) { classId ->
                     if (classId == symbol.classId) regularClass // Short path, allows also to avoid id clashes as in KT-73347
                     else firProvider.getFirClassifierByFqName(classId)
                 }

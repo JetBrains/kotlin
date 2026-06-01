@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.name.Name
 
 internal class FirNoClassifiersScope(delegate: FirContainingNamesAwareScope) : FirDelegatingContainingNamesAwareScope(delegate) {
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getClassifierNames(): Set<Name> = []
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
     }

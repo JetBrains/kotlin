@@ -25,6 +25,6 @@ abstract class AbstractNativeCodegenBoxTest : AbstractNativeBlackBoxTest() {
                 return contentModifier.invoke(content)
             }
         }
-        return listOf(transformer)
+        return [transformer]
     }
 }

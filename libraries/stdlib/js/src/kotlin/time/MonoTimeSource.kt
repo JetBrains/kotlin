@@ -75,7 +75,7 @@ internal class HrTimeSource(private val process: Process) : DefaultTimeSource {
         (timeMark.reading as Reading).let { [seconds, nanos] ->
             duration.toComponents { _, addNanos ->
                 val resultSeconds = sumCheckNaN(seconds + truncate(duration.toDouble(DurationUnit.SECONDS)))
-                Reading(arrayOf(resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0))
+                Reading([resultSeconds, if (resultSeconds.isFinite()) nanos + addNanos else 0.0])
             }
         }.let(TimeSource.Monotonic::ValueTimeMark)
 

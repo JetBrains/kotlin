@@ -67,7 +67,7 @@ class IrInterpreterKCallableNamePreprocessor : IrInterpreterPreprocessor() {
 
         return IrCompositeImpl(
             expression.startOffset, expression.endOffset,
-            expression.type, origin = null, statements = boundArgsWithoutThis + listOf(expression)
+            expression.type, origin = null, statements = boundArgsWithoutThis + expression
         )
     }
 

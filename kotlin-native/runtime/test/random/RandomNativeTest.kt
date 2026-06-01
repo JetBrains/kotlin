@@ -17,7 +17,7 @@ class SeededRandomSmokeNativeTest {
     @Test
     fun sameIntSeedNextLong() {
         val v = subject.nextInt(1..Int.MAX_VALUE)
-        for (seed in listOf(v, -v)) {
+        for (seed in [v, -v]) {
             testSameSeededRandoms(Random(seed), Random(seed), seed) { nextLong() }
         }
     }
@@ -25,7 +25,7 @@ class SeededRandomSmokeNativeTest {
     @Test
     fun sameIntSeedNextIntWithLimit() {
         val v = subject.nextInt(1..Int.MAX_VALUE)
-        for (seed in listOf(v, -v)) {
+        for (seed in [v, -v]) {
             testSameSeededRandoms(Random(seed), Random(seed), seed) { nextInt(1000) }
         }
     }

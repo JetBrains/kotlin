@@ -142,7 +142,7 @@ object TypeIntrinsics {
             Type.getMethodDescriptor(Type.BOOLEAN_TYPE, Type.getObjectType("java/lang/Object"), Type.INT_TYPE)
 
 
-    private val MUTABLE_COLLECTION_TYPE_FQ_NAMES = setOf(
+    private val MUTABLE_COLLECTION_TYPE_FQ_NAMES: Set<FqName> = [
         FqNames.mutableIterator,
         FqNames.mutableIterable,
         FqNames.mutableCollection,
@@ -151,7 +151,7 @@ object TypeIntrinsics {
         FqNames.mutableMap,
         FqNames.mutableSet,
         FqNames.mutableMapEntry
-    )
+    ]
 
     private fun getMutableCollectionMethodName(prefix: String, kotlinType: KotlinType): String? {
         val fqName = getClassFqName(kotlinType)

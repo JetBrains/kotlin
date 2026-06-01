@@ -85,7 +85,7 @@ class CoreJrtFileSystem : DeprecatedVirtualFileSystem() {
                 // but to load proper jrt-fs (one that is pointed by jdkHome) we should provide "java.home" path
                 FileSystems.newFileSystem(rootUri, mapOf("java.home" to jdkHome.absolutePath))
             } else {
-                val classLoader = URLClassLoader(arrayOf(jrtFsJar.toURI().toURL()), null)
+                val classLoader = URLClassLoader([jrtFsJar.toURI().toURL()], null)
                 // If the runtime JDK is set to <9, there are no JrtFileSystemProvider,
                 // we should create classloader with jrt-fs.jar, and DO NOT NEED to pass "java.home" path,
                 // as otherwise it will incur additional classloader creation

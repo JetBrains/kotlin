@@ -97,7 +97,7 @@ private fun calculateExpectActualScopeDiff(
     val matchingContext = ClassicExpectActualMatchingContext(actual.module)
     // It's responsibility of AbstractExpectActualCompatibilityChecker to report that. Most probably this check is redundant,
     // because we can't reach this line if expect and actual don't match, but let's have it for safety
-    if (expect.declaredTypeParameters.size != actual.declaredTypeParameters.size) return emptySet()
+    if (expect.declaredTypeParameters.size != actual.declaredTypeParameters.size) return []
     val classTypeSubstitutor = matchingContext.createExpectActualTypeParameterSubstitutor(
         expect.declaredTypeParameters,
         actual.declaredTypeParameters,
@@ -113,7 +113,7 @@ private fun calculateExpectActualScopeDiff(
     return actualClassCallables.flatMap { actualMember ->
         val potentialExpects = nameAndKindToExpectCallables[actualMember.name to actualMember.functionVsPropertyKind]
         if (potentialExpects.isNullOrEmpty()) {
-            emptyList<K1ExpectActualMemberDiff.Kind>()
+            []
         } else {
             potentialExpects
                 .map { expectMember ->

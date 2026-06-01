@@ -40,7 +40,7 @@ class ConeIntegerLiteralConstantTypeImpl(
             isUnsigned: Boolean,
             isTypePresent: (ConeClassLikeType) -> Boolean,
         ): ConeSimpleKotlinType {
-            val possibleTypes = mutableListOf<ConeClassLikeType>()
+            val possibleTypes: MutableList<ConeClassLikeType> = []
 
             fun checkBoundsAndAddPossibleType(classId: ClassId, range: LongRange) {
                 if (value in range) {
@@ -71,7 +71,7 @@ class ConeIntegerLiteralConstantTypeImpl(
                 addSignedPossibleTypes()
             }
             return if (possibleTypes.size == 1) {
-                possibleTypes.single().withNullabilityAndAttributes(false, ConeAttributes.Empty).also {
+                possibleTypes.single().withNullabilityAndAttributes(false, []).also {
                     if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                         assert(it.isLong() || it.isULong())
                     }
@@ -140,15 +140,15 @@ fun ConeKotlinType.approximateIntegerLiteralType(expectedType: ConeKotlinType? =
 private object ConeIntegerLiteralTypeExtensions {
     fun createSupertypeList(type: ConeIntegerLiteralType): List<ConeClassLikeType> {
         val comparableSuperType =
-            ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), arrayOf(ConeKotlinTypeProjectionIn(type)), false)
+            ConeClassLikeTypeImpl(StandardClassIds.Comparable.toLookupTag(), [ConeKotlinTypeProjectionIn(type)], false)
 
         return if (type.possibleTypes.none { it.isUnsignedTypeOrNullableUnsignedType }) {
-            listOf(
+            [
                 createClassLikeType(StandardClassIds.Number),
                 comparableSuperType,
-            )
+            ]
         } else {
-            listOf(comparableSuperType)
+            [comparableSuperType]
         }
     }
 
@@ -158,7 +158,7 @@ private object ConeIntegerLiteralTypeExtensions {
 
     fun ConeIntegerLiteralType.getApproximatedTypeImpl(expectedType: ConeKotlinType?): ConeClassLikeType {
         val expectedTypeForApproximation = (expectedType?.lowerBoundIfFlexible() as? ConeClassLikeType)
-            ?.withNullabilityAndAttributes(false, ConeAttributes.Empty)
+            ?.withNullabilityAndAttributes(false, [])
         val approximatedType = when (expectedTypeForApproximation) {
             null, !in possibleTypes -> possibleTypes.first()
             else -> expectedTypeForApproximation

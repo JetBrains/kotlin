@@ -72,7 +72,7 @@ import kotlin.reflect.jvm.jvmName
 
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
     override fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> =
-        arrayOf(::PluginRuntimeAnnotationsProvider)
+        [::PluginRuntimeAnnotationsProvider]
 }
 
 abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
@@ -118,7 +118,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 ?.let { put(MODULE_ACTUALIZER, createModuleActualizer(it, testServices)) }
         }
 
-        val callStack = mutableListOf<PsiElement>()
+        val callStack: MutableList<PsiElement> = []
         var stackDepth = 0
         while (true) {
             val callStackExpr = testServices.ktTestModuleStructure.mainModules.flatMap { it.psiFiles }.firstNotNullOfOrNull { file ->
@@ -201,7 +201,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
         }
     }
 
-    open fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> = emptyArray()
+    open fun extraCustomRuntimeClasspathProviders(): Array<Constructor<RuntimeClasspathProvider>> = []
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
@@ -410,7 +410,7 @@ internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices
 private class CollectingIrGenerationExtension(private val annotationToCheckCalls: String?) : IrGenerationExtension {
     var result: String = ""
 
-    val functionsWithAnnotationToCheckCalls: MutableSet<String> = mutableSetOf()
+    val functionsWithAnnotationToCheckCalls: MutableSet<String> = []
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         val dumpOptions = DumpIrTreeOptions(

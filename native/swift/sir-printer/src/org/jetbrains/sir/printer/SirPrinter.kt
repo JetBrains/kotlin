@@ -38,9 +38,9 @@ public class SirPrinter(
                 .filterIsInstance<SirReverseFunctionBridge>()
                 .flatMap { it.swiftFunctionBridge.lines + "" }
             if (reverseBridgeLines.isEmpty()) {
-                listOf(sirTree).asSequence()
+                [sirTree].asSequence()
             } else {
-                listOf(sirTree + "\n" + reverseBridgeLines.joinToString("\n")).asSequence()
+                [sirTree + "\n" + reverseBridgeLines.joinToString("\n")].asSequence()
             }
         }
 
@@ -74,7 +74,7 @@ public class SirPrinter(
 }
 
 private val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
-    listOf("fatalError()")
+    ["fatalError()"]
 )
 
 private fun collectBridges(container: SirDeclarationContainer): List<SirBridge> = buildList {

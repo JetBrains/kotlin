@@ -49,7 +49,7 @@ class FirDumpHandler(
     private var byteCodeListingEnabled = false
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
         if (module.directives.shouldSkip()) return

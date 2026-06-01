@@ -51,9 +51,9 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
 
             val module = TestModule.Exclusive(
                 name = testCaseId.uniqueName,
-                directRegularDependencySymbols = emptySet(),
-                directFriendDependencySymbols = emptySet(),
-                directDependsOnDependencySymbols = emptySet(),
+                directRegularDependencySymbols = [],
+                directFriendDependencySymbols = [],
+                directDependsOnDependencySymbols = [],
             )
 
             val ignoredFiles = predefinedTestCase.ignoredFiles.map { it.absoluteNormalizedFile() }
@@ -65,7 +65,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
             val testCase = TestCase(
                 id = testCaseId,
                 kind = TestKind.STANDALONE,
-                modules = setOf(module),
+                modules = [module],
                 freeCompilerArgs = predefinedTestCase.freeCompilerArgs
                     .parseCompilerArgs(settings) { "Failed to parse free compiler arguments for test case $testCaseId" },
                 nominalPackageName = PackageName(testCaseId.uniqueName),
@@ -81,7 +81,7 @@ internal class PredefinedTestCaseGroupProvider(annotation: PredefinedTestCases) 
                 findSharedModule = null
             )
 
-            TestCaseGroup.Default(disabledTestCaseIds = emptySet(), testCases = listOf(testCase))
+            TestCaseGroup.Default(disabledTestCaseIds = [], testCases = [testCase])
         }
     }
 

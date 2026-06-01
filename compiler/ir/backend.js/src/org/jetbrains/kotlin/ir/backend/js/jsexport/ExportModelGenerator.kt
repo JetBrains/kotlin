@@ -31,11 +31,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
 
         return when {
-            exports.isEmpty() -> emptyList()
+            exports.isEmpty() -> []
             !generateNamespacesForPackages || namespaceFqName.isRoot -> exports
             else -> namespaceFqName.pathSegments().asReversed()
                 .fold(exports) { members, segment ->
-                    listOf(ExportedNamespace(segment.identifier, members))
+                    [ExportedNamespace(segment.identifier, members)]
                 }
         }
     }
@@ -189,10 +189,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         klass: IrClass,
         specialProcessing: (IrDeclarationWithName) -> ExportedDeclaration? = { null }
     ): ExportedClassDeclarationsInfo {
-        val members = mutableListOf<ExportedDeclaration>()
-        val specialMembers = mutableListOf<ExportedDeclaration>()
-        val nestedClasses = mutableListOf<ExportedClass>()
-        val defaultImplementations = mutableListOf<ExportedDeclaration>()
+        val members: MutableList<ExportedDeclaration> = []
+        val specialMembers: MutableList<ExportedDeclaration> = []
+        val nestedClasses: MutableList<ExportedClass> = []
+        val defaultImplementations: MutableList<ExportedDeclaration> = []
 
         klass.forEachExportedMember(context) { candidate, declaration ->
             val processingResult = specialProcessing(candidate)

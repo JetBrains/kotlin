@@ -230,7 +230,7 @@ fun FirDeclaration.getDanglingTypeConstraintsOrEmpty(): List<DanglingTypeConstra
         is FirAnonymousFunction -> danglingTypeConstraints
         is FirProperty -> danglingTypeConstraints
         else -> null
-    } ?: emptyList()
+    } ?: []
 }
 
 val FirPropertySymbol.correspondingValueParameterFromPrimaryConstructor: FirValueParameterSymbol?

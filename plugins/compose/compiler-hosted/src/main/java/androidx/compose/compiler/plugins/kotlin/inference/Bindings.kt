@@ -68,17 +68,17 @@ class Binding(token: String? = null, observers: Set<Bindings>) {
  * ever change.
  */
 class Bindings {
-    private val listeners = mutableListOf<() -> Unit>()
+    private val listeners: MutableList<() -> Unit> = []
 
     /**
      * Create a fresh open applier binding variable
      */
-    fun open() = Binding(observers = setOf(this))
+    fun open() = Binding(observers = [this])
 
     /**
      * Create a closed applier binding variable
      */
-    fun closed(target: String) = Binding(token = target, emptySet())
+    fun closed(target: String) = Binding(token = target, [])
 
     /**
      * Listen for when a unification closed a binding or bound two binding groups together.
@@ -162,7 +162,7 @@ class Bindings {
         val value = binding.value
         value.token = token
         bindingValueChanged(value)
-        value.observers = emptySet()
+        value.observers = []
         return true
     }
 

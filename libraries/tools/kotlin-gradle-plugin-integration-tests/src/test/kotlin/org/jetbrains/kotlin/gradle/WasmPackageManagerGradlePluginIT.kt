@@ -295,10 +295,10 @@ abstract class WasmPackageManagerGradlePluginIT : KGPBaseTest() {
                 }
 
                 val installArgs = if (isYarn) {
-                    project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { listOf(it) }
+                    project.rootProject.extensions.getByType(WasmYarnRootEnvSpec::class.java).executable.map { [it] }
                 } else {
                     project.provider {
-                        listOf("install", "--ignore-scripts")
+                        ["install", "--ignore-scripts"]
                     }
                 }
 

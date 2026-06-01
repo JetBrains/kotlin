@@ -82,12 +82,12 @@ class FirCloneableSymbolProvider(
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProviderWithoutCallables() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
 
-        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> = setOf(StandardClassIds.Cloneable.packageFqName.asString())
+        override fun getPackageNamesWithTopLevelClassifiers(): Set<String> = [StandardClassIds.Cloneable.packageFqName.asString()]
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             if (packageFqName == StandardClassIds.Cloneable.packageFqName) {
-                setOf(StandardClassIds.Cloneable.shortClassName)
-            } else emptySet()
+                [StandardClassIds.Cloneable.shortClassName]
+            } else []
     }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {

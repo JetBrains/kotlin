@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers
 import org.jetbrains.kotlin.fir.analysis.checkers.config.FirLanguageVersionSettingsChecker
 
 object ExtraLanguageVersionSettingsCheckers : LanguageVersionSettingsCheckers() {
-    override val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = setOf(
+    override val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = [
 
-    )
+    ]
 }

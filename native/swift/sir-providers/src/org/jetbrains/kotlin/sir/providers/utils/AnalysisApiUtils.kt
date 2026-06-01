@@ -61,7 +61,7 @@ public val KaAnnotated.deprecatedAnnotation: Deprecated?
     }
 
 public val KaAnnotated.throwsAnnotation: Throws?
-    get() = this.annotations[ClassId.topLevel(FqName.fromSegments(listOf("kotlin", "Throws")))].firstOrNull()?.let {
+    get() = this.annotations[ClassId.topLevel(FqName.fromSegments(["kotlin", "Throws"]))].firstOrNull()?.let {
         val arguments = it.arguments.associate { it.name.asString() to it.expression }
 
         val classes = (arguments["exceptionClasses"] as? KaAnnotationValue.ArrayValue?)

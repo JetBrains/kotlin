@@ -351,7 +351,7 @@ class TypeResolver(
 
                     result = type(definitelyNotNullType)
                 } else {
-                    result = type(IntersectionTypeConstructor(listOf(leftType, rightType)).createType())
+                    result = type(IntersectionTypeConstructor([leftType, rightType]).createType())
                 }
             }
 
@@ -379,7 +379,7 @@ class TypeResolver(
                     }
                     checkSubtypingBetweenContextReceivers(c.trace, contextReceiverList, types)
                     types
-                } else emptyList()
+                } else []
 
                 val parameterDescriptors = resolveParametersOfFunctionType(type.parameters)
                 checkParametersOfFunctionType(parameterDescriptors)
@@ -536,7 +536,7 @@ class TypeResolver(
             KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
                 typeAttributeTranslators.toAttributes(annotations, typeParameter.typeConstructor, containing),
                 typeParameter.typeConstructor,
-                listOf(),
+                [],
                 false,
                 scopeForTypeParameter
             )
@@ -880,7 +880,7 @@ class TypeResolver(
             val qualifierPart = reversedQualifierParts[index]
             val currentArguments = qualifierPart.typeArguments?.arguments.orEmpty()
             val declaredTypeParameters = classifierDescriptorChain[index].declaredTypeParameters
-            val currentParameters = if (wasStatic) emptyList() else declaredTypeParameters
+            val currentParameters = if (wasStatic) [] else declaredTypeParameters
 
             if (wasStatic && currentArguments.isNotEmpty() && declaredTypeParameters.isNotEmpty()) {
                 c.trace.report(TYPE_ARGUMENTS_FOR_OUTER_CLASS_WHEN_NESTED_REFERENCED.on(qualifierPart.typeArguments!!))

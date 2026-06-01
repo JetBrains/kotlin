@@ -9,9 +9,9 @@ import org.jetbrains.kotlin.sir.*
 
 internal class CBridgePrinter {
 
-    private val includes = mutableSetOf<String>("Foundation/Foundation.h")
+    private val includes: MutableSet<String> = ["Foundation/Foundation.h"]
 
-    private val functions = mutableSetOf<List<String>>()
+    private val functions: MutableSet<List<String>> = []
 
     fun add(bridge: SirBridge) {
         when (bridge) {

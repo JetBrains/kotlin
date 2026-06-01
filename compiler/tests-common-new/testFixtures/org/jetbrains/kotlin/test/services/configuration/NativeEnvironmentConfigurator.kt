@@ -114,7 +114,7 @@ abstract class NativeEnvironmentConfigurator(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(NativeEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives)
+        get() = [NativeEnvironmentConfigurationDirectives, KlibBasedCompilerTestDirectives]
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (!module.targetPlatform(testServices).isNative()) return
@@ -131,7 +131,7 @@ abstract class NativeEnvironmentConfigurator(
 
         val runtimeDependencies = getRuntimeLibraryProviders(module).flatMap { provider ->
             // Ignore `KlibNativeDistributionLibraryProvider`, because it is anyway applied in loadNativeKlibs().
-            if (provider is KlibNativeDistributionLibraryProvider) emptyList() else provider.getLibraryPaths()
+            if (provider is KlibNativeDistributionLibraryProvider) [] else provider.getLibraryPaths()
         }
 
         configuration.konanNoStdlib = ConfigurationDirectives.WITH_STDLIB !in module.directives

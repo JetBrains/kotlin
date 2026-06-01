@@ -48,7 +48,7 @@ internal abstract class AbstractBaseCandidateInfoProvider(
             explicitReceiver = explicitReceiver,
             argumentList = argumentList,
             typeArguments = typeArgumentList,
-            containingDeclarations = emptyList(), // TODO - maybe we should pass declarations from context here (no visible differences atm)
+            containingDeclarations = [], // TODO - maybe we should pass declarations from context here (no visible differences atm)
             containingFile = firFile,
             resolutionMode = ResolutionMode.ContextIndependent,
             isUsedAsGetClassReceiver = false,
@@ -117,7 +117,7 @@ internal class CheckCallableReferenceForCompletionCandidateInfoProvider(
                 callSite = firFile,
                 name = callableSymbol.name,
                 explicitReceiver = explicitReceiver,
-                containingDeclarations = emptyList(),
+                containingDeclarations = [],
                 containingFile = firFile,
                 session = firSession,
                 expectedType = null,

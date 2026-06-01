@@ -17,7 +17,7 @@ sealed class StubType {
  */
 class ClassifierStubType(
         val classifier: Classifier,
-        override val typeArguments: List<TypeArgument> = emptyList(),
+        override val typeArguments: List<TypeArgument> = [],
         override val nullable: Boolean = false
 ) : StubType() {
 
@@ -68,7 +68,7 @@ class TypeParameterType(
         override val nullable: Boolean,
         val typeParameterDeclaration: TypeParameterStub
 ) : StubType() {
-    override val typeArguments: List<TypeArgument> = emptyList()
+    override val typeArguments: List<TypeArgument> = []
 }
 
 fun KotlinType.toStubIrType(): StubType = when (this) {
@@ -107,13 +107,13 @@ private object PredefinedTypesHandler {
 
     private val nativePtrClassifier = Classifier.topLevel(cInteropPackage, "NativePtr")
 
-    private val primitives = setOf(
-            KotlinTypes.boolean,
-            KotlinTypes.byte, KotlinTypes.short, KotlinTypes.int, KotlinTypes.long,
-            KotlinTypes.uByte, KotlinTypes.uShort, KotlinTypes.uInt, KotlinTypes.uLong,
-            KotlinTypes.float, KotlinTypes.double,
-            KotlinTypes.vector128
-    )
+    private val primitives: Set<KotlinClassifierType> = [
+        KotlinTypes.boolean,
+        KotlinTypes.byte, KotlinTypes.short, KotlinTypes.int, KotlinTypes.long,
+        KotlinTypes.uByte, KotlinTypes.uShort, KotlinTypes.uInt, KotlinTypes.uLong,
+        KotlinTypes.float, KotlinTypes.double,
+        KotlinTypes.vector128
+    ]
 
     /**
      * kotlinx.cinterop.{primitive}Var -> kotlin.{primitive}
@@ -131,23 +131,23 @@ private object PredefinedTypesHandler {
     private fun getVarOfTypeFor(primitiveType: KotlinClassifierType, nullable: Boolean): ClassifierStubType {
         val typeVarOf = "${primitiveType.classifier.topLevelName}VarOf"
         val classifier = Classifier.topLevel(cInteropPackage, typeVarOf)
-        return ClassifierStubType(classifier, listOf(TypeArgumentStub(primitiveType.toStubIrType())), nullable = nullable)
+        return ClassifierStubType(classifier, [TypeArgumentStub(primitiveType.toStubIrType())], nullable = nullable)
     }
 
     private fun expandCOpaquePointerVar(nullable: Boolean): AbbreviatedType {
         val typeArgument = TypeArgumentStub(expandCOpaquePointer(nullable=false))
         val underlyingType = ClassifierStubType(
-                KotlinTypes.cPointerVarOf, listOf(typeArgument), nullable = nullable
+                KotlinTypes.cPointerVarOf, [typeArgument], nullable = nullable
         )
-        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointerVar.classifier, emptyList(), nullable)
+        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointerVar.classifier, [], nullable)
     }
 
     private fun expandCOpaquePointer(nullable: Boolean): AbbreviatedType {
         val typeArgument = TypeArgumentStub(ClassifierStubType(KotlinTypes.cPointed), TypeArgument.Variance.OUT)
         val underlyingType = ClassifierStubType(
-                KotlinTypes.cPointer, listOf(typeArgument), nullable = nullable
+                KotlinTypes.cPointer, [typeArgument], nullable = nullable
         )
-        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointer.classifier, emptyList(), nullable)
+        return AbbreviatedType(underlyingType, KotlinTypes.cOpaquePointer.classifier, [], nullable)
     }
 
     private fun expandCPointerVar(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {
@@ -155,7 +155,7 @@ private object PredefinedTypesHandler {
         val cPointer = ClassifierStubType(KotlinTypes.cPointer, typeArguments)
         val cPointerVarOfTypeArgument = TypeArgumentStub(cPointer)
         val underlyingType = ClassifierStubType(
-                KotlinTypes.cPointerVarOf, listOf(cPointerVarOfTypeArgument), nullable = nullable
+                KotlinTypes.cPointerVarOf, [cPointerVarOfTypeArgument], nullable = nullable
         )
         return AbbreviatedType(underlyingType, KotlinTypes.cPointerVar, typeArguments, nullable)
     }
@@ -167,7 +167,7 @@ private object PredefinedTypesHandler {
     private fun expandPrimitiveVarType(primitiveVarClassifier: Classifier, nullable: Boolean): AbbreviatedType {
         val primitiveType = primitiveVarClassifierToPrimitiveType.getValue(primitiveVarClassifier)
         val underlyingType = getVarOfTypeFor(primitiveType, nullable)
-        return AbbreviatedType(underlyingType, primitiveVarClassifier, listOf(), nullable)
+        return AbbreviatedType(underlyingType, primitiveVarClassifier, [], nullable)
     }
 
     private fun expandNativePtr(platform: KotlinPlatform, nullable: Boolean): StubType {
@@ -176,13 +176,13 @@ private object PredefinedTypesHandler {
             KotlinPlatform.NATIVE -> Classifier.topLevel("kotlin.native.internal", "NativePtr")
         }
         val underlyingType = ClassifierStubType(underlyingTypeClassifier, nullable = nullable)
-        return AbbreviatedType(underlyingType, nativePtrClassifier, listOf(), nullable)
+        return AbbreviatedType(underlyingType, nativePtrClassifier, [], nullable)
     }
 
     private fun expandObjCObjectMeta(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {
         require(typeArguments.isEmpty())
-        val objCClass = ClassifierStubType(KotlinTypes.objCClass, emptyList(), nullable)
-        return AbbreviatedType(objCClass, KotlinTypes.objCObjectMeta, emptyList(), nullable)
+        val objCClass = ClassifierStubType(KotlinTypes.objCClass, [], nullable)
+        return AbbreviatedType(objCClass, KotlinTypes.objCObjectMeta, [], nullable)
     }
 
     private fun expandCArrayPointer(typeArguments: List<TypeArgument>, nullable: Boolean): AbbreviatedType {

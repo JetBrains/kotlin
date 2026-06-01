@@ -64,7 +64,7 @@ internal class InlineFunctionBodyPreprocessor(
         }
     }
     private val nonReifiedTypeParameterSubstitutor: AbstractIrTypeSubstitutor = object : BaseIrTypeSubstitutor() {
-        private val inProgress = mutableSetOf<IrTypeParameterSymbol>()
+        private val inProgress: MutableSet<IrTypeParameterSymbol> = []
         // We need to avoid computing erasures for unused parameters, as they still exist in functions
         // loaded from klibs, but computing erasure would lead to exception because of unbound symbols
         // in super-types. So we cache them on-demand instead of computing in advance.

@@ -171,7 +171,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             buildResolveAndCheckFirFromKtFiles(platformSession, platformKtFiles, reporter)
 
         return FirAnalysisResult(
-            AllModulesFrontendOutput(listOf(commonAnalysis, platformAnalysis)),
+            AllModulesFrontendOutput([commonAnalysis, platformAnalysis]),
             commonKtFiles + platformKtFiles,
             reporter
         )
@@ -203,7 +203,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =
-        frontend(files, listOf()).firResult.irModuleFragment
+        frontend(files, []).firResult.irModuleFragment
 
     override fun compile(
         platformFiles: List<SourceFile>,

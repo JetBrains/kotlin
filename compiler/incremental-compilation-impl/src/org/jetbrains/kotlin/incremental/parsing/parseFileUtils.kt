@@ -29,7 +29,7 @@ import java.util.*
 
 fun classesFqNames(files: Set<File>): Set<String> {
     val existingKotlinFiles = files.filter { it.name.endsWith(".kt", ignoreCase = true) && it.isFile }
-    if (existingKotlinFiles.isEmpty()) return emptySet()
+    if (existingKotlinFiles.isEmpty()) return []
 
     val disposable = Disposer.newDisposable("Disposable for org.jetbrains.kotlin.incremental.parsing.classesFqNames")
 

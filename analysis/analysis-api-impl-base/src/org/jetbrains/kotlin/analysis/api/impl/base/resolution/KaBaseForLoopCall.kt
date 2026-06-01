@@ -33,5 +33,5 @@ class KaBaseForLoopCall(
 
     @KaExperimentalApi
     override val calls: List<KaSingleCall<*, *>>
-        get() = withValidityAssertion { listOf(backingIteratorCall, backingHasNextCall, backingNextCall) }
+        get() = withValidityAssertion { [backingIteratorCall, backingHasNextCall, backingNextCall] }
 }

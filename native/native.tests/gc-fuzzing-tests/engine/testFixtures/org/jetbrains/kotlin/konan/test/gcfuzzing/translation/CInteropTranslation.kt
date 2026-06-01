@@ -33,7 +33,7 @@ fun Program.produceCInterop(config: CInteropConfig): CInteropOutput {
         defContents = context.defContents.toString(),
         headerFilename = config.headerFilename,
         headerContents = context.headerContents.toString(),
-        args = emptyList(),
+        args = [],
     )
 }
 

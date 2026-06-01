@@ -21,4 +21,4 @@ val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID = ClassId(FqName("kotlin")
 val OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_FQ_NAME = OVERLOAD_RESOLUTION_BY_LAMBDA_ANNOTATION_CLASS_ID.asSingleFqName()
 
 // @HidesMembers annotation only has effect for members with these names
-val HIDES_MEMBERS_NAME_LIST = setOf(Name.identifier("forEach"), Name.identifier("addSuppressed"))
+val HIDES_MEMBERS_NAME_LIST: Set<Name> = [Name.identifier("forEach"), Name.identifier("addSuppressed")]

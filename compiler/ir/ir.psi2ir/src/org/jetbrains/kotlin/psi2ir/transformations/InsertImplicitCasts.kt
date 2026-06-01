@@ -466,7 +466,7 @@ internal class InsertImplicitCasts(
     }
 
     private val operatorsWithDeprecatedIntegerValueTypeLiteralConversion = with(OperatorNameConventions) {
-        setOf(PLUS, MINUS, TIMES, DIV, REM, UNARY_PLUS, UNARY_MINUS, SHL, SHR, USHR, AND, OR, XOR, INV)
+        [PLUS, MINUS, TIMES, DIV, REM, UNARY_PLUS, UNARY_MINUS, SHL, SHR, USHR, AND, OR, XOR, INV]
     }
 
     private fun IrExpression.invokeIntegerCoercionFunction(targetType: KotlinType, coercionFunName: String): IrExpression {

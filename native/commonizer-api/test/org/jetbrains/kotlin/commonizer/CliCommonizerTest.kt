@@ -21,11 +21,11 @@ public class CliCommonizerTest {
         val commonizer = CliCommonizer(this::class.java.classLoader)
         commonizer.commonizeLibraries(
             konanHome = konanHome,
-            inputLibraries = emptySet(),
-            dependencyLibraries = emptySet(),
-            outputTargets = setOf(CommonizerTarget(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64)),
+            inputLibraries = [],
+            dependencyLibraries = [],
+            outputTargets = [CommonizerTarget(KonanTarget.LINUX_X64, KonanTarget.MACOS_X64)],
             outputDirectory = temporaryOutputDirectory.root,
-            additionalSettings = emptyList(),
+            additionalSettings = [],
         )
     }
 }

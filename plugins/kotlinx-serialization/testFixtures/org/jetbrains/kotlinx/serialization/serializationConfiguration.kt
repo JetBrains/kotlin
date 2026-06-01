@@ -33,7 +33,7 @@ class SerializationEnvironmentConfigurator(
     private val noLibraries: Boolean
 ) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(SerializationDirectives)
+        get() = [SerializationDirectives]
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (ENABLE_SERIALIZATION !in module.directives) return
@@ -52,14 +52,15 @@ class SerializationEnvironmentConfigurator(
 
 class SerializationRuntimeClasspathJvmProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (ENABLE_SERIALIZATION !in module.directives) return emptyList()
+        if (ENABLE_SERIALIZATION !in module.directives) return []
         return librariesPaths
     }
 }
 
 class SerializationRuntimeClasspathJsProvider(testServices: TestServices) : RuntimeClasspathJsProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (ENABLE_SERIALIZATION !in module.directives) return emptyList()
+        if (ENABLE_SERIALIZATION !in module.directives) return []
+        @Suppress("ConvertToCollectionLiterals")
         return super.runtimeClassPaths(module) + listOf(
             File(System.getProperty("serialization.core.path")!!),
             File(System.getProperty("serialization.json.path")!!),

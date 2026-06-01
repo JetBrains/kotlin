@@ -88,7 +88,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
     protected val moduleDataWithFilters: MutableMap<FirModuleData, LibraryPathFilter> =
         mutableMapOf(baseDependenciesModuleData to LibraryPathFilter.LibraryList(baseLibraryPaths.toSet()))
 
-    protected val moduleDataHistory: MutableList<FirModuleData> = mutableListOf(baseDependenciesModuleData)
+    protected val moduleDataHistory: MutableList<FirModuleData> = [baseDependenciesModuleData]
 
     override val allModuleData: Collection<FirModuleData>
         get() = moduleDataHistory
@@ -111,7 +111,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
 
     fun addNewLibraryModuleDataIfNeeded(libraryPaths: List<Path>): Pair<FirModuleData?, List<Path>> {
         val newLibraryPaths = libraryPaths.filter { getModuleData(it) == null }
-        if (newLibraryPaths.isEmpty()) return null to emptyList()
+        if (newLibraryPaths.isEmpty()) return null to []
         val newDependenciesModuleData = makeLibraryModuleData(Name.special("<$baseName-lib-${moduleDataHistory.size + 1}>"))
         moduleDataWithFilters[newDependenciesModuleData] = LibraryPathFilter.LibraryList(newLibraryPaths.toSet())
         moduleDataHistory.add(newDependenciesModuleData)
@@ -122,7 +122,7 @@ open class ScriptingModuleDataProvider(private val baseName: String, baseLibrary
         FirSourceModuleData(
             name,
             dependencies = moduleDataHistory.filter { it.dependencies.isEmpty() }.asReversed(),
-            dependsOnDependencies = emptyList(),
+            dependsOnDependencies = [],
             friendDependencies = moduleDataHistory.filter { it.dependencies.isNotEmpty() },
             JvmPlatforms.defaultJvmPlatform,
         ).also { moduleDataHistory.add(it) }
@@ -195,7 +195,7 @@ fun createCompilerState(
     extensionStorage.registerInProject(project) { "Error on plugin registration: ${it.javaClass.name}" }
 
     val classpath = scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty().flatMap {
-        (it as? JvmDependency)?.classpath ?: emptyList()
+        (it as? JvmDependency)?.classpath ?: []
     }
     compilerContext.environment.updateClasspath(classpath.map { JvmClasspathRoot(it) })
     val projectEnvironment = compilerContext.environment.toVfsBasedProjectEnvironment()

@@ -29,7 +29,7 @@ enum class PrimitiveType(typeName: String) {
 
     companion object {
         @JvmField
-        val NUMBER_TYPES = setOf(CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE)
+        val NUMBER_TYPES: Set<PrimitiveType> = [CHAR, BYTE, SHORT, INT, FLOAT, LONG, DOUBLE]
 
         @JvmStatic
         fun getByShortName(name: String): PrimitiveType? = when (name) {

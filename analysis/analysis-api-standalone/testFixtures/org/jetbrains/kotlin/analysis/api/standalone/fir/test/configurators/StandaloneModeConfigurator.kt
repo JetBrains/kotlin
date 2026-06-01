@@ -31,6 +31,7 @@ class StandaloneModeConfigurator(
 
     private val sourceConfigurator = LLSourceLikeTestConfigurator()
 
+    @Suppress("ConvertToCollectionLiterals")
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
         get() = sourceConfigurator.serviceRegistrars -
                 listOf(AnalysisApiIdeModeTestServiceRegistrar) +

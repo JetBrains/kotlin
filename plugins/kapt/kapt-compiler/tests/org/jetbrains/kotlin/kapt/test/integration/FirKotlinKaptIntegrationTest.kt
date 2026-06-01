@@ -238,7 +238,7 @@ class FirKotlinKaptIntegrationTest(private val testInfo: TestInfo) {
     fun testLog() {
         val diagnostics = diagnosticsTest(
             name = "Log",
-            supportedAnnotations = arrayOf("*"),
+            supportedAnnotations = ["*"],
             expectFailure = true
         ) { _, _, env ->
             env.messager.printMessage(Diagnostic.Kind.ERROR, "a error from processor")

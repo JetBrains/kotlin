@@ -151,7 +151,7 @@ fun KtExpression.getPossiblyQualifiedCallExpression(): KtCallExpression? =
 // ---------- Block expression -------------------------------------------------------------------------------------------------------------
 
 fun KtElement.blockExpressionsOrSingle(): Sequence<KtElement> =
-    if (this is KtBlockExpression) statements.asSequence() else sequenceOf(this)
+    if (this is KtBlockExpression) statements.asSequence() else [this]
 
 fun KtExpression.lastBlockStatementOrThis(): KtExpression = (this as? KtBlockExpression)?.statements?.lastOrNull() ?: this
 
@@ -220,7 +220,7 @@ fun KtExpression.getAnnotationEntries(): List<KtAnnotationEntry> {
     return when (parent) {
         is KtAnnotatedExpression -> parent.annotationEntries
         is KtLabeledExpression -> parent.getAnnotationEntries()
-        else -> emptyList()
+        else -> []
     }
 }
 
@@ -236,9 +236,9 @@ private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnn
         @Suppress("DEPRECATION") // KT-78356
         val stubType = child.stubType
         when (stubType) {
-            KtNodeTypes.ANNOTATION_ENTRY -> listOf(child.psi as KtAnnotationEntry)
+            KtNodeTypes.ANNOTATION_ENTRY -> [child.psi as KtAnnotationEntry]
             KtNodeTypes.ANNOTATION -> (child.psi as KtAnnotation).entries
-            else -> emptyList()
+            else -> []
         }
     }
 }
@@ -246,9 +246,9 @@ private fun StubElement<*>.collectAnnotationEntriesFromStubElement(): List<KtAnn
 private fun KtAnnotationsContainer.collectAnnotationEntriesFromPsi(): List<KtAnnotationEntry> {
     return children.flatMap { child ->
         when (child) {
-            is KtAnnotationEntry -> listOf(child)
+            is KtAnnotationEntry -> [child]
             is KtAnnotation -> child.entries
-            else -> emptyList()
+            else -> []
         }
     }
 }
@@ -362,10 +362,10 @@ internal fun KtDeclaration.isImplicitlyActualDeclaration(): Boolean = when (this
 internal fun KtClass.allowsImplicitlyActualConstructor() = isAnnotation() || isValue() || isInline()
 
 fun KtElement.isContextualDeclaration(): Boolean {
-    val contextReceivers = when (this) {
+    val contextReceivers: List<KtElement> = when (this) {
         is KtCallableDeclaration -> contextReceivers
         is KtClassOrObject -> contextReceivers
-        else -> emptyList()
+        else -> []
     }
     return contextReceivers.isNotEmpty()
 }

@@ -41,7 +41,7 @@ class FirArrayOfCallTransformer : FirDefaultTransformer<FirSession>() {
             argumentList = buildArgumentList {
                 if (functionCall.arguments.isNotEmpty()) {
                     functionCall.arguments.flatMapTo(arguments) {
-                        if (it is FirVarargArgumentsExpression) it.arguments else listOf(it)
+                        if (it is FirVarargArgumentsExpression) it.arguments else [it]
                     }
                 }
             }

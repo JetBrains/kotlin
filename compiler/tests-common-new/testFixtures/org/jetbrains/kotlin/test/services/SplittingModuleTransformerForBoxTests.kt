@@ -58,22 +58,22 @@ class SplittingModuleTransformerForBoxTests(
         val firstModule = TestModule(
             name = "lib",
             files = firstModuleFiles + additionalFiles,
-            allDependencies = emptyList(),
+            allDependencies = [],
             module.directives,
             module.languageVersionSettings
         )
 
         val secondModule = TestModule(
             name = "main",
-            files = listOf(secondModuleFile), // additionalFiles are not added here, due to potential deserializing clashes between helpers' copies: coroutines and JS stepping.
-            allDependencies = listOf(DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)),
+            files = [secondModuleFile], // additionalFiles are not added here, due to potential deserializing clashes between helpers' copies: coroutines and JS stepping.
+            allDependencies = [DependencyDescription(firstModule, DependencyKind.Binary, DependencyRelation.FriendDependency)],
             RegisteredDirectivesBuilder(module.directives).apply {
                 -CodegenTestDirectives.IGNORE_FIR_DIAGNOSTICS
             }.build(),
             module.languageVersionSettings
         )
         testServices.splitStateProvider.hasBeenSplit = true
-        return TestModuleStructureImpl(listOf(firstModule, secondModule), moduleStructure.originalTestDataFiles)
+        return TestModuleStructureImpl([firstModule, secondModule], moduleStructure.originalTestDataFiles)
     }
 }
 
@@ -82,7 +82,7 @@ class SplittingModuleTransformerForBoxTests(
  */
 class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::SplitStateProvider))
+        get() = [service(::SplitStateProvider)]
 
     override fun shouldSkipTest(): Boolean {
         if (!testServices.splitStateProvider.hasBeenSplit) return true

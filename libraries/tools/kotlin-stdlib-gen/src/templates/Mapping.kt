@@ -409,7 +409,7 @@ object Mapping : TemplateGroupBase() {
         }
     }
 
-    val f_flatMapIndexed = listOf(Iterables, Sequences).map { containerFamily ->
+    val f_flatMapIndexed = [Iterables, Sequences].map { containerFamily ->
         val containerClass = containerFamily.name.dropLast(1)
         fn("flatMapIndexed(transform: (index: Int, T) -> $containerClass<R>)") {
             when (containerFamily) {
@@ -448,7 +448,7 @@ object Mapping : TemplateGroupBase() {
     }
 
 
-    val f_flatMapIndexedTo = listOf(Iterables, Sequences).map { containerFamily ->
+    val f_flatMapIndexedTo = [Iterables, Sequences].map { containerFamily ->
         val containerClass = containerFamily.name.dropLast(1)
         fn("flatMapIndexedTo(destination: C, transform: (index: Int, T) -> $containerClass<R>)") {
             when (containerFamily) {

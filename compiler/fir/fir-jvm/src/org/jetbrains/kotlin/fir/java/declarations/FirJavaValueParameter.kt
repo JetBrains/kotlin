@@ -99,7 +99,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         get() = null
 
     override val typeParameters: List<FirTypeParameterRef>
-        get() = emptyList()
+        get() = []
 
     override val status: FirDeclarationStatus
         get() = FirResolvedDeclarationStatusImpl.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
@@ -111,7 +111,7 @@ class FirJavaValueParameter @FirImplementationDetail constructor(
         get() = null
 
     override val contextParameters: List<FirValueParameter>
-        get() = emptyList()
+        get() = []
 
     override val isLocal: Boolean
         get() = true

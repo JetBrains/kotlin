@@ -106,8 +106,8 @@ abstract class IrSignatureWithUnboundIrTest {
         val type = IrSimpleTypeImpl(
             classifier = unboundSymbol,
             hasQuestionMark = false,
-            arguments = emptyList(),
-            annotations = emptyList()
+            arguments = [],
+            annotations = []
         )
         return type
     }
@@ -116,7 +116,7 @@ abstract class IrSignatureWithUnboundIrTest {
         name: String = "test.kt",
         packageFqName: FqName = FqName("org.sample"),
     ): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
+        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = [0, 10, 25], maxOffset = 75)
         return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also { module.files += it }
     }
 }

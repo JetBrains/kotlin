@@ -53,7 +53,7 @@ abstract class AbstractRecognizerTests<OldT, NewT, OldSyntaxElement : TestSyntax
         var totalSyntaxElementNumber = 0L
         var totalNumberOfFilesWithSyntaxErrors = 0L
         var totalNumberOfFilesWithSyntaxErrorsAndTreeDiscrepancy = 0L
-        val comparisonFailures = mutableListOf<() -> Unit>()
+        val comparisonFailures: MutableList<() -> Unit> = []
 
         files@ for (testDataDir in testDataDirs) {
             testDataDir.walkTopDown()

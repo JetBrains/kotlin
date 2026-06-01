@@ -25,9 +25,9 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         val actualTypeParameters = declaration.typeParameters.filterNot { it is FirOuterClassTypeParameterRef }.takeIf { it.isNotEmpty() }
             ?: return
 
-        val processed = mutableSetOf<FirTypeParameterSymbol>()
-        val typeParameterCycles = mutableListOf<List<FirTypeParameterSymbol>>()
-        val path = mutableListOf<FirTypeParameterSymbol>()
+        val processed: MutableSet<FirTypeParameterSymbol> = []
+        val typeParameterCycles: MutableList<List<FirTypeParameterSymbol>> = []
+        val path: MutableList<FirTypeParameterSymbol> = []
 
         fun findCycles(typeParameterSymbol: FirTypeParameterSymbol) {
             if (processed.add(typeParameterSymbol)) {
@@ -50,7 +50,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
                 val targets = if (declaration is FirRegularClass) {
                     typeParameter.originalBounds().filter { typeParameterCycle.contains(extractTypeParamSymbol(it.coneType)) }.mapNotNull { it.source }
                 } else {
-                    listOf(typeParameter.source)
+                    [typeParameter.source]
                 }
                 targets.forEach {
                     reporter.reportOn(it, FirErrors.CYCLIC_GENERIC_UPPER_BOUND, typeParameterCycle)
@@ -65,7 +65,7 @@ object FirCyclicTypeBoundsChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         if (this is FirErrorTypeRef && diagnostic is ConeCyclicTypeBound) {
             (diagnostic as ConeCyclicTypeBound).bounds
         } else {
-            listOf(this)
+            [this]
         }
 
 

@@ -159,11 +159,11 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(sharedLibPackageRelativePath),
-                            products = listOf("SharedLib"),
+                            products = ["SharedLib"],
                         )
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(swiftConsumerRelativePath),
-                            products = listOf("SwiftConsumer"),
+                            products = ["SwiftConsumer"],
                         )
                     }
                 }
@@ -235,7 +235,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(product(targetName))
+                            products = [product(targetName)]
                         )
                     }
                 }
@@ -274,7 +274,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(product(targetName, platforms = setOf(SwiftPMDependency.Platform.iOS))),
+                            products = [product(targetName, platforms = [SwiftPMDependency.Platform.iOS])],
                         )
                     }
                 }
@@ -343,7 +343,7 @@ class SwiftPMImportBinaryTargetsIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localPackageRelativePath),
-                            products = listOf(frameworkName),
+                            products = [frameworkName],
                         )
                     }
                 }
@@ -435,10 +435,10 @@ private data class AppleSdkSlice(
     val destination: String,
 )
 
-private val iosFrameworkSlices = listOf(
+private val iosFrameworkSlices = [
     AppleSdkSlice(sdk = "iphoneos", destination = "generic/platform=iOS"),
     AppleSdkSlice(sdk = "iphonesimulator", destination = "generic/platform=iOS Simulator"),
-)
+]
 
 private enum class XcframeworkLinkage {
     STATIC,
@@ -501,7 +501,7 @@ private fun buildSwiftFramework(
     val archivePath = workDir.resolve("$frameworkName-${slice.sdk}.xcarchive")
     val command = buildList {
         addAll(
-            listOf(
+            [
                 "xcodebuild", "archive",
                 "-project", "iosApp.xcodeproj",
                 "-scheme", baseXcodeTarget,
@@ -517,7 +517,7 @@ private fun buildSwiftFramework(
                     XcframeworkLinkage.STATIC -> "MACH_O_TYPE=staticlib"
                     XcframeworkLinkage.DYNAMIC -> "MACH_O_TYPE=mh_dylib"
                 },
-            )
+            ]
         )
     }
     runProcessOrFail(
@@ -553,7 +553,7 @@ private fun buildSwiftStaticLibrary(
         buildDir = workDir.resolve("lib$frameworkName-${slice.sdk}-build").createDirectories(),
     )
 
-    val command = listOf(
+    val command = [
         "xcodebuild", "build",
         "-project", "iosApp.xcodeproj",
         "-scheme", baseXcodeTarget,
@@ -564,7 +564,7 @@ private fun buildSwiftStaticLibrary(
         "BUILD_LIBRARY_FOR_DISTRIBUTION=YES",
         "SWIFT_INSTALL_OBJC_HEADER=YES",
         "SWIFT_OBJC_INTERFACE_HEADER_DIR=${library.headersDir.absolutePathString()}",
-    )
+    ]
     runProcessOrFail(
         command = command,
         workingDir = workDir,
@@ -586,12 +586,12 @@ private fun buildSwiftStaticLibrary(
 private fun createXCFramework(
     outputDir: Path,
     frameworkName: String,
-    archives: List<Path> = emptyList(),
-    libraries: List<LibraryArtifact> = emptyList(),
+    archives: List<Path> = [],
+    libraries: List<LibraryArtifact> = [],
 ): Path {
     val xcframeworkPath = outputDir.resolve("$frameworkName.xcframework")
     val command = buildList {
-        addAll(listOf("xcodebuild", "-create-xcframework"))
+        addAll(["xcodebuild", "-create-xcframework"])
         archives.forEach { archive ->
             add("-archive")
             add(archive.absolutePathString())

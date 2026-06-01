@@ -68,9 +68,9 @@ fun dumpDeclarationIrSizesIfNeed(path: String?, allModules: List<IrModuleFragmen
 
     val out = File(path)
     val [prefix, postfix, separator, indent] = when (out.extension) {
-        "json" -> listOf("{\n", "\n}", ",\n", "    ")
-        "js" -> listOf("export const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    ")
-        else -> listOf("", "", "\n", "")
+        "json" -> ["{\n", "\n}", ",\n", "    "]
+        "js" -> ["export const kotlinDeclarationsSize = {\n", "\n};\n", ",\n", "    "]
+        else -> ["", "", "\n", ""]
     }
 
     val value = declarations.joinToString(separator, prefix, postfix) { declaration ->

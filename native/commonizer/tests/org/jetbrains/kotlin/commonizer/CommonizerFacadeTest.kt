@@ -42,8 +42,8 @@ class CommonizerFacadeTest {
     fun commonized1() = withDisposable { disposable ->
         doTestSuccessfulCommonization(
             mapOf(
-                "target1" to listOf("foo"),
-                "target2" to listOf("foo")
+                "target1" to ["foo"],
+                "target2" to ["foo"]
             ),
             disposable,
         )
@@ -53,8 +53,8 @@ class CommonizerFacadeTest {
     fun commonized2() = withDisposable { disposable ->
         doTestSuccessfulCommonization(
             mapOf(
-                "target1" to listOf("foo", "bar"),
-                "target2" to listOf("bar", "foo")
+                "target1" to ["foo", "bar"],
+                "target2" to ["bar", "foo"]
             ),
             disposable,
         )
@@ -64,7 +64,7 @@ class CommonizerFacadeTest {
     fun commonized3() = withDisposable { disposable ->
         doTestSuccessfulCommonization(
             mapOf(
-                "target1" to listOf("foo")
+                "target1" to ["foo"]
             ),
             disposable,
         )
@@ -74,8 +74,8 @@ class CommonizerFacadeTest {
     fun commonizedWithDifferentModules() = withDisposable { disposable ->
         doTestNothingToCommonize(
             mapOf(
-                "target1" to listOf("foo"),
-                "target2" to listOf("bar")
+                "target1" to ["foo"],
+                "target2" to ["bar"]
             ),
             disposable,
         )
@@ -85,8 +85,8 @@ class CommonizerFacadeTest {
     fun commonizedWithMissingModules() = withDisposable { disposable ->
         doTestSuccessfulCommonization(
             mapOf(
-                "target1" to listOf("foo", "bar"),
-                "target2" to listOf("foo", "qix")
+                "target1" to ["foo", "bar"],
+                "target2" to ["foo", "qix"]
             ),
             disposable,
         )
@@ -104,7 +104,7 @@ class CommonizerFacadeTest {
             val sharedTarget = SharedCommonizerTarget(targetDependentModuleNames.targets.allLeaves())
 
             return CommonizerParameters(
-                outputTargets = setOf(sharedTarget),
+                outputTargets = [sharedTarget],
                 dependenciesProvider = TargetDependent(sharedTarget.withAllLeaves()) { null },
                 manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
                 targetProviders = targetDependentModuleNames.map { target, moduleNames ->
@@ -130,7 +130,7 @@ class CommonizerFacadeTest {
             runCommonization(originalModules.toCommonizerParameters(results, disposable))
             assertEquals(Status.DONE, results.status)
 
-            val expectedCommonModuleNames = mutableSetOf<String>()
+            val expectedCommonModuleNames: MutableSet<String> = []
             originalModules.values.forEachIndexed { index, moduleNames ->
                 if (index == 0)
                     expectedCommonModuleNames.addAll(moduleNames)
@@ -139,7 +139,7 @@ class CommonizerFacadeTest {
             }
             assertModulesMatch(
                 expectedCommonizedModuleNames = expectedCommonModuleNames,
-                expectedMissingModuleNames = emptySet(),
+                expectedMissingModuleNames = [],
                 actualModuleResults = results.modulesByTargets.getValue(results.sharedTarget)
             )
 
@@ -161,8 +161,8 @@ class CommonizerFacadeTest {
             actualModuleResults: Collection<ModuleResult>
         ) {
 
-            val actualCommonizedModuleNames = mutableSetOf<String>()
-            val actualMissingModuleNames = mutableSetOf<String>()
+            val actualCommonizedModuleNames: MutableSet<String> = []
+            val actualMissingModuleNames: MutableSet<String> = []
 
             actualModuleResults.forEach { moduleResult ->
                 actualCommonizedModuleNames += moduleResult.libraryName

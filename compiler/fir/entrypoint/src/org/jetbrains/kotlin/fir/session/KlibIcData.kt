@@ -41,7 +41,7 @@ class KlibIcData(incrementalData: IncrementalDataProvider) : KlibMetadataCompone
         get() = error("moduleHeaderData is not implemented")
 
     override fun getPackageFragmentNames(packageFqName: String): Set<String> {
-        return fragments[packageFqName]?.keys ?: emptySet()
+        return fragments[packageFqName]?.keys ?: []
     }
 
     override fun getPackageFragment(packageFqName: String, fragmentName: String): ByteArray {

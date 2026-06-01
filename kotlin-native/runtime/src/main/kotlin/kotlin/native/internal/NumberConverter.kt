@@ -255,7 +255,7 @@ internal class NumberConverter {
         var low: Boolean
         var high: Boolean
         var u: Int
-        val si = longArrayOf(s, s shl 1, s shl 2, s shl 3)
+        val si: LongArray = [s, s shl 1, s shl 2, s shl 3]
         while (true) {
             // Set U to be floor (r / s) and r to be the remainder
             // using a kind of "binary search" to find the answer.

@@ -37,7 +37,7 @@ abstract class KtDefaultAnnotationArgumentReference(
     element: KtValueArgument,
 ) : AbstractKtReference<KtValueArgument>(element) {
     override val resolvesByNames: Collection<Name>
-        get() = listOf(Name.identifier(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME))
+        get() = [Name.identifier(PsiAnnotation.DEFAULT_REFERENCED_METHOD_NAME)]
 
     override fun getRangeInElement(): TextRange = TextRange.EMPTY_RANGE
 

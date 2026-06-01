@@ -17,7 +17,7 @@ internal class CombinationContextImpl : CombinationContext {
         locations: Set<TypeLocation>,
         optionsConfig: EnumOptionsBuilder.() -> Unit,
     ): Set<EnumVariant> {
-        val enumTypes: MutableSet<EnumVariant> = mutableSetOf()
+        val enumTypes: MutableSet<EnumVariant> = []
         val options = EnumOptionsBuilderImpl().also { it.optionsConfig() }.build()
         for (serializer in serializers) {
             for (location in locations) {
@@ -57,7 +57,7 @@ internal class CombinationContextImpl : CombinationContext {
 
     private fun addTypes(types: Iterable<TypeVariant>) {
         for (type in types) {
-            val typesForFeatures = typesByFeatures.getOrPut(type.features) { mutableListOf() }
+            val typesForFeatures = typesByFeatures.getOrPut(type.features) { [] }
             val className = type.className + if (typesForFeatures.size > 0) typesForFeatures.size.toString() else ""
             typesForFeatures += type
             this.types[type] = className
@@ -66,9 +66,9 @@ internal class CombinationContextImpl : CombinationContext {
 }
 
 private class EnumOptionsBuilderImpl : EnumOptionsBuilder {
-    private val serialInfoP: MutableSet<SerialInfo> = mutableSetOf()
-    private val descriptorAccessingP: MutableSet<DescriptorAccessing> = mutableSetOf()
-    private val entriesP: MutableSet<String> = mutableSetOf()
+    private val serialInfoP: MutableSet<SerialInfo> = []
+    private val descriptorAccessingP: MutableSet<DescriptorAccessing> = []
+    private val entriesP: MutableSet<String> = []
 
 
     override fun serialInfo(vararg serialInfo: SerialInfo) {

@@ -67,7 +67,7 @@ internal class ComposableTypeTransformer(
     private val context: IrPluginContext,
     private val typeRemapper: ComposableTypeRemapper,
 ) : IrElementTransformerVoid() {
-    private val externalTransformedDecls = mutableSetOf<IrDeclaration>()
+    private val externalTransformedDecls: MutableSet<IrDeclaration> = []
 
     private fun visitFunctionIfExternal(function: IrFunction): IrFunction {
         if (
@@ -351,13 +351,13 @@ class ComposableTypeRemapper(
 
         val oldIrArguments = type.arguments
         val realParams = oldIrArguments.size - 1
-        var extraArgs = listOf(
+        var extraArgs = [
             // composer param
             makeTypeProjection(
                 composerType,
                 Variance.INVARIANT
             )
-        )
+        ]
         val changedParams = changedParamCount(realParams, 1)
         extraArgs = extraArgs + (0 until changedParams).map {
             makeTypeProjection(context.irBuiltIns.intType, Variance.INVARIANT)

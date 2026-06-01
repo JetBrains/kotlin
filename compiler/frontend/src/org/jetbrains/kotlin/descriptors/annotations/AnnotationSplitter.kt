@@ -42,7 +42,7 @@ class AnnotationSplitter(
     applicableTargets: Set<AnnotationUseSiteTarget>
 ) {
     companion object {
-        private val TARGET_PRIORITIES = setOf(CONSTRUCTOR_PARAMETER, PROPERTY, FIELD)
+        private val TARGET_PRIORITIES: Set<AnnotationUseSiteTarget> = [CONSTRUCTOR_PARAMETER, PROPERTY, FIELD]
     }
 
     private val splitAnnotations = storageManager.createLazyValue {

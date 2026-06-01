@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.Name
 interface SyntheticJavaPartsProvider {
 
     companion object {
-        val EMPTY = CompositeSyntheticJavaPartsProvider(emptyList())
+        val EMPTY = CompositeSyntheticJavaPartsProvider([])
     }
 
     fun getMethodNames(thisDescriptor: ClassDescriptor, c: LazyJavaResolverContext): List<Name>

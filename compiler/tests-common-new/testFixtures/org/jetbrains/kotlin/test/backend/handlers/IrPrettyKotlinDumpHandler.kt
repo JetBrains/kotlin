@@ -43,7 +43,7 @@ class IrPrettyKotlinDumpHandler(
     private val dumper = MultiModuleInfoDumper("// MODULE: %s")
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
+        get() = [CodegenTestDirectives, FirDiagnosticsDirectives]
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return

@@ -86,7 +86,7 @@ class DeclarationResolver(
                     getTopLevelDescriptorsByFqName(topLevelDescriptorProvider, fqName, NoLookupLocation.WHEN_CHECK_DECLARATION_CONFLICTS)
                         .partition { it is MemberDescriptor && it.isExpect }
 
-            for (descriptors in listOf(expected, actual)) {
+            for (descriptors in [expected, actual]) {
                 if (descriptors.size > 1) {
                     for (directive in declarationsOrPackageDirectives) {
                         val reportAt = (directive as? KtPackageDirective)?.nameIdentifier ?: directive

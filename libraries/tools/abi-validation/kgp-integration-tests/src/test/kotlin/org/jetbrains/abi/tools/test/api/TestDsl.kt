@@ -160,7 +160,7 @@ internal interface FileContainer {
 }
 
 internal class BaseKotlinScope : FileContainer {
-    var files: MutableList<AppendableScope> = mutableListOf()
+    var files: MutableList<AppendableScope> = []
     var runner: Runner = Runner()
 
     override fun file(fileName: String, fn: AppendableScope.() -> Unit) {
@@ -181,7 +181,7 @@ internal class DirectoryScope(
 }
 
 internal class AppendableScope(val filePath: String) {
-    val files: MutableList<String> = mutableListOf()
+    val files: MutableList<String> = []
 }
 
 internal class Runner(withConfigurationCache: Boolean = true) {
@@ -227,7 +227,7 @@ private fun GradleRunner.addPluginTestRuntimeClasspath() = apply {
     withPluginClasspath(pluginClasspath)
 }
 
-internal val commonNativeTargets = listOf(
+internal val commonNativeTargets = [
     "linuxX64",
     "linuxArm64",
     "mingwX64",
@@ -235,9 +235,9 @@ internal val commonNativeTargets = listOf(
     "androidNativeArm64",
     "androidNativeX64",
     "androidNativeX86"
-)
+]
 
-internal val appleNativeTarget = listOf(
+internal val appleNativeTarget = [
     "macosX64",
     "macosArm64",
     "iosX64",
@@ -251,7 +251,7 @@ internal val appleNativeTarget = listOf(
     "watchosX64",
     "watchosSimulatorArm64",
     "watchosDeviceArm64",
-)
+]
 
 private val PLUGIN_MANAGEMENT = """
 pluginManagement {

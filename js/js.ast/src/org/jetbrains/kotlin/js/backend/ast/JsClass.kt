@@ -9,7 +9,7 @@ class JsClass(
     private var name: JsName? = null,
     var baseClass: JsExpression? = null,
     var constructor: JsFunction? = null,
-    val members: MutableList<JsFunction> = mutableListOf()
+    val members: MutableList<JsFunction> = []
 ) : JsLiteral(), HasName {
     override fun getName(): JsName? {
         return name
@@ -39,7 +39,7 @@ class JsClass(
     }
 
     override fun deepCopy(): JsClass {
-        val classCopy = JsClass(name, baseClass, constructor?.deepCopy(), members.mapTo(mutableListOf()) { it.deepCopy() })
+        val classCopy = JsClass(name, baseClass, constructor?.deepCopy(), members.mapTo([]) { it.deepCopy() })
 
         return classCopy.withMetadataFrom<JsClass>(this)
     }

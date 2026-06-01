@@ -115,7 +115,7 @@ class JavaTargetAnnotationDescriptor(
     override val allValueArguments by c.storageManager.createLazyValue {
         val targetArgument = when (firstArgument) {
             is JavaArrayAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(firstArgument.getElements())
-            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments(listOf(firstArgument))
+            is JavaEnumValueAnnotationArgument -> JavaAnnotationTargetMapper.mapJavaTargetArguments([firstArgument])
             else -> null
         }
         targetArgument?.let { mapOf(JavaAnnotationMapper.TARGET_ANNOTATION_ALLOWED_TARGETS to it) }.orEmpty()
@@ -146,7 +146,7 @@ object JavaAnnotationTargetMapper {
         "TYPE_USE" to EnumSet.of(KotlinTarget.TYPE)
     )
 
-    fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: emptySet()
+    fun mapJavaTargetArgumentByName(argumentName: String?): Set<KotlinTarget> = targetNameLists[argumentName] ?: []
 
     internal fun mapJavaTargetArguments(arguments: List<JavaAnnotationArgument>): ConstantValue<*> {
         // Map arguments: java.lang.annotation.Target -> kotlin.annotation.Target

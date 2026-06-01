@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.test.runners.codegen.inlineScopes.*
 fun main(args: Array<String>) {
     val testsRoot = args[0]
     val mainClassName = TestGeneratorUtil.getMainClassName()
-    val k1BoxTestDir = listOf("multiplatform/k1")
-    val k2BoxTestDir = listOf("multiplatform/k2")
-    val excludedScriptDirs = listOf("script")
+    val k1BoxTestDir = ["multiplatform/k1"]
+    val k2BoxTestDir = ["multiplatform/k2"]
+    val excludedScriptDirs = ["script"]
 
     // We exclude the 'inlineScopes/newFormatToOld' directory from tests that have inline scopes enabled
     // by default, since we only want to test the scenario where code with inline scopes is inlined by the
     // old inliner with $iv suffixes.
-    val inlineScopesNewFormatToOld = listOf("inlineScopes/newFormatToOld")
+    val inlineScopesNewFormatToOld = ["inlineScopes/newFormatToOld"]
 
     generateTestGroupSuiteWithJUnit5(args, mainClassName) {
         testGroup(testsRoot, testDataRoot = "compiler/testData/codegen") {

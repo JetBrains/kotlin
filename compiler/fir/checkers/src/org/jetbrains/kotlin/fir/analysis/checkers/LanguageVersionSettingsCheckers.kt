@@ -12,5 +12,5 @@ abstract class LanguageVersionSettingsCheckers {
         val EMPTY: LanguageVersionSettingsCheckers = object : LanguageVersionSettingsCheckers() {}
     }
 
-    open val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = emptySet()
+    open val languageVersionSettingsCheckers: Set<FirLanguageVersionSettingsChecker> = []
 }

@@ -49,7 +49,7 @@ class InstanceOwnerRecordingClassVisitor(
 
             private fun storeUsage(internalName: String) {
                 val jvmClassName = JvmClassName.byInternalName(internalName)
-                methodToUsedClassesMap?.getOrPut(methodSignature) { mutableSetOf() }?.add(jvmClassName)
+                methodToUsedClassesMap?.getOrPut(methodSignature) { [] }?.add(jvmClassName)
                 allUsedClassesSet?.add(jvmClassName)
             }
         }

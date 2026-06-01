@@ -55,9 +55,9 @@ internal class KaFe10DataFlowProvider(
     override val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
         get() = withPsiValidityAssertion {
             val bindingContext = analysisContext.analyze(this)
-            val smartCasts = bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, this] ?: return emptyList()
-            val call = bindingContext[BindingContext.CALL, this] ?: return emptyList()
-            val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return emptyList()
+            val smartCasts = bindingContext[BindingContext.IMPLICIT_RECEIVER_SMARTCAST, this] ?: return []
+            val call = bindingContext[BindingContext.CALL, this] ?: return []
+            val resolvedCall = bindingContext[BindingContext.RESOLVED_CALL, call] ?: return []
 
             listOfNotNull(
                 createImplicitReceiverSmartCast(

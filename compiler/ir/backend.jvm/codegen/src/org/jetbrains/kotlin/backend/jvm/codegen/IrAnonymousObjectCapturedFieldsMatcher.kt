@@ -78,7 +78,7 @@ internal class IrAnonymousObjectCapturedFieldsMatcher(
     }
 
     private fun IrBlockBody.collectStoreCapturedParameters(): List<IrSetField> {
-        val result = mutableListOf<IrSetField>()
+        val result: MutableList<IrSetField> = []
         for (statement in statements) {
             collectStoreCapturedParameters(statement, result)
         }

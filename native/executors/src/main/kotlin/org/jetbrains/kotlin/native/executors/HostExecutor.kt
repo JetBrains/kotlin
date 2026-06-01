@@ -120,7 +120,7 @@ private fun <T> ProcessBuilder.scoped(block: suspend CoroutineScope.(Process) ->
 
 private class SleeperWithBackoff {
     // Start with exponential backoff, then try 150ms for a while, and finally settle on a second.
-    private val backoffMilliseconds = longArrayOf(10, 20, 40, 80, 150, 150, 150, 150, 150)
+    private val backoffMilliseconds: LongArray = [10, 20, 40, 80, 150, 150, 150, 150, 150]
     private val maxBackoffMilliseconds = 1000L
     private var nextIndex = 0
 
@@ -170,7 +170,7 @@ class HostExecutor : Executor {
                 |And timeout: ${request.timeout}
                 """.trimMargin()
         )
-        return ProcessBuilder(listOf(request.executableAbsolutePath) + args).apply {
+        return ProcessBuilder([request.executableAbsolutePath] + args).apply {
             directory(workingDirectory)
             environment().putAll(request.environment)
         }.scoped { process ->

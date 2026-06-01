@@ -134,7 +134,7 @@ class ObjCExportStubOriginTest(
         )
 
         analyzeWithObjCExport(file) {
-            val header = translateToObjCHeader(listOf(KtObjCExportFile(file)))
+            val header = translateToObjCHeader([KtObjCExportFile(file)])
             val stub = header.stubs.firstOrNull {
                 it.name.endsWith("Kt") // Top level facade has a name ending with "Kt"
             }

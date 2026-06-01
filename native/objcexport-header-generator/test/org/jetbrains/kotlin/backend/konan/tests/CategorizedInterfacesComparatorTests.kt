@@ -14,7 +14,7 @@ class CategorizedInterfacesComparatorTests {
         val fooC = ObjCInterfaceImpl(name = "C")
 
         assertEquals(
-            listOf(fooA, fooB, fooC),
+            [fooA, fooB, fooC],
             listOf(fooA, fooB, fooC).sortedWith(ObjCInterfaceOrder)
         )
     }
@@ -26,7 +26,7 @@ class CategorizedInterfacesComparatorTests {
         val fooC = ObjCInterfaceImpl(name = "C", categoryName = "C")
 
         assertEquals(
-            listOf(fooA, fooB, fooC),
+            [fooA, fooB, fooC],
             listOf(fooA, fooB, fooC).sortedWith(ObjCInterfaceOrder)
         )
     }
@@ -37,7 +37,7 @@ class CategorizedInterfacesComparatorTests {
         val fooExtension = ObjCInterfaceImpl(name = "Foo", categoryName = "extensions")
 
         assertEquals(
-            listOf(foo, fooExtension),
+            [foo, fooExtension],
             listOf(foo, fooExtension).sortedWith(ObjCInterfaceOrder)
         )
     }
@@ -48,7 +48,7 @@ class CategorizedInterfacesComparatorTests {
         val fooExtension = ObjCInterfaceImpl(name = "Foo", categoryName = "extensions")
 
         assertEquals(
-            listOf(foo, fooExtension),
+            [foo, fooExtension],
             listOf(fooExtension, foo).sortedWith(ObjCInterfaceOrder)
         )
     }
@@ -59,7 +59,7 @@ class CategorizedInterfacesComparatorTests {
         val fooB = ObjCInterfaceImpl(name = "Foo", categoryName = "CategoryB")
 
         assertEquals(
-            listOf(fooA, fooB),
+            [fooA, fooB],
             listOf(fooA, fooB).sortedWith(ObjCInterfaceOrder)
         )
     }
@@ -73,10 +73,10 @@ private fun ObjCInterfaceImpl(
     categoryName = categoryName,
     comment = null,
     origin = null,
-    attributes = emptyList(),
-    superProtocols = emptyList(),
-    members = emptyList(),
-    generics = emptyList(),
+    attributes = [],
+    superProtocols = [],
+    members = [],
+    generics = [],
     superClass = null,
-    superClassGenerics = emptyList(),
+    superClassGenerics = [],
 )

@@ -24,9 +24,9 @@ open class KaLibraryModuleImpl(
     override var librarySources: KaLibrarySourceModule?,
     override val isSdk: Boolean,
 ) : KtModuleWithModifiableDependencies(), KaLibraryModule {
-    override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
-    override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
-    override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+    override val directRegularDependencies: MutableList<KaModule> = []
+    override val directDependsOnDependencies: MutableList<KaModule> = []
+    override val directFriendDependencies: MutableList<KaModule> = []
 
     override val areDependenciesComplete: Boolean
         get() = hasFallbackDependencies
@@ -34,7 +34,7 @@ open class KaLibraryModuleImpl(
     private val hasFallbackDependencies: Boolean
         get() = directRegularDependencies.any { it is KaLibraryFallbackDependenciesModule }
 
-    override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
+    override val binaryVirtualFiles: Collection<VirtualFile> = []
 
     override fun toString(): String = libraryName
 }

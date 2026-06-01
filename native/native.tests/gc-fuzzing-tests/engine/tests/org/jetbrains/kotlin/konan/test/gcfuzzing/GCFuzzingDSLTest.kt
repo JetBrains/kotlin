@@ -54,40 +54,40 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
 
     @Test
     fun empty(testInfo: TestInfo) = runTest(testInfo) {
-        Program(definitions = emptyList(), mainBody = Body(statements = emptyList()))
+        Program(definitions = [], mainBody = Body(statements = []))
     }
 
     @Test
     fun noDefinitions(testInfo: TestInfo) = runTest(testInfo) {
-        val storeExpressions = listOf(
-            StoreExpression.Global(0, Path(emptyList())),
-            StoreExpression.Global(0, Path(listOf(0, 0, 0))),
-            StoreExpression.Local(0, Path(emptyList())),
-            StoreExpression.Local(0, Path(listOf(0, 0, 0))),
-        )
-        val loadExpressions = listOf(
-            LoadExpression.Global(0, Path(emptyList())),
-            LoadExpression.Global(0, Path(listOf(0, 0, 0))),
-            LoadExpression.Local(0, Path(emptyList())),
-            LoadExpression.Local(0, Path(listOf(0, 0, 0))),
-        )
+        val storeExpressions = [
+            StoreExpression.Global(0, Path([])),
+            StoreExpression.Global(0, Path([0, 0, 0])),
+            StoreExpression.Local(0, Path([])),
+            StoreExpression.Local(0, Path([0, 0, 0])),
+        ]
+        val loadExpressions = [
+            LoadExpression.Global(0, Path([])),
+            LoadExpression.Global(0, Path([0, 0, 0])),
+            LoadExpression.Local(0, Path([])),
+            LoadExpression.Local(0, Path([0, 0, 0])),
+        ]
         Program(
-            definitions = emptyList(), mainBody = Body(
+            definitions = [], mainBody = Body(
                 statements = buildList {
                     storeExpressions.forEach { store ->
                         loadExpressions.forEach { load ->
                             add(BodyStatement.Store(store, load))
                         }
                     }
-                    add(BodyStatement.SpawnThread(0, emptyList()))
+                    add(BodyStatement.SpawnThread(0, []))
                 })
         )
     }
 
     @Test
     fun differentIds(testInfo: TestInfo) = runTest(testInfo) {
-        val ids = listOf(0, -1, 1, 511, Int.MIN_VALUE, Int.MAX_VALUE)
-        val paths = listOf(Path(emptyList()), Path(ids))
+        val ids = [0, -1, 1, 511, Int.MIN_VALUE, Int.MAX_VALUE]
+        val paths = [Path([]), Path(ids)]
         val loadExpressions = buildList {
             ids.forEach { id ->
                 paths.forEach { path ->
@@ -105,9 +105,9 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
             }
         }
         val argss = buildList {
-            add(emptyList())
+            add([])
             loadExpressions.forEach {
-                add(listOf(it))
+                add([it])
             }
             add(loadExpressions)
         }
@@ -140,14 +140,14 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                 }), returnExpression = LoadExpression.Default
         )
         Program(
-            definitions = listOf(
+            definitions = [
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Global(
                     TargetLanguage.Kotlin,
@@ -158,34 +158,34 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     Field.StrongRef,
                 ),
                 Definition.Function(
-                    TargetLanguage.Kotlin, parameters = listOf(Parameter, Parameter), body = body
+                    TargetLanguage.Kotlin, parameters = [Parameter, Parameter], body = body
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC, parameters = listOf(Parameter, Parameter), body = body
+                    TargetLanguage.ObjC, parameters = [Parameter, Parameter], body = body
                 ),
-            ),
+            ],
             mainBody = Body(
-                listOf(
-                    BodyStatement.Call(0, emptyList()),
-                    BodyStatement.Call(1, emptyList()),
-                )
+                [
+                    BodyStatement.Call(0, []),
+                    BodyStatement.Call(1, []),
+                ]
             ),
         )
     }
 
     @Test
     fun referenceLocals(testInfo: TestInfo) = runTest(testInfo) {
-        fun local(id: EntityId) = LoadExpression.Local(id, Path(emptyList()))
-        fun localL(id: EntityId) = StoreExpression.Local(id, Path(emptyList()))
+        fun local(id: EntityId) = LoadExpression.Local(id, Path([]))
+        fun localL(id: EntityId) = StoreExpression.Local(id, Path([]))
 
-        val bodies = listOf(buildList {
-            add(BodyStatement.Alloc(0, listOf(local(0))))
-            add(BodyStatement.Alloc(0, listOf(local(1))))
-            add(BodyStatement.Alloc(0, listOf(local(3))))
+        val bodies = [buildList {
+            add(BodyStatement.Alloc(0, [local(0)]))
+            add(BodyStatement.Alloc(0, [local(1)]))
+            add(BodyStatement.Alloc(0, [local(3)]))
         }, buildList {
-            add(BodyStatement.Call(0, listOf(local(0))))
-            add(BodyStatement.Call(0, listOf(local(1))))
-            add(BodyStatement.Call(0, listOf(local(3))))
+            add(BodyStatement.Call(0, [local(0)]))
+            add(BodyStatement.Call(0, [local(1)]))
+            add(BodyStatement.Call(0, [local(3)]))
         }, buildList {
             add(BodyStatement.Load(local(0)))
             add(BodyStatement.Load(local(1)))
@@ -195,12 +195,12 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
             add(BodyStatement.Store(localL(0), LoadExpression.Default))
             add(BodyStatement.Store(localL(1), LoadExpression.Default))
             add(BodyStatement.Store(localL(2), LoadExpression.Default))
-        })
+        }]
         Program(
             definitions = listOf(
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field.StrongRef),
+                    [Field.StrongRef],
                 ), Definition.Global(
                     TargetLanguage.Kotlin,
                     Field.StrongRef,
@@ -208,25 +208,25 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     TargetLanguage.ObjC,
                     Field.StrongRef,
                 ), *bodies.flatMap { statements ->
-                    listOf(
+                    [
                         Definition.Function(
-                            TargetLanguage.Kotlin, parameters = listOf(Parameter), body = BodyWithReturn(
+                            TargetLanguage.Kotlin, parameters = [Parameter], body = BodyWithReturn(
                                 body = Body(statements), returnExpression = LoadExpression.Default
                             )
                         ),
                         Definition.Function(
-                            TargetLanguage.ObjC, parameters = listOf(Parameter), body = BodyWithReturn(
+                            TargetLanguage.ObjC, parameters = [Parameter], body = BodyWithReturn(
                                 body = Body(statements), returnExpression = LoadExpression.Default
                             )
                         ),
-                    )
+                    ]
                 }.toTypedArray()
             ),
             mainBody = Body(
-                listOf(
-                    BodyStatement.Call(0, emptyList()),
-                    BodyStatement.Call(1, emptyList()),
-                )
+                [
+                    BodyStatement.Call(0, []),
+                    BodyStatement.Call(1, []),
+                ]
             ),
         )
     }
@@ -234,38 +234,38 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     @Test
     fun setFields(testInfo: TestInfo) = runTest(testInfo) {
         val setFieldsBody = Body(
-            listOf(
-                BodyStatement.Alloc(0, emptyList()),
-                BodyStatement.Alloc(1, emptyList()),
-                BodyStatement.Store(StoreExpression.Local(0, Path(listOf(0))), LoadExpression.Local(1, Path(listOf(1)))),
-                BodyStatement.Store(StoreExpression.Local(0, Path(listOf(1))), LoadExpression.Local(1, Path(listOf(0)))),
-                BodyStatement.Store(StoreExpression.Local(1, Path(listOf(0))), LoadExpression.Local(0, Path(listOf(1)))),
-                BodyStatement.Store(StoreExpression.Local(1, Path(listOf(1))), LoadExpression.Local(0, Path(listOf(0)))),
-            )
+            [
+                BodyStatement.Alloc(0, []),
+                BodyStatement.Alloc(1, []),
+                BodyStatement.Store(StoreExpression.Local(0, Path([0])), LoadExpression.Local(1, Path([1]))),
+                BodyStatement.Store(StoreExpression.Local(0, Path([1])), LoadExpression.Local(1, Path([0]))),
+                BodyStatement.Store(StoreExpression.Local(1, Path([0])), LoadExpression.Local(0, Path([1]))),
+                BodyStatement.Store(StoreExpression.Local(1, Path([1])), LoadExpression.Local(0, Path([0]))),
+            ]
         )
         Program(
-            definitions = listOf(
+            definitions = [
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Function(
                     TargetLanguage.Kotlin,
-                    emptyList(),
+                    [],
                     body = BodyWithReturn(body = setFieldsBody, returnExpression = LoadExpression.Default)
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC, emptyList(), body = BodyWithReturn(body = setFieldsBody, returnExpression = LoadExpression.Default)
+                    TargetLanguage.ObjC, [], body = BodyWithReturn(body = setFieldsBody, returnExpression = LoadExpression.Default)
                 ),
-            ), mainBody = Body(
-                listOf(
-                    BodyStatement.Call(0, listOf(LoadExpression.Default, LoadExpression.Default)),
-                    BodyStatement.Call(1, listOf(LoadExpression.Default, LoadExpression.Default))
-                )
+            ], mainBody = Body(
+                [
+                    BodyStatement.Call(0, [LoadExpression.Default, LoadExpression.Default]),
+                    BodyStatement.Call(1, [LoadExpression.Default, LoadExpression.Default])
+                ]
             )
         )
     }
@@ -273,33 +273,33 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     @Test
     fun weakRefs(testInfo: TestInfo) = runTest(testInfo) {
         val testFunBody = Body(
-            listOf(
+            [
                 BodyStatement.Alloc(
-                    0, listOf(
-                        LoadExpression.Global(0, Path(listOf())),
-                        LoadExpression.Global(1, Path(listOf())),
-                    )
+                    0, [
+                        LoadExpression.Global(0, Path([])),
+                        LoadExpression.Global(1, Path([])),
+                    ]
                 ),
                 BodyStatement.Store(
-                    StoreExpression.Local(0, Path(listOf(0))),
-                    LoadExpression.Local(0, Path(listOf(1)))
+                    StoreExpression.Local(0, Path([0])),
+                    LoadExpression.Local(0, Path([1]))
                 ),
                 BodyStatement.Store(
-                    StoreExpression.Local(0, Path(listOf(1))),
-                    LoadExpression.Local(0, Path(listOf(0)))
+                    StoreExpression.Local(0, Path([1])),
+                    LoadExpression.Local(0, Path([0]))
                 ),
                 BodyStatement.Store(
-                    StoreExpression.Local(1, Path(listOf(0))),
-                    LoadExpression.Local(1, Path(listOf(1)))
+                    StoreExpression.Local(1, Path([0])),
+                    LoadExpression.Local(1, Path([1]))
                 ),
                 BodyStatement.Store(
-                    StoreExpression.Local(1, Path(listOf(1))),
-                    LoadExpression.Local(1, Path(listOf(0)))
+                    StoreExpression.Local(1, Path([1])),
+                    LoadExpression.Local(1, Path([0]))
                 ),
-            )
+            ]
         )
         Program(
-            definitions = listOf(
+            definitions = [
                 Definition.Global(
                     TargetLanguage.Kotlin,
                     Field.WeakRef,
@@ -310,36 +310,36 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                 ),
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field.StrongRef, Field.WeakRef),
+                    [Field.StrongRef, Field.WeakRef],
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field.StrongRef, Field.WeakRef),
+                    [Field.StrongRef, Field.WeakRef],
                 ),
                 Definition.Function(
                     TargetLanguage.Kotlin,
-                    emptyList(),
+                    [],
                     body = BodyWithReturn(body = testFunBody, returnExpression = LoadExpression.Default)
                 ),
                 Definition.Function(
                     TargetLanguage.ObjC,
-                    emptyList(),
+                    [],
                     body = BodyWithReturn(body = testFunBody, returnExpression = LoadExpression.Default)
                 ),
-            ), mainBody = Body(
-                listOf(
-                    BodyStatement.Alloc(0, emptyList()),
+            ], mainBody = Body(
+                [
+                    BodyStatement.Alloc(0, []),
                     BodyStatement.Store(
-                        StoreExpression.Global(0, Path(emptyList())),
-                        LoadExpression.Local(0, Path(emptyList()))
+                        StoreExpression.Global(0, Path([])),
+                        LoadExpression.Local(0, Path([]))
                     ),
                     BodyStatement.Store(
-                        StoreExpression.Global(1, Path(emptyList())),
-                        LoadExpression.Local(0, Path(emptyList()))
+                        StoreExpression.Global(1, Path([])),
+                        LoadExpression.Local(0, Path([]))
                     ),
-                    BodyStatement.Call(0, listOf(LoadExpression.Default, LoadExpression.Default)),
-                    BodyStatement.Call(1, listOf(LoadExpression.Default, LoadExpression.Default))
-                )
+                    BodyStatement.Call(0, [LoadExpression.Default, LoadExpression.Default]),
+                    BodyStatement.Call(1, [LoadExpression.Default, LoadExpression.Default])
+                ]
             )
         )
     }
@@ -347,14 +347,14 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
     @Test
     fun smoke(testInfo: TestInfo) = runTest(testInfo) {
         Program(
-            definitions = listOf(
+            definitions = [
                 Definition.Class(
                     TargetLanguage.Kotlin,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Class(
                     TargetLanguage.ObjC,
-                    listOf(Field.StrongRef, Field.StrongRef),
+                    [Field.StrongRef, Field.StrongRef],
                 ),
                 Definition.Global(
                     TargetLanguage.Kotlin,
@@ -365,74 +365,74 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
                     Field.StrongRef,
                 ),
                 Definition.Function(
-                    TargetLanguage.Kotlin, listOf(Parameter, Parameter), BodyWithReturn(
+                    TargetLanguage.Kotlin, [Parameter, Parameter], BodyWithReturn(
                         body = Body(
-                            listOf(
+                            [
                                 BodyStatement.Store(
-                                    StoreExpression.Global(0, Path(listOf())),
-                                    LoadExpression.Local(0, Path(listOf())),
+                                    StoreExpression.Global(0, Path([])),
+                                    LoadExpression.Local(0, Path([])),
                                 ),
                                 BodyStatement.Store(
-                                    StoreExpression.Local(1, Path(listOf(0))),
-                                    LoadExpression.Global(0, Path(listOf(1))),
+                                    StoreExpression.Local(1, Path([0])),
+                                    LoadExpression.Global(0, Path([1])),
                                 ),
-                                BodyStatement.SpawnThread(2, listOf(LoadExpression.Local(1, Path(listOf())))),
-                            )
+                                BodyStatement.SpawnThread(2, [LoadExpression.Local(1, Path([]))]),
+                            ]
                         ), returnExpression = LoadExpression.Default
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC, listOf(Parameter, Parameter), BodyWithReturn(
+                    TargetLanguage.ObjC, [Parameter, Parameter], BodyWithReturn(
                         body = Body(
-                            listOf(
+                            [
                                 BodyStatement.Store(
-                                    StoreExpression.Global(0, Path(listOf())),
-                                    LoadExpression.Local(0, Path(listOf())),
+                                    StoreExpression.Global(0, Path([])),
+                                    LoadExpression.Local(0, Path([])),
                                 ),
                                 BodyStatement.Store(
-                                    StoreExpression.Local(1, Path(listOf(0))),
-                                    LoadExpression.Global(0, Path(listOf(1))),
+                                    StoreExpression.Local(1, Path([0])),
+                                    LoadExpression.Global(0, Path([1])),
                                 ),
-                                BodyStatement.SpawnThread(3, listOf(LoadExpression.Local(1, Path(listOf())))),
-                            )
+                                BodyStatement.SpawnThread(3, [LoadExpression.Local(1, Path([]))]),
+                            ]
                         ), returnExpression = LoadExpression.Default
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.Kotlin, listOf(Parameter), BodyWithReturn(
+                    TargetLanguage.Kotlin, [Parameter], BodyWithReturn(
                         body = Body(
-                            listOf(
-                                BodyStatement.Alloc(0, listOf()),
-                                BodyStatement.Alloc(1, listOf()),
-                                BodyStatement.Call(3, listOf(LoadExpression.Local(0, Path(listOf()))))
-                            )
-                        ), returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
+                            [
+                                BodyStatement.Alloc(0, []),
+                                BodyStatement.Alloc(1, []),
+                                BodyStatement.Call(3, [LoadExpression.Local(0, Path([]))])
+                            ]
+                        ), returnExpression = LoadExpression.Local(5, Path([1, 3, 4]))
                     )
                 ),
                 Definition.Function(
-                    TargetLanguage.ObjC, listOf(Parameter), BodyWithReturn(
+                    TargetLanguage.ObjC, [Parameter], BodyWithReturn(
                         body = Body(
-                            listOf(
-                                BodyStatement.Alloc(0, listOf()),
-                                BodyStatement.Alloc(1, listOf()),
-                                BodyStatement.Call(2, listOf(LoadExpression.Local(0, Path(listOf()))))
-                            )
-                        ), returnExpression = LoadExpression.Local(5, Path(listOf(1, 3, 4)))
+                            [
+                                BodyStatement.Alloc(0, []),
+                                BodyStatement.Alloc(1, []),
+                                BodyStatement.Call(2, [LoadExpression.Local(0, Path([]))])
+                            ]
+                        ), returnExpression = LoadExpression.Local(5, Path([1, 3, 4]))
                     )
                 ),
-            ), mainBody = Body(
-                listOf(
-                    BodyStatement.Alloc(123, listOf()), BodyStatement.Load(
-                        LoadExpression.Local(0, Path(listOf())),
-                    ), BodyStatement.Call(
-                        65, listOf(
-                            LoadExpression.Local(0, Path(listOf())),
-                            LoadExpression.Local(1, Path(listOf(67))),
-                        )
-                    ), BodyStatement.Call(
-                        6, listOf()
-                    )
+            ], mainBody = Body(
+                [
+                    BodyStatement.Alloc(123, []), BodyStatement.Load(
+                    LoadExpression.Local(0, Path([])),
+                ), BodyStatement.Call(
+                    65, [
+                        LoadExpression.Local(0, Path([])),
+                        LoadExpression.Local(1, Path([67])),
+                    ]
+                ), BodyStatement.Call(
+                    6, []
                 )
+                ]
             )
         )
     }
@@ -444,31 +444,31 @@ class GCFuzzingDSLTest : AbstractNativeSimpleTest() {
         fun defineNode(targetLanguage: TargetLanguage) = Definition.Class(targetLanguage, Array(fieldsCount) { Field.StrongRef }.toList())
         fun populateNode(classId: EntityId) = buildList {
             (0 until fieldsCount).forEach {
-                add(BodyStatement.Alloc(classId, emptyList()))
-                add(BodyStatement.Store(StoreExpression.Local(0, Path(listOf(it))), LoadExpression.Local(it + 1, Path(emptyList()))))
+                add(BodyStatement.Alloc(classId, []))
+                add(BodyStatement.Store(StoreExpression.Local(0, Path([it])), LoadExpression.Local(it + 1, Path([]))))
             }
         }
 
         fun definePopulateNodeAndReturnNext(targetLanguage: TargetLanguage, classId: EntityId) = Definition.Function(
-            targetLanguage, parameters = listOf(
+            targetLanguage, parameters = [
                 Parameter
-            ), body = BodyWithReturn(Body(populateNode(classId)), returnExpression = LoadExpression.Local(0, Path(listOf(fieldsCount - 1))))
+            ], body = BodyWithReturn(Body(populateNode(classId)), returnExpression = LoadExpression.Local(0, Path([fieldsCount - 1])))
         )
 
         Program(
-            definitions = listOf(
+            definitions = [
                 defineNode(TargetLanguage.Kotlin),
                 defineNode(TargetLanguage.ObjC),
                 definePopulateNodeAndReturnNext(TargetLanguage.Kotlin, 0),
                 definePopulateNodeAndReturnNext(TargetLanguage.ObjC, 1),
-            ),
+            ],
             mainBody = Body(
                 buildList {
-                    add(BodyStatement.Alloc(0, emptyList()))
-                    add(BodyStatement.Alloc(1, emptyList()))
+                    add(BodyStatement.Alloc(0, []))
+                    add(BodyStatement.Alloc(1, []))
                     (0 until listsLengthCount).forEach {
-                        add(BodyStatement.Call(0, listOf(LoadExpression.Local(2 * it, Path(emptyList())))))
-                        add(BodyStatement.Call(1, listOf(LoadExpression.Local(2 * it + 1, Path(emptyList())))))
+                        add(BodyStatement.Call(0, [LoadExpression.Local(2 * it, Path([]))]))
+                        add(BodyStatement.Call(1, [LoadExpression.Local(2 * it + 1, Path([]))]))
                     }
                 }
             )

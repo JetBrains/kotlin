@@ -171,7 +171,7 @@ class KlibModuleMetadata(
         val versionExt = KlibMetadataVersionWriteExtension(metadataVersion)
         val groupedProtos = groupedFragments.mapValues { [_, fragments] ->
             fragments.map { mf ->
-                val c = WriteContext(ApproximatingStringTable(), listOf(versionExt))
+                val c = WriteContext(ApproximatingStringTable(), [versionExt])
                 KlibModuleFragmentWriter(c.strings as ApproximatingStringTable, c.contextExtensions).also { it.writeModuleFragment(mf) }.write()
             }
         }

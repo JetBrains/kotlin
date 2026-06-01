@@ -100,7 +100,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                     else context.multiFieldValueClassReplacements.getRootMfvcNode(it.typeOrNull!!.erasedUpperBound).leavesCount
                 } - if (function.isSuspend) 0 else 1
             }
-            invokeFunction.overriddenSymbols = emptyList()
+            invokeFunction.overriddenSymbols = []
             declaration.addBridge(invokeFunction, functionNInvokeFun.owner)
         }
 
@@ -116,7 +116,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             origin = IrDeclarationOrigin.BRIDGE
         }.apply {
             overriddenSymbols += superFunction.symbol
-            parameters = listOf(thisReceiver!!.copyTo(this), superFunction.nonDispatchParameters.single().copyTo(this))
+            parameters = [thisReceiver!!.copyTo(this), superFunction.nonDispatchParameters.single().copyTo(this)]
 
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {
                 // Check the number of arguments

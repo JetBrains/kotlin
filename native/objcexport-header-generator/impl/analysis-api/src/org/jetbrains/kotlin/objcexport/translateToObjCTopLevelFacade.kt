@@ -60,13 +60,13 @@ fun ObjCExportContext.translateToObjCTopLevelFacade(file: KtResolvedObjCExportFi
         origin = file.file?.let {
             ObjCExportStubOrigin.Source(null, null, it)
         },
-        attributes = listOf(OBJC_SUBCLASSING_RESTRICTED) + fileName.toNameAttributes(),
-        superProtocols = emptyList(),
+        attributes = [OBJC_SUBCLASSING_RESTRICTED] + fileName.toNameAttributes(),
+        superProtocols = [],
         members = topLevelCallables,
         categoryName = null,
-        generics = emptyList(),
+        generics = [],
         superClass = exportSession.getDefaultSuperClassOrProtocolName().objCName,
-        superClassGenerics = emptyList()
+        superClassGenerics = []
     )
     return null
 }

@@ -688,10 +688,10 @@ private fun Printer.generateCompilerOptionsHelper(
         }
         println(") {")
         withIndent {
-            val multiValuesReturnTypes = setOf(
+            val multiValuesReturnTypes: Set<String> = [
                 "org.gradle.api.provider.ListProperty",
                 "org.gradle.api.provider.SetProperty",
-            )
+            ]
             if (parentHelperName != null) println("$parentHelperName.syncOptionsAsConvention(from, into)")
             for (property in properties) {
                 with(options.level) {
@@ -1048,7 +1048,7 @@ private val additionalMetadata = mapOf(
             value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
             gradleInputType = GradleInputTypes.INPUT
         ),
-        "Xuse-k2" to listOf(
+        "Xuse-k2" to [
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -1059,7 +1059,7 @@ private val additionalMetadata = mapOf(
                 level = DeprecationLevel.HIDDEN,
                 removeAfter = LanguageVersion.KOTLIN_2_2,
             )
-        ),
+        ],
     ),
     CompilerArgumentsLevelNames.commonToolArguments to mapOf(
         "verbose" to GradleOption(
@@ -1133,7 +1133,7 @@ private val additionalMetadata = mapOf(
             gradleInputType = GradleInputTypes.INPUT,
             shouldGenerateDeprecatedKotlinOptions = true,
         ),
-        "Xtyped-arrays" to listOf(
+        "Xtyped-arrays" to [
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -1144,7 +1144,7 @@ private val additionalMetadata = mapOf(
                 level = DeprecationLevel.ERROR,
                 removeAfter = LanguageVersion.KOTLIN_2_2,
             ),
-        ),
+        ],
         "Xfriend-modules-disabled" to GradleOption(
             value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
             gradleInputType = GradleInputTypes.INPUT,

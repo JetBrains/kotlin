@@ -28,7 +28,7 @@ interface CirPropertyGetter : CirPropertyAccessor {
 
         init {
             DEFAULT_NO_ANNOTATIONS = createInterned(
-                annotations = emptyList(),
+                annotations = [],
                 isDefault = true,
                 isInline = false
             )

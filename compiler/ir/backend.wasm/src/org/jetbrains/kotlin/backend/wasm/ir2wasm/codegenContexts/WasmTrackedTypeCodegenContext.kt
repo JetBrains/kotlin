@@ -19,8 +19,8 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.getAllSuperclasses
 
 class ModuleReferencedTypes(
-    val gcTypes: MutableSet<IdSignature> = mutableSetOf(),
-    val functionTypes: MutableSet<IdSignature> = mutableSetOf(),
+    val gcTypes: MutableSet<IdSignature> = [],
+    val functionTypes: MutableSet<IdSignature> = [],
 )
 
 fun ModuleReferencedTypes.addGcTypeToReferenced(

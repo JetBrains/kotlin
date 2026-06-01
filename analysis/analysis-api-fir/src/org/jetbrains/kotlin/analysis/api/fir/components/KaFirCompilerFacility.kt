@@ -173,8 +173,8 @@ internal class KaFirCompilerFacility(
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): KaCompilationResult {
-        val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
-        val mutedExceptions = mutableListOf<Throwable>()
+        val disabledIrExtensions: MutableList<Class<out IrGenerationExtension>> = []
+        val mutedExceptions: MutableList<Throwable> = []
         while (true) {
             try {
                 val result = compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
@@ -359,7 +359,7 @@ internal class KaFirCompilerFacility(
 
             lambda.accept(object : FirDefaultVisitorVoid() {
 
-                val allowedReturnTargets = mutableListOf<FirTargetElement>()
+                val allowedReturnTargets: MutableList<FirTargetElement> = []
 
                 override fun visitElement(element: FirElement) {
                     if (element is FirLoop || element is FirFunction) {
@@ -873,7 +873,7 @@ internal class KaFirCompilerFacility(
         jvmGeneratorExtensions: JvmGeneratorExtensions,
         compiledCodeProvider: CompiledCodeProvider,
     ): KaCompilationResult {
-        val matchingClassNames = mutableSetOf<String>()
+        val matchingClassNames: MutableSet<String> = []
 
         val classBuilderFactory = KaClassBuilderFactory.create(
             delegateFactory = if (target.isTestMode) ClassBuilderFactories.TEST else ClassBuilderFactories.BINARIES,
@@ -1088,7 +1088,7 @@ internal class KaFirCompilerFacility(
     ): Fir2IrActualizedResult {
         val fir2IrConfiguration =
             Fir2IrConfiguration.forAnalysisApi(effectiveConfiguration, session.languageVersionSettings, diagnosticReporter)
-        val frontendOutput = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, session.getScopeSession(), firFiles)))
+        val frontendOutput = AllModulesFrontendOutput([SingleModuleFrontendOutput(session, session.getScopeSession(), firFiles)])
         val singleOutput = frontendOutput.outputs.size == 1
         check(singleOutput) { "Single output invariant is used in the lambda below" }
 
@@ -1464,7 +1464,7 @@ private class SyntaxErrorReportingVisitor(
     private val useSiteSession: FirSession,
     private val diagnosticConverter: (KtPsiDiagnostic) -> KaDiagnosticWithPsi<*>
 ) : KtTreeVisitorVoid() {
-    private val collectedDiagnostics = mutableListOf<KaDiagnostic>()
+    private val collectedDiagnostics: MutableList<KaDiagnostic> = []
 
     val diagnostics: List<KaDiagnostic>
         get() = Collections.unmodifiableList(collectedDiagnostics)

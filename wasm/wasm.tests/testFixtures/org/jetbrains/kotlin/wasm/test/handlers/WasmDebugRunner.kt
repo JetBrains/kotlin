@@ -17,7 +17,7 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
         val devDir = File(outputDirBase, mode)
         devDir.mkdirs()
 
-        val sourceMaps = mutableListOf<SourceMap>()
+        val sourceMaps: MutableList<SourceMap> = []
 
         compilationSet.compilerResult.writeTo(devDir, "index", debugMode, mode)
         sourceMaps.add(compilationSet.compilerResult.parsedSourceMaps)

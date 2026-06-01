@@ -27,7 +27,7 @@ class TestAllFilesPresentMethodModel(val classModel: SimpleTestClassModel) : Met
         get() = null
 
     override val tags: List<String>
-        get() = emptyList()
+        get() = []
 
     private object Generator : MethodGenerator<TestAllFilesPresentMethodModel>() {
         override fun generateSignature(method: TestAllFilesPresentMethodModel, p: Printer) {

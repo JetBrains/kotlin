@@ -65,10 +65,10 @@ abstract class AbstractResolveByElementTest : AbstractResolveTest<KtElement>() {
                 defaultType = KtElement::class,
             ) as KtElement?
 
-        if (expression == null) return emptyList()
+        if (expression == null) return []
 
         val elementToResolve = expression.elementToResolve
-        return listOf(ResolveKtElementTestCaseContext(element = elementToResolve, marker = null))
+        return [ResolveKtElementTestCaseContext(element = elementToResolve, marker = null)]
     }
 
     class ResolveKtElementTestCaseContext(

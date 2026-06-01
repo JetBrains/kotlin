@@ -34,18 +34,18 @@ object FirJvmIdentitySensitiveCallWithValueTypeObjectChecker : FirFunctionCallCh
     private val synchronizedCallableId = CallableId(FqName("kotlin"), Name.identifier("synchronized"))
     private val lockParameterName = Name.identifier("lock")
 
-    private val operationsToCheckFirstArgCallableIds = setOf(
+    private val operationsToCheckFirstArgCallableIds: Set<CallableId> = [
         CallableId(FqName("java.lang"), FqName("System"), Name.identifier("identityHashCode")),
         CallableId(FqName("java.lang.ref"), FqName("Cleaner"), Name.identifier("register")),
         CallableId(FqName("java.lang.ref"), FqName("PhantomReference"), Name.identifier("PhantomReference")),
         CallableId(FqName("java.lang.ref"), FqName("SoftReference"), Name.identifier("SoftReference")),
         CallableId(FqName("java.lang.ref"), FqName("WeakReference"), Name.identifier("WeakReference")),
-    )
+    ]
 
-    private val operationsToCheckFirstTypeArgCallableIds = setOf(
+    private val operationsToCheckFirstTypeArgCallableIds: Set<CallableId> = [
         CallableId(FqName("java.util"), FqName("IdentityHashMap"), Name.identifier("IdentityHashMap")),
         CallableId(FqName("java.util"), FqName("WeakHashMap"), Name.identifier("WeakHashMap")),
-    )
+    ]
 
     override val platformSpecificCheckerEnabledInMetadataCompilation: Boolean
         get() = true

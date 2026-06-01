@@ -75,7 +75,7 @@ abstract class AbstractAnalysisApiCodebaseTest<T : SourceDirectory> : TestWithDi
      * Adds a new annotation to the given declaration with the given text and returns the resulting file text.
      */
     protected fun fileTextWithNewAnnotation(declaration: KtDeclaration, newAnnotationText: String): String =
-        fileTextWithNewAnnotations(listOf(CodebaseDeclarationAnnotation(declaration, newAnnotationText)))
+        fileTextWithNewAnnotations([CodebaseDeclarationAnnotation(declaration, newAnnotationText)])
 
     /**
      * Pairs an unmarked [declaration] with the [annotation] text (including the leading `@`) that should be inserted above it.

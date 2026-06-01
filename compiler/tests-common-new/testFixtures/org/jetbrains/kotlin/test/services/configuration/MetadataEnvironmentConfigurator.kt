@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 
 class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::CompiledClassesManager))
+        get() = [service(::CompiledClassesManager)]
 
     override fun configureCompilerConfiguration(
         configuration: CompilerConfiguration,
@@ -38,8 +38,8 @@ class MetadataEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         configuration.moduleName = module.name
         configuration.metadataDestinationDirectory = testServices.compiledClassesManager.getOutputDirForModule(module)
 
-        val friendDependencies = mutableListOf<String>()
-        val refinesDependencies = mutableListOf<String>()
+        val friendDependencies: MutableList<String> = []
+        val refinesDependencies: MutableList<String> = []
 
         fun processDependency(dependencyModule: TestModule, relation: DependencyRelation) {
             val dependencyOutputDir = testServices.compiledClassesManager.getOutputDirForModule(dependencyModule)

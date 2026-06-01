@@ -53,7 +53,7 @@ fun String.isValidES5Identifier(): Boolean {
     return true
 }
 
-val SPECIAL_KEYWORDS: Set<String> = setOf("default")
+val SPECIAL_KEYWORDS: Set<String> = ["default"]
 
 val RESERVED_KEYWORDS: Set<String> = SPECIAL_KEYWORDS + setOf(
     // keywords

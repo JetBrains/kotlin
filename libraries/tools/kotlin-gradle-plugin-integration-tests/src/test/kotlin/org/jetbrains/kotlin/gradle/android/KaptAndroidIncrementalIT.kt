@@ -182,12 +182,12 @@ open class KaptAndroidIncrementalIT : KaptBaseIT() {
                     val affectedFile = subProject("app").kotlinSourcesDir().resolve("org.example.inter.project.ic")
                         .resolve(useUtilFileName).relativeTo(projectPath)
                     assertCompiledKotlinSources(
-                        listOf(affectedFile),
+                        [affectedFile],
                         getOutputForTask(":app:kaptGenerateStubsDebugKotlin"),
                         errorMessageSuffix = " in task ':app:kaptGenerateStubsDebugKotlin"
                     )
                     assertCompiledKotlinSources(
-                        listOf(affectedFile),
+                        [affectedFile],
                         getOutputForTask(":app:compileDebugKotlin"),
                         errorMessageSuffix = " in task ':app:compileDebugKotlin"
                     )

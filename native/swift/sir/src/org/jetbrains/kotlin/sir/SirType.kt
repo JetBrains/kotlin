@@ -28,12 +28,12 @@ sealed interface SirType {
 sealed interface SirWrappedType : SirType
 
 class SirFunctionalType(
-    val contextTypes: List<SirType> = emptyList(),
+    val contextTypes: List<SirType> = [],
     val parameterTypes: List<SirType>,
     val isAsync: Boolean = false,
     val errorType: SirType = SirType.never,
     val returnType: SirType,
-    override val attributes: List<SirAttribute> = emptyList(),
+    override val attributes: List<SirAttribute> = [],
 ) : SirWrappedType {
     val contextType: SirType? = contextTypes.takeIf { it.isNotEmpty() }?.let { types ->
         types.singleOrNull() ?: SirTupleType(types.map { null to it })
@@ -72,7 +72,7 @@ class SirFunctionalType(
 
 class SirTupleType(
     val types: List<Pair<String?, SirType>>,
-    override val attributes: List<SirAttribute> = emptyList(),
+    override val attributes: List<SirAttribute> = [],
 ) : SirWrappedType {
     init {
         require(types.size > 1) { "Tuple requires at least two types" }
@@ -97,9 +97,9 @@ class SirTupleType(
 
 open class SirNominalType(
     val typeDeclaration: SirScopeDefiningDeclaration,
-    val typeArguments: List<SirType> = emptyList(),
+    val typeArguments: List<SirType> = [],
     val parent: SirNominalType? = null,
-    override val attributes: List<SirAttribute> = emptyList(),
+    override val attributes: List<SirAttribute> = [],
 ) : SirType {
 
     override fun equals(other: Any?): Boolean {
@@ -128,7 +128,7 @@ open class SirNominalType(
 
 open class SirOptionalType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.optional,
-    typeArguments = listOf(type)
+    typeArguments = [type]
 ), SirWrappedType {
     val wrappedType: SirType get() = super.typeArguments.single()
 }
@@ -137,27 +137,27 @@ class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
-    typeArguments = listOf(type),
+    typeArguments = [type],
 ), SirWrappedType {
     val elementType: SirType get() = super.typeArguments.single()
 }
 
 class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.dictionary,
-    typeArguments = listOf(keyType, valueType)
+    typeArguments = [keyType, valueType]
 ), SirWrappedType {
     val keyType: SirType get() = super.typeArguments[0]
     val valueType: SirType get() = super.typeArguments[1]
 }
 
 open class SirExistentialType(
-    protocols: List<Pair<SirProtocol, List<SirType>>> = emptyList(),
+    protocols: List<Pair<SirProtocol, List<SirType>>> = [],
 ) : SirType {
-    override val attributes: List<SirAttribute> = emptyList()
+    override val attributes: List<SirAttribute> = []
 
     val protocols: List<Pair<SirProtocol, List<SirType>>> = protocols.sortedBy { it.first.swiftFqName }
 
-    constructor(vararg protocols: SirProtocol) : this(protocols.map { it to emptyList() })
+    constructor(vararg protocols: SirProtocol) : this(protocols.map { it to [] })
 
     constructor(vararg protocols: Pair<SirProtocol, List<SirType>>) : this(protocols.toList())
 
@@ -176,7 +176,7 @@ class SirTypedFlowType(
     val typedProtocol: SirProtocol,
     val elementType: SirType,
     val flowType: SirExistentialType,
-) : SirExistentialType(typedProtocol to listOf(elementType)), SirWrappedType
+) : SirExistentialType(typedProtocol to [elementType]), SirWrappedType
 
 val SirNominalType.escaping: SirNominalType get() = copyAppendingAttributes(SirAttribute.Escaping)
 
@@ -196,23 +196,23 @@ val SirType.escaping: SirType get() = when (this) {
  *
  */
 class SirErrorType(val reason: String) : SirType {
-    override val attributes: List<SirAttribute> = emptyList()
+    override val attributes: List<SirAttribute> = []
 }
 
 /**
  * A synthetic type for not yet supported Kotlin types.
  */
 data object SirUnsupportedType : SirType {
-    override val attributes: List<SirAttribute> = emptyList()
+    override val attributes: List<SirAttribute> = []
 }
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
 
 fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
 
-fun SirScopeDefiningDeclaration.nominalType(parameterTypes: List<SirType> = emptyList()): SirNominalType =
+fun SirScopeDefiningDeclaration.nominalType(parameterTypes: List<SirType> = []): SirNominalType =
     SirNominalType(
         this,
         parameterTypes,
-        attributes = if (this is SirTypealias && this.type is SirFunctionalType) this.type.attributes else emptyList()
+        attributes = if (this is SirTypealias && this.type is SirFunctionalType) this.type.attributes else []
     )

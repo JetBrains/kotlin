@@ -271,7 +271,7 @@ open class ConstraintSystemBuilderImpl(private val mode: Mode = ConstraintSystem
     ) {
         val bound = Bound(
             typeVariable, constrainingType, kind, constraintContext.position,
-            constrainingType.isProper(), constraintContext.derivedFrom ?: emptySet()
+            constrainingType.isProper(), constraintContext.derivedFrom ?: []
         )
         val typeBounds = getTypeBounds(typeVariable)
         if (typeBounds.bounds.contains(bound)) return

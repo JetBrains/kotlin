@@ -24,7 +24,7 @@ class MutableDataTest {
     fun kt39145_1() = withWorker {
         execute(TransferMode.SAFE, { "test" }) {
             val data = MutableData(1_000)
-            val bytes = byteArrayOf(0, 10, 20, 30)
+            val bytes: ByteArray = [0, 10, 20, 30]
             data.append(bytes, 0, 4)
             assertEquals(4, data.size)
 
@@ -36,7 +36,7 @@ class MutableDataTest {
     fun kt39145_2() = withWorker {
         val externalData = MutableData(1_000)
         execute(TransferMode.SAFE, { externalData }) {
-            val bytes = byteArrayOf(0, 10, 20, 30)
+            val bytes: ByteArray = [0, 10, 20, 30]
             it.append(bytes, 0, 4)
             assertEquals(4, it.size)
 
@@ -47,7 +47,7 @@ class MutableDataTest {
     @Test
     fun kt39145_3() {
         val mainThreadData = MutableData(1_000)
-        val bytes = byteArrayOf(0, 10, 20, 30)
+        val bytes: ByteArray = [0, 10, 20, 30]
         mainThreadData.append(bytes, 0, 4)
         assertEquals(4, mainThreadData.size)
 

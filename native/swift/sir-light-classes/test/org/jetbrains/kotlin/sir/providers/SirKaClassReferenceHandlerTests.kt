@@ -97,7 +97,7 @@ class SirKaClassReferenceHandlerTests : SirTranslationTest() {
     }
 
     private inline fun doTest(file: KtFile, testBody: (List<SirDeclaration>, Set<FqName>) -> Unit) {
-        val referencedDeclarations = mutableSetOf<FqName>()
+        val referencedDeclarations: MutableSet<FqName> = []
         val sirSessionBuilder = { kaModule: KaModule ->
             TestSirSession(kaModule) {
                 it.classId?.asSingleFqName()?.let(referencedDeclarations::add)

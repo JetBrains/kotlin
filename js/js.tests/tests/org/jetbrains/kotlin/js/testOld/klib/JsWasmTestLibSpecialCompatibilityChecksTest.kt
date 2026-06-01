@@ -13,7 +13,7 @@ class JsTestLibSpecialCompatibilityChecksTest : WebLibrarySpecialCompatibilityCh
         get() = patchedJsTestWithoutJarManifest
 
     override fun additionalLibraries(): List<String> =
-        listOf(patchedJsStdlibWithoutJarManifest)
+        [patchedJsStdlibWithoutJarManifest]
 
     override val libraryDisplayName: String
         get() = "kotlin-test"
@@ -27,7 +27,7 @@ class WasmTestLibSpecialCompatibilityChecksTest : WebLibrarySpecialCompatibility
         get() = patchedWasmTestWithoutJarManifest
 
     override fun additionalLibraries(): List<String> =
-        listOf(patchedWasmStdlibWithoutJarManifest)
+        [patchedWasmStdlibWithoutJarManifest]
 
     override val libraryDisplayName: String
         get() = "kotlin-test"

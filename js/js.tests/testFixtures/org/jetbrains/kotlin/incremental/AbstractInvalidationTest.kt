@@ -220,8 +220,8 @@ abstract class AbstractInvalidationTest(
     }
 
     private fun CompilerConfiguration.enableKlibRelativePaths(moduleSourceDir: File) {
-        val bases = mutableListOf<String>()
-        val platformDirs = moduleSourceDir.listFiles() ?: arrayOf()
+        val bases: MutableList<String> = []
+        val platformDirs = moduleSourceDir.listFiles() ?: []
         for (platformDir in platformDirs) {
             if (platformDir.isDirectory) {
                 bases.add(platformDir.absolutePath)
@@ -263,9 +263,9 @@ abstract class AbstractInvalidationTest(
 
             val outputKlibFile = resolveModuleArtifact(module, buildDir)
 
-            val friends = mutableListOf<File>()
+            val friends: MutableList<File> = []
             if (moduleStep.rebuildKlib) {
-                val dependencies = mutableListOf(File(stdlibKLib), File(kotlinTestKLib))
+                val dependencies: MutableList<File> = [File(stdlibKLib), File(kotlinTestKLib)]
                 for (dep in moduleStep.dependencies) {
                     val klibFile = resolveModuleArtifact(dep.moduleName, buildDir)
                     dependencies += klibFile
@@ -305,7 +305,7 @@ abstract class AbstractInvalidationTest(
         ) {
             val gotStats = stats.filter { it.key.path !in librariesToExcludeFromStats }
 
-            val checkedLibs = mutableSetOf<KotlinLibraryFile>()
+            val checkedLibs: MutableSet<KotlinLibraryFile> = []
 
             for (info in testInfo) {
                 val libFile = KotlinLibraryFile(info.modulePath)
@@ -316,7 +316,7 @@ abstract class AbstractInvalidationTest(
                 for ([srcFile, dirtyStats] in updateStatus) {
                     for (dirtyStat in dirtyStats) {
                         if (dirtyStat != DirtyFileState.NON_MODIFIED_IR) {
-                            got.getOrPut(dirtyStat.str) { mutableSetOf() }.add(srcFile.toString())
+                            got.getOrPut(dirtyStat.str) { [] }.add(srcFile.toString())
                         }
                     }
                 }
@@ -339,7 +339,7 @@ abstract class AbstractInvalidationTest(
 
         protected fun prepareExternalJsFiles(): MutableList<String> {
             val moduleEmulationPath = ForTestCompileRuntime.transformTestDataPath(MODULE_EMULATION_FILE)
-            return testDir.filesInDir.mapNotNullTo(mutableListOf(moduleEmulationPath.absolutePath)) { file ->
+            return testDir.filesInDir.mapNotNullTo([moduleEmulationPath.absolutePath]) { file ->
                 file.takeIf { it.name.isAllowedJsFile() }?.readText()?.let { jsCode ->
                     val externalModule = jsDir.resolve(file.name)
                     externalModule.writeAsJsModule(jsCode, file.nameWithoutExtension)
@@ -362,7 +362,7 @@ abstract class AbstractInvalidationTest(
             fileAttributes.isRegularFile && "${path.fileName}".isAllowedKtFile()
         }).map { it.toFile() }.collect(Collectors.toList())
 
-        val ktSources = mutableListOf<KtFile>()
+        val ktSources: MutableList<KtFile> = []
         for (sourceFile in sourceFiles) {
             val isCommon = sourceFile.parentFile.name == "common"
             addKotlinSourceRoot(sourceFile.absolutePath, isCommon)

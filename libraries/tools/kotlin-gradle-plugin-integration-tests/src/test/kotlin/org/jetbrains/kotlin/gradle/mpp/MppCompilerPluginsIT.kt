@@ -29,7 +29,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
             enablePlugins = true,
             targetSourceSet = "jvm6Main",
             compileTask = ":compileKotlinJvm6",
-            sourceSets = listOf("commonMain", "jvm6Main"),
+            sourceSets = ["commonMain", "jvm6Main"],
             additionalAssertions = {
                 assertFileInProjectExists("build/classes/kotlin/jvm6/main/com/example/Annotated.class")
                 assertFileInProjectExists("build/classes/kotlin/jvm6/main/com/example/Override.class")
@@ -45,7 +45,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
             enablePlugins = true,
             targetSourceSet = "nodeJsMain",
             compileTask = ":compileKotlinNodeJs",
-            sourceSets = listOf("commonMain", "nodeJsMain")
+            sourceSets = ["commonMain", "nodeJsMain"]
         )
     }
 
@@ -57,7 +57,7 @@ class MppCompilerPluginsIT : KGPBaseTest() {
             enablePlugins = false,
             targetSourceSet = null, // No platform-specific Override.kt for native
             compileTask = ":compileKotlinLinux64",
-            sourceSets = listOf("commonMain", "linux64Main", "nativeMain")
+            sourceSets = ["commonMain", "linux64Main", "nativeMain"]
         )
     }
 

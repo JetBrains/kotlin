@@ -229,22 +229,22 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         val linkerError = reference.getLinkageErrorIfAny(backendContext)
         return when {
             linkerError != null -> {
-                listOf(
+                [
                     makeValueParameter("message", context.irBuiltIns.stringType),
                     makeValueParameter("name", context.irBuiltIns.stringType)
-                )
+                ]
             }
             reference.reflectionTargetSymbol != null -> {
-                listOf(
+                [
                     makeValueParameter("flags", context.irBuiltIns.intType),
                     makeValueParameter("arity", context.irBuiltIns.intType),
                     makeValueParameter("id", context.irBuiltIns.stringType),
                     makeValueParameter("receiver", context.irBuiltIns.anyNType),
                     makeValueParameter("name", context.irBuiltIns.stringType),
-                )
+                ]
             }
             else -> {
-                emptyList()
+                []
             }
         }
     }
@@ -450,8 +450,10 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
 
         // Build the erased function type that matches what callRef expects.
         val anyNType = backendContext.irBuiltIns.anyNType
+
+        @Suppress("ConvertToCollectionLiterals")
         val funcRefParameterTypes = boundValueTypes + List(arity) { anyNType } +
-                if (isSuspend) listOf(anyNType) else emptyList()
+                if (isSuspend) listOf(anyNType) else []
         val erasedFunctionType = backendContext.irBuiltIns.functionN(funcRefParameterTypes.size).typeWith(funcRefParameterTypes + anyNType)
 
         // Check per-file cache to avoid duplicates within the same file
@@ -490,20 +492,20 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
 
         functionReferenceClass.superTypes =
-            listOf(superClass, superInterfaceType) memoryOptimizedPlus additionalInterfaces
+            [superClass, superInterfaceType] memoryOptimizedPlus additionalInterfaces
         val constructor = functionReferenceClass.addConstructor {
             origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
             isPrimary = true
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
         }.apply {
-            parameters = listOf(buildValueParameter(this) {
+            parameters = [buildValueParameter(this) {
                 name = Name.identifier("func")
                 startOffset = SYNTHETIC_OFFSET
                 endOffset = SYNTHETIC_OFFSET
                 type = backendContext.wasmSymbols.wasmTypedFuncRefType(erasedFunctionType)
                 kind = IrParameterKind.Regular
-            }) + boundValueTypes.mapIndexed { index, type ->
+            }] + boundValueTypes.mapIndexed { index, type ->
                 buildValueParameter(this) {
                     name = Name.identifier("p${index}")
                     startOffset = SYNTHETIC_OFFSET
@@ -601,7 +603,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
 
         fun DeclarationIrBuilder.buildConstructorCall(receiverTemp: IrVariable?) =
-            irCallConstructor(constructor.symbol, emptyList()).apply {
+            irCallConstructor(constructor.symbol, []).apply {
                 origin = JsStatementOrigins.CALLABLE_REFERENCE_CREATE
                 arguments[0] = IrRawFunctionReferenceImpl(
                     startOffset = reference.startOffset,
@@ -794,7 +796,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
                                 irCall(
                                     getContinuationSymbol,
                                     getContinuationSymbol.owner.returnType,
-                                    listOf(anyNType)
+                                    [anyNType]
                                 )
                             )
                         }

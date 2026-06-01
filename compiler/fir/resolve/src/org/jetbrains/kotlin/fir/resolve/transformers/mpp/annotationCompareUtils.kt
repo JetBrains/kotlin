@@ -71,7 +71,7 @@ private fun FirExpectActualMatchingContext.areAnnotationArgumentsEqual(
             if (it is FirSpreadArgumentExpression && it.expression is FirCollectionLiteral) {
                 (it.expression as FirCollectionLiteral).argumentList.arguments
             } else {
-                listOf(it)
+                [it]
             }
         }
     }

@@ -49,13 +49,13 @@ class LazyExplicitImportScope(
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        if (name != aliasName) return emptyList()
+        if (name != aliasName) return []
 
         return collectCallableMemberDescriptors(location, MemberScope::getContributedFunctions)
     }
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        if (name != aliasName) return emptyList()
+        if (name != aliasName) return []
 
         return collectCallableMemberDescriptors(location, MemberScope::getContributedVariables)
     }
@@ -110,7 +110,7 @@ class LazyExplicitImportScope(
         return descriptors
     }
 
-    override fun computeImportedNames() = setOf(aliasName)
+    override fun computeImportedNames(): Set<Name> = [aliasName]
 
     override fun printStructure(p: Printer) {
         p.println(this::class.java.simpleName, ": ", aliasName)

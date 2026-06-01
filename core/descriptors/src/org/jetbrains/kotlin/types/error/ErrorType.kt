@@ -13,7 +13,7 @@ class ErrorType @JvmOverloads internal constructor(
     override val constructor: TypeConstructor,
     override val memberScope: MemberScope,
     val kind: ErrorTypeKind,
-    override val arguments: List<TypeProjection> = emptyList(),
+    override val arguments: List<TypeProjection> = [],
     override val isMarkedNullable: Boolean = false,
     vararg val formatParams: String
 ) : SimpleType() {

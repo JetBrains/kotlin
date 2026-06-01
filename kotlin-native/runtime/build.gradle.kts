@@ -758,6 +758,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xklib-ir-inliner=intra-module",
             "-Xcontext-parameters",
             "-Xname-based-destructuring=complete",
+            "-Xcollection-literals",
             "-module-name", KOTLIN_NATIVE_STDLIB_NAME,
             "-opt-in=kotlin.RequiresOptIn",
             "-opt-in=kotlin.contracts.ExperimentalContracts",

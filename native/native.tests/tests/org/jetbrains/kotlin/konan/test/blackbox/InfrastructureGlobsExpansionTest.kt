@@ -28,7 +28,7 @@ class InfrastructureGlobsExpansionTest {
     @Test
     fun noGlobs() {
         val fileName = "file.kt"
-        val dirNames = listOf(null, "foo", "foo/bar", "foo/bar/baz")
+        val dirNames = [null, "foo", "foo/bar", "foo/bar/baz"]
 
         dirNames.forEach { dirName ->
             val fullPattern = testDir.resolveNullable(dirName).resolve(fileName)
@@ -41,8 +41,8 @@ class InfrastructureGlobsExpansionTest {
 
     @Test
     fun filePattern() {
-        val fileNames = listOf("one.kt", "two.kt", "three.kt", "four.java", "five.py")
-        val dirNames = listOf(null, "foo", "foo/bar", "foo/bar/baz")
+        val fileNames = ["one.kt", "two.kt", "three.kt", "four.java", "five.py"]
+        val dirNames = [null, "foo", "foo/bar", "foo/bar/baz"]
         val pattern = "*.kt"
 
         dirNames.forEach { dirName ->
@@ -60,8 +60,8 @@ class InfrastructureGlobsExpansionTest {
 
     @Test
     fun dirPattern() {
-        val fileNames = listOf("one.kt", "two.kt", "three.kt", "four.java", "five.py")
-        val dirNames = listOf(null, "foo", "bar", "baz")
+        val fileNames = ["one.kt", "two.kt", "three.kt", "four.java", "five.py"]
+        val dirNames = [null, "foo", "bar", "baz"]
         val pattern = "ba*/*.kt" // covers "bar" & "baz" dirs
 
         dirNames.forEach { dirName -> createDirWithFiles(dirName, fileNames) }
@@ -76,8 +76,8 @@ class InfrastructureGlobsExpansionTest {
 
     @Test
     fun doubleStarPattern() {
-        val fileNames = listOf("one.kt", "two.kt", "three.kt", "four.java", "five.py")
-        val dirNames = listOf(null, "foo", "foo/bar", "foo/bar/baz")
+        val fileNames = ["one.kt", "two.kt", "three.kt", "four.java", "five.py"]
+        val dirNames = [null, "foo", "foo/bar", "foo/bar/baz"]
         val pattern = "foo/**.kt" // covers "foo" and all subdirectories
 
         dirNames.forEach { dirName -> createDirWithFiles(dirName, fileNames) }

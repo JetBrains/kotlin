@@ -24,10 +24,10 @@ class ScriptExtensionDiscoveryTest : BaseCompilationTest() {
         if (version < KotlinToolingVersion(2, 4, 0, "snapshot")
             && kotlinToolchain::class.simpleName != "KotlinToolchainsV1Adapter") {
             assertThrows<UnsupportedOperationException> {
-                kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder(emptyList())
+                kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder([])
             }
         } else {
-            assertInstanceOf<DiscoverScriptExtensionsOperation>(kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder(emptyList()))
+            assertInstanceOf<DiscoverScriptExtensionsOperation>(kotlinToolchain.jvm.discoverScriptExtensionsOperationBuilder([]))
         }
 
     }

@@ -32,7 +32,7 @@ class IrInterpreterEnvironment(
     val configuration: IrInterpreterConfiguration = IrInterpreterConfiguration(),
 ) {
     internal val callStack: CallStack = CallStack()
-    internal val irExceptions = mutableListOf<IrClass>()
+    internal val irExceptions: MutableList<IrClass> = []
     internal var mapOfEnums = mutableMapOf<IrSymbol, Complex>()
     internal var mapOfObjects = mutableMapOf<IrSymbol, Complex>()
     internal var javaClassToIrClass = mutableMapOf<Class<*>, IrClass>()
@@ -74,7 +74,7 @@ class IrInterpreterEnvironment(
 
     internal fun getCachedFunction(
         symbol: IrFunctionSymbol,
-        boundParameters: Set<IrValueParameter> = emptySet(),
+        boundParameters: Set<IrValueParameter> = [],
         fromDelegatingCall: Boolean = false
     ): IrFunctionSymbol? {
         return functionCache[CacheFunctionSignature(symbol, boundParameters, fromDelegatingCall)]
@@ -82,7 +82,7 @@ class IrInterpreterEnvironment(
 
     internal fun setCachedFunction(
         symbol: IrFunctionSymbol,
-        boundParameters: Set<IrValueParameter> = emptySet(),
+        boundParameters: Set<IrValueParameter> = [],
         fromDelegatingCall: Boolean = false,
         newFunction: IrFunctionSymbol
     ): IrFunctionSymbol {

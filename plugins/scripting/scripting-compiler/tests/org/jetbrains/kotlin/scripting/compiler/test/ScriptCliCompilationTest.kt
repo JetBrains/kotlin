@@ -76,7 +76,7 @@ class ScriptCliCompilationTest {
 
     @Test
     fun testSimpleScriptWithArgs() {
-        val out = checkRun("hello_args.kts", listOf("kotlin"))
+        val out = checkRun("hello_args.kts", ["kotlin"])
         assertEquals("Hello, kotlin!", out)
     }
 
@@ -87,13 +87,13 @@ class ScriptCliCompilationTest {
     }
 
 
-    private val thisClasspath = listOf(PathUtil.getResourcePathForClass(ScriptCliCompilationTest::class.java))
+    private val thisClasspath = [PathUtil.getResourcePathForClass(ScriptCliCompilationTest::class.java)]
 
     private fun runCompiler(
         script: File,
-        args: List<String> = emptyList(),
+        args: List<String> = [],
         scriptDef: KClass<*>? = null,
-        classpath: List<File> = emptyList()
+        classpath: List<File> = []
     ): Pair<ExitCode, MessageCollector> {
 
         val collector = MessageCollectorImpl()
@@ -121,16 +121,16 @@ class ScriptCliCompilationTest {
 
     private fun checkRun(
         scriptFileName: String,
-        args: List<String> = emptyList(),
+        args: List<String> = [],
         scriptDef: KClass<*>? = null,
-        classpath: List<File> = emptyList()
+        classpath: List<File> = []
     ): String = checkRun(ForTestCompileRuntime.transformTestDataPath(testDataPath + File.separator + scriptFileName), args, scriptDef, classpath)
 
     private fun checkRun(
         scriptFile: File,
-        args: List<String> = emptyList(),
+        args: List<String> = [],
         scriptDef: KClass<*>? = null,
-        classpath: List<File> = emptyList()
+        classpath: List<File> = []
     ): String =
         captureOut {
             val res = runCompiler(scriptFile, args, scriptDef, classpath)
@@ -162,7 +162,7 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
                     ?.flatMap {
                         (it as? Import)?.sources?.map { sourceName ->
                             FileScriptSource(scriptBaseDir?.resolve(sourceName) ?: File(sourceName))
-                        } ?: emptyList()
+                        } ?: []
                     }
                 val deps = annotations
                     ?.mapNotNull {

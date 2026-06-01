@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import kotlin.reflect.KClass
 import kotlin.reflect.full.allSuperclasses
 
-private val implementationPackageNames = listOf(
+private val implementationPackageNames = [
     "org.jetbrains.kotlin.analysis.api.impl.base",
     "org.jetbrains.kotlin.analysis.api.fir",
     "org.jetbrains.kotlin.analysis.api.descriptors",
     "org.jetbrains.kotlin.references.fe10",
-)
+]
 
 @KaImplementationDetail
 public fun getApiKClassOf(value: Any): KClass<*> {
@@ -25,7 +25,7 @@ public fun getApiKClassOf(value: Any): KClass<*> {
     }
 
     val valueClass = value::class
-    val allClasses = listOf(valueClass) + valueClass.allSuperclasses
+    val allClasses = [valueClass] + valueClass.allSuperclasses
 
     val matchingClasses = allClasses.filter { it.isImplementationIndependent() }
     val matchingClassSet = matchingClasses.toSet()

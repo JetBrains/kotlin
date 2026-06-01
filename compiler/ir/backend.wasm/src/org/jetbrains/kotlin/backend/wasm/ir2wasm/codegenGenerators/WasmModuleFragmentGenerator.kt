@@ -17,10 +17,10 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class ModuleReferencedDeclarations(
-    val functions: MutableSet<IdSignature> = mutableSetOf(),
-    val globalVTable: MutableSet<IdSignature> = mutableSetOf(),
-    val globalClassITable: MutableSet<IdSignature> = mutableSetOf(),
-    val rttiGlobal: MutableSet<IdSignature> = mutableSetOf(),
+    val functions: MutableSet<IdSignature> = [],
+    val globalVTable: MutableSet<IdSignature> = [],
+    val globalClassITable: MutableSet<IdSignature> = [],
+    val rttiGlobal: MutableSet<IdSignature> = [],
 )
 
 class WasmModuleFragmentGenerator(

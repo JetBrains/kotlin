@@ -8,10 +8,10 @@ import org.jetbrains.jps.model.serialization.JpsModelSerializerExtension
 import org.jetbrains.jps.model.serialization.module.JpsModuleSourceRootPropertiesSerializer
 
 open class KotlinCommonJpsModelSerializerExtension : JpsModelSerializerExtension() {
-    override fun getModuleSourceRootPropertiesSerializers(): List<JpsModuleSourceRootPropertiesSerializer<*>> = listOf(
+    override fun getModuleSourceRootPropertiesSerializers(): List<JpsModuleSourceRootPropertiesSerializer<*>> = [
         KotlinSourceRootPropertiesSerializer.Source,
         KotlinSourceRootPropertiesSerializer.TestSource,
         KotlinResourceRootPropertiesSerializer.Resource,
         KotlinResourceRootPropertiesSerializer.TestResource
-    )
+    ]
 }

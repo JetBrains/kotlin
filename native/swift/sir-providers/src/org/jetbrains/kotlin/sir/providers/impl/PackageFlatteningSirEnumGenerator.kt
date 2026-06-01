@@ -17,7 +17,7 @@ public class PackageFlatteningSirEnumGenerator(
     private val enumGenerator: SirEnumGenerator,
     private val moduleForTrampolines: SirModule
 ) : SirEnumGenerator {
-    private val processedDeclarations: MutableSet<SirEnum> = mutableSetOf()
+    private val processedDeclarations: MutableSet<SirEnum> = []
 
     override fun FqName.sirPackageEnum(): SirEnum = with(enumGenerator) { this@sirPackageEnum.sirPackageEnum() }
         .also {

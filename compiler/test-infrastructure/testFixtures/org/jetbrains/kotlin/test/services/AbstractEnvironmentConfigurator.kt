@@ -69,7 +69,7 @@ abstract class EnvironmentConfigurator(protected val testServices: TestServices)
 
 class DirectiveToConfigurationKeyExtractor {
     private val booleanDirectivesMap = mutableMapOf<SimpleDirective, CompilerConfigurationKey<Boolean>>()
-    private val invertedBooleanDirectives = mutableSetOf<SimpleDirective>()
+    private val invertedBooleanDirectives: MutableSet<SimpleDirective> = []
     private val stringDirectivesMap = mutableMapOf<StringDirective, CompilerConfigurationKey<String>>()
     private val valueDirectivesMap = mutableMapOf<ValueDirective<*>, CompilerConfigurationKey<*>>()
 

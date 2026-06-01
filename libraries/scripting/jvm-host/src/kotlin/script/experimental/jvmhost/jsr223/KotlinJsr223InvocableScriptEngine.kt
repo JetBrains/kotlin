@@ -32,7 +32,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
     override fun invokeMethod(thiz: Any?, name: String?, vararg args: Any?): Any? {
         if (name == null) throw java.lang.NullPointerException("method name cannot be null")
         if (thiz == null) throw IllegalArgumentException("cannot invoke method on the null object")
-        return invokeImpl(sequenceOf(thiz), name, args)
+        return invokeImpl([thiz], name, args)
     }
 
     private fun invokeImpl(possibleReceivers: Sequence<Any>, name: String, args: Array<out Any?>): Any? {
@@ -40,7 +40,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
 
         val [fn, mapping] = possibleReceivers.mapNotNull { instance ->
             val candidates = instance::class.functions.filter { it.name == name }
-            candidates.findMapping(listOf(instance) + args)
+            candidates.findMapping([instance] + args)
         }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
 
         val res = try {
@@ -65,7 +65,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
 
     override fun <T : Any> getInterface(thiz: Any?, clasz: Class<T>?): T? {
         if (thiz == null) throw IllegalArgumentException("object cannot be null")
-        return proxyInterface(sequenceOf(thiz), clasz)
+        return proxyInterface([thiz], clasz)
     }
 
     private fun <T : Any> proxyInterface(possibleReceivers: Sequence<Any>, clasz: Class<T>?): T? {
@@ -74,7 +74,7 @@ interface KotlinJsr223InvocableScriptEngine : Invocable {
 
         // TODO: cache the method lookups?
 
-        val proxy = Proxy.newProxyInstance(baseClassLoader, arrayOf(clasz)) { _, method, args ->
+        val proxy = Proxy.newProxyInstance(baseClassLoader, [clasz]) { _, method, args ->
             invokeImpl(possibleReceivers, method.name, args ?: emptyArray())
         }
         return clasz.kotlin.safeCast(proxy)

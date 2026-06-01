@@ -56,7 +56,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 }
             }
         }) { fragmentDependencies ->
-            val visitedDependencies = mutableSetOf<String>()
+            val visitedDependencies: MutableSet<String> = []
             for ([_, dependencies] in fragmentDependencies) {
                 for (dependency in dependencies) {
                     assert(visitedDependencies.add(dependency)) {
@@ -70,7 +70,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
     @DisplayName("native stdlib and platform dependencies are added to fragment dependencies")
     @GradleTest
     fun nativeStdlibIsAdded(gradleVersion: GradleVersion) {
-        doTestFragmentDependenciesArg(gradleVersion, listOf("linuxX64")) { fragmentDependenciesPerFragment ->
+        doTestFragmentDependenciesArg(gradleVersion, ["linuxX64"]) { fragmentDependenciesPerFragment ->
             val nativeDependencies = fragmentDependenciesPerFragment.getValue("nativeMain")
             assert(nativeDependencies.count { "stdlib" in it } == 1 && nativeDependencies.any { "/klib/common/stdlib" in it }) {
                 "Exactly one K/N stdlib dependency is expected in nativeMain: $nativeDependencies"
@@ -97,7 +97,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
 
     private fun doTestFragmentDependenciesArg(
         gradleVersion: GradleVersion,
-        targetsToRun: List<String> = listOf("linuxX64", "jvm", "js"),
+        targetsToRun: List<String> = ["linuxX64", "jvm", "js"],
         additionalProjectConfiguration: Project.() -> Unit = {},
         assertions: (Map<String, List<String>>) -> Unit,
     ) {
@@ -228,7 +228,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 buildOptions = defaultBuildOptions.copy(continueAfterFailure = true)
             ) {
                 // ensures no unexpected task dependencies are added
-                val libraryTasks = setOf(
+                val libraryTasks: Set<String> = [
                     ":library:allMetadataJar",
                     ":library:kmpPartiallyResolvedDependenciesChecker",
                     ":library:checkKotlinGradlePluginConfigurationErrors",
@@ -266,8 +266,8 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:transformLinuxMainDependenciesMetadata",
                     ":library:transformNativeMainDependenciesMetadata",
                     ":library:downloadKotlinNativeDistribution",
-                )
-                val thisProjectTasks = setOf(
+                ]
+                val thisProjectTasks: Set<String> = [
                     ":kmpPartiallyResolvedDependenciesChecker",
                     ":checkKotlinGradlePluginConfigurationErrors",
                     ":commonizeNativeDistribution",
@@ -293,7 +293,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":transformNativeMainDependenciesMetadata",
                     ":transformNativeTestDependenciesMetadata",
                     ":downloadKotlinNativeDistribution"
-                )
+                ]
                 assertExactTasksInGraph(
                     if (localRepository != null) {
                         thisProjectTasks

@@ -31,11 +31,11 @@ class AtomicfuJvmIrTransformer(
     override val atomicfuFunctionCallTransformer: AtomicFunctionCallTransformer = JvmAtomicFunctionCallTransformer()
 
     private inner class JvmAtomicExtensionsTransformer : AtomicExtensionTransformer() {
-        override fun transformedExtensionsForAllAtomicHandlers(atomicExtension: IrFunction): List<IrSimpleFunction> = listOf(
+        override fun transformedExtensionsForAllAtomicHandlers(atomicExtension: IrFunction): List<IrSimpleFunction> = [
             generateExtensionForAtomicHandler(AtomicHandlerType.ATOMIC_FIELD_UPDATER, atomicExtension),
             generateExtensionForAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, atomicExtension),
             generateExtensionForAtomicHandler(AtomicHandlerType.ATOMIC_ARRAY, atomicExtension)
-        )
+        ]
     }
 
     private inner class JvmAtomicPropertiesTransformer : AtomicPropertiesTransformer() {
@@ -67,10 +67,10 @@ class AtomicfuJvmIrTransformer(
                 body = irBlockBody {
                     +irReturn(
                         if (accessor.isGetter) {
-                            invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "get", emptyList(), accessor.returnType)
+                            invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "get", [], accessor.returnType)
                         } else {
                             val arg = accessor.parameters.last().capture()
-                            invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "set", listOf(arg), accessor.returnType)
+                            invokeFunctionOnAtomicHandler(AtomicHandlerType.BOXED_ATOMIC, getBoxedAtomicProperty, "set", [arg], accessor.returnType)
                         }
                     )
                 }

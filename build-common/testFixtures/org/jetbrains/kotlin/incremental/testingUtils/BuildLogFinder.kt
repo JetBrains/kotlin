@@ -44,7 +44,7 @@ data class BuildLogFinder(
     }
 
     fun findBuildLog(dir: File): File? {
-        val names = dir.list() ?: arrayOf()
+        val names = dir.list() ?: []
         val files = names.filter { File(dir, it).isFile }.toSet()
         val matchedName = when {
             isJpsBuild && JPS_LOG in files -> JPS_LOG

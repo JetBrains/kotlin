@@ -37,7 +37,7 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             fooKt.writeText(fooKt.readText().replace("foo()", "foo(i: Int = 1)"))
 
             module1.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = listOf(fooKt.toFile()), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [fooKt.toFile()], removedFiles = []),
             ) {
                 assertCompiledSources("foo.kt", "bar.kt")
                 assertLogContainsPatterns(LogLevel.DEBUG, ".*Incremental compilation completed".toRegex())
@@ -51,7 +51,7 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
     fun testTwoModules(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             // this is not the scenario DSL, so the modules are not built at this moment
 
@@ -63,14 +63,14 @@ class ExampleIncrementalCompilationTest : BaseCompilationTest() {
             barKt.writeText(barKt.readText().replace("bar()", "bar(i: Int = 1)"))
 
             module1.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = listOf(barKt.toFile()), removedFiles = emptyList()),
+                SourcesChanges.Known(modifiedFiles = [barKt.toFile()], removedFiles = []),
                 icOptionsConfigAction = {
                     it[BaseIncrementalCompilationConfiguration.KEEP_IC_CACHES_IN_MEMORY] = false
                 }
             )
 
             module2.compileIncrementally(
-                SourcesChanges.Known(modifiedFiles = emptyList(), removedFiles = emptyList())
+                SourcesChanges.Known(modifiedFiles = [], removedFiles = [])
             ) {
                 assertCompiledSources("b.kt")
             }

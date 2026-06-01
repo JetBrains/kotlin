@@ -147,12 +147,12 @@ fun main(args: Array<String>) {
                     "diagnostics/tests",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                     pattern = KT_OR_KTS.canFreezeIDE,
-                    excludeDirs = listOf("jvm", "headerMode")
+                    excludeDirs = ["jvm", "headerMode"]
                 )
                 model(
                     "diagnostics/testsWithStdLib",
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                    excludeDirs = listOf("native"),
+                    excludeDirs = ["native"],
                     pattern = KT_OR_KTS.canFreezeIDE,
                 )
             }
@@ -172,20 +172,20 @@ fun main(args: Array<String>) {
             testClass<AbstractLLBlackBoxTest> {
                 model(
                     "codegen/box",
-                    excludeDirs = listOf(
+                    excludeDirs = [
                         "script", // script is excluded until KT-60127 is implemented
                         "multiplatform/k1",
-                    )
+                    ]
                 )
             }
 
             testClass<AbstractLLReversedBlackBoxTest> {
                 model(
                     "codegen/box",
-                    excludeDirs = listOf(
+                    excludeDirs = [
                         "script", // script is excluded until KT-60127 is implemented
                         "multiplatform/k1",
-                    )
+                    ]
                 )
             }
 
@@ -227,7 +227,7 @@ fun main(args: Array<String>) {
             fun TestGroup.TestClass.modelInit() {
                 model(
                     "diagnostics",
-                    excludeDirs = listOf("helpers") + detectDirsWithTestsMapFileOnly("diagnostics"),
+                    excludeDirs = ["helpers"] + detectDirsWithTestsMapFileOnly("diagnostics"),
                     excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
                 )
             }

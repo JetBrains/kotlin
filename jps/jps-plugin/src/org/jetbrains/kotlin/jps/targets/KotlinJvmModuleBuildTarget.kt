@@ -330,7 +330,7 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
 
     private fun findJavaSourceRoots(context: CompileContext): List<JvmSourceRoot> {
         val roots = context.projectDescriptor.buildRootIndex.getTargetRoots(jpsModuleBuildTarget, context)
-        val result = mutableListOf<JvmSourceRoot>()
+        val result: MutableList<JvmSourceRoot> = []
         for (root in roots) {
             val filePath = root.rootFile
             val file = filePath.toFile()
@@ -379,14 +379,14 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         }
 
         fun getOldSourceFiles(target: ModuleBuildTarget, generatedClass: GeneratedJvmClass): Set<File> {
-            val cache = incrementalCaches[kotlinContext.targetsBinding[target]] ?: return emptySet()
+            val cache = incrementalCaches[kotlinContext.targetsBinding[target]] ?: return []
             cache as JpsIncrementalJvmCache
 
             val className = generatedClass.outputClass.className
-            if (!cache.isMultifileFacade(className)) return emptySet()
+            if (!cache.isMultifileFacade(className)) return []
 
             // In case of graph implementation of JPS
-            if (KotlinBuilder.useDependencyGraph || previousMappings == null) return emptySet()
+            if (KotlinBuilder.useDependencyGraph || previousMappings == null) return []
 
             val name = previousMappings.getName(className.internalName)
             return previousMappings.getClassSources(name).toSet()
@@ -450,6 +450,6 @@ class KotlinJvmModuleBuildTarget(kotlinContext: KotlinCompileContext, jpsModuleB
         val importedFqNames = importTracker.filePathToImportedFqNamesMap[sourceFile.path]
         if (enumFqNameClasses == null && importedFqNames == null) return
 
-        callback.registerImports(output.outputClass.className.internalName, importedFqNames ?: listOf(), enumFqNameClasses ?: listOf())
+        callback.registerImports(output.outputClass.className.internalName, importedFqNames ?: [], enumFqNameClasses ?: [])
     }
 }

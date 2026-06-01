@@ -33,12 +33,12 @@ class KtVisitorTest : KotlinTestWithEnvironment() {
     }
 
     fun testHiddenTokensInStringConcatenation() {
-        val expectedComments = listOf("/* Block comment before plus */", "/* Block comment after plus */", "// Line comment")
+        val expectedComments = ["/* Block comment before plus */", "/* Block comment after plus */", "// Line comment"]
 
         val code = """val s = "s1" ${expectedComments[0]} + ${expectedComments[1]} "s2" + ${expectedComments[2]}
             |"s3"""".trimMargin()
 
-        val actualComments = mutableListOf<String>()
+        val actualComments: MutableList<String> = []
         var insideStringConcatenation = false
         var actualWhitespaceCount = 0
         var actualPlusOperatorCount = 0

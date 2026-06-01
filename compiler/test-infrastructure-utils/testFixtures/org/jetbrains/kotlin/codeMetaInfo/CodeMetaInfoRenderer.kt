@@ -53,7 +53,7 @@ object CodeMetaInfoRenderer {
         builder: StringBuilder
     ) {
         checkOpenedAndCloseStringIfNeeded(opened, offset, builder)
-        val matchedCodeMetaInfos = sortedMetaInfos[offset] ?: emptyList()
+        val matchedCodeMetaInfos = sortedMetaInfos[offset] ?: []
         if (matchedCodeMetaInfos.isNotEmpty()) {
             val iterator = matchedCodeMetaInfos.listIterator()
             var current: CodeMetaInfo? = iterator.next()
@@ -98,7 +98,7 @@ object CodeMetaInfoRenderer {
         return metaInfos.groupBy { it.start }.map { [_, withSameStart] ->
             withSameStart.groupBy { it.end }.map { [_, withSameEnd] ->
                 withSameEnd.groupBy { it.tag }.map { [_, withSameTag] ->
-                    val visited = mutableSetOf<CodeMetaInfo>()
+                    val visited: MutableSet<CodeMetaInfo> = []
                     buildList {
                         for (info in withSameTag) {
                             if (!visited.add(info)) continue
@@ -109,7 +109,7 @@ object CodeMetaInfoRenderer {
                             val otherInfosWithAttributes = withSameTag
                                 .filter { it.attributes.isNotEmpty() && (it !in visited || it is ParsedCodeMetaInfo && it !== info) }
                                 .onEach { visited.add(it) }
-                            val newAttributes = (listOf(info) + otherInfosWithAttributes).flatMap { it.attributes }
+                            val newAttributes = ([info] + otherInfosWithAttributes).flatMap { it.attributes }
                             info.attributes.clear()
                             info.attributes.addAll(newAttributes)
                             info.renderConfiguration.postProcessAttributes(info)

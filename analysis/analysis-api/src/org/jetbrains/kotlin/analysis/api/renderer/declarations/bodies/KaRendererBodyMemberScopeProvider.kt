@@ -49,7 +49,7 @@ public interface KaRendererBodyMemberScopeProvider {
     @KaExperimentalApi
     public object NONE : KaRendererBodyMemberScopeProvider {
         override fun getMemberScope(analysisSession: KaSession, symbol: KaDeclarationContainerSymbol): List<KaDeclarationSymbol> {
-            return emptyList()
+            return []
         }
     }
 }

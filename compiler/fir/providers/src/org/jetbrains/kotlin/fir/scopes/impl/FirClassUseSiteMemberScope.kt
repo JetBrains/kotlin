@@ -34,7 +34,7 @@ class FirClassUseSiteMemberScope(
 ) {
     override fun collectProperties(name: Name): Collection<FirVariableSymbol<*>> {
         return buildList {
-            val explicitlyDeclaredProperties = mutableSetOf<FirVariableSymbol<*>>()
+            val explicitlyDeclaredProperties: MutableSet<FirVariableSymbol<*>> = []
             declaredMemberScope.processPropertiesByName(name) { symbol ->
                 if (symbol.isStatic) return@processPropertiesByName
                 if (symbol is FirPropertySymbol) {
@@ -55,7 +55,7 @@ class FirClassUseSiteMemberScope(
     }
 
     private fun computeDirectOverriddenForDeclaredProperty(declaredPropertySymbol: FirPropertySymbol): List<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> {
-        val result = mutableListOf<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>>()
+        val result: MutableList<FirTypeIntersectionScopeContext.ResultOfIntersection<FirPropertySymbol>> = []
         for (resultOfIntersection in getPropertiesAndFieldsFromSupertypesByName(declaredPropertySymbol.name).first) {
             resultOfIntersection.collectDirectOverriddenForDeclared(declaredPropertySymbol, result) { overrideCandidate, baseProperty, _ ->
                 overrideChecker.isOverriddenProperty(overrideCandidate, baseProperty)
@@ -69,7 +69,7 @@ class FirClassUseSiteMemberScope(
             return it to fieldsFromSupertypes.getValue(name)
         }
 
-        val fields = mutableListOf<FirFieldSymbol>()
+        val fields: MutableList<FirFieldSymbol> = []
         val properties = supertypeScopeContext.collectIntersectionResultsForCallables<FirPropertySymbol>(name) { propertyName, processor ->
             processPropertiesByName(propertyName) {
                 when (it) {

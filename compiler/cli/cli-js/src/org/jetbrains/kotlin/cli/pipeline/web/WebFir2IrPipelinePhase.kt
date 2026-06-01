@@ -43,8 +43,8 @@ import org.jetbrains.kotlin.storage.LockBasedStorageManager
 
 object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFir2IrPipelineArtifact>(
     name = "WebFir2IrPipelinePhase",
-    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
-    postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.TranslationToIrStarted],
+    postActions = [PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: WebFrontendPipelineArtifact): WebFir2IrPipelineArtifact {
         (val firResult = frontendOutput, val configuration, val moduleStructure, val hasErrors) = input
@@ -69,7 +69,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
         val fir2IrExtensions = Fir2IrExtensions.Default
 
         var builtInsModule: KotlinBuiltIns? = null
-        val dependencies = mutableListOf<ModuleDescriptorImpl>()
+        val dependencies: MutableList<ModuleDescriptorImpl> = []
 
         val librariesDescriptors = moduleStructure.klibs.all.map { resolvedLibrary ->
             val storageManager = LockBasedStorageManager("ModulesStructure")
@@ -100,7 +100,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, WebFi
             kotlinBuiltIns = builtInsModule ?: DefaultBuiltIns.Instance,
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
             specialAnnotationsProvider = null,
-            extraActualDeclarationExtractorsInitializer = { emptyList() },
+            extraActualDeclarationExtractorsInitializer = { [] },
         ) { irModuleFragment ->
             (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }

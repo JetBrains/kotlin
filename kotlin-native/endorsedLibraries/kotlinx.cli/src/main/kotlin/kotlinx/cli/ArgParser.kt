@@ -117,12 +117,12 @@ open class ArgParser(
     /**
      * Map with declared options.
      */
-    private val declaredOptions = mutableListOf<CLIEntityWrapper>()
+    private val declaredOptions: MutableList<CLIEntityWrapper> = []
 
     /**
      * Map with declared arguments.
      */
-    private val declaredArguments = mutableListOf<CLIEntityWrapper>()
+    private val declaredArguments: MutableList<CLIEntityWrapper> = []
 
     /**
      * State of parser. Stores last parsing result or null.
@@ -153,7 +153,7 @@ open class ArgParser(
     /**
      * Name with all commands that should be executed.
      */
-    protected val fullCommandName = mutableListOf(programName)
+    protected val fullCommandName: MutableList<String> = [programName]
 
     /**
      * Flag to recognize if CLI entities can be treated as options.
@@ -163,12 +163,12 @@ open class ArgParser(
     /**
      * Arguments which should be parsed with subcommands.
      */
-    private val subcommandsArguments = mutableListOf<String>()
+    private val subcommandsArguments: MutableList<String> = []
 
     /**
      * Options which should be parsed with subcommands.
      */
-    private val subcommandsOptions = mutableListOf<String>()
+    private val subcommandsOptions: MutableList<String> = []
 
     /**
      * Subcommand used in commmand line arguments.

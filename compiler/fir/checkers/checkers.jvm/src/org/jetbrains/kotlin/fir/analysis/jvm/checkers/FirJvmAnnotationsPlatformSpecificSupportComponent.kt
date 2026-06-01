@@ -15,24 +15,24 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 
 object FirJvmAnnotationsPlatformSpecificSupportComponent : FirAnnotationsPlatformSpecificSupportComponent() {
-    override val requiredAnnotationsWithArguments: Set<ClassId> = setOf(
+    override val requiredAnnotationsWithArguments: Set<ClassId> = [
         JvmStandardClassIds.Annotations.Java.Target,
         JvmStandardClassIds.Annotations.JvmName,
-    )
+    ]
 
     override val requiredAnnotations: Set<ClassId> = requiredAnnotationsWithArguments + setOf(
         JvmStandardClassIds.Annotations.Java.Deprecated,
         JvmStandardClassIds.Annotations.JvmRecord,
     )
 
-    override val volatileAnnotations: Set<ClassId> = setOf(
+    override val volatileAnnotations: Set<ClassId> = [
         JvmStandardClassIds.Annotations.JvmVolatile,
-    )
+    ]
 
-    override val repeatableAnnotations: Set<ClassId> = setOf(
+    override val repeatableAnnotations: Set<ClassId> = [
         JvmStandardClassIds.Annotations.Java.Repeatable,
         JvmStandardClassIds.Annotations.JvmRepeatable,
-    )
+    ]
 
     override val deprecationAnnotationsWithOverridesPropagation: Map<ClassId, Boolean> = mapOf(
         JvmStandardClassIds.Annotations.Java.Deprecated to false,

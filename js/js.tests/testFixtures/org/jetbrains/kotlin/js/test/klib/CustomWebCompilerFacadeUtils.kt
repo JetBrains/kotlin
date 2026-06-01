@@ -51,16 +51,16 @@ fun TestModule.collectDependencies(
         null -> { // JS
             // For proper compilation by the old compiler version, `kotlin-stdlib-js-ir-minimal-for-test` cannot be used from the current Kotlin repo.
             // Instead, stdlib and `kotlin.test` from old dist must be used for all tests (`kotlin.test` is not part of `kotlin-stdlib-js-*.klib`)
-            listOf(
+            [
                 customJsCompilerSettings.stdlib,
                 customJsCompilerSettings.kotlinTest,
-            )
+            ]
         }
         WasmTarget.JS -> {
-            listOf(
+            [
                 customWasmJsCompilerSettings.stdlib,
                 customWasmJsCompilerSettings.kotlinTest,
-            )
+            ]
         }
         WasmTarget.WASI -> error("WASI target is not yet supported in the first phase of ${CustomWebCompilerFirstStageFacade::class.simpleName}")
     }

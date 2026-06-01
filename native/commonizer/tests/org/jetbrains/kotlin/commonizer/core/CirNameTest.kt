@@ -17,12 +17,12 @@ class CirNameTest {
         listOf("", "foo", "bar", "<stdlib>").forEach { rawName ->
             val kotlinName = Name.guessByFirstCharacter(rawName)
 
-            val names = listOf(
+            val names = [
                 CirName.create(rawName),
                 CirName.create(rawName),
                 CirName.create(kotlinName),
                 CirName.create(kotlinName)
-            )
+            ]
 
             val first = names.first()
             names.forEach { name ->

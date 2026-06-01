@@ -34,7 +34,7 @@ import java.lang.reflect.Field
 import java.lang.reflect.Method
 
 @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
-private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
+private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT: Set<Class<*>> = [
     // Primitives
     java.lang.Integer::class.java, java.lang.Character::class.java, java.lang.Byte::class.java, java.lang.Long::class.java,
     java.lang.Short::class.java, java.lang.Boolean::class.java, java.lang.Double::class.java, java.lang.Float::class.java,
@@ -43,7 +43,7 @@ private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
     ShortArray::class.java, BooleanArray::class.java, DoubleArray::class.java, FloatArray::class.java,
     // Others
     Class::class.java, String::class.java
-)
+]
 
 class ReflectKotlinClass private constructor(
     val klass: Class<*>,

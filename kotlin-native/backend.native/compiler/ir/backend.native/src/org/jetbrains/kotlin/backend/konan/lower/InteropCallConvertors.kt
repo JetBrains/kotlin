@@ -258,12 +258,12 @@ private fun InteropCallContext.calculateFieldPointer(receiver: IrExpression, off
 private fun InteropCallContext.interpretCPointer(nativePtr: IrExpression, type: IrType): IrMemberAccessExpression<*> {
     require(type.isCPointer()) { "A CPointer expected but was: ${type.render()}" }
     return builder.irCallWithSubstitutedType(
-            symbols.interopInterpretCPointer, listOf((type as IrSimpleType).arguments[0].typeOrFail)
+            symbols.interopInterpretCPointer, [(type as IrSimpleType).arguments[0].typeOrFail]
     ).also { it.arguments[0] = nativePtr }
 }
 
 private fun InteropCallContext.readPointed(nativePtr: IrExpression, type: IrType) =
-        builder.irCallWithSubstitutedType(symbols.interopInterpretNullablePointed, listOf(type)).also {
+        builder.irCallWithSubstitutedType(symbols.interopInterpretNullablePointed, [type]).also {
             it.arguments[0] = nativePtr
         }
 
@@ -272,7 +272,7 @@ private fun InteropCallContext.readObjectiveCReferenceFromMemory(
         type: IrType
 ): IrExpression {
     val readMemory = readValueFromMemory(nativePtr, symbols.nativePtrType)
-    return builder.irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
+    return builder.irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, [type]).apply {
         arguments[0] = readMemory
     }
 }

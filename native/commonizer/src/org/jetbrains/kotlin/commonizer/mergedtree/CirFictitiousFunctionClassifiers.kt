@@ -18,7 +18,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
     private const val MIN_ARITY = 0
     private const val MAX_ARITY = 255
 
-    private val FUNCTION_PREFIXES = arrayOf("Function", "SuspendFunction")
+    private val FUNCTION_PREFIXES: Array<String> = ["Function", "SuspendFunction"]
     private val PACKAGE_NAME = CirPackageName.create("kotlin")
 
     private val classifiers: Map<CirEntityId, CirProvided.RegularClass> = CommonizerMap<CirEntityId, CirProvided.RegularClass>().apply {
@@ -31,7 +31,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
 
     override fun hasClassifier(classifierId: CirEntityId) = classifierId in classifiers
     override fun classifier(classifierId: CirEntityId): CirProvided.RegularClass? = classifiers[classifierId]
-    override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = emptyList()
+    override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = []
 
     private inline fun buildFictitiousFunctionClass(prefix: String, arity: Int, consumer: (CirEntityId, CirProvided.RegularClass) -> Unit) {
         val typeParameters = List(arity + 1) { index ->
@@ -42,7 +42,7 @@ object CirFictitiousFunctionClassifiers : CirProvidedClassifiers {
         }
 
         val classId = CirEntityId.create(PACKAGE_NAME, CirName.create("$prefix$arity"))
-        val clazz = CirProvided.RegularClass(typeParameters, emptyList(), Visibilities.Public, ClassKind.INTERFACE)
+        val clazz = CirProvided.RegularClass(typeParameters, [], Visibilities.Public, ClassKind.INTERFACE)
 
         consumer(classId, clazz)
     }

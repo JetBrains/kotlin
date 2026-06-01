@@ -70,7 +70,7 @@ private fun extractAllTransitively(
     declarations: Sequence<KaDeclarationSymbol>,
 ): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> = generateSequence(
     declarations.extractDeclarations()
-        .flatMap { listOf(it) + it.trampolineDeclarations() }
+        .flatMap { [it] + it.trampolineDeclarations() }
         .groupBy { it.parent }.toList()
 ) {
     it.flatMap { [_, children] ->

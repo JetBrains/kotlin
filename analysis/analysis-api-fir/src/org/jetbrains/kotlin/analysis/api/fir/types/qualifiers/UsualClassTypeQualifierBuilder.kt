@@ -45,7 +45,7 @@ internal object UsualClassTypeQualifierBuilder {
             return index == designation.lastIndex || designation[index].isInner || designation[index + 1].isInner
         }
 
-        val result = mutableListOf<KaResolvedClassTypeQualifier>()
+        val result: MutableList<KaResolvedClassTypeQualifier> = []
         designation.forEachIndexed { index, currentClass ->
             val typeParameters = if (needToRenderTypeParameters(index)) {
                 val typeParametersCount = currentClass.typeParameters.count { it is FirTypeParameter }
@@ -59,7 +59,7 @@ internal object UsualClassTypeQualifierBuilder {
 
                 typeParametersLeft -= typeParametersCount
                 coneType.typeArguments.slice(begin until end).map { builder.typeBuilder.buildTypeProjection(it) }
-            } else emptyList()
+            } else []
             result += KaBaseResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassifierSymbol(currentClass.symbol),
                 typeParameters,
@@ -71,7 +71,7 @@ internal object UsualClassTypeQualifierBuilder {
     private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
-        val designation = mutableListOf<FirClassLikeDeclaration>(this)
+        val designation: MutableList<FirClassLikeDeclaration> = [this]
         var currentClass = containingClassLookUp?.toRegularClassSymbol(moduleData.session)?.fir
 
         @OptIn(LookupTagInternals::class)
@@ -91,7 +91,7 @@ internal object UsualClassTypeQualifierBuilder {
             withFirEntry("firDeclaration", declaration)
         }
         return when (declaration) {
-            is FirAnonymousObject -> listOf(declaration)
+            is FirAnonymousObject -> [declaration]
             is FirRegularClass,
             is FirTypeAlias
                 -> declaration.collectForLocal()

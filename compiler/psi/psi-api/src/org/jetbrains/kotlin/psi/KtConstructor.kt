@@ -31,7 +31,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
         @Suppress("DEPRECATION") // KT-78356
         getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
-    override fun getValueParameters() = valueParameterList?.parameters ?: emptyList()
+    override fun getValueParameters() = valueParameterList?.parameters ?: []
 
     override fun getReceiverTypeReference() = null
 
@@ -77,9 +77,9 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
 
     override fun getTypeConstraintList() = null
 
-    override fun getTypeConstraints() = emptyList<KtTypeConstraint>()
+    override fun getTypeConstraints(): List<KtTypeConstraint> = []
 
-    override fun getTypeParameters() = emptyList<KtTypeParameter>()
+    override fun getTypeParameters(): List<KtTypeParameter> = []
 
     override fun getName(): String? = getContainingClassOrObject().name
 

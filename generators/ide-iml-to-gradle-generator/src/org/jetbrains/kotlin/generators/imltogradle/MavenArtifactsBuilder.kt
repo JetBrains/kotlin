@@ -42,7 +42,7 @@ object MavenArtifactsBuilder {
         return result
     }
 
-    private val COMMON_GROUP_NAMES = setOf("platform", "vcs", "tools", "clouds")
+    private val COMMON_GROUP_NAMES: Set<String> = ["platform", "vcs", "tools", "clouds"]
 }
 
 data class MavenArtifact(

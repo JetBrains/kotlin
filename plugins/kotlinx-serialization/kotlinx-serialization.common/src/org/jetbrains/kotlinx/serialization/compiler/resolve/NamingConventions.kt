@@ -17,7 +17,7 @@ object SerializationPackages {
     val descriptorsPackageFqName = FqName("kotlinx.serialization.descriptors")
     val builtinsPackageFqName = FqName("kotlinx.serialization.builtins")
 
-    val allPublicPackages = listOf(packageFqName, encodingPackageFqName, descriptorsPackageFqName, builtinsPackageFqName)
+    val allPublicPackages = [packageFqName, encodingPackageFqName, descriptorsPackageFqName, builtinsPackageFqName]
 }
 
 object SerializationAnnotations {
@@ -203,7 +203,7 @@ object SerializersClassIds {
     val contextSerializerId = ClassId(SerializationPackages.packageFqName, Name.identifier(SpecialBuiltins.contextSerializer))
     val generatedSerializerId = ClassId(SerializationPackages.internalPackageFqName, SerialEntityNames.GENERATED_SERIALIZER_CLASS)
 
-    val setOfSpecialSerializers = setOf(contextSerializerId, polymorphicSerializerId)
+    val setOfSpecialSerializers: Set<ClassId> = [contextSerializerId, polymorphicSerializerId]
 }
 
 object SerializationRuntimeClassIds {

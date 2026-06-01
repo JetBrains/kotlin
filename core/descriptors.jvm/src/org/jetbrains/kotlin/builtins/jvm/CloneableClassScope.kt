@@ -18,14 +18,14 @@ class CloneableClassScope(
     storageManager: StorageManager,
     containingClass: ClassDescriptor
 ) : GivenFunctionsMemberScope(storageManager, containingClass) {
-    override fun computeDeclaredFunctions(): List<FunctionDescriptor> = listOf(
+    override fun computeDeclaredFunctions(): List<FunctionDescriptor> = [
         SimpleFunctionDescriptorImpl.create(containingClass, Annotations.EMPTY, CLONE_NAME, DECLARATION, SourceElement.NO_SOURCE).apply {
             initialize(
                 null, containingClass.thisAsReceiverParameter, emptyList(), emptyList(), emptyList(), containingClass.builtIns.anyType,
                 Modality.OPEN, DescriptorVisibilities.PROTECTED
             )
         }
-    )
+    ]
 
     companion object {
         val CLONE_NAME = Name.identifier("clone")

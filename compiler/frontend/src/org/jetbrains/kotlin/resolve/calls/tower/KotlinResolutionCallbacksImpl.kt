@@ -298,7 +298,7 @@ class KotlinResolutionCallbacksImpl(
 
     override fun bindStubResolvedCallForCandidate(candidate: ResolvedCallAtom) {
         kotlinToResolvedCallTransformer.createStubResolvedCallAndWriteItToTrace<CallableDescriptor>(
-            candidate, trace, emptyList(), substitutor = null
+            candidate, trace, [], substitutor = null
         )
     }
 

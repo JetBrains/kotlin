@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.psi.KtFunctionType
 import org.jetbrains.kotlin.psi.KtNullableType
 import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.stubs.elements.KtParameterElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -50,7 +51,7 @@ object FirContextualFunctionTypeChecker : FirResolvedTypeRefChecker(MppCheckerKi
         source.requireFeatureSupport(LanguageFeature.ContextParameters)
     }
 
-    private val valueParameterElementSet = setOf(KtStubElementTypes.VALUE_PARAMETER)
+    private val valueParameterElementSet: Set<KtParameterElementType> = [KtStubElementTypes.VALUE_PARAMETER]
 
     private fun KtSourceElement.findContextReceiverListSource(): KtSourceElement? {
         fun PsiElement.findContextReceiverListSource(): KtPsiSourceElement? {

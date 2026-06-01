@@ -208,7 +208,7 @@ class KotlinTypeRefinerImpl(
     private fun TypeConstructor.areThereExpectSupertypes(): Boolean {
         var result = false
         DFS.dfs(
-            listOf(this),
+            [this],
             DFS.Neighbors(TypeConstructor::allDependentTypeConstructors),
             DFS.VisitedWithSet(),
             object : DFS.AbstractNodeHandler<TypeConstructor, Unit>() {

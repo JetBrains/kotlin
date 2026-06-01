@@ -11,17 +11,17 @@ import org.jetbrains.kotlin.fir.analysis.checkers.experimental.RedundantInterpol
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.*
 
 object ExperimentalExpressionCheckers : ExpressionCheckers() {
-    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
+    override val functionCallCheckers: Set<FirFunctionCallChecker> = [
         EmptyRangeChecker,
-    )
+    ]
 
-    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = setOf(
+    override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = [
         RedundantInterpolationPrefixCheckerConcatenation,
-    )
+    ]
 
-    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker> = setOf(
+    override val literalExpressionCheckers: Set<FirLiteralExpressionChecker> = [
         RedundantInterpolationPrefixCheckerLiteral,
-    )
+    ]
 
-    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = setOf()
+    override val variableAssignmentCheckers: Set<FirVariableAssignmentChecker> = []
 }

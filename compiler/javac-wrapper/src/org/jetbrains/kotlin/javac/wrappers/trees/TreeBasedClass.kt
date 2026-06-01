@@ -87,7 +87,7 @@ class TreeBasedClass(
                     }
 
                     tree.extending?.let {
-                        (TreeBasedType.create(it, compilationUnit, javac, emptyList(), this) as? JavaClassifierType)
+                        (TreeBasedType.create(it, compilationUnit, javac, [], this) as? JavaClassifierType)
                                 ?.let { list.add(it) }
                     }
 
@@ -96,7 +96,7 @@ class TreeBasedClass(
                     }
 
                     tree.implementing?.mapNotNullTo(list) {
-                        TreeBasedType.create(it, compilationUnit, javac, emptyList(), this) as? JavaClassifierType
+                        TreeBasedType.create(it, compilationUnit, javac, [], this) as? JavaClassifierType
                     }
                 }
             }
@@ -126,7 +126,7 @@ class TreeBasedClass(
         get() = false
 
     override val permittedTypes: Sequence<JavaClassifierType>
-        get() = emptySequence()
+        get() = []
 
     override val lightClassOriginKind: LightClassOriginKind?
         get() = null
@@ -149,7 +149,7 @@ class TreeBasedClass(
                 }
 
     override val recordComponents: Collection<JavaRecordComponent>
-        get() = emptyList()
+        get() = []
 
     override fun hasDefaultConstructor() = !isInterface && constructors.isEmpty()
 
@@ -173,12 +173,12 @@ private class EnumSupertype(private val javaClass: JavaClass,
         get() = javac.JAVA_LANG_ENUM
 
     override val typeArguments: List<JavaType>
-        get() = listOf(TypeArgument())
+        get() = [TypeArgument()]
 
     override val isRaw: Boolean
         get() = false
     override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
+        get() = []
     override val classifierQualifiedName: String
         get() = classifier?.fqName?.asString() ?: ""
     override val presentableText: String
@@ -192,11 +192,11 @@ private class EnumSupertype(private val javaClass: JavaClass,
         override val classifier: JavaClassifier?
             get() = this@EnumSupertype.javaClass
         override val typeArguments: List<JavaType>
-            get() = emptyList()
+            get() = []
         override val isRaw: Boolean
             get() = false
         override val annotations: Collection<JavaAnnotation>
-            get() = emptyList()
+            get() = []
         override val classifierQualifiedName: String
             get() = this@EnumSupertype.javaClass.fqName!!.asString()
         override val presentableText: String

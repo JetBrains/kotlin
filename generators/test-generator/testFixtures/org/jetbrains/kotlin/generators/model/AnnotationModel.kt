@@ -49,7 +49,7 @@ class AnnotationModel(
 }
 
 fun annotation(annotation: Class<out Annotation>, singleArgumentValue: Any): AnnotationModel {
-    return AnnotationModel(annotation, listOf(AnnotationArgumentModel(value = singleArgumentValue)))
+    return AnnotationModel(annotation, [AnnotationArgumentModel(value = singleArgumentValue)])
 }
 
 fun annotation(annotation: Class<out Annotation>, vararg arguments: Pair<String, Any>): AnnotationModel {

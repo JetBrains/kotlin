@@ -9,12 +9,12 @@ import org.jetbrains.kotlin.AbstractPsiKDocCoverageTest
 import org.junit.jupiter.api.Test
 
 class PsiImplementationKDocCoverageTest : AbstractPsiKDocCoverageTest() {
-    override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = listOf(
+    override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = [
         SourceDirectory.ForDumpFileComparison(
-            listOf("src/org/jetbrains/kotlin"),
+            ["src/org/jetbrains/kotlin"],
             "api/psi-impl.undocumented",
         )
-    )
+    ]
 
     @Test
     fun testKDocCoverage() {

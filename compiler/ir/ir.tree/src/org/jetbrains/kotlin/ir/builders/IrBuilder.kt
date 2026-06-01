@@ -301,7 +301,7 @@ fun IrBuilderWithScope.irContinue(loop: IrLoop) =
     IrContinueImpl(startOffset, endOffset, context.irBuiltIns.nothingType, loop)
 
 fun IrBuilderWithScope.irGetObject(classSymbol: IrClassSymbol) =
-    IrGetObjectValueImpl(startOffset, endOffset, IrSimpleTypeImpl(classSymbol, false, emptyList(), emptyList()), classSymbol)
+    IrGetObjectValueImpl(startOffset, endOffset, IrSimpleTypeImpl(classSymbol, false, [], []), classSymbol)
 
 // Also adds created variable into building block
 fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(

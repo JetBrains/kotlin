@@ -36,7 +36,7 @@ class Fir2IrCommonMemberStorage {
     val enumEntryCache: MutableMap<FirEnumEntry, IrEnumEntrySymbol> = mutableMapOf()
 
     val localClassCache: MutableMap<FirClass, IrClass> = mutableMapOf()
-    val localCallableCache: MutableList<Fir2IrScopeCache> = mutableListOf()
+    val localCallableCache: MutableList<Fir2IrScopeCache> = []
 
     val functionCache: ConcurrentHashMap<FirFunction, IrSimpleFunctionSymbol> = ConcurrentHashMap()
     val dataClassGeneratedFunctionsCache: ConcurrentHashMap<FirClass, Fir2IrDeclarationStorage.DataClassGeneratedFunctionsStorage> =
@@ -69,7 +69,7 @@ class Fir2IrCommonMemberStorage {
      * }
      */
     val delegatedClassesInfo: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = mutableMapOf()
-    val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = mutableSetOf()
+    val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = []
 
     // Should be updated respectively when adding new properties
     fun cloneFilteringSymbols(filterOutSymbols: Set<FirBasedSymbol<*>>): Fir2IrCommonMemberStorage {

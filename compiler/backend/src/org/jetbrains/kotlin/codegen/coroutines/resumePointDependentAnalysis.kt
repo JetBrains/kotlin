@@ -84,7 +84,7 @@ private class ReinitializationAnalysisUsingDFS(
 
     override fun calculate(): Array<MutableList<SpillableVariable>> {
         val variablesForReinitializationBySuspensionPointIndex =
-            Array<MutableList<SpillableVariable>>(suspensionPoints.size) { mutableListOf() }
+            Array<MutableList<SpillableVariable>>(suspensionPoints.size) { [] }
         val cfg = ControlFlowGraph.build(methodNode)
         val spEnds: List<Int> = suspensionPoints.map { methodNode.instructions.indexOf(it.suspensionCallEnd) }
         val spIndexBySpEnd = spEnds.withIndex().associateBy({ it.value }, { it.index })
@@ -114,7 +114,7 @@ private class ReinitializationAnalysisUsingDFS(
         currentSPEnd: Int,
         slot: Int,
     ): List<Int> {
-        val foundSpEndsWithUninitializedPathFrom = mutableListOf<Int>()
+        val foundSpEndsWithUninitializedPathFrom: MutableList<Int> = []
         fun handleBeforeChildren(insnIndex: Int): Boolean {
             if (spEnds.contains(insnIndex)) {
                 if (insnIndex != currentSPEnd) {
@@ -174,7 +174,7 @@ private class ReinitializationAnalysisUsingDFA(
         ) { nLocals, _ -> ResumeDependentFrame(context, nLocals) }
         val afterResumeFrames = analyzer.analyze()
         val variablesForReinitializationBySuspensionPointIndex =
-            Array<MutableList<SpillableVariable>>(suspensionPoints.size) { mutableListOf() }
+            Array<MutableList<SpillableVariable>>(suspensionPoints.size) { [] }
         for ([spIndex, suspensionPoint] in suspensionPoints.withIndex()) {
             val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
                 ?: error(

@@ -49,7 +49,7 @@ class TransformerForAdditionalMembersGenerator(context: IrPluginContext) : Abstr
                     UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                     irBuiltIns.nothingType, function.symbol, getValue
                 )
-                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(returnStatement))
+                context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET, [returnStatement])
             }
             else -> function.body
         }

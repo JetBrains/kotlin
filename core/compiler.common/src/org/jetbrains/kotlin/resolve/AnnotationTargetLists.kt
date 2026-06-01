@@ -127,8 +127,8 @@ object AnnotationTargetLists {
     val EMPTY = targetList()
 
     private class TargetListBuilder(vararg val defaultTargets: KotlinTarget) {
-        private var canBeSubstituted: List<KotlinTarget> = listOf()
-        private var onlyWithUseSiteTarget: List<KotlinTarget> = listOf()
+        private var canBeSubstituted: List<KotlinTarget> = []
+        private var onlyWithUseSiteTarget: List<KotlinTarget> = []
 
         fun extraTargets(vararg targets: KotlinTarget) {
             canBeSubstituted = targets.toList()
@@ -150,8 +150,8 @@ object AnnotationTargetLists {
  */
 class AnnotationTargetList(
     val defaultTargets: List<KotlinTarget>,
-    val canBeSubstituted: List<KotlinTarget> = emptyList(),
-    val onlyWithUseSiteTarget: List<KotlinTarget> = emptyList()
+    val canBeSubstituted: List<KotlinTarget> = [],
+    val onlyWithUseSiteTarget: List<KotlinTarget> = []
 ) {
     @Suppress("POTENTIALLY_NON_REPORTED_ANNOTATION")
     @Deprecated(level = DeprecationLevel.ERROR, message = "These lists are not intended to compare them")
@@ -165,16 +165,16 @@ class AnnotationTargetList(
 }
 
 object UseSiteTargetsList {
-    val T_CONSTRUCTOR_PARAMETER = listOf(
+    val T_CONSTRUCTOR_PARAMETER = [
         AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
         AnnotationUseSiteTarget.PROPERTY,
         AnnotationUseSiteTarget.FIELD
-    )
+    ]
 
-    val T_PROPERTY = listOf(
+    val T_PROPERTY = [
         AnnotationUseSiteTarget.PROPERTY,
         AnnotationUseSiteTarget.FIELD
-    )
+    ]
 }
 
 @RequiresOptIn(message = "This target list is for deprecation reporting only and not intended to be widely used.")

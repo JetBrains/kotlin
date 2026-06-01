@@ -409,7 +409,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
             }
         """.trimIndent(),
         validator = {
-            val expectedArity = listOf(2, 3, 4, 15)
+            val expectedArity = [2, 3, 4, 15]
             var i = 0 // to iterate over `hashCode` calls
             it.acceptChildrenVoid(object : IrVisitorVoid() {
                 override fun visitElement(element: IrElement) {
@@ -730,7 +730,7 @@ class ComposerParamTransformTests : AbstractIrTransformTest() {
  */
 private fun noZombieLocalClassSymbols(): (IrElement) -> Unit = { root ->
     // Collect local/anonymous class symbols declared in this IR tree
-    val declaredLocalClassSymbols = mutableSetOf<IrClassSymbol>()
+    val declaredLocalClassSymbols: MutableSet<IrClassSymbol> = []
     root.accept(object : IrVisitorVoid() {
         override fun visitElement(element: IrElement) = element.acceptChildren(this, null)
         override fun visitClass(declaration: IrClass) {

@@ -71,7 +71,7 @@ class ConstructAnnotationTest {
             .filterIsInstance(TestAnnotation::class.java)
 
         assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(annotations.first().options.toList(), ["option"])
     }
 
     @Test
@@ -81,7 +81,7 @@ class ConstructAnnotationTest {
             .filterIsInstance(TestAnnotation::class.java)
 
         assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(annotations.first().options.toList(), ["option"])
     }
 
     @Test
@@ -91,7 +91,7 @@ class ConstructAnnotationTest {
             .filterIsInstance(TestAnnotation::class.java)
 
         assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
+        assertEquals(annotations.first().options.toList(), ["option"])
     }
 
     @Test
@@ -111,8 +111,8 @@ class ConstructAnnotationTest {
             .filterIsInstance(AnnotationWithVarArgAndArray::class.java)
 
         assertEquals(annotations.count(), 1)
-        assertEquals(annotations.first().options.toList(), listOf("option"))
-        assertEquals(annotations.first().moreOptions.toList(), listOf("otherOption"))
+        assertEquals(annotations.first().options.toList(), ["option"])
+        assertEquals(annotations.first().moreOptions.toList(), ["otherOption"])
     }
 
     private fun annotations(filename: String, vararg classes: KClass<out Annotation>): ResultWithDiagnostics<List<Annotation>> {
@@ -151,7 +151,7 @@ class ConstructAnnotationTest {
         }
 
         val data = getScriptCollectedData(ktFile, configuration, null)
-        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: emptyList()
+        val annotations = data[ScriptCollectedData.collectedAnnotations]?.map { it.annotation } ?: []
 
         annotations
             .filterIsInstance(InvalidScriptResolverAnnotation::class.java)

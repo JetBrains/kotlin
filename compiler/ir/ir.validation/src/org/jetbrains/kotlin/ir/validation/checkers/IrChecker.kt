@@ -15,7 +15,7 @@ import kotlin.reflect.KClass
 
 sealed interface IrChecker : IrValidationError.Cause {
     val requiredContextUpdaters : Set<ContextUpdater>
-        get() = emptySet()
+        get() = []
 }
 
 abstract class IrElementChecker<in E : IrElement>(

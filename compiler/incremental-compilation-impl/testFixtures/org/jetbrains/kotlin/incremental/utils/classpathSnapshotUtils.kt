@@ -16,13 +16,13 @@ import java.io.File
 
 fun makeEmptyClasspathChangesForSingleModuleTests(classpathSnapshotDir: File): ClasspathChanges {
     val snapshotFiles = ClasspathSnapshotFiles(
-        currentClasspathEntrySnapshotFiles = emptyList(),
+        currentClasspathEntrySnapshotFiles = [],
         classpathSnapshotDir = classpathSnapshotDir
     )
 
     if (!snapshotFiles.shrunkPreviousClasspathSnapshotFile.exists()) {
         ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
-            snapshotFiles.shrunkPreviousClasspathSnapshotFile, emptyList()
+            snapshotFiles.shrunkPreviousClasspathSnapshotFile, []
         )
     }
 

@@ -31,9 +31,9 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
     @Test
     fun `Writing a klib with different 'targets for manifest'`() {
         listOf(
-            listOf(KonanTarget.IOS_ARM64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_ARM64),
-            listOf(KonanTarget.LINUX_ARM64, KonanTarget.MACOS_X64),
-            listOf(KonanTarget.ANDROID_ARM64),
+            [KonanTarget.IOS_ARM64, KonanTarget.MACOS_ARM64, KonanTarget.WATCHOS_ARM64],
+            [KonanTarget.LINUX_ARM64, KonanTarget.MACOS_X64],
+            [KonanTarget.ANDROID_ARM64],
         ).forEach { targets ->
             runTestWithParameters {
                 this.targetsForManifest = targets
@@ -65,7 +65,7 @@ class NativeKlibWriterTest : AbstractNativeKlibWriterTest<NewNativeKlibWriterPar
                 )
                 platformAndTargets(
                     builtInsPlatform = BuiltInsPlatform.NATIVE,
-                    targetNames = parameters.targetsForManifest?.map { it.name } ?: listOf(parameters.target.name)
+                    targetNames = parameters.targetsForManifest?.map { it.name } ?: [parameters.target.name]
                 )
                 legacyNativeDependenciesInManifest(parameters.dependencies.map { it.uniqueName })
                 legacyNativeShortNameInManifest(parameters.shortName)

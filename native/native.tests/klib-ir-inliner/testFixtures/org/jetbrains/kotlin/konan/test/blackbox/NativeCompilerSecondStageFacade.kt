@@ -78,7 +78,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 fileCheckStage = module.fileCheckStage(),
                 regularDependencies = regularDependencies,
                 friendDependencies = friendDependencies,
-                mainLibraries = listOf(mainLibrary),
+                mainLibraries = [mainLibrary],
                 enableAssertions = AssertionsMode.ALWAYS_DISABLE !in module.directives[ASSERTIONS_MODE],
                 withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
@@ -105,9 +105,9 @@ class NativeCompilerSecondStageFacade private constructor(
             var someLibrary: File? = null
             val freeArgs = someModule.directives[FREE_COMPILER_ARGS]
 
-            val regularDependencies = mutableSetOf<String>()
-            val friendDependencies = mutableSetOf<String>()
-            val mainLibraries = mutableListOf<String>()
+            val regularDependencies: MutableSet<String> = []
+            val friendDependencies: MutableSet<String> = []
+            val mainLibraries: MutableList<String> = []
             for ((val services = testServices, val _ = catchingExecutor) in inputArtifact.nonGroupingStageOutputs) {
                 val mainModule = services.moduleStructure.modules.last()
                 mainModule.collectDependencies(services).let { [regular, friend] ->
@@ -228,7 +228,7 @@ class NativeCompilerSecondStageFacade private constructor(
                     },
                 ),
                 regularAndFriendDependencies.flatMap {
-                    listOf(K2NativeCompilerArguments::libraries.cliArgument, it)
+                    [K2NativeCompilerArguments::libraries.cliArgument, it]
                 },
                 listOf(K2NativeCompilerArguments::friendModules.cliArgument, friendModules).takeIf { friendModules.isNotEmpty() },
                 customLanguageFeatures
@@ -236,10 +236,10 @@ class NativeCompilerSecondStageFacade private constructor(
                     .map { CommonCompilerArguments::manuallyConfiguredFeatures.cliArgument + ":$it" },
                 freeArgs,
                 fileCheckStage?.let {
-                    listOf(
+                    [
                         K2NativeCompilerArguments::saveLlvmIrAfter.cliArgument(it),
                         K2NativeCompilerArguments::saveLlvmIrDirectory.cliArgument(executableFile.fileCheckDump(fileCheckStage).parent),
-                    )
+                    ]
                 },
             )
         }

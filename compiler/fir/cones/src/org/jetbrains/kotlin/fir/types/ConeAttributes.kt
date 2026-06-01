@@ -79,8 +79,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
             return generateNullableAccessor<ConeAttribute<*>, T>(T::class) as ReadOnlyProperty<ConeAttributes, T?>
         }
 
-        val Empty: ConeAttributes = ConeAttributes(emptyList())
-        val WithExtensionFunctionType: ConeAttributes = ConeAttributes(listOf(CompilerConeAttributes.ExtensionFunctionType))
+        private val Empty: ConeAttributes = ConeAttributes([])
 
         fun create(attributes: List<ConeAttribute<*>>): ConeAttributes {
             return if (attributes.isEmpty()) {
@@ -89,9 +88,15 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
                 ConeAttributes(attributes)
             }
         }
-    }
 
-    private constructor(attribute: ConeAttribute<*>) : this(listOf(attribute))
+        operator fun of(vararg attributes: ConeAttribute<*>): ConeAttributes {
+            return create(attributes.asList())
+        }
+
+        operator fun of(): ConeAttributes = Empty
+
+        val WithExtensionFunctionType: ConeAttributes = [CompilerConeAttributes.ExtensionFunctionType]
+    }
 
     init {
         for (attribute in attributes) {
@@ -112,7 +117,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
     }
 
     fun add(attribute: ConeAttribute<*>): ConeAttributes {
-        return add(create(listOf(attribute)))
+        return add([attribute])
     }
 
     operator fun contains(attribute: ConeAttribute<*>): Boolean {
@@ -150,7 +155,7 @@ class ConeAttributes private constructor(attributes: List<ConeAttribute<*>>) : A
 
     private inline fun perform(other: ConeAttributes, op: ConeAttribute<*>.(ConeAttribute<*>?) -> ConeAttribute<*>?): ConeAttributes {
         if (this.isEmpty() && other.isEmpty()) return this
-        val attributes = mutableListOf<ConeAttribute<*>>()
+        val attributes: MutableList<ConeAttribute<*>> = []
         for (index in indices) {
             val a = arrayMap[index]
             val b = other.arrayMap[index]

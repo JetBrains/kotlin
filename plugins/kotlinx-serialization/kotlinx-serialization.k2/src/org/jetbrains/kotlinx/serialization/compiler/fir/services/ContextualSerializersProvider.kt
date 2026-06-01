@@ -67,20 +67,20 @@ class ContextualSerializersProvider(session: FirSession) : FirExtensionSessionCo
     private fun FirExpression.unwrapArguments(): List<FirExpression> = when (this) {
         is FirCollectionLiteral -> arguments
         is FirVarargArgumentsExpression -> arguments
-        else -> emptyList()
+        else -> []
     }
 
     private fun getKClassListFromFileAnnotation(file: FirFileSymbol, annotationClassId: ClassId): List<ConeKotlinType> {
         val annotation = file.resolvedAnnotationsWithArguments.getAnnotationByClassId(
             annotationClassId, session
-        ) ?: return emptyList()
+        ) ?: return []
         val annotationArgument = annotation.argumentMapping.mapping.values.firstOrNull()
-        val arguments = annotationArgument?.unwrapArguments() ?: return emptyList()
+        val arguments = annotationArgument?.unwrapArguments() ?: return []
         val classes: List<FirGetClassCall> = arguments.flatMap {
             when (it) {
-                is FirGetClassCall -> listOf(it)
+                is FirGetClassCall -> [it]
                 is FirSpreadArgumentExpression -> it.expression.unwrapArguments().filterIsInstance<FirGetClassCall>()
-                else -> emptyList()
+                else -> []
             }
         }
         return classes.mapNotNull { cls -> cls.getTargetType()?.fullyExpandedType(session)?.takeUnless { it is ConeErrorType } }

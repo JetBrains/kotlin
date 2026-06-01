@@ -39,7 +39,7 @@ internal class CEnumVarClassGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = []
 
     fun generate(enumIrClass: IrClass): IrClass {
         val enumVarClassDescriptor = enumIrClass.descriptor.unsubstitutedMemberScope

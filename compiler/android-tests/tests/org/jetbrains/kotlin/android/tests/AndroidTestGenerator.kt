@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.services.sourceFileProvider
 import java.io.File
 import java.util.regex.Pattern
 
-private val FILE_NAME_ANNOTATIONS = arrayOf("@file:JvmName", "@file:kotlin.jvm.JvmName")
+private val FILE_NAME_ANNOTATIONS: Array<String> = ["@file:JvmName", "@file:kotlin.jvm.JvmName"]
 
 private val packagePattern = Pattern.compile("(?m)^\\s*package[ |\t]+([\\w|\\.]*)")
 

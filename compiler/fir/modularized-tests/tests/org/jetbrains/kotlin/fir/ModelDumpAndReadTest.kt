@@ -35,13 +35,13 @@ class ModelDumpAndReadTest {
             writeText("fun main2() {}")
         }
         val jarFile = tmpdir.resolve("output.jar")
-        val args = listOf(
+        val args = [
             "-d", jarFile.absolutePath,
             "-XXdump-model=${tmpdir.absolutePath}",
             "-module-name", "testmain",
             mainKt.absolutePath,
             main2Kt.absolutePath,
-        )
+        ]
         val res = CompilerTestUtil.executeCompiler(K2JVMCompiler(), args)
         assertEquals(ExitCode.OK, res.second)
 
@@ -50,11 +50,11 @@ class ModelDumpAndReadTest {
 
         val arguments = moduleData.arguments as K2JVMCompilerArguments
         assertEquals(jarFile.absolutePath, arguments.destination)
-        assertEquals(listOf(mainKt.absolutePath, main2Kt.absolutePath), arguments.freeArgs)
+        assertEquals([mainKt.absolutePath, main2Kt.absolutePath], arguments.freeArgs)
         assertEquals("testmain", arguments.moduleName)
 
         assertEquals("testmain", moduleData.name)
-        assertEquals(listOf(mainKt, main2Kt), moduleData.sources.toList())
+        assertEquals([mainKt, main2Kt], moduleData.sources.toList())
         assertTrue(moduleData.classpath.any { it.name == "kotlin-stdlib.jar" })
     }
 
@@ -112,7 +112,7 @@ class ModelDumpAndReadTest {
         assertEquals(1, modules.size)
         val m = modules.single()
         assertEquals("m1", m.name)
-        assertEquals(listOf(src1, src2), m.sources.toList())
+        assertEquals([src1, src2], m.sources.toList())
         // classpath keeps order
         val cpList = m.classpath.map { it.absolutePath }
         assertTrue(cp1 in cpList && cp2 in cpList)
@@ -128,7 +128,7 @@ class ModelDumpAndReadTest {
         assertTrue(arguments.reportOutputFiles)
         // optIn maps to list/array
         assertTrue(arguments.optIn.contains("kotlin.ExperimentalStdlibApi"))
-        assertEquals(listOf(src1.absolutePath, src2.absolutePath), arguments.freeArgs)
+        assertEquals([src1.absolutePath, src2.absolutePath], arguments.freeArgs)
     }
 
 }

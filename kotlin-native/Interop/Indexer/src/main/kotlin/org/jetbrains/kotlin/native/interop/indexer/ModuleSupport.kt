@@ -11,7 +11,7 @@ import kotlin.collections.plus
 data class ModulesInfo(val topLevelHeaders: List<IncludeInfo>, val ownHeaders: Set<String>, val modules: List<String>)
 
 fun getModulesInfo(compilation: Compilation, modules: List<String>, skipNonImportableModules: Boolean): ModulesInfo {
-    if (modules.isEmpty()) return ModulesInfo(emptyList(), emptySet(), emptyList())
+    if (modules.isEmpty()) return ModulesInfo([], [], [])
 
     val areModulesEnabled = compilation.compilerArgs.contains("-fmodules")
     withIndex(excludeDeclarationsFromPCH = false) { index ->
@@ -30,7 +30,7 @@ private fun buildModulesInfo(
         modulesASTFiles: List<String>,
         areModulesEnabled: Boolean
 ): ModulesInfo {
-    val ownHeaders = mutableSetOf<String>()
+    val ownHeaders: MutableSet<String> = []
     val topLevelHeaders = linkedSetOf<IncludeInfo>()
     modulesASTFiles.forEach {
         val moduleTranslationUnit = clang_createTranslationUnit(index, it)!!
@@ -72,7 +72,7 @@ private data class TranslationUnitParseResult(
 
 private fun ModularCompilation.parseModules(index: CXIndex, modules: List<String>): TranslationUnitParseResult {
     val compilationWithImports = copy(additionalPreambleLines = modules.map { "@import $it;" } + additionalPreambleLines)
-    val errors = mutableListOf<Diagnostic>()
+    val errors: MutableList<Diagnostic> = []
     val translationUnit = compilationWithImports.parse(
             index,
             options = CXTranslationUnit_DetailedPreprocessingRecord,
@@ -113,9 +113,9 @@ private fun getModulesASTFiles(
 
     class ModuleImportErrors(val moduleName: String, val errors: List<String>)
 
-    val moduleImportErrors = mutableListOf<ModuleImportErrors>()
+    val moduleImportErrors: MutableList<ModuleImportErrors> = []
     modules.forEach { module ->
-        val (translationUnit, errors) = compilation.parseModules(index, listOf(module))
+        val (translationUnit, errors) = compilation.parseModules(index, [module])
         try {
             if (errors.isNotEmpty()) {
                 moduleImportErrors.add(ModuleImportErrors(module, errors.map { it.format }))
@@ -164,8 +164,8 @@ internal fun <T, R> roundRobinTake(
     var iterator = keysQueue.listIterator()
     while (iterator.hasNext() && totalTakenElementsCount < outputLimit) {
         val key = iterator.next()
-        val takenElements = output.getOrPut(key) { mutableListOf() }
-        val associatedElements = input[key] ?: emptyList()
+        val takenElements = output.getOrPut(key) { [] }
+        val associatedElements = input[key].orEmpty()
         if (takenElements.size == associatedElements.size) {
             iterator.remove()
         } else {
@@ -187,8 +187,8 @@ private fun getModulesHeaders(
         areModulesEnabled: Boolean
 ): Set<ClangFile> {
     val nonModularIncludes = mutableMapOf<ClangFile, MutableSet<ClangFile>>()
-    val result = mutableSetOf<ClangFile>()
-    val errors = mutableListOf<Throwable>()
+    val result: MutableSet<ClangFile> = []
+    val errors: MutableList<Throwable> = []
 
     indexTranslationUnit(index, translationUnit, 0, object : Indexer {
         override fun importedASTFile(info: CXIdxImportedASTFileInfo) {
@@ -225,7 +225,7 @@ private fun getModulesHeaders(
                     result += file
                 }
             } else if (includer != null) {
-                nonModularIncludes.getOrPut(includer, { mutableSetOf() }) += file
+                nonModularIncludes.getOrPut(includer, { [] }) += file
             }
         }
     })
@@ -244,7 +244,7 @@ private fun getModulesHeaders(
 }
 
 private fun <T> findReachable(roots: Set<T>, arcs: Map<T, Set<T>>): Set<T> {
-    val visited = mutableSetOf<T>()
+    val visited: MutableSet<T> = []
 
     fun dfs(vertex: T) {
         if (!visited.add(vertex)) return

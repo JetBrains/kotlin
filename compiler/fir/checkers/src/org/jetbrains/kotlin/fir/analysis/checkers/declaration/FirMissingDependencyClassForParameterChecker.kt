@@ -54,7 +54,7 @@ object FirMissingDependencyClassForParameterChecker : FirValueParameterChecker(M
     private fun checkLambdaParameter(parameter: FirValueParameter) {
         if (parameter.returnTypeRef.source?.kind is KtRealSourceElementKind) return
 
-        val missingTypes = mutableSetOf<ConeClassLikeType>()
+        val missingTypes: MutableSet<ConeClassLikeType> = []
         considerType(parameter.returnTypeRef.coneType, missingTypes)
         reportMissingTypes(
             parameter.source, missingTypes,

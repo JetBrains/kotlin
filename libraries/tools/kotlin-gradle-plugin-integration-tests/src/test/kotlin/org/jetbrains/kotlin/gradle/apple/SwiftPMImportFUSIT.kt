@@ -53,7 +53,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 }
             }
             assertEquals(
-                emptyList(),
+                [],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -65,13 +65,13 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             buildScriptInjection {
                 project.applyMultiplatform {
                     swiftPMDependencies {
-                        swiftPackage(url = "https://foo.bar", version = "1.0.0", products = emptyList())
+                        swiftPackage(url = "https://foo.bar", version = "1.0.0", products = [])
                     }
                 }
             }
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=1"),
+                ["${booleanFusEventName}=true", "${numericFusEventName}=1"],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -90,7 +90,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                             iosSimulatorArm64()
                             iosArm64()
                             swiftPMDependencies {
-                                swiftPackage(url = "https://foo.bar", version = "1.0.0", products = emptyList())
+                                swiftPackage(url = "https://foo.bar", version = "1.0.0", products = [])
                             }
                         }
                     }
@@ -99,7 +99,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             )
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
+                ["${booleanFusEventName}=true", "${numericFusEventName}=2"],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -117,7 +117,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             include(
                 project("empty", version) {
                     val packageDependency = projectPath.resolve("packageDependency").also { it.createDirectories() }.toFile()
-                    runProcess(listOf("swift", "package", "init", "--type", "library"), packageDependency)
+                    runProcess(["swift", "package", "init", "--type", "library"], packageDependency)
 
                     plugins {
                         kotlin("multiplatform")
@@ -151,7 +151,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
 
             // Project dependencies shouldn't trigger this FUS event
             assertEquals(
-                listOf("${booleanFusEventName}=false"),
+                ["${booleanFusEventName}=false"],
                 collectFusEvents(
                     ":generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
                     buildAction = BuildActions.build
@@ -162,7 +162,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
 
             val publishedDependency = project("empty", version) {
                 val packageDependency = projectPath.resolve("packageDependency").also { it.createDirectories() }.toFile()
-                runProcess(listOf("swift", "package", "init", "--type", "library"), packageDependency)
+                runProcess(["swift", "package", "init", "--type", "library"], packageDependency)
 
                 plugins {
                     kotlin("multiplatform")
@@ -190,7 +190,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             }
             // But modular dependencies should
             assertEquals(
-                listOf("${booleanFusEventName}=true"),
+                ["${booleanFusEventName}=true"],
                 collectFusEvents(
                     ":generateSyntheticLinkageSwiftPMImportProjectForCinteropsAndLdDump",
                     buildAction = BuildActions.build
@@ -218,7 +218,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
                 }
             }
             assertEquals(
-                emptyList(),
+                [],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -234,7 +234,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             }
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=1"),
+                ["${booleanFusEventName}=true", "${numericFusEventName}=1"],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build
@@ -260,7 +260,7 @@ class SwiftPMImportFUSIT : KGPBaseTest() {
             )
 
             assertEquals(
-                setOf("${booleanFusEventName}=true", "${numericFusEventName}=2"),
+                ["${booleanFusEventName}=true", "${numericFusEventName}=2"],
                 collectFusEvents(
                     ":help",
                     buildAction = BuildActions.build

@@ -408,7 +408,7 @@ class ControlFlowProcessor(
         ) {
             val left = KtPsiUtil.deparenthesize(lhs)
             if (left == null) {
-                val arguments = rhsDeferredValue()?.let { listOf(it) } ?: emptyList()
+                val arguments = rhsDeferredValue()?.let { [it] } ?: []
                 builder.magic(parentExpression, parentExpression, arguments, MagicKind.UNSUPPORTED_ELEMENT)
                 return
             }
@@ -480,7 +480,7 @@ class ControlFlowProcessor(
         ): SmartFMap<PseudoValue, ValueParameterDescriptor> {
             val valueArguments = setResolvedCall.resultingDescriptor.valueParameters.flatMapTo(
                 ArrayList()
-            ) { descriptor -> setResolvedCall.valueArguments[descriptor]?.arguments ?: emptyList() }
+            ) { descriptor -> setResolvedCall.valueArguments[descriptor]?.arguments ?: [] }
 
             val rhsArgument = valueArguments.lastOrNull()
             var argumentValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
@@ -534,7 +534,7 @@ class ControlFlowProcessor(
             val baseExpression = expression.baseExpression ?: return
             if (EXCLEXCL === operationType) {
                 generateInstructions(baseExpression)
-                builder.predefinedOperation(expression, NOT_NULL_ASSERTION, elementsToValues(listOf(baseExpression)))
+                builder.predefinedOperation(expression, NOT_NULL_ASSERTION, elementsToValues([baseExpression]))
                 return
             }
 
@@ -1324,7 +1324,7 @@ class ControlFlowProcessor(
                     // For the last entry of exhaustive when,
                     // attempt to jump further should lead to error, not to "done"
                     if (!iterator.hasNext() && WhenChecker.isWhenExhaustive(expression, trace)) {
-                        builder.magic(expression, null, emptyList(), MagicKind.EXHAUSTIVE_WHEN_ELSE)
+                        builder.magic(expression, null, [], MagicKind.EXHAUSTIVE_WHEN_ELSE)
                     }
                 }
             }
@@ -1578,7 +1578,7 @@ class ControlFlowProcessor(
 
             val receivers = getReceiverValues(resolvedCall)
 
-            deferredGeneratorsStack.push(mutableListOf())
+            deferredGeneratorsStack.push([])
 
             var parameterValues = SmartFMap.emptyMap<PseudoValue, ValueParameterDescriptor>()
             for (argument in resolvedCall.call.valueArguments) {

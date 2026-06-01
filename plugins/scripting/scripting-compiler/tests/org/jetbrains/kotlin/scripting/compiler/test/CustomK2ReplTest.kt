@@ -45,76 +45,76 @@ class CustomK2ReplTest {
     @Test
     fun testSimple() {
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 "val x = 3",
                 "x + 4",
                 "x"
-            ),
-            sequenceOf(
+            ],
+            [
                 null,
                 7,
                 3
-            )
+            ]
         )
     }
 
     @Test
     fun testWithImplicitReceiver() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf("val x = ok", "ok", "x",),
-            sequenceOf(null, "OK", "OK"),
+            ["val x = ok", "ok", "x", ],
+            [null, "OK", "OK"],
         )
     }
 
     @Test
     fun testWithImplicitReceiverWithShadowing() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf("val ok = 42", "ok",),
-            sequenceOf(null, 42),
+            ["val ok = 42", "ok", ],
+            [null, 42],
         )
     }
 
     @Test
     fun testWithImplicitReceiverIntExtension() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf(
+            [
                 "fun org.jetbrains.kotlin.scripting.compiler.test.ReplReceiver1.foo() = ok.length",
                 "foo()",
-            ),
-            sequenceOf(null, 2),
+            ],
+            [null, 2],
         )
     }
 
     @Test
     fun testWithImplicitReceiverExtExtension() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf(
+            [
                 "val obj = org.jetbrains.kotlin.scripting.compiler.test.TestReplReceiver1()",
                 "obj.checkReceiver { ok }",
-            ),
-            sequenceOf(null, "OK"),
+            ],
+            [null, "OK"],
         )
     }
 
     @Test
     fun testWithReceiverExtension() {
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 "val obj = org.jetbrains.kotlin.scripting.compiler.test.TestReplReceiver1()",
                 "obj.checkReceiver { ok }",
-            ),
-            sequenceOf(null, "OK"),
+            ],
+            [null, "OK"],
         )
     }
 
     @Test
     fun testWithUpdatingDefaultImports() {
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 "kotlin.random.Random.nextInt(10)/10",
                 "Random.nextInt(10)/10",
-            ),
-            sequenceOf(0, 0),
+            ],
+            [0, 0],
             baseCompilationConfiguration.with {
                 refineConfiguration {
                     beforeCompiling { (val script, val config = compilationConfiguration, val _ = collectedData) ->
@@ -132,14 +132,14 @@ class CustomK2ReplTest {
     @Test
     fun testWithUpdatingDependeciesAndImportKotlinDeclarations() {
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 "println(\"firstLine\")",
                 "import org.jetbrains.kotlinx.dataframe.jupyter.KotlinNotebookPluginUtils",
                 "KotlinNotebookPluginUtils.getKotlinNotebookIDEBuildNumber().toString()",
                 "import org.jetbrains.kotlinx.dataframe.jupyter.importDataSchema",
                 "importDataSchema(\"ftp://xx\").url.toString()",
-            ),
-            sequenceOf(null, null, "null", null, "ftp://xx"),
+            ],
+            [null, null, "null", null, "ftp://xx"],
             baseCompilationConfiguration.with {
                 refineConfiguration {
                     beforeCompiling { (val script, val config = compilationConfiguration, val _ = collectedData) ->
@@ -164,10 +164,10 @@ class CustomK2ReplTest {
     @Test
     fun testBasicReflection() {
         evalAndCheckSnippets(
-            sequenceOf(
+            [
                 "var x = 3",
                 "fun f() = x"
-            ),
+            ],
             baseCompilationConfiguration,
             baseEvaluationConfiguration,
             {
@@ -199,7 +199,7 @@ class CustomK2ReplTest {
         if (!isK2) return
         val serializationPluginClasspath = System.getProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath")!!
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 """
                     import kotlinx.serialization.*
                     import kotlinx.serialization.json.*
@@ -219,13 +219,13 @@ class CustomK2ReplTest {
                     val obj2 = Json.decodeFromString<User>(jsonData)
                     obj2.lastName + ", " + obj2.firstName + " " + obj2.lastName
                 """.trimIndent()
-            ),
-            sequenceOf(
+            ],
+            [
                 null,
                 """{"firstName":"James","lastName":"Bond"}""",
                 "James Bond",
                 "Bond, James Bond",
-            ),
+            ],
             baseCompilationConfiguration.with {
                 updateClasspath(
                     runBlocking {
@@ -252,7 +252,7 @@ class CustomK2ReplTest {
             dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
         }.valueOrThrow()
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 """
                     import org.jetbrains.kotlinx.dataframe.api.*
                     import org.jetbrains.kotlinx.dataframe.*
@@ -260,14 +260,14 @@ class CustomK2ReplTest {
                     val df = dataFrameOf("a" to columnOf(42))
                     df.a[0]
                 """,
-            ),
-            sequenceOf(
+            ],
+            [
                 42
-            ),
+            ],
             baseCompilationConfiguration.with {
                 // override to make sure that the classloader uses kotlin-reflect from dataframe.
                 // dependency in baseCompilationConfiguration causes "(Kotlin reflection is not available)"
-                set(ScriptCompilationConfiguration.dependencies, listOf(JvmDependency(dataframe)))
+                set(ScriptCompilationConfiguration.dependencies, [JvmDependency(dataframe)])
                 compilerOptions(
                     "-Xplugin=$dataFramePluginClasspath"
                 )
@@ -282,7 +282,7 @@ class CustomK2ReplTest {
 
     fun doTestKotlinCoroutinesWithProvidedClasspath(coroutinesCoreClasspath: List<File>) {
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 """
             import kotlin.coroutines.*
             import kotlinx.coroutines.*
@@ -290,10 +290,10 @@ class CustomK2ReplTest {
             runBlocking { async {}.join() }
             "After runBlocking"
         """,
-            ),
-            sequenceOf(
+            ],
+            [
                 "After runBlocking",
-            ),
+            ],
             baseCompilationConfiguration.with {
                 updateClasspath(
                     coroutinesCoreClasspath
@@ -327,26 +327,26 @@ class CustomK2ReplTest {
     @Test
     fun testPropertyTypesCanBeRedeclared() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf(
+            [
                 "val x = 42",
                 "x",
                 "val x = true",
                 "x"
-            ),
-            sequenceOf(null, 42, null, true),
+            ],
+            [null, 42, null, true],
         )
     }
 
     @Test
     fun testFunctionWithTheSameSignatureCanBeRedeclared() {
         evalAndCheckSnippetsWithReplReceiver1(
-            sequenceOf(
+            [
                 "fun x() = 42",
                 "x()",
                 "fun x() = true",
                 "x()"
-            ),
-            sequenceOf(null, 42, null, true),
+            ],
+            [null, 42, null, true],
         )
     }
 
@@ -382,15 +382,15 @@ class CustomK2ReplTest {
         val snippetClass = results.last().get().result.scriptClass!!
 
         val layer1 = snippetClass.nestedClasses.toList()
-        assertEquals(layer1.map { it.simpleName }, listOf("A", "B"))
+        assertEquals(layer1.map { it.simpleName }, ["A", "B"])
         val [_, bClass] = layer1
 
         val layer2 = bClass.nestedClasses.toList()
-        assertEquals(layer2.map { it.simpleName }, listOf("C", "D"))
+        assertEquals(layer2.map { it.simpleName }, ["C", "D"])
         val [_, dClass] = layer2
 
         val layer3 = dClass.nestedClasses.toList()
-        assertEquals(layer3.map { it.simpleName }, listOf("E"))
+        assertEquals(layer3.map { it.simpleName }, ["E"])
     }
 
     @Test
@@ -484,7 +484,7 @@ class CustomK2ReplTest {
             .split(File.pathSeparator).map(::File)
 
         evalAndCheckSnippetsResultVals(
-            sequenceOf(
+            [
                 """
                     import kotlinx.coroutines.*
                     
@@ -501,11 +501,11 @@ class CustomK2ReplTest {
                 """
                     response
                 """.trimIndent()
-            ),
-            sequenceOf(
+            ],
+            [
                 null,
                 "OK",
-            ),
+            ],
             baseCompilationConfiguration.with {
                 updateClasspath(coroutinesCoreClasspath)
                 repl {
@@ -581,7 +581,7 @@ private fun evalAndCheckSnippetsResultVals(
     // this is K2-only tests
     if (System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") == true) return
 
-    val evaluationResults = compileEvalAndCheckSnippetsSequence(snippets, compilationConfiguration, evaluationConfiguration, emptySequence())
+    val evaluationResults = compileEvalAndCheckSnippetsSequence(snippets, compilationConfiguration, evaluationConfiguration, [])
     checkEvaluatedSnippetsResultVals(expectedResultVals, evaluationResults)
 }
 
@@ -596,7 +596,7 @@ private fun evalAndCheckSnippets(
 
     val results =
         compileEvalAndCheckSnippetsSequence(snippets, compilationConfiguration, evaluationConfiguration, resultCheckers.asSequence())
-    checkEvaluatedSnippetsResultVals(emptySequence(), results)
+    checkEvaluatedSnippetsResultVals([], results)
 }
 
 private fun evalAndCheckSnippetsWithReplReceiver1(

@@ -20,7 +20,7 @@ internal class LLFirIdeRegisteredPluginAnnotations(
     private val annotationsResolver: KotlinAnnotationsResolver
 ) : AbstractFirRegisteredPluginAnnotations(session) {
 
-    private val annotationsFromPlugins: MutableSet<AnnotationFqn> = mutableSetOf()
+    private val annotationsFromPlugins: MutableSet<AnnotationFqn> = []
 
     override val annotations: Set<AnnotationFqn>
         get() = allAnnotationsCache.getValue()

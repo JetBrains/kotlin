@@ -31,6 +31,6 @@ internal class KaBaseForLoopInReference(expression: KtForExpression) : KtForLoop
             get() = KtForExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtForExpression>
-            get() = { listOf(KaBaseForLoopInReference(it)) }
+            get() = { [KaBaseForLoopInReference(it)] }
     }
 }

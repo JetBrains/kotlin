@@ -19,9 +19,9 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 class KaLibraryFallbackDependenciesModuleImpl(
     override val dependentLibrary: KaLibraryModule,
 ) : KaModuleBase(), KaLibraryFallbackDependenciesModule {
-    override val directRegularDependencies: List<KaModule> get() = emptyList()
-    override val directDependsOnDependencies: List<KaModule> get() = emptyList()
-    override val directFriendDependencies: List<KaModule> get() = emptyList()
+    override val directRegularDependencies: List<KaModule> get() = []
+    override val directDependsOnDependencies: List<KaModule> get() = []
+    override val directFriendDependencies: List<KaModule> get() = []
 
     @KaPlatformInterface
     override val baseContentScope: GlobalSearchScope

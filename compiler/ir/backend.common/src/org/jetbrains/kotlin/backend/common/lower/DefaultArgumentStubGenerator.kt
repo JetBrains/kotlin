@@ -134,7 +134,7 @@ open class DefaultArgumentStubGenerator<TContext : CommonBackendContext>(
                 irFunction.resolveAnnotations(),
             ) ?: return null
 
-        return listOf(irFunction, newIrFunction).also {
+        return [irFunction, newIrFunction].also {
             if (!newIrFunction.isFakeOverride) {
                 newIrFunction.body = newIrFunction.generateDefaultStubBody(irFunction)
             }
@@ -240,7 +240,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
     protected val forceSetOverrideSymbols: Boolean = true,
 ) : IrElementTransformerVoid(), BodyLoweringPass {
 
-    private val declarationStack = mutableListOf<IrDeclaration>()
+    private val declarationStack: MutableList<IrDeclaration> = []
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         declarationStack.push(container)
         irBody.transformChildrenVoid(this)
@@ -409,7 +409,7 @@ open class DefaultParameterInjector<TContext : CommonBackendContext>(
                                 expression.endOffset,
                                 parameter.type,
                                 IrStatementOrigin.DEFAULT_VALUE,
-                                listOf(it)
+                                [it]
                             )
                         }
                     }

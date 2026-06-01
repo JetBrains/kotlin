@@ -18,7 +18,7 @@ class LookupTrackerTest : BaseCompilationTest() {
     @Test
     @DisplayName("LOOKUP_TRACKER can be set using the deprecated Option")
     fun setLookupTracker() {
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(""))
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(""))
         val lookupTracker = object : CompilerLookupTracker {
             override fun clear() {}
 

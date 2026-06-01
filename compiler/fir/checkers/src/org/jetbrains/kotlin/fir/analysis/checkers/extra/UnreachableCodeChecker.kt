@@ -27,7 +27,7 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
         val unreachableSources = unreachableNodes.mapNotNull { it.fir.source }.toSet()
         val reachableSources = reachableNodes.mapNotNull { it.fir.source }.toSet()
         val unreachableElements = unreachableNodes.map { it.fir }
-        val innerNodes = mutableSetOf<FirElement>()
+        val innerNodes: MutableSet<FirElement> = []
         unreachableElements.forEach { it.collectInnerNodes(innerNodes) }
         unreachableElements.distinctBy { it.source }.forEach { element ->
             if (element !in innerNodes) {
@@ -36,17 +36,17 @@ object UnreachableCodeChecker : FirControlFlowChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun ControlFlowGraph.allNodes(acc: MutableList<CFGNode<*>> = mutableListOf()): List<CFGNode<*>> {
+    private fun ControlFlowGraph.allNodes(acc: MutableList<CFGNode<*>> = []): List<CFGNode<*>> {
         acc.addAll(this.nodes)
         subGraphs.forEach { it.allNodes(acc) }
         return acc
     }
 
-    private val sourceKindsToSkip = setOf(
+    private val sourceKindsToSkip: Set<KtFakeSourceElementKind> = [
         KtFakeSourceElementKind.ImplicitReturn.FromExpressionBody,
         KtFakeSourceElementKind.ImplicitReturn.FromLastStatement,
         KtFakeSourceElementKind.DesugaredForLoop
-    )
+    ]
 
     private fun CFGNode<*>.skipNode(): Boolean {
         val skipType = this is ExitNodeMarker ||

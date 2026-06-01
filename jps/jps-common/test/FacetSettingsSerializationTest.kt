@@ -17,9 +17,9 @@ class FacetSettingsSerializationTest {
     @Test
     fun `test - module dependencies`() {
         val source = KotlinFacetSettings().apply {
-            implementedModuleNames = listOf("implementedModule1", "implementedModule2")
-            dependsOnModuleNames = listOf("dependsOnModule1", "dependsOnModule2")
-            additionalVisibleModuleNames = setOf("friend1", "friend2")
+            implementedModuleNames = ["implementedModule1", "implementedModule2"]
+            dependsOnModuleNames = ["dependsOnModule1", "dependsOnModule2"]
+            additionalVisibleModuleNames = ["friend1", "friend2"]
         }
 
         val deserialized = serializeAndDeserialize(source)

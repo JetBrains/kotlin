@@ -74,26 +74,26 @@ public actual fun Char.Companion.isSurrogatePair(high: Char, low: Char): Boolean
 @Suppress("DEPRECATION")
 public actual fun Char.Companion.toChars(codePoint: Int): CharArray =
         when {
-            codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> charArrayOf(codePoint.toChar())
+            codePoint in 0 until MIN_SUPPLEMENTARY_CODE_POINT -> [codePoint.toChar()]
             codePoint in MIN_SUPPLEMENTARY_CODE_POINT..MAX_CODE_POINT -> {
                 val low = ((codePoint - 0x10000) and 0x3FF) + MIN_LOW_SURROGATE.toInt()
                 val high = (((codePoint - 0x10000) ushr 10) and 0x3FF) + MIN_HIGH_SURROGATE.toInt()
-                charArrayOf(high.toChar(), low.toChar())
+                [high.toChar(), low.toChar()]
             }
             else -> throw IllegalArgumentException()
         }
 
-private val digits = intArrayOf(
-        0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
-        -1, -1, -1, -1, -1, -1, -1,
-        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-        30, 31, 32, 33, 34, 35,
-        -1, -1, -1, -1, -1, -1,
-        10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
-        20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
-        30, 31, 32, 33, 34, 35
-)
+private val digits: IntArray = [
+    0, 1, 2, 3, 4, 5, 6, 7, 8, 9,
+    -1, -1, -1, -1, -1, -1, -1,
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35,
+    -1, -1, -1, -1, -1, -1,
+    10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+    30, 31, 32, 33, 34, 35
+]
 
 internal actual fun digitOf(char: Char, radix: Int): Int = when {
     char >= '0' && char <= 'z' -> digits[char - '0']

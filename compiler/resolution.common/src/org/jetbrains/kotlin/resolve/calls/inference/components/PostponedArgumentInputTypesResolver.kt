@@ -56,7 +56,7 @@ class PostponedArgumentInputTypesResolver(
             variableDependencyProvider.getShallowlyDependentVariables(typeVariableTypeConstructor).orEmpty() + typeVariableTypeConstructor
 
         return dependentVariables.flatMap { type ->
-            val constraints = c.notFixedTypeVariables[type]?.constraints ?: return@flatMap emptyList()
+            val constraints = c.notFixedTypeVariables[type]?.constraints ?: return@flatMap []
             val constraintsWithFunctionalType = constraints.filter { it.type.isBuiltinFunctionTypeOrSubtype() }
             constraintsWithFunctionalType.extractFunctionalTypes()
         }
@@ -204,10 +204,10 @@ class PostponedArgumentInputTypesResolver(
                     parameterTypesFromDeclarationOfRelatedLambda?.let { Pair(it, anotherArgument.isLambda()) }
                 }
             } else {
-                emptyList()
+                []
             }
 
-        val declaredParameterTypes = mutableSetOf<List<KotlinTypeMarker?>>()
+        val declaredParameterTypes: MutableSet<List<KotlinTypeMarker?>> = []
 
         val maxParameterCount = maxOf(
             parameterTypesFromConstraints?.maxOfOrNull { it.size } ?: 0,
@@ -262,7 +262,7 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedAtomWithRevisableExpectedType,
         parameterTypes: List<List<TypeWithKind?>>,
     ): List<TypeArgumentMarker> {
-        if (parameterTypes.isEmpty()) return emptyList()
+        if (parameterTypes.isEmpty()) return []
         val csBuilder = getBuilder()
         val allGroupedParameterTypes = parameterTypes.first().indices.map { i -> parameterTypes.map { it.getOrNull(i) } }
 
@@ -335,7 +335,7 @@ class PostponedArgumentInputTypesResolver(
         val typeConstructor = type.typeConstructor()
 
         if (typeConstructor == targetVariable)
-            return emptyList()
+            return []
 
         for (i in 0 until type.argumentsCount()) {
             val argument = type.getArgument(i)
@@ -528,7 +528,7 @@ class PostponedArgumentInputTypesResolver(
     private fun KotlinTypeMarker.getAllDeeplyRelatedTypeVariables(
         variableDependencyProvider: TypeVariableDependencyInformationProvider,
     ): Collection<TypeVariableTypeConstructorMarker> {
-        val collectedVariables = mutableSetOf<TypeVariableTypeConstructorMarker>()
+        val collectedVariables: MutableSet<TypeVariableTypeConstructorMarker> = []
         getAllDeeplyRelatedTypeVariables(variableDependencyProvider, collectedVariables)
         return collectedVariables
     }

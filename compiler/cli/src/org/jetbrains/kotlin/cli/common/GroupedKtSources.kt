@@ -49,7 +49,7 @@ fun collectSources(
     projectEnvironment: VfsBasedProjectEnvironment
 ): GroupedKtSources {
     fun createSet(): MutableSet<KtSourceFile> = if (compilerConfiguration.dontSortSourceFiles) {
-        mutableSetOf()
+        []
     } else {
         TreeSet(ktSourceFileComparator)
     }
@@ -98,7 +98,7 @@ fun collectSources(
                 }
             },
             convertToSourceFiles = {
-                val sources = listOf(KtVirtualFileSourceFile(virtualFileCreator.create(it)))
+                val sources = [KtVirtualFileSourceFile(virtualFileCreator.create(it))]
                 if (it.extension == KotlinFileType.EXTENSION) sources
                 else {
                     // currently applying the extension only to non-kt files, e.g. scripts
@@ -111,7 +111,7 @@ fun collectSources(
                 else platformSources.add(file)
 
                 fileInfo.moduleName?.let {
-                    sourcesByModuleName.getOrPut(it) { mutableSetOf() }.add(file)
+                    sourcesByModuleName.getOrPut(it) { [] }.add(file)
                 }
             }
         }

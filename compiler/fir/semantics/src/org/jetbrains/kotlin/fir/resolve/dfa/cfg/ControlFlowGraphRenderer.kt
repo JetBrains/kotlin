@@ -52,7 +52,7 @@ private class ControlFlowGraphRenderer(
     }
 
     fun renderPartialGraph(controlFlowGraph: ControlFlowGraph) {
-        val nodes = DFS.topologicalOrder(listOf(controlFlowGraph.enterNode)) { it.followingNodes }
+        val nodes = DFS.topologicalOrder([controlFlowGraph.enterNode]) { it.followingNodes }
             .associateWithTo(linkedMapOf()) { nodeCounter++ }
         printer.renderNodes(nodes.filterKeys { it.level >= controlFlowGraph.enterNode.level })
         printer.renderEdges(nodes)
@@ -66,7 +66,7 @@ private class ControlFlowGraphRenderer(
                 enterCluster(color)
                 color = BLUE
             }
-            val attributes = mutableListOf<String>()
+            val attributes: MutableList<String> = []
 
             val nodeName = node.render()
             val nodeHeader = if (options.renderLevels) "$nodeName [${node.level}]" else nodeName

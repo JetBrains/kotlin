@@ -27,5 +27,5 @@ abstract class AbstractDataContainerVersionChangedTest : AbstractIncrementalCach
         get() = BuildLogFinder(isDataContainerBuildLogEnabled = true)
 
     override fun getVersionManagersToTest(target: KotlinModuleBuildTarget<*>) =
-        listOf(kotlinCompileContext.lookupsCacheAttributesManager.versionManagerForTesting)
+        [kotlinCompileContext.lookupsCacheAttributesManager.versionManagerForTesting]
 }

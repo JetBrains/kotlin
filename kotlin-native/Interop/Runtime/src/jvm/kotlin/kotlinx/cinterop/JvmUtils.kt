@@ -116,7 +116,7 @@ private fun initializePath() =
                 .map { if (it == "") "." else it }
 
 // Track the libraries that we have already loaded.
-private var loadedLibraries = mutableSetOf<String>()
+private var loadedLibraries: MutableSet<String> = []
 
 private fun tryLoadKonanLibrary(dir: String, fullLibraryName: String, runFromDaemon: Boolean): Boolean {
     if (loadedLibraries.contains(fullLibraryName)) {

@@ -169,19 +169,19 @@ internal fun schemeOf(text: String): Scheme {
     fun <T> list(continueBlock: (first: Boolean) -> Boolean, block: () -> T): List<T> =
         if (continueBlock(true)) {
             skipWhiteSpace()
-            val result = mutableListOf<T>()
+            val result: MutableList<T> = []
             while (true) {
                 result.add(block())
                 if (!continueBlock(false)) break
                 skipWhiteSpace()
             }
             result
-        } else emptyList()
+        } else []
 
     fun scheme(): Scheme = delimited('[', ']') {
         val target = item()
         val anyParameters = isChar('*')
-        val parameters = if (anyParameters) emptyList() else list({
+        val parameters = if (anyParameters) [] else list({
             (text[current] == ',').also { if (it) expect(',') }
         }) { scheme() }
         val result = optional(':') { scheme() }

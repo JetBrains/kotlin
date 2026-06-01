@@ -20,11 +20,11 @@ object JavaClasses {
 
 
     private fun javaUtilName(name: String): FqName {
-        return FqName.fromSegments(listOf("java", "util", name))
+        return FqName.fromSegments(["java", "util", name])
     }
 
     private fun javaLangName(name: String): FqName {
-        return FqName.fromSegments(listOf("java", "lang", name))
+        return FqName.fromSegments(["java", "lang", name])
     }
 }
 
@@ -106,7 +106,7 @@ class DummyJavaTypeParameter(override val name: Name) : JavaTypeParameter {
     }
 
     override val upperBounds: Collection<JavaClassifierType>
-        get() = emptyList()
+        get() = []
 }
 
 private fun shouldNotBeCalled(): Nothing = error("should not be called")

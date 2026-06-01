@@ -47,8 +47,8 @@ internal object DataFlowIR {
             val irClass: IrClass?,
             val name: String?
     ) {
-        val superTypes = mutableListOf<Type>()
-        val vtable = mutableListOf<FunctionSymbol>()
+        val superTypes: MutableList<Type> = []
+        val vtable: MutableList<FunctionSymbol> = []
         val itable = mutableMapOf<Int, List<FunctionSymbol>>()
 
         // Special marker type forbidding devirtualization on its instances.
@@ -287,7 +287,7 @@ internal object DataFlowIR {
         fun debugString() = buildString {
             appendLine("FUNCTION $symbol")
             appendLine("Params: ${symbol.parameters.contentToString()}")
-            val nodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
+            val nodes = [body.rootScope] + body.allScopes.flatMap { it.nodes }
             val ids = nodes.withIndex().associateBy({ it.value }, { it.index })
             nodes.forEach {
                 appendLine("    NODE #${ids[it]!!}")
@@ -427,7 +427,7 @@ internal object DataFlowIR {
     }
 
     class TypeHierarchy(val allTypes: Array<Type>) {
-        private val typesSubTypes = Array(allTypes.size) { mutableListOf<Type>() }
+        private val typesSubTypes: Array<MutableList<Type>> = Array(allTypes.size) { [] }
         private val allInheritors = Array(allTypes.size) { CustomBitSet() }
 
         init {
@@ -471,7 +471,7 @@ internal object DataFlowIR {
         val typeHierarchy by lazy {
             require(sealed) { "The symbol table has been sealed" }
 
-            val allDeclaredTypes = listOf(Type.Virtual) + classMap.values + primitiveMap.values
+            val allDeclaredTypes = [Type.Virtual] + classMap.values + primitiveMap.values
             val allTypes = Array<Type>(allDeclaredTypes.size) { Type.Virtual }
             for (type in allDeclaredTypes)
                 allTypes[type.index] = type
@@ -698,7 +698,7 @@ internal object DataFlowIR {
 
             functionMap[irField] = symbol
 
-            symbol.parameters = emptyArray()
+            symbol.parameters = []
             symbol.returnParameter = mapTypeToFunctionParameter(context.irBuiltIns.unitType)
             return symbol
         }

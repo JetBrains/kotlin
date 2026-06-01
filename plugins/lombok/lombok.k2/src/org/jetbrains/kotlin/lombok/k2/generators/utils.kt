@@ -63,7 +63,7 @@ fun FirClassSymbol<*>.isSuitableJavaClass(): Boolean {
 fun List<FirFunction>.filterClashingDeclarations(classSymbol: FirClassSymbol<*>): List<FirFunctionSymbol<*>> {
     @Suppress("UNCHECKED_CAST")
     val allStaticFunctionsAndConstructors = classSymbol.fir.declarations.filterIsInstance<FirFunction>().toMutableList()
-    val result = mutableListOf<FirFunction>()
+    val result: MutableList<FirFunction> = []
     for (function in this) {
         if (allStaticFunctionsAndConstructors.none { sameSignature(it, function) }) {
             allStaticFunctionsAndConstructors += function
@@ -99,7 +99,7 @@ fun FirClassSymbol<*>.createJavaMethod(
     dispatchReceiverType: ConeSimpleKotlinType? = this.defaultType(),
     isStatic: Boolean = false,
     methodSymbol: FirNamedFunctionSymbol? = null,
-    methodTypeParameters: Collection<FirTypeParameter> = emptyList(),
+    methodTypeParameters: Collection<FirTypeParameter> = [],
 ): FirJavaMethod {
     return buildJavaMethod {
         containingClassSymbol = this@createJavaMethod

@@ -30,20 +30,20 @@ class PrecompiledCasesTest {
         val testDir = baseOutputPath.resolve(testName.methodName)
         val target = testDir.resolve(testName.methodName + ".txt")
 
-        doCheck(listOf(testDir), target, AbiFilters.EMPTY)
+        doCheck([testDir], target, AbiFilters.EMPTY)
     }
 
     @OptIn(ExperimentalPathApi::class)
     private fun snapshotAPIAndCompare(
-        includedClasses: Set<String> = emptySet(),
-        excludedClasses: Set<String> = emptySet(),
-        includedAnnotatedWith: Set<String> = emptySet(),
-        excludedAnnotatedWith: Set<String> = emptySet(),
+        includedClasses: Set<String> = [],
+        excludedClasses: Set<String> = [],
+        includedAnnotatedWith: Set<String> = [],
+        excludedAnnotatedWith: Set<String> = [],
     ) {
         val testDir = baseOutputPath.resolve(testName.methodName)
         val filters = AbiFilters(includedClasses, excludedClasses, includedAnnotatedWith, excludedAnnotatedWith)
         val target = testDir.resolve(testName.methodName + ".txt")
 
-        doCheck(listOf(testDir), target, filters)
+        doCheck([testDir], target, filters)
     }
 }

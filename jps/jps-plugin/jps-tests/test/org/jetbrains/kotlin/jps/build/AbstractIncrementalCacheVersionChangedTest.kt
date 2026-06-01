@@ -48,5 +48,5 @@ abstract class AbstractIncrementalCacheVersionChangedTest : AbstractIncrementalJ
     }
 
     protected open fun getVersionManagersToTest(target: KotlinModuleBuildTarget<*>): List<CacheVersionManager> =
-        listOf(target.localCacheVersionManager)
+        [target.localCacheVersionManager]
 }

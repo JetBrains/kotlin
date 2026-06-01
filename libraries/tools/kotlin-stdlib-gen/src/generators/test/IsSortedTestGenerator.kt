@@ -20,8 +20,8 @@ object IsSortedTestGenerator {
         val emptyCollection = emptyCollectionExpr(ctor, primitive)
         val fpTypes = when (primitive) {
             null -> PrimitiveType.floatingPointPrimitives.toList()
-            in PrimitiveType.floatingPointPrimitives -> listOf(primitive)
-            else -> emptyList()
+            in PrimitiveType.floatingPointPrimitives -> [primitive]
+            else -> []
         }
 
         val className = "IsSorted${collectionClass}Test"

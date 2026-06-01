@@ -70,7 +70,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         )
 
         versions.add(
-            loadValueFromPomXml("libraries/pom.xml", listOf("project", "version"))
+            loadValueFromPomXml("libraries/pom.xml", ["project", "version"])
                 ?.toVersion("version in pom.xml")
                 ?: error("No version in libraries/pom.xml")
         )
@@ -103,8 +103,8 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         FileUtil.processFilesRecursively(File("libraries")) { file ->
             if (file.name == "pom.xml" && file.toPath().none { it.fileName.toString() == "target" }) {
                 println(file.path)
-                if (loadValueFromPomXml(file.path, listOf("project", "parent", "artifactId")) == "kotlin-project") {
-                    val version = loadValueFromPomXml(file.path, listOf("project", "parent", "version"))
+                if (loadValueFromPomXml(file.path, ["project", "parent", "artifactId"]) == "kotlin-project") {
+                    val version = loadValueFromPomXml(file.path, ["project", "parent", "version"])
                         ?: error("No version found in pom.xml at $file")
                     poms.add(Pom(file.path, version))
                 }
@@ -131,7 +131,7 @@ class KotlinVersionsTest : KtUsefulTestCase() {
         var result: String? = null
 
         SAXParserFactory.newInstance().newSAXParser().parse(File(filePath), object : DefaultHandler() {
-            val currentPath = mutableListOf<String>()
+            val currentPath: MutableList<String> = []
 
             override fun startElement(uri: String, localName: String, qName: String, attributes: Attributes) {
                 currentPath.add(qName)

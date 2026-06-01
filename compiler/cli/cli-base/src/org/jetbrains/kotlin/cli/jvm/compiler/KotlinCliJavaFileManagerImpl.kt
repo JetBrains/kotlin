@@ -284,7 +284,7 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         return emptySet()
     }
 
-    override fun getNonTrivialPackagePrefixes(): Collection<String> = emptyList()
+    override fun getNonTrivialPackagePrefixes(): List<String> = []
 
     companion object {
         private fun findClassInPsiFile(classNameWithInnerClassesDotSeparated: String, file: PsiClassOwner): PsiClass? {

@@ -22,9 +22,12 @@ abstract class Stack<T> {
      * The order is preserved.
      */
     abstract fun <R> createSnapshot(transform: (T) -> R): Stack<R>
+
+    companion object {
+        operator fun <T> of(vararg values: T): Stack<T> = StackImpl(*values)
+    }
 }
 
-fun <T> stackOf(vararg values: T): Stack<T> = StackImpl(*values)
 val Stack<*>.isEmpty: Boolean get() = size == 0
 val Stack<*>.isNotEmpty: Boolean get() = size != 0
 fun <T> Stack<T>.topOrNull(): T? = if (size == 0) null else top()

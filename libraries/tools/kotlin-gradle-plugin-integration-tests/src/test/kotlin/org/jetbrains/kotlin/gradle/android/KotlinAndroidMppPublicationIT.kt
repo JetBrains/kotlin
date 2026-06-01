@@ -30,7 +30,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
         agpVersion: String,
         jdkVersion: JdkVersions.ProvidedJdk,
     ) {
-        val androidSourcesElementsAttributes = arrayOf(
+        val androidSourcesElementsAttributes: Array<Pair<String, String>> = [
             "org.gradle.category" to "documentation",
             "org.gradle.dependency.bundling" to "external",
             "org.gradle.docstype" to "sources",
@@ -42,7 +42,7 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             // user-specific attributes that added manually in build script
             "com.example.compilation" to "release",
             "com.example.target" to "androidLib",
-        )
+        ]
 
         project(
             "new-mpp-android",
@@ -165,10 +165,10 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
             build("publish") {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
-                    val flavorAttributes = arrayOf(
+                    val flavorAttributes: Array<Pair<String, String>> = [
                         "foo" to flavorName,
                         "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
-                    )
+                    ]
 
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0.aar"))
                     assertFileExists(groupDir.resolve("lib-androidlib-$flavor/1.0/lib-androidlib-$flavor-1.0-sources.jar"))
@@ -210,10 +210,10 @@ class KotlinAndroidMppPublicationIT : KGPBaseTest() {
                 listOf("fooBar", "fooBaz").forEach { flavorName ->
                     val flavor = flavorName.lowercase()
 
-                    val flavorAttributes = arrayOf(
+                    val flavorAttributes: Array<Pair<String, String>> = [
                         "foo" to flavorName,
                         "com.android.build.api.attributes.ProductFlavor:foo" to flavorName
-                    )
+                    ]
 
                     listOf("-debug", "").forEach { buildType ->
                         assertFileExists(groupDir.resolve("lib-androidlib-$flavor$buildType/1.0/lib-androidlib-$flavor$buildType-1.0.aar"))

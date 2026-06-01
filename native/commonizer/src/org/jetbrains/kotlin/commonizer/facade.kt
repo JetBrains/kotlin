@@ -110,7 +110,7 @@ internal fun serializeTarget(
 // Fortunately (1), macOS SDK from Xcode 14.1 should have CFCGTypes.h, so this hack can be removed soon.
 // TODO: Remove hack after Xcode 14.1.
 private val allowedDuplicates = run {
-    val cfcgTypesClassifiers = setOf(
+    val cfcgTypesClassifiers: Set<String> = [
         "platform/CoreGraphics/CGAffineTransform",
         "platform/CoreGraphics/CGAffineTransform.Companion",
         "platform/CoreGraphics/CGFloat",
@@ -131,6 +131,6 @@ private val allowedDuplicates = run {
         "platform/CoreGraphics/CGSize.Companion",
         "platform/CoreGraphics/CGVector",
         "platform/CoreGraphics/CGVector.Companion",
-    )
+    ]
     cfcgTypesClassifiers.map { CirEntityId.create(it) }.toSet()
 }

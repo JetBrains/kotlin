@@ -46,7 +46,7 @@ class FirQualifierResolverImpl(override val session: FirSession) : FirQualifierR
         // This implementation mimics the K1 behavior where we allow resolving `Foo.Bar` from the root package without import but not `Foo`.
         // See KT-69985 and compiler/testData/diagnostics/tests/imports/noImportFromRootPackage.kt.
         if (parts.size > 1) {
-            val lastPart = mutableListOf<FirQualifierPart>()
+            val lastPart: MutableList<FirQualifierPart> = []
             val firstPart = parts.toMutableList()
 
             while (firstPart.isNotEmpty()) {

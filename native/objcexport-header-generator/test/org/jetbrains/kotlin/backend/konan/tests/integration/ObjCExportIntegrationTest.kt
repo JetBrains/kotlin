@@ -129,13 +129,13 @@ class ObjCExportIntegrationTest {
     fun `compare combined dependencies`() {
         val report = generateHeadersAndBuildReport(
             "combined",
-            listOf(
+            [
                 testLibraryKotlinxDatetime,
                 testLibraryKotlinxCoroutines,
                 testLibraryAtomicFu,
                 testLibraryKotlinxSerializationCore,
                 testLibraryKotlinxSerializationJson
-            )
+            ]
         )
         if (report.hasIssues) {
             fail(report.toString())
@@ -143,7 +143,7 @@ class ObjCExportIntegrationTest {
     }
 
     private fun generateHeadersAndBuildReport(library: Library): IntegrationTestReport {
-        return generateHeadersAndBuildReport(library.name, listOf(library))
+        return generateHeadersAndBuildReport(library.name, [library])
     }
 
     private fun generateHeadersAndBuildReport(name: String, libraries: List<Library>): IntegrationTestReport {
@@ -182,12 +182,12 @@ class ObjCExportIntegrationTest {
         val k1Index = try {
             compileAndIndex(k1Header, baseHeader)
         } catch (e: Throwable) {
-            return IntegrationTestReport(name, listOf(Issue.FailedK1Compilation(e.message, k1Header, e)))
+            return IntegrationTestReport(name, [Issue.FailedK1Compilation(e.message, k1Header, e)])
         }
         val k2Index = try {
             compileAndIndex(k2Header, baseHeader)
         } catch (e: Throwable) {
-            return IntegrationTestReport(name, listOf(Issue.FailedK2CompilationK2(e.message, k2Header, e)))
+            return IntegrationTestReport(name, [Issue.FailedK2CompilationK2(e.message, k2Header, e)])
         }
 
         return IntegrationTestReport(
@@ -198,7 +198,7 @@ class ObjCExportIntegrationTest {
     private fun compileAndIndex(header: String, baseHeader: File): IndexerResult {
         val headerFile = files.file("$integrationModuleName.h", header)
         return compileAndIndex(
-            listOf(baseHeader, headerFile), files, appleSdkPath, appleFrameworkPath
+            [baseHeader, headerFile], files, appleSdkPath, appleFrameworkPath
         )
     }
 }

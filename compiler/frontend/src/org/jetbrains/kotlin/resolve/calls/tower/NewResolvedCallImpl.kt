@@ -220,7 +220,7 @@ class NewResolvedCallImpl<D : CallableDescriptor>(
     }
 
     private fun collectErrorPositions(): Map<ValueArgument, List<KotlinCallDiagnostic>> {
-        val result = mutableListOf<Pair<ValueArgument, KotlinCallDiagnostic>>()
+        val result: MutableList<Pair<ValueArgument, KotlinCallDiagnostic>> = []
 
         fun ConstraintPosition.originalPosition(): ConstraintPosition =
             if (this is IncorporationConstraintPosition) {

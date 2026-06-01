@@ -26,7 +26,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     fun testNonIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             module1.compileWithMetrics { metrics ->
                 val expectedNames = baseMetricNames
@@ -53,7 +53,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     fun testIncrementalCompilationMetrics(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
             val module1 = module("jvm-module-1")
-            val module2 = module("jvm-module-2", listOf(module1))
+            val module2 = module("jvm-module-2", [module1])
 
             module1.compileIncrementallyWithMetrics(SourcesChanges.ToBeCalculated) { metrics ->
                 val expectedNames = incrementalRecompilationMetricNames
@@ -122,7 +122,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             val bazKt = module1.sourcesDirectory.resolve("baz.kt")
             bazKt.writeText(bazKt.readText().replace("baz() = 42", "baz() = 99"))
 
-            module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = listOf(bazKt.toFile()), removedFiles = emptyList())) { metrics ->
+            module1.compileIncrementallyWithMetrics(SourcesChanges.Known(modifiedFiles = [bazKt.toFile()], removedFiles = [])) { metrics ->
                 assertCompiledSources("baz.kt")
 
                 val expectedNames = incrementalCompilationMetricNames
@@ -142,7 +142,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
     }
 
     companion object {
-        private val baseMetricNames = setOf(
+        private val baseMetricNames: Set<String> = [
             "PS MarkSweep",
             "PS Scavenge",
             "Run compilation -> Sources compilation round -> Compiler time -> Compiler code analysis",
@@ -156,7 +156,7 @@ class SmokeCompilationMetricsTest : BaseCompilationTest() {
             "Total compiler iteration -> Analysis lines per second",
             "Total compiler iteration -> Code generation lines per second",
             "Total compiler iteration -> Number of lines analyzed",
-        )
+        ]
 
         private val incrementalCompilationBaseMetricNames = baseMetricNames + setOf(
             "Number of times classpath snapshot is loaded -> Number of cache hits when loading classpath entry snapshots",

@@ -34,7 +34,7 @@ fun assertClassDeclarationsContain(classFqn: String, expectedDeclarations: Set<S
         // in case we got java.home pointing to the JRE part, javap is located in the outer JDK part
         if (it.exists()) it else File(javaHome, "../bin/javap")
     }.absolutePath
-    val result = runProcess(listOf(javapPath, classFqn), module.outputDirectory)
+    val result = runProcess([javapPath, classFqn], module.outputDirectory)
     assert(result.isSuccessful) {
         "Failed to run javap on $classFqn.\n\n${result.output}"
     }

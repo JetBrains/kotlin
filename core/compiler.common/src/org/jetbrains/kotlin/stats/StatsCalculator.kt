@@ -38,7 +38,7 @@ class StatsCalculator(val reportsData: ReportsData) {
         max: Boolean = true,
         selector: (UnitStats) -> R
     ): List<UnitStats> {
-        if (count == 0) return emptyList()
+        if (count == 0) return []
 
         // Use the priority queue to avoid accidental O(N) * Log(N) complexity due to the sorting of the full collection.
         // If the count is small (typically a reasonable number is lower than 10),

@@ -159,7 +159,7 @@ class JavaTypeResolver(
     // Note that this makes MISSING_DEPENDENCY_CLASS diagnostic messages not as precise as they could be in some corner cases.
     private fun createNotFoundClass(javaType: JavaClassifierType): TypeConstructor {
         val classId = ClassId.topLevel(FqName(javaType.classifierQualifiedName))
-        return c.components.deserializedDescriptorResolver.components.notFoundClasses.getClass(classId, listOf(0)).typeConstructor
+        return c.components.deserializedDescriptorResolver.components.notFoundClasses.getClass(classId, [0]).typeConstructor
     }
 
     private fun mapKotlinClass(javaType: JavaClassifierType, attr: JavaTypeAttributes, fqName: FqName): ClassDescriptor? {

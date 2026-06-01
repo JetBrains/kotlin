@@ -41,7 +41,7 @@ class DataRowSchemaSupertype(session: FirSession) : FirSupertypeGenerationExtens
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
-        if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return emptyList()
-        return listOf(dataRowSchema.constructClassLikeType(emptyArray()))
+        if (resolvedSupertypes.any { it.toClassLikeSymbol(session)?.classId == dataRowSchema }) return []
+        return [dataRowSchema.constructClassLikeType([])]
     }
 }

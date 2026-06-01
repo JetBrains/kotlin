@@ -87,7 +87,7 @@ class ClassCodegen private constructor(
     private val state: GenerationState get() = context.state
     private val config: JvmBackendConfig = context.config
 
-    private val innerClasses = mutableSetOf<IrClass>()
+    private val innerClasses: MutableSet<IrClass> = []
     val typeMapper = object : IrTypeMapper(context) {
         override fun mapType(type: IrType, mode: TypeMappingMode, sw: JvmSignatureWriter?, materialized: Boolean): Type {
             var t = type
@@ -375,7 +375,7 @@ class ClassCodegen private constructor(
         if (entry is MultifileFacadeFileEntry) {
             return entry.partFiles.flatMap { it.loadSourceFilesInfo() }
         }
-        return listOf(File(entry.name))
+        return [File(entry.name)]
     }
 
     private fun generateField(field: IrField) {

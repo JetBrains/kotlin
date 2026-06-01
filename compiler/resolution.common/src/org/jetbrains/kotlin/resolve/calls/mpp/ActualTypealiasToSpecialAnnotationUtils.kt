@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.mpp
 
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 
 object ActualTypealiasToSpecialAnnotationUtils {
     /**
@@ -15,11 +16,11 @@ object ActualTypealiasToSpecialAnnotationUtils {
      * Instead, we prohibit certain package names because we are sure that annotations from them
      * are visible in common and there is no point to typealias them.
      */
-    private val FORBIDDEN_PACKAGES = setOf(
+    private val FORBIDDEN_PACKAGES: Set<FqName> = [
         StandardNames.ANNOTATION_PACKAGE_FQ_NAME,
         StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
         StandardNames.KOTLIN_INTERNAL_FQ_NAME,
-    )
+    ]
 
     fun isAnnotationProhibitedInActualTypeAlias(classId: ClassId): Boolean {
         return classId.packageFqName in FORBIDDEN_PACKAGES

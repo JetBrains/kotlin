@@ -120,7 +120,7 @@ abstract class RelocatableCacheTestCase(
             facet.useProjectSettings = false
             facet.compilerArguments = K2JVMCompilerArguments().apply {
                 // Add both libraries inside and outside project
-                pluginClasspaths = arrayOf(module1Lib.absolutePath, libraryJar.absolutePath)
+                pluginClasspaths = [module1Lib.absolutePath, libraryJar.absolutePath]
             }
 
             it.container.setChild(

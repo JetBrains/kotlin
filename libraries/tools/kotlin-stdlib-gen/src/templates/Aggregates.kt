@@ -276,7 +276,7 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
-    fun f_sumOf() = listOf("Int", "Long", "UInt", "ULong", "Double", "java.math.BigInteger", "java.math.BigDecimal").map { selectorType ->
+    fun f_sumOf() = ["Int", "Long", "UInt", "ULong", "Double", "java.math.BigInteger", "java.math.BigDecimal"].map { selectorType ->
         fn("sumOf(selector: (T) -> $selectorType)") {
             includeDefault()
             include(CharSequences, ArraysOfUnsigned)
@@ -288,7 +288,7 @@ object Aggregates : TemplateGroupBase() {
                 selectorType.startsWith("java") -> selectorType.substringAfterLast('.')
                 else -> selectorType
             }
-            if (selectorType !in listOf("Int", "UInt")) {
+            if (selectorType !in ["Int", "UInt"]) {
                 annotation("@OptIn(kotlin.experimental.ExperimentalTypeInference::class)")
                 annotation("@OverloadResolutionByLambdaReturnType")
             }
@@ -355,7 +355,7 @@ object Aggregates : TemplateGroupBase() {
 
                 val isFloat = primitive?.isFloatingPoint() == true
                 val isUnsigned = family == ArraysOfUnsigned
-                val isGeneric = family in listOf(Iterables, Sequences, ArraysOfObjects)
+                val isGeneric = family in [Iterables, Sequences, ArraysOfObjects]
 
                 if (!nullable || legacy) suppress("CONFLICTING_OVERLOADS")
                 if (legacy) {
@@ -428,8 +428,8 @@ object Aggregates : TemplateGroupBase() {
                 }
             }
 
-        for (op in listOf("min", "max")) {
-            for (nullable in listOf(false, true))
+        for (op in ["min", "max"]) {
+            for (nullable in [false, true])
                 yield(def(op, nullable))
             yield(def(op, nullable = true, legacy = true, orNull = ""))
         }
@@ -524,8 +524,8 @@ object Aggregates : TemplateGroupBase() {
                 body(Maps) { "return entries.$op$orNull(selector)" }
             }
 
-        for (op in listOf("minBy", "maxBy")) {
-            for (nullable in listOf(false, true))
+        for (op in ["minBy", "maxBy"]) {
+            for (nullable in [false, true])
                 yield(def(op, nullable))
             yield(def(op, nullable = true, legacy = true, orNull = ""))
         }
@@ -588,8 +588,8 @@ object Aggregates : TemplateGroupBase() {
                 body(Maps) { "return entries.$op$orNull(comparator)" }
             }
 
-        for (op in listOf("minWith", "maxWith")) {
-            for (nullable in listOf(false, true))
+        for (op in ["minWith", "maxWith"]) {
+            for (nullable in [false, true])
                 yield(def(op, nullable))
             yield(def(op, nullable = true, legacy = true, orNull = ""))
         }
@@ -673,9 +673,9 @@ object Aggregates : TemplateGroupBase() {
             }
 
 
-        for (op in listOf("min", "max"))
-            for (selectorType in listOf("R", "Float", "Double"))
-                for (nullable in listOf(false, true))
+        for (op in ["min", "max"])
+            for (selectorType in ["R", "Float", "Double"])
+                for (nullable in [false, true])
                     yield(def(op, selectorType, nullable))
     }
 
@@ -745,8 +745,8 @@ object Aggregates : TemplateGroupBase() {
                 }
             }
 
-        for (op in listOf("min", "max"))
-            for (nullable in listOf(false, true))
+        for (op in ["min", "max"])
+            for (nullable in [false, true])
                 yield(def(op, nullable))
     }
 
@@ -1478,7 +1478,7 @@ object Aggregates : TemplateGroupBase() {
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             """
-            if (isEmpty()) return listOf(initial)
+            if (isEmpty()) return [initial]
 
             val result = ArrayList<R>(${f.code.size} + 1).apply { add(initial) }
             var accumulator = initial
@@ -1492,7 +1492,7 @@ object Aggregates : TemplateGroupBase() {
         body(Iterables) {
             """
             val estimatedSize = collectionSizeOrDefault(9)
-            if (estimatedSize == 0) return listOf(initial)
+            if (estimatedSize == 0) return [initial]
             
             val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
             var accumulator = initial
@@ -1573,7 +1573,7 @@ object Aggregates : TemplateGroupBase() {
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned, CharSequences) {
             """
-            if (isEmpty()) return listOf(initial)
+            if (isEmpty()) return [initial]
 
             val result = ArrayList<R>(${f.code.size} + 1).apply { add(initial) }
             var accumulator = initial
@@ -1587,7 +1587,7 @@ object Aggregates : TemplateGroupBase() {
         body(Iterables) {
             """
             val estimatedSize = collectionSizeOrDefault(9)
-            if (estimatedSize == 0) return listOf(initial)
+            if (estimatedSize == 0) return [initial]
             
             val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
             var index = 0
@@ -1665,7 +1665,7 @@ object Aggregates : TemplateGroupBase() {
 
         body {
             """
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
             
             var accumulator = this[0]
             val result = ArrayList<T>(${f.code.size}).apply { add(accumulator) }
@@ -1701,7 +1701,7 @@ object Aggregates : TemplateGroupBase() {
 
         body {
             """
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
 
             var accumulator = this[0]
             val result = ArrayList<T>(${f.code.size}).apply { add(accumulator) }
@@ -1740,7 +1740,7 @@ object Aggregates : TemplateGroupBase() {
 
         body(ArraysOfObjects) {
             """
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
 
             var accumulator: S = this[0]
             val result = ArrayList<S>(size).apply { add(accumulator) }
@@ -1754,7 +1754,7 @@ object Aggregates : TemplateGroupBase() {
         body(Iterables) {
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) return emptyList()
+            if (!iterator.hasNext()) return []
 
             var accumulator: S = iterator.next()
             val result = ArrayList<S>(collectionSizeOrDefault(10)).apply { add(accumulator) }
@@ -1809,7 +1809,7 @@ object Aggregates : TemplateGroupBase() {
 
         body(ArraysOfObjects) {
             """
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
 
             var accumulator: S = this[0]
             val result = ArrayList<S>(size).apply { add(accumulator) }
@@ -1823,7 +1823,7 @@ object Aggregates : TemplateGroupBase() {
         body(Iterables) {
             """
             val iterator = this.iterator()
-            if (!iterator.hasNext()) return emptyList()
+            if (!iterator.hasNext()) return []
 
             var accumulator: S = iterator.next()
             val result = ArrayList<S>(collectionSizeOrDefault(10)).apply { add(accumulator) }

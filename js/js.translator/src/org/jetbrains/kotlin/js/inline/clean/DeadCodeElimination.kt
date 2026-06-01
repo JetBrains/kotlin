@@ -27,7 +27,7 @@ internal class DeadCodeElimination(private val root: JsStatement) {
     }
 
     inner class EliminationVisitor : RecursiveJsVisitor() {
-        var breakLabels = mutableSetOf<JsName>()
+        var breakLabels: MutableSet<JsName> = []
         var localBreakExists = false
         var canContinue = false
 

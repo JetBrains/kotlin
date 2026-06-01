@@ -110,7 +110,7 @@ internal class DelegatedPropertyGenerator(
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             accessorDescriptor
         ).buildWithScope { irAccessor ->
-            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktProperty, null, emptyList())
+            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktProperty, null, [])
             if (context.configuration.generateBodies) {
                 irAccessor.body = generateBody(irAccessor)
             }
@@ -408,7 +408,7 @@ internal class DelegatedPropertyGenerator(
             IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR,
             getterDescriptor
         ).buildWithScope { irAccessor ->
-            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktDelegate, null, emptyList())
+            FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(irAccessor, ktDelegate, null, [])
             irAccessor.body = generateBody(irAccessor)
         }
 
@@ -421,7 +421,7 @@ internal class DelegatedPropertyGenerator(
     }
 
     private fun getKPropertyTypeForLocalDelegatedProperty(variableDescriptor: VariableDescriptorWithAccessors) =
-        context.reflectionTypes.getKPropertyType(Annotations.EMPTY, emptyList(), variableDescriptor.type, variableDescriptor.isVar)
+        context.reflectionTypes.getKPropertyType(Annotations.EMPTY, [], variableDescriptor.type, variableDescriptor.isVar)
 
     private fun createPropertyDelegateDescriptor(
         propertyDescriptor: PropertyDescriptor,

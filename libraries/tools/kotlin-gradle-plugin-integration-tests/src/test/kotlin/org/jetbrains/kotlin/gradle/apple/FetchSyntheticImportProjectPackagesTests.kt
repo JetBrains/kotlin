@@ -66,24 +66,24 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                         TransitiveSwiftPMDependencies(
                             mapOf(
                                 SwiftPMDependencyIdentifier("dep", true) to SwiftPMImportMetadata(
-                                    konanTargets = setOf("ios_arm64"),
+                                    konanTargets = ["ios_arm64"],
                                     iosDeploymentVersion = "123.0",
                                     macosDeploymentVersion = "234.0",
                                     watchosDeploymentVersion = null,
                                     tvosDeploymentVersion = null,
                                     isModulesDiscoveryEnabled = true,
-                                    dependencies = setOf(
+                                    dependencies = [
                                         SwiftPMDependency.Remote(
                                             repository = SwiftPMDependency.Remote.Repository.Url("https://foo.bar/baz"),
                                             version = SwiftPMDependency.Remote.Version.Exact(project.property("transitiveDepVersion") as String),
-                                            products = listOf(
+                                            products = [
                                                 SwiftPMDependency.Product("dep"),
-                                            ),
-                                            cinteropClangModules = emptyList(),
+                                            ],
+                                            cinteropClangModules = [],
                                             packageName = "baz",
-                                            traits = setOf()
+                                            traits = []
                                         )
-                                    ),
+                                    ],
                                 ),
                             )
                         )
@@ -118,7 +118,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
             withLockFileFixture {
                 val repoAName = "TestPackageA"
 
-                createRepo(repoAName, listOf("1.0.0"))
+                createRepo(repoAName, ["1.0.0"])
 
                 val repoA = repoRef(repoAName)
                 val fetchTask = ":${FetchSyntheticImportProjectPackages.TASK_NAME}"
@@ -130,7 +130,7 @@ class FetchSyntheticImportProjectPackagesTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repoA.url),
                             version = from("1.0.0"),
-                            products = listOf(product(repoA.name)),
+                            products = [product(repoA.name)],
                         )
                     }
                 }

@@ -145,7 +145,7 @@ class TestRunProvider(
             testCaseId.testCaseGroupId
 
         val executable = if (settings.get<XCTestRunner>().isEnabled &&
-            testCase.kind in listOf(TestKind.STANDALONE, TestKind.REGULAR)
+            testCase.kind in [TestKind.STANDALONE, TestKind.REGULAR]
         ) {
             val testCompilation = when (testCase.kind) {
                 TestKind.STANDALONE -> {
@@ -153,7 +153,7 @@ class TestRunProvider(
                     cachedXCTestCompilations.computeIfAbsent(
                         TestCompilationCacheKey.Standalone(testCaseId)
                     ) {
-                        compilationFactory.testCasesToTestBundle(listOf(testCase), settings)
+                        compilationFactory.testCasesToTestBundle([testCase], settings)
                     }
                 }
                 TestKind.REGULAR -> {
@@ -194,7 +194,7 @@ class TestRunProvider(
                     cachedCompilations.computeIfAbsent(
                         TestCompilationCacheKey.Standalone(testCaseId)
                     ) {
-                        compilationFactory.testCasesToExecutable(listOf(testCase), settings)
+                        compilationFactory.testCasesToExecutable([testCase], settings)
                     }
                 }
                 TestKind.REGULAR -> {

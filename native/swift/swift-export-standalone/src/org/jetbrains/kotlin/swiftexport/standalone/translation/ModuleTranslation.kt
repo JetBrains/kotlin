@@ -45,7 +45,7 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
             val symbolContainingModule = symbol.containingModule as? KaLibraryModule
             symbolContainingModule?.let { libraryName ->
                 externalTypeDeclarationReferences
-                    .getOrPut(libraryName) { mutableListOf() }
+                    .getOrPut(libraryName) { [] }
                     .addIfNotNull(symbol.classId?.asSingleFqName())
             }
         }
@@ -90,8 +90,8 @@ internal fun translateCrossReferencingModulesTransitively(
                 kaModule = module,
                 moduleConfig = kaModules.configFor(module),
                 unprocessedReferences = references.toMutableSet(),
-                currentlyProcessing = emptyList(),
-                processedReferences = mutableSetOf(),
+                currentlyProcessing = [],
+                processedReferences = [],
             )
         }
     val typeReferenceHandler = SirKaClassReferenceHandler { symbol ->
@@ -125,7 +125,7 @@ internal fun translateCrossReferencingModulesTransitively(
                     }
                 }
                 it.processedReferences += it.currentlyProcessing
-                it.currentlyProcessing = emptyList()
+                it.currentlyProcessing = []
                 // Touch all declarations
                 it.sirSession.withSessions {
                     deepTouch(sirModule, typeReferenceHandler::onClassReference)

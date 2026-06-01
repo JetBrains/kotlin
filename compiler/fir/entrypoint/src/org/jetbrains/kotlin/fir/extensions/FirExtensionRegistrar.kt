@@ -20,7 +20,7 @@ import kotlin.reflect.KClass
 
 abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
     companion object {
-        internal val AVAILABLE_EXTENSIONS = listOf(
+        internal val AVAILABLE_EXTENSIONS = [
             FirStatusTransformerExtension::class,
             FirDeclarationGenerationExtension::class,
             FirAdditionalCheckersExtension::class,
@@ -40,12 +40,12 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
             FirMetadataSerializerPlugin::class,
             @OptIn(FirExtensionApiInternals::class)
             FirFunctionCallRefinementExtension::class,
-        )
+        ]
 
-        internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = listOf(
+        internal val ALLOWED_EXTENSIONS_FOR_LIBRARY_SESSION = [
             FirTypeAttributeExtension::class,
             FirFunctionTypeKindExtension::class,
-        )
+        ]
     }
 
     protected abstract fun ExtensionRegistrarContext.configurePlugin()
@@ -255,10 +255,10 @@ abstract class FirExtensionRegistrar : FirExtensionRegistrarAdapter() {
 
     private val extensionFactories: Map<KClass<out FirExtension>, MutableList<FirExtension.Factory<FirExtension>>> =
         AVAILABLE_EXTENSIONS.associateWith {
-            mutableListOf()
+            []
         }
 
-    private val diagnosticsContainers: MutableList<KtDiagnosticsContainer> = mutableListOf()
+    private val diagnosticsContainers: MutableList<KtDiagnosticsContainer> = []
 
     /**
      * A lazy property which returns the [extensionFactories] map, but calls
@@ -293,8 +293,8 @@ class BunchOfRegisteredExtensions @PluginServicesInitialization constructor(
         @OptIn(PluginServicesInitialization::class)
         fun empty(): BunchOfRegisteredExtensions {
             return BunchOfRegisteredExtensions(
-                extensions = FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { listOf() },
-                diagnosticsContainers = emptyList()
+                extensions = FirExtensionRegistrar.AVAILABLE_EXTENSIONS.associateWith { [] },
+                diagnosticsContainers = []
             )
         }
     }

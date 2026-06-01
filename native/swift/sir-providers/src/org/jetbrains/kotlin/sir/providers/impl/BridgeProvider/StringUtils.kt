@@ -30,27 +30,27 @@ internal val String.cIdentifier: String
         }
     }.let { it.takeIf { !cKeywords.contains(it) } ?: "${it}_" }
 
-private val cKeywords = setOf(
+private val cKeywords: Set<String> = [
     "alignas", "alignof", "auto", "bool", "break", "case", "char", "const", "constexpr", "continue", "default", "do", "double", "else",
     "enum", "extern", "false", "float", "for", "goto", "id", "if", "inline", "int", "long", "nullptr", "register", "restrict", "return", "short",
     "signed", "sizeof", "static", "static_assert", "struct", "switch", "thread_local", "true", "typedef", "typeof", "typeof_unqual",
     "union", "unsigned", "void", "volatile", "while", "_Alignas", "_Alignof", "_Atomic", "_BitInt", "_Bool", "_Complex", "_Decimal128",
     "_Decimal32", "_Decimal64", "_Generic", "_Imaginary", "_Noreturn", "_Static_assert", "_Thread_local"
-)
+]
 
 internal val String.kotlinIdentifier: String
     get() = this.takeIf { kotlinBasicIdentifierRegex.matches(it) && !kotlinKeywords.contains(it) && it.any { it != '_' } }
         ?: (this.takeIf(kotlinQuotedIdentifierRegex::matches)
             ?: this.replace(kotlinQuotedIdentifierNonCompliantRegex) { "" }).let { "`$it`" }
 
-private val kotlinKeywords = setOf(
+private val kotlinKeywords: Set<String> = [
     "return@", "continue@", "break@", "this@", "super@", "file", "field", "property", "get", "set", "receiver", "param", "setparam",
     "delegate", "package", "import", "class", "interface", "fun", "object", "val", "var", "typealias", "constructor", "by", "companion",
     "init", "this", "super", "typeof", "where", "if", "else", "when", "try", "catch", "finally", "for", "do", "while", "throw", "return",
     "continue", "break", "as", "is", "in", "!is", "!in", "out", "dynamic", "public", "private", "protected", "internal", "enum", "sealed",
     "annotation", "data", "inner", "tailrec", "operator", "inline", "infix", "external", "suspend", "override", "abstract", "final", "open",
     "const", "lateinit", "vararg", "noinline", "crossinline", "reified", "expect", "actual"
-)
+]
 
 internal fun createBridgeParameterName(kotlinName: String): String {
     // TODO: Post-process because C has stricter naming conventions.

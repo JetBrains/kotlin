@@ -29,7 +29,7 @@ class PlatformIntegerCommonizer(
     }
 
     private val platformDependentTypeCommonizers: List<PlatformDependentTypeCommonizer>
-        get() = listOf(
+        get() = [
             PlatformIntCommonizer(classifiers),
             PlatformUIntCommonizer(classifiers),
             PlatformIntArrayCommonizer(classifiers),
@@ -40,7 +40,7 @@ class PlatformIntegerCommonizer(
             PlatformUIntProgressionCommonizer(classifiers),
             PlatformIntVarOfCommonizer(classifiers, TypeArgumentListCommonizer(typeCommonizer)),
             PlatformUIntVarOfCommonizer(classifiers, TypeArgumentListCommonizer(typeCommonizer)),
-        )
+        ]
 }
 
 private sealed class PlatformDependentTypeCommonizer(
@@ -217,7 +217,7 @@ private fun createCirTypeWithoutArguments(id: CirEntityId): CirClassType =
     CirClassType.createInterned(
         classId = id,
         outerType = null,
-        arguments = emptyList(),
+        arguments = [],
         isMarkedNullable = false,
     )
 

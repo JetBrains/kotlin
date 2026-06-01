@@ -187,8 +187,8 @@ object FirAnnotationClassDeclarationChecker : FirRegularClassChecker(MppCheckerK
     }
 
     private class CycleChecker(val targetAnnotation: FirRegularClassSymbol, val session: FirSession) {
-        private val visitedAnnotations = mutableSetOf(targetAnnotation)
-        private val annotationsWithCycle = mutableSetOf(targetAnnotation)
+        private val visitedAnnotations: MutableSet<FirRegularClassSymbol> = [targetAnnotation]
+        private val annotationsWithCycle: MutableSet<FirRegularClassSymbol> = [targetAnnotation]
 
         fun annotationHasCycle(annotation: FirRegularClassSymbol): Boolean {
             val primaryConstructor = annotation.primaryConstructorIfAny(session) ?: return false

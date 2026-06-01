@@ -44,7 +44,7 @@ internal abstract class AbstractKPropertyProxy(
     override val returnType: KType
         get() = state.getReturnType(callInterceptor)
     override val typeParameters: List<KTypeParameter>
-        get() = listOf()
+        get() = []
     override val visibility: KVisibility?
         get() = state.property.visibility.toKVisibility()
 

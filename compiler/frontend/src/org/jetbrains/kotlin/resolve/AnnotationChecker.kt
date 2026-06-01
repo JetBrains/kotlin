@@ -126,7 +126,7 @@ class AnnotationChecker(
 
     private fun checkPropertyUseSiteTargetAnnotations(property: KtProperty, trace: BindingTrace) {
         fun List<KtAnnotationEntry>?.getDescriptors() =
-            this?.mapNotNull { trace.get(BindingContext.ANNOTATION, it)?.annotationClass } ?: listOf()
+            this?.mapNotNull { trace.get(BindingContext.ANNOTATION, it)?.annotationClass } ?: []
 
         val reportError = languageVersionSettings.supportsFeature(ProhibitRepeatedUseSiteTargetAnnotations)
 
@@ -207,13 +207,13 @@ class AnnotationChecker(
 
     private fun KtAnnotated?.getImplicitUseSiteTargetList(): List<AnnotationUseSiteTarget> = when (this) {
         is KtParameter ->
-            if (ownerFunction is KtPrimaryConstructor) UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER else emptyList()
+            if (ownerFunction is KtPrimaryConstructor) UseSiteTargetsList.T_CONSTRUCTOR_PARAMETER else []
         is KtProperty ->
-            if (!isLocal) UseSiteTargetsList.T_PROPERTY else emptyList()
+            if (!isLocal) UseSiteTargetsList.T_PROPERTY else []
         is KtPropertyAccessor ->
-            if (isGetter) listOf(AnnotationUseSiteTarget.PROPERTY_GETTER) else listOf(AnnotationUseSiteTarget.PROPERTY_SETTER)
+            if (isGetter) [AnnotationUseSiteTarget.PROPERTY_GETTER] else [AnnotationUseSiteTarget.PROPERTY_SETTER]
         else ->
-            emptyList()
+            []
     }
 
     private fun KtAnnotated?.getDefaultUseSiteTarget(descriptor: AnnotationDescriptor) =
@@ -335,7 +335,7 @@ class AnnotationChecker(
 
         @JvmStatic
         fun applicableTargetSet(descriptor: AnnotationDescriptor): Set<KotlinTarget> {
-            val classDescriptor = descriptor.annotationClass ?: return emptySet()
+            val classDescriptor = descriptor.annotationClass ?: return []
             return applicableTargetSet(classDescriptor)
         }
 

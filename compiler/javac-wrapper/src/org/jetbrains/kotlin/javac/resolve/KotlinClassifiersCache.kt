@@ -112,7 +112,7 @@ class MockKotlinClassifier(override val classId: ClassId,
 
     override val supertypes: Collection<JavaClassifierType>
         get() = if (classOrObject == null) {
-            emptyList()
+            []
         }
         else javac.kotlinResolver.resolveSupertypes(classOrObject)
                 .mapNotNull { javac.getKotlinClassifier(it) ?: javac.findClass(it) }
@@ -123,7 +123,7 @@ class MockKotlinClassifier(override val classId: ClassId,
                         ?.filterIsInstance<KtClassOrObject>()
                         ?.mapNotNull { nestedClassOrObject ->
                             cache.createMockKotlinClassifier(nestedClassOrObject, ktFile, classId.createNestedClassId(nestedClassOrObject.nameAsSafeName))
-                        } ?: emptyList()
+                        } ?: []
 
     override val isFromSource: Boolean
         get() = true

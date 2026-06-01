@@ -122,4 +122,4 @@ public sealed interface KaDeclarationSymbol : KaSymbol, KaAnnotatedSymbol {
 @KaExperimentalApi
 public val KaDeclarationSymbol.typeParameters: List<KaTypeParameterSymbol>
     @OptIn(KaImplementationDetail::class)
-    get() = if (this is KaTypeParameterOwnerSymbol) typeParameters else emptyList()
+    get() = if (this is KaTypeParameterOwnerSymbol) typeParameters else []

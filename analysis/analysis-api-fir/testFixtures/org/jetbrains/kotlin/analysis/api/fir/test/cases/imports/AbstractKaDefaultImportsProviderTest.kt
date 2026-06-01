@@ -92,7 +92,7 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
 
         return context.towerDataContext.towerDataElements
             .flatMap { it.getAvailableScopes() }
-            .flatMap { if (it is FirDefaultStarImportingScope) listOf(it.first, it.second) else listOf(it) }
+            .flatMap { if (it is FirDefaultStarImportingScope) [it.first, it.second] else [it] }
             .flatMap { scope ->
                 when (scope) {
                     is FirSingleLevelDefaultStarImportingScope -> {
@@ -111,7 +111,7 @@ abstract class AbstractKaDefaultImportsProviderTest : AbstractAnalysisApiBasedTe
                             )
                         }
                     }
-                    else -> emptyList()
+                    else -> []
                 }
             }
 

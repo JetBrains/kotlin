@@ -119,7 +119,7 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         for (root in sourceRoots) {
             javaSources.addAll(root.walk().filter { it.isFile && it.extension == "java" })
         }
-        if (javaSources.isEmpty()) return TestCompilationResult(ExitCode.OK, emptyList(), emptyList(), "")
+        if (javaSources.isEmpty()) return TestCompilationResult(ExitCode.OK, [], [], "")
 
         val javaClasspath = compileClasspath + File.pathSeparator + kotlinClassesPath
         val javaDestinationDir = File(workingDir, "java-classes").apply {

@@ -26,7 +26,7 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+            for (file in ["User.java", "Address.java", "Observable.java"]) {
                 TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
@@ -46,7 +46,7 @@ class IncrementalKaptTest {
         val logger = WriterBackedKaptLogger(isVerbose = true)
         KaptContext(options, true, logger).use {
             it.doAnnotationProcessing(
-                options.collectJavaSourceFiles(SourcesToReprocess.FullRebuild), listOf(SimpleProcessor().toIsolating())
+                options.collectJavaSourceFiles(SourcesToReprocess.FullRebuild), [SimpleProcessor().toIsolating()]
             )
         }
 
@@ -74,7 +74,7 @@ class IncrementalKaptTest {
             assertFalse(outputDir.resolve("test/UserGenerated.java").exists())
 
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), [SimpleProcessor().toIsolating()]
             )
         }
 
@@ -84,7 +84,7 @@ class IncrementalKaptTest {
         sourcesDir.resolve("User.java").delete()
         KaptContext(optionsForSecondRun, true, logger).use {
             it.doAnnotationProcessing(
-                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), listOf(SimpleProcessor().toIsolating())
+                optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess), [SimpleProcessor().toIsolating()]
             )
         }
 
@@ -103,7 +103,7 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+            for (file in ["User.java", "Address.java", "Observable.java"]) {
                 TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
@@ -123,13 +123,13 @@ class IncrementalKaptTest {
         val logger = WriterBackedKaptLogger(isVerbose = true)
         KaptContext(options, true, logger).use {
             it.doAnnotationProcessing(
-                options.collectJavaSourceFiles(SourcesToReprocess.FullRebuild), listOf(SimpleGeneratingIfTypeDoesNotExist().toIsolating())
+                options.collectJavaSourceFiles(SourcesToReprocess.FullRebuild), [SimpleGeneratingIfTypeDoesNotExist().toIsolating()]
             )
         }
 
         compileSources(sourcesDir.listFiles().orEmpty().asIterable(), classesOutput)
         compileSources(
-            listOf(outputDir.resolve("test/UserGenerated.java"), outputDir.resolve("test/AddressGenerated.java")),
+            [outputDir.resolve("test/UserGenerated.java"), outputDir.resolve("test/AddressGenerated.java")],
             classesOutput
         )
 
@@ -152,7 +152,7 @@ class IncrementalKaptTest {
 
             it.doAnnotationProcessing(
                 optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess),
-                listOf(SimpleGeneratingIfTypeDoesNotExist().toIsolating())
+                [SimpleGeneratingIfTypeDoesNotExist().toIsolating()]
             )
         }
 
@@ -170,7 +170,7 @@ class IncrementalKaptTest {
     ) {
         val sourcesDir = baseSourcesDir.resolve("test").also { base ->
             base.mkdir()
-            for (file in listOf("User.java", "Address.java", "Observable.java")) {
+            for (file in ["User.java", "Address.java", "Observable.java"]) {
                 TEST_DATA_DIR.resolve(file).copyTo(base.resolve(file))
             }
         }
@@ -191,7 +191,7 @@ class IncrementalKaptTest {
         KaptContext(options, true, logger).use {
             it.doAnnotationProcessing(
                 options.collectJavaSourceFiles(SourcesToReprocess.FullRebuild),
-                listOf(DynamicProcessor(RuntimeProcType.NON_INCREMENTAL).toDynamic())
+                [DynamicProcessor(RuntimeProcType.NON_INCREMENTAL).toDynamic()]
             )
         }
 
@@ -213,11 +213,11 @@ class IncrementalKaptTest {
             assertEquals(SourcesToReprocess.FullRebuild, it.sourcesToReprocess)
 
             // check output dir is empty
-            assertEquals(listOf(outputDir), outputDir.walkTopDown().toList())
+            assertEquals([outputDir], outputDir.walkTopDown().toList())
 
             it.doAnnotationProcessing(
                 optionsForSecondRun.collectJavaSourceFiles(it.sourcesToReprocess),
-                listOf(DynamicProcessor(RuntimeProcType.NON_INCREMENTAL).toDynamic())
+                [DynamicProcessor(RuntimeProcType.NON_INCREMENTAL).toDynamic()]
             )
         }
 

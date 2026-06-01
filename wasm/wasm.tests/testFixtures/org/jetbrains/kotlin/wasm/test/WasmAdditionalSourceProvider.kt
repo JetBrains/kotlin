@@ -25,7 +25,7 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         }
 
         // no box function
-        if (fileWithBoxFun == null) return emptyList()
+        if (fileWithBoxFun == null) return []
 
         val matchResult = Regex("^package\\s+([\\w.]+)", RegexOption.MULTILINE).find(fileWithBoxFun.originalContent)
 
@@ -33,10 +33,10 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
         val boxTestRunTestFile = boxTestRunFile.toTestFile()
 
         // no package
-        if (matchResult == null) return listOf(boxTestRunTestFile)
+        if (matchResult == null) return [boxTestRunTestFile]
 
         val p = matchResult.groupValues[1]
-        return listOf(
+        return [
             TestFile(
                 boxTestRunTestFile.name,
                 boxTestRunFile.readText().replace("box()", "$p.box()"),
@@ -45,7 +45,7 @@ class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : Addition
                 isAdditional = true,
                 directives = RegisteredDirectives.Empty
             )
-        )
+        ]
     }
 }
 
@@ -55,11 +55,11 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (WasmEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return emptyList()
+        if (WasmEnvironmentConfigurationDirectives.NO_COMMON_FILES in module.directives) return []
         // For multiplatform projects, add the files only to common modules with no dependencies.
         if (module.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects) &&
             module.allDependencies.isNotEmpty()) {
-            return emptyList()
+            return []
         }
         return getAdditionalGlobalFiles() + getAdditionalLocalFiles(module.files.first().originalFile.parent)
     }

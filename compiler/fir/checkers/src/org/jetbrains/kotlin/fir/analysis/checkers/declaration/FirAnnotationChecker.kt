@@ -410,7 +410,7 @@ object FirAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkRepeatedAnnotationsInProperty(property: FirProperty) {
         fun FirAnnotationContainer?.getAnnotationTypes(): List<ConeKotlinType> {
-            return this?.annotations?.map { it.annotationTypeRef.coneType } ?: listOf()
+            return this?.annotations?.map { it.annotationTypeRef.coneType } ?: []
         }
 
         val propertyAnnotations = mapOf(

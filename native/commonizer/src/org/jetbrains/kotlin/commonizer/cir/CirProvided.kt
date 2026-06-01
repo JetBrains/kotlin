@@ -38,7 +38,7 @@ object CirProvided {
             check(syntheticClassId.packageName.isUnderKotlinNativeSyntheticPackages)
         }
 
-        override val typeParameters: List<TypeParameter> get() = emptyList()
+        override val typeParameters: List<TypeParameter> get() = []
         override val visibility: Visibility get() = Visibilities.Public
         override val supertypes: List<Type> = syntheticClassId.artificialSupertypes()
     }
@@ -93,20 +93,20 @@ private object ArtificialSupertypes {
     private fun createType(classId: String): CirProvided.ClassType {
         return CirProvided.ClassType(
             classifierId = CirEntityId.create(classId),
-            outerType = null, arguments = emptyList(), isMarkedNullable = false
+            outerType = null, arguments = [], isMarkedNullable = false
         )
     }
 
-    private val cOpaqueType = listOf(createType("kotlinx/cinterop/COpaque"))
-    private val objcObjectBase = listOf(createType("kotlinx/cinterop/ObjCObjectBase"))
-    private val objcCObject = listOf(createType("kotlinx/cinterop/ObjCObject"))
+    private val cOpaqueType = [createType("kotlinx/cinterop/COpaque")]
+    private val objcObjectBase = [createType("kotlinx/cinterop/ObjCObjectBase")]
+    private val objcCObject = [createType("kotlinx/cinterop/ObjCObject")]
 
     fun CirEntityId.artificialSupertypes(): List<CirProvided.Type> {
         return when (packageName) {
             CNAMES_STRUCTS_PACKAGE -> cOpaqueType
             OBJCNAMES_CLASSES_PACKAGE -> objcObjectBase
             OBJCNAMES_PROTOCOLS_PACKAGE -> objcCObject
-            else -> emptyList()
+            else -> []
         }
     }
 }

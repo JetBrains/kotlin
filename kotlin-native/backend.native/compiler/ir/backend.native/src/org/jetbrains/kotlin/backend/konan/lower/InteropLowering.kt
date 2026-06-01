@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.native.interop.ObjCMethodInfo
+import kotlin.reflect.KFunction1
 
 internal class InteropLowering(val context: Context, val fileLowerState: FileLowerState) : FileLoweringPass, BodyLoweringPass {
     override fun lower(irFile: IrFile) {
@@ -88,7 +89,7 @@ private abstract class BaseInteropIrTransformer(
             element: IrElement? = null,
             block: KotlinStubs.() -> T
     ): T {
-        val addedDeclarations = mutableListOf<IrDeclaration>()
+        val addedDeclarations: MutableList<IrDeclaration> = []
         val result = createKotlinStubs(nameCounter, element) {
             it.parent = owner
             addedDeclarations += it
@@ -104,14 +105,14 @@ private abstract class BaseInteropIrTransformer(
             element: IrElement? = null,
             block: KotlinStubs.() -> IrExpression
     ): IrExpression {
-        val addedDeclarations = mutableListOf<IrDeclaration>()
+        val addedDeclarations: MutableList<IrDeclaration> = []
         val result = createKotlinStubs(NameCounter(), element) {
             it.parent = parent
             addedDeclarations += it
         }.block()
         return if (addedDeclarations.isEmpty())
             result
-        else irCall(symbols.interopCallMarker, result.type, listOf(result.type)).apply {
+        else irCall(symbols.interopCallMarker, result.type, [result.type]).apply {
             arguments[0] = irBlock {
                 addedDeclarations.forEach {
                     it.transform(this@BaseInteropIrTransformer, null)
@@ -214,14 +215,14 @@ private class InteropTransformerPart1(
         fileLowerState: FileLowerState,
         irFile: IrFile?,
 ) : BaseInteropIrTransformer(context, fileLowerState, irFile) {
-    val eagerTopLevelInitializersForObjCClasses = mutableListOf<IrExpression>()
+    val eagerTopLevelInitializersForObjCClasses: MutableList<IrExpression> = []
 
     private fun IrBuilderWithScope.callAlloc(classPtr: IrExpression): IrExpression =
             irCall(symbols.interopAllocObjCObject).apply {
                 arguments[0] = classPtr
             }
 
-    private val outerClasses = mutableListOf<IrClass>()
+    private val outerClasses: MutableList<IrClass> = []
 
     override fun visitClass(declaration: IrClass): IrStatement {
         if (declaration.isKotlinObjCClass()) {
@@ -312,7 +313,7 @@ private class InteropTransformerPart1(
 
             result.body = context.createIrBuilder(result.symbol).irBlockBody(result) {
                 +irReturn(
-                        irCallWithSubstitutedType(symbols.interopObjCObjectInitBy, listOf(irClass.defaultType)).apply {
+                        irCallWithSubstitutedType(symbols.interopObjCObjectInitBy, [irClass.defaultType]).apply {
                             arguments[0] = irGet(result.parameters[0])
                             arguments[1] = irCall(constructor).also {
                                 result.parameters.drop(1).forEachIndexed { index, parameter -> it.arguments[index] = irGet(parameter) }
@@ -437,7 +438,7 @@ private class InteropTransformerPart1(
             symbols.interopInterpretObjCPointer
         }
 
-        return irCallWithSubstitutedType(callee, listOf(type)).apply {
+        return irCallWithSubstitutedType(callee, [type]).apply {
             arguments[0] = expression
         }
     }
@@ -744,7 +745,7 @@ private class InteropTransformerPart2(
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {
             val nameCounter = NameCounter()
-            val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
+            val uniq: MutableSet<String> = []  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
                 function.overriddenSymbols.mapNotNull {
                     val selector = it.owner.getExternalObjCMethodInfo()?.selector
@@ -792,7 +793,7 @@ private class InteropTransformerPart2(
             val rawPtr = irTemporary(irCall(symbols.interopAllocObjCObject.owner).apply {
                 arguments[0] = getObjCClass(symbols, constructedClass.symbol)
             })
-            val instance = irTemporary(irCallWithSubstitutedType(symbols.interopInterpretObjCPointer.owner, listOf(expression.type)).apply {
+            val instance = irTemporary(irCallWithSubstitutedType(symbols.interopInterpretObjCPointer.owner, [expression.type]).apply {
                 arguments[0] = irGet(rawPtr)
             })
             // Balance pointer retained by alloc:
@@ -1011,9 +1012,9 @@ private class InteropTransformerPart2(
                 }
                 IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
-                    val integerTypePredicates = arrayOf(
-                            IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
-                    )
+                    val integerTypePredicates: Array<(IrType) -> Boolean> = [
+                        IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
+                    ]
 
                     val receiver = expression.arguments[0]!!
                     val typeOperand = expression.getSingleTypeArgument()

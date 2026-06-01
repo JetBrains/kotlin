@@ -209,7 +209,7 @@ internal fun invokeSwiftC(
 
 fun codesign(path: String) {
     val executableAbsolutePath = "/usr/bin/codesign"
-    val args = arrayOf("--verbose", "-s", "-", path)
+    val args: Array<String> = ["--verbose", "-s", "-", path]
     runProcess(executableAbsolutePath, *args) {
         timeout = Duration.parse("30s")
     }

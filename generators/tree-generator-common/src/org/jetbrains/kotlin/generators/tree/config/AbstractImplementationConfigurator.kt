@@ -18,7 +18,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
               Element : AbstractElement<Element, ElementField, Implementation>,
               ElementField : AbstractField<ElementField> {
 
-    private val elementsWithImpl = mutableSetOf<Element>()
+    private val elementsWithImpl: MutableSet<Element> = []
 
     protected abstract fun createImplementation(element: Element, name: String?): Implementation
 
@@ -138,7 +138,7 @@ abstract class AbstractImplementationConfigurator<Implementation, Element, Eleme
                 if (fieldName != null && !implementation.allFields.any { it.name == fieldName }) continue
 
                 val fields = if (fieldName != null) {
-                    listOf(implementation[fieldName])
+                    [implementation[fieldName]]
                 } else {
                     implementation.allFields
                 }

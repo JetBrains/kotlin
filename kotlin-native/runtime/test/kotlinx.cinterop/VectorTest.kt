@@ -34,7 +34,7 @@ class VectorTest {
 
     @Test
     fun getIntAt() {
-        val a = arrayOf(0, 1, 2, 3)
+        val a: Array<Int> = [0, 1, 2, 3]
         val v = vectorOf(a[0], a[1], a[2], a[3])
         (0 until 4).forEach { assertEquals(a[it], v.getIntAt(it)) }
         assertFailsWith<IndexOutOfBoundsException> { v.getIntAt(-1) }
@@ -43,7 +43,7 @@ class VectorTest {
 
     @Test
     fun getFloatAt() {
-        val a = arrayOf(1f, 3.162f, 10f, 31f)
+        val a: Array<Float> = [1f, 3.162f, 10f, 31f]
         val v = vectorOf(a[0], a[1], a[2], a[3])
         (0 until 4).forEach { assertEquals(a[it], v.getFloatAt(it)) }
         assertFailsWith<IndexOutOfBoundsException> { v.getFloatAt(-1) }
@@ -52,7 +52,7 @@ class VectorTest {
 
     @Test
     fun getByteAt() {
-        val a = arrayOf(0, 1, 2, 3)
+        val a: Array<Int> = [0, 1, 2, 3]
         val v = vectorOf(a[0], a[1], a[2], a[3])
         (0 until 4).forEach {
             assertEquals(if (Platform.isLittleEndian) a[it].toByte() else 0, v.getByteAt(it * 4))
@@ -67,7 +67,7 @@ class VectorTest {
     @Test
     fun updateVector() {
         var v = vectorOf(0, 1, 2, 3)
-        val a = arrayOf(1f, 3.162f, 10f, 31f)
+        val a: Array<Float> = [1f, 3.162f, 10f, 31f]
         // Used to be vector of ints, now a vector of floats.
         v = vectorOf(a[0], a[1], a[2], a[3])
         (0 until 4).forEach { assertEquals(a[it], v.getFloatAt(it)) }

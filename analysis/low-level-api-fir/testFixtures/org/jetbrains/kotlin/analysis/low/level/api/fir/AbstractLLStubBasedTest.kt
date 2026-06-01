@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  */
 abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     protected object Directives : SimpleDirectivesContainer() {
         /**

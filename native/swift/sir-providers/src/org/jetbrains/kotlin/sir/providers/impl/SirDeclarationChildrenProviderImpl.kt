@@ -21,7 +21,7 @@ public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSessi
         sirSession.withSessions {
             filter { isAccessible(it) }
                 .flatMap { it.toSir().allDeclarations }
-                .flatMap { decl -> listOf(decl) + decl.trampolineDeclarations().filter { it.parent == decl } }
+                .flatMap { decl -> [decl] + decl.trampolineDeclarations().filter { it.parent == decl } }
         }
 
     context(sir: SirSession)

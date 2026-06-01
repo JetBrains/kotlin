@@ -57,7 +57,7 @@ class AdditionalBuiltInsMembersSignatureListsTest : KotlinTestWithEnvironment() 
 
             val scope = classDescriptor.unsubstitutedMemberScope
 
-            val signaturesFromLaterJdkReleases = SIGNATURES_FROM_LATER_JDK_RELEASES[internalName] ?: emptySet()
+            val signaturesFromLaterJdkReleases = SIGNATURES_FROM_LATER_JDK_RELEASES[internalName] ?: []
 
             for (jvmDescriptor in jvmDescriptors) {
                 if (jvmDescriptor in signaturesFromLaterJdkReleases) continue

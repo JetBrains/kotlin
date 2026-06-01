@@ -80,7 +80,7 @@ data class ResolvedDependencies(
     val sourceCodeModuleId: ResolvedDependencyId
 ) {
     companion object {
-        val EMPTY = ResolvedDependencies(emptyList(), ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID)
+        val EMPTY = ResolvedDependencies([], ResolvedDependencyId.DEFAULT_SOURCE_CODE_MODULE_ID)
     }
 }
 
@@ -119,7 +119,7 @@ object ResolvedDependenciesSupport {
             mutableMapOf()
 
         var sourceCodeModuleId: ResolvedDependencyId? = null
-        val modules = mutableListOf<ResolvedDependency>()
+        val modules: MutableList<ResolvedDependency> = []
 
         source.lines().forEachIndexed { lineNo, line ->
             fun malformedLine(): ResolvedDependencies {
@@ -167,7 +167,7 @@ object ResolvedDependenciesSupport {
                         id = moduleId,
                         selectedVersion = selectedVersion,
                         requestedVersionsByIncomingDependencies = mutableMapOf(), // To be filled later.
-                        artifactPaths = mutableSetOf() // To be filled on the next iterations.
+                        artifactPaths = [] // To be filled on the next iterations.
                     )
                 }
             }

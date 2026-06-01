@@ -39,7 +39,7 @@ abstract class SetTypeSerializer<T : Any>(
 
     override fun deserialize(decoder: Decoder): Set<T> {
         var type = ""
-        val values = mutableSetOf<T>()
+        val values: MutableSet<T> = []
         decoder.decodeStructure(descriptor) {
             while (true) {
                 when (val index = decodeElementIndex(descriptor)) {

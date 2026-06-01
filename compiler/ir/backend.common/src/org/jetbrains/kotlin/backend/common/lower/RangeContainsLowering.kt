@@ -124,7 +124,7 @@ private class Transformer(
         val shouldUpperComeFirst: Boolean
         val useCompareTo: Boolean
         val isNumericRange: Boolean
-        val additionalStatements = mutableListOf<IrStatement>()
+        val additionalStatements: MutableList<IrStatement> = []
 
         when (headerInfo) {
             is NumericHeaderInfo -> {
@@ -388,7 +388,7 @@ private class Transformer(
 internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeOwnerSymbol: () -> IrSymbol) :
     HeaderInfoBuilder(context, scopeOwnerSymbol, allowUnsignedBounds = true) {
 
-    override val progressionHandlers = listOf(
+    override val progressionHandlers = [
         CollectionIndicesHandler(context),
         ArrayIndicesHandler(context),
         CharSequenceIndicesHandler(context),
@@ -396,15 +396,15 @@ internal open class RangeHeaderInfoBuilder(context: CommonBackendContext, scopeO
         RangeUntilHandler(context),
         DownToHandler(context),
         RangeToHandler(context)
-    )
+    ]
 
-    override val callHandlers = listOf(
+    override val callHandlers = [
         FloatingPointRangeToHandler,
         ComparableRangeToHandler(context),
         ReversedHandler(context, this)
-    )
+    ]
 
-    override val expressionHandlers = listOf(DefaultProgressionHandler(context, allowUnsignedBounds = true))
+    override val expressionHandlers = [DefaultProgressionHandler(context, allowUnsignedBounds = true)]
 }
 
 /** Builds a [HeaderInfo] for closed floating-point ranges built using the `rangeTo` function. */

@@ -276,8 +276,8 @@ inline fun <K, V, VA : V> MutableMap<K, V>.getOrPut(key: K, defaultValue: (K) ->
 
 fun <T> Set<T>.compactIfPossible(): Set<T> =
     when (size) {
-        0 -> emptySet()
-        1 -> setOf(single())
+        0 -> []
+        1 -> [single()]
         else -> this
     }
 

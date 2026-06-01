@@ -54,7 +54,7 @@ private var IrClass.inlineClassFieldSetter: IrSimpleFunction? by irAttribute(cop
 
 private fun IrClass.getParentAndFullName(): Pair<IrDeclarationParent, String> {
     require(this.isUsedAsBoxClass())
-    val classes = mutableListOf(this)
+    val classes: MutableList<IrClass> = [this]
     var parent = this.parent
     while (parent is IrClass) {
         classes.add(parent)

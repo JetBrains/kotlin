@@ -84,18 +84,18 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
         val bounds = bounds.filter { it.isProper }
 
         if (bounds.isEmpty()) {
-            return listOf()
+            return []
         }
         val hasStrongBound = bounds.any { it.position.isStrong() }
         if (!hasStrongBound) {
-            return listOf()
+            return []
         }
 
         val exactBounds = filterBounds(bounds, EXACT_BOUND, values)
         val bestFit = exactBounds.singleBestRepresentative()
         if (bestFit != null) {
             if (tryPossibleAnswer(bounds, bestFit)) {
-                return listOf(bestFit)
+                return [bestFit]
             }
         }
         values.addAll(exactBounds)
@@ -121,7 +121,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
 
         if (superTypeOfLowerBounds != null && superTypeOfNumberLowerBounds != null) {
             val superTypeOfAllLowerBounds =
-                CommonSupertypes.commonSupertypeForNonDenotableTypes(listOf(superTypeOfLowerBounds, superTypeOfNumberLowerBounds))
+                CommonSupertypes.commonSupertypeForNonDenotableTypes([superTypeOfLowerBounds, superTypeOfNumberLowerBounds])
             if (tryPossibleAnswer(bounds, superTypeOfAllLowerBounds)) {
                 return setOf(superTypeOfAllLowerBounds!!)
             }
@@ -137,7 +137,7 @@ class TypeBoundsImpl(override val typeVariable: TypeVariable) : TypeBounds {
 
         values.addAll(filterBounds(bounds, TypeBounds.BoundKind.UPPER_BOUND))
 
-        if (values.size == 1 && typeVariable.hasOnlyInputTypesAnnotation() && !tryPossibleAnswer(bounds, values.first())) return listOf()
+        if (values.size == 1 && typeVariable.hasOnlyInputTypesAnnotation() && !tryPossibleAnswer(bounds, values.first())) return []
 
         return values
     }

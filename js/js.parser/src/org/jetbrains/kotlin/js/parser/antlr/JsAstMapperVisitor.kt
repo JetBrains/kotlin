@@ -339,7 +339,7 @@ internal class JsAstMapperVisitor(
 
         return JsCase().apply {
             caseExpression = jsExpression
-            statements.addAll(jsStatementsList?.statements ?: emptyList())
+            statements.addAll(jsStatementsList?.statements ?: [])
         }.applyLocation(ctx)
     }
 
@@ -347,7 +347,7 @@ internal class JsAstMapperVisitor(
         val jsStatementsList = ctx.statementList()?.let { visitNode<JsBlock>(it) }
 
         return JsDefault().apply {
-            statements.addAll(jsStatementsList?.statements ?: emptyList())
+            statements.addAll(jsStatementsList?.statements ?: [])
         }.applyLocation(ctx)
     }
 
@@ -407,7 +407,7 @@ internal class JsAstMapperVisitor(
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
-        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        val formalParams = paramList?.formalParameterArg() ?: []
 
         return scopeContext.enterFunction().apply {
             this.name = scopeContext.localNameFor(id.text)
@@ -453,7 +453,7 @@ internal class JsAstMapperVisitor(
 
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
-        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        val formalParams = paramList?.formalParameterArg() ?: []
 
         fun JsFunction.applyMethodName() {
             ctx.classElementName()?.propertyName()?.identifierName()?.let {
@@ -556,7 +556,7 @@ internal class JsAstMapperVisitor(
 
     override fun visitArrayLiteral(ctx: JavaScriptParser.ArrayLiteralContext): JsArrayLiteral {
         return JsArrayLiteral().apply {
-            var elements = ctx.elementList()?.arrayElement() ?: emptyList()
+            var elements = ctx.elementList()?.arrayElement() ?: []
             // If an array contains a trailing comma (like [1,]) it doesn't introduce an array hole,
             // but parser treats it as a hole anyway.
             // Since it's quite tricky to tweak the grammar and keep it not too complex,
@@ -603,7 +603,7 @@ internal class JsAstMapperVisitor(
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
-        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        val formalParams = paramList?.formalParameterArg() ?: []
 
         return JsPropertyInitializer.KeyValue(
             visitNode<JsExpression>(ctx.propertyName()),
@@ -1044,7 +1044,7 @@ internal class JsAstMapperVisitor(
         }
 
         // JS allows calling new-expressions without parens at all
-        val jsArguments = ctx.arguments()?.let { visitAll<JsExpression>(it.argument()) } ?: emptyList()
+        val jsArguments = ctx.arguments()?.let { visitAll<JsExpression>(it.argument()) } ?: []
         return JsNew(jsNewExpression).apply {
             arguments.addAll(jsArguments)
         }.applyLocation(ctx)
@@ -1180,7 +1180,7 @@ internal class JsAstMapperVisitor(
         val isGenerator = ctx.Multiply() != null
         val paramList = ctx.formalParameterList()
         val restParam = paramList?.restParameterArg()
-        val formalParams = paramList?.formalParameterArg() ?: emptyList()
+        val formalParams = paramList?.formalParameterArg() ?: []
 
         return scopeContext.enterFunction().apply {
             this.name = null
@@ -1291,7 +1291,7 @@ internal class JsAstMapperVisitor(
             tag = null,
             segments = ctx.templateStringAtom()?.map { element ->
                 visitNode<JsTemplateStringLiteral.Segment>(element)
-            } ?: listOf()
+            } ?: []
         ).applyLocation(ctx)
     }
 

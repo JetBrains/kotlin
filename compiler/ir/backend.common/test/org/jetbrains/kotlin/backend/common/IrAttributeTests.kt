@@ -25,7 +25,7 @@ private var IrExpression.baz: String? by bazAttr
 
 class IrAttributeTests {
     private fun createIrElement(): IrExpression =
-        IrConstImpl.constNull(0, 0, IrErrorTypeImpl(null, listOf(), Variance.INVARIANT))
+        IrConstImpl.constNull(0, 0, IrErrorTypeImpl(null, [], Variance.INVARIANT))
 
     private val IrElement.allAttributes: Map<IrAttribute<*, *>, Any>
         get() = (this as IrElementBase).attributes

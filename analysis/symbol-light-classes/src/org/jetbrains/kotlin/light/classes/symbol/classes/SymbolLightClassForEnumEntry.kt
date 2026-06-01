@@ -97,8 +97,8 @@ internal class SymbolLightClassForEnumEntry(
     override fun getImplementsList(): PsiReferenceList? = null
     override fun getSuperClass(): PsiClass = enumClass
     override fun getInterfaces(): Array<PsiClass> = PsiClass.EMPTY_ARRAY
-    override fun getSupers(): Array<PsiClass> = arrayOf(enumClass)
-    override fun getSuperTypes(): Array<PsiClassType> = arrayOf(baseClassType)
+    override fun getSupers(): Array<PsiClass> = [enumClass]
+    override fun getSuperTypes(): Array<PsiClassType> = [baseClassType]
 
     override fun getParent(): PsiElement = containingClass
 
@@ -106,7 +106,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
-            val result = mutableListOf<PsiField>()
+            val result: MutableList<PsiField> = []
 
             // Then, add instance fields: properties from parameters, and then member properties
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
@@ -129,7 +129,7 @@ internal class SymbolLightClassForEnumEntry(
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         enumConstant.withEnumEntrySymbol { enumEntrySymbol ->
-            val result = mutableListOf<PsiMethod>()
+            val result: MutableList<PsiMethod> = []
 
             enumEntrySymbol.enumEntryInitializer?.let { initializer ->
                 val declaredMemberScope = initializer.declaredMemberScope
@@ -143,7 +143,7 @@ internal class SymbolLightClassForEnumEntry(
         }
     }
 
-    override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
 
     override fun isInheritor(baseClass: PsiClass, checkDeep: Boolean): Boolean {
         if (!checkDeep) return baseClass == enumClass

@@ -47,7 +47,7 @@ object FirAnonymousUnusedParamChecker : FirAnonymousFunctionChecker(MppCheckerKi
     private fun FirAnonymousFunction.getReportableParameters(): MutableSet<FirValueParameterSymbol> {
         return valueParameters
             .filter { it.source?.kind !is KtFakeSourceElementKind && it.name != SpecialNames.UNDERSCORE_FOR_UNUSED_VAR }
-            .mapTo(mutableSetOf()) { it.symbol }
+            .mapTo([]) { it.symbol }
     }
 
     private val unusedParamsVisitor: FirVisitor<Unit, MutableSet<FirValueParameterSymbol>> =

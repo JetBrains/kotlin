@@ -59,7 +59,7 @@ fun ClassDescriptor.getGeneratedSerializerDescriptor(): ClassDescriptor =
 
 fun ClassDescriptor.createSerializerTypeFor(argument: SimpleType, baseSerializerInterface: FqName): SimpleType {
     val projectionType = Variance.INVARIANT
-    val types = listOf(TypeProjectionImpl(projectionType, argument))
+    val types = [TypeProjectionImpl(projectionType, argument)]
     val descriptor = module.findClassAcrossModuleDependencies(ClassId.topLevel(baseSerializerInterface))
         ?: throw IllegalArgumentException("Can't locate $baseSerializerInterface. Is kotlinx-serialization library present in compile classpath?")
     return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, descriptor, types)

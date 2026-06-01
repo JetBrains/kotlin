@@ -90,11 +90,11 @@ fun FirClassSymbol<*>.isPrimitiveNumberType(): Boolean = classId in PRIMITIVE_NU
 fun FirClassSymbol<*>.isPrimitiveUnsignedNumberType(): Boolean = classId in PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS
 fun FirClassSymbol<*>.isPrimitiveNumberOrUnsignedNumberType(): Boolean = isPrimitiveNumberType() || isPrimitiveUnsignedNumberType()
 
-private val PRIMITIVE_NUMBER_CLASS_IDS: Set<ClassId> = setOf(
+private val PRIMITIVE_NUMBER_CLASS_IDS: Set<ClassId> = [
     StandardClassIds.Double, StandardClassIds.Float, StandardClassIds.Long, StandardClassIds.Int,
     StandardClassIds.Short, StandardClassIds.Byte
-)
+]
 
-private val PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS: Set<ClassId> = setOf(
+private val PRIMITIVE_UNSIGNED_NUMBER_CLASS_IDS: Set<ClassId> = [
     StandardClassIds.ULong, StandardClassIds.UInt, StandardClassIds.UShort, StandardClassIds.UByte
-)
+]

@@ -44,7 +44,7 @@ internal class ClasspathSnapshotBasedImpactDeterminer (
                 )
                 // `classpathChanges` contains changed and impacted symbols on the classpath.
                 // We also need to compute symbols in the current module that are impacted by `classpathChanges`.
-                classpathChanges.toChangeInfoList().getChangedAndImpactedSymbols(listOf(caches.platformCache), reporter).toChangesEither()
+                classpathChanges.toChangeInfoList().getChangedAndImpactedSymbols([caches.platformCache], reporter).toChangesEither()
             }
             is NotAvailableDueToMissingClasspathSnapshot -> ChangesEither.Unknown(BuildAttribute.CLASSPATH_SNAPSHOT_NOT_FOUND)
             is NotAvailableForNonIncrementalRun -> ChangesEither.Unknown(BuildAttribute.UNKNOWN_CHANGES_IN_GRADLE_INPUTS)
@@ -62,7 +62,7 @@ private fun DirtyData.toChangesEither(): ChangesEither.Known {
 }
 
 private fun ProgramSymbolSet.toChangeInfoList(): List<ChangeInfo> {
-    val changes = mutableListOf<ChangeInfo>()
+    val changes: MutableList<ChangeInfo> = []
     classes.forEach { classId ->
         // It's important to set `areSubclassesAffected = true` when we don't know
         changes.add(ChangeInfo.SignatureChanged(classId.asSingleFqName(), areSubclassesAffected = true))

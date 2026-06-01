@@ -57,7 +57,7 @@ internal interface ImpactingClassesResolver {
  */
 internal object AllImpacts : Impact {
 
-    private val allImpacts = listOf(SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact)
+    private val allImpacts = [SupertypesInheritorsImpact, ConstantsInCompanionObjectsImpact]
 
     override fun getResolver(allClasses: Iterable<AccessibleClassSnapshot>): ImpactedSymbolsResolver {
         val resolvers = allImpacts.map { it.getResolver(allClasses) }
@@ -92,7 +92,7 @@ private object SupertypesInheritorsImpact : Impact {
         val classIdToSubclasses: Map<ClassId, Set<ClassId>> = getClassIdToSubclassesMap(allClasses)
         return object : ImpactedSymbolsResolver {
             override fun getImpactedClasses(classId: ClassId): Set<ClassId> {
-                return classIdToSubclasses[classId] ?: emptySet()
+                return classIdToSubclasses[classId] ?: []
             }
 
             override fun getImpactedClassMembers(classMembers: ClassMembers): Set<ClassMembers> {
@@ -100,7 +100,7 @@ private object SupertypesInheritorsImpact : Impact {
                     subclasses.mapTo(mutableSetOf()) { subclass ->
                         ClassMembers(subclass, classMembers.memberNames)
                     }
-                } ?: emptySet()
+                } ?: []
             }
         }
     }
@@ -109,7 +109,7 @@ private object SupertypesInheritorsImpact : Impact {
         val classIdToSupertypesMap: Map<ClassId, Set<ClassId>> = getClassIdToSupertypesMap(allClasses)
         return object : ImpactingClassesResolver {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
-                return classIdToSupertypesMap[classId] ?: emptySet()
+                return classIdToSupertypesMap[classId] ?: []
             }
         }
     }
@@ -118,7 +118,7 @@ private object SupertypesInheritorsImpact : Impact {
         val classIdToSubclasses = mutableMapOf<ClassId, MutableSet<ClassId>>()
         getClassIdToSupertypesMap(allClasses).forEach { [classId, supertypes] ->
             supertypes.forEach { supertype ->
-                classIdToSubclasses.getOrPut(supertype) { mutableSetOf() }.add(classId)
+                classIdToSubclasses.getOrPut(supertype) { [] }.add(classId)
             }
         }
         return classIdToSubclasses
@@ -197,8 +197,8 @@ private object ConstantsInCompanionObjectsImpact : Impact {
                 return classToCompanionObject[classMembers.classId]?.let { companionObject ->
                     val constantsInCompanionObject = companionObjectToConstants[companionObject]!!
                     val impactedConstants = classMembers.memberNames.intersect(constantsInCompanionObject.toSet())
-                    setOf(ClassMembers(companionObject, impactedConstants))
-                } ?: emptySet()
+                    [ClassMembers(companionObject, impactedConstants)]
+                } ?: []
             }
         }
     }
@@ -215,8 +215,8 @@ private object ConstantsInCompanionObjectsImpact : Impact {
             override fun getImpactingClasses(classId: ClassId): Set<ClassId> {
                 return if (classId in companionObjects) {
                     // classId.outerClassId should be present in `allClasses` as this is a companion object
-                    setOf(classId.outerClassId!!)
-                } else emptySet()
+                    [classId.outerClassId!!]
+                } else []
             }
         }
     }

@@ -43,9 +43,9 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
         )
     }
 
-    open fun contentModificationTrackers(): List<ModificationTracker> = listOf(
+    open fun contentModificationTrackers(): List<ModificationTracker> = [
         KotlinAsJavaSupportBase.getInstance(project).outOfBlockModificationTracker(this)
-    )
+    ]
 
     override fun getFields(): Array<PsiField> = ownFields.toArrayIfNotEmptyOrDefault(PsiField.EMPTY_ARRAY)
 
@@ -125,7 +125,7 @@ internal abstract class SymbolLightClassBase protected constructor(val ktModule:
     private fun PsiClass.hasSuper(
         baseClass: PsiClass,
         checkDeep: Boolean,
-        visitedSupers: MutableSet<PsiClass> = mutableSetOf()
+        visitedSupers: MutableSet<PsiClass> = []
     ): Boolean {
         visitedSupers.add(this)
         val notVisitedSupers = supers.filterNot { visitedSupers.contains(it) }

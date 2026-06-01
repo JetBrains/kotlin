@@ -90,7 +90,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
         return when (declaration) {
             is IrDeclarationWithName if (isBuiltInClass(declaration) || isIntrinsic(declaration)) -> {
                 context.bodilessBuiltInsPackageFragment.addChild(declaration)
-                emptyList()
+                []
             }
             is IrPossiblyExternalDeclaration if declaration.isEffectivelyExternal() -> {
                 externalPackageFragment.declarations += declaration
@@ -99,7 +99,7 @@ class MoveBodilessDeclarationsToSeparatePlaceLowering(private val context: JsIrB
                 if (irFile.getJsModule() != null || irFile.getJsQualifier() != null)
                     context.packageLevelJsModules += externalPackageFragment
 
-                emptyList()
+                []
             }
             else -> null
         }

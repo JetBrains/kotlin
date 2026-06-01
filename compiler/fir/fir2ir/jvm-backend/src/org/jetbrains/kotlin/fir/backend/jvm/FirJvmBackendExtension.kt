@@ -64,7 +64,7 @@ class FirJvmBackendExtension(
                 JvmSerializationBindings(),
                 context.state,
                 // annotation can't have local delegated properties, it is safe to pass empty list
-                localDelegatedProperties = emptyList(),
+                localDelegatedProperties = [],
                 typeApproximator,
                 components,
                 object : FirElementAwareStringTable {

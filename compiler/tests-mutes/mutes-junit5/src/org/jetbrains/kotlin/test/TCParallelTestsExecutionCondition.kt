@@ -21,7 +21,7 @@ class TCParallelTestsExecutionCondition : ExecutionCondition {
         if (!::excludedTestClasses.isInitialized) {
             excludedTestClasses = context.getConfigurationParameter("teamcity.build.parallelTests.excludesFile") { excludesFile ->
                 File(excludesFile).readLines().filter { !it.startsWith("#") }.toSet()
-            }.getOrNull() ?: emptySet()
+            }.getOrNull() ?: []
         }
 
         if (excludedTestClasses.isEmpty()) {

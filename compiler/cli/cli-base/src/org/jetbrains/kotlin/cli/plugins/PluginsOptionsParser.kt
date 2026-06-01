@@ -31,7 +31,7 @@ fun extractPluginClasspathAndOptions(pluginConfiguration: String): PluginClasspa
     val options = rawOptions.takeIf { it.isNotBlank() }
         ?.split(regularDelimiter)
         ?.mapNotNull { parseModernPluginOption(it) }
-        ?: emptyList()
+        ?: []
     return PluginClasspathAndOptions(pluginConfiguration, classPath, options)
 }
 

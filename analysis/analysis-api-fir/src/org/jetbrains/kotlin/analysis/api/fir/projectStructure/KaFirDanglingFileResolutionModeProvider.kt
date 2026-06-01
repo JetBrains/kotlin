@@ -115,8 +115,8 @@ internal class KaFirDanglingFileResolutionModeProvider : KaDanglingFileResolutio
      */
     @OptIn(KtImplementationDetail::class)
     private fun getFlatTopLevelStubList(stub: KotlinFileStub): List<KotlinStubElement<*>> {
-        val stubList: MutableList<StubElement<*>?> = mutableListOf(stub)
-        val result: MutableList<KotlinStubElement<*>> = mutableListOf()
+        val stubList: MutableList<StubElement<*>?> = [stub]
+        val result: MutableList<KotlinStubElement<*>> = []
         while (stubList.isNotEmpty()) {
             val stub = stubList.removeLast() as? KotlinStubElement<*> ?: continue
             stub.childrenStubs.filterTo(stubList) { stub.shouldAddChild(it) }

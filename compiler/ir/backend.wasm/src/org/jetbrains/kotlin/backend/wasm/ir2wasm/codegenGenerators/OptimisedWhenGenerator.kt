@@ -31,11 +31,11 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     if (expression.branches.size <= 2) return false
 
     var elseExpression: IrExpression? = null
-    val extractedBranches = mutableListOf<ExtractedWhenBranch>()
+    val extractedBranches: MutableList<ExtractedWhenBranch> = []
 
     // Parse when structure. Note that the condition can be nested. See matchConditions() for details.
     var noMultiplyConditionBranches = true
-    val seenConditions = mutableSetOf<Any>() //to filter out equal conditions
+    val seenConditions: MutableSet<Any> = [] //to filter out equal conditions
     for (branch in expression.branches) {
         if (isElseBranch(branch)) {
             elseExpression = branch.result
@@ -64,10 +64,10 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
     }
     if (allConditionsReadsSameValue) return false
 
-    val supportedBasicTypes = setOf(
+    val supportedBasicTypes: Set<IrConstKind> = [
         IrConstKind.Char,
         IrConstKind.Int,
-    )
+    ]
 
     // Check all kinds are the same
     //TODO: Support all primitive types
@@ -129,7 +129,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
             )
         }
     } else {
-        val brTable = mutableListOf<Int>()
+        val brTable: MutableList<Int> = []
         for (i in minValue..maxValue) {
             val branchIndex = intBranches.indexOfFirst { branch -> branch.intConditions.any { it == i } }
             val brIndex = if (branchIndex != -1) branchIndex else intBranches.size
@@ -172,7 +172,7 @@ internal fun BodyGenerator.tryGenerateOptimisedWhen(
  * }
  */
 private fun BodyGenerator.createBinaryTable(selectorLocal: WasmLocal, intBranches: List<ExtractedWhenBranchWithIntConditions>) {
-    val sortedCaseToBranchIndex = mutableListOf<Pair<Int, Int>>()
+    val sortedCaseToBranchIndex: MutableList<Pair<Int, Int>> = []
     intBranches.flatMapIndexedTo(sortedCaseToBranchIndex) { index, branch -> branch.intConditions.map { it to index } }
     sortedCaseToBranchIndex.sortBy { it.first }
 
@@ -199,7 +199,7 @@ private fun tryExtractEqEqNumberConditions(symbols: BackendWasmSymbols, conditio
     // All conditions has the same eqeq
     if (conditions.any { it.symbol != firstConditionSymbol }) return null
 
-    val result = mutableListOf<ExtractedWhenCondition>()
+    val result: MutableList<ExtractedWhenCondition> = []
     for (condition in conditions) {
         if (condition.symbol != firstConditionSymbol) return null
         val conditionConst = condition.arguments[1] as? IrConst ?: return null
@@ -241,7 +241,7 @@ private fun BodyGenerator.createBinaryTable(
     resultType: WasmType?,
     expectedType: IrType,
 ) {
-    val sortedCaseToBranchIndex = mutableListOf<Pair<Int, IrExpression>>()
+    val sortedCaseToBranchIndex: MutableList<Pair<Int, IrExpression>> = []
     intBranches.mapTo(sortedCaseToBranchIndex) { branch -> branch.intConditions[0] to branch.expression }
     sortedCaseToBranchIndex.sortBy { it.first }
 

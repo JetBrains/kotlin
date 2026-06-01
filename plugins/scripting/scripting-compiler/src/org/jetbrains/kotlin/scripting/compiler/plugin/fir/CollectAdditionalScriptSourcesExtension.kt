@@ -138,7 +138,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             topologicalSort(
                 sourcesToFiles.keys, reportCycle = { throw CycleDetected(it) }
             ) {
-                sourceDependencies[this] ?: emptyList()
+                sourceDependencies[this] ?: []
             }.reversed().mapNotNull { sourcesToFiles[it] }
         } catch (e: CycleDetected) {
             configuration.report(
@@ -186,7 +186,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
             val dependencies = hostConfiguration[ScriptingHostConfiguration.configurationDependencies].orEmpty() +
                     scriptCompilationConfiguration[ScriptCompilationConfiguration.dependencies].orEmpty()
             val classpath = dependencies.flatMap {
-                (it as? JvmDependency)?.classpath ?: emptyList()
+                (it as? JvmDependency)?.classpath ?: []
             }
 
             val moduleDataProvider = ScriptingModuleDataProvider("dummy", classpath.map(File::toPath))

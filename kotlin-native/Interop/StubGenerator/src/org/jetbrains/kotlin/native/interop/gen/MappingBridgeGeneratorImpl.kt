@@ -38,7 +38,7 @@ class MappingBridgeGeneratorImpl(
             independent: Boolean,
             block: NativeCodeBuilder.(nativeValues: List<NativeExpression>) -> NativeExpression
     ): KotlinExpression {
-        val bridgeArguments = mutableListOf<BridgeTypedKotlinValue>()
+        val bridgeArguments: MutableList<BridgeTypedKotlinValue> = []
 
         kotlinValues.forEach { (type, value) ->
             if (type.unwrapTypedefs() is RecordType) {
@@ -74,7 +74,7 @@ class MappingBridgeGeneratorImpl(
                 nativeBacked, bridgeReturnType, bridgeArguments, independent
         ) { bridgeNativeValues ->
 
-            val nativeValues = mutableListOf<String>()
+            val nativeValues: MutableList<String> = []
             kotlinValues.forEachIndexed { index, (val type, val _ = value) ->
                 val unwrappedType = type.unwrapTypedefs()
                 if (unwrappedType is RecordType) {
@@ -131,7 +131,7 @@ class MappingBridgeGeneratorImpl(
             block: KotlinCodeBuilder.(kotlinValues: List<KotlinExpression>) -> KotlinExpression
     ): NativeExpression {
 
-        val bridgeArguments = mutableListOf<BridgeTypedNativeValue>()
+        val bridgeArguments: MutableList<BridgeTypedNativeValue> = []
 
         nativeValues.forEachIndexed { _, (type, value) ->
             val bridgeArgument = if (type.unwrapTypedefs() is RecordType) {
@@ -164,7 +164,7 @@ class MappingBridgeGeneratorImpl(
                 bridgeReturnType,
                 bridgeArguments
         ) { bridgeKotlinValues ->
-            val kotlinValues = mutableListOf<String>()
+            val kotlinValues: MutableList<String> = []
             nativeValues.forEachIndexed { index, (val type, val _ = value) ->
                 val mirror = mirror(declarationMapper, type)
                 if (type.unwrapTypedefs() is RecordType) {

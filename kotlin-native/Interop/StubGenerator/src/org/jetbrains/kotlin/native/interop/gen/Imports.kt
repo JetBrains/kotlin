@@ -40,7 +40,7 @@ class ImportsImpl(internal val headerIdToPackage: Map<HeaderId, PackageInfo>) : 
     override fun isImported(headerId: HeaderId) =
             headerId in headerIdToPackage
 
-    private val accessedLibraries = mutableSetOf<KotlinLibrary>()
+    private val accessedLibraries: MutableSet<KotlinLibrary> = []
 
     val requiredLibraries: Set<KotlinLibrary>
         get() = accessedLibraries.toSet()

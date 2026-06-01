@@ -310,9 +310,9 @@ class JsSuspendFunctionsLowering(
     }
 
     private fun assignStateIds(entryState: SuspendState, subject: IrVariableSymbol, switch: IrWhen, rootLoop: IrLoop) {
-        val visited = mutableSetOf<SuspendState>()
+        val visited: MutableSet<SuspendState> = []
 
-        val sortedStates = DFS.topologicalOrder(listOf(entryState), { it.successors }, { visited.add(it) })
+        val sortedStates = DFS.topologicalOrder([entryState], { it.successors }, { visited.add(it) })
         sortedStates.withIndex().forEach { it.value.id = it.index }
 
         val eqeqeqInt = context.irBuiltIns.eqeqeqSymbol

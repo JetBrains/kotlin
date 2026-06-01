@@ -35,7 +35,7 @@ object CliSealedClassInheritorsProvider : SealedClassInheritorsProvider() {
         sealedClass: ClassDescriptor,
         allowSealedInheritorsInDifferentFilesOfSamePackage: Boolean
     ): Collection<ClassDescriptor> {
-        if (sealedClass.modality != Modality.SEALED) return emptyList()
+        if (sealedClass.modality != Modality.SEALED) return []
 
         val result = linkedSetOf<ClassDescriptor>()
 

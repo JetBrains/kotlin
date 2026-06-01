@@ -99,6 +99,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
             }
         }
 
+        @Suppress("ConvertToCollectionLiterals")
         return JsCompositeBlock(
             interfaceDefaultsBlock.statements + listOf(
                 JsVars(JsVars.Variant.Var, JsVar(classHolderName)),
@@ -117,7 +118,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
 
         // Properties might be lowered out of classes
         // We'll use IrSimpleFunction::correspondingProperty to collect them into set
-        val properties = mutableSetOf<IrProperty>()
+        val properties: MutableSet<IrProperty> = []
 
         val jsClass = JsClass(name = classNameUsedInsideDeclarationStatements, baseClass = baseClassRef)
 
@@ -386,7 +387,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
         // II.prototype.foo = I.prototype.foo
         if (!irClass.isInterface) {
             val isFakeOverride = declaration.isFakeOverride
-            val missedOverrides = mutableListOf<IrSimpleFunction>()
+            val missedOverrides: MutableList<IrSimpleFunction> = []
             declaration.collectRealOverrides()
                 .onEach {
                     if (isFakeOverride && it.modality == Modality.ABSTRACT) {
@@ -571,7 +572,7 @@ class JsClassGenerator(private val irClass: IrClass, val context: JsGenerationCo
                     context.staticContext.getNameForStaticFunction(backendContext.symbols.makeAssociatedObjectMapES5.owner).makeRef(),
                     JsArrayLiteral(
                         classAssociatedObjects.flatMap { [key, objectGetInstanceFunction] ->
-                            listOf(key.getClassRef(context.staticContext), objectGetInstanceFunction)
+                            [key.getClassRef(context.staticContext), objectGetInstanceFunction]
                         }.toSmartList()
                     )
                 )

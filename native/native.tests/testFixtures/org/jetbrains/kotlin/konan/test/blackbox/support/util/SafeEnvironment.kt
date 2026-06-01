@@ -35,9 +35,9 @@ internal object SafeEnvVars : Iterable<NameAndSafeValue> {
 
     private const val KONAN_WORD = "KONAN"
 
-    private val SAFE_ENV_VARS = setOf("PATH", "USER", "LANG", "PWD", "TEMP", "TMP", "GRADLE_OPTS")
-    private val SAFE_ENV_VAR_PREFIXES = listOf("JAVA_", "JDK_")
-    private val SAFE_ENV_VAR_SUFFIXES = listOf("DIR", "DIRS", "HOME", "ROOT", "PATH", "FILE")
+    private val SAFE_ENV_VARS: Set<String> = ["PATH", "USER", "LANG", "PWD", "TEMP", "TMP", "GRADLE_OPTS"]
+    private val SAFE_ENV_VAR_PREFIXES = ["JAVA_", "JDK_"]
+    private val SAFE_ENV_VAR_SUFFIXES = ["DIR", "DIRS", "HOME", "ROOT", "PATH", "FILE"]
 }
 
 internal class SafeProperties : Iterable<NameAndSafeValue> {
@@ -66,8 +66,8 @@ internal class SafeProperties : Iterable<NameAndSafeValue> {
                     || SAFE_PROPERTY_SUFFIXES.any { suffix -> name.endsWith(suffix) }
         }
 
-        private val SUPPRESSED_PROPERTIES = setOf("java.class.path") // Too long. Makes logs poorly readable.
-        private val SAFE_PROPERTY_PREFIXES = listOf(
+        private val SUPPRESSED_PROPERTIES: Set<String> = ["java.class.path"] // Too long. Makes logs poorly readable.
+        private val SAFE_PROPERTY_PREFIXES = [
             "ast.",
             "file.",
             "ide.",
@@ -83,14 +83,14 @@ internal class SafeProperties : Iterable<NameAndSafeValue> {
             "sun.os.",
             "psi.",
             "user."
-        )
-        private val SAFE_PROPERTY_SUFFIXES = listOf(".separator")
+        ]
+        private val SAFE_PROPERTY_SUFFIXES = [".separator"]
     }
 }
 
 private const val HIDDEN_VALUE = "<hidden>"
 
-private val UNSAFE_VARIABLE_PARTS = listOf("key", "token", "secret", "private", "pass", "password", "passphrase")
+private val UNSAFE_VARIABLE_PARTS = ["key", "token", "secret", "private", "pass", "password", "passphrase"]
 
 private fun isUnsafeVariableName(name: String) = name
     .splitToSequence('.', '_')

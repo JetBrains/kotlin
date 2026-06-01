@@ -63,7 +63,7 @@ public actual constructor(
     private class ExceptionTraceBuilder(private val top: Throwable) {
         private val target = StringBuilder()
         private var printOut = false
-        private val visited = mutableSetOf<Throwable>()
+        private val visited: MutableSet<Throwable> = []
 
         fun build(): String {
             top.dumpFullTrace("", "")
@@ -202,5 +202,5 @@ public actual fun Throwable.addSuppressed(exception: Throwable) {
  */
 @SinceKotlin("1.4")
 public actual val Throwable.suppressedExceptions: List<Throwable> get() {
-    return this.suppressedExceptionsList ?: emptyList()
+    return this.suppressedExceptionsList ?: []
 }

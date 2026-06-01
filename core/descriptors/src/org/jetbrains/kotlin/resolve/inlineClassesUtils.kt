@@ -33,12 +33,12 @@ fun KotlinType.unsubstitutedUnderlyingType(): KotlinType? =
     (constructor.declarationDescriptor as? ClassDescriptor)?.inlineClassRepresentation?.underlyingType
 
 fun KotlinType.unsubstitutedUnderlyingTypes(): List<KotlinType> {
-    val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return emptyList()
+    val declarationDescriptor = constructor.declarationDescriptor as? ClassDescriptor ?: return []
     return when {
         declarationDescriptor.isInlineClass() -> listOfNotNull(unsubstitutedUnderlyingType())
         declarationDescriptor.isMultiFieldValueClass() ->
-            declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: emptyList()
-        else -> emptyList()
+            declarationDescriptor.unsubstitutedPrimaryConstructor?.valueParameters?.map { it.type } ?: []
+        else -> []
     }
 }
 
@@ -55,10 +55,10 @@ fun KotlinType.isRecursiveInlineOrValueClassType(): Boolean =
     isRecursiveInlineOrValueClassTypeInner(hashSetOf())
 
 private fun KotlinType.isRecursiveInlineOrValueClassTypeInner(visited: HashSet<ClassifierDescriptor>): Boolean {
-    val types = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isValueClass() }) {
-        is ClassDescriptor -> if (descriptor.isValueClass()) unsubstitutedUnderlyingTypes() else emptyList()
+    val types: List<KotlinType> = when (val descriptor = constructor.declarationDescriptor?.original?.takeIf { it.isValueClass() }) {
+        is ClassDescriptor -> if (descriptor.isValueClass()) unsubstitutedUnderlyingTypes() else []
         is TypeParameterDescriptor -> descriptor.upperBounds
-        else -> emptyList()
+        else -> []
     }
     return types.any {
         val classifier = it.constructor.declarationDescriptor?.original ?: return@any false

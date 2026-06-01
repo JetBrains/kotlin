@@ -309,10 +309,10 @@ class NativeSecondStageCompilationConfig(
         }
     } ?: false // Disabled by default because of KT-68928
 
-    val defaultForceNativeThreadStateForFunctions: Set<String> = setOf(
-            "org_jetbrains_skia_DirectContext__1nFlushAndSubmit", // KT-75895, KT-79384
-            "org_jetbrains_skia_Canvas__1nDrawPicture", // KT-84768, KT-79384
-    )
+    val defaultForceNativeThreadStateForFunctions: Set<String> = [
+        "org_jetbrains_skia_DirectContext__1nFlushAndSubmit", // KT-75895, KT-79384
+        "org_jetbrains_skia_Canvas__1nDrawPicture", // KT-84768, KT-79384
+    ]
 
     val forceNativeThreadStateForFunctions: Set<String> =
             configuration.get(BinaryOptions.forceNativeThreadStateForFunctions)?.toSet()

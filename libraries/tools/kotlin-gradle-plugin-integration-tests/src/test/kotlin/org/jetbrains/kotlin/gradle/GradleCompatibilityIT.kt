@@ -137,14 +137,14 @@ class GradleCompatibilityIT : KGPBaseTest() {
 
         assertEquals(
             mapOf(
-                TestVersions.Gradle.MIN_SUPPORTED to listOf(
+                TestVersions.Gradle.MIN_SUPPORTED to [
                     "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}.jar",
                     "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}.jar",
-                ),
-                TestVersions.Gradle.MAX_SUPPORTED to listOf(
+                ],
+                TestVersions.Gradle.MAX_SUPPORTED to [
                     "kotlin-gradle-plugin-${defaultBuildOptions.kotlinVersion}-${maximumGradleVariantArtifactSuffix}.jar",
                     "kotlin-gradle-plugin-api-${defaultBuildOptions.kotlinVersion}-${maximumGradleVariantArtifactSuffix}.jar",
-                ),
+                ],
             ),
             resolvedJars,
         )

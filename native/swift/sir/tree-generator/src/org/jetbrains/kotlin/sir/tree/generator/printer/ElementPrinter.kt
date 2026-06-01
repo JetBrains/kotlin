@@ -28,7 +28,7 @@ internal class ElementPrinter(printer: ImportCollectingPrinter) : AbstractElemen
 
             printFunctionWithBlockBody(
                 name = "toString",
-                parameters = emptyList(),
+                parameters = [],
                 returnType = StandardTypes.string,
                 override = true
             ) {

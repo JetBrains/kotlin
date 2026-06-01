@@ -28,7 +28,7 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+            [FeatureFlag.OptimizeNonSkippingGroups.featureName]
         )
         languageVersionSettings = LanguageVersionSettingsImpl(
             languageVersion = languageVersionSettings.languageVersion,
@@ -157,10 +157,10 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
                 content: @Composable AnimatedVisibilityScope.(targetState: S) -> Unit
             ) { }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeAnimationJar()
-        )
+        ]
     )
 
     @Test
@@ -491,10 +491,10 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
                 }
             }
             """,
-            additionalPaths = listOf(
+            additionalPaths = [
                 Classpath.composeUiJar(),
                 Classpath.composeFoundationJar()
-            )
+            ]
         )
     }
 
@@ -1063,10 +1063,10 @@ class LambdaMemoizationTransformTests : AbstractIrTransformTest() {
                 val lambda = { println(parameter) }
             }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.jarFor<EnumTestProtos>(), // protobuf-test-classes
             Classpath.jarFor<com.google.protobuf.Internal.EnumLite>() // protobuf-lite
-        )
+        ]
     )
 
     @Test

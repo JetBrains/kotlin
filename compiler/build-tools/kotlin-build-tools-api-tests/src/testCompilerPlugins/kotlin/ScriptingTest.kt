@@ -33,7 +33,7 @@ class ScriptingTest : BaseCompilationTest() {
     @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
+            val module = module("scripting-kts", dependencies = [dependencyOnThisClasspath])
             module.compile(compilationConfigAction = configureCompilerArgs(GreetScriptTemplate::class)) {
                 assertOutputs("Test_greet.class")
             }
@@ -45,7 +45,7 @@ class ScriptingTest : BaseCompilationTest() {
     @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionNonIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
+            val module = module("scripting-custom-extension", dependencies = [dependencyOnThisClasspath])
             module.compile(compilationConfigAction = configureCompilerArgs(GreetScriptCustomExtensionTemplate::class, "greet")) {
                 assertOutputs("Test.class")
             }
@@ -57,7 +57,7 @@ class ScriptingTest : BaseCompilationTest() {
     @TestMetadata("scripting-kts")
     fun smokeTestCompilerPluginsApplicationIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("scripting-kts", dependencies = listOf(dependencyOnThisClasspath))
+            val module = module("scripting-kts", dependencies = [dependencyOnThisClasspath])
             module.compileIncrementally(
                 SourcesChanges.Unknown,
                 compilationConfigAction = configureCompilerArgs(GreetScriptTemplate::class)
@@ -72,7 +72,7 @@ class ScriptingTest : BaseCompilationTest() {
     @TestMetadata("scripting-custom-extension")
     fun smokeTestCompilerPluginsApplicationCustomExtensionIncremental(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmProject(strategyConfig) {
-            val module = module("scripting-custom-extension", dependencies = listOf(dependencyOnThisClasspath))
+            val module = module("scripting-custom-extension", dependencies = [dependencyOnThisClasspath])
             module.compileIncrementally(
                 SourcesChanges.Unknown,
                 compilationConfigAction = configureCompilerArgs(GreetScriptCustomExtensionTemplate::class, "greet")
@@ -93,7 +93,7 @@ class ScriptingTest : BaseCompilationTest() {
         }
         val toolchain = strategyConfig.first
         val operation =
-            toolchain.jvm.discoverScriptExtensionsOperationBuilder(listOf(workingDirectory)).build()
+            toolchain.jvm.discoverScriptExtensionsOperationBuilder([workingDirectory]).build()
 
         val result = toolchain.createBuildSession().use { session ->
             session.executeOperation(
@@ -102,7 +102,7 @@ class ScriptingTest : BaseCompilationTest() {
             )
         }
 
-        assertEquals(listOf("greet.kts"), result)
+        assertEquals(["greet.kts"], result)
     }
 
     @DefaultStrategyAgnosticCompilationTest
@@ -115,9 +115,9 @@ class ScriptingTest : BaseCompilationTest() {
             resolve(GreetScriptCustomExtensionTemplate::class.qualifiedName!!).createFile()
         }
 
-        val result = executeDiscovery(strategyConfig, listOf(workingDirectory))
+        val result = executeDiscovery(strategyConfig, [workingDirectory])
 
-        assertEquals(listOf("greet"), result)
+        assertEquals(["greet"], result)
     }
 
     @DefaultStrategyAgnosticCompilationTest
@@ -130,9 +130,9 @@ class ScriptingTest : BaseCompilationTest() {
             resolve(GreetScriptMyExtensionTemplate::class.qualifiedName!!).createFile()
         }
 
-        val result = executeDiscovery(strategyConfig, listOf(workingDirectory))
+        val result = executeDiscovery(strategyConfig, [workingDirectory])
 
-        assertEquals(listOf("greet.my"), result)
+        assertEquals(["greet.my"], result)
     }
 
     @DefaultStrategyAgnosticCompilationTest
@@ -146,7 +146,7 @@ class ScriptingTest : BaseCompilationTest() {
             resolve(GreetScriptCustomExtensionTemplate::class.qualifiedName!!).createFile()
         }
 
-        val result = executeDiscovery(strategyConfig, listOf(workingDirectory))
+        val result = executeDiscovery(strategyConfig, [workingDirectory])
 
         assertEquals(setOf("greet.kts", "greet"), result.toSet())
     }
@@ -157,7 +157,7 @@ class ScriptingTest : BaseCompilationTest() {
         assumeInProcess(strategyConfig)
         workingDirectory.resolve("empty").createDirectories()
 
-        val result = executeDiscovery(strategyConfig, listOf(workingDirectory.resolve("empty")))
+        val result = executeDiscovery(strategyConfig, [workingDirectory.resolve("empty")])
 
         assertTrue(result.isEmpty(), "Expected empty list when no script definitions found")
     }
@@ -168,7 +168,7 @@ class ScriptingTest : BaseCompilationTest() {
         assumeInProcess(strategyConfig)
         val nonExistingPath = workingDirectory.resolve("does-not-exist")
 
-        val result = executeDiscovery(strategyConfig, listOf(nonExistingPath))
+        val result = executeDiscovery(strategyConfig, [nonExistingPath])
 
         assertTrue(result.isEmpty(), "Expected empty list for non-existing path")
     }
@@ -182,7 +182,7 @@ class ScriptingTest : BaseCompilationTest() {
             resolve("com.example.NonExistentScript").createFile()
         }
 
-        val result = executeDiscovery(strategyConfig, listOf(workingDirectory))
+        val result = executeDiscovery(strategyConfig, [workingDirectory])
 
         assertTrue(result.isEmpty(), "Expected empty list when class is missing")
     }
@@ -191,7 +191,7 @@ class ScriptingTest : BaseCompilationTest() {
     @BtaVersionsOnlyCompilationTest
     @DisplayName("Script extension discovery fails with daemon execution policy")
     fun discoverScriptExtensionsFailsWithDaemon(toolchain: KotlinToolchains) {
-        val classpath = listOf(workingDirectory.resolve("greet-script-template"))
+        val classpath = [workingDirectory.resolve("greet-script-template")]
         val operation = toolchain.jvm.discoverScriptExtensionsOperationBuilder(classpath).build()
         val daemonPolicy = toolchain.daemonExecutionPolicyBuilder().build()
 
@@ -236,7 +236,7 @@ class ScriptingTest : BaseCompilationTest() {
         scriptingTemplate: KClass<*>,
         customScriptExtension: String? = null,
     ): (JvmCompilationOperation.Builder) -> Unit = {
-        it.compilerArguments[COMPILER_PLUGINS] = listOf(scriptingPlugin(scriptingTemplate))
+        it.compilerArguments[COMPILER_PLUGINS] = [scriptingPlugin(scriptingTemplate)]
         if (customScriptExtension != null) {
             it[KOTLINSCRIPT_EXTENSIONS] = arrayOf(customScriptExtension)
         }

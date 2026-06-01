@@ -31,8 +31,8 @@ abstract class KaSimpleNameReferenceBase(expression: KtSimpleNameExpression) : K
                 is KtOperationReferenceExpression -> operatorNames(element)
 
                 // According to the KDoc, labels and `this`/`super` references cannot be properly expressed in terms of this API
-                is KtNameReferenceExpression if (element.parent is KtInstanceExpressionWithLabel) -> emptyList()
-                is KtLabelReferenceExpression -> emptyList()
+                is KtNameReferenceExpression if (element.parent is KtInstanceExpressionWithLabel) -> []
+                is KtLabelReferenceExpression -> []
                 else -> null
             }
 
@@ -40,7 +40,7 @@ abstract class KaSimpleNameReferenceBase(expression: KtSimpleNameExpression) : K
                 return specialNames
             }
 
-            return listOf(element.getReferencedNameAsName())
+            return [element.getReferencedNameAsName()]
         }
 }
 

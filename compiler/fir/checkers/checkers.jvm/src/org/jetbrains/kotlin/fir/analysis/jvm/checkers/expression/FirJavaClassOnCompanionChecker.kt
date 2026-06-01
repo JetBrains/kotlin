@@ -43,7 +43,7 @@ object FirJavaClassOnCompanionChecker : FirPropertyAccessExpressionChecker(MppCh
         if (receiver.symbol != containingClassSymbol) return
 
         val expectedType = actualType.lookupTag.constructClassType(
-            arrayOf(containingClassSymbol.defaultType()), isMarkedNullable = actualType.isMarkedNullable
+            [containingClassSymbol.defaultType()], isMarkedNullable = actualType.isMarkedNullable
         )
 
         reporter.reportOn(expression.source, FirJvmErrors.JAVA_CLASS_ON_COMPANION, actualType, expectedType)

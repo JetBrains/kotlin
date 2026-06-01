@@ -59,7 +59,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
         scopeProvider: FirKotlinScopeProvider,
         context: Context,
     ): List<FirSymbolProvider> {
-        return listOf(
+        return [
             FirCloneableSymbolProvider(session, moduleData, scopeProvider),
             OptionalAnnotationClassesProvider(
                 session,
@@ -67,7 +67,7 @@ object FirJvmSessionFactory : FirAbstractSessionFactory<FirJvmSessionFactory.Con
                 scopeProvider,
                 context.packagePartProviderForLibraries,
             )
-        )
+        ]
     }
 
     // ==================================== Library session ====================================

@@ -91,15 +91,15 @@ fun checkClassifierUsages(
                         getClassifierUsedToReferenceCompanionObject(target, expression)
                     )
 
-                is ClassConstructorDescriptor -> listOf(target.constructedClass)
+                is ClassConstructorDescriptor -> [target.constructedClass]
 
                 is FakeCallableDescriptorForTypeAliasObject -> {
                     val referencedObject = target.getReferencedObject()
                     val referencedTypeAlias = target.typeAliasDescriptor
                     if (referencedObject != referencedTypeAlias.classDescriptor)
-                        listOf(referencedObject, referencedTypeAlias)
+                        [referencedObject, referencedTypeAlias]
                     else
-                        listOf(referencedTypeAlias)
+                        [referencedTypeAlias]
                 }
 
                 else -> {
@@ -108,10 +108,10 @@ fun checkClassifierUsages(
                     // to report if there's something wrong with the class. We characterize this case below by the following properties:
                     // 1) Exactly one of the references is a classifier
                     // 2) All references refer to the same source element, i.e. their source is the same
-                    val targets = context.trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return emptyList()
-                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return emptyList()
+                    val targets = context.trace.get(BindingContext.AMBIGUOUS_REFERENCE_TARGET, expression) ?: return []
+                    if (targets.groupBy { (it as? DeclarationDescriptorWithSource)?.source }.size != 1) return []
                     val targetClassifiers = targets.filterIsInstance<ClassifierDescriptor>()
-                    if (targetClassifiers.size == 1) targetClassifiers else emptyList()
+                    if (targetClassifiers.size == 1) targetClassifiers else []
                 }
             }
         }

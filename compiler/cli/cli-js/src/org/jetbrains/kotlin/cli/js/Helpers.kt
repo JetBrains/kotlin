@@ -49,7 +49,7 @@ internal val moduleKindMap: Map<String, ModuleKind> = mapOf(
 )
 
 internal fun configureLibraries(libraryString: String?): List<String> =
-    libraryString?.splitByPathSeparator() ?: emptyList()
+    libraryString?.splitByPathSeparator() ?: []
 
 private fun String.splitByPathSeparator(): List<String> {
     return this.split(File.pathSeparator.toRegex())
@@ -63,7 +63,7 @@ internal fun calculateSourceMapSourceRoot(
     arguments: CommonJsAndWasmCompilerArguments,
 ): String {
     var commonPath: File? = null
-    val pathToRoot = mutableListOf<File>()
+    val pathToRoot: MutableList<File> = []
     val pathToRootIndexes = hashMapOf<File, Int>()
 
     try {
@@ -116,5 +116,5 @@ internal fun initializeFinalArtifactConfiguration(configuration: CompilerConfigu
         isPerModule = arguments is K2JSCompilerArguments && arguments.irPerModule,
         generateDts = arguments.generateDts,
     ) ?: return
-    configuration.artifactConfigurations = listOf(artifactConfiguration)
+    configuration.artifactConfigurations = [artifactConfiguration]
 }

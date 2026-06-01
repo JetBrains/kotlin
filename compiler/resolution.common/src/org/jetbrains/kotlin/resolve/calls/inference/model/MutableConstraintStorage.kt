@@ -102,7 +102,7 @@ class MutableVariableWithConstraints private constructor(
             constraintsGroupedByContainedTypeVariables = computeConstraintsGroupedByContainedTypeVariables()
         }
 
-        return constraintsGroupedByContainedTypeVariables!![typeVariableConstructor] ?: emptyList()
+        return constraintsGroupedByContainedTypeVariables!![typeVariableConstructor] ?: []
     }
 
     private fun computeConstraintsGroupedByContainedTypeVariables(): Map<TypeConstructorMarker, Collection<Constraint>> = with(context) {
@@ -194,7 +194,7 @@ class MutableVariableWithConstraints private constructor(
     }
 
     private fun addConstraintToCacheByTypeHashCode(constraint: Constraint) {
-        constraintsGroupedByTypeHashCode?.getOrPut(constraint.typeHashCode) { mutableListOf() }?.add(constraint)
+        constraintsGroupedByTypeHashCode?.getOrPut(constraint.typeHashCode) { [] }?.add(constraint)
     }
 
     // This method should be used only for transaction in constraint system

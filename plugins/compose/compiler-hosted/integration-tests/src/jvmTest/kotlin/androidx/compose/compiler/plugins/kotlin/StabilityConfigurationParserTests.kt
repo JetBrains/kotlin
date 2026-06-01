@@ -40,7 +40,7 @@ class StabilityConfigurationParserTests {
         """
             com.foo.bar
         """.trimIndent(),
-        setOf("com.foo.bar")
+        ["com.foo.bar"]
     )
 
     @Test
@@ -48,7 +48,7 @@ class StabilityConfigurationParserTests {
         """
             com.foo_1.bar
         """.trimIndent(),
-        setOf("com.foo_1.bar")
+        ["com.foo_1.bar"]
     )
 
     @Test
@@ -57,7 +57,7 @@ class StabilityConfigurationParserTests {
             com.foo.bar
             com.bar.foo
         """.trimIndent(),
-        setOf("com.foo.bar", "com.bar.foo")
+        ["com.foo.bar", "com.bar.foo"]
     )
 
     @Test
@@ -67,7 +67,7 @@ class StabilityConfigurationParserTests {
             com.foo.bar
             // Comment last line
         """.trimIndent(),
-        setOf("com.foo.bar")
+        ["com.foo.bar"]
     )
 
     @Test
@@ -77,7 +77,7 @@ class StabilityConfigurationParserTests {
                com.foo.bar
 
         """.trimIndent(),
-        setOf("com.foo.bar")
+        ["com.foo.bar"]
     )
 
     @Test
@@ -87,7 +87,7 @@ class StabilityConfigurationParserTests {
             com.*
             // Comment last line
         """.trimIndent(),
-        setOf("com.*")
+        ["com.*"]
     )
 
     @Test
@@ -95,7 +95,7 @@ class StabilityConfigurationParserTests {
         """
             com.*.bar
         """.trimIndent(),
-        setOf("com.*.bar")
+        ["com.*.bar"]
     )
 
     @Test
@@ -103,7 +103,7 @@ class StabilityConfigurationParserTests {
         """
             com.*.bar.*
         """.trimIndent(),
-        setOf("com.*.bar.*")
+        ["com.*.bar.*"]
     )
 
     @Test
@@ -141,7 +141,7 @@ class SingleStabilityConfigurationTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
-            listOf("$PATH_TO_CONFIG_FILES/config1.conf")
+            ["$PATH_TO_CONFIG_FILES/config1.conf"]
         )
         put(ComposeConfiguration.STRONG_SKIPPING_ENABLED_KEY, false)
     }
@@ -172,14 +172,14 @@ class MultipleStabilityConfigurationTest : AbstractIrTransformTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(
             ComposeConfiguration.STABILITY_CONFIG_PATH_KEY,
-            listOf(
+            [
                 "$PATH_TO_CONFIG_FILES/config1.conf",
                 "$PATH_TO_CONFIG_FILES/config2.conf"
-            )
+            ]
         )
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+            [FeatureFlag.OptimizeNonSkippingGroups.featureName]
         )
     }
 

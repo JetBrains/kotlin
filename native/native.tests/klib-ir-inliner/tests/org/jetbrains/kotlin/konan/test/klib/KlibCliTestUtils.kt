@@ -60,15 +60,15 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
     }
 
     // The list of source modules being built.
-    val modules = mutableListOf<ModuleImpl>()
+    val modules: MutableList<ModuleImpl> = []
 
     // The builder for a single source module.
     class ModuleBuilderImpl : KlibTestSourceModuleBuilder {
-        var dependencyNames = emptyList<String>()
+        var dependencyNames: List<String> = []
         var sourceFileAddend = ""
 
         override fun dependsOn(dependencyName: String, vararg otherDependencyNames: String) {
-            dependencyNames = listOf(dependencyName) + otherDependencyNames.toList()
+            dependencyNames = [dependencyName] + otherDependencyNames.toList()
         }
 
         override fun sourceFileAddend(sourceFileAddend: String) {
@@ -153,7 +153,7 @@ internal fun newSourceModules(init: KlibTestSourceModulesBuilder.() -> Unit): Kl
 context(testRunner: AbstractNativeSimpleTest)
 internal fun KlibTestSourceModules.compileToKlibsViaCli(
     produceUnpackedKlibs: Boolean = true,
-    extraCliArgs: List<String> = emptyList(),
+    extraCliArgs: List<String> = [],
     transform: ((module: KlibTestSourceModule, successKlib: TestCompilationResult.Success<out KLIB>) -> Unit)? = null
 ) {
     val klibFilesDir = testRunner.buildDir.resolve(
@@ -205,7 +205,7 @@ internal fun KlibTestSourceModules.compileToKlibsViaCli(
                     settings = testRunner.testRunSettings,
                     freeCompilerArgs = testCase.freeCompilerArgs,
                     defFile = module.sourceFile,
-                    sources = emptyList(),
+                    sources = [],
                     dependencies = emptySet(),
                     expectedArtifact = expectedArtifact
                 )

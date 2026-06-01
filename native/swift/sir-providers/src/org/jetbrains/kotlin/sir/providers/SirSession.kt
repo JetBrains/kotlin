@@ -190,34 +190,34 @@ public sealed interface SirTranslationResult {
     }
 
     public data class Untranslatable(public val origin: SirOrigin) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> get() = emptyList()
+        override val allDeclarations: List<SirDeclaration> get() = []
         override val primaryDeclaration: SirDeclaration? get() = null
     }
 
     public data class RegularClass(public override val declaration: SirClass) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
     }
 
     public data class TypeAlias(public override val declaration: SirTypealias) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
     }
 
     public data class Enum(public override val declaration: SirEnum) : TypeDeclaration {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
     }
 
     public data class EnumCase(public val declaration: SirEnumCase) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
     public data class Constructor(public val declaration: SirInit) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
     public data class RegularProperty(public val declaration: SirVariable) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
         override val primaryDeclaration: SirDeclaration get() = declaration
 
     }
@@ -228,7 +228,7 @@ public sealed interface SirTranslationResult {
     }
 
     public data class RegularFunction(public val declaration: SirFunction) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+        override val allDeclarations: List<SirDeclaration> = [declaration]
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
@@ -236,7 +236,7 @@ public sealed interface SirTranslationResult {
         public val declaration: SirFunction,
         public val supplementaryDeclarations: List<SirDeclaration>
     ) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
+        override val allDeclarations: List<SirDeclaration> = [declaration] + supplementaryDeclarations
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 
@@ -244,7 +244,7 @@ public sealed interface SirTranslationResult {
         public val declaration: SirSubscript,
         public val supplementaryDeclarations: List<SirDeclaration>
     ) : SirTranslationResult {
-        override val allDeclarations: List<SirDeclaration> = listOf(declaration) + supplementaryDeclarations
+        override val allDeclarations: List<SirDeclaration> = [declaration] + supplementaryDeclarations
         override val primaryDeclaration: SirDeclaration get() = declaration
     }
 

@@ -41,14 +41,14 @@ class FirParcelizeDeclarationGenerator(
     private val annotations: List<FqName>
 ) : FirDeclarationGenerationExtension(session) {
     companion object {
-        private val parcelizeMethodsNames = setOf(DESCRIBE_CONTENTS_NAME, WRITE_TO_PARCEL_NAME)
+        private val parcelizeMethodsNames: Set<Name> = [DESCRIBE_CONTENTS_NAME, WRITE_TO_PARCEL_NAME]
     }
 
     private val predicate = DeclarationPredicate.create { annotated(annotations) }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val owner = context?.owner as? FirRegularClassSymbol ?: return emptyList()
-        if (!checkParcelizeClassSymbols(owner, session) { session.predicateBasedProvider.matches(predicate, it) }) return emptyList()
+        val owner = context?.owner as? FirRegularClassSymbol ?: return []
+        if (!checkParcelizeClassSymbols(owner, session) { session.predicateBasedProvider.matches(predicate, it) }) return []
         val function = when (callableId.callableName) {
             DESCRIBE_CONTENTS_NAME -> {
                 val hasDescribeContentImplementation = owner.hasDescribeContentsImplementation() ||
@@ -69,8 +69,8 @@ class FirParcelizeDeclarationGenerator(
                 }
             }
             else -> null
-        } ?: return emptyList()
-        return listOf(function.symbol)
+        } ?: return []
+        return [function.symbol]
     }
 
     private fun FirRegularClassSymbol.hasDescribeContentsImplementation(): Boolean {
@@ -106,7 +106,7 @@ class FirParcelizeDeclarationGenerator(
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
-            classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> emptySet()
+            classSymbol.rawStatus.modality == Modality.ABSTRACT || classSymbol.rawStatus.modality == Modality.SEALED -> []
             else -> parcelizeMethodsNames
         }
     }

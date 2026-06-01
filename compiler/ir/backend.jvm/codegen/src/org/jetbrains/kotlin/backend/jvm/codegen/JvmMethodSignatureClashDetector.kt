@@ -84,7 +84,7 @@ class JvmMethodSignatureClashDetector(
                     reportJvmSignatureClash(
                         diagnosticReporter,
                         JvmBackendErrors.CONFLICTING_INHERITED_JVM_DECLARATIONS,
-                        listOf(classCodegen.irClass),
+                        [classCodegen.irClass],
                         conflictingJvmDeclarationsData
                     )
                 }
@@ -144,23 +144,23 @@ class JvmMethodSignatureClashDetector(
     }
 
     companion object {
-        val SPECIAL_BRIDGES_AND_OVERRIDES = setOf(
+        val SPECIAL_BRIDGES_AND_OVERRIDES: Set<IrDeclarationOrigin> = [
             IrDeclarationOrigin.BRIDGE,
             IrDeclarationOrigin.BRIDGE_SPECIAL,
             IrDeclarationOrigin.IR_BUILTINS_STUB,
             JvmLoweredDeclarationOrigin.TO_ARRAY,
             JvmLoweredDeclarationOrigin.SUPER_INTERFACE_METHOD_BRIDGE,
             ANNOTATION_IMPLEMENTATION
-        )
+        ]
 
-        val PREDEFINED_SIGNATURES = listOf(
+        val PREDEFINED_SIGNATURES = [
             JvmMemberSignature.Method("getClass", "()Ljava/lang/Class;"),
             JvmMemberSignature.Method("notify", "()V"),
             JvmMemberSignature.Method("notifyAll", "()V"),
             JvmMemberSignature.Method("wait", "()V"),
             JvmMemberSignature.Method("wait", "(J)V"),
             JvmMemberSignature.Method("wait", "(JI)V"),
-        )
+        ]
     }
 }
 

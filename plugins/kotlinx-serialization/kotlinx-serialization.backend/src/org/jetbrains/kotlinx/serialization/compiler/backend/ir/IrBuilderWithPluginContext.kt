@@ -128,7 +128,7 @@ interface IrBuilderWithPluginContext {
         }
 
         getter.apply {
-            parameters = listOf(containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType))
+            parameters = [containingClass.thisReceiver!!.copyTo(this, type = containingClass.defaultType)]
             body = compilerContext.irBuiltIns.createIrBuilder(symbol, containingClass.startOffset, containingClass.endOffset).irBlockBody {
                 +irReturn(
                     irInvoke(
@@ -209,7 +209,7 @@ interface IrBuilderWithPluginContext {
     context(irBuilder: IrBuilderWithScope) fun irInvoke(
         callee: IrFunctionSymbol,
         arguments: List<IrExpression>,
-        typeArguments: List<IrType?> = emptyList(),
+        typeArguments: List<IrType?> = [],
         returnTypeHint: IrType? = null,
     ): IrFunctionAccessExpression {
         val call = irBuilder.irCall(callee, type = returnTypeHint ?: callee.owner.returnType)
@@ -225,7 +225,7 @@ interface IrBuilderWithPluginContext {
 
         val arrayType = compilerContext.irBuiltIns.arrayClass.typeWith(arrayElementType)
         val arg0 = IrVarargImpl(irBuilder.startOffset, irBuilder.endOffset, arrayType, arrayElementType, arrayElements)
-        val typeArguments = listOf(arrayElementType)
+        val typeArguments = [arrayElementType]
 
         return irBuilder.irCall(compilerContext.irBuiltIns.arrayOf, arrayType, typeArguments = typeArguments).apply {
             arguments[0] = arg0
@@ -377,7 +377,7 @@ interface IrBuilderWithPluginContext {
 
         getter.apply {
             if (parameters.isEmpty())
-                parameters = listOf(propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType))
+                parameters = [propertyParent.thisReceiver!!.copyTo(this, type = propertyParent.defaultType)]
             if (body == null)
                 body = compilerContext.irBuiltIns.createIrBuilder(symbol, propertyParent.startOffset, propertyParent.endOffset).irBlockBody {
                         +irReturn(irGetField(irGet(dispatchReceiverParameter!!), field))
@@ -400,7 +400,7 @@ interface IrBuilderWithPluginContext {
         createClassReference(classSymbol.starProjectedType, irBuilder.startOffset, irBuilder.endOffset)
 
     fun collectSerialInfoAnnotations(irClass: IrClass): List<IrConstructorCall> {
-        if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return emptyList()
+        if (!(irClass.isInterface || irClass.hasSerializableOrMetaAnnotation())) return []
         val annotationByFq: MutableMap<FqName, List<IrConstructorCall>> =
             irClass.annotations.groupBy { it.symbol.owner.parentAsClass.fqNameWhenAvailable!! }.toMutableMap()
         for (clazz in irClass.getAllSuperclasses()) {
@@ -411,7 +411,7 @@ interface IrBuilderWithPluginContext {
                 }
             annotations.forEach { [fqname, call] ->
                 if (fqname !in annotationByFq) {
-                    annotationByFq[fqname] = listOf(call)
+                    annotationByFq[fqname] = [call]
                 } else {
                     // SerializationPluginDeclarationChecker already reported inconsistency
                     // InheritableSerialInfo annotations can not be repeatable
@@ -448,7 +448,7 @@ interface IrBuilderWithPluginContext {
             compilerContext.lazyModePublicationEnumEntry.symbol
         )
         val lambdaExpression = containingClass.createLambdaExpression(returnType, initializerBuilder)
-        return irInvoke(compilerContext.lazyFunctionSymbol, listOf(enumElement, lambdaExpression), listOf(returnType), lazyIrType)
+        return irInvoke(compilerContext.lazyFunctionSymbol, [enumElement, lambdaExpression], [returnType], lazyIrType)
     }
 
     context(irBuilder: IrBuilderWithScope) @OptIn(ObsoleteDescriptorBasedAPI::class)

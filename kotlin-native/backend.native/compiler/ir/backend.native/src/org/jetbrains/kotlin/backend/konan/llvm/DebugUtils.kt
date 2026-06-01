@@ -332,7 +332,7 @@ internal fun setupBridgeDebugInfo(generationState: NativeGenerationState, functi
             scope = file.reinterpret(),
             file = file,
             lineNo = 0,
-            type = debugInfo.subroutineType(generationState.runtime.targetData, emptyList()), // TODO: use proper type.
+            type = debugInfo.subroutineType(generationState.runtime.targetData, []), // TODO: use proper type.
             isLocal = 0,
             isDefinition = 1,
             scopeLine = 0,

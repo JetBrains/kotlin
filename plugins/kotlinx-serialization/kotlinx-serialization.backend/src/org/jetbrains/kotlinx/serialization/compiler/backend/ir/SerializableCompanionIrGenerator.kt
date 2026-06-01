@@ -226,7 +226,7 @@ class SerializableCompanionIrGenerator(
             val serializerCall = getterDescriptor.symbol
             val call = irInvoke(
                 serializerCall,
-                listOf(irGet(factory.dispatchReceiverParameter!!)) + serializers,
+                [irGet(factory.dispatchReceiverParameter!!)] + serializers,
                 List(argsSize) { compilerContext.irBuiltIns.anyNType },
                 returnTypeHint = kSerializerStarType
             )

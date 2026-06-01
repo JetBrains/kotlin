@@ -43,7 +43,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
      */
     abstract fun configureBuilders()
 
-    val intermediateBuilders = mutableListOf<IntermediateBuilder<ElementField, Element>>()
+    val intermediateBuilders: MutableList<IntermediateBuilder<ElementField, Element>> = []
 
     /**
      * Provides a way to configure an intermediate builder class.
@@ -287,7 +287,7 @@ abstract class AbstractBuilderConfigurator<Element, Implementation, ElementField
              * Exclude the field with [name] from this builder class.
              */
             infix fun without(name: String) {
-                without(listOf(name))
+                without([name])
             }
 
             /**

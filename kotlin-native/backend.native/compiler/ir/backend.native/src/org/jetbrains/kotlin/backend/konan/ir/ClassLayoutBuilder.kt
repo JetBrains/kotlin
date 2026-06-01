@@ -152,7 +152,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
          */
         val root = context.irBuiltIns.anyClass.owner
         val immediateInheritors = mutableMapOf<IrClass, MutableList<IrClass>>()
-        val allClasses = mutableListOf<IrClass>()
+        val allClasses: MutableList<IrClass> = []
         irModule.acceptVoid(object: IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -172,7 +172,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
                     allClasses += declaration
                     if (declaration != root) {
                         val superClass = declaration.getSuperClassNotAny() ?: root
-                        val inheritors = immediateInheritors.getOrPut(superClass) { mutableListOf() }
+                        val inheritors = immediateInheritors.getOrPut(superClass) { [] }
                         inheritors.add(declaration)
                     }
                 }
@@ -223,8 +223,8 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
         companion object {
             fun build(irModuleFragment: IrModuleFragment): InterfacesForbiddennessGraph {
                 val interfaceIndices = mutableMapOf<IrClass, Int>()
-                val interfaces = mutableListOf<IrClass>()
-                val forbidden = mutableListOf<MutableList<Int>>()
+                val interfaces: MutableList<IrClass> = []
+                val forbidden: MutableList<MutableList<Int>> = []
                 irModuleFragment.acceptVoid(object : IrVisitorVoid() {
                     override fun visitElement(element: IrElement) {
                         element.acceptChildrenVoid(this)
@@ -232,7 +232,7 @@ internal class GlobalHierarchyAnalysis(val context: Context, val irModule: IrMod
 
                     fun registerInterface(iface: IrClass) {
                         interfaceIndices.getOrPut(iface) {
-                            forbidden.add(mutableListOf())
+                            forbidden.add([])
                             interfaces.add(iface)
                             interfaces.size - 1
                         }
@@ -313,14 +313,14 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         }
 
         val superVtableEntries = if (irClass.isSpecialClassWithNoSupertypes()) {
-            emptyList()
+            []
         } else {
             val superClass = irClass.getSuperClassNotAny() ?: context.irBuiltIns.anyClass.owner
             context.getLayoutBuilder(superClass).vtableEntries
         }
 
         val methods = overridableOrOverridingMethods
-        val newVtableSlots = mutableListOf<OverriddenFunctionInfo>()
+        val newVtableSlots: MutableList<OverriddenFunctionInfo> = []
         val overridenVtableSlots = mutableMapOf<IrSimpleFunction, OverriddenFunctionInfo>()
 
         context.logMultiple {
@@ -460,7 +460,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
         fields?.let { return it }
 
         val superClass = irClass.getSuperClassNotAny()
-        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else emptyList()
+        val superFields = if (superClass != null) context.getLayoutBuilder(superClass).getFieldsInternal(llvm) else []
 
         val declaredFields = getDeclaredFields(llvm)
         val sortedDeclaredFields = if (irClass.hasAnnotation(KonanFqNames.noReorderFields))

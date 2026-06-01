@@ -229,7 +229,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
             val packageName = if (fqnShouldBeEmitted) fqName.parentOrNull()?.asString() ?: "" else ""
             val typeName = fqName.shortName().asString()
 
-            return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), emptyList()).also {
+            return builder.irCallConstructor(symbols.reflectionSymbols.wasmTypeInfoData.constructors.first(), []).also {
                 it.arguments[0] = typeId
                 it.arguments[1] = packageName.toIrConst(context.irBuiltIns.stringType)
                 it.arguments[2] = typeName.toIrConst(context.irBuiltIns.stringType)

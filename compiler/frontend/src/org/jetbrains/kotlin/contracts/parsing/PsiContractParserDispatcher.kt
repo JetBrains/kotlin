@@ -92,7 +92,7 @@ internal class PsiContractParserDispatcher(
     }
 
     private fun checkDuplicatedCallsEffectsAndReport(effects: List<Pair<EffectDeclaration?, KtExpression>>) {
-        val descriptorsWithCallsEffect = mutableSetOf<ParameterDescriptor>()
+        val descriptorsWithCallsEffect: MutableSet<ParameterDescriptor> = []
         for ([effect, expression] in effects) {
             if (effect !is CallsEffectDeclaration) continue
             val descriptor = effect.variableReference.descriptor

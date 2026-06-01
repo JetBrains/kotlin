@@ -85,8 +85,8 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
     )
 
     private class ClassContext {
-        val serializableMethodRefInfos = mutableListOf<SerializableMethodRefInfo>()
-        val functionsToAdd = mutableListOf<IrFunction>()
+        val serializableMethodRefInfos: MutableList<SerializableMethodRefInfo> = []
+        val functionsToAdd: MutableList<IrFunction> = []
     }
 
     private val classContextStack = ArrayDeque<ClassContext>()
@@ -322,7 +322,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
 
         val implFunSymbol = call.invokeFunction.symbol
 
-        val generatedParameters = LambdaMetafactoryArgumentsBuilder(backendContext, emptySet())
+        val generatedParameters = LambdaMetafactoryArgumentsBuilder(backendContext, [])
             .getLambdaMetafactoryArguments(
                 call, plainLambda = indyCallData.plainLambda, forceSerializability = indyCallData.forceSerializability
             )
@@ -378,7 +378,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
             implFunRawRef,
             instanceMethodType
         )
-        var bridgeMethodTypes = emptyList<IrExpression>()
+        var bridgeMethodTypes: List<IrExpression> = []
 
         var flags = 0
 
@@ -445,7 +445,7 @@ class IndyLambdaMetafactoryLowering(val backendContext: JvmBackendContext) : Fil
         samMethod: IrSimpleFunction,
         targetRef: IrRichFunctionReference,
     ): IrCall {
-        val dynamicCallArguments = mutableListOf<IrExpression>()
+        val dynamicCallArguments: MutableList<IrExpression> = []
 
         val irDynamicCallTarget = backendContext.irFactory.buildFun {
             origin = JvmLoweredDeclarationOrigin.INVOKEDYNAMIC_CALL_TARGET

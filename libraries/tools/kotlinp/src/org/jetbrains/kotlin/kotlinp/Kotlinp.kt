@@ -348,7 +348,7 @@ abstract class Kotlinp(protected val settings: Settings) {
                 renderPropertyAccessorModifiers(setter, printer)
                 append("set")
                 property.setterParameter?.let {
-                    appendValueParameters(listOf(it))
+                    appendValueParameters([it])
                 }
                 appendLine()
             }

@@ -23,14 +23,14 @@ import org.jetbrains.kotlin.fir.types.impl.FirFunctionTypeRefImpl
 
 @FirBuilderDsl
 class FirFunctionTypeRefBuilder : FirAnnotationContainerBuilder {
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var source: KtSourceElement
     var isMarkedNullable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     var receiverTypeRef: FirTypeRef? = null
-    val parameters: MutableList<FirFunctionTypeParameter> = mutableListOf()
+    val parameters: MutableList<FirFunctionTypeParameter> = []
     lateinit var returnTypeRef: FirTypeRef
     var isSuspend: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val contextParameterTypeRefs: MutableList<FirTypeRef> = mutableListOf()
+    val contextParameterTypeRefs: MutableList<FirTypeRef> = []
 
     override fun build(): FirFunctionTypeRef {
         return FirFunctionTypeRefImpl(

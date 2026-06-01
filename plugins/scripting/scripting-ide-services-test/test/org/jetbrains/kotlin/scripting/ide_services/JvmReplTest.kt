@@ -186,7 +186,7 @@ class JvmIdeServicesTest : TestCase() {
             """.trimIndent()
         )
         val completionList1 = repl.complete(codeLine1, 12)
-        checkContains(completionList1.valueOrThrow(), setOf("prop_x", "prop_y", "pro", "println(Double)"))
+        checkContains(completionList1.valueOrThrow(), ["prop_x", "prop_y", "pro", "println(Double)"])
     }
 
     fun testPackageCompletion() = JvmTestRepl().use { repl ->
@@ -197,8 +197,8 @@ class JvmIdeServicesTest : TestCase() {
             """.trimIndent()
         )
         val completionList1 = repl.complete(codeLine1, 12)
-        checkContains(completionList1.valueOrThrow(), setOf("lang", "math"))
-        checkDoesntContain(completionList1.valueOrThrow(), setOf("xval"))
+        checkContains(completionList1.valueOrThrow(), ["lang", "math"])
+        checkDoesntContain(completionList1.valueOrThrow(), ["xval"])
     }
 
     fun testFileCompletion() = JvmTestRepl().use { repl ->
@@ -350,11 +350,11 @@ class JvmIdeServicesTest : TestCase() {
         private fun compileFile(inputKtFileName: String, outputJarName: String): CliCompilationResult {
             val jarPath = outputJarDir.resolve(outputJarName).toAbsolutePath().invariantSeparatorsPathString
 
-            val compilerArgs = arrayOf(
+            val compilerArgs: Array<String> = [
                 "$MODULE_PATH/testData/$inputKtFileName",
                 "-kotlin-home", "dist/kotlinc",
                 "-d", jarPath
-            )
+            ]
 
             val exitCode = K2JVMCompiler().exec(
                 MessageCollector.NONE,

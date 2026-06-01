@@ -66,7 +66,7 @@ internal fun PsiAnnotation.tryConvertAsTarget(): KtLightAbstractAnnotation? {
     if (FqNames.target.asString() != qualifiedName) return null
 
     val attributeValues = extractArrayAnnotationFqNames("allowedTargets")
-        ?: extractAnnotationFqName("value")?.let { listOf(it) }
+        ?: extractAnnotationFqName("value")?.let { [it] }
 
     attributeValues ?: return null
 
@@ -76,7 +76,7 @@ internal fun PsiAnnotation.tryConvertAsTarget(): KtLightAbstractAnnotation? {
 
     return asUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_TARGET,
-        listOf(targetAttributes),
+        [targetAttributes],
     )
 }
 
@@ -90,7 +90,7 @@ private val retentionMapping = hashMapOf(
 
 internal fun createRetentionRuntimeAnnotation(parent: PsiElement) = KtUltraLightSimpleAnnotation(
     JAVA_LANG_ANNOTATION_RETENTION,
-    listOf("value" to retentionMapping["kotlin.annotation.AnnotationRetention.RUNTIME"]!!),
+    ["value" to retentionMapping["kotlin.annotation.AnnotationRetention.RUNTIME"]!!],
     parent,
 )
 
@@ -109,7 +109,7 @@ internal fun PsiAnnotation.tryConvertAsRetention(): KtLightAbstractAnnotation? {
     val convertedValue = extractAnnotationFqName("value")?.let { retentionMapping[it] } ?: return null
     return asUltraLightSimpleAnnotation(
         JAVA_LANG_ANNOTATION_RETENTION,
-        listOf("value" to convertedValue),
+        ["value" to convertedValue],
     )
 }
 
@@ -150,5 +150,5 @@ internal fun PsiAnnotation.tryConvertAsRepeatableContainer(): KtLightAbstractAnn
 
 private fun PsiAnnotation.tryConvertAs(from: FqName, to: String): KtLightAbstractAnnotation? =
     takeIf { from.asString() == qualifiedName }?.let {
-        asUltraLightSimpleAnnotation(to, emptyList())
+        asUltraLightSimpleAnnotation(to, [])
     }

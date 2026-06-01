@@ -107,7 +107,7 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
         }
 
     private fun IrExpression.wrapWithBlock(origin: IrStatementOrigin?): IrBlock =
-        IrBlockImpl(this.startOffset, this.endOffset, this.type, origin, listOf(this))
+        IrBlockImpl(this.startOffset, this.endOffset, this.type, origin, [this])
 
     private fun irTrue(startOffset: Int, endOffset: Int) =
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, true)
@@ -225,10 +225,10 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
                 val nullResult = safeCallInfo.ifNullBranch.result
                 val foldedWhen = IrWhenImpl(
                     startOffset, endOffset, safeCallType, JvmLoweredStatementOrigin.FOLDED_SAFE_CALL,
-                    listOf(
+                    [
                         IrBranchImpl(startOffset, endOffset, foldedCondition, safeCallResult),
                         IrBranchImpl(startOffset, endOffset, irTrue(startOffset, endOffset), nullResult)
-                    )
+                    ]
                 )
                 return foldedWhen.wrapWithBlock(JvmLoweredStatementOrigin.FOLDED_SAFE_CALL)
             }
@@ -340,9 +340,9 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
                     elvisTmpVal.type = innerElvisRhs.type
                     val newCondition = IrCompositeImpl(
                         startOffset, endOffset, context.irBuiltIns.booleanType, null,
-                        listOf(
+                        [
                             elvisTmpVal, irValNotNull(startOffset, endOffset, elvisTmpVal)
-                        )
+                        ]
                     )
                     innerElvisLastBranch.condition = newCondition
                     innerElvisLastBranch.result = IrGetValueImpl(startOffset, endOffset, elvisTmpVal.symbol)
@@ -374,14 +374,14 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
                     //      }
                     val newCondition = IrCompositeImpl(
                         startOffset, endOffset, context.irBuiltIns.booleanType, null,
-                        listOf(elvisTmpVal, irValNotNull(startOffset, endOffset, elvisTmpVal))
+                        [elvisTmpVal, irValNotNull(startOffset, endOffset, elvisTmpVal)]
                     )
                     val foldedWhen = IrWhenImpl(
                         startOffset, endOffset, elvisType, JvmLoweredStatementOrigin.FOLDED_ELVIS,
-                        listOf(
+                        [
                             IrBranchImpl(startOffset, endOffset, newCondition, IrGetValueImpl(startOffset, endOffset, elvisTmpVal.symbol)),
                             IrBranchImpl(startOffset, endOffset, irTrue(startOffset, endOffset), elvisInfo.elvisRhs)
-                        )
+                        ]
                     )
                     return foldedWhen.wrapWithBlock(JvmLoweredStatementOrigin.FOLDED_ELVIS)
                 }

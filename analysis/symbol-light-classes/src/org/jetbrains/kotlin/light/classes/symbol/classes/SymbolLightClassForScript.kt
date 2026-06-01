@@ -56,7 +56,7 @@ internal class SymbolLightClassForScript private constructor(
     }
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
-        val result = mutableListOf<PsiMethod>()
+        val result: MutableList<PsiMethod> = []
 
         result.addScriptDefaultMethods()
 
@@ -159,11 +159,11 @@ internal class SymbolLightClassForScript private constructor(
     }
 
     override fun getSupers(): Array<PsiClass> {
-        return superClass?.let { arrayOf(it) } ?: PsiClass.EMPTY_ARRAY
+        return superClass?.let { [it] } ?: PsiClass.EMPTY_ARRAY
     }
 
     override fun getSuperTypes(): Array<PsiClassType> {
-        return arrayOf(PsiType.getJavaLangObject(manager, resolveScope))
+        return [PsiType.getJavaLangObject(manager, resolveScope)]
     }
 
     override fun getScope(): PsiElement = parent

@@ -71,11 +71,11 @@ class JavaClassifierTypeImpl(
         }
 
     private fun computeTypeArguments(): List<JavaType?> {
-        val classifier = classifier as? JavaClassImpl ?: return emptyList()
+        val classifier = classifier as? JavaClassImpl ?: return []
         val parameters = getTypeParameters(classifier.psi)
 
         // Note: Returning `emptyList` is important so that we don't cache a new, empty array list instance.
-        if (parameters.isEmpty()) return emptyList()
+        if (parameters.isEmpty()) return []
 
         val substitutor = substitutor
 
@@ -170,7 +170,7 @@ class JavaClassifierTypeImpl(
             currentOwner = currentOwner.containingClass
         }
 
-        return result ?: emptyList()
+        return result ?: []
     }
 
     companion object {

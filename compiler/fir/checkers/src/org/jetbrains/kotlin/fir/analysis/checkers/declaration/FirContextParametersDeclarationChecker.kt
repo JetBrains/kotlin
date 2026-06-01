@@ -110,7 +110,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         return when (this) {
             is FirCallableDeclaration -> contextParameters
             is FirRegularClass -> contextParameters
-            else -> emptyList()
+            else -> []
         }
     }
 
@@ -126,4 +126,3 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
         }
     }
 }
-

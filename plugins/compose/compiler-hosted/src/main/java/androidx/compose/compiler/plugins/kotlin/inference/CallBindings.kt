@@ -26,7 +26,7 @@ package androidx.compose.compiler.plugins.kotlin.inference
  */
 class CallBindings(
     val target: Binding,
-    val parameters: List<CallBindings> = emptyList(),
+    val parameters: List<CallBindings> = [],
     val result: CallBindings?,
     val anyParameters: Boolean,
 ) {

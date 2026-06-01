@@ -116,7 +116,7 @@ private fun weakHashLen32WithSeeds(w: ULong, x: ULong, y: ULong, z: ULong, a: UL
     a += x
     a += y
     b += rotate(a, 44)
-    return ulongArrayOf(a + z, b + c)
+    return [a + z, b + c]
 }
 
 private fun weakHashLen32WithSeeds(s: ByteArray, pos: Int, a: ULong, b: ULong): ULongArray {

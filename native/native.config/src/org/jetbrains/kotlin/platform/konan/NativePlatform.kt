@@ -36,7 +36,7 @@ object NativePlatforms {
     val unspecifiedNativePlatform: TargetPlatform
         get() = CompatNativePlatform
 
-    val allNativePlatforms: List<TargetPlatform> = listOf(unspecifiedNativePlatform) + predefinedNativeTargetToNativePlatform.values
+    val allNativePlatforms: List<TargetPlatform> = [unspecifiedNativePlatform] + predefinedNativeTargetToNativePlatform.values
 
     fun nativePlatformBySingleTarget(target: KonanTarget): TargetPlatform =
         predefinedNativeTargetToNativePlatform[target] ?: unspecifiedNativePlatform
@@ -53,7 +53,7 @@ object NativePlatforms {
     fun nativePlatformByTargetNames(targets: Collection<String>): TargetPlatform =
         nativePlatformByTargets(targets.mapNotNull { KonanTarget.predefinedTargets[it] })
 
-    private object CompatNativePlatform : TargetPlatform(setOf(NativePlatformUnspecifiedTarget))
+    private object CompatNativePlatform : TargetPlatform([NativePlatformUnspecifiedTarget])
 }
 
 fun TargetPlatform?.isNative(): Boolean = this != null && this.size > 0 && all { it is NativePlatform }

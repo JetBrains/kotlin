@@ -129,13 +129,13 @@ public class SirDeclarationFromKtSymbolProvider(
     private fun <T : SirDeclaration> T.takeUnlessUnavailableInProtocol(): T? =
         takeUnless { it.parent is SirProtocol && it.isUnavailable }
 
-    private val nsObjectReservedProperties = setOf(
+    private val nsObjectReservedProperties: Set<String> = [
         "debugDescription", "description", "hash", "hashValue", "superclass",
-    )
-    private val nsObjectReservedFunctions = setOf(
+    ]
+    private val nsObjectReservedFunctions: Set<String> = [
         "copy()", "doesNotRecognizeSelector(_:)", "finalize()", "forwardingTarget(for:)", "hash(into:)", "method(for:)", "mutableCopy()",
         "release()",
-    )
+    ]
 
     private fun <T : SirDeclaration> T.takeUnlessNSObjectConflict(): T? = when (this) {
         is SirFromKtSymbol<*> if ktSymbol.isTopLevel -> this

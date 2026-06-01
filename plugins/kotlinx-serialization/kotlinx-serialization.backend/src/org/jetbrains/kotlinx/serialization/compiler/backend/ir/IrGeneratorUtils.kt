@@ -45,7 +45,7 @@ fun IrPluginContext.generateBodyForDefaultConstructor(declaration: IrConstructor
         irBuiltIns.unitType,
     )
 
-    return irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
+    return irFactory.createBlockBody(-1, -1, [delegatingAnyCall, initializerCall])
 }
 
 fun IrClass.addDefaultConstructorBodyIfAbsent(ctx: IrPluginContext) {
@@ -64,7 +64,7 @@ fun findPath(childType: IrSimpleType, parentType: IrSimpleType): List<IrSimpleTy
 private fun findPathInternal(
     type: IrSimpleType,
     targetParentType: IrSimpleType,
-    prev: List<IrSimpleType> = emptyList(),
+    prev: List<IrSimpleType> = [],
 ): List<IrSimpleType>? {
     val current = prev + type
     if (FqNameEqualityChecker.areEqual(targetParentType.classifier, type.classifier)) return current

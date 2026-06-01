@@ -204,7 +204,7 @@ internal class JvmPropertiesLowering(
                     IrParameterKind.DispatchReceiver -> if (!isStatic) it.copyTo(this, type = it.type.eraseTypeParameters()) else null
                     else -> it.copyTo(this, type = it.type.eraseTypeParameters(), kind = IrParameterKind.Regular)
                 }
-            } ?: emptyList()
+            } ?: []
             parent = declaration.parent
             metadata = declaration.metadata
         }

@@ -224,13 +224,13 @@ enum class TestRunnerType {
     NO_EXIT
 }
 
-internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs(emptyList(), cinteropArgs) {
+internal class TestCInteropArgs(cinteropArgs: List<String>) : TestCompilerArgs([], cinteropArgs) {
     constructor(vararg cinteropArgs: String) : this(cinteropArgs.asList())
 }
 
 open class TestCompilerArgs(
     val compilerArgs: List<String>,
-    val cinteropArgs: List<String> = emptyList(),
+    val cinteropArgs: List<String> = [],
     val assertionsMode: AssertionsMode = AssertionsMode.DEFAULT,
     val objcArc: Boolean = true,
 ) {
@@ -259,7 +259,7 @@ open class TestCompilerArgs(
     )
 
     companion object {
-        val EMPTY = TestCompilerArgs(emptyList())
+        val EMPTY = TestCompilerArgs([])
 
         fun findForbiddenArgs(compilerArgs: Iterable<String>): Set<String> = buildSet {
             addAll(compilerArgs)
@@ -270,7 +270,7 @@ open class TestCompilerArgs(
         }
 
         /** The set of compiler args that are not permitted to be explicitly specified using [FREE_COMPILER_ARGS]. */
-        private val EXPLICITLY_FORBIDDEN_COMPILER_ARGS = setOf(
+        private val EXPLICITLY_FORBIDDEN_COMPILER_ARGS: Set<String> = [
             "-trn", "-generate-no-exit-test-runner",
             "-tr", "-generate-test-runner",
             "-trw", "-generate-worker-test-runner",
@@ -284,12 +284,12 @@ open class TestCompilerArgs(
             "-g", "-opt",
             "-memory-model",
             "-Xcheck-state-at-external-calls"
-        )
+        ]
 
         /** The set of compiler arg prefixes that are not permitted to be explicitly specified using [FREE_COMPILER_ARGS]. */
-        private val EXPLICITLY_FORBIDDEN_COMPILER_ARG_PREFIXES = setOf(
+        private val EXPLICITLY_FORBIDDEN_COMPILER_ARG_PREFIXES: Set<String> = [
             "-Xgc="
-        )
+        ]
     }
 }
 

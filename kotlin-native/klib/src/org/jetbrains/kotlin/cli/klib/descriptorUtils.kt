@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
 // TODO: remove it, KT-65380
 private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
+    val result: MutableSet<FqName> = []
     val packageFragmentProvider = (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
 
     fun getSubPackages(fqName: FqName) {

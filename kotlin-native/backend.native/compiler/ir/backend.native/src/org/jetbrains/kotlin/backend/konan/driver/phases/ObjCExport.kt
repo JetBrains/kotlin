@@ -49,7 +49,7 @@ internal val CreateObjCFrameworkPhase = createSimpleNamedCompilerPhase<NativeBac
  */
 internal val CreateObjCExportCodeSpecPhase = createSimpleNamedCompilerPhase<LinkKlibsContext, ObjCExportedInterface, ObjCExportCodeSpec>(
         "ObjCExportCodeCodeSpec",
-        outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec(emptyList(), emptyList()) }
+        outputIfNotEnabled = { _, _, _, _, -> ObjCExportCodeSpec([], []) }
 ) { context, input ->
     input.createCodeSpec(context.symbolTable!!).also {
         context.config.dumpObjcSelectorToSignatureMapping?.let { path ->

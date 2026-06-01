@@ -28,7 +28,7 @@ internal class NativeDistributionListTargets(options: Collection<Option<*>>) : T
             .resolve(KONAN_DISTRIBUTION_PLATFORM_LIBS_DIR)
             .list()
             ?.sorted()
-            ?: emptyList()
+            ?: []
 
         println()
         if (targets.isEmpty())

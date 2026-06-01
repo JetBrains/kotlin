@@ -107,7 +107,7 @@ class K1CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
     }
 
     override fun compileToIr(files: List<SourceFile>): IrModuleFragment =
-        frontend(files, listOf()).backendInput.irModuleFragment
+        frontend(files, []).backendInput.irModuleFragment
 
     override fun compile(
         platformFiles: List<SourceFile>,

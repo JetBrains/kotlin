@@ -57,7 +57,7 @@ private fun markExportedDeclarations(dirtyFiles: Collection<IrFile>, context: Wa
     } ?: return
 
     val packageFqName = testFile.packageFqName.asString().takeIf { it.isNotEmpty() }
-    markExportedDeclarations(context, testFile, setOf(FqName.fromSegments(listOfNotNull(packageFqName, "box"))))
+    markExportedDeclarations(context, testFile, [FqName.fromSegments(listOfNotNull(packageFqName, "box"))])
 }
 
 
@@ -349,7 +349,7 @@ abstract class WasmAbstractInvalidationTest(
 
             WasmVM.NodeJs.run(
                 "./test.mjs",
-                emptyList(),
+                [],
                 workingDirectory = buildDir,
                 useNewExceptionHandling = false,
             )

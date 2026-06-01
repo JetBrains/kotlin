@@ -41,7 +41,7 @@ fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosti
     val lightTreeComparingModeEnabled = firParser != null && FirDiagnosticsDirectives.COMPARE_WITH_LIGHT_TREE in module.directives
     val lightTreeEnabled = firParser == FirParser.LightTree
 
-    val processedModules = mutableSetOf<TestModule>()
+    val processedModules: MutableSet<TestModule> = []
     val diagnosticsService = testServices.diagnosticsService
 
     fun processModule(module: TestModule) {
@@ -72,7 +72,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
     for (module in moduleStructure.modules) {
         if (RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in module.directives) continue
         needToVerifyDiagnostics = true
-        val reportedDiagnostics = mutableListOf<String>()
+        val reportedDiagnostics: MutableList<String> = []
         for (testFile in module.files) {
             testServices.sourceFileProvider.getContentOfSourceFile(testFile).byteInputStream().reader().use {
                 val finder = SequentialPositionFinder(it)

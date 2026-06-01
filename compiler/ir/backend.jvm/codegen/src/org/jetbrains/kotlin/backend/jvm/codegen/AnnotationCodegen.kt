@@ -54,7 +54,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
     private val typeMapper = classCodegen.typeMapper
     private val methodSignatureMapper = classCodegen.methodSignatureMapper
 
-    private val annotationDescriptorsAlreadyPresent = mutableSetOf<String>()
+    private val annotationDescriptorsAlreadyPresent: MutableSet<String> = []
 
     fun genAnnotations(annotated: IrDeclaration, annotations: List<IrConstructorCall> = annotated.annotations) {
         for (annotation in annotations) {

@@ -18,9 +18,9 @@ object TransformersFunctions {
     val removeOptionalJvmInlineAnnotation = ReplacingSourceTransformer("OPTIONAL_JVM_INLINE_ANNOTATION", "")
 
     object Android {
-        val forAll: List<(String) -> String> = listOf(
+        val forAll: List<(String) -> String> = [
             replaceOptionalJvmInlineAnnotationWithReal,
-        )
+        ]
         val forSpecificFile: Map<File, (String) -> String> = mapOf(
         )
     }

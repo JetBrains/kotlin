@@ -185,8 +185,8 @@ internal class ExportCachesAbiVisitor(val context: Context) : FileLoweringPass {
     }
 
     private val visitor = object : IrVisitorVoid() {
-        val addedFunctions = mutableListOf<IrSimpleFunction>()
-        val handledFakeOverrides = mutableSetOf<IrSimpleFunction>()
+        val addedFunctions: MutableList<IrSimpleFunction> = []
+        val handledFakeOverrides: MutableSet<IrSimpleFunction> = []
 
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)

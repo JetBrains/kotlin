@@ -112,7 +112,7 @@ private class KotlinEnumSyntheticMethod(
     private val modifierList = object : LightModifierList(manager, language, PsiModifier.PUBLIC, PsiModifier.STATIC) {
         override fun getParent() = this@KotlinEnumSyntheticMethod
 
-        private val annotations = arrayOf(makeNotNullAnnotation(enumClass))
+        private val annotations: Array<PsiAnnotation> = [makeNotNullAnnotation(enumClass)]
 
         override fun findAnnotation(fqn: String): PsiAnnotation? = annotations.firstOrNull { it.hasQualifiedName(fqn) }
         override fun getAnnotations(): Array<PsiAnnotation> = annotations.clone()

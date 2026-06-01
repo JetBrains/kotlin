@@ -35,8 +35,8 @@ internal fun MethodNode.allSuspensionPointsAreTailCalls(suspensionPoints: List<S
         !isMeaningful || opcode in SAFE_OPCODES || isInvisibleInDebugVarInsn(this@allSuspensionPointsAreTailCalls) || isInlineMarker(this) || isPartOfSuspendInlineMarker()
 
     fun AbstractInsnNode.transitiveSuccessorsAreSafeOrReturns(isUnitSuspendCall: Boolean): Boolean {
-        val visited = mutableSetOf(this)
-        val stack = mutableListOf(this)
+        val visited: MutableSet<AbstractInsnNode> = [this]
+        val stack: MutableList<AbstractInsnNode> = [this]
         while (stack.isNotEmpty()) {
             val insn = stack.popLast()
             // In Unit-returning functions, the last call statement may be followed by POP + GETSTATIC Unit.INSTANCE + ARETURN.
@@ -112,7 +112,7 @@ internal fun MethodNode.addCoroutineSuspendedChecks(suspensionPoints: List<Suspe
 
 private fun AbstractInsnNode?.skipUntilMeaningful(skipSuspendMarkers: Boolean): AbstractInsnNode? {
     var cursor: AbstractInsnNode? = this ?: return null
-    val visited = mutableSetOf<AbstractInsnNode>()
+    val visited: MutableSet<AbstractInsnNode> = []
     while (cursor != null) {
         if (!visited.add(cursor)) return null
         when {

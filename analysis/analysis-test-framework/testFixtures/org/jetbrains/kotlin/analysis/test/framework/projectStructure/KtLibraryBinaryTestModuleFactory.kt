@@ -18,5 +18,5 @@ object KtLibraryBinaryTestModuleFactory : KtLibraryBinaryTestModuleFactoryBase()
     override val testModuleKind: TestModuleKind
         get() = TestModuleKind.LibraryBinary
 
-    override fun decompileToPsiFiles(binaryRoot: Path, testServices: TestServices, project: Project): List<PsiFile> = emptyList()
+    override fun decompileToPsiFiles(binaryRoot: Path, testServices: TestServices, project: Project): List<PsiFile> = []
 }

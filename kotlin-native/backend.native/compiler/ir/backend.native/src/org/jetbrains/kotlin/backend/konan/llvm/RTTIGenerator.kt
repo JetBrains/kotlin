@@ -235,7 +235,7 @@ internal class RTTIGenerator(
         val [interfaceTable, interfaceTableSize] = if (needInterfaceTable) {
             interfaceTableRecords(irClass)
         } else {
-            Pair(emptyList(), -1)
+            Pair([], -1)
         }
         val interfaceTablePtr = staticData.placeGlobalConstArray("kifacetable:$className",
                 runtime.interfaceTableRecordType, interfaceTable)
@@ -509,7 +509,7 @@ internal class RTTIGenerator(
         val superClass = context.irBuiltIns.anyClass.owner
 
         assert(superClass.implementedInterfaces.isEmpty())
-        val interfaces = (listOf(irClass) + irClass.implementedInterfaces)
+        val interfaces = ([irClass] + irClass.implementedInterfaces)
         val interfacesPtr = staticData.placeGlobalConstArray("",
                 llvm.pointerType, interfaces.map { it.typeInfoPtr })
 

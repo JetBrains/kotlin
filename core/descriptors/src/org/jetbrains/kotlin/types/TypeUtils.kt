@@ -154,7 +154,7 @@ fun constituentTypes(types: Collection<KotlinType>): Collection<KotlinType> {
 }
 
 fun KotlinType.constituentTypes(): Collection<KotlinType> =
-    constituentTypes(listOf(this))
+    constituentTypes([this])
 
 private fun constituentTypes(result: MutableSet<KotlinType>, types: Collection<KotlinType>) {
     result.addAll(types)
@@ -300,7 +300,7 @@ val TypeParameterDescriptor.representativeUpperBound: KotlinType
     }
 
 fun KotlinType.expandIntersectionTypeIfNecessary(): Collection<KotlinType> {
-    if (constructor !is IntersectionTypeConstructor) return listOf(this)
+    if (constructor !is IntersectionTypeConstructor) return [this]
     val types = constructor.supertypes
     return if (isMarkedNullable) {
         types.map { it.makeNullable() }

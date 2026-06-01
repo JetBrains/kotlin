@@ -72,7 +72,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
 
         callablesImpl { _ -> names }
     }
@@ -106,7 +106,7 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
 
         classifiersImpl { _ -> names }
     }
@@ -134,12 +134,12 @@ private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     override val constructors: Sequence<KaConstructorSymbol>
         get() = withValidityAssertion {
             // constructors are not considered to be top-level declarations
-            emptySequence()
+            []
         }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
         // we do not provide generated packages at all, since the semantics and use-cases are not yet clear
-        emptySequence()
+        []
     }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {

@@ -36,17 +36,17 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         const val INLINE_SCOPES_DUMP_EXTENSION = "asm.scopes.txt"
         const val LINE_SEPARATOR = "\n"
 
-        val IGNORED_CLASS_VISIBLE_ANNOTATIONS = setOf(
+        val IGNORED_CLASS_VISIBLE_ANNOTATIONS: Set<String> = [
             "Lkotlin/Metadata;",
             "Lkotlin/annotation/Target;",
             "Lkotlin/annotation/Retention;",
             "Ljava/lang/annotation/Retention;",
             "Ljava/lang/annotation/Target;"
-        )
+        ]
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(AsmLikeInstructionListingDirectives)
+        get() = [AsmLikeInstructionListingDirectives]
 
     private val baseDumper = MultiModuleInfoDumper()
 
@@ -78,10 +78,10 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
         showLocalVariables: Boolean,
         renderAnnotations: Boolean
     ) {
-        val fields = (clazz.fields ?: emptyList()).sortedBy { it.name }
-        val methods = (clazz.methods ?: emptyList()).sortedBy { it.name }
+        val fields = (clazz.fields ?: []).sortedBy { it.name }
+        val methods = (clazz.methods ?: []).sortedBy { it.name }
 
-        val superTypes = (listOf(clazz.superName) + clazz.interfaces).filterNotNull()
+        val superTypes = ([clazz.superName] + clazz.interfaces).filterNotNull()
 
         if (renderAnnotations) {
             clazz.signature?.let {

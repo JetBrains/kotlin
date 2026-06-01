@@ -50,7 +50,7 @@ sealed class ResolutionCandidate : Candidate, KotlinDiagnosticsHolder {
     val descriptor: CallableDescriptor get() = resolvedCall.candidateDescriptor
     val diagnostics: List<KotlinCallDiagnostic> = mutableDiagnostics
     val resultingApplicabilities: Array<CandidateApplicability>
-        get() = arrayOf(currentApplicability, getResultApplicability(getSystem().errors), variableApplicability)
+        get() = [currentApplicability, getResultApplicability(getSystem().errors), variableApplicability]
 
     private val variableApplicability
         get() = variableCandidateIfInvoke?.resultingApplicability ?: CandidateApplicability.RESOLVED

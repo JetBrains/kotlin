@@ -281,7 +281,7 @@ fun assertFileContains(
     ignoreWhitespace: Boolean = false,
 ): String {
     return assertFilesCombinedContains(
-        files = listOf(file),
+        files = [file],
         expectedText = expectedText,
         ignoreWhitespace = ignoreWhitespace,
     )

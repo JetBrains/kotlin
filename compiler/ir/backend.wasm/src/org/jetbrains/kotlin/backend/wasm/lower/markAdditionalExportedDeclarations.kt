@@ -26,7 +26,7 @@ fun markExportedDeclarations(context: WasmBackendContext, irFile: IrFile, export
         if (declaration is IrFunction && declaration.fqNameWhenAvailable in exportedFqNames) {
             val builder = context.createIrBuilder(irFile.symbol)
             declaration.annotations +=
-                builder.irAnnotation(exportConstructor, typeArguments = emptyList())
+                builder.irAnnotation(exportConstructor, typeArguments = [])
         }
     }
 }

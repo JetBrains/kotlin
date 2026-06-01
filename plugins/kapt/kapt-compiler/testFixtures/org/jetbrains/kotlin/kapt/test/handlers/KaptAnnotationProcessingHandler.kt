@@ -20,8 +20,8 @@ class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHand
         val kaptContext = info.kaptContext
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)
         kaptContext.doAnnotationProcessing(
-            emptyList(),
-            listOf(JavaKaptContextUtils.simpleProcessor()),
+            [],
+            [JavaKaptContextUtils.simpleProcessor()],
             additionalSources = compilationUnits
         )
 

@@ -86,12 +86,12 @@ internal class CAdapterCodegen(
                     )
                     generateFunction(codegen, functionProto) {
                         val value = call(
-                            codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
-                            emptyList(),
-                            Lifetime.GLOBAL,
-                            ExceptionHandler.Caller,
-                            false,
-                            returnSlot
+                                codegen.llvmFunction(context.getObjectClassInstanceFunction(irClass)),
+                                [],
+                                Lifetime.GLOBAL,
+                                ExceptionHandler.Caller,
+                                false,
+                                returnSlot
                         )
                         ret(value)
                     }
@@ -117,5 +117,5 @@ internal class CAdapterCodegen(
     private val kGetTypeFuncType = LlvmFunctionSignature(LlvmRetType(llvm.pointerType, isObjectType = false))
 
     // Abstraction leak for slot :(.
-    private val kGetObjectFuncType = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, listOf(LlvmParamType(llvm.pointerType)))
+    private val kGetObjectFuncType = LlvmFunctionSignature(codegen.kObjHeaderPtrReturnType, [LlvmParamType(llvm.pointerType)])
 }

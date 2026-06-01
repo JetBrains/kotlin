@@ -16,18 +16,19 @@ import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.FirUnresolvedTypeRef
+import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 
 object FirSuspendModifierChecker : FirTypeRefChecker(MppCheckerKind.Common) {
-    private val suspendTokenElementSet = setOf(KtTokens.SUSPEND_KEYWORD)
+    private val suspendTokenElementSet: Set<KtModifierKeywordToken> = [KtTokens.SUSPEND_KEYWORD]
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(typeRef: FirTypeRef) {
         // We are only interested in source type refs (i.e., Fir(Dynamic|User|Function)TypeRef).
         if (typeRef !is FirUnresolvedTypeRef) return
 
-        val suspendModifierSources = mutableListOf<KtSourceElement>()
+        val suspendModifierSources: MutableList<KtSourceElement> = []
         typeRef.source.getChild(KtStubElementTypes.MODIFIER_LIST, depth = 1)?.forEachChildOfType(suspendTokenElementSet, depth = 1) {
             suspendModifierSources += it
         }

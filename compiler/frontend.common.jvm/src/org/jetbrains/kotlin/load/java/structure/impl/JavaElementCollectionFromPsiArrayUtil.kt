@@ -16,20 +16,20 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.name.Name
 
 inline fun <Psi, Java> Array<Psi>.convert(factory: (Psi) -> Java): List<Java> = when (size) {
-    0 -> emptyList()
-    1 -> listOf(factory(first()))
+    0 -> []
+    1 -> [factory(first())]
     else -> map(factory)
 }
 
 inline fun <Psi, Java> Array<Psi>.convertIndexed(factory: (Int, Psi) -> Java): List<Java> = when (size) {
-    0 -> emptyList()
-    1 -> listOf(factory(0, first()))
+    0 -> []
+    1 -> [factory(0, first())]
     else -> mapIndexed(factory)
 }
 
 fun <Psi, Java> Collection<Psi>.convert(factory: (Psi) -> Java): List<Java> = when (size) {
-    0 -> emptyList()
-    1 -> listOf(factory(first()))
+    0 -> []
+    1 -> [factory(first())]
     else -> map(factory)
 }
 

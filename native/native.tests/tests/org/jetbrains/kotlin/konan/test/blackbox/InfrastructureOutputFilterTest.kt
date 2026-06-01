@@ -90,15 +90,15 @@ class InfrastructureOutputFilterTest {
 
         assertTrue(!testReport.isEmpty())
         assertEquals(
-            listOf("sample.test.Foo.passed", "sample.test.Baz.passed"),
+            ["sample.test.Foo.passed", "sample.test.Baz.passed"],
             testReport.passedTests.map(TestName::toString)
         )
         assertEquals(
-            listOf("sample.test.Foo.failed", "sample.test.Baz.failed"),
+            ["sample.test.Foo.failed", "sample.test.Baz.failed"],
             testReport.failedTests.map(TestName::toString)
         )
         assertEquals(
-            listOf("sample.test.Foo.ignored", "sample.test.Baz.ignored"),
+            ["sample.test.Foo.ignored", "sample.test.Baz.ignored"],
             testReport.ignoredTests.map(TestName::toString)
         )
 
@@ -150,8 +150,8 @@ class InfrastructureOutputFilterTest {
         testReport ?: throw AssertionError("Test report expected")
 
         assertTrue(!testReport.isEmpty())
-        assertEquals(listOf("sample.test.Foo.passed"), testReport.passedTests.map(TestName::toString))
-        assertEquals(listOf("sample.test.Foo.failed"), testReport.failedTests.map(TestName::toString))
+        assertEquals(["sample.test.Foo.passed"], testReport.passedTests.map(TestName::toString))
+        assertEquals(["sample.test.Foo.failed"], testReport.failedTests.map(TestName::toString))
         assertTrue(testReport.ignoredTests.isEmpty())
 
         assertEquals(

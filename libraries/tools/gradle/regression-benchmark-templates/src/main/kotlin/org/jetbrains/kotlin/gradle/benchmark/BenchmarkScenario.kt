@@ -10,12 +10,12 @@ class Scenario {
     lateinit var title: String
     var warmups = 6
     var iterations = 10
-    val tasks = mutableListOf<String>()
-    val gradleArgs = mutableListOf<String>()
-    val cleanupTasks = mutableListOf<String>()
-    val applyAbiChange = mutableListOf<String>()
-    val applyNonAbiChange = mutableListOf<String>()
-    val applyAndroidResourceValueChange = mutableListOf<String>()
+    val tasks: MutableList<String> = []
+    val gradleArgs: MutableList<String> = []
+    val cleanupTasks: MutableList<String> = []
+    val applyAbiChange: MutableList<String> = []
+    val applyNonAbiChange: MutableList<String> = []
+    val applyAndroidResourceValueChange: MutableList<String> = []
 
     fun runTasks(vararg tasks: String) {
         this.tasks.addAll(tasks)
@@ -43,7 +43,7 @@ class Scenario {
 }
 
 class ScenarioSuite(
-    private val _scenarios: MutableList<Scenario> = mutableListOf<Scenario>()
+    private val _scenarios: MutableList<Scenario> = []
 ) {
     val scenarios: List<Scenario> get() = _scenarios.toList()
 

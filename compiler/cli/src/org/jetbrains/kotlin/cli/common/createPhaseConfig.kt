@@ -36,7 +36,7 @@ private fun getCornerPhasesToDump(
     phasesToExecute: List<AnyNamedPhase>? = null,
 ): Pair<PhaseSet, PhaseSet> {
     if (phasesToExecute != null && arguments.phasesToDump?.contains("IrLowering") == true) {
-        return PhaseSet.Enum(setOf(phasesToExecute.first().name)) to PhaseSet.Enum(setOf(phasesToExecute.last().name))
+        return PhaseSet.Enum([phasesToExecute.first().name]) to PhaseSet.Enum([phasesToExecute.last().name])
     }
     return PhaseSet.Empty to PhaseSet.Empty
 }

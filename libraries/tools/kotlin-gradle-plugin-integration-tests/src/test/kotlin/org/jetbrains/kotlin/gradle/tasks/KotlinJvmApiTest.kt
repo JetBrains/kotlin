@@ -153,11 +153,11 @@ class KotlinJvmApiTest : KGPBaseTest() {
             }
 
             val expectedOutputClass = projectPath.resolve("build/fooOutput/Foo.class")
-            val expectedOutputStubs = listOf(
+            val expectedOutputStubs = [
                 projectPath.resolve("build/fooOutputStubs/Foo.java"),
                 projectPath.resolve("build/fooOutputStubs/Foo.kapt_metadata"),
                 projectPath.resolve("build/fooOutputStubs/error/NonExistentClass.java")
-            )
+            ]
 
             build("foo") {
                 assertFileExists(expectedOutputClass)

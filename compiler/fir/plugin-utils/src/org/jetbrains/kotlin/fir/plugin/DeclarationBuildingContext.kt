@@ -105,11 +105,11 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
             boundProviders += typeProvider
         }
 
-        internal val boundProviders: MutableList<(List<FirTypeParameterRef>) -> ConeKotlinType> = mutableListOf()
+        internal val boundProviders: MutableList<(List<FirTypeParameterRef>) -> ConeKotlinType> = []
     }
 
 
-    private val contextReceiverTypeProviders: MutableList<(List<FirTypeParameterRef>) -> ConeKotlinType> = mutableListOf()
+    private val contextReceiverTypeProviders: MutableList<(List<FirTypeParameterRef>) -> ConeKotlinType> = []
 
     /**
      * Adds context receiver with [type] type to declaration
@@ -153,9 +153,9 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
         val key: GeneratedDeclarationKey
     )
 
-    protected val typeParameters: MutableList<TypeParameterData> = mutableListOf()
+    protected val typeParameters: MutableList<TypeParameterData> = []
 
-    private val statusConfigs: MutableList<FirResolvedDeclarationStatusImpl.() -> Unit> = mutableListOf()
+    private val statusConfigs: MutableList<FirResolvedDeclarationStatusImpl.() -> Unit> = []
 
     /**
      * Sets the source of the generated declaration.
@@ -211,7 +211,7 @@ public sealed class DeclarationBuildingContext<T : FirDeclaration>(
         for ([typeParameter, data] in ownTypeParameters.zip(typeParameters)) {
             val coneBounds = data.boundProviders.map { it.invoke(allParameters) }
             val bounds = if (coneBounds.isEmpty()) {
-                listOf(session.builtinTypes.nullableAnyType)
+                [session.builtinTypes.nullableAnyType]
             } else {
                 coneBounds.map { it.toFirResolvedTypeRef() }
             }

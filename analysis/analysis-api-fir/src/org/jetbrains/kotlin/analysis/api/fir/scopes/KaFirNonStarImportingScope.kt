@@ -41,11 +41,11 @@ internal class KaFirNonStarImportingScope(
     }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
         imports.flatMapTo(hashSetOf()) { listOfNotNull(it.callableName, it.aliasName) }

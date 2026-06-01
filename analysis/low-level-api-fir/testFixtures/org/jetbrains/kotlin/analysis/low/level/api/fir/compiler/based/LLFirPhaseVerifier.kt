@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 internal class LLFirPhaseVerifier(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(Directives)
+        get() = [Directives]
 
     private object Directives : SimpleDirectivesContainer() {
         val IGNORE_PHASE_VERIFICATION by stringDirective("Disable phase verifier")
@@ -59,7 +59,7 @@ internal class LLFirPhaseVerifier(testServices: TestServices) : FirAnalysisHandl
     }
 
     private class Visitor : FirVisitorVoid() {
-        val unresolvedElements = mutableListOf<FirElementWithResolveState>()
+        val unresolvedElements: MutableList<FirElementWithResolveState> = []
 
         override fun visitElement(element: FirElement) {
             if (element is FirElementWithResolveState && element.resolvePhase < FirResolvePhase.entries.last()) {

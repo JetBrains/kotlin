@@ -64,7 +64,7 @@ internal object GlobalCompiledProjectsCache {
             strategyConfig,
             icOptionsConfigAction = icOptionsConfigAction
         )
-        val initialOutputs = mutableSetOf<FileKey>()
+        val initialOutputs: MutableSet<FileKey> = []
         for (file in module.outputDirectory.walk()) {
             if (!file.isRegularFile()) continue
             initialOutputs.add(

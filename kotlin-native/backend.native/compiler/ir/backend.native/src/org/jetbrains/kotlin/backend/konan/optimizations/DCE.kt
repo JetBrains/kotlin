@@ -30,7 +30,7 @@ internal fun dce(
             devirtualizedCallSitesUnfoldFactor = -1,
             nonDevirtualizedCallSitesUnfoldFactor = -1,
     ).build()
-    val referencedFunctions = mutableSetOf<IrSimpleFunction>()
+    val referencedFunctions: MutableSet<IrSimpleFunction> = []
 
     fun referenceFunction(functionSymbol: DataFlowIR.FunctionSymbol) {
         val irFunction = functionSymbol.irFunction ?: error("No IR for: $functionSymbol")

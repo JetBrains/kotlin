@@ -15,41 +15,41 @@ import org.jetbrains.kotlin.name.Name
 @KaImplementationDetail
 class KaBaseEmptyScope(override val token: KaLifetimeToken) : KaScope {
     override fun getAllPossibleNames(): Set<Name> = withValidityAssertion {
-        return emptySet()
+        return []
     }
 
     override fun getPossibleCallableNames(): Set<Name> = withValidityAssertion {
-        return emptySet()
+        return []
     }
 
     override fun getPossibleClassifierNames(): Set<Name> = withValidityAssertion {
-        return emptySet()
+        return []
     }
 
     override val declarations: Sequence<KaDeclarationSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun callables(nameFilter: (Name) -> Boolean): Sequence<KaCallableSymbol> = withValidityAssertion {
-        return emptySequence()
+        return []
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        return emptySequence()
+        return []
     }
 
     override fun classifiers(nameFilter: (Name) -> Boolean): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        return emptySequence()
+        return []
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        return emptySequence()
+        return []
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 
     override fun mayContainName(name: Name): Boolean = withValidityAssertion {

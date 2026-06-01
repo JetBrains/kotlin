@@ -420,7 +420,7 @@ private fun columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol,
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.sortPropertiesByOrderAnnotation()
                 ?.mapNotNull { columnOf(it, mapping) }
-                ?: emptyList()
+                ?: []
 
             SimpleFrameColumn(name, nestedColumns)
         }
@@ -434,7 +434,7 @@ private fun columnOf(it: FirPropertySymbol, mapping: Map<FirTypeParameterSymbol,
                 ?.filterIsInstance<FirPropertySymbol>()
                 ?.sortPropertiesByOrderAnnotation()
                 ?.mapNotNull { columnOf(it, mapping) }
-                ?: emptyList()
+                ?: []
             SimpleColumnGroup(name, nestedColumns)
         }
 
@@ -482,14 +482,14 @@ fun path(propertyAccessExpression: FirPropertyAccessExpression): List<String> {
     val typeRef = propertyAccessExpression.dispatchReceiver?.resolvedType
     val joinDsl = ClassId(FqName("org.jetbrains.kotlinx.dataframe.api"), Name.identifier("JoinDsl"))
     if (typeRef?.classId?.equals(joinDsl) == true && colName == "right") {
-        return emptyList()
+        return []
     }
     return when (val explicitReceiver = propertyAccessExpression.explicitReceiver) {
-        null, is FirThisReceiverExpression -> listOf(colName)
+        null, is FirThisReceiverExpression -> [colName]
         else -> {
             val propertyAccess = explicitReceiver as FirPropertyAccessExpression
             if (propertyAccess.calleeReference.symbol is FirValueParameterSymbol) {
-                listOf(colName)
+                [colName]
             } else {
                 path(propertyAccess) + colName
             }
@@ -513,7 +513,7 @@ fun FirPropertyAccessExpression.columnName(): String {
 }
 
 internal fun FirFunctionCall.collectArgumentExpressions(): RefinedArguments {
-    val refinedArgument = mutableListOf<RefinedArgument>()
+    val refinedArgument: MutableList<RefinedArgument> = []
 
     val parameterName = Name.identifier("receiver")
     (explicitReceiver ?: extensionReceiver)?.let {

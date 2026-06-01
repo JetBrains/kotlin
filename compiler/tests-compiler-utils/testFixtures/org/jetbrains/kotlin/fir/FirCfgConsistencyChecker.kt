@@ -51,7 +51,7 @@ class FirCfgConsistencyChecker(private val assertions: Assertions) : FirVisitorV
     }
 
     private fun checkOrder(graph: ControlFlowGraph) {
-        val visited = mutableSetOf<CFGNode<*>>()
+        val visited: MutableSet<CFGNode<*>> = []
         for (node in graph.nodes) {
             for (previousNode in node.previousNodes) {
                 if (previousNode.owner != graph) continue

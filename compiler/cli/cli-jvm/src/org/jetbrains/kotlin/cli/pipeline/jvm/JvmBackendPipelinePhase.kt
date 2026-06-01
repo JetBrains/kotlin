@@ -28,9 +28,9 @@ import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStat
 
 object JvmBackendPipelinePhase : PipelinePhase<JvmFir2IrPipelineArtifact, JvmBackendPipelineArtifact>(
     name = "JvmBackendPipelineStep",
-    postActions = setOf(
+    postActions = [
         CheckCompilationErrors.CheckDiagnosticCollector
-    )
+    ]
 ) {
     override fun executePhase(input: JvmFir2IrPipelineArtifact): JvmBackendPipelineArtifact {
         (val fir2IrResult = result, val configuration, val environment, val allSourceFiles = sourceFiles, val mainClassFqName) = input

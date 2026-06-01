@@ -57,22 +57,22 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
         )
     }
 
-    private fun compileAndGetDiagnostics(sourceFiles: List<File>, additionalArgs: List<String> = emptyList()): List<Diagnostic> {
+    private fun compileAndGetDiagnostics(sourceFiles: List<File>, additionalArgs: List<String> = []): List<Diagnostic> {
         val args = makeCompilerArgs(sourceFiles, tmpdir) + additionalArgs
-        val diagnostics = mutableListOf<Diagnostic>()
+        val diagnostics: MutableList<Diagnostic> = []
         val result = CompilerTestUtil.executeCompiler(K2JSCompiler(), args, LoggingMessageRenderer(diagnostics)).second
         assertEquals("Compilation failed with exit code $result", ExitCode.OK, result)
         return diagnostics
     }
 
     private fun makeCompilerArgs(sourceFiles: List<File>, jarFile: File): List<String> {
-        return listOf(
+        return [
             K2JSCompilerArguments::libraries.cliArgument,
             PathUtil.kotlinPathsForCompiler.jsStdLibKlibPath.absolutePath,
             K2JSCompilerArguments::outputDir.cliArgument(jarFile.absolutePath),
             K2JSCompilerArguments::moduleName.cliArgument("main"),
             K2JSCompilerArguments::verbose.cliArgument,
-        ) + sourceFiles.map { it.absolutePath }
+        ] + sourceFiles.map { it.absolutePath }
     }
 
     private data class Diagnostic(
@@ -118,7 +118,7 @@ class NopackArgumentTest : TestCaseWithTmpdir() {
             nopackArgument?.let { K2JSCompilerArguments::nopack.cliArgument(it.toString()) },
         )
 
-        val diagnostics = compileAndGetDiagnostics(listOf(mainKt), additionalArgs)
+        val diagnostics = compileAndGetDiagnostics([mainKt], additionalArgs)
         val produceKlibFile = diagnostics.extractBooleanConfiguration("PRODUCE_KLIB_FILE")
         val produceKlibDir = diagnostics.extractBooleanConfiguration("PRODUCE_KLIB_DIR")
         assertEquals("PRODUCE_KLIB_FILE", expectedProduceKlibFile, produceKlibFile)

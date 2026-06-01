@@ -101,7 +101,7 @@ class JarRunner(private val path: String) : AbstractRunner() {
         // 'kotlin *.jar' ignores the passed classpath as 'java -jar' does
         // TODO: warn on non-empty classpath?
 
-        return URLClassLoader(arrayOf(File(path).toURI().toURL()), getPlatformClassLoader())
+        return URLClassLoader([File(path).toURI().toURL()], getPlatformClassLoader())
     }
 }
 

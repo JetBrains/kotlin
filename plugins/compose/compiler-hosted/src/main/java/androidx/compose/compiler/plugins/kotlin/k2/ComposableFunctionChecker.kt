@@ -44,7 +44,7 @@ object ComposableFunctionChecker : FirFunctionChecker(MppCheckerKind.Common) {
                 reporter.reportOn(
                     declaration.source,
                     FirErrors.CONFLICTING_OVERLOADS,
-                    listOf(declaration.symbol, override)
+                    [declaration.symbol, override]
                 )
             } else if (override.isComposable(context.session) && !override.toScheme().canOverride(declaration.symbol.toScheme())) {
                 reporter.reportOn(

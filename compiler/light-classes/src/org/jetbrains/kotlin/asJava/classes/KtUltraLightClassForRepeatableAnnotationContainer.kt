@@ -22,11 +22,11 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
     override fun getName() = JvmAbi.REPEATABLE_ANNOTATION_CONTAINER_NAME
     override fun getParent() = containingClass
     override fun getTypeParameterList(): PsiTypeParameterList? = null
-    override fun getTypeParameters(): Array<PsiTypeParameter> = emptyArray()
+    override fun getTypeParameters(): Array<PsiTypeParameter> = []
     override fun getContainingClass(): KtLightClass? = classOrObject.toLightClass()
     override fun getScope(): PsiElement? = containingClass
-    override fun getOwnInnerClasses() = emptyList<PsiClass>()
-    override fun getOwnFields(): List<KtLightField> = emptyList()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
+    override fun getOwnFields(): List<KtLightField> = []
     override fun getOwnMethods(): List<KtLightMethod> = _ownMethods
     override fun getModifierList(): PsiModifierList? = _modifierList
     override fun isInterface(): Boolean = true
@@ -63,7 +63,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
             JavaPsiFacade.getElementFactory(project).createTypeByFQClassName(qualifier, resolveScope).createArrayType()
         }
 
-        listOf(
+        [
             KtUltraLightMethodForSourceDeclaration(
                 delegate = lightMethodBuilder,
                 lightMemberOrigin = null,
@@ -72,7 +72,7 @@ class KtUltraLightClassForRepeatableAnnotationContainer(classOrObject: KtClassOr
                 forceToSkipNullabilityAnnotation = false,
                 methodIndex = METHOD_INDEX_FOR_NON_ORIGIN_METHOD,
             )
-        )
+        ]
     }
 }
 
@@ -86,16 +86,16 @@ private class KtUltraLightModifierListForRepeatableAnnotationContainer(
     override val annotationsFilter: ((KtLightAbstractAnnotation) -> Boolean) = { it.qualifiedName in allowedAnnotations }
 
     companion object {
-        private val allowedAnnotations = setOf(
+        private val allowedAnnotations: Set<String> = [
             KOTLIN_JVM_INTERNAL_REPEATABLE_CONTAINER,
             CommonClassNames.JAVA_LANG_ANNOTATION_RETENTION,
             StandardNames.FqNames.retention.asString(),
             CommonClassNames.JAVA_LANG_ANNOTATION_TARGET,
             StandardNames.FqNames.target.asString(),
-        )
+        ]
 
         // It is marked as Abstract because all the annotation classes are marked as Abstract
         // It is marked as Static because all nested interfaces marked as Static
-        private val modifiers = setOf(PsiModifier.PUBLIC, PsiModifier.ABSTRACT, PsiModifier.STATIC)
+        private val modifiers: Set<String> = [PsiModifier.PUBLIC, PsiModifier.ABSTRACT, PsiModifier.STATIC]
     }
 }

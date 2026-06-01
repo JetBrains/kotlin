@@ -36,10 +36,10 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService
     ): List<ConeKotlinType> {
-        if (resolvedSupertypes.any { it.coneType.classId == supertypeClassId }) return emptyList()
+        if (resolvedSupertypes.any { it.coneType.classId == supertypeClassId }) return []
 
-        val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return emptyList()
-        val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return emptyList()
+        val annotation = classLikeDeclaration.getAnnotationByClassId(annotationClassId, session) ?: return []
+        val getClassArgument = (annotation as? FirAnnotationCall)?.argument as? FirGetClassCall ?: return []
 
         val resolvedArgument = typeFromQualifierParts(
             isMarkedNullable = false,
@@ -54,7 +54,7 @@ class SupertypeWithArgumentGenerator(session: FirSession) : FirSupertypeGenerati
             visitQualifiers(getClassArgument.argument)
         }
 
-        return listOf(supertypeClassId.constructClassLikeType(arrayOf(resolvedArgument), isMarkedNullable = false))
+        return [supertypeClassId.constructClassLikeType([resolvedArgument], isMarkedNullable = false)]
     }
 
     private val FirPropertyAccessExpression.qualifierName: Name?

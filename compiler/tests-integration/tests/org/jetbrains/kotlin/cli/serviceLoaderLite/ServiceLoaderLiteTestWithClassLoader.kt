@@ -21,7 +21,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     inner class InnerComponent : Intf
 
     fun testClassloader1() {
-        val entries = arrayOf(impls(Component1::class, Component2::class), clazz<Component1>(), clazz<Component2>())
+        val entries: Array<Entry> = [impls(Component1::class, Component2::class), clazz<Component1>(), clazz<Component2>()]
 
         classLoaderTest("test", *entries) { classLoader ->
             val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
@@ -86,8 +86,8 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     }
 
     fun testNestedClassLoaders() {
-        val entries1 = arrayOf(impls<Intf>(Component1::class), clazz<Component1>())
-        val entries2 = arrayOf(impls<Intf>(Component2::class), clazz<Component2>())
+        val entries1: Array<Entry> = [impls<Intf>(Component1::class), clazz<Component1>()]
+        val entries2: Array<Entry> = [impls<Intf>(Component2::class), clazz<Component2>()]
 
         var index = 0
         classLoaderTest("test" + index++, *entries1) { classLoader1 ->
@@ -102,7 +102,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     }
 
     fun testEmpty() {
-        val classLoader = URLClassLoader(emptyArray(), ServiceLoaderLiteTestWithClassLoader::class.java.classLoader)
+        val classLoader = URLClassLoader([], ServiceLoaderLiteTestWithClassLoader::class.java.classLoader)
         val impls = ServiceLoaderLite.loadImplementations<Intf>(classLoader)
         assertTrue(impls.isEmpty())
     }
@@ -110,7 +110,7 @@ class ServiceLoaderLiteTestWithClassLoader : AbstractServiceLoaderLiteTest() {
     private fun classLoaderTest(name: String, vararg entries: Entry, parent: ClassLoader? = null, block: (URLClassLoader) -> Unit) {
         applyForDirAndJar(name, *entries) { file ->
             val parentClassLoader = parent ?: ServiceLoaderLiteTestWithClassLoader::class.java.classLoader
-            val classLoader = URLClassLoader(arrayOf(file.toURI().toURL()), parentClassLoader)
+            val classLoader = URLClassLoader([file.toURI().toURL()], parentClassLoader)
             block(classLoader)
         }
     }

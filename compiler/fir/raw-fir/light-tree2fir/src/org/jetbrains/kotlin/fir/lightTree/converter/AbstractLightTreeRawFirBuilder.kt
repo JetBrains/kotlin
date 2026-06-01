@@ -147,7 +147,7 @@ abstract class AbstractLightTreeRawFirBuilder(
             when (node.tokenType) {
                 type -> container += node
             }
-        } ?: emptyList()
+        } ?: []
     }
 
     fun LighterASTNode?.getChildrenAsArray(): Array<out LighterASTNode?> {
@@ -174,7 +174,7 @@ abstract class AbstractLightTreeRawFirBuilder(
     protected inline fun <T> LighterASTNode.forEachChildrenReturnList(f: (LighterASTNode, MutableList<T>) -> Unit): MutableList<T> {
         val kidsArray = this.getChildrenAsArray()
 
-        val container = mutableListOf<T>()
+        val container: MutableList<T> = []
         for (kid in kidsArray) {
             if (kid == null) break
             if (ignoredTokens.contains(kid.tokenType)) continue

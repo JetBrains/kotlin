@@ -829,7 +829,7 @@ class KtPsiFactory private constructor(
             return this
         }
 
-        fun typeParams(values: Collection<String> = emptyList()): CallableBuilder {
+        fun typeParams(values: Collection<String> = []): CallableBuilder {
             placeKeyword()
             if (!values.isEmpty()) {
                 sb.append(values.joinToString(", ", "<", "> ", -1, ""))
@@ -1000,7 +1000,7 @@ class KtPsiFactory private constructor(
         KtBlockExpression(fakeBlockExpression.text), KtPsiUtil.KtExpressionWrapper {
 
         override fun getStatements(): List<KtExpression> {
-            return listOf(expression)
+            return [expression]
         }
 
         override fun getBaseExpression(): KtExpression {

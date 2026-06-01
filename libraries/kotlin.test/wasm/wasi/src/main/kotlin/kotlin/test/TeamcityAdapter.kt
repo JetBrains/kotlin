@@ -42,7 +42,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
     }
 
     val argumentNumber = numberOfArgumentsPtr.loadInt()
-    if (argumentNumber <= 2) return emptyList()
+    if (argumentNumber <= 2) return []
 
     val argumentStringSize = sizeOfArgumentStringPtr.loadInt()
     val stringBufferPtr = allocator.allocate(argumentStringSize)
@@ -62,7 +62,7 @@ internal actual fun getArguments(): List<String> = withScopedMemoryAllocator { a
 @OptIn(UnsafeWasmMemoryApi::class, ExperimentalWasmInterop::class)
 private fun decodeStrings(arraySize: Int, startAddress: UInt, endAddress: UInt): List<String> {
     val buffer = ByteArray(arraySize)
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
 
     var currentPtr = Pointer(startAddress)
     var currentIndex = 0

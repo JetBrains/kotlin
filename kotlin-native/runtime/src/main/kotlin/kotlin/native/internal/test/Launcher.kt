@@ -19,7 +19,7 @@ import kotlin.native.concurrent.*
 @ExperimentalNativeApi
 @ThreadLocal
 public object GeneratedSuites {
-   public val suites: MutableList<TestSuite> = mutableListOf<TestSuite>()
+   public val suites: MutableList<TestSuite> = []
    @IgnorableReturnValue public fun add(suite: TestSuite): Boolean = suites.add(suite)
 }
 

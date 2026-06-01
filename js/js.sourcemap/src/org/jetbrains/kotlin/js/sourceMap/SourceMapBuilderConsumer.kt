@@ -18,8 +18,8 @@ class SourceMapBuilderConsumer(
     private val provideExternalModuleContent: Boolean
 ) : SourceLocationConsumer {
 
-    private val sourceStack = mutableListOf<JsLocationWithSource?>()
-    private val declarationLocationStack = mutableListOf<JsLocationWithSource?>()
+    private val sourceStack: MutableList<JsLocationWithSource?> = []
+    private val declarationLocationStack: MutableList<JsLocationWithSource?> = []
 
     override fun newLine() {
         mappingConsumer.newLine()

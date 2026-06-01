@@ -32,7 +32,7 @@ class ConeEquivalentCallConflictResolver(private val session: FirSession) : Cone
         // See org.jetbrains.kotlin.resolve.calls.results.OverloadingConflictResolver.filterOutEquivalentCalls.
         val fromSourceFirst = candidates.sortedBy { it.symbol.fir.moduleData.session.kind != FirSession.Kind.Source }
 
-        val result = mutableSetOf<Candidate>()
+        val result: MutableSet<Candidate> = []
         outerLoop@ for (myCandidate in fromSourceFirst) {
             val me = myCandidate.symbol.fir
             if (me is FirCallableDeclaration && me.symbol.containingClassLookupTag() == null) {

@@ -26,7 +26,7 @@ internal sealed class WasmVM(
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
-        toolArgs: List<String> = emptyList(),
+        toolArgs: List<String> = [],
     ): String
 
     object V8 : WasmVM(property = "javascript.engine.path.V8", entryPointIsJsFile = true) {
@@ -58,7 +58,7 @@ internal sealed class WasmVM(
             tool.run(
                 *toolArgs.toTypedArray(),
                 "--wasm-verbose",
-                *jsFiles.flatMap { listOf("-f", it) }.toTypedArray(),
+                *jsFiles.flatMap { ["-f", it] }.toTypedArray(),
                 "--module=$entryFile",
                 workingDirectory = workingDirectory,
             )

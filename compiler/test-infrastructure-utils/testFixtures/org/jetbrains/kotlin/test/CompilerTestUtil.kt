@@ -48,11 +48,11 @@ object CompilerTestUtil {
     @JvmStatic
     @JvmOverloads
     fun compileJvmLibrary(
-            src: File,
-            libraryName: String = "library",
-            extraOptions: List<String> = emptyList(),
-            extraClasspath: List<File> = emptyList(),
-            messageRenderer: MessageRenderer? = null,
+        src: File,
+        libraryName: String = "library",
+        extraOptions: List<String> = [],
+        extraClasspath: List<File> = [],
+        messageRenderer: MessageRenderer? = null,
     ): File {
         val destination = File(KtTestUtil.tmpDir("testLibrary"), "$libraryName.jar")
         val args = mutableListOf<String>().apply {

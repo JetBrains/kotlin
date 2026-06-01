@@ -36,7 +36,7 @@ private class KotlinStandaloneAnnotationsResolver(
     private val filesInScope = ktFiles.filter { scope.contains(it.virtualFile) }
 
     private val allDeclarations: List<KtDeclaration> by lazy {
-        val result = mutableListOf<KtDeclaration>()
+        val result: MutableList<KtDeclaration> = []
 
         val visitor = declarationRecursiveVisitor {
             result += it
@@ -72,10 +72,10 @@ private class KotlinStandaloneAnnotationsResolver(
         return FqName.fromSegments(allQualifiers)
     }
 
-    private fun KtTypeReference.resolveAnnotationClassIds(candidates: MutableSet<ClassId> = mutableSetOf()): Set<ClassId> {
+    private fun KtTypeReference.resolveAnnotationClassIds(candidates: MutableSet<ClassId> = []): Set<ClassId> {
         val annotationTypeElement = typeElement as? KtUserType
-        val referencedName = annotationTypeElement?.referencedFqName() ?: return emptySet()
-        if (referencedName.isRoot) return emptySet()
+        val referencedName = annotationTypeElement?.referencedFqName() ?: return []
+        if (referencedName.isRoot) return []
 
         if (!referencedName.parent().isRoot) {
             // we assume here that the annotation is used by its fully-qualified name
@@ -97,8 +97,8 @@ private class KotlinStandaloneAnnotationsResolver(
 
     private fun FqName.toClassIdSequence(): Sequence<ClassId> {
         var currentName = shortNameOrSpecial()
-        if (currentName.isSpecial) return emptySequence()
-        var currentParent = parentOrNull() ?: return emptySequence()
+        if (currentName.isSpecial) return []
+        var currentParent = parentOrNull() ?: return []
         var currentRelativeName = currentName.asString()
 
         return sequence {

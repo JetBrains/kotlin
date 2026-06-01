@@ -30,7 +30,7 @@ object ArrayIterator : CallBasedIntrinsicMethod() {
         classCodegen: ClassCodegen,
     ): IntrinsicFunction {
         val owner = classCodegen.typeMapper.mapClass(expression.symbol.owner.parentAsClass)
-        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(owner)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, [owner]) {
             val methodSignature = "(${owner.descriptor})${signature.returnType.descriptor}"
             val intrinsicOwner =
                 if (AsmUtil.isPrimitive(owner.elementType))

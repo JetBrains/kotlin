@@ -251,7 +251,7 @@ abstract class IrSignatureClashTest {
         name: String = "test.kt",
         packageFqName: FqName = FqName("org.sample"),
     ): IrFile {
-        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = intArrayOf(0, 10, 25), maxOffset = 75)
+        val fileEntry = NaiveSourceBasedFileEntryImpl(name, lineStartOffsets = [0, 10, 25], maxOffset = 75)
         return IrFileImpl(fileEntry, IrFileSymbolImpl(), packageFqName).also { module.files += it }
     }
 

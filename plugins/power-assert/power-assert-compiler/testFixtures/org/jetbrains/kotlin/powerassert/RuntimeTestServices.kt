@@ -43,13 +43,13 @@ class RuntimeEnvironmentConfigurator(testServices: TestServices) : EnvironmentCo
 
 class RuntimeRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (DISABLE_RUNTIME in module.directives) return emptyList()
+        if (DISABLE_RUNTIME in module.directives) return []
 
         val targetPlatform = module.targetPlatform(testServices)
         return when {
             targetPlatform.isJvm() -> findJvmLib()
             targetPlatform.isJs() -> findJsLib()
-            else -> emptyList()
+            else -> []
         }
     }
 }

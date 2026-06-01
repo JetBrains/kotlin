@@ -33,6 +33,6 @@ internal class KaBaseCollectionLiteralReference(
             get() = KtCollectionLiteralExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtCollectionLiteralExpression>
-            get() = { listOf(KaBaseCollectionLiteralReference(it)) }
+            get() = { [KaBaseCollectionLiteralReference(it)] }
     }
 }

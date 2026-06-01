@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.util.PrivateForInline
  * @param session given use-site session
  */
 fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
-    val result = mutableListOf<FirConstructorSymbol>()
+    val result: MutableList<FirConstructorSymbol> = []
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
@@ -44,7 +44,7 @@ fun FirClass.constructors(session: FirSession): List<FirConstructorSymbol> {
  * @param session given use-site session
  */
 fun FirClassSymbol<*>.constructors(session: FirSession): List<FirConstructorSymbol> {
-    val result = mutableListOf<FirConstructorSymbol>()
+    val result: MutableList<FirConstructorSymbol> = []
     session.declaredMemberScope(this, memberRequiredPhase = null).processDeclaredConstructors { result += it }
     return result
 }
@@ -76,7 +76,7 @@ fun FirClassSymbol<*>.declaredProperties(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
 ): List<FirPropertySymbol> {
-    val result = mutableListOf<FirPropertySymbol>()
+    val result: MutableList<FirPropertySymbol> = []
     processAllDeclaredCallables(session, memberRequiredPhase) {
         if (it is FirPropertySymbol) {
             result += it
@@ -95,7 +95,7 @@ fun FirClassSymbol<*>.declaredFunctions(
     session: FirSession,
     memberRequiredPhase: FirResolvePhase = FirResolvePhase.STATUS,
 ): List<FirNamedFunctionSymbol> {
-    val result = mutableListOf<FirNamedFunctionSymbol>()
+    val result: MutableList<FirNamedFunctionSymbol> = []
     processAllDeclaredCallables(session, memberRequiredPhase) {
         if (it is FirNamedFunctionSymbol) {
             result += it
@@ -188,7 +188,7 @@ fun FirClassSymbol<*>.primaryConstructorIfAny(session: FirSession): FirConstruct
  */
 fun FirClass.collectEnumEntries(session: FirSession): List<FirEnumEntry> {
     assert(classKind == ClassKind.ENUM_CLASS)
-    val result = mutableListOf<FirEnumEntry>()
+    val result: MutableList<FirEnumEntry> = []
     session.declaredMemberScope(this, memberRequiredPhase = null).processAllProperties {
         if (it is FirEnumEntrySymbol) {
             result.add(it.fir)
@@ -218,7 +218,7 @@ fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>
         .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol() }
 
     return superTypes.flatMap { superType ->
-        if (!superType.isSealed) return@flatMap emptyList()
+        if (!superType.isSealed) return@flatMap []
 
         superType.fir.getSealedClassInheritors(holder.session)
             .mapNotNull { it.toSymbol() as? FirRegularClassSymbol }
@@ -375,7 +375,7 @@ fun FirCallableSymbol<*>.dispatchReceiverScope(): FirTypeScope {
 
 @ScopeFunctionRequiresPrewarm
 fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenIntersectionsRecursively(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
-    if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return listOf(this)
+    if (member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>().origin != FirDeclarationOrigin.IntersectionOverride) return [this]
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenIntersectionsRecursively() }
 }
@@ -385,7 +385,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
     val symbol = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
 
     if (symbol !is FirIntersectionCallableSymbol || symbol.containsMultipleNonSubsumed) {
-        return listOf(this)
+        return [this]
     }
 
     return baseScope.getDirectOverriddenMembersWithBaseScope(member).flatMap { it.flattenPhantomIntersectionsRecursively() }
@@ -397,7 +397,7 @@ fun MemberWithBaseScope<FirCallableSymbol<*>>.flattenPhantomIntersectionsRecursi
  */
 @ScopeFunctionRequiresPrewarm
 fun Collection<MemberWithBaseScope<FirCallableSymbol<*>>>.nonSubsumed(): List<MemberWithBaseScope<FirCallableSymbol<*>>> {
-    val baseMembers = mutableSetOf<FirCallableSymbol<*>>()
+    val baseMembers: MutableSet<FirCallableSymbol<*>> = []
     for ((val member, val scope = baseScope) in this) {
         val unwrapped = member.unwrapSubstitutionOverrides<FirCallableSymbol<*>>()
         val addIfDifferent = { it: FirCallableSymbol<*> ->

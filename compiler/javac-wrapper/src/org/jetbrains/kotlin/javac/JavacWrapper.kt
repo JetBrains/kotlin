@@ -162,7 +162,7 @@ class JavacWrapper(
 
     private val classifierResolver = ClassifierResolver(this)
     private val identifierResolver = IdentifierResolver(this)
-    private val kotlinClassifiersCache by lazy { KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else emptyList(), this) }
+    private val kotlinClassifiersCache by lazy { KotlinClassifiersCache(if (javaFiles.isNotEmpty()) kotlinFiles else [], this) }
     private val symbolBasedPackagesCache = hashMapOf<String, SymbolBasedPackage?>()
     private val symbolBasedClassesCache = hashMapOf<ClassId, SymbolBasedClass>()
 
@@ -246,7 +246,7 @@ class JavacWrapper(
                     .map { it.value }
 
     fun getPackageAnnotationsFromSources(fqName: FqName): List<JCTree.JCAnnotation> =
-        packageSourceAnnotations[fqName] ?: emptyList()
+        packageSourceAnnotations[fqName] ?: []
 
     fun findClassesFromPackage(fqName: FqName): List<JavaClass> =
         treeBasedJavaClasses
@@ -340,7 +340,7 @@ class JavacWrapper(
             }
         }
 
-        val mappedPackages = mutableListOf<SimpleSymbolBasedPackage>()
+        val mappedPackages: MutableList<SimpleSymbolBasedPackage> = []
         for (provider in packagePartsProviders) {
             val jvmPackageNames = provider.findPackageParts(fqName)
                 .map { it.substringBeforeLast("/").replace('/', '.') }.filter { it != fqName }.distinct()
@@ -405,7 +405,7 @@ class JavacWrapper(
                 }
             }
             outputDir.mkdirs()
-            fileManager.setLocation(CLASS_OUTPUT, listOf(outputDir))
+            fileManager.setLocation(CLASS_OUTPUT, [outputDir])
         }
     }
 

@@ -84,7 +84,7 @@ private class BrokenLibraryElementFinder(project: Project) : PsiElementFinder() 
 
     override fun findClasses(qualifiedName: String, scope: GlobalSearchScope): Array<PsiClass> {
         val klass = findClass(qualifiedName, scope) ?: return PsiClass.EMPTY_ARRAY
-        return arrayOf(klass)
+        return [klass]
     }
 }
 
@@ -98,7 +98,7 @@ private class BrokenClass(
     manager: PsiManager,
 ) : LightPsiClassBase(manager, JavaLanguage.INSTANCE, name) {
     private val modifierList: PsiModifierList = LightModifierList(manager, JavaLanguage.INSTANCE, PsiModifier.PUBLIC)
-    private val methods: Array<PsiMethod> = arrayOf(ConstructorMethod(this), GetterMethod(this))
+    private val methods: Array<PsiMethod> = [ConstructorMethod(this), GetterMethod(this)]
 
     override fun getQualifiedName(): String = "$packageName.$name"
     override fun getModifierList(): PsiModifierList = modifierList

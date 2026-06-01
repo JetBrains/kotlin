@@ -253,7 +253,7 @@ fun FirExpression.unwrapVarargValue(): List<FirExpression> {
             else -> arguments
         }
         is FirCollectionLiteral -> arguments
-        else -> listOf(this)
+        else -> [this]
     }
 }
 

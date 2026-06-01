@@ -201,7 +201,7 @@ class WrapJsComposableLambdaLowering(
         val rememberBlock = createLambda0(
             returnType = lambda.type,
             functionSymbol = calculationFunSymbol,
-            statements = listOf(irReturn(calculationFunSymbol, funReference))
+            statements = [irReturn(calculationFunSymbol, funReference)]
         )
 
         // create remember(dispatchReceiver,...) { dispatchReceiver::invoke }

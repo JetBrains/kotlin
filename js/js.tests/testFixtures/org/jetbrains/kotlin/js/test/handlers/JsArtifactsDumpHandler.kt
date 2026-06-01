@@ -25,14 +25,14 @@ import java.io.File
  * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
  */
 object JsArtifactsDumpHandler {
-    private val supportedTranslationModes = listOf(
+    private val supportedTranslationModes = [
         TranslationMode.FULL_DEV,
         TranslationMode.FULL_PROD_MINIMIZED_NAMES,
         TranslationMode.PER_MODULE_DEV,
         TranslationMode.PER_MODULE_PROD_MINIMIZED_NAMES,
         TranslationMode.PER_FILE_DEV,
         TranslationMode.PER_FILE_PROD_MINIMIZED_NAMES,
-    )
+    ]
 
     class Suppressor(testServices: TestServices) : TestFailureSuppressor(testServices) {
         override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {

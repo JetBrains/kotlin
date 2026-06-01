@@ -26,7 +26,7 @@ object ErrorUtils {
     val errorPropertyType: KotlinType = createErrorType(ErrorTypeKind.ERROR_PROPERTY_TYPE)
 
     private val errorProperty: PropertyDescriptor = ErrorPropertyDescriptor()
-    val errorPropertyGroup: Set<PropertyDescriptor> = setOf(errorProperty)
+    val errorPropertyGroup: Set<PropertyDescriptor> = [errorProperty]
 
     /**
      * @return true if any of the types referenced in parameter types (including type parameters and extension receiver) of the function
@@ -61,10 +61,10 @@ object ErrorUtils {
 
     @JvmStatic
     fun createErrorType(kind: ErrorTypeKind, vararg formatParams: String): ErrorType =
-        createErrorTypeWithArguments(kind, emptyList(), *formatParams)
+        createErrorTypeWithArguments(kind, [], *formatParams)
 
     fun createErrorType(kind: ErrorTypeKind, typeConstructor: TypeConstructor, vararg formatParams: String): ErrorType =
-        createErrorTypeWithArguments(kind, emptyList(), typeConstructor, *formatParams)
+        createErrorTypeWithArguments(kind, [], typeConstructor, *formatParams)
 
     fun createErrorTypeWithArguments(kind: ErrorTypeKind, arguments: List<TypeProjection>, vararg formatParams: String): ErrorType =
         createErrorTypeWithArguments(kind, arguments, createErrorTypeConstructor(kind, *formatParams), *formatParams)

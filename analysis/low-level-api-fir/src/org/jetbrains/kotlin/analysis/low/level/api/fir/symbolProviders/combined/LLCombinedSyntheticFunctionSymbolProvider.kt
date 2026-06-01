@@ -35,13 +35,13 @@ internal class LLCombinedSyntheticFunctionSymbolProvider private constructor(
     // needed for consistency should this symbol provider be part of another composite symbol provider.
     override val symbolNamesProvider: FirSymbolNamesProvider =
         object : FirCompositeSymbolNamesProvider(providers.map { it.symbolNamesProvider }) {
-            override fun getPackageNames(): Set<String> = emptySet()
+            override fun getPackageNames(): Set<String> = []
 
             override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
-            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+            override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = []
 
             override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
-            override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+            override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = []
         }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {

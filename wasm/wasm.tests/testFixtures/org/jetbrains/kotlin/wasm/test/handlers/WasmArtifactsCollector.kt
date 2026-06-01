@@ -15,8 +15,8 @@ internal interface WasmArtifactsCollector {
     val testServices: TestServices
 
     fun collectJsArtifacts(originalFile: File, mode: String): JsArtifacts {
-        val jsFiles = mutableListOf<AdditionalFile>()
-        val mjsFiles = mutableListOf<AdditionalFile>()
+        val jsFiles: MutableList<AdditionalFile> = []
+        val mjsFiles: MutableList<AdditionalFile> = []
         var entryMjs: String? = "test.mjs"
 
         testServices.moduleStructure.modules.forEach { m ->
@@ -66,14 +66,14 @@ internal interface WasmArtifactsCollector {
     }
 
     fun JsArtifacts.saveJsArtifacts(baseDir: File): SavedJsArtifacts {
-        val mjsFilePaths = mutableListOf<String>()
+        val mjsFilePaths: MutableList<String> = []
         for (mjsFile: AdditionalFile in mjsFiles) {
             val file = File(baseDir, mjsFile.name)
             file.writeText(mjsFile.content)
             mjsFilePaths += file.canonicalPath
         }
 
-        val jsFilePaths = mutableListOf<String>()
+        val jsFilePaths: MutableList<String> = []
         for (jsFile: AdditionalFile in jsFiles) {
             val file = File(baseDir, jsFile.name)
             file.writeText(jsFile.content)

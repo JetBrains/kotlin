@@ -33,7 +33,7 @@ class DataClassDeclarationChecker : DeclarationChecker {
                 declaration.nameIdentifier?.let { context.trace.report(Errors.PRIMARY_CONSTRUCTOR_REQUIRED_FOR_DATA_CLASS.on(it)) }
             }
             val primaryConstructor = declaration.primaryConstructor
-            val parameters = primaryConstructor?.valueParameters ?: emptyList()
+            val parameters = primaryConstructor?.valueParameters ?: []
             if (parameters.isEmpty()) {
                 (primaryConstructor?.valueParameterList ?: declaration.nameIdentifier)?.let {
                     context.trace.report(Errors.DATA_CLASS_WITHOUT_PARAMETERS.on(it))

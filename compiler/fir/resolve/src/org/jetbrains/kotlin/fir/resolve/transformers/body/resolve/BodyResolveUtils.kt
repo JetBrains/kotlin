@@ -52,7 +52,7 @@ internal fun remapArgumentsWithVararg(
             if (!type.isNonPrimitiveArray) return null
             val argument = type.typeArguments.singleOrNull() ?: return null
             val newArgument = argument.replaceType(argument.type?.removeAnnotations() ?: return null)
-            return type.withArguments(arrayOf(newArgument))
+            return type.withArguments([newArgument])
         }
     }
 

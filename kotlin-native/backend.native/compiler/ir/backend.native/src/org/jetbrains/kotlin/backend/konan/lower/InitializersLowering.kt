@@ -33,8 +33,8 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
     }
 
     private inner class InitializersTransformer(val irClass: IrClass) {
-        val initializers = mutableListOf<IrStatement>()
-        val constInitializers = mutableListOf<IrStatement>()
+        val initializers: MutableList<IrStatement> = []
+        val constInitializers: MutableList<IrStatement> = []
 
         fun lowerInitializers() {
             collectAndRemoveInitializers()
@@ -69,15 +69,15 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                             IrBlockImpl(startOffset, endOffset,
                                     context.irBuiltIns.unitType,
                                     IrStatementOrigin.INITIALIZE_FIELD,
-                                    listOf(
-                                            IrSetFieldImpl(startOffset, endOffset, declaration.symbol,
-                                                    IrGetValueImpl(
-                                                            startOffset, endOffset,
-                                                            irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
-                                                    ),
-                                                    initExpression,
-                                                    context.irBuiltIns.unitType,
-                                                    IrStatementOrigin.INITIALIZE_FIELD)))
+                                    [
+                                        IrSetFieldImpl(startOffset, endOffset, declaration.symbol,
+                                                IrGetValueImpl(
+                                                        startOffset, endOffset,
+                                                        irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
+                                                ),
+                                                initExpression,
+                                                context.irBuiltIns.unitType,
+                                                IrStatementOrigin.INITIALIZE_FIELD)])
                     )
 
                     // We shall keep initializer for constants for compile-time instantiation.
@@ -92,7 +92,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
             irClass.declarations.transformFlat {
                 if (it !is IrAnonymousInitializer)
                     null
-                else listOf()
+                else []
             }
         }
 
@@ -175,7 +175,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                 } else {
                                     val startOffset = it.startOffset
                                     val endOffset = it.endOffset
-                                    listOf(IrCallImpl(startOffset, endOffset,
+                                    [IrCallImpl(startOffset, endOffset,
                                             context.irBuiltIns.unitType, initializeMethodSymbol,
                                             initializeMethodSymbol.owner.typeParameters.size
                                     ).apply {
@@ -183,7 +183,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                                                 startOffset, endOffset,
                                                 irClass.thisReceiver!!.type, irClass.thisReceiver!!.symbol
                                         )
-                                    })
+                                    }]
                                 }
                             }
 
@@ -198,7 +198,7 @@ internal class InitializersLowering(val context: CommonBackendContext) : ClassLo
                             it is IrDelegatingConstructorCall
                                     && irClass.symbol == context.irBuiltIns.anyClass
                                     && it.symbol == declaration.symbol -> {
-                                listOf()
+                                []
                             }
 
                             else -> null

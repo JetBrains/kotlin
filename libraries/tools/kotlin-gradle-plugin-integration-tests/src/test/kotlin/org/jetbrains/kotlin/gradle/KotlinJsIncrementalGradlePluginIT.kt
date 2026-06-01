@@ -40,7 +40,7 @@ abstract class AbstractKotlinJsIncrementalGradlePluginIT(
             }
 
             build("compileKotlinJs", "compileTestKotlinJs") {
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources([], output)
             }
 
             val modifiedFile = subProject("lib").kotlinSourcesDir("jsMain").resolve("A.kt") ?: error("No A.kt file in test project")

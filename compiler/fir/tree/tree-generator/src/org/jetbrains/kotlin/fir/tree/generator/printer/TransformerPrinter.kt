@@ -19,10 +19,10 @@ internal class TransformerPrinter(
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(firVisitorType.withArgs(rootElement, visitorDataType))
+        get() = [firVisitorType.withArgs(rootElement, visitorDataType)]
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(dataTypeVariable)
+        get() = [dataTypeVariable]
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable

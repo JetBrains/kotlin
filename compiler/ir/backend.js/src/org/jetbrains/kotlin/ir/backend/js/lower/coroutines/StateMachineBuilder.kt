@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 
 class SuspendState(type: IrType) {
     val entryBlock: IrContainerExpression = JsIrBuilder.buildComposite(type)
-    val successors = mutableSetOf<SuspendState>()
+    val successors: MutableSet<SuspendState> = []
     var id = -1
 }
 
@@ -88,7 +88,7 @@ class StateMachineBuilder(
 
     val entryState = SuspendState(unit)
     val rootExceptionTrap = buildExceptionTrapState()
-    val allTheIntermediateLocals = mutableListOf<IrVariable>()
+    val allTheIntermediateLocals: MutableList<IrVariable> = []
     private val globalExceptionVar = JsIrBuilder.buildVar(exceptionSymbolGetter.returnType.makeNotNull(), function.owner, "e")
     lateinit var globalCatch: IrCatch
 
@@ -151,9 +151,9 @@ class StateMachineBuilder(
     private var currentState = entryState
     private var currentBlock = entryState.entryBlock
 
-    private val catchBlockStack = mutableListOf(rootExceptionTrap)
+    private val catchBlockStack: MutableList<SuspendState> = [rootExceptionTrap]
     private val tryStateMap = hashMapOf<IrExpression, TryState>()
-    private val tryLoopStack = mutableListOf<IrExpression>()
+    private val tryLoopStack: MutableList<IrExpression> = []
 
     private fun buildExceptionTrapState(): SuspendState {
         val state = SuspendState(unit)
@@ -310,7 +310,7 @@ class StateMachineBuilder(
                 arguments[1] = JsIrBuilder.buildCall(context.symbols.coroutineSuspendedGetter)
             }
 
-            val suspensionBlock = JsIrBuilder.buildBlock(unit, listOf(irReturn))
+            val suspensionBlock = JsIrBuilder.buildBlock(unit, [irReturn])
             addStatement(JsIrBuilder.buildIfElse(unit, check, suspensionBlock))
 
             if (isInlineClassExpected) {
@@ -536,7 +536,7 @@ class StateMachineBuilder(
 
     override fun visitVararg(expression: IrVararg) {
         if (expression !in suspendableNodes) return addStatement(expression)
-        val spreadIndices = mutableSetOf<Int>()
+        val spreadIndices: MutableSet<Int> = []
         val newArgs = expression.elements
             .mapIndexedTo(mutableListOf()) { index, item ->
                 if (item is IrSpreadElement) {

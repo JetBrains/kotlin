@@ -149,8 +149,8 @@ class KotlinCallCompleter(
             propagateLambdaAnalysisDiagnostics(diagnosticHolderForLambda, candidate)
         }
 
-        val errorCandidates = mutableSetOf<SimpleResolutionCandidate>()
-        val successfulCandidates = mutableSetOf<SimpleResolutionCandidate>()
+        val errorCandidates: MutableSet<SimpleResolutionCandidate> = []
+        val successfulCandidates: MutableSet<SimpleResolutionCandidate> = []
 
         for (candidate in candidates) {
             if (candidate.isSuccessful) {
@@ -184,7 +184,7 @@ class KotlinCallCompleter(
     }
 
     private fun SimpleResolutionCandidate.getInputTypesOfLambdaAtom(atom: ResolvedLambdaAtom): List<UnwrappedType> {
-        val result = mutableListOf<UnwrappedType>()
+        val result: MutableList<UnwrappedType> = []
         val substitutor = getSystem().getBuilder().buildCurrentSubstitutor()
         val ctx = getSystem().asConstraintSystemCompleterContext()
         for (inputType in atom.inputTypes) {
@@ -257,7 +257,7 @@ class KotlinCallCompleter(
         kotlinConstraintSystemCompleter.runCompletion(
             constraintSystem.asConstraintSystemCompleterContext(),
             completionMode,
-            listOf(resolvedCallAtom),
+            [resolvedCallAtom],
             returnType,
             diagnosticsHolder
         ) {

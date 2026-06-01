@@ -24,10 +24,10 @@ internal class DirectedGraphCondensation<out K>(val topologicalOrder: List<Direc
 
 // The Kosoraju-Sharir algorithm.
 internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(private val graph: DirectedGraph<K, N>) {
-    private val visited = mutableSetOf<K>()
-    private val order = mutableListOf<N>()
+    private val visited: MutableSet<K> = []
+    private val order: MutableList<N> = []
     private val nodeToMultiNodeMap = mutableMapOf<N, DirectedGraphMultiNode<K>>()
-    private val multiNodesOrder = mutableListOf<DirectedGraphMultiNode<K>>()
+    private val multiNodesOrder: MutableList<DirectedGraphMultiNode<K>> = []
 
     fun build(): DirectedGraphCondensation<K> {
         // First phase.
@@ -38,10 +38,10 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
 
         // Second phase.
         visited.clear()
-        val multiNodes = mutableListOf<DirectedGraphMultiNode<K>>()
+        val multiNodes: MutableList<DirectedGraphMultiNode<K>> = []
         order.reversed().forEach {
             if (!visited.contains(it.key)) {
-                val nodes = mutableSetOf<K>()
+                val nodes: MutableSet<K> = []
                 paint(it, nodes)
                 multiNodes += DirectedGraphMultiNode(nodes)
             }
@@ -51,16 +51,16 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
     }
 
     private fun findOrder(node: N) {
-        val stack = mutableListOf<Pair<N, Iterator<K>>>()
+        val stack: MutableList<Pair<N, Iterator<K>>> = []
         visited += node.key
-        stack.add(node to (node.directEdges ?: emptyList()).iterator())
+        stack.add(node to node.directEdges.orEmpty().iterator())
         while (stack.isNotEmpty()) {
             if (stack.last().second.hasNext()) {
                 val nextKey = stack.last().second.next()
                 if (!visited.contains(nextKey)) {
                     visited += nextKey
                     val nextNode = graph.get(nextKey)
-                    stack.add(nextNode to (nextNode.directEdges ?: emptyList()).iterator())
+                    stack.add(nextNode to nextNode.directEdges.orEmpty().iterator())
                 }
             } else {
                 order += stack.last().first
@@ -70,10 +70,10 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
     }
 
     private fun paint(node: N, multiNode: MutableSet<K>) {
-        val stack = mutableListOf<Pair<N, Iterator<K>>>()
+        val stack: MutableList<Pair<N, Iterator<K>>> = []
         visited += node.key
         multiNode += node.key
-        stack.add(node to (node.reversedEdges ?: emptyList()).iterator())
+        stack.add(node to node.reversedEdges.orEmpty().iterator())
         while (stack.isNotEmpty()) {
             if (stack.last().second.hasNext()) {
                 val nextKey = stack.last().second.next()
@@ -81,7 +81,7 @@ internal class DirectedGraphCondensationBuilder<K, out N: DirectedGraphNode<K>>(
                     visited += nextKey
                     multiNode += nextKey
                     val nextNode = graph.get(nextKey)
-                    stack.add(nextNode to (nextNode.reversedEdges ?: emptyList()).iterator())
+                    stack.add(nextNode to nextNode.reversedEdges.orEmpty().iterator())
                 }
             } else {
                 stack.popLast()

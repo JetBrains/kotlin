@@ -61,13 +61,13 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
 
         private val cancellationExceptionFqName = FqName("kotlin.coroutines.cancellation.CancellationException")
 
-        private val cancellationExceptionAndSupersClassIds = setOf(
+        private val cancellationExceptionAndSupersClassIds: Set<ClassId> = [
             ClassId.topLevel(StandardNames.FqNames.throwable),
             ClassId.topLevel(FqName("kotlin.Exception")),
             ClassId.topLevel(FqName("kotlin.RuntimeException")),
             ClassId.topLevel(FqName("kotlin.IllegalStateException")),
             ClassId.topLevel(cancellationExceptionFqName)
-        )
+        ]
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -128,7 +128,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
         function: FirNamedFunction,
         throwsAnnotation: FirAnnotation?
     ): Map<FirNamedFunctionSymbol, ThrowsFilter> {
-        val visited = mutableSetOf<FirNamedFunctionSymbol>()
+        val visited: MutableSet<FirNamedFunctionSymbol> = []
         val result = mutableMapOf<FirNamedFunctionSymbol, ThrowsFilter>()
 
         fun getInheritedThrows(localThrowsAnnotation: FirAnnotation?, functionWithScope: MemberWithBaseScope<FirNamedFunctionSymbol>) {
@@ -202,7 +202,7 @@ sealed class FirNativeThrowsChecker(mppKind: MppCheckerKind) : FirBasicDeclarati
     }
 
     private fun FirAnnotation.getClassIds(session: FirSession): List<ClassId> {
-        val unwrappedArgs = argumentMapping.mapping.values.firstOrNull()?.unwrapVarargValue() ?: return emptyList()
+        val unwrappedArgs = argumentMapping.mapping.values.firstOrNull()?.unwrapVarargValue() ?: return []
         return unwrappedArgs.mapNotNull { it.extractClassFromArgument(session)?.classId }
     }
 

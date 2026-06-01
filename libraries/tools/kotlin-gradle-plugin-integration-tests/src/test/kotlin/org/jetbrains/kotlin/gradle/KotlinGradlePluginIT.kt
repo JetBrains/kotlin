@@ -534,7 +534,7 @@ class KotlinGradleIT : KGPBaseTest() {
     @GradleTest
     fun testJavaLibraryCompatibility(gradleVersion: GradleVersion) {
         project("javaLibraryProject", gradleVersion) {
-            val compileKotlinTasks = arrayOf(":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin")
+            val compileKotlinTasks: Array<String> = [":libA:compileKotlin", ":libB:compileKotlin", ":app:compileKotlin"]
             build("build") {
                 assertTasksExecuted(*compileKotlinTasks)
                 assertOutputDoesNotContain("Could not register Kotlin output")

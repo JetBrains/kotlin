@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirAugmentedAssignmentImpl
 @FirBuilderDsl
 class FirAugmentedAssignmentBuilder : FirAnnotationContainerBuilder {
     var source: KtSourceElement? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var operation: FirOperation
     lateinit var leftArgument: FirExpression
     lateinit var rightArgument: FirExpression

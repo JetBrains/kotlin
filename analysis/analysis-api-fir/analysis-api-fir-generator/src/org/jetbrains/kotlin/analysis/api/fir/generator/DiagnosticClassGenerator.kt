@@ -19,21 +19,21 @@ object DiagnosticClassGenerator {
             file = path.resolve("KaFirDiagnostics.kt"),
             diagnosticList = diagnosticList,
             packageName = packageName,
-            starImportsToAdd = emptySet(),
+            starImportsToAdd = [],
         )
 
         KaDiagnosticClassImplementationRenderer.render(
             file = path.resolve("KaFirDiagnosticsImpl.kt"),
             diagnosticList = diagnosticList,
             packageName = packageName,
-            starImportsToAdd = emptySet(),
+            starImportsToAdd = [],
         )
 
         FirDiagnosticToKaDiagnosticConverterRenderer.render(
             file = path.resolve("KaFirDataClassConverters.kt"),
             diagnosticList = diagnosticList,
             packageName = packageName,
-            starImportsToAdd = emptySet(),
+            starImportsToAdd = [],
         )
 
         ArgumentsConverterGenerator.render(

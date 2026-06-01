@@ -155,7 +155,7 @@ class MemoizedInlineClassReplacements(
                 parent = irClass
                 // We ignore type arguments here, since there is no good way to go from type arguments to types in the IR anyway.
                 val typeArgument =
-                    IrSimpleTypeImpl(irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, listOf())
+                    IrSimpleTypeImpl(irClass.symbol, false, List(irClass.typeParameters.size) { IrStarProjectionImpl }, [])
                 addValueParameter {
                     name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_FIRST_PARAMETER_NAME
                     type = typeArgument

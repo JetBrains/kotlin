@@ -93,7 +93,7 @@ class JsIrBackendContext(
 
     override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(irFactory)
 
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+    val dynamicType: IrDynamicType = IrDynamicTypeImpl([], Variance.INVARIANT)
 
     override val reflectionSymbols: ReflectionSymbols get() = symbols.reflectionSymbols
 

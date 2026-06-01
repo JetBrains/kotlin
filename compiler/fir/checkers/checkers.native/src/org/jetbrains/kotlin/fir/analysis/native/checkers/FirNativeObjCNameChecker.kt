@@ -71,8 +71,8 @@ object FirNativeObjCNameChecker : FirBasicDeclarationChecker(MppCheckerKind.Plat
         if (objCName.name?.isEmpty() == true || objCName.swiftName?.isEmpty() == true) {
             reporter.reportOn(annotationSource, EMPTY_OBJC_NAME)
         }
-        val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: emptySet()
-        val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: emptySet()
+        val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: []
+        val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: []
         val invalidChars = invalidNameChars + invalidSwiftNameChars
         if (invalidChars.isNotEmpty()) {
             reporter.reportOn(annotationSource, INVALID_OBJC_NAME_CHARS, invalidFirstChars.joinToString(""))

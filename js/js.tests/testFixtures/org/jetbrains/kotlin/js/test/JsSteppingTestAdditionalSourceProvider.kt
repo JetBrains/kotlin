@@ -39,7 +39,7 @@ abstract class AbstractWebJsSteppingTestAdditionalSourceProvider(testServices: T
                 add(classLoader.getResource(commonTestHelpersFile)!!.toTestFile())
             }
         } else
-            emptyList()
+            []
     }
 }
 

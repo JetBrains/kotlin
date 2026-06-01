@@ -30,17 +30,17 @@ internal object ErrorClassTypeQualifierBuilder {
                     )
                 }
 
-            is ConeUnresolvedNameError -> listOf(
-                KaBaseUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
-            )
+            is ConeUnresolvedNameError -> [
+                KaBaseUnresolvedClassTypeQualifier(coneDiagnostic.name, [], builder.token)
+            ]
 
-            is ConeUnresolvedReferenceError -> listOf(
-                KaBaseUnresolvedClassTypeQualifier(coneDiagnostic.name, emptyList(), builder.token)
-            )
+            is ConeUnresolvedReferenceError -> [
+                KaBaseUnresolvedClassTypeQualifier(coneDiagnostic.name, [], builder.token)
+            ]
 
             is ConeUnresolvedSymbolError ->
                 coneDiagnostic.classId.asSingleFqName().pathSegments()
-                    .map { KaBaseUnresolvedClassTypeQualifier(it, emptyList(), builder.token) }
+                    .map { KaBaseUnresolvedClassTypeQualifier(it, [], builder.token) }
 
         }
     }
@@ -59,7 +59,7 @@ internal object ErrorClassTypeQualifierBuilder {
         return generateSequence(firSymbol) { it.getContainingClassSymbol() }.mapTo(mutableListOf()) { classSymbol ->
             KaBaseResolvedClassTypeQualifier(
                 builder.classifierBuilder.buildClassLikeSymbol(classSymbol),
-                emptyList(),
+                [],
             )
         }
     }

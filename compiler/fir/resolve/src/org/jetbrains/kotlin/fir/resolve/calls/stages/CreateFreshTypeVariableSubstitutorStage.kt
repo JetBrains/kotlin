@@ -44,7 +44,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val declaration = candidate.symbol.fir
         candidate.symbol.lazyResolveToPhase(FirResolvePhase.STATUS)
         if (declaration !is FirTypeParameterRefsOwner || declaration.typeParameters.isEmpty()) {
-            candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, emptyList())
+            candidate.initializeSubstitutorAndVariables(ConeSubstitutor.Empty, [])
             return
         }
         val csBuilder = candidate.system.getBuilder()
@@ -269,7 +269,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             isTypealiasConstructor -> {
                 val fullyExpandedType = declaration.unwrapSubstitutionOverrides().returnTypeRef.coneType.fullyExpandedType()
                 val arguments = fullyExpandedType.let(toFreshVariables::substituteOrSelf).typeArguments.toList()
-                val parameters = fullyExpandedType.toClassLikeSymbol()?.fir?.typeParameters ?: emptyList()
+                val parameters = fullyExpandedType.toClassLikeSymbol()?.fir?.typeParameters ?: []
                 arguments to parameters
             }
             else -> {
@@ -277,7 +277,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             }
         }
 
-        val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+        val constraints: MutableList<Pair<ConeKotlinType, ConeKotlinType>> = []
 
         for ([index, parameter] in typeParametersForConstraining.withIndex()) {
             val argumentType = typeArgumentsForConstraining.getOrNull(index)?.type?.let(toFreshVariables::substituteOrSelf) ?: continue
@@ -303,7 +303,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         freshTypeVariables: List<ConeTypeParameterBasedTypeVariable>,
         typeParameters: List<FirTypeParameterRef>,
     ): MutableList<Pair<ConeKotlinType, ConeKotlinType>> {
-        val constraints = mutableListOf<Pair<ConeKotlinType, ConeKotlinType>>()
+        val constraints: MutableList<Pair<ConeKotlinType, ConeKotlinType>> = []
 
         fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
             upperBound: ConeKotlinType//,

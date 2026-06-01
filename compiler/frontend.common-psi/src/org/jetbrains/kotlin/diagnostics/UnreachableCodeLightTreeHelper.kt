@@ -27,7 +27,7 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
     }
 
     fun Node.getLeavesOrReachableChildren(reachable: Set<Node>, unreachable: Set<Node>): List<Node> {
-        val result = mutableListOf<Node>()
+        val result: MutableList<Node> = []
         tree.traverseDescendants(this) { element ->
             val isReachable = element in reachable && !element.hasChildrenInSet(unreachable)
             if (isReachable || element.getChildren(tree).isEmpty()) {
@@ -41,7 +41,7 @@ class UnreachableCodeLightTreeHelper(val tree: FlyweightCapableTreeStructure<Nod
     }
 
     fun List<Node>.removeReachableElementsWithMeaninglessSiblings(reachableElements: Set<Node>): List<Node> {
-        val childrenToRemove = mutableSetOf<Node>()
+        val childrenToRemove: MutableSet<Node> = []
         fun collectSiblingsIfMeaningless(elementIndex: Int, direction: Int) {
             val index = elementIndex + direction
             if (index !in 0 until size) return

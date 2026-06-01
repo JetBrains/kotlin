@@ -47,19 +47,19 @@ internal fun NativeFirstStagePhaseContext.firSerializerBase(
     val diagnosticReporter = configuration.diagnosticsCollector
     val irDiagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter, configuration.languageVersionSettings)
     return serializeModuleIntoKlib(
-            moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
-            irModuleFragment = irModuleFragment,
-            configuration = configuration,
-            diagnosticReporter = irDiagnosticReporter,
-            metadataSerializer = Fir2KlibMetadataSerializer(
+        moduleName = irModuleFragment?.name?.asString() ?: firResult.outputs.last().session.moduleData.name.asString(),
+        irModuleFragment = irModuleFragment,
+        configuration = configuration,
+        diagnosticReporter = irDiagnosticReporter,
+        metadataSerializer = Fir2KlibMetadataSerializer(
                 configuration,
                 firResult.outputs,
                 fir2IrOutput?.fir2irActualizedResult,
                 produceHeaderKlib = produceHeaderKlib,
             ),
-            cleanFiles = emptyList(),
-            dependencies = usedLibraries.orEmpty(),
-            createModuleSerializer = { irDiagnosticReporter ->
+        cleanFiles = [],
+        dependencies = usedLibraries.orEmpty(),
+        createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(
                     settings = IrSerializationSettings(
                         configuration = configuration,

@@ -18,52 +18,52 @@ enum class KotlinJpsLibrary(val id: String, roots: () -> Array<File>) {
     MockRuntime(
         "kotlin-mock-runtime",
         {
-            arrayOf(
+            [
                 PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
                 File(PathUtil.kotlinPathsForDistDirectoryForTests.libPath, "annotations-13.0.jar"),
-            )
+            ]
         }
     ),
 
     JvmStdLib(
         "kotlin-stdlib",
         {
-            arrayOf(
+            [
                 PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
                 File(PathUtil.kotlinPathsForDistDirectoryForTests.libPath, "annotations-13.0.jar"),
-            )
+            ]
         }
     ),
 
     JvmTest(
         "kotlin-test",
-        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.kotlinTestPath) },
+        { [PathUtil.kotlinPathsForDistDirectoryForTests.kotlinTestPath] },
     ),
 
     JsStdLib(
         "KotlinJavaScript",
-        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath) }
+        { [PathUtil.kotlinPathsForDistDirectoryForTests.jsStdLibKlibPath] }
     ),
     JsTest(
         "KotlinJavaScriptTest",
-        { arrayOf(PathUtil.kotlinPathsForDistDirectoryForTests.jsKotlinTestKlibPath) }
+        { [PathUtil.kotlinPathsForDistDirectoryForTests.jsKotlinTestKlibPath] }
     ),
     Lombok(
         "lombok",
         {
-            arrayOf(
+            [
                 PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
                 File(lombok.Lombok::class.java.protectionDomain.codeSource.location.toURI().path),
-            )
+            ]
         }
     ),
     Serialization(
         "serialization",
         {
-            arrayOf(
+            [
                 PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath,
                 File(kotlinx.serialization.Serializable::class.java.protectionDomain.codeSource.location.toURI().path)
-            )
+            ]
         }
     );
 

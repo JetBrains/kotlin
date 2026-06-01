@@ -49,13 +49,13 @@ fun checkExperimentalAnnotationUsage(intellijModulePaths: List<String>) {
 
 
 //  Please do not add new usages here, it may break IntelliJ Kotlin Plugin. See KT-62510 for more details
-private val allowedUsages = listOf(
+private val allowedUsages = [
     // TODO should be removed as a part of KTIJ-27368
     AllowedUsage(
         Paths.get("compiler/ir/serialization.common/src/org/jetbrains/kotlin/backend/common/serialization/CityHash.kt"),
         "ExperimentalUnsignedTypes"
     )
-)
+]
 
 private data class AllowedUsage(
     val file: Path,

@@ -51,7 +51,7 @@ class CallableReferenceResolutionCandidate(
     )
 
     override fun addResolvedKtPrimitive(resolvedAtom: ResolvedAtom) {} // there aren't nested resolved primitives for callable references
-    override fun getSubResolvedAtoms(): List<ResolvedAtom> = emptyList()
+    override fun getSubResolvedAtoms(): List<ResolvedAtom> = []
 
     var freshVariablesSubstitutor: FreshVariableNewTypeSubstitutor? = null
         internal set

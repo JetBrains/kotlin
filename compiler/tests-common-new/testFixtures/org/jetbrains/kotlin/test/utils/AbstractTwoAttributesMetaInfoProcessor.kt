@@ -37,8 +37,8 @@ abstract class AbstractTwoAttributesMetaInfoProcessor(testServices: TestServices
             true -> firstAttribute to secondAttribute
             false -> secondAttribute to firstAttribute
         }
-        val matchedExistedInfos = mutableSetOf<ParsedCodeMetaInfo>()
-        val matchedReportedInfos = mutableSetOf<CodeMetaInfo>()
+        val matchedExistedInfos: MutableSet<ParsedCodeMetaInfo> = []
+        val matchedReportedInfos: MutableSet<CodeMetaInfo> = []
         val allReportedInfos = globalMetadataInfoHandler.getReportedMetaInfosForFile(file)
         for ([_, reportedInfos] in allReportedInfos.groupBy { Triple(it.start, it.end, it.tag) }) {
             val existedInfos = globalMetadataInfoHandler.getExistingMetaInfosForActualMetadata(file, reportedInfos.first())

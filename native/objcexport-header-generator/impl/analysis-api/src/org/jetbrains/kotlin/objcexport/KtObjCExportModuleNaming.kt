@@ -24,7 +24,7 @@ interface KtObjCExportModuleNaming {
     fun KaSession.getModuleName(module: KaModule): String?
 
     companion object {
-        val default = KtObjCExportModuleNaming(listOf(KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming))
+        val default = KtObjCExportModuleNaming([KtKlibObjCExportModuleNaming, KtSimpleObjCExportModuleNaming])
     }
 }
 

@@ -25,9 +25,9 @@ class SerializationContextInFile(val bindingContext: BindingContext, val current
         val annotation = AnnotationsUtils
             .getContainingFileAnnotations(bindingContext, declarationInFile)
             .find { it.fqName == annotationFqName }
-            ?: return emptyList()
+            ?: return []
 
-        val typeList = annotation.firstArgument()?.value as? List<*> ?: return emptyList()
+        val typeList = annotation.firstArgument()?.value as? List<*> ?: return []
         return typeList.filterIsInstance<KClassValue>().map { it.getArgumentType(declarationInFile.module) }
     }
 

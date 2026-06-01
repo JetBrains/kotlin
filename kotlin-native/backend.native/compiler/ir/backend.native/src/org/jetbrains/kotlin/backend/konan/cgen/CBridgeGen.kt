@@ -60,7 +60,7 @@ internal interface KotlinStubs {
 }
 
 internal class CBridgeGenState(val stubs: KotlinStubs) {
-    private val cLines = mutableListOf<String>()
+    private val cLines: MutableList<String> = []
 
     fun addC(lines: List<String>) {
         cLines.addAll(lines)
@@ -85,7 +85,7 @@ private class KotlinToCCallBuilder(
 
     val bridgeCallBuilder = KotlinCallBuilder(irBuilder, symbols)
     val bridgeBuilder = KotlinCBridgeBuilder(irBuilder.startOffset, irBuilder.endOffset, cBridgeName, stubs, isKotlinToC = true, foreignExceptionMode)
-    val cBridgeBodyLines = mutableListOf<String>()
+    val cBridgeBodyLines: MutableList<String> = []
     val cCallBuilder = CCallBuilder()
     val cFunctionBuilder = CFunctionBuilder()
 
@@ -187,7 +187,7 @@ internal fun KotlinStubs.generateCCall(
     } else if (!direct) {
         val targetFunctionVariable = CVariable(CTypes.pointer(callBuilder.cFunctionBuilder.getType()), targetFunctionName)
         val cCallSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cCall, "id")!!
-        callBuilder.state.addC(listOf("extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");")) // Exported from cinterop stubs.
+        callBuilder.state.addC(["extern const $targetFunctionVariable __asm(\"$cCallSymbolName\");"]) // Exported from cinterop stubs.
     } else {
         /*
         Basically, we need to make the target C function accessible here.
@@ -227,7 +227,7 @@ internal fun KotlinStubs.generateCCall(
         val signature = callBuilder.cFunctionBuilder.buildSignature(targetFunctionName, language)
 
         val symbolNameLiteral = quoteAsCStringLiteral(symbolName)
-        callBuilder.state.addC(listOf("$signature __asm($symbolNameLiteral);"))
+        callBuilder.state.addC(["$signature __asm($symbolNameLiteral);"])
     }
 
     val libraryName = if (isInvoke) "" else callee.getPackageFragment().konanLibrary.let {
@@ -288,7 +288,7 @@ internal fun KotlinStubs.generateCGlobalDirectAccess(
     val globalName = this.getUniqueCName("targetGlobal")
     val globalSymbolName = callee.getAnnotationArgumentValue<String>(RuntimeNames.cGlobalAccess, "name")!!
     val globalSymbolNameLiteral = quoteAsCStringLiteral(globalSymbolName)
-    callBuilder.state.addC(listOf("extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"))
+    callBuilder.state.addC(["extern ${globalCType.render(globalName)} __asm($globalSymbolNameLiteral);"])
 
     // And now generate the actual access and pass the value between C and Kotlin:
     val result: IrExpression = when {
@@ -403,7 +403,7 @@ private fun KotlinToCCallBuilder.unwrapVariadicArguments(
         elements: List<IrVarargElement>
 ): List<IrExpression> = elements.flatMap {
     when (it) {
-        is IrExpression -> listOf(it)
+        is IrExpression -> [it]
         is IrSpreadElement -> {
             val expression = it.expression
             require(expression is IrCall && expression.symbol == irBuiltIns.arrayOf) { stubs.renderCompilerError(it) }
@@ -420,7 +420,7 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
         block: (variable: IrVariable?, elements: List<IrVarargElement>) -> R
 ): R = when (argument) {
 
-    null -> block(null, emptyList())
+    null -> block(null, [])
 
     is IrVararg -> block(null, argument.elements)
 
@@ -452,7 +452,7 @@ private fun <R> KotlinToCCallBuilder.handleArgumentForVarargParameter(
 }
 
 private fun KotlinToCCallBuilder.emitCBridge() {
-    val cLines = mutableListOf<String>()
+    val cLines: MutableList<String> = []
 
     cLines += "${bridgeBuilder.buildCSignature(cBridgeName)} {"
     cLines += cBridgeBodyLines
@@ -615,7 +615,7 @@ internal fun KotlinStubs.generateObjCCall(
 
 internal fun IrBuilderWithScope.getObjCClass(symbols: BackendNativeSymbols, symbol: IrClassSymbol): IrExpression {
     require(!symbol.owner.isObjCMetaClass())
-    return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, listOf(symbol.starProjectedType))
+    return irCall(symbols.interopGetObjCClass, symbols.nativePtrType, [symbol.starProjectedType])
 }
 
 private fun IrBuilderWithScope.irNullNativePtr(symbols: BackendNativeSymbols) = irCall(symbols.getNativeNullPtr.owner)
@@ -637,9 +637,9 @@ private class CCallbackBuilder(
 
     val bridgeBuilder = KotlinCBridgeBuilder(location.startOffset, location.endOffset, cBridgeName, stubs, isKotlinToC = false)
     val kotlinCallBuilder = KotlinCallBuilder(bridgeBuilder.kotlinIrBuilder, symbols)
-    val kotlinBridgeStatements = mutableListOf<IrStatement>()
+    val kotlinBridgeStatements: MutableList<IrStatement> = []
     val cBridgeCallBuilder = CCallBuilder()
-    val cBodyLines = mutableListOf<String>()
+    val cBodyLines: MutableList<String> = []
     val cFunctionBuilder = CFunctionBuilder()
 
 }
@@ -689,17 +689,15 @@ private fun CCallbackBuilder.buildValueReturn(function: IrSimpleFunction, valueR
         kotlinBridgeStatements.forEach { +it }
     }
     val cBridgeDeclaration = "${buildCBridge()};"
-    kotlinBridge.annotations += listOf(
-            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner,
-                    stubs.language, cBridgeDeclaration)
-    )
+    kotlinBridge.annotations +=
+            buildSimpleAnnotation(irBuiltIns, UNDEFINED_OFFSET, UNDEFINED_OFFSET, symbols.cToKotlinBridge.owner, stubs.language, cBridgeDeclaration)
     stubs.addKotlin(kotlinBridge)
 }
 
 private fun CCallbackBuilder.buildCFunction(): String {
     val result = stubs.getUniqueCName("kncfun")
 
-    val cLines = mutableListOf<String>()
+    val cLines: MutableList<String> = []
 
     cLines += "${cFunctionBuilder.buildSignature(result, stubs.language)} {"
     cLines += cBodyLines
@@ -819,7 +817,7 @@ private fun getCStructType(kotlinClass: IrClass): CType? =
 private fun CBridgeGenState.getNamedCStructType(kotlinClass: IrClass): CType? {
     val cStructType = getCStructType(kotlinClass) ?: return null
     val name = stubs.getUniqueCName("struct")
-    addC(listOf("typedef ${cStructType.render(name)};"))
+    addC(["typedef ${cStructType.render(name)};"])
     return CTypes.simple(name)
 }
 
@@ -1116,7 +1114,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
     }
 
     private fun IrBuilderWithScope.readCValue(kotlinPointed: IrExpression, symbols: BackendNativeSymbols): IrExpression =
-        irCallWithSubstitutedType(symbols.interopCValueRead.owner, listOf(kotlinPointedType)).apply {
+        irCallWithSubstitutedType(symbols.interopCValueRead.owner, [kotlinPointedType]).apply {
             arguments[0] = kotlinPointed
             arguments[1] = getTypeObject()
         }
@@ -1131,7 +1129,7 @@ private class StructValuePassing(private val kotlinClass: IrClass, override val 
         val kotlinPtr = passThroughBridge("&$result", CTypes.voidPtr, symbols.nativePtrType)
 
         kotlinBridgeStatements += irCallWithSubstitutedType(
-                symbols.interopCValueWrite.owner, listOf(kotlinPointedType)
+                symbols.interopCValueWrite.owner, [kotlinPointedType]
         ).apply {
             arguments[0] = expression
             arguments[1] = irGet(kotlinPtr)
@@ -1222,7 +1220,7 @@ private class ObjCReferenceValuePassing(
 
     override fun IrBuilderWithScope.bridgedToKotlin(expression: IrExpression, symbols: BackendNativeSymbols): IrExpression =
             convertPossiblyRetainedObjCPointer(symbols, retained, expression) {
-                irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, listOf(type)).apply {
+                irCallWithSubstitutedType(symbols.interopInterpretObjCPointerOrNull, [type]).apply {
                     arguments[0] = it
                 }
             }
@@ -1413,7 +1411,7 @@ private class ObjCBlockPointerValuePassing(
                 isNoinline = false,
                 isHidden = false,
         )
-        constructor.parameters = listOf(constructorParameter)
+        constructor.parameters = [constructorParameter]
         constructorParameter.parent = constructor
 
         constructor.body = irBuiltIns.createIrBuilder(constructor.symbol).irBlockBody(startOffset, endOffset) {
@@ -1619,7 +1617,7 @@ private fun KotlinToCCallBuilder.cValuesRefToPointer(
             .single { it.name.asString() == "getPointer" }
 
     irBuilder.irSafeTransform(value) {
-        irCall(getPointerFunction.symbol, symbols.interopCPointer.typeWithArguments(listOf(pointedType))).apply {
+        irCall(getPointerFunction.symbol, symbols.interopCPointer.typeWithArguments([pointedType])).apply {
             arguments[0] = it
             arguments[1] = bridgeCallBuilder.getMemScope()
         }

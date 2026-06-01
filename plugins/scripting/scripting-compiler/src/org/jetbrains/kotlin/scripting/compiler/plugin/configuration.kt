@@ -27,7 +27,7 @@ fun configureScriptDefinitions(
 ) {
     // TODO: consider using escaping to allow kotlin escaped names in class names
     val templatesFromClasspath = loadScriptTemplatesFromClasspath(
-        scriptTemplates, configuration.jvmClasspathRoots, emptyList(), baseClassloader, hostConfiguration, messageCollector.reporter
+        scriptTemplates, configuration.jvmClasspathRoots, [], baseClassloader, hostConfiguration, messageCollector.reporter
     )
     configuration.addAll(ScriptingConfigurationKeys.SCRIPT_DEFINITIONS, templatesFromClasspath.toList())
 }

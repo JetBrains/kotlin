@@ -141,9 +141,9 @@ abstract class AbstractWasmWasiDiagnosticWithIrInlinerTestBase : AbstractWasmWas
 
 private fun TestConfigurationBuilder.withIrInliner(plusOrMinus: Char) {
     defaultDirectives {
-        LANGUAGE with listOf(
+        LANGUAGE with [
             "$plusOrMinus${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
             "$plusOrMinus${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-        )
+        ]
     }
 }

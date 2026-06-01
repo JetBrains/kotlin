@@ -131,12 +131,12 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
             origin = GENERATED_MEMBER_IN_CALLABLE_REFERENCE
         }
 
-        nameProperty.overriddenSymbols = listOf(superProperty.symbol)
+        nameProperty.overriddenSymbols = [superProperty.symbol]
 
         val getter = nameProperty.addGetter {
             returnType = stringType
         }
-        getter.overriddenSymbols = listOf(supperGetter.symbol)
+        getter.overriddenSymbols = [supperGetter.symbol]
         getter.parameters += getter.createDispatchReceiverParameterWithClassParent()
 
         // TODO: What name should be in case of constructor? <init> or class name?
@@ -150,7 +150,7 @@ abstract class WebCallableReferenceLowering(context: JsCommonBackendContext) :
             )
 
         getter.body = context.irFactory.createBlockBody(
-            UNDEFINED_OFFSET, UNDEFINED_OFFSET, listOf(statement)
+            UNDEFINED_OFFSET, UNDEFINED_OFFSET, [statement]
         )
 
         clazz.functionReferenceReflectedName = functionReferenceReflectedName

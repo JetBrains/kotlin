@@ -53,13 +53,13 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             rootNonLocalDeclaration: KtAnnotated,
         ): FirDeclaration {
             val declarationsToRebind = when (val originalDeclaration = designation.target) {
-                is FirFunction -> listOf(originalDeclaration)
+                is FirFunction -> [originalDeclaration]
                 is FirProperty -> listOfNotNull(originalDeclaration.getter, originalDeclaration.setter)
                 is FirReplSnippet -> originalDeclaration.snippetClass.let { snippetClass ->
                     snippetClass.declarations.filter { it.isReplSnippetDeclaration == true } + snippetClass
                 }
 
-                else -> emptyList()
+                else -> []
             }
 
             return build(
@@ -194,7 +194,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
             classOrObject: KtClassOrObject,
             constructor: KtConstructor<*>?,
         ): ConstructorConversionParams {
-            val typeParameters = mutableListOf<FirTypeParameterRef>()
+            val typeParameters: MutableList<FirTypeParameterRef> = []
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
             val containingClass = this.containingClass ?: errorWithAttachment("Constructor outside of class") {
                 withPsiEntry("constructor", constructor, baseSession.llFirModuleData.ktModule)
@@ -270,7 +270,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 primaryConstructor?.valueParameters?.isEmpty() ?: classOrObject.secondaryConstructors.let { constructors ->
                     constructors.isEmpty() || constructors.any { it.valueParameters.isEmpty() }
                 }
-            val typeParameters = mutableListOf<FirTypeParameterRef>()
+            val typeParameters: MutableList<FirTypeParameterRef> = []
             context.appendOuterTypeParameters(ignoreLastLevel = false, typeParameters)
             val selfType = classOrObject.toDelegatedSelfType(typeParameters, owner.symbol)
             return enumEntry.toFirEnumEntry(selfType, ownerClassHasDefaultConstructor)
@@ -344,7 +344,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
         val psi = parent.psi
         val typeParameters = when (psi) {
             is KtClassOrObject -> parent.typeParameters.subList(0, psi.typeParameters.size)
-            is KtScript -> emptyList()
+            is KtScript -> []
             else -> errorWithFirSpecificEntries(
                 message = "Expected ${KtClassOrObject::class.simpleName}/${KtScript::class.simpleName} is not found",
                 fir = parent,

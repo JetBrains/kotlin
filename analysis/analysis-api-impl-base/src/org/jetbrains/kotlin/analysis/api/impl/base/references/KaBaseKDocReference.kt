@@ -45,6 +45,6 @@ internal class KaBaseKDocReference(element: KDocName) : KDocReference(element), 
             get() = KDocName::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KDocName>
-            get() = { listOf(KaBaseKDocReference(it)) }
+            get() = { [KaBaseKDocReference(it)] }
     }
 }

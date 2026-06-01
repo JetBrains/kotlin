@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.name.ClassId
  * See K1: org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslatorImpl.getDefinedThrows
  */
 internal fun KaSession.getDefinedThrows(symbol: KaFunctionSymbol): List<ClassId> {
-    if (symbol.isSuspend) return listOf(ClassId.topLevel(KonanFqNames.cancellationException))
-    if (!symbol.hasThrowsAnnotation) return emptyList()
+    if (symbol.isSuspend) return [ClassId.topLevel(KonanFqNames.cancellationException)]
+    if (!symbol.hasThrowsAnnotation) return []
 
     val throwsAnnotations = symbol.annotations
         .filter { annotation -> annotation.classId?.asSingleFqName() == KonanFqNames.throws }

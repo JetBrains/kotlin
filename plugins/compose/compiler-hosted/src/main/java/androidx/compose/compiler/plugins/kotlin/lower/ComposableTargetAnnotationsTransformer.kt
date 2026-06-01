@@ -358,7 +358,7 @@ class ComposableTargetAnnotationsTransformer(
     fun IrType.toScheme(defaultTarget: Item): Scheme =
         when {
             this is IrSimpleType && isFunction() -> arguments
-            else -> emptyList()
+            else -> []
         }.let { typeArguments ->
             val target = annotations.target.let {
                 if (it.isUnspecified) defaultTarget else it
@@ -429,16 +429,16 @@ class ComposableTargetAnnotationsTransformer(
         } else null
 
     private fun Item.toAnnotations(): List<IrAnnotation> =
-        toAnnotation()?.let { listOf(it) } ?: emptyList()
+        toAnnotation()?.let { [it] } ?: []
 
     private fun Scheme.toAnnotations(): List<IrAnnotation> =
         if (ComposableInferredTargetClass != null) {
-            listOf(
+            [
                 annotation(ComposableInferredTargetClass).also {
                     it.arguments[0] = irConst(serialize())
                 }
-            )
-        } else emptyList()
+            ]
+        } else []
 
     private fun annotation(classSymbol: IrClassSymbol) =
         IrAnnotationImpl(
@@ -631,7 +631,7 @@ class InferenceFunctionDeclaration(
             parameters().map { it.toDeclaredScheme(effectiveDefault) },
             result
         ).let { scheme ->
-            ancestorScheme(defaultTarget)?.let { scheme.mergeWith(listOf(it)) } ?: scheme
+            ancestorScheme(defaultTarget)?.let { scheme.mergeWith([it]) } ?: scheme
         }
     }
 
@@ -733,7 +733,7 @@ class InferenceFunctionParameter(
     override val schemeIsUpdatable: Boolean get() = false
 
     override fun toDeclaredScheme(defaultTarget: Item): Scheme = with(transformer) {
-        val samAnnotations = parameter.type.samOwnerOrNull()?.annotations ?: emptyList()
+        val samAnnotations = parameter.type.samOwnerOrNull()?.annotations ?: []
         val annotations = parameter.type.annotations + samAnnotations
         val target = annotations.target.let { if (it.isUnspecified) defaultTarget else it }
         parameter.type.toScheme(target)
@@ -1028,7 +1028,7 @@ private val IrFunction.targetParameters
     }
 
 private fun <T> Iterable<T>.takeUpTo(n: Int): List<T> =
-    if (n <= 0) emptyList() else take(n)
+    if (n <= 0) [] else take(n)
 
 /**
  * A function with overly wide parameters should be ignored for traversal as well as when

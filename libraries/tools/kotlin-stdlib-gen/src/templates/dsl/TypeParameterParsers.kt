@@ -10,9 +10,9 @@ import templates.TypeParameter.*
 data class TypeParameter(val original: String, val name: String, val constraint: TypeRef? = null) {
     constructor(simpleName: String) : this(simpleName, simpleName)
 
-    data class TypeRef(val name: String, val typeArguments: List<TypeArgument> = emptyList()) {
+    data class TypeRef(val name: String, val typeArguments: List<TypeArgument> = []) {
         fun mentionedTypes(): List<TypeRef> =
-                if (typeArguments.isEmpty()) listOf(this) else typeArguments.flatMap { it.type.mentionedTypes() }
+            if (typeArguments.isEmpty()) [this] else typeArguments.flatMap { it.type.mentionedTypes() }
     }
 
     data class TypeArgument(val type: TypeRef)
@@ -48,7 +48,7 @@ private fun parseTypeArgument(typeParam: String): TypeArgument
 
 private fun parseArguments(typeParams: String): List<TypeArgument> {
     var restParams: String = typeParams
-    val params = mutableListOf<TypeArgument>()
+    val params: MutableList<TypeArgument> = []
     while (true) {
         val comma = restParams.indexOf(',')
         if (comma < 0) {

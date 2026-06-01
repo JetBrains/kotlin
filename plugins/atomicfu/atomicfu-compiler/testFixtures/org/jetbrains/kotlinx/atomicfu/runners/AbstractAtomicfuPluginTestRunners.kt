@@ -55,8 +55,8 @@ open class AbstractAtomicfuNativeIrTextTest : AbstractLightTreeNativeIrTextTest(
                 {
                     object : RuntimeClasspathProvider(it) {
                         override fun runtimeClassPaths(module: TestModule): List<File> {
-                            val str = System.getProperty("atomicfuNative.classpath")?.split(File.pathSeparator) ?: emptyList()
-                            val compilerPluginClasspath = System.getProperty("atomicfu.compiler.plugin")?.split(File.pathSeparator) ?: emptyList()
+                            val str = System.getProperty("atomicfuNative.classpath")?.split(File.pathSeparator) ?: []
+                            val compilerPluginClasspath = System.getProperty("atomicfu.compiler.plugin")?.split(File.pathSeparator) ?: []
                             return (str + compilerPluginClasspath).map { File(it) }
                         }
                     }

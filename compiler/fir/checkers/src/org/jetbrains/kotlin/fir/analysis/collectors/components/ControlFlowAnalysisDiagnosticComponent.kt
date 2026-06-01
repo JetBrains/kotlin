@@ -114,16 +114,16 @@ class ControlFlowAnalysisDiagnosticComponent(
      * ```
      */
     private class LocalPropertyCollector : FirDefaultVisitor<Unit, Set<ControlFlowGraph>>() {
-        val properties = mutableSetOf<FirPropertySymbol>()
+        val properties: MutableSet<FirPropertySymbol> = []
 
         // Properties which may not be initialized when accessed, even if they have an initializer.
-        val conditionallyInitializedProperties = mutableSetOf<FirPropertySymbol>()
+        val conditionallyInitializedProperties: MutableSet<FirPropertySymbol> = []
 
         // Properties defined within do-while loops, and used within the condition of that same do-while loop, are considered conditionally
         // initialized. It is possible they may not even be defined by the loop condition due to a `continue` in the do-while loop. Track
         // do-while loop properties so those used in the condition can be recorded.
         private val doWhileLoopProperties = ArrayDeque<Pair<FirLoop, MutableSet<FirPropertySymbol>>>()
-        private val insideDoWhileConditions = mutableSetOf<FirLoop>()
+        private val insideDoWhileConditions: MutableSet<FirLoop> = []
 
         override fun visitElement(element: FirElement, data: Set<ControlFlowGraph>) {
             when (element) {
@@ -171,7 +171,7 @@ class ControlFlowAnalysisDiagnosticComponent(
         }
 
         override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop, data: Set<ControlFlowGraph>) {
-            doWhileLoopProperties.addLast(doWhileLoop to mutableSetOf())
+            doWhileLoopProperties.addLast(doWhileLoop to [])
 
             // Manually navigate children of do-while loop, so it is known when the loop condition is being navigated.
             // Navigation of the annotations and label is not needed.

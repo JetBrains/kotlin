@@ -27,7 +27,7 @@ class FirPackageMemberScope(
     val fqName: FqName,
     val session: FirSession,
     private val symbolProvider: FirSymbolProvider = session.symbolProvider,
-    private val excludedNames: Set<Name> = emptySet(),
+    private val excludedNames: Set<Name> = [],
 ) : FirScope() {
     private val classifierCache: MutableMap<Name, FirClassifierSymbol<*>?> = hashMapOf()
     private val functionCache: MutableMap<Name, List<FirNamedFunctionSymbol>> = hashMapOf()

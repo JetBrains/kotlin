@@ -29,7 +29,7 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
 
     protected open val gradleTask = "assemble"
     protected open val projectName = "generic-kmp-app-plus-lib-with-tests"
-    protected open val mainCompileTasks = setOf(
+    protected open val mainCompileTasks: Set<String> = [
         ":app:compileCommonMainKotlinMetadata",
         ":app:compileKotlinJvm",
         ":app:compileKotlinJs",
@@ -38,7 +38,7 @@ abstract class KmpIncrementalITBase : KGPBaseTest() {
         ":lib:compileKotlinJvm",
         ":lib:compileKotlinJs",
         ":lib:compileKotlinNative",
-    )
+    ]
 
     protected open fun withProject(gradleVersion: GradleVersion, test: TestProject.() -> Unit): Unit {
         nativeProject(

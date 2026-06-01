@@ -265,10 +265,10 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                 """.trimMargin()
             )
 
-            val args = if (testFallbackStrategy) {
-                arrayOf("-Pkotlin.daemon.jvmargs=-Xmxqwerty")
+            val args: Array<String> = if (testFallbackStrategy) {
+                ["-Pkotlin.daemon.jvmargs=-Xmxqwerty"]
             } else {
-                emptyArray()
+                []
             }
             val expectedFinishStrategy = when {
                 testFallbackStrategy -> KotlinCompilerExecutionStrategy.IN_PROCESS
@@ -288,7 +288,7 @@ abstract class ExecutionStrategyIT : KGPDaemonsBaseTest() {
                     val defaultJvmSettingsForGivenGradleVersion =
                         if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) "256" else "384"
                     assertKotlinDaemonJvmOptions(
-                        listOf("-XX:MaxMetaspaceSize=${defaultJvmSettingsForGivenGradleVersion}m", "-ea")
+                        ["-XX:MaxMetaspaceSize=${defaultJvmSettingsForGivenGradleVersion}m", "-ea"]
                     )
                 }
             }
@@ -391,11 +391,11 @@ class NoActiveThreadsAfterCompilerInvocationIT : KGPDaemonsBaseTest() {
                 threadsAfter - threadsBefore
             }
 
-            val expectedGradleWorkerThreads = listOf(
+            val expectedGradleWorkerThreads = [
                 """java\.lang\.Thread:pool-\d+-thread-\d+ \(total \d+\)""".toRegex(),
                 """java\.lang\.Thread:WorkerExecutor Queue \(total 1\)""".toRegex(),
                 """java\.lang\.Thread:Unconstrained build operations Thread \d+ \(total \d+\)""".toRegex(),
-            )
+            ]
 
             val newThreadsAfterExecutionFiltered = newThreadsAfterExecution.filter { threadInfo ->
                 expectedGradleWorkerThreads.all { !threadInfo.matches(it) }

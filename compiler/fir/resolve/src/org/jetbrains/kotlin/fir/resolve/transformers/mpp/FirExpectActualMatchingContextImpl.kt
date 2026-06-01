@@ -189,7 +189,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             if (isActualDeclaration) actualScopeSession else expectScopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        ) ?: return emptyList()
+        ) ?: return []
 
         return mutableListOf<FirBasedSymbol<*>>().apply {
             for (name in scope.getCallableNames()) {
@@ -214,7 +214,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             true -> actualSession
             else -> symbol.moduleData.session
         }
-        val scope = symbol.staticScope(SessionHolderImpl(session, actualScopeSession)) ?: return emptyList()
+        val scope = symbol.staticScope(SessionHolderImpl(session, actualScopeSession)) ?: return []
         val result = ArrayList<FirCallableSymbol<*>>()
         for (name in scope.getCallableNames()) {
             scope.getMembersTo(result, name)
@@ -229,7 +229,7 @@ class FirExpectActualMatchingContextImpl private constructor(
             expectScopeSession,
             CallableCopyTypeCalculator.DoNothing,
             requiredMembersPhase = FirResolvePhase.STATUS,
-        ) ?: return emptyList()
+        ) ?: return []
 
         return mutableListOf<FirCallableSymbol<*>>().apply {
             scope.getMembersTo(this, name)
@@ -238,7 +238,7 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun RegularClassSymbolMarker.getStaticCallablesForExpectClass(name: Name): List<FirCallableSymbol<*>> {
         val symbol = asSymbol()
-        val scope = symbol.staticScope(SessionHolderImpl(symbol.moduleData.session, actualScopeSession)) ?: return emptyList()
+        val scope = symbol.staticScope(SessionHolderImpl(symbol.moduleData.session, actualScopeSession)) ?: return []
         val result = ArrayList<FirCallableSymbol<*>>()
         scope.getMembersTo(result, name)
         return result
@@ -292,11 +292,11 @@ class FirExpectActualMatchingContextImpl private constructor(
 
     override fun FunctionSymbolMarker.allRecursivelyOverriddenDeclarationsIncludingSelf(containingClass: RegularClassSymbolMarker?): List<CallableSymbolMarker> {
         return when (val symbol = asSymbol()) {
-            is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> listOf(symbol)
+            is FirConstructorSymbol, is FirFunctionWithoutNameSymbol -> [symbol]
             is FirNamedFunctionSymbol -> {
-                if (containingClass == null) return listOf(symbol)
+                if (containingClass == null) return [symbol]
                 val session = symbol.moduleData.session
-                (listOf(symbol) + symbol.overriddenFunctions(containingClass.asSymbol(), session, actualScopeSession).asSequence())
+                ([symbol] + symbol.overriddenFunctions(containingClass.asSymbol(), session, actualScopeSession).asSequence())
                     // Tests work even if you don't filter out fake-overrides. Filtering fake-overrides is needed because
                     // the returned descriptors are compared by `equals`. And `equals` for fake-overrides is weird.
                     // I didn't manage to invent a test that would check this condition

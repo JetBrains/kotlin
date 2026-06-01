@@ -51,7 +51,7 @@ class ReflectJavaClassifierType(public override val reflectType: Type) : Reflect
 
     override val annotations: Collection<JavaAnnotation>
         get() {
-            return emptyList() // TODO
+            return [] // TODO
         }
 
     override fun findAnnotation(fqName: FqName): JavaAnnotation? {

@@ -54,8 +54,8 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (context == null) return emptyList()
-        if (callableId.callableName != FOO_NAME) return emptyList()
+        if (context == null) return []
+        if (callableId.callableName != FOO_NAME) return []
         val function = createMemberFunction(context.owner, Key, callableId.callableName, session.builtinTypes.unitType.coneType) {
             valueParameter(
                 name = Name.identifier("x"),
@@ -102,17 +102,17 @@ class MemberFunctionWithAnnotatedParametersGenerator(session: FirSession) : FirD
                 annotationResolvePhase = FirAnnotationResolvePhase.Types
                 containingDeclarationSymbol = parameter.symbol
             }
-            parameter.replaceAnnotations(listOf(annotation))
+            parameter.replaceAnnotations([annotation])
         }
 
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
-            classSymbol in matchedClasses -> setOf(FOO_NAME)
-            else -> emptySet()
+            classSymbol in matchedClasses -> [FOO_NAME]
+            else -> []
         }
     }
 

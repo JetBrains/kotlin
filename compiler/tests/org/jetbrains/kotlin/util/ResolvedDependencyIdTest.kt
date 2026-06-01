@@ -18,7 +18,7 @@ class ResolvedDependencyIdTest {
 
     @Test(expected = IllegalStateException::class)
     fun failOnNoNames2() {
-        ResolvedDependencyId(emptyList())
+        ResolvedDependencyId([])
     }
 
     @Test

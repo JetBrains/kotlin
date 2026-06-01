@@ -38,7 +38,7 @@ abstract class TemplateGroupBase : TemplateGroup {
         if (defaultActions.isEmpty()) this else onEach { t -> defaultActions.forEach(t::builder) }
     }
 
-    private val defaultActions = mutableListOf<MemberBuildAction>()
+    private val defaultActions: MutableList<MemberBuildAction> = []
 
     fun defaultBuilder(builderAction: MemberBuildAction) {
         defaultActions += builderAction
@@ -46,8 +46,8 @@ abstract class TemplateGroupBase : TemplateGroup {
 
     companion object {
         private val typeMemberTemplate = MemberTemplate::class.createType()
-        private val typeIterableOfMemberTemplates = Iterable::class.createType(arguments = listOf(KTypeProjection.invariant(typeMemberTemplate)))
-        private val typeSequenceOfMemberTemplates = Sequence::class.createType(arguments = listOf(KTypeProjection.invariant(typeMemberTemplate)))
+        private val typeIterableOfMemberTemplates = Iterable::class.createType(arguments = [KTypeProjection.invariant(typeMemberTemplate)])
+        private val typeSequenceOfMemberTemplates = Sequence::class.createType(arguments = [KTypeProjection.invariant(typeMemberTemplate)])
     }
 
 }

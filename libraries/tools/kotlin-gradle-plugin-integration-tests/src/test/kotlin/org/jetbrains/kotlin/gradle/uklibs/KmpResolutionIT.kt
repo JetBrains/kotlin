@@ -53,25 +53,25 @@ class KmpResolutionIT : KGPBaseTest() {
 
         assertEquals(
             listOf<List<String>>(
-                listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
-                listOf("commonMain", "foo-transitive-1.0-commonMain-.klib"),
+                ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"],
+                ["commonMain", "foo-transitive-1.0-commonMain-.klib"],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals(
             listOf<List<String>>(
-                listOf("linuxMain", "foo-direct-1.0-linuxMain-.klib"),
-                listOf("linuxMain", "foo-direct-1.0-commonMain-.klib"),
-                listOf("linuxMain", "foo-transitive-1.0-linuxMain-.klib"),
-                listOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
-                listOf("commonMain", "foo-transitive-1.0-commonMain-.klib"),
+                ["linuxMain", "foo-direct-1.0-linuxMain-.klib"],
+                ["linuxMain", "foo-direct-1.0-commonMain-.klib"],
+                ["linuxMain", "foo-transitive-1.0-linuxMain-.klib"],
+                ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"],
+                ["commonMain", "foo-transitive-1.0-commonMain-.klib"],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
-                mutableListOf("commonMain", "foo-transitive-1.0-commonMain-.klib"),
+                ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"],
+                ["commonMain", "foo-transitive-1.0-commonMain-.klib"],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("iosMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
@@ -95,7 +95,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -104,11 +104,11 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "kotlin-metadata",
                             "org.jetbrains.kotlin.platform.type" to "common",
                         ),
-                    ),
+                    ],
                     configuration = "metadataApiElements",
                 ),
                 "foo:transitive-jvm:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -117,16 +117,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "jvmApiElements-published",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -135,18 +135,18 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements",
                 ),
                 "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
-                    ),
+                    ],
                     configuration = "compile",
                 ),
             ).prettyPrinted, jvmDependencies.prettyPrinted
@@ -154,7 +154,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -163,17 +163,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "kotlin-metadata",
                             "org.jetbrains.kotlin.platform.type" to "common",
                         ),
-                    ),
+                    ],
                     configuration = "metadataApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         // This is a stub in stdlib publication for native
-                    ),
+                    ],
                     configuration = "nativeApiElements",
                 ),
                 "foo:transitive-iosarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -183,12 +183,12 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "ios_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "iosArm64ApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "iosArm64ApiElements-published",
                 ),
             ).prettyPrinted, iosDependencies.prettyPrinted
@@ -196,7 +196,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -206,16 +206,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "linux_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:transitive-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -225,17 +225,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "linux_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${consumer.buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, linuxDependencies.prettyPrinted
@@ -274,29 +274,29 @@ class KmpResolutionIT : KGPBaseTest() {
 
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "foo-transitive-1.0-commonMain-.klib",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "linuxMain", "uklib-foo-direct-1.0-commonMain-",
-                ),
-                mutableListOf(
+                ],
+                [
                     "linuxMain", "foo-transitive-1.0-linuxMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "foo-transitive-1.0-commonMain-.klib",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
@@ -320,13 +320,13 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         // Ignored because it doesn't have a jvm target
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive-jvm:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -335,16 +335,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "jvmApiElements-published",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -353,18 +353,18 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements",
                 ),
                 "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
-                    ),
+                    ],
                     configuration = "compile",
                 ),
             ).prettyPrinted, jvmDependencies.prettyPrinted
@@ -372,13 +372,13 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         // Ignored because it doesn't have an iOS target
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive-iosarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -388,17 +388,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "ios_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "iosArm64ApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "iosArm64ApiElements-published",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, iosDependencies.prettyPrinted
@@ -406,7 +406,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -415,11 +415,11 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "linux_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -429,17 +429,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "linux_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, linuxDependencies.prettyPrinted
@@ -482,29 +482,29 @@ class KmpResolutionIT : KGPBaseTest() {
 
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "linuxMain", "uklib-foo-direct-1.0-commonMain-",
-                ),
-                mutableListOf(
+                ],
+                [
                     "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
@@ -528,12 +528,12 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -542,16 +542,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412"
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -560,18 +560,18 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements",
                 ),
                 "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
-                    ),
+                    ],
                     configuration = "compile",
                 ),
             ).prettyPrinted, jvmDependencies.prettyPrinted
@@ -579,12 +579,12 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -593,17 +593,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "ios_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, iosDependencies.prettyPrinted
@@ -611,7 +611,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -620,11 +620,11 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "linux_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -633,17 +633,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "linux_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, linuxDependencies.prettyPrinted
@@ -683,39 +683,39 @@ class KmpResolutionIT : KGPBaseTest() {
 
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("commonMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf(
+                [
                     "linuxMain", "foo-direct-1.0-linuxMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "linuxMain", "foo-direct-1.0-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "linuxMain", "uklib-foo-transitive-1.0-linuxMain-",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib",
-                ),
-                mutableListOf(
+                ],
+                [
                     "commonMain", "uklib-foo-transitive-1.0-commonMain-",
-                ),
+                ],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("linuxMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
         assertEquals<PrettyPrint<List<List<String>>>>(
             mutableListOf<MutableList<String>>(
-                mutableListOf("commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"),
-                mutableListOf("commonMain", "uklib-foo-transitive-1.0-commonMain-"),
+                ["commonMain", "org.jetbrains.kotlin-kotlin-stdlib-${consumer.buildOptions.kotlinVersion}-commonMain-.klib"],
+                ["commonMain", "uklib-foo-transitive-1.0-commonMain-"],
             ).prettyPrinted, consumer.metadataTransformationOutputClasspath("iosMain")
                 .relativeTransformationPathComponents().prettyPrinted
         )
@@ -739,7 +739,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -748,11 +748,11 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "kotlin-metadata",
                             "org.jetbrains.kotlin.platform.type" to "common",
                         ),
-                    ),
+                    ],
                     configuration = "metadataApiElements",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -761,16 +761,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412"
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -779,18 +779,18 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "java-api",
                             "org.jetbrains.kotlin.platform.type" to "jvm",
                         ),
-                    ),
+                    ],
                     configuration = "jvmApiElements",
                 ),
                 "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
                             "org.gradle.libraryelements" to "jar",
                             "org.gradle.usage" to "java-api",
                         ),
-                    ),
+                    ],
                     configuration = "compile",
                 ),
             ).prettyPrinted, jvmDependencies.prettyPrinted
@@ -798,7 +798,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "jar",
                             "org.gradle.category" to "library",
@@ -807,11 +807,11 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.gradle.usage" to "kotlin-metadata",
                             "org.jetbrains.kotlin.platform.type" to "common",
                         ),
-                    ),
+                    ],
                     configuration = "metadataApiElements",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -820,17 +820,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "ios_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, iosDependencies.prettyPrinted
@@ -838,7 +838,7 @@ class KmpResolutionIT : KGPBaseTest() {
         assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
             mutableMapOf<String, ResolvedComponentWithArtifacts>(
                 "foo:direct-linuxarm64:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "klib",
                             "org.gradle.category" to "library",
@@ -848,16 +848,16 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.native.target" to "linux_arm64",
                             "org.jetbrains.kotlin.platform.type" to "native",
                         ),
-                    ),
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:direct:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "linuxArm64ApiElements-published",
                 ),
                 "foo:transitive:1.0" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
+                    artifacts = [
                         mutableMapOf(
                             "artifactType" to "uklib",
                             "org.gradle.category" to "library",
@@ -866,17 +866,17 @@ class KmpResolutionIT : KGPBaseTest() {
                             "org.jetbrains.kotlin.uklibState" to "decompressed",
                             "org.jetbrains.kotlin.uklibView" to "linux_arm64",
                         ),
-                    ),
+                    ],
                     configuration = "uklibApiElements",
                 ),
                 "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "fallbackVariant_KT-81412",
                 ),
                 "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                    artifacts = mutableListOf(
-                    ),
+                    artifacts = [
+                    ],
                     configuration = "nativeApiElements",
                 ),
             ).prettyPrinted, linuxDependencies.prettyPrinted
@@ -919,7 +919,7 @@ class KmpResolutionIT : KGPBaseTest() {
             assertEquals<PrettyPrint<Map<String, ResolvedComponentWithArtifacts>>>(
                 mutableMapOf<String, ResolvedComponentWithArtifacts>(
                     "org.jetbrains.kotlin:kotlin-stdlib:${buildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
@@ -928,22 +928,22 @@ class KmpResolutionIT : KGPBaseTest() {
                                 "org.gradle.usage" to "java-api",
                                 "org.jetbrains.kotlin.platform.type" to "jvm",
                             ),
-                        ),
+                        ],
                         configuration = "jvmApiElements",
                     ),
                     "org.jetbrains:annotations:13.0" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
                                 "org.gradle.libraryelements" to "jar",
                                 "org.gradle.usage" to "java-api",
                             ),
-                        ),
+                        ],
                         configuration = "compile",
                     ),
                     "producer:empty:1.0" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
+                        artifacts = [
                             mutableMapOf(
                                 "artifactType" to "jar",
                                 "org.gradle.category" to "library",
@@ -952,7 +952,7 @@ class KmpResolutionIT : KGPBaseTest() {
                                 "org.gradle.usage" to "kotlin-metadata",
                                 "org.jetbrains.kotlin.platform.type" to "common",
                             ),
-                        ),
+                        ],
                         configuration = "metadataApiElements",
                     ),
                 ).prettyPrinted,

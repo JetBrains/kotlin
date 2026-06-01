@@ -30,10 +30,10 @@ internal class LLFirModuleResolveComponents(
 
     val scopeSessionProvider: LLFirScopeSessionProvider = LLFirScopeSessionProvider.create(
         globalResolveComponents.project,
-        invalidationTrackers = listOf(
+        invalidationTrackers = [
             PsiModificationTracker.MODIFICATION_COUNT,
             ProjectRootModificationTracker.getInstance(globalResolveComponents.project),
-        )
+        ]
     )
 
     val fileStructureCache: FileStructureCache = FileStructureCache(this)

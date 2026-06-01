@@ -15,7 +15,7 @@ class ConeClassLikeTypeImpl(
     override val lookupTag: ConeClassLikeLookupTag,
     typeArguments: Array<out ConeTypeProjection>,
     override val isMarkedNullable: Boolean,
-    override val attributes: ConeAttributes = ConeAttributes.Empty
+    override val attributes: ConeAttributes = [],
 ) : ConeClassLikeType() {
     override val typeArguments: Array<out ConeTypeProjection> = if (typeArguments.isEmpty()) EMPTY_ARRAY else typeArguments
 

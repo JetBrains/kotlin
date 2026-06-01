@@ -122,7 +122,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
                         context.session.languageVersionSettings
                     ) == true
                 }
-                else -> actualTargets.any { it in (redundantTargetMap[modifierToken] ?: emptySet()) }
+                else -> actualTargets.any { it in (redundantTargetMap[modifierToken] ?: []) }
             }
             if (checkResult) {
                 reporter.reportOn(

@@ -36,14 +36,14 @@ object Snapshots : TemplateGroupBase() {
         }
     }
 
-    private fun optimizedSequenceToCollection(emptyFactory: String, singleElementFactory: String, dstType: String) =
+    private fun optimizedSequenceToCollection(dstType: String) =
         """
         val it = iterator()
         if (!it.hasNext())
-            return $emptyFactory()
+            return []
         val element = it.next()
         if (!it.hasNext())
-            return $singleElementFactory(element)
+            return [element]
         val dst = $dstType<T>()
         dst.add(element)
         while (it.hasNext()) dst.add(it.next())
@@ -66,22 +66,22 @@ object Snapshots : TemplateGroupBase() {
             """
             if (this is Collection) {
                 return when (size) {
-                    0 -> emptySet()
-                    1 -> setOf(if (this is List) this[0] else iterator().next())
+                    0 -> []
+                    1 -> [if (this is List) this[0] else iterator().next()]
                     else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
                 }
             }
             return toCollection(LinkedHashSet<T>()).optimizeReadOnlySet()
             """
         }
-        body(Sequences) { optimizedSequenceToCollection("emptySet", "setOf", "LinkedHashSet") }
+        body(Sequences) { optimizedSequenceToCollection("LinkedHashSet") }
         body(CharSequences, ArraysOfObjects, ArraysOfPrimitives) {
             val size = f.code.size
             val capacity = if (f == CharSequences || primitive == PrimitiveType.Char) "$size.coerceAtMost(128)" else size
             """
             return when ($size) {
-                0 -> emptySet()
-                1 -> setOf(this[0])
+                0 -> []
+                1 -> [this[0]]
                 else -> toCollection(LinkedHashSet<T>(mapCapacity($capacity)))
             }
             """
@@ -166,8 +166,8 @@ object Snapshots : TemplateGroupBase() {
             """
             if (this is Collection) {
                 return when (size) {
-                    0 -> emptyList()
-                    1 -> listOf(if (this is List) get(0) else iterator().next())
+                    0 -> []
+                    1 -> [if (this is List) get(0) else iterator().next()]
                     else -> this.toMutableList()
                 }
             }
@@ -177,8 +177,8 @@ object Snapshots : TemplateGroupBase() {
         body(CharSequences, ArraysOfPrimitives) {
             """
             return when (${f.code.size}) {
-                0 -> emptyList()
-                1 -> listOf(this[0])
+                0 -> []
+                1 -> [this[0]]
                 else -> this.toMutableList()
             }
             """
@@ -187,26 +187,26 @@ object Snapshots : TemplateGroupBase() {
         body(ArraysOfObjects) {
             """
             return when (${f.code.size}) {
-                0 -> emptyList()
-                1 -> listOf(this[0])
+                0 -> []
+                1 -> [this[0]]
                 else -> copyOf().asList()
             }
             """
         }
-        body(Sequences) { optimizedSequenceToCollection("emptyList", "listOf", "ArrayList") }
+        body(Sequences) { optimizedSequenceToCollection("ArrayList") }
         specialFor(Maps) {
             doc { "Returns a [List] containing all key-value pairs." }
             returns("List<Pair<K, V>>")
             body {
                 """
                 if (size == 0)
-                    return emptyList()
+                    return []
                 val iterator = entries.iterator()
                 if (!iterator.hasNext())
-                    return emptyList()
+                    return []
                 val first = iterator.next()
                 if (!iterator.hasNext())
-                    return listOf(first.toPair())
+                    return [first.toPair()]
                 val result = ArrayList<Pair<K, V>>(size)
                 result.add(first.toPair())
                 do {

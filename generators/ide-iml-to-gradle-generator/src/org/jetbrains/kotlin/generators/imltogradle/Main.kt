@@ -23,7 +23,7 @@ private val INTELLIJ_REPO_ROOT = KOTLIN_REPO_ROOT.resolve("intellij").resolve("c
     ?: KOTLIN_REPO_ROOT.resolve("intellij")
 
 // These modules are used in Kotlin plugin and IDEA doesn't publish artifact of these modules
-private val intellijModulesForWhichGenerateBuildGradle = listOf(
+private val intellijModulesForWhichGenerateBuildGradle = [
     "intellij.platform.debugger.testFramework",
     "intellij.gradle.tests",
     "intellij.platform.externalSystem.tests",
@@ -40,18 +40,18 @@ private val intellijModulesForWhichGenerateBuildGradle = listOf(
     "intellij.platform.configurationStore.tests",
     "intellij.statsCollector.tests",
     "intellij.groovy.uast.tests",
-)
+]
 
-private val intellijModulesToIgnore = listOf(
+private val intellijModulesToIgnore = [
     "kotlin.util.compiler-dependencies",
     "intellij.gradle.java.tests",
     "intellij.grazie.tests",
-)
+]
 
 fun main() {
     val ijCommunityModuleNameToJpsModuleMapping = INTELLIJ_REPO_ROOT.loadJpsProject().modules.associateBy { it.name }
 
-    val skipDirNames = setOf("src", "out", "org", "com", "testData")
+    val skipDirNames: Set<String> = ["src", "out", "org", "com", "testData"]
     val imlFiles = INTELLIJ_REPO_ROOT
         .walk()
         .onEnter { dir -> dir.name !in skipDirNames }
@@ -94,11 +94,11 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
 
     return when {
         lib.name == "kotlin-stdlib-jdk8" || lib.name == "kotlinc.kotlin-stdlib" -> {
-            listOf(
+            [
                 JpsLikeJarDependency("kotlinStdlib()", scope, dependencyConfiguration = null, exported = exported),
                 // TODO remove hack (for some reason we have to specify :kotlin-stdlib-jdk7 explicitly, otherwise compilation doesn't pass)
                 JpsLikeJarDependency("project(\":kotlin-stdlib-jdk7\")", scope, dependencyConfiguration = null, exported = exported)
-            )
+            ]
         }
         kotlincArtifactId != null -> {
             val dependencyNotation =
@@ -106,7 +106,7 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
                     "project(\":prepare:ide-plugin-dependencies:$kotlincArtifactId\")"
                 else
                     "project(\":$kotlincArtifactId\")"
-            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration = null, exported = exported))
+            [JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration = null, exported = exported)]
         }
         mavenRepositoryLibraryDescriptor == null -> {
             lib.getRootUrls(JpsOrderRootType.COMPILED)
@@ -129,7 +129,7 @@ fun convertJpsLibrary(lib: JpsLibrary, scope: JpsJavaDependencyScope, exported: 
             val dependencyNotation = "\"${mavenRepositoryLibraryDescriptor.mavenId}\""
             val dependencyConfiguration =
                 "{ isTransitive = false }".takeIf { !mavenRepositoryLibraryDescriptor.isIncludeTransitiveDependencies }
-            listOf(JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration, exported = exported))
+            [JpsLikeJarDependency(dependencyNotation, scope, dependencyConfiguration, exported = exported)]
         }
     }
 }
@@ -139,19 +139,19 @@ fun convertIntellijDependencyNotFollowingTransitive(dep: JpsDependencyDescriptor
         is Either.First -> {
             when (val moduleName = moduleOrLibrary.value.name) {
                 in intellijModulesForWhichGenerateBuildGradle -> {
-                    listOf(JpsLikeModuleDependency(":kotlin-ide.$moduleName", dep.scope, exported))
+                    [JpsLikeModuleDependency(":kotlin-ide.$moduleName", dep.scope, exported)]
                 }
-                in intellijModulesToIgnore -> emptyList()
+                in intellijModulesToIgnore -> []
                 else -> {
                     val (groupId, artifactId) = MavenArtifactsBuilder.generateMavenCoordinates(moduleName)
-                    listOf(
+                    [
                         JpsLikeJarDependency(
                             GradleDependencyNotation.IntellijMavenDepGradleDependencyNotation(groupId, artifactId).dependencyNotation,
                             dep.scope,
                             dependencyConfiguration = null,
                             exported
                         )
-                    )
+                    ]
                 }
             }
         }
@@ -163,7 +163,7 @@ fun convertJpsModuleDependency(dep: JpsModuleDependency): List<JpsLikeDependency
     val moduleName = dep.moduleReference.moduleName
     return when {
         moduleName.startsWith("kotlin.") -> {
-            listOf(JpsLikeModuleDependency(":kotlin-ide.$moduleName", dep.scope, dep.isExported))
+            [JpsLikeModuleDependency(":kotlin-ide.$moduleName", dep.scope, dep.isExported)]
         }
         moduleName.startsWith("intellij.") -> {
             dep.module.orElse { error("Cannot resolve dependency ${dep.moduleReference.moduleName}") }

@@ -317,7 +317,7 @@ fun ConeTypeProjection.withSource(source: FirTypeRefSource?): ConeTypeProjection
         source == null || this !is ConeKotlinTypeProjection -> this
         else -> {
             // Prefer existing source information.
-            val attributes = ConeAttributes.create(listOf(SourceAttribute(source))).add(type.attributes)
+            val attributes = ConeAttributes.create([SourceAttribute(source)]).add(type.attributes)
             replaceType(type.withAttributes(attributes))
         }
     }
@@ -356,7 +356,7 @@ abstract class FirPlatformUpperBoundsProvider : FirComposableSessionComponent<Fi
 private val FirSession.platformUpperBoundsProvider: FirPlatformUpperBoundsProvider? by FirSession.nullableSessionComponentAccessor()
 val FirSession.platformUpperBoundsProviders: List<FirPlatformUpperBoundsProvider>
     get() = when (val component = platformUpperBoundsProvider) {
-        null -> emptyList()
+        null -> []
         is FirPlatformUpperBoundsProvider.Composed -> component.components
-        else -> listOf(component)
+        else -> [component]
     }

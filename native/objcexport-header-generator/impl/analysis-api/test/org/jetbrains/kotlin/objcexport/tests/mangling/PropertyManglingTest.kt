@@ -32,7 +32,7 @@ class PropertyManglingTest(
             val property = mangleObjCProperties(properties).filterIsInstance<ObjCProperty>().first()
 
             assertEquals("bar", property.name)
-            assertEquals(listOf("readonly", "getter=bar_"), property.propertyAttributes)
+            assertEquals(["readonly", "getter=bar_"], property.propertyAttributes)
         }
     }
 
@@ -50,7 +50,7 @@ class PropertyManglingTest(
             val property = mangleObjCProperties(properties).filterIsInstance<ObjCProperty>().first()
 
             assertEquals("bar", property.name)
-            assertEquals(listOf("readonly"), property.propertyAttributes)
+            assertEquals(["readonly"], property.propertyAttributes)
         }
     }
 

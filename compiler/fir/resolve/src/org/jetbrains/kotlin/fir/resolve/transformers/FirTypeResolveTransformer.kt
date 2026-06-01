@@ -72,7 +72,7 @@ fun <F : FirClassLikeDeclaration> F.runTypeResolvePhaseForLocalClass(
 open class FirTypeResolveTransformer(
     final override val session: FirSession,
     @property:PrivateForInline val scopeSession: ScopeSession,
-    initialScopes: List<FirScope> = emptyList(),
+    initialScopes: List<FirScope> = [],
     initialCurrentFile: FirFile? = null,
     @property:PrivateForInline val classDeclarationsStack: ArrayDeque<FirClass> = ArrayDeque()
 ) : FirAbstractTreeTransformer<Any?>(FirResolvePhase.TYPES) {
@@ -138,7 +138,7 @@ open class FirTypeResolveTransformer(
         return withScopeCleanup {
             // TODO: robuster matching and error reporting on no extension (KT-72969)
             session.replSnippetResolveExtension?.getSnippetScope(replSnippet, session)?.let {
-                addScopes(listOf(it))
+                addScopes([it])
             }
 
             action()
@@ -332,13 +332,13 @@ open class FirTypeResolveTransformer(
     private fun unboundCyclesInTypeParametersSupertypes(typeParametersOwner: FirTypeParameterRefsOwner) {
         for (typeParameter in typeParametersOwner.typeParameters) {
             if (typeParameter !is FirTypeParameter) continue
-            if (hasSupertypePathToParameter(typeParameter, typeParameter, mutableSetOf())) {
+            if (hasSupertypePathToParameter(typeParameter, typeParameter, [])) {
                 val errorType = buildErrorTypeRef {
                     diagnostic = ConeCyclicTypeBound(typeParameter.symbol, typeParameter.bounds.toImmutableList())
                     source = typeParameter.bounds.first().source
                 }
                 typeParameter.replaceBounds(
-                    listOf(errorType)
+                    [errorType]
                 )
             }
         }
@@ -535,7 +535,7 @@ open class FirTypeResolveTransformer(
             useSiteSession = session
         ).asReversed()
 
-        val scopesToAdd = mutableListOf<FirScope>()
+        val scopesToAdd: MutableList<FirScope> = []
 
         for (superType in superTypes) {
             superType.lookupTag.getNestedClassifierScope(session, scopeSession)?.let { nestedClassifierScope ->

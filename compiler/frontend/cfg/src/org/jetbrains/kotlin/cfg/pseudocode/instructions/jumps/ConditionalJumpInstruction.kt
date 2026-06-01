@@ -48,7 +48,7 @@ class ConditionalJumpInstruction(
         }
 
     override val nextInstructions: Collection<Instruction>
-        get() = listOf(nextOnFalse, nextOnTrue)
+        get() = [nextOnFalse, nextOnTrue]
 
     override val inputValues: List<PseudoValue>
         get() = listOfNotNull(conditionValue)

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractRestrictedAnalysisTest : AbstractAnalysisApiBasedTest() {
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(RestrictedAnalysisTestServiceRegistrar)
+        get() = super.additionalServiceRegistrars + RestrictedAnalysisTestServiceRegistrar
 
     protected val KtTestModule.restrictedAnalysisService: SwitchableRestrictedAnalysisService
         get() = SwitchableRestrictedAnalysisService.getInstance(this.ktModule.project)

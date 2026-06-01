@@ -29,20 +29,22 @@ abstract class AbstractNativeCExportInterfaceV1HeaderTest() : AbstractNativeSimp
         val goldenDataHeaderFile = resolveTargetSpecificGoldenDataFile(path)
 
         val moduleName: String = path.nameWithoutExtension
-        val module = TestModule.Exclusive(moduleName, emptySet(), emptySet(), emptySet())
+        val module = TestModule.Exclusive(moduleName, [], [], [])
         module.files += TestFile.createCommitted(path.toFile(), module)
 
         val testCase = TestCase(
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(module),
-            freeCompilerArgs = TestCompilerArgs(listOf(
-                "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
-                "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
-                "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
-                "-opt-in", "kotlin.experimental.ExperimentalObjCRefinement",
-                "-Xbinary=cInterfaceMode=v1",
-            )),
+            modules = [module],
+            freeCompilerArgs = TestCompilerArgs(
+                [
+                    "-opt-in", "kotlin.experimental.ExperimentalNativeApi",
+                    "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
+                    "-opt-in", "kotlin.native.internal.InternalForKotlinNative",
+                    "-opt-in", "kotlin.experimental.ExperimentalObjCRefinement",
+                    "-Xbinary=cInterfaceMode=v1",
+                ]
+            ),
             nominalPackageName = PackageName(moduleName),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
             extras = TestCase.NoTestRunnerExtras()

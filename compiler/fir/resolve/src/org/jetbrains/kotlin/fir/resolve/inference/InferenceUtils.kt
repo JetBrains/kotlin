@@ -103,7 +103,7 @@ fun extractLambdaInfoFromFunctionType(
 
     val contextParameters =
         when {
-            contextParameterNumber == 0 -> emptyList()
+            contextParameterNumber == 0 -> []
             lambda.isLambda -> valueParametersTypesIncludingReceiver.subList(0, contextParameterNumber)
             else -> lambda.contextParameters.map { it.returnTypeRef.coneType }
         }

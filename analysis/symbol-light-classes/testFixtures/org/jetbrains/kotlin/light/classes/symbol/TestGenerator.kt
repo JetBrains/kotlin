@@ -75,7 +75,7 @@ private fun lightClassesTestsInit(
 ): TestGroup.TestClass.() -> Unit = {
     model(
         relativeRootPath = path,
-        excludeDirs = if (isLibrary) listOf("compilationErrors") else emptyList(),
+        excludeDirs = if (isLibrary) ["compilationErrors"] else [],
         pattern = if (isLibrary) TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME else TestGeneratorUtil.KT_OR_KTS_WITHOUT_DOTS_IN_NAME,
     )
 }

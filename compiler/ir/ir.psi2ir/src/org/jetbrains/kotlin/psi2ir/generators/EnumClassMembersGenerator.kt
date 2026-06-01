@@ -53,7 +53,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 valuesFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(
-                    irFunction, null, null, emptyList()
+                    irFunction, null, null, []
                 )
                 irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUES)
             }
@@ -74,7 +74,7 @@ class EnumClassMembersGenerator(declarationGenerator: DeclarationGenerator) : De
                 valueOfFunction
             ).also { irFunction ->
                 FunctionGenerator(declarationGenerator).generateFunctionParameterDeclarationsAndReturnType(
-                    irFunction, null, null, emptyList()
+                    irFunction, null, null, []
                 )
                 irFunction.body = IrSyntheticBodyImpl(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, IrSyntheticBodyKind.ENUM_VALUEOF)
             }

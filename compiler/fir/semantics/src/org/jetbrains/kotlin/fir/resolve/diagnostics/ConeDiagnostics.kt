@@ -46,8 +46,8 @@ interface ConeDiagnosticWithCandidates : ConeDiagnostic {
 interface ConeDiagnosticWithSingleCandidate : ConeDiagnosticWithCandidates {
     val candidate: AbstractCallCandidate<*>
     val candidateSymbol: FirBasedSymbol<*> get() = candidate.symbol
-    override val candidates: Collection<AbstractCallCandidate<*>> get() = listOf(candidate)
-    override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = listOf(candidateSymbol)
+    override val candidates: Collection<AbstractCallCandidate<*>> get() = [candidate]
+    override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = [candidateSymbol]
 }
 
 class ConeUnresolvedReferenceError(val name: Name) : ConeUnresolvedError {

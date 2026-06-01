@@ -42,7 +42,7 @@ internal class LLFirJavaAnnotationProvider(
     private fun computePackageAnnotations(psi: PsiPackage): List<JavaAnnotation> {
         val directories = psi.getDirectories(scope)
         if (directories.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         return buildList {

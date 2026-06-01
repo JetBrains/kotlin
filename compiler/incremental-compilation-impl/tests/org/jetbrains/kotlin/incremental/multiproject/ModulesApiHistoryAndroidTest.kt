@@ -61,7 +61,7 @@ class ModulesApiHistoryAndroidTest {
         val info = IncrementalModuleInfo(
             rootProjectBuildDir = projectRoot.resolve("build"),
             dirToModule = mapOf(appKotlinDestination to appEntry, libKotlinDestination to libEntry),
-            nameToModules = mapOf("app" to setOf(appEntry), "lib" to setOf(libEntry)),
+            nameToModules = mapOf("app" to [appEntry], "lib" to [libEntry]),
             jarToClassListFile = mapOf(),
             jarToModule = mapOf(),
             jarToAbiSnapshot = mapOf()
@@ -77,9 +77,9 @@ class ModulesApiHistoryAndroidTest {
             it
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(changed))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([changed])
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory), changedFiles.value)
+        assertEquals([appHistory], changedFiles.value)
     }
 
     @Test
@@ -89,9 +89,9 @@ class ModulesApiHistoryAndroidTest {
             it
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(changed))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([changed])
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory), changedFiles.value)
+        assertEquals([appHistory], changedFiles.value)
     }
 
     @Test
@@ -103,7 +103,7 @@ class ModulesApiHistoryAndroidTest {
 
         val changedFiles = androidHistory.historyFilesForChangedFiles(changed)
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory), changedFiles.value)
+        assertEquals([appHistory], changedFiles.value)
     }
 
     @Test
@@ -113,7 +113,7 @@ class ModulesApiHistoryAndroidTest {
             it
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(changed))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([changed])
         assertTrue(changedFiles is Either.Error, "Fetching history should fail for file outside classes dir.")
     }
 
@@ -128,9 +128,9 @@ class ModulesApiHistoryAndroidTest {
             it
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(changedApp, changedLib))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([changedApp, changedLib])
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory, libHistory), changedFiles.value)
+        assertEquals([appHistory, libHistory], changedFiles.value)
     }
 
     @Test
@@ -143,9 +143,9 @@ class ModulesApiHistoryAndroidTest {
             it.closeEntry()
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(jarFile))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([jarFile])
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory), changedFiles.value)
+        assertEquals([appHistory], changedFiles.value)
     }
 
     @Test
@@ -164,8 +164,8 @@ class ModulesApiHistoryAndroidTest {
             it.closeEntry()
         }
 
-        val changedFiles = androidHistory.historyFilesForChangedFiles(setOf(appJar, libJar))
+        val changedFiles = androidHistory.historyFilesForChangedFiles([appJar, libJar])
         changedFiles as Either.Success<Set<File>>
-        assertEquals(setOf(appHistory, libHistory), changedFiles.value)
+        assertEquals([appHistory, libHistory], changedFiles.value)
     }
 }

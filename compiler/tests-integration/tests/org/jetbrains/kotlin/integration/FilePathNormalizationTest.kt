@@ -369,7 +369,7 @@ class FilePathNormalizationTest : KotlinIntegrationTestBase() {
         val module = ModuleBuilder("", "", "").apply {
             addClasspathEntry(linkToLibDir.path)
         }
-        configuration.configureSourceRoots(listOf(module))
+        configuration.configureSourceRoots([module])
 
         val classpathRoot = configuration.get(CLIConfigurationKeys.CONTENT_ROOTS)?.singleOrNull() as? JvmClasspathRoot
             ?: error("Not a JvmClasspathRoot")

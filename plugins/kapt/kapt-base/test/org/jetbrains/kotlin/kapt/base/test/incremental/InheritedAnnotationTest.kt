@@ -40,10 +40,10 @@ class TestInheritedAnnotation {
             ).map { File(MY_TEST_DIR, it) }
             runAnnotationProcessing(
                 srcFiles,
-                listOf(processor),
+                [processor],
                 generatedSources
             ) { elementUtils, trees -> MentionedTypesTaskListener(cache.javaCache, elementUtils, trees) }
-            cache.updateCache(listOf(processor), false)
+            cache.updateCache([processor], false)
         }
     }
 

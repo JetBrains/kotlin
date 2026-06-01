@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.generators.tree.ElementRef as GenericElementRef
 
 class Element(name: String, override val propertyName: String, kind: Kind) : AbstractElement<Element, Field, Implementation>(name) {
     companion object {
-        private val allowedKinds = setOf(
+        private val allowedKinds: Set<ImplementationKind> = [
             ImplementationKind.Interface,
             ImplementationKind.SealedInterface,
             ImplementationKind.AbstractClass,
             ImplementationKind.SealedClass
-        )
+        ]
     }
 
     override val namePrefix: String
@@ -43,10 +43,10 @@ class Element(name: String, override val propertyName: String, kind: Kind) : Abs
         get() = true
 
     override val walkableChildren: List<Field>
-        get() = emptyList() // Use Implementation#walkableChildren instead
+        get() = [] // Use Implementation#walkableChildren instead
 
     override val transformableChildren: List<Field>
-        get() = emptyList() // Use Implementation#transformableChildren instead
+        get() = [] // Use Implementation#transformableChildren instead
 
     override val visitorParameterName: String
         get() = safeDecapitalizedName

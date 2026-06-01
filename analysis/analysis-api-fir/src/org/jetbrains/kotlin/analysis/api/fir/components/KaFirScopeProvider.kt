@@ -182,7 +182,7 @@ internal class KaFirScopeProvider(
                 // The static scope contains inner classes, so we need to exclude them from the non-static scope to avoid duplicates.
                 val nonStaticScope = FirNoClassifiersScope(getBaseUseSiteScope())
                 getStaticScope()
-                    ?.let { staticScope -> FirNameAwareCompositeScope(listOf(nonStaticScope, staticScope)) }
+                    ?.let { staticScope -> FirNameAwareCompositeScope([nonStaticScope, staticScope]) }
                     ?: nonStaticScope
             }
         }
@@ -280,7 +280,7 @@ internal class KaFirScopeProvider(
             val firImportingScopesIndexed = firImportingScopes.asReversed().withIndex()
 
             val ktScopesWithKinds = createScopesWithKind(firImportingScopesIndexed)
-            return KaBaseScopeContext(ktScopesWithKinds, implicitValues = emptyList(), token)
+            return KaBaseScopeContext(ktScopesWithKinds, implicitValues = [], token)
         }
 
     // Do not check [this] psi validity as it is not used
@@ -350,7 +350,7 @@ internal class KaFirScopeProvider(
     private fun flattenFirScope(firScope: FirScope): List<FirScope> = when (firScope) {
         is FirCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
         is FirNameAwareCompositeScope -> firScope.scopes.flatMap { flattenFirScope(it) }
-        else -> listOf(firScope)
+        else -> [firScope]
     }
 
     private fun convertToKtScope(firScope: FirScope): KaScope {

@@ -58,7 +58,7 @@ class PrimaryConstructorLowering(val context: JsCommonBackendContext) : Declarat
         }
 
         declaration.body = irClass.run {
-            factory.createBlockBody(startOffset, endOffset, listOf(IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, unitType)))
+            factory.createBlockBody(startOffset, endOffset, [IrInstanceInitializerCallImpl(startOffset, endOffset, symbol, unitType)])
         }
 
         return declaration

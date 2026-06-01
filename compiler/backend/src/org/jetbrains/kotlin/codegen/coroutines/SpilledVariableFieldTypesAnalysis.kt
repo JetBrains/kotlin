@@ -36,7 +36,7 @@ private class IntLikeCoerceInterpreter : OptimizationBasicInterpreter() {
 
     override fun copyOperation(insn: AbstractInsnNode, value: BasicValue?): BasicValue? =
         when {
-            insn.opcode == Opcodes.ILOAD -> IloadedValue(setOf(insn as VarInsnNode))
+            insn.opcode == Opcodes.ILOAD -> IloadedValue([insn as VarInsnNode])
             value == null -> null
             else -> BasicValue(value.type)
         }

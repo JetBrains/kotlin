@@ -76,10 +76,10 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
             isTest = true,
             outputDir = outDir,
             sourcesToCompile = filesToCompile.toList(),
-            commonSources = emptyList(),
-            javaSourceRoots = listOf(JvmSourceRoot(srcDir, null)),
+            commonSources = [],
+            javaSourceRoots = [JvmSourceRoot(srcDir, null)],
             classpath = listOf(outDir, PathUtil.kotlinPathsForDistDirectoryForTests.stdlibPath).filter { it.exists() },
-            friendDirs = emptyList()
+            friendDirs = []
         )
 
         val args = K2JVMCompilerArguments().apply {
@@ -105,7 +105,7 @@ abstract class AbstractJvmLookupTrackerTest : AbstractLookupTrackerTest() {
 }
 
 abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
-    private val DECLARATION_KEYWORDS = listOf("interface", "class", "enum class", "object", "fun", "operator fun", "val", "var")
+    private val DECLARATION_KEYWORDS = ["interface", "class", "enum class", "object", "fun", "operator fun", "val", "var"]
     private val DECLARATION_STARTS_WITH = DECLARATION_KEYWORDS.map { it + " " }
 
     // ignore KDoc like comments which starts with `/**`, example: /** text */
@@ -180,7 +180,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
 
         val filesToLookups = arrayListOf<Map<File, List<LookupInfo>>>()
         fun CompilerOutput.originalFilesToLookups() =
-            compiledFiles.associateBy({ workToOriginalFileMap[it]!! }, { lookups[it] ?: emptyList() })
+            compiledFiles.associateBy({ workToOriginalFileMap[it]!! }, { lookups[it] ?: [] })
 
         make(dirtyFiles).apply {
             logOutput("INITIAL BUILD")
@@ -237,7 +237,7 @@ abstract class AbstractLookupTrackerTest : TestWithWorkingDir() {
         }
 
         val lookups = lookupTracker.lookups.groupBy { File(it.filePath) }
-        val lookupsFromCompiledFiles = filesToCompile.associateWith { (lookups[it] ?: emptyList()) }
+        val lookupsFromCompiledFiles = filesToCompile.associateWith { (lookups[it] ?: []) }
         return CompilerOutput(exitCode.toString(), messageCollector.errors.map { it.message }, filesToCompile, lookupsFromCompiledFiles)
     }
 

@@ -26,7 +26,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
     open val isParameter: Boolean
         get() = false
 
-    open val arbitraryImportables: MutableList<Importable> = mutableListOf()
+    open val arbitraryImportables: MutableList<Importable> = []
 
     open var optInAnnotation: ClassRef<*>? = null
     open var replaceOptInAnnotation: ClassRef<*>? = null
@@ -89,7 +89,7 @@ abstract class AbstractField<Field : AbstractField<Field>> {
      */
     abstract val isChild: Boolean
 
-    open val overriddenFields: MutableSet<Field> = mutableSetOf<Field>()
+    open val overriddenFields: MutableSet<Field> = []
 
     open fun updatePropertiesFromOverriddenFields(parentFields: List<Field>) {
         overriddenFields += parentFields

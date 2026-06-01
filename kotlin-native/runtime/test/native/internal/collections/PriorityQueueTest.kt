@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 
 class PriorityQueueTest {
-    val testData = listOf(108, 42, 37, 4, 8, 15, 16, 23, 42)
+    val testData = [108, 42, 37, 4, 8, 15, 16, 23, 42]
 
     @Test
     fun addAndFirstElement() {

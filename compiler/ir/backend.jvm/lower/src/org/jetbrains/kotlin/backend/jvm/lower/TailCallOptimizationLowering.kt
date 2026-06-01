@@ -49,7 +49,7 @@ internal class TailCallOptimizationLowering(private val context: JvmBackendConte
 
 private class TailCallOptimizationData(val function: IrSimpleFunction) {
     val returnsUnit = function.returnType.isUnit()
-    val tailCalls = mutableSetOf<IrCall>()
+    val tailCalls: MutableSet<IrCall> = []
 
     // Collect all tail calls, including those nested in `when`s, which are not arguments to `return`s.
     private fun IrStatement.findCallsOnTailPositionWithoutImmediateReturn(immediateReturn: Boolean = false) {

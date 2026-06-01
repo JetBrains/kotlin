@@ -46,7 +46,7 @@ abstract class AbstractDiagnosticsDataClassRenderer : DiagnosticListRenderer() {
             packageName = packageName,
             importableTypes,
             simpleImports,
-            starImports = emptyList()
+            starImports = []
         )
     }
 

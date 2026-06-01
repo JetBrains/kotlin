@@ -50,7 +50,7 @@ class NativeDeserializerFacade(
 ) : DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>(testServices, ArtifactKinds.KLib, BackendKinds.IrBackend) {
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::LibraryProvider), service(::ModuleDescriptorProvider))
+        get() = [service(::LibraryProvider), service(::ModuleDescriptorProvider)]
 
     override fun shouldTransform(module: TestModule): Boolean {
         return testServices.defaultsProvider.backendKind == outputKind
@@ -119,17 +119,17 @@ class NativeDeserializerFacade(
             forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             stubGenerator = stubGenerator,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,
-            exportedDependencies = emptyList(),
+            exportedDependencies = [],
             partialLinkageConfig = PartialLinkageConfig(partialLinkageLogLevel),
             irDiagnosticReporter = irDiagnosticReporter,
             libraryBeingCached = null,
-            externalOverridabilityConditions = listOf(IrObjCOverridabilityCondition),
+            externalOverridabilityConditions = [IrObjCOverridabilityCondition],
         )
 
         val moduleDependencies: IrModuleDependencies = deserializeDependencies(sortedDependencies, irLinker, mainModuleLib, mapping)
 
         irLinker.init(null)
-        ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+        ExternalDependenciesGenerator(symbolTable, [irLinker]).generateUnboundSymbolsAsDependencies()
         irLinker.postProcess(inOrAfterLinkageStep = true)
 
         return IrModuleInfo(
@@ -151,7 +151,7 @@ class NativeDeserializerFacade(
         mainModuleLib: KotlinLibrary?,
         mapping: (KotlinLibrary) -> ModuleDescriptor,
     ): IrModuleDependencies {
-        val all: MutableList<IrModuleFragment> = mutableListOf()
+        val all: MutableList<IrModuleFragment> = []
         var stdlib: IrModuleFragment? = null
         var included: IrModuleFragment? = null
 

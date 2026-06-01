@@ -8,20 +8,20 @@ package org.jetbrains.kotlin.generators.util
 import java.io.File
 
 private const val TAGS_FILE_NAME = "_tags.txt"
-private val PROHIBITED_SYMBOLS = listOf(' ', ',', '(', ')', '&', '|', '!')
+private val PROHIBITED_SYMBOLS = [' ', ',', '(', ')', '&', '|', '!']
 
 fun extractTagsFromDirectory(dir: File): List<String> {
-    if (!dir.exists()) return emptyList()
+    if (!dir.exists()) return []
     require(dir.isDirectory) {
         "${dir.absolutePath} is not a directory"
     }
     val tagsFile = dir.resolve(TAGS_FILE_NAME)
-    if (!tagsFile.exists()) return emptyList()
+    if (!tagsFile.exists()) return []
     return tagsFile.readLines().filter { it.isNotBlank() }.onEach(::validateTag)
 }
 
 // TODO: support tags in testdata files
-fun extractTagsFromTestFile(@Suppress("UNUSED_PARAMETER") file: File): List<String> = emptyList()
+fun extractTagsFromTestFile(@Suppress("UNUSED_PARAMETER") file: File): List<String> = []
 
 private fun validateTag(tag: String) {
     require(PROHIBITED_SYMBOLS.none { it in tag }) {

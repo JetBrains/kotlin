@@ -94,10 +94,10 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
             append('_')
         }
 
-        val scopes = mutableListOf<MutableList<Bridge>>()
+        val scopes: MutableList<MutableList<Bridge>> = []
 
         override fun visitClass(declaration: IrClass): IrStatement {
-            val bridges = mutableListOf<Bridge>()
+            val bridges: MutableList<Bridge> = []
             scopes.push(bridges)
             declaration.transformChildrenVoid(this)
             scopes.pop()
@@ -129,7 +129,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
             if (expression.symbol != context.symbols.interopCallMarker)
                 return super.visitCall(expression)
 
-            val bridges = mutableListOf<Bridge>()
+            val bridges: MutableList<Bridge> = []
             scopes.push(bridges)
             expression.transformChildrenVoid(this)
             scopes.pop()
@@ -203,7 +203,7 @@ internal class InteropBridgesNameInventor(val generationState: NativeGenerationS
                                 )
                         )
 
-                        generationState.cStubsManager.addStub(location, listOf(declaration), language)
+                        generationState.cStubsManager.addStub(location, [declaration], language)
                     }
                     is Bridge.KotlinToC -> {
                         val language = annotation.getAnnotationStringValue("language")

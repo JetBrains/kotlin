@@ -66,7 +66,7 @@ private class PreciseJavaInteropCoordinator(
     private val reporter: BuildReporter<BuildTimeMetric, BuildPerformanceMetric>,
     messageCollector: MessageCollector,
 ) : JavaInteropCoordinator(messageCollector) {
-    private val changedUntrackedJavaClasses = mutableSetOf<ClassId>()
+    private val changedUntrackedJavaClasses: MutableSet<ClassId> = []
 
     override fun hasChangedUntrackedJavaClasses(): Boolean = changedUntrackedJavaClasses.isNotEmpty()
 
@@ -167,7 +167,7 @@ internal sealed class JavaInteropCoordinator(
 
     open fun hasChangedUntrackedJavaClasses(): Boolean = false
 
-    open fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> = emptyList()
+    open fun getAdditionalDirtyLookupSymbols(): Iterable<LookupSymbol> = []
 
     open fun makeJavaClassesTracker(platformCache: IncrementalJvmCache): JavaClassesTracker? = null
 

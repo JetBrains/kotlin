@@ -22,7 +22,7 @@ import kotlin.test.assertNull
 
 abstract class AbstractPackageSymbolTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)

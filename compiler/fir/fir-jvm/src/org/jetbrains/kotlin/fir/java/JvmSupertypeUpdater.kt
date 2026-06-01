@@ -43,7 +43,7 @@ class JvmSupertypeUpdater(private val session: FirSession) : PlatformSupertypeUp
         if (session.isMetadataCompilation && recordType.lookupTag.toRegularClassSymbol(session) == null) return
         var anyFound = false
         var hasExplicitSuperClass = false
-        val newSuperTypeRefs = firClass.superTypeRefs.mapTo(mutableListOf()) {
+        val newSuperTypeRefs: MutableList<FirTypeRef> = firClass.superTypeRefs.mapTo([]) {
             when {
                 it is FirImplicitBuiltinTypeRef && it.id == StandardClassIds.Any -> {
                     anyFound = true

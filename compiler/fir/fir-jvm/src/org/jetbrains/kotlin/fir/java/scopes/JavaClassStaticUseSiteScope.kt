@@ -34,12 +34,12 @@ class JavaClassStaticUseSiteScope internal constructor(
     }
 
     private fun computeFunctions(name: Name): MutableList<FirNamedFunctionSymbol> {
-        val superClassSymbols = mutableListOf<FirNamedFunctionSymbol>()
+        val superClassSymbols: MutableList<FirNamedFunctionSymbol> = []
         superClassScope.processFunctionsByName(name) {
             superClassSymbols.add(it)
         }
 
-        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val result: MutableList<FirNamedFunctionSymbol> = []
 
         declaredMemberScope.processFunctionsByName(name) l@{ functionSymbol ->
             if (!functionSymbol.isStatic) return@l
@@ -63,7 +63,7 @@ class JavaClassStaticUseSiteScope internal constructor(
     }
 
     private fun computeProperties(name: Name): MutableList<FirVariableSymbol<*>> {
-        val result: MutableList<FirVariableSymbol<*>> = mutableListOf()
+        val result: MutableList<FirVariableSymbol<*>> = []
         declaredMemberScope.processPropertiesByName(name) l@{ propertySymbol ->
             if (!propertySymbol.isStatic) return@l
             result.add(propertySymbol)

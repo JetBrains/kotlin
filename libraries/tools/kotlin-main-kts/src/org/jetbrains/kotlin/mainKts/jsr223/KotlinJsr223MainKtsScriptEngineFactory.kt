@@ -27,7 +27,7 @@ class KotlinJsr223MainKtsScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
     private var lastClassPath: List<File>? = null
 
     override fun getExtensions(): List<String> =
-        listOf(scriptDefinition.compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!)
+        [scriptDefinition.compilationConfiguration[ScriptCompilationConfiguration.fileExtension]!!]
 
     @Synchronized
     private fun JvmScriptCompilationConfigurationBuilder.dependenciesFromCurrentContext() {
@@ -54,6 +54,6 @@ class KotlinJsr223MainKtsScriptEngineFactory : KotlinJsr223JvmScriptEngineFactor
                 }
             },
             scriptDefinition.evaluationConfiguration
-        ) { ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)) }
+        ) { ScriptArgsWithTypes([emptyArray<String>()], [Array<String>::class]) }
 }
 

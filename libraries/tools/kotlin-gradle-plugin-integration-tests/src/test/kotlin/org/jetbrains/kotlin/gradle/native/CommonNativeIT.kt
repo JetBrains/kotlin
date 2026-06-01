@@ -23,8 +23,8 @@ class CommonNativeIT : KGPBaseTest() {
     fun testCommonIos(gradleVersion: GradleVersion) {
         doCommonNativeTest(
             "common-ios",
-            libTargets = listOf("iosLibArm64", "iosLibX64"),
-            appTargets = listOf("iosArm64", "iosX64"),
+            libTargets = ["iosLibArm64", "iosLibX64"],
+            appTargets = ["iosArm64", "iosX64"],
             gradleVersion
         )
     }
@@ -34,8 +34,8 @@ class CommonNativeIT : KGPBaseTest() {
     fun testCommonWatchos(gradleVersion: GradleVersion) {
         doCommonNativeTest(
             "common-watchos",
-            libTargets = listOf("watchosLibArm32", "watchosLibArm64", "watchosLibX64"),
-            appTargets = listOf("watchosArm32", "watchosArm64", "watchosX64"),
+            libTargets = ["watchosLibArm32", "watchosLibArm64", "watchosLibX64"],
+            appTargets = ["watchosArm32", "watchosArm64", "watchosX64"],
             gradleVersion
         )
     }
@@ -45,8 +45,8 @@ class CommonNativeIT : KGPBaseTest() {
     fun testCommonTvos(gradleVersion: GradleVersion) {
         doCommonNativeTest(
             "common-tvos",
-            libTargets = listOf("tvosLibArm64", "tvosLibX64"),
-            appTargets = listOf("tvosArm64", "tvosX64"),
+            libTargets = ["tvosLibArm64", "tvosLibX64"],
+            appTargets = ["tvosArm64", "tvosX64"],
             gradleVersion
         )
     }

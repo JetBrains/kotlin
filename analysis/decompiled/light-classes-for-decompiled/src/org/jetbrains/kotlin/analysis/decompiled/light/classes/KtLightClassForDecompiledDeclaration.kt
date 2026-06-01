@@ -49,7 +49,7 @@ open class KtLightClassForDecompiledDeclaration(
     private val contentFinderCache by lazyPub {
         ClassContentFinderCache(
             extensibleClass = this,
-            modificationTrackers = listOf(KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)),
+            modificationTrackers = [KotlinAsJavaSupportBase.getInstance(project).librariesTracker(this)],
         )
     }
 

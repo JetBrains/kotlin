@@ -281,7 +281,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
         }
 
         private fun createFakeFormalTypeParameters(sourceTypeParameters: List<IrTypeParameter>, irClass: IrClass): List<IrTypeParameter> {
-            if (sourceTypeParameters.isEmpty()) return emptyList()
+            if (sourceTypeParameters.isEmpty()) return []
 
             val fakeTypeParameters = sourceTypeParameters.map {
                 buildTypeParameter(irClass) {
@@ -347,7 +347,7 @@ internal class FunctionReferenceLowering(private val context: JvmBackendContext)
                     // arity, [receivers], owner, name, signature, flags
                     it.parameters.size == 1 + boundReceivers.size + 4
                 }
-                irCallConstructor(constructor.symbol, emptyList()).apply {
+                irCallConstructor(constructor.symbol, []).apply {
                     generateConstructorCallArguments(this) { irGet(boundReceiverVars[it].symbol) }
                 }
             }.generate()

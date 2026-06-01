@@ -60,16 +60,16 @@ class CustomWebCompilerFirstStageFacade(testServices: TestServices) : CustomKlib
                     CommonCompilerArguments::disableDefaultScriptingPlugin.cliArgument,
                 ),
                 runIf(regularDependencies.isNotEmpty()) {
-                    listOf(
+                    [
                         K2JSCompilerArguments::libraries.cliArgument,
                         regularDependencies.joinToString(File.pathSeparator),
-                    )
+                    ]
                 },
                 runIf(friendDependencies.isNotEmpty()) {
-                    listOf(K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator)))
+                    [K2JSCompilerArguments::friendModules.cliArgument(friendDependencies.joinToString(File.pathSeparator))]
                 },
                 runIf(testServices.targetPlatformProvider.getTargetPlatform(module).isWasmJs()) {
-                    listOf(K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.JS.alias))
+                    [K2JSCompilerArguments::wasmTarget.cliArgument(WasmTarget.JS.alias)]
                 },
                 customArgs,
                 sources,

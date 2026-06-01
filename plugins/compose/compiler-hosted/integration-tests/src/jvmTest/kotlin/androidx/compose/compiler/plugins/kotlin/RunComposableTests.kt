@@ -479,7 +479,7 @@ class RunComposableTests : AbstractCodegenTest() {
         setContentMethod.isAccessible = true
 
         val realComposable: (Composer, Int) -> Unit = { composer, _ ->
-            testMethod.invoke(instanceOfClass, *emptyArray(), composer, 1)
+            testMethod.invoke(instanceOfClass, *[], composer, 1)
         }
 
         val composition = Composition(UnitApplier(), createRecomposer())

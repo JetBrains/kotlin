@@ -68,7 +68,7 @@ fun makeModuleFile(
         "java-production",
         isTest,
         // this excludes the output directories from the class path, to be removed for true incremental compilation
-        setOf(outputDir),
+        [outputDir],
         friendDirs,
         isIncrementalMode
     )
@@ -140,9 +140,9 @@ fun LookupStorage.update(
 }
 
 data class DirtyData(
-    val dirtyLookupSymbols: Collection<LookupSymbol> = emptyList(),
-    val dirtyClassesFqNames: Collection<FqName> = emptyList(),
-    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = emptyList()
+    val dirtyLookupSymbols: Collection<LookupSymbol> = [],
+    val dirtyClassesFqNames: Collection<FqName> = [],
+    val dirtyClassesFqNamesForceRecompile: Collection<FqName> = []
 )
 
 /**
@@ -152,7 +152,7 @@ data class DirtyData(
  */
 fun ChangesCollector.getChangedSymbols(reporter: ICReporter): DirtyData {
     // Caches are used to compute impacted symbols. Set `caches = emptyList()` so that we get changed symbols only, not impacted ones.
-    return changes().getChangedAndImpactedSymbols(caches = emptyList(), reporter)
+    return changes().getChangedAndImpactedSymbols(caches = [], reporter)
 }
 
 /**
@@ -185,7 +185,7 @@ fun List<ChangeInfo>.getChangedAndImpactedSymbols(
         reporter.debug { "Process $change" }
 
         if (change is ChangeInfo.SignatureChanged) {
-            val fqNames = if (!change.areSubclassesAffected) listOf(change.fqName) else withSubtypes(change.fqName, caches)
+            val fqNames = if (!change.areSubclassesAffected) [change.fqName] else withSubtypes(change.fqName, caches)
             dirtyClassesFqNames.addAll(fqNames)
 
             for (classFqName in fqNames) {
@@ -218,7 +218,7 @@ fun mapLookupSymbolsToFiles(
     lookupStorage: LookupStorage,
     lookupSymbols: Iterable<LookupSymbol>,
     reporter: ICReporter,
-    excludes: Set<File> = emptySet()
+    excludes: Set<File> = []
 ): Set<File> {
     val dirtyFiles = HashSet<File>()
 
@@ -235,7 +235,7 @@ fun mapClassesFqNamesToFiles(
     caches: Iterable<IncrementalCacheCommon>,
     classesFqNames: Iterable<FqName>,
     reporter: ICReporter,
-    excludes: Set<File> = emptySet()
+    excludes: Set<File> = []
 ): Set<File> {
     val fqNameToAffectedFiles = HashMap<FqName, MutableSet<File>>()
 
@@ -270,7 +270,7 @@ fun findSealedSupertypes(
     caches: Iterable<IncrementalCacheCommon>
 ): Collection<FqName> {
     if (isSealed(fqName, caches)) {
-        return listOf(fqName)
+        return [fqName]
     }
     return caches.flatMap { cache -> cache.getSupertypesOf(fqName).filter { cache.isSealed(it) ?: false }}
 }
@@ -279,7 +279,7 @@ fun withSubtypes(
     typeFqName: FqName,
     caches: Iterable<IncrementalCacheCommon>
 ): Set<FqName> {
-    val typesToProccess = LinkedHashSet(listOf(typeFqName))
+    val typesToProccess = LinkedHashSet([typeFqName])
     val proccessedTypes = hashSetOf<FqName>()
 
 

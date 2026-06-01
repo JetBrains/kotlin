@@ -32,13 +32,13 @@ class SubstitutingFunctor(
     private val ownerFunction: FunctionDescriptor
 ) : AbstractFunctor() {
     override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
-        if (basicEffects.isEmpty()) return emptyList()
+        if (basicEffects.isEmpty()) return []
 
         val parameters = computeParameters(arguments)
 
         val substitutions = parameters.zip(arguments).toMap()
         val substitutor = Substitutor(substitutions, typeSubstitution, reducer)
-        val substitutedClauses = mutableListOf<ESEffect>()
+        val substitutedClauses: MutableList<ESEffect> = []
 
         effectsLoop@ for (effect in basicEffects) {
             when (effect) {

@@ -34,7 +34,7 @@ class MetadataSmokeTest {
             .mapNotNull { it.signature?.toString() }
 
         assertEquals(
-            listOf("foo(Lkotlin/jvm/functions/Function0;)Ljava/lang/String;"),
+            ["foo(Lkotlin/jvm/functions/Function0;)Ljava/lang/String;"],
             inlineFunctions
         )
     }
@@ -110,7 +110,7 @@ class MetadataSmokeTest {
         // Kotlin reflection loads the metadata and builds a mapping from Kotlin symbols to JVM, so if the call succeeds,
         // we can be sure that the metadata is consistent
 
-        val classLoader = object : URLClassLoader(emptyArray()) {
+        val classLoader = object : URLClassLoader([]) {
             override fun findClass(name: String): Class<*> =
                 if (name == "Hello") defineClass(name, bytes, 0, bytes.size) else super.findClass(name)
         }
@@ -182,7 +182,7 @@ class MetadataSmokeTest {
         val mv = JvmMetadataVersion(1, 3)
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.Class(dummy, mv, 0).write() } // We can't write empty KmClass()
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.FileFacade(KmPackage(), mv, 0).write() }
-        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade(listOf("A"), mv, 0).write() }
+        assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassFacade(["A"], mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.MultiFileClassPart(KmPackage(), "A", mv, 0).write() }
         assertFailsWith<IllegalArgumentException> { KotlinClassMetadata.SyntheticClass(null, mv, 0).write() }
 

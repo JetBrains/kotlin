@@ -74,7 +74,7 @@ abstract class FirScopeProvider {
 
         return when {
             nestedClassifierScope != null && callableScope != null ->
-                FirNameAwareCompositeScope(listOf(nestedClassifierScope, callableScope))
+                FirNameAwareCompositeScope([nestedClassifierScope, callableScope])
             else -> nestedClassifierScope ?: callableScope
         }
     }

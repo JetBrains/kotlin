@@ -99,18 +99,18 @@ class JvmAtomicSymbols(
         atomicUpdaterClassSymbol.getSimpleFunction("newUpdater")
             ?: error("No newUpdater function was found for ${atomicUpdaterClassSymbol.owner.render()} ")
 
-    private val BOXED_ATOMIC_TYPES = setOf(
+    private val BOXED_ATOMIC_TYPES: Set<IrClassSymbol> = [
         javaAtomicIntegerClass,
         javaAtomicLongClass,
         javaAtomicBooleanClass,
         javaAtomicReferenceClass
-    )
+    ]
 
-    private val ATOMIC_FIELD_UPDATER_TYPES = setOf(
+    private val ATOMIC_FIELD_UPDATER_TYPES: Set<IrClassSymbol> = [
         javaAtomicIntegerFieldUpdaterClass,
         javaAtomicLongFieldUpdaterClass,
         javaAtomicRefFieldUpdaterClass
-    )
+    ]
 
     fun isAtomicFieldUpdaterHandlerType(type: IrType) = type.classOrNull in ATOMIC_FIELD_UPDATER_TYPES
     fun isBoxedAtomicHandlerType(type: IrType) = type.classOrNull in BOXED_ATOMIC_TYPES

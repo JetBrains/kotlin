@@ -48,7 +48,7 @@ object WebKlibSerializationPipelinePhase : PipelinePhase<WebFir2IrPipelineArtifa
             klibPath = outputKlibPath,
             moduleFragment = fir2IrResult.irModuleFragment,
             irBuiltIns = fir2IrResult.irBuiltIns,
-            cleanFiles = icData ?: emptyList(),
+            cleanFiles = icData ?: [],
             nopack = configuration.produceKlibDir,
             jsOutputName = configuration.perModuleOutputName,
             builtInsPlatform = if (configuration.wasmCompilation) BuiltInsPlatform.WASM else BuiltInsPlatform.JS,

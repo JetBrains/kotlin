@@ -68,7 +68,7 @@ class ExportModelToJsStatements(
                     )
                 )
 
-                listOf(namespaceDeclaration) + declaration.declarations.flatMap {
+                [namespaceDeclaration] + declaration.declarations.flatMap {
                     generateDeclarationExport(
                         it,
                         namespaceVariableName.makeRef(),
@@ -81,16 +81,16 @@ class ExportModelToJsStatements(
                 val name = staticContext.getNameForStaticDeclaration(declaration.ir)
                 when {
                     namespace != null ->
-                        listOf(jsAssignment(jsElementAccess(declaration.name, namespace), JsNameRef(name)).makeStmt())
+                        [jsAssignment(jsElementAccess(declaration.name, namespace), JsNameRef(name)).makeStmt()]
 
                     esModules -> {
                         if (declaration.attributes.contains(ExportedAttribute.DefaultExport)) {
-                            listOf(JsExport(JsExport.Subject.Default(name.makeRef())))
+                            [JsExport(JsExport.Subject.Default(name.makeRef()))]
                         } else {
-                            listOf(JsExport(name.makeRef(), alias = JsName(declaration.name, false)))
+                            [JsExport(name.makeRef(), alias = JsName(declaration.name, false))]
                         }
                     }
-                    else -> emptyList()
+                    else -> []
                 }
             }
 
@@ -106,20 +106,20 @@ class ExportModelToJsStatements(
                             JsExport(name.makeRef(), JsName(declaration.name, false))
                         }
 
-                        listOf(JsVars(JsVars.Variant.Var, property), exportStatement)
+                        [JsVars(JsVars.Variant.Var, property), exportStatement]
                     }
                     declaration.isDefaultImplementation -> {
                         val property = declaration.generateTopLevelGetters()
                         val propertyName = property.name ?: error("Name is expected to bet set")
-                        listOf(
+                        [
                             JsVars(JsVars.Variant.Var, property),
                             jsAssignment(jsElementAccess(declaration.name, namespace), propertyName.makeRef()).makeStmt()
-                        )
+                        ]
                     }
                     else -> {
                         val getter = declaration.irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
                         val setter = declaration.irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
-                        listOf(
+                        [
                             defineProperty(
                                 namespace,
                                 declaration.name,
@@ -128,7 +128,7 @@ class ExportModelToJsStatements(
                                 staticContext,
                                 enumerable = true
                             ).makeStmt()
-                        )
+                        ]
                     }
                 }
             }
@@ -187,7 +187,7 @@ class ExportModelToJsStatements(
                     .takeIf { !declaration.ir.isInner }.orEmpty()
 
                 if (!allowImplementingInterfaces && declaration.isInterface && staticMembers.isEmpty() && declaration.nestedClasses.isEmpty()) {
-                    return emptyList()
+                    return []
                 }
 
                 val [name, classInitialization] = declaration.getNameAndInitialization()
@@ -243,12 +243,12 @@ class ExportModelToJsStatements(
         val secondaryConstructors = members.filterIsInstanceAnd<ExportedFunction> { it.isStatic }
         val bindConstructor = JsName("__bind_constructor_", false)
 
-        val blockStatements = mutableListOf<JsStatement>(
+        val blockStatements: MutableList<JsStatement> = [
             JsVars(
                 JsVars.Variant.Var,
                 JsVars.JsVar(bindConstructor, innerClassRef.bindToThis(innerClassRef))
             )
-        )
+        ]
 
         if (companionObject != null) {
             val companionName = companionObject.getJsNameOrKotlinName().identifier

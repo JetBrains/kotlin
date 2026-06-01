@@ -181,7 +181,7 @@ class UninitializedStoresProcessor(private val methodNode: MethodNode) {
         val uninitializedValuesToRemovableUsages = hashMapOf<AbstractInsnNode, MutableSet<AbstractInsnNode>>()
         override fun newOperation(insn: AbstractInsnNode): BasicValue? {
             if (insn.opcode == Opcodes.NEW) {
-                uninitializedValuesToRemovableUsages.getOrPut(insn) { mutableSetOf() }
+                uninitializedValuesToRemovableUsages.getOrPut(insn) { [] }
                 return UninitializedNewValue(insn as TypeInsnNode, insn.desc)
             }
             return super.newOperation(insn)

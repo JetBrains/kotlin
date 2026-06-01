@@ -132,7 +132,7 @@ abstract class BaseKotlinMangleComputer<Declaration, Type, TypeParameter, ValueP
         container: Declaration,
     ): Iterable<IndexedValue<TypeParameter>>
 
-    protected open fun FunctionDeclaration.platformSpecificFunctionMarks(): List<String> = emptyList()
+    protected open fun FunctionDeclaration.platformSpecificFunctionMarks(): List<String> = []
 
     /**
      * Simply attempts to cast [Declaration] to [TypeParameterContainer].

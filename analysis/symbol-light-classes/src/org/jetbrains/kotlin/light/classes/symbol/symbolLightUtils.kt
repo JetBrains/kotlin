@@ -224,7 +224,7 @@ internal fun AnnotationValue.Annotation.normalizedArguments(): List<AnnotationAr
         val missingVarargParameterName =
             params.singleOrNull { it.isVararg && !it.hasDeclaredDefaultValue }?.name?.takeIf { name -> args.none { it.name == name } }
         if (missingVarargParameterName == null) args
-        else args + AnnotationArgument(missingVarargParameterName, AnnotationValue.Array(emptyList(), null))
+        else args + AnnotationArgument(missingVarargParameterName, AnnotationValue.Array([], null))
     }
 }
 

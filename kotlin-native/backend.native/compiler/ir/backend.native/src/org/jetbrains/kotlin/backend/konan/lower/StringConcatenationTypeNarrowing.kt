@@ -45,7 +45,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         it.name == nameAppend && it.hasShape(
                 dispatchReceiver = true,
                 regularParameters = 1,
-                parameterTypes = listOf(stringBuilder.typeWith(), context.irBuiltIns.stringType.makeNullable())
+                parameterTypes = [stringBuilder.typeWith(), context.irBuiltIns.stringType.makeNullable()]
         )
     }
 
@@ -53,7 +53,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         it.name == nameAppend && it.hasShape(
                 dispatchReceiver = true,
                 regularParameters = 1,
-                parameterTypes = listOf(stringBuilder.typeWith(), context.irBuiltIns.anyNType)
+                parameterTypes = [stringBuilder.typeWith(), context.irBuiltIns.anyNType]
         )
     }
 
@@ -61,7 +61,7 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         it.name == namePlusImpl && it.hasShape(
                 dispatchReceiver = true,
                 regularParameters = 1,
-                parameterTypes = listOf(context.irBuiltIns.stringType, context.irBuiltIns.stringType)
+                parameterTypes = [context.irBuiltIns.stringType, context.irBuiltIns.stringType]
         )
     }
 

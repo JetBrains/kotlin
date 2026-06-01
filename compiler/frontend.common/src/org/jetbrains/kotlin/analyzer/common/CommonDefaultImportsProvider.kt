@@ -9,5 +9,5 @@ import org.jetbrains.kotlin.resolve.DefaultImportsProvider
 import org.jetbrains.kotlin.resolve.ImportPath
 
 object CommonDefaultImportsProvider : DefaultImportsProvider() {
-    override val platformSpecificDefaultImports: List<ImportPath> = emptyList()
+    override val platformSpecificDefaultImports: List<ImportPath> = []
 }

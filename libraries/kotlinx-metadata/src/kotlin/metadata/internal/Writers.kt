@@ -21,7 +21,7 @@ import kotlin.metadata.internal.extensions.MetadataExtensions
  */
 public interface WriteContextExtension
 
-public open class WriteContext(public val strings: StringTable, public val contextExtensions: List<WriteContextExtension> = emptyList()) {
+public open class WriteContext(public val strings: StringTable, public val contextExtensions: List<WriteContextExtension> = []) {
     internal val versionRequirements: MutableVersionRequirementTable = MutableVersionRequirementTable()
 
     internal val extensions = MetadataExtensions.INSTANCES
@@ -349,7 +349,7 @@ private fun WriteContext.writeEffectExpression(effectExpression: KmEffectExpress
     return t.build()
 }
 
-public open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) {
+public open class ClassWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = []) {
     public val t: ProtoBuf.Class.Builder = ProtoBuf.Class.newBuilder()!!
     public val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
@@ -407,7 +407,7 @@ public open class ClassWriter(stringTable: StringTable, contextExtensions: List<
     }
 }
 
-public open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) {
+public open class PackageWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = []) {
     public val t: ProtoBuf.Package.Builder = ProtoBuf.Package.newBuilder()
     public val c: WriteContext = WriteContext(stringTable, contextExtensions)
 
@@ -422,7 +422,7 @@ public open class PackageWriter(stringTable: StringTable, contextExtensions: Lis
     }
 }
 
-public open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = emptyList()) {
+public open class ModuleFragmentWriter(stringTable: StringTable, contextExtensions: List<WriteContextExtension> = []) {
     protected val t: ProtoBuf.PackageFragment.Builder = ProtoBuf.PackageFragment.newBuilder()!!
     protected val c: WriteContext = WriteContext(stringTable, contextExtensions)
 

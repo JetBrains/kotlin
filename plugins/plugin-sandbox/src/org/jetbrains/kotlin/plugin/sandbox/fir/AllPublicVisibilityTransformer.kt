@@ -43,7 +43,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
     }
 
     override fun transformStatus(status: FirDeclarationStatus, declaration: FirDeclaration): FirDeclarationStatus {
-        val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: emptyList()
+        val owners = session.predicateBasedProvider.getOwnersOfDeclaration(declaration) ?: []
         val visibility = findVisibility(declaration, owners) ?: return status
 
         return when (declaration.source?.explicitVisibility) {

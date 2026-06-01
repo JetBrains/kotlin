@@ -31,9 +31,9 @@ class KaBaseEmptyAnnotationList(override val token: KaLifetimeToken) : AbstractL
     }
 
     override fun get(classId: ClassId): List<KaAnnotation> = withValidityAssertion {
-        return emptyList()
+        return []
     }
 
     override val classIds: Set<ClassId>
-        get() = withValidityAssertion { emptySet() }
+        get() = withValidityAssertion { [] }
 }

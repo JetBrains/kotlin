@@ -31,9 +31,9 @@ abstract class AbstractElement<Element, Field, Implementation>(
 
     var kDoc: String? = null
 
-    val fields = mutableSetOf<Field>()
+    val fields: MutableSet<Field> = []
 
-    val params = mutableListOf<TypeVariable>()
+    val params: MutableList<TypeVariable> = []
 
     val elementParents: List<ElementRef<Element>>
         field = mutableListOf<ElementRef<Element>>()
@@ -53,7 +53,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
         newParent.element.subElements.add(element)
     }
 
-    val otherParents = mutableListOf<ClassRef<*>>()
+    val otherParents: MutableList<ClassRef<*>> = []
 
     val parentRefs: List<ClassOrElementRef>
         get() = elementParents + otherParents
@@ -117,7 +117,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
                 parentRef.element.allFields.asReversed().forEach { field ->
                     // The list is removed and then added back in, so that it's moved to the back.
                     // This is required to keep the established order of generated properties.
-                    val list = remove(field.name) ?: mutableListOf()
+                    val list = remove(field.name) ?: []
                     list.add(parentRef to field)
                     put(field.name, list)
                 }
@@ -166,7 +166,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
     val transformerClass: Element
         get() = transformerReturnType ?: baseTransformerType ?: element
 
-    val implementations = mutableListOf<Implementation>()
+    val implementations: MutableList<Implementation> = []
 
     var doesNotNeedImplementation: Boolean = false
 
@@ -177,7 +177,7 @@ abstract class AbstractElement<Element, Field, Implementation>(
      *
      * Note that classes referenced in field types will be imported automatically.
      */
-    val additionalImports = mutableListOf<Importable>()
+    val additionalImports: MutableList<Importable> = []
 
     override fun addImport(importable: Importable) {
         additionalImports.add(importable)

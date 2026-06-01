@@ -10,7 +10,7 @@ import java.util.regex.Pattern
 
 internal val functionPattern = Pattern.compile("^K?(Suspend)?Function\\d+$")
 
-internal val functionTypeInterfacePackages = listOf("kotlin", "kotlin.coroutines", "kotlin.reflect")
+internal val functionTypeInterfacePackages = ["kotlin", "kotlin.coroutines", "kotlin.reflect"]
 
 fun checkIsFunctionTypeInterfacePackageFqName(fqName: String) = fqName in functionTypeInterfacePackages
 

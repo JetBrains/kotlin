@@ -93,7 +93,7 @@ class ResolversTest : ResolversTestBase() {
             if (!acceptsArtifact(artifactCoordinates)) throw Exception("Path is invalid")
             val file = doResolve(artifactCoordinates)
                 ?: return makeResolveFailureResult("Failed to resolve '$artifactCoordinates'", sourceCodeLocation)
-            return ResultWithDiagnostics.Success(listOf(file))
+            return ResultWithDiagnostics.Success([file])
         }
 
         override fun addRepository(

@@ -86,7 +86,7 @@ object IrTree : AbstractTreeBuilder() {
             println()
             printFunctionDeclaration(
                 name = "acquireSymbol",
-                parameters = listOf(FunctionParameter("symbol", symbol)),
+                parameters = [FunctionParameter("symbol", symbol)],
                 returnType = this@element,
                 modality = Modality.ABSTRACT,
             )
@@ -1150,7 +1150,7 @@ object IrTree : AbstractTreeBuilder() {
     }
     val whileLoop: Element by element(Expression) {
         visitorParameterName = "loop"
-        childrenOrderOverride = listOf("condition", "body")
+        childrenOrderOverride = ["condition", "body"]
 
         parent(loop)
     }

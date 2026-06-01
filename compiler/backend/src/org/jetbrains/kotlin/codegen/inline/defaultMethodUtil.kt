@@ -146,7 +146,7 @@ private fun extractDefaultLambdasInfo(
                 }
 
                 toDelete.apply {
-                    addAll(listOf(instanceCreation, instanceCreation.next))
+                    addAll([instanceCreation, instanceCreation.next])
                     addAll(InsnSequence(instanceInstuction, varAssignmentInstruction.next).toList())
                 }
 

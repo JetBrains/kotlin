@@ -23,7 +23,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
     @TestMetadata("compiler-plugins")
     fun smokeTestCompilerPluginsApplication(strategyConfig: CompilerExecutionStrategyConfiguration) {
         smokeTest(strategyConfig) {
-            it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_PLUGIN, ASSIGNMENT_PLUGIN)
+            it.compilerArguments[COMPILER_PLUGINS] = [NOARG_PLUGIN, ASSIGNMENT_PLUGIN]
         }
     }
 
@@ -91,7 +91,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                     }
                 }.joinToString(","))
             }
-            it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
+            it.compilerArguments[COMPILER_PLUGINS] = [ASSIGNMENT_PLUGIN]
             it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
         }
     }
@@ -114,7 +114,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                         }"
                     )
                 }
-                it.compilerArguments[COMPILER_PLUGINS] = listOf(ASSIGNMENT_PLUGIN)
+                it.compilerArguments[COMPILER_PLUGINS] = [ASSIGNMENT_PLUGIN]
                 it.compilerArguments.applyArgumentStrings(it.compilerArguments.build().toArgumentStrings() + compilerPluginArgs)
             }) {
                 // BTA currently transforms the structured way to the "default way", such a combination is considered illegal
@@ -172,7 +172,7 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("compiler-plugins-jpa")
             module.compile(compilationConfigAction = {
-                it.compilerArguments[COMPILER_PLUGINS] = listOf(NOARG_JPA_PLUGIN)
+                it.compilerArguments[COMPILER_PLUGINS] = [NOARG_JPA_PLUGIN]
             }) {
                 assertOutputs(
                     "javax/persistence/Entity.class",
@@ -186,31 +186,31 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 )
                 assertClassDeclarationsContain(
                     classFqn = "javax.persistence.EntityClass",
-                    setOf(
+                    [
                         "public javax.persistence.EntityClass();",
                         "public javax.persistence.EntityClass(long, java.lang.String);",
-                    )
+                    ]
                 )
                 assertClassDeclarationsContain(
                     classFqn = "javax.persistence.EmbeddableClass",
-                    setOf(
+                    [
                         "public javax.persistence.EmbeddableClass();",
                         "public javax.persistence.EmbeddableClass(java.lang.String, java.lang.String);",
-                    )
+                    ]
                 )
                 assertClassDeclarationsContain(
                     classFqn = "javax.persistence.MappedSuperclassClass",
-                    setOf(
+                    [
                         "public javax.persistence.MappedSuperclassClass();",
                         "public javax.persistence.MappedSuperclassClass(long, long);",
-                    )
+                    ]
                 )
                 assertClassDeclarationsContain(
                     classFqn = "SomeClass",
-                    setOf(
+                    [
                         "public SomeClass();",
                         "public SomeClass(int);",
-                    )
+                    ]
                 )
             }
         }
@@ -233,10 +233,10 @@ class CompilerPluginsCustomArgumentSmokeTest : BaseCompilationTest() {
                 )
                 assertClassDeclarationsContain(
                     classFqn = "SomeClass",
-                    setOf(
+                    [
                         "public SomeClass();",
                         "public SomeClass(int, AssignableClass);",
-                    )
+                    ]
                 )
             }
         }

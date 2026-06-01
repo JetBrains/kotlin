@@ -100,7 +100,7 @@ class TestProcessor(
         val COMPANION_GETTER_NAME = Name.identifier("getCompanion")
         val INSTANCE_GETTER_NAME = Name.identifier("createInstance")
 
-        val IGNORE_FQ_NAME = FqName.fromSegments(listOf("kotlin", "test", "Ignore"))
+        val IGNORE_FQ_NAME = FqName.fromSegments(["kotlin", "test", "Ignore"])
     }
 
     private enum class TestProcessorFunctionKind(annotationNameString: String, val runtimeKindString: String) {
@@ -113,8 +113,8 @@ class TestProcessor(
         val annotationFqName = FqName(annotationNameString)
 
         companion object {
-            val INSTANCE_KINDS = listOf(TEST, BEFORE_TEST, AFTER_TEST)
-            val COMPANION_KINDS = listOf(BEFORE_CLASS, AFTER_CLASS)
+            val INSTANCE_KINDS = [TEST, BEFORE_TEST, AFTER_TEST]
+            val COMPANION_KINDS = [BEFORE_CLASS, AFTER_CLASS]
         }
     }
 
@@ -136,7 +136,7 @@ class TestProcessor(
 
     private fun getTestFunctionKind(kind: TestProcessorFunctionKind) = testFunctionKindCache[kind]!!
 
-    private val topLevelSuiteNames = mutableSetOf<String>()
+    private val topLevelSuiteNames: MutableSet<String> = []
 
     // region Useful extensions.
     private var testSuiteCnt = 0
@@ -185,7 +185,7 @@ class TestProcessor(
                     arguments[1] = IrGetEnumValueImpl(
                         it.function.startOffset,
                         it.function.endOffset,
-                        symbols.testFunctionKind.typeWithArguments(emptyList()),
+                        symbols.testFunctionKind.typeWithArguments([]),
                         testKindEntry
                     )
                     arguments[2] = it.function.wrapWithLambdaCall(parent, this@TestProcessor.context)
@@ -211,7 +211,7 @@ class TestProcessor(
 
     private inner class TestClass(val ownerClass: IrClass) {
         var companion: IrClass? = null
-        val functions = mutableListOf<TestFunction>()
+        val functions: MutableList<TestFunction> = []
 
         val suiteClassId: ClassId = ownerClass.classId ?: error(ownerClass.render())
         val suiteName: String get() = suiteClassId.asFqNameString()
@@ -223,7 +223,7 @@ class TestProcessor(
     private inner class AnnotationCollector(val irFile: IrFile) : IrVisitorVoid() {
         val testClasses = mutableMapOf<IrClass, TestClass>()
 
-        val topLevelFunctions = mutableListOf<TestFunction>()
+        val topLevelFunctions: MutableList<TestFunction> = []
         val topLevelSuiteClassId: ClassId by lazy {
             ClassId(irFile.packageFqName, PackagePartClassUtils.getFilePartShortName(irFile.fileName).let(Name::identifier))
         }
@@ -415,7 +415,7 @@ class TestProcessor(
 
             body = context.createIrBuilder(symbol, symbol.owner.startOffset, symbol.owner.endOffset).irBlockBody {
                 +irReturn(
-                    irGetObjectValue(objectSymbol.typeWithArguments(emptyList()), objectSymbol)
+                    irGetObjectValue(objectSymbol.typeWithArguments([]), objectSymbol)
                 )
             }
         }
@@ -459,10 +459,11 @@ class TestProcessor(
         }
 
     private val baseClassSuiteConstructor = baseClassSuite.constructors.single {
-        it.hasShape(regularParameters = 2, parameterTypes = listOf(
-                context.irBuiltIns.stringType,   // name: String
-                context.irBuiltIns.booleanType   // ignored: Boolean
-        ))
+        it.hasShape(regularParameters = 2, parameterTypes = [
+            context.irBuiltIns.stringType,   // name: String
+            context.irBuiltIns.booleanType   // ignored: Boolean
+        ]
+        )
     }
 
     /**
@@ -579,7 +580,7 @@ class TestProcessor(
             declarations += instanceGetter
             companionGetter?.let { declarations += it }
 
-            superTypes += symbols.baseClassSuite.typeWith(listOf(testClassType, testCompanionType))
+            superTypes += symbols.baseClassSuite.typeWith([testClassType, testCompanionType])
             addFakeOverrides((context as? NativePreSerializationLoweringContext)?.typeSystem ?: (context as CommonBackendContext).typeSystem)
         }
     }
@@ -605,7 +606,7 @@ class TestProcessor(
 
     private val topLevelSuite = symbols.topLevelSuite.owner
     private val topLevelSuiteConstructor = topLevelSuite.constructors.single {
-        it.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.stringType))
+        it.hasShape(regularParameters = 1, parameterTypes = [context.irBuiltIns.stringType])
     }
     private val topLevelSuiteRegisterFunction = topLevelSuite.simpleFunctions().single {
         it.name.asString() == "registerFunction"
@@ -643,14 +644,14 @@ class TestProcessor(
     }
 
     private fun createTestSuites(irFile: IrFile, annotationCollector: AnnotationCollector) {
-        val statements = mutableListOf<IrStatement>()
+        val statements: MutableList<IrStatement> = []
 
         // There is no specified order on fake override functions, so to ensure all the tests are run deterministically,
         // sort the fake override functions by name.
         for (testClass in annotationCollector.testClasses.values) {
             val functions = testClass.functions.toList()
             testClass.functions.clear()
-            val fakeOverrideFunctions = mutableListOf<TestFunction>()
+            val fakeOverrideFunctions: MutableList<TestFunction> = []
             for (function in functions) {
                 if (function.function.isFakeOverride)
                     fakeOverrideFunctions.add(function)

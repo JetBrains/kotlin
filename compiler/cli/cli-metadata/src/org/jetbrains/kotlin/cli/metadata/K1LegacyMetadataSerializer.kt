@@ -88,7 +88,7 @@ open class K1LegacyMetadataSerializer(
                             ?: error("No descriptor found for class ${classOrObject.fqName}")
                         val destFile = File(destDir, getClassFilePath(ClassId(packageFqName, classDescriptor.name)))
                         PackageSerializer(
-                            listOf(classDescriptor), emptyList(), packageFqName, destFile,
+                            [classDescriptor], [], packageFqName, destFile,
                             languageVersionSettings, project,
                         ).run()
                     }
@@ -97,7 +97,7 @@ open class K1LegacyMetadataSerializer(
 
             if (members.isNotEmpty()) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
-                PackageSerializer(emptyList(), members, packageFqName, destFile, languageVersionSettings, project).run()
+                PackageSerializer([], members, packageFqName, destFile, languageVersionSettings, project).run()
 
                 packageTable.getOrPut(packageFqName) {
                     PackageParts(packageFqName.asString())

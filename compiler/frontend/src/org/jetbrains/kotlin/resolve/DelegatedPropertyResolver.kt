@@ -459,10 +459,10 @@ class DelegatedPropertyResolver(
     ): OverloadResolutionResults<FunctionDescriptor> {
         val propertyHasReceiver = propertyDescriptor.dispatchReceiverParameter != null
         val arguments = KtPsiFactory(delegateExpression.project, markGenerated = false).run {
-            listOf(
+            [
                 createExpression(if (propertyHasReceiver) "this" else "null"),
                 createExpressionForProperty()
-            )
+            ]
         }
         val functionName = OperatorNameConventions.PROVIDE_DELEGATE
         val receiver = ExpressionReceiver.create(delegateExpression, delegateExpressionType, context.trace.bindingContext)
@@ -721,7 +721,7 @@ class DelegatedPropertyResolver(
         val resolutionCallbacks = psiCallResolver.createResolutionCallbacks(trace, newInferenceSession, resolutionContext)
         val resolutionResults = newInferenceSession.resolveCandidates(resolutionCallbacks)
 
-        for ([name, isGet] in listOf(OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false)) {
+        for ([name, isGet] in [OperatorNameConventions.GET_VALUE to true, OperatorNameConventions.SET_VALUE to false]) {
             val result = resolutionResults.firstOrNull {
                 it.resolutionResult.resultCallAtom()?.atom?.name == name
             }

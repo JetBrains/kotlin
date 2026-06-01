@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.test.services.assertions
  */
 abstract class AbstractCanBeAnalysedTest : AbstractAnalysisApiBasedTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     object Directives : SimpleDirectivesContainer() {
         val USE_SITE_MODULE by directive("Determines the module of the use-site analysis session from which `canBeAnalysed` is called.")

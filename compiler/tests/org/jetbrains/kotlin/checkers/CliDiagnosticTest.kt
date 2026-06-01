@@ -37,7 +37,7 @@ class CliDiagnosticTest {
                 }
             }
         }
-        val errors = mutableListOf<String>()
+        val errors: MutableList<String> = []
         for (message in collector.messages) {
             errors.checkRules("language/API version correctness", message, 0)
         }
@@ -52,7 +52,7 @@ class CliDiagnosticTest {
     }
 
     private class MessageCollectorStub : MessageCollector {
-        val messages = mutableListOf<String>()
+        val messages: MutableList<String> = []
 
         override fun clear() {}
 

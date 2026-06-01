@@ -205,7 +205,7 @@ internal class KaFirTypeProvider(
      * in which code can be broken in the source file.
      */
     private fun handleUnexpectedFirElementError(fir: FirElement?, element: KtElement): KaErrorType {
-        val exception = InvalidFirElementTypeException(fir, element, emptyList())
+        val exception = InvalidFirElementTypeException(fir, element, [])
         logger<KaFirTypeProvider>().error(exception)
 
         val coneErrorType = ConeErrorType(

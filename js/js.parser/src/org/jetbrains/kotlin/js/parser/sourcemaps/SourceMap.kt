@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.js.parser.sourcemaps
 import java.io.*
 
 class SourceMap(val sourceContentResolver: (String) -> Reader?) {
-    val groups = mutableListOf<SourceMapGroup>()
+    val groups: MutableList<SourceMapGroup> = []
 
     @Suppress("UNUSED") // For use in the debugger
     fun debugToString() = ByteArrayOutputStream().also { debug(PrintStream(it)) }.toString()
@@ -121,7 +121,7 @@ data class SourceMapSegment(
 )
 
 class SourceMapGroup {
-    val segments = mutableListOf<SourceMapSegment>()
+    val segments: MutableList<SourceMapSegment> = []
 }
 
 sealed class SourceMapParseResult

@@ -26,12 +26,12 @@ class TestKotlinActualDeclarationProvider(private val project: Project) : Kotlin
 
     override fun getActualDeclarations(declaration: KtDeclaration): Sequence<KtDeclaration> {
         if (!declaration.isExpectDeclaration()) {
-            return emptySequence()
+            return []
         }
 
         val module = projectStructureProvider.getModule(declaration, useSiteModule = null)
         if (!module.targetPlatform.isCommon()) {
-            return emptySequence()
+            return []
         }
 
         val implementingModules = projectStructureProvider.getImplementingModules(module)
@@ -43,7 +43,7 @@ class TestKotlinActualDeclarationProvider(private val project: Project) : Kotlin
                 val candidateDeclarations: Collection<KtDeclaration>? = when (declaration) {
                     is KtNamedFunction -> {
                         val callableId = declaration.callableId
-                        if (callableId != null) declarationProvider.getTopLevelFunctions(callableId) else emptyList()
+                        if (callableId != null) declarationProvider.getTopLevelFunctions(callableId) else []
                     }
                     is KtConstructor<*> -> {
                         val containingClassId = declaration.containingClassOrObject?.getClassId()
@@ -51,16 +51,16 @@ class TestKotlinActualDeclarationProvider(private val project: Project) : Kotlin
                             val candidateClasses = declarationProvider.getAllClassesByClassId(containingClassId)
                             candidateClasses.flatMap { it.allConstructors }
                         } else {
-                            emptyList()
+                            []
                         }
                     }
                     is KtProperty -> {
                         val callableId = declaration.callableId
-                        if (callableId != null) declarationProvider.getTopLevelProperties(callableId) else emptyList()
+                        if (callableId != null) declarationProvider.getTopLevelProperties(callableId) else []
                     }
                     is KtClassOrObject -> {
                         val classId = declaration.getClassId()
-                        if (classId != null) declarationProvider.getAllClassesByClassId(classId) else emptyList()
+                        if (classId != null) declarationProvider.getAllClassesByClassId(classId) else []
                     }
                     else -> null
                 }

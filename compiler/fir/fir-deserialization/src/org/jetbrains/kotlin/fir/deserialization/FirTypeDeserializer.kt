@@ -64,7 +64,7 @@ class FirTypeDeserializer(
         if (typeParameterProtos.isNotEmpty()) {
             typeParameterNames = hashMapOf()
             val result = typeParameterDescriptors as LinkedHashMap<Int, FirTypeParameterSymbol>
-            val builders = mutableListOf<FirTypeParameterBuilder>()
+            val builders: MutableList<FirTypeParameterBuilder> = []
             for (proto in typeParameterProtos) {
                 if (!proto.hasId()) continue
                 val name = nameResolver.getName(proto.name)

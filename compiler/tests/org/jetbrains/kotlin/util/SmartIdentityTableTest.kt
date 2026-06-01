@@ -82,7 +82,7 @@ class SmartIdentityTableTest {
         val table = SmartIdentityTable<Key, Value>()
 
         // insert enough data to trigger conversion of the Table to use a Map
-        val keys = mutableListOf<Key>()
+        val keys: MutableList<Key> = []
         for (i in 0 until 15) {
             val key = Key(i)
             val value = Value(i)

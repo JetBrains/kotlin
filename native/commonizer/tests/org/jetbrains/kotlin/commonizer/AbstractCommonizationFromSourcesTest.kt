@@ -157,7 +157,7 @@ private class AnalyzedModuleDependencies(
         )
 
     companion object {
-        val EMPTY = AnalyzedModuleDependencies(emptyMap(), emptyList())
+        val EMPTY = AnalyzedModuleDependencies(emptyMap(), [])
     }
 }
 
@@ -189,7 +189,7 @@ private class AnalyzedModules(
         manifestDataProvider: (CommonizerTarget) -> NativeManifestDataProvider = { MockNativeManifestDataProvider(it) },
         commonizerSettings: CommonizerSettings = DefaultCommonizerSettings,
     ) = CommonizerParameters(
-        outputTargets = setOf(SharedCommonizerTarget(leafTargets.toSet())),
+        outputTargets = [SharedCommonizerTarget(leafTargets.toSet())],
         manifestProvider = TargetDependent(sharedTarget.withAllLeaves(), manifestDataProvider),
         dependenciesProvider = TargetDependent(sharedTarget.withAllLeaves()) { target ->
             dependencyModules
@@ -289,7 +289,7 @@ private class AnalyzedModules(
             }
 
             val leafPlatforms = when (currentTarget) {
-                is LeafCommonizerTarget -> listOf(currentTarget)
+                is LeafCommonizerTarget -> [currentTarget]
                 is SharedCommonizerTarget -> currentTarget.targets
             }
 
@@ -315,7 +315,7 @@ private class AnalyzedModules(
                 },
                 refinesDependencies = when {
                     currentTarget != sharedTarget -> dependencies.expectByDependencies.map { it.destination }
-                    else -> emptyList()
+                    else -> []
                 },
                 firTransformationPhase = TestPatchingPipelinePhase.takeIf { !isDependencyModule },
             )

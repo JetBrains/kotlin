@@ -21,11 +21,11 @@ import org.jetbrains.kotlin.name.ClassId
 
 object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private val implementedKotlinAnnotationsAllowedTargetsMap: Map<ClassId, List<KotlinTarget>> = buildMap {
-        val logTargets = listOf(
+        val logTargets = [
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,
             KotlinTarget.ENUM_CLASS,
-        )
+        ]
         this[LombokNames.LOG_ID] = logTargets
         this[LombokNames.SLF4J_ID] = logTargets
         this[LombokNames.LOG4J_ID] = logTargets
@@ -34,19 +34,19 @@ object FirLombokAnnotationChecker : FirBasicDeclarationChecker(MppCheckerKind.Co
         this[LombokNames.JBOSS_LOG_ID] = logTargets
         this[LombokNames.LOG4J2_ID] = logTargets
         this[LombokNames.XSLF4J_ID] = logTargets
-        this[LombokNames.TO_STRING_ID] = listOf(
+        this[LombokNames.TO_STRING_ID] = [
             KotlinTarget.CLASS_ONLY,
             KotlinTarget.OBJECT,
             KotlinTarget.ENUM_CLASS,
             KotlinTarget.LOCAL_CLASS,
-        )
-        this[LombokNames.TO_STRING_INCLUDE_ID] = listOf(
+        ]
+        this[LombokNames.TO_STRING_INCLUDE_ID] = [
             KotlinTarget.PROPERTY,
             //KotlinTarget.FUNCTION, TODO: support later because Lombok also allows it on functions, KT-86021
-        )
-        this[LombokNames.TO_STRING_EXCLUDE_ID] = listOf(
+        ]
+        this[LombokNames.TO_STRING_EXCLUDE_ID] = [
             KotlinTarget.PROPERTY,
-        )
+        ]
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

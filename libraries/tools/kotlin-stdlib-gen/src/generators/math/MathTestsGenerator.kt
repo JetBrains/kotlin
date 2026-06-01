@@ -16,14 +16,14 @@ internal class MathTestsGenerator(
     class ModelFunction1(override val function: Function1<Double, Double>, exact: Boolean = true, val customTestPoint: Double? = null) : Model(exact)
     class ModelFunction2(override val function: Function2<Double, Double, Double>, exact: Boolean = true) : Model(exact)
 
-    private val doubleSpecialPoints = listOf(
+    private val doubleSpecialPoints = [
         Double.NEGATIVE_INFINITY,
         Double.POSITIVE_INFINITY,
         Double.MIN_VALUE,
         Double.MAX_VALUE,
         Double.NaN,
         123456.789123e200, //Just a random point
-    )
+    ]
 
     private fun mutatePoints(points: List<Double>): Sequence<Double> = sequence {
         for (pt in points) {
@@ -78,9 +78,9 @@ internal class MathTestsGenerator(
             appendLineWithIndent("checkAnswers(::$name, arguments, answers, ${model.exact})")
             val specialFunctionPoint = (model as? ModelFunction1)?.customTestPoint
             if (specialFunctionPoint != null) {
-                appendLineWithIndent(mutatePoints(listOf(specialFunctionPoint)).toULongVariableList("specialFunctionPointArguments"))
+                appendLineWithIndent(mutatePoints([specialFunctionPoint]).toULongVariableList("specialFunctionPointArguments"))
                 appendLineWithIndent(
-                    mutatePoints(listOf(specialFunctionPoint)).map(model.function).toULongVariableList("specialFunctionPointResults")
+                    mutatePoints([specialFunctionPoint]).map(model.function).toULongVariableList("specialFunctionPointResults")
                 )
                 appendLineWithIndent("checkAnswers(::$name, specialFunctionPointArguments, specialFunctionPointResults, ${model.exact})")
             }

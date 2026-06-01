@@ -17,13 +17,13 @@ class SwiftExportWithCoroutinesTestSupport : BeforeTestExecutionCallback {
         val atomicFuCinteropInterop = TestModule.Given(testLibraryAtomicFuCinteropInteropKlibFile.toFile())
         val atomicFuModule = TestModule.Given(
             testLibraryAtomicFuKlibFile.toFile(),
-            dependencies = setOf(atomicFuCinteropInterop)
+            dependencies = [atomicFuCinteropInterop]
         )
         val kotlinxCoroutinesModule = TestModule.Given(
             testLibraryKotlinxCoroutinesKlibFile.toFile(),
             // It is not quite correct to pass atomicfu-cinterop-interop as a coroutines dependency,
             // but this fixes compilation of the corresponding static caches.
-            dependencies = setOf(atomicFuModule, atomicFuCinteropInterop)
+            dependencies = [atomicFuModule, atomicFuCinteropInterop]
         )
         (context?.requiredTestInstance as AbstractSwiftExportTest).apply {
             givenModules += setOf(

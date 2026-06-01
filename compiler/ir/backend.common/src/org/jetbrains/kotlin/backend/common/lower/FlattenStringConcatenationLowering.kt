@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import kotlin.math.max
 import kotlin.math.min
@@ -74,10 +75,10 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
         // There are two versions of String.plus in the library. One for nullable and one for non-nullable strings.
         // The version for nullable strings has FqName kotlin.plus, the version for non-nullable strings
         // is a member function of kotlin.String (with FqName kotlin.String.plus)
-        private val PARENT_NAMES = setOf(
+        private val PARENT_NAMES: Set<FqName> = [
             StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
             StandardNames.FqNames.string.toSafe()
-        )
+        ]
 
         /** @return true if the given expression is a call to [String.plus] */
         private val IrCall.isStringPlusCall: Boolean
@@ -125,7 +126,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
 
         /** Recursively collects string concatenation arguments from the given expression. */
         private fun collectStringConcatenationArguments(expression: IrExpression): List<IrExpression> {
-            val arguments = mutableListOf<IrExpression>()
+            val arguments: MutableList<IrExpression> = []
             expression.acceptChildrenVoid(object : IrVisitorVoid() {
 
                 override fun visitElement(element: IrElement) {
@@ -181,7 +182,7 @@ class FlattenStringConcatenationLowering(val context: CommonBackendContext) : Fi
     }
 
     private fun IrStringConcatenation.tryToFold(): IrExpression {
-        val folded = mutableListOf<IrExpression>()
+        val folded: MutableList<IrExpression> = []
         for (next in this.arguments) {
             val last = folded.lastOrNull()
             when {

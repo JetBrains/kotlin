@@ -51,7 +51,7 @@ internal class KaFe10FileScope(
     }
 
     override fun callables(names: Collection<Name>): Sequence<KaCallableSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return callables { it in namesSet }
     }
@@ -71,15 +71,15 @@ internal class KaFe10FileScope(
     }
 
     override fun classifiers(names: Collection<Name>): Sequence<KaClassifierSymbol> = withValidityAssertion {
-        if (names.isEmpty()) return emptySequence()
+        if (names.isEmpty()) return []
         val namesSet = names.toSet()
         return classifiers { it in namesSet }
     }
 
     override val constructors: Sequence<KaConstructorSymbol>
-        get() = withValidityAssertion { emptySequence() }
+        get() = withValidityAssertion { [] }
 
     override fun getPackageSymbols(nameFilter: (Name) -> Boolean): Sequence<KaPackageSymbol> = withValidityAssertion {
-        emptySequence()
+        []
     }
 }

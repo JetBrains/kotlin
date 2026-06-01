@@ -39,7 +39,7 @@ abstract class AbstractNativeObjCExportTest : AbstractNativeSimpleTest() {
             TestCase.WithTestRunnerExtras(TestRunnerType.DEFAULT),
             testPathFull.name,
             ktSources,
-            TestCompilerArgs(listOf("-Xexport-kdoc"))
+            TestCompilerArgs(["-Xexport-kdoc"])
         )
         val objCFramework: ObjCFramework = testCase.toObjCFramework().assertSuccess().resultingArtifact
 

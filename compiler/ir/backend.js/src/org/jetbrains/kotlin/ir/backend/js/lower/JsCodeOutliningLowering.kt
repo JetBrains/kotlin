@@ -159,10 +159,10 @@ private class JsCodeOutlineTransformer(
     val reportInlinableLambdaCaptured: InlinableLambdaCapturingReporter?,
 ) : IrElementTransformerVoid() {
     private val symbols = loweringContext.symbols as PreSerializationJsSymbols
-    val outlinedFunctions = mutableListOf<IrFunction>()
+    val outlinedFunctions: MutableList<IrFunction> = []
 
     val localScopes: MutableList<HashMap<String, IrValueDeclaration>> =
-        mutableListOf(hashMapOf())
+        [hashMapOf()]
 
     init {
         if (container is IrFunction) {
@@ -265,7 +265,7 @@ private class JsCodeOutlineTransformer(
         val builder = loweringContext.createIrBuilder(outlinedFunction.symbol)
         val annotation = builder.irAnnotation(
             symbols.jsOutlinedFunctionAnnotationSymbol.constructors.first(),
-            typeArguments = emptyList(),
+            typeArguments = [],
         )
         outlinedFunction.annotations += annotation
         return annotation
@@ -301,7 +301,7 @@ private class JsCodeOutlineTransformer(
         val sourceMapBuilderConsumer = SourceMapBuilderConsumer(
             File("."),
             sourceMapBuilder,
-            SourceFilePathResolver(emptyList()),
+            SourceFilePathResolver([]),
             provideExternalModuleContent = false,
         )
         JsToStringGenerationVisitor(jsCode, sourceMapBuilderConsumer).accept(jsFunction)
@@ -332,7 +332,7 @@ private class JsCodeOutlineTransformer(
 }
 
 class JsScopesCollector : RecursiveJsVisitor() {
-    private val functionsStack = mutableListOf(Scope(null))
+    private val functionsStack: MutableList<Scope> = [Scope(null)]
     private val functionalScopes = mutableMapOf<JsFunction?, Scope>(null to functionsStack.first())
 
     private class Scope(val parent: Scope?) {
@@ -380,8 +380,8 @@ private class KotlinLocalsUsageCollector(
     private val scopeInfo: JsScopesCollector,
     private val findValueDeclarationWithName: (String) -> IrValueDeclaration?,
 ) : RecursiveJsVisitor() {
-    private val functionStack = mutableListOf<JsFunction?>(null)
-    private val processedNames = mutableSetOf<String>()
+    private val functionStack: MutableList<JsFunction?> = [null]
+    private val processedNames: MutableSet<String> = []
 
     val usedLocals: Map<JsName, IrValueDeclaration>
         field = linkedMapOf<JsName, IrValueDeclaration>()

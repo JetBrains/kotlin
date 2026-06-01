@@ -14,10 +14,10 @@ interface ModuleInfo {
     val name: Name
     val displayedName: String get() = name.asString()
     fun dependencies(): List<ModuleInfo>
-    val expectedBy: List<ModuleInfo> get() = emptyList()
+    val expectedBy: List<ModuleInfo> get() = []
     val platform: TargetPlatform
     val analyzerServices: PlatformDependentAnalyzerServices
-    fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = listOf()
+    fun modulesWhoseInternalsAreVisible(): Collection<ModuleInfo> = []
     val capabilities: Map<ModuleCapability<*>, Any?>
         get() = mapOf(Capability to this)
     val stableName: Name?

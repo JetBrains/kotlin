@@ -56,7 +56,7 @@ abstract class AnalysisApiFirOutOfContentRootTestConfiguratorBase : LLSourceLike
 }
 
 object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirOutOfContentRootTestConfiguratorBase() {
-    override val testPrefixes: List<String> get() = listOf("out_of_src_roots")
+    override val testPrefixes: List<String> get() = ["out_of_src_roots"]
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
@@ -87,12 +87,12 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirOutOfConte
         override val targetPlatform: TargetPlatform,
     ) : KaNotUnderContentRootModule, KaModuleBase() {
         override val directRegularDependencies: List<KaModule> by lazy {
-            listOf(LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(targetPlatform))
+            [LLFirBuiltinsSessionFactory.getInstance(project).getBuiltinsModule(targetPlatform)]
         }
 
-        override val directDependsOnDependencies: List<KaModule> get() = emptyList()
-        override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
-        override val directFriendDependencies: List<KaModule> get() = emptyList()
+        override val directDependsOnDependencies: List<KaModule> get() = []
+        override val transitiveDependsOnDependencies: List<KaModule> get() = []
+        override val directFriendDependencies: List<KaModule> get() = []
         override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
         override val project: Project get() = file.project
         override val moduleDescription: String get() = "Not under content root \"${name}\" for ${file.virtualFile.path}"
@@ -100,7 +100,7 @@ object AnalysisApiFirOutOfContentRootTestConfigurator : AnalysisApiFirOutOfConte
 }
 
 object AnalysisApiFirOutOfContentRootWithDependenciesTestConfigurator : AnalysisApiFirOutOfContentRootTestConfiguratorBase() {
-    override val testPrefixes: List<String> get() = listOf("out_of_src_roots_w_deps")
+    override val testPrefixes: List<String> get() = ["out_of_src_roots_w_deps"]
 
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {
         super.configureTest(builder, disposable)
@@ -130,9 +130,9 @@ object AnalysisApiFirOutOfContentRootWithDependenciesTestConfigurator : Analysis
         override val file: PsiFile,
         override val targetPlatform: TargetPlatform,
     ) : KaNotUnderContentRootModule, KtModuleWithModifiableDependencies() {
-        override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
-        override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
-        override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+        override val directRegularDependencies: MutableList<KaModule> = []
+        override val directDependsOnDependencies: MutableList<KaModule> = []
+        override val directFriendDependencies: MutableList<KaModule> = []
 
         override val baseContentScope: GlobalSearchScope get() = GlobalSearchScope.fileScope(file)
         override val project: Project get() = file.project

@@ -210,7 +210,7 @@ internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAc
 internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
     override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef {
         val llvm = generationContext!!.llvm
-        return generationContext.call(llvm.lookupTLS, listOf(llvm.tlsKey, llvm.int32(index)))
+        return generationContext.call(llvm.lookupTLS, [llvm.tlsKey, llvm.int32(index)])
     }
 }
 

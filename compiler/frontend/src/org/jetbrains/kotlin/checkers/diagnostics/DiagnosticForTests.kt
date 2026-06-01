@@ -26,7 +26,7 @@ open class AbstractDiagnosticForTests(override val psiElement: PsiElement, overr
         get() = Severity.ERROR
 
     override val textRanges: List<TextRange>
-        get() = listOf(psiElement.textRange)
+        get() = [psiElement.textRange]
 
     override val psiFile: PsiFile
         get() = psiElement.containingFile

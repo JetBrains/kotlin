@@ -181,7 +181,7 @@ abstract class AbstractModifierChecks {
 }
 
 object OperatorChecks : AbstractModifierChecks() {
-    override val checks = listOf(
+    override val checks = [
         Checks(GET, MemberOrExtension, ValueParameterCountCheck.AtLeast(1)),
         Checks(SET, MemberOrExtension, ValueParameterCountCheck.AtLeast(2)) {
             val lastIsOk =
@@ -215,7 +215,7 @@ object OperatorChecks : AbstractModifierChecks() {
         Checks(COMPARE_TO, MemberOrExtension, ReturnsInt, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(BINARY_OPERATION_NAMES, MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(SIMPLE_UNARY_OPERATION_NAMES, MemberOrExtension, NoValueParameters),
-        Checks(listOf(INC, DEC), MemberOrExtension) {
+        Checks([INC, DEC], MemberOrExtension) {
             val receiver = dispatchReceiverParameter ?: extensionReceiverParameter
             ensure(receiver != null && ((returnType?.isSubtypeOf(receiver.type) ?: false) || incDecCheckForExpectClass(receiver))) {
                 "receiver must be a supertype of the return type"
@@ -223,7 +223,7 @@ object OperatorChecks : AbstractModifierChecks() {
         },
         Checks(ASSIGNMENT_OPERATIONS, MemberOrExtension, ReturnsUnit, SingleValueParameter, NoDefaultAndVarargsCheck),
         Checks(COMPONENT_REGEX, MemberOrExtension, NoValueParameters)
-    )
+    ]
 
     /**
      * See KT-49714
@@ -255,9 +255,9 @@ object OperatorChecks : AbstractModifierChecks() {
 }
 
 object InfixChecks : AbstractModifierChecks() {
-    override val checks = listOf(
+    override val checks = [
         Checks(MemberKindCheck.MemberOrExtension, SingleValueParameter, NoDefaultAndVarargsCheck)
-    )
+    ]
 }
 
 fun FunctionDescriptor.isValidOperator() = isOperator && OperatorChecks.check(this).isSuccess

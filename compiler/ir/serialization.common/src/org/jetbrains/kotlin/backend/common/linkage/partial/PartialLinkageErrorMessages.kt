@@ -204,13 +204,13 @@ private fun IrSymbol.guessName(): String? {
                     is IrConstructor -> {
                         val parent = owner.parentClassOrNull
                         when {
-                            parent == null || parent.isAnonymousObject -> listOf(owner.name)
+                            parent == null || parent.isAnonymousObject -> [owner.name]
                             parent.isCompanionWithDefaultName() -> listOfNotNull(parent.parentClassOrNull?.name, parent.name, owner.name)
-                            else -> listOf(parent.name, owner.name)
+                            else -> [parent.name, owner.name]
                         }
                     }
                     is IrEnumEntry -> listOfNotNull(owner.parentClassOrNull?.name, owner.name)
-                    else -> listOf(owner.name)
+                    else -> [owner.name]
                 }.joinToString(".")
             }
 }

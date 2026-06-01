@@ -162,9 +162,9 @@ class FindMatchingBuildFailureInjection<ExpectedException : Exception>(
         topLevelException: Throwable,
         targetClass: Class<T>,
     ): Set<T> {
-        val exceptionsStack = mutableListOf(topLevelException)
-        val walkedExceptions = mutableSetOf<Throwable>()
-        val matchingExceptions = mutableSetOf<T>()
+        val exceptionsStack: MutableList<Throwable> = [topLevelException]
+        val walkedExceptions: MutableSet<Throwable> = []
+        val matchingExceptions: MutableSet<T> = []
         while (exceptionsStack.isNotEmpty()) {
             val current = exceptionsStack.removeLast()
             if (current in walkedExceptions) continue
@@ -606,7 +606,7 @@ private class TestPluginDependencySpec(
 }
 
 private class TestPluginDependenciesSpec : PluginDependenciesSpec, Serializable {
-    val plugins = mutableListOf<TestPluginDependencySpec>()
+    val plugins: MutableList<TestPluginDependencySpec> = []
     override fun id(id: String): PluginDependencySpec = TestPluginDependencySpec(id).also { plugins.add(it) }
 }
 

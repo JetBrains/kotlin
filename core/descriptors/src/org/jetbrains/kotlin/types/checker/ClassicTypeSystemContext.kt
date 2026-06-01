@@ -555,7 +555,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         fun createExtensionFunctionAnnotation() = BuiltInAnnotationDescriptor(builtIns, FqNames.extensionFunctionType, emptyMap())
 
         val resultingAnnotations = when {
-            ourAnnotations.isNullOrEmpty() && isExtensionFunction -> Annotations.create(listOf(createExtensionFunctionAnnotation()))
+            ourAnnotations.isNullOrEmpty() && isExtensionFunction -> Annotations.create([createExtensionFunctionAnnotation()])
             !ourAnnotations.isNullOrEmpty() && !isExtensionFunction -> Annotations.create(ourAnnotations.filter { it.fqName != FqNames.extensionFunctionType })
             !ourAnnotations.isNullOrEmpty() && isExtensionFunction -> Annotations.create(ourAnnotations + createExtensionFunctionAnnotation())
             else -> Annotations.EMPTY

@@ -412,7 +412,7 @@ open class LiveLiteralTransformer(
     }
 
     open fun makeKeySet(): MutableSet<String> {
-        return mutableSetOf()
+        return []
     }
 
     @OptIn(IrImplementationDetail::class)

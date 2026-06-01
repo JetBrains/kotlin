@@ -19,7 +19,7 @@ class JpsCompilationResult : CompilationResults,
         LoopbackNetworkInterface.serverLoopbackSocketFactory
     ) {
 
-    var icLogLines: List<String> = emptyList()
+    var icLogLines: List<String> = []
     val compiledFiles = ArrayList<String>()
 
     private val buildMetricsReporter = BuildMetricsReporterImpl<JpsBuildTimeMetric, JpsBuildPerformanceMetric>()

@@ -45,7 +45,7 @@ interface ReadWriteAccessChecker {
             return ReferenceAccess.WRITE to expression
         }
 
-        return if (parent is KtUnaryExpression && parent.operationToken in constant { setOf(KtTokens.PLUSPLUS, KtTokens.MINUSMINUS) })
+        return if (parent is KtUnaryExpression && parent.operationToken in constant { [KtTokens.PLUSPLUS, KtTokens.MINUSMINUS] })
             ReferenceAccess.READ_WRITE to parent
         else
             ReferenceAccess.READ to expression

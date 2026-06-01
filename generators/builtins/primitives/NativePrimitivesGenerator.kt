@@ -25,11 +25,11 @@ class NativePrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(w
 
     override fun primitiveConstants(type: PrimitiveType): List<Any> {
         return when (type) {
-            PrimitiveType.FLOAT -> listOf(
+            PrimitiveType.FLOAT -> [
                 String.format(Locale.US, "%.17eF", java.lang.Float.MIN_VALUE),
                 String.format(Locale.US, "%.17eF", java.lang.Float.MAX_VALUE),
                 "1.0F/0.0F", "-1.0F/0.0F", "-(0.0F/0.0F)"
-            )
+            ]
             else -> super.primitiveConstants(type)
         }
     }

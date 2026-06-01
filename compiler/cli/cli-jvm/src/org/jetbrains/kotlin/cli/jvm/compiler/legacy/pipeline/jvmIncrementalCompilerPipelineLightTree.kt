@@ -47,9 +47,9 @@ fun compileModuleToAnalyzedFirViaLightTreeIncrementally(
     ).compileModuleToAnalyzedFirViaLightTreeIncrementally(
         input,
         diagnosticsReporter,
-        previousStepsSymbolProviders = emptyList(),
+        previousStepsSymbolProviders = [],
         incrementalExcludesScope,
-        friendPaths = emptyList()
+        friendPaths = []
     )
 }
 

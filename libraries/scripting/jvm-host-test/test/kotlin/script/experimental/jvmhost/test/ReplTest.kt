@@ -32,9 +32,9 @@ class ReplTest {
     @Test
     fun testDecompiledReflection() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "val x = 1",
-            ),
+            ],
             sequenceOf(null),
             compiledSnippetChecker = { linkedSnippet ->
                 val snippet = linkedSnippet.get()
@@ -59,12 +59,12 @@ class ReplTest {
     fun testCompileAndEval() {
         val out = captureOut {
             checkEvaluateInRepl(
-                sequenceOf(
+                [
                     "val x = 3",
                     "x + 4",
                     "println(\"x = \$x\")"
-                ),
-                sequenceOf(null, 7, null)
+                ],
+                [null, 7, null]
             )
         }
         assertEquals("x = 3", out)
@@ -74,7 +74,7 @@ class ReplTest {
     fun testCaptureFromPreviousSnippets() {
         val out = captureOut {
             checkEvaluateInRepl(
-                sequenceOf(
+                [
                     "val x = 3",
                     "fun b() = x",
                     "b()",
@@ -87,8 +87,8 @@ class ReplTest {
                     "Inner().d()",
                     "class TwoLevel { inner class Inner { fun e() = x + 8 } }",
                     "TwoLevel().Inner().e()",
-                ),
-                sequenceOf(null, null, 3, null, null, 5, null, 7, null, 9, null, 11)
+                ],
+                [null, null, 3, null, null, 5, null, 7, null, 9, null, 11]
             )
         }
         assertEquals("b() = 3", out)
@@ -97,24 +97,24 @@ class ReplTest {
     @Test
     fun testEvalWithResult() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "val x = 5",
                 "x + 6",
                 "res1 * 2"
-            ),
-            sequenceOf(null, 11, 22)
+            ],
+            [null, 11, 22]
         )
     }
 
     @Test
     fun testEvalWithIfResult() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "val x = 5",
                 "x + 6",
                 "if (x < 10) res1 * 2 else x"
-            ),
-            sequenceOf(null, 11, 22)
+            ],
+            [null, 11, 22]
         )
     }
 
@@ -122,12 +122,12 @@ class ReplTest {
     fun testImplicitReceiver() {
         val receiver = TestReceiver()
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "val x = 4",
                 "x + prop1",
                 "res1 * 3"
-            ),
-            sequenceOf(null, 7, 21),
+            ],
+            [null, 7, 21],
             simpleScriptCompilationConfiguration.with {
                 implicitReceivers(TestReceiver::class)
             },
@@ -140,19 +140,19 @@ class ReplTest {
     @Test
     fun testEvalWithError() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "throw RuntimeException(\"abc\")",
                 "val x = 3",
                 "x + 1"
-            ),
-            sequenceOf(RuntimeException("abc"), null, 4)
+            ],
+            [RuntimeException("abc"), null, 4]
         )
     }
 
     @Test
     fun testEvalWithExceptionWithCause() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 """
                     try {
                         throw Exception("Error!")
@@ -160,54 +160,54 @@ class ReplTest {
                         throw Exception("Oh no", e)
                     }
                 """.trimIndent()
-            ),
-            sequenceOf(Exception("Oh no", Exception("Error!")))
+            ],
+            [Exception("Oh no", Exception("Error!"))]
         )
     }
 
     @Test
     fun testEvalWithErrorWithLocation() {
         checkEvaluateInReplDiags(
-            sequenceOf(
+            [
                 """
                     val foobar = 78
                     val foobaz = "dsdsda"
                     val ddd = ppp
                     val ooo = foobar
                 """.trimIndent()
-            ),
-            sequenceOf(
+            ],
+            [
                 makeFailureResult(
                     "Unresolved reference: ppp", location = SourceCode.Location(
                         SourceCode.Position(3, 11), SourceCode.Position(3, 14)
                     )
                 )
-            )
+            ]
         )
     }
 
     @Test
     fun testSyntaxErrors() {
         checkEvaluateInReplDiags(
-            sequenceOf(
+            [
                 "data class Q(val x: Int, val: String)",
                 "fun g(): Unit { return }}",
                 "fun f() : Int { return 1",
                 "6*7"
-            ),
-            sequenceOf(
+            ],
+            [
                 makeFailureResult("Parameter name expected"),
                 makeFailureResult("Unexpected symbol"),
                 makeFailureResult("Expecting '}'"),
                 42.asSuccess()
-            )
+            ]
         )
     }
 
     @Test
     fun testCodegenErrors() {
         checkEvaluateInReplDiags(
-            sequenceOf(
+            [
                 """
                     val x = 1
                     class C {
@@ -216,8 +216,8 @@ class ReplTest {
                         }
                     }
                 """.trimIndent()
-            ),
-            sequenceOf(
+            ],
+            [
                 makeFailureResult(
                     "Object 'Companion' captures the script class instance. Try to use class or anonymous object instead.",
                     location = SourceCode.Location(
@@ -225,7 +225,7 @@ class ReplTest {
                         SourceCode.Position(3, 21)
                     )
                 ),
-            )
+            ]
         )
     }
 
@@ -233,14 +233,14 @@ class ReplTest {
     // TODO: make it covering more cases
     fun testIrReceiverOvewrite() {
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "fun f(a: String) = a",
                 "f(\"x\")"
-            ),
-            sequenceOf(
+            ],
+            [
                 null,
                 "x"
-            )
+            ]
         )
     }
 
@@ -251,7 +251,7 @@ class ReplTest {
                 "    fun `<get-x>`(): Int defined in Line_0_simplescript"
 
         checkEvaluateInReplDiags(
-            sequenceOf(
+            [
                 """
                     fun stack(vararg tup: Int): Int = tup.sum()
                     val X = 1
@@ -261,8 +261,8 @@ class ReplTest {
                     val y = 42
                     y
                 """.trimIndent()
-            ),
-            sequenceOf(
+            ],
+            [
                 ResultWithDiagnostics.Failure(
                     errorMessage.asErrorDiagnostics(
                         location = SourceCode.Location(
@@ -278,7 +278,7 @@ class ReplTest {
                     )
                 ),
                 42.asSuccess()
-            )
+            ]
         )
     }
 
@@ -361,12 +361,12 @@ class ReplTest {
         )
 
         checkEvaluateInRepl(
-            sequenceOf(
+            [
                 "args[0]",
                 "res0+args[0]",
                 "res1+args[0]"
-            ),
-            sequenceOf("a", "aa", "aaa"),
+            ],
+            ["a", "aa", "aaa"],
             scriptDef.compilationConfiguration,
             scriptDef.evaluationConfiguration
         )
@@ -391,17 +391,17 @@ class ReplTest {
         val error = "Only the Kotlin standard library is allowed to use the 'kotlin' package"
         val script = "package kotlin\n\"$greeting\""
         checkEvaluateInReplDiags(
-            sequenceOf(script),
-            sequenceOf(
+            [script],
+            [
                 makeFailureResult(
                     error, path = "Line_0.simplescript.kts",
                     location = SourceCode.Location(SourceCode.Position(1, 1), SourceCode.Position(1, 15))
                 )
-            )
+            ]
         )
         checkEvaluateInRepl(
-            sequenceOf(script),
-            sequenceOf(greeting),
+            [script],
+            [greeting],
             simpleScriptCompilationConfiguration.with {
                 compilerOptions(K2JVMCompilerArguments::allowKotlinPackage.cliArgument)
             }

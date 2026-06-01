@@ -39,7 +39,7 @@ fun <GeneratedType, TypePrinter> printGeneratedTypesIntoSingleFile(
     treeGeneratorReadMe: String,
     packageName: String,
     fileNameWithoutExtension: String,
-    fileSuppressions: List<String> = emptyList(),
+    fileSuppressions: List<String> = [],
     makeTypePrinter: (ImportCollectingPrinter) -> TypePrinter,
     printType: TypePrinter.(GeneratedType) -> Unit,
 ): GeneratedFile {
@@ -87,11 +87,11 @@ fun printGeneratedType(
     treeGeneratorReadMe: String,
     packageName: String,
     typeName: String,
-    fileSuppressions: List<String> = emptyList(),
+    fileSuppressions: List<String> = [],
     body: ImportCollectingPrinter.() -> Unit,
 ): GeneratedFile =
     printGeneratedTypesIntoSingleFile(
-        listOf(null),
+        [null],
         generationPath,
         treeGeneratorReadMe,
         packageName,
@@ -109,7 +109,7 @@ fun printGeneratedType(
  * warning in each generated file.
  */
 class TreeGenerator(private val generationPath: File, val treeGeneratorReadme: String) {
-    val generatedFiles = mutableListOf<GeneratedFile>()
+    val generatedFiles: MutableList<GeneratedFile> = []
 
     fun run(body: TreeGenerator.() -> Unit) {
         body(this)
@@ -146,7 +146,7 @@ class TreeGenerator(private val generationPath: File, val treeGeneratorReadme: S
                 treeGeneratorReadme,
                 implementation.packageName,
                 implementation.typeName,
-                fileSuppressions = listOf("DuplicatedCode"),
+                fileSuppressions = ["DuplicatedCode"],
             ) { createImplementationPrinter(this).printImplementation(implementation) }
         }
     }
@@ -162,7 +162,7 @@ class TreeGenerator(private val generationPath: File, val treeGeneratorReadme: S
                 treeGeneratorReadme,
                 builder.packageName,
                 builder.typeName,
-                fileSuppressions = listOf("DuplicatedCode", "unused"),
+                fileSuppressions = ["DuplicatedCode", "unused"],
             ) {
                 createBuilderPrinter(this).printBuilder(builder)
             }

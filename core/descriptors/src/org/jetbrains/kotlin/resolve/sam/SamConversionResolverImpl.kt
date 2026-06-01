@@ -24,7 +24,7 @@ class SamConversionResolverImpl(
     private val samWithReceiverResolvers: Iterable<SamWithReceiverResolver>
 ) : SamConversionResolver {
     class SamConversionResolverWithoutReceiverConversion(storageManager: StorageManager) : SamConversionResolver {
-        val resolver = SamConversionResolverImpl(storageManager, emptyList())
+        val resolver = SamConversionResolverImpl(storageManager, [])
 
         override fun resolveFunctionTypeIfSamInterface(classDescriptor: ClassDescriptor): SimpleType? {
             return resolver.resolveFunctionTypeIfSamInterface(classDescriptor)

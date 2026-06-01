@@ -16,7 +16,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData") {
             testClass<AbstractJvmRuntimeDescriptorLoaderTest> {
                 model("loadJava/compiledKotlin")
-                model("loadJava/compiledJava", extension = "java", excludeDirs = listOf("sam", "kotlinSignature/propagation"))
+                model("loadJava/compiledJava", extension = "java", excludeDirs = ["sam", "kotlinSignature/propagation"])
             }
 
             testClass<AbstractJvm8RuntimeDescriptorLoaderTest> {

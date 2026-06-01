@@ -106,7 +106,7 @@ class DestructuringDeclarationResolver(
         val newContext = context.replaceExpectedType(expectedType).replaceContextDependency(ContextDependency.INDEPENDENT)
         val results = fakeCallResolver.resolveFakeCall(
             newContext, receiver, componentName,
-            entry, initializer ?: entry, FakeCallKind.COMPONENT, emptyList()
+            entry, initializer ?: entry, FakeCallKind.COMPONENT, []
         )
 
         if (!results.isSuccess) {

@@ -271,7 +271,7 @@ internal fun extractNonFatalDiagnostics(
     explicitReceiver: FirExpression?,
     extraNotFatalDiagnostics: List<ConeDiagnostic>?
 ): List<ConeDiagnostic> {
-    val prevDiagnostics = (explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.nonFatalDiagnostics ?: emptyList()
+    val prevDiagnostics = (explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.nonFatalDiagnostics.orEmpty()
     return when {
         !extraNotFatalDiagnostics.isNullOrEmpty() -> prevDiagnostics + extraNotFatalDiagnostics
         else -> prevDiagnostics

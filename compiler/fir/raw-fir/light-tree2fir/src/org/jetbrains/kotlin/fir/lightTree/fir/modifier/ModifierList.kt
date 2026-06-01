@@ -13,8 +13,8 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.types.Variance
 
 open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
-    val annotations: MutableList<LighterASTNode> = mutableListOf()
-    var contextLists: MutableList<LighterASTNode> = mutableListOf()
+    val annotations: MutableList<LighterASTNode> = []
+    var contextLists: MutableList<LighterASTNode> = []
 
     fun addModifier(modifier: LighterASTNode, isInClass: Boolean = false) {
         when (val tokenType = modifier.tokenType) {

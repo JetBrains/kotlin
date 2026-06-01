@@ -18,7 +18,7 @@ internal fun WasmOp.isBlockEnd(): Boolean = this == WasmOp.END
 
 class WasmExpressionBuilderWithOptimizer(
     skipCommentInstructions: Boolean = true,
-) : WasmExpressionBuilder(mutableListOf(), skipCommentInstructions) {
+) : WasmExpressionBuilder([], skipCommentInstructions) {
 
     private var completed: Boolean = false
 
@@ -427,7 +427,7 @@ open class WasmExpressionBuilder(
 }
 
 inline fun buildWasmExpression(body: WasmExpressionBuilder.() -> Unit): MutableList<WasmInstr> {
-    val res = mutableListOf<WasmInstr>()
+    val res: MutableList<WasmInstr> = []
     WasmExpressionBuilder(res).body()
     return res
 }

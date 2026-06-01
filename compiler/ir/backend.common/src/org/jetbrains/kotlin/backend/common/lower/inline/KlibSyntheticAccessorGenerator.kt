@@ -67,7 +67,7 @@ class KlibSyntheticAccessorGenerator(
 
             accessor.body = context.irFactory.createBlockBody(
                 UNDEFINED_OFFSET, UNDEFINED_OFFSET,
-                listOf(createDelegatingConstructorCall(accessor, source.symbol))
+                [createDelegatingConstructorCall(accessor, source.symbol)]
             )
         }
     }
@@ -97,7 +97,7 @@ class KlibSyntheticAccessorGenerator(
     }
 
     override fun capturedTypeParametersOfSyntheticAccessor(declaration: IrDeclaration): List<IrTypeParameter> {
-        val classParent = declaration.parent as? IrClass ?: return listOf()
+        val classParent = declaration.parent as? IrClass ?: return []
         return if (classParent.isInner) {
             classParent.typeParameters + capturedTypeParametersOfSyntheticAccessor(classParent)
         } else {
@@ -171,7 +171,7 @@ class KlibSyntheticAccessorGenerator(
             returnType = expression.type // This is the type of the outer class.
             body = context.irFactory.createBlockBody(
                 startOffset, startOffset,
-                listOf(IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, symbol, expression))
+                [IrReturnImpl(startOffset, endOffset, context.irBuiltIns.nothingType, symbol, expression)]
             )
         }
     }

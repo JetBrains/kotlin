@@ -29,9 +29,9 @@ interface AdditionalClassPartsProvider {
     fun getFunctionsNames(classDescriptor: ClassDescriptor): Collection<Name>
 
     object None : AdditionalClassPartsProvider {
-        override fun getSupertypes(classDescriptor: ClassDescriptor): Collection<KotlinType> = emptyList()
-        override fun getFunctions(name: Name, classDescriptor: ClassDescriptor): Collection<SimpleFunctionDescriptor> = emptyList()
-        override fun getFunctionsNames(classDescriptor: ClassDescriptor): Collection<Name> = emptyList()
-        override fun getConstructors(classDescriptor: ClassDescriptor): Collection<ClassConstructorDescriptor> = emptyList()
+        override fun getSupertypes(classDescriptor: ClassDescriptor): List<KotlinType> = []
+        override fun getFunctions(name: Name, classDescriptor: ClassDescriptor): List<SimpleFunctionDescriptor> = []
+        override fun getFunctionsNames(classDescriptor: ClassDescriptor): List<Name> = []
+        override fun getConstructors(classDescriptor: ClassDescriptor): List<ClassConstructorDescriptor> = []
     }
 }

@@ -24,11 +24,11 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
     companion object {
         private val HELPERS_PATH = "ir/interpreter/helpers"
         private val STDLIB_PATH = "stdlib"
-        private val UNSIGNED_PATH = arrayOf(
+        private val UNSIGNED_PATH: Array<String> = [
             "$STDLIB_PATH/unsigned/src/kotlin",
             "$STDLIB_PATH/jvm/src/kotlin/util/UnsignedJVM.kt"
-        )
-        private val RUNTIME_PATHS = arrayOf(
+        ]
+        private val RUNTIME_PATHS: Array<String> = [
             "$STDLIB_PATH/src/kotlin/ranges/Progressions.kt",
             "$STDLIB_PATH/src/kotlin/ranges/ProgressionIterators.kt",
             "$STDLIB_PATH/src/kotlin/internal/progressionUtil.kt",
@@ -37,24 +37,24 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
             "$STDLIB_PATH/jvm/src/kotlin/collections/TypeAliases.kt",
             "$STDLIB_PATH/src/kotlin/text/regex/MatchResult.kt",
             "$STDLIB_PATH/src/kotlin/collections/Sequence.kt",
-        )
-        private val ANNOTATIONS_PATHS = arrayOf(
+        ]
+        private val ANNOTATIONS_PATHS: Array<String> = [
             "$STDLIB_PATH/src/kotlin/annotations/WasExperimental.kt",
             "$STDLIB_PATH/src/kotlin/annotations/ExperimentalStdlibApi.kt",
             "$STDLIB_PATH/src/kotlin/annotations/OptIn.kt",
             "$STDLIB_PATH/src/kotlin/internal/Annotations.kt",
             "$STDLIB_PATH/src/kotlin/experimental/inferenceMarker.kt",
             "$STDLIB_PATH/jvm/runtime/kotlin/jvm/annotations/JvmPlatformAnnotations.kt",
-        )
+        ]
         private val REFLECT_PATH = "$STDLIB_PATH/jvm/src/kotlin/reflect"
-        private val EXCLUDES = listOf(
+        private val EXCLUDES = [
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
             "stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
-        )
+        ]
     }
 
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(AdditionalFilesDirectives)
+        [AdditionalFilesDirectives]
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
         val stdlibUri = this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI()

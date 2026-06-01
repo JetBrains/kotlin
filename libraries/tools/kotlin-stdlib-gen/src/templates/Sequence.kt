@@ -17,8 +17,8 @@ object SequenceOps : TemplateGroupBase() {
         body {
             """
             ${ when(f) {
-                ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return emptyList()"
-                CharSequences -> "if (this is String && isEmpty()) return emptyList()"
+                ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return []"
+                CharSequences -> "if (this is String && isEmpty()) return []"
                 else -> ""
             }}
             return Iterable { this.iterator() }
@@ -51,8 +51,8 @@ object SequenceOps : TemplateGroupBase() {
         body {
             """
             ${ when(f) {
-                ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return emptySequence()"
-                CharSequences -> "if (this is String && isEmpty()) return emptySequence()"
+                ArraysOfObjects, ArraysOfPrimitives -> "if (isEmpty()) return []"
+                CharSequences -> "if (this is String && isEmpty()) return []"
                 else -> ""
             }}
             return Sequence { this.iterator() }

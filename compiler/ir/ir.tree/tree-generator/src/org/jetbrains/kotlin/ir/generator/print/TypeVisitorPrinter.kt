@@ -52,10 +52,10 @@ internal open class TypeVisitorPrinter(
     }
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(irVisitorType.withArgs(resultTypeVariable, dataTypeVariable))
+        get() = [irVisitorType.withArgs(resultTypeVariable, dataTypeVariable)]
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(resultTypeVariable, dataTypeVariable)
+        get() = [resultTypeVariable, dataTypeVariable]
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable
@@ -304,7 +304,7 @@ internal open class TypeVisitorPrinter(
 
     override fun printMethodsForElement(element: Element) {
         val irTypeFields = element.getFieldsWithIrTypeType()
-        val isAnnotationContainer = element in listOf(IrTree.declarationBase, IrTree.file)
+        val isAnnotationContainer = element in [IrTree.declarationBase, IrTree.file]
         if (!isAnnotationContainer && (irTypeFields.isEmpty() || element.parentInVisitor == null)) return
 
         printer.run {

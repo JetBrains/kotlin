@@ -36,7 +36,7 @@ fun markRange(
     startOffset: Int,
     endOffset: Int,
 ): List<TextRange> {
-    return listOf(markSingleElement(startOffset, endOffset))
+    return [markSingleElement(startOffset, endOffset)]
 }
 
 fun markSingleElement(

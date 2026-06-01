@@ -20,11 +20,11 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/litmus-tests/testData") {
             testClass<AbstractNativeBlackBoxTest>(
                 suiteTestClassName = "FirLitmusKtTestsGenerated",
-                annotations = listOf(
+                annotations = [
                     litmusktNative(),
                     provider<UseExtTestCaseGroupProvider>(),
                     forceHostTarget(),
-                )
+                ]
             ) {
                 model("standalone")
             }

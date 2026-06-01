@@ -20,7 +20,7 @@ object FirMissingDependencyClassForLambdaReceiverChecker :
         if (!declaration.isLambda) return
         val receiverType = declaration.receiverType ?: return
 
-        val missingTypes = mutableSetOf<ConeClassLikeType>()
+        val missingTypes: MutableSet<ConeClassLikeType> = []
         considerType(receiverType, missingTypes)
         reportMissingTypes(
             declaration.source, missingTypes,

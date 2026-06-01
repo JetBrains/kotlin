@@ -36,7 +36,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
     private fun compareBase(path: String, withTestData: Boolean, compareFir: (File) -> Boolean) {
         var counter = 0
         var errorCounter = 0
-        val differentFiles = mutableListOf<File>()
+        val differentFiles: MutableList<File> = []
 
         val onEachFile: (File) -> Unit = { file ->
             if (!compareFir(file)) {

@@ -20,10 +20,10 @@ private class Global(val index: Int) : WasmImmediate.GlobalIdx()
 private class Type(val index: Int) : WasmImmediate.TypeIdx()
 
 private class BinaryToIrResolver : DeclarationResolver() {
-    val functions: MutableList<WasmFunction> = mutableListOf()
-    val globalFields: MutableList<WasmGlobal> = mutableListOf()
-    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
-    val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
+    val functions: MutableList<WasmFunction> = []
+    val globalFields: MutableList<WasmGlobal> = []
+    val gcTypes: MutableList<WasmTypeDeclaration> = []
+    val functionTypes: MutableList<WasmFunctionType> = []
 
     override fun resolve(type: WasmHeapType.Type): WasmTypeDeclaration =
         functionTypes[(type as FunctionHeapType).index]
@@ -44,26 +44,26 @@ private class BinaryToIrResolver : DeclarationResolver() {
 class WasmBinaryToIR(val b: MyByteReader) {
     val validVersion = 1u
 
-    val functionTypes: MutableList<WasmFunctionType> = mutableListOf()
-    val gcTypes: MutableList<WasmTypeDeclaration> = mutableListOf()
+    val functionTypes: MutableList<WasmFunctionType> = []
+    val gcTypes: MutableList<WasmTypeDeclaration> = []
 
-    val importsInOrder: MutableList<WasmNamedModuleField> = mutableListOf()
-    val importedFunctions: MutableList<WasmFunction.Imported> = mutableListOf()
-    val importedMemories: MutableList<WasmMemory> = mutableListOf()
-    val importedTables: MutableList<WasmTable> = mutableListOf()
-    val importedGlobals: MutableList<WasmGlobal> = mutableListOf()
-    val importedTags: MutableList<WasmTag> = mutableListOf()
+    val importsInOrder: MutableList<WasmNamedModuleField> = []
+    val importedFunctions: MutableList<WasmFunction.Imported> = []
+    val importedMemories: MutableList<WasmMemory> = []
+    val importedTables: MutableList<WasmTable> = []
+    val importedGlobals: MutableList<WasmGlobal> = []
+    val importedTags: MutableList<WasmTag> = []
 
-    val definedFunctions: MutableList<WasmFunction.Defined> = mutableListOf()
-    val table: MutableList<WasmTable> = mutableListOf()
-    val memory: MutableList<WasmMemory> = mutableListOf()
-    val globals: MutableList<WasmGlobal> = mutableListOf()
-    val exports: MutableList<WasmExport<*>> = mutableListOf()
+    val definedFunctions: MutableList<WasmFunction.Defined> = []
+    val table: MutableList<WasmTable> = []
+    val memory: MutableList<WasmMemory> = []
+    val globals: MutableList<WasmGlobal> = []
+    val exports: MutableList<WasmExport<*>> = []
     var startFunction: WasmFunction? = null
-    val elements: MutableList<WasmElement> = mutableListOf()
-    val data: MutableList<WasmData> = mutableListOf()
+    val elements: MutableList<WasmElement> = []
+    val data: MutableList<WasmData> = []
     var dataCount: Boolean = true
-    val tags: MutableList<WasmTag> = mutableListOf()
+    val tags: MutableList<WasmTag> = []
 
     private fun <T> byIdx(l1: List<T>, l2: List<T>, index: Int): T {
         if (index < l1.size)
@@ -147,7 +147,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                             name = "",
                                             type = readValueType(),
                                             isMutable = b.readVarUInt1(),
-                                            init = emptyList(),
+                                            init = [],
                                             importPair = importPair
                                         ).also { importsInOrder.add(it) }
                                     )
@@ -211,7 +211,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                     // Globals section
                     6 -> {
                         forEachVectorElement {
-                            val expr = mutableListOf<WasmInstr>()
+                            val expr: MutableList<WasmInstr> = []
                             globals.add(
                                 WasmGlobal(
                                     name = "",
@@ -290,7 +290,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
                                 if (firstByte < 4) {
                                     WasmTable.Value.Function(funByIdx(b.readVarUInt32AsInt()))
                                 } else {
-                                    val exprBody = mutableListOf<WasmInstr>()
+                                    val exprBody: MutableList<WasmInstr> = []
                                     readExpression(exprBody)
                                     WasmTable.Value.Expression(exprBody)
                                 }
@@ -380,7 +380,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
 
         return WasmModule(
             resolver = definedDeclarations,
-            recGroups = (functionTypes + gcTypes).map { listOf(it) },
+            recGroups = (functionTypes + gcTypes).map { [it] },
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
             importedMemories = importedMemories,
@@ -420,7 +420,7 @@ class WasmBinaryToIR(val b: MyByteReader) {
     private fun readExpression(): MutableList<WasmInstr> =
         mutableListOf<WasmInstr>().also { readExpression(it) }
 
-    private fun readExpression(instructions: MutableList<WasmInstr>, locals: List<WasmLocal> = emptyList()) {
+    private fun readExpression(instructions: MutableList<WasmInstr>, locals: List<WasmLocal> = []) {
         var blockCount = 0
         while (true) {
             require(blockCount >= 0)
@@ -595,7 +595,7 @@ class MyByteReader(ins: java.io.InputStream) : ByteReader() {
 
     class SizeLimit(val maxSize: Long, val reason: String)
 
-    var sizeLimits = mutableListOf(SizeLimit(Long.MAX_VALUE, "Root"))
+    var sizeLimits: MutableList<SizeLimit> = [SizeLimit(Long.MAX_VALUE, "Root")]
     var currentMaxSize: Long = Long.MAX_VALUE
 
     override val isEof: Boolean

@@ -480,16 +480,16 @@ class IrDescriptorBasedFunctionFactory(
 
         klass.thisReceiver = createThisReceiver(descriptorFactory).also { it.parent = klass }
 
-        klass.superTypes = listOf(with(IrSimpleTypeBuilder()) {
+        klass.superTypes = [with(IrSimpleTypeBuilder()) {
             classifier = baseClass
-            arguments = listOf(
+            arguments = [
                 with(IrSimpleTypeBuilder()) {
                     classifier = r.symbol
                     buildSimpleType()
                 },
-            )
+            ]
             buildSimpleType()
-        })
+        }]
 
         klass.parent = packageFragment
         packageFragment.declarations += klass

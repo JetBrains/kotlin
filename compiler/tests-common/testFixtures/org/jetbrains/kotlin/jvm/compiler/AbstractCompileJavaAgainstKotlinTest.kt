@@ -84,8 +84,8 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
 
         val compiledSuccessfully = if (useJavac) {
             compileKotlinWithJava(
-                listOf(javaFile),
-                listOf(ktFile),
+                [javaFile],
+                [ktFile],
                 out, testRootDisposable
             )
         } else {
@@ -142,7 +142,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
         updateConfiguration(environment.configuration)
         environment.registerJavac(
             javaFiles = javaFiles,
-            kotlinFiles = listOf(KotlinTestUtils.loadKtFile(environment.project, ktFiles.first()))
+            kotlinFiles = [KotlinTestUtils.loadKtFile(environment.project, ktFiles.first())]
         )
         if (!ktFiles.isEmpty()) {
             LoadDescriptorUtil.compileKotlinToDirAndGetModule(ktFiles, outDir, environment)
@@ -162,7 +162,7 @@ abstract class AbstractCompileJavaAgainstKotlinTest : TestCaseWithTmpdir(), Fron
                 parameterNameRenderingPolicy = ParameterNameRenderingPolicy.NONE
                 verbose = true
                 annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-                excludedAnnotationClasses = setOf(FqName(Retention::class.java.name))
+                excludedAnnotationClasses = [FqName(Retention::class.java.name)]
                 modifiers = DescriptorRendererModifier.ALL
             }
         )

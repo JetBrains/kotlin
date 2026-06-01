@@ -49,8 +49,8 @@ private class PatchBuilder(val objCExportNamer: ObjCExportNamer) {
             val newValue: String
     )
 
-    val globalPatches = mutableListOf<GlobalPatch>()
-    val literalPatches = mutableListOf<LiteralPatch>()
+    val globalPatches: MutableList<GlobalPatch> = []
+    val literalPatches: MutableList<LiteralPatch> = []
 
     // Note: exported classes anyway use the same prefix,
     // so using more unique private prefix wouldn't help to prevent any clashes.

@@ -67,11 +67,11 @@ class IrTextDumpHandler(
             }
         }
 
-        private val HIDDEN_ENUM_METHOD_NAMES = setOf(
+        private val HIDDEN_ENUM_METHOD_NAMES: Set<Name> = [
             Name.identifier("finalize"), // JVM-specific fake override from java.lang.Enum. TODO: remove it after fixing KT-63744
             Name.identifier("getDeclaringClass"), // JVM-specific fake override from java.lang.Enum. TODO: remove it after fixing KT-63744
             Name.identifier("clone"), // JVM-specific fake override from kotlin.Enum (not java.lang.Enum !).
-        )
+        ]
 
         private fun IrSimpleFunction.isHiddenEnumMethod(irBuiltIns: IrBuiltIns): Boolean {
             return isFakeOverride && allOverridden(includeSelf = true).any {
@@ -94,7 +94,7 @@ class IrTextDumpHandler(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     private val pathRelativizer = IrFileEntryPathRelativizer(testServices)
 

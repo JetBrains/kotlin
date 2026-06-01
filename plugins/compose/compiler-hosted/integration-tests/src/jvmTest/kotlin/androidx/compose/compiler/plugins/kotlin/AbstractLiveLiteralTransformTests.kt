@@ -32,7 +32,7 @@ import org.junit.Assert.assertEquals
 abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
     @OptIn(ExperimentalCompilerApi::class)
     private fun computeKeys(files: List<SourceFile>): List<String> {
-        var builtKeys = mutableSetOf<String>()
+        var builtKeys: MutableSet<String> = []
         compileToIr(
             files,
             registerExtensions = { configuration ->
@@ -57,7 +57,7 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
                                 val stabilityInferencer = StabilityInferencer(
                                     pluginContext.platform.isJvm(),
                                     pluginContext.moduleDescriptor,
-                                    emptySet()
+                                    []
                                 )
                                 val featureFlags = FeatureFlags()
                                 val transformer = object : LiveLiteralTransformer(
@@ -91,12 +91,12 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
     // since the lowering will throw an exception if duplicate keys are found, all we have to do
     // is run the lowering
     protected fun assertNoDuplicateKeys(@Language("kotlin") src: String) {
-        computeKeys(listOf(SourceFile("Test.kt", src)))
+        computeKeys([SourceFile("Test.kt", src)])
     }
 
     // For a given src string, a
     protected fun assertKeys(vararg keys: String, makeSrc: () -> String) {
-        val builtKeys = computeKeys(listOf(SourceFile("Test.kt", makeSrc())))
+        val builtKeys = computeKeys([SourceFile("Test.kt", makeSrc())])
         assertEquals(
             keys.toList().sorted().joinToString(separator = ",\n") {
                 "\"${it.replace('$', '%')}\""
@@ -109,8 +109,8 @@ abstract class AbstractLiveLiteralTransformTests : AbstractIrTransformTest() {
 
     // test: have two src strings (before/after) and assert that the keys of the params didn't change
     protected fun assertDurableChange(before: String, after: String) {
-        val beforeKeys = computeKeys(listOf(SourceFile("Test.kt", before)))
-        val afterKeys = computeKeys(listOf(SourceFile("Test.kt", after)))
+        val beforeKeys = computeKeys([SourceFile("Test.kt", before)])
+        val afterKeys = computeKeys([SourceFile("Test.kt", after)])
 
         assertEquals(
             beforeKeys.toList().sorted().joinToString(separator = "\n"),

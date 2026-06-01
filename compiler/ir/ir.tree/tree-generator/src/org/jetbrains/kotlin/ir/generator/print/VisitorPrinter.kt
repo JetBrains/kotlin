@@ -16,7 +16,7 @@ internal class VisitorPrinter(
 ) : AbstractVisitorPrinter<Element, Field>(importCollectingPrinter) {
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = listOf(resultTypeVariable, dataTypeVariable)
+        get() = [resultTypeVariable, dataTypeVariable]
 
     override val visitorDataType: TypeRef
         get() = dataTypeVariable
@@ -24,7 +24,7 @@ internal class VisitorPrinter(
     override fun visitMethodReturnType(element: Element) = resultTypeVariable
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = emptyList()
+        get() = []
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = false

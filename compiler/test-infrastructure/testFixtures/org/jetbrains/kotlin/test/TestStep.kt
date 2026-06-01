@@ -87,7 +87,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                 inputArtifact: InputArtifact,
                 thereWereExceptionsOnPreviousSteps: Boolean
             ): StepResult.HandlersResult {
-                val exceptions = mutableListOf<WrappedException>()
+                val exceptions: MutableList<WrappedException> = []
                 var shouldRunNextSteps = true
                 for (outputHandler in handlers) {
                     if (outputHandler.shouldRun(thereWasAnException = thereWereExceptionsOnPreviousSteps || exceptions.isNotEmpty())) {
@@ -159,7 +159,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                 inputArtifact: InputArtifact,
                 thereWereExceptionsOnPreviousSteps: Boolean,
             ): StepResult.HandlersResult {
-                val exceptions = mutableListOf<WrappedException>()
+                val exceptions: MutableList<WrappedException> = []
                 var shouldRunNextSteps = true
                 for (outputHandler in handlers) {
                     try {

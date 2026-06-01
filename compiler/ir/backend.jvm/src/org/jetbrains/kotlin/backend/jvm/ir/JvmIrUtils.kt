@@ -291,7 +291,7 @@ val IrDeclaration.isStaticValueClassReplacement: Boolean
 private fun JvmBackendContext.makeRawTypeAnnotation() = generatorExtensions.generateRawTypeAnnotation()!!
 
 fun IrClass.rawType(context: JvmBackendContext): IrType =
-    defaultType.addAnnotations(listOf(context.makeRawTypeAnnotation()))
+    defaultType.addAnnotations([context.makeRawTypeAnnotation()])
 
 fun IrSimpleType.isRawType(): Boolean =
     hasAnnotation(JvmSymbols.RAW_TYPE_ANNOTATION_FQ_NAME)
@@ -344,7 +344,7 @@ fun IrFunction.suspendFunctionOriginal(): IrFunction =
 private fun IrSimpleFunction.isOrOverridesDefaultParameterStub(): Boolean =
     // Cannot use resolveFakeOverride here because of KT-36188.
     DFS.ifAny(
-        listOf(this),
+        [this],
         { it.overriddenSymbols.map(IrSimpleFunctionSymbol::owner) },
         { it.origin == IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER }
     )

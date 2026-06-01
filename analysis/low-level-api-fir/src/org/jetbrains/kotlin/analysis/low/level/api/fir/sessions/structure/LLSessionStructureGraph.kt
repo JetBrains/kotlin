@@ -43,7 +43,7 @@ internal class LLSessionStructureGraphNode(
     /**
      * The graph can be circular, so we need to assign dependencies some time after all nodes have been created.
      */
-    var dependencies: List<LLSessionStructureGraphNode> = emptyList()
+    var dependencies: List<LLSessionStructureGraphNode> = []
 
     /**
      * The session's distance from the nearest session that has a corresponding analysis session.

@@ -127,7 +127,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(script) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("symbol", "name", "factory", "startOffset", "endOffset")
+            implementation.constructorParameterOrderOverride = ["symbol", "name", "factory", "startOffset", "endOffset"]
             defaultNull(
                 "thisReceiver", "baseClass", "resultProperty", "earlierScriptsParameter",
                 "importedScripts", "earlierScripts", "targetClass", "constructor"
@@ -154,7 +154,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(externalPackageFragment) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("symbol", "packageFqName")
+            implementation.constructorParameterOrderOverride = ["symbol", "packageFqName"]
             additionalImports(
                 ArbitraryImportable(Packages.descriptors, "ModuleDescriptor"),
             )
@@ -179,7 +179,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
 
         impl(file) {
             implementation.putImplementationOptInInConstructor = false
-            implementation.constructorParameterOrderOverride = listOf("fileEntry", "symbol", "packageFqName")
+            implementation.constructorParameterOrderOverride = ["fileEntry", "symbol", "packageFqName"]
             defaultWithErrorOnSet("startOffset", "0")
             defaultWithErrorOnSet("endOffset", "maxOf(fileEntry.maxOffset, 0)")
             isMutable("module")
@@ -431,7 +431,7 @@ object ImplementationConfigurator : AbstractIrTreeImplementationConfigurator() {
             println()
             printFunctionWithBlockBody(
                 "acquireSymbol",
-                listOf(FunctionParameter("symbol", symbolType)),
+                [FunctionParameter("symbol", symbolType)],
                 implementation.element,
                 override = true,
             ) {

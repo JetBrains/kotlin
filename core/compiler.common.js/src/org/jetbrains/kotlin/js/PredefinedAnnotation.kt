@@ -30,6 +30,6 @@ enum class PredefinedAnnotation(val classId: ClassId) {
     val fqName: FqName = classId.asSingleFqName()
 
     companion object {
-        val WITH_CUSTOM_NAME = setOf(LIBRARY, NATIVE)
+        val WITH_CUSTOM_NAME: Set<PredefinedAnnotation> = [LIBRARY, NATIVE]
     }
 }

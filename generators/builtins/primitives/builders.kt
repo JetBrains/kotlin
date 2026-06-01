@@ -40,7 +40,7 @@ internal interface PrimitiveBuilder {
 
 internal abstract class AnnotatedAndDocumented {
     protected var doc: String? = null
-    val annotations: MutableList<String> = mutableListOf()
+    val annotations: MutableList<String> = []
     var additionalComments: String? = null
 
     fun appendDoc(doc: String) {
@@ -78,11 +78,11 @@ internal abstract class AnnotatedAndDocumented {
 }
 
 internal class FileBuilder(private val builtBy: String) : PrimitiveBuilder {
-    private val suppresses: MutableList<String> = mutableListOf()
-    private val annotations: MutableList<String> = mutableListOf()
-    private val imports: MutableList<String> = mutableListOf()
-    private val fileComments: MutableList<String> = mutableListOf()
-    private val topLevelDeclarations: MutableList<PrimitiveBuilder> = mutableListOf()
+    private val suppresses: MutableList<String> = []
+    private val annotations: MutableList<String> = []
+    private val imports: MutableList<String> = []
+    private val fileComments: MutableList<String> = []
+    private val topLevelDeclarations: MutableList<PrimitiveBuilder> = []
 
     fun suppress(suppress: String) {
         suppresses += suppress
@@ -156,11 +156,11 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
     private var primaryConstructor: PrimaryConstructorBuilder? = PrimaryConstructorBuilder()
     private var secondaryConstructor: SecondaryConstructorBuilder? = null
-    private val typeParams: MutableList<String> = mutableListOf()
-    private var superTypes: List<String> = emptyList()
+    private val typeParams: MutableList<String> = []
+    private var superTypes: List<String> = []
     private var companionObject: CompanionObjectBuilder? = null
 
-    private var builders: MutableList<PrimitiveBuilder> = mutableListOf()
+    private var builders: MutableList<PrimitiveBuilder> = []
 
     fun primaryConstructor(init: PrimaryConstructorBuilder.() -> Unit): PrimaryConstructorBuilder {
         val builder = PrimaryConstructorBuilder().apply(init)
@@ -251,7 +251,7 @@ internal class ClassBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
 }
 
 internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
-    private val properties: MutableList<PropertyBuilder> = mutableListOf()
+    private val properties: MutableList<PropertyBuilder> = []
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
 
     fun property(init: PropertyBuilder.() -> Unit): PropertyBuilder {
@@ -281,7 +281,7 @@ internal class CompanionObjectBuilder : AnnotatedAndDocumented(), PrimitiveBuild
 internal class PrimaryConstructorBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var visibility: MethodVisibility? = MethodVisibility.PRIVATE
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
-    private var parameters: MutableList<MethodParameterBuilder> = mutableListOf()
+    private var parameters: MutableList<MethodParameterBuilder> = []
 
     fun parameter(init: MethodParameterBuilder.() -> Unit): MethodParameterBuilder {
         val argBuilder = MethodParameterBuilder()
@@ -306,9 +306,9 @@ internal class SecondaryConstructorBuilder : AnnotatedAndDocumented(), Primitive
     var visibility: MethodVisibility = MethodVisibility.PRIVATE
     var expectActual: ExpectActualModifier = ExpectActualModifier.Unspecified
     var body: String? = null
-    private val modifiers: MutableList<String> = mutableListOf()
-    private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
-    private var argumentsToPrimaryContructor: MutableList<String>? = mutableListOf()
+    private val modifiers: MutableList<String> = []
+    private val parameters: MutableList<MethodParameterBuilder> = []
+    private var argumentsToPrimaryContructor: MutableList<String>? = []
 
     fun modifier(modifier: String) {
         modifiers += modifier
@@ -360,7 +360,7 @@ internal class MethodSignatureBuilder(private var expectActual: () -> ExpectActu
     var isOperator: Boolean = false
 
     var methodName: String? = null
-    private val parameters: MutableList<MethodParameterBuilder> = mutableListOf()
+    private val parameters: MutableList<MethodParameterBuilder> = []
     var returnType: String? = null
 
     val parameterName: String
@@ -465,7 +465,7 @@ internal class PropertyBuilder : AnnotatedAndDocumented(), PrimitiveBuilder {
     var type: String? = null
     var value: String? = null
     var getterBody: String? = null
-    private val modifiers: MutableList<String> = mutableListOf()
+    private val modifiers: MutableList<String> = []
 
     fun modifier(modifier: String) {
         modifiers += modifier

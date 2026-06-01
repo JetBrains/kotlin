@@ -26,7 +26,7 @@ internal class LlvmDiagnostic(val severity: Severity, val message: String) {
 }
 
 internal class LlvmDiagnosticCollector {
-    private val diagnostics = mutableListOf<LlvmDiagnostic>()
+    private val diagnostics: MutableList<LlvmDiagnostic> = []
 
     fun add(diagnostic: LlvmDiagnostic) {
         diagnostics += diagnostic

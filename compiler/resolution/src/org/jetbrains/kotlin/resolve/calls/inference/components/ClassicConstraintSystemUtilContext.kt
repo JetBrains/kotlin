@@ -67,7 +67,7 @@ class ClassicConstraintSystemUtilContext(
         return when (val atom = declaration.atom) {
             is FunctionExpression -> {
                 val receiverType = atom.receiverType
-                if (receiverType != null) listOf(receiverType) + atom.parametersTypes else atom.parametersTypes.toList()
+                if (receiverType != null) [receiverType] + atom.parametersTypes else atom.parametersTypes.toList()
             }
             is LambdaKotlinCallArgument -> atom.parametersTypes?.toList()
             else -> null

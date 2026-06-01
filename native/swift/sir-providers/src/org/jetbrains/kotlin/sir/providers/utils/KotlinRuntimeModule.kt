@@ -17,15 +17,15 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
  */
 public object KotlinRuntimeModule : SirModule() {
 
-    override val imports: MutableList<SirImport> = mutableListOf()
+    override val imports: MutableList<SirImport> = []
 
     override val name: String = "KotlinRuntime"
 
     override val declarations: MutableList<SirDeclaration> by lazy {
-        mutableListOf(
+        [
             kotlinBaseConstructionOptions,
             kotlinBase
-        )
+        ]
     }
 
     public val kotlinBaseConstructionOptions: SirStruct = buildStruct { // Faux struct representing NS_ENUM(NSUInteger)
@@ -55,15 +55,15 @@ public object KotlinRuntimeModule : SirModule() {
 }
 
 public object KotlinRuntimeSupportModule : SirModule() {
-    override val imports: MutableList<SirImport> = mutableListOf()
+    override val imports: MutableList<SirImport> = []
     override val name: String = "KotlinRuntimeSupport"
 
     override val declarations: MutableList<SirDeclaration> by lazy {
-        mutableListOf(
+        [
             kotlinError,
             kotlinBridgeable,
             kotlinExistential,
-        )
+        ]
     }
 
     public val kotlinError: SirStruct = buildStruct {
@@ -102,13 +102,13 @@ public object KotlinRuntimeSupportModule : SirModule() {
 }
 
 public object KotlinCoroutineSupportModule : SirModule() {
-    override val imports: MutableList<SirImport> = mutableListOf()
+    override val imports: MutableList<SirImport> = []
     override val name: String = "KotlinCoroutineSupport"
 
     override val declarations: MutableList<SirDeclaration> by lazy {
-        mutableListOf(
+        [
             swiftJob,
-        )
+        ]
     }
 
     public val swiftJob: SirClass = buildClass {
@@ -223,7 +223,7 @@ private fun buildKotlinBaseDesignatedInit(): SirInit = buildInit {
     isFailable = false
     isOverride = false
     parameters.addAll(
-        listOf(
+        [
             SirParameter(
                 argumentName = "__externalRCRefUnsafe",
                 type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
@@ -232,6 +232,6 @@ private fun buildKotlinBaseDesignatedInit(): SirInit = buildInit {
                 argumentName = "options",
                 type = SirNominalType(kotlinBaseConstructionOptions)
             ),
-        )
+        ]
     )
 }

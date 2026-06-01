@@ -30,8 +30,8 @@ context(_: KaSession)
 @Suppress("CONTEXT_RECEIVERS_DEPRECATED")
 public fun KlibDeclarationAddress.getSymbols(): Sequence<KaSymbol> {
     return when (this) {
-        is KlibClassAddress -> getClassOrObjectSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
-        is KlibTypeAliasAddress -> getTypeAliasSymbol()?.let { symbol -> sequenceOf(symbol) } ?: emptySequence()
+        is KlibClassAddress -> getClassOrObjectSymbol()?.let { symbol -> [symbol] } ?: []
+        is KlibTypeAliasAddress -> getTypeAliasSymbol()?.let { symbol -> [symbol] } ?: []
         is KlibFunctionAddress -> getFunctionSymbols()
         is KlibPropertyAddress -> getPropertySymbols()
     }

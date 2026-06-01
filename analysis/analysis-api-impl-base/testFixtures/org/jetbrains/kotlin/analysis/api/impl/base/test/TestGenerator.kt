@@ -159,7 +159,7 @@ fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                 and analysisApiModeIs(AnalysisApiMode.Ide)
     ) {
         test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.LibrarySource)) {
-            model("compilation", pattern = TestGeneratorUtil.KT, excludeDirs = listOf("codeFragments/reifiedTypeParams"))
+            model("compilation", pattern = TestGeneratorUtil.KT, excludeDirs = ["codeFragments/reifiedTypeParams"])
         }
 
         test<AbstractCompilerFacilityTest>(filter = testModuleKindIs(TestModuleKind.Source)) {
@@ -203,7 +203,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
         group("symbols", filter = analysisSessionModeIs(AnalysisSessionMode.Normal)) {
             fun TestGroup.TestClass.symbolsModel(data: AnalysisApiTestConfiguratorFactoryData, path: String) {
                 if (data.analysisApiMode == AnalysisApiMode.Standalone || data.targetPlatform != TargetPlatformEnum.JVM) {
-                    model(data, path, excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                    model(data, path, excludeDirsRecursively = ["withTestCompilerPluginEnabled"])
                 } else {
                     model(data, path)
                 }
@@ -218,13 +218,13 @@ private fun AnalysisApiTestGroup.generateAnalysisApiNonComponentsTests() {
             }
 
             test<AbstractSingleSymbolByPsiTest>(
-                targetPlatforms = listOf(
+                targetPlatforms = [
                     TargetPlatformEnum.JVM,
                     TargetPlatformEnum.JS,
                     TargetPlatformEnum.Wasm,
                     TargetPlatformEnum.WasmWasi,
                     TargetPlatformEnum.Common
-                )
+                ]
             ) {
                 symbolsModel(it, "singleSymbolByPsi")
             }
@@ -724,7 +724,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
                         AnalysisApiMode.Ide ->
                             model(it, "memberScope")
                         AnalysisApiMode.Standalone ->
-                            model(it, "memberScope", excludeDirsRecursively = listOf("withTestCompilerPluginEnabled"))
+                            model(it, "memberScope", excludeDirsRecursively = ["withTestCompilerPluginEnabled"])
                     }
                 }
 
@@ -783,7 +783,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForLibraries(
      */
     component("relationProvider", filter = analysisApiModeIs(AnalysisApiMode.Ide)) {
         test<AbstractGetExpectsForActualByCoordinatesTest> {
-            model(it, "getExpectsForActual", excludeDirsRecursively = listOf("incorrectMatching"))
+            model(it, "getExpectsForActual", excludeDirsRecursively = ["incorrectMatching"])
         }
     }
 }

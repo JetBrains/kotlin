@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 @TestMetadata("testData/lightClasses")
 class FakeKnmLightClassesTestGenerated : FakeManagedTest() {
-    override val variantChain = listOf("knm")
+    override val variantChain = ["knm"]
 
     @Test
     @TestMetadata("simple.kt")

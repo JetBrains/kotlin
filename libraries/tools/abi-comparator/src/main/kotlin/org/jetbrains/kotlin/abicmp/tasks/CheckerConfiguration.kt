@@ -17,7 +17,7 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 
-private val allClassCheckers = listOf(
+private val allClassCheckers = [
     classPropertyChecker(ClassNode::version),
     classPropertyChecker(ClassNode::access) { v -> "${v.toString(2)} ${v.classFlags()}" },
     classPropertyChecker("internalName", ClassNode::name),
@@ -33,9 +33,9 @@ private val allClassCheckers = listOf(
     InnerClassesListChecker(),
     MethodsListChecker(),
     FieldsListChecker()
-)
+]
 
-private val allMethodCheckers = listOf(
+private val allMethodCheckers = [
     methodPropertyChecker(MethodNode::access) { v -> "${v.toString(2)} ${v.methodFlags()}" },
     methodPropertyChecker("methodName", MethodNode::name),
     methodPropertyChecker(MethodNode::desc),
@@ -46,15 +46,15 @@ private val allMethodCheckers = listOf(
     MethodAnnotationsChecker(MethodNode::invisibleAnnotations),
     MethodParameterAnnotationsChecker(MethodNode::visibleParameterAnnotations),
     MethodParameterAnnotationsChecker(MethodNode::invisibleParameterAnnotations)
-)
+]
 
-private val allConstructorMetadataCheckers = listOf(
+private val allConstructorMetadataCheckers = [
     constructorMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
     constructorMetadataPropertyChecker("modifiers") { printConstructorModifiers(it) },
     constructorMetadataPropertyChecker("valueParameters") { it.valueParameters.stringifyValueParameters() }
-)
+]
 
-private val allFunctionMetadataCheckers = listOf(
+private val allFunctionMetadataCheckers = [
     functionMetadataPropertyChecker("lambdaClassOriginName") { it.lambdaClassOriginName.toString() },
     functionMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
     functionMetadataPropertyChecker("contextParametersTypes") {
@@ -72,9 +72,9 @@ private val allFunctionMetadataCheckers = listOf(
         @OptIn(ExperimentalContracts::class)
         it.contract?.let { contract -> printContract(contract) } ?: PROPERTY_VAL_STUB
     }
-)
+]
 
-private val allPropertyMetadataCheckers = listOf(
+private val allPropertyMetadataCheckers = [
     propertyMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
     propertyMetadataPropertyChecker("fieldSignature") { it.fieldSignature?.toString() ?: PROPERTY_VAL_STUB },
     propertyMetadataPropertyChecker("getterSignature") { it.getterSignature?.toString() ?: PROPERTY_VAL_STUB },
@@ -101,18 +101,18 @@ private val allPropertyMetadataCheckers = listOf(
     propertyMetadataPropertyChecker("setterValueParameter") {
         it.setterParameter?.let { param -> printValueParameter(param) } ?: PROPERTY_VAL_STUB
     }
-)
+]
 
-private val allTypeAliasMetadataCheckers = listOf(
+private val allTypeAliasMetadataCheckers = [
     typeAliasMetadataPropertyChecker("versionRequirements") { it.versionRequirements.stringifyRelevantRequirements() },
     typeAliasMetadataPropertyChecker("annotations") { it.annotations.stringifyAnnotations() },
     typeAliasMetadataPropertyChecker("visibility") { it.visibility.toString() },
     typeAliasMetadataPropertyChecker("typeParameters") { it.typeParameters.stringifyTypeParameters() },
     typeAliasMetadataPropertyChecker("underlyingType") { printType(it.underlyingType) },
     typeAliasMetadataPropertyChecker("expandedType") { printType(it.expandedType) }
-)
+]
 
-private val allFieldCheckers = listOf(
+private val allFieldCheckers = [
     fieldPropertyChecker(FieldNode::access) { v -> "${v.toString(2)} ${v.fieldFlags()}" },
     fieldPropertyChecker("fieldName", FieldNode::name),
     fieldPropertyChecker(FieldNode::desc),
@@ -120,9 +120,9 @@ private val allFieldCheckers = listOf(
     fieldPropertyChecker("initialValue", FieldNode::value),
     FieldAnnotationsChecker(FieldNode::visibleAnnotations),
     FieldAnnotationsChecker(FieldNode::invisibleAnnotations)
-)
+]
 
-private val allClassMetadataCheckers = listOf(
+private val allClassMetadataCheckers = [
     classMetadataListChecker("constructors") { loadConstructors(it).keys.toList() },
     classMetadataListChecker("functions") { loadFunctions(it.kmClass).keys.toList() },
     classMetadataListChecker("properties") { loadProperties(it.kmClass).keys.toList() },
@@ -146,46 +146,46 @@ private val allClassMetadataCheckers = listOf(
         it.kmClass.contextReceiverTypes.stringifyTypeListSorted()
     },
     classMetadataPropertyChecker("versionRequirements") { it.kmClass.versionRequirements.stringifyRelevantRequirements() }
-)
+]
 
-private val allPackageMetadataCheckers = listOf(
+private val allPackageMetadataCheckers = [
     fileFacadeMetadataListChecker("functions") { loadFunctions(it).keys.toList() },
     fileFacadeMetadataListChecker("properties") { loadProperties(it).keys.toList() },
     fileFacadeMetadataListChecker("typeAliases") { loadTypeAliases(it).keys.toList() },
     fileFacadeMetadataListChecker("localDelegatedProperties") { loadLocalDelegatedProperties(it).keys.toList() }
-)
+]
 
 @OptIn(UnstableMetadataApi::class)
-private val allPackagePartsMetadataCheckers = listOf(
+private val allPackagePartsMetadataCheckers = [
     packagePartsPropertyChecker("multiFileParts") {
         it.multiFileClassParts.toList().map { filePart -> "(${filePart.first}, ${filePart.second})" }.toList().sorted()
             .joinToString(prefix = "[", postfix = "]")
     },
     packagePartsPropertyChecker("fileFacades") { it.fileFacades.toList().sorted().joinToString(prefix = "[", postfix = "]") }
-)
+]
 
 @OptIn(UnstableMetadataApi::class)
-private val allModuleMetadataCheckers = listOf(
+private val allModuleMetadataCheckers = [
     moduleMetadataPropertyChecker("optionalAnnotations") {
         it.optionalAnnotationClasses.map { clazz -> clazz.name }.sorted().joinToString(prefix = "[", postfix = "]")
     },
     moduleMetadataPropertyChecker("packageParts") { it.packageParts.keys.toList().sorted().joinToString(prefix = "[", postfix = "]") }
-)
+]
 
-private val allMultifileClassFacadeMetadataCheckers = listOf(
+private val allMultifileClassFacadeMetadataCheckers = [
     multiFileClassFacadeMetadataListChecker("partClassNames") { it.partClassNames }
-)
+]
 
-private val allMultifileClassPartMetadataCheckers = listOf(
+private val allMultifileClassPartMetadataCheckers = [
     multiFileClassPartMetadataPropertyChecker("facadeClassName") { it.facadeClassName }
-)
+]
 
-private val allSyntheticClassMetadataCheckers = listOf(
+private val allSyntheticClassMetadataCheckers = [
     syntheticClassMetadataPropertyChecker("isLambda") { it.isLambda.toString() },
     syntheticClassMetadataPropertyChecker("function") {
         it.kmLambda?.function?.let(::printFunction) ?: PROPERTY_VAL_STUB
     }
-)
+]
 
 
 class CheckerConfigurationBuilder {

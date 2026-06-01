@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 fun ConeClassifierLookupTag.constructType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
+    attributes: ConeAttributes = [],
 ): ConeLookupTagBasedType {
     return when (this) {
         is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable, attributes)
@@ -27,7 +27,7 @@ fun ConeClassifierLookupTag.constructType(
 fun ConeClassLikeLookupTag.constructClassType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
+    attributes: ConeAttributes = [],
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this, typeArguments, isMarkedNullable, attributes)
 }
@@ -39,7 +39,7 @@ fun ClassId.toLookupTag(): ConeClassLikeLookupTagImpl {
 fun ClassId.constructClassLikeType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
+    attributes: ConeAttributes = [],
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
@@ -47,7 +47,7 @@ fun ClassId.constructClassLikeType(
 fun FirClassifierSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
+    attributes: ConeAttributes = [],
 ): ConeLookupTagBasedType {
     return when (this) {
         is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
@@ -58,7 +58,7 @@ fun FirClassifierSymbol<*>.constructType(
 fun FirClassLikeSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
+    attributes: ConeAttributes = [],
 ): ConeClassLikeType {
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }

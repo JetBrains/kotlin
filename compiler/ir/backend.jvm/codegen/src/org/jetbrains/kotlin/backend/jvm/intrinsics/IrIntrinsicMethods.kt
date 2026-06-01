@@ -44,21 +44,21 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
     private val stringFqn = StandardNames.FqNames.string.toSafe()
 
     private val intrinsics = (
-            listOf(
-                Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", emptyList()) to JavaClassProperty,
-                Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", emptyList()) to GetJavaObjectType,
-                Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", emptyList()) to GetJavaPrimitiveType,
-                Key(kotlinJvmFqn, kClassFqn, "<get-java>", emptyList()) to KClassJavaProperty,
-                Key(kotlinJvmInternalUnsafeFqn, null, "monitorEnter", listOf(anyFqn)) to MonitorInstruction.MONITOR_ENTER,
-                Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", listOf(anyFqn)) to MonitorInstruction.MONITOR_EXIT,
-                Key(kotlinJvmFqn, arrayFqn, "isArrayOf", emptyList()) to IsArrayOf,
-                Key(kotlinFqn, null, "arrayOfNulls", listOf(intFqn)) to NewArray,
-                Key(cloneableFqn, null, "clone", emptyList()) to Clone,
-                Key(kotlinFqn, null, "enumValues", listOf()) to EnumValues,
-                Key(kotlinFqn, null, "enumValueOf", listOf(stringFqn)) to EnumValueOf,
-                Key(kotlinEnumsFqn, null, "enumEntries", listOf()) to EnumEntries,
-                Key(kotlinFqn, stringFqn, "plus", listOf(anyFqn)) to StringPlus,
-                Key(kotlinReflectFqn, null, "typeOf", listOf()) to TypeOf,
+            [
+                Key(kotlinJvmFqn, FqName("T"), "<get-javaClass>", []) to JavaClassProperty,
+                Key(kotlinJvmFqn, kClassFqn, "<get-javaObjectType>", []) to GetJavaObjectType,
+                Key(kotlinJvmFqn, kClassFqn, "<get-javaPrimitiveType>", []) to GetJavaPrimitiveType,
+                Key(kotlinJvmFqn, kClassFqn, "<get-java>", []) to KClassJavaProperty,
+                Key(kotlinJvmInternalUnsafeFqn, null, "monitorEnter", [anyFqn]) to MonitorInstruction.MONITOR_ENTER,
+                Key(kotlinJvmInternalUnsafeFqn, null, "monitorExit", [anyFqn]) to MonitorInstruction.MONITOR_EXIT,
+                Key(kotlinJvmFqn, arrayFqn, "isArrayOf", []) to IsArrayOf,
+                Key(kotlinFqn, null, "arrayOfNulls", [intFqn]) to NewArray,
+                Key(cloneableFqn, null, "clone", []) to Clone,
+                Key(kotlinFqn, null, "enumValues", []) to EnumValues,
+                Key(kotlinFqn, null, "enumValueOf", [stringFqn]) to EnumValueOf,
+                Key(kotlinEnumsFqn, null, "enumEntries", []) to EnumEntries,
+                Key(kotlinFqn, stringFqn, "plus", [anyFqn]) to StringPlus,
+                Key(kotlinReflectFqn, null, "typeOf", []) to TypeOf,
                 irBuiltIns.eqeqSymbol.toKey()!! to Equals(KtTokens.EQEQ),
                 irBuiltIns.eqeqeqSymbol.toKey()!! to Equals(KtTokens.EQEQEQ),
                 irBuiltIns.ieee754equalsFunByOperandType[irBuiltIns.floatClass]!!.toKey()!! to Ieee754Equals(Type.FLOAT_TYPE),
@@ -84,7 +84,7 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 symbols.handleResultOfReflectiveAccess.toKey()!! to HandleResultOfReflectiveAccess,
                 symbols.intPostfixIncrDecr.toKey()!! to IntIncr(isPrefix = false),
                 symbols.intPrefixIncrDecr.toKey()!! to IntIncr(isPrefix = true)
-            ) +
+            ] +
                     numberConversionMethods() +
                     unaryFunForPrimitives("plus", UnaryPlus) +
                     unaryFunForPrimitives("unaryPlus", UnaryPlus) +
@@ -136,16 +136,17 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
         }
     }
 
+    @Suppress("ConvertToCollectionLiterals")
     private fun intrinsicsThatShouldHaveBeenLowered() =
         (irBuiltIns.primitiveTypesToPrimitiveArrays.map { [_, primitiveClassSymbol] ->
             val name = primitiveClassSymbol.owner.name.asString()
             // IntArray -> intArrayOf
             val arrayOfFunName = name.decapitalizeAsciiOnly() + "Of"
-            Key(kotlinFqn, null, arrayOfFunName, listOf(primitiveClassSymbol.owner.fqNameWhenAvailable))
+            Key(kotlinFqn, null, arrayOfFunName, [primitiveClassSymbol.owner.fqNameWhenAvailable])
         } + listOf(
-            Key(kotlinFqn, anyFqn, "toString", emptyList()),
-            Key(kotlinFqn, null, "arrayOf", listOf(arrayFqn)),
-            Key(stringFqn, null, "plus", listOf(anyFqn)),
+            Key(kotlinFqn, anyFqn, "toString", []),
+            Key(kotlinFqn, null, "arrayOf", [arrayFqn]),
+            Key(stringFqn, null, "plus", [anyFqn]),
         )).map { it to IntrinsicShouldHaveBeenLowered }
 
     private val PrimitiveType.symbol
@@ -195,26 +196,41 @@ class IrIntrinsicMethods(val irBuiltIns: IrBuiltIns, val symbols: JvmSymbols) {
                 arrayMethods(irBuiltIns.arrayClass.owner.typeParameters.single().symbol, irBuiltIns.arrayClass)
 
     private fun atomicIntrinsicsForJdk8(): List<Pair<Key, IntrinsicMethod>> =
-        listOf(
-            Key(StandardNames.FqNames.atomicInt, null, "compareAndExchange", listOf(intFqn, intFqn)) to AtomicCompareAndExchange(Type.INT),
-            Key(StandardNames.FqNames.atomicLong, null, "compareAndExchange", listOf(longFqn, longFqn)) to AtomicCompareAndExchange(Type.LONG),
-            Key(StandardNames.FqNames.atomicBoolean, null, "compareAndExchange", listOf(booleanFqn, booleanFqn)) to AtomicCompareAndExchange(Type.BOOLEAN),
-            Key(StandardNames.FqNames.atomicReference, null, "compareAndExchange", listOf(FqName("T"), FqName("T"))) to AtomicCompareAndExchange(Type.OBJECT),
+        [
+            Key(StandardNames.FqNames.atomicInt, null, "compareAndExchange", [intFqn, intFqn]) to AtomicCompareAndExchange(Type.INT),
+            Key(StandardNames.FqNames.atomicLong, null, "compareAndExchange", [longFqn, longFqn]) to AtomicCompareAndExchange(Type.LONG),
+            Key(
+                StandardNames.FqNames.atomicBoolean, null, "compareAndExchange",
+                [booleanFqn, booleanFqn]
+            ) to AtomicCompareAndExchange(Type.BOOLEAN),
+            Key(
+                StandardNames.FqNames.atomicReference, null, "compareAndExchange",
+                [FqName("T"), FqName("T")]
+            ) to AtomicCompareAndExchange(Type.OBJECT),
 
-            Key(StandardNames.FqNames.atomicIntArray, null, "compareAndExchangeAt", listOf(intFqn, intFqn, intFqn)) to AtomicArrayCompareAndExchange(Type.INT),
-            Key(StandardNames.FqNames.atomicLongArray, null, "compareAndExchangeAt", listOf(intFqn, longFqn, longFqn)) to AtomicArrayCompareAndExchange(Type.LONG),
-            Key(StandardNames.FqNames.atomicArray, null, "compareAndExchangeAt", listOf(intFqn, FqName("T"), FqName("T"))) to AtomicArrayCompareAndExchange(Type.OBJECT),
-        )
+            Key(
+                StandardNames.FqNames.atomicIntArray, null, "compareAndExchangeAt",
+                [intFqn, intFqn, intFqn]
+            ) to AtomicArrayCompareAndExchange(Type.INT),
+            Key(
+                StandardNames.FqNames.atomicLongArray, null, "compareAndExchangeAt",
+                [intFqn, longFqn, longFqn]
+            ) to AtomicArrayCompareAndExchange(Type.LONG),
+            Key(
+                StandardNames.FqNames.atomicArray, null, "compareAndExchangeAt",
+                [intFqn, FqName("T"), FqName("T")]
+            ) to AtomicArrayCompareAndExchange(Type.OBJECT),
+        ]
 
     private fun arrayMethods(elementClass: IrClassifierSymbol, arrayClass: IrClassSymbol) =
-        listOf(
+        [
             createKeyMapping(ArraySize, arrayClass, "<get-size>"),
             createKeyMapping(NewArray, arrayClass, "<init>", irBuiltIns.intClass),
             createKeyMapping(ArraySet, arrayClass, "set", irBuiltIns.intClass, elementClass),
             createKeyMapping(ArrayGet, arrayClass, "get", irBuiltIns.intClass),
             createKeyMapping(Clone, arrayClass, "clone"),
             createKeyMapping(ArrayIterator, arrayClass, "iterator")
-        )
+        ]
 
     private fun primitiveComparisonIntrinsics(
         typeToIrFun: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>,

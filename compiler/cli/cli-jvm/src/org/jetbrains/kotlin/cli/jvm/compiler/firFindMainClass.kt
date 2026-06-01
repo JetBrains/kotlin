@@ -81,6 +81,6 @@ private class FirMainClassFinder(
         val [parent, grandparent] = parents
         if (parent is FirRegularClass && parent.classKind != ClassKind.OBJECT) return
 
-        groupedMainFunctions.getOrPut(grandparent ?: parent, defaultValue = { mutableListOf() }).add(namedFunction)
+        groupedMainFunctions.getOrPut(grandparent ?: parent, defaultValue = { [] }).add(namedFunction)
     }
 }

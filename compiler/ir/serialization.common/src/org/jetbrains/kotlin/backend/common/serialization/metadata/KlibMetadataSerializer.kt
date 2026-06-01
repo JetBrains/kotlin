@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedSimpleFunctionDescriptor
 
 internal fun <T, R> Iterable<T>.maybeChunked(size: Int?, transform: (List<T>) -> R): List<R>
-    = size?.let { this.chunked(size, transform) } ?: listOf(transform(this.toList()))
+    = size?.let { this.chunked(size, transform) } ?: [transform(this.toList())]
 
 abstract class KlibMetadataSerializer(
     val languageVersionSettings: LanguageVersionSettings,
@@ -150,24 +150,24 @@ abstract class KlibMetadataSerializer(
             val nonCassDescriptors = topLevelDescriptors+typeAliases
 
 
-            return listOf(withNewContext {
-                    val packageProto = if (nonCassDescriptors.isEmpty())
-                        emptyPackageProto()
-                    else
-                        buildPackageProto(fqName, nonCassDescriptors)
+            return [withNewContext {
+                val packageProto = if (nonCassDescriptors.isEmpty())
+                    emptyPackageProto()
+                else
+                    buildPackageProto(fqName, nonCassDescriptors)
 
-                    buildKlibPackageFragment(
-                        packageProto,
-                        serializeClasses(fqName, classifierDescriptors),
-                        fqName,
-                        topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
-                        serializerExtension.stringTable
-                    )
-                }
-            )
+                buildKlibPackageFragment(
+                    packageProto,
+                    serializeClasses(fqName, classifierDescriptors),
+                    fqName,
+                    topLevelDescriptors.isEmpty() && classifierDescriptors.isEmpty(),
+                    serializerExtension.stringTable
+                )
+            }
+            ]
         }
 
-        val result = mutableListOf<ProtoBuf.PackageFragment>()
+        val result: MutableList<ProtoBuf.PackageFragment> = []
 
         result += classifierDescriptors.maybeChunked(TOP_LEVEL_CLASS_DECLARATION_COUNT_PER_FILE) { descriptors ->
 
@@ -197,7 +197,7 @@ abstract class KlibMetadataSerializer(
             withNewContext {
                 buildKlibPackageFragment(
                     buildPackageProto(fqName, descriptors),
-                    emptyList(),
+                    [],
                     fqName,
                     descriptors.isEmpty(),
                     serializerExtension.stringTable
@@ -209,7 +209,7 @@ abstract class KlibMetadataSerializer(
             result += withNewContext {
                 buildKlibPackageFragment(
                     emptyPackageProto(),
-                    emptyList(),
+                    [],
                     fqName,
                     true,
                     serializerExtension.stringTable
@@ -221,7 +221,7 @@ abstract class KlibMetadataSerializer(
     }
 
     protected fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-        val result = mutableSetOf<FqName>()
+        val result: MutableSet<FqName> = []
 
         fun getSubPackagesOfModule(fqName: FqName) =
             if (includeOnlyModuleContent) {

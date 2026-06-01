@@ -21,10 +21,10 @@ class BlackBoxCodegenSuppressor(
     private val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
 ) : SimpleTestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::SuppressionChecker.bind(customIgnoreDirective, additionalIgnoreDirectives)))
+        get() = [service(::SuppressionChecker.bind(customIgnoreDirective, additionalIgnoreDirectives))]
 
     override fun testIsMuted(): Boolean {
         val suppressionChecker = testServices.codegenSuppressionChecker
@@ -39,7 +39,7 @@ class BlackBoxCodegenSuppressor(
         val suppressionChecker = testServices.codegenSuppressionChecker
         val moduleStructure = testServices.moduleStructure
         val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(moduleStructure.modules.firstOrNull()) ?: return
-        val failures = mutableListOf<Throwable>()
+        val failures: MutableList<Throwable> = []
         suppressionChecker.processAllDirectives(ignoreDirectives) { directive, suppressionResult ->
             try {
                 suppressionChecker.throwThatTestCouldBeUnmuted(directive, suppressionResult)
@@ -59,7 +59,7 @@ class BlackBoxCodegenSuppressor(
             if (module == null) return null
             val targetBackend = testServices.defaultsProvider.targetBackend ?: return null
             val ignoreDirective = extractIgnoredDirectiveForTargetBackend(testServices, module, targetBackend, customIgnoreDirective)
-            return additionalIgnoreDirectives?.let { it + listOfNotNull(ignoreDirective) } ?: ignoreDirective?.let { listOf(it) }
+            return additionalIgnoreDirectives?.let { it + listOfNotNull(ignoreDirective) } ?: ignoreDirective?.let { [it] }
         }
 
         fun failuresInModuleAreIgnored(module: TestModule): Boolean {
@@ -93,7 +93,7 @@ class BlackBoxCodegenSuppressor(
             val modules = testServices.moduleStructure.modules
             for (ignoreDirective in ignoreDirectives) {
                 val suppressionResult = modules
-                    .map { failuresInModuleAreIgnored(it, listOf(ignoreDirective)) }
+                    .map { failuresInModuleAreIgnored(it, [ignoreDirective]) }
                     .firstOrNull { it.testMuted }
                     ?: continue
                 return processDirective(ignoreDirective, suppressionResult)

@@ -936,8 +936,8 @@ object Generators : TemplateGroupBase() {
         body {
             """
             val iterator = iterator()
-            if (!iterator.hasNext()) return emptyList()
-            val result = mutableListOf<R>()
+            if (!iterator.hasNext()) return []
+            val result: MutableList<R> = []
             var current = iterator.next()
             while (iterator.hasNext()) {
                 val next = iterator.next()
@@ -950,7 +950,7 @@ object Generators : TemplateGroupBase() {
         body(CharSequences) {
             """
             val size = ${f.code.size} - 1
-            if (size < 1) return emptyList()
+            if (size < 1) return []
             val result = ArrayList<R>(size)
             for (index in 0 until size) {
                 result.add(transform(this[index], this[index + 1]))

@@ -157,9 +157,9 @@ class MultiModuleJavaAnalysisCustomTest : KtUsefulTestCase() {
             }
             modules[name] = TestModule(project, name, kotlinFiles, javaFilesScope) {
                 when (this._name) {
-                    "a" -> listOf(this)
-                    "b" -> listOf(this, modules["a"]!!)
-                    "c" -> listOf(this, modules["b"]!!, modules["a"]!!)
+                    "a" -> [this]
+                    "b" -> [this, modules["a"]!!]
+                    "c" -> [this, modules["b"]!!, modules["a"]!!]
                     else -> throw IllegalStateException(_name)
                 }
             }

@@ -38,7 +38,7 @@ class CursorTest {
 
     @Test
     fun parseIdentifiersThatArePossibleByEscaping() {
-        val validEscapedIdentifiers = listOf("123", "🙂", "identifiers can include spaces")
+        val validEscapedIdentifiers = ["123", "🙂", "identifiers can include spaces"]
         for (id in validEscapedIdentifiers) {
             assertEquals(id, Cursor(id).parseValidIdentifier())
         }
@@ -47,7 +47,7 @@ class CursorTest {
     @Test
     fun parseValidIdentifierDoesNotIncludeIllegalCharacters() {
         val identifiersIncludingIllegalChar =
-            listOf(
+            [
                 "identifiers can't include :",
                 "identifiers can't include \\",
                 "identifiers can't include /",
@@ -62,7 +62,7 @@ class CursorTest {
                 "identifiers can't include }",
                 "identifiers can't include ?",
                 "identifiers can't include ,",
-            )
+            ]
         for (id in identifiersIncludingIllegalChar) {
             val cursor = Cursor(id)
             assertEquals("identifiers can't include ", cursor.parseValidIdentifier())

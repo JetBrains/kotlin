@@ -242,7 +242,7 @@ private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean 
 }
 
 
-private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
+private val SUPPORTED_SYMBOL_ORIGINS: Set<KaSymbolOrigin> = [KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY]
 
 context(ka: KaSession, sirSession: SirSession)
 private fun hasUnsupportedInputTypeParameters(ktSymbol: KaFunctionSymbol): Boolean =

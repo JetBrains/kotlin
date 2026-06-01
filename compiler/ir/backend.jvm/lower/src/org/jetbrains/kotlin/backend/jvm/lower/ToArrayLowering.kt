@@ -146,7 +146,7 @@ private val IrClass.superClass: IrClass?
     get() = superTypes.mapNotNull { it.getClass()?.takeIf { superClass -> superClass.isClass } }.singleOrNull()
 
 internal val IrClass.isCollectionSubClass: Boolean
-    get() = DFS.ifAny(superTypes, { it.getClass()?.superTypes ?: listOf() }) { it.isCollection() }
+    get() = DFS.ifAny(superTypes, { it.getClass()?.superTypes ?: [] }) { it.isCollection() }
 
 private fun IrType.isArrayOrNullableArrayOf(context: JvmBackendContext, element: IrClassifierSymbol): Boolean =
     this is IrSimpleType && (isArray() || isNullableArray()) && arguments.size == 1 && element == when (val it = arguments[0]) {

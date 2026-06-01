@@ -40,7 +40,7 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
                     backingSymbol = valueParameter.symbol,
                     backingReturnType = substitutor.substitute(valueParameter.returnType),
                     backingReceiverType = valueParameter.receiverType?.let(substitutor::substitute),
-                    backingContextParameters = emptyList(),
+                    backingContextParameters = [],
                 )
             },
             backingContextParameters = contextParameters.map { contextParameter ->
@@ -48,7 +48,7 @@ internal class KaFe10FunctionSignature<out S : KaFunctionSymbol>(
                     backingSymbol = contextParameter.symbol,
                     backingReturnType = substitutor.substitute(contextParameter.returnType),
                     backingReceiverType = contextParameter.receiverType?.let(substitutor::substitute),
-                    backingContextParameters = emptyList(),
+                    backingContextParameters = [],
                 )
             }
         )

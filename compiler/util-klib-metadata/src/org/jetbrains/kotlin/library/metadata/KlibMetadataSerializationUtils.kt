@@ -15,7 +15,7 @@ fun buildKlibPackageFragment(
     fqName: FqName,
     isEmpty: Boolean,
     stringTable: SerializableStringTable,
-    fileAnnotations: List<ProtoBuf.Annotation> = emptyList(),
+    fileAnnotations: List<ProtoBuf.Annotation> = [],
 ): ProtoBuf.PackageFragment {
 
     val [stringTableProto, nameTableProto] = stringTable.buildProto()

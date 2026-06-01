@@ -21,7 +21,7 @@ class MessageCollectorAdapter(
     private val kotlinTarget: KotlinModuleBuildTarget<*>?
 ) : MessageCollector {
     private var hasErrors = false
-    val filesWithErrors = mutableSetOf<String>()
+    val filesWithErrors: MutableSet<String> = []
 
     override fun report(severity: CompilerMessageSeverity, @Nls message: String, location: CompilerMessageSourceLocation?) {
         hasErrors = hasErrors || severity.isError

@@ -48,7 +48,7 @@ class FrontendConfiguratorTestModel(
     override val generator: MethodGenerator<FrontendConfiguratorTestModel> get() = FrontendConfiguratorTestGenerator
     override val name: String get() = "getConfigurator"
     override val dataString: String? get() = null
-    override val tags: List<String> get() = emptyList()
+    override val tags: List<String> get() = []
 
     override val isTestMethod: Boolean get() = false
     override val shouldBeGeneratedForInnerTestClass: Boolean get() = false

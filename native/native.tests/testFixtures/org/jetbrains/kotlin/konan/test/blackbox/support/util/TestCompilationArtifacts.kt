@@ -16,7 +16,7 @@ private fun invokeKlibTool(
     command: String,
     printSignatures: Boolean,
     signatureVersion: KotlinIrSignatureVersion?,
-    absolutePathPrefixes: List<String> = emptyList(),
+    absolutePathPrefixes: List<String> = [],
 ): String {
     val entryPoint = Class.forName("org.jetbrains.kotlin.cli.klib.Main", true, kotlinNativeClassLoader)
         .declaredMethods
@@ -90,7 +90,7 @@ fun TestCompilationArtifact.KLIB.dumpIr(
 
 fun File.dumpIr(
     kotlinNativeClassLoader: ClassLoader,
-    absolutePathPrefixes: List<String> = emptyList(),
+    absolutePathPrefixes: List<String> = [],
 ): String = invokeKlibTool(
     kotlinNativeClassLoader,
     klibFile = this,

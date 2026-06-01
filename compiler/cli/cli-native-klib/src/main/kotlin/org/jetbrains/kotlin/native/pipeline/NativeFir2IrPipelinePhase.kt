@@ -44,8 +44,8 @@ import org.jetbrains.kotlin.native.runPreSerializationLowerings
 
 object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeFir2IrArtifact>(
     name = "NativeFir2IrPhase",
-    preActions = setOf(PerformanceNotifications.TranslationToIrStarted),
-    postActions = setOf(PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.TranslationToIrStarted],
+    postActions = [PerformanceNotifications.TranslationToIrFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: NativeFrontendArtifact): NativeFir2IrArtifact? {
         val (frontendOutput, configuration, phaseContext) = input
@@ -60,14 +60,14 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
             visibilityConverter = Fir2IrVisibilityConverter.Default,
             kotlinBuiltIns = DefaultBuiltIns.Instance,
             specialAnnotationsProvider = null,
-            extraActualDeclarationExtractorsInitializer = { emptyList() },
+            extraActualDeclarationExtractorsInitializer = { [] },
             typeSystemContextProvider = ::IrTypeSystemContextImpl,
         )
 
         @OptIn(DelicateDeclarationStorageApi::class)
         val usedPackages = buildSet {
             val queue = ArrayDeque<IrSymbol>()
-            val processed = mutableSetOf<IrSymbol>()
+            val processed: MutableSet<IrSymbol> = []
 
             fun queueSymbol(symbol: IrSymbol) {
                 if (processed.add(symbol)) {
@@ -135,8 +135,8 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
 
 object NativePreSerializationPipelinePhase : PipelinePhase<NativeFir2IrArtifact, NativeFir2IrArtifact>(
     name = "NativePreSerializationPhase",
-    preActions = setOf(PerformanceNotifications.IrPreLoweringStarted),
-    postActions = setOf(PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.IrPreLoweringStarted],
+    postActions = [PerformanceNotifications.IrPreLoweringFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: NativeFir2IrArtifact): NativeFir2IrArtifact {
         val (fir2IrOutput, configuration, phaseContext) = input

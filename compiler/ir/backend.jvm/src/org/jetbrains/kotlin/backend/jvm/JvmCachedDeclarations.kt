@@ -319,7 +319,7 @@ class JvmCachedDeclarations(
             }.apply {
                 createThisReceiverParameter()
                 parent = annotationClass
-                superTypes = listOf(context.irBuiltIns.annotationType)
+                superTypes = [context.irBuiltIns.annotationType]
             }
 
             val propertyName = Name.identifier("value")

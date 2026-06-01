@@ -41,11 +41,11 @@ import java.io.File
 
 class BuiltInsDeserializationForFirTestCase {
     companion object {
-        private val BUILTIN_PACKAGE_NAMES = listOf(
+        private val BUILTIN_PACKAGE_NAMES = [
             StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
             StandardNames.COLLECTIONS_PACKAGE_FQ_NAME,
             StandardNames.RANGES_PACKAGE_FQ_NAME
-        )
+        ]
 
         private const val TEST_DATA_PATH = "compiler/fir/analysis-tests/legacy-fir-tests/testData/builtIns"
     }

@@ -32,7 +32,7 @@ import org.jetbrains.kotlin.psi.KtNonPublicApi
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.butIf
 
-private val reservedWords = setOf(
+private val reservedWords: Set<String> = [
     "break",
     "case",
     "catch",
@@ -69,9 +69,9 @@ private val reservedWords = setOf(
     "void",
     "while",
     "with"
-)
+]
 
-private val strictModeReservedWords = setOf(
+private val strictModeReservedWords: Set<String> = [
     "as",
     "implements",
     "interface",
@@ -82,7 +82,7 @@ private val strictModeReservedWords = setOf(
     "public",
     "static",
     "yield"
-)
+]
 
 internal val allReservedWords = reservedWords + strictModeReservedWords
 
@@ -352,14 +352,14 @@ private fun MutableList<ExportedDeclaration>.addNotImplementableProperty(klass: 
 context(_: KaSession)
 private fun KaNamedClassSymbol.generateNotImplementableBrandType(config: TypeScriptExportConfig): ExportedType {
     return ExportedType.InlineInterfaceType(
-        listOf(
+        [
             ExportedField(
                 name = ExportedMemberName.Identifier(getExportedFqName(shouldIncludePackage = true, config).asString()),
                 type = ExportedType.Primitive.UniqueSymbol,
                 mutable = false,
                 isMember = true,
             )
-        )
+        ]
     )
 }
 
@@ -482,7 +482,7 @@ private fun KaNamedClassSymbol.collectAllImplementableAndNotImplementableInterfa
     // - All the implementable interfaces in the hierarchy to add the correct Symbol
     // - All the nearest not-implementable interfaces to generate a correct type for __doNotUseOrImplementIt
     val result = linkedMapOf<KaNamedClassSymbol, Boolean>()
-    val stack = mutableListOf<KaNamedClassSymbol>()
+    val stack: MutableList<KaNamedClassSymbol> = []
     stack.enqueueSuperTypes(superTypes)
 
     while (stack.isNotEmpty()) {

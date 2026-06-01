@@ -63,7 +63,7 @@ class KlibAnnotationsTest {
     }
 
     private fun writeModule(module: KmModuleFragment, metadataVersion: KlibMetadataVersion): KlibModuleMetadata.SerializedKlibMetadata =
-        KlibModuleMetadata("klib", listOf(module), metadataVersion).write()
+        KlibModuleMetadata("klib", [module], metadataVersion).write()
 
     private fun readModule(metadata: KlibModuleMetadata.SerializedKlibMetadata): KmModuleFragment =
         KlibModuleMetadata.readLenient(object : KlibModuleMetadata.MetadataLibraryProvider {
@@ -113,7 +113,7 @@ class KlibAnnotationsTest {
     private fun generateModule(): KmModuleFragment = KmModuleFragment().apply {
         fqName = "klib"
         pkg = generatePackage()
-        classes.addAll(listOf(generateKlass(), generateEnumKlass()))
+        classes.addAll([generateKlass(), generateEnumKlass()])
         fileAnnotations.add(KmAnnotation("FileAnnotation", emptyMap()))
     }
 

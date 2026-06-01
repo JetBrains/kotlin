@@ -77,12 +77,12 @@ private class TCTestMessageParserCallback : ServiceMessageParserCallback {
     private var afterMessage = false
     private var state: State = State.Begin
 
-    val passedTests = mutableListOf<TestName>()
-    val failedTests = mutableListOf<TestName>()
-    val ignoredTests = mutableListOf<TestName>()
+    val passedTests: MutableList<TestName> = []
+    val failedTests: MutableList<TestName> = []
+    val ignoredTests: MutableList<TestName> = []
 
     val nonTestOutput = StringBuilder()
-    val errors = mutableListOf<String>()
+    val errors: MutableList<String> = []
 
     override fun regularText(text: String) {
         val actualText = if (afterMessage) {

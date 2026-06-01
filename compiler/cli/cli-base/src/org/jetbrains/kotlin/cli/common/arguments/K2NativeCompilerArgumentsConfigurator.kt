@@ -19,9 +19,9 @@ class K2NativeCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsCo
         require(this is K2NativeCompilerArguments)
         super.configureAnalysisFlags(arguments, reporter, languageVersion).apply {
             val optInList = (get(AnalysisFlags.optIn) as List<*>?).orEmpty()
-            putAnalysisFlag(AnalysisFlags.optIn, optInList + listOf("kotlin.ExperimentalUnsignedTypes"))
+            putAnalysisFlag(AnalysisFlags.optIn, optInList + "kotlin.ExperimentalUnsignedTypes")
             if (printIr)
-                phasesToDumpAfter = arrayOf("ALL")
+                phasesToDumpAfter = ["ALL"]
             if (metadataKlib) {
                 putAnalysisFlag(AnalysisFlags.metadataCompilation, true)
             }

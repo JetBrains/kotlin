@@ -37,7 +37,7 @@ internal class CEnumCompanionGenerator(
     override val irBuiltIns: IrBuiltIns = context.irBuiltIns
     override val symbolTable: SymbolTable = context.symbolTable
     override val typeTranslator: TypeTranslator = context.typeTranslator
-    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = mutableListOf()
+    override val postLinkageSteps: MutableList<(IrBuiltIns, BackendNativeSymbols) -> Unit> = []
 
     // Depends on already generated `.values()` irFunction.
     fun generate(enumClass: IrClass): IrClass =

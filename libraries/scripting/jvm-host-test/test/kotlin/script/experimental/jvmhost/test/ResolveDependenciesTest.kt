@@ -66,12 +66,12 @@ class ResolveDependenciesTest {
     @Test
     fun testReplResolveFunAndValFromClassloader() = expectTestToFailOnK2 {
         checkEvaluateInRepl(
-            sequenceOf(funAndValAccessScriptText, funAndValAccessScriptText), sequenceOf(42, 42),
+            [funAndValAccessScriptText, funAndValAccessScriptText], [42, 42],
             configurationWithDependenciesFromClassloader,
             null
         )
         checkEvaluateInRepl(
-            funAndValImportScriptText.split('\n').asSequence(), sequenceOf(null, null, 42),
+            funAndValImportScriptText.split('\n').asSequence(), [null, null, 42],
             configurationWithDependenciesFromClassloader,
             null
         )
@@ -100,9 +100,9 @@ class ResolveDependenciesTest {
             org.jetbrains.kotlin.mainKts.MainKtsConfigurator()
             ${thisPackage}.ShouldBeVisibleFromScript().x
         """.trimIndent().toScriptSource()
-        val classpath = listOf(
+        val classpath = [
             ForTestCompileRuntime.mainKtsJar(),
-        )
+        ]
         val compilationConfiguration = configurationWithDependenciesFromClassloader.with {
             updateClasspath(classpath)
         }

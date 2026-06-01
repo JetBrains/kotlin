@@ -57,13 +57,13 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
 
     // FIXME (KTI-2545): One can't simply write errorprone package name, because whole com.google. package is relocated in kotlin-compiler-embeddable.
     // For the time being, string literal should be split.
-    internal val errorPronePackageFqName: FqName = FqName.fromSegments(listOf("com", "google", "errorprone", "annotations"))
+    internal val errorPronePackageFqName: FqName = FqName.fromSegments(["com", "google", "errorprone", "annotations"])
 
-    private val ignorableReturnValueLikeAnnotations: Set<ClassId> = setOf(
+    private val ignorableReturnValueLikeAnnotations: Set<ClassId> = [
         StandardClassIds.Annotations.IgnorableReturnValue,
         ClassId(errorPronePackageFqName, Name.identifier("CanIgnoreReturnValue")),
         // Apparently, org.jetbrains.annotations and org.springframework.lang do not have CanIgnoreReturnValue because they have slightly different design
-    )
+    ]
 
     fun hasIgnorableLikeAnnotation(list: List<ClassId>?): Boolean = list.orEmpty().any { it in ignorableReturnValueLikeAnnotations }
 
@@ -108,7 +108,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
     }
 
     private class Default : FirMustUseReturnValueStatusComponent() {
-        private val mustUseReturnValueLikeAnnotations: Set<ClassId> = setOf(
+        private val mustUseReturnValueLikeAnnotations: Set<ClassId> = [
             StandardClassIds.Annotations.MustUseReturnValues,
             ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("MustUseReturnValue")), // Pre-2.3.0 name, can be deleted later.
             ClassId(errorPronePackageFqName, Name.identifier("CheckReturnValue")),
@@ -116,7 +116,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             ClassId(FqName("org.springframework.lang"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.jooq"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("edu.umd.cs.findbugs.annotations"), Name.identifier("CheckReturnValue")),
-        )
+        ]
 
         private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation() = this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
 

@@ -20,7 +20,7 @@ class WasmFolderBoxRunner(
 
     private fun runWasmFolder() {
         val artifacts = modulesToArtifact.values.single() as WasmFolderBinaryArtifact
-        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", mutableSetOf())
+        val throwables = saveAdditionalFilesAndRun(artifacts.folder, "dev", [])
         if (throwables.isNotEmpty())
             throw throwables.first()
     }

@@ -217,7 +217,7 @@ class PublishingHelpersTest : KGPBaseTest() {
             buildScriptInjection {
                 signing.sign(publishing.publications)
                 project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
-                    it.keyservers.set(emptyList())
+                    it.keyservers.set([])
                 }
             }
             buildAndFail(*buildArguments) {
@@ -238,7 +238,7 @@ class PublishingHelpersTest : KGPBaseTest() {
                 signing.useGpgCmd()
                 signing.sign(publishing.publications)
                 project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
-                    it.keyservers.set(emptyList())
+                    it.keyservers.set([])
                 }
             }
             fun buildWithConfCacheCheck(firstRun: Boolean) {
@@ -270,7 +270,7 @@ class PublishingHelpersTest : KGPBaseTest() {
             buildScriptInjection {
                 signing.sign(publishing.publications)
                 project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
-                    it.keyservers.set(emptyList())
+                    it.keyservers.set([])
                 }
             }
             buildAndFail(
@@ -307,16 +307,16 @@ class PublishingHelpersTest : KGPBaseTest() {
                 buildScriptInjection {
                     publishing.publications.create<MavenPublication>("mavenJava")
                     project.tasks.named<CheckSigningTask>("checkSigningConfiguration").configure {
-                        it.keyservers.set(listOf("http://localhost:$port"))
+                        it.keyservers.set(["http://localhost:$port"])
                     }
                 }
                 buildScriptCode(
-                    arrayOf(
+                    [
                         "checkSigningConfiguration",
                         "-Psigning.keyId=$keyId",
                         "-Psigning.secretKeyRingFile=$keyring",
                         "-Psigning.password=abc"
-                    )
+                    ]
                 )
             }
         }

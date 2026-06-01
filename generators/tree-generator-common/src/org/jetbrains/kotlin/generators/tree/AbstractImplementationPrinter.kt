@@ -28,14 +28,14 @@ abstract class AbstractImplementationPrinter<Implementation, Element, Field>(
         get() = false
 
     protected open fun ImportCollecting.parentConstructorArguments(implementation: Implementation): List<String> =
-        emptyList()
+        []
 
     protected abstract fun makeFieldPrinter(printer: ImportCollectingPrinter): AbstractFieldPrinter<Field>
 
     protected open fun ImportCollectingPrinter.printAdditionalMethods(implementation: Implementation) {
     }
 
-    protected open fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> = emptyList()
+    protected open fun additionalConstructorParameters(implementation: Implementation): List<FunctionParameter> = []
 
     fun printImplementation(implementation: Implementation) {
         printer.run {

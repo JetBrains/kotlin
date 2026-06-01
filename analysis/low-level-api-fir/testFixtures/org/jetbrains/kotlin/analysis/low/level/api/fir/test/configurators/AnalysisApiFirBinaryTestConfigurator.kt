@@ -53,12 +53,12 @@ abstract class AnalysisApiFirBinaryTestConfigurator : AnalysisApiTestConfigurato
     }
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> =
-        listOf(
+        [
             AnalysisApiBaseTestServiceRegistrar,
             AnalysisApiIdeModeTestServiceRegistrar,
             FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
-        )
+        ]
 }
 
 class AnalysisApiFirLibraryBinaryTestConfigurator(override val defaultTargetPlatform: TargetPlatform = defaultTargetPlatformValue) :

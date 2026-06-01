@@ -43,7 +43,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
     fun `package generation with direct dependencies`(version: GradleVersion) {
         project("empty", version) {
             val packageOne = projectPath.resolve("packageOne").also { it.createDirectories() }.toFile()
-            runProcess(listOf("swift", "package", "init", "--type", "library"), packageOne)
+            runProcess(["swift", "package", "init", "--type", "library"], packageOne)
 
             plugins {
                 kotlin("multiplatform").apply(false)
@@ -53,8 +53,8 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                 val extension = project.locateOrRegisterSwiftPMDependenciesExtension().apply {
                     iosMinimumDeploymentTarget.set("123.0")
                     tvosMinimumDeploymentTarget.set("234.0")
-                    swiftPackage("https://foo.bar/baz.git", "1.0.0", listOf("a", "b"))
-                    localSwiftPackage(project.layout.projectDirectory.dir("packageOne"), listOf("packageOne"))
+                    swiftPackage("https://foo.bar/baz.git", "1.0.0", ["a", "b"])
+                    localSwiftPackage(project.layout.projectDirectory.dir("packageOne"), ["packageOne"])
                 }
                 project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
                     configureWithExtension(extension)
@@ -67,14 +67,14 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
 
             val generatedPackage = json.decodeFromString<PackageDescription>(
                 runProcess(
-                    listOf("swift", "package", "describe", "--type", "json"),
+                    ["swift", "package", "describe", "--type", "json"],
                     projectPath.resolve("build/kotlin/swiftImport").toFile(),
                 ).output
             )
 
             assertEquals(
                 PackageDescription(
-                    dependencies = listOf(
+                    dependencies = [
                         PackageDescription.PackageDependency(
                             identity = "baz",
                             path = null,
@@ -87,37 +87,37 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                             type = "fileSystem",
                             url = null,
                         ),
-                    ),
-                    platforms = listOf(
+                    ],
+                    platforms = [
                         PackageDescription.PackagePlatform(
                             name = "ios",
                             version = "123.0",
                         ),
-                    ),
-                    products = listOf(
+                    ],
+                    products = [
                         PackageDescription.PackageProduct(
                             name = "KotlinMultiplatformLinkedPackage",
-                            targets = listOf(
+                            targets = [
                                 "KotlinMultiplatformLinkedPackage",
-                            ),
+                            ],
                             type = mapOf(
-                                "library" to listOf(
+                                "library" to [
                                     "automatic",
-                                ),
+                                ],
                             ),
                         ),
-                    ),
-                    targets = listOf(
+                    ],
+                    targets = [
                         PackageDescription.PackageTarget(
                             path = "Sources/KotlinMultiplatformLinkedPackage",
-                            productDependencies = listOf(
+                            productDependencies = [
                                 "a",
                                 "b",
                                 "packageOne",
-                            ),
+                            ],
                             type = "library",
                         ),
-                    ),
+                    ],
                 ).prettyPrinted,
                 generatedPackage.prettyPrinted
             )
@@ -140,24 +140,24 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
                         TransitiveSwiftPMDependencies(
                             mapOf(
                                 SwiftPMDependencyIdentifier("dep", true) to SwiftPMImportMetadata(
-                                    konanTargets = setOf("ios_arm64"),
+                                    konanTargets = ["ios_arm64"],
                                     iosDeploymentVersion = "123.0",
                                     macosDeploymentVersion = "234.0",
                                     watchosDeploymentVersion = null,
                                     tvosDeploymentVersion = null,
                                     isModulesDiscoveryEnabled = true,
-                                    dependencies = setOf(
+                                    dependencies = [
                                         SwiftPMDependency.Remote(
                                             repository = SwiftPMDependency.Remote.Repository.Url("https://foo.bar/baz"),
                                             version = SwiftPMDependency.Remote.Version.Exact("1.0.0"),
-                                            products = listOf(
+                                            products = [
                                                 SwiftPMDependency.Product("dep"),
-                                            ),
-                                            cinteropClangModules = emptyList(),
+                                            ],
+                                            cinteropClangModules = [],
                                             packageName = "baz",
-                                            traits = setOf()
+                                            traits = []
                                         )
-                                    ),
+                                    ],
                                 ),
                             )
                         )
@@ -170,7 +170,7 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
             val rootPackagePath = projectPath.resolve("build/kotlin/swiftImport")
             val generatedRootPackage = json.decodeFromString<PackageDescription>(
                 runProcess(
-                    listOf("swift", "package", "describe", "--type", "json"),
+                    ["swift", "package", "describe", "--type", "json"],
                     rootPackagePath.toFile(),
                 ).output
             )
@@ -178,90 +178,90 @@ class GenerateSyntheticLinkageImportProjectTests : KGPBaseTest() {
 
             assertEquals(
                 PackageDescription(
-                    dependencies = listOf(
+                    dependencies = [
                         PackageDescription.PackageDependency(
                             identity = "dep",
                             path = subpackagePath.toRealPath().pathString,
                             type = "fileSystem",
                             url = null,
                         ),
-                    ),
-                    platforms = listOf(
+                    ],
+                    platforms = [
                         PackageDescription.PackagePlatform(
                             name = "ios",
                             version = "123.0",
                         ),
-                    ),
-                    products = listOf(
+                    ],
+                    products = [
                         PackageDescription.PackageProduct(
                             name = "KotlinMultiplatformLinkedPackage",
-                            targets = listOf(
+                            targets = [
                                 "KotlinMultiplatformLinkedPackage",
-                            ),
+                            ],
                             type = mapOf(
-                                "library" to listOf(
+                                "library" to [
                                     "automatic",
-                                ),
+                                ],
                             ),
                         ),
-                    ),
-                    targets = listOf(
+                    ],
+                    targets = [
                         PackageDescription.PackageTarget(
                             path = "Sources/KotlinMultiplatformLinkedPackage",
-                            productDependencies = listOf(
+                            productDependencies = [
                                 "dep",
-                            ),
+                            ],
                             type = "library",
                         ),
-                    ),
+                    ],
                 ).prettyPrinted,
                 generatedRootPackage.prettyPrinted,
             )
 
             val generatedSubpackage = json.decodeFromString<PackageDescription>(
                 runProcess(
-                    listOf("swift", "package", "describe", "--type", "json"),
+                    ["swift", "package", "describe", "--type", "json"],
                     subpackagePath.toFile(),
                 ).output
             )
             assertEquals(
                 PackageDescription(
-                    dependencies = listOf(
+                    dependencies = [
                         PackageDescription.PackageDependency(
                             identity = "baz",
                             path = null,
                             type = "sourceControl",
                             url = "https://foo.bar/baz",
                         ),
-                    ),
-                    platforms = listOf(
+                    ],
+                    platforms = [
                         PackageDescription.PackagePlatform(
                             name = "ios",
                             version = "123.0",
                         ),
-                    ),
-                    products = listOf(
+                    ],
+                    products = [
                         PackageDescription.PackageProduct(
                             name = "dep",
-                            targets = listOf(
+                            targets = [
                                 "dep",
-                            ),
+                            ],
                             type = mapOf(
-                                "library" to listOf(
+                                "library" to [
                                     "automatic",
-                                ),
+                                ],
                             ),
                         ),
-                    ),
-                    targets = listOf(
+                    ],
+                    targets = [
                         PackageDescription.PackageTarget(
                             path = "Sources/dep",
-                            productDependencies = listOf(
+                            productDependencies = [
                                 "dep",
-                            ),
+                            ],
                             type = "library",
                         ),
-                    ),
+                    ],
                 ).prettyPrinted,
                 generatedSubpackage.prettyPrinted,
             )

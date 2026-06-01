@@ -38,7 +38,7 @@ class KlibMetadataMonolithicSerializer(
             module.getPackage(fqName).fragments.filter { it.module == module }
         }
 
-        if (fragments.isEmpty()) return emptyList()
+        if (fragments.isEmpty()) return []
 
         val classifierDescriptors = DescriptorSerializer.sort(
             fragments.flatMap {
@@ -57,9 +57,9 @@ class KlibMetadataMonolithicSerializer(
 
     fun serializeModule(moduleDescriptor: ModuleDescriptor): SerializedMetadata {
 
-        val fragments = mutableListOf<List<ByteArray>>()
-        val fragmentNames = mutableListOf<String>()
-        val emptyPackages = mutableListOf<String>()
+        val fragments: MutableList<List<ByteArray>> = []
+        val fragmentNames: MutableList<String> = []
+        val emptyPackages: MutableList<String> = []
 
         for (packageFqName in getPackagesFqNames(moduleDescriptor)) {
             val packageProtos =

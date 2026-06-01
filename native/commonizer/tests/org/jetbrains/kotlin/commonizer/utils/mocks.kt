@@ -27,7 +27,7 @@ internal fun mockTAType(
 ): CirTypeAliasType = CirTypeAliasType.createInterned(
     typeAliasId = createValidClassifierId(typeAliasId),
     underlyingType = underlyingType().makeNullableIfNecessary(nullable),
-    arguments = emptyList(),
+    arguments = [],
     isMarkedNullable = nullable
 )
 
@@ -37,12 +37,12 @@ internal fun mockClassType(
 ): CirClassType = CirClassType.createInterned(
     classId = createValidClassifierId(classId),
     outerType = null,
-    arguments = emptyList(),
+    arguments = [],
     isMarkedNullable = nullable
 )
 
 internal fun mockExtensionReceiver(receiverClassId: String) = CirExtensionReceiver(
-    annotations = emptyList(),
+    annotations = [],
     type = mockClassType(receiverClassId)
 )
 
@@ -60,10 +60,10 @@ internal val MOCK_CLASSIFIERS = CirKnownClassifiers(
             CommonizedGroup(0),
             LockBasedStorageManager.NO_LOCKS.createNullableLazyValue {
                 CirClass.create(
-                    annotations = emptyList(),
+                    annotations = [],
                     name = CirName.create("Any"),
-                    typeParameters = emptyList(),
-                    supertypes = emptyList(),
+                    typeParameters = [],
+                    supertypes = [],
                     visibility = Visibilities.Public,
                     modality = Modality.OPEN,
                     kind = ClassKind.CLASS,
@@ -141,7 +141,7 @@ internal class MockResultsConsumer : ResultsConsumer {
     val sharedTarget: SharedCommonizerTarget by lazy { modulesByTargets.keys.filterIsInstance<SharedCommonizerTarget>().single() }
     val leafTargets: Set<LeafCommonizerTarget> by lazy { modulesByTargets.keys.filterIsInstance<LeafCommonizerTarget>().toSet() }
 
-    private val finishedTargets = mutableSetOf<CommonizerTarget>()
+    private val finishedTargets: MutableSet<CommonizerTarget> = []
 
     lateinit var status: ResultsConsumer.Status
 
@@ -170,12 +170,12 @@ fun MockNativeManifestDataProvider(
     target: CommonizerTarget,
     uniqueName: String = "mock",
     versions: KotlinLibraryVersioning = KotlinLibraryVersioning(null, null, null),
-    dependencies: List<String> = emptyList(),
+    dependencies: List<String> = [],
     isCInterop: Boolean = true,
     packageFqName: String? = "mock",
-    exportForwardDeclarations: List<String> = emptyList(),
-    includedForwardDeclarations: List<String> = emptyList(),
-    nativeTargets: Collection<String> = emptyList(),
+    exportForwardDeclarations: List<String> = [],
+    includedForwardDeclarations: List<String> = [],
+    nativeTargets: Collection<String> = [],
     shortName: String? = "mock"
 ): NativeManifestDataProvider = object : NativeManifestDataProvider {
     override fun buildManifest(libraryName: UniqueLibraryName): NativeSensitiveManifestData {

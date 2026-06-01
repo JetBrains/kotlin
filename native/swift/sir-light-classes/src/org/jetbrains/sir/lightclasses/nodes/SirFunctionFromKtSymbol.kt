@@ -115,7 +115,7 @@ internal open class SirFunctionFromKtSymbol(
         val suffix = ""
         val baseName = fqName.baseBridgeName + suffix
 
-        val contextParameters = contextParameters?.second ?: emptyList()
+        val contextParameters = contextParameters?.second ?: []
         val extensionReceiverParameter = extensionReceiverParameter?.let {
             SirParameter("", "receiver", it.type)
         }
@@ -173,7 +173,7 @@ internal open class SirFunctionFromKtSymbol(
                 swiftDeprecation = effectiveReverseBridgeDeprecation(),
             ).orEmpty()
         } else {
-            emptyList()
+            []
         }
 
         forwardBridges + reverseBridges

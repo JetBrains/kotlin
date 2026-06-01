@@ -111,7 +111,7 @@ class GetSymbolsTest {
 
             /* Check: One function does not have any value params, the other function has a single param with name 'seed' */
             assertEquals(
-                setOf(emptyList(), listOf("seed")), aFunctionSymbols.map { it.valueParameters.map { it.name.asString() } }.toSet()
+                [[], ["seed"]], aFunctionSymbols.map { it.valueParameters.map { it.name.asString() } }.toSet()
             )
         }
     }
@@ -202,7 +202,7 @@ class GetSymbolsTest {
 
         buildStandaloneAnalysisAPISession {
             val currentArchitectureTarget = HostManager.host
-            val nativePlatform = NativePlatforms.nativePlatformByTargets(listOf(currentArchitectureTarget))
+            val nativePlatform = NativePlatforms.nativePlatformByTargets([currentArchitectureTarget])
 
             buildKtModuleProvider {
                 platform = nativePlatform

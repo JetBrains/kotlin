@@ -186,14 +186,14 @@ internal class JsUsefulDeclarationProcessor(
         if (!irClass.containsMetadata()) return
 
         val metadataKinds = when {
-            irClass.isObject -> listOf(RuntimeMetadataKind.COMPANION_OBJECT, RuntimeMetadataKind.OBJECT)
-            irClass.isInterface -> listOf(RuntimeMetadataKind.INTERFACE)
-            else -> listOf(
+            irClass.isObject -> [RuntimeMetadataKind.COMPANION_OBJECT, RuntimeMetadataKind.OBJECT]
+            irClass.isInterface -> [RuntimeMetadataKind.INTERFACE]
+            else -> [
                 RuntimeMetadataKind.CLASS,
                 RuntimeMetadataKind.LAMBDA,
                 RuntimeMetadataKind.COROUTINE,
                 RuntimeMetadataKind.FUNCTION_REFERENCE,
-            )
+            ]
         }
 
         for (metadataKind in metadataKinds) {

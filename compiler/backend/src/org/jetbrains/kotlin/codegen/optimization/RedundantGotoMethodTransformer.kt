@@ -85,7 +85,7 @@ class RedundantGotoMethodTransformer : MethodTransformer() {
         jumpInsn: JumpInsnNode,
         labelsToReplace: Map<LabelNode, JumpInsnNode>
     ) {
-        val lastJumpInsn = getLastTargetJumpInsn(jumpInsn, labelsToReplace, mutableListOf())
+        val lastJumpInsn = getLastTargetJumpInsn(jumpInsn, labelsToReplace, [])
         if (lastJumpInsn != null && lastJumpInsn != jumpInsn) {
             // Do not remove the old label because it can be used to define a local variable range.
             jumpInsn.label = lastJumpInsn.label

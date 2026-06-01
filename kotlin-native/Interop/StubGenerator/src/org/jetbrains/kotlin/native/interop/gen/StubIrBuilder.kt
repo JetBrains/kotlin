@@ -39,8 +39,8 @@ class BridgeGenerationComponentsBuilder {
     val setterToBridgeInfo = mutableMapOf<PropertyAccessor.Setter, BridgeGenerationInfo>()
     val arrayGetterBridgeInfo = mutableMapOf<PropertyAccessor.Getter, BridgeGenerationInfo>()
     val enumToTypeMirror = mutableMapOf<ClassStub.Enum, TypeMirror>()
-    val wCStringParameters = mutableSetOf<FunctionParameterStub>()
-    val cStringParameters = mutableSetOf<FunctionParameterStub>()
+    val wCStringParameters: MutableSet<FunctionParameterStub> = []
+    val cStringParameters: MutableSet<FunctionParameterStub> = []
 
     fun build(): BridgeGenerationComponents = object : BridgeGenerationComponents {
         override val getterToBridgeInfo =
@@ -148,7 +148,7 @@ open class StubsBuildingContextImpl(
 
     private var theCounter = 0
 
-    private val uniqFunctions = mutableSetOf<String>()
+    private val uniqFunctions: MutableSet<String> = []
 
     override fun isOverloading(name: String, types: List<StubType>):Boolean  {
         return if (configuration.library.language == Language.CPP) {
@@ -184,10 +184,10 @@ open class StubsBuildingContextImpl(
         }
 
         // todo: KT-81145 strictEnums in cinterop should be transitive
-        val predefinedGlobalStrictEnums = setOf(
-                "UINavigationItemSearchBarPlacement",
-                "UIBarButtonItemStyle",
-        )
+        val predefinedGlobalStrictEnums: Set<String> = [
+            "UINavigationItemSearchBarPlacement",
+            "UIBarButtonItemStyle",
+        ]
         if (predefinedGlobalStrictEnums.contains(name)) {
             return true
         }
@@ -306,11 +306,11 @@ class StubIrBuilder(private val context: StubIrContext) {
     private val configuration = context.configuration
     private val nativeIndex: NativeIndex = context.nativeIndex
 
-    private val classes = mutableListOf<ClassStub>()
-    private val functions = mutableListOf<FunctionStub>()
-    private val globals = mutableListOf<PropertyStub>()
-    private val typealiases = mutableListOf<TypealiasStub>()
-    private val containers = mutableListOf<SimpleStubContainer>()
+    private val classes: MutableList<ClassStub> = []
+    private val functions: MutableList<FunctionStub> = []
+    private val globals: MutableList<PropertyStub> = []
+    private val typealiases: MutableList<TypealiasStub> = []
+    private val containers: MutableList<SimpleStubContainer> = []
 
     private fun addStubs(stubs: List<StubIrElement>) = stubs.forEach(this::addStub)
 

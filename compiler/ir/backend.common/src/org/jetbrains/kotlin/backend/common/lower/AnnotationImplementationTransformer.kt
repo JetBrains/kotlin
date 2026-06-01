@@ -141,7 +141,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
                             IrCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayFunction)
                         } else {
                             val arrayConstructor = arrayType.classOrNull!!.constructors.single {
-                                it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType))
+                                it.owner.hasShape(regularParameters = 1, parameterTypes = [context.irBuiltIns.intType])
                             }
                             IrConstructorCallImpl.fromSymbolOwner(source.startOffset, source.endOffset, arrayType, arrayConstructor)
                         }
@@ -173,7 +173,7 @@ abstract class AnnotationImplementationTransformer(val context: CommonBackendCon
             parent = localDeclarationParent ?: irFile
                     ?: error("irFile in transformer should be specified when creating synthetic implementation")
             createThisReceiverParameter()
-            superTypes = listOf(annotationClass.defaultType)
+            superTypes = [annotationClass.defaultType]
             platformSetup()
             // Type parameters can be copied from annotationClass, but in fact they are never used by any of the backends.
         }

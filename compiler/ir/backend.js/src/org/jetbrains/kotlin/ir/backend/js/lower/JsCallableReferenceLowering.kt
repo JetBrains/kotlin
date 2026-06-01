@@ -79,8 +79,8 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
     }
 
     override fun getExtraConstructorParameters(constructor: IrConstructor, reference: IrRichFunctionReference): List<IrValueParameter> {
-        if (!reference.shouldAddContinuation) return emptyList()
-        return listOf(
+        if (!reference.shouldAddContinuation) return []
+        return [
             buildValueParameter(constructor) {
                 val superContinuation = context.symbols.coroutineImpl.owner.primaryConstructor!!.parameters.single()
                 name = superContinuation.name
@@ -88,7 +88,7 @@ class JsCallableReferenceLowering(private val jsContext: JsIrBackendContext) : W
                 origin = IrDeclarationOrigin.CONTINUATION
                 kind = IrParameterKind.Regular
             }
-        )
+        ]
     }
 
     override fun postprocessClass(functionReferenceClass: IrClass, functionReference: IrRichFunctionReference) {

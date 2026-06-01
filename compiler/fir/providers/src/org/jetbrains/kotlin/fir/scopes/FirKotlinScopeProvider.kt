@@ -139,7 +139,7 @@ class FirKotlinScopeProvider(
                 it.fullyExpandedType(useSiteSession).toRegularClassSymbol(useSiteSession)?.takeIf { it.classKind == ClassKind.CLASS }
             }?.fir
             val superClassScope = superClass?.staticScopeForBackend(useSiteSession, scopeSession) ?: return scope
-            scope?.let { FirNameAwareCompositeScope(listOf(it, superClassScope)) } ?: superClassScope
+            scope?.let { FirNameAwareCompositeScope([it, superClassScope]) } ?: superClassScope
         } else {
             scope
         }
@@ -204,7 +204,7 @@ object FirPlatformDeclarationFilter {
         return function.name !in namesToCheck || !function.symbol.hasAnnotation(StandardNames.FqNames.platformDependentClassId, session)
     }
 
-    private val namesToCheck = listOf("getOrDefault", "remove", "first", "last").mapTo(hashSetOf(), Name::identifier)
+    private val namesToCheck = ["getOrDefault", "remove", "first", "last"].mapTo(hashSetOf(), Name::identifier)
 }
 
 abstract class ConeSubstitutionScopeKey : ScopeSessionKey<FirClass, FirClassSubstitutionScope>() {

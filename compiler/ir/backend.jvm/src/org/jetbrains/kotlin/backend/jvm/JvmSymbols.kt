@@ -220,11 +220,11 @@ class JvmSymbols(
         }
 
         val appendTypes = with(irBuiltIns) {
-            listOf(
+            [
                 anyNType,
                 stringType.makeNullable(),
                 booleanType, charType, intType, longType, floatType, doubleType
-            )
+            ]
         }
         for (type in appendTypes) {
             klass.addFunction("append", klass.defaultType).apply {
@@ -391,18 +391,18 @@ class JvmSymbols(
 
     val functionReferenceImpl: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.FunctionReferenceImpl"), classModality = Modality.OPEN) { klass ->
-            klass.superTypes = listOf(functionReference.defaultType)
+            klass.superTypes = [functionReference.defaultType]
             klass.generateCallableReferenceSuperclassConstructors(withArity = true)
         }
 
     val adaptedFunctionReference: IrClassSymbol =
         createClass(FqName("kotlin.jvm.internal.AdaptedFunctionReference"), classModality = Modality.OPEN) { klass ->
-            klass.superTypes = listOf(irBuiltIns.anyType)
+            klass.superTypes = [irBuiltIns.anyType]
             klass.generateCallableReferenceSuperclassConstructors(withArity = true)
         }
 
     private fun IrClass.generateCallableReferenceSuperclassConstructors(withArity: Boolean) {
-        for (hasBoundReceiver in listOf(false, true)) {
+        for (hasBoundReceiver in [false, true]) {
             addConstructor().apply {
                 if (withArity) {
                     addValueParameter("arity", irBuiltIns.intType)
@@ -420,7 +420,7 @@ class JvmSymbols(
 
     val funInterfaceConstructorReferenceClass =
         createClass(FqName("kotlin.jvm.internal.FunInterfaceConstructorReference"), classModality = Modality.OPEN) { irClass ->
-            irClass.superTypes = listOf(irBuiltIns.anyType)
+            irClass.superTypes = [irBuiltIns.anyType]
             irClass.addConstructor().also { irConstructor ->
                 irConstructor.addValueParameter("funInterface", javaLangClass.starProjectedType)
             }
@@ -588,10 +588,10 @@ class JvmSymbols(
         }.symbol
 
     private val progressionUtilClasses by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        listOf(
-            "kotlin.internal.ProgressionUtilKt" to listOf(irBuiltIns.intClass, irBuiltIns.longClass),
+        [
+            "kotlin.internal.ProgressionUtilKt" to [irBuiltIns.intClass, irBuiltIns.longClass],
             "kotlin.internal.UProgressionUtilKt" to listOfNotNull(irBuiltIns.uintClass, irBuiltIns.ulongClass)
-        ).map { [fqn, types] ->
+        ].map { [fqn, types] ->
             createClass(FqName(fqn)) { klass ->
                 for (type in types) {
                     klass.addFunction("getProgressionLastElement", type.owner.defaultType, isStatic = true).apply {
@@ -805,11 +805,11 @@ class JvmSymbols(
         }.apply {
             parent = createClass(FqName("kotlin.jvm.JvmClassMappingKt")).owner
             addGetter().apply {
-                annotations = listOf(
+                annotations = [
                     IrAnnotationImpl.fromSymbolOwner(jvmName.typeWith(), jvmName.constructors.single()).apply {
                         arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, irBuiltIns.stringType, "getJavaClass")
                     }
-                )
+                ]
                 parameters += createExtensionReceiver(irBuiltIns.kClassClass.starProjectedType)
                 returnType = javaLangClass.starProjectedType
             }
@@ -879,7 +879,7 @@ class JvmSymbols(
 
     val arraysClass: IrClassSymbol =
         createClass(FqName("java.util.Arrays")) { irClass ->
-            for (type in listOf(
+            for (type in [
                 irBuiltIns.booleanArray.defaultType,
                 irBuiltIns.byteArray.defaultType,
                 irBuiltIns.charArray.defaultType,
@@ -889,7 +889,7 @@ class JvmSymbols(
                 irBuiltIns.floatArray.defaultType,
                 irBuiltIns.doubleArray.defaultType,
                 arrayOfAnyNType
-            )) {
+            ]) {
                 irClass.addArraysCopyOfFunction(type)
                 irClass.addArraysEqualsFunction(type)
             }
@@ -963,7 +963,7 @@ class JvmSymbols(
     private val javaLangString: IrClassSymbol =
         createClass(FqName("java.lang.String")) { klass ->
             val valueOfTypes = with(irBuiltIns) {
-                listOf(anyNType, booleanType, charType, intType, longType, floatType, doubleType)
+                [anyNType, booleanType, charType, intType, longType, floatType, doubleType]
             }
 
             for (type in valueOfTypes) {
@@ -975,14 +975,14 @@ class JvmSymbols(
 
     private val defaultValueOfFunction = javaLangString.functions.single {
         it.owner.name.asString() == "valueOf"
-                && it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(irBuiltIns.anyNType))
+                && it.owner.hasShape(regularParameters = 1, parameterTypes = [irBuiltIns.anyNType])
     }
 
     private val valueOfFunctions: Map<IrType, IrSimpleFunctionSymbol?> =
         context.irBuiltIns.primitiveIrTypes.associateWith { type ->
             javaLangString.functions.singleOrNull {
                 it.owner.name.asString() == "valueOf"
-                        && it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(type))
+                        && it.owner.hasShape(regularParameters = 1, parameterTypes = [type])
             }
         }
 

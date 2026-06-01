@@ -38,7 +38,7 @@ import kotlin.collections.plusAssign
 class AddContinuationToNonLocalSuspendFunctionsLowering(val context: CommonBackendContext) : DeclarationTransformer {
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
         if (declaration is IrSimpleFunction && declaration.isSuspend) {
-            listOf(transformSuspendFunction(context, declaration))
+            [transformSuspendFunction(context, declaration)]
         } else {
             null
         }

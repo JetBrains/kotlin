@@ -55,7 +55,7 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
             val it = it.value
             val name = (it.first as? FirLiteralExpression)?.value as? String
             val newName = (it.second as? FirLiteralExpression)?.value as? String
-            if (name == null || newName == null) return PluginDataFrameSchema(emptyList())
+            if (name == null || newName == null) return PluginDataFrameSchema([])
             name to newName
         }
 
@@ -75,7 +75,7 @@ class RenameMapping : AbstractSchemaModificationInterpreter() {
 
 internal fun PluginDataFrameSchema.map(selected: ColumnsResolver, nextName: () -> String): PluginDataFrameSchema =
     PluginDataFrameSchema(
-        f(columns(impliedColumnsResolver = selected), nextName, selected.resolve(this).mapTo(mutableSetOf()) { it.path }, emptyList()),
+        f(columns(impliedColumnsResolver = selected), nextName, selected.resolve(this).mapTo(mutableSetOf()) { it.path }, []),
     )
 
 internal fun f(
@@ -85,7 +85,7 @@ internal fun f(
     path: List<String>,
 ): List<SimpleCol> =
     columns.map {
-        val fullPath = path + listOf(it.name)
+        val fullPath = path + it.name
         when (it) {
             is SimpleColumnGroup -> {
                 val group = if (fullPath in selected) {

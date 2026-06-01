@@ -35,7 +35,7 @@ import org.jetbrains.org.objectweb.asm.Opcodes
 @PhasePrerequisites(ObjectClassLowering::class, StaticDefaultFunctionLowering::class, InterfaceLowering::class)
 internal class SyntheticAccessorLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
-        val pendingAccessorsToAdd = mutableSetOf<IrFunction>()
+        val pendingAccessorsToAdd: MutableSet<IrFunction> = []
         irFile.transformChildrenVoid(SyntheticAccessorTransformer(context, irFile, pendingAccessorsToAdd))
         for (accessor in pendingAccessorsToAdd) {
             (accessor.parent as IrDeclarationContainer).declarations.add(accessor)

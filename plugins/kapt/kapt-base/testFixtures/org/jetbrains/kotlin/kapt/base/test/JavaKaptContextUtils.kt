@@ -40,7 +40,7 @@ object JavaKaptContextUtils {
                 return true
             }
 
-            override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
+            override fun getSupportedAnnotationTypes(): Set<String> = ["test.MyAnnotation"]
         }, DeclaredProcType.NON_INCREMENTAL, logger
     )
 

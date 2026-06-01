@@ -338,7 +338,7 @@ class FirMetadataSessionFactoryForHmppCompilation(targetPlatform: TargetPlatform
         scopeProvider: FirKotlinScopeProvider,
         context: Context,
     ): List<FirSymbolProvider> {
-        return emptyList()
+        return []
     }
 
     override val createSeparateSharedProvidersInHmppCompilation: Boolean

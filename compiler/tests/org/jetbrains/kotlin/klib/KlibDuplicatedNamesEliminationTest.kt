@@ -30,11 +30,11 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
 
     // A baseline test.
     fun testNoDuplicatedNames() {
-        val libraryPaths = listOf(
+        val libraryPaths = [
             generateNewKlib("a"),
             generateNewKlib("b"),
             generateNewKlib("c"),
-        )
+        ]
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
@@ -56,13 +56,13 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
     }
 
     fun testDuplicatedNamesAllowAllWithWarning() {
-        val libraryPaths = listOf(
+        val libraryPaths = [
             generateNewKlib("a"),
             generateNewKlib("b"),
             generateNewKlib("b"),
             generateNewKlib("c"),
             generateNewKlib("c"),
-        )
+        ]
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
@@ -94,13 +94,13 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
     }
 
     fun testDuplicatedNamesAllowFirstWithWarning() {
-        val libraryPaths = listOf(
+        val libraryPaths = [
             generateNewKlib("a"),
             generateNewKlib("b"),
             generateNewKlib("b"),
             generateNewKlib("c"),
             generateNewKlib("c"),
-        )
+        ]
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)
@@ -118,7 +118,7 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
         assertTrue(resultOfElimination !== resultOfLoading)
         assertFalse(resultOfElimination.hasProblems)
         assertEquals(
-            listOf(libraryPaths[0], libraryPaths[1], libraryPaths[3]),
+            [libraryPaths[0], libraryPaths[1], libraryPaths[3]],
             resultOfElimination.librariesStdlibFirst.map { it.libraryFile.path }
         )
 
@@ -137,13 +137,13 @@ class KlibDuplicatedNamesEliminationTest : TestCaseWithTmpdir() {
     }
 
     fun testDuplicatedNamesDeny() {
-        val libraryPaths = listOf(
+        val libraryPaths = [
             generateNewKlib("a"),
             generateNewKlib("b"),
             generateNewKlib("b"),
             generateNewKlib("c"),
             generateNewKlib("c"),
-        )
+        ]
 
         val resultOfLoading = KlibLoader { libraryPaths(libraryPaths) }.load()
         assertFalse(resultOfLoading.hasProblems)

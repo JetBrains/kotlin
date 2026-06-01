@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.resolve.checkers
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.lexer.KtSingleValueToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.KtBinaryExpression
 import org.jetbrains.kotlin.psi.KtExpression
@@ -29,7 +30,8 @@ class PrimitiveNumericComparisonInfo(
 
 object PrimitiveNumericComparisonCallChecker : CallChecker {
 
-    private val comparisonOperatorTokens = setOf(KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ)
+    private val comparisonOperatorTokens: Set<KtSingleValueToken> =
+        [KtTokens.EQEQ, KtTokens.EXCLEQ, KtTokens.LT, KtTokens.LTEQ, KtTokens.GT, KtTokens.GTEQ]
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         // Primitive number comparisons only take part in binary operator convention resolution
@@ -96,13 +98,13 @@ object PrimitiveNumericComparisonCallChecker : CallChecker {
         }
 
     private fun CallCheckerContext.getStableTypesForExpression(expression: KtExpression): List<KotlinType> {
-        val type = trace.bindingContext.getType(expression) ?: return emptyList()
+        val type = trace.bindingContext.getType(expression) ?: return []
         val dataFlowValue = dataFlowValueFactory.createDataFlowValue(
             expression, type, trace.bindingContext, resolutionContext.scope.ownerDescriptor
         )
-        val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return emptyList()
+        val dataFlowInfo = trace.get(BindingContext.EXPRESSION_TYPE_INFO, expression)?.dataFlowInfo ?: return []
         val stableTypes = dataFlowInfo.getStableTypes(dataFlowValue, languageVersionSettings)
-        return listOf(type) + stableTypes
+        return [type] + stableTypes
     }
 
     private fun List<KotlinType>.findPrimitiveOrNullablePrimitiveType() =

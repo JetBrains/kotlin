@@ -221,7 +221,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             return true
         }
 
-        for (receiver in listOf(receiversInfo.extensionReceiver) + receiversInfo.contextParameters) {
+        for (receiver in [receiversInfo.extensionReceiver] + receiversInfo.contextParameters) {
             if (sameInstanceOfReceiver(receiver.expression, chosenRestrictSuspensionSymbol)) {
                 if (receiver.type?.isRestrictSuspensionReceiver() == true) {
                     return true
@@ -313,7 +313,7 @@ object FirSuspendCallChecker : FirQualifiedAccessExpressionChecker(MppCheckerKin
             val variableForInvokeType = variableForInvoke.resolvedType
 
             if (!variableForInvokeType.hasContextParameters && !variableForInvokeType.isExtensionFunctionType) {
-                return ReceiversInfo(null, ReceiverInfo(null, null), emptyList())
+                return ReceiversInfo(null, ReceiverInfo(null, null), [])
             }
 
             val amountOfContexts = variableForInvokeType.contextParameterNumberForFunctionType

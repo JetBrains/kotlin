@@ -106,7 +106,7 @@ public sealed class KaCompilationResult(
         public val output: List<KaCompiledFile>,
         public val capturedValues: List<KaCodeFragmentCapturedValue>,
         public var canBeCached: Boolean,
-        mutedExceptions: List<Throwable> = emptyList(),
+        mutedExceptions: List<Throwable> = [],
     ) : KaCompilationResult(mutedExceptions)
 
     /**
@@ -117,7 +117,7 @@ public sealed class KaCompilationResult(
     @KaExperimentalApi
     public class Failure(
         public val errors: List<KaDiagnostic>,
-        mutedExceptions: List<Throwable> = emptyList(),
+        mutedExceptions: List<Throwable> = [],
     ) : KaCompilationResult(mutedExceptions)
 }
 

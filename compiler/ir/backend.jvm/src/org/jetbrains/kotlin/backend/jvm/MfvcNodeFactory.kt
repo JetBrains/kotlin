@@ -119,7 +119,7 @@ private fun makeUnboxMethod(
         this.modality = modality
     }.apply {
         this.parent = parent
-        overriddenSymbols = overriddenNode?.let { it.unboxMethod.overriddenSymbols + it.unboxMethod.symbol } ?: listOf()
+        overriddenSymbols = overriddenNode?.let { it.unboxMethod.overriddenSymbols + it.unboxMethod.symbol } ?: []
         if (!static) {
             parameters += createDispatchReceiverParameterWithClassParent()
         }
@@ -136,7 +136,7 @@ private fun makeUnboxMethod(
                     val unboxMethodsToCall = when (defaultMethodsImplementationSourceNode) {
                         DefaultUnboxFunctionImplementation -> error("$defaultMethodsImplementationSourceNode is expected to be pure")
                         ExternalUnboxFunctionImplementation -> error("${parent.render()} is expected to be external")
-                        is DelegatingUnboxFunctionImplementation -> listOf(defaultMethodsImplementationSourceNode.node.unboxMethod)
+                        is DelegatingUnboxFunctionImplementation -> [defaultMethodsImplementationSourceNode.node.unboxMethod]
                         is CustomUnboxFunctionImplementation -> listOfNotNull(
                             defaultMethodsImplementationSourceNode.getter,
                             (defaultMethodsImplementationSourceNode.node as? NameableMfvcNode)?.unboxMethod
@@ -530,8 +530,8 @@ private fun makeRootMfvcNodeSubnodes(
         type,
         typeArguments,
         MethodFullNameMode.UnboxFunction,
-        listOf(name),
-        oldBackingField?.annotations ?: listOf(),
+        [name],
+        oldBackingField?.annotations ?: [],
         static,
         overriddenNode,
         DefaultUnboxFunctionImplementation,
@@ -542,7 +542,7 @@ private fun makeRootMfvcNodeSubnodes(
         if (oldProperty != null) {
             updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
         }
-        it.unboxMethod.overriddenSymbols = listOf() // the getter is saved so it overrides itself
+        it.unboxMethod.overriddenSymbols = [] // the getter is saved so it overrides itself
     }
 }
 
@@ -566,13 +566,13 @@ fun createIntermediateNodeForMfvcPropertyOfRegularClass(
     val oldField = oldProperty.backingFieldIfNotDelegate
     val type = oldProperty.getter?.returnType ?: oldField?.type ?: error("Either getter or field must exist")
     require(type is IrSimpleType && type.needsMfvcFlattening()) { "Expected MFVC but got ${type.render()}" }
-    val fieldAnnotations = oldField?.annotations ?: listOf()
+    val fieldAnnotations = oldField?.annotations ?: []
     val static = oldProperty.isStatic(parent)
     val overriddenNode = oldGetter?.let { getOverriddenNode(context.multiFieldValueClassReplacements, it) as IntermediateMfvcNode? }
     val modality = if (oldGetter == null || oldGetter.modality == Modality.FINAL) Modality.FINAL else oldGetter.modality
     val defaultMethodsImplementationSourceNode = if (parent.isKotlinExternalStub()) ExternalUnboxFunctionImplementation else null
     return createIntermediateMfvcNode(
-        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldProperty.name),
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, [oldProperty.name],
         fieldAnnotations, static, overriddenNode, defaultMethodsImplementationSourceNode, oldGetter, modality, oldField
     ).also {
         updateAnnotationsAndPropertyFromOldProperty(oldProperty, context, it)
@@ -587,7 +587,7 @@ fun createIntermediateNodeForStandaloneMfvcField(
     val type = oldField.type
     require(type is IrSimpleType && type.needsMfvcFlattening()) { "Expected MFVC but got ${type.render()}" }
     return createIntermediateMfvcNode(
-        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, listOf(oldField.name),
+        parent, context, type, makeTypeArgumentsFromType(type), MethodFullNameMode.Getter, [oldField.name],
         oldField.annotations, oldField.isStatic, null, null, null, Modality.FINAL, oldField
     )
 }

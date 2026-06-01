@@ -70,7 +70,7 @@ private fun TestModule.transitiveDependencies(
     reverseOrder: Boolean,
     filter: (DependencyDescription) -> Boolean,
 ): List<TestModule> {
-    val result = topologicalSort(listOf(this), reverseOrder = reverseOrder) { item ->
+    val result = topologicalSort([this], reverseOrder = reverseOrder) { item ->
         item.allDependencies.mapNotNull { dep ->
             dep.dependencyModule.takeIf { dep.relation == expectedRelation && filter(dep) }
         }

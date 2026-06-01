@@ -25,7 +25,7 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
     fun `Metadata compilation - DENY strategy`() = runTest(
         strategy = DuplicatedUniqueNameStrategy.DENY,
         expectedDuplicatedNameMessagePrefix = "error",
-        freeCompilerArgs = listOf("-Xmetadata-klib")
+        freeCompilerArgs = ["-Xmetadata-klib"]
     )
 
     @Test
@@ -33,21 +33,21 @@ class KlibCliDuplicatedUniqueNamesTest : AbstractNativeSimpleTest() {
         strategy = DuplicatedUniqueNameStrategy.ALLOW_FIRST_WITH_WARNING,
         expectedDuplicatedNameMessagePrefix = "warning",
         isUnresolvedReferenceErrorExpected = true,
-        freeCompilerArgs = listOf("-Xmetadata-klib")
+        freeCompilerArgs = ["-Xmetadata-klib"]
     )
 
     @Test
     fun `Metadata compilation - ALLOW_ALL_WITH_WARNING strategy`() = runTest(
         strategy = DuplicatedUniqueNameStrategy.ALLOW_ALL_WITH_WARNING,
         expectedDuplicatedNameMessagePrefix = null,
-        freeCompilerArgs = listOf("-Xmetadata-klib")
+        freeCompilerArgs = ["-Xmetadata-klib"]
     )
 
     @Test
     fun `Metadata compilation - default strategy`() = runTest(
         strategy = null,
         expectedDuplicatedNameMessagePrefix = null,
-        freeCompilerArgs = listOf("-Xmetadata-klib")
+        freeCompilerArgs = ["-Xmetadata-klib"]
     )
 
     @Test

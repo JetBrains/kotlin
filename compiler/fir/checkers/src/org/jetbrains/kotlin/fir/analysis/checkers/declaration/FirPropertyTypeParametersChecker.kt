@@ -25,7 +25,7 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
         if (declaration.symbol is FirLocalPropertySymbol) return
 
         val boundsByName = declaration.typeParameters.associate { it.name to it.symbol.resolvedBounds }
-        val usedTypes = mutableSetOf<ConeKotlinType>()
+        val usedTypes: MutableSet<ConeKotlinType> = []
 
         fun collectAllTypes(type: ConeKotlinType) {
             val unwrappedType = type.unwrapToSimpleTypeUsingLowerBound()

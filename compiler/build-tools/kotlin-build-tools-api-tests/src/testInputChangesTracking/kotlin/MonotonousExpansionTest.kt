@@ -45,8 +45,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
 
             module.compile {
                 assertCompilationSteps(
-                    setOf("b.kt"),
-                    setOf("a.kt", "b.kt"),
+                    ["b.kt"],
+                    ["a.kt", "b.kt"],
                 )
             }
         }
@@ -66,8 +66,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
 
             module.compile {
                 assertCompilationSteps(
-                    setOf("b.kt"),
-                    setOf("a.kt"),
+                    ["b.kt"],
+                    ["a.kt"],
                 )
             }
         }
@@ -84,8 +84,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
 
             module.compile {
                 assertCompilationSteps(
-                    setOf("b.kt"),
-                    setOf("a.kt", "b.kt"),
+                    ["b.kt"],
+                    ["a.kt", "b.kt"],
                 )
             }
         }
@@ -105,8 +105,8 @@ class MonotonousExpansionTest : BaseCompilationTest() {
 
             module.compile {
                 assertCompilationSteps(
-                    setOf("b.kt"),
-                    setOf("a.kt"),
+                    ["b.kt"],
+                    ["a.kt"],
                 )
             }
         }

@@ -299,10 +299,10 @@ class IrLinkerFakeOverrideProvider(
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
-    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = emptyList(),
+    private val externalOverridabilityConditions: List<IrExternalOverridabilityCondition> = [],
     private val isMultipleInheritedImplementationsAllowed: (IrOverridableDeclaration<*>) -> Boolean = { false },
 ) {
-    private val haveFakeOverrides = mutableSetOf<IrClass>()
+    private val haveFakeOverrides: MutableSet<IrClass> = []
     val fakeOverrideCandidates = mutableMapOf<IrClass, CompatibilityMode>()
 
     fun enqueueClass(clazz: IrClass, signature: IdSignature, compatibilityMode: CompatibilityMode) {

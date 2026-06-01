@@ -67,7 +67,7 @@ data class MethodBridge(
     }
 
     val paramBridges: List<MethodBridgeParameter> =
-        listOf(receiver) + MethodBridgeSelector + valueParameters
+        [receiver] + MethodBridgeSelector + valueParameters
 
     val isInstance: Boolean
         get() = receiver.isInstance

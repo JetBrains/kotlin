@@ -5,8 +5,8 @@ import org.jetbrains.kotlin.backend.konan.objcexport.*
 internal fun objCProperty(
     name: String = "",
     type: ObjCType = ObjCIdType,
-    propertyAttributes: List<String> = emptyList(),
-    declarationAttributes: List<String> = emptyList(),
+    propertyAttributes: List<String> = [],
+    declarationAttributes: List<String> = [],
 ): ObjCProperty {
     return ObjCProperty(
         name = name,
@@ -23,15 +23,15 @@ internal fun objCProperty(
 internal fun objCMethod(
     selector: String,
     returnType: ObjCType = ObjCIdType,
-    attributes: List<String> = emptyList(),
+    attributes: List<String> = [],
 ): ObjCMethod {
-    return objCMethod(listOf(selector), returnType, attributes)
+    return objCMethod([selector], returnType, attributes)
 }
 
 internal fun objCMethod(
     selectors: List<String>,
     returnType: ObjCType = ObjCIdType,
-    attributes: List<String> = emptyList(),
+    attributes: List<String> = [],
 ): ObjCMethod {
     return ObjCMethod(
         comment = null,
@@ -39,11 +39,11 @@ internal fun objCMethod(
         isInstanceMethod = true,
         returnType = returnType,
         selectors = selectors,
-        parameters = emptyList(),
+        parameters = [],
         attributes = attributes
     )
 }
 
 internal fun objCInitMethod(): ObjCMethod {
-    return objCMethod(listOf("init"), ObjCInstanceType, emptyList())
+    return objCMethod(["init"], ObjCInstanceType, [])
 }

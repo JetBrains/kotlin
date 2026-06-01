@@ -69,7 +69,7 @@ class DifferentClassloadersIT : KGPBaseTest() {
                     val specificProjectsReported = Regex("$MULTIPLE_KOTLIN_PLUGINS_SPECIFIC_PROJECTS_WARNING((?:'.*'(?:, )?)+)")
                         .find(output)!!.groupValues[1].split(", ").map { it.removeSurrounding("'") }.toSet()
 
-                    assertEquals(setOf(":mpp-lib", ":jvm-app"), specificProjectsReported)
+                    assertEquals([":mpp-lib", ":jvm-app"], specificProjectsReported)
                 }
             }
 

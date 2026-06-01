@@ -19,8 +19,8 @@ class ErrorTypeConstructor(val kind: ErrorTypeKind, vararg val formatParams: Str
 
     fun getParam(i: Int): String = formatParams[i]
 
-    override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
-    override fun getSupertypes(): Collection<KotlinType> = emptyList()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
+    override fun getSupertypes(): List<KotlinType> = []
     override fun isFinal(): Boolean = false
     override fun isDenotable(): Boolean = false
     override fun getDeclarationDescriptor(): ClassifierDescriptor = ErrorUtils.errorClass

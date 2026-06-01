@@ -30,16 +30,16 @@ private fun FirAnnotation.findUseSiteTargets(session: FirSession): Set<Annotatio
 
 // See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget.USE_SITE_MAPPING] (it's in reverse)
 private val USE_SITE_TARGET_NAME_MAP = mapOf(
-    "FIELD" to setOf(AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD),
-    "FILE" to setOf(AnnotationUseSiteTarget.FILE),
-    "PROPERTY" to setOf(AnnotationUseSiteTarget.PROPERTY),
-    "PROPERTY_GETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_GETTER),
-    "PROPERTY_SETTER" to setOf(AnnotationUseSiteTarget.PROPERTY_SETTER),
-    "VALUE_PARAMETER" to setOf(
+    "FIELD" to [AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD],
+    "FILE" to [AnnotationUseSiteTarget.FILE],
+    "PROPERTY" to [AnnotationUseSiteTarget.PROPERTY],
+    "PROPERTY_GETTER" to [AnnotationUseSiteTarget.PROPERTY_GETTER],
+    "PROPERTY_SETTER" to [AnnotationUseSiteTarget.PROPERTY_SETTER],
+    "VALUE_PARAMETER" to [
         AnnotationUseSiteTarget.CONSTRUCTOR_PARAMETER,
         AnnotationUseSiteTarget.RECEIVER,
         AnnotationUseSiteTarget.SETTER_PARAMETER,
-    ),
+    ],
 )
 
 // See [org.jetbrains.kotlin.descriptors.annotations.KotlinTarget] (the second argument of each entry)

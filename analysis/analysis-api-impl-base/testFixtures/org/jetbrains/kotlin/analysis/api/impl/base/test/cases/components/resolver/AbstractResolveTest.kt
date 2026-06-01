@@ -27,10 +27,10 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
     protected abstract val resolveKind: String
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doTest(testServices: TestServices) {
-        val modules = findMainModule(testServices)?.let { listOf(it) }
+        val modules = findMainModule(testServices)?.let { [it] }
             ?: testServices.ktTestModuleStructure.mainModules
 
         val fileResolutionTargets = modules.mapNotNull { module ->
@@ -186,7 +186,7 @@ abstract class AbstractResolveTest<T> : AbstractAnalysisApiBasedTest() {
         return Directives.IGNORE_STABILITY.takeIf { it in this }
     }
 
-    private val suppressedStabilityExceptions: MutableList<Throwable> = mutableListOf()
+    private val suppressedStabilityExceptions: MutableList<Throwable> = []
 
     protected fun ignoreStabilityIfNeeded(body: () -> Unit): Unit = try {
         body()

@@ -33,7 +33,7 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     @DisplayName("Gc and code cache options may be properly overridden")
     @Test
     fun testModification() {
-        val commandParts = leaseSessionAndExtractCommand(listOf("Xmx400m", "XX:ReservedCodeCacheSize=280m", "XX:+UseG1GC"))
+        val commandParts = leaseSessionAndExtractCommand(["Xmx400m", "XX:ReservedCodeCacheSize=280m", "XX:+UseG1GC"])
         val xmxArgument = commandParts.single { it.startsWith("-Xmx") }
         val codeCacheSizeArgument = commandParts.single { it.startsWith("-XX:ReservedCodeCacheSize") }
         val useGcArgument = commandParts.single { it.startsWith("-XX:+Use") && it.endsWith("GC") }
@@ -46,7 +46,7 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     @DisplayName("-XX:-UseParallelGC is handled")
     @Test
     fun testDisablingParallelGC() {
-        val commandParts = leaseSessionAndExtractCommand(listOf("XX:-UseParallelGC"))
+        val commandParts = leaseSessionAndExtractCommand(["XX:-UseParallelGC"])
         assert(commandParts.none { it.startsWith("-XX:+Use") && it.endsWith("GC") }) {
             "Expected no explicitly enabled garbage collector via JVM arguments: $commandParts"
         }
@@ -97,7 +97,7 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     @Test
     fun testUnknownProblemsCauseDisablingGcAutoSelection() {
         val logs =
-            leaseSessionAndExtractLogs(listOf("-XmxInvalidValue"), leaseExceptionHandler = { /* no-op, lease is expected to fail */ })
+            leaseSessionAndExtractLogs(["-XmxInvalidValue"], leaseExceptionHandler = { /* no-op, lease is expected to fail */ })
         val numberOfGcListenerMessages =
             logs.count { it.message.contains("GC auto-selection logic is disabled temporary for the next daemon startup") }
         assert(numberOfGcListenerMessages == 1) {
@@ -105,7 +105,7 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
         }
     }
 
-    private fun leaseSessionAndExtractCommand(additionalJvmArguments: List<String> = emptyList()): List<String> {
+    private fun leaseSessionAndExtractCommand(additionalJvmArguments: List<String> = []): List<String> {
         val prefix = "starting the daemon as: "
         return leaseSessionAndExtractLogs(additionalJvmArguments)
             .single { it.message.startsWith(prefix) }.message.substring(prefix.length)
@@ -113,10 +113,10 @@ class JvmArgumentsModificationTest : BaseDaemonSessionTest() {
     }
 
     private fun leaseSessionAndExtractLogs(
-        additionalJvmArguments: List<String> = emptyList(),
+        additionalJvmArguments: List<String> = [],
         leaseExceptionHandler: (Exception) -> Unit = { throw it },
     ): List<DaemonReportMessage> {
-        val daemonMessagesCollector = mutableListOf<DaemonReportMessage>()
+        val daemonMessagesCollector: MutableList<DaemonReportMessage> = []
         try {
             leaseSession(
                 daemonMessagesCollector = daemonMessagesCollector,

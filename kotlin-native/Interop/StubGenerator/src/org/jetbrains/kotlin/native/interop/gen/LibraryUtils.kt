@@ -19,7 +19,7 @@ package org.jetbrains.kotlin.native.interop.gen
 import org.jetbrains.kotlin.konan.file.File
 
 internal fun resolveLibraries(staticLibraries: List<String>, libraryPaths: List<String>): List<String> {
-    val result = mutableListOf<String>()
+    val result: MutableList<String> = []
     staticLibraries.forEach { library ->
         
         val resolution = libraryPaths.map { "$it/$library" } 
@@ -38,7 +38,7 @@ internal fun argsToCompiler(staticLibraries: Array<String>, libraryPaths: Array<
 
 internal fun argsToCompiler(staticLibraries: List<String>, libraryPaths: List<String>) = 
     resolveLibraries(staticLibraries, libraryPaths)
-        .map { it -> listOf("-include-binary", it) }
+        .map { it -> ["-include-binary", it] }
         .flatten()
         .toTypedArray()
 

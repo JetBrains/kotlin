@@ -125,7 +125,7 @@ internal class UltraLightMembersCreator(
         if (ktFunction.hasExpectModifier()
             || ktFunction.hasReifiedParameters()
             || ktFunction.hasAnnotation(JVM_SYNTHETIC_ANNOTATION_FQ_NAME)
-        ) return emptyList()
+        ) return []
 
         var methodIndex = METHOD_INDEX_BASE
         val basicMethod = asJavaMethod(
@@ -137,7 +137,7 @@ internal class UltraLightMembersCreator(
             additionalReceiverParameter = additionalReceiverParameter,
         )
 
-        val result = mutableListOf(basicMethod)
+        val result: MutableList<KtLightMethod> = [basicMethod]
 
         if (ktFunction.hasAnnotation(JVM_OVERLOADS_FQ_NAME)) {
             val numberOfDefaultParameters = ktFunction.valueParameters.count(KtParameter::hasDefaultValue)
@@ -442,17 +442,17 @@ internal class UltraLightMembersCreator(
     ): List<KtLightMethod> {
         ProgressManager.checkCanceled()
 
-        val propertyName = declaration.name ?: return emptyList()
+        val propertyName = declaration.name ?: return []
         if (declaration.isConstOrJvmField() ||
             declaration.hasReifiedParameters() ||
             declaration.hasExpectModifier()
-        ) return emptyList()
+        ) return []
 
         val ktGetter = (declaration as? KtProperty)?.getter
         val ktSetter = (declaration as? KtProperty)?.setter
 
         val isPrivate = !forceStatic && declaration.hasModifier(PRIVATE_KEYWORD)
-        if (isPrivate && declaration !is KtProperty) return emptyList()
+        if (isPrivate && declaration !is KtProperty) return []
 
         fun needsAccessor(accessor: KtPropertyAccessor?, type: MethodType): Boolean {
             if (onlyJvmStatic && !declaration.isJvmStatic(support) && !(accessor != null && accessor.isJvmStatic(support)))

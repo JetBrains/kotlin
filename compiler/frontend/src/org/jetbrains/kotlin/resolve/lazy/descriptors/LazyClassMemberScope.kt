@@ -185,7 +185,7 @@ open class LazyClassMemberScope(
             }
 
     private fun getDataClassRelatedFunctionNames(): Collection<Name> {
-        val declarations = mutableListOf<DeclarationDescriptor>()
+        val declarations: MutableList<DeclarationDescriptor> = []
         addDataClassMethods(declarations, NoLookupLocation.WHEN_GET_ALL_DESCRIPTORS)
         return declarations.map { it.name }
     }
@@ -236,7 +236,7 @@ open class LazyClassMemberScope(
                     reportOnDeclarationOrFail(
                         trace,
                         fromCurrent
-                    ) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(fromCurrent, fromSuper)) }
+                    ) { Errors.CONFLICTING_OVERLOADS.on(it, [fromCurrent, fromSuper]) }
                 }
 
                 override fun inheritanceConflict(
@@ -250,7 +250,7 @@ open class LazyClassMemberScope(
                         Errors.CONFLICTING_INHERITED_MEMBERS.on(
                             ktClassOrObject,
                             thisDescriptor,
-                            listOf(first, second)
+                            [first, second]
                         )
                     }
                 }
@@ -267,7 +267,7 @@ open class LazyClassMemberScope(
                     Errors.CONFLICTING_INHERITED_MEMBERS_WARNING.on(
                         ktClassOrObject,
                         thisDescriptor,
-                        listOf(overriddenFunction, conflictedDescriptor)
+                        [overriddenFunction, conflictedDescriptor]
                     )
                 }
             }
@@ -504,7 +504,7 @@ open class LazyClassMemberScope(
         c.storageManager.createLazyValue { doGetConstructors() }
 
     private fun doGetConstructors(): Collection<ClassConstructorDescriptor> {
-        val result = mutableListOf<ClassConstructorDescriptor>()
+        val result: MutableList<ClassConstructorDescriptor> = []
         result.addAll(resolveSecondaryConstructors())
         addSyntheticSecondaryConstructors(result)
         return result
@@ -548,7 +548,7 @@ open class LazyClassMemberScope(
     }
 
     private fun resolveSecondaryConstructors(): Collection<ClassConstructorDescriptor> {
-        val classOrObject = declarationProvider.correspondingClassOrObject ?: return emptyList()
+        val classOrObject = declarationProvider.correspondingClassOrObject ?: return []
 
         return classOrObject.secondaryConstructors.map { constructor ->
             val descriptor = c.functionDescriptorResolver.resolveSecondaryConstructorDescriptor(

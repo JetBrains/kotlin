@@ -27,8 +27,8 @@ internal class WhitespaceRangesBuilder : RangesBuilder() {
 private const val WS = "WS"
 private const val NOT_WS = "NOT_WS"
 
-private val whitespaceCategories = listOf(
+private val whitespaceCategories = [
     CharCategory.SPACE_SEPARATOR.code,
     CharCategory.LINE_SEPARATOR.code,
     CharCategory.PARAGRAPH_SEPARATOR.code
-)
+]

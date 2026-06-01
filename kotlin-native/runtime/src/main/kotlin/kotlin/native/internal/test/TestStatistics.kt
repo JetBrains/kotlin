@@ -37,11 +37,11 @@ internal class MutableTestStatistics: TestStatistics {
     override val hasFailedTests: Boolean
         get() = _failedTests.isNotEmpty()
 
-    private val _failedTests = mutableListOf<TestCase>()
+    private val _failedTests: MutableList<TestCase> = []
     override val failedTests: Collection<TestCase>
         get() = _failedTests
 
-    private val _ignoredTests = mutableListOf<TestCase>()
+    private val _ignoredTests: MutableList<TestCase> = []
     val ignoredTests: Collection<TestCase>
         get() = _ignoredTests
 
@@ -61,14 +61,14 @@ internal class MutableTestStatistics: TestStatistics {
         _failedTests.addAll(testCases)
     }
 
-    fun registerFail(testCase: TestCase) = registerFail(listOf(testCase))
+    fun registerFail(testCase: TestCase) = registerFail([testCase])
 
     fun registerIgnore(testCases: Collection<TestCase>) {
         total += testCases.size
         _ignoredTests.addAll(testCases)
     }
 
-    fun registerIgnore(testCase: TestCase) = registerIgnore(listOf(testCase))
+    fun registerIgnore(testCase: TestCase) = registerIgnore([testCase])
 
     fun registerIgnore(suite: TestSuite) {
         registerIgnore(suite.testCases.values)

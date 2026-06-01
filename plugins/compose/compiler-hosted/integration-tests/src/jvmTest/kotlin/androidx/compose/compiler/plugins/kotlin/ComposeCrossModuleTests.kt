@@ -1569,7 +1569,7 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
         val libraryClasses = modules.filter { it.key != "Main" }.flatMap {
             classLoader(
                 it.value,
-                listOf(classesDirectory.root),
+                [classesDirectory.root],
                 dumpClasses,
                 !flipLibraryFirSetting
             ).allGeneratedFiles.also { outputFiles ->
@@ -1583,7 +1583,7 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
         val appClasses = classLoader(
             modules["Main"]
                 ?: error("No Main module specified"),
-            listOf(classesDirectory.root),
+            [classesDirectory.root],
             dumpClasses
         ).allGeneratedFiles
 

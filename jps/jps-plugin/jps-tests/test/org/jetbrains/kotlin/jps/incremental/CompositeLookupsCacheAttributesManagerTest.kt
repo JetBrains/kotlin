@@ -12,7 +12,7 @@ import kotlin.io.path.Path
 import kotlin.test.assertEquals
 
 class CompositeLookupsCacheAttributesManagerTest {
-    val manager = CompositeLookupsCacheAttributesManager(Path("not-used"), setOf())
+    val manager = CompositeLookupsCacheAttributesManager(Path("not-used"), [])
 
     @Test
     fun testNothingToJava() {
@@ -20,7 +20,7 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = null,
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm"))
+                expected = CompositeLookupsCacheAttributes(1, ["jvm"])
             ).status
         )
     }
@@ -31,7 +31,7 @@ class CompositeLookupsCacheAttributesManagerTest {
             CacheStatus.INVALID,
             manager.loadDiff(
                 actual = null,
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js"))
+                expected = CompositeLookupsCacheAttributes(1, ["jvm", "js"])
             ).status
         )
     }
@@ -41,8 +41,8 @@ class CompositeLookupsCacheAttributesManagerTest {
         assertEquals(
             CacheStatus.INVALID,
             manager.loadDiff(
-                actual = CompositeLookupsCacheAttributes(1, setOf("jvm")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("js"))
+                actual = CompositeLookupsCacheAttributes(1, ["jvm"]),
+                expected = CompositeLookupsCacheAttributes(1, ["js"])
             ).status
         )
     }
@@ -52,8 +52,8 @@ class CompositeLookupsCacheAttributesManagerTest {
         assertEquals(
             CacheStatus.VALID,
             manager.loadDiff(
-                actual = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm"))
+                actual = CompositeLookupsCacheAttributes(1, ["jvm", "js"]),
+                expected = CompositeLookupsCacheAttributes(1, ["jvm"])
             ).status
         )
     }
@@ -63,8 +63,8 @@ class CompositeLookupsCacheAttributesManagerTest {
         assertEquals(
             CacheStatus.INVALID,
             manager.loadDiff(
-                actual = CompositeLookupsCacheAttributes(1, setOf("jvm", "js")),
-                expected = CompositeLookupsCacheAttributes(2, setOf("jvm"))
+                actual = CompositeLookupsCacheAttributes(1, ["jvm", "js"]),
+                expected = CompositeLookupsCacheAttributes(2, ["jvm"])
             ).status
         )
     }
@@ -74,8 +74,8 @@ class CompositeLookupsCacheAttributesManagerTest {
         assertEquals(
             CacheStatus.INVALID,
             manager.loadDiff(
-                actual = CompositeLookupsCacheAttributes(1, setOf("jvm")),
-                expected = CompositeLookupsCacheAttributes(1, setOf("jvm", "js"))
+                actual = CompositeLookupsCacheAttributes(1, ["jvm"]),
+                expected = CompositeLookupsCacheAttributes(1, ["jvm", "js"])
             ).status
         )
     }

@@ -12,4 +12,4 @@ import org.jetbrains.kotlin.descriptors.EffectiveVisibility
  * "Origin" declaration visibility should allow this
  * For example, private data schema would cause IR_VALIDATION_EXCEPTION
  */
-internal val ALLOWED_DECLARATION_VISIBILITY = setOf(EffectiveVisibility.Public, EffectiveVisibility.Internal)
+internal val ALLOWED_DECLARATION_VISIBILITY: Set<EffectiveVisibility> = [EffectiveVisibility.Public, EffectiveVisibility.Internal]

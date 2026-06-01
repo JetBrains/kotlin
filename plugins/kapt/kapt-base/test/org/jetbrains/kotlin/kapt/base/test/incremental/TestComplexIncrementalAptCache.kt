@@ -42,10 +42,10 @@ class TestComplexIncrementalAptCache {
             ).map { File(MY_TEST_DIR, it) }
             runAnnotationProcessing(
                 srcFiles,
-                listOf(processor),
+                [processor],
                 generatedSources
             ) { elements, trees -> MentionedTypesTaskListener(cache.javaCache, elements, trees) }
-            cache.updateCache(listOf(processor), false)
+            cache.updateCache([processor], false)
         }
     }
 

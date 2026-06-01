@@ -54,7 +54,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
     open val defaultRendererOption: PrettyRendererOption? = null
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(SymbolTestDirectives)
+        get() = super.additionalDirectives + SymbolTestDirectives
 
     abstract fun KaSession.collectSymbols(ktFile: KtFile, testServices: TestServices): SymbolsData
 
@@ -204,7 +204,7 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
      * Returns the set of [KtFile]s which may contain any of the found symbols. If a symbol is not contained in one of these files, the test
      * fails.
      */
-    open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = setOf(mainFile)
+    open fun getAllowedContainingFiles(mainFile: KtFile, testServices: TestServices): Set<KtFile> = [mainFile]
 
     private fun RegisteredDirectives.doNotCheckSymbolRestoreDirective(): Directive? {
         return DO_NOT_REQUIRE_SYMBOL_RESTORATION.takeIf { it in this }
@@ -257,8 +257,8 @@ abstract class AbstractSymbolTest : AbstractAnalysisApiBasedTest() {
             directives.doNotCheckSymbolRestoreDirective()
         }
 
-        val restoredPointers = mutableListOf<KaSymbolPointer<*>>()
-        val nonRestoredSymbols = mutableListOf<String>()
+        val restoredPointers: MutableList<KaSymbolPointer<*>> = []
+        val nonRestoredSymbols: MutableList<String> = []
 
         val restored = analyzeForTest(analyzeContext ?: ktFile) {
             pointersWithRendered.mapNotNull { (val pointer, val expectedRender = rendered, val shouldBeRendered, val psiOnly) ->
@@ -495,7 +495,7 @@ private val KaSymbol.supportsOnlyPsiBasedPointersByDesign: Boolean
     }
 
 private fun KaSymbol?.withImplicitSymbols(): Sequence<KaSymbol> {
-    val ktSymbol = this ?: return emptySequence()
+    val ktSymbol = this ?: return []
     return sequence {
         yield(ktSymbol)
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 @OptIn(TestInfrastructureInternals::class)
 object DuplicateFileNameChecker : ModuleStructureTransformer() {
     override fun transformModuleStructure(moduleStructure: TestModuleStructure, defaultsProvider: DefaultsProvider): TestModuleStructure {
-        val files = mutableSetOf<String>()
+        val files: MutableSet<String> = []
 
         for (module in moduleStructure.modules) {
             for (file in module.files) {

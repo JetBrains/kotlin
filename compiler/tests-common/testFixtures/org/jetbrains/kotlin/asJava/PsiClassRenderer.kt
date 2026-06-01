@@ -330,7 +330,7 @@ class PsiClassRenderer private constructor(
 
 
     private fun PsiModifierListOwner.renderModifiers(typeIfApplicable: PsiType? = null): String {
-        val annotationsBuffer = mutableListOf<String>()
+        val annotationsBuffer: MutableList<String> = []
         var nullableIsRendered = false
         var notNullIsRendered = false
 

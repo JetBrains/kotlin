@@ -76,12 +76,12 @@ class ClosureAnnotator private constructor(
     }
 
     class ClosureBuilder(val owner: IrDeclaration?) {
-        private val capturedValues = mutableSetOf<IrValueSymbol>()
-        private val declaredValues = mutableSetOf<IrValueDeclaration>()
-        private val includes = mutableSetOf<ClosureBuilder>()
+        private val capturedValues: MutableSet<IrValueSymbol> = []
+        private val declaredValues: MutableSet<IrValueDeclaration> = []
+        private val includes: MutableSet<ClosureBuilder> = []
 
-        private val potentiallyCapturedTypeParameters = mutableSetOf<IrTypeParameter>()
-        private val capturedTypeParameters = mutableSetOf<IrTypeParameter>()
+        private val potentiallyCapturedTypeParameters: MutableSet<IrTypeParameter> = []
+        private val capturedTypeParameters: MutableSet<IrTypeParameter> = []
 
         private var closure: Closure? = null
 

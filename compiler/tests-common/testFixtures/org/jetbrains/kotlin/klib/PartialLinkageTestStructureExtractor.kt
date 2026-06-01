@@ -110,6 +110,6 @@ abstract class PartialLinkageTestStructureExtractor : KlibCompilerInvocationTest
 
         private const val PL_UTILS_DIR = "__utils__"
         private const val TEST_MODE_PLACEHOLDER = "__UNKNOWN_TEST_MODE__"
-        private val knownSourceExtensions = setOf("kt", "js", "def", "h", "c", "cpp")
+        private val knownSourceExtensions: Set<String> = ["kt", "js", "def", "h", "c", "cpp"]
     }
 }

@@ -32,7 +32,7 @@ class MappedSymbolBasedPackage(
     override val annotationsByFqName: Map<FqName?, JavaAnnotation> by buildLazyValueForMap()
 
     // @JvmPackageName-annotated files cannot have classes
-    override fun getClasses(nameFilter: (Name) -> Boolean): List<JavaClass> = emptyList()
+    override fun getClasses(nameFilter: (Name) -> Boolean): List<JavaClass> = []
 
     override fun toString() = originalFqName.toString()
 

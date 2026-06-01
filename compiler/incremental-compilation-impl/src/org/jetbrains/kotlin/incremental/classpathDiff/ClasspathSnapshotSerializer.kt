@@ -71,26 +71,26 @@ object ClasspathEntrySnapshotExternalizer : DataExternalizer<ClasspathEntrySnaps
 }
 
 internal object ClassSnapshotExternalizer : DataExternalizer<ClassSnapshot> by DelegateDataExternalizer(
-    types = listOf(AccessibleClassSnapshot::class.java, InaccessibleClassSnapshot::class.java),
-    typesExternalizers = listOf(AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer)
+    types = [AccessibleClassSnapshot::class.java, InaccessibleClassSnapshot::class.java],
+    typesExternalizers = [AccessibleClassSnapshotExternalizer, InaccessibleClassSnapshotExternalizer]
 )
 
 internal object AccessibleClassSnapshotExternalizer : DataExternalizer<AccessibleClassSnapshot> by DelegateDataExternalizer(
-    types = listOf(KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java),
-    typesExternalizers = listOf(KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer)
+    types = [KotlinClassSnapshot::class.java, JavaClassSnapshot::class.java],
+    typesExternalizers = [KotlinClassSnapshotExternalizer, JavaClassSnapshotExternalizer]
 )
 
 private object KotlinClassSnapshotExternalizer : DataExternalizer<KotlinClassSnapshot> by DelegateDataExternalizer(
-    types = listOf(
+    types = [
         RegularKotlinClassSnapshot::class.java,
         PackageFacadeKotlinClassSnapshot::class.java,
         MultifileClassKotlinClassSnapshot::class.java
-    ),
-    typesExternalizers = listOf(
+    ],
+    typesExternalizers = [
         RegularKotlinClassSnapshotExternalizer,
         PackageFacadeKotlinClassSnapshotExternalizer,
         MultifileClassKotlinClassSnapshotExternalizer
-    )
+    ]
 )
 
 private object RegularKotlinClassSnapshotExternalizer : DataExternalizer<RegularKotlinClassSnapshot> {

@@ -89,7 +89,7 @@ internal class StatementGenerator(
                     irStatement.endOffset,
                     context.irBuiltIns.unitType,
                     null,
-                    listOf(irStatement)
+                    [irStatement]
                 )
             else ->
                 throw AssertionError("Unexpected statement: ${irStatement.render()}")
@@ -304,7 +304,7 @@ internal class StatementGenerator(
                 if (first is IrConst && first.kind == IrConstKind.String)
                     IrConstImpl.string(startOffset, endOffset, first.type, first.value as String)
                 else
-                    IrStringConcatenationImpl(startOffset, endOffset, resultType, listOf(first))
+                    IrStringConcatenationImpl(startOffset, endOffset, resultType, [first])
             }
 
             else -> IrStringConcatenationImpl(startOffset, endOffset, resultType, entries)

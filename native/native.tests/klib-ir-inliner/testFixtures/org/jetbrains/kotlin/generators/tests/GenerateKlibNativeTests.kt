@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.abi.AbstractNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
@@ -38,7 +39,7 @@ import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
-    val k1BoxTestDir = listOf("multiplatform/k1")
+    val k1BoxTestDir = ["multiplatform/k1"]
     val testsRoot = args[0]
     val excludedCustomTestdataPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN
 
@@ -57,7 +58,7 @@ fun main(args: Array<String>) {
         testGroup(testsRoot = testsRoot, testDataRoot = "compiler/testData/diagnostics") {
             testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib())
+                annotations = [klib()]
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
@@ -66,7 +67,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
                 suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
-                annotations = listOf(klib())
+                annotations = [klib()]
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
@@ -76,7 +77,7 @@ fun main(args: Array<String>) {
 
             testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
                 suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(klib())
+                annotations = [klib()]
             ) {
                 model("klibSerializationTests", excludedPattern = excludedCustomTestdataPattern)
                 // KT-67300: TODO: extract specialBackendChecks into own test runner, invoking Native backend facade at the end
@@ -130,10 +131,10 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
-                annotations = listOf(
+                annotations = [
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
-                )
+                ]
             ) {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
@@ -149,9 +150,9 @@ fun main(args: Array<String>) {
             // Codegen/box tests based on Compiler Core testinfra
             testClass<AbstractNativeCodegenBoxCoreTest>(
                 suiteTestClassName = "NativeCodegenBoxTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
@@ -159,9 +160,9 @@ fun main(args: Array<String>) {
             // Codegen/box tests based on Compiler Core testinfra
             testClass<AbstractNativeCodegenBoxCoreHeaderModeTest>(
                 suiteTestClassName = "NativeCodegenBoxHeaderModeTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model("box", excludeDirs = k1BoxTestDir)
                 model("boxInline")
@@ -171,9 +172,9 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "native/native.tests/testData/codegen") {
             testClass<AbstractNativeCodegenBoxCoreTest>(
                 suiteTestClassName = "NativeSpecificCodegenBoxTestGenerated",
-                annotations = listOf(
+                annotations = [
                     provider<UseDummyTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model()
             }
@@ -183,10 +184,10 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
-                annotations = listOf(
+                annotations = [
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>(),
-                )
+                ]
             ) {
                 model()
             }
@@ -232,7 +233,7 @@ fun main(args: Array<String>) {
 private fun klib() = annotation(Tag::class.java, "klib")
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 
-fun klibSyntheticAccessors() = arrayOf(
+fun klibSyntheticAccessors(): Array<AnnotationModel> = [
     annotation(
         EnforcedProperty::class.java,
         "property" to ClassLevelProperty.TEST_KIND,
@@ -244,4 +245,4 @@ fun klibSyntheticAccessors() = arrayOf(
         "propertyValue" to CacheMode.Alias.NO.name
     ),
     provider<UseExtTestCaseGroupProvider>(),
-)
+]

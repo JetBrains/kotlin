@@ -46,11 +46,11 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
         }
     }
 
-    private val classKinds = setOf(
+    private val classKinds: Set<ClassKind> = [
         ClassKind.CLASS,
         ClassKind.ENUM_CLASS,
         ClassKind.OBJECT
-    )
+    ]
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     protected fun check(
@@ -143,7 +143,7 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     private fun checkBoundUniqueness(declaration: FirTypeParameter) {
-        val seenClasses = mutableSetOf<FirRegularClassSymbol>()
+        val seenClasses: MutableSet<FirRegularClassSymbol> = []
         val allNonErrorBounds = declaration.symbol.resolvedBounds.filter { it !is FirErrorTypeRef }
         val uniqueBounds = allNonErrorBounds.distinctBy { it.coneType.fullyExpandedClassId(context.session) ?: it.coneType }
         val allowUsingClassTypeAsInterface =
@@ -204,8 +204,8 @@ sealed class FirTypeParameterBoundsChecker(mppKind: MppCheckerKind) : FirTypePar
     ) {
         if (declaration.bounds.size <= 1) return
 
-        val firTypeRefClasses = mutableListOf<Pair<FirTypeRef, FirRegularClassSymbol>>()
-        val firRegularClassesSet = mutableSetOf<FirRegularClassSymbol>()
+        val firTypeRefClasses: MutableList<Pair<FirTypeRef, FirRegularClassSymbol>> = []
+        val firRegularClassesSet: MutableSet<FirRegularClassSymbol> = []
 
         for (bound in declaration.symbol.resolvedBounds) {
             val classSymbol = bound.toRegularClassSymbol(context.session) ?: continue

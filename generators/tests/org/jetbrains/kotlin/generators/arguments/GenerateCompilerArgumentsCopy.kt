@@ -22,7 +22,7 @@ import kotlin.reflect.full.superclasses
 import kotlin.reflect.jvm.kotlinProperty
 
 @Suppress("DEPRECATION")
-private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
+private val CLASSES_TO_PROCESS: List<KClass<*>> = [
     JpsPluginSettings::class,
     CompilerSettings::class,
     K2MetadataCompilerArguments::class,
@@ -32,7 +32,7 @@ private val CLASSES_TO_PROCESS: List<KClass<*>> = listOf(
     K2JVMCompilerArguments::class,
     KotlinWasmCompilerArguments::class,
     K2JKlibCompilerArguments::class,
-)
+]
 
 private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(
     K2JVMCompilerArguments::class.java.`package` to File("compiler/cli/cli-base/gen"),
@@ -41,7 +41,7 @@ private val PACKAGE_TO_DIR_MAPPING: Map<Package, File> = mapOf(
 )
 
 fun generateCompilerArgumentsCopy(withPrinterToFile: (targetFile: File, Printer.() -> Unit) -> Unit) {
-    val processed = mutableSetOf<Pair<KClass<*>, KClass<*>>>()
+    val processed: MutableSet<Pair<KClass<*>, KClass<*>>> = []
     for (klass in CLASSES_TO_PROCESS) {
         generateRec(klass, withPrinterToFile, processed)
     }
@@ -187,18 +187,18 @@ private fun generateConfigureLanguageFeaturesImpl(
 
 private fun Printer.enableFeaturesFromDeclaredFieldsOf(klass: Class<*>) {
     var isFirst = true
-    val deprecatedFields = mutableSetOf<String>()
+    val deprecatedFields: MutableSet<String> = []
 
     for (field in klass.declaredFields) {
         if (field.getAnnotation(Argument::class.java) == null) continue
         if (field.kotlinProperty?.hasAnnotation<Deprecated>() == true) deprecatedFields.add(field.name)
         val featuresByValue = buildMap<String, Pair<MutableList<LanguageFeature>, MutableList<LanguageFeature>>> {
             for (enables in field.getAnnotationsByType(Enables::class.java)) {
-                val pair = getOrPut(enables.ifValueIs) { Pair(mutableListOf(), mutableListOf()) }
+                val pair = getOrPut(enables.ifValueIs) { Pair([], []) }
                 pair.first.add(enables.feature)
             }
             for (disables in field.getAnnotationsByType(Disables::class.java)) {
-                val pair = getOrPut(disables.ifValueIs) { Pair(mutableListOf(), mutableListOf()) }
+                val pair = getOrPut(disables.ifValueIs) { Pair([], []) }
                 pair.second.add(disables.feature)
             }
         }

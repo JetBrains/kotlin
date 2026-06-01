@@ -95,7 +95,7 @@ class SpaceCodeOwnersTest {
     @Test
     fun testAllOwnersInOwnerList() {
         val permittedOwnerNames = owners.permittedOwners.map { it.name }.toSet()
-        val problems = mutableListOf<String>()
+        val problems: MutableList<String> = []
         for (pattern in owners.patterns) {
             if (pattern !is OwnershipPattern.Pattern) continue
             for (owner in pattern.owners) {
@@ -112,7 +112,7 @@ class SpaceCodeOwnersTest {
     @Test
     fun testBranchRulesHaveValidOwners() {
         val permittedOwnerNames = owners.permittedOwners.map { it.name }.toSet()
-        val problems = mutableListOf<String>()
+        val problems: MutableList<String> = []
         for (rule in owners.branchRules) {
             for (owner in rule.owners) {
                 if (owner !in permittedOwnerNames) {
@@ -140,7 +140,7 @@ class SpaceCodeOwnersTest {
         )
         checker.check()
 
-        val problems = mutableListOf<String>()
+        val problems: MutableList<String> = []
 
         if (checker.unmatchedFilesTop.isNotEmpty()) {
             problems.add(
@@ -177,7 +177,7 @@ class SpaceCodeOwnersTest {
 
         val ignoreTracker = GitIgnoreTracker()
 
-        val unmatchedFilesTop = mutableListOf<File>()
+        val unmatchedFilesTop: MutableList<File> = []
 
         data class ItemUse(val item: OwnershipPattern, val rule: FastIgnoreRule) {
 
@@ -234,7 +234,7 @@ class SpaceCodeOwnersTest {
             if (ignoreTracker.isIgnored(path, isDirectory = true)) return
             val directoryMatch = findMatchLine(path, isDirectory = true, parentMatch)
             ignoreTracker.withDirectory(directory) {
-                for (childName in (directory.list() ?: emptyArray())) {
+                for (childName in (directory.list() ?: [])) {
                     val child = if (directory == root) {
                         File(childName)
                     } else {
@@ -261,9 +261,9 @@ class SpaceCodeOwnersTest {
 
 
 private class GitIgnoreTracker {
-    private val ignoreNodeStack = mutableListOf(
+    private val ignoreNodeStack: MutableList<IgnoreNode> = [
         IgnoreNode(listOf(FastIgnoreRule("/.git")))
-    )
+    ]
     private val reversedIgnoreNodeStack = ignoreNodeStack.asReversed()
 
     fun isIgnored(path: String, isDirectory: Boolean): Boolean {
@@ -292,7 +292,7 @@ private data class CodeOwners(
     val userOwners: List<UserOwnerEntry>,
     val githubOwners: List<GitHubOwnerEntry>,
     val patterns: List<OwnershipPattern>,
-    val branchRules: List<BranchRule> = emptyList()
+    val branchRules: List<BranchRule> = []
 ) {
     data class OwnerListEntry(val name: String, val line: Int) {
         override fun toString(): String {
@@ -357,12 +357,12 @@ private fun parseCodeOwners(file: File): CodeOwners {
         return ownersPattern.findAll(ownerString).map { it.value }.toList()
     }
 
-    val permittedOwners = mutableListOf<CodeOwners.OwnerListEntry>()
-    val userOwners = mutableListOf<CodeOwners.UserOwnerEntry>()
-    val githubOwners = mutableListOf<CodeOwners.GitHubOwnerEntry>()
-    val patterns = mutableListOf<OwnershipPattern>()
-    val excludedPatterns = mutableListOf<OwnershipPattern.NoOwnerPattern>()
-    val branchRules = mutableListOf<BranchRule>()
+    val permittedOwners: MutableList<CodeOwners.OwnerListEntry> = []
+    val userOwners: MutableList<CodeOwners.UserOwnerEntry> = []
+    val githubOwners: MutableList<CodeOwners.GitHubOwnerEntry> = []
+    val patterns: MutableList<OwnershipPattern> = []
+    val excludedPatterns: MutableList<OwnershipPattern.NoOwnerPattern> = []
+    val branchRules: MutableList<BranchRule> = []
 
     file.useLines { lines ->
 

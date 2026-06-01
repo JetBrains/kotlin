@@ -88,7 +88,7 @@ class KmpModuleSorter private constructor(private val modules: List<KaModule>) {
      * Modules, corresponding to source sets of the same KMP project.
      */
     private inner class KmpGroup() {
-        private val modules = mutableListOf<KaModule>()
+        private val modules: MutableList<KaModule> = []
         private val sortedModules by lazy {
             topologicalSort(modules) { directDependsOnDependencies }.also {
                 if (it.size != modules.size) hasErrors = true

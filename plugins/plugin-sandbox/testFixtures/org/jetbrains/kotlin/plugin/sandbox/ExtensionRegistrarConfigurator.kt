@@ -28,7 +28,7 @@ object PluginSandboxDirectives : SimpleDirectivesContainer() {
 
 class ExtensionRegistrarConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(PluginSandboxDirectives)
+        get() = [PluginSandboxDirectives]
 
     override fun ExtensionStorage.registerCompilerExtensions(module: TestModule, configuration: CompilerConfiguration) {
         if (PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES in moduleStructure.allDirectives) {

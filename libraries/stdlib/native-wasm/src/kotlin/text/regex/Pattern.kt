@@ -35,7 +35,7 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
     private val lexemes = Lexer(pattern, flags)
 
     /** List of all capturing groups in the pattern. Primarily used for handling back references. */
-    val capturingGroups = mutableListOf<FSet>()
+    val capturingGroups: MutableList<FSet> = []
 
     /** Mapping from group name to its index */
     val groupNameToIndex = hashMapOf<String, Int>()
@@ -519,11 +519,11 @@ internal class Pattern(val pattern: String, flags: Int = 0) {
                         next = fSet
                     }
                     val lineBreakChars = RangeSet(
-                        CharClass().addAll(listOf('\u000A', '\u000B', '\u000C', '\u000D', '\u0085', '\u2028', '\u2029'))
+                        CharClass().addAll(['\u000A', '\u000B', '\u000C', '\u000D', '\u0085', '\u2028', '\u2029'])
                     ).apply {
                         next = fSet
                     }
-                    term = NonCapturingJointSet(listOf(lineBreakSequence, lineBreakChars), fSet)
+                    term = NonCapturingJointSet([lineBreakSequence, lineBreakChars], fSet)
                 }
 
                 Lexer.CHAR_PREVIOUS_MATCH -> {  // A previous match: \G

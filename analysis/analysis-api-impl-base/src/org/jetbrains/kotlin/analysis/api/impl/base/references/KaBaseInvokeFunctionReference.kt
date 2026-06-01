@@ -22,13 +22,13 @@ internal class KaBaseInvokeFunctionReference(expression: KtCallExpression) : KtI
         // There is no way to distinguish between the error regular and implicit calls, so by default only relevant errors are shown
         is KaCallResolutionError -> callResult.candidateCalls.filterIsInstance<KaImplicitInvokeCall>().map { it.symbol }
         is KaCallResolutionSuccess -> when (val call = callResult.call) {
-            is KaImplicitInvokeCall -> listOf(call.symbol)
-            else -> emptyList()
+            is KaImplicitInvokeCall -> [call.symbol]
+            else -> []
         }
 
         // Multi-call resolution attempts are never implicit invoke calls
-        is KaMultiCallResolutionAttempt -> emptyList()
-        null -> emptyList()
+        is KaMultiCallResolutionAttempt -> []
+        null -> []
     }
 
     override fun isReferenceToImportAlias(alias: KtImportAlias): Boolean {
@@ -40,6 +40,6 @@ internal class KaBaseInvokeFunctionReference(expression: KtCallExpression) : KtI
             get() = KtCallExpression::class.java
 
         override val referenceProvider: KotlinPsiReferenceProviderContributor.ReferenceProvider<KtCallExpression>
-            get() = { listOf(KaBaseInvokeFunctionReference(it)) }
+            get() = { [KaBaseInvokeFunctionReference(it)] }
     }
 }

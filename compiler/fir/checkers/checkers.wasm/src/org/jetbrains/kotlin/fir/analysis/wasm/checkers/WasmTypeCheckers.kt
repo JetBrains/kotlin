@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.type.FirResolvedTypeRefChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.type.TypeCheckers
 
 object WasmBaseTypeCheckers : TypeCheckers() {
-    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = setOf(
+    override val resolvedTypeRefCheckers: Set<FirResolvedTypeRefChecker> = [
         FirDynamicUnsupportedChecker,
-    )
+    ]
 }

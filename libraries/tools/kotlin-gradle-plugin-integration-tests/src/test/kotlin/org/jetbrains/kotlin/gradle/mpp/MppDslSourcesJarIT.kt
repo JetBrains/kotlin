@@ -47,12 +47,12 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                 val repoGroupDir = localRepoDir.resolve("com/example")
                 assertDirectoryExists(repoGroupDir)
 
-                val targetArtifactIds = listOf(
+                val targetArtifactIds = [
                     "sample-lib",
                     "sample-lib-jvm6",
                     "sample-lib-nodejs",
                     "sample-lib-linux64",
-                )
+                ]
 
                 val sourceJarSourceRoots: Map<String, Set<String>> =
                     targetArtifactIds.associateWith { artifactId ->
@@ -61,10 +61,10 @@ class MppDslSourcesJarIT : KGPBaseTest() {
                         sourcesJarPath.jarFileRootDirs() - "META-INF"
                     }
 
-                assertEquals(setOf("commonMain", "nativeMain"), sourceJarSourceRoots["sample-lib"])
-                assertEquals(setOf("commonMain", "jvm6Main"), sourceJarSourceRoots["sample-lib-jvm6"])
-                assertEquals(setOf("commonMain", "nodeJsMain"), sourceJarSourceRoots["sample-lib-nodejs"])
-                assertEquals(setOf("commonMain", "nativeMain", "linux64Main"), sourceJarSourceRoots["sample-lib-linux64"])
+                assertEquals(["commonMain", "nativeMain"], sourceJarSourceRoots["sample-lib"])
+                assertEquals(["commonMain", "jvm6Main"], sourceJarSourceRoots["sample-lib-jvm6"])
+                assertEquals(["commonMain", "nodeJsMain"], sourceJarSourceRoots["sample-lib-nodejs"])
+                assertEquals(["commonMain", "nativeMain", "linux64Main"], sourceJarSourceRoots["sample-lib-linux64"])
             }
         }
     }

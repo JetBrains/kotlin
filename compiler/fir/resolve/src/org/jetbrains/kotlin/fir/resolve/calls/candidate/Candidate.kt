@@ -237,7 +237,7 @@ class Candidate(
     // ---------------------------------------- Postponed atoms ----------------------------------------
 
     val postponedAtoms: List<ConePostponedResolvedAtom>
-        field = mutableListOf()
+        field: MutableList<ConePostponedResolvedAtom> = []
 
     fun addPostponedAtom(atom: ConePostponedResolvedAtom) {
         postponedAtoms += atom
@@ -272,12 +272,12 @@ class Candidate(
 
     // ---------------------------------------- PCLA-related parts ----------------------------------------
 
-    val postponedPCLACalls: MutableList<ConeResolutionAtom> = mutableListOf()
-    val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = mutableListOf()
+    val postponedPCLACalls: MutableList<ConeResolutionAtom> = []
+    val lambdasAnalyzedWithPCLA: MutableList<FirAnonymousFunction> = []
 
     // Currently, it's only about completion results writing for property delegation inference info
     // See the call sites of [FirDelegatedPropertyInferenceSession.completeSessionOrPostponeIfNonRoot]
-    val onPCLACompletionResultsWritingCallbacks: MutableList<(ConeSubstitutor) -> Unit> = mutableListOf()
+    val onPCLACompletionResultsWritingCallbacks: MutableList<(ConeSubstitutor) -> Unit> = []
 
     // ---------------------------------------- Applicability ----------------------------------------
 
@@ -288,7 +288,7 @@ class Candidate(
         get() = lowestApplicability
 
     override val diagnostics: List<ResolutionDiagnostic>
-        field = mutableListOf()
+        field: MutableList<ResolutionDiagnostic> = []
 
     fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         diagnostics += diagnostic
@@ -334,7 +334,7 @@ class Candidate(
     }
 
     fun contextArguments(): List<FirExpression> {
-        return contextArguments?.map { it.expression.unwrapArgument() } ?: emptyList()
+        return contextArguments?.map { it.expression.unwrapArgument() } ?: []
     }
 
     private var sourcesWereUpdated = false

@@ -143,20 +143,20 @@ fun ConeKotlinType.customFunctionTypeToSimpleFunctionType(session: FirSession): 
         additionalAnnotations = kind.annotationOnInvokeClassId
             ?.takeUnless { classId -> attributes.customAnnotations.hasAnnotation(classId, session) }
             ?.let { annotationClassId ->
-                listOf(buildAnnotation {
+                [buildAnnotation {
                     argumentMapping = FirEmptyAnnotationArgumentMapping
                     annotationTypeRef = buildResolvedTypeRef {
-                        coneType = annotationClassId.defaultType(emptyList())
+                        coneType = annotationClassId.defaultType([])
                     }
-                })
-            } ?: emptyList()
+                }]
+            } ?: []
     )
 }
 
 fun ConeKotlinType.createFunctionTypeWithNewKind(
     session: FirSession,
     kind: FunctionTypeKind,
-    additionalAnnotations: List<FirAnnotation> = emptyList(),
+    additionalAnnotations: List<FirAnnotation> = [],
     updateTypeArguments: (Array<out ConeTypeProjection>.() -> Array<out ConeTypeProjection>)? = null,
 ): ConeClassLikeType {
     val expandedType = fullyExpandedType(session)
@@ -290,7 +290,7 @@ fun ConeClassLikeType.findContributedInvokeSymbol(
 // ---------------------------------------------- function type type argument extraction ----------------------------------------------
 
 fun ConeKotlinType.contextParameterTypes(session: FirSession): List<ConeKotlinType> {
-    if (!isSomeFunctionType(session)) return emptyList()
+    if (!isSomeFunctionType(session)) return []
     return fullyExpandedType(session).let { expanded ->
         val contextParameter = expanded.typeArguments.take(expanded.contextParameterNumberForFunctionType)
         contextParameter.map { it.typeOrDefault(session.builtinTypes.nothingType.coneType) }

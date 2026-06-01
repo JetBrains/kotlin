@@ -23,17 +23,18 @@ import org.jetbrains.kotlin.descriptors.annotations.abbreviationFqName
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameOrNull
 import org.jetbrains.kotlin.types.getAbbreviation
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 object SuspendLimitationsChecker : DeclarationChecker {
-    private val UNSUPPORTED_OPERATOR_NAMES = setOf(
+    private val UNSUPPORTED_OPERATOR_NAMES: Set<Name> = [
         OperatorNameConventions.CONTAINS,
         OperatorNameConventions.GET, OperatorNameConventions.SET,
         OperatorNameConventions.PROVIDE_DELEGATE, OperatorNameConventions.GET_VALUE, OperatorNameConventions.SET_VALUE
-    )
+    ]
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (descriptor !is FunctionDescriptor || !descriptor.isSuspend) return

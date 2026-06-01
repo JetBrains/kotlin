@@ -51,13 +51,13 @@ abstract class StandaloneModeBinaryTestConfigurator : StandaloneModeConfigurator
     }
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = listOf(
+        get() = [
             AnalysisApiBaseTestServiceRegistrar,
             FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
             StandaloneSessionServiceRegistrar,
             StandaloneModeTestServiceRegistrar,
-        )
+        ]
 
     override fun createModules(
         moduleStructure: TestModuleStructure,

@@ -82,7 +82,7 @@ abstract class AbstractExplicitModeLazyTest {
         }
         canStart.value = 1
 
-        val results = mutableSetOf<Any>()
+        val results: MutableSet<Any> = []
         futures.forEach {
             results += it.result
         }

@@ -762,7 +762,7 @@ private class LibraryDeserializer(
                                 index = (idSignature.inner as LocalSignature).index()
                             )
                         ),
-                        arguments = emptyList(),
+                        arguments = [],
                         nullability = nullability
                     )
                 }
@@ -776,7 +776,7 @@ private class LibraryDeserializer(
             typeParameterResolver: TypeParameterResolver
         ): List<AbiTypeArgument> {
             return if (typeArgumentIds.isEmpty())
-                emptyList()
+                []
             else typeArgumentIds.memoryOptimizedMap { typeArgumentId ->
                 val typeProjection = BinaryTypeProjection.decode(typeArgumentId)
                 if (typeProjection.isStarProjection)

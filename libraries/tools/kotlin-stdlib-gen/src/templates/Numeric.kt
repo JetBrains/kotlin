@@ -23,7 +23,7 @@ object Numeric : TemplateGroupBase() {
     private val summablePrimitives = numericPrimitivesDefaultOrder + PrimitiveType.unsignedPrimitives
 
     val f_sum = fn("sum()") {
-        listOf(Iterables, Sequences, ArraysOfObjects).forEach { include(it, summablePrimitives) }
+        [Iterables, Sequences, ArraysOfObjects].forEach { include(it, summablePrimitives) }
         include(ArraysOfPrimitives, numericPrimitivesDefaultOrder)
         include(ArraysOfUnsigned)
     } builder {

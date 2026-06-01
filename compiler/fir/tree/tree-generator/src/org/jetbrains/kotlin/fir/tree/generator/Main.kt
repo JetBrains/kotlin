@@ -41,13 +41,13 @@ fun main(args: Array<String>) {
         printElementBuilders(implementations.mapNotNull { it.builder } + builderConfigurator.intermediateBuilders, ::BuilderPrinter)
         printVisitors(
             model,
-            listOf(
+            [
                 firVisitorType to ::VisitorPrinter.bind(false),
                 firDefaultVisitorType to ::VisitorPrinter.bind(true),
                 firVisitorVoidType to ::VisitorVoidPrinter,
                 firDefaultVisitorVoidType to ::DefaultVisitorVoidPrinter,
                 firTransformerType to ::TransformerPrinter.bind(model.rootElement),
-            )
+            ]
         )
     }
 }

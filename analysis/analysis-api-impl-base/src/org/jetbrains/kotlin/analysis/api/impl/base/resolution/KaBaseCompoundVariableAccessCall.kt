@@ -32,6 +32,6 @@ class KaBaseCompoundVariableAccessCall(
     @KaExperimentalApi
     override val calls: List<KaSingleCall<*, *>>
         get() = withValidityAssertion {
-            listOf(backingVariableCall, backingCompoundOperation.operationCall)
+            [backingVariableCall, backingCompoundOperation.operationCall]
         }
 }

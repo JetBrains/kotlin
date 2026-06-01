@@ -34,7 +34,7 @@ class TestStdlibWithDxTest {
     }
 
     private fun doTest(file: File) {
-        val files = mutableListOf<Pair<ByteArray, String>>();
+        val files: MutableList<Pair<ByteArray, String>> = [];
         ZipInputStream(FileInputStream(file)).use { zip ->
             for (entry in generateSequence { zip.nextEntry }) {
                 if (entry.name.endsWith(".class") && !entry.name.startsWith("META-INF/")) {

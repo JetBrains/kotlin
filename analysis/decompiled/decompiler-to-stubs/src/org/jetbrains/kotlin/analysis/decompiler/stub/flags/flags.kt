@@ -73,7 +73,7 @@ val EXPECT_PROPERTY = createBooleanFlagToModifier(Flags.IS_EXPECT_PROPERTY, KtTo
 val STATIC_FUNCTION = createBooleanFlagToModifier(Flags.IS_STATIC_FUNCTION, KtTokens.COMPANION_KEYWORD)
 val STATIC_PROPERTY = createBooleanFlagToModifier(Flags.IS_STATIC_PROPERTY, KtTokens.COMPANION_KEYWORD)
 
-internal val ACCESSOR_FLAGS = listOf(VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR)
+internal val ACCESSOR_FLAGS = [VISIBILITY, MODALITY, INLINE_ACCESSOR, EXTERNAL_ACCESSOR]
 
 private fun createBooleanFlagToModifier(
     flagField: Flags.BooleanFlagField, ktModifierKeywordToken: KtModifierKeywordToken

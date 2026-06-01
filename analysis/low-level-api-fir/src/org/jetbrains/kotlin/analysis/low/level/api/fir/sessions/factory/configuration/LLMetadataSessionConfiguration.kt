@@ -26,6 +26,6 @@ internal class LLMetadataSessionConfiguration(private val project: Project) : LL
         session: LLFirBuiltinsAndCloneableSession
     ): List<FirSymbolProvider> {
         /** Aligned with [org.jetbrains.kotlin.fir.session.FirMetadataSessionFactory] (adds `Cloneable` similarly to JVM). */
-        return listOf(createCloneableSymbolProvider(session))
+        return [createCloneableSymbolProvider(session)]
     }
 }

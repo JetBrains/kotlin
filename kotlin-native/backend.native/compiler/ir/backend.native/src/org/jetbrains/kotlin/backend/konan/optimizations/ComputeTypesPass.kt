@@ -65,7 +65,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     private val unitType = context.irBuiltIns.unitType
 
     private fun IrClass.superClassesHierarchy(): List<IrClass> {
-        val result = mutableListOf<IrClass>()
+        val result: MutableList<IrClass> = []
         var clazz = this
         while (!clazz.isAny()) {
             result.add(clazz)
@@ -125,7 +125,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     )
 
     private fun IrElement.getImmediateChildren(): List<IrElement> {
-        val result = mutableListOf<IrElement>()
+        val result: MutableList<IrElement> = []
         acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 result.add(element)
@@ -167,7 +167,7 @@ internal class ComputeTypesPass(val context: Context) : BodyLoweringPass {
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         context.log { "Analyzing ${container.render()}" }
 
-        val allVariablesWrites = mutableListOf<VariableWrite>()
+        val allVariablesWrites: MutableList<VariableWrite> = []
         val variableWriteMap = mutableMapOf<VariableWrite, Int>()
         val variableWrites = mutableMapOf<IrVariable, BitSet>()
 

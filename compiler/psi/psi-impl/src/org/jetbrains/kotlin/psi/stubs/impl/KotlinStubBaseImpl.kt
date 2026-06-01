@@ -18,11 +18,11 @@ import java.lang.reflect.Method
 val STUB_TO_STRING_PREFIX = "KotlinStub$"
 
 private val IGNORED_NULL_VALUES: Map<Class<out StubElement<*>>, Set<String>> = buildMap {
-    put(KotlinFunctionStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
-    put(KotlinPropertyStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
-    put(KotlinConstructorStub::class.java, setOf(KotlinCallableStubBase<*>::kdocText.name))
-    put(KotlinClassStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
-    put(KotlinObjectStub::class.java, setOf(KotlinClassOrObjectStub<*>::kdocText.name))
+    put(KotlinFunctionStub::class.java, [KotlinCallableStubBase<*>::kdocText.name])
+    put(KotlinPropertyStub::class.java, [KotlinCallableStubBase<*>::kdocText.name])
+    put(KotlinConstructorStub::class.java, [KotlinCallableStubBase<*>::kdocText.name])
+    put(KotlinClassStub::class.java, [KotlinClassOrObjectStub<*>::kdocText.name])
+    put(KotlinObjectStub::class.java, [KotlinClassOrObjectStub<*>::kdocText.name])
 }
 
 @OptIn(KtImplementationDetail::class)
@@ -94,7 +94,7 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
     companion object {
         private val LOGGER: Logger = Logger.getInstance(KotlinStubBaseImpl::class.java)
 
-        private val BASE_STUB_INTERFACES = listOf(
+        private val BASE_STUB_INTERFACES = [
             KotlinStubWithFqName::class.java,
             KotlinClassifierStub::class.java,
             KotlinClassOrObjectStub::class.java,
@@ -102,6 +102,6 @@ abstract class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<
             KotlinCallableStubBase::class.java,
             KotlinPlaceHolderWithTextStub::class.java,
             KotlinDeclarationWithBodyStub::class.java,
-        )
+        ]
     }
 }

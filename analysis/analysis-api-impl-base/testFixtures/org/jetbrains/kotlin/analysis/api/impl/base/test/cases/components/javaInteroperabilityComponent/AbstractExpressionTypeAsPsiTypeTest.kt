@@ -54,9 +54,9 @@ abstract class AbstractExpressionTypeAsPsiTypeTest : AbstractAnalysisApiBasedTes
 
 private fun KaSession.renderActual(expressionType: KaType, psiContext: KtLightElement<*, *>): String = prettyPrint {
     appendLine("${KaType::class.simpleName}: ${expressionType.render(useSiteSession)}")
-    for (allowErrorTypes in listOf(false, true)) {
+    for (allowErrorTypes in [false, true]) {
         for (typeMappingMode in KaTypeMappingMode.entries) {
-            for (isAnnotationMethod in listOf(false, true)) {
+            for (isAnnotationMethod in [false, true]) {
                 val psiType = expressionType.asPsiType(psiContext, allowErrorTypes, typeMappingMode, isAnnotationMethod)
                 appendLine("asPsiType(allowErrorTypes=$allowErrorTypes, mode=$typeMappingMode, isAnnotationMethod=$isAnnotationMethod):")
                 withIndent {

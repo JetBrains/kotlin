@@ -148,7 +148,7 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
         var end: Int = text.length
         if (text.startsWith("0x", ignoreCase = true) || text.startsWith("0b", ignoreCase = true)) start += 2
         if (text.endsWith('l', ignoreCase = true)) --end
-        listOf(text.substring(start, end))
+        [text.substring(start, end)]
     }
 
     return parts.any { it != null && (it.startsWith("_") || it.endsWith("_")) }

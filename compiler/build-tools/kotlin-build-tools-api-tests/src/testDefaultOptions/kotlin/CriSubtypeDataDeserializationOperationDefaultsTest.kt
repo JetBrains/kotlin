@@ -17,7 +17,7 @@ class CriSubtypeDataDeserializationOperationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = kotlinToolchains.cri.createCriSubtypeDataDeserializationOperation(byteArrayOf())
+        val operation = kotlinToolchains.cri.createCriSubtypeDataDeserializationOperation([])
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
     }
 }

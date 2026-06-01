@@ -37,7 +37,7 @@ internal class TestsDumper(private val context: Context) : FileLoweringPass {
         val testCasesToDump = mutableMapOf<String, MutableList<String>>()
 
         fun registerTestCases(testSuiteName: String, statements: List<IrStatement>) {
-            val testCases = testCasesToDump.getOrPut(testSuiteName) { mutableListOf() }
+            val testCases = testCasesToDump.getOrPut(testSuiteName) { [] }
             statements.forEach {
                 if (it !is IrCall) return@forEach
                 if (it.symbol.owner.name.asString() != "registerTestCase") return@forEach

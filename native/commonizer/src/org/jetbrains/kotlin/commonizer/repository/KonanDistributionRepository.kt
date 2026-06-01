@@ -43,7 +43,7 @@ internal class KonanDistributionRepository(
         }
 
     override fun getLibraries(target: CommonizerTarget): Set<NativeLibrary> {
-        val singleTarget = target.konanTargets.singleOrNull() ?: return emptySet()
+        val singleTarget = target.konanTargets.singleOrNull() ?: return []
         return librariesByTarget[singleTarget]?.value ?: error("Missing target libraries for $target")
     }
 }

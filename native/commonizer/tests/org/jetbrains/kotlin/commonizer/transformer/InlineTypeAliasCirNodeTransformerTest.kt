@@ -30,7 +30,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
         }
 
         val targetARoot = CirTreeRoot(
-            modules = listOf(
+            modules = [
                 createCirTree {
                     withDependencies()
                     source(
@@ -41,11 +41,11 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                     """.trimIndent()
                     )
                 }
-            )
+            ]
         )
 
         val targetBRoot = CirTreeRoot(
-            modules = listOf(
+            modules = [
                 createCirTree {
                     withDependencies()
                     source(
@@ -56,7 +56,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                     """.trimIndent()
                     )
                 }
-            )
+            ]
         )
 
         val roots = TargetDependent(
@@ -71,23 +71,23 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
             commonDependencies = CirProvidedClassifiersByModules(
                 true, mapOf(
                     CirEntityId.create("dep/ClassA") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
+                        typeParameters = [],
                         kind = ClassKind.CLASS,
                         visibility = Visibilities.Public,
-                        supertypes = emptyList()
+                        supertypes = []
                     ),
                     CirEntityId.create("dep/ClassB") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
+                        typeParameters = [],
                         kind = ClassKind.CLASS,
                         visibility = Visibilities.Public,
-                        supertypes = listOf(
+                        supertypes = [
                             CirProvided.ClassType(
                                 classifierId = CirEntityId.create("dep/ClassA"),
                                 outerType = null,
-                                arguments = emptyList(),
+                                arguments = [],
                                 isMarkedNullable = false
                             )
-                        )
+                        ]
                     )
                 )
             )
@@ -101,7 +101,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
         val inlinedXClass = kotlin.test.assertNotNull(xClassNode.targetDeclarations[1])
 
         kotlin.test.assertEquals(
-            setOf(CirEntityId.create("dep/ClassA")),
+            [CirEntityId.create("dep/ClassA")],
             inlinedXClass.supertypes.map { (it as? CirClassType)?.classifierId }.toSet()
         )
     }
@@ -120,7 +120,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
         }
 
         val targetARoot = CirTreeRoot(
-            modules = listOf(
+            modules = [
                 createCirTree {
                     withDependencies()
                     source(
@@ -131,34 +131,34 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                     """.trimIndent()
                     )
                 }
-            )
+            ]
         )
 
         val targetBRoot = CirTreeRoot(
             dependencies = CirProvidedClassifiersByModules(
                 true, mapOf(
                     CirEntityId.create("dep/ClassA") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
+                        typeParameters = [],
                         kind = ClassKind.CLASS,
                         visibility = Visibilities.Public,
-                        supertypes = emptyList()
+                        supertypes = []
                     ),
                     CirEntityId.create("dep/ClassB") to CirProvided.RegularClass(
-                        typeParameters = emptyList(),
+                        typeParameters = [],
                         kind = ClassKind.CLASS,
                         visibility = Visibilities.Public,
-                        supertypes = listOf(
+                        supertypes = [
                             CirProvided.ClassType(
                                 classifierId = CirEntityId.create("dep/ClassA"),
                                 outerType = null,
-                                arguments = emptyList(),
+                                arguments = [],
                                 isMarkedNullable = false
                             )
-                        )
+                        ]
                     )
                 )
             ),
-            modules = listOf(
+            modules = [
                 createCirTree {
                     withDependencies()
                     source(
@@ -169,7 +169,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
                     """.trimIndent()
                     )
                 }
-            )
+            ]
         )
 
         val roots = TargetDependent(
@@ -192,7 +192,7 @@ class InlineTypeAliasCirNodeTransformerTest : KtInlineSourceCommonizerTestCase()
         val inlinedXClass = kotlin.test.assertNotNull(xClassNode.targetDeclarations[1])
 
         kotlin.test.assertEquals(
-            setOf(CirEntityId.create("dep/ClassA")),
+            [CirEntityId.create("dep/ClassA")],
             inlinedXClass.supertypes.map { (it as? CirClassType)?.classifierId }.toSet()
         )
     }

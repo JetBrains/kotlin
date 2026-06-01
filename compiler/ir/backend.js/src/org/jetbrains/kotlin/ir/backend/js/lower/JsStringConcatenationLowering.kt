@@ -82,12 +82,12 @@ private class JsStringConcatenationTransformer(val context: CommonBackendContext
                 owner.hasShape(
                     dispatchReceiver = true,
                     regularParameters = 1,
-                    parameterTypes = listOf(context.irBuiltIns.stringType, null)
+                    parameterTypes = [context.irBuiltIns.stringType, null]
                 ) -> context.symbols.memberStringPlus
                 owner.hasShape(
                     extensionReceiver = true,
                     regularParameters = 1,
-                    parameterTypes = listOf(context.irBuiltIns.stringType.makeNullable(), null)
+                    parameterTypes = [context.irBuiltIns.stringType.makeNullable(), null]
                 ) -> context.symbols.extensionStringPlus
                 else -> return false
             }

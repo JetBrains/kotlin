@@ -15,7 +15,7 @@ abstract class CharGenerator(private val writer: PrintWriter) : BuiltInsGenerato
         writer.print(generateFile().build())
     }
 
-    protected open val fileAnnotations: List<String> = emptyList()
+    protected open val fileAnnotations: List<String> = []
 
     private fun generateFile(): FileBuilder {
         return file(this::class) {
@@ -359,11 +359,11 @@ class JvmCharGenerator(writer: PrintWriter) : CharGenerator(writer) {
         expectActual = ExpectActualModifier.Actual
     }
 
-    override val fileAnnotations = listOf(
+    override val fileAnnotations = [
         "kotlin.internal.JvmBuiltin",
         "kotlin.internal.SuppressBytecodeGeneration",
         "Suppress(\"NON_ABSTRACT_FUNCTION_WITH_NO_BODY\")"
-    )
+    ]
 }
 
 class JsCharGenerator(writer: PrintWriter) : CharGenerator(writer) {

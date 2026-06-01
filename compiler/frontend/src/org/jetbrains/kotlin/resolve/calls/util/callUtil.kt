@@ -153,10 +153,10 @@ fun KtElement.getCall(context: BindingContext): Call? {
 }
 
 fun KtElement.getParentCall(context: BindingContext, strict: Boolean = true): Call? {
-    val callExpressionTypes = arrayOf(
+    val callExpressionTypes: Array<Class<out KtElement>> = [
         KtSimpleNameExpression::class.java, KtCallElement::class.java, KtBinaryExpression::class.java,
         KtUnaryExpression::class.java, KtArrayAccessExpression::class.java
-    )
+    ]
 
     val parent = if (strict) {
         PsiTreeUtil.getParentOfType(this, *callExpressionTypes)

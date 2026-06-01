@@ -247,7 +247,7 @@ object JsIrBuilder {
     fun buildBlock(type: IrType, statements: List<IrStatement>) =
         IrBlockImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
 
-    fun buildComposite(type: IrType, statements: List<IrStatement> = emptyList()) =
+    fun buildComposite(type: IrType, statements: List<IrStatement> = []) =
         IrCompositeImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, type, JsStatementOrigins.SYNTHESIZED_STATEMENT, statements)
 
     fun buildVar(

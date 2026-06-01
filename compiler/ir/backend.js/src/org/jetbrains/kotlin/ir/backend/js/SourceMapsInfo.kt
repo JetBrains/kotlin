@@ -24,7 +24,7 @@ data class SourceMapsInfo(
             if (configuration.getBoolean(JSConfigurationKeys.SOURCE_MAP)) {
                 SourceMapsInfo(
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_PREFIX, ""),
-                    configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, emptyList()),
+                    configuration.get(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, []),
                     configuration.get(JSConfigurationKeys.OUTPUT_DIR),
                     configuration.get(JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES, SourceMapSourceEmbedding.INLINING),
                     configuration.get(JSConfigurationKeys.SOURCEMAP_NAMES_POLICY, SourceMapNamesPolicy.SIMPLE_NAMES),

@@ -15,20 +15,20 @@ package org.jetbrains.kotlin.parcelize
  * reflection, as well as all objects, enums, and function types (since they are implicitly serializable).
  */
 object BuiltinParcelableTypes {
-    val IMMUTABLE_LIST_FQNAMES = setOf(
+    val IMMUTABLE_LIST_FQNAMES: Set<String> = [
         kotlinxImmutable("PersistentList"),
         kotlinxImmutable("ImmutableList"),
-    )
+    ]
 
-    val IMMUTABLE_SET_FQNAMES = setOf(
+    val IMMUTABLE_SET_FQNAMES: Set<String> = [
         kotlinxImmutable("PersistentSet"),
         kotlinxImmutable("ImmutableSet"),
-    )
+    ]
 
-    val IMMUTABLE_MAP_FQNAMES = setOf(
+    val IMMUTABLE_MAP_FQNAMES: Set<String> = [
         kotlinxImmutable("PersistentMap"),
         kotlinxImmutable("ImmutableMap"),
-    )
+    ]
 
     val IMMUTABLE_COLLECTIONS_FQNAMES = setOf(
         *IMMUTABLE_LIST_FQNAMES.toTypedArray(),
@@ -36,22 +36,22 @@ object BuiltinParcelableTypes {
         *IMMUTABLE_MAP_FQNAMES.toTypedArray()
     )
 
-    val PARCELABLE_SUPERTYPE_FQNAMES = setOf(
+    val PARCELABLE_SUPERTYPE_FQNAMES: Set<String> = [
         "android.os.Parcelable",
         "android.os.IBinder",
-    )
+    ]
 
-    val EXTERNAL_SERIALIZABLE_FQNAMES = setOf(
+    val EXTERNAL_SERIALIZABLE_FQNAMES: Set<String> = [
         "java.io.Serializable",
-    )
+    ]
 
-    val STDLIB_SUPPORTED_TYPES_FQNAMES = setOf(
+    val STDLIB_SUPPORTED_TYPES_FQNAMES: Set<String> = [
         "kotlin.time.Duration",
         "kotlin.ranges.CharRange",
         "kotlin.ranges.IntRange",
         "kotlin.ranges.LongRange",
         "kotlin.uuid.Uuid",
-    )
+    ]
 
     val PARCELABLE_BASE_TYPE_FQNAMES = setOf(
         "android.os.Bundle",

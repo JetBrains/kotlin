@@ -39,11 +39,11 @@ class FakeSymbolBasedClass(
 
     override val visibility: Visibility get() = Visibilities.Public
 
-    override val typeParameters: List<JavaTypeParameter> get() = emptyList()
+    override val typeParameters: List<JavaTypeParameter> get() = []
 
     override val fqName: FqName get() = FqName(element.qualifiedName.toString())
 
-    override val supertypes: Collection<JavaClassifierType> get() = emptyList()
+    override val supertypes: Collection<JavaClassifierType> get() = []
 
     val innerClasses: Map<Name, JavaClass> get() = emptyMap()
 
@@ -67,23 +67,23 @@ class FakeSymbolBasedClass(
 
     override val isRecord: Boolean get() = false
 
-    override val recordComponents: Collection<JavaRecordComponent> get() = emptyList()
+    override val recordComponents: Collection<JavaRecordComponent> get() = []
 
     override val isSealed: Boolean get() = false
 
-    override val permittedTypes: Sequence<JavaClassifierType> get() = emptySequence()
+    override val permittedTypes: Sequence<JavaClassifierType> get() = []
 
     override val lightClassOriginKind: LightClassOriginKind? get() = null
 
-    override val methods: Collection<JavaMethod> get() = emptyList()
+    override val methods: Collection<JavaMethod> get() = []
 
-    override val fields: Collection<JavaField> get() = emptyList()
+    override val fields: Collection<JavaField> get() = []
 
-    override val constructors: Collection<JavaConstructor> get() = emptyList()
+    override val constructors: Collection<JavaConstructor> get() = []
 
     override fun hasDefaultConstructor() = false
 
-    override val innerClassNames: Collection<Name> get() = emptyList()
+    override val innerClassNames: Collection<Name> get() = []
 
     override val virtualFile: VirtualFile? by lazy {
         file?.let { javac.toVirtualFile(it) }

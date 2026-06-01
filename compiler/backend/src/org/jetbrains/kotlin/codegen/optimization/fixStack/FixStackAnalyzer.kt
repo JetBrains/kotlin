@@ -72,7 +72,7 @@ internal class FixStackAnalyzer(
     fun getExpectedStackSize(location: AbstractInsnNode): Int {
         // We should look for expected stack size at loop entry point markers if available,
         // otherwise at location itself.
-        val expectedStackSizeNodes = loopEntryPointMarkers[location] ?: listOf(location)
+        val expectedStackSizeNodes = loopEntryPointMarkers[location] ?: [location]
 
         // Find 1st live node among expected stack size nodes and return corresponding stack size
         for (node in expectedStackSizeNodes) {

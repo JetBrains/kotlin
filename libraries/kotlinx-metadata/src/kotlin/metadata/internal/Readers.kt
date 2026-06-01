@@ -24,7 +24,7 @@ public class ReadContext(
     @get:IgnoreInApiDump internal val versionRequirements: VersionRequirementTable,
     internal val ignoreUnknownVersionRequirements: Boolean,
     private val parent: ReadContext? = null,
-    internal val contextExtensions: List<ReadContextExtension> = emptyList()
+    internal val contextExtensions: List<ReadContextExtension> = []
 ) {
     private val typeParameterNameToId = mutableMapOf<Int, Int>()
 
@@ -50,7 +50,7 @@ public class ReadContext(
 public fun ProtoBuf.Class.toKmClass(
     strings: NameResolver,
     ignoreUnknownVersionRequirements: Boolean = false,
-    contextExtensions: List<ReadContextExtension> = emptyList(),
+    contextExtensions: List<ReadContextExtension> = [],
 ): KmClass {
     val v = KmClass()
     val c = ReadContext(
@@ -121,7 +121,7 @@ private fun ProtoBuf.Class.loadInlineClassUnderlyingType(c: ReadContext): ProtoB
 public fun ProtoBuf.Package.toKmPackage(
     strings: NameResolver,
     ignoreUnknownVersionRequirements: Boolean = false,
-    contextExtensions: List<ReadContextExtension> = emptyList(),
+    contextExtensions: List<ReadContextExtension> = [],
 ): KmPackage {
     val v = KmPackage()
     val c = ReadContext(
@@ -141,7 +141,7 @@ public fun ProtoBuf.Package.toKmPackage(
 
 public fun ProtoBuf.PackageFragment.toKmModuleFragment(
     strings: NameResolver,
-    contextExtensions: List<ReadContextExtension> = emptyList(),
+    contextExtensions: List<ReadContextExtension> = [],
 ): KmModuleFragment {
     val v = KmModuleFragment()
     val c = ReadContext(

@@ -73,7 +73,7 @@ fun <T : ExtendableMessage<T>> T.loadAnnotationsFromProtocol(
     nameResolver: NameResolver,
     useSiteTarget: AnnotationUseSiteTarget? = null
 ): List<FirAnnotation> {
-    if (extension == null) return emptyList()
+    if (extension == null) return []
     val annotations = getExtension(extension)
     return annotations.map { deserializeAnnotation(session, it, nameResolver, useSiteTarget) }
 }
@@ -145,7 +145,7 @@ internal fun ProtoBuf.Annotation.Argument.Value.toFirExpression(session: FirSess
             val classId = nameResolver.getClassId(this@toFirExpression.classId)
             val lookupTag = classId.toLookupTag()
             val referencedType = lookupTag.constructType()
-            val resolvedType = StandardClassIds.KClass.constructClassLikeType(arrayOf(referencedType), false)
+            val resolvedType = StandardClassIds.KClass.constructClassLikeType([referencedType], false)
             argumentList = buildUnaryArgumentList(
                 buildClassReferenceExpression {
                     classTypeRef = buildResolvedTypeRef { coneType = referencedType }

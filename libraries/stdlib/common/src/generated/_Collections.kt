@@ -696,9 +696,9 @@ public fun <T> Iterable<T>.drop(n: Int): List<T> {
     if (this is Collection<*>) {
         val resultSize = size - n
         if (resultSize <= 0)
-            return emptyList()
+            return []
         if (resultSize == 1)
-            return listOf(last())
+            return [last()]
         list = ArrayList<T>(resultSize)
         if (this is List<T>) {
             if (this is RandomAccess) {
@@ -747,7 +747,7 @@ public inline fun <T> List<T>.dropLastWhile(predicate: (T) -> Boolean): List<T> 
             }
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -878,7 +878,7 @@ public inline fun <T, C : MutableCollection<in T>> Iterable<T>.filterTo(destinat
  * Returns a list containing elements at indices in the specified [indices] range.
  */
 public fun <T> List<T>.slice(indices: IntRange): List<T> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return this.subList(indices.start, indices.endInclusive + 1).toList()
 }
 
@@ -887,7 +887,7 @@ public fun <T> List<T>.slice(indices: IntRange): List<T> {
  */
 public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<T>(size)
     for (index in indices) {
         list.add(get(index))
@@ -904,10 +904,10 @@ public fun <T> List<T>.slice(indices: Iterable<Int>): List<T> {
  */
 public fun <T> Iterable<T>.take(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (this is Collection<T>) {
         if (n >= size) return toList()
-        if (n == 1) return listOf(first())
+        if (n == 1) return [first()]
     }
     var count = 0
     val list = ArrayList<T>(n)
@@ -928,10 +928,10 @@ public fun <T> Iterable<T>.take(n: Int): List<T> {
  */
 public fun <T> List<T>.takeLast(n: Int): List<T> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(last())
+    if (n == 1) return [last()]
     val list = ArrayList<T>(n)
     if (this is RandomAccess) {
         for (index in size - n until size)
@@ -950,13 +950,13 @@ public fun <T> List<T>.takeLast(n: Int): List<T> {
  */
 public inline fun <T> List<T>.takeLastWhile(predicate: (T) -> Boolean): List<T> {
     if (isEmpty())
-        return emptyList()
+        return []
     val iterator = listIterator(size)
     while (iterator.hasPrevious()) {
         if (!predicate(iterator.previous())) {
             val _ = iterator.next()
             val expectedSize = size - iterator.nextIndex()
-            if (expectedSize == 0) return emptyList()
+            if (expectedSize == 0) return []
             return ArrayList<T>(expectedSize).apply {
                 while (iterator.hasNext())
                     add(iterator.next())
@@ -1495,8 +1495,8 @@ public fun <T> Iterable<T>.toHashSet(): HashSet<T> {
 public fun <T> Iterable<T>.toList(): List<T> {
     if (this is Collection) {
         return when (size) {
-            0 -> emptyList()
-            1 -> listOf(if (this is List) get(0) else iterator().next())
+            0 -> []
+            1 -> [if (this is List) get(0) else iterator().next()]
             else -> this.toMutableList()
         }
     }
@@ -1527,8 +1527,8 @@ public fun <T> Collection<T>.toMutableList(): MutableList<T> {
 public fun <T> Iterable<T>.toSet(): Set<T> {
     if (this is Collection) {
         return when (size) {
-            0 -> emptySet()
-            1 -> setOf(if (this is List) this[0] else iterator().next())
+            0 -> []
+            1 -> [if (this is List) this[0] else iterator().next()]
             else -> toCollection(LinkedHashSet<T>(mapCapacity(size)))
         }
     }
@@ -1868,7 +1868,7 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
  */
 public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
-    val set = mutableSetOf<T>()
+    val set: MutableSet<T> = []
     for (e in this) {
         if (otherCollection.contains(e)) {
             set.add(e)
@@ -1887,7 +1887,7 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
  */
 public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
-    val result = mutableSetOf<T>()
+    val result: MutableSet<T> = []
     for (e in this) {
         if (!otherCollection.contains(e)) {
             result.add(e)
@@ -3164,7 +3164,7 @@ public inline fun <S, T : S> List<T>.reduceRightOrNull(operation: (T, acc: S) ->
 @SinceKotlin("1.4")
 public inline fun <T, R> Iterable<T>.runningFold(initial: R, operation: (acc: R, T) -> R): List<R> {
     val estimatedSize = collectionSizeOrDefault(9)
-    if (estimatedSize == 0) return listOf(initial)
+    if (estimatedSize == 0) return [initial]
     val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -3189,7 +3189,7 @@ public inline fun <T, R> Iterable<T>.runningFold(initial: R, operation: (acc: R,
 @SinceKotlin("1.4")
 public inline fun <T, R> Iterable<T>.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, T) -> R): List<R> {
     val estimatedSize = collectionSizeOrDefault(9)
-    if (estimatedSize == 0) return listOf(initial)
+    if (estimatedSize == 0) return [initial]
     val result = ArrayList<R>(estimatedSize + 1).apply { add(initial) }
     var index = 0
     var accumulator = initial
@@ -3214,7 +3214,7 @@ public inline fun <T, R> Iterable<T>.runningFoldIndexed(initial: R, operation: (
 @SinceKotlin("1.4")
 public inline fun <S, T : S> Iterable<T>.runningReduce(operation: (acc: S, T) -> S): List<S> {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) return emptyList()
+    if (!iterator.hasNext()) return []
     var accumulator: S = iterator.next()
     val result = ArrayList<S>(collectionSizeOrDefault(10)).apply { add(accumulator) }
     while (iterator.hasNext()) {
@@ -3239,7 +3239,7 @@ public inline fun <S, T : S> Iterable<T>.runningReduce(operation: (acc: S, T) ->
 @SinceKotlin("1.4")
 public inline fun <S, T : S> Iterable<T>.runningReduceIndexed(operation: (index: Int, acc: S, T) -> S): List<S> {
     val iterator = this.iterator()
-    if (!iterator.hasNext()) return emptyList()
+    if (!iterator.hasNext()) return []
     var accumulator: S = iterator.next()
     val result = ArrayList<S>(collectionSizeOrDefault(10)).apply { add(accumulator) }
     var index = 1
@@ -3772,8 +3772,8 @@ public fun <T> Iterable<T>.zipWithNext(): List<Pair<T, T>> {
 @SinceKotlin("1.2")
 public inline fun <T, R> Iterable<T>.zipWithNext(transform: (a: T, b: T) -> R): List<R> {
     val iterator = iterator()
-    if (!iterator.hasNext()) return emptyList()
-    val result = mutableListOf<R>()
+    if (!iterator.hasNext()) return []
+    val result: MutableList<R> = []
     var current = iterator.next()
     while (iterator.hasNext()) {
         val next = iterator.next()

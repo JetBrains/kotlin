@@ -35,8 +35,8 @@ class TypeVariableTypeConstructor(
     val debugName: String,
     override val originalTypeParameter: TypeParameterDescriptor?
 ) : NewTypeVariableConstructor, TypeVariableTypeConstructorMarker {
-    override fun getParameters(): List<TypeParameterDescriptor> = emptyList()
-    override fun getSupertypes(): Collection<KotlinType> = emptyList()
+    override fun getParameters(): List<TypeParameterDescriptor> = []
+    override fun getSupertypes(): List<KotlinType> = []
     override fun isFinal(): Boolean = false
     override fun isDenotable(): Boolean = false
     override fun getDeclarationDescriptor(): ClassifierDescriptor? = null
@@ -69,7 +69,7 @@ sealed class NewTypeVariable(
 fun TypeConstructor.typeForTypeVariable(): SimpleType {
     require(this is TypeVariableTypeConstructor)
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-        TypeAttributes.Empty, this, arguments = emptyList(),
+        TypeAttributes.Empty, this, arguments = [],
         nullable = false, memberScope = builtIns.any.unsubstitutedMemberScope
     )
 }

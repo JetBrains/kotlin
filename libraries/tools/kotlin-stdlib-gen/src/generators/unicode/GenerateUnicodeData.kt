@@ -60,9 +60,9 @@ fun main(args: Array<String>) {
         PropertyLine(line.split("; ").map { it.trim() })
     }
 
-    val categoryRangesGenerators = mutableListOf<RangesGenerator>()
-    val otherLowercaseGenerators = mutableListOf<OtherLowercaseRangesGenerator>()
-    val otherUppercaseGenerators = mutableListOf<OtherUppercaseRangesGenerator>()
+    val categoryRangesGenerators: MutableList<RangesGenerator> = []
+    val otherLowercaseGenerators: MutableList<OtherLowercaseRangesGenerator> = []
+    val otherUppercaseGenerators: MutableList<OtherUppercaseRangesGenerator> = []
 
     fun addRangesGenerators(generatedDir: File, target: KotlinTarget) {
         val category = RangesGenerator.forCharCategory(generatedDir.resolve("_CharCategories.kt"), target)
@@ -78,7 +78,7 @@ fun main(args: Array<String>) {
         otherUppercaseGenerators.add(OtherUppercaseRangesGenerator(generatedDir.resolve("_OtherUppercaseChars.kt"), target))
     }
 
-    val oneToOneMappingsGenerators = mutableListOf<MappingsGenerator>()
+    val oneToOneMappingsGenerators: MutableList<MappingsGenerator> = []
 
     fun addOneToOneMappingsGenerators(generatedDir: File, target: KotlinTarget) {
         val uppercase = MappingsGenerator.forUppercase(generatedDir.resolve("_UppercaseMappings.kt"), target)
@@ -89,7 +89,7 @@ fun main(args: Array<String>) {
         oneToOneMappingsGenerators.add(titlecase)
     }
 
-    val oneToManyMappingsGenerators = mutableListOf<OneToManyMappingsGenerator>()
+    val oneToManyMappingsGenerators: MutableList<OneToManyMappingsGenerator> = []
 
     fun addOneToManyMappingsGenerators(generatedDir: File, target: KotlinTarget) {
         val uppercase = OneToManyMappingsGenerator.forUppercase(generatedDir.resolve("_OneToManyUppercaseMappings.kt"), target, bmpUnicodeDataLines)
@@ -98,8 +98,8 @@ fun main(args: Array<String>) {
         oneToManyMappingsGenerators.add(lowercase)
     }
 
-    val stringUppercaseGenerators = mutableListOf<StringUppercaseGenerator>()
-    val stringLowercaseGenerators = mutableListOf<StringLowercaseGenerator>()
+    val stringUppercaseGenerators: MutableList<StringUppercaseGenerator> = []
+    val stringLowercaseGenerators: MutableList<StringLowercaseGenerator> = []
 
     val categoryTestGenerator: CharCategoryTestGenerator
 

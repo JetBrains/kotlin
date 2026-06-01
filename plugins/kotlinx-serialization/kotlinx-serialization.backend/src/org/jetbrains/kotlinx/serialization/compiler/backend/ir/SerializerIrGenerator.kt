@@ -74,7 +74,7 @@ open class SerializerIrGenerator(
         return irClass.properties.singleOrNull { it.name.asString() == name && isReturnTypeOk(it) }
     }
 
-    var localSerializersFieldsDescriptors: List<IrProperty> = emptyList()
+    var localSerializersFieldsDescriptors: List<IrProperty> = []
         private set
 
     // child serializers cached if serializable class is internal
@@ -92,7 +92,7 @@ open class SerializerIrGenerator(
     // null if was not found — we're in FIR
     private fun findLocalSerializersFieldDescriptors(): List<IrProperty?> {
         val count = serializableIrClass.typeParameters.size
-        if (count == 0) return emptyList()
+        if (count == 0) return []
         val propNames = (0 until count).map { "${SerialEntityNames.typeArgPrefix}$it" }
         return propNames.map { name ->
             getProperty(name) { it.getter!!.returnType.isKSerializer() }
@@ -285,7 +285,7 @@ open class SerializerIrGenerator(
             // extract Tx from KSerializer<Tx> list
             val typeArgs =
                 localSerializersFieldsDescriptors.map { ir -> (ir.backingField!!.type as IrSimpleType).arguments.single().typeOrNull }
-            val args = mutableListOf<IrExpression>(irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc))
+            val args: MutableList<IrExpression> = [irGet(objectToSerialize), irGet(localOutput), irGet(localSerialDesc)]
             args.addAll(localSerializersFieldsDescriptors.map { ir ->
                 irGetField(
                     irGet(saveFunc.dispatchReceiverParameter!!),
@@ -437,14 +437,14 @@ open class SerializerIrGenerator(
                             inputClass.functions.single {
                                 it.owner.name.asString() == "${CallingConventions.decode}${sti.elementMethodPrefix}Serializable${CallingConventions.elementPostfix}" &&
                                         it.owner.hasShape(dispatchReceiver = true, regularParameters = 4)
-                            } to listOf(
+                            } to [
                                 localSerialDesc.get(), irInt(index), innerSerial, serialPropertiesMap.getValue(property.ir).get()
-                            )
+                            ]
                         }, { sti ->
                                                          inputClass.functions.single {
                                                              it.owner.name.asString() == "${CallingConventions.decode}${sti.elementMethodPrefix}${CallingConventions.elementPostfix}" &&
                                                                      it.owner.hasShape(dispatchReceiver = true, regularParameters = 2)
-                                                         } to listOf(localSerialDesc.get(), irInt(index))
+                                                         } to [localSerialDesc.get(), irInt(index)]
                                                      }, cachedChildSerializerByIndex(index), returnTypeHint = property.type)
                     // local$i = localInput.decode...(...)
                     +irSet(
@@ -484,7 +484,7 @@ open class SerializerIrGenerator(
                             Name.identifier(UNKNOWN_FIELD_EXC)
                         )
                     )
-                        .single { it.owner.hasShape(regularParameters = 1, parameterTypes = listOf(context.irBuiltIns.intType)) }
+                        .single { it.owner.hasShape(regularParameters = 1, parameterTypes = [context.irBuiltIns.intType]) }
                     +elseBranch(
                         irThrow(
                             irInvoke(

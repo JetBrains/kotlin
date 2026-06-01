@@ -126,7 +126,7 @@ class ObjCExportLazyImpl(
         translateClasses(file) + translateTopLevels(file)
 
     private fun translateClasses(container: KtDeclarationContainer): List<ObjCClass> {
-        val result = mutableListOf<ObjCClass>()
+        val result: MutableList<ObjCClass> = []
         container.declarations.forEach { declaration ->
             // Supposed to be true if ObjCExportMapper.shouldBeVisible is true.
             if (declaration is KtClassOrObject && declaration.isPublic && declaration !is KtEnumEntry
@@ -157,9 +157,9 @@ class ObjCExportLazyImpl(
                 ktClassOrObject.hasModifier(KtTokens.FINAL_KEYWORD)
 
             val attributes = if (isFinal) {
-                listOf(OBJC_SUBCLASSING_RESTRICTED)
+                [OBJC_SUBCLASSING_RESTRICTED]
             } else {
-                emptyList()
+                []
             }
 
             LazyObjCInterfaceImpl(
@@ -182,14 +182,14 @@ class ObjCExportLazyImpl(
             }
             .toList()
     } else {
-        emptyList()
+        []
     }
 
     private fun translateTopLevels(file: KtFile): List<ObjCInterface> {
         val extensions =
             mutableMapOf<ClassDescriptor, MutableList<KtCallableDeclaration>>()
 
-        val topLevel = mutableListOf<KtCallableDeclaration>()
+        val topLevel: MutableList<KtCallableDeclaration> = []
 
         file.children.filterIsInstance<KtCallableDeclaration>().forEach {
             // Supposed to be similar to ObjCExportMapper.shouldBeVisible.
@@ -199,7 +199,7 @@ class ObjCExportLazyImpl(
                     // If a class is hidden from Objective-C API then it is meaningless
                     // to export its extensions.
                     if (!classDescriptor.isHiddenFromObjC()) {
-                        extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                        extensions.getOrPut(classDescriptor, { [] }) += it
                     }
                 } else {
                     topLevel += it
@@ -207,7 +207,7 @@ class ObjCExportLazyImpl(
             }
         }
 
-        val result = mutableListOf<ObjCInterface>()
+        val result: MutableList<ObjCInterface> = []
 
         extensions.mapTo(result) { [classDescriptor, declarations] ->
             translateExtensions(file, classDescriptor, declarations)
@@ -365,7 +365,7 @@ class ObjCExportLazyImpl(
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
         override val extras: Extras = emptyExtras(),
-    ) : LazyObjCInterface(name = name, generics = emptyList(), categoryName = null, attributes = listOf(OBJC_SUBCLASSING_RESTRICTED)) {
+    ) : LazyObjCInterface(name = name, generics = [], categoryName = null, attributes = [OBJC_SUBCLASSING_RESTRICTED]) {
 
         override val origin: Nothing? = null
 
@@ -386,7 +386,7 @@ class ObjCExportLazyImpl(
         private val declarations: List<KtCallableDeclaration>,
         private val lazy: ObjCExportLazyImpl,
         override val extras: Extras = emptyExtras(),
-    ) : LazyObjCInterface(name = name.objCName, generics = emptyList(), categoryName = categoryName, attributes = emptyList()) {
+    ) : LazyObjCInterface(name = name.objCName, generics = [], categoryName = categoryName, attributes = []) {
 
         override fun computeRealStub(): ObjCInterface = lazy.translator.translateExtensions(
             classDescriptor,

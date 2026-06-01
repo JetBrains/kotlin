@@ -159,7 +159,7 @@ internal class JvmCompilationOperationImpl private constructor(
     }
 
     private fun getKotlinFilenameExtensions(): Set<String> =
-        DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
+        DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: [])
 
     override fun getRootProjectDir(): Path? {
         return (get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration)?.toOptions()?.get(ROOT_PROJECT_DIR)

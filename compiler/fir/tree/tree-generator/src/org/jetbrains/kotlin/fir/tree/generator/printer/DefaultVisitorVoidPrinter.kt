@@ -18,7 +18,7 @@ internal class DefaultVisitorVoidPrinter(
 ) : AbstractVisitorPrinter<Element, Field>(printer) {
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
@@ -26,7 +26,7 @@ internal class DefaultVisitorVoidPrinter(
     override fun visitMethodReturnType(element: Element) = StandardTypes.unit
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(firVisitorVoidType)
+        get() = [firVisitorVoidType]
 
     override val allowTypeParametersInVisitorMethods: Boolean
         get() = true

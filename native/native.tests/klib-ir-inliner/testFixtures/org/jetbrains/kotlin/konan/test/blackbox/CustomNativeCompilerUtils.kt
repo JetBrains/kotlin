@@ -67,9 +67,9 @@ val currentCustomNativeCompilerSettings: CustomNativeCompilerSettings by lazy {
             CustomKlibCompilerArtifacts.create(
                 version = LanguageVersion.LATEST_STABLE,
                 compilerDist = compilerDist,
-                compilerClassPath = listOf(
+                compilerClassPath = [
                     compilerDist.resolve("konan").resolve("lib").resolve("kotlin-native-compiler-embeddable.jar")
-                ),
+                ],
             )
         } ?: propertyNotFound(propertyName)
     }

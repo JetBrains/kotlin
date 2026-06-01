@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.backend.common.push
 
 class StronglyConnectedComponents<T>(val enumerateOutgoingEdges: (T) -> Sequence<T>) {
 
-    private val visited = mutableSetOf<T>()
-    private val stack = mutableListOf<T>()
+    private val visited: MutableSet<T> = []
+    private val stack: MutableList<T> = []
     private val reversedGraph = mutableMapOf<T, MutableSet<T>>()
 
     fun visit(edge: T) {
         if (visited.add(edge)) {
             for (outgoingEdge in enumerateOutgoingEdges(edge)) {
-                (reversedGraph.getOrPut(outgoingEdge) { mutableSetOf() }).add(edge)
+                (reversedGraph.getOrPut(outgoingEdge) { [] }).add(edge)
                 visit(outgoingEdge)
             }
             stack.push(edge)
@@ -25,11 +25,11 @@ class StronglyConnectedComponents<T>(val enumerateOutgoingEdges: (T) -> Sequence
 
     fun findComponents(): MutableList<MutableList<T>> {
         visited.clear()
-        val result = mutableListOf<MutableList<T>>()
+        val result: MutableList<MutableList<T>> = []
         while (stack.isNotEmpty()) {
             val edge = stack.pop()
             if (visited.add(edge)) {
-                val component = mutableListOf<T>()
+                val component: MutableList<T> = []
                 visitTransposedEdge(edge, component)
                 result.add(component)
             }

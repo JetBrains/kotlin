@@ -194,7 +194,7 @@ class ResolutionWithStubTypesChecker(private val kotlinCallResolver: KotlinCallR
         }
 
         return ReceiverExpressionKotlinCallArgument(
-            ReceiverValueWithSmartCastInfo(receiverValue, typesFromSmartCasts = emptySet(), true)
+            ReceiverValueWithSmartCastInfo(receiverValue, typesFromSmartCasts = [], true)
         )
     }
 }

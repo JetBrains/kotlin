@@ -89,7 +89,7 @@ class FirJavaElementFinder(
     }
 
     override fun findClasses(qualifiedName: String, scope: GlobalSearchScope): Array<PsiClass> {
-        return findClass(qualifiedName, scope)?.let { arrayOf(it) } ?: emptyArray()
+        return findClass(qualifiedName, scope)?.let { [it] } ?: []
     }
 
     override fun findClass(qualifiedName: String, scope: GlobalSearchScope): PsiClass? {
@@ -167,7 +167,7 @@ class FirJavaElementFinder(
 
         val classProperties = firClass.declarations.filterIsInstance<FirProperty>()
         // Note: we must store companion properties in outer clas because java resolver will not find it other way.
-        val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: emptyList()
+        val companionProperties = firClass.companionObjectSymbol?.declarationSymbols?.map { it.fir }?.filterIsInstance<FirProperty>() ?: []
         (classProperties + companionProperties).forEach {
             buildFieldStubForConst(it, stub)
         }
@@ -320,7 +320,7 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
 
     val isInterface = firRegularClass.classKind == ClassKind.INTERFACE
 
-    val interfaceNames = mutableListOf<String>()
+    val interfaceNames: MutableList<String> = []
     var superName: String? = null
 
     for (superTypeRef in superTypeRefs) {
@@ -346,7 +346,7 @@ private fun PsiClassStubImpl<*>.addSupertypesReferencesLists(
         if (superName == null || "java/lang/Object" == superName || this.isEnum && "java/lang/Enum" == superName) {
             newReferenceList(JavaStubElementTypes.EXTENDS_LIST, this, ArrayUtil.EMPTY_STRING_ARRAY)
         } else {
-            newReferenceList(JavaStubElementTypes.EXTENDS_LIST, this, arrayOf(superName))
+            newReferenceList(JavaStubElementTypes.EXTENDS_LIST, this, [superName])
         }
         newReferenceList(JavaStubElementTypes.IMPLEMENTS_LIST, this, ArrayUtil.toStringArray(interfaceNames))
     }

@@ -24,11 +24,11 @@ class WritersContractTest {
 
     val unknown = Metadata(
         99,
-        metadataVersion = with(JvmMetadataVersion.LATEST_STABLE_SUPPORTED) { intArrayOf(major, minor, patch) },
+        metadataVersion = with(JvmMetadataVersion.LATEST_STABLE_SUPPORTED) { [major, minor, patch] },
         extraString = "blabla"
     )
 
-    val everyType = listOf(classMd, fileFacadeMd, lambdaMd, multiFileFacadeMd, multiFilePartMd, unknown)
+    val everyType = [classMd, fileFacadeMd, lambdaMd, multiFileFacadeMd, multiFilePartMd, unknown]
 
     @Test
     fun lenientDataCantBeWritten() = everyType.forEach { md ->

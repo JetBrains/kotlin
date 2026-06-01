@@ -55,7 +55,7 @@ fun StorageComponentContainer.useInstanceIfNotNull(instance: Any?) {
 }
 
 fun StorageComponentContainer.useClashResolver(clashResolver: PlatformExtensionsClashResolver<*>) {
-    registerClashResolvers(listOf(clashResolver))
+    registerClashResolvers([clashResolver])
 }
 
 inline operator fun <reified T : Any> ComponentProvider.getValue(thisRef: Any?, desc: KProperty<*>): T {

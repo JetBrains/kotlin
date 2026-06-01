@@ -399,9 +399,9 @@ internal open class FirTowerResolveTask(
         info: CallInfo,
         skipSynthetics: Boolean = false,
     ) {
-        val emptyScopes = mutableSetOf<FirScope>()
-        val scopesWithoutCompanionExtensions = mutableSetOf<FirScope>()
-        val implicitReceiverValuesWithEmptyScopes = mutableSetOf<ImplicitReceiverValue<*>>()
+        val emptyScopes: MutableSet<FirScope> = []
+        val scopesWithoutCompanionExtensions: MutableSet<FirScope> = []
+        val implicitReceiverValuesWithEmptyScopes: MutableSet<ImplicitReceiverValue<*>> = []
 
         enumerateTowerLevels(
             onScope = { scope, staticScopeOwnerSymbol, group ->

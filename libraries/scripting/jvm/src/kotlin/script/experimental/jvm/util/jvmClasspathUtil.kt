@@ -37,8 +37,8 @@ internal const val KOTLIN_SCRIPTING_JVM_JAR = "kotlin-scripting-jvm.jar"
 internal const val KOTLIN_COMPILER_NAME = "kotlin-compiler"
 internal const val KOTLIN_COMPILER_JAR = "$KOTLIN_COMPILER_NAME.jar"
 
-private val JAR_COLLECTIONS_CLASSES_PATHS = arrayOf("BOOT-INF/classes", "WEB-INF/classes")
-private val JAR_COLLECTIONS_LIB_PATHS = arrayOf("BOOT-INF/lib", "WEB-INF/lib")
+private val JAR_COLLECTIONS_CLASSES_PATHS: Array<String> = ["BOOT-INF/classes", "WEB-INF/classes"]
+private val JAR_COLLECTIONS_LIB_PATHS: Array<String> = ["BOOT-INF/lib", "WEB-INF/lib"]
 private val JAR_COLLECTIONS_KEY_PATHS = JAR_COLLECTIONS_CLASSES_PATHS + JAR_COLLECTIONS_LIB_PATHS
 internal const val JAR_MANIFEST_RESOURCE_NAME = "META-INF/MANIFEST.MF"
 
@@ -52,8 +52,8 @@ internal const val KOTLIN_REFLECT_JAR_PROPERTY = "kotlin.java.reflect.jar"
 internal const val KOTLIN_RUNTIME_JAR_PROPERTY = "kotlin.java.runtime.jar"
 internal const val KOTLIN_SCRIPT_RUNTIME_JAR_PROPERTY = "kotlin.script.runtime.jar"
 
-private val validClasspathFilesExtensions = setOf("jar", "zip", "java")
-private val validJarCollectionFilesExtensions = setOf("jar", "war", "zip")
+private val validClasspathFilesExtensions: Set<String> = ["jar", "zip", "java"]
+private val validJarCollectionFilesExtensions: Set<String> = ["jar", "war", "zip"]
 
 class ClasspathExtractionException(message: String) : Exception(message)
 
@@ -76,7 +76,7 @@ fun classpathFromClassloader(currentClassLoader: ClassLoader, unpackJarCollectio
         }
     }
     return allRelatedClassLoaders(currentClassLoader).flatMap { classLoader ->
-        var classPath = emptySequence<File>()
+        var classPath: Sequence<File> = []
         if (unpackJarCollections && JAR_COLLECTIONS_KEY_PATHS.any { classLoader.getResource(it)?.file?.isNotEmpty() == true }) {
             // if cache dir is specified, find all jar collections (spring boot fat jars and WARs so far, and unpack it accordingly
             val jarCollections = JAR_COLLECTIONS_KEY_PATHS.asSequence().flatMap { currentClassLoader.getResources(it).asSequence() }
@@ -225,7 +225,7 @@ private const val KOTLIN_COMPILER_EMBEDDABLE_JAR = "$KOTLIN_COMPILER_NAME-embedd
 
 // Iterating over classloaders tree in a regular, parent-first order
 private fun allRelatedClassLoaders(clsLoader: ClassLoader, visited: MutableSet<ClassLoader> = HashSet()): Sequence<ClassLoader> {
-    if (!visited.add(clsLoader)) return emptySequence()
+    if (!visited.add(clsLoader)) return []
 
     val singleParent = clsLoader.parent
     if (singleParent != null)
@@ -280,7 +280,7 @@ internal fun List<File>.takeIfContainsAll(vararg keyNames: String): List<File>? 
     }
 
 internal fun List<File>.filterIfContainsAll(vararg keyNames: String): List<File>? {
-    val foundKeys = mutableSetOf<String>()
+    val foundKeys: MutableSet<String> = []
     val res = arrayListOf<File>()
     for (cpentry in this) {
         for (prefix in keyNames) {
@@ -349,7 +349,7 @@ object KotlinJars {
 
     private val explicitCompilerClasspath: List<File>? by lazy {
         System.getProperty(KOTLIN_COMPILER_CLASSPATH_PROPERTY)?.split(File.pathSeparator)?.map(::File)
-            ?: System.getProperty(KOTLIN_COMPILER_JAR_PROPERTY)?.let(::File)?.takeIf(File::exists)?.let { listOf(it) }
+            ?: System.getProperty(KOTLIN_COMPILER_JAR_PROPERTY)?.let(::File)?.takeIf(File::exists)?.let { [it] }
     }
 
     val compilerClasspath: List<File> by lazy {
@@ -361,23 +361,23 @@ object KotlinJars {
     }
 
     private fun findCompilerClasspath(withScripting: Boolean): List<File> {
-        val kotlinCompilerJars = listOf(
+        val kotlinCompilerJars = [
             KOTLIN_COMPILER_JAR,
             KOTLIN_COMPILER_EMBEDDABLE_JAR
-        )
-        val kotlinLibsJars = listOf(
+        ]
+        val kotlinLibsJars = [
             KOTLIN_JAVA_STDLIB_JAR,
             KOTLIN_JAVA_REFLECT_JAR,
             KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
-        )
-        val kotlinScriptingJars = if (withScripting) listOf(
+        ]
+        val kotlinScriptingJars = if (withScripting) [
             KOTLIN_SCRIPTING_COMPILER_JAR,
             KOTLIN_SCRIPTING_COMPILER_EMBEDDABLE_JAR,
             KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
             KOTLIN_SCRIPTING_COMPILER_IMPL_EMBEDDABLE_JAR,
             KOTLIN_SCRIPTING_COMMON_JAR,
             KOTLIN_SCRIPTING_JVM_JAR
-        ) else emptyList()
+        ] else []
 
         val kotlinBaseJars = kotlinCompilerJars + kotlinLibsJars + kotlinScriptingJars
 
@@ -456,17 +456,17 @@ object KotlinJars {
     }
 
     val kotlinScriptStandardJars
-        get() = listOf(
+        get() = [
             stdlibOrNull,
             scriptRuntimeOrNull
-        ).filterNotNull()
+        ].filterNotNull()
 
     val kotlinScriptStandardJarsWithReflect
-        get() = listOf(
+        get() = [
             stdlibOrNull,
             scriptRuntimeOrNull,
             reflectOrNull
-        ).filterNotNull()
+        ].filterNotNull()
 }
 
-fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as? JvmDependency)?.classpath ?: emptyList() } ?: emptyList()
+fun List<ScriptDependency>?.toClassPathOrEmpty() = this?.flatMap { (it as? JvmDependency)?.classpath ?: [] } ?: []

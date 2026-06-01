@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.CompanionBlockInfo
 
 class CompanionBlockCollector {
-    val validBlocks: MutableList<KtSourceElement> = mutableListOf()
-    val nestedBlocks: MutableList<KtSourceElement> = mutableListOf()
+    val validBlocks: MutableList<KtSourceElement> = []
+    val nestedBlocks: MutableList<KtSourceElement> = []
 
     fun collect(source: KtSourceElement, isNested: Boolean) {
         if (isNested) {

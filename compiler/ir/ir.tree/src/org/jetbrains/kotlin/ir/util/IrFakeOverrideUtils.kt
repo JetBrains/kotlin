@@ -39,7 +39,7 @@ fun <T : IrOverridableDeclaration<*>> T.collectRealOverrides(
     isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
     filter: (T) -> Boolean = { false },
 ): Set<T> {
-    if (!isFakeOverride(this)) return setOf(this)
+    if (!isFakeOverride(this)) return [this]
 
     @Suppress("UNCHECKED_CAST")
     return this.overriddenSymbols
@@ -51,8 +51,8 @@ private fun <T : IrOverridableDeclaration<*>> Collection<T>.collectAndFilterReal
     isFakeOverride: (T) -> Boolean = IrOverridableDeclaration<*>::isFakeOverride,
     filter: (T) -> Boolean = { false }
 ): Set<T> {
-    val visited = mutableSetOf<T>()
-    val realOverrides = mutableSetOf<T>()
+    val visited: MutableSet<T> = []
+    val realOverrides: MutableSet<T> = []
 
     fun collectRealOverrides(member: T) {
         if (!visited.add(member) || filter(member)) return

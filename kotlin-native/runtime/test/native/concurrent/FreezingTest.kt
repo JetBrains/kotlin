@@ -23,7 +23,7 @@ class FreezingTest {
 
     @Test
     fun freezeIsNoopForArrays() {
-        val a = arrayOf(1, 2, 3)
+        val a: Array<Int> = [1, 2, 3]
         a.freeze()
         a[0] = 4
         assertContentEquals(arrayOf(4, 2, 3), a)
@@ -31,7 +31,7 @@ class FreezingTest {
 
     @Test
     fun freezeIsNoopForPrimitiveArrays() {
-        val a = intArrayOf(1, 2, 3)
+        val a: IntArray = [1, 2, 3]
         a.freeze()
         a[0] = 4
         assertContentEquals(intArrayOf(4, 2, 3), a)

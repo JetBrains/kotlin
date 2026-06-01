@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.test.blackbox.support.util
 
 class ArgsBuilder {
-    private val args = mutableListOf<String>()
+    private val args: MutableList<String> = []
 
     operator fun contains(arg: String): Boolean = arg in args
 

@@ -123,7 +123,7 @@ object ModifierCheckerCore {
             trace.report(Errors.WRONG_MODIFIER_TARGET.on(node.psi, modifier, actualTargets.firstOrNull()?.description ?: "this"))
             return false
         }
-        val redundantTargets = redundantTargetMap[modifier] ?: emptySet()
+        val redundantTargets = redundantTargetMap[modifier] ?: []
         when {
             actualTargets.any { it in redundantTargets } ->
                 trace.report(

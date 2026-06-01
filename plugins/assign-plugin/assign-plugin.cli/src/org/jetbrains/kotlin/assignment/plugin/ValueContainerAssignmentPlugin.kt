@@ -35,7 +35,7 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId = PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION)
+    override val pluginOptions = [ANNOTATION_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(ASSIGNMENT_ANNOTATION, value)

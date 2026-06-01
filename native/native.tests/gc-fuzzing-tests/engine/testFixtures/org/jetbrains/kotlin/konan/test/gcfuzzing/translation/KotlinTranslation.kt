@@ -27,7 +27,7 @@ fun Program.produceKotlin(config: KotlinConfig): KotlinOutput {
     return KotlinOutput(
         filename = "${config.moduleName}.kt",
         contents = context.contents.toString(),
-        args = listOf("-Xstatic-framework", "-Xbinary=bundleId=${config.moduleName}", "-module-name", config.moduleName),
+        args = ["-Xstatic-framework", "-Xbinary=bundleId=${config.moduleName}", "-module-name", config.moduleName],
         frameworkName = config.moduleName,
     )
 }
@@ -230,18 +230,18 @@ private class KotlinTranslationContext(
         contents.lineEnd()
         contents.line("private fun mainBodyImpl(localsCount: Int)")
         contents.braces {
-            bodyContext(emptyList()) {
+            bodyContext([]) {
                 translateBody(body)
             }
         }
         contents.lineEnd()
         contents.line("fun mainBody()")
         contents.braces {
-            bodyContext(emptyList()) {
+            bodyContext([]) {
                 contents.lineEnd("val localsCount = 0")
                 contents.lineEnd {
                     expressionContext {
-                        translateFunctionCallExpressionImpl("mainBodyImpl", body.estimateLocalsCount(), emptyList())
+                        translateFunctionCallExpressionImpl("mainBodyImpl", body.estimateLocalsCount(), [])
                     }
                 }
             }

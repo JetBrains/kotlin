@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
  */
 abstract class AbstractLLStubBasedResolutionTest : AbstractLLStubBasedTest<Pair<String, List<FirResolvePhase>>>() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val STUB_RESOLUTION_INCONSISTENCY by stringDirective("Indicates that stub-based and AST-based resolution differ. The YT issue number has to be provided")

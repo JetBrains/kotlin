@@ -197,8 +197,8 @@ internal class OperatorExpressionGenerator(statementGenerator: StatementGenerato
         // Infer type for elvis manually. Take into account possibly nested elvises.
         val rightType = getResultTypeForElvis(binaryExpression.right!!).unwrap()
         val leftType = getResultTypeForElvis(binaryExpression.left!!).unwrap()
-        val leftNNType = intersectTypes(listOf(leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any))
-        return NewCommonSuperTypeCalculator.commonSuperType(listOf(rightType, leftNNType))
+        val leftNNType = intersectTypes([leftType, (context.irBuiltIns as IrBuiltInsOverDescriptors).any])
+        return NewCommonSuperTypeCalculator.commonSuperType([rightType, leftNNType])
     }
 
     private fun generateElvis(expression: KtBinaryExpression): IrExpression {

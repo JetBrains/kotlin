@@ -448,15 +448,15 @@ internal fun argumentsWithVarargAsSingleArray(
     // External vararg arguments should be represented in JS as multiple "plain" arguments (opposed to arrays in Kotlin)
     // We are using `Function.prototype.apply` function to pass all arguments as a single array.
     // For this purpose are concatenating non-vararg arguments with vararg.
-    var arraysForConcat = mutableListOf<JsExpression>()
-    val concatElements = mutableListOf<JsExpression>()
+    var arraysForConcat: MutableList<JsExpression> = []
+    val concatElements: MutableList<JsExpression> = []
     for ((parameter, irArgument, jsArgument) in arguments) {
         // Call `Array.prototype.slice` on vararg arguments in order to convert array-like objects into proper arrays
         if (parameter.isVararg) {
             if (arraysForConcat.isNotEmpty()) {
                 concatElements.add(JsArrayLiteral(arraysForConcat))
             }
-            arraysForConcat = mutableListOf()
+            arraysForConcat = []
 
             val varargArgument = when (jsArgument) {
                 is JsArrayLiteral -> jsArgument
@@ -728,14 +728,14 @@ private fun IrDeclarationWithName.originalNameForUseInSourceMap(policy: SourceMa
     return name.asString()
 }
 
-private val nameMappingOriginAllowList = setOf(
+private val nameMappingOriginAllowList: Set<IrDeclarationOrigin> = [
     IrDeclarationOrigin.DEFINED,
     IrDeclarationOrigin.FOR_LOOP_VARIABLE,
     IrDeclarationOrigin.CATCH_PARAMETER,
     IrDeclarationOrigin.CONTINUATION,
     BOUND_VALUE_PARAMETER,
     JsLoweredDeclarationOrigin.JS_SHADOWED_DEFAULT_PARAMETER,
-)
+]
 
 private fun IrClass?.canUseSuperRef(context: JsGenerationContext, superClass: IrClass): Boolean {
     val currentFunction = context.currentFunction ?: return false

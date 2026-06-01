@@ -14,7 +14,7 @@ internal class KaResolveExtensionToContentScopeRefinerBridge : KotlinContentScop
     override fun getEnlargementScopes(module: KaModule): List<GlobalSearchScope> =
         buildList {
             if (KaResolveExtensionProvider.provideExtensionsFor(module).isNotEmpty()) {
-                add(KaBaseResolveExtensionGeneratedFilesScope(listOf(module)))
+                add(KaBaseResolveExtensionGeneratedFilesScope([module]))
             }
         }
 

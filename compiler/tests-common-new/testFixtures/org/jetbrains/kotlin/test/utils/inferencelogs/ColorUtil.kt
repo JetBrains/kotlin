@@ -70,12 +70,12 @@ private fun generatePointsOnACircle(): Sequence<Double> {
     val circleQuarterTraversal = sequenceOf(0.0) + traverseBinaryRationalsFrom0To1()
 
     return circleQuarterTraversal.flatMap { offset ->
-        listOf(
+        [
             offset + 0.0, // North
             offset + kotlin.math.PI, // South
             offset + kotlin.math.PI / 2, // East
             offset + kotlin.math.PI * 3.0 / 2 // West
-        )
+        ]
     }
 }
 

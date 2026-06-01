@@ -36,7 +36,7 @@ annotation class Repository(vararg val repositoriesCoordinates: String, val opti
 suspend fun ExternalDependenciesResolver.resolveFromScriptSourceAnnotations(
     annotations: Iterable<ScriptSourceAnnotation<*>>
 ): ResultWithDiagnostics<List<File>> {
-    val reports = mutableListOf<ScriptDiagnostic>()
+    val reports: MutableList<ScriptDiagnostic> = []
     annotations.forEach { (val annotation, val locationWithId = location) ->
         when (annotation) {
             is Repository -> {

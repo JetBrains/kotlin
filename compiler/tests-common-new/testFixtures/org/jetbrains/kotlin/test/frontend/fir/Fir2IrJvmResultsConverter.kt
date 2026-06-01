@@ -63,7 +63,7 @@ internal class Fir2IrJvmResultsConverter(testServices: TestServices) : AbstractF
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         // Create and initialize the module and its dependencies
         compilerConfigurationProvider.getProject(module)
-        return emptyList()
+        return []
     }
 
     override val klibFactories: KlibMetadataFactories

@@ -21,12 +21,12 @@ sealed interface CirProvidedClassifiers {
     object EMPTY : CirProvidedClassifiers {
         override fun hasClassifier(classifierId: CirEntityId) = false
         override fun classifier(classifierId: CirEntityId): CirProvided.Classifier? = null
-        override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId) = emptyList<CirEntityId>()
+        override fun findTypeAliasesWithUnderlyingType(underlyingClassifier: CirEntityId): List<CirEntityId> = []
     }
 
     companion object {
         internal val FALLBACK_FORWARD_DECLARATION_CLASS =
-            CirProvided.RegularClass(emptyList(), emptyList(), Visibilities.Public, ClassKind.CLASS)
+            CirProvided.RegularClass([], [], Visibilities.Public, ClassKind.CLASS)
 
         fun of(vararg delegates: CirProvidedClassifiers): CirProvidedClassifiers {
             val unwrappedDelegates: List<CirProvidedClassifiers> = delegates.fold(ArrayList()) { acc, delegate ->
@@ -54,8 +54,8 @@ internal operator fun CirProvidedClassifiers.plus(other: CirProvidedClassifiers)
     return when {
         this is CompositeClassifiers && other is CompositeClassifiers -> CompositeClassifiers(this.delegates + other.delegates)
         this is CompositeClassifiers -> CompositeClassifiers(this.delegates + other)
-        other is CompositeClassifiers -> CompositeClassifiers(listOf(this) + other.delegates)
-        else -> CompositeClassifiers(listOf(this, other))
+        other is CompositeClassifiers -> CompositeClassifiers([this] + other.delegates)
+        else -> CompositeClassifiers([this, other])
     }
 }
 

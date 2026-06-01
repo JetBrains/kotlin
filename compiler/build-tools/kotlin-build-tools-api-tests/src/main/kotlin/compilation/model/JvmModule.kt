@@ -63,7 +63,7 @@ class JvmModule(
         compilationAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger
     ): CompilationResult {
-        val allowedExtensions = setOf("kt", "kts", "java", "greet")
+        val allowedExtensions: Set<String> = ["kt", "kts", "java", "greet"]
 
         val compilationOperation = kotlinToolchain.jvm.jvmCompilationOperation(
             sourcesDirectory.walk()

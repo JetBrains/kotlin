@@ -75,7 +75,7 @@ sealed class Stability {
     operator fun plus(other: Stability): Stability = when {
         other is Certain -> if (other.stable) this else other
         this is Certain -> if (stable) other else this
-        else -> Combined(listOf(this, other))
+        else -> Combined([this, other])
     }
 
     operator fun plus(other: List<Stability>): Stability {
@@ -137,9 +137,9 @@ fun Stability.normalize(): Stability {
             // if combined, we perform the more expensive normalization process
         }
     }
-    val parameters = mutableSetOf<IrTypeParameterSymbol>()
-    val parts = mutableListOf<Stability>()
-    val stack = mutableListOf<Stability>(this)
+    val parameters: MutableSet<IrTypeParameterSymbol> = []
+    val parts: MutableList<Stability> = []
+    val stack: MutableList<Stability> = [this]
     while (stack.isNotEmpty()) {
         when (val stability: Stability = stack.removeAt(stack.size - 1)) {
             is Stability.Combined -> {
@@ -228,7 +228,7 @@ class StabilityInferencer(
      * result.
      */
     fun stabilityOf(irType: IrType, fileContainingDependent: IrFile?): Stability =
-        stabilityOf(irType, emptyMap(), emptySet(), fileContainingDependent)
+        stabilityOf(irType, emptyMap(), [], fileContainingDependent)
 
     /**
      * Returns the stability of [declaration].
@@ -495,7 +495,7 @@ class StabilityInferencer(
             type.isTypeParameter() -> {
                 val classifier = type.classifierOrFail
                 val arg = substitutions[classifier]
-                val symbol = SymbolForAnalysis(classifier, emptyList(), analysisEntryFile)
+                val symbol = SymbolForAnalysis(classifier, [], analysisEntryFile)
                 if (arg != null && symbol !in currentlyAnalyzing) {
                     stabilityOf(arg, substitutions, currentlyAnalyzing + symbol, analysisEntryFile)
                 } else {

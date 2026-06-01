@@ -27,9 +27,9 @@ interface PackageFragmentProvider {
 
     object Empty : PackageFragmentProvider {
         @Deprecated("for usages use #packageFragments(FqName) at final point, for impl use #collectPackageFragments(FqName, MutableCollection<PackageFragmentDescriptor>)")
-        override fun getPackageFragments(fqName: FqName) = emptyList<PackageFragmentDescriptor>()
+        override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> = []
 
-        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean) = emptySet<FqName>()
+        override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Set<FqName> = []
     }
 }
 
@@ -39,7 +39,7 @@ interface PackageFragmentProviderOptimized : PackageFragmentProvider {
 }
 
 fun PackageFragmentProvider.packageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-    val packageFragments = mutableListOf<PackageFragmentDescriptor>()
+    val packageFragments: MutableList<PackageFragmentDescriptor> = []
     collectPackageFragmentsOptimizedIfPossible(fqName, packageFragments)
     return packageFragments
 }

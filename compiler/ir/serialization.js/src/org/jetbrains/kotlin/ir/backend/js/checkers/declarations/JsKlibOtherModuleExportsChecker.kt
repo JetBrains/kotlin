@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.ir.backend.js.checkers.*
 
 object JsKlibOtherModuleExportsChecker : JsKlibExportedDeclarationsChecker {
     private fun <T> MutableMap<T, MutableList<JsKlibExport>>.addExport(key: T, export: JsKlibExport) {
-        getOrPut(key) { mutableListOf() }.add(export)
+        getOrPut(key) { [] }.add(export)
     }
 
     private fun collectClashesByFqNames(declarations: List<JsKlibExportingDeclaration>): Map<String, List<JsKlibExport>> {

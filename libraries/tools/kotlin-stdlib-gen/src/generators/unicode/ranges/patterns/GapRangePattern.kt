@@ -26,7 +26,7 @@ internal class GapRangePattern private constructor(
 ) : RangePattern {
     private val start: Int = charCode
     private var end: Int = charCode
-    private val gaps = mutableListOf<Gap>()
+    private val gaps: MutableList<Gap> = []
 
     init {
         require(categoryId == "OL")

@@ -71,7 +71,7 @@ fun <T : Any> deserializeFromPlainText(str: String, klass: KClass<T>): T? {
 }
 
 @Suppress("UNCHECKED_CAST")
-fun <T : Any> transformClassToPropertiesMap(classToTransform: T, excludedProperties: List<String> = emptyList()) =
+fun <T : Any> transformClassToPropertiesMap(classToTransform: T, excludedProperties: List<String> = []) =
     collectProperties(classToTransform::class as KClass<T>, false)
         .filter { property -> property.name !in excludedProperties }
         .associateBy(

@@ -17,7 +17,7 @@ internal class OtherUppercaseRangesGenerator(
     private val outputFile: File,
     private val target: KotlinTarget
 ) {
-    private val otherUpperRanges = mutableListOf<IntRange>()
+    private val otherUpperRanges: MutableList<IntRange> = []
 
     fun appendLine(line: PropertyLine) {
         // In Native the Other_Uppercase code points are also used to perform String.lowercase()

@@ -20,7 +20,7 @@ internal fun ObjCExportContext.mangleObjCMethods(
 internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
     val with = if (attribute.isConstructor) "With" else ""
     return if (attribute.parameters.isEmpty())
-        listOf(attribute.name + attribute.postfix)
+        [attribute.name + attribute.postfix]
     else if (attribute.parameters.size == 1) {
         val mangledAttribute = (attribute.name + with + attribute.parameters.first()
             .replaceFirstChar { it.uppercaseChar() }).mangleSelector(attribute.postfix)
@@ -64,7 +64,7 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
              * - bar__ > ___
              * etc
              */
-            listOf("${mangledAttribute.dropLast(2)}:")
+            ["${mangledAttribute.dropLast(2)}:"]
         } else {
             /**
              * If extension function has parameters we have the same amount of `_` for selector and parameter:
@@ -73,7 +73,7 @@ internal fun buildMangledSelectors(attribute: ObjCMemberDetails): List<String> {
              * - bar param__ > _:param__
              * etc
              */
-            listOf(mangledAttribute)
+            [mangledAttribute]
         }
 
     } else {
@@ -140,7 +140,7 @@ internal fun ObjCMemberDetails.mangleAttribute(): ObjCMemberDetails {
  * This function isn't for optimization; it avoids handling complex edge case later during mangling.
  */
 internal fun List<ObjCExportStub>.hasMethodConflicts(): Boolean {
-    val swiftNameAttributes = mutableSetOf<String>()
+    val swiftNameAttributes: MutableSet<String> = []
     forEach { method ->
         if (method is ObjCMethod && method.isSwiftNameMethod()) {
             val swiftNameAttribute = getMemberKey(method)

@@ -48,7 +48,7 @@ object PluginCliParser {
             pluginClasspaths?.asList().orEmpty(),
             pluginOptions?.asList().orEmpty(),
             pluginConfigurations?.asList().orEmpty(),
-            emptyList(),
+            [],
             configuration,
             parentDisposable,
         )
@@ -85,7 +85,7 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ): ExitCode {
-        return loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, emptyList(), configuration, parentDisposable)
+        return loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, [], configuration, parentDisposable)
     }
 
     @JvmStatic
@@ -229,7 +229,7 @@ object PluginCliParser {
         configuration: CompilerConfiguration,
         parentDisposable: Disposable,
     ) {
-        val classLoader = createClassLoader(pluginClasspaths ?: emptyList(), parentDisposable)
+        val classLoader = createClassLoader(pluginClasspaths ?: [], parentDisposable)
         val componentRegistrars = ServiceLoaderLite.loadImplementations(ComponentRegistrar::class.java, classLoader)
         configuration.addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
 

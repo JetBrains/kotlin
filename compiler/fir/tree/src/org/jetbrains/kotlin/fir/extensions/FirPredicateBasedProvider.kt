@@ -70,7 +70,7 @@ abstract class FirPredicateBasedProvider : FirSessionComponent {
 
 @NoMutableState
 object FirEmptyPredicateBasedProvider : FirPredicateBasedProvider() {
-    override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> = emptyList()
+    override fun getSymbolsByPredicate(predicate: LookupPredicate): List<FirBasedSymbol<*>> = []
 
     override fun getOwnersOfDeclaration(declaration: FirDeclaration): List<FirBasedSymbol<*>>? = null
 

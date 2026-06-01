@@ -339,7 +339,7 @@ private class ContextCollectorVisitor(
 
         val cfgNode = getClosestControlFlowNode(fir, kind)
         val flow = cfgNode?.flow
-        val smartCasts = mutableListOf<ContextCollector.SmartCast>()
+        val smartCasts: MutableList<ContextCollector.SmartCast> = []
         val expression = findExpression(fir)
         val expressionStability = if (flow != null && expression != null) {
             computeExpressionStability(expression, flow)
@@ -677,7 +677,7 @@ private class ContextCollectorVisitor(
             withParent(propertyAccessExpression) {
                 val calleeReference = propertyAccessExpression.calleeReference
 
-                val visitor = FilteringVisitor(this, elementsToSkip = setOf(calleeReference), checkIsActive = true)
+                val visitor = FilteringVisitor(this, elementsToSkip = [calleeReference], checkIsActive = true)
                 propertyAccessExpression.acceptChildren(visitor)
                 calleeReference.accept(this)
             }

@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.platform.konan.NativePlatforms
  */
 object NativeConfigurationPhase : AbstractConfigurationPhase<K2NativeCompilerArguments>(
     name = "NativeConfigurationPhase",
-    preActions = setOf(PerformanceNotifications.InitializationStarted),
-    postActions = setOf(PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(NativeKlibConfigurationUpdater)
+    preActions = [PerformanceNotifications.InitializationStarted],
+    postActions = [PerformanceNotifications.InitializationFinished, CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [NativeKlibConfigurationUpdater]
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
@@ -83,7 +83,7 @@ object NativeKlibConfigurationUpdater : ConfigurationUpdater<K2NativeCompilerArg
         arguments.kotlinHome?.let { configuration.konanHome = it }
         arguments.target?.let { configuration.konanTarget = it }
         configuration.targetPlatform = configuration.konanTarget?.let {
-            NativePlatforms.nativePlatformByTargetNames(listOf(it))
+            NativePlatforms.nativePlatformByTargetNames([it])
         } ?: NativePlatforms.unspecifiedNativePlatform
 
         configuration.konanLibraries = arguments.libraries.toList()

@@ -22,7 +22,7 @@ abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartP
 
     override fun findPackageParts(packageFqName: String): List<String> {
         val rootToPackageParts: Collection<PackageParts> = getPackageParts(packageFqName)
-        if (rootToPackageParts.isEmpty()) return emptyList()
+        if (rootToPackageParts.isEmpty()) return []
 
         val result = linkedSetOf<String>()
         val visitedMultifileFacades = linkedSetOf<String>()

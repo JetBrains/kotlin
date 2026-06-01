@@ -111,7 +111,7 @@ object Ordering : TemplateGroupBase() {
 
         body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
             """
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
             val list = toMutableList()
             list.reverse()
             return list

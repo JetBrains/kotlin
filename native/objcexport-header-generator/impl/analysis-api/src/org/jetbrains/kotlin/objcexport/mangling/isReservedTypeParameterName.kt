@@ -14,17 +14,17 @@ import org.jetbrains.kotlin.objcexport.getObjCKotlinStdlibClassOrProtocolName
  * See K1 implementation [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.GenericTypeParameterNameMapping]
  */
 internal fun ObjCExportContext.isReservedTypeParameterName(name: String): Boolean {
-    val predefinedClassNames = setOf(
+    val predefinedClassNames: Set<String> = [
         exportSession.getDefaultSuperClassOrProtocolName().objCName,
         exportSession.getObjCKotlinStdlibClassOrProtocolName(FqNames.mutableSet.shortName().asString()).objCName,
         exportSession.getObjCKotlinStdlibClassOrProtocolName(FqNames.mutableMap.shortName().asString()).objCName
-    )
+    ]
 
     return (reservedTypeParameterNames + predefinedClassNames).contains(name)
 }
 
-private val reservedTypeParameterNames = setOf(
+private val reservedTypeParameterNames: Set<String> = [
     "id", "NSObject", "NSArray", "NSCopying", "NSNumber", "NSInteger",
     "NSUInteger", "NSString", "NSSet", "NSDictionary", "NSMutableArray", "int", "unsigned", "short",
     "char", "long", "float", "double", "int32_t", "int64_t", "int16_t", "int8_t", "unichar"
-)
+]

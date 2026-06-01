@@ -198,7 +198,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     )
     val additionalModules = parseBitcodeFiles(additionalBitcodeFiles)
     return LlvmModules(
-            runtimeModules.ifNotEmpty { this + generationState.generateRuntimeConstantsModule() } ?: emptyList(),
+            runtimeModules.ifNotEmpty { this + generationState.generateRuntimeConstantsModule() }.orEmpty(),
             additionalModules + listOfNotNull(patchObjCRuntimeModule(generationState))
     )
 }
@@ -265,15 +265,15 @@ private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvm
 
 private fun embedAppleLinkerOptionsToBitcode(llvm: CodegenLlvmHelpers, config: NativeSecondStageCompilationConfig) {
     fun findEmbeddableOptions(options: List<String>): List<List<String>> {
-        val result = mutableListOf<List<String>>()
+        val result: MutableList<List<String>> = []
         val iterator = options.iterator()
         loop@while (iterator.hasNext()) {
             val option = iterator.next()
-            result += when {
-                option.startsWith("-l") -> listOf(option)
-                option == "-framework" && iterator.hasNext() -> listOf(option, iterator.next())
+            result.add(when {
+                option.startsWith("-l") -> [option]
+                option == "-framework" && iterator.hasNext() -> [option, iterator.next()]
                 else -> break@loop // Ignore the rest.
-            }
+            })
         }
         return result
     }

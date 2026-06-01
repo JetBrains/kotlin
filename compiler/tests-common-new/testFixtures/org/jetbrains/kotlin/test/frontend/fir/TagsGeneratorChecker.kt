@@ -52,7 +52,7 @@ import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
 class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
-    private val tagsFromAllModules: MutableSet<String> = mutableSetOf()
+    private val tagsFromAllModules: MutableSet<String> = []
     private val testDataFiles: List<File> by lazy {
         testServices.moduleStructure.originalTestDataFiles.first().let { originalFile ->
             listOf(
@@ -254,7 +254,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
 
 @OptIn(UnresolvedExpressionTypeAccess::class)
 private class TagsCollectorVisitor(private val session: FirSession) : FirVisitorVoid() {
-    val tags = mutableSetOf<String>()
+    val tags: MutableSet<String> = []
 
     override fun visitElement(element: FirElement) {
         element.acceptChildren(this)

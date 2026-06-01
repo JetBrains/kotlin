@@ -188,7 +188,7 @@ class ForwardDeclarationsTests : IndexerTestsBase() {
                 buildNativeLibraryFrom(
                         def,
                         // Here we intentionally don't use -fmodules since this is how the platform libraries are built
-                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        ["-compiler-option", "-I${files.directory}"],
                         imports = ImportsMock(
                                 mapOf(
                                         HeaderId(headerContentsHash(oneH.path)) to "one"
@@ -253,7 +253,7 @@ class ForwardDeclarationsTests : IndexerTestsBase() {
                 buildNativeLibraryFrom(
                         def,
                         // Here we intentionally don't use -fmodules since this is how the platform libraries are built
-                        arrayOf("-compiler-option", "-I${files.directory}"),
+                        ["-compiler-option", "-I${files.directory}"],
                         imports = ImportsMock(
                                 mapOf(
                                         HeaderId(headerContentsHash(oneH.path)) to "one"

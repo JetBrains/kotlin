@@ -44,7 +44,7 @@ private class EnumDefImpl(
         override val isAnonymous: Boolean,
         override val location: Location
 ) : EnumDef(spelling, type) {
-    override val constants = mutableListOf<EnumConstant>()
+    override val constants: MutableList<EnumConstant> = []
 }
 
 private interface ObjCContainerImpl {
@@ -61,10 +61,10 @@ private class ObjCProtocolImpl(
         override val isForwardDeclaration: Boolean,
         override val swiftName: String? = null
 ) : ObjCProtocol(name), ObjCContainerImpl {
-    override val protocols = mutableListOf<ObjCProtocol>()
-    override val methods = mutableListOf<ObjCMethod>()
-    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
-    override val properties = mutableListOf<ObjCProperty>()
+    override val protocols: MutableList<ObjCProtocol> = []
+    override val methods: MutableList<ObjCMethod> = []
+    override val unavailableMethods: MutableList<ObjCUnavailableMethod> = []
+    override val properties: MutableList<ObjCProperty> = []
 }
 
 private class ObjCClassImpl(
@@ -72,25 +72,25 @@ private class ObjCClassImpl(
         override val location: Location,
         override val isForwardDeclaration: Boolean,
         override val binaryName: String?,
-        override val typeParameters: List<String> = emptyList<String>(),
+        override val typeParameters: List<String> = [],
         override val swiftName: String? = null
 ) : ObjCClass(name), ObjCContainerImpl {
-    override val protocols = mutableListOf<ObjCProtocol>()
-    override val methods = mutableListOf<ObjCMethod>()
-    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
-    override val properties = mutableListOf<ObjCProperty>()
+    override val protocols: MutableList<ObjCProtocol> = []
+    override val methods: MutableList<ObjCMethod> = []
+    override val unavailableMethods: MutableList<ObjCUnavailableMethod> = []
+    override val properties: MutableList<ObjCProperty> = []
     override var baseClass: ObjCClass? = null
-    override val includedCategories = mutableListOf<ObjCCategory>()
+    override val includedCategories: MutableList<ObjCCategory> = []
 }
 
 private class ObjCCategoryImpl(
         name: String, clazz: ObjCClass,
         override val location: Location
 ) : ObjCCategory(name, clazz), ObjCContainerImpl {
-    override val protocols = mutableListOf<ObjCProtocol>()
-    override val methods = mutableListOf<ObjCMethod>()
-    override val unavailableMethods = mutableListOf<ObjCUnavailableMethod>()
-    override val properties = mutableListOf<ObjCProperty>()
+    override val protocols: MutableList<ObjCProtocol> = []
+    override val methods: MutableList<ObjCMethod> = []
+    override val unavailableMethods: MutableList<ObjCUnavailableMethod> = []
+    override val properties: MutableList<ObjCProperty> = []
 }
 
 public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boolean = false) : NativeIndex() {
@@ -106,7 +106,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private open inner class LocatableDeclarationRegistry<D : LocatableDeclaration> {
         private val all = mutableMapOf<DeclarationID, D>()
 
-        val included = mutableListOf<D>()
+        val included: MutableList<D> = []
 
         protected open fun shouldBeIncluded(declaration: D, headerId: HeaderId): Boolean =
                 !library.headerExclusionPolicy.excludeAll(headerId)
@@ -221,8 +221,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     override val functions: Collection<FunctionDecl>
         get() = functionById.values.filterNotNull()
 
-    override val macroConstants = mutableListOf<ConstantDef>()
-    override val wrappedMacros = mutableListOf<WrappedMacroDef>()
+    override val macroConstants: MutableList<ConstantDef> = []
+    override val wrappedMacros: MutableList<WrappedMacroDef> = []
 
     private val globalById = mutableMapOf<DeclarationID, GlobalDecl>()
 
@@ -308,8 +308,8 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
                     else -> error(cursor.kind)
                 },
                 members,
-                emptyList(),
-                emptyList()
+                [],
+                []
         )
     }
 
@@ -435,7 +435,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         val cursor = typesDefinitions.classDefinition(getCursorSpelling(originalCursor)) ?: originalCursor
 
         val name = clang_getCursorDisplayName(cursor).convertAndDispose()
-        val parameters = mutableListOf<String>()
+        val parameters: MutableList<String> = []
 
         if (isObjCInterfaceDeclForward(cursor)) {
             return objCClassRegistry.getOrPut(cursor) {
@@ -477,7 +477,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
     private fun collectClassCategories(classCursor: CValue<CXCursor>, className: String): List<CValue<CXCursor>> {
         assert(classCursor.kind == CXCursorKind.CXCursor_ObjCInterfaceDecl) { classCursor.kind }
         val classFile = getContainingFile(classCursor)
-        val result = mutableListOf<CValue<CXCursor>>()
+        val result: MutableList<CValue<CXCursor>> = []
         // Accessing the whole translation unit (TU) is overkill, but it is the simplest solution which is doable
         // since we use this function for a narrow set of cases.
         // Possible improvements:
@@ -817,14 +817,14 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
             CXType_ObjCId -> objCType {
                 ObjCIdType(
                         getNullability(type, typeAttributes),
-                        protocols = emptyList() // `CXType_ObjCId` means `id` without any protocols.
+                        protocols = [] // `CXType_ObjCId` means `id` without any protocols.
                 )
             }
 
             CXType_ObjCClass -> objCType {
                 ObjCClassPointer(
                         getNullability(type, typeAttributes),
-                        protocols = emptyList() // `CXType_ObjCClass` means `Class` without any protocols.
+                        protocols = [] // `CXType_ObjCClass` means `Class` without any protocols.
                 )
             }
 
@@ -912,12 +912,12 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
         // TODO: also use nullability attributes of parameters and return value.
 
         val functionType = convertFunctionType(pointee) as? FunctionType
-                ?: return ObjCIdType(nullability, protocols = emptyList())
+                ?: return ObjCIdType(nullability, protocols = [])
 
         return ObjCBlockPointer(nullability, functionType.parameterTypes, functionType.returnType)
     }
 
-    private val TARGET_ATTRIBUTE_NAMES = setOf("__target__", "target")
+    private val TARGET_ATTRIBUTE_NAMES: Set<String> = ["__target__", "target"]
 
     private fun isSuitableFunction(cursor: CValue<CXCursor>): Boolean {
         if (!isAvailable(cursor)) return false
@@ -1129,7 +1129,7 @@ public open class NativeIndexImpl(val library: NativeLibrary, val verbose: Boole
 
         var returnType = convertType(cursorReturnType, clang_getCursorResultTypeAttributes(cursor))
 
-        val parameters = mutableListOf<Parameter>()
+        val parameters: MutableList<Parameter> = []
         parameters += getFunctionParameters(cursor) ?: return null
 
         val definitionCursor = findDefinition(cursor)
@@ -1264,7 +1264,7 @@ private fun indexDeclarations(
 ): Compilation {
     // Below, declarations from PCH should be excluded to restrict `visitChildren` to visit local declarations only
     withIndex(excludeDeclarationsFromPCH = true) { index ->
-        val errors = mutableListOf<Diagnostic>()
+        val errors: MutableList<Diagnostic> = []
         val translationUnit = nativeIndex.library.parse(
                 index,
                 options = CXTranslationUnit_DetailedPreprocessingRecord or CXTranslationUnit_ForSerialization,

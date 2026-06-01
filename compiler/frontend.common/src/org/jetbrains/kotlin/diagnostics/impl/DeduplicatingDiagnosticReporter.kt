@@ -13,7 +13,7 @@ class DeduplicatingDiagnosticReporter(private val delegate: DiagnosticReporter) 
     override val hasErrors: Boolean get() = delegate.hasErrors
     override val hasWarningsForWError: Boolean get() = delegate.hasWarningsForWError
 
-    private val reported = mutableSetOf<Triple<KtSourceFile?, AbstractKtSourceElement, KtDiagnosticFactoryN>>()
+    private val reported: MutableSet<Triple<KtSourceFile?, AbstractKtSourceElement, KtDiagnosticFactoryN>> = []
 
     override fun report(diagnostic: KtDiagnostic?, context: DiagnosticContext) {
         when (diagnostic) {

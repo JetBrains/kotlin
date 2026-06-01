@@ -43,7 +43,7 @@ private fun Int.flagsList(flags: List<(Int) -> String?>) =
     }.joinToString(prefix = "[", postfix = "]") { it }
 
 
-val CLASS_FLAGS = listOf(
+val CLASS_FLAGS = [
     AndNotFlag(Opcodes.ACC_PUBLIC + Opcodes.ACC_PROTECTED + Opcodes.ACC_PRIVATE, "package-private"),
     AndFlag(Opcodes.ACC_PUBLIC, "public"),
     AndFlag(Opcodes.ACC_PRIVATE, "private"),
@@ -58,9 +58,9 @@ val CLASS_FLAGS = listOf(
     AndFlag(Opcodes.ACC_ENUM, "enum"),
     AndFlag(Opcodes.ACC_MODULE, "module)"),
     AndFlag(Opcodes.ACC_DEPRECATED, "deprecated")
-)
+]
 
-val METHOD_FLAGS = listOf(
+val METHOD_FLAGS = [
     AndNotFlag(Opcodes.ACC_PUBLIC + Opcodes.ACC_PROTECTED + Opcodes.ACC_PRIVATE, "package-private"),
     AndFlag(Opcodes.ACC_PUBLIC, "public"),
     AndFlag(Opcodes.ACC_PRIVATE, "private"),
@@ -75,9 +75,9 @@ val METHOD_FLAGS = listOf(
     AndFlag(Opcodes.ACC_STRICT, "strict"),
     AndFlag(Opcodes.ACC_SYNTHETIC, "synthetic"),
     AndFlag(Opcodes.ACC_DEPRECATED, "deprecated")
-)
+]
 
-val FIELD_FLAGS = listOf(
+val FIELD_FLAGS = [
     AndNotFlag(Opcodes.ACC_PUBLIC + Opcodes.ACC_PROTECTED + Opcodes.ACC_PRIVATE, "package-private"),
     AndFlag(Opcodes.ACC_PUBLIC, "public"),
     AndFlag(Opcodes.ACC_PRIVATE, "private"),
@@ -89,4 +89,4 @@ val FIELD_FLAGS = listOf(
     AndFlag(Opcodes.ACC_SYNTHETIC, "synthetic"),
     AndFlag(Opcodes.ACC_ENUM, "enum"),
     AndFlag(Opcodes.ACC_DEPRECATED, "deprecated")
-)
+]

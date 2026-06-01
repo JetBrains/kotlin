@@ -102,13 +102,13 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         }
 
         if (declaration.hasDefaultArgs() && (declaration is IrConstructor || declaration.isTopLevel || declaration.isStatic)) {
-            return listOf(declaration.introduceDefaultResolution())
+            return [declaration.introduceDefaultResolution()]
         }
 
         val [originalFun, defaultFunStub] = super.transformFlat(declaration) ?: return null
 
         if (originalFun !is IrFunction || defaultFunStub !is IrFunction) {
-            return listOf(originalFun, defaultFunStub)
+            return [originalFun, defaultFunStub]
         }
 
         if (!defaultFunStub.isFakeOverride) {
@@ -143,7 +143,7 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         defaultFunStub.annotations = exportAnnotations
         originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 
-        return listOf(originalFun, defaultFunStub)
+        return [originalFun, defaultFunStub]
     }
 
     override fun IrFunction.generateDefaultStubBody(originalDeclaration: IrFunction): IrBody {

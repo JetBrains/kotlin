@@ -393,25 +393,25 @@ fun <T> FirPropertyBuilder.generateAccessorsByDelegate(
         }
         coneTypeOrNull = when {
             !isMember && !isExtension -> if (isVar) {
-                StandardClassIds.KMutableProperty0.constructClassLikeType(arrayOf(ConeStarProjection))
+                StandardClassIds.KMutableProperty0.constructClassLikeType([ConeStarProjection])
             } else {
-                StandardClassIds.KProperty0.constructClassLikeType(arrayOf(ConeStarProjection))
+                StandardClassIds.KProperty0.constructClassLikeType([ConeStarProjection])
             }
             isMember && isExtension -> if (isVar) {
                 StandardClassIds.KMutableProperty2.constructClassLikeType(
-                    arrayOf(
+                    [
                         ConeStarProjection,
                         ConeStarProjection,
                         ConeStarProjection
-                    )
+                    ]
                 )
             } else {
-                StandardClassIds.KProperty2.constructClassLikeType(arrayOf(ConeStarProjection, ConeStarProjection, ConeStarProjection))
+                StandardClassIds.KProperty2.constructClassLikeType([ConeStarProjection, ConeStarProjection, ConeStarProjection])
             }
             else -> if (isVar) {
-                StandardClassIds.KMutableProperty1.constructClassLikeType(arrayOf(ConeStarProjection, ConeStarProjection))
+                StandardClassIds.KMutableProperty1.constructClassLikeType([ConeStarProjection, ConeStarProjection])
             } else {
-                StandardClassIds.KProperty1.constructClassLikeType(arrayOf(ConeStarProjection, ConeStarProjection))
+                StandardClassIds.KProperty1.constructClassLikeType([ConeStarProjection, ConeStarProjection])
             }
         }
         this@generateAccessorsByDelegate.typeParameters.mapTo(typeArguments) {
@@ -795,7 +795,7 @@ fun FirErrorTypeRef.wrapIntoArray(): FirResolvedTypeRef {
     val typeRef = this
     return buildResolvedTypeRef {
         source = typeRef.source
-        coneType = StandardClassIds.Array.constructClassLikeType(arrayOf(ConeKotlinTypeProjectionOut(typeRef.coneType)))
+        coneType = StandardClassIds.Array.constructClassLikeType([ConeKotlinTypeProjectionOut(typeRef.coneType)])
         delegatedTypeRef = typeRef.copyWithNewSourceKind(KtFakeSourceElementKind.ArrayTypeFromVarargParameter)
     }
 }

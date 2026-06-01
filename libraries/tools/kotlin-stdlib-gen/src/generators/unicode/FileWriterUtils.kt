@@ -21,12 +21,12 @@ internal fun FileWriter.writeHeader(file: File, pkg: String) {
 
 internal fun FileWriter.writeIntArray(name: String, elements: List<Int>, strategy: RangesWritingStrategy, useHex: Boolean = true) {
     val toString = if (useHex) Int::toHexIntLiteral else Int::toString
-    writeCollection(name, "intArrayOf", elements.map(toString), strategy)
+    writeCollection(name, "IntArray", elements.map(toString), strategy)
 }
 
 private fun FileWriter.writeCollection(
     name: String,
-    constructingFun: String,
+    collectionType: String,
     elements: List<String>,
     strategy: RangesWritingStrategy
 ) {
@@ -34,7 +34,7 @@ private fun FileWriter.writeCollection(
         append(strategy.indentation + string)
     }
 
-    appendWithIndentation("${strategy.rangesVisibilityModifier} val $name = $constructingFun(")
+    appendWithIndentation("${strategy.rangesVisibilityModifier} val $name: $collectionType = [")
     for (i in elements.indices) {
         if (i % 20 == 0) {
             appendLine()
@@ -43,15 +43,15 @@ private fun FileWriter.writeCollection(
         append(elements[i] + ", ")
     }
     appendLine()
-    appendWithIndentation(")")
+    appendWithIndentation("]")
     appendLine()
 }
 
 internal fun FileWriter.writeMappings(mappings: Map<Int, List<String>>, strategy: RangesWritingStrategy) {
     val keys = mappings.keys.map { it.toHexIntLiteral() }
-    writeCollection("keys", "intArrayOf", keys, strategy)
+    writeCollection("keys", "IntArray", keys, strategy)
     val values = mappings.values.map { it.hexCharsToStringLiteral() }
-    writeCollection("values", "arrayOf", values, strategy)
+    writeCollection("values", "Array<String>", values, strategy)
 }
 
 internal const val TO_BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/"
@@ -64,7 +64,7 @@ internal fun List<Int>.toVarLenBase64(): String {
 private fun Int.to6Bits(): List<Int> {
     require(this >= 0)
 
-    val result = mutableListOf<Int>()
+    val result: MutableList<Int> = []
 
     var value = this
     do {

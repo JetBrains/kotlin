@@ -290,7 +290,7 @@ object SessionConstructionUtils {
         val [scripts, nonScriptFiles] = when (configuration.dontCreateSeparateSessionForScripts) {
             false -> files.partition(isScript)
             // only in tests mode
-            true -> emptyList<F>() to files
+            true -> Pair([], files)
         }
 
         val isMppEnabled = languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)
@@ -313,12 +313,12 @@ object SessionConstructionUtils {
 
         val nonScriptSessions = when {
             metadataCompilationMode || !isMppEnabled -> {
-                listOf(
+                [
                     createSingleSession(
                         nonScriptFiles, rootModuleName, libraryList, targetPlatform,
                         sessionConfigurator, createSourceSession
                     )
-                )
+                ]
             }
 
             hmppModuleStructure == null -> createSessionsForLegacyMppProject(
@@ -361,7 +361,7 @@ object SessionConstructionUtils {
             @OptIn(PrivateSessionConstructor::class)
             DependencyListForCliModule(
                 libraryList.regularDependencies,
-                listOf(lastModuleData),
+                [lastModuleData],
                 libraryList.friendDependencies,
                 libraryList.moduleDataProvider
             ),
@@ -404,7 +404,7 @@ object SessionConstructionUtils {
         val commonModuleData = FirSourceModuleData(
             Name.identifier("${rootModuleName.asString()}-common"),
             libraryList.regularDependencies,
-            listOf(),
+            [],
             libraryList.friendDependencies,
             targetPlatform,
             isCommon = true
@@ -413,14 +413,14 @@ object SessionConstructionUtils {
         val platformModuleData = FirSourceModuleData(
             rootModuleName,
             libraryList.regularDependencies,
-            listOf(commonModuleData),
+            [commonModuleData],
             libraryList.friendDependencies,
             targetPlatform,
             isCommon = false
         )
 
-        val commonFiles = mutableListOf<F>()
-        val platformFiles = mutableListOf<F>()
+        val commonFiles: MutableList<F> = []
+        val platformFiles: MutableList<F> = []
         for (file in files) {
             (if (isCommonSource(file)) commonFiles else platformFiles).add(file)
         }
@@ -440,10 +440,10 @@ object SessionConstructionUtils {
             useCheckers(CliOnlyLanguageVersionSettingsCheckers)
         }
 
-        return listOf(
+        return [
             SessionWithSources(commonSession, commonFiles),
             SessionWithSources(platformSession, platformFiles)
-        )
+        ]
     }
 
     private fun <F> createSessionsForMppProject(

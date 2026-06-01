@@ -13,5 +13,5 @@ class ObjCExportTranslatedClass(
     val objCClass: ObjCClass,
 )
 
-fun ObjCExportTranslatedClass(objCClass: ObjCClass?) = objCClass?.let { ObjCExportTranslatedClass(emptyList(), it) }
+fun ObjCExportTranslatedClass(objCClass: ObjCClass?) = objCClass?.let { ObjCExportTranslatedClass([], it) }
 

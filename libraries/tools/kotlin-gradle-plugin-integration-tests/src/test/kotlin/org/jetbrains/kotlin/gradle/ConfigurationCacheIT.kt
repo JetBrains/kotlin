@@ -67,7 +67,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testMppWithMavenPublish(gradleVersion: GradleVersion) {
         project("new-mpp-lib-and-app/sample-lib", gradleVersion) {
-            val publishedTargets = mutableListOf("kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64")
+            val publishedTargets: MutableList<String> = ["kotlinMultiplatform", "jvm6", "nodeJs", "linux64", "mingw64"]
             patchKmpSampleLibForIsolatedProjects()
             publishedTargets.remove("nodeJs")
             testConfigurationCacheOf(
@@ -275,7 +275,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         ) {
             testConfigurationCacheOf(
                 "assemble",
-                executedTaskNames = listOf(":lib-project:compileKotlin")
+                executedTaskNames = [":lib-project:compileKotlin"]
             )
         }
     }
@@ -287,7 +287,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project("instantExecutionWithBuildSrc", gradleVersion) {
             testConfigurationCacheOf(
                 "build",
-                executedTaskNames = listOf(":compileKotlin")
+                executedTaskNames = [":compileKotlin"]
             )
         }
     }
@@ -299,7 +299,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project("instantExecutionWithIncludedBuildPlugin", gradleVersion) {
             testConfigurationCacheOf(
                 "build",
-                executedTaskNames = listOf(":compileKotlin")
+                executedTaskNames = [":compileKotlin"]
             )
         }
     }
@@ -327,7 +327,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project(
             "simpleProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+            buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.FILE])
         ) {
             build("assemble") {
                 assertBuildReportPathIsPrinted()
@@ -344,7 +344,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @GradleTest
     fun testBuildScanReportSmokeTestForConfigurationCache(gradleVersion: GradleVersion) {
         project("simpleProject", gradleVersion) {
-            val buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.BUILD_SCAN), logLevel = LogLevel.DEBUG)
+            val buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.BUILD_SCAN], logLevel = LogLevel.DEBUG)
             build("clean", "assemble", "-Pkotlin.build.report.build_scan.custom_values_limit=0", "--scan", buildOptions = buildOptions) {
                 assertOutputContains("Can't add any more custom values into build scan")
             }

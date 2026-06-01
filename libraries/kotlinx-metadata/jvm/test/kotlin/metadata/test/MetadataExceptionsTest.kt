@@ -19,7 +19,7 @@ class MetadataExceptionsTest {
     fun testReadMalformedInput() {
         val malformedInput = "abcdefdkdgwaydgyuawdfg543awyudfuiawty" // random string guaranteed by dropping ball on a keyboard
         val malformedMetadata =
-            Metadata(KotlinClassMetadata.CLASS_KIND, CompilerMetadataVersion.INSTANCE.toArray(), arrayOf(malformedInput))
+            Metadata(KotlinClassMetadata.CLASS_KIND, CompilerMetadataVersion.INSTANCE.toArray(), [malformedInput])
         val e = assertFailsWith<IllegalArgumentException> {
             (KotlinClassMetadata.readStrict(malformedMetadata) as KotlinClassMetadata.Class)
         }
@@ -43,9 +43,9 @@ class MetadataExceptionsTest {
 
     @Test
     fun testReadObsoleteVersion() {
-        doTestVersion(intArrayOf(0, 1, 0), "version 0.1.0, while minimum supported version is 1.1.0")
-        doTestVersion(intArrayOf(1, 0, 0), "version 1.0.0, while minimum supported version is 1.1.0")
-        doTestVersion(intArrayOf(1, 0, 255), "version 1.0.255, while minimum supported version is 1.1.0")
+        doTestVersion([0, 1, 0], "version 0.1.0, while minimum supported version is 1.1.0")
+        doTestVersion([1, 0, 0], "version 1.0.0, while minimum supported version is 1.1.0")
+        doTestVersion([1, 0, 255], "version 1.0.255, while minimum supported version is 1.1.0")
     }
 
     @Test
@@ -59,7 +59,7 @@ class MetadataExceptionsTest {
 
     @Test
     fun testInvalidVersion() {
-        doTestVersion(intArrayOf(), "instance does not have metadataVersion in it and therefore is malformed and cannot be read")
+        doTestVersion([], "instance does not have metadataVersion in it and therefore is malformed and cannot be read")
         doTestVersion(
             CompilerMetadataVersion.INVALID_VERSION.toArray(),
             "instance does not have metadataVersion in it and therefore is malformed and cannot be read"

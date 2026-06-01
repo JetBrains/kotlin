@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.fir.analysis.js.checkers.JsDeclarationCheckers
 import org.jetbrains.kotlin.fir.analysis.js.checkers.JsExpressionCheckers
 
 internal object LLJsCheckersConfiguration : LLPlatformCheckersConfiguration {
-    override val declarationCheckers: List<DeclarationCheckers> = listOf(JsDeclarationCheckers)
-    override val expressionCheckers: List<ExpressionCheckers> = listOf(JsExpressionCheckers)
-    override val typeCheckers: List<TypeCheckers> = emptyList()
+    override val declarationCheckers: List<DeclarationCheckers> = [JsDeclarationCheckers]
+    override val expressionCheckers: List<ExpressionCheckers> = [JsExpressionCheckers]
+    override val typeCheckers: List<TypeCheckers> = []
 }

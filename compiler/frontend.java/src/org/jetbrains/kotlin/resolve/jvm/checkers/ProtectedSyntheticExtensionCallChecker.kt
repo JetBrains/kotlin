@@ -69,7 +69,7 @@ object ProtectedSyntheticExtensionCallChecker : CallChecker {
         if (resolvedCall.dispatchReceiver != null && resolvedCall.extensionReceiver !is ReceiverValue) return
 
         val receiverValue = resolvedCall.extensionReceiver as ReceiverValue
-        val receiverTypes = listOf(receiverValue.type) + context.dataFlowInfo.getStableTypes(
+        val receiverTypes = [receiverValue.type] + context.dataFlowInfo.getStableTypes(
             context.dataFlowValueFactory.createDataFlowValue(
                 receiverValue, context.trace.bindingContext, context.scope.ownerDescriptor
             ),

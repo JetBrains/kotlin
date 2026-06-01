@@ -21,11 +21,11 @@ abstract class AbstractFirWasmInvalidationTest :
 abstract class AbstractFirWasmInvalidationMultiModuleTestBase(workingDirPath: String) :
     WasmAbstractInvalidationTest(TargetBackend.WASM, workingDirPath)  {
 
-    private val ignoredTests = setOf(
+    private val ignoredTests: Set<String> = [
         "classFunctionsAndFields", //Invalid signature //KT-84599
         "multiModuleEagerInitialization", //Eager initializer KT-83579
         "eagerInitializationMoveBetweenModules", //Eager initializer KT-83579
-    )
+    ]
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
         super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests
@@ -44,9 +44,9 @@ abstract class AbstractFirWasmInvalidationSingleModuleTest :
         configuration.wasmIncludedModuleOnly = true
     }
 
-    private val ignoredTests = setOf(
+    private val ignoredTests: Set<String> = [
         "mainFunctionSelect", //KT-85577 Single module mode execute all main functions in dependencies
-    )
+    ]
 
     override fun isIgnoredTest(projectInfo: ProjectInfo): Boolean =
         super.isIgnoredTest(projectInfo) || projectInfo.name in ignoredTests

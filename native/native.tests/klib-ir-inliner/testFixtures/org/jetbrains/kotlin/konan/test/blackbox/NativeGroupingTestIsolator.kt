@@ -25,7 +25,7 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(TestDirectives)
+        get() = [TestDirectives]
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.

@@ -115,7 +115,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
 
     // properties builder base class (DSL for building properties collection)
 
-    open class Builder(baseProperties: Iterable<PropertiesCollection> = emptyList()) {
+    open class Builder(baseProperties: Iterable<PropertiesCollection> = []) {
 
         val data: MutableMap<Key<*>, Any?> = LinkedHashMap<Key<*>, Any?>().apply {
             baseProperties.forEach { putAll(it.properties) }
@@ -284,7 +284,7 @@ open class PropertiesCollection(protected var properties: Map<Key<*>, Any?> = em
         }
 
         fun <V> Key<in List<V>>.transform(action: (V) -> V) {
-            val newValues = get(this)?.map(action) ?: emptyList()
+            val newValues = get(this)?.map(action) ?: []
             data[this] = newValues
         }
 

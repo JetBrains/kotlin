@@ -20,8 +20,8 @@ class LicensesTests {
         val linkDefinitionRegExp = Regex(pattern = "\\[(\\w+)]:.+")
         val linkRegExp = Regex(pattern = "]\\s?\\[(\\w+)]")
 
-        val linksUsages = mutableSetOf<String>()
-        val linksDefinitions = mutableSetOf<String>()
+        val linksUsages: MutableSet<String> = []
+        val linksDefinitions: MutableSet<String> = []
 
         val readmeFile = File(licenseReadmePath)
         readmeFile.useLines { lineSequence ->

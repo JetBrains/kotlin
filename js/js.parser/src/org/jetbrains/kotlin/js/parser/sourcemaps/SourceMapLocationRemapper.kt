@@ -80,7 +80,7 @@ class SourceMapLocationRemapper(private val sourceMap: SourceMap, private val so
     }
 
     internal class JsNodeFlatListCollector : RecursiveJsVisitor() {
-        val nodeList = mutableListOf<JsNode>()
+        val nodeList: MutableList<JsNode> = []
 
         override fun visitDoWhile(x: JsDoWhile) {
             nodeList += x

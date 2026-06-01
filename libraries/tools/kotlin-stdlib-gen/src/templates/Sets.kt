@@ -153,7 +153,7 @@ object SetOps : TemplateGroupBase() {
         body {
             """
             val otherCollection = other.convertToListIfNotCollection()
-            val set = mutableSetOf<T>()
+            val set: MutableSet<T> = []
             for (e in this) {
                 if (otherCollection.contains(e)) {
                     set.add(e)
@@ -197,7 +197,7 @@ object SetOps : TemplateGroupBase() {
         body {
             """
             val otherCollection = other.convertToListIfNotCollection()
-            val result = mutableSetOf<T>()
+            val result: MutableSet<T> = []
             for (e in this) {
                 if (!otherCollection.contains(e)) {
                     result.add(e)

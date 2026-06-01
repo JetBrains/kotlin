@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
  */
 internal fun ObjCExportContext.translateToMappedObjCTypeOrNull(type: KaType): ObjCClassType? {
     val allSuperTypes = with(analysisSession) { type.allSupertypes }
-    return listOf(type).plus(allSuperTypes).firstNotNullOfOrNull find@{ type ->
+    return [type].plus(allSuperTypes).firstNotNullOfOrNull find@{ type ->
         val classId = with(analysisSession) { type.expandedSymbol }?.classId ?: return@find null
         mappedObjCTypeNames[classId]?.let { mappedTypeName ->
             return@find ObjCClassType(mappedTypeName, translateTypeArgumentsToObjC(type))

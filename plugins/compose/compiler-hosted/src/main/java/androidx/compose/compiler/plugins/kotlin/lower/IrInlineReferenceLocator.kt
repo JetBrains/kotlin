@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 class ComposeInlineLambdaLocator(private val context: IrPluginContext) {
     private val inlineLambdaToParameter = mutableMapOf<IrFunctionSymbol, IrValueParameter>()
-    private val inlineFunctionExpressions = mutableSetOf<IrExpression>()
+    private val inlineFunctionExpressions: MutableSet<IrExpression> = []
 
     fun isInlineLambda(irFunction: IrFunction): Boolean =
         irFunction.symbol in inlineLambdaToParameter.keys

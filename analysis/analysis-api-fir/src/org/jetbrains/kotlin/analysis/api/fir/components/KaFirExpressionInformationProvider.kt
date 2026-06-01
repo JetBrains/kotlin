@@ -41,7 +41,7 @@ internal class KaFirExpressionInformationProvider(
         get() = with(analysisSession) { resolveSymbol() }
 
     override fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> = withPsiValidityAssertion {
-        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return emptyList()
+        val firWhenExpression = getOrBuildFirSafe<FirWhenExpression>(analysisSession.resolutionFacade) ?: return []
         return withSession(analysisSession.resolutionFacade.useSiteFirSession) {
             FirWhenExhaustivenessComputer.computeAllMissingCases(firWhenExpression)
         }

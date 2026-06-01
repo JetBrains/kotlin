@@ -315,14 +315,14 @@ class LazyImportScope(
     override fun getContributedPackage(name: Name): PackageViewDescriptor? = null
 
     override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> {
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
         return importResolver.collectFromImports(name) { scope -> scope.getContributedVariables(name, location) }.ifEmpty {
             secondaryImportResolver?.collectFromImports(name) { scope -> scope.getContributedVariables(name, location) }.orEmpty()
         }
     }
 
     override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> {
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
         return importResolver.collectFromImports(name) { scope -> scope.getContributedFunctions(name, location) }.ifEmpty {
             secondaryImportResolver?.collectFromImports(name) { scope -> scope.getContributedFunctions(name, location) }.orEmpty()
         }
@@ -334,7 +334,7 @@ class LazyImportScope(
         changeNamesForAliased: Boolean
     ): Collection<DeclarationDescriptor> {
         // we do not perform any filtering by visibility here because all descriptors from both visible/invisible filter scopes are to be added anyway
-        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return listOf()
+        if (filteringKind == FilteringKind.INVISIBLE_CLASSES) return []
 
         val storageManager = importResolver.components.storageManager
         if (secondaryImportResolver != null) {

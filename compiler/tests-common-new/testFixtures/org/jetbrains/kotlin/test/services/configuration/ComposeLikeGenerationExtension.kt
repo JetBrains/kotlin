@@ -64,7 +64,7 @@ class ComposeLikeConfigurator(testServices: TestServices) : EnvironmentConfigura
 }
 
 private class ComposeLikeGenerationExtension : IrGenerationExtension {
-    private val rewrittenFunctions = mutableSetOf<IrFunction>()
+    private val rewrittenFunctions: MutableSet<IrFunction> = []
 
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         moduleFragment.transformChildrenVoid(ComposeLikeDefaultArgumentRewriter(pluginContext, rewrittenFunctions))
@@ -103,7 +103,7 @@ private class ComposeLikeDefaultMethodCallRewriter(private val context: IrPlugin
                                     defaultValue.endOffset,
                                     defaultValue.type,
                                     IrStatementOrigin.DEFAULT_VALUE,
-                                    listOf(defaultValue)
+                                    [defaultValue]
                                 )
                             }
                     }
@@ -139,7 +139,7 @@ private class ComposeLikeDefaultArgumentRewriter(
         val hasDefaultArguments = declaration.parameters.any { it.defaultValue != null }
         if (!hasDefaultArguments) return super.visitFunction(declaration)
         rewrittenFunctions.add(declaration)
-        val newParameters = mutableListOf<IrValueParameter>()
+        val newParameters: MutableList<IrValueParameter> = []
         declaration.parameters.forEach { param ->
             newParameters.add(
                 if (param.defaultValue != null) {
@@ -173,7 +173,7 @@ private class ComposeLikeDefaultArgumentRewriter(
         )
         declaration.transformChildrenVoid()
         val body = declaration.body!!
-        val defaultSelection = mutableListOf<IrStatement>()
+        val defaultSelection: MutableList<IrStatement> = []
         declaration.parameters.forEach {
             if (it.hasDefaultValue()) {
                 val index = defaultSelection.size
@@ -274,7 +274,7 @@ private class ComposeLikeDefaultArgumentRewriter(
                 it.owner.hasShape(
                     dispatchReceiver = true,
                     regularParameters = 1,
-                    parameterTypes = listOf(this, paramType)
+                    parameterTypes = [this, paramType]
                 )
             }
     }

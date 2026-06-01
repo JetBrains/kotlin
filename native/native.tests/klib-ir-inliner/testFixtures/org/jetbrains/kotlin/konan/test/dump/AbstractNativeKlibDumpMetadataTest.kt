@@ -38,7 +38,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val testPathFull = getAbsoluteFile(testPath)
         muteTestIfNecessary(testPathFull)
 
-        val testCase: TestCase = generateTestCaseWithSingleSource(testPathFull, listOf())
+        val testCase: TestCase = generateTestCaseWithSingleSource(testPathFull, [])
         val testCompilationResult: TestCompilationResult.Success<out KLIB> = compileToLibrary(testCase)
 
         val kotlinNativeClassLoader = testRunSettings.get<KotlinNativeClassLoader>()
@@ -79,9 +79,9 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         val moduleName: String = source.name
         val module = TestModule.Exclusive(
             moduleName,
-            directRegularDependencySymbols = emptySet(),
-            directFriendDependencySymbols = emptySet(),
-            directDependsOnDependencySymbols = emptySet()
+            directRegularDependencySymbols = [],
+            directFriendDependencySymbols = [],
+            directDependsOnDependencySymbols = []
         )
         val rootDir = KtTestUtil.tmpDirForTest(this::class.java.name, source.nameWithoutExtension)
         for (testFile in moduleStructure.modules.single().files) {
@@ -95,7 +95,7 @@ abstract class AbstractNativeKlibDumpMetadataTest : AbstractNativeSimpleTest() {
         return TestCase(
             id = TestCaseId.Named(moduleName),
             kind = TestKind.STANDALONE,
-            modules = setOf(module),
+            modules = [module],
             freeCompilerArgs = TestCompilerArgs(extraArgs),
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),

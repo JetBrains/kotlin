@@ -147,7 +147,7 @@ private interface KaMultiUnknownCall : KaMultiCall
 @KaExperimentalApi
 public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(this)
+        is KaSingleCall<*, *> -> [this]
         is KaMultiCall -> calls
     }
 
@@ -160,7 +160,7 @@ public val KaSingleOrMultiCall.calls: List<KaSingleCall<*, *>>
 @KaExperimentalApi
 public val KaSingleOrMultiCall.symbols: List<KaSymbol>
     get() = when (this) {
-        is KaSingleCall<*, *> -> listOf(symbol)
+        is KaSingleCall<*, *> -> [symbol]
         is KaMultiCall -> calls.map { it.signature.symbol }
     }
 

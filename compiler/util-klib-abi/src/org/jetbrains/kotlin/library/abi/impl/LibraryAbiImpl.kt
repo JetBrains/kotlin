@@ -45,7 +45,7 @@ internal class AbiAnnotationListImpl(private val annotations: List<AbiAnnotation
     override fun annotatedWith() = annotations
 
     companion object {
-        val EMPTY = AbiAnnotationListImpl(emptyList())
+        val EMPTY = AbiAnnotationListImpl([])
     }
 }
 
@@ -121,7 +121,7 @@ internal class AbiConstructorImpl(
     override val contextReceiverParametersCount get() = valueParameters.count { it.kind == AbiValueParameterKind.CONTEXT }
     override val companionExtensionsClass: AbiClassifierReference.ClassReference? = null
     override val returnType get() = null // No need to render return type for constructors.
-    override val typeParameters get() = emptyList<AbiTypeParameter>()
+    override val typeParameters: List<AbiTypeParameter> get() = []
 
     companion object {
         private val IS_INLINE = FlagField.booleanFirst()

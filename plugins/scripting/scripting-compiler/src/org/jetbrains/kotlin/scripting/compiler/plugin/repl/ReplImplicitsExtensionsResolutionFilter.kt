@@ -17,16 +17,16 @@ import kotlin.concurrent.write
 import kotlin.script.experimental.api.KotlinType
 
 class ReplImplicitsExtensionsResolutionFilter(
-    classesToSkip: Collection<KotlinType> = emptyList(),
-    classesToSkipAfterFirstTime: Collection<KotlinType> = emptyList()
+    classesToSkip: Collection<KotlinType> = [],
+    classesToSkipAfterFirstTime: Collection<KotlinType> = []
 ) : ImplicitsExtensionsResolutionFilter {
     private val lock = ReentrantReadWriteLock()
-    private var classesToSkipNames: Set<String> = emptySet()
-    private var classesToSkipFirstTimeNames: Set<String> = emptySet()
+    private var classesToSkipNames: Set<String> = []
+    private var classesToSkipFirstTimeNames: Set<String> = []
 
     fun update(
-        classesToSkip: Collection<KotlinType> = emptyList(),
-        classesToSkipAfterFirstTime: Collection<KotlinType> = emptyList()
+        classesToSkip: Collection<KotlinType> = [],
+        classesToSkipAfterFirstTime: Collection<KotlinType> = []
     ) = lock.write {
         classesToSkipNames = classesToSkip.mapTo(hashSetOf()) { it.typeName }
         classesToSkipFirstTimeNames = classesToSkipAfterFirstTime.mapTo(hashSetOf()) { it.typeName }
@@ -39,7 +39,7 @@ class ReplImplicitsExtensionsResolutionFilter(
     override fun getScopesWithInfo(
         scopes: Sequence<HierarchicalScope>
     ): Sequence<ScopeWithImplicitsExtensionsResolutionInfo> {
-        val processedReceivers = mutableSetOf<String>()
+        val processedReceivers: MutableSet<String> = []
         return scopes.map { scope ->
             val receivers = (if (scope is LexicalScope) listOfNotNull(scope.implicitReceiver) + scope.contextReceiversGroup else null)
                 ?.map { it.value }

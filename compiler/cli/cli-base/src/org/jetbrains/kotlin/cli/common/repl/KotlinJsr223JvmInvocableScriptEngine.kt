@@ -38,7 +38,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
                 val receiverKlass = receiverClass ?: receiverInstance::class
                 val receiverInHistory = history.find { it.instance == receiverInstance } ?:
                                         EvalClassWithInstanceAndLoader(receiverKlass, receiverInstance, receiverKlass.java.classLoader, history.first().invokeWrapper)
-                listOf(receiverInHistory) + history.filterNot { it == receiverInHistory }
+                [receiverInHistory] + history.filterNot { it == receiverInHistory }
             }
             else {
                 history
@@ -62,7 +62,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 
         val [fn, mapping, invokeWrapper] = prioritizedCallOrder.asSequence().map { (val klass, val instance, val _ = classLoader, val invokeWrapper) ->
             val candidates = klass.functions.filter { it.name == name }
-            candidates.findMapping(listOf(instance) + args)?.let {
+            candidates.findMapping([instance] + args)?.let {
                 Triple(it.first, it.second, invokeWrapper)
             }
         }.filterNotNull().firstOrNull() ?: throw NoSuchMethodException("no suitable function '$name' found")
@@ -103,7 +103,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
 
         // TODO: cache the method lookups?
 
-        val proxy = Proxy.newProxyInstance(Thread.currentThread().contextClassLoader, arrayOf(clasz)) { _, method, args ->
+        val proxy = Proxy.newProxyInstance(Thread.currentThread().contextClassLoader, [clasz]) { _, method, args ->
             invokeImpl(priority, method.name, args ?: emptyArray())
         }
         return clasz.kotlin.safeCast(proxy)

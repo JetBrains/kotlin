@@ -258,7 +258,7 @@ object RangeOps : TemplateGroupBase() {
         signature("to${toType}ExactOrNull()")
         returns("$toType?")
 
-        val isConversionDeprecated = fromType.isFloatingPoint() && toType in listOf(PrimitiveType.Byte, PrimitiveType.Short)
+        val isConversionDeprecated = fromType.isFloatingPoint() && toType in [PrimitiveType.Byte, PrimitiveType.Short]
         val conversion = if (isConversionDeprecated) "toInt().to$toType" else "to$toType"
 
         body {

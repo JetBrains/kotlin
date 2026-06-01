@@ -269,7 +269,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     ): TypeStatements {
         val result = mutableMapOf<DataFlowVariable, MutableTypeStatement>()
         val queue = LinkedList<OperationStatement>().apply { this += approvedStatement }
-        val approved = mutableSetOf<OperationStatement>()
+        val approved: MutableSet<OperationStatement> = []
         while (queue.isNotEmpty()) {
             val next = queue.removeFirst()
             // Defense from cycles in facts
@@ -323,15 +323,15 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         val approvedStatements = when {
             known != null && typeFromVar != null -> mapOf(variable to known.toMutable().also { it.upperTypes += typeFromVar })
             known != null && typeFromVar == null -> mapOf(variable to known)
-            known == null && typeFromVar != null -> mapOf(variable to MutableTypeStatement(variable, mutableSetOf(typeFromVar)))
+            known == null && typeFromVar != null -> mapOf(variable to MutableTypeStatement(variable, [typeFromVar]))
             else -> return false
         }
 
         val approvedUpper = approvedStatements.values.getUnifiedUpperType()
         val approvedLower = approvedStatements.values.getIntersectedLowerType()
 
-        val statementUpper = listOf(statement).getUnifiedUpperType()
-        val statementLower = listOf(statement).getIntersectedLowerType()
+        val statementUpper = [statement].getUnifiedUpperType()
+        val statementLower = [statement].getIntersectedLowerType()
 
         return (approvedUpper == null || statementUpper == null || AbstractTypeChecker.isSubtypeOf(context, approvedUpper, statementUpper))
             && (approvedLower == null || statementUpper == null || !AbstractTypeChecker.isSubtypeOf(context, statementUpper, approvedLower))
@@ -345,7 +345,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         right.isEmpty() -> right
         else -> buildMap {
             for ([variable, leftStatement] in left) {
-                put(variable, or(listOf(leftStatement, right[variable] ?: continue)) ?: continue)
+                put(variable, or([leftStatement, right[variable] ?: continue]) ?: continue)
             }
         }
     }
@@ -436,7 +436,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             // See `Complex Lower Bounds` (the `or` case) in `data-flow-based-exhaustiveness.md` for more details.
 
             statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
-                ?: listOf(context.nothingType())
+                ?: [context.nothingType()]
         }.let {
             ConeTypeIntersector.intersectTypes(context, it)
         }.takeIf { !it.isNothing }

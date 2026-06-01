@@ -228,7 +228,7 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param handler the callback that will be called
      */
     inline fun <reified T : Annotation> onAnnotations(noinline handler: RefineScriptCompilationConfigurationHandler) {
-        onAnnotations(listOf(KotlinType(T::class)), handler)
+        onAnnotations([KotlinType(T::class)], handler)
     }
 
     /**
@@ -354,7 +354,7 @@ interface CompiledScript {
      * The scripts compiled along with this one in one module, imported or otherwise included into compilation
      */
     val otherScripts: List<CompiledScript>
-        get() = emptyList()
+        get() = []
 
     /**
      * The name and the type of the script's result field, if any

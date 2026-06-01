@@ -93,34 +93,34 @@ class GeneralNativeIT : KGPBaseTest() {
 
             val sharedPrefix = CompilerOutputKind.DYNAMIC.prefix(HostManager.host)
             val sharedSuffix = CompilerOutputKind.DYNAMIC.suffix(HostManager.host)
-            val sharedPaths = listOf(
+            val sharedPaths = [
                 "build/bin/host/debugShared/$sharedPrefix$baseName$sharedSuffix",
                 "build/bin/host/releaseShared/$sharedPrefix$baseName$sharedSuffix",
-            )
+            ]
 
             val staticPrefix = CompilerOutputKind.STATIC.prefix(HostManager.host)
             val staticSuffix = CompilerOutputKind.STATIC.suffix(HostManager.host)
-            val staticPaths = listOf(
+            val staticPaths = [
                 "build/bin/host/debugStatic/$staticPrefix$baseName$staticSuffix",
                 "build/bin/host/releaseStatic/$staticPrefix$baseName$staticSuffix",
-            )
+            ]
 
-            val headerPaths = listOf(
+            val headerPaths = [
                 "build/bin/host/debugShared/$sharedPrefix${baseName}_api.h",
                 "build/bin/host/debugStatic/$staticPrefix${baseName}_api.h",
                 "build/bin/host/releaseShared/$sharedPrefix${baseName}_api.h",
                 "build/bin/host/releaseStatic/$staticPrefix${baseName}_api.h",
-            )
+            ]
 
             val klibPrefix = CompilerOutputKind.LIBRARY.prefix(HostManager.host)
             val klibPath = "${kotlinClassesDir(targetName = "host")}${klibPrefix}/klib/native-library"
 
-            val linkTasks = listOf(
+            val linkTasks = [
                 ":linkDebugSharedHost",
                 ":linkDebugStaticHost",
                 ":linkReleaseSharedHost",
                 ":linkReleaseStaticHost",
-            )
+            ]
 
             val klibTask = ":compileKotlinHost"
 
@@ -166,17 +166,17 @@ class GeneralNativeIT : KGPBaseTest() {
 
             val frameworkPrefix = CompilerOutputKind.FRAMEWORK.prefix(HostManager.host)
             val frameworkSuffix = CompilerOutputKind.FRAMEWORK.suffix(HostManager.host)
-            val targets = listOf("ios", "iosSim")
+            val targets = ["ios", "iosSim"]
             val binaries = mapOf(
-                "ios" to listOf(BinaryMeta("main"), BinaryMeta("custom", true)),
-                "iosSim" to listOf(BinaryMeta("main"))
+                "ios" to [BinaryMeta("main"), BinaryMeta("custom", true)],
+                "iosSim" to [BinaryMeta("main")]
             )
             val frameworkPaths = targets.flatMap { target ->
                 binaries.getValue(target).flatMap {
-                    val list = listOf(
+                    val list = [
                         "build/bin/$target/${it.name}DebugFramework/$frameworkPrefix${it.name}$frameworkSuffix",
                         "build/bin/$target/${it.name}ReleaseFramework/$frameworkPrefix${it.name}$frameworkSuffix",
-                    )
+                    ]
                     if (it.isStatic) {
                         list
                     } else {
@@ -187,19 +187,19 @@ class GeneralNativeIT : KGPBaseTest() {
 
             val headerPaths = targets.flatMap { target ->
                 binaries.getValue(target).flatMap {
-                    listOf(
+                    [
                         "build/bin/$target/${it.name}DebugFramework/$frameworkPrefix${it.name}$frameworkSuffix/headers/${it.name}.h",
                         "build/bin/$target/${it.name}ReleaseFramework/$frameworkPrefix${it.name}$frameworkSuffix/headers/${it.name}.h",
-                    )
+                    ]
                 }
             }
 
             val frameworkTasks = targets.flatMap { target ->
                 binaries.getValue(target).flatMap {
-                    listOf(
+                    [
                         ":link${it.name.capitalize()}DebugFramework${target.capitalize()}",
                         ":link${it.name.capitalize()}ReleaseFramework${target.capitalize()}",
-                    )
+                    ]
                 }
             }
 
@@ -245,10 +245,10 @@ class GeneralNativeIT : KGPBaseTest() {
     fun shouldFailOnExportingNonApiLibrary(gradleVersion: GradleVersion) {
         testExportApi(
             nativeProject("native-binaries/libraries", gradleVersion, configureSubProjects = true),
-            listOf(
+            [
                 ExportApiTestData("linkDebugSharedHost", "debugShared"),
                 ExportApiTestData("linkDebugStaticHost", "debugStatic"),
-            )
+            ]
         )
     }
 
@@ -259,9 +259,9 @@ class GeneralNativeIT : KGPBaseTest() {
     fun testExportApiOnlyToFrameworks(gradleVersion: GradleVersion) {
         testExportApi(
             nativeProject("native-binaries/frameworks", gradleVersion),
-            listOf(
+            [
                 ExportApiTestData("linkMainDebugFrameworkIos", "mainDebugFramework")
-            )
+            ]
         )
     }
 
@@ -344,11 +344,11 @@ class GeneralNativeIT : KGPBaseTest() {
              */
             buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(gradleVersion),
         ) {
-            val binaries = listOf(
+            val binaries = [
                 "debugExecutable" to "native-binary",
                 "releaseExecutable" to "native-binary",
                 "bazDebugExecutable" to "my-baz",
-            )
+            ]
             val linkTasks =
                 binaries.map { [name, _] -> "link${name.capitalize()}Host" }
             val outputFiles = binaries.associate { [name, fileBaseName] ->
@@ -492,7 +492,7 @@ class GeneralNativeIT : KGPBaseTest() {
     fun testNativeTests(gradleVersion: GradleVersion) {
         nativeProject("native-tests", gradleVersion) {
             val hostTestTask = "hostTest"
-            val testTasks = setOf(hostTestTask, "iosTest", "iosArm64Test")
+            val testTasks: Set<String> = [hostTestTask, "iosTest", "iosArm64Test"]
 
             val testsToExecute = buildSet {
                 add(":$hostTestTask")
@@ -559,7 +559,7 @@ class GeneralNativeIT : KGPBaseTest() {
 
     private fun TestProject.getBootedSimulators(): Set<String>? =
         if (HostManager.hostIsMac) {
-            val simulators = runProcess(listOf("xcrun", "simctl", "list"), projectPath.toFile(), System.getenv()).also {
+            val simulators = runProcess(["xcrun", "simctl", "list"], projectPath.toFile(), System.getenv()).also {
                 assertTrue(it.isSuccessful, "xcrun exection failed")
             }.output
 
@@ -704,7 +704,7 @@ class GeneralNativeIT : KGPBaseTest() {
             // Check that test binaries can be accessed in a buildscript.
             build("tasks") {
                 val suffix = if (HostManager.hostIsMingw) "exe" else "kexe"
-                val names = listOf("test", "another")
+                val names = ["test", "another"]
                 val files = names.map { "$it.$suffix" }
 
                 files.forEach {
@@ -796,11 +796,11 @@ class GeneralNativeIT : KGPBaseTest() {
             gradleVersion, configureSubProjects = true,
             localRepoDir = defaultLocalRepo(gradleVersion)
         ) {
-            fun libraryDirectories(projectName: String, cinteropName: String) = listOf(
+            fun libraryDirectories(projectName: String, cinteropName: String) = [
                 projectPath.resolve("$projectName/build/classes/kotlin/host/main/cinterop/${projectName}-cinterop-$cinteropName"),
                 projectPath.resolve("$projectName/build/classes/kotlin/host/main/klib/${projectName}"),
                 projectPath.resolve("$projectName/build/classes/kotlin/host/test/klib/${projectName}_test")
-            )
+            ]
 
             // Enable info log to see cinterop environment variables.
             build(
@@ -1123,11 +1123,11 @@ class GeneralNativeIT : KGPBaseTest() {
                 compilerArgumentsLogLevel = "warning"
             )
             build("assemble", buildOptions = updatedBuildOptions) {
-                val tasksWithNativeCompilerArguments = listOf(
+                val tasksWithNativeCompilerArguments = [
                     ":compileCommonMainKotlinMetadata", // it is shared native metadata, which is compiled by konan
                     ":compileKotlinLinux64",
                     ":linkMainDebugStaticLinux64",
-                )
+                ]
                 for (task in tasksWithNativeCompilerArguments) {
                     val taskOutput = getOutputForTask(task, LogLevel.INFO)
                     assertTrue(

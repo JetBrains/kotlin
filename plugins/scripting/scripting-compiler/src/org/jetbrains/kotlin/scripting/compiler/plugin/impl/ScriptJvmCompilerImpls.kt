@@ -174,7 +174,7 @@ private fun compileImpl(
             // Adjust definitions so all compiler dependencies are saved in the resulting compilation configuration, so evaluation
             // performed with the expected classpath
             // TODO: make this logic obsolete by injecting classpath earlier in the pipeline
-            val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: emptyList() }
+            val depsFromConfiguration = get(dependencies)?.flatMapTo(HashSet()) { (it as? JvmDependency)?.classpath ?: [] }
             val depsFromCompiler = compilerConfiguration.getList(CLIConfigurationKeys.CONTENT_ROOTS)
                 .mapNotNull {
                     when {
@@ -347,7 +347,7 @@ private fun doCompileWithK2(
     val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
         configuration,
         projectEnvironment,
-        previousStepsSymbolProviders = emptyList(),
+        previousStepsSymbolProviders = [],
         incrementalExcludesScope = null
     )
 
@@ -356,7 +356,7 @@ private fun doCompileWithK2(
         configuration,
         ktFiles,
         rootModuleNameAsString = targetId.name,
-        friendPaths = emptyList(),
+        friendPaths = [],
         librariesScope,
         isScript = { false },
         incrementalCompilationContext,
@@ -398,7 +398,7 @@ private fun doCompileWithK2(
                 topologicalSort(
                     rawFir, reportCycle = { throw CycleDetected(it) }
                 ) {
-                    rawFirDeps[this] ?: emptyList()
+                    rawFirDeps[this] ?: []
                 }.reversed()
             } catch (e: CycleDetected) {
                 return ResultWithDiagnostics.Failure(
@@ -416,7 +416,7 @@ private fun doCompileWithK2(
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Common)
     session.runCheckers(scopeSession, fir, diagnosticsReporter, MppCheckerKind.Platform)
 
-    val analysisResults = AllModulesFrontendOutput(listOf(SingleModuleFrontendOutput(session, scopeSession, fir)))
+    val analysisResults = AllModulesFrontendOutput([SingleModuleFrontendOutput(session, scopeSession, fir)])
 
     if (diagnosticsReporter.hasErrors) {
         diagnosticsReporter.reportToMessageCollector(messageCollector, renderDiagnosticName)

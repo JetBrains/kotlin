@@ -41,8 +41,8 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestKind.STANDALONE_NO_TR,
             extras,
             "kt65659",
-            listOf(testDataFile),
-            TestCompilerArgs(listOf("-Xbinary=bundleId=kt65659")),
+            [testDataFile],
+            TestCompilerArgs(["-Xbinary=bundleId=kt65659"]),
         )
         val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings)
         val compilationResult = objCFrameworkCompilation.result.assertSuccess()
@@ -58,15 +58,15 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestKind.STANDALONE_NO_TR,
             extras,
             "SignextZeroext",
-            listOf(testDataFile),
+            [testDataFile],
             TestCompilerArgs(
-                listOf(
+                [
                     "-Xbinary=bundleId=signextZeroext",
                     "-Xsave-llvm-ir-after=$fileCheckStage",
                     "-Xsave-llvm-ir-directory=${buildDir.absolutePath}",
-                )
+                ]
             ),
-            givenDependencies = emptySet(),
+            givenDependencies = [],
             // KT-64879: TODO: refactor fileCheckMatcher out from TestRunChecks to another layer like TestExecutableChecks
             checks = TestRunChecks.Default(Duration.ZERO)
                 .copy(fileCheckMatcher = TestRunCheck.FileCheckMatcher(testRunSettings, testDataFile))
@@ -95,11 +95,11 @@ class FrameworkTest : AbstractNativeSimpleTest() {
 
         val testCase = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR, extras, "ValuesGenerics",
-            listOf(
+            [
                 testSuiteDir.resolve(testName).resolve("$testName.kt"),
                 testSuiteDir.resolve("objcexport/values.kt"),
-            ),
-            freeCompilerArgs = TestCompilerArgs(listOf("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"))
+            ],
+            freeCompilerArgs = TestCompilerArgs(["-opt-in=kotlinx.cinterop.ExperimentalForeignApi"])
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
 
@@ -117,7 +117,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     fun testMultipleFrameworks() {
         // This test might fail with dynamic caches until https://youtrack.jetbrains.com/issue/KT-34262 is fixed
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
-        testMultipleFrameworksImpl("multiple", emptyList(), checks)
+        testMultipleFrameworksImpl("multiple", [], checks)
     }
 
     @Test
@@ -126,7 +126,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
 
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout)
-        testMultipleFrameworksImpl("multiple", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
+        testMultipleFrameworksImpl("multiple", ["-Xstatic-framework", "-Xpre-link-caches=enable"], checks)
     }
 
     @Test
@@ -140,7 +140,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             defaultChecks.copy(exitCodeCheck = TestRunCheck.ExitCode.Expected(134))
         } else defaultChecks
 
-        testMultipleFrameworksImpl("multipleFailsWithCaches", listOf("-Xstatic-framework", "-Xpre-link-caches=enable"), checks)
+        testMultipleFrameworksImpl("multipleFailsWithCaches", ["-Xstatic-framework", "-Xpre-link-caches=enable"], checks)
     }
 
     private fun testMultipleFrameworksImpl(testName: String, freeCompilerArgs: List<String>, checks: TestRunChecks) {
@@ -152,11 +152,11 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val moduleNameFirst = "First"
         val testCase1 = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR, extras, moduleNameFirst,
-            listOf(
+            [
                 framework1Dir.resolve("first.kt"),
                 framework1Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
-            ),
+            ],
             freeCompilerArgs = TestCompilerArgs(
                 freeCompilerArgs + "-module-name" + moduleNameFirst + "-Xbinary=bundleId=$moduleNameFirst"
             ),
@@ -168,26 +168,26 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val moduleNameSecond = "Second"
         val testCase2 = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR, extras, moduleNameSecond,
-            listOf(
+            [
                 framework2Dir.resolve("second.kt"),
                 framework2Dir.resolve("test.kt"),
                 sharedDir.resolve("shared.kt"),
-            ), freeCompilerArgs = TestCompilerArgs(
+            ], freeCompilerArgs = TestCompilerArgs(
                 freeCompilerArgs + "-module-name" + moduleNameSecond + "-Xbinary=bundleId=$moduleNameSecond"
             )
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase2, testRunSettings).result.assertSuccess()
 
-        compileAndRunSwift(testName, testCase1, swiftExtraOpts = emptyList(), testDir)
+        compileAndRunSwift(testName, testCase1, swiftExtraOpts = [], testDir)
     }
 
     @Test
     fun testGH3343() {
         val testName = "gh3343"
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
-        val freeCInteropArgs = TestCompilerArgs(emptyList(), cinteropArgs = listOf("-header", "$testName.h"))
+        val freeCInteropArgs = TestCompilerArgs([], cinteropArgs = ["-header", "$testName.h"])
         val interopLibrary = compileCInterop(testName, freeCInteropArgs)
-        val testCase = generateObjCFramework(testName, emptyList(), setOf(TestModule.Given(interopLibrary.klibFile)))
+        val testCase = generateObjCFramework(testName, [], [TestModule.Given(interopLibrary.klibFile)])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -197,7 +197,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val interopLibrary = compileCInterop(testName)
 
-        val testCase = generateObjCFramework(testName, emptyList(), setOf(TestModule.Given(interopLibrary.klibFile)))
+        val testCase = generateObjCFramework(testName, [], [TestModule.Given(interopLibrary.klibFile)])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -209,12 +209,12 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         generateObjCFramework(testName, moduleName = reservedModuleMapSyntax)
         SwiftCompilation(
             testRunSettings,
-            listOf(testSuiteDir.resolve(testName).resolve("$testName.swift")),
+            [testSuiteDir.resolve(testName).resolve("$testName.swift")],
             TestCompilationArtifact.BinaryLibrary(buildDir.resolve("swiftObject")),
-            listOf(
+            [
                 "-c",
                 "-F", buildDir.absolutePath
-            ),
+            ],
             outputFile = { library -> library.libraryFile }
         ).result.assertSuccess()
     }
@@ -227,7 +227,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         // We can do it later if needed.
         Assumptions.assumeFalse(testRunSettings.configurables.targetTriple.isMacabi)
 
-        val testCase = generateObjCFramework(testName, listOf("-g"))
+        val testCase = generateObjCFramework(testName, ["-g"])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -236,7 +236,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val testName = "stacktraceBridges"
         Assumptions.assumeFalse(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
 
-        val testCase = generateObjCFramework(testName, listOf("-g"))
+        val testCase = generateObjCFramework(testName, ["-g"])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -244,7 +244,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     fun testStacktraceByLibbacktrace() {
         Assumptions.assumeFalse(testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT)
         val testName = "stacktraceByLibbacktrace"
-        val testCase = generateObjCFramework(testName, listOf("-g", "-Xbinary=sourceInfoType=libbacktrace"))
+        val testCase = generateObjCFramework(testName, ["-g", "-Xbinary=sourceInfoType=libbacktrace"])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -264,18 +264,18 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val testName = "bundle_id"
         val testDir = testSuiteDir.resolve(testName)
         val freeCompilerArgs = TestCompilerArgs(
-            listOf(
+            [
                 "-Xbinary=bundleId=$testName",
                 "-Xbinary=bundleVersion=FooBundleVersion",
                 "-Xbinary=bundleShortVersionString=FooBundleShortVersionString"
-            )
+            ]
         )
         val testCase = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR, extras, testName,
-            listOf(
+            [
                 testDir.resolve("main.kt"),
                 testDir.resolve("lib.kt"),
-            ),
+            ],
             freeCompilerArgs
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
@@ -303,7 +303,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestKind.STANDALONE_NO_TR,
             extras,
             moduleName,
-            listOf(testSuiteDir.resolve(testName).resolve("lib.kt")),
+            [testSuiteDir.resolve(testName).resolve("lib.kt")],
         )
         val objCFrameworkCompilation = testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
 
@@ -326,7 +326,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val interopLibrary = compileCInterop(testName)
 
-        val testCase = generateObjCFramework(testName, emptyList(), setOf(TestModule.Given(interopLibrary.klibFile)))
+        val testCase = generateObjCFramework(testName, [], [TestModule.Given(interopLibrary.klibFile)])
         compileAndRunSwift(testName, testCase)
     }
 
@@ -355,8 +355,8 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         // test must make huge amount of repetitions to make sure there's no race conditions, so bigger timeout is needed. Double is not enough
         val checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 10)
         val testCase = generateObjCFramework(testName, checks = checks)
-        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>().scheduler != GCSchedulerType.AGGRESSIVE) listOf() else
-            listOf("-D", "AGGRESSIVE_GC")
+        val swiftExtraOpts = if (testRunSettings.get<GCScheduler>().scheduler != GCSchedulerType.AGGRESSIVE) [] else
+            ["-D", "AGGRESSIVE_GC"]
         compileAndRunSwift(testName, testCase, swiftExtraOpts)
     }
 
@@ -379,29 +379,29 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val testName = "permanentObjects"
         Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP) { "Test requires GC to actually happen" }
 
-        val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
+        val testCase = generateObjCFramework(testName, ["-opt-in=kotlin.native.internal.InternalForKotlinNative"])
         compileAndRunSwift(testName, testCase)
     }
 
     @Test
     fun testReflection() {
         val testName = "reflection"
-        val testCase = generateObjCFramework(testName, listOf("-opt-in=kotlin.native.internal.InternalForKotlinNative"))
+        val testCase = generateObjCFramework(testName, ["-opt-in=kotlin.native.internal.InternalForKotlinNative"])
         compileAndRunSwift(testName, testCase)
     }
 
     @Test
     fun testLatin1Disabled() {
         val testName = "latin1"
-        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=false"))
+        val testCase = generateObjCFramework(testName, ["-Xbinary=latin1Strings=false"])
         compileAndRunSwift(testName, testCase)
     }
 
     @Test
     fun testLatin1Enabled() {
         val testName = "latin1"
-        val testCase = generateObjCFramework(testName, listOf("-Xbinary=latin1Strings=true"))
-        compileAndRunSwift(testName, testCase, swiftExtraOpts=listOf("-D", "ENABLE_LATIN1"))
+        val testCase = generateObjCFramework(testName, ["-Xbinary=latin1Strings=true"])
+        compileAndRunSwift(testName, testCase, swiftExtraOpts= ["-D", "ENABLE_LATIN1"])
     }
 
     @Test
@@ -413,37 +413,37 @@ class FrameworkTest : AbstractNativeSimpleTest() {
 
     @Test
     fun objCExportTest() {
-        objCExportTestImpl("", emptyList(), emptyList(), false)
+        objCExportTestImpl("", [], [], false)
     }
 
     @Test
     fun objCExportTestNoGenerics() {
-        objCExportTestImpl("NoGenerics", listOf("-Xno-objc-generics"),
-                           listOf("-D", "NO_GENERICS"), false)
+        objCExportTestImpl("NoGenerics", ["-Xno-objc-generics"],
+                           ["-D", "NO_GENERICS"], false)
     }
 
     @Test
     fun objCExportTestLegacySuspendUnit() {
-        objCExportTestImpl("LegacySuspendUnit", listOf("-Xbinary=unitSuspendFunctionObjCExport=legacy"),
-                           listOf("-D", "LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT"), false)
+        objCExportTestImpl("LegacySuspendUnit", ["-Xbinary=unitSuspendFunctionObjCExport=legacy"],
+                           ["-D", "LEGACY_SUSPEND_UNIT_FUNCTION_EXPORT"], false)
     }
 
     @Test
     fun objCExportTestNoSwiftMemberNameMangling() {
-        objCExportTestImpl("NoSwiftMemberNameMangling", listOf("-Xbinary=objcExportDisableSwiftMemberNameMangling=true"),
-                           listOf("-D", "DISABLE_MEMBER_NAME_MANGLING"), false)
+        objCExportTestImpl("NoSwiftMemberNameMangling", ["-Xbinary=objcExportDisableSwiftMemberNameMangling=true"],
+                           ["-D", "DISABLE_MEMBER_NAME_MANGLING"], false)
     }
 
     @Test
     fun objCExportTestNoInterfaceMemberNameMangling() {
-        objCExportTestImpl("NoInterfaceMemberNameMangling", listOf("-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"),
-                           listOf("-D", "DISABLE_INTERFACE_METHOD_NAME_MANGLING"), false)
+        objCExportTestImpl("NoInterfaceMemberNameMangling", ["-Xbinary=objcExportIgnoreInterfaceMethodCollisions=true"],
+                           ["-D", "DISABLE_INTERFACE_METHOD_NAME_MANGLING"], false)
     }
 
     @Test
     fun objCExportTestStatic() {
-        objCExportTestImpl("Static", listOf("-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"),
-                           listOf("-D", "DISALLOW_SUSPEND_ANY_THREAD"), true)
+        objCExportTestImpl("Static", ["-Xbinary=objcExportSuspendFunctionLaunchThreadRestriction=main"],
+                           ["-D", "DISALLOW_SUSPEND_ANY_THREAD"], true)
     }
 
     @Test
@@ -454,20 +454,20 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val dumpFile = buildDir.resolve("dump.txt")
         val goldenFile = testDir.resolve("golden.txt")
         val freeCompilerArgs = TestCompilerArgs(
-            listOf(
+            [
                 "-module-name", testName,
                 "-Xbinary=bundleId=$testName",
                 "-Xbinary=bundleVersion=FooBundleVersion",
                 "-Xbinary=bundleShortVersionString=FooBundleShortVersionString",
                 "-Xbinary=dumpObjcSelectorToSignatureMapping=${dumpFile.absolutePath}",
                 "-Xomit-framework-binary"
-            )
+            ]
         )
         val testCase = generateObjCFrameworkTestCase(
             TestKind.STANDALONE_NO_TR, extras, testName,
-            listOf(
+            [
                 testDir.resolve("main.kt"),
-            ),
+            ],
             freeCompilerArgs
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
@@ -497,7 +497,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             testSuiteDir.resolve("objcexport/library"),
             buildDir,
             TestCompilerArgs("-Xshort-module-name=MyLibrary", "-module-name", "org.jetbrains.kotlin.native.test-library"),
-            emptyList(),
+            [],
         )
 
         // Convert KT sources into ObjC framework using two KLIbs
@@ -519,7 +519,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
                     "-module-name", frameworkName,
                 )
             ),
-            givenDependencies = setOf(TestModule.Given(library.klibFile)),
+            givenDependencies = [TestModule.Given(library.klibFile)],
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout * 5), // objcexport is a test suite on its own, increase the default timeout
         )
         testCompilationFactory.testCaseToObjCFrameworkCompilation(testCase, testRunSettings).result.assertSuccess()
@@ -544,7 +544,7 @@ class FrameworkTest : AbstractNativeSimpleTest() {
         val testExecutable = TestExecutable(
             successExecutable.resultingArtifact,
             successExecutable.loggedData,
-            listOf(TestName("objCExportTest$suffix"))
+            [TestName("objCExportTest$suffix")]
         )
         runExecutableAndVerify(testCase, testExecutable)
 
@@ -559,8 +559,8 @@ class FrameworkTest : AbstractNativeSimpleTest() {
 
     private fun generateObjCFramework(
         name: String,
-        testCompilerArgs: List<String> = emptyList(),
-        givenDependencies: Set<TestModule.Given> = emptySet(),
+        testCompilerArgs: List<String> = [],
+        givenDependencies: Set<TestModule.Given> = [],
         checks: TestRunChecks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
         moduleName: String = name.replaceFirstChar { it.uppercase() },
     ): TestCase {
@@ -570,7 +570,8 @@ class FrameworkTest : AbstractNativeSimpleTest() {
             TestKind.STANDALONE_NO_TR,
             extras,
             moduleName,
-            listOf(testSuiteDir.resolve(name).resolve("$name.kt")),
+            [testSuiteDir.resolve(name).resolve("$name.kt")],
+            @Suppress("ConvertToCollectionLiterals")
             TestCompilerArgs(
                 testCompilerArgs + listOf("-module-name", moduleName, "-Xbinary=bundleId=$name")
             ),
@@ -587,15 +588,15 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     private fun compileAndRunSwift(
         testName: String,
         testCase: TestCase,
-        swiftExtraOpts: List<String> = emptyList(),
+        swiftExtraOpts: List<String> = [],
         testDir: File = testSuiteDir.resolve(testName),
     ) {
         val success =
-            compileSwift(listOf(testDir.resolve("$testName.swift")), swiftExtraOpts)
+            compileSwift([testDir.resolve("$testName.swift")], swiftExtraOpts)
         val testExecutable = TestExecutable(
             success.resultingArtifact,
             success.loggedData,
-            listOf(TestName(testName))
+            [TestName(testName)]
         )
         runExecutableAndVerify(testCase, testExecutable)
     }
@@ -606,11 +607,13 @@ class FrameworkTest : AbstractNativeSimpleTest() {
     ): TestCompilationResult.Success<out TestCompilationArtifact.Executable> {
         // create a test provider and get main entry point
         val provider = createTestProvider(buildDir, testSources)
-        val frameworkOpts = listOf(
+        val frameworkOpts = [
             "-Xlinker", "-rpath", "-Xlinker", "@executable_path/Frameworks",
             "-Xlinker", "-rpath", "-Xlinker", buildDir.absolutePath,
             "-F", buildDir.absolutePath
-        )
+        ]
+
+        @Suppress("ConvertToCollectionLiterals")
         return SwiftCompilation(
             testRunSettings,
             testSources + listOf(

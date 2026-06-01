@@ -395,7 +395,7 @@ open class IncrementalJvmCache(
         // (also that would fail with exception).
         @Synchronized
         fun storeModuleMapping(className: JvmClassName, bytes: ByteArray) {
-            storage[className.internalName] = ProtoMapValue(isPackageFacade = false, bytes = bytes, strings = emptyArray())
+            storage[className.internalName] = ProtoMapValue(isPackageFacade = false, bytes = bytes, strings = [])
         }
 
         @Synchronized

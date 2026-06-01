@@ -687,7 +687,7 @@ abstract class CompileServiceImplBase(
     ): ExitCode {
         reporter.startMeasureGc()
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
-        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, setOf("kt"), includeJavaSources = false)
+        val allKotlinFiles = extractKotlinSourcesFromFreeCompilerArguments(args, ["kt"], includeJavaSources = false)
 
         val workingDir = incrementalCompilationOptions.workingDir
         val modulesApiHistory = incrementalCompilationOptions.multiModuleICSettings?.run {
@@ -744,7 +744,7 @@ abstract class CompileServiceImplBase(
     ): ExitCode {
         reporter.startMeasureGc()
         val allKotlinJvmExtensions = (DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS +
-                (incrementalCompilationOptions.kotlinScriptExtensions ?: emptyArray())).toSet()
+                (incrementalCompilationOptions.kotlinScriptExtensions ?: [])).toSet()
 
         @Suppress("DEPRECATION") // TODO: get rid of that parsing KT-62759
         val allSourceFiles = extractKotlinSourcesFromFreeCompilerArguments(k2jvmArgs, allKotlinJvmExtensions, includeJavaSources = true)
@@ -1176,7 +1176,7 @@ class CompileServiceImpl(
                 if (hasLowerPriorityThan(bestDaemonWithMetadata)) {
                     // there is at least one bigger, try to handover my clients to it and shutdown
                     log.info("$LOG_PREFIX_ASSUMING_OTHER_DAEMONS_HAVE higher prio, try to handover clients to it and schedule shutdown: my runfile: ${runFile.name} (${runFile.lastModified()}) vs best other runfile: ${bestDaemonWithMetadata.runFile.name} (${bestDaemonWithMetadata.runFile.lastModified()})")
-                    val clients = getClients().takeIf { it.isGood }?.get() ?: emptyList()
+                    val clients = getClients().takeIf { it.isGood }?.get() ?: []
                     val handoverSuccessful = clients
                         .map { client -> bestDaemonWithMetadata.daemon.registerClient(client) }
                         .all { it.isOk }

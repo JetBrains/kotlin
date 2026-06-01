@@ -128,7 +128,7 @@ internal class JvmSourcesToCompileCalculator(
 }
 
 private fun processLookupSymbolsForAndroidLayouts(changedFiles: DeterminableFiles.Known): Collection<LookupSymbol> {
-    val result = mutableListOf<LookupSymbol>()
+    val result: MutableList<LookupSymbol> = []
     for (file in changedFiles.modified + changedFiles.removed) {
         if (file.extension.lowercase() != "xml") continue
         val layoutName = file.name.substringBeforeLast('.')

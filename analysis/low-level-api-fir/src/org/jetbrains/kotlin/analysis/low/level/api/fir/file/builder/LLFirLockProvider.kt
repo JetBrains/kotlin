@@ -404,7 +404,7 @@ private val resolveStateFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
  */
 private class JumpingResolutionStatesStack {
     private val stateStackHolder = ThreadLocal.withInitial<MutableList<FirInProcessOfResolvingToJumpingPhaseState>> {
-        mutableListOf()
+        []
     }
 
     /**

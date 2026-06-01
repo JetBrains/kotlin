@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.platform.wasm
 
 object BinaryenConfig {
-    private val binaryenCommonArgs = listOf(
+    private val binaryenCommonArgs = [
         // Proposals
         "--enable-gc",
         "--enable-reference-types",
@@ -29,8 +29,9 @@ object BinaryenConfig {
         "--inline-functions-with-loops",
         "--traps-never-happen",
         "--fast-math",
-    )
+    ]
 
+    @Suppress("ConvertToCollectionLiterals")
     val binaryenArgs = binaryenCommonArgs + listOf(
         "--closed-world",
         // without "--type-merging" it produces increases the size
@@ -45,6 +46,7 @@ object BinaryenConfig {
         "-Oz",
     )
 
+    @Suppress("ConvertToCollectionLiterals")
     val binaryenMultimoduleArgs = binaryenCommonArgs + listOf(
         "-O3",
         "-O3",

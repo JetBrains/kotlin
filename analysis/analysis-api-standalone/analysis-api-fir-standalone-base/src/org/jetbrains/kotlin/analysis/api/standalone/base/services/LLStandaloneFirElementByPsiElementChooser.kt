@@ -107,7 +107,7 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
         val boundsByName = psiFunction.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
         firFunction.typeParameters.zip(psiFunction.typeParameters) { expectedTypeParameter, candidateTypeParameter ->
             if (expectedTypeParameter.symbol.name.toString() != candidateTypeParameter.name) return false
-            val candidateBounds = mutableListOf<KtTypeReference>()
+            val candidateBounds: MutableList<KtTypeReference> = []
             candidateBounds.addIfNotNull(candidateTypeParameter.extendsBound)
             boundsByName[candidateTypeParameter.name]?.forEach {
                 candidateBounds.addIfNotNull(it.boundTypeReference)

@@ -43,7 +43,7 @@ class ComposeIrGenerationExtension(
     private val metricsDestination: String? = null,
     private val reportsDestination: String? = null,
     private val useK2: Boolean = false,
-    private val stableTypeMatchers: Set<FqNameMatcher> = emptySet(),
+    private val stableTypeMatchers: Set<FqNameMatcher> = [],
     private val moduleMetricsFactory: ((StabilityInferencer, FeatureFlags) -> ModuleMetrics)? = null,
     private val descriptorSerializerContext: ComposeDescriptorSerializerContext? = null,
     private val featureFlags: FeatureFlags,

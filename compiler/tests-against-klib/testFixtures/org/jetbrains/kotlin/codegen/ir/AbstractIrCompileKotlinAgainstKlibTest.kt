@@ -32,7 +32,7 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val classpath: MutableList<File> = ArrayList()
         classpath.add(KtTestUtil.getAnnotationsJar())
         val configuration = createConfiguration(
-            configurationKind, getTestJdkKind(files), classpath, listOf(outputDir), files
+            configurationKind, getTestJdkKind(files), classpath, [outputDir], files
         )
         myEnvironment = createForTests(
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
@@ -48,12 +48,12 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
                 throw t
             }
         }
-        super.doMultiFileTest(wholeFile, listOf(files.last()))
+        super.doMultiFileTest(wholeFile, [files.last()])
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {
         super.updateConfiguration(configuration)
-        configuration.put(JVMConfigurationKeys.KLIB_PATHS, listOf(klibName))
+        configuration.put(JVMConfigurationKeys.KLIB_PATHS, [klibName])
     }
 
     // We need real (as opposed to virtual) files in order to produce a Klib.
@@ -73,12 +73,12 @@ abstract class AbstractCompileKotlinAgainstKlibTest : AbstractBlackBoxCodegenTes
         val sourceFiles = loadMultiFilesReal(files)
         val [output, exitCode] = AbstractCliTest.executeCompilerGrabOutput(
             K2JSCompiler(),
-            listOf(
+            [
                 "-ir-output-dir", outputDir.normalize().absolutePath,
                 "-ir-output-name", klibName,
                 "-Xir-produce-klib-file",
                 "-libraries", "libraries/stdlib/build/classes/kotlin/js/main/"
-            ) + sourceFiles
+            ] + sourceFiles
         )
         if (exitCode != ExitCode.OK) {
             throw Exception(output)

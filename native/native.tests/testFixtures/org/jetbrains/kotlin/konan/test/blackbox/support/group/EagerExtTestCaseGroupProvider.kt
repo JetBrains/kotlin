@@ -39,7 +39,7 @@ internal class EagerExtTestCaseGroupProvider : ExtTestCaseGroupProvider() {
                 .mapNotNull {
                     val extendedSettings = object : Settings(
                         parent = settings,
-                        settings = listOf(ExternalSourceTransformersProvider::class to JvmInlineAnnotationRemover)
+                        settings = [ExternalSourceTransformersProvider::class to JvmInlineAnnotationRemover]
                     ) {}
                     super.getTestCaseGroup(TestCaseGroupId.TestDataDir(it), extendedSettings)
                 }.toSet()
@@ -67,6 +67,6 @@ internal class EagerExtTestCaseGroupProvider : ExtTestCaseGroupProvider() {
      * This happens because we eagerly iterate through the test data, while JUnit does not create actual test instances.
      */
     private object JvmInlineAnnotationRemover : ExternalSourceTransformersProvider {
-        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers = listOf(removeOptionalJvmInlineAnnotation)
+        override fun getSourceTransformers(testDataFile: File): ExternalSourceTransformers = [removeOptionalJvmInlineAnnotation]
     }
 }

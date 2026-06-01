@@ -26,7 +26,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 "assemble",
                 buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(":compileKotlinJs")
+                executedTaskNames = [":compileKotlinJs"]
             )
         }
     }
@@ -39,13 +39,13 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 ":app:build",
                 buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(
+                executedTaskNames = [
                     ":app:jsPackageJson",
                     ":app:jsPublicPackageJson",
                     ":app:compileKotlinJs",
                     ":app:compileProductionExecutableKotlinJs",
                     ":app:jsBrowserProductionWebpack",
-                )
+                ]
             )
         }
     }
@@ -78,13 +78,14 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             assertSimpleConfigurationCacheScenarioWorks(
                 ":build",
                 buildOptions = defaultBuildOptions,
-                executedTaskNames = listOf(
+                executedTaskNames = [
                     ":jsPackageJson",
                     ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
                     ":jsNodeTest",
-                ) + listOf(":compileProductionExecutableKotlinJs")
+                    ":compileProductionExecutableKotlinJs",
+                ]
             )
         }
     }
@@ -100,14 +101,15 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
             // check IdeaPropertiesEvaluator for the logic
             build(":build", "-Didea.version=2020.1") {
                 assertConfigurationCacheReused()
-                val upToDateTasks = listOf(
+                val upToDateTasks: Array<String> = [
                     ":jsPackageJson",
                     ":jsPublicPackageJson",
                     ":rootPackageJson",
                     ":compileKotlinJs",
                     ":jsNodeTest",
-                ) + listOf(":compileProductionExecutableKotlinJs")
-                assertTasksUpToDate(*upToDateTasks.toTypedArray())
+                    ":compileProductionExecutableKotlinJs",
+                ]
+                assertTasksUpToDate(*upToDateTasks)
             }
         }
     }
@@ -123,7 +125,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                         yarn = false
                     )
                 ),
-                executedTaskNames = listOf(":rootPackageJson")
+                executedTaskNames = [":rootPackageJson"]
             )
         }
     }
@@ -139,7 +141,7 @@ class JsIrConfigurationCacheIT : KGPBaseTest() {
                         yarn = true
                     )
                 ),
-                executedTaskNames = listOf(":rootPackageJson")
+                executedTaskNames = [":rootPackageJson"]
             )
         }
     }

@@ -85,18 +85,18 @@ enum class KotlinTarget(val description: String, val isDefault: Boolean = true) 
         val DEFAULT_TARGET_SET: Set<KotlinTarget> = entries.filter { it.isDefault }.toSet()
         val ALL_TARGET_SET: Set<KotlinTarget> = entries.toSet()
 
-        val ANNOTATION_CLASS_LIST = listOf(ANNOTATION_CLASS, CLASS)
-        val LOCAL_CLASS_LIST = listOf(LOCAL_CLASS, CLASS)
-        val CLASS_LIST = listOf(CLASS_ONLY, CLASS)
-        val COMPANION_OBJECT_LIST = listOf(COMPANION_OBJECT, OBJECT, CLASS)
-        val OBJECT_LIST = listOf(STANDALONE_OBJECT, OBJECT, CLASS)
-        val INTERFACE_LIST = listOf(INTERFACE, CLASS)
-        val ENUM_LIST = listOf(ENUM_CLASS, CLASS)
-        val ENUM_ENTRY_LIST = listOf(ENUM_ENTRY, PROPERTY, FIELD)
-        val PROPERTY_SETTER_LIST = listOf(PROPERTY_SETTER)
-        val PROPERTY_GETTER_LIST = listOf(PROPERTY_GETTER)
-        val FUNCTION_LIST = listOf(FUNCTION)
-        val FILE_LIST = listOf(FILE)
+        val ANNOTATION_CLASS_LIST = [ANNOTATION_CLASS, CLASS]
+        val LOCAL_CLASS_LIST = [LOCAL_CLASS, CLASS]
+        val CLASS_LIST = [CLASS_ONLY, CLASS]
+        val COMPANION_OBJECT_LIST = [COMPANION_OBJECT, OBJECT, CLASS]
+        val OBJECT_LIST = [STANDALONE_OBJECT, OBJECT, CLASS]
+        val INTERFACE_LIST = [INTERFACE, CLASS]
+        val ENUM_LIST = [ENUM_CLASS, CLASS]
+        val ENUM_ENTRY_LIST = [ENUM_ENTRY, PROPERTY, FIELD]
+        val PROPERTY_SETTER_LIST = [PROPERTY_SETTER]
+        val PROPERTY_GETTER_LIST = [PROPERTY_GETTER]
+        val FUNCTION_LIST = [FUNCTION]
+        val FILE_LIST = [FILE]
 
         fun classActualTargets(
             kind: ClassKind,

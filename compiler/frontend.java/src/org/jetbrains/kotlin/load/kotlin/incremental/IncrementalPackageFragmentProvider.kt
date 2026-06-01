@@ -41,7 +41,7 @@ class IncrementalPackageFragmentProvider(
             .mapTo(hashSetOf()) { it.packageFqName }
             .keysToMap(this::IncrementalPackageFragment)
 
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> = emptySet()
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Set<FqName> = []
 
     override fun collectPackageFragments(fqName: FqName, packageFragments: MutableCollection<PackageFragmentDescriptor>) =
         packageFragments.addIfNotNull(fqNameToPackageFragment[fqName])

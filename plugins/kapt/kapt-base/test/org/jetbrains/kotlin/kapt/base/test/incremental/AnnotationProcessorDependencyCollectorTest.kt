@@ -17,7 +17,7 @@ class AnnotationProcessorDependencyCollectorTest {
     fun testAggregating() {
         val aggregating = AnnotationProcessorDependencyCollector(RuntimeProcType.AGGREGATING) {}
         val generated = listOf("GeneratedA.java", "GeneratedB.java", "GeneratedC.java").map { File(it).toURI() }
-        generated.forEach { aggregating.add(it, emptyArray(), null) }
+        generated.forEach { aggregating.add(it, [], null) }
 
         assertEquals(aggregating.getGeneratedToSources(), generated.associate { File(it) to null })
         assertEquals(aggregating.getRuntimeType(), RuntimeProcType.AGGREGATING)
@@ -25,9 +25,9 @@ class AnnotationProcessorDependencyCollectorTest {
 
     @Test
     fun testIsolatingWithoutOrigin() {
-        val warnings = mutableListOf<String>()
+        val warnings: MutableList<String> = []
         val isolating = AnnotationProcessorDependencyCollector(RuntimeProcType.ISOLATING) { s -> warnings.add(s) }
-        isolating.add(File("GeneratedA.java").toURI(), emptyArray(), null)
+        isolating.add(File("GeneratedA.java").toURI(), [], null)
 
         assertEquals(isolating.getRuntimeType(), RuntimeProcType.NON_INCREMENTAL)
         assertEquals(isolating.getGeneratedToSources(), emptyMap<File, String?>())
@@ -37,8 +37,8 @@ class AnnotationProcessorDependencyCollectorTest {
     @Test
     fun testNonIncremental() {
         val nonIncremental = AnnotationProcessorDependencyCollector(RuntimeProcType.NON_INCREMENTAL) {}
-        nonIncremental.add(File("GeneratedA.java").toURI(), emptyArray(), null)
-        nonIncremental.add(File("GeneratedB.java").toURI(), emptyArray(), null)
+        nonIncremental.add(File("GeneratedA.java").toURI(), [], null)
+        nonIncremental.add(File("GeneratedB.java").toURI(), [], null)
 
         assertEquals(nonIncremental.getRuntimeType(), RuntimeProcType.NON_INCREMENTAL)
         assertEquals(nonIncremental.getGeneratedToSources(), emptyMap<File, String?>())

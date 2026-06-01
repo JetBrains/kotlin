@@ -294,7 +294,7 @@ class Fir2IrLazyProperty(
     }
 
     override var overriddenSymbols: List<IrPropertySymbol> by symbolsMappingForLazyClasses.lazyMappedPropertyListVar(lock) lazy@{
-        if (containingClass == null || parent !is Fir2IrLazyClass) return@lazy emptyList()
+        if (containingClass == null || parent !is Fir2IrLazyClass) return@lazy []
 
         val baseFunctionWithDispatchReceiverTag =
             lazyFakeOverrideGenerator.computeFakeOverrideKeys(containingClass, fir.symbol)

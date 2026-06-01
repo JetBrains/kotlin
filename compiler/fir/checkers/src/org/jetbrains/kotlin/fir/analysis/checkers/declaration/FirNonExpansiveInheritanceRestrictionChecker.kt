@@ -39,7 +39,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
         val edgesInCycles = graph.expansiveEdges.filterTo(SmartSet.create()) { graph.isEdgeInCycle(it) }
         if (edgesInCycles.isEmpty()) return
 
-        val problemNodes = edgesInCycles.flatMapTo(mutableSetOf()) { listOf(it.from, it.to) }
+        val problemNodes = edgesInCycles.flatMapTo(mutableSetOf()) { [it.from, it.to] }
 
         for (ref in declaration.typeParameters) {
             if (problemNodes.remove(TypeParameterNode(declaration.symbol, ref.symbol))) {
@@ -174,7 +174,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
 
             val neighbors = DFS.Neighbors<T> { current -> edgeLists[current] ?: emptySet() }
 
-            DFS.dfs(listOf(from), neighbors, handler)
+            DFS.dfs([from], neighbors, handler)
 
             return handler.result()
         }

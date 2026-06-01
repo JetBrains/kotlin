@@ -165,12 +165,12 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                 // invariant, we would like to put a synchronization point immediately before "InlineAllFunctions".
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, getLoweringsUpToAndIncludingSyntheticAccessors()) }
                 fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningOnlyPrivateFunctions) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, listOf(inlineAllFunctionsPhase)) }
-                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, listOf(specialObjCValidationPhase, redundantCastsRemoverPhase)) }
+                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, [inlineAllFunctionsPhase]) }
+                fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, [specialObjCValidationPhase, redundantCastsRemoverPhase]) }
             }
 
             fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterInliningAllFunctions) }
-            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, listOf(constEvaluationPhase)) }
+            fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, [constEvaluationPhase]) }
             fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, state.context.config.getLoweringsAfterInlining()) }
             fragmentWithState.forEach { [fragment, state] -> state.runSpecifiedLowerings(fragment, validateIrAfterLowering) }
 
@@ -348,15 +348,15 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
-        sequenceOf(
-                BackendJobFragment(
-                        input,
-                        context.config.libraryToCache?.strategy,
-                        DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
-                        llvmModuleSpecification,
-                        PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
-                )
-        )
+        [
+            BackendJobFragment(
+                    input,
+                    context.config.libraryToCache?.strategy,
+                    DependenciesTrackerImpl(llvmModuleSpecification, context.config, context),
+                    llvmModuleSpecification,
+                    PerformanceManagerImpl.createChildIfNeeded(mainPerfManager, start = false),
+            )
+        ]
     }
 }
 
@@ -407,13 +407,13 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         val resolvedCacheBinaries by lazy { resolveCacheBinaries(context.config.cachedLibraries, moduleCompilationOutput.dependenciesTrackingResult) }
         when {
             context.config.produce == CompilerOutputKind.STATIC_CACHE -> {
-                compilationResult to ResolvedCacheBinaries(emptyList(), emptyList())
+                compilationResult to ResolvedCacheBinaries([], [])
             }
             shouldPerformPreLink(context.config, resolvedCacheBinaries, linkerOutputKind) -> {
                 val prelinkResult = temporaryFiles.create("withStaticCaches", ".o").javaFile()
-                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput(listOf(compilationResult), resolvedCacheBinaries, prelinkResult))
+                runAndMeasurePhase(PreLinkCachesPhase, PreLinkCachesInput([compilationResult], resolvedCacheBinaries, prelinkResult))
                 // Static caches are linked into binary, so we don't need to pass them.
-                prelinkResult to ResolvedCacheBinaries(emptyList(), resolvedCacheBinaries.dynamic)
+                prelinkResult to ResolvedCacheBinaries([], resolvedCacheBinaries.dynamic)
             }
             else -> {
                 compilationResult to resolvedCacheBinaries
@@ -423,7 +423,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
     val linkerPhaseInput = LinkerPhaseInput(
             linkerOutputFile,
             linkerOutputKind,
-            listOf(linkerInput.canonicalPath),
+            [linkerInput.canonicalPath],
             moduleCompilationOutput.dependenciesTrackingResult,
             outputFiles,
             temporaryFiles,
@@ -443,7 +443,7 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
-    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
+    val allModulesToLower = [module] + dependenciesToCompile.reversed()
 
     runLowerings(loweringList, allModulesToLower, performanceManager)
 }
@@ -456,7 +456,7 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
-    val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
+    val allModulesToLower = [module] + dependenciesToCompile.reversed()
 
     runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
@@ -473,9 +473,9 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
         )
         runAndMeasurePhase(CExportGenerateApiPhase, input)
         runAndMeasurePhase(CExportCompileAdapterPhase, CExportCompileAdapterInput(cExportFiles.cppAdapter, cExportFiles.bitcodeAdapter))
-        listOf(cExportFiles.bitcodeAdapter)
+        [cExportFiles.bitcodeAdapter]
     } else {
-        emptyList()
+        []
     }
     runAndMeasurePhase(CStubsPhase)
     // TODO: Consider extracting llvmModule and friends from nativeGenerationState and pass them explicitly.

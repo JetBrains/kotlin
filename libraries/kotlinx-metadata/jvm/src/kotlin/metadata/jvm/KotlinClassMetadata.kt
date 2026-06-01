@@ -197,7 +197,7 @@ public sealed class KotlinClassMetadata {
                     else Pair(emptyArray<String>(), emptyArray<String>())
                 Metadata(SYNTHETIC_CLASS_KIND, version.toIntArray(), d1, d2, extraInt = flags)
             } else {
-                Metadata(SYNTHETIC_CLASS_KIND, version.toIntArray(), emptyArray<String>(), emptyArray<String>(), extraInt = flags)
+                Metadata(SYNTHETIC_CLASS_KIND, version.toIntArray(), emptyArray<String>(), [], extraInt = flags)
             }
         }
 

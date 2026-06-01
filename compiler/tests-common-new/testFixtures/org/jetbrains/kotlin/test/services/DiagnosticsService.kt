@@ -61,8 +61,8 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
             }
         }
 
-        val enabledNames = mutableSetOf<String>()
-        val disabledNames = mutableSetOf<String>()
+        val enabledNames: MutableSet<String> = []
+        val disabledNames: MutableSet<String> = []
         for ([name, enabled] in diagnosticMap) {
             when (enabled) {
                 true -> enabledNames += name

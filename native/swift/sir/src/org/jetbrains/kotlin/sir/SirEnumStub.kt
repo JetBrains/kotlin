@@ -15,8 +15,8 @@ class SirEnumStub(
         get() = null
     override lateinit var parent: SirDeclarationParent
     override val attributes: List<SirAttribute>
-        get() = emptyList()
-    override val declarations: MutableList<SirDeclaration> = mutableListOf()
+        get() = []
+    override val declarations: MutableList<SirDeclaration> = []
     override val protocols: List<SirProtocol>
-        get() = emptyList()
+        get() = []
 }

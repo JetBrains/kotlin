@@ -134,7 +134,7 @@ object JsLibraryUtils {
         }
         try {
             val zipEntries = zipFile.entries()
-            val librariesWithoutSourceMaps = mutableListOf<JsLibrary>()
+            val librariesWithoutSourceMaps: MutableList<JsLibrary> = []
             val possibleMapFiles = mutableMapOf<String, ZipEntry>()
 
             while (zipEntries.hasMoreElements()) {

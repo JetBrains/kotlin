@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
  */
 class LoadedKlibs(
     val all: List<KotlinLibrary>,
-    val friends: List<KotlinLibrary> = emptyList(),
+    val friends: List<KotlinLibrary> = [],
     val included: KotlinLibrary? = null
 )
 
@@ -49,6 +49,6 @@ class LoadedKlibs(
  */
 class LoadedNativeKlibs(
     val all: List<KotlinLibrary>,
-    val friends: List<KotlinLibrary> = emptyList(),
-    val included: List<KotlinLibrary> = emptyList(),
+    val friends: List<KotlinLibrary> = [],
+    val included: List<KotlinLibrary> = [],
 )

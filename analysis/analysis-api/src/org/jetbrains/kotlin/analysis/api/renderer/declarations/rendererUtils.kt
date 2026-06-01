@@ -21,7 +21,7 @@ public fun <S> renderAnnotationsModifiersAndContextReceivers(
     printer: PrettyPrinter,
     keyword: KtKeywordToken,
 ): Unit where S : KaAnnotated, S : KaDeclarationSymbol = printer {
-    renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, listOf(keyword))
+    renderAnnotationsModifiersAndContextReceivers(analysisSession, symbol, declarationRenderer, printer, [keyword])
 }
 
 @KaExperimentalApi

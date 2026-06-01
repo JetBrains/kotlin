@@ -46,7 +46,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
             val resolvedClassTypeRef = classId.toLookupTag().toDefaultResolvedTypeRef()
             return buildClassReferenceExpression {
                 classTypeRef = resolvedClassTypeRef
-                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(resolvedClassTypeRef.coneType), false)
+                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType([resolvedClassTypeRef.coneType], false)
             }
         }
 
@@ -67,7 +67,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
         override fun visitArray(name: Name?): KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor? {
             if (name == null && !visitNullNames) return null
             return object : KotlinJvmBinaryClass.AnnotationArrayArgumentVisitor {
-                private val elements = mutableListOf<FirExpression>()
+                private val elements: MutableList<FirExpression> = []
 
                 override fun visit(value: Any?) {
                     elements.add(createConstant(value))
@@ -86,7 +86,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
                 }
 
                 override fun visitAnnotation(classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor {
-                    val list = mutableListOf<FirAnnotation>()
+                    val list: MutableList<FirAnnotation> = []
                     val visitor = loadAnnotation(classId, list)
                     return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                         override fun visitEnd() {
@@ -113,7 +113,7 @@ internal class AnnotationsLoader(private val session: FirSession, private val ko
 
         override fun visitAnnotation(name: Name?, classId: ClassId): KotlinJvmBinaryClass.AnnotationArgumentVisitor? {
             if (name == null && !visitNullNames) return null
-            val list = mutableListOf<FirAnnotation>()
+            val list: MutableList<FirAnnotation> = []
             val visitor = loadAnnotation(classId, list)
             return object : KotlinJvmBinaryClass.AnnotationArgumentVisitor by visitor {
                 override fun visitEnd() {

@@ -89,7 +89,7 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             addRegularModule("b") {
                 sourceFileAddend("fun foo() = a.a(0)") // call a real function from "a"
             }
-        }.compileToKlibsViaCli(extraCliArgs = listOf(CLI_PARAM_LIBRARIES, moduleAKlibRelativePath)) { _, successKlib ->
+        }.compileToKlibsViaCli(extraCliArgs = [CLI_PARAM_LIBRARIES, moduleAKlibRelativePath]) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
         }
     }
@@ -107,27 +107,27 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             modules.modules[0].sourceFile.parentFile.resolve("non-existent-klib.klib").absolutePath,
         ).forEach { libraryPath ->
             modules.compileToKlibsViaCli(
-                extraCliArgs = listOf(
+                extraCliArgs = [
                     CLI_PARAM_LIBRARIES, libraryPath,
-                )
+                ]
             ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
 
             modules.compileToKlibsViaCli(
-                extraCliArgs = listOf(
+                extraCliArgs = [
                     CLI_PARAM_LIBRARIES, libraryPath,
                     CLI_PARAM_FRIENDS, libraryPath,
-                )
+                ]
             ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
 
             modules.compileToKlibsViaCli(
-                extraCliArgs = listOf(
+                extraCliArgs = [
                     CLI_PARAM_LIBRARIES, libraryPath,
                     CLI_ARG_INCLUDES(libraryPath),
-                )
+                ]
             ) { _, successKlib ->
                 successKlib.assertLibraryNotFound(libraryPath)
             }
@@ -151,10 +151,10 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         // Existing friend that is also passed via `-library`.
         moduleB.compileToKlibsViaCli(
-            extraCliArgs = listOf(
+            extraCliArgs = [
                 CLI_PARAM_LIBRARIES, moduleAKlibPath,
                 CLI_PARAM_FRIENDS, moduleAKlibPath,
-            )
+            ]
         ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertNoFriendIssues()
@@ -162,9 +162,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         // Existing friend that is not passed via `-library`.
         moduleB.compileToKlibsViaCli(
-            extraCliArgs = listOf(
+            extraCliArgs = [
                 CLI_PARAM_FRIENDS, moduleAKlibPath,
-            )
+            ]
         ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertUnexpectedFriends(moduleAKlibPath)
@@ -174,10 +174,10 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         // Non-existing friend that is also passed via `-library`.
         moduleB.compileToKlibsViaCli(
-            extraCliArgs = listOf(
+            extraCliArgs = [
                 CLI_PARAM_LIBRARIES, nonExistentKlibPath,
                 CLI_PARAM_FRIENDS, nonExistentKlibPath,
-            )
+            ]
         ) { _, successKlib ->
             successKlib.assertLibraryNotFound(nonExistentKlibPath)
             successKlib.assertNoFriendIssues()
@@ -185,9 +185,9 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
 
         // Non-existing friend that is not passed via `-library`.
         moduleB.compileToKlibsViaCli(
-            extraCliArgs = listOf(
+            extraCliArgs = [
                 CLI_PARAM_FRIENDS, nonExistentKlibPath,
-            )
+            ]
         ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()
             successKlib.assertUnexpectedFriends(nonExistentKlibPath)
@@ -340,8 +340,8 @@ class KlibCliSanityTest : AbstractNativeSimpleTest() {
             }
         }.compileToKlibsViaCli(
             extraCliArgs = buildList {
-                if (noStdlib) this += listOf("-nostdlib", "-l", stdlibPath)
-                if (noDefaultLibs) this += listOf("-no-default-libs", "-l", posixPath)
+                if (noStdlib) addAll(["-nostdlib", "-l", stdlibPath])
+                if (noDefaultLibs) addAll(["-no-default-libs", "-l", posixPath])
             }
         ) { _, successKlib ->
             successKlib.assertNoKlibLoaderIssues()

@@ -28,20 +28,20 @@ class PropertiesLowering(@Suppress("unused") context: LoweringContext) : Declara
             is IrSimpleFunction -> {
                 declaration.correspondingPropertySymbol?.owner?.let { property ->
                     if (!property.isEffectivelyExternal()) {
-                        return listOf(declaration)
+                        return [declaration]
                     }
                 }
             }
             is IrField -> {
                 declaration.correspondingPropertySymbol?.owner?.let { property ->
                     if (!property.isEffectivelyExternal()) {
-                        return listOf(declaration)
+                        return [declaration]
                     }
                 }
             }
             is IrProperty -> {
                 if (!declaration.isEffectivelyExternal()) {
-                    return listOf()
+                    return []
                 }
             }
         }

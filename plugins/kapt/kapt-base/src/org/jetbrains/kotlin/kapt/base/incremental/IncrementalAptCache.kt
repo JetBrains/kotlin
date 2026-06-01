@@ -10,7 +10,7 @@ import java.io.Serializable
 
 class IncrementalAptCache : Serializable {
 
-    private val aggregatingGenerated: MutableSet<File> = mutableSetOf()
+    private val aggregatingGenerated: MutableSet<File> = []
     private val aggregatedTypes: MutableSet<String> = linkedSetOf()
     private val isolatingMapping: MutableMap<File, String> = mutableMapOf()
 
@@ -23,9 +23,9 @@ class IncrementalAptCache : Serializable {
             return false
         }
 
-        val aggregating = mutableListOf<IncrementalProcessor>()
-        val isolating = mutableListOf<IncrementalProcessor>()
-        val nonIncremental = mutableListOf<IncrementalProcessor>()
+        val aggregating: MutableList<IncrementalProcessor> = []
+        val isolating: MutableList<IncrementalProcessor> = []
+        val nonIncremental: MutableList<IncrementalProcessor> = []
         processors.forEach {
             when (it.getRuntimeType()) {
                 RuntimeProcType.AGGREGATING -> aggregating.add(it)
@@ -71,7 +71,7 @@ class IncrementalAptCache : Serializable {
      * information is deleted for them. The invalidation is non-transitive.
      */
     fun invalidateIsolatingForOriginTypes(originatingTypes: Set<String>) {
-        val isolatingGenerated = mutableSetOf<File>()
+        val isolatingGenerated: MutableSet<File> = []
         isolatingMapping.forEach { [file, type] ->
             if (type in originatingTypes) {
                 isolatingGenerated.add(file)
@@ -88,12 +88,12 @@ class IncrementalAptCache : Serializable {
         originatingTypes: Set<String>,
         typeInfoProvider: (Collection<File>) -> Set<String>
     ): List<String> {
-        val allGeneratedTypes = mutableListOf<String>()
+        val allGeneratedTypes: MutableList<String> = []
         var currentOrigins = originatingTypes.toSet()
 
         // We need to do it in a loop because mapping could be: [AGenerated.java -> A.java, AGeneratedGenerated.java -> AGenerated.java]
         while (currentOrigins.isNotEmpty()) {
-            val generated = mutableSetOf<File>()
+            val generated: MutableSet<File> = []
             isolatingMapping.forEach { [file, origin] ->
                 if (origin in currentOrigins) {
                     generated.add(file)

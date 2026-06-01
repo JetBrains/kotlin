@@ -38,7 +38,7 @@ abstract class BaseJvmAbiTest : TestCase() {
     inner class Compilation(
         private val projectDir: File,
         val name: String?,
-        val dependencies: Collection<Compilation> = emptyList()
+        val dependencies: Collection<Compilation> = []
     ) {
         val srcDir: File
             get() = if (name == null) projectDir else projectDir.resolve(name)
@@ -74,9 +74,9 @@ abstract class BaseJvmAbiTest : TestCase() {
         val compiler = K2JVMCompiler()
         val args = compiler.createArguments().apply {
             noStdlib = true
-            freeArgs = listOf(compilation.srcDir.canonicalPath)
+            freeArgs = [compilation.srcDir.canonicalPath]
             classpath = (abiDependencies + kotlinJvmStdlib).joinToString(File.pathSeparator) { it.canonicalPath }
-            pluginClasspaths = arrayOf(abiPluginJar.canonicalPath)
+            pluginClasspaths = [abiPluginJar.canonicalPath]
             pluginOptions = listOfNotNull(
                 abiOption(JvmAbiCommandLineProcessor.OUTPUT_PATH_OPTION.optionName, compilation.abiDir.canonicalPath),
                 abiOption(JvmAbiCommandLineProcessor.REMOVE_DEBUG_INFO_OPTION.optionName, true.toString()).takeIf {
@@ -106,7 +106,7 @@ abstract class BaseJvmAbiTest : TestCase() {
         }
         val exitCode = compiler.exec(messageCollector, Services.EMPTY, args)
         if (exitCode != ExitCode.OK || messageCollector.errors.isNotEmpty()) {
-            val errorLines = listOf("Could not compile $compilation", "Exit code: $exitCode", "Errors:") +
+            val errorLines = ["Could not compile $compilation", "Exit code: $exitCode", "Errors:"] +
                     messageCollector.errors.map { "e: ${it.location}: ${it.message}" }
             error(errorLines.joinToString("\n"))
         }
@@ -116,13 +116,13 @@ abstract class BaseJvmAbiTest : TestCase() {
         val javaFiles = CodegenTestUtil.findJavaSourcesInDirectory(compilation.srcDir).map(::File)
         if (javaFiles.isNotEmpty()) {
             compilation.javaDestinationDir.mkdirs()
-            val javacOptions = listOf(
+            val javacOptions = [
                 "-classpath",
                 (abiDependencies + compilation.destinationDir).joinToString(File.pathSeparator) { it.canonicalPath }
                         + File.pathSeparator + kotlinJvmStdlib,
                 "-d",
                 compilation.javaDestinationDir.canonicalPath
-            )
+            ]
             compileJavaFiles(javaFiles, javacOptions).assertSuccessful()
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.destinationDir)
             FileUtil.copyDir(compilation.javaDestinationDir, compilation.abiDir)

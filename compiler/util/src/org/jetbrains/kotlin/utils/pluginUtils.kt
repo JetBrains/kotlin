@@ -34,7 +34,7 @@ fun decodePluginOptions(options: String): Map<String, List<String>> {
         val key = ois.readUTF()
 
         val valueCount = ois.readInt()
-        val values = mutableListOf<String>()
+        val values: MutableList<String> = []
 
         repeat(valueCount) {
             val size = ois.readInt()

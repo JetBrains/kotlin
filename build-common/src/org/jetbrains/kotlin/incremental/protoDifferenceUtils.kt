@@ -35,8 +35,8 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 data class Difference(
     val isClassAffected: Boolean = false,
     val areSubclassesAffected: Boolean = false,
-    val changedMembersNames: Set<String> = emptySet(),
-    val changedSupertypes: Set<FqName> = emptySet()
+    val changedMembersNames: Set<String> = [],
+    val changedSupertypes: Set<FqName> = []
 )
 
 sealed class ProtoData
@@ -343,7 +343,7 @@ class DifferenceCalculatorForClass(
     }
 
     companion object {
-        private val membersResolvers: List<(ProtoBuf.Class) -> List<MessageLite>> = listOf(
+        private val membersResolvers: List<(ProtoBuf.Class) -> List<MessageLite>> = [
             // This list must match the logic in `DifferenceCalculatorForClass.difference`
             // TODO: Consider adding COMPANION_OBJECT_NAME and NESTED_CLASS_NAME_LIST as they are also members of a class (see
             // `DifferenceCalculatorForClass.difference`)
@@ -352,7 +352,7 @@ class DifferenceCalculatorForClass(
             ProtoBuf.Class::getPropertyList,
             ProtoBuf.Class::getTypeAliasList,
             ProtoBuf.Class::getEnumEntryList
-        )
+        ]
 
         fun ClassProtoData.getNonPrivateMembers(): List<String> {
             return membersResolvers.flatMap { membersResolver ->
@@ -417,12 +417,12 @@ class DifferenceCalculatorForPackageFacade(
     }
 
     companion object {
-        private val membersResolvers: List<(ProtoBuf.Package) -> List<MessageLite>> = listOf(
+        private val membersResolvers: List<(ProtoBuf.Package) -> List<MessageLite>> = [
             // This list must match the logic in `DifferenceCalculatorForPackageFacade.difference`
             ProtoBuf.Package::getFunctionList,
             ProtoBuf.Package::getPropertyList,
             ProtoBuf.Package::getTypeAliasList
-        )
+        ]
 
         fun PackagePartProtoData.getNonPrivateMembers(): List<String> {
             return membersResolvers.flatMap { membersResolver ->

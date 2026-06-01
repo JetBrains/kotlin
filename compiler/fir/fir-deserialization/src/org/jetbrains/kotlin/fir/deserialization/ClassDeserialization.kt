@@ -280,7 +280,7 @@ fun deserializeClassToSymbol(
 }
 
 private val ARRAY = Name.identifier("Array")
-private val ARRAY_CLASSES: Set<Name> = setOf(
+private val ARRAY_CLASSES: Set<Name> = [
     ARRAY,
     Name.identifier("ByteArray"),
     Name.identifier("CharArray"),
@@ -290,7 +290,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
     Name.identifier("FloatArray"),
     Name.identifier("DoubleArray"),
     Name.identifier("BooleanArray"),
-)
+]
 
 fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?, session: FirSession) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
@@ -308,14 +308,14 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
         origin = FirDeclarationOrigin.Library
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         returnTypeRef = buildResolvedTypeRef {
-            val typeArguments = if (classId.shortClassName == ARRAY) {
-                arrayOf(
+            val typeArguments: Array<ConeTypeParameterType> = if (classId.shortClassName == ARRAY) {
+                [
                     ConeTypeParameterTypeImpl(
                         ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isMarkedNullable = false
                     )
-                )
+                ]
             } else {
-                emptyArray()
+                []
             }
             coneType = ConeClassLikeTypeImpl(
                 classId.toLookupTag(),
@@ -345,7 +345,7 @@ private fun ProtoBuf.ClassOrBuilder.propertiesInOrder(
     if (versionRequirements.any { it.version.major >= 2 }) return properties
     if (orderFromExtension.isEmpty()) return properties
     val propertiesByName = properties.groupBy { it.name }
-    val orderedProperties = orderFromExtension.flatMap { propertiesByName[it] ?: emptyList() }
+    val orderedProperties = orderFromExtension.flatMap { propertiesByName[it] ?: [] }
     // non-serializable properties are not saved in SerializationPluginMetadataExtensions, so we need to pick up them if any
     return if (orderedProperties.size == properties.size) {
         orderedProperties

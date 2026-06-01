@@ -63,7 +63,7 @@ internal sealed class KaFirKotlinPropertySymbol<P : KtCallableDeclaration>(
         get() = withValidityAssertion { createContextReceivers() }
 
     override val contextParameters: List<KaContextParameterSymbol>
-        get() = withValidityAssertion { emptyList() }
+        get() = withValidityAssertion { [] }
 
     override val isExtension: Boolean
         get() = withValidityAssertion { backingPsi?.isExtensionDeclaration() ?: firSymbol.isExtension }

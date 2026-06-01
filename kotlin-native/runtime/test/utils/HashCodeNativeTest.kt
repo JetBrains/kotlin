@@ -48,7 +48,7 @@ class HashCodeNativeTest {
     @Test
     fun hashCodeOfString() {
         val str = "Hello"
-        val charArray = charArrayOf('H', 'e', 'l', 'l', 'o')
+        val charArray: CharArray = ['H', 'e', 'l', 'l', 'o']
         assertEquals(str.hashCode(), charArray.concatToString(0, 5).hashCode())
     }
 }

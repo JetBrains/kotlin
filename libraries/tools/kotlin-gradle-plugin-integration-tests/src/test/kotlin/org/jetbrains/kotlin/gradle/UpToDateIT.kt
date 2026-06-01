@@ -57,7 +57,7 @@ class UpToDateIT : KGPBaseTest() {
     fun testOther(gradleVersion: GradleVersion) {
         testMutations(
             gradleVersion,
-            setOf(
+            [
                 emptyMutation,
                 OptionMutation("compileKotlin.kotlinOptions.jvmTarget", "'1.8'", "'11'"),
                 OptionMutation("compileKotlin.kotlinOptions.freeCompilerArgs", "[]", "['-Xallow-kotlin-package']"),
@@ -66,7 +66,7 @@ class UpToDateIT : KGPBaseTest() {
                 subpluginOptionMutationWithKapt,
                 externalOutputMutation,
                 compilerClasspathMutation
-            )
+            ]
         )
     }
 

@@ -33,7 +33,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     private fun find(className: String, numberOfTypeParameters: Int): ClassDescriptor {
         val name = Name.identifier(className)
         return kotlinReflectScope.getContributedClassifier(name, NoLookupLocation.FROM_REFLECTION) as? ClassDescriptor
-                ?: notFoundClasses.getClass(ClassId(KOTLIN_REFLECT_FQ_NAME, name), listOf(numberOfTypeParameters))
+                ?: notFoundClasses.getClass(ClassId(KOTLIN_REFLECT_FQ_NAME, name), [numberOfTypeParameters])
     }
 
     private class ClassLookup(val numberOfTypeParameters: Int) {
@@ -55,7 +55,7 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
     val kMutableProperty2: ClassDescriptor by ClassLookup(3)
 
     fun getKClassType(annotations: Annotations, type: KotlinType, variance: Variance): KotlinType =
-            KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), kClass, listOf(TypeProjectionImpl(variance, type)))
+            KotlinTypeFactory.simpleNotNullType(annotations.toDefaultAttributes(), kClass, [TypeProjectionImpl(variance, type)])
 
     fun getKFunctionType(
         annotations: Annotations,
@@ -192,7 +192,8 @@ class ReflectionTypes(module: ModuleDescriptor, private val notFoundClasses: Not
         fun createKPropertyStarType(module: ModuleDescriptor): KotlinType? {
             val kPropertyClass = module.findClassAcrossModuleDependencies(StandardNames.FqNames.kProperty) ?: return null
             return KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, kPropertyClass,
-                                                       listOf(StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())))
+                                                       [StarProjectionImpl(kPropertyClass.typeConstructor.parameters.single())]
+            )
         }
 
         fun isPossibleExpectedCallableType(typeConstructor: TypeConstructor): Boolean {

@@ -42,7 +42,7 @@ object FirStandaloneServiceRegistrar : AnalysisApiSimpleServiceRegistrar() {
         }
         PluginStructureProvider.registerApplicationServices(application, PLUGIN_RELATIVE_PATH)
 
-        for (fileType in listOf(JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KlibMetaFileType)) {
+        for (fileType in [JavaClassFileType.INSTANCE, KotlinBuiltInFileType, KlibMetaFileType]) {
             FileTypeFileViewProviders.INSTANCE.addExplicitExtension(fileType, ClassFileViewProviderFactory(), disposable)
             BinaryFileStubBuilders.INSTANCE.addExplicitExtension(fileType, ClassFileStubBuilder(), disposable)
             BinaryFileTypeDecompilers.getInstance().addExplicitExtension(fileType, ClassFileDecompiler(), disposable)

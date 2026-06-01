@@ -34,7 +34,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> CommonArgumentConfiguration<T>.testBtaArgumentToArgumentString() {
         assumeArgumentSupported()
         for (value in argumentValues) {
-            val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
                 compilerArguments[argumentKey] = value
             }
 
@@ -51,7 +51,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("Raw argument has the default value when BTA argument is not set")
     fun <T> CommonArgumentConfiguration<T>.testBtaArgumentNotSetByDefault() {
         assumeArgumentSupported()
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         val actualArgumentStrings = jvmOperation.compilerArguments.toArgumentStrings()
 
@@ -66,7 +66,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> CommonArgumentConfiguration<T>.testBtaArgumentGetWhenSet() {
         assumeArgumentSupported()
         for (value in argumentValues) {
-            val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+            val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
                 compilerArguments[argumentKey] = value
             }
 
@@ -80,7 +80,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("BTA argument has the default value when not set")
     fun <T> CommonArgumentConfiguration<T>.testBtaArgumentGetWhenNull() {
         assumeArgumentSupported()
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
         val value = jvmOperation.compilerArguments[argumentKey]
 
@@ -94,7 +94,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> CommonArgumentConfiguration<T>.testRawArgumentStringsConversion() {
         assumeArgumentSupported()
         for (value in argumentRawValues) {
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
             operation.compilerArguments.applyArgumentStrings(expectedArgumentStringsFor(value))
 
@@ -106,9 +106,9 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("BTA argument has the default value when no raw arguments are applied")
     fun <T> CommonArgumentConfiguration<T>.testNoRawArgumentStrings() {
         assumeArgumentSupported()
-        val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+        val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
-        operation.compilerArguments.applyArgumentStrings(listOf())
+        operation.compilerArguments.applyArgumentStrings([])
 
         assertEquals(
             getDefaultValueString(), getValueString(operation.compilerArguments[argumentKey])
@@ -123,7 +123,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
         argumentConfig.assumeArgumentSupported()
 
         for (invalidValue in argumentConfig.invalidRawValues) {
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
             operation.compilerArguments.applyArgumentStrings(argumentConfig.expectedArgumentStringsFor(invalidValue))
             val logger = CapturingLogger()
             val result = toolchain.createBuildSession().use {
@@ -141,7 +141,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     fun <T> CommonArgumentConfiguration<T>.testInvalidDirectAssignmentFails() {
         assumeArgumentSupported()
         for (invalidValue in invalidArgumentValues) {
-            val operation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get("."))
+            val operation = toolchain.jvm.createJvmCompilationOperation([], Paths.get("."))
 
             assertThrows<CompilerArgumentsParseException> {
                 operation.compilerArguments[argumentKey] = invalidValue
@@ -153,7 +153,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
     @DisplayName("BTA argument of null value is converted to raw argument")
     fun <T> CommonArgumentConfiguration<T?>.testNullBtaArgument() {
         assumeArgumentSupported()
-        val jvmOperation = toolchain.jvm.createJvmCompilationOperation(emptyList(), Paths.get(".")).apply {
+        val jvmOperation = toolchain.jvm.createJvmCompilationOperation([], Paths.get(".")).apply {
             compilerArguments[argumentKey] = null
         }
 

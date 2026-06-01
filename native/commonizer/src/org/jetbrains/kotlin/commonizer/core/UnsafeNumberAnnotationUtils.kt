@@ -92,7 +92,7 @@ private class UnsafeNumberAnnotation(val actualPlatformTypes: Map<String, Render
         private val type = CirClassType.createInterned(
             classId = CirEntityId.create("kotlinx/cinterop/UnsafeNumber"),
             outerType = null,
-            arguments = emptyList(),
+            arguments = [],
             isMarkedNullable = false
         )
     }

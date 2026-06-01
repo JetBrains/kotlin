@@ -142,7 +142,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             build(
                 "clean", ":assemble",
-                buildOptions = defaultBuildOptions.copy(buildReport = listOf(BuildReportType.FILE))
+                buildOptions = defaultBuildOptions.copy(buildReport = [BuildReportType.FILE])
             ) {
                 assertTasksFromCache(":compileKotlin")
             }
@@ -197,7 +197,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             build("assemble") {
                 assertIncrementalCompilation(
-                    expectedCompiledKotlinFiles = relativeToProject(listOf(bKtSourceFile, affectedAppSourceFile))
+                    expectedCompiledKotlinFiles = relativeToProject([bKtSourceFile, affectedAppSourceFile])
                 )
             }
         }
@@ -224,19 +224,19 @@ class BuildCacheIT : KGPBaseTest() {
             buildAndFail("assemble") {
                 assertTasksFailed(":lib:compileKotlin")
                 assertOutputDoesNotContain("On recompilation full rebuild will be performed")
-                val affectedFiles = setOf(
+                val affectedFiles: Set<Path> = [
                     bKtSourceFile,
-                )
+                ]
                 assertCompiledKotlinSources(affectedFiles.relativizeTo(projectPath), output)
             }
 
             bKtSourceFile.modify { it.replace("fun b2) {}", "fun b2() {}") }
 
             build("assemble") {
-                val affectedFiles = setOf(
+                val affectedFiles: Set<Path> = [
                     bKtSourceFile,
                     subProject("app").kotlinSourcesDir().resolve("foo/BB.kt"),
-                )
+                ]
                 assertIncrementalCompilation(expectedCompiledKotlinFiles = affectedFiles.relativizeTo(projectPath))
             }
         }
@@ -279,15 +279,15 @@ class BuildCacheIT : KGPBaseTest() {
             buildAndFail("assemble") {
                 assertTasksFailed(":app:compileKotlin")
                 assertOutputDoesNotContain("On recompilation full rebuild will be performed")
-                assertCompiledKotlinSources(listOf(projectPath.relativize(fileToEdit)), output)
+                assertCompiledKotlinSources([projectPath.relativize(fileToEdit)], output)
             }
 
             fileToEdit.replaceText("return", "return this")
 
             build("assemble") {
-                assertIncrementalCompilation(expectedCompiledKotlinFiles = listOf(projectPath.relativize(fileToEdit)))
+                assertIncrementalCompilation(expectedCompiledKotlinFiles = [projectPath.relativize(fileToEdit)])
                 assertCompiledKotlinSourcesHandleKapt(
-                    listOf(projectPath.relativize(fileToEdit)),
+                    [projectPath.relativize(fileToEdit)],
                     ":app"
                 )
             }
@@ -319,7 +319,7 @@ class BuildCacheIT : KGPBaseTest() {
 
             buildAndFail("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertTasksFailed(":app:compileKotlin")
-                assertCompiledKotlinSources(listOf(projectPath.relativize(fileToEdit)), output)
+                assertCompiledKotlinSources([projectPath.relativize(fileToEdit)], output)
             }
 
             fileToEdit.modify { it.replace("\"text\".plus()", "\"text\".plus(\"+\")") }
@@ -328,7 +328,7 @@ class BuildCacheIT : KGPBaseTest() {
             build("build", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
 
                 assertCompiledKotlinTestSourcesAreHandledByKapt(
-                    listOf(projectPath.relativize(testFileToEdit)),
+                    [projectPath.relativize(testFileToEdit)],
                     ":app"
                 )
             }

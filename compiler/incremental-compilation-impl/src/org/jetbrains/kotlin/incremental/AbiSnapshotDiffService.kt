@@ -22,14 +22,14 @@ class AbiSnapshotDiffService() {
         fun compareJarsInternal(
             oldSnapshot: AbiSnapshot, newSnapshot: AbiSnapshot,
             caches: IncrementalCacheCommon
-        ) = diffCache.computeIfAbsent(Pair(oldSnapshot, newSnapshot)) { [snapshot, actual] -> doCompute(snapshot, actual, caches, emptyList()) }
+        ) = diffCache.computeIfAbsent(Pair(oldSnapshot, newSnapshot)) { [snapshot, actual] -> doCompute(snapshot, actual, caches, []) }
 
         fun inScope(fqName: FqName, scopes: Collection<String>) = scopes.any { scope -> fqName.toString().startsWith(scope) }
 
         fun doCompute(snapshot: AbiSnapshot, actual: AbiSnapshot, caches: IncrementalCacheCommon, scopes: Collection<String>): DirtyData {
 
-            val dirtyFqNames = mutableListOf<FqName>()
-            val dirtyLookupSymbols = mutableListOf<LookupSymbol>()
+            val dirtyFqNames: MutableList<FqName> = []
+            val dirtyLookupSymbols: MutableList<LookupSymbol> = []
 
             for ([fqName, protoData] in snapshot.protos) {
                 if (!inScope(fqName, scopes)) continue
@@ -58,7 +58,7 @@ class AbiSnapshotDiffService() {
                         }
                         for (member in diff.changedMembersNames) {
                             //TODO(valtman) mark dirty symbols for subclasses
-                            val subtypeFqNames = withSubtypes(fqName, listOf(caches))
+                            val subtypeFqNames = withSubtypes(fqName, [caches])
                             dirtyFqNames.addAll(subtypeFqNames)
 
                             for (subtypeFqName in subtypeFqNames) {

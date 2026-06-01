@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.uniqueName
 
 private class LibraryHashComputer {
-    private val hashes = mutableListOf<FingerprintHash>()
+    private val hashes: MutableList<FingerprintHash> = []
 
     fun update(hash: FingerprintHash) {
         hashes.add(hash)
@@ -78,7 +78,7 @@ class CachedLibraries(
                 return DependenciesSerializer.deserialize(path, data)
             }
 
-            override fun computeBinariesPaths() = listOf(path)
+            override fun computeBinariesPaths() = [path]
 
             override fun computeSerializedInlineFunctionBodies() = mutableListOf<SerializedInlineFunctionReference>().also {
                 val directory = File(path).absoluteFile.parentFile.parentFile
@@ -180,7 +180,7 @@ class CachedLibraries(
                 val filesToCache = configuration.filesToCache
                 val fileIdsToCache = libraryToCache?.takeIf { it == library }?.getFileFqNames(filesToCache)?.let { fqNames ->
                     filesToCache.zip(fqNames) { filePath, fqName -> cacheFileId(fqName, filePath) }.toSet()
-                } ?: emptySet()
+                }.orEmpty()
                 val libraryFileDirs = library.getFilesWithFqNames().map { (filePath, fqName) ->
                     child(cacheFileId(fqName, filePath))
                 }

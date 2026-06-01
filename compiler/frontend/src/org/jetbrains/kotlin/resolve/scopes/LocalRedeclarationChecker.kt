@@ -90,12 +90,12 @@ class ThrowingLocalRedeclarationChecker(overloadChecker: OverloadChecker) : Abst
 class TraceBasedLocalRedeclarationChecker(val trace: BindingTrace, overloadChecker: OverloadChecker) :
     AbstractLocalRedeclarationChecker(overloadChecker) {
     override fun handleRedeclaration(first: DeclarationDescriptor, second: DeclarationDescriptor) {
-        reportOnDeclarationOrFail(trace, first) { Errors.REDECLARATION.on(it, listOf(first, second)) }
-        reportOnDeclarationOrFail(trace, second) { Errors.REDECLARATION.on(it, listOf(first, second)) }
+        reportOnDeclarationOrFail(trace, first) { Errors.REDECLARATION.on(it, [first, second]) }
+        reportOnDeclarationOrFail(trace, second) { Errors.REDECLARATION.on(it, [first, second]) }
     }
 
     override fun handleConflictingOverloads(first: CallableMemberDescriptor, second: CallableMemberDescriptor) {
-        reportOnDeclarationOrFail(trace, first) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(first, second)) }
-        reportOnDeclarationOrFail(trace, second) { Errors.CONFLICTING_OVERLOADS.on(it, listOf(first, second)) }
+        reportOnDeclarationOrFail(trace, first) { Errors.CONFLICTING_OVERLOADS.on(it, [first, second]) }
+        reportOnDeclarationOrFail(trace, second) { Errors.CONFLICTING_OVERLOADS.on(it, [first, second]) }
     }
 }

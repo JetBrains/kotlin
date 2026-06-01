@@ -41,7 +41,7 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
     override lateinit var name: Name
     override var initializer: FirExpression? = null
     override var delegate: FirExpression? = null
@@ -49,11 +49,11 @@ class FirPropertyBuilder : FirVariableBuilder, FirTypeParametersOwnerBuilder, Fi
     override var getter: FirPropertyAccessor? = null
     override var setter: FirPropertyAccessor? = null
     override var backingField: FirBackingField? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     lateinit var symbol: FirPropertySymbol
     var delegateFieldSymbol: FirDelegateFieldSymbol? = null
     var bodyResolveState: FirPropertyBodyResolveState = FirPropertyBodyResolveState.NOTHING_RESOLVED
-    override val typeParameters: MutableList<FirTypeParameter> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameter> = []
 
     override fun build(): FirProperty {
         return FirPropertyImpl(

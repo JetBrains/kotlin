@@ -46,11 +46,11 @@ fun wasmIgnoreForParser(raw: String): WasmIgnoreForConfig? {
         System.err.println("Directive $raw does not specify any properties to base the suppressor on.\nIf this is an intentional catch-all suppression, use IGNORE_BACKEND")
         return null
     }
-    if (parts.keys.any { it !in listOf("mode", "os", "vm") }) {
+    if (parts.keys.any { it !in ["mode", "os", "vm"] }) {
         System.err.println("Invalid key specified in directive $raw, only know keys 'mode', 'os', 'vm'")
         return null
     }
-    if (parts["os"]?.lowercase() !in listOf(null, "linux", "windows", "mac")) {
+    if (parts["os"]?.lowercase() !in [null, "linux", "windows", "mac"]) {
         System.err.println("Invalid OS specified in WASM_IGNORE_FOR directive: os=${parts["os"]}. Must be linux, windows, or mac (case insensitive)")
         return null
     }

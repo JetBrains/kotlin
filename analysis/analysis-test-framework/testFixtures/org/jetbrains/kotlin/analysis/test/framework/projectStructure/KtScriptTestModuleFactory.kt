@@ -41,6 +41,6 @@ object KtScriptTestModuleFactory : KtTestModuleFactory {
             project,
         )
 
-        return KtTestModule(TestModuleKind.ScriptSource, testModule, module, listOf(ktFile))
+        return KtTestModule(TestModuleKind.ScriptSource, testModule, module, [ktFile])
     }
 }

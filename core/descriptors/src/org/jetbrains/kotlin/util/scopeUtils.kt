@@ -45,7 +45,7 @@ fun <T> Collection<T>?.concat(collection: Collection<T>): Collection<T>? {
 
 inline fun <Scope, T> getFromAllScopes(scopes: Array<Scope>, callback: (Scope) -> Collection<T>): Collection<T> =
     when (scopes.size) {
-        0 -> emptyList()
+        0 -> []
         1 -> callback(scopes[0])
         else -> {
             var result: Collection<T>? = null
@@ -65,7 +65,7 @@ inline fun <Scope, T> getFromAllScopes(firstScope: Scope, restScopes: Array<Scop
 }
 
 inline fun <Scope, R> flatMapScopes(scope1: Scope?, scope2: Scope?, transform: (Scope) -> Collection<R>): Collection<R> {
-    val results1 = if (scope1 != null) transform(scope1) else emptyList()
+    val results1 = if (scope1 != null) transform(scope1) else []
     if (scope2 == null) return results1
     else {
         val results2 = transform(scope2)

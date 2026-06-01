@@ -86,7 +86,7 @@ class FirDeserializationContext(
         kdocDeserializer,
         containerSource,
         outerClassSymbol,
-        if (capturesTypeParameters) allTypeParameters else emptyList()
+        if (capturesTypeParameters) allTypeParameters else []
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
@@ -115,7 +115,7 @@ class FirDeserializationContext(
             kdocDeserializer,
             fqName,
             relativeClassName = null,
-            typeParameterProtos = emptyList(),
+            typeParameterProtos = [],
             containerSource,
             outerClassSymbol = null,
             outerClassEffectiveVisibility = EffectiveVisibility.Public,
@@ -190,7 +190,7 @@ class FirDeserializationContext(
                 kdocDeserializer,
                 containerSource,
                 outerClassSymbol,
-                emptyList()
+                []
             )
         }
     }
@@ -337,7 +337,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 this.symbol = FirPropertyAccessorSymbol()
                 dispatchReceiverType = runUnless(isStatic) { c.dispatchReceiver }
                 local.memberDeserializer.addValueParametersTo(
-                    listOf(proto.setterValueParameter),
+                    [proto.setterValueParameter],
                     symbol,
                     classBuilderForAnnotationConstructor = null,
                     proto,
@@ -400,7 +400,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.containerSource, proto, local.nameResolver, local.typeTable, CallableKind.PROPERTY_GETTER
             )
         } else {
-            emptyList()
+            []
         }
 
         val propertyModality = ProtoEnumFlags.modality(Flags.MODALITY.get(flags))
@@ -455,7 +455,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     c.containerSource, proto, classProto, local.nameResolver, local.typeTable
                 )
             }
-            val backingFieldAnnotations = mutableListOf<FirAnnotation>()
+            val backingFieldAnnotations: MutableList<FirAnnotation> = []
             backingFieldAnnotations +=
                 c.annotationDeserializer.loadPropertyBackingFieldAnnotations(
                     c.containerSource, proto, local.nameResolver, local.typeTable
@@ -654,7 +654,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                 c.containerSource, proto, c.nameResolver, c.typeTable, CallableKind.OTHERS
             )
         } else {
-            emptyList()
+            []
         }
 
         val callableName = c.nameResolver.getName(proto.name)
@@ -755,7 +755,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val relativeClassName = c.relativeClassName!!
         val callableId = CallableId(c.packageFqName, relativeClassName, relativeClassName.shortName())
         val symbol = FirConstructorSymbol(callableId)
-        val local = c.childContext(emptyList(), containingDeclarationSymbol = symbol)
+        val local = c.childContext([], containingDeclarationSymbol = symbol)
         val isPrimary = !Flags.IS_SECONDARY.get(flags)
 
         val typeParameters = classBuilder.typeParameters

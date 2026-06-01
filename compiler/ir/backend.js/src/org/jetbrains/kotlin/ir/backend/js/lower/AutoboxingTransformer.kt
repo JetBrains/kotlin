@@ -120,7 +120,7 @@ abstract class AbstractValueUsageLowering(
 
 class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideInlinedFunctionBlock: Boolean = false) :
     AbstractValueUsageLowering(context, replaceTypesInsideInlinedFunctionBlock) {
-    private var processingReturnStack = mutableListOf<IrReturn>()
+    private var processingReturnStack: MutableList<IrReturn> = []
 
     private fun IrExpression.useReturnableExpressionAsType(expectedType: IrType): IrExpression {
         val expressionType = getActualType(context)
@@ -160,7 +160,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
             // Don't materialize Unit if value is known to be proper Unit on runtime
             if (!this.isGetUnit(irBuiltIns)) {
                 val unitValue = JsIrBuilder.buildGetObjectValue(actualType, context.irBuiltIns.unitClass)
-                return JsIrBuilder.buildComposite(actualType, listOf(this, unitValue))
+                return JsIrBuilder.buildComposite(actualType, [this, unitValue])
             }
         }
 
@@ -187,7 +187,7 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
             JsIrBuilder.buildCall(
                 function,
                 expectedType,
-                typeArguments = listOf(actualType, expectedType)
+                typeArguments = [actualType, expectedType]
             ).also {
                 it.arguments[0] = arg
             }
@@ -219,10 +219,10 @@ class AutoboxingTransformer(context: JsCommonBackendContext, replaceTypesInsideI
             )
             buildBlock(
                 type = resultType,
-                statements = listOf(
+                statements = [
                     tmp,
                     nullCheck
-                )
+                ]
             )
         }
     }

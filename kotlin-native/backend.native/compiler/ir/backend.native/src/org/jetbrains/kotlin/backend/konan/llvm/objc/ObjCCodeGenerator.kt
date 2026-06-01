@@ -27,35 +27,35 @@ internal open class ObjCCodeGenerator(val codegen: CodeGenerator) {
     private val objcMsgSend = llvm.externalNativeRuntimeFunction(
             "objc_msgSend",
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)),
+            [LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)],
             isVararg = true
     ).toConstPointer()
 
     val objcRelease = llvm.externalNativeRuntimeFunction(
             "llvm.objc.release",
             LlvmRetType(llvm.voidType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType)),
-            listOf(LlvmFunctionAttribute.NoUnwind)
+            [LlvmParamType(llvm.pointerType)],
+            [LlvmFunctionAttribute.NoUnwind]
     )
 
     val objcAlloc = llvm.externalNativeRuntimeFunction(
             "objc_alloc",
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType))
+            [LlvmParamType(llvm.pointerType)]
     )
 
     val objcAutoreleaseReturnValue = llvm.externalNativeRuntimeFunction(
             "llvm.objc.autoreleaseReturnValue",
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType)),
-            listOf(LlvmFunctionAttribute.NoUnwind)
+            [LlvmParamType(llvm.pointerType)],
+            [LlvmFunctionAttribute.NoUnwind]
     )
 
     val objcRetainAutoreleasedReturnValue = llvm.externalNativeRuntimeFunction(
             OBJC_RETAIN_AUTORELEASED_RETURN_VALUE,
             LlvmRetType(llvm.pointerType, isObjectType = false),
-            listOf(LlvmParamType(llvm.pointerType)),
-            listOf(LlvmFunctionAttribute.NoUnwind)
+            [LlvmParamType(llvm.pointerType)],
+            [LlvmFunctionAttribute.NoUnwind]
     )
 
     val objcRetainAutoreleasedReturnValueMarker: LLVMValueRef? by lazy {

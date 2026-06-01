@@ -52,12 +52,12 @@ object TestGeneratorUtil {
         Throwable().stackTrace.lastOrNull()?.className
 }
 
-private val defaultPackages = listOf(
+private val defaultPackages = [
     "java.lang",
     "kotlin",
     "kotlin.annotations",
     "kotlin.collections"
-)
+]
 
 fun Class<*>.isDefaultImportedClass(): Boolean {
     val outerName = canonicalName.removeSuffix(".$simpleName")

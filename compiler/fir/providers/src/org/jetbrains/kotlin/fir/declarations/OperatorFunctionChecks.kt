@@ -137,7 +137,7 @@ object OperatorFunctionChecks {
         )
         checkFor(OperatorNameConventions.SIMPLE_UNARY_OPERATION_NAMES, Checks.memberOrExtension, Checks.ValueParametersCount.none)
         checkFor(
-            setOf(OperatorNameConventions.INC, OperatorNameConventions.DEC),
+            [OperatorNameConventions.INC, OperatorNameConventions.DEC],
             Checks.memberOrExtension,
             Checks.simple("receiver must be a supertype of the return type") { function, session ->
                 val receiver = function.receiverParameter?.typeRef?.coneType ?: function.dispatchReceiverType ?: return@simple false
@@ -342,7 +342,7 @@ private object Checks {
 
     private val kPropertyType = ConeClassLikeTypeImpl(
         StandardClassIds.KProperty.toLookupTag(),
-        arrayOf(ConeStarProjection),
+        [ConeStarProjection],
         isMarkedNullable = false
     )
 

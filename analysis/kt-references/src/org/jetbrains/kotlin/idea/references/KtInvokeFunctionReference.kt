@@ -66,6 +66,6 @@ abstract class KtInvokeFunctionReference(
     override fun canRename(): Boolean = true
 
     companion object {
-        private val NAMES = listOf(OperatorNameConventions.INVOKE)
+        private val NAMES = [OperatorNameConventions.INVOKE]
     }
 }

@@ -198,11 +198,11 @@ class Fir2IrLazyFakeOverrideGenerator(private val c: Fir2IrComponents) : Fir2IrC
         containingClass: ConeClassLikeLookupTag,
     ): List<S> {
         if (symbol.fir.origin is FirDeclarationOrigin.SubstitutionOverride) {
-            return listOf(symbol.originalForSubstitutionOverride!!)
+            return [symbol.originalForSubstitutionOverride!!]
         }
 
         if (scope !is FirTypeScope) {
-            return emptyList()
+            return []
         }
 
         return scope.directOverridden(symbol).map {

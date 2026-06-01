@@ -56,7 +56,7 @@ class MoveTemporaryVariableDeclarationToAssignment(private val body: JsBlock) {
 
     private fun analyze() {
         val visitor = object : RecursiveJsVisitor() {
-            private val blockStack = mutableListOf<JsBlock>()
+            private val blockStack: MutableList<JsBlock> = []
 
             private val currentBlock
                 get() = blockStack.last()

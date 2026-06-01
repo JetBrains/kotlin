@@ -23,10 +23,10 @@ internal class TypeTransformerVoidPrinter(
         get() = StandardTypes.nothing.copy(nullable = true)
 
     override val visitorSuperTypes: List<ClassRef<PositionTypeParameterRef>>
-        get() = listOf(typeTransformerType.withArgs(StandardTypes.unit, visitorDataType))
+        get() = [typeTransformerType.withArgs(StandardTypes.unit, visitorDataType)]
 
     override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     override fun visitMethodReturnType(element: Element): TypeRef = StandardTypes.unit
 

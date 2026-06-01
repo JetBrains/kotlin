@@ -124,7 +124,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         val notForInline = irFunction.originalOfSuspendForInline
         val smap = if (flags.and(Opcodes.ACC_ABSTRACT) != 0 || irFunction.isExternal) {
             generateAnnotationDefaultValueIfNeeded(methodVisitor)
-            SMAP(listOf())
+            SMAP([])
         } else if (notForInline != null) {
             (val originalNode = node, val smap = classSMAP) = classCodegen.generateMethodNode(notForInline)
             originalNode.accept(MethodBodyVisitor(methodVisitor))
@@ -362,8 +362,8 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
     }
 
     companion object {
-        private val methodOriginsWithoutAnnotations =
-            setOf(
+        private val methodOriginsWithoutAnnotations: Set<IrDeclarationOrigin> =
+            [
                 // Not generating parameter annotations for default stubs fixes KT-7892, though
                 // this certainly looks like a workaround for a javac bug.
                 IrDeclarationOrigin.FUNCTION_FOR_DEFAULT_PARAMETER,
@@ -373,7 +373,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 JvmLoweredDeclarationOrigin.TO_ARRAY,
                 IrDeclarationOrigin.IR_BUILTINS_STUB,
                 IrDeclarationOrigin.PROPERTY_DELEGATE,
-            )
+            ]
 
         private fun IrFunction.isWithAnnotations(useEnhancedBridges: Boolean): Boolean =
             when (origin) {

@@ -16,7 +16,7 @@ import org.jetbrains.org.objectweb.asm.tree.LocalVariableNode
 import org.jetbrains.org.objectweb.asm.tree.MethodNode
 
 class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderMode) : ClassBuilderFactory {
-    val compiledClasses = mutableListOf<ClassNode>()
+    val compiledClasses: MutableList<ClassNode> = []
     val origins = mutableMapOf<Any, JvmDeclarationOrigin>()
 
     override fun getClassBuilderMode(): ClassBuilderMode = builderMode
@@ -55,7 +55,7 @@ class OriginCollectingClassBuilderFactory(private val builderMode: ClassBuilderM
 
             // ASM doesn't read information about local variables for the `abstract` methods so we need to get it manually
             if ((access and Opcodes.ACC_ABSTRACT) != 0 && methodNode.localVariables == null) {
-                methodNode.localVariables = mutableListOf<LocalVariableNode>()
+                methodNode.localVariables = []
             }
 
             return methodNode

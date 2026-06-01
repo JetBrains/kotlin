@@ -36,7 +36,7 @@ abstract class AbstractSurfaceDumpConsistencyTest {
     }
 
     private fun runTest(block: Consumer<String>.() -> Unit) {
-        val result = mutableListOf<String>()
+        val result: MutableList<String> = []
         block(result::add)
         if (result.isNotEmpty()) {
             fail("Problems are found:\n" + result.joinToString("\n"))

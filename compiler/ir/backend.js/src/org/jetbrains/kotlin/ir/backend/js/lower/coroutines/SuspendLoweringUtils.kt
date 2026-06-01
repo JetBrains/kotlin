@@ -64,7 +64,7 @@ open class SuspendableNodesCollector(private val suspendableNodes: MutableSet<Ir
 }
 
 fun collectSuspendableNodes(function: IrBlock): MutableSet<IrElement> {
-    val suspendableNodes = mutableSetOf<IrElement>()
+    val suspendableNodes: MutableSet<IrElement> = []
     var size: Int
 
     do {

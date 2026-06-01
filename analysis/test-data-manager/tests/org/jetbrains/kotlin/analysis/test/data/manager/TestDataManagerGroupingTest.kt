@@ -38,12 +38,12 @@ class TestDataManagerGroupingTest {
     @Test
     fun `tests grouped by variant depth`() {
         assertGrouping(
-            tests = listOf(
-                DiscoveredTest("1", "golden", emptyList()),
-                DiscoveredTest("2", "js", listOf("js")),
-                DiscoveredTest("3", "wasm", listOf("wasm")),
-                DiscoveredTest("4", "knm-js", listOf("knm", "js")),
-            ),
+            tests = [
+                DiscoveredTest("1", "golden", []),
+                DiscoveredTest("2", "js", ["js"]),
+                DiscoveredTest("3", "wasm", ["wasm"]),
+                DiscoveredTest("4", "knm-js", ["knm", "js"]),
+            ],
             expected = """
                 depth=0: []
                 depth=1: [js], [wasm]
@@ -55,12 +55,12 @@ class TestDataManagerGroupingTest {
     @Test
     fun `all single-variant tests in one group`() {
         assertGrouping(
-            tests = listOf(
-                DiscoveredTest("1", "js", listOf("js")),
-                DiscoveredTest("2", "wasm", listOf("wasm")),
-                DiscoveredTest("3", "knm", listOf("knm")),
-                DiscoveredTest("4", "native", listOf("native")),
-            ),
+            tests = [
+                DiscoveredTest("1", "js", ["js"]),
+                DiscoveredTest("2", "wasm", ["wasm"]),
+                DiscoveredTest("3", "knm", ["knm"]),
+                DiscoveredTest("4", "native", ["native"]),
+            ],
             expected = """
                 depth=1: [js], [knm], [native], [wasm]
             """
@@ -70,11 +70,11 @@ class TestDataManagerGroupingTest {
     @Test
     fun `multiple tests with same variant in same group`() {
         assertGrouping(
-            tests = listOf(
-                DiscoveredTest("1", "js-test-1", listOf("js")),
-                DiscoveredTest("2", "js-test-2", listOf("js")),
-                DiscoveredTest("3", "wasm-test", listOf("wasm")),
-            ),
+            tests = [
+                DiscoveredTest("1", "js-test-1", ["js"]),
+                DiscoveredTest("2", "js-test-2", ["js"]),
+                DiscoveredTest("3", "wasm-test", ["wasm"]),
+            ],
             expected = """
                 depth=1: [js], [wasm]
             """
@@ -83,7 +83,7 @@ class TestDataManagerGroupingTest {
 
     @Test
     fun `empty tests list produces empty groups`() {
-        val result = groupByVariantDepth(emptyList())
+        val result = groupByVariantDepth([])
         assertEquals(emptyList<TestGroup>(), result.groups)
         assertEquals(emptyList<VariantChainConflict>(), result.conflicts)
     }
@@ -91,10 +91,10 @@ class TestDataManagerGroupingTest {
     @Test
     fun `golden only produces single group`() {
         assertGrouping(
-            tests = listOf(
-                DiscoveredTest("1", "golden-1", emptyList()),
-                DiscoveredTest("2", "golden-2", emptyList()),
-            ),
+            tests = [
+                DiscoveredTest("1", "golden-1", []),
+                DiscoveredTest("2", "golden-2", []),
+            ],
             expected = """
                 depth=0: []
             """
@@ -106,10 +106,10 @@ class TestDataManagerGroupingTest {
     @Test
     fun `conflict detected - same last variant`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "a-b-c", listOf("a", "b", "c")),
-                DiscoveredTest("2", "x-y-c", listOf("x", "y", "c")),
-            ),
+            tests = [
+                DiscoveredTest("1", "a-b-c", ["a", "b", "c"]),
+                DiscoveredTest("2", "x-y-c", ["x", "y", "c"]),
+            ],
             expected = """
                 [a, b, c] vs [x, y, c]: 'c'
             """
@@ -119,10 +119,10 @@ class TestDataManagerGroupingTest {
     @Test
     fun `conflict detected - last variant in other chain`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "a-b-c", listOf("a", "b", "c")),
-                DiscoveredTest("2", "a-c-b", listOf("a", "c", "b")),
-            ),
+            tests = [
+                DiscoveredTest("1", "a-b-c", ["a", "b", "c"]),
+                DiscoveredTest("2", "a-c-b", ["a", "c", "b"]),
+            ],
             expected = """
                 [a, b, c] vs [a, c, b]: 'c'
                 [a, b, c] vs [a, c, b]: 'b'
@@ -133,10 +133,10 @@ class TestDataManagerGroupingTest {
     @Test
     fun `no conflict - different last variants, no overlap`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "js", listOf("js")),
-                DiscoveredTest("2", "wasm", listOf("wasm")),
-            ),
+            tests = [
+                DiscoveredTest("1", "js", ["js"]),
+                DiscoveredTest("2", "wasm", ["wasm"]),
+            ],
             expected = ""
         )
     }
@@ -144,11 +144,11 @@ class TestDataManagerGroupingTest {
     @Test
     fun `no conflict - different platforms with same base`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "lib-js", listOf("lib", "js")),
-                DiscoveredTest("2", "lib-wasm", listOf("lib", "wasm")),
-                DiscoveredTest("3", "lib-native", listOf("lib", "native")),
-            ),
+            tests = [
+                DiscoveredTest("1", "lib-js", ["lib", "js"]),
+                DiscoveredTest("2", "lib-wasm", ["lib", "wasm"]),
+                DiscoveredTest("3", "lib-native", ["lib", "native"]),
+            ],
             expected = ""
         )
     }
@@ -156,10 +156,10 @@ class TestDataManagerGroupingTest {
     @Test
     fun `no conflict - empty variant chains`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "golden-1", emptyList()),
-                DiscoveredTest("2", "golden-2", emptyList()),
-            ),
+            tests = [
+                DiscoveredTest("1", "golden-1", []),
+                DiscoveredTest("2", "golden-2", []),
+            ],
             expected = ""
         )
     }
@@ -167,25 +167,25 @@ class TestDataManagerGroupingTest {
     @Test
     fun `no conflict - single test`() {
         assertConflicts(
-            tests = listOf(
-                DiscoveredTest("1", "single", listOf("a", "b", "c")),
-            ),
+            tests = [
+                DiscoveredTest("1", "single", ["a", "b", "c"]),
+            ],
             expected = ""
         )
     }
 
     @Test
     fun `conflict in one group does not affect other groups`() {
-        val tests = listOf(
+        val tests = [
             // Group 0 - no conflict possible
-            DiscoveredTest("1", "golden", emptyList()),
+            DiscoveredTest("1", "golden", []),
             // Group 1 - no conflict
-            DiscoveredTest("2", "js", listOf("js")),
-            DiscoveredTest("3", "wasm", listOf("wasm")),
+            DiscoveredTest("2", "js", ["js"]),
+            DiscoveredTest("3", "wasm", ["wasm"]),
             // Group 2 - has conflict
-            DiscoveredTest("4", "a-b", listOf("a", "b")),
-            DiscoveredTest("5", "b-a", listOf("b", "a")),
-        )
+            DiscoveredTest("4", "a-b", ["a", "b"]),
+            DiscoveredTest("5", "b-a", ["b", "a"]),
+        ]
 
         val result = groupByVariantDepth(tests)
 
@@ -202,10 +202,10 @@ class TestDataManagerGroupingTest {
 
     @Test
     fun `groupByVariantDepth returns conflicts`() {
-        val tests = listOf(
-            DiscoveredTest("1", "a-b-c", listOf("a", "b", "c")),
-            DiscoveredTest("2", "x-y-c", listOf("x", "y", "c")),
-        )
+        val tests = [
+            DiscoveredTest("1", "a-b-c", ["a", "b", "c"]),
+            DiscoveredTest("2", "x-y-c", ["x", "y", "c"]),
+        ]
 
         val result = groupByVariantDepth(tests)
 

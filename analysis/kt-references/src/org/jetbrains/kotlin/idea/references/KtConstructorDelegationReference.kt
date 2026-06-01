@@ -20,7 +20,7 @@ abstract class KtConstructorDelegationReference(
     }
 
     override val resolvesByNames: Collection<Name>
-        get() = emptyList()
+        get() = []
 
     override fun handleElementRename(newElementName: String): PsiElement? {
         // Class rename never affects this reference, so there is no need to fail with exception

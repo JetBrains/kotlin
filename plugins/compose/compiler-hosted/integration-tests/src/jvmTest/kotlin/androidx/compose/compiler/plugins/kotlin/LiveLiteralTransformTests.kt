@@ -442,11 +442,11 @@ class LiveLiteralTransformTests : AbstractLiveLiteralTransformTests() {
                 minLines: Int = 1,
             ) {}
         """.trimIndent(),
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeUiTextJar(),
             Classpath.composeFoundationTextJar(),
             Classpath.composeFoundationLayoutJar(),
-        )
+        ]
     )
 }

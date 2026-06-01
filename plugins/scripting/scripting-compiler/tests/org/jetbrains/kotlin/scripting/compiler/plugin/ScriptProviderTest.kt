@@ -34,15 +34,15 @@ class ScriptProviderTest {
         val standardDef = FakeScriptDefinition()
         val shadedDef = FakeScriptDefinition(".x.kts")
         val provider = TestCliScriptDefinitionProvider(standardDef).apply {
-            setScriptDefinitions(listOf(shadedDef, standardDef))
+            setScriptDefinitions([shadedDef, standardDef])
             setScriptDefinitionsSources(
-                listOf(
+                [
                     TestScriptDefinitionSource(
                         genDefCounter,
                         ".y.kts",
                         ".x.kts"
                     )
-                )
+                ]
             )
         }
 

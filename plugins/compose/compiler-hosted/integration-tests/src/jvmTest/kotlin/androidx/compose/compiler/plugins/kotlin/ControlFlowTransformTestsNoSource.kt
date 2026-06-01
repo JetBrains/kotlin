@@ -24,7 +24,7 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, false)
         put(
             ComposeConfiguration.FEATURE_FLAGS,
-            listOf(FeatureFlag.OptimizeNonSkippingGroups.featureName)
+            [FeatureFlag.OptimizeNonSkippingGroups.featureName]
         )
         put(ComposeConfiguration.TRACE_MARKERS_ENABLED_KEY, false)
     }
@@ -133,10 +133,10 @@ class ControlFlowTransformTestsNoSource : AbstractControlFlowTransformTests() {
                 }
             }
         """,
-        additionalPaths = listOf(
+        additionalPaths = [
             Classpath.composeUiJar(),
             Classpath.composeFoundationLayoutJar()
-        )
+        ]
     )
 
     @Test // b/346821372 regression test

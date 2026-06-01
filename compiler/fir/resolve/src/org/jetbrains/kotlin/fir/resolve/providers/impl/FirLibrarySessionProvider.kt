@@ -29,7 +29,7 @@ class FirLibrarySessionProvider(
     override fun getFirScriptContainerFile(symbol: FirScriptSymbol): FirFile? = null
     override fun getFirScriptByFilePath(path: String): FirScriptSymbol? = null
     override fun getFirReplSnippetContainerFile(symbol: FirReplSnippetSymbol): FirFile? = null
-    override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = emptyList()
+    override fun getFirFilesByPackage(fqName: FqName): List<FirFile> = []
 
     override fun getClassNamesInPackage(fqName: FqName): Set<Name> = shouldNotBeCalled()
 

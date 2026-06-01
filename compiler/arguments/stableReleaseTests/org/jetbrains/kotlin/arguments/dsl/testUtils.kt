@@ -13,9 +13,9 @@ import kotlin.reflect.KClass
 
 // Should be removed in the scope of KT-81552 Introduce compiler arguments categories
 // Really experimental compiler arguments should have a special handling in tests
-private val temporaryExceptions: Set<String> = setOf(
+private val temporaryExceptions: Set<String> = [
     // Add here argument name to ignore from checks
-)
+]
 
 internal fun Set<StableKotlinCompilerArgument>.filterNonDeprecated() = filter {
     !it.isObsolete && it.releaseVersionsMetadata.deprecatedVersion == null && it.name !in temporaryExceptions

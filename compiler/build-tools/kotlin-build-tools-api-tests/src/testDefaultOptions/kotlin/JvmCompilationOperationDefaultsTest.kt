@@ -20,7 +20,7 @@ class JvmCompilationOperationDefaultsTest {
     @Test
     fun testDefaultOptions() {
         val kotlinToolchains = KotlinToolchains.loadImplementation(btaClassloader)
-        val operation = kotlinToolchains.jvm.jvmCompilationOperationBuilder(emptyList(), Path(".")).build()
+        val operation = kotlinToolchains.jvm.jvmCompilationOperationBuilder([], Path(".")).build()
         assertEquals(DEFAULT_METRICS_COLLECTOR, operation[BuildOperation.METRICS_COLLECTOR])
         assertEquals(null, operation[JvmCompilationOperation.INCREMENTAL_COMPILATION])
         assertEquals(null, operation[BaseCompilationOperation.LOOKUP_TRACKER])

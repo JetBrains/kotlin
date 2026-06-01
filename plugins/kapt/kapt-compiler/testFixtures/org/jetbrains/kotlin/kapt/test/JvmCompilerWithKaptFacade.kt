@@ -28,7 +28,7 @@ class JvmCompilerWithKaptFacade(
         get() = KaptContextBinaryArtifact.Kind
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::KaptMessageCollectorProvider))
+        get() = [service(::KaptMessageCollectorProvider)]
 
     override fun transform(module: TestModule, inputArtifact: ResultingArtifact.Source): KaptContextBinaryArtifact {
         val configurationProvider = testServices.compilerConfigurationProvider

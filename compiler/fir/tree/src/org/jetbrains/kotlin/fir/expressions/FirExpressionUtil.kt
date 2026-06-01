@@ -152,7 +152,7 @@ val FirVariableAssignment.dispatchReceiver: FirExpression? get() = unwrapLValue(
 
 val FirVariableAssignment.extensionReceiver: FirExpression? get() = unwrapLValue()?.extensionReceiver
 
-val FirVariableAssignment.contextArguments: List<FirExpression> get() = unwrapLValue()?.contextArguments ?: emptyList()
+val FirVariableAssignment.contextArguments: List<FirExpression> get() = unwrapLValue()?.contextArguments ?: []
 
 fun FirVariableAssignment.unwrapLValue(): FirQualifiedAccessExpression? {
     val lValue = lValue

@@ -180,7 +180,7 @@ fun AbstractIrTypeSubstitutor.chainedWith(other: AbstractIrTypeSubstitutor?): Ab
 }
 
 private fun createSupertypeSubstitutor(parentClass: IrClassSymbol, childClass: IrClassifierSymbol): AbstractIrTypeSubstitutor? {
-    val visited = mutableSetOf<IrClassifierSymbol>()
+    val visited: MutableSet<IrClassifierSymbol> = []
 
     fun find(childClass: IrClassifierSymbol): AbstractIrTypeSubstitutor? {
         if (childClass == parentClass) return AbstractIrTypeSubstitutor.Empty

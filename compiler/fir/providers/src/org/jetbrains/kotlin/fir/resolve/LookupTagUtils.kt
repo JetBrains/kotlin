@@ -64,7 +64,7 @@ fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElem
                 source = fakeSource
                 coneType = ConeClassLikeTypeImpl(
                     StandardNames.FqNames.parameterNameClassId.toLookupTag(),
-                    emptyArray(),
+                    [],
                     isMarkedNullable = false
                 )
             }
@@ -73,7 +73,7 @@ fun ConeKotlinType.withParameterNameAnnotation(name: Name, element: KtSourceElem
                 buildLiteralExpression(fakeSource, ConstantValueKind.String, name.asString(), setType = true)
         }
     }
-    return withAttributes(attributes.add(ParameterNameTypeAttribute(name, listOf(parameterNameAnnotationCall))))
+    return withAttributes(attributes.add(ParameterNameTypeAttribute(name, [parameterNameAnnotationCall])))
 }
 
 fun ConeKotlinType.withCombinedAttributesFrom(other: ConeKotlinType): ConeKotlinType =

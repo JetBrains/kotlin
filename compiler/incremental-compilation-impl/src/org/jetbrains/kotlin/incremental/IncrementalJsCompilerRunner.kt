@@ -235,7 +235,7 @@ class IncrementalJsCompilerRunner(
                 CompileScopeExpansionMode.ALWAYS ->
                     (services[IncrementalNextRoundChecker::class.java] as IncrementalNextRoundCheckerImpl).newDirtySources
                 CompileScopeExpansionMode.NEVER ->
-                    emptySet()
+                    []
             }
 
         return additionalDirtyFiles + super.additionalDirtyFiles(caches, generatedFiles, services)
@@ -259,15 +259,15 @@ class IncrementalJsCompilerRunner(
             // todo: split compare and update (or cache comparing)
             caches.platformCache.compare(translatedFiles, changesCollector)
             (val dirtyLookupSymbols, val dirtyClassFqNames = dirtyClassesFqNames) = changesCollector.getChangedAndImpactedSymbols(
-                listOf(
+                [
                     caches.platformCache
-                ), reporter
+                ], reporter
             )
             // todo unify with main cycle
             newDirtySources.addAll(mapLookupSymbolsToFiles(caches.lookupCache, dirtyLookupSymbols, reporter, excludes = sourcesToCompile))
             newDirtySources.addAll(
                 mapClassesFqNamesToFiles(
-                    listOf(caches.platformCache),
+                    [caches.platformCache],
                     dirtyClassFqNames,
                     reporter,
                     excludes = sourcesToCompile

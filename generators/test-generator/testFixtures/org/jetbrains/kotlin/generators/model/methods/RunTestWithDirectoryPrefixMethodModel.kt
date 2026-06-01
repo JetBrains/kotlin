@@ -24,7 +24,7 @@ class RunTestWithDirectoryPrefixMethodModel(
     override val isTestMethod: Boolean get() = false
 
     override val tags: List<String>
-        get() = emptyList()
+        get() = []
 
     object Generator : MethodGenerator<RunTestWithDirectoryPrefixMethodModel>() {
         override fun generateBody(method: RunTestWithDirectoryPrefixMethodModel, p: Printer) {

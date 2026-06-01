@@ -83,7 +83,7 @@ abstract class AbstractLazyTypeAnnotationsTest : AbstractFirLazyDeclarationResol
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val BODY_RESOLVE by directive("Resolve a declaration to body to collect types from the body as well")
@@ -145,7 +145,7 @@ private fun FirBasedSymbol<*>.toStringWithContext(): String {
 private class ConeTypeWithContext(val type: ConeKotlinType, val context: String)
 
 private fun FirElementWithResolveState.collectConeTypes(): Collection<ConeTypeWithContext> {
-    val types = mutableListOf<ConeTypeWithContext>()
+    val types: MutableList<ConeTypeWithContext> = []
     val contextStack = ContextStack()
 
     this.accept(object : FirVisitorVoid() {
@@ -177,7 +177,7 @@ private fun FirElementWithResolveState.collectConeTypes(): Collection<ConeTypeWi
 }
 
 private class ContextStack {
-    val stack = mutableListOf<FirDeclaration>()
+    val stack: MutableList<FirDeclaration> = []
 
     inline fun withStack(element: FirElement, action: () -> Unit) {
         if (element is FirDeclaration) {

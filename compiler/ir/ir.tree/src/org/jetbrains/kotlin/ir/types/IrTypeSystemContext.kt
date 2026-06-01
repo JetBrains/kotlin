@@ -154,7 +154,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     private fun getTypeParameters(typeConstructor: TypeConstructorMarker): List<IrTypeParameter> {
         return when (typeConstructor) {
-            is IrTypeParameterSymbol -> emptyList()
+            is IrTypeParameterSymbol -> []
             is IrClassSymbol -> extractTypeParameters(typeConstructor.owner)
             else -> error("unsupported type constructor")
         }
@@ -265,7 +265,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 } else null
 
                 IrCapturedType(
-                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, emptyList()
+                    status, lowerType, argument, typeParameters[index], SimpleTypeNullability.DEFINITELY_NOT_NULL, []
                 )
             }
         }
@@ -279,7 +279,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
                 assert(oldArgument is IrTypeProjection && oldArgument.variance == Variance.INVARIANT)
                 oldArgument
             } else {
-                val capturedSuperTypes = mutableListOf<IrType>()
+                val capturedSuperTypes: MutableList<IrType> = []
                 typeParameters[index].superTypes.mapTo(capturedSuperTypes) {
                     typeSubstitutor.substitute(it)
                 }
@@ -311,7 +311,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun RigidTypeMarker.isSingleClassifierType() = true
 
     override fun RigidTypeMarker.possibleIntegerTypes() = irBuiltIns.run {
-        setOf(byteType, shortType, intType, longType)
+        [byteType, shortType, intType, longType]
     }
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean = false
@@ -334,7 +334,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
     override fun createFlexibleType(lowerBound: RigidTypeMarker, upperBound: RigidTypeMarker): KotlinTypeMarker {
         require(lowerBound.isNothing())
         require(upperBound is IrType && upperBound.isNullableAny())
-        return IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+        return IrDynamicTypeImpl([], Variance.INVARIANT)
     }
 
     override fun createSimpleType(
@@ -351,7 +351,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
             constructor as IrClassifierSymbol,
             if (nullable) SimpleTypeNullability.MARKED_NULLABLE else SimpleTypeNullability.DEFINITELY_NOT_NULL,
             arguments.memoryOptimizedMap { it as IrTypeArgument },
-            ourAnnotations ?: emptyList()
+            ourAnnotations ?: []
         )
     }
 
@@ -396,7 +396,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 
     override fun KotlinTypeMarker.replaceCustomAttributes(newAttributes: List<AnnotationMarker>): KotlinTypeMarker = this
 
-    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> = emptyList()
+    override fun unionTypeAttributes(types: List<KotlinTypeMarker>): List<AnnotationMarker> = []
 
     override fun KotlinTypeMarker.isNullableType(): Boolean =
         this is IrType && isNullable()
@@ -595,7 +595,7 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
 }
 
 fun extractTypeParameters(parent: IrDeclarationParent): List<IrTypeParameter> {
-    val result = mutableListOf<IrTypeParameter>()
+    val result: MutableList<IrTypeParameter> = []
     var current: IrDeclarationParent? = parent
     while (current != null) {
         (current as? IrTypeParametersContainer)?.let { result += it.typeParameters }

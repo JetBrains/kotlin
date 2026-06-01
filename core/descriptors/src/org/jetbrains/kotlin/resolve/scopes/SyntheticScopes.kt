@@ -45,7 +45,7 @@ interface SyntheticScope {
             name: Name,
             location: LookupLocation
         ): Collection<PropertyDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticMemberFunctions(
@@ -53,40 +53,40 @@ interface SyntheticScope {
             name: Name,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticStaticFunctions(
             contributedFunctions: Collection<FunctionDescriptor>,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticConstructors(
             contributedClassifier: ClassifierDescriptor,
             location: LookupLocation
         ): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticExtensionProperties(
             receiverTypes: Collection<KotlinType>,
             location: LookupLocation
         ): Collection<PropertyDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticMemberFunctions(receiverTypes: Collection<KotlinType>): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticStaticFunctions(functionDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticConstructors(classifierDescriptors: Collection<DeclarationDescriptor>): Collection<FunctionDescriptor> {
-            return emptyList()
+            return []
         }
 
         override fun getSyntheticConstructor(constructor: ConstructorDescriptor): ConstructorDescriptor? {
@@ -100,7 +100,7 @@ interface SyntheticScopes {
     val scopes: Collection<SyntheticScope>
 
     object Empty : SyntheticScopes {
-        override val scopes: Collection<SyntheticScope> = emptyList()
+        override val scopes: Collection<SyntheticScope> = []
     }
 }
 

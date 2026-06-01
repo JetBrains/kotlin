@@ -33,11 +33,11 @@ class PrivateMembersLowering(val context: JsIrBackendContext) : DeclarationTrans
                 ?.also { declaration.correspondingStatic = it }
                 ?.let(::listOf)
 
-            is IrProperty -> listOf(declaration.apply {
+            is IrProperty -> [declaration.apply {
                 // Detach old function from corresponding property
                 this.getter = this.getter?.let(::transformAccessor)
                 this.setter = this.setter?.let(::transformAccessor)
-            })
+            }]
             else -> null
         }
     }

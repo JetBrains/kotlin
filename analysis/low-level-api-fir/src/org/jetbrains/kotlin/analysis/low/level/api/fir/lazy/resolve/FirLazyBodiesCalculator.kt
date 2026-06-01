@@ -250,7 +250,7 @@ private fun rebindDestructuringDeclarationEntries(
 }
 
 private fun reviveReplSnippet(designation: FirDesignation): FirReplSnippet {
-    val replDesignation = FirDesignation(listOf(designation.file), designation.replSnippet)
+    val replDesignation = FirDesignation([designation.file], designation.replSnippet)
     return revive<FirReplSnippet>(replDesignation)
 }
 

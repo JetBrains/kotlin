@@ -77,14 +77,14 @@ class JvmAbiCommandLineProcessor : CommandLineProcessor {
         get() = COMPILER_PLUGIN_ID
 
     override val pluginOptions: Collection<CliOption>
-        get() = listOf(
+        get() = [
             OUTPUT_PATH_OPTION,
             REMOVE_DEBUG_INFO_OPTION,
             REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE_OPTION,
             PRESERVE_DECLARATION_ORDER_OPTION,
             REMOVE_PRIVATE_CLASSES_OPTION,
             TREAT_INTERNAL_AS_PRIVATE_OPTION,
-        )
+        ]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) {
         when (option) {

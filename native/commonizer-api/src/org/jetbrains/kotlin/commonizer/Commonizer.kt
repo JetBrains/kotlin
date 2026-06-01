@@ -17,7 +17,7 @@ public interface CInteropCommonizer : Serializable {
         outputTargets: Set<SharedCommonizerTarget>,
         outputDirectory: File,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<AdditionalCommonizerSetting<*>> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting<*>> = [],
     )
 }
 
@@ -28,7 +28,7 @@ public interface NativeDistributionCommonizer : Serializable {
         outputDirectory: File,
         outputTargets: Set<SharedCommonizerTarget>,
         logLevel: CommonizerLogLevel = CommonizerLogLevel.Quiet,
-        additionalSettings: List<AdditionalCommonizerSetting<*>> = emptyList(),
+        additionalSettings: List<AdditionalCommonizerSetting<*>> = [],
     )
 }
 

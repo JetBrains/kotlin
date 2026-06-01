@@ -59,7 +59,7 @@ class FirTypeIntersectionScopeContext(
             constructor(
                 chosenSymbol: D,
                 overriddenMember: MemberWithBaseScope<D>
-            ) : this(chosenSymbol, listOf(overriddenMember), overriddenMember.baseScope)
+            ) : this(chosenSymbol, [overriddenMember], overriddenMember.baseScope)
         }
 
         class NonTrivial<D : FirCallableSymbol<*>>(
@@ -89,8 +89,8 @@ class FirTypeIntersectionScopeContext(
 
     private fun collectClassifiers(name: Name): List<Pair<FirClassifierSymbol<*>, ConeSubstitutor>> {
         val accepted = HashSet<FirClassifierSymbol<*>>()
-        val pending = mutableListOf<FirClassifierSymbol<*>>()
-        val result = mutableListOf<Pair<FirClassifierSymbol<*>, ConeSubstitutor>>()
+        val pending: MutableList<FirClassifierSymbol<*>> = []
+        val result: MutableList<Pair<FirClassifierSymbol<*>, ConeSubstitutor>> = []
         for (scope in scopes) {
             scope.processClassifiersByNameWithSubstitution(name) { symbol, substitution ->
                 if (symbol !in accepted) {
@@ -113,7 +113,7 @@ class FirTypeIntersectionScopeContext(
         processCallables: FirScope.(Name, (D) -> Unit) -> Unit
     ): MembersByScope<D> {
         return scopes.mapNotNull { scope ->
-            val resultForScope = mutableListOf<D>()
+            val resultForScope: MutableList<D> = []
             scope.processCallables(name) {
                 if (it !is FirConstructorSymbol) {
                     resultForScope.add(it)
@@ -137,7 +137,7 @@ class FirTypeIntersectionScopeContext(
         membersByScope: List<Pair<FirTypeScope, List<D>>>
     ): List<ResultOfIntersection<D>> {
         if (membersByScope.isEmpty()) {
-            return emptyList()
+            return []
         }
 
         membersByScope.singleOrNull()?.let { [scope, members] ->
@@ -149,7 +149,7 @@ class FirTypeIntersectionScopeContext(
             .distinctBy { it.member }
             .toMutableList()
 
-        val result = mutableListOf<ResultOfIntersection<D>>()
+        val result: MutableList<ResultOfIntersection<D>> = []
 
         while (allMembersWithScope.size > 1) {
             val groupWithInvisible =
@@ -306,7 +306,7 @@ class FirTypeIntersectionScopeContext(
         scope: FirTypeScope,
         processDirectOverridden: ProcessOverriddenWithBaseScope<D>,
     ): Collection<MemberWithBaseScope<D>> {
-        val result = mutableSetOf<MemberWithBaseScope<D>>()
+        val result: MutableSet<MemberWithBaseScope<D>> = []
 
         collectRealOverridden(symbol, scope, result, mutableSetOf(), processDirectOverridden)
 

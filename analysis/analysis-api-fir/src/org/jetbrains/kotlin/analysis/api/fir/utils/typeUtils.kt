@@ -112,9 +112,7 @@ internal fun ConeKotlinType.getAllStrictSupertypes(
     session: FirSession,
     calculationMode: ConeSupertypeCalculationMode,
 ): Sequence<ConeKotlinType> =
-    listOf(this)
-        .bfs { it.getDirectSupertypes(session, calculationMode).iterator() }
-        .drop(1)
+    [this].bfs { it.getDirectSupertypes(session, calculationMode).iterator() }.drop(1)
 
 internal fun ConeKotlinType.getDirectSupertypes(
     session: FirSession,
@@ -128,9 +126,9 @@ internal fun ConeKotlinType.getDirectSupertypes(
             ConeDefinitelyNotNullType.create(it, session.typeContext) ?: it
         }
         is ConeIntersectionType -> intersectedTypes.asSequence().flatMap { it.getDirectSupertypes(session, calculationMode) }
-        is ConeErrorType -> emptySequence()
+        is ConeErrorType -> []
         is ConeLookupTagBasedType -> calculateSupertypes(session, calculationMode)
-        else -> emptySequence()
+        else -> []
     }.distinct()
 }
 
@@ -138,11 +136,11 @@ private fun ConeLookupTagBasedType.calculateSupertypes(
     session: FirSession,
     calculationMode: ConeSupertypeCalculationMode,
 ): Sequence<ConeKotlinType> {
-    val symbol = lookupTag.toSymbol(session) ?: return emptySequence()
+    val symbol = lookupTag.toSymbol(session) ?: return []
     val superTypes = symbol.getUnsubstitutedSupertypes(session)
 
     if (superTypes.isEmpty()) {
-        return emptySequence()
+        return []
     }
 
     if (calculationMode == ConeSupertypeCalculationMode.NO_SUBSTITUTION) {
@@ -156,7 +154,7 @@ private fun FirClassifierSymbol<*>.getUnsubstitutedSupertypes(session: FirSessio
     return when (this) {
         is FirAnonymousObjectSymbol -> resolvedSuperTypes
         is FirRegularClassSymbol -> resolvedSuperTypes
-        is FirTypeAliasSymbol -> fullyExpandedClass(session)?.resolvedSuperTypes ?: emptyList()
+        is FirTypeAliasSymbol -> fullyExpandedClass(session)?.resolvedSuperTypes ?: []
         is FirTypeParameterSymbol -> resolvedBounds.map { it.coneType }
     }
 }
@@ -173,7 +171,7 @@ private fun ConeLookupTagBasedType.substituteSuperTypes(
 
     if (typeParameterSymbols.size != argumentTypes.size) {
         // Should not happen in valid code
-        return emptySequence()
+        return []
     }
 
     val substitutor = substitutorByMap(typeParameterSymbols.zip(argumentTypes).toMap(), session)

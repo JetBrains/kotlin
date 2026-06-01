@@ -13,7 +13,7 @@ import kotlin.script.experimental.api.ScriptDiagnostic
 import kotlin.script.experimental.api.SourceCode
 
 fun makeResolveFailureResult(message: String, location: SourceCode.LocationWithId? = null) =
-    makeResolveFailureResult(listOf(message), location)
+    makeResolveFailureResult([message], location)
 
 fun makeResolveFailureResult(messages: Iterable<String>, location: SourceCode.LocationWithId? = null) =
     makeResolveFailureResult(messages, location, null)

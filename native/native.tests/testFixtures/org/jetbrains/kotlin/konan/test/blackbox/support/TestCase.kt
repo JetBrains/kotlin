@@ -150,9 +150,9 @@ sealed class TestModule {
         override val files: FailOnDuplicatesSet<TestFile<Shared>> = FailOnDuplicatesSet()
     }
 
-    data class Given(val klibFile: File, val dependencies: Set<Given> = emptySet()) : TestModule() {
+    data class Given(val klibFile: File, val dependencies: Set<Given> = []) : TestModule() {
         override val name: String get() = klibFile.name
-        override val files: Set<TestFile<*>> get() = emptySet()
+        override val files: Set<TestFile<*>> get() = []
     }
 
     final override fun equals(other: Any?) =
@@ -162,31 +162,31 @@ sealed class TestModule {
     final override fun toString() = "${javaClass.canonicalName}[name=$name]"
 
     companion object {
-        fun newDefaultModule() = Exclusive(DEFAULT_MODULE_NAME, emptySet(), emptySet(), emptySet())
+        fun newDefaultModule() = Exclusive(DEFAULT_MODULE_NAME, [], [], [])
 
         val TestModule.allRegularDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allRegularDependencies
                 is Given -> dependencies
-                is Shared -> emptySet()
+                is Shared -> []
             }
 
         val TestModule.allFriendDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allFriendDependencies
-                is Shared, is Given -> emptySet()
+                is Shared, is Given -> []
             }
 
         val TestModule.allDependsOnDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> allDependsOnDependencies
-                is Shared, is Given -> emptySet()
+                is Shared, is Given -> []
             }
 
         val TestModule.directDependsOnDependencies: Set<TestModule>
             get() = when (this) {
                 is Exclusive -> directDependsOnDependencies
-                is Shared, is Given -> emptySet()
+                is Shared, is Given -> []
             }
 
         private val SM = LockBasedStorageManager(TestModule::class.java.name)
@@ -242,8 +242,8 @@ class TestCase(
     }
 
     sealed interface Extras
-    class NoTestRunnerExtras(val entryPoint: String? = null, val inputDataFile: File? = null, val arguments: List<String> = emptyList()) : Extras
-    class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = emptySet()) : Extras
+    class NoTestRunnerExtras(val entryPoint: String? = null, val inputDataFile: File? = null, val arguments: List<String> = []) : Extras
+    class WithTestRunnerExtras(val runnerType: TestRunnerType, val ignoredTests: Set<String> = []) : Extras
 
     init {
         when (kind) {

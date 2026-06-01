@@ -50,7 +50,7 @@ import javax.xml.stream.XMLStreamWriter
 
 object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmFrontendPipelinePhase",
-    postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JvmFrontendPipelineArtifact? {
         val (configuration, rootDisposable) = input
@@ -122,7 +122,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
             configuration,
             environment,
-            previousStepsSymbolProviders = emptyList(),
+            previousStepsSymbolProviders = [],
             incrementalExcludesScope = sourceScope
         )
 
@@ -134,7 +134,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
         val libraryList = createLibraryListForJvm(
             moduleName,
             configuration,
-            friendPaths = chunk.modules.fold(emptyList()) { paths, m -> paths + m.getFriendPaths() }
+            friendPaths = chunk.modules.fold([]) { paths, m -> paths + m.getFriendPaths() }
         )
 
         val sessionsWithSources = prepareJvmSessions(
@@ -218,8 +218,8 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
     }
 
     private fun groupKtFiles(ktFiles: List<KtFile>): GroupedKtSources {
-        val platformSources = mutableSetOf<KtPsiSourceFile>()
-        val commonSources = mutableSetOf<KtPsiSourceFile>()
+        val platformSources: MutableSet<KtPsiSourceFile> = []
+        val commonSources: MutableSet<KtPsiSourceFile> = []
         val sourcesByModuleName = mutableMapOf<String, MutableSet<KtPsiSourceFile>>()
 
         for (ktFile in ktFiles) {
@@ -231,7 +231,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                 }
                 else -> {
                     commonSources.add(sourceFile)
-                    sourcesByModuleName.getOrPut(moduleName) { mutableSetOf() }.add(sourceFile)
+                    sourcesByModuleName.getOrPut(moduleName) { [] }.add(sourceFile)
                 }
             }
         }

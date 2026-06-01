@@ -35,7 +35,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
     override val packageFragmentsFactory: KlibMetadataDeserializedPackageFragmentsFactory,
     override val flexibleTypeDeserializer: FlexibleTypeDeserializer,
     val additionalClassPartsProvider: AdditionalClassPartsProvider = AdditionalClassPartsProvider.None,
-    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = emptyList(),
+    val fictitiousClassDescriptorFactories: List<ClassDescriptorFactory> = [],
 ) : KlibMetadataModuleDescriptorFactory {
 
     override fun createDescriptorOptionalBuiltIns(
@@ -113,7 +113,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
         // don't know if it's possible to fix this.
         // TODO: think about fixing issues in descriptors/scopes
         val packageFqNames = deserializedPackageFragments.mapTo(mutableSetOf()) { it.fqName }
-        val emptyPackageFragments = mutableListOf<PackageFragmentDescriptor>()
+        val emptyPackageFragments: MutableList<PackageFragmentDescriptor> = []
         for (packageFqName in packageFqNames.mapNotNull { it.parentOrNull() }) {
             var ancestorFqName = packageFqName
             while (!ancestorFqName.isRoot && packageFqNames.add(ancestorFqName)) {
@@ -165,7 +165,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
             ContractDeserializerImpl(configuration, storageManager),
             additionalClassPartsProvider = additionalClassPartsProvider,
             extensionRegistryLite = KlibMetadataSerializerProtocol.extensionRegistry,
-            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = emptyList()),
+            samConversionResolver = SamConversionResolverImpl(storageManager, samWithReceiverResolvers = []),
             enumEntriesDeserializationSupport = enumEntriesDeserializationSupport,
         )
 
@@ -175,7 +175,7 @@ class KlibMetadataModuleDescriptorFactoryImpl(
 
         return compositePackageFragmentAddend?.let {
             CompositePackageFragmentProvider(
-                listOf(it, provider),
+                [it, provider],
                 "CompositeProvider@KlibMetadataModuleDescriptorFactory for $moduleDescriptor"
             )
         } ?: provider

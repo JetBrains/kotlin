@@ -30,11 +30,11 @@ class AetherResolveSessionTest : TestCase() {
 
     fun testMirror() {
         val aether = sessionFrom(Settings().apply {
-            mirrors = listOf(Mirror().apply {
+            mirrors = [Mirror().apply {
                 id = "myMirror"
                 url = "http://myMirror.org"
                 mirrorOf = "*"
-            })
+            }]
         })
 
         val remote = RemoteRepository.Builder("myServer", "default", "http://example.org")
@@ -47,11 +47,11 @@ class AetherResolveSessionTest : TestCase() {
 
     fun testAuthenticateBasedOnId() {
         val aether = sessionFrom(Settings().apply {
-            servers = listOf(Server().apply {
+            servers = [Server().apply {
                 id = "myServer"
                 username = "myUsername"
                 password = "myPasswword"
-            })
+            }]
         })
 
         val remote = RemoteRepository.Builder("myServer", "default", "http://example.org")
@@ -70,7 +70,7 @@ class AetherResolveSessionTest : TestCase() {
 
     fun testAuthenticateBasedOnIdWithMirror() {
         val aether = sessionFrom(Settings().apply {
-            servers = listOf(
+            servers = [
                 Server().apply {
                     id = "myIServer"
                     username = "myUsername"
@@ -82,12 +82,12 @@ class AetherResolveSessionTest : TestCase() {
                     password = "myMirrorPassword"
                 },
 
-                )
-            mirrors = listOf(Mirror().apply {
+            ]
+            mirrors = [Mirror().apply {
                 id = "myMirror"
                 url = "http://myMirror.org"
                 mirrorOf = "*"
-            })
+            }]
 
         })
 
@@ -107,11 +107,11 @@ class AetherResolveSessionTest : TestCase() {
 
     fun testDoNotOverwriteCredentials() {
         val aether = sessionFrom(Settings().apply {
-            servers = listOf(Server().apply {
+            servers = [Server().apply {
                 id = "myServer"
                 username = "myUsername"
                 password = "myPasswword"
-            })
+            }]
         })
 
         val remote = RemoteRepository.Builder("myServer", "default", "http://example.org")

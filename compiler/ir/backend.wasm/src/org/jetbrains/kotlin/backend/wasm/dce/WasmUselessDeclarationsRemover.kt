@@ -61,7 +61,7 @@ class WasmUselessDeclarationsRemover(
                 return@transformFlat null
             }
             if (member !in usefulDeclarations) {
-                emptyList()
+                []
             } else {
                 member.acceptVoid(this)
                 null

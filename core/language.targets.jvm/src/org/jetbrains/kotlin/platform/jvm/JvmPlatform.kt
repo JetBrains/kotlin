@@ -40,7 +40,7 @@ object JvmPlatforms {
 
     val allJvmPlatforms: List<TargetPlatform> = jvmTargetToJdkPlatform.values.toList()
 
-    private object CompatJvmPlatform : TargetPlatform(setOf(UNSPECIFIED_SIMPLE_JVM_PLATFORM))
+    private object CompatJvmPlatform : TargetPlatform([UNSPECIFIED_SIMPLE_JVM_PLATFORM])
 }
 
 class JdkPlatform(val targetVersion: JvmTarget) : JvmPlatform() {

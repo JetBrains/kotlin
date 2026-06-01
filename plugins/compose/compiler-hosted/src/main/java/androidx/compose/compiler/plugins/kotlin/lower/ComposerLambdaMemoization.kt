@@ -50,8 +50,8 @@ import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 private class CaptureCollector {
-    val captures = mutableSetOf<IrValueDeclaration>()
-    val capturedDeclarations = mutableSetOf<IrSymbolOwner>()
+    val captures: MutableSet<IrValueDeclaration> = []
+    val capturedDeclarations: MutableSet<IrSymbolOwner> = []
     val hasCaptures: Boolean get() = captures.isNotEmpty() || capturedDeclarations.isNotEmpty()
 
     fun recordCapture(local: IrValueDeclaration) {
@@ -112,7 +112,7 @@ private fun List<DeclarationContext>.recordLocalCapture(
 
 private class SymbolOwnerContext(override val declaration: IrSymbolOwner) : DeclarationContext() {
     override val composable get() = false
-    override val captures: Set<IrValueDeclaration> get() = emptySet()
+    override val captures: Set<IrValueDeclaration> get() = []
     override fun declareLocal(local: IrValueDeclaration) {}
     override fun recordCapture(local: IrValueDeclaration): Boolean {
         return false
@@ -133,9 +133,9 @@ private class FunctionContext(
      */
     var enclosingTryCount: Int = 0,
 ) : DeclarationContext() {
-    val locals = mutableSetOf<IrValueDeclaration>()
-    override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
-    var collectors = mutableListOf<CaptureCollector>()
+    val locals: MutableSet<IrValueDeclaration> = []
+    override val captures: MutableSet<IrValueDeclaration> = []
+    var collectors: MutableList<CaptureCollector> = []
 
 
     // Composable function invocations are not allowed in `try` expressions, so memoization is not
@@ -189,10 +189,10 @@ private class FunctionContext(
 
 private class AnonymousInitializerContext(override val declaration: IrAnonymousInitializer) : DeclarationContext() {
     override val composable: Boolean = false
-    override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
+    override val captures: MutableSet<IrValueDeclaration> = []
 
-    val locals = mutableSetOf<IrValueDeclaration>()
-    var collectors = mutableListOf<CaptureCollector>()
+    val locals: MutableSet<IrValueDeclaration> = []
+    var collectors: MutableList<CaptureCollector> = []
 
     override fun declareLocal(local: IrValueDeclaration) {
         locals.add(local)
@@ -235,9 +235,9 @@ private class AnonymousInitializerContext(override val declaration: IrAnonymousI
 
 private class ClassContext(override val declaration: IrClass) : DeclarationContext() {
     override val composable: Boolean = false
-    override val captures: MutableSet<IrValueDeclaration> = mutableSetOf()
+    override val captures: MutableSet<IrValueDeclaration> = []
     val thisParam: IrValueDeclaration? = declaration.thisReceiver!!
-    var collectors = mutableListOf<CaptureCollector>()
+    var collectors: MutableList<CaptureCollector> = []
     override fun declareLocal(local: IrValueDeclaration) {}
     override fun recordCapture(local: IrValueDeclaration): Boolean {
         val isThis = local == thisParam
@@ -274,7 +274,7 @@ class ComposerLambdaMemoization(
 
     ModuleLoweringPass {
 
-    private val declarationContextStack = mutableListOf<DeclarationContext>()
+    private val declarationContextStack: MutableList<DeclarationContext> = []
 
     private var currentFunctionContext: FunctionContext? = null
 
@@ -556,7 +556,7 @@ class ComposerLambdaMemoization(
             val argumentsAreNullOrStable =
                 reference.arguments.all { it.isNullOrStable(fileContainingDependent = functionContext.declaration.fileOrNull) }
 
-            val captures = mutableListOf<IrValueDeclaration>()
+            val captures: MutableList<IrValueDeclaration> = []
             if (localCaptures != null) {
                 captures.addAll(localCaptures)
             }
@@ -1073,11 +1073,11 @@ class ComposerLambdaMemoization(
             val cacheTmpVar = irTemporary(cache, "tmpCache")
             cacheTmpVar.wrap(
                 type = expression.type,
-                before = listOf(irStartReplaceGroup(irCurrentComposer(), irConst(key))),
-                after = listOf(
+                before = [irStartReplaceGroup(irCurrentComposer(), irConst(key))],
+                after = [
                     irEndReplaceGroup(irCurrentComposer()),
                     irGet(cacheTmpVar)
-                )
+                ]
             )
         }
     }

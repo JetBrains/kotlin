@@ -95,19 +95,19 @@ internal class GranularAnnotationsBox(
          *
          * @see org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
          */
-        private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = listOf(
+        private val specialAnnotationsListWithSafeArgumentsResolve: Map<String, ClassId> = [
             JvmStandardClassIds.Annotations.JvmRecord,
-        ).associateBy { it.asFqNameString() }
+        ].associateBy { it.asFqNameString() }
 
         /**
          * @see org.jetbrains.kotlin.fir.declarations.FirAnnotationsPlatformSpecificSupportComponent
          */
-        private val specialAnnotationsList: Map<String, ClassId> = listOf(
+        private val specialAnnotationsList: Map<String, ClassId> = [
             StandardClassIds.Annotations.Deprecated,
             StandardClassIds.Annotations.DeprecatedSinceKotlin,
             StandardClassIds.Annotations.WasExperimental,
             StandardClassIds.Annotations.Target,
             StandardClassIds.Annotations.IntroducedAt,
-        ).associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
+        ].associateBy { it.asFqNameString() } + specialAnnotationsListWithSafeArgumentsResolve
     }
 }

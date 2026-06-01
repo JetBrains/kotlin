@@ -28,7 +28,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("jvm-module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "enable"))
+                    it.compilerArguments.applyArgumentStrings(["-jvm-target", "21", "-jvm-default", "enable"])
                 },
                 assertions = { assertOutputs("FooKt.class", "Bar.class", "BazKt.class") })
         }
@@ -46,7 +46,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("jvm-module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "21", "-jvm-default", "bogus"))
+                    it.compilerArguments.applyArgumentStrings(["-jvm-target", "21", "-jvm-default", "bogus"])
                 },
                 assertions = {
                     expectFail()
@@ -67,7 +67,7 @@ class ApplyArgumentStringsValidationTest : BaseCompilationTest() {
             val module = module("jvm-module-1")
             module.compile(
                 compilationConfigAction = {
-                    it.compilerArguments.applyArgumentStrings(listOf("-jvm-target", "target", "-jvm-default", "bogus"))
+                    it.compilerArguments.applyArgumentStrings(["-jvm-target", "target", "-jvm-default", "bogus"])
                 },
                 assertions = {
                     expectFail()

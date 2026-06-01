@@ -117,7 +117,7 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             Wrapper.mustBeHandledWithWrapper(enumClass) -> {
                 val enumEntryName = environment.convertToState(enumEntry.name.asString(), environment.irBuiltIns.stringType)
                 val valueOfFun = enumClass.functions.single { it.name.asString() == "valueOf" }
-                Wrapper.getEnumEntry(enumClass).invokeMethod(valueOfFun, listOf(enumEntryName))
+                Wrapper.getEnumEntry(enumClass).invokeMethod(valueOfFun, [enumEntryName])
                 environment.mapOfEnums[enumEntry.symbol] = callStack.popState() as Complex
             }
             else -> defaultAction()

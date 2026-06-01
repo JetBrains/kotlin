@@ -59,7 +59,7 @@ internal object NativeCacheKotlinVersionsGenerator {
             val sortedSnapshots = snapshots.sortedWith(compareBy({ it.first }, { it.second }, { it.third }))
             sortedSnapshots.takeLast(2) // Get only two last snapshots
         } else {
-            emptyList()
+            []
         }
 
         // 5. Map releases to the intermediate model with deprecation status

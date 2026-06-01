@@ -59,7 +59,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
         project("empty", version) {
             val stubTrackedFiles = projectPath.resolve("trackedFilesStub").also { it.createFile() }.toFile()
             val packageOne = projectPath.resolve("packageOne").also { it.createDirectories() }.toFile()
-            runProcess(listOf("swift", "package", "init", "--type", "library"), packageOne)
+            runProcess(["swift", "package", "init", "--type", "library"], packageOne)
 
             plugins {
                 kotlin("multiplatform").apply(false)
@@ -69,7 +69,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                 val extension = project.locateOrRegisterSwiftPMDependenciesExtension().apply {
                     localSwiftPackage(
                         directory = project.layout.projectDirectory.dir("packageOne"),
-                        products = listOf("packageOne"),
+                        products = ["packageOne"],
                     )
                 }
                 val packageGeneration = project.tasks.register<GenerateSyntheticLinkageImportProject>("packageGeneration") {
@@ -151,7 +151,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
             val generatedDefFile = projectPath.resolve("build/kotlin/swiftImportDefs/macosx/arm64.def").toFile()
             assertFileExists(generatedDefFile)
             assertEquals(
-                listOf("language = Objective-C", "package = swiftPMImport.empty"),
+                ["language = Objective-C", "package = swiftPMImport.empty"],
                 generatedDefFile.readLines(),
             )
             assertFileExists(projectPath.resolve("build/kotlin/swiftImportLdDump/macosx/arm64.ld"))
@@ -163,16 +163,16 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
     fun `KT-86174 - convertSyntheticImportProjectIntoDefFile tasks re-execute fetch after clean`(
         version: GradleVersion,
     ) {
-        val convertTaskNames = arrayOf(
+        val convertTaskNames: Array<String> = [
             "convertSyntheticImportProjectIntoDefFileIphoneos",
             "convertSyntheticImportProjectIntoDefFileIphonesimulator",
-        )
+        ]
 
         project("empty", version) {
             withLockFileFixture {
                 val repoName = "TestPackageA"
                 val repo = repoRef(repoName).also {
-                    createRepo(it.name, listOf("1.0.0"))
+                    createRepo(it.name, ["1.0.0"])
                 }
 
                 initSwiftPmProject(cacheDirFile) {
@@ -180,7 +180,7 @@ class ConvertSyntheticSwiftPMImportProjectIntoDefFileTests : KGPBaseTest() {
                         swiftPackage(
                             url = url(repo.url),
                             version = from("1.0.0"),
-                            products = listOf(product(repo.name)),
+                            products = [product(repo.name)],
                         )
                     }
                 }

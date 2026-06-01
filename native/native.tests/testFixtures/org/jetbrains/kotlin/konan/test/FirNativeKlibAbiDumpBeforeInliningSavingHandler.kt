@@ -103,7 +103,7 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
             irModuleFragment,
             configuration,
             diagnosticReporter,
-            cleanFiles = emptyList(),
+            cleanFiles = [],
             usedLibrariesForManifest,
             createModuleSerializer = { irDiagnosticReporter ->
                 KonanIrModuleSerializer(

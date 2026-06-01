@@ -45,11 +45,11 @@ class ResolvedDataColumn(internal val col: ColumnWithPathApproximation) : Single
     }
 
     override fun resolve(df: PluginDataFrameSchema): List<ColumnWithPathApproximation> {
-        return listOf(col)
+        return [col]
     }
 
     override fun resolve(context: ColumnResolutionContext): List<ColumnWithPath<Any?>> {
-        return listOf(resolveSingle(context))
+        return [resolveSingle(context)]
     }
 
     override fun resolveSingle(context: ColumnResolutionContext): ColumnWithPath<Any?> {

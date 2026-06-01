@@ -90,7 +90,7 @@ class SymbolBasedClassifierType<out T : TypeMirror>(
 
     override val typeArguments: List<JavaType>
         get() {
-            if (typeMirror.kind != TypeKind.DECLARED || isFake) return emptyList()
+            if (typeMirror.kind != TypeKind.DECLARED || isFake) return []
 
             val arguments = arrayListOf<JavaType>()
             var type = typeMirror as DeclaredType

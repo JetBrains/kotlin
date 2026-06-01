@@ -11,7 +11,7 @@ import java.lang.reflect.Array as JavaArray
 import java.lang.NullPointerException as JavaNPE
 import java.util.Arrays
 
-private val EMPTY = emptyArray<Any?>() // shared empty array
+private val EMPTY: Array<Any?> = [] // shared empty array
 private const val MAX_SIZE = Int.MAX_VALUE - 2 // empirically maximal array size that can be allocated without exceeding VM limits
 
 // TODO: eventually should become internal @PublishedApi

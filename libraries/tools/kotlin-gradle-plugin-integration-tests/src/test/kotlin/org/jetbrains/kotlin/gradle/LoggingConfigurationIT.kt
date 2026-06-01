@@ -46,7 +46,7 @@ class LoggingConfigurationMppIT : KGPBaseTest() {
                 providers.gradleProperty("invalidateCC").orNull
                 """.trimIndent()
             )
-            for (mainCompileTask in listOf(":lib:compileKotlinJvm", ":lib:compileKotlinJs")) {
+            for (mainCompileTask in [":lib:compileKotlinJvm", ":lib:compileKotlinJs"]) {
                 checkLoggingConfigurations("lib/build.gradle.kts", mainCompileTask, buildOptions)
             }
         }

@@ -16,7 +16,7 @@ object ParcelizeNames {
 
     val DEPRECATED_RUNTIME_PACKAGE = FqName("kotlinx.android.parcel")
 
-    private val PACKAGES_FQ_NAMES = listOf(RUNTIME_PACKAGE, DEPRECATED_RUNTIME_PACKAGE)
+    private val PACKAGES_FQ_NAMES = [RUNTIME_PACKAGE, DEPRECATED_RUNTIME_PACKAGE]
 
     // -------------------- Class ids --------------------
 

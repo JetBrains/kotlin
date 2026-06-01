@@ -145,10 +145,10 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
         fun fibUntil(number: Int): List<Int> {
             require(number > 0)
             if (number == 1) {
-                return listOf(1)
+                return [1]
             }
             if (number == 2) {
-                return listOf(1, 1)
+                return [1, 1]
             }
 
             val previous = fibUntil(number - 1)

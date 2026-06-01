@@ -55,7 +55,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
             module.compile(compilationConfigAction = {
                 it.compilerArguments[WERROR] = true
                 @OptIn(ExperimentalCompilerArgument::class)
-                it.compilerArguments[X_WARNING_LEVEL] = listOf(WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING))
+                it.compilerArguments[X_WARNING_LEVEL] = [WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING)]
             }) {
                 assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
                 assertLogDoesNotContainPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
@@ -70,7 +70,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
             val module = module("deprecated-usage")
             module.compile(compilationConfigAction = {
                 @OptIn(ExperimentalCompilerArgument::class)
-                it.compilerArguments[X_WARNING_LEVEL] = listOf(WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING))
+                it.compilerArguments[X_WARNING_LEVEL] = [WarningLevel("DEPRECATION", WarningLevel.Severity.WARNING)]
             }) {
                 assertLogContainsPatterns(LogLevel.WARN, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
                 assertLogDoesNotContainPatterns(LogLevel.ERROR, Regex(".*oldFun.*"), Regex(".*deprecated.*", RegexOption.IGNORE_CASE))
@@ -87,7 +87,7 @@ class KotlinLoggerSeverityWerrorTest : BaseCompilationTest() {
         jvmProject(strategyConfig) {
             val module = module("jvm-module-1")
             module.compile(compilationConfigAction = {
-                it.compilerArguments.applyArgumentStrings(listOf("-Xcontext-parameters"))
+                it.compilerArguments.applyArgumentStrings(["-Xcontext-parameters"])
                 it.compilerArguments[WERROR] = true
             }) {
                 expectFail()

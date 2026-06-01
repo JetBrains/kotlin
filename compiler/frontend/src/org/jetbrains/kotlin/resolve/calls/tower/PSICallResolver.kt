@@ -79,21 +79,21 @@ class PSICallResolver(
     private val missingSupertypesResolver: MissingSupertypesResolver,
     private val resultTypeResolver: ResultTypeResolver,
 ) {
-    private val callCheckersWithAdditionalResolve = listOf(
+    private val callCheckersWithAdditionalResolve = [
         PassingProgressionAsCollectionCallChecker(kotlinCallResolver),
         ResolutionWithStubTypesChecker(kotlinCallResolver)
-    )
+    ]
 
     private val givenCandidatesName = Name.special("<given candidates>")
 
     private val arePartiallySpecifiedTypeArgumentsEnabled = languageVersionSettings.supportsFeature(LanguageFeature.PartiallySpecifiedTypeArguments)
 
-    val defaultResolutionKinds = setOf(
+    val defaultResolutionKinds: Set<NewResolutionOldInference.ResolutionKind> = [
         NewResolutionOldInference.ResolutionKind.Function,
         NewResolutionOldInference.ResolutionKind.Variable,
         NewResolutionOldInference.ResolutionKind.Invoke,
         NewResolutionOldInference.ResolutionKind.CallableReference
-    )
+    ]
 
     fun <D : CallableDescriptor> runResolutionAndInference(
         context: BasicCallResolutionContext,
@@ -255,7 +255,7 @@ class PSICallResolver(
         if (getResultApplicability(diagnostics.filterErrorDiagnostics()) == CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER) {
             val singleCandidate = result.resultCallAtom() ?: error("Should be not null for result: $result")
             val resolvedCall = kotlinToResolvedCallTransformer.onlyTransform<D>(singleCandidate, diagnostics).also {
-                tracingStrategy.unresolvedReferenceWrongReceiver(trace, listOf(it))
+                tracingStrategy.unresolvedReferenceWrongReceiver(trace, [it])
             }
 
             return SingleOverloadResolutionResult(resolvedCall)
@@ -350,7 +350,7 @@ class PSICallResolver(
                 collectErrorCandidatesForFunction(scopeTower, kotlinCall.name, kotlinCall.explicitReceiver?.receiver)
             KotlinCallKind.VARIABLE ->
                 collectErrorCandidatesForVariable(scopeTower, kotlinCall.name, kotlinCall.explicitReceiver?.receiver)
-            else -> emptyList()
+            else -> []
         }
 
         for (candidate in errorCandidates) {
@@ -511,7 +511,7 @@ class PSICallResolver(
 
             val psiKotlinCall = variable.resolvedCall.atom.psiKotlinCall
 
-            val variableResult = PartialCallResolutionResult(variable.resolvedCall, listOf(), variable.getSystem())
+            val variableResult = PartialCallResolutionResult(variable.resolvedCall, [], variable.getSystem())
 
             return SubKotlinCallArgumentImpl(
                 CallMaker.makeExternalValueArgument((variableReceiver.receiverValue as ExpressionReceiver).expression),
@@ -661,7 +661,7 @@ class PSICallResolver(
                     val partiallyResolvedCall = call?.let { bindingContext.get(BindingContext.ONLY_RESOLVED_CALL, it)?.result }
 
                     if (partiallyResolvedCall != null) {
-                        val receiver = ReceiverValueWithSmartCastInfo(oldReceiver, emptySet(), isStable = true)
+                        val receiver = ReceiverValueWithSmartCastInfo(oldReceiver, [], isStable = true)
                         return SubKotlinCallArgumentImpl(
                             CallMaker.makeExternalValueArgument(oldReceiver.expression),
                             context.dataFlowInfo, context.dataFlowInfo, receiver, partiallyResolvedCall

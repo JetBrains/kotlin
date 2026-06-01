@@ -194,7 +194,7 @@ class GenericReplTest : KtUsefulTestCase() {
 
 
 internal class TestRepl(
-    templateClasspath: List<File> = listOf(File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")),
+    templateClasspath: List<File> = [File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-stdlib.jar")],
     templateClassName: String = "kotlin.script.templates.standard.ScriptTemplateWithArgs",
     repeatingMode: ReplRepeatingMode = ReplRepeatingMode.NONE,
 ) : Closeable {
@@ -202,7 +202,7 @@ internal class TestRepl(
 
     private val disposable: Disposable by lazy { Disposer.newDisposable("${TestRepl::class.simpleName}.disposable") }
 
-    val emptyScriptArgs = ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class))
+    val emptyScriptArgs = ScriptArgsWithTypes([emptyArray<String>()], [Array<String>::class])
 
     private val configuration =
         KotlinTestUtils.newConfiguration(ConfigurationKind.ALL, TestJdkKind.MOCK_JDK, *templateClasspath.toTypedArray()).apply {

@@ -96,9 +96,9 @@ abstract class AbstractAnalysisApiInternalApiTest : AbstractAnalysisApiCodebaseV
     }
 
     private fun collectViolations(file: KtFile): List<CodebaseDeclarationAnnotation> {
-        val violations = mutableListOf<CodebaseDeclarationAnnotation>()
+        val violations: MutableList<CodebaseDeclarationAnnotation> = []
         for (declaration in file.declarations) {
-            collectViolations(declaration, requiredMarkers = emptySet(), violations)
+            collectViolations(declaration, requiredMarkers = [], violations)
         }
         return violations
     }

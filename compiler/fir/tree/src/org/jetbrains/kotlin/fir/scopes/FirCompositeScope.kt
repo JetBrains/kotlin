@@ -29,7 +29,7 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope() {
         name: Name,
         noinline processor: (T) -> Unit
     ) {
-        val unique = mutableSetOf<T>()
+        val unique: MutableSet<T> = []
         for (scope in scopes) {
             scope.process(name) {
                 if (unique.add(it)) {
@@ -43,7 +43,7 @@ class FirCompositeScope(val scopes: Iterable<FirScope>) : FirScope() {
         process: FirScope.((T) -> Unit) -> Unit,
         noinline processor: (T) -> Unit
     ) {
-        val unique = mutableSetOf<T>()
+        val unique: MutableSet<T> = []
         for (scope in scopes) {
             scope.process {
                 if (unique.add(it)) {

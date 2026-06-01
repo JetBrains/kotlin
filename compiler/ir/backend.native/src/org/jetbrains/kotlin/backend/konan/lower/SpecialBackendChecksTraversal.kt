@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.NativeStandardInteropNames.objCActionClassId
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.utils.fileUtils.descendantRelativeTo
 import java.io.File
+import kotlin.reflect.KFunction1
 
 /**
  * Kotlin/Native-specific language checks. Most importantly, it checks C/Objective-C interop restrictions.
@@ -69,17 +70,17 @@ private class BackendChecker(
     fun reportError(location: IrElement, message: String): Nothing =
             context.reportCompilationError(message, irFile, location)
 
-    private val outerDeclarations = mutableListOf<IrDeclaration>()
+    private val outerDeclarations: MutableList<IrDeclaration> = []
 
     private val outerClass: IrClass? get() = outerDeclarations.last { it is IrClass } as? IrClass
     private val outerFunction: IrFunction? get() = outerDeclarations.last { it is IrFunction } as? IrFunction
 
-    private val outerAnnotators = mutableListOf<Lazy<ClosureAnnotator>>()
+    private val outerAnnotators: MutableList<Lazy<ClosureAnnotator>> = []
     private val functionAnnotators = mutableMapOf<IrFunction, Lazy<ClosureAnnotator>>()
     private val functionClosures = mutableMapOf<IrFunction, Closure>()
 
     private fun captures(function: IrFunction): List<IrValueDeclaration> {
-        if (function.visibility != DescriptorVisibilities.LOCAL) return emptyList()
+        if (function.visibility != DescriptorVisibilities.LOCAL) return []
         val closure = functionClosures.getOrPut(function) {
             functionAnnotators[function]!!.value.getFunctionClosure(function)
         }
@@ -457,9 +458,9 @@ private class BackendChecker(
             }
             IntrinsicType.INTEROP_SIGN_EXTEND, IntrinsicType.INTEROP_NARROW -> {
 
-                val integerTypePredicates = arrayOf(
-                        IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
-                )
+                val integerTypePredicates: Array<KFunction1<IrType, Boolean>> = [
+                    IrType::isByte, IrType::isShort, IrType::isInt, IrType::isLong
+                ]
 
                 val receiver = expression.arguments[0]!!
                 val typeOperand = expression.getSingleTypeArgument()
@@ -550,9 +551,9 @@ private class BackendChecker(
     private data class ReferencedFunctionWithCapture(val function: IrFunction?, val captures: List<IrExpression>)
 
     private fun searchForReferences(function: IrFunction, targetValues: Set<IrValueDeclaration>): List<IrExpression> {
-        if (targetValues.isEmpty()) return emptyList()
+        if (targetValues.isEmpty()) return []
 
-        val result = mutableListOf<IrExpression>()
+        val result: MutableList<IrExpression> = []
         function.acceptChildrenVoid(object: IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -590,7 +591,7 @@ private class BackendChecker(
                     searchForReferences(expression.function, capturedVariables.toSet())
             )
         }
-        else -> ReferencedFunctionWithCapture(null, emptyList())
+        else -> ReferencedFunctionWithCapture(null, [])
     }
 
     private fun IrCall.getSingleTypeArgument(): IrType {
@@ -601,7 +602,7 @@ private class BackendChecker(
     private fun checkIrKType(
             irElement: IrElement,
             type: IrType,
-            seenTypeParameters: MutableSet<IrTypeParameter> = mutableSetOf()
+            seenTypeParameters: MutableSet<IrTypeParameter> = []
     ) {
         if (type !is IrSimpleType)
             return

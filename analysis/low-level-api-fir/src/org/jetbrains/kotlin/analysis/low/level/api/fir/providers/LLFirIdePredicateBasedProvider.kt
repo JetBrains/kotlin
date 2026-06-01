@@ -170,7 +170,7 @@ internal class LLFirIdePredicateBasedProvider(
     }
 
     private fun annotationsOnDeclaration(declaration: FirDeclaration): Set<AnnotationFqn> {
-        if (declaration.annotations.isEmpty()) return emptySet()
+        if (declaration.annotations.isEmpty()) return []
 
         val firResolvedAnnotations = declaration.annotations
             .asSequence()
@@ -181,7 +181,7 @@ internal class LLFirIdePredicateBasedProvider(
 
         if (firResolvedAnnotations.isNotEmpty()) return firResolvedAnnotations
 
-        val psiDeclaration = declaration.psi as? KtAnnotated ?: return emptySet()
+        val psiDeclaration = declaration.psi as? KtAnnotated ?: return []
         val psiAnnotations = annotationsResolver.annotationsOnDeclaration(psiDeclaration)
 
         return psiAnnotations.map { it.asSingleFqName() }.toSet()

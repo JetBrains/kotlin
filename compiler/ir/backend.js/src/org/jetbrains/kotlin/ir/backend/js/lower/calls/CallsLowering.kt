@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.JsStandardClassIds
 
 class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
-    private val transformers = listOf(
+    private val transformers = [
         NumberOperatorCallsTransformer(context),
         NumberConversionCallsTransformer(context),
         BoxedLongCallsTransformer(context),
@@ -33,7 +33,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
         BuiltInConstructorCalls(context),
         JsonIntrinsics(context),
         NativeGetterSetterTransformer(context),
-    )
+    ]
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildren(object : IrTransformer<IrDeclaration>() {

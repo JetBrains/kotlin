@@ -160,11 +160,11 @@ fun getUnboxedTypes(
     multiFieldValueClassUnboxInfo: MultiFieldValueClassUnboxInfo?
 ): List<Type> {
     val primitiveType = AsmUtil.unboxPrimitiveTypeOrNull(boxedType)
-    if (primitiveType != null) return listOf(primitiveType)
+    if (primitiveType != null) return [primitiveType]
 
-    if (boxedType == AsmTypes.K_CLASS_TYPE) return listOf(AsmTypes.JAVA_CLASS_TYPE)
+    if (boxedType == AsmTypes.K_CLASS_TYPE) return [AsmTypes.JAVA_CLASS_TYPE]
 
-    unboxedTypeOfInlineClass(boxedType, state)?.let { return listOf(it) }
+    unboxedTypeOfInlineClass(boxedType, state)?.let { return [it] }
     multiFieldValueClassUnboxInfo?.let { return it.unboxedTypes }
 
     throw IllegalArgumentException("Expected primitive type wrapper or KClass or inline class wrapper, got: $boxedType")

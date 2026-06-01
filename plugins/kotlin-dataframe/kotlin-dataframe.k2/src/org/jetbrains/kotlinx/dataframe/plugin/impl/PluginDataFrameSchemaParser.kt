@@ -84,7 +84,7 @@ class PluginDataFrameSchemaParser {
     }
 
     private fun parseColumns(jsonObject: JsonObject): Result<List<SimpleCol>> {
-        val columns = mutableListOf<SimpleCol>()
+        val columns: MutableList<SimpleCol> = []
 
         for ([name, value] in jsonObject.entries) {
             if (name.isBlank()) {
@@ -140,7 +140,7 @@ class PluginDataFrameSchemaParser {
     }
 
     private fun parseNestedColumns(jsonObject: JsonObject): Result<List<SimpleCol>> {
-        val columns = mutableListOf<SimpleCol>()
+        val columns: MutableList<SimpleCol> = []
 
         for ([key, value] in jsonObject.entries) {
             if (key.isBlank()) {

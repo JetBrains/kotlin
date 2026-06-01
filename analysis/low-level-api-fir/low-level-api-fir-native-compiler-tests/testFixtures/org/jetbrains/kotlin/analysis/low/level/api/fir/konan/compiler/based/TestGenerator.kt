@@ -14,13 +14,13 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("analysis/low-level-api-fir/low-level-api-fir-native-compiler-tests/tests-gen", "compiler/testData/diagnostics") {
             testClass<AbstractLLNativeDiagnosticsTest>(
-                annotations = listOf(annotation(Tag::class.java, "llFirNative"))
+                annotations = [annotation(Tag::class.java, "llFirNative")]
             ) {
                 model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
             testClass<AbstractLLReversedNativeDiagnosticsTest>(
-                annotations = listOf(annotation(Tag::class.java, "llFirNative"))
+                annotations = [annotation(Tag::class.java, "llFirNative")]
             ) {
                 model("nativeTests", testMethod = "doTest", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }

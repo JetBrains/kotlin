@@ -150,7 +150,7 @@ private const val MAX_BYTES_PER_CHAR = 3
 /**
  * The byte sequence a malformed UTF-16 char sequence is replaced by.
  */
-private val REPLACEMENT_BYTE_SEQUENCE: ByteArray = byteArrayOf(0xEF.toByte(), 0xBF.toByte(), 0xBD.toByte())
+private val REPLACEMENT_BYTE_SEQUENCE: ByteArray = [0xEF.toByte(), 0xBF.toByte(), 0xBD.toByte()]
 
 /**
  * Encodes the [string] using UTF-8 and returns the resulting [ByteArray].

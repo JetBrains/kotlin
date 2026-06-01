@@ -39,8 +39,8 @@ internal class CharCategoryTestGenerator(private val outputFile: File) {
         }
     }
 
-    private val otherLowercaseRanges = mutableListOf<PropertyLine>()
-    private val otherUppercaseRanges = mutableListOf<PropertyLine>()
+    private val otherLowercaseRanges: MutableList<PropertyLine> = []
+    private val otherUppercaseRanges: MutableList<PropertyLine> = []
 
     fun appendPropertyLine(line: PropertyLine) {
         when (line.property) {

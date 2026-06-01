@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.name.ClassId
 
 class FirFunctionTypeKindServiceImpl(private val session: FirSession) : FirFunctionTypeKindService() {
-    private val nonReflectKindsFromExtensions = mutableListOf<FunctionTypeKind>()
+    private val nonReflectKindsFromExtensions: MutableList<FunctionTypeKind> = []
 
     override val extractor: FunctionTypeKindExtractor = run {
         val kinds = buildList {

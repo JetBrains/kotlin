@@ -299,7 +299,7 @@ internal fun createSwiftPmGitRepoWithTags(
     runGit("config", "user.email", "spm@test", repoDir = repoDir)
     runGit("config", "user.name", "spm-test", repoDir = repoDir)
     val commandResult = runProcess(
-        listOf("touch", "git-daemon-export-ok"),
+        ["touch", "git-daemon-export-ok"],
         workingDir = repoDir.toFile(),
     )
 
@@ -458,10 +458,10 @@ private fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
         .withType(FetchSyntheticImportProjectPackages::class.java)
         .configureEach { task ->
             task.additionalSwiftPackageResolveArgs.set(
-                listOf(
+                [
                     "--resolver-fingerprint-checking", "warn",
                     "--cache-path", cacheDirFile.path,
-                )
+                ]
             )
         }
 
@@ -469,10 +469,10 @@ private fun KotlinMultiplatformExtension.configureSwiftPmTestArgs(
         .withType(ConvertSyntheticSwiftPMImportProjectIntoDefFile::class.java)
         .configureEach { task ->
             task.additionalXcodeArgs.set(
-                listOf(
+                [
                     "-packageFingerprintPolicy", "warn",
                     "-packageCachePath", cacheDirFile.path,
-                )
+                ]
             )
         }
 }
@@ -497,12 +497,12 @@ internal fun TestProject.dumpTaskGraph(
     return taskGraph
 }
 
-internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks : String) {
-    val taskToExclude = setOf(
+internal fun Set<String>.assertExactSwiftImportTasksInGraph(vararg tasks: String) {
+    val taskToExclude: Set<String> = [
         ":kmpPartiallyResolvedDependenciesChecker",
         ":downloadKotlinNativeDistribution",
         ":checkKotlinGradlePluginConfigurationErrors",
-    )
+    ]
     // we also need to exlcude "right:checkKotlinGradlePluginConfigurationErrors"
     val filteredGraph = filterNot { taskPath ->
         taskToExclude.any { suffix ->
@@ -679,13 +679,13 @@ internal fun parsePackageResolved(jsonString: String): SwiftPmPackageResolved = 
 
 @Serializable
 data class SwiftPackageDescription(
-    val dependencies: List<SwiftPackageDependency> = emptyList(),
+    val dependencies: List<SwiftPackageDependency> = [],
     @SerialName("manifest_display_name") val manifestDisplayName: String,
     val name: String,
     val path: String,
-    val platforms: List<SwiftPackagePlatform> = emptyList(),
-    val products: List<SwiftPackageProduct> = emptyList(),
-    val targets: List<SwiftPackageTarget> = emptyList(),
+    val platforms: List<SwiftPackagePlatform> = [],
+    val products: List<SwiftPackageProduct> = [],
+    val targets: List<SwiftPackageTarget> = [],
     @SerialName("tools_version") val toolsVersion: String,
 )
 
@@ -717,7 +717,7 @@ data class SwiftPackagePlatform(
 @Serializable
 data class SwiftPackageProduct(
     val name: String,
-    val targets: List<String> = emptyList(),
+    val targets: List<String> = [],
     val type: SwiftPackageProductType,
 )
 
@@ -744,9 +744,9 @@ data class SwiftPackageTarget(
     @SerialName("module_type") val moduleType: String,
     val name: String,
     val path: String,
-    @SerialName("product_dependencies") val productDependencies: List<String> = emptyList(),
-    @SerialName("product_memberships") val productMemberships: List<String> = emptyList(),
-    val sources: List<String> = emptyList(),
+    @SerialName("product_dependencies") val productDependencies: List<String> = [],
+    @SerialName("product_memberships") val productMemberships: List<String> = [],
+    val sources: List<String> = [],
     val type: String,
 )
 
@@ -775,7 +775,7 @@ private inline fun <reified T> runAppleToolCommand(
 }
 
 fun describeSwiftPackage(packagePath: Path): SwiftPackageDescription {
-    return runAppleToolCommand(packagePath, listOf("/usr/bin/swift", "package", "describe", "--type", "json"))
+    return runAppleToolCommand(packagePath, ["/usr/bin/swift", "package", "describe", "--type", "json"])
 }
 
 /**
@@ -886,7 +886,7 @@ internal fun <R> GitDaemon.useWithFailure(
 
 internal fun runGit(vararg args: String, repoDir: Path): String {
     val out = runProcess(
-        cmd = listOf("git") + args.toList(),
+        cmd = ["git"] + args.toList(),
         workingDir = repoDir.toFile(),
     )
     if (out.exitCode != 0) error("git ${args.joinToString(" ")} failed:\n${out.output}")
@@ -899,7 +899,7 @@ internal fun runGit(vararg args: String, repoDir: Path): String {
 @Serializable
 data class SwiftPackageDump(
     val name: String,
-    val targets: List<SwiftPackageDumpTarget> = emptyList(),
+    val targets: List<SwiftPackageDumpTarget> = [],
 )
 
 
@@ -907,8 +907,8 @@ data class SwiftPackageDump(
 data class SwiftPackageDumpTarget(
     val name: String,
     val type: String,
-    val dependencies: List<SwiftPackageDumpTargetDependency> = emptyList(),
-    val settings: List<SwiftPackageDumpTargetSetting> = emptyList(),
+    val dependencies: List<SwiftPackageDumpTargetDependency> = [],
+    val settings: List<SwiftPackageDumpTargetSetting> = [],
 )
 
 @Serializable
@@ -930,13 +930,13 @@ data class SwiftPackageDumpTargetSettingKind(
 
 @Serializable
 data class SwiftPackageDumpUnsafeFlags(
-    @SerialName("_0") val flags: List<String> = emptyList(),
+    @SerialName("_0") val flags: List<String> = [],
 )
 
 // endregion
 
 fun dumpSwiftPackage(packagePath: Path): SwiftPackageDump {
-    return runAppleToolCommand(packagePath, listOf("swift", "package", "dump-package"))
+    return runAppleToolCommand(packagePath, ["swift", "package", "dump-package"])
 }
 
 // region xcodebuild PIF dump DTOs
@@ -956,11 +956,11 @@ data class XcodebuildPIFContents(
     val projectDirectory: String? = null,
     val projectIsPackage: String? = null,
     val projectName: String? = null,
-    val targets: List<String> = emptyList(),
-    val projects: List<String> = emptyList(),
-    val dependencies: List<XcodebuildPIFDependency> = emptyList(),
-    val buildConfigurations: List<XcodebuildPIFBuildConfiguration> = emptyList(),
-    val buildPhases: List<XcodebuildPIFBuildPhase> = emptyList(),
+    val targets: List<String> = [],
+    val projects: List<String> = [],
+    val dependencies: List<XcodebuildPIFDependency> = [],
+    val buildConfigurations: List<XcodebuildPIFBuildConfiguration> = [],
+    val buildPhases: List<XcodebuildPIFBuildPhase> = [],
     val productReference: XcodebuildPIFProductReference? = null,
     val productTypeIdentifier: String? = null,
     val type: String? = null,
@@ -971,7 +971,7 @@ data class XcodebuildPIFContents(
 data class XcodebuildPIFDependency(
     val guid: String,
     val name: String? = null,
-    val platformFilters: List<String> = emptyList(),
+    val platformFilters: List<String> = [],
 )
 
 @Serializable
@@ -985,7 +985,7 @@ data class XcodebuildPIFBuildConfiguration(
 data class XcodebuildPIFBuildPhase(
     val guid: String,
     val type: String,
-    val buildFiles: List<XcodebuildPIFBuildFile> = emptyList(),
+    val buildFiles: List<XcodebuildPIFBuildFile> = [],
 )
 
 @Serializable
@@ -993,7 +993,7 @@ data class XcodebuildPIFBuildFile(
     val guid: String,
     val fileReference: String? = null,
     val targetReference: String? = null,
-    val platformFilters: List<String> = emptyList(),
+    val platformFilters: List<String> = [],
 )
 
 @Serializable
@@ -1007,14 +1007,14 @@ data class XcodebuildPIFProductReference(
 data class XcodebuildPIFFrameworksBuildPhase(
     val guid: String,
     val type: String,
-    val buildFiles: List<XcodebuildPIFBuildFile> = emptyList(),
+    val buildFiles: List<XcodebuildPIFBuildFile> = [],
 )
 
 // endregion
 
 fun dumpXcodebuildPIF(appPath: Path): List<XcodebuildPIFEntry> {
     val outputFile = File.createTempFile("xcodebuild-pif", ".json")
-    return runAppleToolCommand(appPath, listOf("xcodebuild", "-dumpPIF", outputFile.absolutePath), outputFile)
+    return runAppleToolCommand(appPath, ["xcodebuild", "-dumpPIF", outputFile.absolutePath], outputFile)
 }
 
 data class ApplicationRun(
@@ -1087,12 +1087,12 @@ fun PublishedProject.assertSwiftPMMetadataVariantExistsInRootComponent() {
                 "org.gradle.usage" to "swiftPMDependenciesMetadata"
             ),
             availableAt = null,
-            files = listOf(
+            files = [
                 VariantFile(
                     name = "swiftPMDependenciesMetadata",
                     url = "${name}-${version}-swiftpm-metadata.json",
                 )
-            ),
+            ],
         ).prettyPrinted,
         gradleMetadata.variants.single { it.name == "swiftPMDependenciesMetadataElements" }.prettyPrinted
     )
@@ -1115,7 +1115,7 @@ fun TestProject.commonizeAndDumpCinteropSignatures(
     return dumpKlibMetadataSignatures(commonizerResult.toFile())
 }
 
-private val CINTEROP_NOISE_SIGNATURE_LINES = setOf(
+private val CINTEROP_NOISE_SIGNATURE_LINES: Set<String> = [
     "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS.<get-SWIFT_TYPEDEFS>|<get-SWIFT_TYPEDEFS>(){}[0]",
     "swiftPMImport.emptyxcode/SWIFT_TYPEDEFS|{}SWIFT_TYPEDEFS[0]",
     "swiftPMImport.emptyxcode/char16_tVar|null[0]",
@@ -1138,7 +1138,7 @@ private val CINTEROP_NOISE_SIGNATURE_LINES = setOf(
     "swiftPMImport.emptyxcode/swift_uint3|null[0]",
     "swiftPMImport.emptyxcode/swift_uint4Var|null[0]",
     "swiftPMImport.emptyxcode/swift_uint4|null[0]",
-)
+]
 
 fun String.filterOutNoiseSignatures() =
     lines().filter { it !in CINTEROP_NOISE_SIGNATURE_LINES }.joinToString("\n").trim()

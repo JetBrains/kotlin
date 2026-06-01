@@ -28,7 +28,7 @@ object JsIdePlatformKind : IdePlatformKind() {
             null
     }
 
-    val platforms get() = listOf(JsPlatforms.defaultJsPlatform)
+    val platforms get() = [JsPlatforms.defaultJsPlatform]
     override val defaultPlatform get() = JsPlatforms.defaultJsPlatform
 
     @Deprecated(

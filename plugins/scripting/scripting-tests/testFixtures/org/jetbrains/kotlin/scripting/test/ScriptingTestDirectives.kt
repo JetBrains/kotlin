@@ -13,9 +13,9 @@ object ScriptingTestDirectives : SimpleDirectivesContainer() {
     val GRADLE_LIKE_SCRIPT by directive("Provided properties")
 
     val directivesToPassViaEnvironment =
-        listOf(
+        [
             SCRIPT_DEFAULT_IMPORTS to "defaultImports",
             SCRIPT_PROVIDED_PROPERTIES to "providedProperties",
             GRADLE_LIKE_SCRIPT to "gradleLikeScript",
-        )
+        ]
 }

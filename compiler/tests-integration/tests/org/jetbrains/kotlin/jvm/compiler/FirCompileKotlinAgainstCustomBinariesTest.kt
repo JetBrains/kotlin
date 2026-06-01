@@ -32,15 +32,15 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
     }
 
     fun testHasStableParameterNames() {
-        compileKotlin("source.kt", tmpdir, listOf(compileLibrary("library")))
+        compileKotlin("source.kt", tmpdir, [compileLibrary("library")])
     }
 
     fun testStrictMetadataVersionSemanticsOldVersion() {
         val nextMetadataVersion = languageVersion.toMetadataVersion().next()
         val library = compileLibrary(
-            "library", additionalOptions = listOf("-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion")
+            "library", additionalOptions = ["-Xgenerate-strict-metadata-version", "-Xmetadata-version=$nextMetadataVersion"]
         )
-        compileKotlin("source.kt", tmpdir, listOf(library))
+        compileKotlin("source.kt", tmpdir, [library])
     }
 
     fun testPreReleaseFlagIsConsistentBetweenBootstrapAndCurrentCompiler() {
@@ -66,7 +66,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",
-            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+            additionalOptions = ["-XXLanguage:+$arbitraryPoisoningFeature", ]
         ) {}
 
         val library = compileJsLibrary(
@@ -76,7 +76,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         compileKotlin(
             fileName = "source.kt",
             output = File(tmpdir, "usage.js"),
-            classpath = listOf(poisonedLibrary, library),
+            classpath = [poisonedLibrary, library],
             compiler = K2JSCompiler()
         ) { compilerOutput ->
             compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
@@ -88,7 +88,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
         val poisonedLibrary = compileJsLibrary(
             libraryName = "poisonedLibrary",
-            additionalOptions = listOf("-XXLanguage:+$arbitraryPoisoningFeature",)
+            additionalOptions = ["-XXLanguage:+$arbitraryPoisoningFeature", ]
         ) {}
 
         val library = compileJsLibrary(
@@ -98,7 +98,7 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
         compileKotlin(
             fileName = "source.kt",
             output = File(tmpdir, "usage.js"),
-            classpath = listOf(poisonedLibrary, library),
+            classpath = [poisonedLibrary, library],
             compiler = K2JSCompiler()
         ) { compilerOutput ->
             compilerOutput.replace(arbitraryPoisoningFeature.name, "<!POISONING_LANGUAGE_FEATURE!>")
@@ -107,12 +107,12 @@ class FirCompileKotlinAgainstCustomBinariesTest : AbstractCompileKotlinAgainstCu
 
     fun testDataClassCompiledWith1_0_5Compiler() {
         val library = File(testDataDirectory, "VeryOldLibraryWithDataClass.jar")
-        compileKotlin("source.kt", tmpdir, listOf(library), K2JVMCompiler())
+        compileKotlin("source.kt", tmpdir, [library], K2JVMCompiler())
     }
 
     fun testAgainstHeaderMode() {
-        val library = compileLibrary("library", additionalOptions = listOf("-Xheader-mode"))
+        val library = compileLibrary("library", additionalOptions = ["-Xheader-mode"])
 
-        compileKotlin(fileName = "main.kt", output = tmpdir, classpath = listOf(library))
+        compileKotlin(fileName = "main.kt", output = tmpdir, classpath = [library])
     }
 }

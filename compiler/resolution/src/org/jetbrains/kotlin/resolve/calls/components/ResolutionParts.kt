@@ -387,7 +387,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
 
     private fun NewConstraintSystem.getDependentTypeParameters(
         variable: TypeConstructorMarker,
-        dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = listOf()
+        dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> = []
     ): List<Pair<TypeConstructorMarker, KotlinTypeMarker?>> {
         val context = asConstraintSystemCompleterContext()
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
@@ -410,7 +410,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
         return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { [typeConstructor, _] ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
-            } else emptyList()
+            } else []
         }
     }
 
@@ -436,7 +436,7 @@ internal object CollectionTypeVariableUsagesInfo : ResolutionPart() {
             if (it.position.from is DeclaredUpperBoundConstraintPositionImpl && it.kind == ConstraintKind.UPPER) {
                 it.type.typeConstructor(asConstraintSystemCompleterContext())
             } else null
-        } ?: emptyList()
+        } ?: []
 
     private fun NewConstraintSystem.isContainedInInvariantOrContravariantPositionsWithDependencies(
         variable: TypeVariableFromCallableDescriptor,
@@ -873,15 +873,15 @@ internal object CheckContextReceiversResolutionPart : ResolutionPart() {
             return
         }
         val parentLexicalScopes = scopeTower.lexicalScope.parentsWithSelf.filterIsInstance<LexicalScope>()
-        val implicitReceiversGroups = mutableListOf<List<ReceiverValueWithSmartCastInfo>>()
+        val implicitReceiversGroups: MutableList<List<ReceiverValueWithSmartCastInfo>> = []
         for (scope in parentLexicalScopes) {
-            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add(listOf(it)) }
+            scopeTower.getImplicitReceiver(scope)?.let { implicitReceiversGroups.add([it]) }
             val contextReceiversGroup = scopeTower.getContextReceivers(scope)
             if (contextReceiversGroup.isNotEmpty()) {
                 implicitReceiversGroups.add(contextReceiversGroup)
             }
         }
-        val contextReceiversArguments = mutableListOf<SimpleKotlinCallArgument>()
+        val contextReceiversArguments: MutableList<SimpleKotlinCallArgument> = []
         for (candidateContextReceiverParameter in candidateDescriptor.contextReceiverParameters) {
             val contextReceiverArgument = findContextReceiver(implicitReceiversGroups, candidateContextReceiverParameter) ?: return
             contextReceiversArguments.add(contextReceiverArgument)

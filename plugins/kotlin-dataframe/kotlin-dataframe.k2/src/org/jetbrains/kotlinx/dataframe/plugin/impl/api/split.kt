@@ -192,7 +192,7 @@ class SplitWithTransformIntoRows : AbstractSchemaModificationInterpreter() {
 
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df.convertAsColumn(receiver.columns) {
-            val targetProjection = arrayOf(receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT))
+            val targetProjection: Array<ConeTypeProjection> = [receiver.targetType.coneType.toTypeProjection(Variance.INVARIANT)]
             simpleColumnOf("", StandardClassIds.List.createConeType(session, targetProjection))
         }.explodeImpl(dropEmpty, receiver.columns)
     }
@@ -226,7 +226,7 @@ abstract class SplitPair : AbstractSchemaModificationInterpreter() {
     override fun Arguments.interpret(): PluginDataFrameSchema {
         return receiver.df
             .split(receiver.columns) {
-                listOf(typeArg1, typeArg2)
+                [typeArg1, typeArg2]
             }
             .operation()
             .toPluginDataFrameSchema()
@@ -269,7 +269,7 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
 
 internal fun Arguments.createListType(type: ConeKotlinType): ConeClassLikeType = StandardClassIds.List.createConeType(
     session,
-    arrayOf(type.toTypeProjection(Variance.INVARIANT)),
+    [type.toTypeProjection(Variance.INVARIANT)],
 )
 
 abstract class SplitIterableAbstractOperation : AbstractSchemaModificationInterpreter() {

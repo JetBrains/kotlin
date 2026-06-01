@@ -81,7 +81,7 @@ class LazyTypeAliasDescriptor(
     }
 
     private val lazyTypeConstructorParameters =
-        storageManager.createRecursionTolerantLazyValue({ this.computeConstructorTypeParameters() }, emptyList())
+        storageManager.createRecursionTolerantLazyValue({ this.computeConstructorTypeParameters() }, [])
 
     fun initialize(
         declaredTypeParameters: List<TypeParameterDescriptor>,

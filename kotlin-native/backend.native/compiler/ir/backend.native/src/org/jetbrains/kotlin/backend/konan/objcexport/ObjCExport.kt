@@ -49,7 +49,7 @@ internal fun produceObjCExportInterface(
     //   and can't do this per-module, e.g. due to global name conflict resolution.
 
     val unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport
-    val moduleDescriptors = listOf(moduleDescriptor) + moduleDescriptor.getExportedDependencies(config)
+    val moduleDescriptors = [moduleDescriptor] + moduleDescriptor.getExportedDependencies(config)
     val entryPoints = config.objcEntryPoints
     val expandEntryPoints = config.configuration.getBoolean(BinaryOptions.objcExportExpandEntryPoints)
     val effectiveEntryPoints = if (entryPoints != ObjCEntryPoints.ALL && expandEntryPoints) {
@@ -152,7 +152,7 @@ internal fun createObjCFramework(
             frameworkDirectory,
             frameworkName,
             exportedInterface.headerLines,
-            moduleDependencies = setOf("Foundation")
+            moduleDependencies = ["Foundation"]
     )
 }
 
@@ -193,7 +193,7 @@ internal class ObjCExport(
 
         val mapper = exportedInterface?.mapper ?: ObjCExportMapper(unitSuspendFunctionExport = config.unitSuspendFunctionObjCExport)
         namer = exportedInterface?.namer ?: ObjCExportNamerImpl(
-                setOf(moduleDescriptor),
+                [moduleDescriptor],
                 moduleDescriptor.builtIns,
                 mapper,
                 ObjCExportProblemCollector.SILENT,
@@ -216,19 +216,19 @@ private fun ObjCExportedInterface.generateWorkaroundForSwiftSR10177(generationSt
     // Objective-C protocols ABI is complicated (consider e.g. undocumented extended type encoding),
     // so the easiest way to achieve this (quickly) is to compile a stub by clang.
 
-    val protocolsStub = listOf(
-            "__attribute__((used)) static void __workaroundSwiftSR10177() {",
-            buildString {
-                append("    ")
-                generatedClasses.forEach {
-                    if (it.isInterface) {
-                        val protocolName = namer.getClassOrProtocolName(it).objCName
-                        append("@protocol($protocolName); ")
-                    }
+    val protocolsStub = [
+        "__attribute__((used)) static void __workaroundSwiftSR10177() {",
+        buildString {
+            append("    ")
+            generatedClasses.forEach {
+                if (it.isInterface) {
+                    val protocolName = namer.getClassOrProtocolName(it).objCName
+                    append("@protocol($protocolName); ")
                 }
-            },
-            "}"
-    )
+            }
+        },
+        "}"
+    ]
 
     val source = createTempFile("protocols", ".m").deleteOnExit()
     source.writeLines(headerLines + protocolsStub)

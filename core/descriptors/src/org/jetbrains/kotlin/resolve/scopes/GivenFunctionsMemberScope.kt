@@ -43,7 +43,7 @@ abstract class GivenFunctionsMemberScope(
     protected abstract fun computeDeclaredFunctions(): List<FunctionDescriptor>
 
     override fun getContributedDescriptors(kindFilter: DescriptorKindFilter, nameFilter: (Name) -> Boolean): Collection<DeclarationDescriptor> {
-        if (!kindFilter.acceptsKinds(DescriptorKindFilter.CALLABLES.kindMask)) return listOf()
+        if (!kindFilter.acceptsKinds(DescriptorKindFilter.CALLABLES.kindMask)) return []
         return allDescriptors
     }
 
@@ -63,11 +63,11 @@ abstract class GivenFunctionsMemberScope(
         for ([name, group] in allSuperDescriptors.groupBy { it.name }) {
             for ([isFunction, descriptors] in group.groupBy { it is FunctionDescriptor }) {
                 OverridingUtil.DEFAULT.generateOverridesInFunctionGroup(
-                        name,
-                        /* membersFromSupertypes = */ descriptors,
-                        /* membersFromCurrent = */ if (isFunction) functionsFromCurrent.filter { it.name == name } else listOf(),
-                        containingClass,
-                        object : NonReportingOverrideStrategy() {
+                    name,
+                    /* membersFromSupertypes = */ descriptors,
+                    /* membersFromCurrent = */ if (isFunction) functionsFromCurrent.filter { it.name == name } else [],
+                    containingClass,
+                    object : NonReportingOverrideStrategy() {
                             override fun addFakeOverride(fakeOverride: CallableMemberDescriptor) {
                                 OverridingUtil.resolveUnknownVisibilityForMember(fakeOverride, null)
                                 result.add(fakeOverride)

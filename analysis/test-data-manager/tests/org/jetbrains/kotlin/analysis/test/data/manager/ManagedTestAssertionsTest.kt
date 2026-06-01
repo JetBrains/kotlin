@@ -40,7 +40,7 @@ class ManagedTestAssertionsTest {
      */
     private fun assertFileState(expected: String) {
         assertFileState(
-            fileNames = listOf("test.txt", "test.js.txt", "test.knm.txt", "test.wasm.txt"),
+            fileNames = ["test.txt", "test.js.txt", "test.knm.txt", "test.wasm.txt"],
             expected = expected,
         )
     }
@@ -103,7 +103,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - golden creates file silently`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new content", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: new content")
         // No exception thrown
@@ -113,7 +113,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - golden creates file with sanitizer`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE) {
+        runAssertion(variantChain = [], actual = "new content", mode = TestDataManagerMode.UPDATE) {
             "sanitized $it"
         }
 
@@ -125,7 +125,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - mismatch updates file silently`() {
         setupFiles("test.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: new")
         // No exception thrown
@@ -138,7 +138,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "old"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "golden", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: golden")  // js.txt deleted after update
         // No exception thrown
@@ -148,7 +148,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - mismatch updates file with sanitizer`() {
         setupFiles("test.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE) {
+        runAssertion(variantChain = [], actual = "new", mode = TestDataManagerMode.UPDATE) {
             "sanitized $it"
         }
 
@@ -160,7 +160,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - mismatch ignores with sanitizer`() {
         setupFiles("test.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE) {
+        runAssertion(variantChain = [], actual = "new", mode = TestDataManagerMode.UPDATE) {
             it.replace("new", "old")
         }
 
@@ -175,7 +175,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "same"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: same")  // js.txt deleted
         // No exception thrown
@@ -185,7 +185,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - secondary missing creates file silently`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "content", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.js.txt: content")
     }
@@ -197,7 +197,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "same"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE) {
+        runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.UPDATE) {
             it.uppercase()
         }
 
@@ -212,7 +212,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("test.txt: content")
@@ -224,7 +224,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("")
@@ -238,7 +238,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK) {
+            runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.CHECK) {
                 "sanitized $it"
             }
         }
@@ -255,7 +255,7 @@ class ManagedTestAssertionsTest {
         )
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("test.txt: same")  // js.txt was deleted
@@ -270,7 +270,7 @@ class ManagedTestAssertionsTest {
         )
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.CHECK) {
+            runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.CHECK) {
                 it.uppercase()
             }
         }
@@ -284,7 +284,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "expected")
 
         assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "actual", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "actual", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("test.txt: expected")  // File unchanged
@@ -295,7 +295,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "expected")
 
         assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "actual", mode = TestDataManagerMode.CHECK) {
+            runAssertion(variantChain = [], actual = "actual", mode = TestDataManagerMode.CHECK) {
                 "sanitized $it"
             }
         }
@@ -307,7 +307,7 @@ class ManagedTestAssertionsTest {
     fun `CHECK mode - content matches passes`() {
         setupFiles("test.txt" to "content")
 
-        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
+        runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.CHECK)
 
         assertFileState("test.txt: content")
         // No exception thrown
@@ -317,7 +317,7 @@ class ManagedTestAssertionsTest {
     fun `CHECK mode - content matches passes with sanitizer`() {
         setupFiles("test.txt" to "Same")
 
-        runAssertion(variantChain = emptyList(), actual = "same", mode = TestDataManagerMode.CHECK) {
+        runAssertion(variantChain = [], actual = "same", mode = TestDataManagerMode.CHECK) {
             it.uppercase()
         }
 
@@ -331,7 +331,7 @@ class ManagedTestAssertionsTest {
         setupFiles()
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("") // No file created on TC
@@ -348,7 +348,7 @@ class ManagedTestAssertionsTest {
         )
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("test.txt: same\ntest.js.txt: same") // js.txt NOT deleted on TC
@@ -361,7 +361,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "content", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "content", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("")
@@ -376,7 +376,7 @@ class ManagedTestAssertionsTest {
     fun `secondary test reads from golden when prefixed missing`() {
         setupFiles("test.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "golden", mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: golden")  // No js.txt created
     }
@@ -388,7 +388,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "js specific"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "js specific", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "js specific", mode = TestDataManagerMode.UPDATE)
 
         assertFileState(
             expected = """
@@ -408,7 +408,7 @@ class ManagedTestAssertionsTest {
 
         // prefixes = [knm, js] → reads: js.txt, knm.txt, txt
         // First existing is js.txt
-        runAssertion(variantChain = listOf("knm", "js"), actual = "js", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["knm", "js"], actual = "js", mode = TestDataManagerMode.UPDATE)
 
         assertFileState(
             expected = """
@@ -425,7 +425,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "different"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "different", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "different", mode = TestDataManagerMode.UPDATE)
 
         assertFileState(
             expected = """
@@ -439,7 +439,7 @@ class ManagedTestAssertionsTest {
     fun `redundancy check skips when write-target missing`() {
         setupFiles("test.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "golden", mode = TestDataManagerMode.UPDATE)
 
         // No redundancy check needed - js.txt doesn't exist
         assertFileState("test.txt: golden")
@@ -450,7 +450,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "expected")
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "actual", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "actual", mode = TestDataManagerMode.CHECK)
         }
 
         assertNotNull(ex.expected)
@@ -459,12 +459,12 @@ class ManagedTestAssertionsTest {
 
     @Test
     fun `normalizeContent handles various line endings`() {
-        val inputs = listOf(
+        val inputs = [
             "  line1\r\nline2  \r\n  " to "line1\nline2\n",
             "content" to "content\n",
             "  trimmed  " to "trimmed\n",
             "line1\nline2\n" to "line1\nline2\n",
-        )
+        ]
 
         for ([input, expected] in inputs) {
             assertEquals(
@@ -483,10 +483,10 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - compound extension - golden creates file`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = "content", extension = ".pretty.txt")
+        runAssertion(variantChain = [], actual = "content", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: content"
         )
     }
@@ -495,12 +495,12 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - compound extension - golden creates file with sanitizer`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = "content", extension = ".pretty.txt") {
+        runAssertion(variantChain = [], actual = "content", extension = ".pretty.txt") {
             "sanitized $it"
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: sanitized content"
         ) // Created with sanitized content
     }
@@ -509,10 +509,10 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - compound extension - mismatch updates file`() {
         setupFiles("test.pretty.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = "new", extension = ".pretty.txt")
+        runAssertion(variantChain = [], actual = "new", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: new"
         )
     }
@@ -521,12 +521,12 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - compound extension - mismatch updates file with sanitizer`() {
         setupFiles("test.pretty.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = "new", extension = ".pretty.txt") {
+        runAssertion(variantChain = [], actual = "new", extension = ".pretty.txt") {
             "sanitized $it"
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: sanitized new"
         ) // Updated with sanitized content
     }
@@ -538,10 +538,10 @@ class ManagedTestAssertionsTest {
             "test.js.pretty.txt" to "same"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "same", extension = ".pretty.txt")
+        runAssertion(variantChain = ["js"], actual = "same", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = "test.pretty.txt: same"  // js.pretty.txt deleted
         )
     }
@@ -553,12 +553,12 @@ class ManagedTestAssertionsTest {
             "test.js.pretty.txt" to "same"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "same", extension = ".pretty.txt") {
+        runAssertion(variantChain = ["js"], actual = "same", extension = ".pretty.txt") {
             it.uppercase()
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = "test.pretty.txt: Same"  // js.pretty.txt deleted, original stayed untouched
         )
     }
@@ -570,11 +570,11 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: content"
         )
         assertTrue(ex.message!!.contains("did not exist"))
@@ -586,11 +586,11 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = ""
         )
         assertTrue(ex.message!!.contains("No expected file found for secondary test with variant chain [js]."))
@@ -603,13 +603,13 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK) {
+            runAssertion(variantChain = [], actual = "content", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK) {
                 "sanitized $it"
             }
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: sanitized content"
         )
         assertTrue(ex.message!!.contains("did not exist"))
@@ -620,11 +620,11 @@ class ManagedTestAssertionsTest {
         setupFiles("test.pretty.txt" to "expected")
 
         assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "actual", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "actual", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt"),
+            fileNames = ["test.pretty.txt"],
             expected = "test.pretty.txt: expected"  // File unchanged
         )
     }
@@ -637,11 +637,11 @@ class ManagedTestAssertionsTest {
         )
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "same", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = ["js"], actual = "same", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = "test.pretty.txt: same"  // js.pretty.txt deleted
         )
         assertTrue(ex.message!!.contains("Deleted"))
@@ -655,13 +655,13 @@ class ManagedTestAssertionsTest {
         )
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = listOf("js"), actual = "same", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK) {
+            runAssertion(variantChain = ["js"], actual = "same", extension = ".pretty.txt", mode = TestDataManagerMode.CHECK) {
                 it.uppercase()
             }
         }
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = "test.pretty.txt: Same"  // js.pretty.txt deleted
         )
         assertTrue(ex.message!!.contains("Deleted"))
@@ -673,10 +673,10 @@ class ManagedTestAssertionsTest {
     fun `compound extension - secondary reads from golden when prefixed missing`() {
         setupFiles("test.pretty.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = "golden", extension = ".pretty.txt")
+        runAssertion(variantChain = ["js"], actual = "golden", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = "test.pretty.txt: golden"  // No js.pretty.txt created
         )
     }
@@ -688,10 +688,10 @@ class ManagedTestAssertionsTest {
             "test.js.pretty.txt" to "js specific"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = "js specific", extension = ".pretty.txt")
+        runAssertion(variantChain = ["js"], actual = "js specific", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.pretty.txt", "test.js.pretty.txt"),
+            fileNames = ["test.pretty.txt", "test.js.pretty.txt"],
             expected = """
                 test.pretty.txt: golden
                 test.js.pretty.txt: js specific
@@ -709,11 +709,11 @@ class ManagedTestAssertionsTest {
         )
 
         // Each extension sees only its own file
-        runAssertion(variantChain = emptyList(), actual = "txt content", extension = ".txt")
-        runAssertion(variantChain = emptyList(), actual = "pretty content", extension = ".pretty.txt")
+        runAssertion(variantChain = [], actual = "txt content", extension = ".txt")
+        runAssertion(variantChain = [], actual = "pretty content", extension = ".pretty.txt")
 
         assertFileState(
-            fileNames = listOf("test.txt", "test.pretty.txt"),
+            fileNames = ["test.txt", "test.pretty.txt"],
             expected = """
                 test.txt: txt content
                 test.pretty.txt: pretty content
@@ -730,11 +730,11 @@ class ManagedTestAssertionsTest {
 
         // Mismatch on .txt should not affect .pretty.txt
         assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = "wrong", extension = ".txt", mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = "wrong", extension = ".txt", mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState(
-            fileNames = listOf("test.txt", "test.pretty.txt"),
+            fileNames = ["test.txt", "test.pretty.txt"],
             expected = """
                 test.txt: txt
                 test.pretty.txt: pretty
@@ -752,7 +752,7 @@ class ManagedTestAssertionsTest {
         tempDir.resolve("test.kt").writeText("// test")
         tempDir.resolve("test.txt").writeText(oldContent)
 
-        runAssertion(variantChain = emptyList(), actual = newContent, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = newContent, mode = TestDataManagerMode.UPDATE)
 
         assertEquals(expectedFileContent, tempDir.resolve("test.txt").readText())
     }
@@ -780,7 +780,7 @@ class ManagedTestAssertionsTest {
         tempDir.resolve("test.kt").writeText("// test")
         tempDir.resolve("test.js.txt").writeText("old js")  // No trailing newline
 
-        runAssertion(variantChain = listOf("js"), actual = "new js", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "new js", mode = TestDataManagerMode.UPDATE)
 
         assertEquals("new js", tempDir.resolve("test.js.txt").readText())
     }
@@ -789,7 +789,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - golden creates file with newline EOF`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new content", mode = TestDataManagerMode.UPDATE)
 
         // New files should have trailing newline (no existing file to preserve from)
         assertEquals("new content\n", tempDir.resolve("test.txt").readText())
@@ -839,7 +839,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - null actual deletes existing write-target`() {
         setupFiles("test.txt" to "old content")
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("")  // test.txt deleted
     }
@@ -848,7 +848,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - null actual passes when file missing`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("")  // No exception, no files created
     }
@@ -857,7 +857,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - null actual does not affect fallback files`() {
         setupFiles("test.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: golden")  // golden untouched, no js.txt to delete
     }
@@ -866,7 +866,7 @@ class ManagedTestAssertionsTest {
     fun `UPDATE mode - null actual deletes golden file`() {
         setupFiles("test.txt" to "old")
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("")  // test.txt deleted
     }
@@ -876,7 +876,7 @@ class ManagedTestAssertionsTest {
         // variant ["js"], golden test.txt exists, test.js.txt does not → pass, golden untouched
         setupFiles("test.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: golden")
     }
@@ -889,7 +889,7 @@ class ManagedTestAssertionsTest {
             "test.js.txt" to "js content"
         )
 
-        runAssertion(variantChain = listOf("js"), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertFileState("test.txt: golden")  // test.js.txt deleted, golden untouched
     }
@@ -900,7 +900,7 @@ class ManagedTestAssertionsTest {
     fun `CHECK mode - null actual passes when file missing`() {
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.CHECK)
 
         assertFileState("")  // No exception
     }
@@ -910,7 +910,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "unexpected")
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("")  // test.txt deleted
@@ -923,7 +923,7 @@ class ManagedTestAssertionsTest {
         // variant with null actual, only golden exists → pass, golden untouched
         setupFiles("test.txt" to "golden")
 
-        runAssertion(variantChain = listOf("js"), actual = null, mode = TestDataManagerMode.CHECK)
+        runAssertion(variantChain = ["js"], actual = null, mode = TestDataManagerMode.CHECK)
 
         assertFileState("test.txt: golden")  // golden untouched, no exception
     }
@@ -936,7 +936,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "unexpected")
 
         val ex = assertThrows<AssertionFailedError> {
-            runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
+            runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.CHECK)
         }
 
         assertFileState("test.txt: unexpected")  // File NOT deleted on TC
@@ -949,7 +949,7 @@ class ManagedTestAssertionsTest {
         TestDataManagerMode.isUnderTeamCityOverride = true
         setupFiles()  // No expected files
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.CHECK)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.CHECK)
 
         assertFileState("")  // No exception
     }
@@ -961,7 +961,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "old")
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -974,7 +974,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = null, mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = null, mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "",
@@ -989,7 +989,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new content", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -1002,7 +1002,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = listOf("js"), actual = "new content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "new content", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -1015,7 +1015,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "old")
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = "new", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -1030,21 +1030,21 @@ class ManagedTestAssertionsTest {
 
         runAssertion(
             testDataFileName = "test.kt",
-            variantChain = emptyList(),
+            variantChain = [],
             actual = "first",
             mode = TestDataManagerMode.UPDATE,
         )
 
         runAssertion(
             testDataFileName = "test.kt",
-            variantChain = listOf("variant"),
+            variantChain = ["variant"],
             actual = "first_variant",
             mode = TestDataManagerMode.UPDATE,
         )
 
         runAssertion(
             testDataFileName = "other.kt",
-            variantChain = emptyList(),
+            variantChain = [],
             actual = "second",
             mode = TestDataManagerMode.UPDATE,
         )
@@ -1057,7 +1057,7 @@ class ManagedTestAssertionsTest {
         )
 
         assertFileState(
-            fileNames = listOf("other.txt", "test.txt", "test.variant.txt"),
+            fileNames = ["other.txt", "test.txt", "test.variant.txt"],
             expected = """
                 other.txt: second
                 test.txt: first
@@ -1074,7 +1074,7 @@ class ManagedTestAssertionsTest {
         )
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = listOf("js"), actual = "same", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "same", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -1090,7 +1090,7 @@ class ManagedTestAssertionsTest {
         )
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = listOf("js"), actual = "golden", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = ["js"], actual = "golden", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "test.kt",
@@ -1103,7 +1103,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = false
 
-        runAssertion(variantChain = emptyList(), actual = "new content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "new content", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "",
@@ -1116,7 +1116,7 @@ class ManagedTestAssertionsTest {
         setupFiles("test.txt" to "content")
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPathsAndFileState(
             expectedTrackedPaths = "",
@@ -1129,7 +1129,7 @@ class ManagedTestAssertionsTest {
         setupFiles()  // No expected files
         ManagedTestAssertions.trackUpdatedPaths = true
 
-        runAssertion(variantChain = emptyList(), actual = "content", mode = TestDataManagerMode.UPDATE)
+        runAssertion(variantChain = [], actual = "content", mode = TestDataManagerMode.UPDATE)
 
         assertTrackedPaths("test.kt")
 

@@ -48,15 +48,15 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
         doTestPreReleaseKotlinLibrary(
             rootDir = rootDir,
-            additionalOptions = listOf("-Xskip-prerelease-check", "-Xsuppress-version-warnings")
+            additionalOptions = ["-Xskip-prerelease-check", "-Xsuppress-version-warnings"]
         )
     }
 
-    private fun doTestPreReleaseKotlinLibrary(rootDir: File, additionalOptions: List<String> = emptyList()) {
+    private fun doTestPreReleaseKotlinLibrary(rootDir: File, additionalOptions: List<String> = []) {
         val someNonStableVersion = LanguageVersion.entries.firstOrNull { it > LanguageVersion.LATEST_STABLE } ?: return
         doTestPreReleaseKotlin(
             rootDir = rootDir,
-            libraryOptions = listOf("-language-version", someNonStableVersion.versionString, "-Xsuppress-version-warnings"),
+            libraryOptions = ["-language-version", someNonStableVersion.versionString, "-Xsuppress-version-warnings"],
             additionalOptions = additionalOptions
         )
     }
@@ -64,21 +64,21 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     protected fun doTestPreReleaseKotlin(
         rootDir: File,
         libraryOptions: List<String>,
-        additionalOptions: List<String> = emptyList(),
+        additionalOptions: List<String> = [],
         sanitizeCompilerOutput: (String) -> String = { it },
     ) {
         val library = compileLibrary(
             settings = testRunSettings,
             source = rootDir.resolve("library"),
             freeCompilerArgs = libraryOptions,
-            dependencies = emptyList()
+            dependencies = []
         ).assertSuccess().resultingArtifact
 
         val compilationResult = compileLibrary(
             testRunSettings,
             source = rootDir.resolve("source.kt"),
             freeCompilerArgs = additionalOptions,
-            dependencies = listOf(library)
+            dependencies = [library]
         )
 
         val goldenData = rootDir.resolve("output.txt")
@@ -89,7 +89,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testObjCExportDiagnostics() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
-        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportReportNameCollisions=true"))
+        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, ["-Xbinary=objcExportReportNameCollisions=true"])
         val goldenData = rootDir.resolve("output.txt")
 
         TestDataAssertions.assertEqualsToFile(goldenData, compilationResult.toOutput().sanitizeCompilationOutput())
@@ -98,7 +98,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
     @Test
     fun testObjCExportDiagnosticsErrors() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/ObjCExportDiagnostics")
-        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, listOf("-Xbinary=objcExportErrorOnNameCollisions=true"))
+        val compilationResult = doBuildObjCFrameworkWithNameCollisions(rootDir, ["-Xbinary=objcExportErrorOnNameCollisions=true"])
         assertIs<TestCompilationResult.Failure>(compilationResult)
         val goldenData = rootDir.resolve("error.txt")
 
@@ -120,7 +120,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             extras = testCase.extras,
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = expectedArtifact,
         )
         val compilationResult = compilation.result
@@ -136,7 +136,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/compilerOutput/cacheLinkageErrorMessage")
 
         // Trigger the binary linkage to fail by requesting a non-existing library:
-        val secondStageCompilerArgs = listOf("-linker-option", "-ldoes-not-exist")
+        val secondStageCompilerArgs = ["-linker-option", "-ldoes-not-exist"]
 
         val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
 
@@ -176,13 +176,13 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val autoCacheDir = buildDir.resolve("cache")
         autoCacheDir.mkdirs()
 
-        val secondStageCompilerArgs = listOf(
+        val secondStageCompilerArgs = [
             // Trigger the cache compilation to crash by passing an invalid flag:
             "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage-loglevel=invalid-log-level",
 
             "-Xauto-cache-from=$buildDir",
             "-Xauto-cache-dir=$autoCacheDir",
-        )
+        ]
         val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
 
         assertIs<TestCompilationResult.Failure>(compilationResult)
@@ -211,12 +211,12 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val icCacheDir = buildDir.resolve("ic_cache")
         icCacheDir.mkdirs()
 
-        val secondStageCompilerArgs = listOf(
+        val secondStageCompilerArgs = [
             // Trigger the cache compilation to crash by passing an invalid flag:
             "-Xoverride-konan-properties=additionalCacheFlags=-Xpartial-linkage-loglevel=invalid-log-level",
             "-Xic-cache-dir=${icCacheDir.absolutePath}",
             "-Xenable-incremental-compilation"
-        )
+        ]
         val compilationResult = compileToExecutableInTwoStages(rootDir, secondStageCompilerArgs)
 
         assertIs<TestCompilationResult.Failure>(compilationResult)
@@ -232,7 +232,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     private fun compileToExecutableInTwoStages(
         rootDir: File,
-        secondStageCompilerArgs: List<String> = emptyList(),
+        secondStageCompilerArgs: List<String> = [],
     ): TestCompilationResult<out TestCompilationArtifact.Executable> {
         val testCase = generateTestCaseWithSingleFile(
             rootDir.resolve("main.kt"),
@@ -245,7 +245,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             testRunSettings,
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.KLIB(buildDir.resolve("main.klib"))
         )
 
@@ -256,9 +256,9 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val compilation = ExecutableCompilation(
             testRunSettings,
             freeCompilerArgs = TestCompilerArgs(secondStageCompilerArgs),
-            sourceModules = emptyList(),
+            sourceModules = [],
             extras = testCase.extras,
-            dependencies = listOf(libraryCompilationAsDependency),
+            dependencies = [libraryCompilationAsDependency],
             expectedArtifact = TestCompilationArtifact.Executable(buildDir.resolve("main")),
         )
 
@@ -288,7 +288,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
             freeCompilerArgs = testCase.freeCompilerArgs,
             sourceModules = testCase.modules,
             extras = testCase.extras,
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = expectedArtifact,
         )
         val compilationResult = compilation.result
@@ -305,18 +305,18 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         val lib2 = compileLibrary(settings, rootDir.resolve("lib2.kt")).assertSuccess().resultingArtifact
 
         val freeCompilerArgs = TestCompilerArgs(
-            listOf(
+            [
                 "-Xinclude=${lib1.path}",
                 "-Xinclude=${lib2.path}"
-            ) + additionalOptions
+            ] + additionalOptions
         )
         val expectedArtifact = TestCompilationArtifact.ObjCFramework(buildDir, "testObjCExportDiagnostics")
 
         return ObjCFrameworkCompilation(
             settings,
             freeCompilerArgs,
-            sourceModules = emptyList(),
-            dependencies = emptyList(),
+            sourceModules = [],
+            dependencies = [],
             expectedArtifact
         ).result
     }
@@ -344,7 +344,7 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
         }
 
         // The order of errors is not be defined.
-        val output = TestCompilationFactory().testCasesToExecutable(listOf(testCase), testRunSettings).result.toOutput()
+        val output = TestCompilationFactory().testCasesToExecutable([testCase], testRunSettings).result.toOutput()
             .replace("file\\d+\\.kt".toRegex(), "file*.kt")
             .replace("MyClassObjC\\d+".toRegex(), "MyClassObjC*")
         val goldenData = testClashingBindClassToObjCNameRootDir.resolve("${name}.output.txt")
@@ -380,11 +380,11 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testClashingBindClassToObjCName_classAndMain() = doTestClashingBindClassToObjCName("classAndMain", buildSet {
-        val module1 = TestModule.Exclusive("classAndMain_1", emptySet(), emptySet(), emptySet())
+        val module1 = TestModule.Exclusive("classAndMain_1", [], [], [])
         module1.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("class.kt"), module1)
         module1.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("file1.kt"), module1)
         add(module1)
-        val module2 = TestModule.Exclusive("classAndMain_2", setOf(module1.name), emptySet(), emptySet())
+        val module2 = TestModule.Exclusive("classAndMain_2", [module1.name], [], [])
         module2.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("file2.kt"), module2)
         module2.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("main.kt"), module2)
         add(module2)
@@ -392,16 +392,16 @@ abstract class CompilerOutputTestBase : AbstractNativeSimpleTest() {
 
     @Test
     fun testClashingBindClassToObjCName_separateLibs() = doTestClashingBindClassToObjCName("separateLibs", buildSet {
-        val module1 = TestModule.Exclusive("separateLibs_1", emptySet(), emptySet(), emptySet())
+        val module1 = TestModule.Exclusive("separateLibs_1", [], [], [])
         module1.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("class.kt"), module1)
         add(module1)
-        val module2 = TestModule.Exclusive("separateLibs_2", setOf(module1.name), emptySet(), emptySet())
+        val module2 = TestModule.Exclusive("separateLibs_2", [module1.name], [], [])
         module2.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("file1.kt"), module2)
         add(module2)
-        val module3 = TestModule.Exclusive("separateLibs_3", setOf(module1.name), emptySet(), emptySet())
+        val module3 = TestModule.Exclusive("separateLibs_3", [module1.name], [], [])
         module3.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("file2.kt"), module3)
         add(module3)
-        val module4 = TestModule.Exclusive("separateLibs_4", setOf(module1.name, module2.name, module3.name), emptySet(), emptySet())
+        val module4 = TestModule.Exclusive("separateLibs_4", [module1.name, module2.name, module3.name], [], [])
         module4.files += TestFile.createCommitted(testClashingBindClassToObjCNameRootDir.resolve("main.kt"), module4)
         add(module4)
     })
@@ -419,7 +419,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val poisonedLibrary = compileLibrary(
             settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
-            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+            freeCompilerArgs = ["-XXLanguage:+$arbitraryPoisoningFeature", ],
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
@@ -430,7 +430,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val compilationResult = compileLibrary(
             testRunSettings,
             source = rootDir.resolve("source.kt"),
-            dependencies = listOf(poisonedLibrary, library)
+            dependencies = [poisonedLibrary, library]
         ).toOutput()
 
         TestDataAssertions.assertEqualsToFile(
@@ -448,7 +448,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val poisonedLibrary = compileLibrary(
             settings = testRunSettings,
             source = rootDir.resolve("poisonedLibrary"),
-            freeCompilerArgs = listOf("-XXLanguage:+$arbitraryPoisoningFeature",),
+            freeCompilerArgs = ["-XXLanguage:+$arbitraryPoisoningFeature", ],
         ).assertSuccess().resultingArtifact
 
         val library = compileLibrary(
@@ -459,7 +459,7 @@ class CompilerOutputTest : CompilerOutputTestBase() {
         val compilationResult = compileLibrary(
             testRunSettings,
             source = rootDir.resolve("source.kt"),
-            dependencies = listOf(poisonedLibrary, library)
+            dependencies = [poisonedLibrary, library]
         ).toOutput()
 
         TestDataAssertions.assertEqualsToFile(

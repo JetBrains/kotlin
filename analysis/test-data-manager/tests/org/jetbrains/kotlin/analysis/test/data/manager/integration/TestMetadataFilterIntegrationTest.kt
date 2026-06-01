@@ -66,54 +66,54 @@ internal class TestMetadataFilterIntegrationTest {
     @Test
     fun `filter includes analysis tests and excludes fir tests`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis")),
-            expectedIncluded = setOf("testSymbols()", "testTypes()", "testCall()", "testLambda()"),
-            expectedExcluded = setOf("testChecker()", "testInference()"),
+            filter = TestMetadataFilter(["testData/analysis"]),
+            expectedIncluded = ["testSymbols()", "testTypes()", "testCall()", "testLambda()"],
+            expectedExcluded = ["testChecker()", "testInference()"],
         )
     }
 
     @Test
     fun `filter includes nested class tests`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions")),
-            expectedIncluded = setOf("testCall()", "testLambda()"),
-            expectedExcluded = setOf("testSymbols()", "testTypes()", "testChecker()", "testInference()"),
+            filter = TestMetadataFilter(["testData/analysis/api/expressions"]),
+            expectedIncluded = ["testCall()", "testLambda()"],
+            expectedExcluded = ["testSymbols()", "testTypes()", "testChecker()", "testInference()"],
         )
     }
 
     @Test
     fun `filter for specific file in nested class`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/expressions/call")),
-            expectedIncluded = setOf("testCall()"),
-            expectedExcluded = setOf("testSymbols()", "testTypes()", "testLambda()", "testChecker()", "testInference()"),
+            filter = TestMetadataFilter(["testData/analysis/api/expressions/call"]),
+            expectedIncluded = ["testCall()"],
+            expectedExcluded = ["testSymbols()", "testTypes()", "testLambda()", "testChecker()", "testInference()"],
         )
     }
 
     @Test
     fun `filter with multiple paths`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols", "testData/compiler/fir/resolve")),
-            expectedIncluded = setOf("testSymbols()", "testInference()"),
-            expectedExcluded = setOf("testTypes()", "testCall()", "testLambda()", "testChecker()"),
+            filter = TestMetadataFilter(["testData/analysis/api/symbols", "testData/compiler/fir/resolve"]),
+            expectedIncluded = ["testSymbols()", "testInference()"],
+            expectedExcluded = ["testTypes()", "testCall()", "testLambda()", "testChecker()"],
         )
     }
 
     @Test
     fun `filter with exact file path including extension`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/symbols.kt")),
-            expectedIncluded = setOf("testSymbols()"),
-            expectedExcluded = setOf("testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"),
+            filter = TestMetadataFilter(["testData/analysis/api/symbols.kt"]),
+            expectedIncluded = ["testSymbols()"],
+            expectedExcluded = ["testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"],
         )
     }
 
     @Test
     fun `filter with non-existing file path excludes all`() {
         assertDiscoveredTests(
-            filter = TestMetadataFilter(listOf("testData/analysis/api/nonexistent.kt")),
-            expectedIncluded = emptySet(),
-            expectedExcluded = setOf("testSymbols()", "testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"),
+            filter = TestMetadataFilter(["testData/analysis/api/nonexistent.kt"]),
+            expectedIncluded = [],
+            expectedExcluded = ["testSymbols()", "testTypes()", "testCall()", "testLambda()", "testChecker()", "testInference()"],
         )
     }
 }

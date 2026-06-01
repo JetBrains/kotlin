@@ -49,16 +49,16 @@ interface SwiftExportValidator {
                             val expectedFiles = goldenData.toPath() / "golden_result/"
                             val expectedSwift = expectedFiles / it.name / "${it.name}.swift"
 
-                            listOf { TestDataAssertions.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }
+                            [{ TestDataAssertions.assertEqualsToFile(expectedSwift, it.swiftApi.readText()) }]
                         }
                         SwiftExportModule.SwiftOnly.Kind.KotlinRuntimeSupport -> {
                             // No need to verify predefined files.
-                            emptyList()
+                            []
                         }
                     }
 
                 }
-                else -> emptyList()
+                else -> []
             }
         })
     }

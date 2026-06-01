@@ -33,13 +33,13 @@ import org.jetbrains.kotlin.types.typeUtil.isTypeParameter
 class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: KotlinCallResolver) : CallCheckerWithAdditionalResolve {
     private val typeCheckerState = ClassicTypeCheckerState(isErrorTypeEqualsToAnything = false)
 
-    private val iterableProgressions = listOf(
+    private val iterableProgressions = [
         CHAR_RANGE_FQN, CHAR_PROGRESSION_FQN,
         INT_RANGE_FQN, INT_PROGRESSION_FQN,
         LONG_RANGE_FQN, LONG_PROGRESSION_FQN,
         UINT_RANGE_FQN, UINT_PROGRESSION_FQN,
         ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN
-    )
+    ]
 
     private fun check(
         resolvedCall: ResolvedCall<*>,
@@ -68,14 +68,14 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         val newArguments = valueArguments.replaceTypes(context, resolutionCallbacks) { i, type ->
             val progressionOrRangeElementType = progressionOrRangeArgumentTypes[i] ?: return@replaceTypes null
             intersectTypes(
-                listOf(
+                [
                     KotlinTypeFactory.simpleNotNullType(
                         TypeAttributes.Empty,
                         builtIns.collection,
-                        listOf(TypeProjectionImpl(progressionOrRangeElementType))
+                        [TypeProjectionImpl(progressionOrRangeElementType)]
                     ),
                     type
-                )
+                ]
             )
         }
         val newCall = kotlinCall.replaceArguments(newArguments, kotlinCall.explicitReceiver)
@@ -151,6 +151,6 @@ class PassingProgressionAsCollectionCallChecker(private val kotlinCallResolver: 
         KotlinTypeFactory.simpleNotNullType(
             TypeAttributes.Empty,
             builtIns.collection,
-            listOf(TypeProjectionImpl(builtIns.nullableAnyType))
+            [TypeProjectionImpl(builtIns.nullableAnyType)]
         )
 }

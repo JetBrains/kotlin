@@ -205,7 +205,7 @@ internal fun deserializeClassToSymbol(
         classOrObject.body
             ?.declarationsAndCompanionBlocks
             ?.asSequence()
-            ?.flatMap { if (it is KtCompanionBlock) it.declarations else listOf(it) }
+            ?.flatMap { if (it is KtCompanionBlock) it.declarations else [it] }
             ?.forEach { declaration ->
                 when (declaration) {
                     is KtConstructor<*> -> addDeclaration(memberDeserializer.loadConstructor(declaration, classOrObject, this))
@@ -358,7 +358,7 @@ private fun FirRegularClassBuilder.addCloneForEnumIfNeeded(
         resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
 
         returnTypeRef = buildResolvedTypeRef {
-            coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = emptyArray(), isMarkedNullable = false)
+            coneType = ConeClassLikeTypeImpl(anyLookupId, typeArguments = [], isMarkedNullable = false)
         }
 
         status = FirResolvedDeclarationStatusImpl(

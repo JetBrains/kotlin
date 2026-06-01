@@ -360,7 +360,7 @@ class IrSparseArrayParcelSerializer(
             val constructorCall = if (sparseArrayClass.typeParameters.isEmpty())
                 irCall(sparseArrayConstructor)
             else
-                irCallConstructor(sparseArrayConstructor.symbol, listOf(elementType))
+                irCallConstructor(sparseArrayConstructor.symbol, [elementType])
 
             val arrayTemporary = irTemporary(constructorCall.apply {
                 arguments[0] = irGet(remainingSizeTemporary)

@@ -58,7 +58,7 @@ abstract class AbstractGetExpectsForActualTest : AbstractAnalysisApiBasedTest() 
 
 abstract class AbstractGetExpectsForActualByCoordinatesTest : AbstractGetExpectsForActualTest() {
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     override fun doTest(testServices: TestServices) {
         if (Directives.DISABLE_COORDINATE_TEST in testServices.moduleStructure.allDirectives) {

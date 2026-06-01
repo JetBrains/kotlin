@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompa
 internal object ExpectActualAnnotationIncompatibilityDiagnosticRenderers {
     private val descriptorRender = DescriptorRenderer.withOptions {
         annotationArgumentsRenderingPolicy = AnnotationArgumentsRenderingPolicy.UNLESS_EMPTY
-        modifiers = emptySet()
+        modifiers = []
         withDefinedIn = true
         classifierNamePolicy = ClassifierNamePolicy.SHORT
     }

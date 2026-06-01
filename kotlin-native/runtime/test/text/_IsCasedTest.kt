@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,7 +12,7 @@ package test.text
 
 import kotlin.test.*
 
-private val casedRanges = arrayOf<IntRange>(
+private val casedRanges: Array<IntRange> = [
     0x0041..0x005a,
     0x0061..0x007a,
     0x00aa..0x00aa,
@@ -168,7 +168,7 @@ private val casedRanges = arrayOf<IntRange>(
     0x1f130..0x1f149,
     0x1f150..0x1f169,
     0x1f170..0x1f189,
-)
+]
 
 class IsCasedTest {
     @Test

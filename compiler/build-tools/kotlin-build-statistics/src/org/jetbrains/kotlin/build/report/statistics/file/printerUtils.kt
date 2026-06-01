@@ -115,7 +115,7 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>) 
             }
         }
 
-        val rootMetrics = allBuildTimeMetricsByParentMap[null] ?: emptyList()
+        val rootMetrics = allBuildTimeMetricsByParentMap[null] ?: []
 
         for (buildTime in rootMetrics) {
             printBuildTime(buildTime)

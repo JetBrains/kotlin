@@ -182,12 +182,12 @@ class CocoaPodsIT : KGPBaseTest() {
             }
 
             val frameworkResult = runProcess(
-                listOf("dwarfdump", "--uuid", "shared.framework/shared"),
+                ["dwarfdump", "--uuid", "shared.framework/shared"],
                 projectPath.resolve("build/cocoapods/framework/").toFile()
             )
 
             val dsymResult = runProcess(
-                listOf("dwarfdump", "--uuid", "shared.framework.dSYM"),
+                ["dwarfdump", "--uuid", "shared.framework.dSYM"],
                 projectPath.resolve("build/cocoapods/framework/").toFile()
             )
 
@@ -527,7 +527,7 @@ class CocoaPodsIT : KGPBaseTest() {
             build("syncFramework", buildOptions = buildOptions) {
                 // Check that an output framework is a dynamic framework
                 val framework = projectPath.resolve("build/cocoapods/framework/$frameworkName.framework/$frameworkName")
-                runProcess(listOf("file", framework.absolutePathString()), projectPath.toFile()).assertProcessRunResult {
+                runProcess(["file", framework.absolutePathString()], projectPath.toFile()).assertProcessRunResult {
                     assertTrue(isSuccessful)
                     assertTrue(output.contains("universal binary with 2 architectures"))
                     assertTrue(output.contains("(for architecture x86_64)"))
@@ -600,7 +600,7 @@ class CocoaPodsIT : KGPBaseTest() {
                         swiftPackage(
                             url = "https://github.com/example/Foo.git",
                             version = "1.0.0",
-                            products = listOf("Foo"),
+                            products = ["Foo"],
                         )
                     }
                 }
@@ -690,13 +690,13 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Cinterop commonization on")
     @GradleTest
     fun testCinteropCommonizationOn(gradleVersion: GradleVersion) {
-        testCinteropCommonizationExecutes(gradleVersion, buildArguments = arrayOf("-Pkotlin.mpp.enableCInteropCommonization=true"))
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments = ["-Pkotlin.mpp.enableCInteropCommonization=true"])
     }
 
     @DisplayName("Cinterop commonization unspecified")
     @GradleTest
     fun testCinteropCommonizationUnspecified(gradleVersion: GradleVersion) {
-        testCinteropCommonizationExecutes(gradleVersion, buildArguments = emptyArray())
+        testCinteropCommonizationExecutes(gradleVersion, buildArguments = [])
     }
 
     private fun testCinteropCommonizationExecutes(
@@ -780,12 +780,12 @@ class CocoaPodsIT : KGPBaseTest() {
         ) {
             buildGradleKts.addCocoapodsBlock("ios.deploymentTarget = \"14.0\"")
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
-                assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
+                assertTasksExecuted([subprojectPodspecTask, subprojectPodInstallTask])
             }
 
             subProject(subProjectName).buildGradleKts.addPod(defaultPodName)
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
-                assertTasksExecuted(listOf(subprojectPodspecTask, subprojectPodInstallTask))
+                assertTasksExecuted([subprojectPodspecTask, subprojectPodInstallTask])
             }
 
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
@@ -795,7 +795,7 @@ class CocoaPodsIT : KGPBaseTest() {
             addPodToPodfile("ios-app", defaultPodName)
             buildWithCocoapodsWrapper(subprojectPodImportTask) {
                 assertTasksUpToDate(subprojectPodspecTask)
-                assertTasksExecuted(listOf(subprojectPodInstallTask))
+                assertTasksExecuted([subprojectPodInstallTask])
             }
         }
     }
@@ -830,7 +830,7 @@ class CocoaPodsIT : KGPBaseTest() {
             )
 
             buildAndAssertAllTasks(
-                notRegisteredTasks = listOf(":cinteropBase64IosArm64", ":cinteropSDWebImageIosArm64"),
+                notRegisteredTasks = [":cinteropBase64IosArm64", ":cinteropSDWebImageIosArm64"],
                 buildOptions = this.buildOptions.copy(
                     nativeOptions = this.buildOptions.nativeOptions.copy(
                         cocoapodsGenerateWrapper = true
@@ -985,19 +985,19 @@ class CocoaPodsIT : KGPBaseTest() {
             buildGradleKts.addCocoapodsBlock("""pod("Base64", version = "1.1.2")""")
 
             assertSimpleConfigurationCacheScenarioWorks(
-                buildArguments = arrayOf(
+                buildArguments = [
                     ":podspec",
                     ":podImport",
                     ":podPublishDebugXCFramework",
                     ":podPublishReleaseXCFramework",
                     ":syncFramework",
-                ),
+                ],
                 buildOptions = buildOptions,
-                executedTaskNames = listOf(
+                executedTaskNames = [
                     ":podPublishDebugXCFramework",
                     ":podPublishReleaseXCFramework",
                     ":linkPodDebugFrameworkIosArm64",
-                )
+                ]
             )
         }
     }
@@ -1062,7 +1062,7 @@ class CocoaPodsIT : KGPBaseTest() {
     @DisplayName("Installing pod with custom defined pod executable in the local.properties")
     @GradleTest
     fun testPodInstallWithCustomExecutablePath(gradleVersion: GradleVersion) {
-        val podPathRun = runProcess(listOf("which", "pod"), Path("/").toFile())
+        val podPathRun = runProcess(["which", "pod"], Path("/").toFile())
         val pathWithoutCocoapods = "/bin:/usr/bin"
         nativeProjectWithCocoapodsAndIosAppPodFile(
             gradleVersion = gradleVersion,

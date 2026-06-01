@@ -76,7 +76,7 @@ abstract class KaBaseTypeCreator<T : KaSession>(val analysisSession: T) : KaType
 
 @KaImplementationDetail
 abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
-    val backingAnnotations = mutableListOf<ClassId>()
+    val backingAnnotations: MutableList<ClassId> = []
 
     override val annotations: List<ClassId>
         get() = withValidityAssertion {
@@ -103,7 +103,7 @@ abstract class KaBaseTypeBuilderWithAnnotations : KaTypeBuilderWithAnnotations {
 @KaImplementationDetail
 class KaBaseClassTypeBuilder(typeCreatorDelegate: KaTypeCreator) : KaClassTypeBuilder, KaBaseTypeBuilderWithAnnotations(),
     KaTypeCreator by typeCreatorDelegate {
-    private val backingTypeArguments = mutableListOf<KaTypeProjection>()
+    private val backingTypeArguments: MutableList<KaTypeProjection> = []
 
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -215,9 +215,9 @@ class KaBaseIntersectionTypeBuilder(
     typeCreatorDelegate: KaTypeCreator
 ) : KaIntersectionTypeBuilder, KaTypeCreator by typeCreatorDelegate {
 
-    private val backingConjuncts: MutableSet<KaType> = mutableSetOf()
+    private val backingConjuncts: MutableSet<KaType> = []
 
-    private fun KaType.unwrapConjunct(): List<KaType> = (this as? KaIntersectionType)?.conjuncts ?: listOf(this)
+    private fun KaType.unwrapConjunct(): List<KaType> = (this as? KaIntersectionType)?.conjuncts ?: [this]
 
     override val conjuncts: Set<KaType> get() = withValidityAssertion { backingConjuncts }
 
@@ -266,7 +266,7 @@ class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaS
             }
         }
 
-    private val backingContextParameters: MutableList<KaType> = mutableListOf()
+    private val backingContextParameters: MutableList<KaType> = []
 
     override val contextParameters: List<KaType>
         get() = withValidityAssertion { backingContextParameters }
@@ -277,7 +277,7 @@ class KaBaseFunctionTypeBuilder(typeCreatorDelegate: KaTypeCreator, session: KaS
 
     override fun contextParameter(contextParameter: () -> KaType) = contextParameter(contextParameter())
 
-    private val backingValueParameters: MutableList<KaFunctionValueParameter> = mutableListOf()
+    private val backingValueParameters: MutableList<KaFunctionValueParameter> = []
 
     override val valueParameters: List<KaFunctionValueParameter>
         get() = withValidityAssertion { backingValueParameters }

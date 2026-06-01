@@ -621,7 +621,7 @@ object LightTreePositioningStrategies {
             val newNodes = tree.valueParameters(node).filter { tree.defaultValue(it) != null }.takeIf(List<*>::isNotEmpty)
                 ?: tree.valueParameterList(node)?.let(::listOf)
                 ?: tree.nameIdentifier(node)?.let(::listOf)
-                ?: listOf(node)
+                ?: [node]
             return newNodes.flatMap { markElement(it, startOffset, endOffset, tree, node) }
         }
     }
@@ -878,7 +878,7 @@ object LightTreePositioningStrategies {
         }
     }
 
-    private val nodeTypesWithOperation = setOf(
+    private val nodeTypesWithOperation: Set<IElementType?> = [
         KtNodeTypes.IS_EXPRESSION,
         KtNodeTypes.BINARY_WITH_TYPE,
         KtNodeTypes.BINARY_EXPRESSION,
@@ -886,7 +886,7 @@ object LightTreePositioningStrategies {
         KtNodeTypes.PREFIX_EXPRESSION,
         KtNodeTypes.BINARY_EXPRESSION,
         KtNodeTypes.WHEN_CONDITION_IN_RANGE
-    )
+    ]
 
     val WHEN_EXPRESSION = object : LightTreePositioningStrategy() {
         override fun mark(
@@ -1007,7 +1007,7 @@ object LightTreePositioningStrategies {
             tree: FlyweightCapableTreeStructure<LighterASTNode>
         ): List<TextRange> {
             if (node.tokenType == KtNodeTypes.INTEGER_CONSTANT) {
-                return listOf(TextRange.create(endOffset - 1, endOffset))
+                return [TextRange.create(endOffset - 1, endOffset)]
             }
             return super.mark(node, startOffset, endOffset, tree)
         }
@@ -1339,7 +1339,7 @@ object LightTreePositioningStrategies {
                 else -> return dotRanges
             }
 
-            return listOf(TextRange(dotRange.startOffset, callElementRange.endOffset))
+            return [TextRange(dotRange.startOffset, callElementRange.endOffset)]
         }
     }
 
@@ -1501,7 +1501,7 @@ fun LighterASTNode.isExpression(): Boolean {
 fun FlyweightCapableTreeStructure<LighterASTNode>.getChildrenArray(node: LighterASTNode): Array<LighterASTNode?> {
     val childrenRef = Ref<Array<LighterASTNode?>>()
     getChildren(node, childrenRef)
-    return childrenRef.get() ?: emptyArray()
+    return childrenRef.get() ?: []
 }
 
 /**
@@ -1769,7 +1769,7 @@ fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantsOfType(
     node: LighterASTNode, type: IElementType,
     predicate: (LighterASTNode) -> Boolean = { true }
 ): List<LighterASTNode> {
-    val result = mutableListOf<LighterASTNode>()
+    val result: MutableList<LighterASTNode> = []
 
     fun FlyweightCapableTreeStructure<LighterASTNode>.collectDescendantByType(node: LighterASTNode) {
         val childrenRef = Ref<Array<LighterASTNode?>>()

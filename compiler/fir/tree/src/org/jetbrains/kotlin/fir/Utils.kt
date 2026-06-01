@@ -330,7 +330,7 @@ value class MutableOrEmptyList<out T>(internal val list: MutableList<@UnsafeVari
     companion object {
         private val EMPTY = MutableOrEmptyList<Nothing>(null)
 
-        private val EMPTY_LIST_STUB = emptyList<Nothing>()
+        private val EMPTY_LIST_STUB: List<Nothing> = []
 
         private val EMPTY_LIST_STUB_ITERATOR = EMPTY_LIST_STUB.iterator()
 

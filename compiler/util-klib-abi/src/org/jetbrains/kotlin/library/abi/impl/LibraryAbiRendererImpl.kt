@@ -37,8 +37,8 @@ internal class AbiRendererImpl(
 
         if (settings.renderManifest) {
             with(libraryAbi.manifest) {
-                val nativeTargets = mutableListOf<LibraryTarget.Native>()
-                val wasmTargets = mutableListOf<LibraryTarget.WASM>()
+                val nativeTargets: MutableList<LibraryTarget.Native> = []
+                val wasmTargets: MutableList<LibraryTarget.WASM> = []
 
                 for (platformTarget in platformTargets) {
                     when (platformTarget) {
@@ -455,7 +455,7 @@ internal class AbiRendererImpl(
 
     companion object {
         private inline fun <T, R : Any> List<T>.mapAndSort(comparator: Comparator<R>, transform: (T) -> R): List<R> {
-            if (isEmpty()) return emptyList()
+            if (isEmpty()) return []
 
             val result = ArrayList<R>(size)
             mapTo(result, transform)

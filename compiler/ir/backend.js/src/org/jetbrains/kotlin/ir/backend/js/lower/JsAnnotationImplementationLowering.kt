@@ -32,7 +32,7 @@ class JsCommonAnnotationImplementationTransformer(context: JsCommonBackendContex
     DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? =
-        if (declaration is IrClass && declaration.isAnnotationClass) listOf(visitClassNew(declaration) as IrClass)
+        if (declaration is IrClass && declaration.isAnnotationClass) [visitClassNew(declaration) as IrClass]
         else null
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrExpression {

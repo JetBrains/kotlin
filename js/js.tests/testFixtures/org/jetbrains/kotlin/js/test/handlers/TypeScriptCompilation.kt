@@ -39,12 +39,12 @@ class TypeScriptCompilation<A : ResultingArtifact.Binary<A>>(
 
         val customizedLibs = allDirectives[JsEnvironmentConfigurationDirectives.TSC_LIB]
             // We generate Promise usages even in ES5 mode, so we should use at least the ES2015 definitions
-            .ifEmpty { listOf(customizedTarget ?: "es2015") }
+            .ifEmpty { [customizedTarget ?: "es2015"] }
 
         val libs = customizedLibs + "dom"
 
         val moduleOption = allDirectives[JsEnvironmentConfigurationDirectives.TSC_MODULE].firstOrNull()?.let {
-            listOf("--module", it)
+            ["--module", it]
         }.orEmpty()
 
         val tscPath = rootOutputDir.resolve("node_modules/typescript/bin/tsc").absolutePath

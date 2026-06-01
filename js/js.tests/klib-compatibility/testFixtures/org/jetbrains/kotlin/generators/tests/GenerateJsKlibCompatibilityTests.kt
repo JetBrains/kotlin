@@ -17,7 +17,7 @@ fun main(args: Array<String>) {
     val testsRoot = args[0]
     System.setProperty("java.awt.headless", "true")
 
-    val jvmOnlyBoxTests = listOf("compileKotlinAgainstKotlin")
+    val jvmOnlyBoxTests = ["compileKotlinAgainstKotlin"]
     val k1BoxTestDir = "multiplatform/k1"
     // KT-68538: `box/inference/pcla/nestedNonExhaustiveIf.kt` times out with first stage version 2.0.0, and it's not convenient to add a timeout to test runner,
     //           so this test is simply excluded from klib compatibility testing. Fixed in 2.0.20
@@ -27,7 +27,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerFirstStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
+                annotations = [annotation(HeavyTest::class.java)]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir, excludedPattern = CUSTOM_FIRST_STAGE_EXCLUSION_PATTERN)
                 model("boxInline")
@@ -35,7 +35,7 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerSecondStageTest>(
-                annotations = listOf(annotation(HeavyTest::class.java))
+                annotations = [annotation(HeavyTest::class.java)]
             ) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
                 model("boxInline")
@@ -45,10 +45,10 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerFirstStageTest>(
                 suiteTestClassName = "CustomJsAggregateFirstStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     aggregate(),
-                )
+                ]
             ) {
                 model("boxInline")
             }
@@ -56,10 +56,10 @@ fun main(args: Array<String>) {
         testGroup(testsRoot, "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerSecondStageTest>(
                 suiteTestClassName = "CustomJsAggregateSecondStageTestGenerated",
-                annotations = listOf(
+                annotations = [
                     annotation(HeavyTest::class.java),
                     aggregate(),
-                )
+                ]
             ) {
                 model("boxInline")
             }

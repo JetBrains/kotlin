@@ -57,7 +57,7 @@ infix fun <A, B> Sequence<A>.x(that: Iterable<B>): Sequence<Pair<A, B>> = sequen
 
 private val Pair<Any?, Any?>.flattenPair: List<Any?>
     get() {
-        val list = mutableListOf<Any?>()
+        val list: MutableList<Any?> = []
         val pairs = ArrayDeque<Any?>()
         pairs.add(this)
 

@@ -52,12 +52,12 @@ internal class KaFe10ReferenceShortener(
 
         return object : ShortenCommand {
             override val targetFile: SmartPsiElementPointer<KtFile> get() = ktFilePointer
-            override val importsToAdd: Set<FqName> get() = emptySet()
-            override val starImportsToAdd: Set<FqName> get() = emptySet()
-            override val listOfTypeToShortenInfo: List<TypeToShortenInfo> get() = emptyList()
-            override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo> get() = emptyList()
-            override val thisLabelsToShorten: List<ThisLabelToShortenInfo> = emptyList()
-            override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>> get() = emptyList()
+            override val importsToAdd: Set<FqName> get() = []
+            override val starImportsToAdd: Set<FqName> get() = []
+            override val listOfTypeToShortenInfo: List<TypeToShortenInfo> get() = []
+            override val listOfQualifierToShortenInfo: List<QualifierToShortenInfo> get() = []
+            override val thisLabelsToShorten: List<ThisLabelToShortenInfo> = []
+            override val kDocQualifiersToShorten: List<SmartPsiElementPointer<KDocName>> get() = []
 
             override val isEmpty: Boolean get() = true
         }

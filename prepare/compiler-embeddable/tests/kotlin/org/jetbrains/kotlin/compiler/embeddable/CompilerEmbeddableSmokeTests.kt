@@ -65,7 +65,7 @@ public class CompilerEmbeddableSmokeTests {
     }
 
     private fun runCompiler(vararg arguments: String): Pair<String, Int> {
-        val cmd = listOf(
+        val cmd = [
             javaExecutable.absolutePath,
             "-Djava.awt.headless=true",
             "-cp",
@@ -73,7 +73,7 @@ public class CompilerEmbeddableSmokeTests {
             COMPILER_CLASS_FQN,
             "-cp",
             compilationClasspath.joinToString(File.pathSeparator)
-        ) + arguments
+        ] + arguments
         val proc = createProcess(cmd, _workingDir.root)
         return readOutput(proc)
     }

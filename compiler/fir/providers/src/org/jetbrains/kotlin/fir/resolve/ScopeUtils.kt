@@ -136,7 +136,7 @@ private fun ConeKotlinType.scope(
     is ConeCapturedType -> {
         val supertypes =
             constructor.supertypes?.takeIf { it.isNotEmpty() }
-                ?: listOf(useSiteSession.builtinTypes.anyType.coneType)
+                ?: [useSiteSession.builtinTypes.anyType.coneType]
         useSiteSession.typeContext.intersectTypes(supertypes).scope(useSiteSession, scopeSession, requiredMembersPhase)
     }
     else -> null

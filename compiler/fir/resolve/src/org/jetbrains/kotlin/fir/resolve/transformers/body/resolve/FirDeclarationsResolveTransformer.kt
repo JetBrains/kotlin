@@ -1465,13 +1465,13 @@ open class FirDeclarationsResolveTransformer(
                     isNoinline = false
                     isVararg = false
                 }
-                listOf(itParam)
+                [itParam]
             }
 
             else -> {
                 val parameters = if (resolvedLambdaAtom.coerceFirstParameterToExtensionReceiver) {
                     val receiver = resolvedLambdaAtom.receiverType ?: error("Coercion to an extension function type, but no receiver found")
-                    listOf(receiver) + resolvedLambdaAtom.parameterTypes
+                    [receiver] + resolvedLambdaAtom.parameterTypes
                 } else {
                     resolvedLambdaAtom.parameterTypes
                 }

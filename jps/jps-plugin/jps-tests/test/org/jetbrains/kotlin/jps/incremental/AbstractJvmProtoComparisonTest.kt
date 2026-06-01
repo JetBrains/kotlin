@@ -34,7 +34,7 @@ abstract class AbstractJvmProtoComparisonTest : AbstractProtoComparisonTest<Loca
         MockLibraryUtil.compileKotlinSources(
             sourcesPath = sourceDir.path,
             outDir = outputDir,
-            extraOptions = listOf(K2JVMCompilerArguments::disableDefaultScriptingPlugin.cliArgument)
+            extraOptions = [K2JVMCompilerArguments::disableDefaultScriptingPlugin.cliArgument]
         )
 
         val classFiles = outputDir.walkMatching { it.name.endsWith(".class") }

@@ -82,7 +82,7 @@ private fun IrSimpleFunction.createMainFunctionWrapper(
                 UNDEFINED_OFFSET,
                 UNDEFINED_OFFSET,
                 context.irBuiltIns.stringType,
-                emptyList()
+                []
             )
         } else {
             null

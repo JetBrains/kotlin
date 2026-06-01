@@ -320,14 +320,14 @@ internal class LLFirSessionFactory(
                 LLDependenciesSymbolProvider(this) {
                     // A binary library session should not have any dependencies (apart from fallback builtins), as library module
                     // dependencies only apply to *resolvable* sessions, including fallback dependencies.
-                    listOf(builtinsSession.symbolProvider)
+                    [builtinsSession.symbolProvider]
                 },
             )
 
             register(FirProvider::class, LLFirLibrarySessionProvider(symbolProvider))
             register(FirSymbolProvider::class, symbolProvider)
 
-            session.registerPlatformSpecificComponents(platformSpecificSymbolProviders = emptyList()) { registration ->
+            session.registerPlatformSpecificComponents(platformSpecificSymbolProviders = []) { registration ->
                 registration.registerBinaryLibraryComponents(this)
             }
 
@@ -378,7 +378,7 @@ internal class LLFirSessionFactory(
                 components,
                 canContainKotlinPackage = true,
             ) { scope ->
-                createScopedDeclarationProviderForFiles(scope, listOf(module.file))
+                createScopedDeclarationProviderForFiles(scope, [module.file])
             }
 
             register(FirProvider::class, provider)
@@ -430,7 +430,7 @@ internal class LLFirSessionFactory(
         registerExtensions(FirReplCompilerExtensionIdeRegistrar(hostConfiguration).configure())
 
         val compilerArguments = makeScriptCompilerArguments(scriptDefinition.compilerOptions.toList())
-        val commandLineProcessors = listOf(AssignmentCommandLineProcessor())
+        val commandLineProcessors = [AssignmentCommandLineProcessor()]
         val compilerConfiguration = CompilerConfiguration.create()
         processCompilerPluginsOptions(
             compilerConfiguration, compilerArguments.pluginOptions.asIterable(), commandLineProcessors
@@ -439,8 +439,8 @@ internal class LLFirSessionFactory(
         val extensionRegistrar = FirScriptingCompilerExtensionIdeRegistrar(
             project,
             hostConfiguration,
-            scriptDefinitionSources = emptyList(),
-            scriptDefinitions = listOf(scriptDefinition)
+            scriptDefinitionSources = [],
+            scriptDefinitions = [scriptDefinition]
         )
 
         registerExtensions(extensionRegistrar.configure())
@@ -498,9 +498,9 @@ internal class LLFirSessionFactory(
                 FirSymbolProvider::class,
                 LLModuleWithDependenciesSymbolProvider(
                     this,
-                    providers = listOf(
+                    providers = [
                         provider.symbolProvider,
-                    ),
+                    ],
                     dependencyProvider,
                 )
             )
@@ -583,14 +583,14 @@ internal class LLFirSessionFactory(
                                 addMerged(session, computeDependencySymbolProviders(dependencySessions))
                             }
                             // Share symbol providers (and their caches) with the context session
-                            addMerged(session, computeDependencySymbolProviders(listOf(contextSession)))
+                            addMerged(session, computeDependencySymbolProviders([contextSession]))
                         } else {
                             // Dependencies are original, so we need a separate set of providers
                             val dependencySessions = computeDependencySessionsFromDependencyModules(allDependencies, module)
                             addMerged(session, computeDependencySymbolProviders(dependencySessions))
                         }
                     } else {
-                        addMerged(session, computeDependencySymbolProviders(listOf(contextSession)))
+                        addMerged(session, computeDependencySymbolProviders([contextSession]))
                     }
 
                     when (contextSession.ktModule) {

@@ -27,7 +27,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
     fun test(version: GradleVersion) {
         project("empty", version) {
             val dynamicProduct = projectPath.resolve("DynamicProduct").also { it.createDirectories() }.toFile()
-            runProcess(listOf("swift", "package", "init", "--type", "library"), dynamicProduct)
+            runProcess(["swift", "package", "init", "--type", "library"], dynamicProduct)
             dynamicProduct.resolve("Package.swift").writeText(
                 """
                     // swift-tools-version: 5.9
@@ -88,7 +88,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir("DynamicProduct"),
-                            products = listOf("DynamicProduct")
+                            products = ["DynamicProduct"]
                         )
                     }
                 }
@@ -116,7 +116,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            runProcess(listOf("swift", "package", "init", "--type", "library"), packageDependency)
+            runProcess(["swift", "package", "init", "--type", "library"], packageDependency)
             writeTestSource("1")
 
             plugins {
@@ -146,7 +146,7 @@ class SwiftPMImportKotlinNativeTestTask : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir("PackageDependency"),
-                            products = listOf("PackageDependency")
+                            products = ["PackageDependency"]
                         )
                     }
                 }

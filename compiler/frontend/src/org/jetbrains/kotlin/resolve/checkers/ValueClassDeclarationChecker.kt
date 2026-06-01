@@ -228,8 +228,8 @@ class InnerClassInsideValueClass : DeclarationChecker {
 class ReservedMembersAndConstructsForValueClass : DeclarationChecker {
 
     companion object {
-        private val boxAndUnboxNames = setOf("box", "unbox")
-        private val equalsAndHashCodeNames = setOf("equals", "hashCode")
+        private val boxAndUnboxNames: Set<String> = ["box", "unbox"]
+        private val equalsAndHashCodeNames: Set<String> = ["equals", "hashCode"]
     }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {

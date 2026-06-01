@@ -19,7 +19,7 @@ import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
 fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
-    val errors = mutableListOf<String>()
+    val errors: MutableList<String> = []
     val existingDiagnosticFactories = mutableMapOf<String, AbstractKtDiagnosticFactory>()
     for (container in diagnosticContainers) {
         container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
@@ -57,7 +57,7 @@ private val messageParameterRegex = """\{\d.*?}""".toRegex()
 
 private val lastCharRegex = """[.}\d]""".toRegex()
 
-private val lastCharExclusions = listOf(
+private val lastCharExclusions = [
     FirErrors.DATA_CLASS_COPY_VISIBILITY_WILL_BE_CHANGED.name,
     FirErrors.ERROR_SUPPRESSION.name,
     FirErrors.NOT_A_MULTIPLATFORM_COMPILATION.name,
@@ -68,9 +68,9 @@ private val lastCharExclusions = listOf(
     "PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
     "ATOMIC_PROPERTIES_SHOULD_BE_VAL",
     "POWER_ASSERT_CAPABLE_OVERLOAD_MISSING",
-)
+]
 
-private val uselessInIdExclusions = listOf(
+private val uselessInIdExclusions = [
     FirErrors.USELESS_CAST.name,
     FirErrors.USELESS_ELVIS.name,
     FirErrors.USELESS_ELVIS_LEFT_IS_NULL.name,
@@ -82,13 +82,13 @@ private val uselessInIdExclusions = listOf(
     FirJsErrors.JS_NO_RUNTIME_USELESS_ON_EXTERNAL_INTERFACE.name,
     "EXTERNAL_SERIALIZER_USELESS",
     "KEEP_SERIALIZER_ANNOTATION_USELESS",
-)
+]
 
-private val duplicateIdExclusions = listOf(
+private val duplicateIdExclusions = [
     JvmBackendErrors.INLINE_CALL_CYCLE.name,
     IrActualizationErrors.ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT.name,
     JsKlibErrors.EXPORTING_JS_NAME_CLASH.name,
-)
+]
 
 fun KtDiagnosticFactoryToRendererMap.verifyMessageForFactory(
     factory: AbstractKtDiagnosticFactory,
@@ -156,7 +156,7 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
         message,
         """\b(?:we|us|you(?!\s+have))\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses 'we', 'us' or 'you'.",
-        setOf(
+        [
             FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
             FirErrors.NO_TYPE_ARGUMENTS_ON_RHS.name,
             "PARCELABLE_TYPE_NOT_SUPPORTED",
@@ -164,20 +164,20 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
             "PUBLIC_ATOMICS_ARE_FORBIDDEN",
             "PUBLISHED_API_ATOMICS_ARE_FORBIDDEN",
             "ATOMIC_PROPERTIES_SHOULD_BE_VAL",
-        )
+        ]
     )
     checkRule(
         name,
         message,
         """\bplease\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses overly polite tone",
-        setOf(
+        [
             FirErrors.CONTEXT_RECEIVERS_DEPRECATED.name,
             FirErrors.ERROR_SUPPRESSION.name,
             FirErrors.ROOT_IDE_PACKAGE_DEPRECATED.name,
             "REQUIRED_KOTLIN_TOO_HIGH",
             "PROVIDED_RUNTIME_TOO_LOW",
-        )
+        ]
     )
 
     checkRule(
@@ -192,10 +192,10 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
         message,
         """\b(?:could|should|would|shall)\b""".toRegex(RegexOption.IGNORE_CASE),
         "uses modal verb (could, should, ...) with uncertainty",
-        setOf(
+        [
             FirErrors.VERSION_REQUIREMENT_DEPRECATION.name,
             FirErrors.NON_PUBLIC_INLINE_CALL_FROM_PUBLIC_INLINE.name
-        )
+        ]
     )
 
     checkRule(
@@ -226,7 +226,7 @@ fun MutableList<String>.checkRules(name: String, message: String, parameterCount
 }
 
 
-private fun MutableList<String>.checkRule(name: String, message: String, regex: Regex, hasProblem: String, exclusions: Set<String> = emptySet()) {
+private fun MutableList<String>.checkRule(name: String, message: String, regex: Regex, hasProblem: String, exclusions: Set<String> = []) {
     if (name !in exclusions && message.contains(regex)) {
         val updatedMessage = message.replace(regex) { matchResult -> "[[${matchResult.value}]]" }
         add(

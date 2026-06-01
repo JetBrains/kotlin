@@ -10,7 +10,7 @@ import kotlin.test.assertFails
 
 class TopologicalSortTest : TestCase() {
     fun testEmptyGraph() {
-        assertEquals("", emptyList<Any>(), topologicalSort(emptyList<Any>()) { emptyList<Any>() })
+        assertEquals("", emptyList<Any>(), topologicalSort(emptyList<Any>()) { [] })
     }
 
     fun testSingleNode() {
@@ -19,7 +19,7 @@ class TopologicalSortTest : TestCase() {
             A
             
         """.trimIndent(),
-            listOf("A")
+            ["A"]
         )
     }
 
@@ -29,7 +29,7 @@ class TopologicalSortTest : TestCase() {
             A; B; C; D
             B > C
         """.trimIndent(),
-            listOf("D", "B", "C", "A")
+            ["D", "B", "C", "A"]
         )
     }
 
@@ -39,7 +39,7 @@ class TopologicalSortTest : TestCase() {
             A; B; C
             A > B; B > C; A > C
         """.trimIndent(),
-            listOf("A", "B", "C")
+            ["A", "B", "C"]
         )
     }
 
@@ -49,7 +49,7 @@ class TopologicalSortTest : TestCase() {
             C; A; B
             A > B; B > C; A > C
         """.trimIndent(),
-            listOf("A", "B", "C")
+            ["A", "B", "C"]
         )
     }
 
@@ -59,7 +59,7 @@ class TopologicalSortTest : TestCase() {
             A; B; C
             C > B; B > A
         """.trimIndent(),
-            listOf("C", "B", "A")
+            ["C", "B", "A"]
         )
     }
 
@@ -69,7 +69,7 @@ class TopologicalSortTest : TestCase() {
             A; B; C; D; E
             E > D; E > B; D > C; C > B; C > A; B > A
         """.trimIndent(),
-            listOf("E", "D", "C", "B", "A")
+            ["E", "D", "C", "B", "A"]
         )
     }
 
@@ -79,7 +79,7 @@ class TopologicalSortTest : TestCase() {
             A; B; C
             C > B; C > B; B > A; C > A
         """.trimIndent(),
-            listOf("C", "B", "A")
+            ["C", "B", "A"]
         )
     }
 
@@ -139,7 +139,7 @@ private fun parseFromString(description: String): Graph<String> {
     val edges = buildMap<String, MutableList<String>> {
         edgeStrings.takeIf { it.isNotBlank() }?.split(";")?.forEach { edgeDescription ->
             val [from, to] = edgeDescription.split(">").map(String::trim)
-            getOrPut(from) { mutableListOf() }.add(to)
+            getOrPut(from) { [] }.add(to)
         }
     }
 

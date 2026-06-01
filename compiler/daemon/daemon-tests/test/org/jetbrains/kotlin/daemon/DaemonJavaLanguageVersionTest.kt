@@ -19,7 +19,7 @@ class DaemonJavaLanguageVersionTest : BaseDaemonSessionTest() {
     fun testDaemonIsReusedWithCompatibleJavaVersion() {
         leaseSession()
 
-        val messagesOnSecondLease = mutableListOf<DaemonReportMessage>()
+        val messagesOnSecondLease: MutableList<DaemonReportMessage> = []
         leaseSession(
             clientMarkerFile = workingDirectory.resolve("client2.alive"),
             sessionMarkerFile = workingDirectory.resolve("session2.alive"),

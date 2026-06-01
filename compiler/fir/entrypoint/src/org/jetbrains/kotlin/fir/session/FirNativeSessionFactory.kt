@@ -60,7 +60,7 @@ abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?>
             kotlinScopeProvider,
             resolvedLibraries
         )
-        return listOf(provider)
+        return [provider]
     }
 
     override fun FirSession.registerLibrarySessionComponents(c: Nothing?) {

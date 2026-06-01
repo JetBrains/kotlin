@@ -114,7 +114,7 @@ fun JsIrBackendContext.getVoid(): IrExpression =
     )
 
 fun irEmpty(context: JsIrBackendContext): IrExpression {
-    return JsIrBuilder.buildComposite(context.dynamicType, emptyList())
+    return JsIrBuilder.buildComposite(context.dynamicType, [])
 }
 
 fun IrSimpleFunction.isObjectInstanceGetter(): Boolean {

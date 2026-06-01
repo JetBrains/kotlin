@@ -158,11 +158,11 @@ class KotlinWasmGradlePluginIT : AbstractKotlinWasmGradlePluginIT() {
 
                 val perFileArguments: Provider<Map<File, List<String>>> = it.inputFiles.elements.map { files ->
                     files.associate { file ->
-                        file.asFile to listOf(
+                        file.asFile to [
                             "--symbolmap=" + rootDir
                                 .resolve("mappings")
                                 .resolve(file.asFile.nameWithoutExtension + ".txt").absolutePath
-                        )
+                        ]
                     }
                 }
 
@@ -586,9 +586,9 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
 
                 // we have such warning in Gradle 7, no warnings in later Gradle versions
                 assertNoBuildWarnings(
-                    setOf(
+                    [
                         "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ]
                 )
 
                 val original =
@@ -648,9 +648,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                 assertFileInProjectNotExists("build/compileSync/wasmJs/main/productionExecutable/kotlin/redefined-wasm-module-name.wasm.map")
 
                 assertNoBuildWarnings(
-                    setOf(
-                        "This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"
-                    )
+                    ["This annotation should be used with the compiler argument '-opt-in=kotlin.RequiresOptIn'"]
                 )
             }
         }
@@ -1042,9 +1040,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                         webpackTask {
                             it.generateConfigOnly = true
                             it.devServerProperty.set(
-                                KotlinWebpackConfig.DevServer(
-                                    static = mutableListOf("foo")
-                                )
+                                KotlinWebpackConfig.DevServer(static = ["foo"])
                             )
                         }
 
@@ -1052,7 +1048,7 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
                             it.outputFileName = "check.js"
                             it.devServer = (it.devServer ?: KotlinWebpackConfig.DevServer()).apply {
                                 @Suppress("DEPRECATION")
-                                static = (static ?: mutableListOf()).apply {
+                                static = (static ?: []).apply {
                                     add("bar")
                                 }
                             }

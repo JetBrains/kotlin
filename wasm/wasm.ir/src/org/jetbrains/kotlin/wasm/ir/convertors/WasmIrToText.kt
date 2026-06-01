@@ -162,7 +162,7 @@ class WasmIrToText(
             indent++
 
         if (wasmInstr.operator in setOf(WasmOp.CALL_INDIRECT, WasmOp.TABLE_INIT)) {
-            val reversed = mutableListOf<WasmImmediate>()
+            val reversed: MutableList<WasmImmediate> = []
             wasmInstr.forEachImmediates(reversed::add)
             reversed.reverse()
             reversed.forEach {

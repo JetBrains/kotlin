@@ -14,7 +14,7 @@ import kotlin.io.path.writeText
 @NativeGradlePluginTests
 class CInteropIdeaSyncIT : KGPBaseTest() {
 
-    private val ideaSyncBuildOptions = defaultBuildOptions.copy(freeArgs = listOf("-Didea.sync.active=true"))
+    private val ideaSyncBuildOptions = defaultBuildOptions.copy(freeArgs = ["-Didea.sync.active=true"])
 
     @DisplayName("Idea sync warning failing cinterop warning")
     @GradleTest

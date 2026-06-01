@@ -54,7 +54,7 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
     override fun createTypeSystemContextProvider(): (IrBuiltIns) -> IrTypeSystemContext = ::IrTypeSystemContextImpl
     override fun createSpecialAnnotationsProvider(): IrSpecialAnnotationsProvider? = null
     override fun createExtraActualDeclarationExtractorInitializer(): (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor> =
-        { emptyList() }
+        { [] }
 
     override val klibFactories: KlibMetadataFactories
         get() = JsFactories
@@ -77,7 +77,7 @@ internal abstract class Fir2IrJsWasmResultsConverter(testServices: TestServices)
         return artifactFactory(
             fir2IrResult.irModuleFragment,
             fir2IrResult.irBuiltIns,
-            compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles) ?: emptyList(),
+            compilerConfiguration.incrementalDataProvider?.getSerializedData(fir2KlibMetadataSerializer.sourceFiles) ?: [],
             diagnosticReporter,
             testServices.firDiagnosticCollectorService.containsErrors(inputArtifact),
             fir2IrResult.components.irMangler,

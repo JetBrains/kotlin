@@ -13,7 +13,7 @@ internal abstract class StringCasingGenerator(
     unicodeDataLines: List<UnicodeDataLine>
 ) {
     private val unicodeDataLines = unicodeDataLines.associateBy { it.char.hexToInt() }
-    protected val contextDependentMappings = mutableListOf<SpecialCasingLine>()
+    protected val contextDependentMappings: MutableList<SpecialCasingLine> = []
 
     fun appendSpecialCasingLine(line: SpecialCasingLine) {
         if (line.conditionList.isEmpty()) return
@@ -23,7 +23,7 @@ internal abstract class StringCasingGenerator(
         val unicodeLine = unicodeDataLines[line.char.hexToInt()]
         val unicodeDataMapping = unicodeLine?.mapping()?.takeIf { it.isNotEmpty() } ?: line.char
 
-        if (isLocaleAgnosticCondition && line.mapping() != listOf(unicodeDataMapping)) {
+        if (isLocaleAgnosticCondition && line.mapping() != [unicodeDataMapping]) {
             contextDependentMappings.add(line)
         }
     }

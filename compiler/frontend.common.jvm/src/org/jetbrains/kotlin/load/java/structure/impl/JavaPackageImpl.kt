@@ -48,7 +48,7 @@ class JavaPackageImpl(
     override val annotations: Collection<JavaAnnotation>
         get() {
             if (!mayHaveAnnotations) {
-                return emptyList()
+                return []
             }
 
             annotationsProvider?.getPackageAnnotations(this)?.let { return it }

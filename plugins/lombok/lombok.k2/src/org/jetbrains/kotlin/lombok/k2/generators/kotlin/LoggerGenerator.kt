@@ -72,7 +72,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
         private val PREDICATE = DeclarationPredicate.create {
             annotated(
-                listOf(
+                [
                     LombokNames.LOG,
                     LombokNames.SLF4J,
                     LombokNames.LOG4J,
@@ -81,7 +81,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                     LombokNames.JBOSS_LOG,
                     LombokNames.LOG4J2,
                     LombokNames.XSLF4J,
-                )
+                ]
             )
         }
     }
@@ -97,9 +97,9 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         if (companionObjectsCache.getValue(classSymbol, context) != null) {
-            return setOf(DEFAULT_NAME_FOR_COMPANION_OBJECT)
+            return [DEFAULT_NAME_FOR_COMPANION_OBJECT]
         }
-        return emptySet()
+        return []
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -149,16 +149,16 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val origin = (context.owner.origin as? FirDeclarationOrigin.Plugin)?.key as? LoggerGeneratorKey ?: return emptyList()
+        val origin = (context.owner.origin as? FirDeclarationOrigin.Plugin)?.key as? LoggerGeneratorKey ?: return []
         val constructor = createDefaultPrivateConstructor(context.owner, origin)
-        return listOf(constructor.symbol)
+        return [constructor.symbol]
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {
-        val classSymbol = context?.owner ?: return emptyList()
+        val classSymbol = context?.owner ?: return []
         return logPropertiesCache.getValue(classSymbol, context)
-            ?.let { listOf(it) }
-            ?: emptyList()
+            ?.let { [it] }
+            ?: []
     }
 
     private fun initializeLogPropertyIfNeeded(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): FirPropertySymbol? {
@@ -232,7 +232,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
             if (config.logFieldIsStatic) {
                 // Add `@JvmStatic` annotation call
                 logProperty.replaceAnnotations(
-                    listOf(
+                    [
                         buildAnnotationCall {
                             annotationTypeRef =
                                 JvmStandardClassIds.Annotations.JvmStatic.constructClassLikeType().toFirResolvedTypeRef()
@@ -244,7 +244,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                             }
                             containingDeclarationSymbol = logProperty.symbol
                         }
-                    )
+                    ]
                 )
             }
 
@@ -337,7 +337,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                         coneTypeOrNull = targetClassType
                     }
                 )
-                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType(arrayOf(targetClassType))
+                coneTypeOrNull = StandardClassIds.KClass.constructClassLikeType([targetClassType])
             }
 
             // Generate `ClassWithLogger::class.java`
@@ -346,7 +346,7 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
                 .singleOrNull() ?: return null
 
             val javaClassType =
-                javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType(arrayOf(targetClassType))
+                javaPropertySymbol.resolvedReturnType.toClassSymbol(session)?.constructType([targetClassType])
             val javaPropertyAccess = buildPropertyAccessExpression {
                 extensionReceiver = getClassCall
                 calleeReference = buildResolvedNamedReference {

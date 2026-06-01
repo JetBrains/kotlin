@@ -745,7 +745,7 @@ open class PsiRawFirBuilder(
             defaultTypeRef: FirTypeRef?,
             containingDeclarationSymbol: FirBasedSymbol<*>,
             valueParameterDeclaration: ValueParameterDeclaration,
-            additionalAnnotations: List<FirAnnotation> = emptyList(),
+            additionalAnnotations: List<FirAnnotation> = [],
         ): FirValueParameter {
             val name = convertValueParameterName(nameAsSafeName, valueParameterDeclaration) { nameIdentifier?.node?.text }
             return buildValueParameter {
@@ -828,7 +828,7 @@ open class PsiRawFirBuilder(
             val propertySymbol = FirRegularPropertySymbol(callableIdForName(propertyName))
             withContainerSymbol(propertySymbol) {
                 val propertySource = toFirSourceElement(KtFakeSourceElementKind.PropertyFromParameter)
-                val parameterAnnotations = mutableListOf<FirAnnotationCall>()
+                val parameterAnnotations: MutableList<FirAnnotationCall> = []
                 for (annotationEntry in annotationEntries) {
                     parameterAnnotations += annotationEntry.convert<FirAnnotationCall>().let {
                         // Filter error annotation calls to avoid double-reporting of INAPPLICABLE_ALL_TARGET_IN_MULTI_ANNOTATION
@@ -938,7 +938,7 @@ open class PsiRawFirBuilder(
         }
 
         private fun KtTypeParameterListOwner.convertTypeParameters(declarationSymbol: FirBasedSymbol<*>): MutableList<FirTypeParameterRef> {
-            return typeParameters.mapTo(mutableListOf()) { typeParameter ->
+            return typeParameters.mapTo([]) { typeParameter ->
                 extractTypeParameter(typeParameter, declarationSymbol)
             }
         }
@@ -1027,7 +1027,7 @@ open class PsiRawFirBuilder(
             functionSymbol: FirFunctionSymbol<*>,
             valueParameterDeclaration: ValueParameterDeclaration,
             defaultTypeRef: FirTypeRef? = null,
-            additionalAnnotations: List<FirAnnotation> = emptyList(),
+            additionalAnnotations: List<FirAnnotation> = [],
         ) {
             for (valueParameter in valueParameters) {
                 container.valueParameters += valueParameter.toFirValueParameter(
@@ -1096,7 +1096,7 @@ open class PsiRawFirBuilder(
             containingClassIsExpectClass: Boolean,
         ): Pair<FirTypeRef, Map<Int, FirFieldSymbol>?> {
             var superTypeCallEntry: KtSuperTypeCallEntry? = null
-            val allSuperTypeCallEntries = mutableListOf<Pair<KtSuperTypeCallEntry, FirTypeRef>>()
+            val allSuperTypeCallEntries: MutableList<Pair<KtSuperTypeCallEntry, FirTypeRef>> = []
             var delegatedSuperTypeRef: FirTypeRef? = null
             val delegateFieldsMap = mutableMapOf<Int, FirFieldSymbol>()
             superTypeListEntries.forEachIndexed { index, superTypeListEntry ->
@@ -1133,7 +1133,7 @@ open class PsiRawFirBuilder(
                     delegatedSuperTypeRef = buildResolvedTypeRef {
                         coneType = ConeClassLikeTypeImpl(
                             implicitEnumType.coneType.lookupTag,
-                            delegatedSelfTypeRef?.coneType?.let { arrayOf(it) } ?: emptyArray(),
+                            delegatedSelfTypeRef?.coneType?.let { [it] } ?: emptyArray(),
                             isMarkedNullable = false,
                         )
                         source = container.source?.fakeElement(KtFakeSourceElementKind.EnumSuperTypeRef)
@@ -1518,7 +1518,7 @@ open class PsiRawFirBuilder(
                             val delegatedSelfType = script.toDelegatedSelfType(this)
                             registerSelfType(delegatedSelfType)
 
-                            val replClassMembers = mutableListOf<FirDeclaration>()
+                            val replClassMembers: MutableList<FirDeclaration> = []
 
                             val evalFunction = withContainerSymbol(evalSymbol) {
                                 val copiedDelegatedProperties = mutableMapOf<FirPropertySymbol, FirProperty>()
@@ -1574,7 +1574,7 @@ open class PsiRawFirBuilder(
                                 }
                             }
 
-                            declarations += listOf(constructor, evalFunction) + replClassMembers
+                            declarations += [constructor, evalFunction] + replClassMembers
                         }
 
                         klass to evalSymbol
@@ -1878,7 +1878,7 @@ open class PsiRawFirBuilder(
                                         coneType =
                                             ConeClassLikeTypeImpl(
                                                 this@buildAnonymousObject.symbol.toLookupTag(),
-                                                emptyArray(),
+                                                [],
                                                 isMarkedNullable = false
                                             )
                                         source = toFirSourceElement(KtFakeSourceElementKind.ClassSelfTypeRef)
@@ -1898,7 +1898,7 @@ open class PsiRawFirBuilder(
                                         delegatedEntrySelfType,
                                         owner = ktEnumEntry,
                                         typeParameters,
-                                        allSuperTypeCallEntries = emptyList(),
+                                        allSuperTypeCallEntries = [],
                                         containingClassIsExpectClass,
                                         copyConstructedTypeRefWithImplicitSource = true,
                                     )
@@ -2056,7 +2056,7 @@ open class PsiRawFirBuilder(
                                 companionBlockCollector,
                             )
 
-                            for (danglingModifier in classOrObject.body?.danglingModifierLists ?: emptyList()) {
+                            for (danglingModifier in classOrObject.body?.danglingModifierLists ?: []) {
                                 addDeclaration(
                                     buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                                 )
@@ -2179,7 +2179,7 @@ open class PsiRawFirBuilder(
                             delegatedSelfType,
                             null,
                             ClassKind.CLASS,
-                            containerTypeParameters = emptyList(),
+                            containerTypeParameters = [],
                             containingClassIsExpectClass = false
                         )
                         delegatedFieldsMap = extractedDelegatedFieldsMap
@@ -2192,7 +2192,7 @@ open class PsiRawFirBuilder(
                             companionBlockCollector,
                         )
 
-                        for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: emptyList()) {
+                        for (danglingModifier in objectDeclaration.body?.danglingModifierLists ?: []) {
                             declarations += buildErrorNonLocalDeclarationForDanglingModifierList(danglingModifier)
                         }
                     }.apply {
@@ -2417,7 +2417,7 @@ open class PsiRawFirBuilder(
                 isLambda = true
                 hasExplicitParameterList = expression.functionLiteral.arrow != null
 
-                val destructuringVariables = mutableListOf<FirStatement>()
+                val destructuringVariables: MutableList<FirStatement> = []
                 for (valueParameter in literal.valueParameters) {
                     val multiDeclaration = valueParameter.destructuringDeclaration
                     valueParameters += if (multiDeclaration != null) {
@@ -2638,7 +2638,7 @@ open class PsiRawFirBuilder(
                     initializer = propertyInitializer
                     isLocal = context.inLocalContext
 
-                    val propertyAnnotations = mutableListOf<FirAnnotationCall>()
+                    val propertyAnnotations: MutableList<FirAnnotationCall> = []
                     for (annotationEntry in annotationEntries) {
                         propertyAnnotations += annotationEntry.convert<FirAnnotationCall>()
                     }
@@ -2650,7 +2650,7 @@ open class PsiRawFirBuilder(
                             this@toFirProperty,
                             propertySymbol = symbol,
                             propertyType,
-                            emptyList(),
+                            [],
                         )
 
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
@@ -2700,7 +2700,7 @@ open class PsiRawFirBuilder(
                                 propertySymbol = symbol,
                                 isGetter = true,
                                 accessorAnnotationsFromProperty = propertyAnnotations.filterUseSiteTarget(PROPERTY_GETTER),
-                                parameterAnnotationsFromProperty = emptyList(),
+                                parameterAnnotationsFromProperty = [],
                                 isCompanionBlockMember,
                             )
 

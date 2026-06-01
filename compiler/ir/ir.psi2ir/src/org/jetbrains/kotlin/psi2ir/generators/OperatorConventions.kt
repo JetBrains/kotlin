@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir.generators
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.lexer.KtTokens
 
@@ -79,11 +80,11 @@ internal fun getIrTypeOperator(ktOperator: IElementType): IrTypeOperator? =
         else -> null
     }
 
-internal val AUGMENTED_ASSIGNMENTS =
-    setOf(IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ, IrStatementOrigin.MULTEQ, IrStatementOrigin.DIVEQ, IrStatementOrigin.PERCEQ)
+internal val AUGMENTED_ASSIGNMENTS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.PLUSEQ, IrStatementOrigin.MINUSEQ, IrStatementOrigin.MULTEQ, IrStatementOrigin.DIVEQ, IrStatementOrigin.PERCEQ]
 
-internal val OPERATORS_DESUGARED_TO_CALLS =
-    setOf(
+internal val OPERATORS_DESUGARED_TO_CALLS: Set<IrStatementOriginImpl> =
+    [
         IrStatementOrigin.PLUS,
         IrStatementOrigin.MINUS,
         IrStatementOrigin.MUL,
@@ -94,22 +95,22 @@ internal val OPERATORS_DESUGARED_TO_CALLS =
         IrStatementOrigin.EXCL,
         IrStatementOrigin.UMINUS,
         IrStatementOrigin.UPLUS
-    )
+    ]
 
-internal val COMPARISON_OPERATORS =
-    setOf(IrStatementOrigin.LT, IrStatementOrigin.LTEQ, IrStatementOrigin.GT, IrStatementOrigin.GTEQ)
+internal val COMPARISON_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.LT, IrStatementOrigin.LTEQ, IrStatementOrigin.GT, IrStatementOrigin.GTEQ]
 
-internal val EQUALITY_OPERATORS =
-    setOf(IrStatementOrigin.EQEQ, IrStatementOrigin.EXCLEQ)
+internal val EQUALITY_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.EQEQ, IrStatementOrigin.EXCLEQ]
 
-internal val IDENTITY_OPERATORS =
-    setOf(IrStatementOrigin.EQEQEQ, IrStatementOrigin.EXCLEQEQ)
+internal val IDENTITY_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.EQEQEQ, IrStatementOrigin.EXCLEQEQ]
 
-internal val IN_OPERATORS =
-    setOf(IrStatementOrigin.IN, IrStatementOrigin.NOT_IN)
+internal val IN_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.IN, IrStatementOrigin.NOT_IN]
 
-internal val BINARY_BOOLEAN_OPERATORS =
-    setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
+internal val BINARY_BOOLEAN_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.ANDAND, IrStatementOrigin.OROR]
 
-internal val INCREMENT_DECREMENT_OPERATORS =
-    setOf(IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR, IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR)
+internal val INCREMENT_DECREMENT_OPERATORS: Set<IrStatementOriginImpl> =
+    [IrStatementOrigin.PREFIX_INCR, IrStatementOrigin.PREFIX_DECR, IrStatementOrigin.POSTFIX_INCR, IrStatementOrigin.POSTFIX_DECR]

@@ -83,15 +83,15 @@ interface ConstraintStorage {
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
-        override val initialConstraints: List<InitialConstraint> get() = emptyList()
+        override val initialConstraints: List<InitialConstraint> get() = []
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
-        override val errors: List<ConstraintSystemError> get() = emptyList()
+        override val errors: List<ConstraintSystemError> get() = []
         override val hasContradiction: Boolean get() = false
         override val fixedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> get() = emptyMap()
-        override val postponedTypeVariables: List<TypeVariableMarker> get() = emptyList()
+        override val postponedTypeVariables: List<TypeVariableMarker> get() = []
         override val builtFunctionalTypesForPostponedArgumentsByTopLevelTypeVariables: Map<Pair<TypeConstructorMarker, List<Pair<TypeConstructorMarker, Int>>>, KotlinTypeMarker> = emptyMap()
         override val builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables: Map<TypeConstructorMarker, KotlinTypeMarker> = emptyMap()
-        override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = emptyList()
+        override val constraintsFromAllForkPoints: List<Pair<IncorporationConstraintPosition, ForkPointData>> = []
 
         override val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>> get() = emptyMap()
 

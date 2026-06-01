@@ -114,7 +114,7 @@ private fun <T> valueParameterTypes(
     signatureBuildingContext: SignatureBuildingContext,
 ): Array<CirTypeSignature>
         where T : CirHasTypeParameters, T : CirCallableMemberWithParameters, T : CirMaybeCallableMemberOfClass {
-    if (callable.valueParameters.isEmpty()) return emptyArray()
+    if (callable.valueParameters.isEmpty()) return []
     return Array(callable.valueParameters.size) { index ->
         val parameter = callable.valueParameters[index]
         buildApproximationSignature(signatureBuildingContext, parameter.returnType)

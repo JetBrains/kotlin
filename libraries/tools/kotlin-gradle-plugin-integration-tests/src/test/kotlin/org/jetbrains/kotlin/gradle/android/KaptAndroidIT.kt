@@ -210,7 +210,7 @@ class KaptAndroidIT : KaptBaseIT() {
 
                     // Read the arguments from a file, because changing them in a build script is treated as an
                     // implementation change by Gradle:
-                    override fun asArguments(): Iterable<String> = listOf(argsFile.readText())
+                    override fun asArguments(): Iterable<String> = [argsFile.readText()]
                 }
 
                 val nested = MyNested(project.file("args.txt"))
@@ -228,8 +228,8 @@ class KaptAndroidIT : KaptBaseIT() {
             val argsFile = androidSubproject.projectPath.resolve("args.txt")
             argsFile.writeText("1234")
 
-            val kaptTasks = listOf(":Android:kaptFlavor1DebugKotlin")
-            val javacTasks = listOf(":Android:compileFlavor1DebugJavaWithJavac")
+            val kaptTasks = [":Android:kaptFlavor1DebugKotlin"]
+            val javacTasks = [":Android:compileFlavor1DebugJavaWithJavac"]
 
             val buildTasks = (kaptTasks + javacTasks).toTypedArray()
 

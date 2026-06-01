@@ -61,7 +61,7 @@ object CompareTo : CallBasedIntrinsicMethod() {
             classCodegen.typeMapper.mapType(calleeParameter.type),
             signature.parameters.single(),
         )
-        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(parameterType, parameterType)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, [parameterType, parameterType]) {
             genInvoke(parameterType, it)
         }
     }

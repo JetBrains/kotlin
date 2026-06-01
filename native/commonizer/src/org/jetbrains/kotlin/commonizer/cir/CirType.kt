@@ -112,7 +112,7 @@ abstract class CirClassType : CirClassOrTypeAliasType() {
             outerType: CirClassType?,
             arguments: List<CirTypeProjection>,
             isMarkedNullable: Boolean,
-            attachments: List<CirTypeAttachment> = emptyList()
+            attachments: List<CirTypeAttachment> = []
         ): CirClassType = interner.intern(
             CirClassTypeInternedImpl(
                 classifierId = classId,
@@ -225,7 +225,7 @@ private class CirClassTypeInternedImpl(
     override val outerType: CirClassType?,
     override val arguments: List<CirTypeProjection>,
     override val isMarkedNullable: Boolean,
-    override val attachments: List<CirTypeAttachment> = emptyList(),
+    override val attachments: List<CirTypeAttachment> = [],
 ) : CirClassType() {
 
     private val hashCode = hashCode(classifierId)

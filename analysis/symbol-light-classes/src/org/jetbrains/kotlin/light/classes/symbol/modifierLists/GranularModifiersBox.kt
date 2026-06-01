@@ -47,13 +47,14 @@ internal class GranularModifiersBox(
             /* fieldName = */ GranularModifiersBox::modifiersMapReference.name,
         )
 
-        internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
+        internal val VISIBILITY_MODIFIERS: Set<String> =
+            [PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE]
         internal val VISIBILITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
             VISIBILITY_MODIFIERS.keysToMap {
                 false
             }.toPersistentHashMap()
 
-        internal val MODALITY_MODIFIERS = setOf(PsiModifier.FINAL, PsiModifier.ABSTRACT)
+        internal val MODALITY_MODIFIERS: Set<String> = [PsiModifier.FINAL, PsiModifier.ABSTRACT]
         internal val MODALITY_MODIFIERS_MAP: PersistentMap<String, Boolean> =
             MODALITY_MODIFIERS.keysToMap {
                 false

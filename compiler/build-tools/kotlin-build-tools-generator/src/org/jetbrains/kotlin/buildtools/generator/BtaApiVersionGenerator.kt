@@ -32,6 +32,6 @@ internal class BtaApiVersionGenerator(
             .build()
 
         fileSpec.writeTo(appendable)
-        return listOf(Path(fileSpec.relativePath) to appendable.toString())
+        return [Path(fileSpec.relativePath) to appendable.toString()]
     }
 }

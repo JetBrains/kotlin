@@ -41,7 +41,7 @@ class FirLazyDelegatedConstructorCallBuilder : FirAnnotationContainerBuilder, Fi
 
 
     @Deprecated("Modification of 'annotations' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
 
     @Deprecated("Modification of 'source' has no impact for FirLazyDelegatedConstructorCallBuilder", level = DeprecationLevel.HIDDEN)
     override var source: KtSourceElement?

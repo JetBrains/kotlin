@@ -100,7 +100,7 @@ object JavaScopeProvider : FirScopeProvider() {
         return scopeSession.getOrBuild(regularClass.symbol, JAVA_USE_SITE) {
             val declaredScope = buildDeclaredMemberScope(useSiteSession, regularClass)
             val superTypes = if (regularClass.isThereLoopInSupertypes(useSiteSession))
-                listOf(StandardClassIds.Any.constructClassLikeType())
+                [StandardClassIds.Any.constructClassLikeType()]
             else
                 lookupSuperTypes(
                     regularClass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
@@ -187,9 +187,9 @@ object JavaScopeProvider : FirScopeProvider() {
     }
 
     private fun FirRegularClass.findClosestJavaSuperTypes(useSiteSession: FirSession): Collection<FirRegularClass> {
-        val result = mutableListOf<FirRegularClass>()
+        val result: MutableList<FirRegularClass> = []
         DFS.dfs(
-            listOf(this),
+            [this],
             { regularClass ->
                 regularClass.symbol.resolvedSuperTypes.mapNotNull {
                     it.lookupTagIfAny?.toRegularClassSymbol(useSiteSession)?.fir

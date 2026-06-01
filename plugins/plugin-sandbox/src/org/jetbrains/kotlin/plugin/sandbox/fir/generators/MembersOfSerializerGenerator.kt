@@ -48,8 +48,8 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val owner = context?.owner ?: return emptyList()
-        val argumentClassId = serializeMethodNames[callableId.callableName] ?: return emptyList()
+        val owner = context?.owner ?: return []
+        val argumentClassId = serializeMethodNames[callableId.callableName] ?: return []
 
         val function = createMemberFunction(
             owner, MembersOfSerializerGeneratorKey, callableId.callableName, session.builtinTypes.unitType.coneType,
@@ -58,13 +58,13 @@ class MembersOfSerializerGenerator(session: FirSession) : FirDeclarationGenerati
         }.apply {
             replaceBody(buildBlock {}.apply { replaceConeTypeOrNull(session.builtinTypes.unitType.coneType) })
         }
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when (classSymbol) {
             in matchedCoreSerializerClasses -> serializeMethodNames.keys
-            else -> emptySet()
+            else -> []
         }
     }
 

@@ -54,13 +54,13 @@ public inline fun <K, V, R : Any> Map<out K, V>.firstNotNullOfOrNull(transform: 
  */
 public fun <K, V> Map<out K, V>.toList(): List<Pair<K, V>> {
     if (size == 0)
-        return emptyList()
+        return []
     val iterator = entries.iterator()
     if (!iterator.hasNext())
-        return emptyList()
+        return []
     val first = iterator.next()
     if (!iterator.hasNext())
-        return listOf(first.toPair())
+        return [first.toPair()]
     val result = ArrayList<Pair<K, V>>(size)
     result.add(first.toPair())
     do {

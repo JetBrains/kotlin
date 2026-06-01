@@ -16,7 +16,7 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
 ) : AbstractTransformerPrinter<Element, Field>(printer) {
 
     final override val visitorTypeParameters: List<TypeVariable>
-        get() = emptyList()
+        get() = []
 
     final override val visitorDataType: TypeRef
         get() = StandardTypes.nothing.copy(nullable = true)
@@ -28,21 +28,21 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
             val methodName = "transform" + element.name
             if (element.isRootElement) {
                 println()
-                val elementTP = TypeVariable("E", listOf(element))
+                val elementTP = TypeVariable("E", [element])
                 printFunctionDeclaration(
                     name = methodName,
-                    parameters = listOf(FunctionParameter(elementParameterName, elementTP)),
+                    parameters = [FunctionParameter(elementParameterName, elementTP)],
                     returnType = elementTP,
-                    typeParameters = listOf(elementTP),
+                    typeParameters = [elementTP],
                     modality = Modality.ABSTRACT,
                 )
                 println()
                 println()
                 printFunctionDeclaration(
                     name = methodName,
-                    parameters = listOf(FunctionParameter(elementParameterName, elementTP), dataParameter),
+                    parameters = [FunctionParameter(elementParameterName, elementTP), dataParameter],
                     returnType = elementTP,
-                    typeParameters = listOf(elementTP),
+                    typeParameters = [elementTP],
                     modality = Modality.FINAL,
                     override = true,
                 )
@@ -52,7 +52,7 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
                 println()
                 printFunctionDeclaration(
                     name = methodName,
-                    parameters = listOf(FunctionParameter(elementParameterName, element)),
+                    parameters = [FunctionParameter(elementParameterName, element)],
                     returnType = returnType,
                     modality = Modality.OPEN,
                 )
@@ -63,7 +63,7 @@ abstract class AbstractTransformerVoidPrinter<Element : AbstractElement<Element,
                 println()
                 printFunctionDeclaration(
                     name = methodName,
-                    parameters = listOf(FunctionParameter(elementParameterName, element), dataParameter),
+                    parameters = [FunctionParameter(elementParameterName, element), dataParameter],
                     returnType = returnType,
                     modality = Modality.FINAL,
                     override = true,

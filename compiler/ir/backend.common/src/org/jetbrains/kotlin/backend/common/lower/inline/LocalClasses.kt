@@ -53,7 +53,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 if (!rootCallee.isInline)
                     return super.visitCall(expression, data)
 
-                val inlinableLambdas = mutableListOf<IrFunction>()
+                val inlinableLambdas: MutableList<IrFunction> = []
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
                     val inlineLambda = when (argument) {
@@ -91,7 +91,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     remapCapturedTypesInExtractedLocalDeclarations = false,
                 ).lower(irBlock = irBlock, container = container, closestParent = data)
 
-                val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
+                val localDeclarationsToPopUp: MutableList<IrDeclaration> = []
 
                 val outerTransformer = this
                 for (lambda in inlinableLambdas) {

@@ -30,16 +30,16 @@ abstract class AbstractWebKlibVersionsTest {
         val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
         val klibDir = createKlibDir("lib1")
 
-        val correctVersions = arrayOf(
+        val correctVersions: Array<String> = [
             "0.0.0", "255.255.255",
             "0.10.200", "10.200.0", "200.0.10",
             "2.2.0", "2.3.0"
-        )
+        ]
         for (version in correctVersions) {
             compileKlib(
                 sourceFile = testDataDir.resolve("lib1.kt"),
                 outputFile = klibDir,
-                extraArgs = arrayOf(K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+                extraArgs = [K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version]
             ).assertSuccess()
 
             val manifest = File("${klibDir.absolutePath}/default/manifest")
@@ -50,15 +50,15 @@ abstract class AbstractWebKlibVersionsTest {
             assertEquals(versionBumped, version)
         }
 
-        val incorrectVersions = arrayOf(
+        val incorrectVersions: Array<String> = [
             "0", "0.1", "0.1.", "0.1.2.", "..", "0 .1. 2",
             "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
+        ]
         for (version in incorrectVersions) {
             val result = compileKlib(
                 sourceFile = testDataDir.resolve("lib1.kt"),
                 outputFile = klibDir,
-                extraArgs = arrayOf(K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version)
+                extraArgs = [K2JSCompilerArguments::customKlibAbiVersion.cliArgument + "=" + version]
             )
             result.assertFailure()
 
@@ -74,15 +74,15 @@ abstract class AbstractWebKlibVersionsTest {
         val testDataDir = ForTestCompileRuntime.transformTestDataPath("compiler/testData/klib/resolve/mismatched-abi-version")
         val klibDir = createKlibDir("lib1")
 
-        val correctVersions = arrayOf(
+        val correctVersions: Array<String> = [
             "0.0.0", "255.255.255",
             "1.4.1", "2.1.0", "2.2.0", "2.3.0"
-        )
+        ]
         for (version in correctVersions) {
             compileKlib(
                 sourceFile = testDataDir.resolve("lib1.kt"),
                 outputFile = klibDir,
-                extraArgs = arrayOf(K2JSCompilerArguments::metadataVersion.cliArgument + "=" + version)
+                extraArgs = [K2JSCompilerArguments::metadataVersion.cliArgument + "=" + version]
             ).assertSuccess()
 
             val manifest = File("${klibDir.absolutePath}/default/manifest")
@@ -93,17 +93,17 @@ abstract class AbstractWebKlibVersionsTest {
             assertEquals(versionBumped, version)
         }
 
-        val incorrectVersions = arrayOf(
+        val incorrectVersions: Array<String> = [
             "0.1.", "0.1.2.", "..", "0 .1. 2",
             // These test cases should be uncommented after fixing KT-76247
             // "0", "0.1", "0.1.2.3",
             // "00.001.0002", "-0.-0.-0", "256.256.256"
-        )
+        ]
         for (version in incorrectVersions) {
             val result = compileKlib(
                 sourceFile = testDataDir.resolve("lib1.kt"),
                 outputFile = klibDir,
-                extraArgs = arrayOf(K2JSCompilerArguments::metadataVersion.cliArgument + "=" + version)
+                extraArgs = [K2JSCompilerArguments::metadataVersion.cliArgument + "=" + version]
             )
             result.assertFailure()
 
@@ -119,9 +119,9 @@ abstract class AbstractWebKlibVersionsTest {
 
     abstract fun compileKlib(
         sourceFile: File,
-        dependencies: Array<File> = emptyArray(),
+        dependencies: Array<File> = [],
         outputFile: File,
-        extraArgs: Array<String> = emptyArray(),
+        extraArgs: Array<String> = [],
     ): CompilationResult
 
     abstract fun compileToBinary(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult

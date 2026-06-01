@@ -260,10 +260,10 @@ private class JvmCompilationOperationV1Adapter private constructor(
                 .usePreciseCompilationResultsBackup(icConfig[BACKUP_CLASSES])
                 .keepIncrementalCompilationCachesInMemory(icConfig[KEEP_IC_CACHES_IN_MEMORY])
                 .useOutputDirs(
-                    icConfig[OUTPUT_DIRS]?.map(Path::toFile) ?: listOf(
+                    icConfig[OUTPUT_DIRS]?.map(Path::toFile) ?: [
                         destinationDirectory.toFile(),
                         icConfig.workingDirectory.toFile()
-                    )
+                    ]
                 )
                 .forceNonIncrementalMode(icConfig[FORCE_RECOMPILATION])
                 .useFirRunner(icConfig[USE_FIR_RUNNER])
@@ -279,6 +279,8 @@ private class JvmCompilationOperationV1Adapter private constructor(
         }
 
         val javaSources = sources.filter { it.toFile().isJavaFile() }.map { it.absolutePathStringOrThrow() }
+
+        @Suppress("ConvertToCollectionLiterals")
         val compilerArguments = compilerArguments.toArgumentStrings().fixForFirCheck() + listOf(
             "-d",
             destinationDirectory.absolutePathStringOrThrow()
@@ -401,12 +403,13 @@ internal fun List<String>.fixForFirCheck(): List<String> {
     return asSequence().windowed(2, partialWindows = true).flatMap { window ->
         if (window[0] == "-language-version") {
             skipNext = true
+            @Suppress("ConvertToCollectionLiterals")
             listOf("${window[0]}=${window[1]}")
         } else if (!skipNext) {
-            listOf(window[0])
+            [window[0]]
         } else {
             skipNext = false
-            emptyList()
+            []
         }
     }.map {
         if (it == "-Xuse-fir-ic=true") {
@@ -445,7 +448,7 @@ private interface ExecutionPolicyV1Adapter {
         @Suppress("DEPRECATION_ERROR")
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
-                val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
+                val jvmArguments = get(JVM_ARGUMENTS) ?: []
                 return get(SHUTDOWN_DELAY_MILLIS).let { delay ->
                     if (delay != null && compilationService.supportsShutdownDelayInDaemon()) {
                         compilationService.makeCompilerExecutionStrategyConfiguration().useDaemonStrategy(

@@ -324,7 +324,7 @@ private class ExceptionsCollector(private val limit: Int = 64) {
     var totalExceptions: Int = 0
         private set
 
-    val collectedExceptions = mutableListOf<Exception>()
+    val collectedExceptions: MutableList<Exception> = []
 
     var path: Path? = null
 

@@ -109,7 +109,7 @@ class FirIntegerConstantOperatorScope(
     }
 
     override fun getClassifierNames(): Set<Name> {
-        return emptySet()
+        return []
     }
 
     override fun processDirectOverriddenFunctionsWithBaseScope(

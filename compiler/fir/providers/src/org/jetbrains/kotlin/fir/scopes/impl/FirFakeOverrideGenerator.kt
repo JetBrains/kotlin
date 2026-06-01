@@ -234,7 +234,7 @@ object FirFakeOverrideGenerator {
                     origin,
                     copyDefaultValues,
                 )
-                emptyList()
+                []
             }
             newTypeParameters == null -> {
                 val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(
@@ -595,7 +595,7 @@ object FirFakeOverrideGenerator {
                     containingDeclarationSymbol = it.symbol,
                     source = originalParameter.source,
                 )
-                it.replaceValueParameters(listOf(newParameter))
+                it.replaceValueParameters([newParameter])
             } else {
                 it.replaceReturnTypeRef(propertyReturnTypeRef)
             }
@@ -656,7 +656,7 @@ object FirFakeOverrideGenerator {
                 configureAnnotationsAndSignature(
                     baseProperty, newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation
                 )
-                emptyList()
+                []
             }
             newTypeParameters == null -> {
                 val [copiedTypeParameters, substitutor] = createNewTypeParametersAndSubstitutor(

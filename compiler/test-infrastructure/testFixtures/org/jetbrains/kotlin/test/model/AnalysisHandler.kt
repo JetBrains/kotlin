@@ -18,7 +18,7 @@ abstract class AnalysisHandlerBase<A : ResultingArtifact<A>>(
     val doNotRunIfThereWerePreviousFailures: Boolean
 ) : ServicesAndDirectivesContainer {
     open val additionalAfterAnalysisCheckers: List<Constructor<AfterAnalysisChecker>>
-        get() = emptyList()
+        get() = []
 
     protected val assertions: Assertions
         get() = testServices.assertions

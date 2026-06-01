@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 
 object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
     name = "JvmSerializeCommonMetadataPipelinePhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.KlibWritingStarted],
+    postActions = [PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: JvmFrontendPipelineArtifact): JvmFrontendPipelineArtifact {
         serializeFragmentsIfNeeded(input)

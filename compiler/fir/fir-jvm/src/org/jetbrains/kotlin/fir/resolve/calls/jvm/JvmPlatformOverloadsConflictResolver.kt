@@ -22,7 +22,7 @@ class JvmPlatformOverloadsConflictResolver(private val session: FirSession) : Co
         if (!session.languageVersionSettings.supportsFeature(LanguageFeature.PreferJavaFieldOverload)) {
             return candidates
         }
-        val result = mutableSetOf<Candidate>()
+        val result: MutableSet<Candidate> = []
         for (myCandidate in candidates) {
             when (val me = myCandidate.symbol.fir) {
                 is FirProperty -> if (!me.isShadowedByFieldCandidate(candidates)) {

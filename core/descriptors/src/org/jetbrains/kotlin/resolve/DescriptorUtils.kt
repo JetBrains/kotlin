@@ -204,7 +204,7 @@ fun CallableDescriptor.getOwnerForEffectiveDispatchReceiverParameter(): Declarat
 
 fun ValueParameterDescriptor.declaresOrInheritsDefaultValue(): Boolean {
     return DFS.ifAny(
-        listOf(this),
+        [this],
         { current -> current.overriddenDescriptors.map(ValueParameterDescriptor::getOriginal) },
         ValueParameterDescriptor::declaresDefaultValue
     )
@@ -254,12 +254,13 @@ fun CallableMemberDescriptor.firstOverridden(
     predicate: (CallableMemberDescriptor) -> Boolean
 ): CallableMemberDescriptor? {
     var result: CallableMemberDescriptor? = null
-    return DFS.dfs(listOf(this),
-                   { current ->
+    return DFS.dfs(
+        [this],
+        { current ->
                        val descriptor = if (useOriginal) current?.original else current
-                       descriptor?.overriddenDescriptors ?: emptyList()
+                       descriptor?.overriddenDescriptors ?: []
                    },
-                   object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
+        object : DFS.AbstractNodeHandler<CallableMemberDescriptor, CallableMemberDescriptor?>() {
                        override fun beforeChildren(current: CallableMemberDescriptor) = result == null
                        override fun afterChildren(current: CallableMemberDescriptor) {
                            if (result == null && predicate(current)) {
@@ -273,7 +274,7 @@ fun CallableMemberDescriptor.firstOverridden(
 }
 
 fun CallableMemberDescriptor.setSingleOverridden(overridden: CallableMemberDescriptor) {
-    overriddenDescriptors = listOf(overridden)
+    overriddenDescriptors = [overridden]
 }
 
 fun CallableMemberDescriptor.overriddenTreeAsSequence(useOriginal: Boolean): Sequence<CallableMemberDescriptor> =
@@ -288,7 +289,7 @@ fun <D : CallableDescriptor> D.overriddenTreeUniqueAsSequence(useOriginal: Boole
     fun D.doBuildOverriddenTreeAsSequence(): Sequence<D> {
         return with(if (useOriginal) original as D else this) {
             if (original in set)
-                emptySequence()
+                []
             else {
                 set += original as D
                 sequenceOf(this) + (overriddenDescriptors as Collection<D>).asSequence().flatMap { it.doBuildOverriddenTreeAsSequence() }
@@ -376,11 +377,11 @@ fun ClassifierDescriptor.getAllSuperClassifiers(): Sequence<ClassifierDescriptor
 
     fun ClassifierDescriptor.doGetAllSuperClassesAndInterfaces(): Sequence<ClassifierDescriptor> =
         if (original in set) {
-            emptySequence()
+            []
         } else {
             set += original
             sequenceOf(original) + typeConstructor.supertypes.asSequence().flatMap {
-                it.constructor.declarationDescriptor?.doGetAllSuperClassesAndInterfaces() ?: sequenceOf()
+                it.constructor.declarationDescriptor?.doGetAllSuperClassesAndInterfaces() ?: []
             }
         }
 

@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.util
 
 @Suppress("NOTHING_TO_INLINE")
 internal inline fun <K, V> MutableMap<K, MutableList<V>>.addValueFor(element: K, value: V) {
-    getOrPut(element) { mutableListOf() } += value
+    getOrPut(element) { [] } += value
 }
 
 internal fun <T> MutableList<T>.replaceFirst(from: T, to: T) {

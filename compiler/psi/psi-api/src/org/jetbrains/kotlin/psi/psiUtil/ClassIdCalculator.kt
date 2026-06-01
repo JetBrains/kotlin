@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.utils.*
 internal object ClassIdCalculator {
     fun calculateClassId(declaration: KtClassLikeDeclaration): ClassId? {
         var ktFile: KtFile? = null
-        val containingClassNames = mutableListOf<String>()
+        val containingClassNames: MutableList<String> = []
 
         for (element in declaration.parentsWithSelf) {
             when (element) {

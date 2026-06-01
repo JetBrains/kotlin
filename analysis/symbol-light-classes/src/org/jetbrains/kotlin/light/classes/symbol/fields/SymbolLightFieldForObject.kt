@@ -70,7 +70,7 @@ internal class SymbolLightFieldForObject private constructor(
                 InitializedModifiersBox(PsiModifier.PUBLIC, PsiModifier.STATIC, PsiModifier.FINAL)
             },
             annotationsBox = ComputeAllAtOnceAnnotationsBox { modifierList ->
-                listOf(SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList))
+                [SymbolLightSimpleAnnotation(NotNull::class.java.name, modifierList)]
             },
         )
     }

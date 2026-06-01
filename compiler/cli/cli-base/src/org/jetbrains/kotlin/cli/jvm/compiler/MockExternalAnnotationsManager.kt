@@ -54,11 +54,11 @@ class MockExternalAnnotationsManager : ExternalAnnotationsManager() {
 
     override fun hasAnnotationRootsForFile(file: VirtualFile): Boolean = false
 
-    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass, annotationFQN: String): List<PsiAnnotation> = emptyList()
+    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass, annotationFQN: String): List<PsiAnnotation> = []
 
-    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass): List<PsiAnnotation> = emptyList()
+    override fun findDefaultConstructorExternalAnnotations(aClass: PsiClass): List<PsiAnnotation> = []
 
-    override fun findExternalAnnotations(listOwner: PsiModifierListOwner, annotationFQN: String): List<PsiAnnotation> = emptyList()
+    override fun findExternalAnnotations(listOwner: PsiModifierListOwner, annotationFQN: String): List<PsiAnnotation> = []
 
     override fun hasConfiguredAnnotationRoot(owner: PsiModifierListOwner): Boolean = false
 }

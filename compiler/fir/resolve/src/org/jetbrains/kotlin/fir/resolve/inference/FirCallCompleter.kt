@@ -391,7 +391,7 @@ class FirCallCompleter(
         completer.complete(
             candidate.system.asConstraintSystemCompleterContext(),
             completionMode,
-            listOf(ConeAtomWithCandidate(call, candidate)),
+            [ConeAtomWithCandidate(call, candidate)],
             initialType,
             transformer.resolutionContext,
             postponedAtomAnalyzer,
@@ -514,7 +514,7 @@ class FirCallCompleter(
             val theParameters = when {
                 lambdaAtom.coerceFirstParameterToExtensionReceiver -> when (receiverType) {
                     null -> error("Coercion to extension receiver while no receiver present")
-                    else -> listOf(receiverType) + parameters
+                    else -> [receiverType] + parameters
                 }
                 else -> parameters
             }
@@ -715,14 +715,14 @@ class FirCallCompleter(
 
         // Recursive contracts are prohibited, so this check ensures that no contracts are applied during contract resolution
         val effects = if (transformer is FirAbstractContractResolveTransformerDispatcher && transformer.insideContractDescription) {
-            emptyList()
+            []
         } else {
             // Candidate could be a substitution or intersection fake override; unwrap and get the effects of the base function.
             function.unwrapFakeOverrides<FirFunction>().symbol.resolvedContractDescription?.effects.orEmpty()
         }
 
         val eventOccurencesRangeByParameter = mutableMapOf<FirValueParameter, EventOccurrencesRange>()
-        val lambdaParametersWithHoldsInEffect = mutableSetOf<FirValueParameter>()
+        val lambdaParametersWithHoldsInEffect: MutableSet<FirValueParameter> = []
         for (fir in effects) {
             when (val effect = fir.effect) {
                 is ConeCallsEffectDeclaration -> {

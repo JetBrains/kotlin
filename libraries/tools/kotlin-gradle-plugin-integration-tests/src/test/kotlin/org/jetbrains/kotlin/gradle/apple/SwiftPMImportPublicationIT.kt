@@ -49,7 +49,7 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }
@@ -63,22 +63,22 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
 
         assertEquals(
             SwiftPMImportMetadata(
-                konanTargets = setOf("ios_arm64", "ios_simulator_arm64"),
+                konanTargets = ["ios_arm64", "ios_simulator_arm64"],
                 iosDeploymentVersion = "18.0",
                 macosDeploymentVersion = null,
                 watchosDeploymentVersion = null,
                 tvosDeploymentVersion = null,
                 isModulesDiscoveryEnabled = true,
-                dependencies = setOf(
+                dependencies = [
                     SwiftPMDependency.Remote(
                         repository = SwiftPMDependency.Remote.Repository.Url("https://github.com/apple/swift-protobuf.git"),
                         version = SwiftPMDependency.Remote.Version.Exact("1.32.0"),
-                        products = listOf(),
-                        cinteropClangModules = emptyList(),
+                        products = [],
+                        cinteropClangModules = [],
                         packageName = "swift-protobuf",
-                        traits = setOf()
+                        traits = []
                     )
-                ),
+                ],
             ),
             deserializeSwiftPMImportMetadata(spmMetadata.inputStream())
         )
@@ -107,7 +107,7 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf(targetName),
+                            products = [targetName],
                         )
                     }
                 }
@@ -124,32 +124,32 @@ class SwiftPMImportPublicationIT : KGPBaseTest() {
 
         assertEquals(
             SwiftPMImportMetadata(
-                konanTargets = setOf("ios_arm64", "ios_simulator_arm64"),
+                konanTargets = ["ios_arm64", "ios_simulator_arm64"],
                 iosDeploymentVersion = null,
                 macosDeploymentVersion = null,
                 watchosDeploymentVersion = null,
                 tvosDeploymentVersion = null,
                 isModulesDiscoveryEnabled = true,
-                dependencies = setOf(
+                dependencies = [
                     SwiftPMDependency.Local(
                         absolutePath = absolutePackagePath,
-                        products = listOf(
+                        products = [
                             SwiftPMDependency.Product(
                                 name = "LocalSwiftPackage",
-                                cinteropClangModules = emptySet(),
+                                cinteropClangModules = [],
                                 platformConstraints = null
                             )
-                        ),
-                        cinteropClangModules = listOf(
+                        ],
+                        cinteropClangModules = [
                             SwiftPMDependency.CinteropClangModule(
                                 name = "LocalSwiftPackage",
                                 platformConstraints = null
                             )
-                        ),
+                        ],
                         packageName = "localSwiftPackage",
-                        traits = setOf()
+                        traits = []
                     )
-                ),
+                ],
             ),
             deserializeSwiftPMImportMetadata(spmMetadata.inputStream())
         )

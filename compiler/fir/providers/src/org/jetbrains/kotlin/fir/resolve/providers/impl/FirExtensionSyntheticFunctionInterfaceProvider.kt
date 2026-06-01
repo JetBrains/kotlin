@@ -126,16 +126,16 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
         override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = classId.getAcceptableFunctionTypeKind() != null
 
-        override fun getPackageNames(): Set<String> = emptySet()
+        override fun getPackageNames(): Set<String> = []
 
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
         override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
         override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> =
             // Generated function type names aren't included in the top-level classifier names set.
-            emptySet()
+            []
 
-        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = []
 
         override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = mayHaveSyntheticFunctionType(classId)
         override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = false
@@ -242,12 +242,12 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
 
                     if (kind.isReflectType) {
                         superTypeRefs += StandardClassIds.KFunction.toLookupTag()
-                            .constructClassType(arrayOf(typeArguments.last().coneType))
+                            .constructClassType([typeArguments.last().coneType])
                             .toFirResolvedTypeRef()
                         superTypeRefs += createSuperType(kind.nonReflectKind())
                     } else {
                         superTypeRefs += StandardClassIds.Function.toLookupTag()
-                            .constructClassType(arrayOf(typeArguments.last().coneType))
+                            .constructClassType([typeArguments.last().coneType])
                             .toFirResolvedTypeRef()
                     }
 

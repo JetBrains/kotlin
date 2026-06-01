@@ -27,8 +27,8 @@ import org.jetbrains.kotlin.util.metadataVersion
 
 object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataInMemorySerializationArtifact>(
     name = "MetadataKlibInMemorySerializerPhase",
-    preActions = setOf(PerformanceNotifications.KlibWritingStarted),
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.KlibWritingStarted],
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataInMemorySerializationArtifact {
         (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
@@ -53,7 +53,7 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
                     ),
                     languageVersionSettings,
                 )
-                fragments.getOrPut(firFile.packageFqName.asString()) { mutableListOf() }.add(packageFragment.toByteArray())
+                fragments.getOrPut(firFile.packageFqName.asString()) { [] }.add(packageFragment.toByteArray())
             }
         }
 
@@ -64,8 +64,8 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
             header.flags = KlibMetadataHeaderFlags.PRE_RELEASE
         }
 
-        val fragmentNames = mutableListOf<String>()
-        val fragmentParts = mutableListOf<List<ByteArray>>()
+        val fragmentNames: MutableList<String> = []
+        val fragmentParts: MutableList<List<ByteArray>> = []
 
         for ([fqName, fragment] in fragments.entries.sortedBy { it.key }) {
             fragmentNames += fqName
@@ -81,8 +81,8 @@ object MetadataKlibInMemorySerializerPhase : PipelinePhase<MetadataFrontendPipel
 
 object MetadataKlibFileWriterPhase : PipelinePhase<MetadataInMemorySerializationArtifact, MetadataSerializationArtifact>(
     name = "MetadataKlibFileWriterPhase",
-    preActions = setOf(),
-    postActions = setOf(PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [],
+    postActions = [PerformanceNotifications.KlibWritingFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: MetadataInMemorySerializationArtifact): MetadataSerializationArtifact {
         val destDir = input.configuration.metadataDestinationDirectory!!

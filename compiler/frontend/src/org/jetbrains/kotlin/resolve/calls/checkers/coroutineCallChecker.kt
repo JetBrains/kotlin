@@ -44,7 +44,8 @@ fun FunctionDescriptor.isBuiltInCoroutineContext() =
 fun PropertyDescriptor.isBuiltInCoroutineContext() =
     fqNameSafe.isBuiltInCoroutineContext()
 
-private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
+private val ALLOWED_SCOPE_KINDS: Set<LexicalScopeKind> =
+    [LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING]
 
 fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescriptor? {
     val scope = context.scope.parentsWithSelf.firstOrNull {
@@ -132,7 +133,7 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
     }
 }
 
-fun KotlinType.isRestrictsSuspensionReceiver() = (listOf(this) + this.supertypes()).any {
+fun KotlinType.isRestrictsSuspensionReceiver() = ([this] + this.supertypes()).any {
     it.constructor.declarationDescriptor?.annotations?.hasAnnotation(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("RestrictsSuspension"))
     ) == true

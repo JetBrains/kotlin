@@ -41,7 +41,7 @@ class SerializationPluginOptions : CommandLineProcessor {
     }
 
     override val pluginId get() = SerializationPluginNames.PLUGIN_ID
-    override val pluginOptions = listOf(DISABLE_INTRINSIC_OPTION)
+    override val pluginOptions = [DISABLE_INTRINSIC_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         DISABLE_INTRINSIC_OPTION -> configuration.put(SERIALIZATION_DISABLE_INTRINSIC, value == "true")

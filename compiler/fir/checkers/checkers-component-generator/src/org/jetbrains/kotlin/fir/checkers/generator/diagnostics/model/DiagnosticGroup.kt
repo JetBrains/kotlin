@@ -16,7 +16,7 @@ import kotlin.reflect.typeOf
 abstract class AbstractDiagnosticGroup @PrivateForInline constructor(val name: String, internal val containingObjectName: String) {
     @Suppress("PropertyName")
     @PrivateForInline
-    val _diagnostics = mutableListOf<DiagnosticData>()
+    val _diagnostics: MutableList<DiagnosticData> = []
 
     @OptIn(PrivateForInline::class)
     val diagnostics: List<DiagnosticData>

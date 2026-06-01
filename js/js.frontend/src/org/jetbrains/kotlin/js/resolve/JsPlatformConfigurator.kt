@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.types.DynamicTypesAllowed
 
 object JsPlatformConfigurator : PlatformConfiguratorBase(
     DynamicTypesAllowed(),
-    additionalDeclarationCheckers = listOf(
+    additionalDeclarationCheckers = [
         NativeInvokeChecker(), NativeGetterChecker(), NativeSetterChecker(),
         JsNameChecker, JsModuleChecker, JsExternalFileChecker,
         JsInheritanceChecker, JsMultipleInheritanceChecker,
@@ -27,14 +27,14 @@ object JsPlatformConfigurator : PlatformConfiguratorBase(
         JsRuntimeAnnotationChecker,
         JsDynamicDeclarationChecker,
         JsExportAnnotationChecker,
-    ),
-    additionalCallCheckers = listOf(
+    ],
+    additionalCallCheckers = [
         JsModuleCallChecker,
         JsDynamicCallChecker,
         JsDefinedExternallyCallChecker,
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
         JsExternalArgumentCallChecker
-    ),
+    ],
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {
         container.useImpl<JsCallChecker>()

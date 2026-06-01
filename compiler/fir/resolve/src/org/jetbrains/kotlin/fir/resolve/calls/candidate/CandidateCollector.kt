@@ -20,8 +20,8 @@ open class CandidateCollector(
     val components: BodyResolveComponents,
     private val resolutionStageRunner: ResolutionStageRunner
 ) {
-    private val groupNumbers = mutableListOf<TowerGroup>()
-    private val candidates = mutableListOf<Candidate>()
+    private val groupNumbers: MutableList<TowerGroup> = []
+    private val candidates: MutableList<Candidate> = []
 
     var currentApplicability: CandidateApplicability = CandidateApplicability.HIDDEN
         private set
@@ -39,7 +39,7 @@ open class CandidateCollector(
      * Diagnostics that should not be bound to specific candidates but should be put to the resulting call.
      * For instance, a case when declaration order affects resolution (see KT-76240).
      */
-    private val forwardedDiagnostics: MutableList<ResolutionDiagnostic> = mutableListOf()
+    private val forwardedDiagnostics: MutableList<ResolutionDiagnostic> = []
 
     fun newDataSet() {
         groupNumbers.clear()

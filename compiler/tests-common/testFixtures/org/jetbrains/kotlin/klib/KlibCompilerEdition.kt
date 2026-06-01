@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.codegen.ModuleInfo.CompilerCase
  * [CUSTOM] - a custom (previously built and published) compiler.
  */
 enum class KlibCompilerEdition(
-    val args: List<String> = emptyList(),
+    val args: List<String> = [],
 ) {
     CURRENT,
     CUSTOM,

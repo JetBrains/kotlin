@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.AnnotationModel
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeBlackBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
@@ -33,11 +34,11 @@ fun main(args: Array<String>) {
     }
 }
 
-private fun stress() = arrayOf(
+private fun stress(): Array<AnnotationModel> = [
     annotation(Tag::class.java, "stress"),
     annotation(
         EnforcedProperty::class.java,
         "property" to ClassLevelProperty.EXECUTION_TIMEOUT,
         "propertyValue" to "15m"
     )
-)
+]

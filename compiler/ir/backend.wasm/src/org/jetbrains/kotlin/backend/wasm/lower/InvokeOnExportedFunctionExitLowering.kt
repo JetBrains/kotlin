@@ -102,7 +102,7 @@ internal class InvokeOnExportedFunctionExitLowering(val context: WasmBackendCont
             val tryWrap = irTry(
                 type = bodyType,
                 tryResult = tryBody,
-                catches = emptyList(),
+                catches = [],
                 finallyExpression = finally
             )
 

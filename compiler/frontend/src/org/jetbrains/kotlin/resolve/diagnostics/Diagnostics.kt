@@ -50,8 +50,8 @@ interface Diagnostics : GenericDiagnostics<Diagnostic> {
         val EMPTY: Diagnostics = object : Diagnostics {
             override fun noSuppression(): Diagnostics = this
             override val modificationTracker: ModificationTracker = ModificationTracker.NEVER_CHANGED
-            override fun all() = listOf<Diagnostic>()
-            override fun forElement(psiElement: PsiElement) = listOf<Diagnostic>()
+            override fun all(): List<Diagnostic> = []
+            override fun forElement(psiElement: PsiElement): List<Diagnostic> = []
         }
     }
 }

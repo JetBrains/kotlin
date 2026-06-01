@@ -33,9 +33,9 @@ internal fun renderMetadata(pretty: Pretty, tree: JCAnnotation): String {
     val metadata = Metadata(
         kind = args[JvmAnnotationNames.KIND_FIELD_NAME].intValue() ?: 1,
         metadataVersion =
-            args[JvmAnnotationNames.METADATA_VERSION_FIELD_NAME].arrayValue()?.map { it.intValue()!! }?.toIntArray() ?: intArrayOf(),
-        data1 = args[JvmAnnotationNames.METADATA_DATA_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: arrayOf(),
-        data2 = args[JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: arrayOf(),
+            args[JvmAnnotationNames.METADATA_VERSION_FIELD_NAME].arrayValue()?.map { it.intValue()!! }?.toIntArray() ?: [],
+        data1 = args[JvmAnnotationNames.METADATA_DATA_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: [],
+        data2 = args[JvmAnnotationNames.METADATA_STRINGS_FIELD_NAME].arrayValue()?.map { it.stringValue()!! }?.toTypedArray() ?: [],
         extraInt = args[JvmAnnotationNames.METADATA_EXTRA_INT_FIELD_NAME].intValue() ?: 0,
         extraString = args[JvmAnnotationNames.METADATA_EXTRA_STRING_FIELD_NAME].stringValue() ?: "",
         packageName = args[JvmAnnotationNames.METADATA_PACKAGE_NAME_FIELD_NAME].stringValue() ?: "",

@@ -392,7 +392,7 @@ private fun String.hexToByteArray(
     AbstractList.checkBoundsIndexes(startIndex, endIndex, length)
 
     if (startIndex == endIndex) {
-        return byteArrayOf()
+        return []
     }
 
     val bytesFormat = format.bytes

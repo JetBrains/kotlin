@@ -190,7 +190,7 @@ object KotlinToJVMBytecodeCompiler {
     @K1Deprecation
     fun compileBunchOfSources(environment: KotlinCoreEnvironment): Boolean {
         val module = ModuleBuilder("test", environment.configuration.outputDirectory!!.path, "test")
-        return compileModules(environment, buildFile = null, listOf(module))
+        return compileModules(environment, buildFile = null, [module])
     }
 
     private fun repeatAnalysisIfNeeded(result: AnalysisResult?, environment: KotlinCoreEnvironment): AnalysisResult? {

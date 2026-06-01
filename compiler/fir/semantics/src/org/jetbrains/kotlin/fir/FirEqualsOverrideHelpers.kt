@@ -56,7 +56,7 @@ fun computeEqualsOverrideContract(
         symbolsForType = collectSymbolsForType(type, session),
         session = session,
         scopeSession = scopeSession,
-        visitedSymbols = mutableSetOf(),
+        visitedSymbols = [],
         trustExpectClasses = trustExpectClasses,
     )
 }
@@ -105,7 +105,7 @@ private fun FirClassSymbol<*>.computeEqualsOverrideContract(
         }
 
         // Note that `sealed class` variants may have additional supertypes
-        return inheritors.minOfOrNull { computeEqualsOverrideContract(listOf(it), session, scopeSession, visitedSymbols, trustExpectClasses) }
+        return inheritors.minOfOrNull { computeEqualsOverrideContract([it], session, scopeSession, visitedSymbols, trustExpectClasses) }
             ?: EqualsOverrideContract.SAFE_FOR_SMART_CAST
     }
 

@@ -167,14 +167,14 @@ internal class KaFe10SymbolRelationProvider(
             override val libraryName: String = libraryPath.fileName.toString().substringBeforeLast(".")
             override val librarySources: KaLibrarySourceModule? = null
             override val isSdk: Boolean = false
-            override val binaryRoots: Collection<Path> = listOf(libraryPath)
+            override val binaryRoots: Collection<Path> = [libraryPath]
 
             @KaExperimentalApi
-            override val binaryVirtualFiles: Collection<VirtualFile> = emptyList()
-            override val directRegularDependencies: List<KaModule> = emptyList()
-            override val directDependsOnDependencies: List<KaModule> = emptyList()
-            override val transitiveDependsOnDependencies: List<KaModule> = emptyList()
-            override val directFriendDependencies: List<KaModule> = emptyList()
+            override val binaryVirtualFiles: Collection<VirtualFile> = []
+            override val directRegularDependencies: List<KaModule> = []
+            override val directDependsOnDependencies: List<KaModule> = []
+            override val transitiveDependsOnDependencies: List<KaModule> = []
+            override val directFriendDependencies: List<KaModule> = []
             override val baseContentScope: GlobalSearchScope = ProjectScope.getLibrariesScope(project)
             override val targetPlatform: TargetPlatform
                 get() = descriptor.platform!!
@@ -264,8 +264,8 @@ internal class KaFe10SymbolRelationProvider(
         }
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
-        if (psiSafe<KtDeclaration>()?.hasActualModifier() != true) return emptyList()
-        val memberDescriptor = (getSymbolDescriptor(this) as? MemberDescriptor)?.takeIf { it.isActual } ?: return emptyList()
+        if (psiSafe<KtDeclaration>()?.hasActualModifier() != true) return []
+        val memberDescriptor = (getSymbolDescriptor(this) as? MemberDescriptor)?.takeIf { it.isActual } ?: return []
 
         return ExpectedActualResolver.findExpectedForActual(memberDescriptor).orEmpty().asSequence()
             .filter { it.key.isCompatibleOrWeaklyIncompatible }
@@ -276,7 +276,7 @@ internal class KaFe10SymbolRelationProvider(
 
     override val KaNamedClassSymbol.sealedClassInheritors: List<KaNamedClassSymbol>
         get() = withValidityAssertion {
-            val classDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return emptyList()
+            val classDescriptor = getSymbolDescriptor(this) as? ClassDescriptor ?: return []
 
             val inheritorsProvider = analysisContext.resolveSession.sealedClassInheritorsProvider
             val allowInDifferentFiles = analysisContext.resolveSession.languageVersionSettings

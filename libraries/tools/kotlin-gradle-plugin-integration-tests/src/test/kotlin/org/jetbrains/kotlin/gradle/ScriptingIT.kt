@@ -33,10 +33,10 @@ abstract class ScriptingIT : KGPBaseTest() {
             val scriptTemplateSubProject = subProject("script-template")
             build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
                 assertCompiledKotlinSources(
-                    listOf(
+                    [
                         appSubProject.kotlinSourcesDir().resolve("world.greet.kts").relativeTo(projectPath),
                         scriptTemplateSubProject.kotlinSourcesDir().resolve("GreetScriptTemplate.kt").relativeTo(projectPath)
-                    ),
+                    ],
                     output
                 )
                 assertFileExists(
@@ -91,7 +91,7 @@ abstract class ScriptingIT : KGPBaseTest() {
                 if (withIC) {
                     // compile iterations are not logged when IC is disabled
                     assertCompiledKotlinSources(
-                        listOf(bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt),
+                        [bobGreet, aliceGreet, worldGreet, greetScriptTemplateKt],
                         output
                     )
                 }
@@ -100,7 +100,7 @@ abstract class ScriptingIT : KGPBaseTest() {
             bobGreetSource.modify { it.replace("Bob", "Uncle Bob") }
             build("assemble") {
                 if (withIC) {
-                    assertCompiledKotlinSources(listOf(bobGreet), output)
+                    assertCompiledKotlinSources([bobGreet], output)
                 }
             }
         }
@@ -131,9 +131,9 @@ abstract class ScriptingIT : KGPBaseTest() {
                 logLevel = LogLevel.DEBUG,
             )) {
                 assertCompiledKotlinSources(
-                    listOf(
+                    [
                         appSubProject.kotlinSourcesDir("test").resolve("script/ComposeMainKtsTest.kt").relativeTo(projectPath),
-                    ),
+                    ],
                     output
                 )
             }

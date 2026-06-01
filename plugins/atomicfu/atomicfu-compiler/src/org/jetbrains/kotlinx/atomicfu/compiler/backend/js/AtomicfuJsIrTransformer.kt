@@ -61,9 +61,10 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         "AtomicBoolean" to irBuiltIns.booleanType
     )
 
-    private val ATOMIC_VALUE_TYPES = setOf("AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef")
-    private val ATOMIC_ARRAY_TYPES = setOf("AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray")
-    private val ATOMICFU_INLINE_FUNCTIONS = setOf("atomicfu_loop", "atomicfu_update", "atomicfu_getAndUpdate", "atomicfu_updateAndGet")
+    private val ATOMIC_VALUE_TYPES: Set<String> = ["AtomicInt", "AtomicLong", "AtomicBoolean", "AtomicRef"]
+    private val ATOMIC_ARRAY_TYPES: Set<String> = ["AtomicIntArray", "AtomicLongArray", "AtomicBooleanArray", "AtomicArray"]
+    private val ATOMICFU_INLINE_FUNCTIONS: Set<String> =
+        ["atomicfu_loop", "atomicfu_update", "atomicfu_getAndUpdate", "atomicfu_updateAndGet"]
 
     fun transform(irFile: IrFile) {
         if (context.platform.isJs()) {
@@ -101,10 +102,10 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
             newDeclaration.parameters = newDeclaration.parameters.toMutableList().apply {
                 removeIf { it.kind == IrParameterKind.ExtensionReceiver }
                 addAll(
-                    listOf(
+                    [
                         buildValueParameter(newDeclaration, GETTER, getterType),
                         buildValueParameter(newDeclaration, SETTER, setterType)
-                    )
+                    ]
                 )
             }
             atomicExtension.transformedAtomicExtension = newDeclaration
@@ -297,16 +298,16 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                     val thisRef = expression.arguments[1]?.let {
                         if (it.isConstNull()) null else it
                     }
-                    val fieldAccessors = listOf(
+                    val fieldAccessors = [
                         context.buildFieldAccessor(originalField, thisRef, false),
                         context.buildFieldAccessor(originalField, thisRef, true)
-                    )
+                    ]
                     return buildCall(
                         UNDEFINED_OFFSET, UNDEFINED_OFFSET,
                         target = runtimeFunction,
                         type = type,
-                        typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(type) else emptyList(),
-                        arguments = if (isSetter) listOf(expression.arguments[3], fieldAccessors[0], fieldAccessors[1]) else
+                        typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) [type] else [],
+                        arguments = if (isSetter) [expression.arguments[3], fieldAccessors[0], fieldAccessors[1]] else
                             fieldAccessors
                     )
                 }
@@ -341,7 +342,7 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 startOffset, endOffset,
                 target = runtimeFunction,
                 type = type,
-                typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) listOf(atomicType) else emptyList(),
+                typeArguments = if (runtimeFunction.owner.typeParameters.size == 1) [atomicType] else [],
                 arguments = arguments + accessors
             )
         }
@@ -354,18 +355,18 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
         private fun IrCall.getAccessors(): List<IrExpression> =
             if (!isArrayElementGetter()) {
                 val field = getBackingField()
-                listOf(
+                [
                     context.buildFieldAccessor(field, dispatchReceiver, false),
                     context.buildFieldAccessor(field, dispatchReceiver, true)
-                )
+                ]
             } else {
                 val arrayGetter = arguments[0] as IrCall
                 val index = arguments[1]!!
                 val arrayField = arrayGetter.getBackingField()
-                listOf(
+                [
                     context.buildArrayElementAccessor(arrayField, arrayGetter, index, false),
                     context.buildArrayElementAccessor(arrayField, arrayGetter, index, true)
-                )
+                ]
             }
 
         private fun IrStatement.isTrace() =
@@ -425,8 +426,8 @@ class AtomicfuJsIrTransformer(private val context: IrPluginContext) {
                 startOffset, endOffset,
                 target = arrayFactorySymbol,
                 type = type,
-                typeArguments = listOf(arrayElementType),
-                arguments = listOf(size)
+                typeArguments = [arrayElementType],
+                arguments = [size]
             )
         }
     }

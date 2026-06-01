@@ -113,5 +113,5 @@ private fun DeclarationDescriptor.loadWasExperimentalMarkerClasses(): List<Class
         }
     }
 
-    return emptyList()
+    return []
 }

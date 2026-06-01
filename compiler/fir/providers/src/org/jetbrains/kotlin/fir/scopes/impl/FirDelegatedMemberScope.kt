@@ -42,7 +42,7 @@ class FirDelegatedMemberScope(
 
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         declaredMemberScope.processFunctionsByName(name, processor)
-        val result = mutableListOf<FirNamedFunctionSymbol>()
+        val result: MutableList<FirNamedFunctionSymbol> = []
 
         for (delegateField in delegateFields) {
             collectFunctionsFromSpecificField(delegateField, name, result)
@@ -117,7 +117,7 @@ class FirDelegatedMemberScope(
     override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) {
         declaredMemberScope.processPropertiesByName(name, processor)
 
-        val result = mutableListOf<FirPropertySymbol>()
+        val result: MutableList<FirPropertySymbol> = []
         for (delegateField in delegateFields) {
             collectPropertiesFromSpecificField(delegateField, name, result)
         }
@@ -264,7 +264,7 @@ fun FirValueParameter.hasTypeOf(classId: ClassId, allowNullable: Boolean): Boole
     return classLike.lookupTag.classId == classId
 }
 
-private val PUBLIC_METHOD_NAMES_IN_ANY = setOf("equals", "hashCode", "toString")
+private val PUBLIC_METHOD_NAMES_IN_ANY: Set<String> = ["equals", "hashCode", "toString"]
 
 abstract class FirDelegatedMembersFilter : FirComposableSessionComponent<FirDelegatedMembersFilter> {
     abstract fun shouldNotGenerateDelegatedMember(memberSymbolFromSuperInterface: FirCallableSymbol<*>): Boolean

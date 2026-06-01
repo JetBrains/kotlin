@@ -25,7 +25,7 @@ class CachedClasspathSnapshotSerializerTest {
 
         val snapshot1 = ClasspathEntrySnapshot(linkedMapOf("com/example/A.class" to InaccessibleClassSnapshot))
         ClasspathEntrySnapshotExternalizer.saveToFile(snapshotFile, snapshot1)
-        val loaded1 = CachedClasspathSnapshotSerializer.load(listOf(snapshotFile), reporter)
+        val loaded1 = CachedClasspathSnapshotSerializer.load([snapshotFile], reporter)
         assertEquals(1, loaded1.classpathEntrySnapshots.single().classSnapshots.size)
 
         // Overwrite the same file with different content. The serialized sizes differ (2 entries vs 1),
@@ -37,7 +37,7 @@ class CachedClasspathSnapshotSerializerTest {
             )
         )
         ClasspathEntrySnapshotExternalizer.saveToFile(snapshotFile, snapshot2)
-        val loaded2 = CachedClasspathSnapshotSerializer.load(listOf(snapshotFile), reporter)
+        val loaded2 = CachedClasspathSnapshotSerializer.load([snapshotFile], reporter)
         assertEquals(2, loaded2.classpathEntrySnapshots.single().classSnapshots.size)
     }
 }

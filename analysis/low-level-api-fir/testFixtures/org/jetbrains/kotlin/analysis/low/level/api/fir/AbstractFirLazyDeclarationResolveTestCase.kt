@@ -163,7 +163,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
             )
         )
 
-        val declarations = mutableListOf<FirBasedSymbol<*>>()
+        val declarations: MutableList<FirBasedSymbol<*>> = []
         for (typeScope in scopes) {
             val names = typeScope.getCallableNames()
             for (name in names) {
@@ -191,7 +191,7 @@ abstract class AbstractFirLazyDeclarationResolveTestCase : AbstractAnalysisApiBa
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     protected object Directives : SimpleDirectivesContainer() {
         val MEMBER_CLASS_FILTER: ValueDirective<(FirBasedSymbol<*>) -> Boolean> by valueDirective("Choose member declaration by a declaration class") { value ->

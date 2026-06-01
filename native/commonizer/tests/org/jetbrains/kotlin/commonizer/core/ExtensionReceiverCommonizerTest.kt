@@ -25,11 +25,11 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
         assertEquals(
             Commonized(mockExtensionReceiver("kotlin/String")),
             commonizer(
-                listOf(
+                [
                     mockExtensionReceiver("kotlin/String"),
                     mockExtensionReceiver("kotlin/String"),
                     mockExtensionReceiver("kotlin/String")
-                )
+                ]
             )
         )
     }
@@ -37,11 +37,11 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
     fun `test different receiver`() {
         assertEquals(
             null, commonizer(
-                listOf(
+                [
                     mockExtensionReceiver("kotlin/String"),
                     mockExtensionReceiver("kotlin/String"),
                     mockExtensionReceiver("kotlin/Int")
-                )
+                ]
             )
         )
     }
@@ -49,18 +49,18 @@ class ExtensionReceiverCommonizerTest : AbstractInlineSourcesCommonizationTest()
     fun `test null and non-null receivers - 1`() {
         assertEquals(
             null, commonizer(
-                listOf(
+                [
                     mockExtensionReceiver("kotlin/String"),
                     mockExtensionReceiver("kotlin/String"),
                     null
-                )
+                ]
             )
         )
     }
 
     fun `test null and non-null receivers - 2`() {
         assertEquals(
-            null, commonizer(listOf(null, null, mockExtensionReceiver("kotlin/String")))
+            null, commonizer([null, null, mockExtensionReceiver("kotlin/String")])
         )
     }
 }

@@ -106,7 +106,7 @@ internal class CoroutinesVarSpillingLowering(val generationState: NativeGenerati
                     else -> expression
                 }
             }
-        }, data = emptyList())
+        }, data = [])
     }
 }
 
@@ -129,7 +129,7 @@ internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGen
 
     private fun computeVisibleVariablesAtSuspensionPoints(body: IrBody) {
         body.acceptChildrenVoid(object : IrVisitorVoid() {
-            val scopeStack = mutableListOf<MutableSet<IrVariable>>(mutableSetOf())
+            val scopeStack: MutableList<MutableSet<IrVariable>> = [[]]
 
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -137,14 +137,14 @@ internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGen
 
             override fun visitContainerExpression(expression: IrContainerExpression) {
                 if (!expression.isTransparentScope)
-                    scopeStack.push(mutableSetOf())
+                    scopeStack.push([])
                 super.visitContainerExpression(expression)
                 if (!expression.isTransparentScope)
                     scopeStack.pop()
             }
 
             override fun visitCatch(aCatch: IrCatch) {
-                scopeStack.push(mutableSetOf())
+                scopeStack.push([])
                 super.visitCatch(aCatch)
                 scopeStack.pop()
             }
@@ -159,7 +159,7 @@ internal class CoroutinesLivenessAnalysisFallback(val generationState: NativeGen
                 expression.result.acceptChildrenVoid(this)
                 expression.resumeResult.acceptChildrenVoid(this)
 
-                val visibleVariables = mutableListOf<IrVariable>()
+                val visibleVariables: MutableList<IrVariable> = []
                 scopeStack.forEach { visibleVariables += it }
                 expression.visibleVariablesAtSuspensionPoint = visibleVariables
             }

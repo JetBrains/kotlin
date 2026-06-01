@@ -29,8 +29,8 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
     override fun getTypeParameters(): Array<PsiTypeParameter> = PsiTypeParameter.EMPTY_ARRAY
     override fun getContainingClass(): KtLightClass = containerOwner
     override fun getScope(): PsiElement = containerOwner
-    override fun getOwnInnerClasses(): List<PsiClass> = emptyList()
-    override fun getOwnFields(): List<PsiField> = emptyList()
+    override fun getOwnInnerClasses(): List<PsiClass> = []
+    override fun getOwnFields(): List<PsiField> = []
     override fun isDeprecated(): Boolean = false
     override fun hasTypeParameters(): Boolean = false
 
@@ -52,9 +52,9 @@ internal class SymbolLightClassForRepeatableAnnotationContainer(private val cont
         ),
     )
 
-    override fun computeOwnMethods(): List<PsiMethod> = listOf(
+    override fun computeOwnMethods(): List<PsiMethod> = [
         SymbolLightRepeatableAnnotationContainerMethod(containerOwner.qualifiedName, this)
-    )
+    ]
 
     override fun copy(): SymbolLightClassForRepeatableAnnotationContainer = SymbolLightClassForRepeatableAnnotationContainer(containerOwner)
 

@@ -40,6 +40,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
         Assumptions.assumeFalse(testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED)
     }
 
+    @Suppress("ConvertToCollectionLiterals")
     protected fun runTest(@TestDataFile testDir: String) {
         val testDataDir = getAbsoluteFile(testDir)
         val testStructure = extractTestStructure(testDataDir)
@@ -132,7 +133,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                     outputDir(moduleName),
                     freeCompilerArgs = TestCompilerArgs(
                         // otherwise, it might shadow some problems with inline functions.
-                        listOf("-XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization") + moduleStep.cliArguments
+                        ["-XXLanguage:-IrIntraModuleInlinerBeforeKlibSerialization"] + moduleStep.cliArguments
                     ),
                     dependencies = moduleStep.dependencies.toCompilationDependencies(),
                 )
@@ -149,13 +150,13 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
                 mainModule.sourceDir,
                 tryPassSystemCacheDirectory = false,
                 freeCompilerArgs = TestCompilerArgs(
-                    listOf(
+                    [
                         "-Xauto-cache-from=${externalLibsDir.absolutePath}",
                         "-Xauto-cache-dir=${autoCacheDir.absolutePath}",
                         "-Xic-cache-dir=${icCacheDir.absolutePath}",
                         "-Xenable-incremental-compilation",
                         "-verbose",
-                    ) + mainStep.cliArguments
+                    ] + mainStep.cliArguments
                 ),
                 dependencies = mainStep.dependencies.toCompilationDependencies(),
             )

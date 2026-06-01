@@ -121,7 +121,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun getOwnMethods(): List<PsiMethod> = cachedValue {
         withClassSymbol { classSymbol ->
-            val result = mutableListOf<PsiMethod>()
+            val result: MutableList<PsiMethod> = []
 
             // We should use the combined declared member scope here because an enum class may contain static callables.
             val declaredMemberScope = classSymbol.combinedDeclaredMemberScope
@@ -291,7 +291,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
 
     override fun getOwnFields(): List<PsiField> = cachedValue {
         withClassSymbol { classSymbol ->
-            val result = mutableListOf<PsiField>()
+            val result: MutableList<PsiField> = []
 
             // First, add static fields: companion object and fields from companion object
             addCompanionObjectFieldIfNeeded(result, classSymbol)

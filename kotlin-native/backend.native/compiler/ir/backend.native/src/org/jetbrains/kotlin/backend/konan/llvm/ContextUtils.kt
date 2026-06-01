@@ -387,8 +387,8 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     internal fun externalNativeRuntimeFunction(
             name: String,
             returnType: LlvmRetType,
-            parameterTypes: List<LlvmParamType> = emptyList(),
-            functionAttributes: List<LlvmFunctionAttribute> = emptyList(),
+            parameterTypes: List<LlvmParamType> = [],
+            functionAttributes: List<LlvmFunctionAttribute> = [],
             isVararg: Boolean = false
     ) = externalFunction(
             LlvmFunctionSignature(returnType, parameterTypes, isVararg, functionAttributes).toProto(
@@ -404,7 +404,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
 
     val dependenciesTracker get() = generationState.dependenciesTracker
 
-    val additionalProducedBitcodeFiles = mutableListOf<String>()
+    val additionalProducedBitcodeFiles: MutableList<String> = []
 
     val staticData = KotlinStaticData(generationState, this, module)
 
@@ -507,11 +507,11 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val Kotlin_intArrayGetElementAddress by lazy { importRtFunction("Kotlin_intArrayGetElementAddress", false) }
     val Kotlin_longArrayGetElementAddress by lazy { importRtFunction("Kotlin_longArrayGetElementAddress", false) }
 
-    val usedFunctions = mutableListOf<LlvmCallable>()
-    val usedGlobals = mutableListOf<LLVMValueRef>()
-    val compilerUsedGlobals = mutableListOf<LLVMValueRef>()
-    val irStaticInitializers = mutableListOf<IrStaticInitializer>()
-    val otherStaticInitializers = mutableListOf<LlvmCallable>()
+    val usedFunctions: MutableList<LlvmCallable> = []
+    val usedGlobals: MutableList<LLVMValueRef> = []
+    val compilerUsedGlobals: MutableList<LLVMValueRef> = []
+    val irStaticInitializers: MutableList<IrStaticInitializer> = []
+    val otherStaticInitializers: MutableList<LlvmCallable> = []
     val initializersGenerationState = InitializersGenerationState()
     val boxCacheGlobals = mutableMapOf<BoxCache, StaticData.Global>()
 
@@ -607,27 +607,27 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val cxxStdTerminate = externalNativeRuntimeFunction(
             "_ZSt9terminatev", // mangled C++ 'std::terminate'
             returnType = LlvmRetType(voidType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
+            functionAttributes = [LlvmFunctionAttribute.NoUnwind]
     )
 
     val gxxPersonalityFunction = externalNativeRuntimeFunction(
             personalityFunctionName,
             returnType = LlvmRetType(int32Type, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
+            functionAttributes = [LlvmFunctionAttribute.NoUnwind],
             isVararg = true
     )
 
     val cxaBeginCatchFunction = externalNativeRuntimeFunction(
             "__cxa_begin_catch",
             returnType = LlvmRetType(pointerType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind),
-            parameterTypes = listOf(LlvmParamType(pointerType))
+            functionAttributes = [LlvmFunctionAttribute.NoUnwind],
+            parameterTypes = [LlvmParamType(pointerType)]
     )
 
     val cxaEndCatchFunction = externalNativeRuntimeFunction(
             "__cxa_end_catch",
             returnType = LlvmRetType(voidType, isObjectType = false),
-            functionAttributes = listOf(LlvmFunctionAttribute.NoUnwind)
+            functionAttributes = [LlvmFunctionAttribute.NoUnwind]
     )
 
     private fun getSizeOfTypeInBits(type: LLVMTypeRef): Long {

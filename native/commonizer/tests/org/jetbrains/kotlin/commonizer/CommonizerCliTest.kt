@@ -62,7 +62,7 @@ class CommonizerCliTest {
     private fun doTestWithArgfile(contents: String, assertions: (List<Task>) -> Unit) {
         val tempFile = File.createTempFile("CommonizerCliTest", testName.methodName)
         tempFile.writeText(contents)
-        val tasks = parseTasksFromCommandLineArguments(arrayOf("@${tempFile.absoluteFile}"))
+        val tasks = parseTasksFromCommandLineArguments(["@${tempFile.absoluteFile}"])
         assertions(tasks)
     }
 }

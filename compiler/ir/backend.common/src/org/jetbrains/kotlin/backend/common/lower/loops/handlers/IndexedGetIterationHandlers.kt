@@ -105,7 +105,7 @@ internal class ArrayIterationHandler(context: CommonBackendContext) : IndexedGet
                     it.hasShape(
                         dispatchReceiver = true,
                         regularParameters = 1,
-                        parameterTypes = listOf(null, context.irBuiltIns.intType)
+                        parameterTypes = [null, context.irBuiltIns.intType]
                     )
         }
 }

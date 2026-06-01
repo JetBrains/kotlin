@@ -34,8 +34,8 @@ data class BuildOperationRecordImpl(
     //taskRecords
     val kotlinLanguageVersion: KotlinVersion?,
     val changedFiles: SourcesChanges? = null,
-    val compilerArguments: List<String> = emptyList(),
-    val statTags: Set<StatTag> = emptySet(),
+    val compilerArguments: List<String> = [],
+    val statTags: Set<StatTag> = [],
 ) : BuildOperationRecord
 
 //KT-66071 update deserialization

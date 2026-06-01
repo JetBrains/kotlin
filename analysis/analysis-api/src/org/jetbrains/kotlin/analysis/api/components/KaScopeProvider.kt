@@ -120,7 +120,7 @@ public interface KaScopeProvider : KaSessionComponent {
      */
     public val KaDeclarationContainerSymbol.combinedMemberScope: KaScope
         get() = withValidityAssertion {
-            return listOf(memberScope, staticMemberScope).asCompositeScope()
+            return [memberScope, staticMemberScope].asCompositeScope()
         }
 
     /**

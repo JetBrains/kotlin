@@ -76,7 +76,7 @@ class JvmAbiOutputExtension(
                     is AbiClassInfo.Stripped -> {
                         val prune = abiInfo.prune
                         val memberInfo = abiInfo.memberInfo
-                        val innerClassesToKeep = mutableSetOf<String>()
+                        val innerClassesToKeep: MutableSet<String> = []
 
                         var sourceFile: String? = null
                         var sourceMap: SourceMapCopier? = null
@@ -91,8 +91,8 @@ class JvmAbiOutputExtension(
                         })
                         val parsingOptions = if (removeDebugInfo) ClassReader.SKIP_DEBUG else 0
                         ClassReader(outputFile.asByteArray()).accept(object : ClassVisitor(Opcodes.API_VERSION, remapper) {
-                            private val keptFields = mutableListOf<FieldNode>()
-                            private val keptMethods = mutableListOf<MethodNode>()
+                            private val keptFields: MutableList<FieldNode> = []
+                            private val keptMethods: MutableList<MethodNode> = []
                             private val innerClassInfos = mutableMapOf<String, InnerClassInfo>()
 
                             override fun visitSource(source: String?, debug: String?) {
@@ -214,7 +214,7 @@ class JvmAbiOutputExtension(
         // should be kept in its own class file even if the classes are otherwise unused.
         private fun MutableSet<String>.addInnerClasses(innerClassInfos: Map<String, InnerClassInfo>, internalName: String) {
             val innerClassesByOuterName = innerClassInfos.values.groupBy { it.outerName }
-            val stack = mutableListOf(internalName)
+            val stack: MutableList<String> = [internalName]
             while (stack.isNotEmpty()) {
                 val next = stack.removeLast()
                 add(next)

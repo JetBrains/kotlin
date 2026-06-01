@@ -68,7 +68,7 @@ fun extractNativeToolSettings(
     }
 
     return if (settingsHeader.trimEnd().endsWith(']'))
-        emptySequence() // No parameters.
+        [] // No parameters.
     else
         settings.drop(1).map { it.trim() }.takeWhile { it != "]" }
 }

@@ -106,13 +106,13 @@ open class OverloadingConflictResolver<C : Any>(
 
         val maximallySpecific = findMaximallySpecific(noOverrides, checkArgumentsMode, false)
         if (maximallySpecific != null) {
-            return setOf(maximallySpecific)
+            return [maximallySpecific]
         }
 
         if (discriminateGenerics) {
             val maximallySpecificGenericsDiscriminated = findMaximallySpecific(noOverrides, checkArgumentsMode, true)
             if (maximallySpecificGenericsDiscriminated != null) {
-                return setOf(maximallySpecificGenericsDiscriminated)
+                return [maximallySpecificGenericsDiscriminated]
             }
         }
 

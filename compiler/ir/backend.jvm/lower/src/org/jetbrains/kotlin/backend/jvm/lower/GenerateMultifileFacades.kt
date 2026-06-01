@@ -108,7 +108,7 @@ private fun generateMultifileFacades(
             }
             if (shouldGeneratePartHierarchy) {
                 val superClass = modifyMultifilePartsForHierarchy(context, partClasses)
-                superTypes = listOf(superClass.typeWith())
+                superTypes = [superClass.typeWith()]
 
                 addConstructor {
                     visibility = DescriptorVisibilities.PRIVATE
@@ -170,13 +170,13 @@ private fun generateMultifileFacades(
 // Changes supertypes of multifile part classes so that they inherit from each other, and returns the last part class.
 // The multifile facade should inherit from that part class.
 private fun modifyMultifilePartsForHierarchy(context: JvmBackendContext, parts: List<IrClass>): IrClass {
-    val superClasses = listOf(context.irBuiltIns.anyClass.owner) + parts.subList(0, parts.size - 1)
+    val superClasses = [context.irBuiltIns.anyClass.owner] + parts.subList(0, parts.size - 1)
 
     for ([klass, superClass] in parts.zip(superClasses)) {
         klass.modality = Modality.OPEN
         klass.visibility = JavaDescriptorVisibilities.PACKAGE_VISIBILITY
 
-        klass.superTypes = listOf(superClass.typeWith())
+        klass.superTypes = [superClass.typeWith()]
 
         klass.addConstructor {
             isPrimary = true
@@ -200,7 +200,7 @@ private fun moveFieldsOfConstProperties(partClass: IrClass, facadeClass: IrClass
                 member.correspondingPropertySymbol = newProperty.symbol
                 newProperty.backingField = member
             }
-            emptyList()
+            []
         } else null
     }
 }
@@ -256,7 +256,7 @@ private fun IrSimpleFunction.createMultifileDelegateIfNeeded(
     if (shouldGeneratePartHierarchy) {
         function.origin = IrDeclarationOrigin.FAKE_OVERRIDE
         function.body = null
-        function.overriddenSymbols = listOf(symbol)
+        function.overriddenSymbols = [symbol]
     } else {
         function.overriddenSymbols = overriddenSymbols.toList()
         function.body = context.createIrBuilder(function.symbol).irBlockBody {

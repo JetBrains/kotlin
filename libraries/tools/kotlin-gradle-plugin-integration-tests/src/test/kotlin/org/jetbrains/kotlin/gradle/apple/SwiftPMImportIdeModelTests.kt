@@ -48,7 +48,7 @@ class SwiftPMImportIdeModelTests : KGPBaseTest() {
 
             val producer = project("empty", version) {
                 val localPackage = projectPath.resolve("localPackage").also { it.createDirectories() }.toFile()
-                runProcess(listOf("swift", "package", "init", "--type", "library"), localPackage)
+                runProcess(["swift", "package", "init", "--type", "library"], localPackage)
 
                 plugins {
                     kotlin("multiplatform")
@@ -58,7 +58,7 @@ class SwiftPMImportIdeModelTests : KGPBaseTest() {
                         iosArm64()
 
                         swiftPMDependencies {
-                            localSwiftPackage(project.layout.projectDirectory.dir("localPackage"), products = listOf("localPackage"))
+                            localSwiftPackage(project.layout.projectDirectory.dir("localPackage"), products = ["localPackage"])
                         }
                     }
                 }

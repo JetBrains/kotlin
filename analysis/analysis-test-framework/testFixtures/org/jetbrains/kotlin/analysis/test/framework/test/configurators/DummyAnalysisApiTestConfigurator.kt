@@ -20,7 +20,7 @@ object DummyAnalysisApiTestConfigurator : AnalysisApiTestConfigurator {
     override val analysisApiMode: AnalysisApiMode get() = AnalysisApiMode.Ide
     override val analyseInDependentSession: Boolean get() = false
     override fun configureTest(builder: TestConfigurationBuilder, disposable: Disposable) {}
-    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> get() = emptyList()
+    override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> get() = []
 
     override fun createModules(
         moduleStructure: TestModuleStructure,
@@ -28,7 +28,7 @@ object DummyAnalysisApiTestConfigurator : AnalysisApiTestConfigurator {
         project: Project,
     ): KtTestModuleStructure = KtTestModuleStructure(
         testModuleStructure = moduleStructure,
-        mainModules = emptyList(),
-        binaryModules = emptyList(),
+        mainModules = [],
+        binaryModules = [],
     )
 }

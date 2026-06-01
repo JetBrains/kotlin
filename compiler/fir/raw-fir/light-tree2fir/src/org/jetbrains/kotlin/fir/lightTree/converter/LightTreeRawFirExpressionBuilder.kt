@@ -177,7 +177,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.fir.builder.PsiRawFirBuilder.Visitor.visitLambdaExpression
      */
     private fun convertLambdaExpression(lambdaExpression: LighterASTNode): FirAnonymousFunctionExpression {
-        val valueParameterList = mutableListOf<ValueParameter>()
+        val valueParameterList: MutableList<ValueParameter> = []
         var block: LighterASTNode? = null
         var hasArrow = false
 
@@ -214,7 +214,7 @@ class LightTreeRawFirExpressionBuilder(
             }
             target = FirFunctionTarget(labelName = label?.name, isLambda = true)
             context.firFunctionTargets += target
-            val destructuringStatements = mutableListOf<FirStatement>()
+            val destructuringStatements: MutableList<FirStatement> = []
             for (valueParameter in valueParameterList) {
                 val multiDeclaration = valueParameter.destructuringDeclaration
                 valueParameters += if (multiDeclaration != null) {
@@ -300,8 +300,8 @@ class LightTreeRawFirExpressionBuilder(
      * `null` if the binary expression could not be folded.
      */
     private fun tryFoldStringConcatenation(binaryExpression: LighterASTNode): FirExpression? {
-        val input = mutableListOf<LighterASTNode?>()
-        val output = mutableListOf<LighterASTNode?>()
+        val input: MutableList<LighterASTNode?> = []
+        val output: MutableList<LighterASTNode?> = []
         input.add(binaryExpression)
         while (input.isNotEmpty()) {
             val node = input.pop()
@@ -571,7 +571,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertAnnotatedExpression(annotatedExpression: LighterASTNode): FirStatement {
         var firExpression: FirStatement? = null
-        val firAnnotationList = mutableListOf<FirAnnotation>()
+        val firAnnotationList: MutableList<FirAnnotation> = []
         annotatedExpression.forEachChildren {
             when (it.tokenType) {
                 ANNOTATION -> declarationBuilder.convertAnnotationTo(it, firAnnotationList)
@@ -743,8 +743,8 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertCallExpression(callSuffix: LighterASTNode): FirExpression {
         var name: String? = null
-        val firTypeArguments = mutableListOf<FirTypeProjection>()
-        val valueArguments = mutableListOf<LighterASTNode>()
+        val firTypeArguments: MutableList<FirTypeProjection> = []
+        val valueArguments: MutableList<LighterASTNode> = []
         var additionalArgument: FirExpression? = null
         var hasArguments = false
         var superNode: LighterASTNode? = null
@@ -866,7 +866,7 @@ class LightTreeRawFirExpressionBuilder(
     }
 
     private fun LighterASTNode?.convertShortOrLongStringTemplate(errorReason: String): Collection<FirExpression> {
-        val firExpressions = mutableListOf<FirExpression>()
+        val firExpressions: MutableList<FirExpression> = []
         this?.forEachChildren {
             when (it.tokenType) {
                 LONG_TEMPLATE_ENTRY_START, LONG_TEMPLATE_ENTRY_END, SHORT_TEMPLATE_ENTRY_START -> return@forEachChildren
@@ -890,8 +890,8 @@ class LightTreeRawFirExpressionBuilder(
     private fun convertWhenExpression(whenExpression: LighterASTNode): FirWhenExpression {
         var subjectExpression: FirExpression? = null
         var subjectVariable: FirVariable? = null
-        val whenEntryNodes = mutableListOf<LighterASTNode>()
-        val whenEntries = mutableListOf<WhenEntry>()
+        val whenEntryNodes: MutableList<LighterASTNode> = []
+        val whenEntries: MutableList<WhenEntry> = []
         whenExpression.forEachChildren {
             when (it.tokenType) {
                 PROPERTY -> subjectVariable = (declarationBuilder.convertPropertyDeclaration(it) as FirVariable).let { variable ->
@@ -996,7 +996,7 @@ class LightTreeRawFirExpressionBuilder(
     ): WhenEntry {
         var isElse = false
         var firBlock: FirBlock = buildEmptyExpressionBlock()
-        val conditions = mutableListOf<FirExpression>()
+        val conditions: MutableList<FirExpression> = []
         var guard: FirExpression? = null
         var shouldBindSubject = false
         whenEntry.forEachChildren {
@@ -1153,7 +1153,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertArrayAccessExpression(arrayAccess: LighterASTNode): FirExpression {
         var firExpression: FirExpression? = null
-        val indices: MutableList<FirExpression> = mutableListOf()
+        val indices: MutableList<FirExpression> = []
         arrayAccess.forEachChildren {
             when (it.tokenType) {
                 INDICES -> indices += convertIndices(it)
@@ -1182,7 +1182,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseCollectionLiteralExpression
      */
     private fun convertCollectionLiteralExpression(expression: LighterASTNode): FirCollectionLiteral {
-        val firExpressionList = mutableListOf<FirExpression>()
+        val firExpressionList: MutableList<FirExpression> = []
         expression.forEachChildren {
             if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect collection literal argument")
         }
@@ -1199,7 +1199,7 @@ class LightTreeRawFirExpressionBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinExpressionParsing.parseAsCollectionLiteralExpression
      */
     private fun convertIndices(indices: LighterASTNode): List<FirExpression> {
-        val firExpressionList: MutableList<FirExpression> = mutableListOf()
+        val firExpressionList: MutableList<FirExpression> = []
         indices.forEachChildren {
             if (it.isExpression()) firExpressionList += getAsFirExpression<FirExpression>(it, "Incorrect index expression")
         }
@@ -1419,7 +1419,7 @@ class LightTreeRawFirExpressionBuilder(
      */
     private fun convertTryExpression(tryExpression: LighterASTNode): FirTryExpression {
         lateinit var tryBlock: FirBlock
-        val catchClauses = mutableListOf<Triple<ValueParameter?, FirBlock, KtLightSourceElement>>()
+        val catchClauses: MutableList<Triple<ValueParameter?, FirBlock, KtLightSourceElement>> = []
         var finallyBlock: FirBlock? = null
         tryExpression.forEachChildren {
             when (it.tokenType) {

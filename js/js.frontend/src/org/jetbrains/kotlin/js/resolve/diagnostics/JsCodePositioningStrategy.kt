@@ -27,6 +27,6 @@ object JsCodePositioningStrategy : PositioningStrategy<PsiElement>() {
         @Suppress("UNCHECKED_CAST")
         val diagnosticWithParameters = diagnostic as DiagnosticWithParameters1<KtExpression, JsCallData>
         val textRange = diagnosticWithParameters.a.reportRange
-        return listOf(textRange)
+        return [textRange]
     }
 }

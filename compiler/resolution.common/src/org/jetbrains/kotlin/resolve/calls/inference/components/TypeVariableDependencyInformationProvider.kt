@@ -186,8 +186,8 @@ class TypeVariableDependencyInformationProvider(
         }
 
 
-    private fun getConstraintEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = deepTypeVariableDependencies[from] ?: emptySet()
-    private fun getPostponeEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = postponeArgumentsEdges[from] ?: emptySet()
+    private fun getConstraintEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = deepTypeVariableDependencies[from] ?: []
+    private fun getPostponeEdges(from: TypeConstructorMarker): Set<TypeConstructorMarker> = postponeArgumentsEdges[from] ?: []
 
     private fun addAllRelatedNodes(to: MutableSet<TypeConstructorMarker>, node: TypeConstructorMarker, includePostponedEdges: Boolean) {
         if (to.add(node)) {

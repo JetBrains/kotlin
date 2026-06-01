@@ -68,10 +68,10 @@ fun IrBody.prependFunctionCall(
         is IrExpressionBody -> {
             expression = JsIrBuilder.buildComposite(
                 type = expression.type,
-                statements = listOf(
+                statements = [
                     call,
                     expression
-                )
+                ]
             )
         }
         is IrBlockBody -> {

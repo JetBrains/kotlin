@@ -27,7 +27,7 @@ fun preprocessCommandLineArguments(args: List<String>, errors: Lazy<ArgumentPars
         if (arg.isArgfileArgument) {
             File(arg.argfilePath).expand(errors.value)
         } else {
-            listOf(arg)
+            [arg]
         }
     }
 
@@ -45,10 +45,10 @@ private fun File.expand(errors: ArgumentParseErrors): List<String> {
     } catch (e: FileNotFoundException) {
         // Process FNFE separately to render absolutePath in error message
         errors.argfileErrors += "Argfile not found: $absolutePath"
-        emptyList()
+        []
     } catch (e: IOException) {
         errors.argfileErrors += "Error while reading argfile: $e"
-        emptyList()
+        []
     }
 }
 

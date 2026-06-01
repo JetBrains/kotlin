@@ -76,7 +76,7 @@ abstract class MemberTemplateDefinition<TParam> : MemberTemplate {
         }
     }
 
-    private val buildActions = mutableListOf<BuildAction>()
+    private val buildActions: MutableList<BuildAction> = []
 
     private var allowedPlatforms = Platform.entries.toSet()
     override fun platforms(vararg platforms: Platform) {
@@ -150,7 +150,7 @@ private fun defaultPrimitives(f: Family): Set<PrimitiveType> =
         f == Family.Unsigned || f == Family.ArraysOfUnsigned -> PrimitiveType.unsignedPrimitives
         f == Family.RangesOfPrimitives -> PrimitiveType.rangePrimitives
         f.isPrimitiveSpecialization -> PrimitiveType.defaultPrimitives
-        else -> emptySet()
+        else -> []
     }
 
 @TemplateDsl

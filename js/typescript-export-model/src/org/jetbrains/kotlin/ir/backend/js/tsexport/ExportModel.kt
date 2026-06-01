@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 public sealed class ExportedDeclaration {
-    public val attributes: MutableSet<ExportedAttribute> = mutableSetOf()
+    public val attributes: MutableSet<ExportedAttribute> = []
     public open val isProtected: Boolean
         get() = false
 }
@@ -54,7 +54,7 @@ public data class ExportedFunction(
     override val name: ExportedMemberName,
     val returnType: ExportedType,
     val parameters: List<ExportedParameter>,
-    val typeParameters: List<ExportedTypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = [],
     override val isMember: Boolean = false,
     override val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
@@ -72,7 +72,7 @@ public data class ExportedConstructor(
 public data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
     val returnType: ExportedType,
-    val typeParameters: List<ExportedTypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = [],
     override val isProtected: Boolean,
 ) : ExportedDeclaration()
 
@@ -136,8 +136,8 @@ public data class ExportedRegularClass(
     val isInterface: Boolean = false,
     val isAbstract: Boolean = false,
     val requireMetadata: Boolean = !isInterface,
-    override val superClasses: List<ExportedType> = emptyList(),
-    override val superInterfaces: List<ExportedType> = emptyList(),
+    override val superClasses: List<ExportedType> = [],
+    override val superInterfaces: List<ExportedType> = [],
     val typeParameters: List<ExportedTypeParameter>,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
@@ -150,11 +150,11 @@ public data class ExportedRegularClass(
 
 public data class ExportedObject(
     override val name: String,
-    override val superClasses: List<ExportedType> = emptyList(),
-    override val superInterfaces: List<ExportedType> = emptyList(),
+    override val superClasses: List<ExportedType> = [],
+    override val superInterfaces: List<ExportedType> = [],
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
-    val typeParameters: List<ExportedTypeParameter> = emptyList(),
+    val typeParameters: List<ExportedTypeParameter> = [],
     override val originalClassId: ClassId?,
     override val isExternal: Boolean,
     override val isCompanion: Boolean,

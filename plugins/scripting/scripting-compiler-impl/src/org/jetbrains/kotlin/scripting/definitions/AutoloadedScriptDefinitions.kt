@@ -30,9 +30,9 @@ class AutoloadedScriptDefinitions(
         if (mainKtsJars != null && mainKtsJars.size >= MAIN_KTS_JARS.size) {
             yieldAll(
                 loadScriptTemplatesFromClasspath(
-                    listOf("org.jetbrains.kotlin.mainKts.MainKtsScript"),
+                    ["org.jetbrains.kotlin.mainKts.MainKtsScript"],
                     mainKtsJars,
-                    emptyList<File>(),
+                    [],
                     baseClassloader,
                     hostConfiguration,
                     messageReporter
@@ -42,6 +42,6 @@ class AutoloadedScriptDefinitions(
     }
 
     companion object {
-        private val MAIN_KTS_JARS = listOf("kotlin-main-kts", "kotlin-stdlib", "kotlin-script-runtime", "kotlin-reflect")
+        private val MAIN_KTS_JARS = ["kotlin-main-kts", "kotlin-stdlib", "kotlin-script-runtime", "kotlin-reflect"]
     }
 }

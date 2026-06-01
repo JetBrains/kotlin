@@ -58,7 +58,7 @@ public sealed interface KaCallableSignature<out S : KaCallableSymbol> : KaLifeti
      * The use-site-substituted [context parameters][org.jetbrains.kotlin.analysis.api.symbols.contextParameters].
      */
     @KaExperimentalApi
-    public val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> get() = withValidityAssertion { emptyList() }
+    public val contextParameters: List<KaVariableSignature<KaContextParameterSymbol>> get() = withValidityAssertion { [] }
 
     /**
      * Applies the given [substitutor] to the signature, returning a new signature with substituted types.

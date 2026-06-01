@@ -12,7 +12,7 @@ class VersionRequirementTable private constructor(private val infos: List<ProtoB
     operator fun get(id: Int): ProtoBuf.VersionRequirement? = infos.getOrNull(id)
 
     companion object {
-        val EMPTY = VersionRequirementTable(emptyList())
+        val EMPTY = VersionRequirementTable([])
 
         fun create(table: ProtoBuf.VersionRequirementTable): VersionRequirementTable =
             if (table.requirementCount == 0) EMPTY else VersionRequirementTable(

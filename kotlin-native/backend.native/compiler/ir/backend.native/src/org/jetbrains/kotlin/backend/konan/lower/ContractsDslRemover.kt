@@ -19,7 +19,7 @@ internal class ContractsDslRemover(val context: Context) : DeclarationContainerL
             if (it is IrClass && it.annotations.hasAnnotation(ContractsDslNames.CONTRACTS_DSL_ANNOTATION_FQN))
                 null
             else
-                listOf(it)
+                [it]
         }
     }
 }

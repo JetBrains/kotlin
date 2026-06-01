@@ -35,7 +35,7 @@ class CustomKlibCompilerFirstStageTestSuppressor(
     private val defaultLanguageVersion: LanguageVersion,
 ) : TestFailureSuppressor(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CustomKlibCompilerTestDirectives)
+        get() = [CustomKlibCompilerTestDirectives]
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val newFailedAssertions = failedAssertions.asSequence().flatMap { wrappedException ->
@@ -52,10 +52,10 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                 when (wrappedException.handler) {
                     is NoFirCompilationErrorsHandler -> processFirstStageException(wrappedException)
                     is BinaryArtifactHandler -> processNonFirstStageException(wrappedException, IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE)
-                    else -> listOf(wrappedException)
+                    else -> [wrappedException]
                 }
             } else {
-                listOf(wrappedException)
+                [wrappedException]
             }
         }.toList()
 
@@ -69,13 +69,13 @@ class CustomKlibCompilerFirstStageTestSuppressor(
 
     private fun processFirstStageException(wrappedException: WrappedException): List<WrappedException> {
         val (exitCode, compilerOutput) = wrappedException.cause as? CustomKlibCompilerException
-            ?: return listOf(wrappedException)
+            ?: return [wrappedException]
 
         return when (exitCode) {
             ExitCode.COMPILATION_ERROR -> {
                 // Make sure that the compilation failure really looks like a frontend error. Otherwise, fail the test.
                 if (!FRONTEND_ERROR_MESSAGE_REGEX.containsMatchIn(compilerOutput)) {
-                    listOf(
+                    [
                         wrappedException,
                         AssertionError(
                             """
@@ -84,15 +84,15 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                                         Compiler output: $compilerOutput
                                     """.trimIndent()
                         ).wrap()
-                    )
+                    ]
                 } else {
-                    emptyList()
+                    []
                 }
             }
             ExitCode.INTERNAL_ERROR -> {
                 // Make sure that the compilation failure really looks like an exception in the compiler. Otherwise, fail the test.
                 if (!COMPILER_EXCEPTION_MESSAGE_REGEX.containsMatchIn(compilerOutput)) {
-                    listOf(
+                    [
                         wrappedException,
                         AssertionError(
                             """
@@ -101,27 +101,27 @@ class CustomKlibCompilerFirstStageTestSuppressor(
                                         Compiler output: $compilerOutput
                                     """.trimIndent()
                         ).wrap()
-                    )
+                    ]
                 } else {
-                    emptyList()
+                    []
                 }
             }
-            else -> listOf(wrappedException)
+            else -> [wrappedException]
         }
     }
 
     private fun processNonFirstStageException(wrappedException: WrappedException, ignoreDirective: StringDirective): List<WrappedException> {
         if (testServices.versionAndTargetAreIgnored(ignoreDirective, defaultLanguageVersion))
-            return emptyList()
+            return []
 
         if (testServices.moduleStructure.modules.any {
                 it.files.any { file -> JsEnvironmentConfigurationDirectives.RECOMPILE in file.directives }
             }) {
             // Backward compatibility is not provided for incremental caches, so these tests may fail during backward compatibility testing
-            return emptyList()
+            return []
         }
 
-        return listOf(wrappedException)
+        return [wrappedException]
     }
 
     override fun checkIfTestShouldBeUnmuted() {

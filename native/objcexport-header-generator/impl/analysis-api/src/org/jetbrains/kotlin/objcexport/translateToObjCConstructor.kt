@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<ObjCMethod> {
 
     /* Translate declared constructors */
+    @Suppress("ConvertToCollectionLiterals")
     val result = with(analysisSession) { symbol.declaredMemberScope }
         .constructors
         .filter { !it.hasExportForCompilerAnnotation }
@@ -27,7 +28,7 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
         .sortedWith(analysisSession.getStableCallableOrder())
         .flatMap { constructor ->
             val objCConstructor = buildObjCMethod(constructor)
-            listOf(objCConstructor) + if (objCConstructor.name == "init") listOf(analysisSession.buildNewInitConstructor(constructor)) else emptyList()
+            [objCConstructor] + if (objCConstructor.name == "init") listOf(analysisSession.buildNewInitConstructor(constructor)) else []
         }
         .toMutableList()
 
@@ -41,9 +42,9 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
                 origin = null,
                 isInstanceMethod = false,
                 returnType = ObjCInstanceType,
-                selectors = listOf("alloc"),
-                parameters = emptyList(),
-                attributes = listOf("unavailable")
+                selectors = ["alloc"],
+                parameters = [],
+                attributes = ["unavailable"]
             )
         )
 
@@ -53,9 +54,9 @@ fun ObjCExportContext.translateToObjCConstructors(symbol: KaClassSymbol): List<O
                 origin = analysisSession.getObjCExportStubOrigin(symbol),
                 isInstanceMethod = false,
                 returnType = ObjCInstanceType,
-                selectors = listOf("allocWithZone:"),
-                parameters = listOf(ObjCParameter("zone", null, ObjCRawType("struct _NSZone *"), null)),
-                attributes = listOf("unavailable")
+                selectors = ["allocWithZone:"],
+                parameters = [ObjCParameter("zone", null, ObjCRawType("struct _NSZone *"), null)],
+                attributes = ["unavailable"]
             )
         )
     }
@@ -92,11 +93,11 @@ private fun KaSession.buildNewInitConstructor(constructor: KaFunctionSymbol): Ob
         origin = getObjCExportStubOrigin(constructor),
         isInstanceMethod = false,
         returnType = ObjCInstanceType,
-        selectors = listOf("new"),
-        parameters = emptyList(),
-        attributes = listOf(
+        selectors = ["new"],
+        parameters = [],
+        attributes = [
             "availability(swift, unavailable, message=\"use object initializers instead\")"
-        )
+        ]
     )
 }
 
@@ -109,9 +110,9 @@ private fun KaSession.buildNewInitSuperConstructor(constructor: KaFunctionSymbol
         origin = getObjCExportStubOrigin(constructor),
         isInstanceMethod = false,
         returnType = ObjCInstanceType,
-        selectors = listOf("new"),
-        parameters = emptyList(),
-        attributes = listOf("unavailable")
+        selectors = ["new"],
+        parameters = [],
+        attributes = ["unavailable"]
     )
 }
 

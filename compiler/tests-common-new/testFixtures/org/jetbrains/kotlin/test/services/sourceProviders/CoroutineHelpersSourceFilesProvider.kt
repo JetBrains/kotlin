@@ -26,7 +26,7 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices) : Addition
     private val tailCallOptimizationCheckerPath = "$helpersPath/TailCallOptimizationChecker.kt"
 
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(AdditionalFilesDirectives)
+        [AdditionalFilesDirectives]
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun produceAdditionalFiles(
@@ -34,7 +34,7 @@ class CoroutineHelpersSourceFilesProvider(testServices: TestServices) : Addition
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (WITH_COROUTINES !in module.directives) return emptyList()
+        if (WITH_COROUTINES !in module.directives) return []
         return buildList {
             val classLoader = this::class.java.classLoader
             add(classLoader.getResource(coroutineHelpersPath)!!.toTestFile())

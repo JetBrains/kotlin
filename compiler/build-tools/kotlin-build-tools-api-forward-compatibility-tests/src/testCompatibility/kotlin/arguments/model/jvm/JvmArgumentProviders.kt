@@ -66,10 +66,10 @@ internal class InvalidRawValueJvmCompilerArgumentsStrategyAgnosticArgumentProvid
 }
 
 private fun namedInvalidRawValueStrategicArgumentConfigurations(): List<Named<Pair<JvmArgumentConfiguration<*>, ExecutionPolicy>>> {
-    val strategies: List<Named<ExecutionPolicy>> = listOf(
+    val strategies: List<Named<ExecutionPolicy>> = [
         named("[in-process]", toolchain.createInProcessExecutionPolicy()),
         named("[daemon]", toolchain.daemonExecutionPolicyBuilder().build()),
-    )
+    ]
     val compilerArguments = namedArgumentConfiguration { it.runsInvalidRawValueTest }
     return strategies.flatMap { namedStrategy ->
         compilerArguments.map { namedArgConfig ->
@@ -92,317 +92,317 @@ private fun namedArgumentConfiguration(
 private val testBaseDir: Path = Paths.get("").toAbsolutePath()
 
 @OptIn(ExperimentalCompilerArgument::class)
-private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = listOf(
+private val jvmArgumentTestDescriptors: List<JvmArgumentTestDescriptor<*>> = [
     JvmArgumentTestDescriptor(
         argumentName = "Xabi-stability",
         argument = X_ABI_STABILITY,
-        argumentValues = listOf("stable", "unstable"),
-        argumentRawValues = listOf("stable", "unstable"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["stable", "unstable"],
+        argumentRawValues = ["stable", "unstable"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xabi-stability=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xabi-stability=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xadd-modules",
         argument = X_ADD_MODULES,
-        argumentValues = listOf(arrayOf("module1", "module2", "module3")),
-        argumentRawValues = listOf(arrayOf("module1", "module2", "module3").joinToString(",")),
+        argumentValues = [["module1", "module2", "module3"]],
+        argumentRawValues = [arrayOf("module1", "module2", "module3").joinToString(",")],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xadd-modules=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xadd-modules=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xassertions",
         argument = X_ASSERTIONS,
-        argumentValues = listOf("always-enable", "always-disable", "jvm", "legacy"),
-        argumentRawValues = listOf("always-enable", "always-disable", "jvm", "legacy"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["always-enable", "always-disable", "jvm", "legacy"],
+        argumentRawValues = ["always-enable", "always-disable", "jvm", "legacy"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xassertions=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xassertions=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "classpath",
         argument = CLASSPATH,
-        argumentValues = listOf(
+        argumentValues = [
             listOf(
                 testBaseDir.resolve("path/to/lib1.jar"),
                 testBaseDir.resolve("path/to/lib2.jar"),
                 testBaseDir.resolve("path/to/classes"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        argumentRawValues = listOf(
+        ],
+        argumentRawValues = [
             listOf(
                 testBaseDir.resolve("path/to/lib1.jar"),
                 testBaseDir.resolve("path/to/lib2.jar"),
                 testBaseDir.resolve("path/to/classes"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
+        ],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-classpath", value) },
+        expectedArgumentStringsFor = { value -> ["-classpath", value] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "jdk-home",
         argument = JDK_HOME,
-        argumentValues = listOf(testBaseDir.resolve("path/to/jdk").toFile().absolutePath),
-        argumentRawValues = listOf(testBaseDir.resolve("path/to/jdk").toFile().absolutePath),
+        argumentValues = [testBaseDir.resolve("path/to/jdk").toFile().absolutePath],
+        argumentRawValues = [testBaseDir.resolve("path/to/jdk").toFile().absolutePath],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-jdk-home", value) },
+        expectedArgumentStringsFor = { value -> ["-jdk-home", value] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "jvm-default",
         argument = JVM_DEFAULT,
-        argumentValues = listOf("enable", "no-compatibility", "disable"),
-        argumentRawValues = listOf("enable", "no-compatibility", "disable"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["enable", "no-compatibility", "disable"],
+        argumentRawValues = ["enable", "no-compatibility", "disable"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-jvm-default", value) },
+        expectedArgumentStringsFor = { value -> ["-jvm-default", value] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "script-templates",
         argument = SCRIPT_TEMPLATES,
-        argumentValues = listOf(arrayOf("org.example.Template1", "org.example.Template2")),
-        argumentRawValues = listOf(arrayOf("org.example.Template1", "org.example.Template2").joinToString(",")),
+        argumentValues = [["org.example.Template1", "org.example.Template2"]],
+        argumentRawValues = [arrayOf("org.example.Template1", "org.example.Template2").joinToString(",")],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-script-templates", value) },
+        expectedArgumentStringsFor = { value -> ["-script-templates", value] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xfriend-paths",
         argument = X_FRIEND_PATHS,
-        argumentValues = listOf(
-            arrayOf(
+        argumentValues = [
+            [
                 testBaseDir.resolve("path/to/friend1").toFile().absolutePath,
                 testBaseDir.resolve("path/to/friend2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/friend3").toFile().absolutePath,
-            ),
-            arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)
-        ),
-        argumentRawValues = listOf(
+            ],
+            [testBaseDir.resolve("path/with,comma").toFile().absolutePath]
+        ],
+        argumentRawValues = [
             arrayOf(
                 testBaseDir.resolve("path/to/friend1").toFile().absolutePath,
                 testBaseDir.resolve("path/to/friend2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/friend3").toFile().absolutePath,
             ).joinToString(",")
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xfriend-paths=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xfriend-paths=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjdk-release",
         argument = X_JDK_RELEASE,
-        argumentValues = listOf(
+        argumentValues = [
             "1.6", "1.7", "1.8", "8", "9", "10", "11", "12", "13", "14",
             "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
-        ),
-        argumentRawValues = listOf(
+        ],
+        argumentRawValues = [
             "1.6", "1.7", "1.8", "8", "9", "10", "11", "12", "13", "14",
             "15", "16", "17", "18", "19", "20", "21", "22", "23", "24", "25"
-        ),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        ],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xjdk-release=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xjdk-release=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xmodule-path",
         argument = X_MODULE_PATH,
-        argumentValues = listOf(
+        argumentValues = [
             listOf(
                 testBaseDir.resolve("path/to/module1"),
                 testBaseDir.resolve("path/to/module2"),
                 testBaseDir.resolve("path/to/module3"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        argumentRawValues = listOf(
+        ],
+        argumentRawValues = [
             listOf(
                 testBaseDir.resolve("path/to/module1"),
                 testBaseDir.resolve("path/to/module2"),
                 testBaseDir.resolve("path/to/module3"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
+        ],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xmodule-path=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xmodule-path=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xstring-concat",
         argument = X_STRING_CONCAT,
-        argumentValues = listOf("indy-with-constants", "indy", "inline"),
-        argumentRawValues = listOf("indy-with-constants", "indy", "inline"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["indy-with-constants", "indy", "inline"],
+        argumentRawValues = ["indy-with-constants", "indy", "inline"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xstring-concat=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xstring-concat=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xlambdas",
         argument = X_LAMBDAS,
-        argumentValues = listOf("indy", "class"),
-        argumentRawValues = listOf("indy", "class"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["indy", "class"],
+        argumentRawValues = ["indy", "class"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xlambdas=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xlambdas=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xwhen-expressions",
         argument = X_WHEN_EXPRESSIONS,
-        argumentValues = listOf("indy", "inline"),
-        argumentRawValues = listOf("indy", "inline"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["indy", "inline"],
+        argumentRawValues = ["indy", "inline"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xwhen-expressions=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xwhen-expressions=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xsam-conversions",
         argument = X_SAM_CONVERSIONS,
-        argumentValues = listOf("class", "indy"),
-        argumentRawValues = listOf("class", "indy"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["class", "indy"],
+        argumentRawValues = ["class", "indy"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xsam-conversions=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xsam-conversions=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjspecify-annotations",
         argument = X_JSPECIFY_ANNOTATIONS,
-        argumentValues = listOf("ignore", "strict", "warn"),
-        argumentRawValues = listOf("ignore", "strict", "warn"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["ignore", "strict", "warn"],
+        argumentRawValues = ["ignore", "strict", "warn"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xjspecify-annotations=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xjspecify-annotations=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xsupport-compatqual-checker-framework-annotations",
         argument = X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS,
-        argumentValues = listOf("enable", "disable"),
-        argumentRawValues = listOf("enable", "disable"),
-        invalidArgumentValues = listOf("non-existent-value"),
-        invalidRawValues = listOf("non-existent-value"),
+        argumentValues = ["enable", "disable"],
+        argumentRawValues = ["enable", "disable"],
+        invalidArgumentValues = ["non-existent-value"],
+        invalidRawValues = ["non-existent-value"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xsupport-compatqual-checker-framework-annotations=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xsupport-compatqual-checker-framework-annotations=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xklib",
         argument = X_KLIB,
-        argumentValues = listOf(
+        argumentValues = [
             listOf(
                 testBaseDir.resolve("path/to/lib1.klib"),
                 testBaseDir.resolve("path/to/lib2.klib"),
                 testBaseDir.resolve("path/to/lib3.klib"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
-        argumentRawValues = listOf(
+        ],
+        argumentRawValues = [
             listOf(
                 testBaseDir.resolve("path/to/lib1.klib"),
                 testBaseDir.resolve("path/to/lib2.klib"),
                 testBaseDir.resolve("path/to/lib3.klib"),
             ).joinToString(File.pathSeparator) { it.toFile().absolutePath }
-        ),
+        ],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xklib=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xklib=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjava-source-roots",
         argument = X_JAVA_SOURCE_ROOTS,
-        argumentValues = listOf(
-            arrayOf(
+        argumentValues = [
+            [
                 testBaseDir.resolve("path/to/java/src1").toFile().absolutePath,
                 testBaseDir.resolve("path/to/java/src2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/java/src3").toFile().absolutePath,
-            ),
-            arrayOf(testBaseDir.resolve("path/with,comma").toFile().absolutePath)
-        ),
-        argumentRawValues = listOf(
+            ],
+            [testBaseDir.resolve("path/with,comma").toFile().absolutePath]
+        ],
+        argumentRawValues = [
             arrayOf(
                 testBaseDir.resolve("path/to/java/src1").toFile().absolutePath,
                 testBaseDir.resolve("path/to/java/src2").toFile().absolutePath,
                 testBaseDir.resolve("path/to/java/src3").toFile().absolutePath,
             ).joinToString(",")
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xjava-source-roots=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xjava-source-roots=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xscript-resolver-environment",
         argument = X_SCRIPT_RESOLVER_ENVIRONMENT,
-        argumentValues = listOf(
-            arrayOf("key1=value1", "key2=value2"),
-            arrayOf("optional="),
-        ),
-        argumentRawValues = listOf(
+        argumentValues = [
+            ["key1=value1", "key2=value2"],
+            ["optional="],
+        ],
+        argumentRawValues = [
             arrayOf("key1=value1", "key2=value2").joinToString(","),
             "optional=",
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xscript-resolver-environment=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xscript-resolver-environment=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xjsr305",
         argument = X_JSR305,
-        argumentValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore")),
-        argumentRawValues = listOf(arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")),
-        invalidArgumentValues = listOf(
-            arrayOf("stict"),
-            arrayOf("@javax.annotation.Nullable:strct"),
-            arrayOf("foo:bar:baz"),
-        ),
-        invalidRawValues = listOf(
+        argumentValues = [["strict", "under-migration:warn", "@com.example.Nullable:ignore"]],
+        argumentRawValues = [arrayOf("strict", "under-migration:warn", "@com.example.Nullable:ignore").joinToString(",")],
+        invalidArgumentValues = [
+            ["stict"],
+            ["@javax.annotation.Nullable:strct"],
+            ["foo:bar:baz"],
+        ],
+        invalidRawValues = [
             "stict",
             "@javax.annotation.Nullable:strct",
             "foo:bar:baz",
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xjsr305=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xjsr305=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xnullability-annotations",
         argument = X_NULLABILITY_ANNOTATIONS,
-        argumentValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn")),
-        argumentRawValues = listOf(arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn").joinToString(",")),
-        invalidArgumentValues = listOf(
-            arrayOf("@javax.annotation.Nullable:bogus"),
-            arrayOf("@javax.annotation.Nullable"),
-            arrayOf("@javax.annotation.Nullable=ignore")
-        ),
-        invalidRawValues = listOf(
+        argumentValues = [["@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn"]],
+        argumentRawValues = [arrayOf("@javax.annotation.Nullable:strict", "@javax.annotation.Nonnull:warn").joinToString(",")],
+        invalidArgumentValues = [
+            ["@javax.annotation.Nullable:bogus"],
+            ["@javax.annotation.Nullable"],
+            ["@javax.annotation.Nullable=ignore"]
+        ],
+        invalidRawValues = [
             "@javax.annotation.Nullable:bogus",
             "@javax.annotation.Nullable",
             "@javax.annotation.Nullable=ignore"
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xnullability-annotations=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xnullability-annotations=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xprofile",
         argument = X_PROFILE,
-        argumentValues = listOf(
+        argumentValues = [
             testBaseDir.resolve("path/to/libasyncProfiler.so").toFile().absolutePath +
                     File.pathSeparator + "event=cpu,interval=1ms,threads,start" +
                     File.pathSeparator + testBaseDir.resolve("path/to/snapshots").toFile().absolutePath
-        ),
-        argumentRawValues = listOf(
+        ],
+        argumentRawValues = [
             testBaseDir.resolve("path/to/libasyncProfiler.so").toFile().absolutePath +
                     File.pathSeparator + "event=cpu,interval=1ms,threads,start" +
                     File.pathSeparator + testBaseDir.resolve("path/to/snapshots").toFile().absolutePath
-        ),
-        invalidArgumentValues = listOf("path/to/libasyncProfiler.so"),
-        invalidRawValues = listOf("path/to/libasyncProfiler.so"),
+        ],
+        invalidArgumentValues = ["path/to/libasyncProfiler.so"],
+        invalidRawValues = ["path/to/libasyncProfiler.so"],
         valueString = { value -> value },
-        expectedArgumentStringsFor = { value -> listOf("-Xprofile=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xprofile=$value"] },
     ),
     JvmArgumentTestDescriptor(
         argumentName = "Xignored-annotations-for-bridges",
         argument = X_IGNORED_ANNOTATIONS_FOR_BRIDGES,
-        argumentValues = listOf(
-            arrayOf("com.example.MyAnnotation", "*")
-        ),
-        argumentRawValues = listOf(
+        argumentValues = [
+            ["com.example.MyAnnotation", "*"]
+        ],
+        argumentRawValues = [
             arrayOf("com.example.MyAnnotation", "*").joinToString(",")
-        ),
+        ],
         valueString = { value -> value?.joinToString(",") },
-        expectedArgumentStringsFor = { value -> listOf("-Xignored-annotations-for-bridges=$value") },
+        expectedArgumentStringsFor = { value -> ["-Xignored-annotations-for-bridges=$value"] },
     ),
-)
+]

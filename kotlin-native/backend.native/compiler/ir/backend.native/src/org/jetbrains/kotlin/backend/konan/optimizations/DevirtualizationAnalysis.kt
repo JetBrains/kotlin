@@ -70,7 +70,7 @@ internal object DevirtualizationAnalysis {
     fun computeRootSet(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG): List<DataFlowIR.FunctionSymbol> {
         val entryPoint = context.symbols.entryPoint?.owner
         val exported = if (entryPoint != null)
-            listOf(moduleDFG.symbolTable.mapFunction(entryPoint))
+            [moduleDFG.symbolTable.mapFunction(entryPoint)]
         else {
             // In a library every public function and every function accessible via virtual call belongs to the rootset.
             moduleDFG.symbolTable.functionMap.values.filter {
@@ -91,10 +91,10 @@ internal object DevirtualizationAnalysis {
         // Conservatively assume each associated object could be called.
         // Note: for constructors there is additional parameter (<this>) and its type will be added
         // to instantiating classes since all objects are final types.
-        val associatedObjectConstructors = mutableListOf<DataFlowIR.FunctionSymbol>()
+        val associatedObjectConstructors: MutableList<DataFlowIR.FunctionSymbol> = []
         // At this point all function references are lowered except those leaking to the native world.
         // Conservatively assume them belonging of the root set.
-        val leakingThroughFunctionReferences = mutableListOf<DataFlowIR.FunctionSymbol>()
+        val leakingThroughFunctionReferences: MutableList<DataFlowIR.FunctionSymbol> = []
         irModule.acceptChildrenVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
                 element.acceptChildrenVoid(this)
@@ -207,7 +207,7 @@ internal object DevirtualizationAnalysis {
 
             private var nodesCount = 0
 
-            val nodes = mutableListOf<Node>()
+            val nodes: MutableList<Node> = []
 
             val voidNode = addNode { Node.Ordinary(it, { "Void" }) }
             val virtualNode = addNode { Node.Source(it, VIRTUAL_TYPE_ID, { "Virtual" }) }
@@ -216,7 +216,7 @@ internal object DevirtualizationAnalysis {
             val externalFunctions = mutableMapOf<Pair<DataFlowIR.FunctionSymbol, DataFlowIR.Type>, Node>()
             val fields = mutableMapOf<DataFlowIR.Field, Node>() // Do not distinguish receivers.
             val virtualCallSiteReceivers = mutableMapOf<DataFlowIR.Node.VirtualCall, Node>()
-            val externalVirtualCalls = mutableListOf<ExternalVirtualCall>()
+            val externalVirtualCalls: MutableList<ExternalVirtualCall> = []
 
             private fun nextId(): Int = nodesCount++
 
@@ -258,13 +258,13 @@ internal object DevirtualizationAnalysis {
             val nodes = constraintGraph.nodes
             val visited = CustomBitSet()
             val prev = mutableMapOf<Node, Node>()
-            var front = mutableListOf<Node>()
+            var front: MutableList<Node> = []
             front.add(node)
             visited.set(node.id)
             lateinit var source: Node.Source
             bfs@while (front.isNotEmpty()) {
                 val prevFront = front
-                front = mutableListOf()
+                front = []
                 for (from in prevFront) {
                     var endBfs = false
                     reversedEdges.forEachEdge(from.id) { toId ->
@@ -843,7 +843,7 @@ internal object DevirtualizationAnalysis {
             }
 
 
-            val badEdges = mutableListOf<Pair<Node, Node.CastEdge>>()
+            val badEdges: MutableList<Pair<Node, Node.CastEdge>> = []
             for (node in topologicalOrder) {
                 node.directCastEdges
                         ?.filter { it.node.priority < node.priority } // Contradicts topological order.
@@ -969,7 +969,7 @@ internal object DevirtualizationAnalysis {
                         +"from ${function.symbol}"
                     }
                     val receiverType = virtualCall.receiverType
-                    val possibleReceivers = mutableListOf<DataFlowIR.Type>()
+                    val possibleReceivers: MutableList<DataFlowIR.Type> = []
                     forEachBitInBoth(receiverNode.types, typeHierarchy.inheritorsOf(receiverType)) {
                         val type = allTypes[it]
                         assert(instantiatingClasses[it]) { "Non-instantiating class $type" }
@@ -1108,7 +1108,7 @@ internal object DevirtualizationAnalysis {
             private val typeHierarchy = moduleDFG.symbolTable.typeHierarchy
             private val allTypes = typeHierarchy.allTypes
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
-            private val typesVirtualCallSites = Array(allTypes.size) { mutableListOf<ConstraintGraphVirtualCall>() }
+            private val typesVirtualCallSites: Array<MutableList<ConstraintGraphVirtualCall>> = Array(allTypes.size) { [] }
             private val suitableTypes = arrayOfNulls<CustomBitSet?>(allTypes.size)
             private val concreteClasses = arrayOfNulls<Node?>(allTypes.size)
             private val consts = arrayOfNulls<Node?>(allTypes.size)
@@ -1176,7 +1176,7 @@ internal object DevirtualizationAnalysis {
                         fieldNode
                     }
 
-            private var stack = mutableListOf<DataFlowIR.FunctionSymbol>()
+            private var stack: MutableList<DataFlowIR.FunctionSymbol> = []
 
             fun build() {
                 // Rapid Type Analysis: find all instantiations and conservatively estimate call graph.
@@ -1221,7 +1221,7 @@ internal object DevirtualizationAnalysis {
 
                     context.logMultiple {
                         +"CONSTRAINT GRAPH FOR $symbol"
-                        val nodes = listOf(body.rootScope) + body.allScopes.flatMap { it.nodes }
+                        val nodes = [body.rootScope] + body.allScopes.flatMap { it.nodes }
                         val ids = nodes.withIndex().associateBy({ it.value }, { it.index })
                         function.body.forEachNonScopeNode { node ->
                             +"FT NODE #${ids[node]}"
@@ -1691,7 +1691,7 @@ internal object DevirtualizationAnalysis {
 
         fun IrBuilderWithScope.irThrowInvalidReceiverTypeException(getTypeInfo: () -> IrExpression): IrExpression = irBlock {
             val kClass = irTemporary(
-                    irCall(createUninitializedInstance, kClassImplType, listOf(kClassImplType)),
+                    irCall(createUninitializedInstance, kClassImplType, [kClassImplType]),
                     nameHint = "clazz"
             )
             +irCall(kClassImplConstructorImpl).apply {
@@ -1703,7 +1703,7 @@ internal object DevirtualizationAnalysis {
             }
         }
 
-        val changedDeclarations = mutableSetOf<IrDeclaration>()
+        val changedDeclarations: MutableSet<IrDeclaration> = []
         var callSitesCount = 0
         var devirtualizedCallSitesCount = 0
         var actuallyDevirtualizedCallSitesCount = 0
@@ -1821,7 +1821,7 @@ internal object DevirtualizationAnalysis {
                                     this.arguments[0] = irGet(receiver)
                                 })
                             }
-                            val branches = mutableListOf<IrBranchImpl>()
+                            val branches: MutableList<IrBranchImpl> = []
                             bestOrder!!.mapIndexedTo(branches) { index, target ->
                                 (val actualCallee, val receiverTypes = possibleReceivers) = target
                                 val condition = when {
@@ -1844,7 +1844,7 @@ internal object DevirtualizationAnalysis {
                                         }
                                     }
                                     else -> {
-                                        irCallWithSubstitutedType(isSubtype, listOf(target.declType.defaultType)).apply {
+                                        irCallWithSubstitutedType(isSubtype, [target.declType.defaultType]).apply {
                                             this.arguments[0] = irGet(typeInfo)
                                         }
                                     }

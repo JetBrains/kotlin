@@ -61,7 +61,7 @@ abstract class WasmDebugRunnerBase(testServices: TestServices) :
             entryFile = "./${collectedJsArtifacts.entryPath}",
             jsFiles = jsFilePaths,
             workingDirectory = outputDir,
-            toolArgs = listOf("--enable-inspector", "--allow-natives-syntax")
+            toolArgs = ["--enable-inspector", "--allow-natives-syntax"]
         )
     }
 }

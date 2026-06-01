@@ -31,14 +31,14 @@ fun ObjCExportContext.translateToObjCClass(symbol: KaClassSymbol): ObjCExportTra
     val final = symbol.modality == KaSymbolModality.FINAL
 
     val name = getObjCClassOrProtocolName(symbol)
-    val attributes = (if (enumKind || final) listOf(OBJC_SUBCLASSING_RESTRICTED) else emptyList()) + name.toNameAttributes()
+    val attributes = (if (enumKind || final) [OBJC_SUBCLASSING_RESTRICTED] else []) + name.toNameAttributes()
 
     val comment: ObjCComment? = analysisSession.translateToObjCComment(symbol.annotations)
     val origin = analysisSession.getObjCExportStubOrigin(symbol)
 
     val superClass = translateSuperClass(symbol)
     val superProtocols: List<String> = superProtocols(symbol)
-    val auxiliaryDeclarations = mutableListOf<ObjCTopLevel>()
+    val auxiliaryDeclarations: MutableList<ObjCTopLevel> = []
 
     val members = buildList<ObjCExportStub> {
         /* The order of members tries to replicate the K1 implementation explicitly */

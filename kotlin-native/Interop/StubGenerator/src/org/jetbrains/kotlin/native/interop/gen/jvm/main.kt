@@ -109,13 +109,13 @@ class Interop {
     }
 }
 // Options, whose values are space-separated and can be escaped.
-val escapedOptions = setOf("-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options")
+val escapedOptions: Set<String> = ["-compilerOpts", "-linkerOpts", "-compiler-options", "-linker-options"]
 
 private fun String.asArgList(key: String) =
         if (escapedOptions.contains(key))
             this.split(Regex("(?<!\\\\)\\Q \\E")).filter { it.isNotEmpty() }.map { it.replace("\\ ", " ") }
         else
-            listOf(this)
+            [this]
 
 private fun <T> Collection<T>.atMostOne(): T? {
     return when (this.size) {
@@ -198,7 +198,7 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
     }
 
     if (relativeToRoot.isEmpty()) {
-        return emptyList()
+        return []
     }
 
     val virtualRoot = Paths.get(System.getProperty("java.io.tmpdir")).resolve("konanSystemInclude")
@@ -209,7 +209,7 @@ fun getCompilerFlagsForVfsOverlay(headerFilterPrefix: Array<String>, def: DefFil
 
     val vfsOverlayFile = createVfsOverlayFile(virtualPathToReal)
 
-    return listOf("-I${virtualRoot.toAbsolutePath()}", "-ivfsoverlay", vfsOverlayFile.toAbsolutePath().toString())
+    return ["-I${virtualRoot.toAbsolutePath()}", "-ivfsoverlay", vfsOverlayFile.toAbsolutePath().toString()]
 }
 
 private fun findFilesByGlobs(roots: List<Path>, includeGlobs: List<String>, excludeGlobs: List<String>): Map<Path, Path> {
@@ -311,7 +311,7 @@ private fun processCLib(
 
     val allLibraryDependencies = when (flavor) {
         KotlinPlatform.NATIVE -> resolveDependencies(resolver, cinteropArguments)
-        else -> listOf()
+        else -> []
     }
 
     val libName = additionalArgs.cstubsName ?: (fqParts.joinToString("") + "stubs")
@@ -472,12 +472,12 @@ private fun processCLib(
 
     return when (stubIrOutput) {
         is StubIrDriver.Result.SourceCode -> {
-            val bitcodePaths = compiledFiles.map {  listOf("-native-library", it) }.flatten()
+            val bitcodePaths = compiledFiles.flatMap { ["-native-library", it] }
             argsToCompiler(staticLibraries, libraryPaths) + bitcodePaths
         }
         is StubIrDriver.Result.Metadata -> {
             val stdlibDependency = resolver.resolveWithDependencies(
-                    emptyList(),
+                    [],
                     noDefaultLibs = true,
                     noEndorsedLibs = true
             ).getFullList()
@@ -620,7 +620,7 @@ internal fun prepareTool(
     else require(konanHome == null) { "custom konanHome cannot be specified when running from daemon" }
 }
 
-internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { setOf("NSView", "UIView") }
+internal val predefinedObjCClassesIncludingCategories: Set<String> by lazy { ["NSView", "UIView"] }
 
 internal fun buildNativeLibrary(
         tool: ToolConfig,

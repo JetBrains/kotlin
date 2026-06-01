@@ -42,9 +42,9 @@ class JvmProject(
             defaultStrategyConfig = defaultStrategyConfig,
             snapshotConfig = snapshotConfig,
             moduleCompilationConfigAction = moduleCompilationConfigAction,
-            stdlibLocation = stdlibClasspath ?: listOf(
+            stdlibLocation = stdlibClasspath ?: [
                 currentKotlinStdlibLocation // compile against the provided stdlib
-            )
+            ]
         )
         initModule(module, moduleName)
         return module

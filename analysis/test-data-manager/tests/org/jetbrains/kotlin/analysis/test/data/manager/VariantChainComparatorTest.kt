@@ -18,11 +18,11 @@ class VariantChainComparatorTest {
     @Test
     fun `empty list comes first`() {
         assertSorted(
-            variantChains = listOf(
-                listOf("descriptors"),
-                emptyList(),
-                listOf("standalone", "fir"),
-            ),
+            variantChains = [
+                ["descriptors"],
+                [],
+                ["standalone", "fir"],
+            ],
             expected = """
                 []
                 [descriptors]
@@ -34,11 +34,11 @@ class VariantChainComparatorTest {
     @Test
     fun `shorter chains before longer`() {
         assertSorted(
-            variantChains = listOf(
-                listOf("a", "b", "c"),
-                listOf("x"),
-                listOf("m", "n"),
-            ),
+            variantChains = [
+                ["a", "b", "c"],
+                ["x"],
+                ["m", "n"],
+            ],
             expected = """
                 [x]
                 [m, n]
@@ -50,11 +50,11 @@ class VariantChainComparatorTest {
     @Test
     fun `alphabetical ordering for same depth`() {
         assertSorted(
-            variantChains = listOf(
-                listOf("zebra"),
-                listOf("alpha"),
-                listOf("beta"),
-            ),
+            variantChains = [
+                ["zebra"],
+                ["alpha"],
+                ["beta"],
+            ],
             expected = """
                 [alpha]
                 [beta]
@@ -66,11 +66,11 @@ class VariantChainComparatorTest {
     @Test
     fun `alphabetical ordering for multi-element chains`() {
         assertSorted(
-            variantChains = listOf(
-                listOf("standalone", "fir"),
-                listOf("standalone", "descriptors"),
-                listOf("analysis", "api"),
-            ),
+            variantChains = [
+                ["standalone", "fir"],
+                ["standalone", "descriptors"],
+                ["analysis", "api"],
+            ],
             expected = """
                 [analysis, api]
                 [standalone, descriptors]
@@ -82,13 +82,13 @@ class VariantChainComparatorTest {
     @Test
     fun `combined ordering - empty first, then by depth, then alphabetically`() {
         assertSorted(
-            variantChains = listOf(
-                listOf("standalone", "fir"),
-                listOf("descriptors"),
-                emptyList(),
-                listOf("alpha"),
-                listOf("a", "b", "c"),
-            ),
+            variantChains = [
+                ["standalone", "fir"],
+                ["descriptors"],
+                [],
+                ["alpha"],
+                ["a", "b", "c"],
+            ],
             expected = """
                 []
                 [alpha]
@@ -102,8 +102,8 @@ class VariantChainComparatorTest {
     @Test
     fun `identical chains are equal`() {
         val result = VariantChainComparator.compare(
-            listOf("a", "b"),
-            listOf("a", "b"),
+            ["a", "b"],
+            ["a", "b"],
         )
 
         assertEquals(0, result)
@@ -111,7 +111,7 @@ class VariantChainComparatorTest {
 
     @Test
     fun `two empty chains are equal`() {
-        val result = VariantChainComparator.compare(emptyList(), emptyList())
+        val result = VariantChainComparator.compare([], [])
 
         assertEquals(0, result)
     }

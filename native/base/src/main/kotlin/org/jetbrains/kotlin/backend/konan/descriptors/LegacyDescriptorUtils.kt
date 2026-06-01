@@ -53,7 +53,7 @@ fun ClassDescriptor.isNothing() = this.defaultType.isNothing()
 @InternalKotlinNativeApi
 val <T : CallableMemberDescriptor> T.allOverriddenDescriptors: List<T>
     get() {
-        val result = mutableListOf<T>()
+        val result: MutableList<T> = []
         fun traverse(descriptor: T) {
             result.add(descriptor)
             @Suppress("UNCHECKED_CAST")
@@ -95,7 +95,7 @@ fun DeclarationDescriptor.findPackageView(): PackageViewDescriptor {
 
 @InternalKotlinNativeApi
 fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescriptor> {
-    var list = mutableListOf<DeclarationDescriptor>()
+    var list: MutableList<DeclarationDescriptor> = []
     var current = this.containingDeclaration
     while (current != null) {
         list.add(current)
@@ -105,7 +105,7 @@ fun DeclarationDescriptor.allContainingDeclarations(): List<DeclarationDescripto
 }
 
 private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
-    val result = mutableSetOf<FqName>()
+    val result: MutableSet<FqName> = []
     val packageFragmentProvider = (module as? ModuleDescriptorImpl)?.packageFragmentProviderForModuleContentWithoutDependencies
 
     fun getSubPackages(fqName: FqName) {
@@ -137,7 +137,7 @@ val DeclarationDescriptor.isExpectMember: Boolean
     get() = this is MemberDescriptor && this.isExpect
 
 @InternalKotlinNativeApi
-val arrayTypes = setOf(
+val arrayTypes: Set<String> = [
     "kotlin.Array",
     "kotlin.ByteArray",
     "kotlin.CharArray",
@@ -149,10 +149,10 @@ val arrayTypes = setOf(
     "kotlin.BooleanArray",
     "kotlin.native.ImmutableBlob",
     "kotlin.native.internal.NativePtrArray"
-)
+]
 
 @InternalKotlinNativeApi
-val arraysWithFixedSizeItems = setOf(
+val arraysWithFixedSizeItems: Set<String> = [
     "kotlin.ByteArray",
     "kotlin.CharArray",
     "kotlin.ShortArray",
@@ -161,4 +161,4 @@ val arraysWithFixedSizeItems = setOf(
     "kotlin.FloatArray",
     "kotlin.DoubleArray",
     "kotlin.BooleanArray"
-)
+]

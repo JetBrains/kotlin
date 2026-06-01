@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.validation.checkers.type.IrTypeParameterScopeChec
 data class IrValidatorConfig(
     val checkTreeConsistency: Boolean = false,
     val checkUnboundSymbols: Boolean = false,
-    val checkers: Set<IrChecker> = emptySet(),
+    val checkers: Set<IrChecker> = [],
 ) {
     fun withCheckers(vararg checkers: IrChecker) = copy(checkers = this.checkers + checkers)
     fun withoutCheckers(vararg checkers: IrChecker) = copy(checkers = this.checkers - checkers.toSet())

@@ -16,6 +16,6 @@ class NoArgsConstructorGeneratorPart(session: FirSession) : AbstractConstructorG
     }
 
     override fun getFieldsForParameters(classSymbol: FirClassSymbol<*>): List<FirJavaField> {
-        return emptyList()
+        return []
     }
 }

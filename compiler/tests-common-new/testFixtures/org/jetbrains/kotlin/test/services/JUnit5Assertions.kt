@@ -100,7 +100,7 @@ object JUnit5Assertions : AssertionsService() {
     override fun unfoldException(e: Throwable): List<Throwable> {
         return when (e) {
             is MultipleFailuresError if e.failures.isNotEmpty() -> e.failures
-            else -> listOf(e)
+            else -> [e]
         }
     }
 

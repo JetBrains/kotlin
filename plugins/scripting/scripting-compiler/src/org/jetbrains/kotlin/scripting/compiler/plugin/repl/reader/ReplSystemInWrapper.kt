@@ -23,7 +23,7 @@ class ReplSystemInWrapper(
     private var isReadLineStartSent = false
     private var byteBuilder = ByteArrayOutputStream()
     private var curBytePos = 0
-    private var inputByteArray = byteArrayOf()
+    private var inputByteArray: ByteArray = []
 
     private val isAtBufferEnd: Boolean
         get() = curBytePos == inputByteArray.size

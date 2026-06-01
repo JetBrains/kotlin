@@ -36,7 +36,7 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
         val facadeFiles = if (file.canHaveAdditionalFilesInFacade()) {
             findFilesForFacade(facadeFqName, module.contentSearchScope).filter(KtFile::isJvmMultifileClassFile)
         } else {
-            listOf(file)
+            [file]
         }
 
         return when {
@@ -54,7 +54,7 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
     }
 
     override fun createFacadeForSyntheticFile(file: KtFile): KtLightClassForFacade {
-        return createInstanceOfLightFacade(file.javaFileFacadeFqName, listOf(file)) ?: errorWithAttachment(
+        return createInstanceOfLightFacade(file.javaFileFacadeFqName, [file]) ?: errorWithAttachment(
             "Unsupported ${file::class.simpleName}"
         ) {
             withEntry("module", file.getContainingModule().toString())
@@ -130,7 +130,7 @@ abstract class KotlinAsJavaSupportBase<TModule : Any>(protected val project: Pro
 
     override fun getScriptClasses(scriptFqName: FqName, scope: GlobalSearchScope): Collection<PsiClass> {
         if (scriptFqName.isRoot) {
-            return emptyList()
+            return []
         }
 
         return findFilesForScript(scriptFqName, scope).mapNotNull { getLightClassForScript(it, scope) }

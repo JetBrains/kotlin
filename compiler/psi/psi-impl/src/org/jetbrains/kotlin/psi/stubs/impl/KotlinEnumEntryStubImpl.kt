@@ -46,13 +46,13 @@ class KotlinEnumEntryStubImpl(
     override val superNames: List<String>
         get() {
             if (findChildStubByType(KtStubElementTypes.INITIALIZER_LIST) == null) {
-                return emptyList()
+                return []
             }
 
             val enumClassStub = parentStub?.parentStub as? KotlinClassStub ?: error("Enum entry should have enum class parent")
             // Invalid code might have an enum class without a name
             val enumClassName = enumClassStub.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
-            return listOf(enumClassName)
+            return [enumClassName]
         }
 
     override val kdocText: String?

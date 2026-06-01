@@ -23,25 +23,29 @@ class ClassicMultiprojectFirRunnerIncrementalTest : BaseCompilationTest() {
     fun testAbiChangeInLib_changeMethodSignature(strategyConfig: CompilerExecutionStrategyConfiguration) {
         jvmScenario(strategyConfig) {
             val lib = moduleWithFir("incrementalMultiproject/lib")
-            val app = moduleWithFir("incrementalMultiproject/app", listOf(lib))
+            val app = moduleWithFir("incrementalMultiproject/app", [lib])
             val external = moduleWithFir("incrementalMultiproject/external")
 
             changeMethodSignatureInLib(lib)
 
             lib.compile {
-                assertCompiledSources(setOf(
-                    "src/main/kotlin/bar/A.kt",
-                    "src/main/kotlin/bar/B.kt",
-                    "src/main/kotlin/bar/barUseA.kt",
-                ))
+                assertCompiledSources(
+                    [
+                        "src/main/kotlin/bar/A.kt",
+                        "src/main/kotlin/bar/B.kt",
+                        "src/main/kotlin/bar/barUseA.kt",
+                    ]
+                )
             }
             app.compile {
-                assertCompiledSources(setOf(
-                    "src/main/kotlin/foo/AA.kt",
-                    "src/main/kotlin/foo/AAA.kt",
-                    "src/main/kotlin/foo/BB.kt",
-                    "src/main/kotlin/foo/fooUseA.kt",
-                ))
+                assertCompiledSources(
+                    [
+                        "src/main/kotlin/foo/AA.kt",
+                        "src/main/kotlin/foo/AAA.kt",
+                        "src/main/kotlin/foo/BB.kt",
+                        "src/main/kotlin/foo/fooUseA.kt",
+                    ]
+                )
             }
         }
     }

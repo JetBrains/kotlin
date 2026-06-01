@@ -77,7 +77,7 @@ object ConeTypeCompatibilityChecker {
             return b.intersectedTypes.minOf { isCompatible(a, it) }
         }
 
-        return when (val intersectionType = intersectTypesOrNull(listOf(a, b))) {
+        return when (val intersectionType = intersectTypesOrNull([a, b])) {
             is ConeIntersectionType -> intersectionType.intersectedTypes.getCompatibility(this)
             else -> if (intersectionType?.isNothing == true) Compatibility.HARD_INCOMPATIBLE else Compatibility.COMPATIBLE
         }
@@ -96,7 +96,7 @@ object ConeTypeCompatibilityChecker {
             // This is to stay compatible with FE1.0.
             else -> Compatibility.SOFT_INCOMPATIBLE
         }
-        return ctx.getCompatibility(flatMap { it.collectUpperBounds(ctx) }.toSet(), emptySet(), compatibilityUpperBound)
+        return ctx.getCompatibility(flatMap { it.collectUpperBounds(ctx) }.toSet(), [], compatibilityUpperBound)
     }
 
     private fun ConeKotlinType.isConcreteType(): Boolean {
@@ -120,7 +120,7 @@ object ConeTypeCompatibilityChecker {
         upperBounds: Set<ConeClassLikeType>,
         lowerBounds: Set<ConeClassLikeType>,
         compatibilityUpperBound: Compatibility,
-        checkedTypeParameters: MutableSet<FirTypeParameterSymbol> = mutableSetOf(),
+        checkedTypeParameters: MutableSet<FirTypeParameterSymbol> = [],
     ): Compatibility {
         val upperBoundClasses: Set<FirClassWithSuperClasses> = upperBounds.mapNotNull { it.toFirClassWithSuperClasses(this) }.toSet()
 
@@ -142,7 +142,7 @@ object ConeTypeCompatibilityChecker {
         // Check if the range formed by upper bounds and lower bounds is empty.
         if (!lowerBounds.all { lowerBoundType ->
                 val classesSatisfyingLowerBounds =
-                    lowerBoundType.toFirClassWithSuperClasses(this)?.thisAndAllSuperClasses ?: emptySet()
+                    lowerBoundType.toFirClassWithSuperClasses(this)?.thisAndAllSuperClasses ?: []
                 leafClassesOrInterfaces.all { it in classesSatisfyingLowerBounds }
             }
         ) {
@@ -236,20 +236,20 @@ object ConeTypeCompatibilityChecker {
     }
 
     private fun ConeKotlinType?.collectLowerBounds(): Set<ConeClassLikeType> {
-        if (this == null) return emptySet()
+        if (this == null) return []
         return when (this) {
-            is ConeErrorType -> emptySet() // Ignore error types
+            is ConeErrorType -> [] // Ignore error types
             is ConeLookupTagBasedType -> when (this) {
-                is ConeClassLikeType -> setOf(this)
-                is ConeTypeParameterType -> emptySet()
+                is ConeClassLikeType -> [this]
+                is ConeTypeParameterType -> []
                 else -> error("missing branch for ${javaClass.name}")
             }
-            is ConeTypeVariableType -> emptySet()
+            is ConeTypeVariableType -> []
             is ConeDefinitelyNotNullType -> original.collectLowerBounds()
             is ConeIntersectionType -> intersectedTypes.flatMap { it.collectLowerBounds() }.toSet()
             is ConeFlexibleType -> lowerBound.collectLowerBounds()
             is ConeCapturedType -> constructor.supertypes?.flatMap { it.collectLowerBounds() }?.toSet().orEmpty()
-            is ConeIntegerConstantOperatorType -> setOf(getApproximatedType())
+            is ConeIntegerConstantOperatorType -> [getApproximatedType()]
             is ConeStubType, is ConeIntegerLiteralConstantType -> {
                 error("$this should not reach here")
             }
@@ -345,7 +345,7 @@ object ConeTypeCompatibilityChecker {
                 } else {
                     Compatibility.SOFT_INCOMPATIBLE
                 }
-            BoundTypeArguments(mutableSetOf(), mutableSetOf(), compatibilityUpperBoundForTypeArg)
+            BoundTypeArguments([], [], compatibilityUpperBoundForTypeArg)
         }.let {
             val type = boundTypeArgument.type
             if (boundTypeArgument.variance.allowsInPosition) {

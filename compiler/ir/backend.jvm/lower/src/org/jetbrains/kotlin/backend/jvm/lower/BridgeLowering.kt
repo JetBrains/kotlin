@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.types.removeAnnotations
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.JvmStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.descriptorUtil.EXACT_ANNOTATION_FQ_NAME
@@ -127,7 +128,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val overridden: IrSimpleFunction,
         val signature: Method,
         val isErroneous: Boolean,
-        val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = mutableListOf()
+        val overriddenSymbols: MutableList<IrSimpleFunctionSymbol> = []
     )
 
     override fun lower(irClass: IrClass) {
@@ -200,7 +201,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     private fun createBridges(irClass: IrClass, irFunction: IrSimpleFunction, specialBridge: SpecialBridge?) {
         // Track final overrides and bridges to avoid clashes
-        val blacklist = mutableSetOf<Method>()
+        val blacklist: MutableSet<Method> = []
 
         // Don't generate bridges for default argument stubs. This is a workaround for a
         // frontend bug (KT-36188). Ideally, the frontend should not allow inheriting from
@@ -387,9 +388,9 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         // opportunity for a Java and Kotlin implementation of the same interface to go out of sync.
 
         if (this.parentAsClass.isInterface || this.isFromJava())
-            return emptyList()
+            return []
         val specialBridge = this.specialBridgeOrNull
-            ?: return emptyList()
+            ?: return []
 
         val result = SmartList<Method>()
         val jvmMethod = this.jvmMethod
@@ -513,7 +514,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             }
 
             if (specialBridge.isOverriding) {
-                overriddenSymbols = listOf(specialBridge.overridden.symbol)
+                overriddenSymbols = [specialBridge.overridden.symbol]
             }
 
             if (MethodSignatureMapper.shouldBoxSingleValueParameterForSpecialCaseOfRemove(this)) {
@@ -582,14 +583,14 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     init {
         val userIgnoredAnnotations =
-            context.state.configuration.get(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)?.toSet() ?: emptySet()
+            context.state.configuration.get(JVMConfigurationKeys.IGNORED_ANNOTATIONS_FOR_BRIDGES)?.toSet() ?: []
         userIgnoredAnnotationsFilter = when {
             userIgnoredAnnotations.isEmpty() -> { _ -> true }
             userIgnoredAnnotations.contains("*") -> { _ -> false }
             else -> { it -> !userIgnoredAnnotations.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
         }
 
-        val kotlinIgnoredMethodAnnotations = setOf(
+        val kotlinIgnoredMethodAnnotations: Set<FqName> = [
             JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME,
             JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME,
             JvmStandardClassIds.JVM_NAME,
@@ -597,7 +598,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME,
             JvmStandardClassIds.JVM_SUPPRESS_WILDCARDS_ANNOTATION_FQ_NAME,
             JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME,
-        )
+        ]
         val ignoredMethodAnnotationNames = userIgnoredAnnotations + kotlinIgnoredMethodAnnotations.map { it.toString() }
         ignoredMethodAnnotationsFilter = when {
             userIgnoredAnnotations.contains("*") -> { _ -> false }
@@ -607,7 +608,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
 
     // some annotations from "kotlin.internal" and "kotlin.jvm" packages can affect types generation, so
     // they shall not be copied to the bridge methods from targets.
-    val kotlinSpecialTypeAnnotations = setOf(
+    val kotlinSpecialTypeAnnotations: Set<FqName?> = [
         JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION,
         JvmAnnotationNames.ENHANCED_MUTABILITY_ANNOTATION,
         JvmSymbols.FLEXIBLE_NULLABILITY_ANNOTATION_FQ_NAME,
@@ -617,7 +618,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         JvmStandardClassIds.JVM_WILDCARD_ANNOTATION_FQ_NAME,
         NO_INFER_ANNOTATION_FQ_NAME,
         EXACT_ANNOTATION_FQ_NAME,
-    )
+    ]
 
     fun IrConstructorCall.isKotlinSpecialTypeAnnotation() =
         symbol.owner.parent.kotlinFqName in kotlinSpecialTypeAnnotations

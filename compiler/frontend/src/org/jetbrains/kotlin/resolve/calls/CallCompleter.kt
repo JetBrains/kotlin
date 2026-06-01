@@ -329,7 +329,7 @@ class CallCompleter(
         val value = (constant.getValue(TypeUtils.NO_EXPECTED_TYPE) as? Number)?.toLong() ?: return null
         val typeConstructor = IntegerValueTypeConstructor(value, moduleDescriptor, constant.parameters)
         return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
-            TypeAttributes.Empty, typeConstructor, emptyList(), false,
+            TypeAttributes.Empty, typeConstructor, [], false,
             ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, typeConstructor.toString())
         )
     }

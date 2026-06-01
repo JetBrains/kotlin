@@ -52,7 +52,7 @@ class IndexedGetLoopHeader(
             loopVariables.drop(1).forEach { it.initializer = irGet(loopVariables.first()) }
             // Even if there is no loop variable, we always want to call `get()` as it may have side effects.
             // The un-lowered loop always calls `get()` on each iteration.
-            loopVariables.ifEmpty { listOf(get) } + incrementInductionVariable(this)
+            loopVariables.ifEmpty { [get] } + incrementInductionVariable(this)
         }
 
     override fun buildLoop(builder: DeclarationIrBuilder, oldLoop: IrLoop, newBody: IrExpression?): LoopReplacement = with(builder) {

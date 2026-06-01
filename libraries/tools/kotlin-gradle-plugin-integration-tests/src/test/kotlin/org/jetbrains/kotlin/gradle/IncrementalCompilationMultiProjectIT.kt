@@ -117,7 +117,7 @@ abstract class IncrementalCompilationJsMultiProjectIT : BaseIncrementalCompilati
             build("assemble") {
                 assertCompiledKotlinSources(
                     getExpectedKotlinSourcesForDefaultProject(
-                        libSources = listOf("bar/A.kt")
+                        libSources = ["bar/A.kt"]
                     ),
                     output
                 )
@@ -221,7 +221,7 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
             result.assertTasksUpToDate(":app:$compileKotlinTaskName") // App compilation has 'compile avoidance'
 
             assertCompiledKotlinSources(
-                project.getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
+                project.getExpectedKotlinSourcesForDefaultProject(libSources = ["bar/A.kt"]),
                 result.output
             )
         }
@@ -316,8 +316,8 @@ abstract class IncrementalCompilationJvmMultiProjectIT : BaseIncrementalCompilat
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/A.kt", "bar/B.kt"),
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt")
+                    libSources = ["bar/A.kt", "bar/B.kt"],
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt"]
                 )
                 assertCompiledKotlinSources(expectedSources, output)
             }
@@ -368,8 +368,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
     }
 
     protected fun TestProject.getExpectedKotlinSourcesForDefaultProject(
-        libSources: List<String> = emptyList(),
-        appSources: List<String> = emptyList()
+        libSources: List<String> = [],
+        appSources: List<String> = []
     ): Iterable<Path> {
         val expectedLibSources = if (libSources.isNotEmpty()) {
             sourceFilesRelativeToProject(
@@ -378,7 +378,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 subProjectName = "lib"
             )
         } else {
-            emptyList()
+            []
         }
 
         val expectedAppSources = if (appSources.isNotEmpty()) {
@@ -388,7 +388,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 subProjectName = "app"
             )
         } else {
-            emptyList()
+            []
         }
 
         return expectedLibSources + expectedAppSources
@@ -404,8 +404,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/A.kt", "bar/B.kt", "bar/barUseA.kt"),
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
+                    libSources = ["bar/A.kt", "bar/B.kt", "bar/barUseA.kt"],
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt"]
                 )
 
                 assertCompiledKotlinSources(expectedSources, output)
@@ -425,8 +425,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/A.kt", "bar/B.kt"),
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt")
+                    libSources = ["bar/A.kt", "bar/B.kt"],
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt"]
                 )
                 assertCompiledKotlinSources(expectedSources, output)
             }
@@ -445,7 +445,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
                 assertTasksUpToDate(":app:$compileKotlinTaskName")
                 assertCompiledKotlinSources(
-                    getExpectedKotlinSourcesForDefaultProject(libSources = listOf("bar/A.kt")),
+                    getExpectedKotlinSourcesForDefaultProject(libSources = ["bar/A.kt"]),
                     output
                 )
             }
@@ -464,7 +464,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
                 assertTasksExecuted(":lib:$compileKotlinTaskName")
                 assertTasksUpToDate(":app:$compileKotlinTaskName")
                 // Lib compilation is incremental (no files are recompiled)
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources([], output)
             }
         }
     }
@@ -490,7 +490,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt"]
                 ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
 
                 assertCompiledKotlinSources(expectedSources, output)
@@ -514,7 +514,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build("assemble") {
                 assertCompiledKotlinSources(
                     getExpectedKotlinSourcesForDefaultProject(
-                        appSources = listOf("foo/fooCallUseAB.kt", "bar/barUseAB.kt")
+                        appSources = ["foo/fooCallUseAB.kt", "bar/barUseAB.kt"]
                     ),
                     output
                 )
@@ -538,7 +538,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             buildAndFail("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"),
+                    libSources = ["bar/B.kt", "bar/barUseAB.kt", "bar/barUseB.kt"],
                     appSources = listOfNotNull(
                         "foo/BB.kt", "foo/fooUseB.kt", "foo/fooCallUseAB.kt",
                         "foo/fooUseBB.kt".takeIf { impactedClassInAppIsRecompiled }
@@ -577,7 +577,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 assertCompiledKotlinSources(
-                    listOf(aaKt.relativeTo(projectPath)),
+                    [aaKt.relativeTo(projectPath)],
                     output
                 )
             }
@@ -606,7 +606,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build("assemble") {
                 assertCompiledKotlinSources(
                     getExpectedKotlinSourcesForDefaultProject(
-                        appSources = listOf("foo/fooCallUseAB.kt", "bar/barUseAB.kt")
+                        appSources = ["foo/fooCallUseAB.kt", "bar/barUseAB.kt"]
                     ),
                     output
                 )
@@ -628,8 +628,8 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    libSources = listOf("bar/A.kt", "bar/B.kt"),
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt")
+                    libSources = ["bar/A.kt", "bar/B.kt"],
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt"]
                 )
 
                 assertCompiledKotlinSources(expectedSources, output)
@@ -648,7 +648,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
 
             build("assemble") {
                 val expectedSources = getExpectedKotlinSourcesForDefaultProject(
-                    appSources = listOf("foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt")
+                    appSources = ["foo/AA.kt", "foo/AAA.kt", "foo/BB.kt", "foo/fooUseA.kt"]
                 ) + subProject("lib").projectPath.resolve("src").allKotlinSources.map { it.relativeTo(projectPath) }
 
                 assertCompiledKotlinSources(expectedSources, output)
@@ -671,7 +671,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build("assemble") {
                 assertCompiledKotlinSources(
                     getExpectedKotlinSourcesForDefaultProject(
-                        libSources = listOf("bar/BarDummy.kt")
+                        libSources = ["bar/BarDummy.kt"]
                     ),
                     output
                 )
@@ -719,7 +719,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build(":app:$compileKotlinTaskName") {
                 assertIncrementalCompilation(
                     expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
-                        libSources = listOf("bar/InterfaceInLib.kt"),
+                        libSources = ["bar/InterfaceInLib.kt"],
                         appSources = listOfNotNull(
                             "foo/SubclassInApp.kt",
                             "foo/ClassUsingSubclassInApp.kt".takeIf { impactedClassInAppIsRecompiled }
@@ -800,7 +800,7 @@ abstract class BaseIncrementalCompilationMultiProjectIT : IncrementalCompilation
             build(":lib:$compileKotlinTaskName") {
                 assertIncrementalCompilation(
                     expectedCompiledKotlinFiles = getExpectedKotlinSourcesForDefaultProject(
-                        libSources = listOf("bar/A.kt", "bar/B.kt", "bar/barUseA.kt")
+                        libSources = ["bar/A.kt", "bar/B.kt", "bar/barUseA.kt"]
                     )
                 )
             }

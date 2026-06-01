@@ -31,7 +31,7 @@ abstract class AbstractStandaloneSessionBuilderAgainstStdlibTest : AbstractStand
 
     protected fun doTestKotlinStdLibResolve(
         targetPlatform: TargetPlatform, platformStdlibPath: Path,
-        additionalStdlibRoots: List<Path> = emptyList(),
+        additionalStdlibRoots: List<Path> = [],
     ) {
         lateinit var sourceModule: KaSourceModule
         val session = buildStandaloneAnalysisAPISession(disposable) {

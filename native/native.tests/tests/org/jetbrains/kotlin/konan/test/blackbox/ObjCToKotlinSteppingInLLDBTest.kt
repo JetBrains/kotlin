@@ -42,7 +42,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         // In any case, it is not too bad: even if `settings set target.enable-trampoline-support false`
         // doesn't disable the transparent stepping attribute in some cases, there is still an option
         // to do so with the compiler flag:
-        val additionalKotlinCompilerArgs = listOf("-Xbinary=enableDebugTransparentStepping=false")
+        val additionalKotlinCompilerArgs = ["-Xbinary=enableDebugTransparentStepping=false"]
 
         testSteppingFromObjcToKotlin(
             """
@@ -213,7 +213,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         clangFileName: String,
         kotlinFileName: String,
         testName: String,
-        additionalKotlinCompilerArgs: List<String> = emptyList(),
+        additionalKotlinCompilerArgs: List<String> = [],
         clangMainSources: String = """
             @import ${kotlinFrameworkName};
             void landing() {}
@@ -261,6 +261,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
         sourceDirectory.resolve(kotlinFileName).writeText(kotlinLibrarySources)
 
         // 2. Build Kotlin framework
+        @Suppress("ConvertToCollectionLiterals")
         val freeCompilerArgs = TestCompilerArgs(
             additionalKotlinCompilerArgs + listOf(
                 "-Xstatic-framework",
@@ -273,7 +274,7 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             testRunSettings,
             freeCompilerArgs = freeCompilerArgs,
             sourceModules = module.modules,
-            dependencies = emptyList(),
+            dependencies = [],
             expectedArtifact = TestCompilationArtifact.ObjCFramework(
                 buildDir,
                 kotlinFrameworkName,
@@ -288,23 +289,23 @@ class ObjCToKotlinSteppingInLLDBTest : AbstractNativeSimpleTest() {
             // This code was initially written against clang from toolchain.
             // Changing it to another one probably won't hurt, but it was not tested.
             clangDistribution = ClangDistribution.Toolchain,
-            sourceFiles = listOf(clangFile),
+            sourceFiles = [clangFile],
             outputFile = executableFile,
-            frameworkDirectories = listOf(buildDir),
+            frameworkDirectories = [buildDir],
         ).assertSuccess()
 
         // 4. Generate the test case
         val testExecutable = TestExecutable(
             clangResult.resultingArtifact,
             loggedCompilationToolCall = clangResult.loggedData,
-            testNames = listOf(TestName(testName)),
+            testNames = [TestName(testName)],
         )
         val spec = ReplLLDBSessionSpec.parse(lldbSpec)
-        val moduleForTestCase = TestModule.Exclusive(testName, emptySet(), emptySet(), emptySet())
+        val moduleForTestCase = TestModule.Exclusive(testName, [], [], [])
         val testCase = TestCase(
             id = TestCaseId.Named(testName),
             kind = TestKind.STANDALONE_LLDB,
-            modules = setOf(moduleForTestCase),
+            modules = [moduleForTestCase],
             freeCompilerArgs = freeCompilerArgs,
             nominalPackageName = PackageName.EMPTY,
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).copy(

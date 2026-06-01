@@ -162,7 +162,7 @@ public interface KaSourceModule : KaModule {
      */
     @KaExperimentalApi
     public val psiRoots: List<PsiFileSystemItem>
-        get() = listOf()
+        get() = []
 
     @KaExperimentalApi
     override val moduleDescription: String
@@ -316,10 +316,10 @@ public interface KaLibraryFallbackDependenciesModule : KaModule {
 @KaPlatformInterface
 @SubclassOptInRequired(KaPlatformInterface::class)
 public interface KaBuiltinsModule : KaModule {
-    override val directRegularDependencies: List<KaModule> get() = emptyList()
-    override val directDependsOnDependencies: List<KaModule> get() = emptyList()
-    override val transitiveDependsOnDependencies: List<KaModule> get() = emptyList()
-    override val directFriendDependencies: List<KaModule> get() = emptyList()
+    override val directRegularDependencies: List<KaModule> get() = []
+    override val directDependsOnDependencies: List<KaModule> get() = []
+    override val transitiveDependsOnDependencies: List<KaModule> get() = []
+    override val directFriendDependencies: List<KaModule> get() = []
 
     @KaExperimentalApi
     override val moduleDescription: String get() = "Builtins for $targetPlatform"

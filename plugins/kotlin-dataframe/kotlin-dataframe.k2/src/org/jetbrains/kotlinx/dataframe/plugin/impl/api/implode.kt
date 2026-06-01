@@ -53,6 +53,6 @@ fun Arguments.implode(col: SimpleCol, dropNA: Boolean = false): SimpleCol = when
     is SimpleFrameColumn -> simpleColumnOf(
         // For now, we can't propagate the schema like List<DataFrame<SchemaType>> - the column type becomes List<DataFrame<*>>.
         // but it's the same as in the library
-        col.name, createListType(Names.DF_CLASS_ID.createConeType(session, arrayOf(ConeStarProjection)))
+        col.name, createListType(Names.DF_CLASS_ID.createConeType(session, [ConeStarProjection]))
     )
 }

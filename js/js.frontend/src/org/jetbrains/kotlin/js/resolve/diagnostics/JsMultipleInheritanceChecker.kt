@@ -26,10 +26,10 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameUnsafe
 
 object JsMultipleInheritanceChecker : DeclarationChecker {
-    private val fqNames = listOf(
-            FqNameUnsafe("kotlin.CharSequence.get"),
-            FqNameUnsafe("kotlin.collections.CharIterator.nextChar")
-    )
+    private val fqNames = [
+        FqNameUnsafe("kotlin.CharSequence.get"),
+        FqNameUnsafe("kotlin.collections.CharIterator.nextChar")
+    ]
     private val simpleNames = fqNames.mapTo(mutableSetOf()) { it.shortName() }
 
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {

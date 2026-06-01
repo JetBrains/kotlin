@@ -37,7 +37,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
 
         val actualLightDeclaration = findLightDeclaration(ktFiles, module, testServices)
 
-        val annotationsFromFindAnnotation = mutableSetOf<PsiAnnotation>()
+        val annotationsFromFindAnnotation: MutableSet<PsiAnnotation> = []
         val modifierList = actualLightDeclaration.modifierList!!
         for ((val qualifier = qualifierName, val isExpected) in qualifiersToCheck) {
             val actual = modifierList.hasAnnotation(qualifier)
@@ -95,7 +95,7 @@ abstract class AbstractSymbolLightClassesAnnotationEqualityTest(
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     private object Directives : SimpleDirectivesContainer() {
         val EXPECTED by valueDirective(description = "Expected annotation qualifier to check equality") {

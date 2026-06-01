@@ -51,7 +51,7 @@ data class KotlinCompilerArgument(
     val argumentType: KotlinArgumentValueType<*> = valueType,
 
     @kotlinx.serialization.Transient
-    val additionalAnnotations: List<Annotation> = emptyList(),
+    val additionalAnnotations: List<Annotation> = [],
 
     @kotlinx.serialization.Transient
     val compilerName: String? = null,
@@ -139,7 +139,7 @@ internal class KotlinCompilerArgumentBuilder {
     /**
      * @see KotlinCompilerArgument.additionalAnnotations
      */
-    private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
+    private val additionalAnnotations: MutableList<Annotation> = []
 
     /**
      * @see KotlinCompilerArgument.restrictedToCompilerPhase

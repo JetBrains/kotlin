@@ -33,7 +33,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
  * A block labeled `guard` can be eliminated with `break guard` converted to `continue`.
  */
 internal class DoWhileGuardElimination(private val root: JsStatement) {
-    private val guardLabels = mutableSetOf<JsName>()
+    private val guardLabels: MutableSet<JsName> = []
     private var hasChanges = false
     private val loopGuardMap = mutableMapOf<JsDoWhile, JsLabel>()
     private val guardToLoopLabel = mutableMapOf<JsName, JsName?>()

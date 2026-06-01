@@ -32,7 +32,7 @@ class IrFileEntrySourceLocationComputationTest {
     fun `File entry without offsets`() {
         val fileEntry = fileEntry()
 
-        for (offset in listOf(0, 1, 10, 100)) {
+        for (offset in [0, 1, 10, 100]) {
             fileEntry.assertSourceLocationComputation(UNDEFINED_LINE_AND_COLUMN, offset)
         }
     }
@@ -41,7 +41,7 @@ class IrFileEntrySourceLocationComputationTest {
     fun `File entry with one offset`() {
         val fileEntry = fileEntry(0)
 
-        for (offset in listOf(0, 1, 10, 100)) {
+        for (offset in [0, 1, 10, 100]) {
             fileEntry.assertSourceLocationComputation(LineAndColumn(line = 0, column = offset), offset)
         }
     }

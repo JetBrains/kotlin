@@ -20,9 +20,9 @@ class KaLibrarySourceModuleImpl(
     override val project: Project,
     override val binaryLibrary: KaLibraryModule,
 ) : KtModuleWithModifiableDependencies(), KaLibrarySourceModule {
-    override val directRegularDependencies: MutableList<KaModule> = mutableListOf()
-    override val directDependsOnDependencies: MutableList<KaModule> = mutableListOf()
-    override val directFriendDependencies: MutableList<KaModule> = mutableListOf()
+    override val directRegularDependencies: MutableList<KaModule> = []
+    override val directDependsOnDependencies: MutableList<KaModule> = []
+    override val directFriendDependencies: MutableList<KaModule> = []
 
     override val areDependenciesComplete: Boolean
         get() = hasFallbackDependencies

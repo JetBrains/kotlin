@@ -43,14 +43,13 @@ internal object TopDownAnalyzerFacadeForKonan {
         val resolvedModuleDescriptors = nativeFactories.DefaultResolvedDescriptorsFactory.createResolved(
                 config.resolvedLibraries, projectContext.storageManager, module.builtIns, config.languageVersionSettings,
                 config.friendModuleFiles, config.refinesModuleFiles,
-                config.includedLibraries.map { it.libraryFile }.toSet(), listOf(module),
+                config.includedLibraries.map { it.libraryFile }.toSet(), [module],
                 isForMetadataCompilation = config.metadataKlib)
 
-        val additionalPackages = mutableListOf<PackageFragmentProvider>()
+        val additionalPackages: MutableList<PackageFragmentProvider> = []
         if (!module.isNativeStdlib()) {
             module.setDependencies(ModuleDependenciesImpl(
-                    allDependencies =
-                    listOf(module) + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule,
+                    allDependencies = [module] + resolvedModuleDescriptors.resolvedDescriptors + resolvedModuleDescriptors.forwardDeclarationsModule,
                     modulesWhoseInternalsAreVisible = resolvedModuleDescriptors.friendModules,
                     directExpectedByDependencies = resolvedModuleDescriptors.refinesModules.toList(),
                     allExpectedByDependencies = resolvedModuleDescriptors.refinesModules
@@ -71,7 +70,7 @@ internal object TopDownAnalyzerFacadeForKonan {
             moduleContext: ModuleContext,
             context: FrontendContext,
             projectContext: ProjectContext,
-            additionalPackages: List<PackageFragmentProvider> = emptyList()
+            additionalPackages: List<PackageFragmentProvider> = [],
     ): AnalysisResult {
 
         // we print out each file we compile if frontend phase is verbose

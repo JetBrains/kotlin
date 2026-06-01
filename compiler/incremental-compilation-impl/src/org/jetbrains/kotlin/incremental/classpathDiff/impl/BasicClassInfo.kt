@@ -71,7 +71,7 @@ internal class BasicClassInfo(
 private class BasicClassInfoClassVisitor(cv: ClassVisitor) : ClassVisitor(Opcodes.API_VERSION, cv) {
     private var className: String? = null
     private var classAccess: Int? = null
-    private val supertypeNames = mutableListOf<String>()
+    private val supertypeNames: MutableList<String> = []
 
     override fun visit(version: Int, access: Int, name: String, signature: String?, superName: String?, interfaces: Array<String>?) {
         className = name

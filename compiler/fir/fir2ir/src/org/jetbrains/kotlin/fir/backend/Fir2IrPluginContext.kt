@@ -68,7 +68,7 @@ class Fir2IrPluginContext(
     override val metadataDeclarationRegistrar: Fir2IrIrGeneratedDeclarationsRegistrar
         get() = c.annotationsFromPluginRegistrar
 
-    private val lookupsWithoutSpecificFile = mutableSetOf<FqName>()
+    private val lookupsWithoutSpecificFile: MutableSet<FqName> = []
     private val finderForBuiltins = Finder(fromFile = null)
 
     override fun finderForBuiltins(): DeclarationFinder {
@@ -144,7 +144,7 @@ class Fir2IrPluginContext(
             val callables = if (classId != null) {
                 val expandedClass = symbolProvider.getClassLikeSymbolByClassId(classId)
                     ?.fullyExpandedClass(c.session)
-                    ?: return emptyList()
+                    ?: return []
                 with(c) { expandedClass.unsubstitutedScope().getCallablesFromScope() }
             } else {
                 symbolProvider.getCallablesFromProvider()

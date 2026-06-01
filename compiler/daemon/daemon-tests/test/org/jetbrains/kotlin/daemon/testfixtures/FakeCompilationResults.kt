@@ -13,7 +13,7 @@ class FakeCompilationResults : CompilationResults {
     val results: List<Serializable>
         get() = resultList.toList()
 
-    private val resultList = mutableListOf<Serializable>()
+    private val resultList: MutableList<Serializable> = []
 
     override fun add(compilationResultCategory: Int, value: Serializable) {
         resultList.add(value)

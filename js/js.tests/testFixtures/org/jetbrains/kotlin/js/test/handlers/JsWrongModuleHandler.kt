@@ -27,7 +27,7 @@ class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler
         val mainJsFile = File(parentDir, "${originalFileName}_v5.js").path
         val libJsFile = File(parentDir, "$originalFileName-kotlin_lib_v5.js").path
         try {
-            V8JsTestChecker.run(listOf(kotlinJsFile, mainJsFile, libJsFile))
+            V8JsTestChecker.run([kotlinJsFile, mainJsFile, libJsFile])
         } catch (e: RuntimeException) {
             testServices.assertions.assertTrue(e is ScriptExecutionException)
             val message = e.message!!

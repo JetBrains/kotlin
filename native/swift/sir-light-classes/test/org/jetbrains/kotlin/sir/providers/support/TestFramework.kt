@@ -38,7 +38,7 @@ class TestSirSession(
     override val moduleToTranslate: KaModule
         get() = useSiteModule
     override val declarationNamer: SirDeclarationNamer = SirDeclarationNamerImpl()
-    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider(emptyList())
+    override val moduleProvider: SirModuleProvider = SirOneToOneModuleProvider([])
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = ObservingSirDeclarationProvider(
             declarationsProvider = SirDeclarationFromKtSymbolProvider(

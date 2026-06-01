@@ -106,7 +106,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
     private val initialLookupsCacheStateDiff: CacheAttributesDiff<*> = loadLookupsCacheStateDiff()
 
     private fun makeLookupsCacheAttributesManager(): CompositeLookupsCacheAttributesManager {
-        val expectedLookupsCacheComponents = mutableSetOf<String>()
+        val expectedLookupsCacheComponents: MutableSet<String> = []
 
         targetsIndex.chunks.forEach { chunk ->
             chunk.targets.forEach { target ->
@@ -198,7 +198,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
 
     private fun logMarkDirtyForTestingBeforeRound(file: File, shouldProcess: Boolean): Boolean {
         if (shouldProcess) {
-            testingLogger?.markedAsDirtyBeforeRound(listOf(file))
+            testingLogger?.markedAsDirtyBeforeRound([file])
         }
         return shouldProcess
     }
@@ -283,7 +283,7 @@ class KotlinCompileContext(val jpsContext: CompileContext) {
             val target = it.representativeTarget
             if (target is KotlinUnsupportedModuleBuildTarget) {
                 if (target.sourceFiles.isNotEmpty()) {
-                    byKind.getOrPut(target.kind) { mutableListOf() }.add(target)
+                    byKind.getOrPut(target.kind) { [] }.add(target)
                 }
             }
         }

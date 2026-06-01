@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 @TestMetadata("testData/analysis/librarySource")
 class FakeLibrarySourceTestGenerated : FakeManagedTest() {
-    override val variantChain = listOf("librarySource")
+    override val variantChain = ["librarySource"]
 
     @Test
     @TestMetadata("symbols.kt")

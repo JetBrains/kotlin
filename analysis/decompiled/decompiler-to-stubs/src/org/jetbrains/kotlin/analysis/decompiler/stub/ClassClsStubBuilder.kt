@@ -66,7 +66,7 @@ private class ClassClsStubBuilder(
         val supertypeIds = classProto.supertypes(c.typeTable).map { c.nameResolver.getClassId(it.className) }
         //empty supertype list if single supertype is Any
         if (supertypeIds.singleOrNull()?.let { StandardNames.FqNames.any == it.asSingleFqName().toUnsafe() } == true) {
-            listOf()
+            []
         } else {
             supertypeIds
         }
@@ -113,10 +113,10 @@ private class ClassClsStubBuilder(
         }
 
         val additionalModifiers = when (classKind) {
-            ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
-            ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD)
-            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
-            else -> emptyList()
+            ProtoBuf.Class.Kind.ENUM_CLASS -> [KtTokens.ENUM_KEYWORD]
+            ProtoBuf.Class.Kind.COMPANION_OBJECT -> [KtTokens.COMPANION_KEYWORD]
+            ProtoBuf.Class.Kind.ANNOTATION_CLASS -> [KtTokens.ANNOTATION_KEYWORD]
+            else -> []
         }
 
         return createModifierListStubForDeclaration(

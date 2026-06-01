@@ -45,7 +45,7 @@ data class KotlinCompilerArgumentsLevel(
     val name: String,
     val arguments: Set<KotlinCompilerArgument>,
     val nestedLevels: Set<KotlinCompilerArgumentsLevel>,
-    val modifiers: Set<Modifier> = emptySet()
+    val modifiers: Set<Modifier> = []
 ) {
 
     /**
@@ -87,8 +87,8 @@ data class KotlinCompilerArgumentsLevel(
 internal class KotlinCompilerArgumentsLevelBuilder(
     val name: String
 ) {
-    private val arguments = mutableSetOf<KotlinCompilerArgument>()
-    private val modifiers = mutableSetOf<Modifier>()
+    private val arguments: MutableSet<KotlinCompilerArgument> = []
+    private val modifiers: MutableSet<Modifier> = []
 
     /**
      * Add a [Modifier] to this level.
@@ -117,14 +117,14 @@ internal class KotlinCompilerArgumentsLevelBuilder(
         arguments.addAll(compilerArguments)
     }
 
-    private val nestedLevels = mutableSetOf<KotlinCompilerArgumentsLevel>()
+    private val nestedLevels: MutableSet<KotlinCompilerArgumentsLevel> = []
 
     /**
      * Define a new nested compiler arguments level.
      */
     fun subLevel(
         name: String,
-        mergeWith: Set<KotlinCompilerArgumentsLevel> = emptySet(),
+        mergeWith: Set<KotlinCompilerArgumentsLevel> = [],
         config: KotlinCompilerArgumentsLevelBuilder.() -> Unit,
     ) {
         val levelBuilder = KotlinCompilerArgumentsLevelBuilder(name)

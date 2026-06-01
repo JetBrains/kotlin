@@ -11,13 +11,13 @@ import org.junit.jupiter.api.Test
 class TestVariantChainTest {
     @Test
     fun `empty chain with additional variant`() {
-        assertEquals(listOf("dangling"), emptyList<String>().withAdditionalVariant("dangling"))
+        assertEquals(["dangling"], emptyList<String>().withAdditionalVariant("dangling"))
     }
 
     @Test
     fun `single element chain with additional variant`() {
         assertEquals(
-            listOf("standalone.fir", "dangling", "standalone.fir.dangling"),
+            ["standalone.fir", "dangling", "standalone.fir.dangling"],
             listOf("standalone.fir").withAdditionalVariant("dangling"),
         )
     }
@@ -25,7 +25,7 @@ class TestVariantChainTest {
     @Test
     fun `multi-element chain with additional variant`() {
         assertEquals(
-            listOf("knm", "wasm", "dangling", "knm.dangling", "wasm.dangling"),
+            ["knm", "wasm", "dangling", "knm.dangling", "wasm.dangling"],
             listOf("knm", "wasm").withAdditionalVariant("dangling"),
         )
     }

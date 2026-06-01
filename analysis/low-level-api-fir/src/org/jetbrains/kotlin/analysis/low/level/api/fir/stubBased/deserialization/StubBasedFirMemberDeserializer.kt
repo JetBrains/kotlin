@@ -87,7 +87,7 @@ internal class StubBasedFirDeserializationContext(
         annotationDeserializer = annotationDeserializer,
         containerSource = containerSource,
         outerClassSymbol = outerClassSymbol,
-        outerTypeParameters = if (capturesTypeParameters) allTypeParameters else emptyList(),
+        outerTypeParameters = if (capturesTypeParameters) allTypeParameters else [],
         initialOrigin = initialOrigin
     )
 
@@ -156,7 +156,7 @@ internal class StubBasedFirDeserializationContext(
             annotationDeserializer,
             containerSource,
             outerClassSymbol,
-            outerTypeParameters = emptyList(),
+            outerTypeParameters = [],
             initialOrigin
         )
 

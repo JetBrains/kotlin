@@ -79,7 +79,7 @@ class JavaSyntheticScopes(
         val funInterfaceConstructorsScopes =
             FunInterfaceConstructorsSyntheticScope(storageManager, lookupTracker, samConventionResolver, samConversionOracle)
 
-        scopes = listOf(javaSyntheticPropertiesScope, samAdapterFunctionsScope, funInterfaceConstructorsScopes) + scopesFromExtensions
+        scopes = [javaSyntheticPropertiesScope, samAdapterFunctionsScope, funInterfaceConstructorsScopes] + scopesFromExtensions
 
         if (samConversionPerArgumentIsEnabled) {
             val forceEnabledSamAdapterFunctionsScope = SamAdapterFunctionsScope(
@@ -93,7 +93,7 @@ class JavaSyntheticScopes(
             )
 
             scopesWithForceEnabledSamAdapters =
-                listOf(javaSyntheticPropertiesScope, forceEnabledSamAdapterFunctionsScope) + scopesFromExtensions
+                [javaSyntheticPropertiesScope, forceEnabledSamAdapterFunctionsScope] + scopesFromExtensions
         } else {
             scopesWithForceEnabledSamAdapters = scopes
         }

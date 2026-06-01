@@ -80,24 +80,24 @@ sealed class EvaluationMode {
             Name.identifier("greater"), Name.identifier("greaterOrEqual"),
         )
 
-        private val allowedMethodsOnStrings = setOf(
+        private val allowedMethodsOnStrings: Set<Name> = [
             Name.special("<get-length>"),
             OperatorNameConventions.PLUS, OperatorNameConventions.GET, OperatorNameConventions.COMPARE_TO,
             OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING,
-        )
+        ]
 
         private val allowedExtensionFunctions = setOf(
             "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>"
         ).map { StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier(it)) }.toSet()
 
-        private val allowedBuiltinExtensionFunctions = listOf(
+        private val allowedBuiltinExtensionFunctions = [
             BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
             BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
             BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
             BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
-        ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)) }.toSet()
+        ].map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)) }.toSet()
 
-        private val allowedOriginsForWhen = setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
+        private val allowedOriginsForWhen: Set<IrStatementOriginImpl> = [IrStatementOrigin.ANDAND, IrStatementOrigin.OROR]
 
         override fun canEvaluateFunction(function: IrFunction): Boolean {
             if (function.property.isConst) return true

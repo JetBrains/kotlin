@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 // TODO: adapt to multifile and multimodule tests
 class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     private val builder = StringBuilder()
     private var alreadyDumped: Boolean = false

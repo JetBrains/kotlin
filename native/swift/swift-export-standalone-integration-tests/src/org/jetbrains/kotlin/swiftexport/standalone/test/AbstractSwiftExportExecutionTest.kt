@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
 import org.jetbrains.kotlin.konan.target.Distribution
-import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestName
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.SwiftCompilation
@@ -15,14 +14,11 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilat
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.SimpleTestRunProvider.getTestRun
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestExecutable
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunners.createProperTestRunner
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemFrameworksPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.systemToolchainPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.BeforeEach
 import java.io.File
 
 /**
@@ -72,11 +68,11 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
     ): TestExecutable {
         // todo: KT-81344 Swift Export Execution tests uses 2 different xcode installlation
         val swiftExtraOpts = swiftModules.flatMap {
-            listOf(
+            [
                 "-I", it.rootDir.absolutePath,
                 "-L", it.rootDir.absolutePath,
                 "-l${it.moduleName}",
-            )
+            ]
         } + listOfNotNull(
             "-Xcc", "-fmodule-map-file=${Distribution(KotlinNativePaths.homePath.absolutePath).kotlinRuntimeForSwiftModuleMap}",
             "-L", kotlinBinaryLibrary.libraryFile.parentFile.absolutePath,
@@ -91,9 +87,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
 
         val success = SwiftCompilation(
             testRunSettings,
-            testSources + listOf(
-                testSuiteDir.resolve("main-testing.swift")
-            ),
+            testSources + testSuiteDir.resolve("main-testing.swift"),
             TestCompilationArtifact.Executable(buildDir(testName).resolve("swiftTestExecutable")),
             swiftExtraOpts,
             outputFile = { executable -> executable.executableFile },
@@ -102,7 +96,7 @@ abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryC
         return TestExecutable(
             success.resultingArtifact,
             success.loggedData,
-            listOf(TestName(testName))
+            [TestName(testName)]
         )
     }
 }

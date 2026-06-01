@@ -15,19 +15,19 @@ import org.jetbrains.kotlin.psi.*
 @KaPlatformInterface
 public object KotlinEmptyDeclarationProvider : KotlinDeclarationProvider {
     override fun getClassLikeDeclarationByClassId(classId: ClassId): KtClassLikeDeclaration? = null
-    override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = emptyList()
-    override fun getAllTypeAliasesByClassId(classId: ClassId): List<KtTypeAlias> = emptyList()
-    override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
-    override fun getTopLevelProperties(callableId: CallableId): List<KtProperty> = emptyList()
-    override fun getTopLevelFunctions(callableId: CallableId): List<KtNamedFunction> = emptyList()
-    override fun getTopLevelCallableFiles(callableId: CallableId): List<KtFile> = emptyList()
-    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = emptySet()
-    override fun findFilesForFacadeByPackage(packageFqName: FqName): List<KtFile> = emptyList()
-    override fun findFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()
-    override fun findInternalFilesForFacade(facadeFqName: FqName): List<KtFile> = emptyList()
-    override fun findFilesForScript(scriptFqName: FqName): List<KtScript> = emptyList()
+    override fun getAllClassesByClassId(classId: ClassId): List<KtClassOrObject> = []
+    override fun getAllTypeAliasesByClassId(classId: ClassId): List<KtTypeAlias> = []
+    override fun getTopLevelKotlinClassLikeDeclarationNamesInPackage(packageFqName: FqName): Set<Name> = []
+    override fun getTopLevelProperties(callableId: CallableId): List<KtProperty> = []
+    override fun getTopLevelFunctions(callableId: CallableId): List<KtNamedFunction> = []
+    override fun getTopLevelCallableFiles(callableId: CallableId): List<KtFile> = []
+    override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = []
+    override fun findFilesForFacadeByPackage(packageFqName: FqName): List<KtFile> = []
+    override fun findFilesForFacade(facadeFqName: FqName): List<KtFile> = []
+    override fun findInternalFilesForFacade(facadeFqName: FqName): List<KtFile> = []
+    override fun findFilesForScript(scriptFqName: FqName): List<KtScript> = []
 
-    override fun computePackageNames(): Set<String> = emptySet()
+    override fun computePackageNames(): Set<String> = []
     override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 }

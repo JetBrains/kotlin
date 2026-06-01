@@ -42,12 +42,12 @@ abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         }
 
         commonServicesConfigurationForJsCodegenTest(
-            customConfigurators = listOf(
+            customConfigurators = [
                 ::CommonEnvironmentConfigurator,
                 ::MetadataEnvironmentConfiguratorForSeparateKmpCompilation,
                 ::JsFirstStageEnvironmentConfiguratorForSeparateKmpCompilation,
                 ::JsSecondStageEnvironmentConfiguratorForSeparateKmpCompilation,
-            )
+            ]
         )
 
         setupFirstStageSteps()

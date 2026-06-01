@@ -30,7 +30,7 @@ val ScriptCompilationConfigurationKeys.ide
 val IdeScriptCompilationConfigurationKeys.dependenciesSources by PropertiesCollection.key<List<ScriptDependency>>()
 
 val IdeScriptCompilationConfigurationKeys.acceptedLocations
-        by PropertiesCollection.key(listOf(ScriptAcceptedLocation.Everywhere))
+        by PropertiesCollection.key([ScriptAcceptedLocation.Everywhere])
 
 /**
  * The name of the generated field, that will contain intermediate evaluation results, provided by power-assert

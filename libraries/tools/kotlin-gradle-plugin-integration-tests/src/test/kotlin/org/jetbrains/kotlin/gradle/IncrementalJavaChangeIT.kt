@@ -29,7 +29,7 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
 
             build("assemble") {
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf("foo/TrackedJavaClassChild.kt", "foo/useTrackedJavaClass.kt"),
+                    ["foo/TrackedJavaClassChild.kt", "foo/useTrackedJavaClass.kt"],
                     subProjectName = "app"
                 )
                 assertCompiledKotlinSources(expectedSources, output)
@@ -46,7 +46,7 @@ abstract class IncrementalJavaChangeDefaultIT : IncrementalCompilationJavaChange
             trackedJavaClassInLib.modify(changeMethodBody)
 
             build("assemble") {
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources([], output)
             }
         }
     }
@@ -212,7 +212,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
 
             build("assemble") {
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf("foo/TrackedJavaClassChild.kt", "foo/useTrackedJavaClass.kt"),
+                    ["foo/TrackedJavaClassChild.kt", "foo/useTrackedJavaClass.kt"],
                     subProjectName = "app"
                 )
                 assertCompiledKotlinSources(expectedSources, output)
@@ -230,7 +230,7 @@ class IncrementalJavaChangePreciseIT : IncrementalCompilationJavaChangesBase(
             trackedJavaClassInLib.modify(changeMethodBody)
 
             build("assemble") {
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources([], output)
             }
         }
     }
@@ -250,13 +250,13 @@ abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJav
 
             build("assemble") {
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf(
+                    [
                         "foo/TrackedJavaClassChild.kt",
                         "foo/useTrackedJavaClass.kt"
-                    ),
+                    ],
                     subProjectName = "app"
                 ) + sourceFilesRelativeToProject(
-                    listOf("bar/useTrackedJavaClassSameModule.kt"),
+                    ["bar/useTrackedJavaClassSameModule.kt"],
                     subProjectName = "lib"
                 )
                 assertCompiledKotlinSources(expectedSources, output)
@@ -274,7 +274,7 @@ abstract class IncrementalJavaChangeDisablePreciseIT : IncrementalCompilationJav
 
             build("assemble") {
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf("bar/useTrackedJavaClassSameModule.kt"),
+                    ["bar/useTrackedJavaClassSameModule.kt"],
                     subProjectName = "lib"
                 )
                 assertCompiledKotlinSources(expectedSources, output)
@@ -318,7 +318,7 @@ abstract class IncrementalCompilationJavaChangesBase(
             build("assemble") {
                 // Fewer Kotlin files are recompiled
                 val expectedSources = sourceFilesRelativeToProject(
-                    listOf("foo/JavaClassChild.kt", "foo/useJavaClass.kt"),
+                    ["foo/JavaClassChild.kt", "foo/useJavaClass.kt"],
                     subProjectName = "app"
                 )
                 assertCompiledKotlinSources(expectedSources, output)
@@ -337,7 +337,7 @@ abstract class IncrementalCompilationJavaChangesBase(
             build("assemble") {
                 assertTasksExecuted(":lib:compileKotlin")
                 assertTasksUpToDate(":app:compileKotlin") // App compilation has 'compile avoidance'
-                assertCompiledKotlinSources(emptyList(), output)
+                assertCompiledKotlinSources([], output)
             }
         }
     }

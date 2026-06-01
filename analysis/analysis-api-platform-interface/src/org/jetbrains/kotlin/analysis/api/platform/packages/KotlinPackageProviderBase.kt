@@ -65,7 +65,7 @@ public abstract class KotlinPackageProviderBase(
             }
         }
         else -> {
-            emptySet()
+            []
         }
     }
 }

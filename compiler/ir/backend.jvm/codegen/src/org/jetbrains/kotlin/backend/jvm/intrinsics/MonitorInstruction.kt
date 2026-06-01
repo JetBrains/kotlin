@@ -34,7 +34,7 @@ class MonitorInstruction private constructor(private val opcode: Int) : CallBase
     override fun toCallable(
         expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
     ): IntrinsicFunction {
-        return IntrinsicFunction.create(expression, signature, classCodegen, listOf(OBJECT_TYPE)) {
+        return IntrinsicFunction.create(expression, signature, classCodegen, [OBJECT_TYPE]) {
             it.visitInsn(opcode)
         }
     }

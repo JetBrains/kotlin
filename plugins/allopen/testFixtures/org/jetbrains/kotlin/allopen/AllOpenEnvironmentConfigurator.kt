@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 
 class AllOpenEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(AllOpenDirectives)
+        get() = [AllOpenDirectives]
 
     override fun ExtensionStorage.registerCompilerExtensions(
         module: TestModule,

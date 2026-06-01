@@ -36,7 +36,7 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override lateinit var moduleData: FirModuleData
     override lateinit var origin: FirDeclarationOrigin
     override var attributes: FirDeclarationAttributes = FirDeclarationAttributes()
-    override val typeParameters: MutableList<FirTypeParameterRef> = mutableListOf()
+    override val typeParameters: MutableList<FirTypeParameterRef> = []
     override lateinit var status: FirDeclarationStatus
     override var isLocal: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override lateinit var returnTypeRef: FirTypeRef
@@ -44,10 +44,10 @@ class FirPrimaryConstructorBuilder : FirAbstractConstructorBuilder, FirAnnotatio
     override var deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider
     override var containerSource: DeserializedContainerSource? = null
     override var dispatchReceiverType: ConeSimpleKotlinType? = null
-    override val contextParameters: MutableList<FirValueParameter> = mutableListOf()
-    override val valueParameters: MutableList<FirValueParameter> = mutableListOf()
+    override val contextParameters: MutableList<FirValueParameter> = []
+    override val valueParameters: MutableList<FirValueParameter> = []
     override var contractDescription: FirContractDescription? = null
-    override val annotations: MutableList<FirAnnotation> = mutableListOf()
+    override val annotations: MutableList<FirAnnotation> = []
     override lateinit var symbol: FirConstructorSymbol
     override var delegatedConstructor: FirDelegatedConstructorCall? = null
     override var body: FirBlock? = null

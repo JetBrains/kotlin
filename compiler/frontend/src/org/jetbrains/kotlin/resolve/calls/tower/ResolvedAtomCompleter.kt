@@ -86,7 +86,7 @@ class ResolvedAtomCompleter(
             is ResolvedCollectionLiteralAtom -> completeCollectionLiterals(resolvedAtom)
             is ResolvedCallableReferenceArgumentAtom -> completeCallableReferenceArgument(resolvedAtom)
             is ResolvedLambdaAtom -> completeLambda(resolvedAtom)
-            is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, emptyList())
+            is ResolvedCallAtom -> completeResolvedCall(resolvedAtom, [])
             is ResolvedSubCallArgument -> completeSubCallArgument(resolvedAtom)
             is ResolvedExpressionAtom -> completeExpression(resolvedAtom)
             else -> {}

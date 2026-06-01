@@ -67,7 +67,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         }
     }
 
-    private val possibleExtraBoxUsageGenerated = mutableSetOf<IrDeclaration>()
+    private val possibleExtraBoxUsageGenerated: MutableSet<IrDeclaration> = []
 
     private val irCurrentScope
         get() = currentScope!!.irElement as IrDeclaration
@@ -282,7 +282,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
     private val variablesToAdd = mutableMapOf<IrDeclarationParent, MutableSet<IrVariable>>()
 
     private fun variablesSaver(variable: IrVariable) {
-        variablesToAdd.getOrPut(variable.parent) { mutableSetOf() }.add(variable)
+        variablesToAdd.getOrPut(variable.parent) { [] }.add(variable)
     }
 
     override fun visitClassNew(declaration: IrClass): IrClass {
@@ -300,7 +300,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
                 memberDeclaration.accept(this, null)
                 null
             }).also { declarations ->
-                for (replacingDeclaration in declarations ?: listOf(memberDeclaration)) {
+                for (replacingDeclaration in declarations ?: [memberDeclaration]) {
                     postActionAfterTransformingClassDeclaration(replacingDeclaration)
                 }
             }
@@ -315,19 +315,19 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
     override fun postActionAfterTransformingClassDeclaration(replacingDeclaration: IrDeclaration) {
         when (replacingDeclaration) {
             is IrFunction -> replacingDeclaration.body = replacingDeclaration.body?.makeBodyWithAddedVariables(
-                context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
+                context, variablesToAdd[replacingDeclaration].orEmpty(), replacingDeclaration.symbol
             )?.apply {
                 if (replacingDeclaration in possibleExtraBoxUsageGenerated) removeAllExtraBoxes()
             }
 
             is IrAnonymousInitializer -> replacingDeclaration.body = replacingDeclaration.body.makeBodyWithAddedVariables(
-                context, variablesToAdd[replacingDeclaration.parent] ?: emptySet(), replacingDeclaration.symbol
+                context, variablesToAdd[replacingDeclaration.parent].orEmpty(), replacingDeclaration.symbol
             ).apply {
                 if (replacingDeclaration in possibleExtraBoxUsageGenerated) removeAllExtraBoxes()
             } as IrBlockBody
 
             is IrField -> replacingDeclaration.initializer = replacingDeclaration.initializer?.makeBodyWithAddedVariables(
-                context, variablesToAdd[replacingDeclaration] ?: emptySet(), replacingDeclaration.symbol
+                context, variablesToAdd[replacingDeclaration].orEmpty(), replacingDeclaration.symbol
             )?.apply {
                 if (replacingDeclaration in possibleExtraBoxUsageGenerated) removeAllExtraBoxes()
             } as IrExpressionBody?
@@ -452,7 +452,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             }
         }
         if (staticFieldMapping.isNotEmpty()) {
-            declaration.declarations.replaceAll(declaration.declarations.flatMap { staticFieldMapping[it] ?: listOf(it) })
+            declaration.declarations.replaceAll(declaration.declarations.flatMap { staticFieldMapping[it] ?: [it] })
         }
     }
 
@@ -506,7 +506,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             .transform(this@JvmInlineMultiFieldValueClassLowering, null)
             .patchDeclarationParents(replacement)
         allScopes.pop()
-        return listOf(replacement)
+        return [replacement]
     }
 
     private companion object {
@@ -714,7 +714,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         rootMfvcNode.throwWhenNotExternalIsNull(newPrimaryConstructor)
         val primaryConstructorImpl = rootMfvcNode.primaryConstructorImpl
         rootMfvcNode.throwWhenNotExternalIsNull(primaryConstructorImpl)
-        rootMfvcNode.mfvc.declarations += listOf(newPrimaryConstructor, primaryConstructorImpl)
+        rootMfvcNode.mfvc.declarations.addAll([newPrimaryConstructor, primaryConstructorImpl])
 
         val initializersBlocks = rootMfvcNode.mfvc.declarations.filterIsInstance<IrAnonymousInitializer>()
         val typeArguments = makeTypeParameterSubstitutionMap(rootMfvcNode.mfvc, primaryConstructorImpl)
@@ -749,7 +749,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             irExprBody(irBlock {
                 val newArguments: List<IrValueDeclaration> = wrapper.parameters.flatMap { parameter ->
                     if (!parameter.type.needsMfvcFlattening()) {
-                        listOf(parameter)
+                        [parameter]
                     } else {
                         // Old parameter value will be only used to set parameter of the lowered function,
                         // thus it is useless to show it in debugger
@@ -780,7 +780,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
             return expression
         }
         val declarations = transformFunctionFlat(originalFunction)
-        require(declarations == listOf(replacement)) {
+        require(declarations == [replacement]) {
             "Expected ${replacement.render()}, got ${declarations?.map { it.render() }}"
         }
         val wrapper = makeNewLamdaFunction(originalFunction, makeBody = { wrapper -> makeLambdaBody(wrapper, replacement) })
@@ -916,7 +916,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
                         leftClass.functions.single { it.isEquals() }
                     }
                     +irCall(newEquals).apply {
-                        arguments.assignFrom(listOf(leftArgument, rightArgument))
+                        arguments.assignFrom([leftArgument, rightArgument])
                     }.transform(this@JvmInlineMultiFieldValueClassLowering, null)
                 } else if (rightNode != null) {
                     // left one is boxed, right one is unboxed
@@ -1005,7 +1005,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         val newArguments = (oldArguments zip argumentSizes).flatMapIndexed { index, [oldArgument, parametersCount] ->
             when {
                 oldArgument == null -> List(parametersCount) { null }
-                parametersCount == 1 -> listOf(oldArgument.transform(this@JvmInlineMultiFieldValueClassLowering, null))
+                parametersCount == 1 -> [oldArgument.transform(this@JvmInlineMultiFieldValueClassLowering, null)]
                 else -> {
                     val expectedType = (structure[index] as MultiFieldValueClassMapping).boxedType
                     val castedIfNeeded = castExpressionToNotNullTypeIfNeeded(oldArgument, expectedType)
@@ -1043,9 +1043,9 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         block: IrContainerExpression,
         variables: List<IrVariable>
     ): List<IrExpression> {
-        val forbiddenVariables = mutableSetOf<IrVariable>()
+        val forbiddenVariables: MutableSet<IrVariable> = []
         val variablesSet = variables.toSet()
-        val standaloneExpressions = mutableListOf<IrExpression>()
+        val standaloneExpressions: MutableList<IrExpression> = []
         val resultVariables = variables.toMutableList()
 
         fun recur(block: IrContainerExpression): Boolean /* stop optimization */ {
@@ -1165,7 +1165,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
      */
     fun IrBlockBuilder.flattenExpression(expression: IrExpression): List<IrExpression> {
         if (!expression.type.needsMfvcFlattening()) {
-            return listOf(expression.transform(this@JvmInlineMultiFieldValueClassLowering, null))
+            return [expression.transform(this@JvmInlineMultiFieldValueClassLowering, null)]
         }
         val rootMfvcNode = replacements.getRootMfvcNode(expression.type.erasedUpperBound)
         val typeArguments = makeTypeArgumentsFromType(expression.type as IrSimpleType)
@@ -1202,7 +1202,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
         val lowering = this@JvmInlineMultiFieldValueClassLowering
         if (rootNode == null || !type.needsMfvcFlattening() || instance.size == 1) {
             require(instance.size == 1) { "Required 1 variable/field to store regular value but got ${instance.size}" }
-            instance.addSetterStatements(this, listOf(expression.transform(lowering, null)))
+            instance.addSetterStatements(this, [expression.transform(lowering, null)])
             return
         }
         require(rootNode.leavesCount == instance.size) {
@@ -1325,7 +1325,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
                     statement.accept(this, false)
                 }
                 expression.statements.lastOrNull()?.accept(this, resultIsUsed)
-                val statementsToRemove = mutableSetOf<IrStatement>()
+                val statementsToRemove: MutableSet<IrStatement> = []
                 for (statement in expression.statements.subListWithoutLast(if (resultIsUsed) 1 else 0)) {
                     val call = getFunctionCallOrNull(statement) ?: continue
                     val node = replacements.getRootMfvcNodeOrNull(call.type.erasedUpperBound) ?: continue
@@ -1342,7 +1342,7 @@ internal class JvmInlineMultiFieldValueClassLowering(context: JvmBackendContext)
 }
 
 // like dropLast but creates a view to the original list instead of copying content of it
-private fun <T> List<T>.subListWithoutLast(n: Int) = if (size > n) subList(0, size - n) else emptyList()
+private fun <T> List<T>.subListWithoutLast(n: Int) = if (size > n) subList(0, size - n) else []
 
 private sealed class BlockOrBody {
     abstract val element: IrElement
@@ -1365,20 +1365,20 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
     val childrenBlocks = mutableMapOf<BlockOrBody, MutableList<BlockOrBody>>()
 
     body.element.acceptVoid(object : IrVisitorVoid() {
-        private val stack = mutableListOf<BlockOrBody>()
+        private val stack: MutableList<BlockOrBody> = []
         override fun visitElement(element: IrElement) {
             element.acceptChildren(this, null)
         }
 
         override fun visitBody(body: IrBody) {
-            currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(BlockOrBody.Body(body)) }
+            currentStackElement()?.let { childrenBlocks.getOrPut(it) { [] }.add(BlockOrBody.Body(body)) }
             stack.add(BlockOrBody.Body(body))
             super.visitBody(body)
             require(stack.removeLast() == BlockOrBody.Body(body)) { "Invalid stack" }
         }
 
         override fun visitBlock(expression: IrBlock) {
-            currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(Block(expression)) }
+            currentStackElement()?.let { childrenBlocks.getOrPut(it) { [] }.add(Block(expression)) }
             stack.add(Block(expression))
             super.visitBlock(expression)
             require(stack.removeLast() == Block(expression)) { "Invalid stack" }
@@ -1389,15 +1389,15 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
         override fun visitValueAccess(expression: IrValueAccessExpression) {
             val valueDeclaration = expression.symbol.owner
             if (valueDeclaration is IrVariable && valueDeclaration in variables) {
-                variableUsages.getOrPut(currentStackElement()!!) { mutableSetOf() }.add(valueDeclaration)
+                variableUsages.getOrPut(currentStackElement()!!) { [] }.add(valueDeclaration)
             }
             super.visitValueAccess(expression)
         }
     })
 
     fun dfs(currentBlock: BlockOrBody, variable: IrVariable): BlockOrBody? {
-        if (variable in (variableUsages[currentBlock] ?: listOf())) return currentBlock
-        val childrenResult = childrenBlocks[currentBlock]?.mapNotNull { dfs(it, variable) } ?: listOf()
+        if (variable in (variableUsages[currentBlock] ?: [])) return currentBlock
+        val childrenResult = childrenBlocks[currentBlock]?.mapNotNull { dfs(it, variable) } ?: []
         return when (childrenResult.size) {
             0 -> return null
             1 -> return childrenResult.single()
@@ -1466,7 +1466,7 @@ private fun BlockOrBody.makeBodyWithAddedVariables(context: JvmBackendContext, v
 
         private fun replaceSetVariableWithInitialization(variables: List<IrVariable>, container: IrStatementContainer) {
             require(variables.all { it.initializer == null }) { "Variables must have no initializer" }
-            val variableFirstUsage = variables.associateWith { v -> container.statements.firstOrNull { it.containsUsagesOf(setOf(v)) } }
+            val variableFirstUsage = variables.associateWith { v -> container.statements.firstOrNull { it.containsUsagesOf([v]) } }
             val variableDeclarationPerStatement = variableFirstUsage.entries
                 .mapNotNull { [variable, firstUsage] -> if (firstUsage == null) null else firstUsage to variable }
                 .groupBy({ [k, _] -> k }, { [_, v] -> v })

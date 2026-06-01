@@ -39,17 +39,17 @@ import org.jetbrains.kotlin.utils.memoryOptimizedMap
 private const val NOT_EXPORTED_NAMESPACE = "not.exported"
 
 class ExportModelGenerator(val context: WasmBackendContext) {
-    private val excludedFromExport = setOf<IrDeclaration>(
+    private val excludedFromExport: Set<IrDeclaration> = [
         context.wasmSymbols.jsRelatedSymbols.jsReferenceClass.owner,
         context.wasmSymbols.jsRelatedSymbols.jsAnyType.classOrFail.owner,
         context.wasmSymbols.jsRelatedSymbols.jsNumberType.classOrFail.owner,
         context.wasmSymbols.jsRelatedSymbols.jsStringType.classOrFail.owner,
         context.wasmSymbols.jsRelatedSymbols.jsBooleanType.classOrFail.owner,
         context.wasmSymbols.jsRelatedSymbols.jsBigIntType.classOrFail.owner
-    )
+    ]
 
     private fun collectAllTheDeclarationsToExport(modules: Iterable<IrModuleFragment>): Iterable<IrDeclaration> {
-        val declarationsToExport = mutableSetOf<IrDeclaration>()
+        val declarationsToExport: MutableSet<IrDeclaration> = []
         val queue = ArrayDeque<IrDeclaration>().apply {
             modules.asSequence()
                 .flatMap { it.files }
@@ -167,7 +167,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
         val isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT
         val isProtected = property.visibility == DescriptorVisibilities.PROTECTED
         if (parentClass?.isInterface == true) {
-            return listOf(
+            return [
                 ExportedField(
                     name = name,
                     type = propertyType,
@@ -179,7 +179,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                     isOptional = isOptional,
                     isStatic = isStatic,
                 )
-            )
+            ]
         } else {
             val accessors: MutableList<ExportedDeclaration> = SmartList(
                 ExportedPropertyGetter(
@@ -261,10 +261,10 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 require(klass.isExternal) { "Unexpected non-external class: ${klass.fqNameWhenAvailable}" }
 
                 val name = FqName.fromSegments(
-                    listOf(
+                    [
                         NOT_EXPORTED_NAMESPACE,
                         klass.getFqNameWithJsNameWhenAvailable(shouldIncludePackage = true, isEsModules = true).asString()
-                    )
+                    ]
                 )
 
                 val classType = ExportedType.ClassType(
@@ -323,12 +323,12 @@ class ExportModelGenerator(val context: WasmBackendContext) {
     }
 
     private fun exportMemberDeclaration(declaration: IrDeclaration): List<ExportedDeclaration> {
-        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == DescriptorVisibilities.PRIVATE) return emptyList()
+        if (declaration !is IrDeclarationWithVisibility || declaration.visibility == DescriptorVisibilities.PRIVATE) return []
         return when (declaration) {
             is IrSimpleFunction -> listOfNotNull(exportFunction(declaration))
-            is IrConstructor -> listOf(exportConstructor(declaration))
+            is IrConstructor -> [exportConstructor(declaration)]
             is IrProperty -> exportProperty(declaration)
-            else -> emptyList()
+            else -> []
         }.map { it.withAttributesFor(declaration) }
     }
 
@@ -353,7 +353,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 name = name,
                 members = members,
                 superClasses = listOfNotNull(superClass),
-                nestedClasses = emptyList(),
+                nestedClasses = [],
                 superInterfaces = superInterfaces,
                 originalClassId = declaration.classId,
                 isExternal = declaration.isEffectivelyExternal(),
@@ -370,7 +370,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 superInterfaces = superInterfaces,
                 typeParameters = typeParameters,
                 members = members,
-                nestedClasses = emptyList(),
+                nestedClasses = [],
                 originalClassId = declaration.classId,
             )
         }
@@ -379,7 +379,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
         return ExportedNamespace(
             name = "$NOT_EXPORTED_NAMESPACE${parentFqName?.asString()?.takeIf { it.isNotEmpty() }?.let { ".$it" }.orEmpty()}",
-            declarations = listOf(exportedDeclaration),
+            declarations = [exportedDeclaration],
             isPrivate = true
         )
     }

@@ -19,10 +19,10 @@ import kotlin.io.path.pathString
  */
 data class Library(
     val mainKlib: Path,
-    val cinteropKlibs: List<Path> = emptyList(),
+    val cinteropKlibs: List<Path> = [],
 ) {
     val klibs
-        get() = listOf(mainKlib) + cinteropKlibs
+        get() = [mainKlib] + cinteropKlibs
 
     val name: String
         get() = mainKlib.nameWithoutExtension

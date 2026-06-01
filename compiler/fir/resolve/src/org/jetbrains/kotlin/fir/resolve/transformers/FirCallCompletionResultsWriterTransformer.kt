@@ -1074,7 +1074,7 @@ class FirCallCompletionResultsWriterTransformer(
     private fun computeTypeArgumentTypes(
         candidate: Candidate,
     ): List<ConeKotlinType> {
-        val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
+        val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return []
 
         return declaration.typeParameters.map {
             val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
@@ -1318,7 +1318,7 @@ class FirCallCompletionResultsWriterTransformer(
             checkNotNullCall,
             data
         ) {
-            listOf(argumentList.arguments[0].resultType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext))
+            [argumentList.arguments[0].resultType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)]
         }
     }
 
@@ -1584,7 +1584,7 @@ private fun CallableReferenceLhsAsType.shouldReportInvalidStaticReceiver(kind: C
 
 context(_: SessionHolder)
 internal fun FirQualifiedAccessExpression.addNonFatalDiagnostics(candidate: Candidate) {
-    val newNonFatalDiagnostics = mutableListOf<ConeDiagnostic>()
+    val newNonFatalDiagnostics: MutableList<ConeDiagnostic> = []
     candidate.ifLhsResolvedToType { lhs, kind ->
         if (lhs.diagnostic == null) {
             if (lhs.shouldReportInvalidStaticReceiver(kind)) {

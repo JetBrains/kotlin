@@ -46,7 +46,7 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
         val rootDir = ForTestCompileRuntime.transformTestDataPath("native/native.tests/testData/kt43502")
 
         val libFile = buildDir.resolve("kt43502.a")
-        compileWithClangToStaticLibrary(sourceFiles = listOf(rootDir.resolve("kt43502.c")), outputFile = libFile).assertSuccess()
+        compileWithClangToStaticLibrary(sourceFiles = [rootDir.resolve("kt43502.c")], outputFile = libFile).assertSuccess()
         val defFile = buildDir.resolve("kt43502.def").also {
             it.printWriter().use {
                 it.println(
@@ -57,20 +57,20 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
                 )
             }
         }
-        val cinteropModule = TestModule.Exclusive("kt43502", emptySet(), emptySet(), emptySet())
+        val cinteropModule = TestModule.Exclusive("kt43502", [], [], [])
         cinteropModule.files += TestFile.createCommitted(defFile, cinteropModule)
-        val ktModule = TestModule.Exclusive("main", setOf("kt43502"), emptySet(), emptySet())
+        val ktModule = TestModule.Exclusive("main", ["kt43502"], [], [])
         ktModule.files += TestFile.createCommitted(rootDir.resolve("main.kt"), ktModule)
 
         val testCase = TestCase(
             id = TestCaseId.Named("kt43502"),
             kind = TestKind.STANDALONE_NO_TR,
-            modules = setOf(cinteropModule, ktModule),
+            modules = [cinteropModule, ktModule],
             freeCompilerArgs = TestCompilerArgs(
-                compilerArgs = listOf(
+                compilerArgs = [
                     "-opt-in", "kotlinx.cinterop.ExperimentalForeignApi",
                     "-module-name", "kt43502"
-                ), cinteropArgs = listOf("-header", rootDir.resolve("kt43502.h").absolutePath)
+                ], cinteropArgs = ["-header", rootDir.resolve("kt43502.h").absolutePath]
             ),
             nominalPackageName = PackageName("kt43502"),
             checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout).run {
@@ -94,21 +94,23 @@ abstract class KT43502TestBase : AbstractNativeSimpleTest() {
         // Possible alternative: generate executable in buildDir and move or copy DLL there.
         // It might make sense in case of multiple dynamic libraries, but let's keep things simple for now.
         val executableFile = File(binaryLibrary.libraryFile.parentFile, clangExecutableName)
-        val includeDirectories = binaryLibrary.headerFile?.let { listOf(it.parentFile) } ?: emptyList()
+        val includeDirectories = binaryLibrary.headerFile?.let { [it.parentFile] } ?: []
         val libraryName = binaryLibrary.libraryFile.nameWithoutExtension.substringAfter("lib")
+
+        @Suppress("ConvertToCollectionLiterals")
         val clangResult = compileWithClang(
-            sourceFiles = listOf(rootDir.resolve("main.c")),
+            sourceFiles = [rootDir.resolve("main.c")],
             includeDirectories = includeDirectories,
             outputFile = executableFile,
-            libraryDirectories = listOf(binaryLibrary.libraryFile.parentFile),
-            libraries = listOf(libraryName),
+            libraryDirectories = [binaryLibrary.libraryFile.parentFile],
+            libraries = [libraryName],
             additionalClangFlags = testRunSettings.getKindSpecificClangFlags(binaryLibrary) + listOf("-Wall", "-Werror"),
         ).assertSuccess()
 
         val testExecutable = TestExecutable(
             clangResult.resultingArtifact,
             loggedCompilationToolCall = clangResult.loggedData,
-            testNames = listOf(TestName("TMP")),
+            testNames = [TestName("TMP")],
         )
 
         runExecutableAndVerify(testCase, testExecutable)

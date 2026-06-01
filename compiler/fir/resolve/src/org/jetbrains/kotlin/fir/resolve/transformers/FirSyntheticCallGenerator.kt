@@ -618,7 +618,7 @@ class FirSyntheticCallGenerator(
         explicitReceiver = null,
         argumentList = argumentList,
         isUsedAsGetClassReceiver = false,
-        typeArguments = emptyList(),
+        typeArguments = [],
         session = session,
         containingFile = components.file,
         containingDeclarations = components.containingDeclarations,
@@ -700,7 +700,7 @@ class FirSyntheticCallGenerator(
         val [typeParameter, rightArgumentType] = generateSyntheticSelectTypeParameter(functionSymbol)
 
         val returnType = rightArgumentType
-            .withAttributes(ConeAttributes.create(listOf(CompilerConeAttributes.Exact)))
+            .withAttributes(ConeAttributes.create([CompilerConeAttributes.Exact]))
             .toFirResolvedTypeRef()
 
         val typeArgument = buildTypeProjectionWithVariance {

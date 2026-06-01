@@ -58,7 +58,7 @@ class OptionalAnnotationPackageFragmentProvider(
                     ErrorReporter.DO_NOTHING,
                     LookupTracker.DO_NOTHING,
                     FlexibleTypeDeserializer.ThrowException,
-                    emptyList(),
+                    [],
                     notFoundClasses,
                     ContractDeserializer.DEFAULT,
                     extensionRegistryLite = serializerProtocol.extensionRegistry,
@@ -92,8 +92,8 @@ class OptionalAnnotationPackageFragmentProvider(
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> =
         packages[fqName]?.let(::listOf).orEmpty()
 
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> =
-        emptyList()
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): List<FqName> =
+        []
 }
 
 private class OptionalAnnotationClassDataFinder(classes: List<ClassData>) : ClassDataFinder {
@@ -115,7 +115,7 @@ private class PackageFragmentForOptionalAnnotations(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
         ): Collection<DeclarationDescriptor> =
-            if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) classDescriptors().values else emptyList()
+            if (kindFilter.acceptsKinds(DescriptorKindFilter.CLASSIFIERS_MASK)) classDescriptors().values else []
 
         override fun getClassifierNames(): Set<Name> = classNames
 

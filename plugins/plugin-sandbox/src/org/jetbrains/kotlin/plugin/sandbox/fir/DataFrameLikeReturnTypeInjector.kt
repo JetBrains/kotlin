@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.name.FqName
 
 class DataFrameLikeReturnTypeInjector(session: FirSession) : FirExpressionResolutionExtension(session) {
     companion object {
-        val DF_CLASS_ID: ClassId = ClassId.topLevel(FqName.fromSegments(listOf("DataFrame")))
+        val DF_CLASS_ID: ClassId = ClassId.topLevel(FqName.fromSegments(["DataFrame"]))
     }
 
     private data object DataFrameLikeReturnTypeInjectorGeneratorKey : GeneratedDeclarationKey()
@@ -45,12 +45,12 @@ class DataFrameLikeReturnTypeInjector(session: FirSession) : FirExpressionResolu
         containingCallableSymbol: FirBasedSymbol<*>,
     ): List<ImplicitExtensionReceiverValue> {
         val callReturnType = functionCall.resolvedType
-        if (callReturnType.classId != DF_CLASS_ID) return emptyList()
+        if (callReturnType.classId != DF_CLASS_ID) return []
         val rootMarker = callReturnType.typeArguments[0]
         if (rootMarker !is ConeClassLikeType) {
-            return emptyList()
+            return []
         }
-        val symbol = rootMarker.toRegularClassSymbol(session) ?: return emptyList()
+        val symbol = rootMarker.toRegularClassSymbol(session) ?: return []
         return symbol.declaredMemberScope(session, FirResolvePhase.DECLARATIONS).collectAllProperties()
             .filterIsInstance<FirPropertySymbol>()
             .filter {

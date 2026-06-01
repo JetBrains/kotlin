@@ -44,14 +44,14 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         val libraryRoot = mavenUrl.resolve("com/jetbrains/library")
 
         // Verify that module directories exist for each target
-        val expectedModules = setOf(
+        val expectedModules: Set<String> = [
             "multiplatformLibrary",
             "multiplatformLibrary-iosarm64",
             "multiplatformLibrary-jvm",
             "multiplatformLibrary-linuxx64",
             "multiplatformLibrary-macosarm64",
             "multiplatformLibrary-mingwx64"
-        )
+        ]
 
         // Check that expected modules exist
         val actualModules = getActualModules(libraryRoot)
@@ -78,12 +78,12 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         val libraryRoot = mavenUrl.resolve("com/jetbrains/library")
 
         // Verify that only the common and JVM module directories exist
-        val expectedModules = setOf(
+        val expectedModules: Set<String> = [
             "multiplatformLibrary",
             "multiplatformLibrary-jvm",
             "multiplatformLibrary-linuxx64",
             "multiplatformLibrary-mingwx64"
-        )
+        ]
 
         // Check exact match of published modules
         val actualModules = getActualModules(libraryRoot)
@@ -148,10 +148,10 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
         verifyModuleContents(libraryRoot, expectedModules)
 
         // Verify cinterop artifacts existence with equality checks
-        val cinteropTargets = mutableListOf(
+        val cinteropTargets: MutableList<String> = [
             "linuxx64",
             "mingwx64"
-        )
+        ]
         if (HostManager.hostIsMac) {
             cinteropTargets.add("macosarm64")
         }
@@ -344,7 +344,7 @@ private fun getActualModules(libraryRoot: Path): Set<String> {
             .map { it.name }
             .toSet()
     } else {
-        emptySet()
+        []
     }
 }
 
@@ -361,11 +361,11 @@ private fun verifyModuleContents(libraryRoot: Path, expectedModules: Set<String>
         val actualFiles = if (versionDir.exists()) {
             versionDir.listDirectoryEntries().map { it.name }.toSet()
         } else {
-            emptySet()
+            []
         }
 
         // Define expected files for each module type
-        val expectedFiles = mutableSetOf<String>()
+        val expectedFiles: MutableSet<String> = []
 
         // All modules should have these files
         expectedFiles.add("$module-1.0.module")

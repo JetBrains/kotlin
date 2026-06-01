@@ -59,8 +59,8 @@ interface DerivedModuleInfo : ModuleInfo {
 }
 
 fun ModuleInfo.flatten(): List<ModuleInfo> = when (this) {
-    is CombinedModuleInfo -> listOf(this) + containedModules
-    else -> listOf(this)
+    is CombinedModuleInfo -> [this] + containedModules
+    else -> [this]
 }
 
 fun ModuleInfo.unwrapPlatform(): ModuleInfo = if (this is CombinedModuleInfo) platformModule else this

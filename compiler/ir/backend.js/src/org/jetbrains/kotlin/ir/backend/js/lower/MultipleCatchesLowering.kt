@@ -73,7 +73,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                 val pendingExceptionDeclaration = JsIrBuilder.buildVar(context.dynamicType, data, "\$p")
                 val pendingException = { JsIrBuilder.buildGetValue(pendingExceptionDeclaration.symbol) }
 
-                val branches = mutableListOf<IrBranch>()
+                val branches: MutableList<IrBranch> = []
                 var isCaughtDynamic = false
 
                 for (catch in aTry.catches) {
@@ -93,7 +93,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                         useOffsetsFrom.endOffset,
                         catch.result.type,
                         null,
-                        listOf(catchParameter, catch.result)
+                        [catchParameter, catch.result]
                     )
 
                     if (type is IrDynamicType) {
@@ -108,7 +108,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
 
                 if (!isCaughtDynamic) {
                     val throwStatement = JsIrBuilder.buildThrow(nothingType, pendingException())
-                    branches += IrElseBranchImpl(litTrue, JsIrBuilder.buildBlock(nothingType, listOf(throwStatement)))
+                    branches += IrElseBranchImpl(litTrue, JsIrBuilder.buildBlock(nothingType, [throwStatement]))
                 }
 
                 val whenStatement = JsIrBuilder.buildWhen(aTry.type, branches)
@@ -117,7 +117,7 @@ class MultipleCatchesLowering(private val context: JsIrBackendContext) : BodyLow
                     IrCatchImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, pendingExceptionDeclaration, whenStatement)
                 }
 
-                return aTry.run { IrTryImpl(startOffset, endOffset, type, tryResult, listOf(newCatch), finallyExpression) }
+                return aTry.run { IrTryImpl(startOffset, endOffset, type, tryResult, [newCatch], finallyExpression) }
             }
 
             private fun buildIsCheck(value: IrExpression, toType: IrType) =

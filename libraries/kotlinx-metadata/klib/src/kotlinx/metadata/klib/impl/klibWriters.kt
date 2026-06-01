@@ -16,7 +16,7 @@ class KlibMetadataVersionWriteExtension(val version: KlibMetadataVersion) : Writ
 
 class KlibModuleFragmentWriter(
     stringTable: ApproximatingStringTable,
-    contextExtensions: List<WriteContextExtension> = emptyList()
+    contextExtensions: List<WriteContextExtension> = []
 ) : ModuleFragmentWriter(stringTable, contextExtensions) {
 
     fun write(): ProtoBuf.PackageFragment =

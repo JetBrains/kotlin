@@ -42,7 +42,7 @@ internal object KaBaseReferenceResolver : ResolveCache.PolyVariantResolver<KtRef
 
                     LOG.error(wrappedException)
 
-                    emptyList()
+                    []
                 }
 
                 resolveToPsiElements.map { KotlinResolveResult(it) }.toTypedArray()

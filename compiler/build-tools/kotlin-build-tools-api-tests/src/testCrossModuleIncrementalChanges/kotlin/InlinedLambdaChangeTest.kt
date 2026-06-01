@@ -26,21 +26,21 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/lambda-body-change/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/lambda-body-change/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeLambdaBody")
 
-            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
-            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            lib.compile(expectedDirtySet = ["com/example/ictest/inlinedLambda.kt"])
+            app.compile(expectedDirtySet = ["com/example/ictest/callSite.kt"])
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
 
             lib.replaceFileWithVersion("com/example/ictest/inlinedLambda.kt", "changeFunctionBody")
 
-            lib.compile(expectedDirtySet = setOf("com/example/ictest/inlinedLambda.kt"))
-            app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
+            lib.compile(expectedDirtySet = ["com/example/ictest/inlinedLambda.kt"])
+            app.compile(expectedDirtySet = ["com/example/ictest/callSite.kt"])
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = WITH_BOTH_CHANGES)
         }
     }
@@ -56,7 +56,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
 
             app.replaceFileWithVersion("inlinedLambda.kt", "changeLambdaBody")
 
-            app.compile(expectedDirtySet = setOf("inlinedLambda.kt"))
+            app.compile(expectedDirtySet = ["inlinedLambda.kt"])
             //interestingly, in this version we don't recompile the call site, but the build works.
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
@@ -70,15 +70,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/local-in-local/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-in-local/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedLocalClass.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -98,15 +98,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedLocalClass.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE)
         }
     }
@@ -120,15 +120,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-uses-local-deduplication-v2/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "changeInnerComputation")
 
-            lib.compile(expectedDirtySet = setOf("inlinedLocalClass.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedLocalClass.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = NEW_LAMBDA_BODY_WITH_DUPLICATED_LAMBDA_USAGE)
         }
     }
@@ -141,7 +141,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/local-named/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/local-named/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
             lib.replaceFileWithVersion("inlinedLocalClass.kt", "addNamedClass")
             lib.compile {
@@ -160,15 +160,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/no-recompile/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/no-recompile/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedCode")
 
-            lib.compile(expectedDirtySet = setOf("inlinedFunction.kt"))
-            app.compile(expectedDirtySet = setOf())
+            lib.compile(expectedDirtySet = ["inlinedFunction.kt"])
+            app.compile(expectedDirtySet = [])
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
         }
     }
@@ -181,7 +181,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/nested-inline/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
@@ -191,8 +191,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             // Because of a compiler optimization, we don't need to recompile A:
             // Inside the lib module inlinedA directly uses a local class from inlinedB without copying it.
             // It's ok. The main criteria for these tests is that the expected output is generated by the built & executed app.
-            lib.compile(expectedDirtySet = setOf("inlinedB.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedB.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -205,15 +205,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/nested-inline-as-anonymous-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline-as-anonymous-object/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedB.kt", "changeObjectInB")
 
-            lib.compile(expectedDirtySet = setOf("inlinedB.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedB.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -226,15 +226,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/nested-inline-as-typed-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/nested-inline-as-typed-object/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedB.kt", "changeObjectInB")
 
-            lib.compile(expectedDirtySet = setOf("inlinedB.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedB.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -247,15 +247,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/inline-property/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-property/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedProperty.kt", "changeLambdaBody")
 
-            lib.compile(expectedDirtySet = setOf("inlinedProperty.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedProperty.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -268,15 +268,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/no-recompile-lambdas/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/no-recompile-lambdas/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedFunction.kt", "changeUnusedLambdas")
 
-            lib.compile(expectedDirtySet = setOf("inlinedFunction.kt"))
-            app.compile(expectedDirtySet = setOf())
+            lib.compile(expectedDirtySet = ["inlinedFunction.kt"])
+            app.compile(expectedDirtySet = [])
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
         }
     }
@@ -289,15 +289,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/inline-crossinline/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-crossinline/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedB.kt", "changeLambdaBody")
 
-            lib.compile(expectedDirtySet = setOf("inlinedB.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedB.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -310,7 +310,7 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
             // doesn't require inlined class snapshotting in this case
 
@@ -318,8 +318,8 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
 
             lib.replaceFileWithVersion("baseType.kt", "changeCompute")
 
-            lib.compile(expectedDirtySet = setOf("baseType.kt"))
-            app.compile(expectedDirtySet = setOf())
+            lib.compile(expectedDirtySet = ["baseType.kt"])
+            app.compile(expectedDirtySet = [])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -332,15 +332,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-local-class/inline-anonymous-object-evil/lib")
             val app = module(
                 "ic-scenarios/inline-local-class/inline-anonymous-object-evil/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("SomeClass.kt", "withOverload")
 
-            lib.compile(expectedDirtySet = setOf("SomeClass.kt", "callable.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["SomeClass.kt", "callable.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }
@@ -353,15 +353,15 @@ class InlinedLambdaChangeTest : BaseCompilationTest() {
             val lib = module("ic-scenarios/inline-named-inner/lib")
             val app = module(
                 "ic-scenarios/inline-named-inner/app",
-                dependencies = listOf(lib),
+                dependencies = [lib],
             )
 
             app.execute(mainClass = "CallSiteKt", exactOutput = INITIAL_OUTPUT)
 
             lib.replaceFileWithVersion("inlinedInnerClass.kt", "modified")
 
-            lib.compile(expectedDirtySet = setOf("inlinedInnerClass.kt"))
-            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            lib.compile(expectedDirtySet = ["inlinedInnerClass.kt"])
+            app.compile(expectedDirtySet = ["callSite.kt"])
             app.execute(mainClass = "CallSiteKt", exactOutput = WITH_NEW_LAMBDA_BODY)
         }
     }

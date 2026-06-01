@@ -33,10 +33,10 @@ public fun Metadata(
     extraInt: Int? = null
 ): Metadata = Metadata(
     kind ?: 1,
-    metadataVersion ?: intArrayOf(),
-    intArrayOf(1, 0, 3),
-    data1 ?: emptyArray(),
-    data2 ?: emptyArray(),
+    metadataVersion ?: [],
+    [1, 0, 3],
+    data1 ?: [],
+    data2 ?: [],
     extraString ?: "",
     packageName ?: "",
     extraInt ?: 0

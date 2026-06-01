@@ -159,7 +159,7 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
     fun calculateConfigHash(config: CompilerConfiguration, artifactConfiguration: WebArtifactConfiguration): ICHash {
         hashCalculator.update(KotlinCompilerVersion.VERSION)
 
-        val booleanKeys = listOf(
+        val booleanKeys = [
             JSConfigurationKeys.SOURCE_MAP,
             JSConfigurationKeys.DEVELOPER_MODE,
             JSConfigurationKeys.USE_ES6_CLASSES,
@@ -170,15 +170,15 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
             JSConfigurationKeys.GENERATE_STRICT_IMPLICIT_EXPORT,
             JSConfigurationKeys.COMPILE_SUSPEND_AS_JS_GENERATOR,
             JSConfigurationKeys.OPTIMIZE_GENERATED_JS,
-        )
+        ]
         hashCalculator.updateConfigKeys(config, booleanKeys) { value: Boolean ->
             hashCalculator.update(if (value) 1 else 0)
         }
 
-        val enumKeys = listOf(
+        val enumKeys = [
             JSConfigurationKeys.SOURCE_MAP_EMBED_SOURCES,
             JSConfigurationKeys.SOURCEMAP_NAMES_POLICY,
-        )
+        ]
         hashCalculator.updateConfigKeys(config, enumKeys) { value: Enum<*> ->
             hashCalculator.update(value.ordinal)
         }
@@ -188,15 +188,15 @@ internal class ICHasher(checkForClassStructuralChanges: Boolean = false) {
 
         hashCalculator.updateConfigKeys(
             config,
-            listOf(
+            [
                 JSConfigurationKeys.SOURCE_MAP_PREFIX,
                 JSConfigurationKeys.DEFINE_PLATFORM_MAIN_FUNCTION_ARGUMENTS
-            )
+            ]
         ) { value: String ->
             hashCalculator.update(value)
         }
 
-        hashCalculator.updateConfigKeys(config, listOf(PARTIAL_LINKAGE_CONFIGURATION)) { value: PartialLinkageConfig ->
+        hashCalculator.updateConfigKeys(config, [PARTIAL_LINKAGE_CONFIGURATION]) { value: PartialLinkageConfig ->
             hashCalculator.update(value.logLevel.ordinal)
         }
 

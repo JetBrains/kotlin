@@ -10,7 +10,7 @@ import java.io.File
 internal sealed class OneShotScriptEngine(propertyPath: String) {
     protected val tool = ExternalTool(System.getProperty(propertyPath))
 
-    abstract fun run(jsFiles: List<String>, workingDirectory: File?, toolArgs: List<String> = emptyList()): String
+    abstract fun run(jsFiles: List<String>, workingDirectory: File?, toolArgs: List<String> = []): String
 
     object V8 : OneShotScriptEngine("javascript.engine.path.V8") {
         override fun run(jsFiles: List<String>, workingDirectory: File?, toolArgs: List<String>) =

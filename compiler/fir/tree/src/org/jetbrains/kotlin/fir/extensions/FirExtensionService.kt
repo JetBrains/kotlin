@@ -19,6 +19,7 @@ annotation class PluginServicesInitialization
 
 @NoMutableState
 class FirExtensionService(val session: FirSession) : ComponentArrayOwner<FirExtension, List<FirExtension>>(), FirSessionComponent {
+    @Suppress("ConvertToCollectionLiterals")
     companion object : ConeTypeRegistry<FirExtension, List<FirExtension>>() {
         inline fun <reified P : FirExtension, V : List<P>> registeredExtensions(): ArrayMapAccessor<FirExtension, List<FirExtension>, V> {
             @Suppress("UNCHECKED_CAST")

@@ -34,13 +34,13 @@ import org.jetbrains.kotlin.test.services.*
 open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(
+        get() = [
             service(::FirModuleInfoProvider),
             service(::FirDiagnosticCollectorService),
-        )
+        ]
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     private fun registerExtraComponents(session: FirSession) {
         testServices.firSessionComponentRegistrar?.registerAdditionalComponent(session)
@@ -64,7 +64,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
 
         val project = testServices.compilerConfigurationProvider.getProject(testModule)
         val configuration = compilerConfigurationProvider.getCompilerConfiguration(testModule)
-        val libraryList = createLibraryListForJvm("repl", configuration, emptyList())
+        val libraryList = createLibraryListForJvm("repl", configuration, [])
         val extensionRegistrars = configuration.getCompilerExtensions(FirExtensionRegistrar)
         val packagePartProviderFactory = compilerConfigurationProvider.getPackagePartProviderFactory(testModule)
         val librariesSearchScope = PsiBasedProjectFileSearchScope(getLibrariesScope(project))
@@ -108,7 +108,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
 
         val firOutputPart = analyzeImpl(module, moduleData)
 
-        return FirOutputArtifactImpl(listOf(firOutputPart))
+        return FirOutputArtifactImpl([firOutputPart])
     }
 
     private fun initializeModuleData(module: TestModule): FirModuleData {

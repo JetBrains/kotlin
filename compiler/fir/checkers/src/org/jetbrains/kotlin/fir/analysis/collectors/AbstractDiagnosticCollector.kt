@@ -63,7 +63,7 @@ abstract class AbstractDiagnosticCollector(
                     val value = (argumentValue as? FirLiteralExpression)?.value as? String ?: continue
 
                     if (result == null) {
-                        result = mutableListOf()
+                        result = []
                     }
                     result.add(correctDiagnosticCase(value))
                 }

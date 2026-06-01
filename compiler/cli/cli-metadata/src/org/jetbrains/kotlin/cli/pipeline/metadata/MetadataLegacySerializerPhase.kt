@@ -61,14 +61,14 @@ object MetadataLegacySerializerPhase : MetadataLegacySerializerPhaseBase(name = 
             for (klass in classes) {
                 val destFile = File(destDir, getClassFilePath(klass.classId))
                 PackageSerializer(
-                    packageFqName, classes = listOf(klass), members = emptyList(),
+                    packageFqName, classes = [klass], members = [],
                     destFile, session, scopeSession, metadataVersion, counters
                 ).serialize()
             }
             for ([file, members] in membersPerFile) {
                 val destFile = File(destDir, getPackageFilePath(packageFqName, file.name))
                 PackageSerializer(
-                    packageFqName, classes = emptyList(), members = members,
+                    packageFqName, classes = [], members = members,
                     destFile, session, scopeSession, metadataVersion, counters
                 ).serialize()
 
@@ -128,8 +128,8 @@ abstract class MetadataLegacySerializerPhaseBase(
     name: String
 ) : PipelinePhase<MetadataFrontendPipelineArtifact, MetadataSerializationArtifact>(
     name = name,
-    preActions = setOf(PerformanceNotifications.BackendStarted),
-    postActions = setOf(PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    preActions = [PerformanceNotifications.BackendStarted],
+    postActions = [PerformanceNotifications.BackendFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     final override fun executePhase(input: MetadataFrontendPipelineArtifact): MetadataSerializationArtifact {
         (val firResult = frontendOutput, val configuration, val _ = sourceFiles) = input
@@ -150,7 +150,7 @@ abstract class MetadataLegacySerializerPhaseBase(
     ): OutputInfo?
 
     protected data class PackageContent(
-        val classes: MutableList<FirRegularClass> = mutableListOf(),
+        val classes: MutableList<FirRegularClass> = [],
         val membersPerFile: MutableMap<FirFile, MutableList<FirMemberDeclaration>> = mutableMapOf()
     )
 
@@ -164,7 +164,7 @@ abstract class MetadataLegacySerializerPhaseBase(
                 when (declaration) {
                     is FirCallableDeclaration,
                     is FirTypeAlias -> {
-                        content.membersPerFile.getOrPut(firFile) { mutableListOf() } += declaration
+                        content.membersPerFile.getOrPut(firFile) { [] } += declaration
                     }
                     is FirRegularClass -> {
                         content.classes += declaration

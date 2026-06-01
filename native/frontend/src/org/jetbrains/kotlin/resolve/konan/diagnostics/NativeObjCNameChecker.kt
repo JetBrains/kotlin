@@ -72,8 +72,8 @@ object NativeObjCNameChecker : DeclarationChecker {
         if (invalidFirstChars.isNotEmpty()) {
             context.trace.report(ErrorsNative.INVALID_OBJC_NAME_FIRST_CHAR.on(reportLocation, invalidFirstChars.joinToString("")))
         }
-        val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: emptySet()
-        val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: emptySet()
+        val invalidNameChars = objCName.name?.toSet()?.subtract(validChars) ?: []
+        val invalidSwiftNameChars = objCName.swiftName?.toSet()?.subtract(validChars) ?: []
         val invalidChars = invalidNameChars + invalidSwiftNameChars
         if (invalidChars.isNotEmpty()) {
             context.trace.report(ErrorsNative.INVALID_OBJC_NAME_CHARS.on(reportLocation, invalidChars.joinToString("")))
@@ -113,6 +113,6 @@ object NativeObjCNameChecker : DeclarationChecker {
             valueParameters.forEach { add(it.getObjCName()) }
         }
 
-        else -> listOf(getObjCName())
+        else -> [getObjCName()]
     }
 }

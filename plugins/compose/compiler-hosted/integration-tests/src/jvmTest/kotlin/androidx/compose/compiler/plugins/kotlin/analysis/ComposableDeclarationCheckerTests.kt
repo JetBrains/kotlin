@@ -30,12 +30,12 @@ class ComposableDeclarationCheckerTests(
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "lv = {0}")
-        fun parameters() = arrayOf(
+        fun parameters(): Array<LanguageVersion> = [
             LanguageVersion.KOTLIN_2_0,
             LanguageVersion.KOTLIN_2_1,
             LanguageVersion.KOTLIN_2_2,
             LanguageVersion.LATEST_STABLE
-        )
+        ]
     }
 
     override fun CompilerConfiguration.updateConfiguration() {

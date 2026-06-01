@@ -72,7 +72,7 @@ class ProgramSymbolSet private constructor(
      * [ProgramSymbolSet] to avoid redundancy.
      */
     class Collector {
-        private val classes = mutableSetOf<ClassId>()
+        private val classes: MutableSet<ClassId> = []
         private val classMembers = mutableMapOf<ClassId, MutableSet<String>>()
         private val packageMembers = mutableMapOf<FqName, MutableSet<String>>()
 
@@ -83,13 +83,13 @@ class ProgramSymbolSet private constructor(
 
         fun addClassMembers(classId: ClassId, memberNames: Collection<String>) {
             if (classId !in classes && memberNames.isNotEmpty()) {
-                classMembers.getOrPut(classId) { mutableSetOf() }.addAll(memberNames)
+                classMembers.getOrPut(classId) { [] }.addAll(memberNames)
             }
         }
 
         fun addPackageMembers(packageFqName: FqName, memberNames: Collection<String>) {
             if (memberNames.isNotEmpty()) {
-                packageMembers.getOrPut(packageFqName) { mutableSetOf() }.addAll(memberNames)
+                packageMembers.getOrPut(packageFqName) { [] }.addAll(memberNames)
             }
         }
 
@@ -106,11 +106,11 @@ class LookupSymbolSet(lookupSymbols: Iterable<LookupSymbol>) {
 
     private val scopeToLookupNames: Map<FqName, Set<String>> = mutableMapOf<FqName, MutableSet<String>>().also { map ->
         lookupSymbols.forEach {
-            map.getOrPut(FqName(it.scope)) { mutableSetOf() }.add(it.name)
+            map.getOrPut(FqName(it.scope)) { [] }.add(it.name)
         }
     }
 
-    fun getLookupNamesInScope(scope: FqName): Set<String> = scopeToLookupNames[scope] ?: emptySet()
+    fun getLookupNamesInScope(scope: FqName): Set<String> = scopeToLookupNames[scope] ?: []
 
     operator fun contains(lookupSymbol: LookupSymbol): Boolean {
         return scopeToLookupNames[FqName(lookupSymbol.scope)]?.contains(lookupSymbol.name) ?: false
@@ -179,8 +179,8 @@ internal fun Collection<LookupSymbol>.toProgramSymbolSet(allClasses: Iterable<Ac
 }
 
 internal fun ProgramSymbolSet.toChangesEither(): ChangesEither.Known {
-    val lookupSymbols = mutableSetOf<LookupSymbol>()
-    val fqNames = mutableSetOf<FqName>()
+    val lookupSymbols: MutableSet<LookupSymbol> = []
+    val fqNames: MutableSet<FqName> = []
 
     asSequence().forEach {
         lookupSymbols.add(it.toLookupSymbol())

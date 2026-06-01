@@ -16,9 +16,7 @@ import java.io.File
 
 class AnalysisApiJvmEnvironmentConfigurator(testServices: TestServices) : JvmEnvironmentConfigurator(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = super.additionalServices + listOf(
-            service(::CompiledLibraryProvider),
-        )
+        get() = super.additionalServices + service(::CompiledLibraryProvider)
 
     override fun convertDependencyToFileList(dependency: DependencyDescription): List<File> {
         val friendModule = dependency.dependencyModule

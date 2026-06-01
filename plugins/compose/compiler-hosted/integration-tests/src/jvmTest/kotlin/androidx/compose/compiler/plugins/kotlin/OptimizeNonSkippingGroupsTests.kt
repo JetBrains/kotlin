@@ -16,13 +16,13 @@ class OptimizeNonSkippingGroupsTests(
 ) : AbstractControlFlowTransformTests() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
-        put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(optimizeNonSkippingGroups)))
+        put(ComposeConfiguration.FEATURE_FLAGS, [FeatureFlag.OptimizeNonSkippingGroups.name(optimizeNonSkippingGroups)])
     }
 
     companion object {
         @JvmStatic
         @Parameterized.Parameters(name = "optimize = {0}")
-        fun data() = arrayOf<Any>(false, true)
+        fun data(): Array<Any> = [false, true]
     }
 
     // Regression test for b/405541364

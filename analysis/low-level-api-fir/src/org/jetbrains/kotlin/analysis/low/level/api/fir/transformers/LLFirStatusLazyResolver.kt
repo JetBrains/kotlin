@@ -142,7 +142,7 @@ private class LLStatusComputationSession(
     useSiteScopeSession: ScopeSession,
     val resolveMode: StatusResolveMode,
 ) : StatusComputationSession(useSiteSession, useSiteScopeSession) {
-    private val useSiteSessions: MutableList<LLFirSession> = mutableListOf(useSiteSession)
+    private val useSiteSessions: MutableList<LLFirSession> = [useSiteSession]
 
     private inline fun withClassSession(regularClass: FirClass, action: () -> Unit) {
         val newSession = regularClass.llFirSession.takeUnless { it == useSiteSessions.lastOrNull() }
@@ -192,12 +192,12 @@ private class LLStatusComputationSession(
                 && regularClass.moduleData.platform.isJvm()
 
         if (!shouldResolveJavaSupertypeCallables) {
-            return emptyList()
+            return []
         }
 
         val fqName = regularClass.classId.asSingleFqName().toUnsafe()
-        val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return emptyList()
-        val javaSymbol = javaClassFqName.toSymbol(useSiteSession) as? FirClassSymbol ?: return emptyList()
+        val javaClassFqName = JavaToKotlinClassMap.mapKotlinToJava(fqName) ?: return []
+        val javaSymbol = javaClassFqName.toSymbol(useSiteSession) as? FirClassSymbol ?: return []
         return javaSymbol.resolvedSuperTypeRefs
     }
 }

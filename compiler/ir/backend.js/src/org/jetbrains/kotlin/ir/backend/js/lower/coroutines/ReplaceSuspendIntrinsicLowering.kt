@@ -59,7 +59,7 @@ class ReplaceSuspendIntrinsicLowering(private val context: JsIrBackendContext) :
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildrenVoid(object : IrElementTransformerVoid() {
-            private val containerFunctionStack = mutableListOf(container)
+            private val containerFunctionStack: MutableList<IrDeclaration> = [container]
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
                 containerFunctionStack.add(declaration)

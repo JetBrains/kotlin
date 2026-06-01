@@ -28,7 +28,7 @@ class FirResolvedCallableReferenceBuilder {
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
     var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
-    val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
+    val inferredTypeArguments: MutableList<ConeKotlinType> = []
     lateinit var mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
     fun build(): FirResolvedCallableReference {

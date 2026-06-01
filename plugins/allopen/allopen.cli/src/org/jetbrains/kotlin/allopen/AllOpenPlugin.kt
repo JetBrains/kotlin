@@ -35,7 +35,7 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
     }
 
     override val pluginId = AllOpenPluginNames.PLUGIN_ID
-    override val pluginOptions = listOf(ANNOTATION_OPTION, PRESET_OPTION)
+    override val pluginOptions = [ANNOTATION_OPTION, PRESET_OPTION]
 
     override fun processOption(option: AbstractCliOption, value: String, configuration: CompilerConfiguration) = when (option) {
         ANNOTATION_OPTION -> configuration.appendList(ALLOPEN_ANNOTATION, value)
@@ -46,7 +46,7 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
 
 class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
-        val annotations = configuration.get(ALLOPEN_ANNOTATION)?.toMutableList() ?: mutableListOf()
+        val annotations = configuration.get(ALLOPEN_ANNOTATION)?.toMutableList() ?: []
         configuration.get(ALLOPEN_PRESET)?.forEach { preset ->
             SUPPORTED_PRESETS[preset]?.let { annotations += it }
         }

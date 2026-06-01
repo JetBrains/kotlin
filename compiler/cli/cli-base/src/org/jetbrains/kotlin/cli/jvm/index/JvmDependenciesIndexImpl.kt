@@ -60,7 +60,7 @@ class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase
         acceptedExtensions: JavaFileExtensions,
     ): Collection<VirtualFile> {
         val fileNameWithoutExtension = classId.relativeClassName.asString().replace('.', '$')
-        val results = mutableListOf<VirtualFile>()
+        val results: MutableList<VirtualFile> = []
 
         traverseIndex(classId.packageFqName, acceptedExtensions.rootTypes) { directoryInRoot, root ->
             for (ext in acceptedExtensions) {
@@ -82,7 +82,7 @@ class JvmDependenciesIndexImpl(roots: List<JavaRoot>) : JvmDependenciesIndexBase
             true
         }
 
-        return results.ifEmpty { emptyList() }
+        return results.ifEmpty { [] }
     }
 
     private data class ClassSearchRequest(

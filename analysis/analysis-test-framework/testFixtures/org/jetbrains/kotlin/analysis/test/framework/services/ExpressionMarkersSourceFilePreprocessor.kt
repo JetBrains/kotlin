@@ -31,14 +31,14 @@ import kotlin.reflect.KClass
 
 internal class ExpressionMarkersSourceFilePreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
     override fun process(file: TestFile, content: String): String {
-        val processors = listOf(
+        val processors = [
             SourceFileProcessor(TAGS.SELECTION_REGEXP) { qualifier, range ->
                 testServices.expressionMarkerProvider.addSelection(file, qualifier, TextRange(range.first, range.last + 1))
             },
             SourceFileProcessor(TAGS.CARET_REGEXP) { qualifier, range ->
                 testServices.expressionMarkerProvider.addCaret(file, qualifier, range.first)
             }
-        )
+        ]
 
         return processText(content, processors)
     }
@@ -223,7 +223,7 @@ class ExpressionMarkerProvider : TestService {
      * that includes both `foo` and `bar`.
      */
     private fun getTopmostSelectedElements(file: KtFile, qualifier: String = ""): List<PsiElement> {
-        val range = getSelectionOrNull(file, qualifier) ?: return emptyList()
+        val range = getSelectionOrNull(file, qualifier) ?: return []
 
         val elements = if (range.isEmpty) {
             val candidates = file.collectDescendantsOfType<PsiElement> { it.textRange == range }

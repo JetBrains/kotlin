@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.powerassert.PowerAssertPluginNames.PLUGIN_ID
 class PowerAssertCommandLineProcessor : CommandLineProcessor {
     override val pluginId: String get() = PLUGIN_ID
 
-    override val pluginOptions: Collection<CliOption> = listOf(
+    override val pluginOptions: Collection<CliOption> = [
         CliOption(
             optionName = "function",
             valueDescription = "function full-qualified name",
@@ -36,7 +36,7 @@ class PowerAssertCommandLineProcessor : CommandLineProcessor {
             required = false, // TODO required for Kotlin/JS
             allowMultipleOccurrences = true,
         ),
-    )
+    ]
 
     override fun processOption(
         option: AbstractCliOption,

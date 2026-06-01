@@ -38,7 +38,7 @@ abstract class CustomKlibCompilerSecondStageFacade<A : ResultingArtifact.Binary<
 
         return compileBinary(
             module = module,
-            customArgs = emptyList(),
+            customArgs = [],
             mainLibrary = inputArtifact.outputFile.absolutePath,
             regularDependencies = regularDependencies,
             friendDependencies = friendDependencies

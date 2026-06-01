@@ -110,7 +110,7 @@ private val SirClass.overrideableInitializers: List<SirInit>
     // 2) Class inherits its parent's designated initializers if it doesn't itself define any designated (or required) initializers
     get() = this.declarations.filterIsInstance<SirInit>().let { initializers ->
         if (initializers.all { it.isConvenience }) {
-            this.superClassDeclaration?.overrideableInitializers ?: emptyList()
+            this.superClassDeclaration?.overrideableInitializers ?: []
         } else {
             initializers.filter { !it.isConvenience }
         }
@@ -123,7 +123,7 @@ private val SirClass.overrideableInitializers: List<SirInit>
  *  See https://docs.swift.org/swift-book/documentation/the-swift-programming-language/initialization
  */
 public fun SirClass.calculateAllAvailableInitializers(): List<SirInit> {
-    val parentInitializers = this.superClassDeclaration?.calculateAllAvailableInitializers() ?: emptyList()
+    val parentInitializers = this.superClassDeclaration?.calculateAllAvailableInitializers() ?: []
     val ownInitializers = this.declarations.filterIsInstance<SirInit>()
     val result = ownInitializers.toMutableList()
 

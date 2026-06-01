@@ -345,7 +345,7 @@ public object KaStandardTypeClassIds {
     public val NOTHING: ClassId get() = StandardClassIds.Nothing
 
     /** A set of primitive class IDs. */
-    public val PRIMITIVES: Set<ClassId> = setOf(INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN)
+    public val PRIMITIVES: Set<ClassId> = [INT, LONG, SHORT, BYTE, FLOAT, DOUBLE, CHAR, BOOLEAN]
 }
 
 @Deprecated("Use `KaStandardTypeClassIds` instead", ReplaceWith("KaStandardTypeClassIds"))

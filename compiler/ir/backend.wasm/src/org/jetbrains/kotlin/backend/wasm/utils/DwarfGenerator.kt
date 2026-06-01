@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocationMapping
 
 class DwarfGenerator : DebugInformationGenerator {
     private val dwarf = Dwarf()
-    private val subprogramStack = mutableListOf<Subprogram>()
-    private val sourceLocationMappings = mutableListOf<SourceLocationMappingWithPositionInFunction>()
+    private val subprogramStack: MutableList<Subprogram> = []
+    private val sourceLocationMappings: MutableList<SourceLocationMappingWithPositionInFunction> = []
 
     override fun addSourceLocation(location: SourceLocationMapping) {
         sourceLocationMappings.add(SourceLocationMappingWithPositionInFunction(location))

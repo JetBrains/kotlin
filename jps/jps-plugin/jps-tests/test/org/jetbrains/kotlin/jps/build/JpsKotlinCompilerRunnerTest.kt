@@ -13,13 +13,13 @@ class JpsKotlinCompilerRunnerTest {
     @Test
     fun filterDuplicatedCompilerPluginOptionsTest() {
         val actualToExpectedArgsMap = mapOf(
-            listOf("-version", "-P", "plugin:<pluginId>:<optionName>=<value>") to listOf(
+            ["-version", "-P", "plugin:<pluginId>:<optionName>=<value>"] to [
                 "-version",
                 "-P",
                 "plugin:<pluginId>:<optionName>=<value>"
-            ),
+            ],
 
-            listOf(
+            [
                 "-version",
                 "-P",
                 "plugin:<pluginId>:<optionName>=<value>",
@@ -27,9 +27,9 @@ class JpsKotlinCompilerRunnerTest {
                 "-P",
                 "plugin:<pluginId>:<optionName>=<value>",
                 "-no-sdk"
-            ) to listOf("-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"),
+            ] to ["-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"],
 
-            listOf(
+            [
                 "-version",
                 "-P",
                 "plugin:<pluginId>:<optionName>=<value>",
@@ -41,7 +41,7 @@ class JpsKotlinCompilerRunnerTest {
                 "-P",
                 "plugin:<pluginId>:<optionName>=<value>",
                 "-no-sdk"
-            ) to listOf("-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"),
+            ] to ["-version", "-P", "plugin:<pluginId>:<optionName>=<value>", "-no-stdlib", "-no-sdk"],
         )
         JpsKotlinCompilerRunner().apply {
             actualToExpectedArgsMap.forEach { [input, expected] ->
@@ -53,24 +53,24 @@ class JpsKotlinCompilerRunnerTest {
     @Test
     fun filterDuplicatedWarningLevelTest() {
         val actualToExpectedArgsMap = mapOf(
-            listOf("-version", "-language-version", "2.1") to
-                    listOf("-version", "-language-version", "2.1"),
+            ["-version", "-language-version", "2.1"] to
+                    ["-version", "-language-version", "2.1"],
 
-            listOf("-Xwarning-level=INVISIBLE_REFERENCE:error") to
-                    listOf("-Xwarning-level=INVISIBLE_REFERENCE:error"),
+            ["-Xwarning-level=INVISIBLE_REFERENCE:error"] to
+                    ["-Xwarning-level=INVISIBLE_REFERENCE:error"],
 
-            listOf(
+            [
                 "-Xwarning-level=INVISIBLE_REFERENCE:error",
                 "-language-version", "2.1",
                 "-Xwarning-level=INVISIBLE_REFERENCE:error"
-            ) to listOf("-Xwarning-level=INVISIBLE_REFERENCE:error", "-language-version", "2.1"),
+            ] to ["-Xwarning-level=INVISIBLE_REFERENCE:error", "-language-version", "2.1"],
 
-            listOf(
+            [
                 "-Xwarning-level=INVISIBLE_REFERENCE:error",
                 "-Xwarning-level=NOTHING_TO_INLINE:warning"
-            ) to listOf("-Xwarning-level=INVISIBLE_REFERENCE:error", "-Xwarning-level=NOTHING_TO_INLINE:warning"),
+            ] to ["-Xwarning-level=INVISIBLE_REFERENCE:error", "-Xwarning-level=NOTHING_TO_INLINE:warning"],
 
-            listOf(
+            [
                 "-version",
                 "-Xwarning-level=INVISIBLE_REFERENCE:error",
                 "-no-stdlib",
@@ -78,13 +78,13 @@ class JpsKotlinCompilerRunnerTest {
                 "-Xwarning-level=INVISIBLE_REFERENCE:error",
                 "-Xwarning-level=NOTHING_TO_INLINE:warning",
                 "-no-sdk"
-            ) to listOf(
+            ] to [
                 "-version",
                 "-Xwarning-level=INVISIBLE_REFERENCE:error",
                 "-no-stdlib",
                 "-Xwarning-level=NOTHING_TO_INLINE:warning",
                 "-no-sdk"
-            ),
+            ],
         )
         JpsKotlinCompilerRunner().apply {
             actualToExpectedArgsMap.forEach { [input, expected] ->

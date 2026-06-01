@@ -19,19 +19,19 @@ import org.jetbrains.kotlin.resolve.jvm.checkers.SuperCallWithDefaultArgumentsCh
 import org.jetbrains.kotlin.resolve.konan.diagnostics.*
 
 object NativePlatformConfigurator : PlatformConfiguratorBase(
-    additionalCallCheckers = listOf(
+    additionalCallCheckers = [
         SuperCallWithDefaultArgumentsChecker(),
         LateinitIntrinsicApplicabilityChecker(isWarningInPre19 = true),
         NativeReifiedForwardDeclarationChecker(),
-    ),
-    additionalDeclarationCheckers = listOf(
+    ],
+    additionalDeclarationCheckers = [
         NativeThrowsChecker, NativeSharedImmutableChecker,
         NativeThreadLocalChecker,
         NativeObjCNameChecker, NativeObjCNameOverridesChecker,
         NativeObjCRefinementChecker, NativeObjCRefinementAnnotationChecker,
         NativeObjCRefinementOverridesChecker, NativeHiddenFromObjCInheritanceChecker,
         NativeObjcOverrideApplicabilityChecker,
-    ),
+    ],
     platformSpecificCastChecker = NativePlatformSpecificCastChecker
 ) {
     override fun configureModuleComponents(container: StorageComponentContainer) {

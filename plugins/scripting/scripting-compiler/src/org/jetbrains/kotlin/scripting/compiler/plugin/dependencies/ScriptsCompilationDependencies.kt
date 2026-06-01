@@ -145,7 +145,7 @@ fun collectScriptsCompilationDependenciesRecursively(
             topologicalSort(
                 collectedSources, reportCycle = { throw CycleDetected(it) }
             ) {
-                collectedSourceDependencies.find { it.script == this }?.sourceDependencies?.valueOrNull() ?: emptyList()
+                collectedSourceDependencies.find { it.script == this }?.sourceDependencies?.valueOrNull() ?: []
             }.reversed()
         } catch (e: CycleDetected) {
             return ResultWithDiagnostics.Failure(

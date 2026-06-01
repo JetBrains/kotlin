@@ -29,7 +29,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
 
     private fun makeSingleLine(text: String): String = text.replace(ANY_LINE_ENDING_REGEX, "↩")
 
-    private val stack = mutableListOf<LoggingElement>()
+    private val stack: MutableList<LoggingElement> = []
 
     private fun LoggingElement.render(indexWithinParent: Int): String? {
         val oldStackSize = stack.size
@@ -56,13 +56,13 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
     private fun FixationLogRecordElement.render(indexWithinParent: Int): String = record.render(indexWithinParent)
 
     private fun FixationLogRecord.render(indexWithinParent: Int): String {
-        val lines = mutableListOf(
+        val lines: MutableList<String?> = [
             chosen?.let {
                 val number = "$indent${indexWithinParent + 1}. "
                 val chosenReadiness = map[chosen]?.renderReadiness(number.length) ?: error("No readiness for chosen variable")
                 number + "Choose " + formatCode(it) + " with " + formatCode(chosenReadiness)
             },
-        )
+        ]
 
         withIndent {
             var index = 0
@@ -114,10 +114,10 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
     }
 
     private fun bringStructureToStageElements(blockItemElements: List<BlockItemElement>): List<List<BlockItemElement>> {
-        if (blockItemElements.isEmpty()) return emptyList()
+        if (blockItemElements.isEmpty()) return []
 
-        val groupsByOrigin = mutableListOf(mutableListOf<BlockItemElement>())
-        val seenConstraints = mutableSetOf<String>()
+        val groupsByOrigin: MutableList<MutableList<BlockItemElement>> = [mutableListOf<BlockItemElement>()]
+        val seenConstraints: MutableSet<String> = []
 
         for (next in blockItemElements) {
             if (ignoreDuplicates && next is ConstraintElement && next.renderRelation() in seenConstraints) {
@@ -129,7 +129,7 @@ class MarkdownInferenceLogsDumper(private val ignoreDuplicates: Boolean = true) 
             if (next is ConstraintElement && originElement is ConstraintElement && originElement.origins == next.origins) {
                 groupsByOrigin.last().add(next)
             } else if (groupsByOrigin.last().isNotEmpty()) {
-                groupsByOrigin.add(mutableListOf(next))
+                groupsByOrigin.add([next])
             } else {
                 groupsByOrigin.last().add(next)
             }

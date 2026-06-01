@@ -414,8 +414,8 @@ object JvmMethodSignatureExternalizer : DataExternalizer<JvmMemberSignature.Meth
 }
 
 object InlineFunctionOrAccessorExternalizer : DataExternalizer<InlineFunctionOrAccessor> by DelegateDataExternalizer(
-    types = listOf(InlineFunction::class.java, InlinePropertyAccessor::class.java),
-    typesExternalizers = listOf(InlineFunctionExternalizer, InlinePropertyAccessorExternalizer)
+    types = [InlineFunction::class.java, InlinePropertyAccessor::class.java],
+    typesExternalizers = [InlineFunctionExternalizer, InlinePropertyAccessorExternalizer]
 )
 
 private object InlineFunctionExternalizer : DataExternalizer<InlineFunction> {

@@ -16,10 +16,10 @@ import org.jetbrains.kotlin.name.Name
 
 object FirJvmNamesChecker {
     // See The Java Virtual Machine Specification, section 4.7.9.1 https://docs.oracle.com/javase/specs/jvms/se8/html/jvms-4.html#jvms-4.7.9.1
-    private val INVALID_CHARS = setOf('.', ';', '[', ']', '/', '<', '>', ':', '\\')
+    private val INVALID_CHARS: Set<Char> = ['.', ';', '[', ']', '/', '<', '>', ':', '\\']
 
     // These characters can cause problems on Windows. '?*"|' are not allowed in file names, and % leads to unexpected env var expansion.
-    private val DANGEROUS_CHARS = setOf('?', '*', '"', '|', '%')
+    private val DANGEROUS_CHARS: Set<Char> = ['?', '*', '"', '|', '%']
 
 
     context(context: CheckerContext, reporter: DiagnosticReporter)

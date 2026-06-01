@@ -39,6 +39,6 @@ class ReflectJavaWildcardType(override val reflectType: WildcardType) : ReflectJ
         get() = reflectType.upperBounds.firstOrNull() != Any::class.java
 
     // TODO: support type use annotations in reflection
-    override val annotations: Collection<JavaAnnotation> = emptyList()
+    override val annotations: Collection<JavaAnnotation> = []
     override val isDeprecatedInJavaDoc = false
 }

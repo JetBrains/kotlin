@@ -108,13 +108,13 @@ private fun diff(firstRoot: File, secondRoot: File): Set<Diff> {
         val secondFile = secondRoot.resolve(firstFile.relativeTo(firstRoot))
 
         if (!secondFile.exists()) {
-            return@flatMap listOf(Diff.MissingFile(secondFile))
+            return@flatMap [Diff.MissingFile(secondFile)]
         }
 
         /* File is directory */
         if (firstFile.isDirectory) {
             if (!secondFile.isDirectory) {
-                return@flatMap listOf(Diff.TypeMismatch(directory = firstFile, file = secondFile))
+                return@flatMap [Diff.TypeMismatch(directory = firstFile, file = secondFile)]
             }
 
             /* Check if all children in the second directory are also present in firstFile */
@@ -127,13 +127,13 @@ private fun diff(firstRoot: File, secondRoot: File): Set<Diff> {
 
         /* File is not a directory */
         if (firstFile.length() != secondFile.length()) {
-            return@flatMap listOf(Diff.DifferentContent(firstFile, secondFile))
+            return@flatMap [Diff.DifferentContent(firstFile, secondFile)]
         }
 
         if (!firstFile.readBytes().contentEquals(secondFile.readBytes())) {
-            return@flatMap listOf(Diff.DifferentContent(firstFile, secondFile))
+            return@flatMap [Diff.DifferentContent(firstFile, secondFile)]
         }
 
-        emptyList()
+        []
     }.toSet()
 }

@@ -68,19 +68,20 @@ interface Compilation {
     val language: Language
 }
 
+@Suppress("ConvertToCollectionLiterals")
 fun defaultCompilerArgs(language: Language): List<String> =
-        listOf(
-                // We compile with -O2 because Clang may insert inline asm in bitcode at -O0.
-                // It is undesirable in case of watchos_arm64 since we target armv7k
-                // for this target instead of arm64_32 because it is not supported in LLVM 8.
-                //
-                // Note that PCH and the *.c file should be compiled with the same optimization level.
-                "-O2",
-                // Allow throwing exceptions through generated stubs.
-                "-fexceptions",
-        ) + when (language) {
-            Language.C -> emptyList()
-            Language.CPP -> emptyList()
+        [
+            // We compile with -O2 because Clang may insert inline asm in bitcode at -O0.
+            // It is undesirable in case of watchos_arm64 since we target armv7k
+            // for this target instead of arm64_32 because it is not supported in LLVM 8.
+            //
+            // Note that PCH and the *.c file should be compiled with the same optimization level.
+            "-O2",
+            // Allow throwing exceptions through generated stubs.
+            "-fexceptions",
+        ] + when (language) {
+            Language.C -> []
+            Language.CPP -> []
             Language.OBJECTIVE_C -> listOf(
                     // "Objective-C" within interop means "Objective-C with ARC":
                     "-fobjc-arc",
@@ -100,14 +101,15 @@ data class CompilationWithPCH(
         override val compilerArgs: List<String>,
         override val language: Language
 ) : Compilation {
+    @Suppress("ConvertToCollectionLiterals")
     constructor(compilerArgs: List<String>, precompiledHeader: String, language: Language)
             : this(compilerArgs + listOf("-include-pch", precompiledHeader), language)
 
     override val includes: List<IncludeInfo>
-        get() = emptyList()
+        get() = []
 
     override val additionalPreambleLines: List<String>
-        get() = emptyList()
+        get() = []
 }
 
 /**
@@ -334,8 +336,8 @@ private fun Type.containsInstancetype(): Boolean = when (this) {
 
 private fun Type.substituteInstancetype(container: ObjCClassOrProtocol): Type = when (this) {
     is ObjCInstanceType -> when (container) {
-        is ObjCClass -> ObjCObjectPointer(container, this.nullability, protocols = emptyList())
-        is ObjCProtocol -> ObjCIdType(this.nullability, protocols = listOf(container))
+        is ObjCClass -> ObjCObjectPointer(container, this.nullability, protocols = [])
+        is ObjCProtocol -> ObjCIdType(this.nullability, protocols = [container])
     }
 
     is ObjCBlockPointer -> this.copy(returnType = this.returnType.substituteInstancetype(container))
@@ -360,7 +362,7 @@ abstract class ObjCClass(name: String) : ObjCClassOrProtocol(name) {
      */
     abstract val includedCategories: List<ObjCCategory>
 
-    open val typeParameters: List<String> get() = emptyList()
+    open val typeParameters: List<String> get() = []
 }
 abstract class ObjCProtocol(name: String) : ObjCClassOrProtocol(name)
 

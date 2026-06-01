@@ -183,7 +183,7 @@ class LazyScriptDescriptor(
         )
     }
 
-    override fun computeSupertypes() = listOf(baseClassDescriptor()?.defaultType ?: builtIns.anyType)
+    override fun computeSupertypes() = [baseClassDescriptor()?.defaultType ?: builtIns.anyType]
 
     private inner class ImportedScriptDescriptorsFinder {
 
@@ -304,7 +304,7 @@ class LazyScriptDescriptor(
     internal val scriptPrimaryConstructorWithParams: () -> ConstructorWithParams = resolveSession.storageManager.createLazyValue {
         val baseConstructorDescriptor = baseClassDescriptor()?.unsubstitutedPrimaryConstructor
         val inheritedAnnotations = baseConstructorDescriptor?.annotations ?: Annotations.EMPTY
-        val baseExplicitParameters = baseConstructorDescriptor?.valueParameters ?: emptyList()
+        val baseExplicitParameters = baseConstructorDescriptor?.valueParameters ?: []
 
         val implicitReceiversParamTypes =
             implicitReceivers.mapIndexed { idx, receiver ->
@@ -378,10 +378,10 @@ class LazyScriptDescriptor(
                 receiverClassDescriptor,
                 true,
                 receiverClassDescriptor.thisAsReceiverParameter,
-                listOf(),
+                [],
                 LexicalScopeKind.CLASS_MEMBER_SCOPE
             ).addImportingScope(
-                AllUnderImportScope.create(receiverClassDescriptor, emptyList())
+                AllUnderImportScope.create(receiverClassDescriptor, [])
             )
         }
         outerScope

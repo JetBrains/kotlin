@@ -16,10 +16,10 @@ val CHECKER_FRAMEWORK_COMPATQUAL_ANNOTATIONS_PACKAGE = FqName("org.checkerframew
 
 private val RXJAVA3_ANNOTATIONS_PACKAGE_NAME = RXJAVA3_ANNOTATIONS_PACKAGE.asString()
 
-val RXJAVA3_ANNOTATIONS = arrayOf(
+val RXJAVA3_ANNOTATIONS: Array<FqName> = [
     FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.Nullable"),
     FqName("$RXJAVA3_ANNOTATIONS_PACKAGE_NAME.NonNull")
-)
+]
 
 val NULLABILITY_ANNOTATION_SETTINGS: NullabilityAnnotationStates<JavaNullabilityAnnotationsStatus> = NullabilityAnnotationStatesImpl(
     mapOf(

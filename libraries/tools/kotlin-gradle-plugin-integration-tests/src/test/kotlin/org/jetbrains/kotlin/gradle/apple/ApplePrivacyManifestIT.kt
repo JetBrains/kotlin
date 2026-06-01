@@ -196,9 +196,9 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                     }
                 }
             },
-            gradleArguments = arrayOf(
+            gradleArguments = [
                 ":embedAndSign",
-            ),
+            ],
             environmentVariables = mapOf(
                 "ENABLE_USER_SCRIPT_SANDBOXING" to "NO",
                 "CONFIGURATION" to "Debug",
@@ -253,9 +253,9 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                     }
                 }
             },
-            gradleArguments = arrayOf(
+            gradleArguments = [
                 ":assembleEmptyDebugXCFramework",
-            ),
+            ],
             beforeMutatingPrivacyManifest = { projectDir ->
                 assertEquals(
                     "initial",
@@ -313,9 +313,9 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                     }
                 }
             },
-            gradleArguments = arrayOf(
+            gradleArguments = [
                 ":podPublishDebugXCFramework",
-            ),
+            ],
             beforeMutatingPrivacyManifest = { projectDir ->
                 assertEquals(
                     "initial",
@@ -370,14 +370,14 @@ class ApplePrivacyManifestIT : KGPBaseTest() {
                     }
                 }
             },
-            gradleArguments = arrayOf(
+            gradleArguments = [
                 ":podspec",
                 ":syncFramework",
                 "-Pkotlin.native.cocoapods.configuration=Debug",
                 "-Pkotlin.native.cocoapods.archs=arm64",
                 "-Pkotlin.native.cocoapods.platform=iphoneos",
                 "-Pkotlin.native.cocoapods.generate.wrapper=true",
-            ),
+            ],
             beforeMutatingPrivacyManifest = { projectDir ->
                 assert(
                     projectDir.resolve("build/cocoapods/framework/empty.framework").exists(),

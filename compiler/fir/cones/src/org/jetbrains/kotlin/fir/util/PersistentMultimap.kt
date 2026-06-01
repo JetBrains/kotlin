@@ -32,7 +32,7 @@ class PersistentMultimap<K, V> private constructor(private val map: PersistentMa
     }
 
     operator fun get(key: K): List<V> {
-        return map[key] ?: emptyList()
+        return map[key] ?: []
     }
 
     val keys: ImmutableSet<K> get() = map.keys
@@ -63,7 +63,7 @@ class PersistentSetMultimap<K, V> private constructor(private val map: Persisten
     }
 
     operator fun get(key: K): Set<V> {
-        return map[key] ?: emptySet()
+        return map[key] ?: []
     }
 
     val entries: ImmutableSet<Map.Entry<K, PersistentSet<V>>> get() = map.entries

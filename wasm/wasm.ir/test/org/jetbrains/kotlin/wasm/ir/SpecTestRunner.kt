@@ -117,7 +117,7 @@ data class SpecTest(
     data class Action(
         val type: String,
         val field: String,
-        val args: List<Value> = emptyList(),
+        val args: List<Value> = [],
         val module: String? = null
     )
 
@@ -152,8 +152,8 @@ val wasmTestSuitePath: String
 
 fun testProposal(
     name: String,
-    wabtOptions: List<String> = listOf("--enable-all"),
-    ignoreFiles: List<String> = emptyList()
+    wabtOptions: List<String> = ["--enable-all"],
+    ignoreFiles: List<String> = []
 ) {
 
     runSpecTests(name, "$wasmTestSuitePath/proposals/$name", wabtOptions, ignoreFiles)
@@ -164,7 +164,7 @@ fun runSpecTests(
     name: String,
     wastDirectoryPath: String,
     wabtOptions: List<String>,
-    ignoreFiles: List<String> = emptyList()
+    ignoreFiles: List<String> = []
 ) {
     // Clean and prepare output dir for spec tests
     val specTestsDir = File("build/spec-tests/$name")

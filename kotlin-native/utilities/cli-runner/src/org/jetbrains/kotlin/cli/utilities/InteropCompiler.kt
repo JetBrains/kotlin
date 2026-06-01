@@ -54,9 +54,10 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
             runFromDaemon
     ) ?: return null // There is no need in compiler invocation if we're generating only metadata.
 
-    val nativeStubs =
-            arrayOf("-native-library", File(nativesDir, "$cstubsName.bc").path)
+    val nativeStubs: Array<String> =
+            ["-native-library", File(nativesDir, "$cstubsName.bc").path]
 
+    @Suppress("ConvertToCollectionLiterals")
     return arrayOf(
         generatedDir.path,
         "-produce", "library",
@@ -67,11 +68,11 @@ fun invokeInterop(flavor: String, args: Array<String>, runFromDaemon: Boolean): 
         "-Xtemporary-files-dir=$temporaryFilesDir") +
         nativeStubs +
         cinteropArgsToCompiler +
-        libraries.flatMap { listOf("-library", it) } +
-        (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else emptyArray()) +
-        (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else emptyArray()) +
-        (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else emptyArray()) +
-        (if (nopack) arrayOf("-$NOPACK") else emptyArray()) +
+        libraries.flatMap { ["-library", it] } +
+        (if (noDefaultLibs) arrayOf("-$NODEFAULTLIBS") else []) +
+        (if (noEndorsedLibs) arrayOf("-$NOENDORSEDLIBS") else []) +
+        (if (purgeUserLibs) arrayOf("-$PURGE_USER_LIBS") else []) +
+        (if (nopack) arrayOf("-$NOPACK") else []) +
         moduleName?.let { arrayOf("-module-name", it) }.orEmpty() +
         shortModuleName?.let { arrayOf("${K2NativeCompilerArguments::shortModuleName.cliArgument}=$it") }.orEmpty() +
         arguments.kotlincOption

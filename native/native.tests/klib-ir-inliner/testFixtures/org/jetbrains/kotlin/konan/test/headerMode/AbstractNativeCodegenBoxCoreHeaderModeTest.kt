@@ -70,14 +70,14 @@ abstract class AbstractNativeCodegenBoxCoreHeaderModeTest : AbstractNativeCoreTe
         klibArtifactsHandlersStep()
 
         defaultDirectives {
-            LANGUAGE with listOf(
+            LANGUAGE with [
                 "+${LanguageFeature.IrIntraModuleInlinerBeforeKlibSerialization.name}",
                 "+${LanguageFeature.IrCrossModuleInlinerBeforeKlibSerialization.name}"
-            )
-            OPT_IN with listOf(
+            ]
+            OPT_IN with [
                 "kotlin.native.internal.InternalForKotlinNative",
                 "kotlin.experimental.ExperimentalNativeApi"
-            )
+            ]
             +HEADER_MODE
             DIAGNOSTICS with "-warnings"
         }

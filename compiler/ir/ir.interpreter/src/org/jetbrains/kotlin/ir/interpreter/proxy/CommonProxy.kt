@@ -34,7 +34,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         if (this === other) return true
         if (other == null) return false
 
-        val valueArguments = mutableListOf<State>()
+        val valueArguments: MutableList<State> = []
         val equalsFun = state.getEqualsFunction()
         if (equalsFun.isFakeOverriddenFromAny() || equalsFun.wasAlreadyCalled()) return defaultEquals(other)
 
@@ -45,7 +45,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
     }
 
     override fun hashCode(): Int {
-        val valueArguments = mutableListOf<State>()
+        val valueArguments: MutableList<State> = []
         val hashCodeFun = state.getHashCodeFunction()
         if (hashCodeFun.isFakeOverriddenFromAny() || hashCodeFun.wasAlreadyCalled()) return defaultHashCode()
 
@@ -59,7 +59,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         if (state.irClass.defaultType.isUnsigned()) {
             return state.unsignedToString()
         }
-        val valueArguments = mutableListOf<State>()
+        val valueArguments: MutableList<State> = []
         val toStringFun = state.getToStringFunction()
         if (toStringFun.isFakeOverriddenFromAny() || toStringFun.wasAlreadyCalled()) return defaultToString()
 
@@ -86,7 +86,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
                     else -> {
                         val irFunction = commonProxy.state.getIrFunction(method)
                             ?: return@newProxyInstance commonProxy.fallbackIfMethodNotFound(method)
-                        val valueArguments = mutableListOf<State>(commonProxy.state)
+                        val valueArguments: MutableList<State> = [commonProxy.state]
                         valueArguments += irFunction.nonDispatchParameters.mapIndexed { index, parameter ->
                             callInterceptor.environment.convertToState(args[index], parameter.type)
                         }

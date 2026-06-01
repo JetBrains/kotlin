@@ -33,7 +33,7 @@ object PsiPositioningStrategies {
     val ACTUAL_DECLARATION_NAME = object : PositioningStrategy<PsiElement>() {
         override fun markDiagnostic(diagnostic: DiagnosticMarker): List<TextRange> {
             require(diagnostic is KtDiagnosticWithSource)
-            val element = diagnostic.element.psi ?: return emptyList()
+            val element = diagnostic.element.psi ?: return []
             (element as? KtNamedDeclaration)?.nameIdentifier?.let { nameIdentifier ->
                 return mark(nameIdentifier)
             }

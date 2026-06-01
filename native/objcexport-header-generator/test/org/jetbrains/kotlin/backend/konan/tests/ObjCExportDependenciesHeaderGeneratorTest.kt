@@ -64,7 +64,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("kotlinxSerializationJson"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxSerializationJson),
-                exportedDependencies = setOf(testLibraryKotlinxSerializationJson)
+                exportedDependencies = [testLibraryKotlinxSerializationJson]
             )
         )
     }
@@ -78,7 +78,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("kotlinxSerializationCore"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxSerializationCore),
-                exportedDependencies = setOf(testLibraryKotlinxSerializationCore)
+                exportedDependencies = [testLibraryKotlinxSerializationCore]
             )
         )
     }
@@ -105,7 +105,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("kotlinxDatetime"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxDatetime),
-                exportedDependencies = setOf(testLibraryKotlinxDatetime)
+                exportedDependencies = [testLibraryKotlinxDatetime]
             )
         )
     }
@@ -119,7 +119,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("kotlinxCoroutines"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testLibraryKotlinxCoroutines, testLibraryAtomicFu),
-                exportedDependencies = setOf(testLibraryKotlinxCoroutines)
+                exportedDependencies = [testLibraryKotlinxCoroutines]
             )
         )
     }
@@ -128,7 +128,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - multiple klibs in library with atomicfu`() {
         doTest(
             dependenciesDir.resolve("multipleKlibsInLibraryWithAtomicfu"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOf(testLibraryAtomicFu)
+                dependencies = [testLibraryAtomicFu]
             )
         )
     }
@@ -157,7 +157,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("notExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
                 withObjCBaseDeclarationStubs = true,
-                dependencies = listOf(testLibraryA, testLibraryB),
+                dependencies = [testLibraryA, testLibraryB],
             )
         )
     }
@@ -177,8 +177,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("exportedAndNotExportedDependency"), configuration = HeaderGenerator.Configuration(
                 frameworkName = "MyApp",
                 withObjCBaseDeclarationStubs = true,
-                dependencies = listOf(testLibraryA, testLibraryB),
-                exportedDependencies = setOf(testLibraryA)
+                dependencies = [testLibraryA, testLibraryB],
+                exportedDependencies = [testLibraryA]
             )
         )
     }
@@ -197,7 +197,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("testInternalLibrary"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testInternalLibrary),
-                exportedDependencies = setOf(testInternalLibrary)
+                exportedDependencies = [testInternalLibrary]
             )
         )
     }
@@ -207,7 +207,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
         doTest(
             dependenciesDir.resolve("extensionsLibrary"), configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testExtensionsLibrary),
-                exportedDependencies = setOf(testExtensionsLibrary)
+                exportedDependencies = [testExtensionsLibrary]
             )
         )
     }
@@ -255,7 +255,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
             dependenciesDir.resolve("oneTypeExtensionsFromMultipleFilesMergedIntoTheSameCategory"),
             configuration = HeaderGenerator.Configuration(
                 dependencies = listOfNotNull(testExtensionsLibrary),
-                exportedDependencies = setOf(testExtensionsLibrary)
+                exportedDependencies = [testExtensionsLibrary]
             )
         )
     }
@@ -279,8 +279,8 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - class name mangling`() {
         doTest(
             dependenciesDir.resolve("classNameMangling"), configuration = HeaderGenerator.Configuration(
-                dependencies = listOf(testLibraryC),
-                exportedDependencies = setOf(testLibraryC),
+                dependencies = [testLibraryC],
+                exportedDependencies = [testLibraryC],
             )
         )
     }
@@ -289,7 +289,7 @@ class ObjCExportDependenciesHeaderGeneratorTest(
     fun `test - suspend handler translated as result and error parameters`() {
         doTest(
             root = dependenciesDir.resolve("suspendHandlerTranslatedAsResultAndErrorParameters"),
-            configuration = HeaderGenerator.Configuration(dependencies = listOf(testLibraryKotlinxCoroutines))
+            configuration = HeaderGenerator.Configuration(dependencies = [testLibraryKotlinxCoroutines])
         )
     }
 

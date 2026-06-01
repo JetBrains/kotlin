@@ -64,7 +64,7 @@ private class CalculatorForNestedCall(
 
     private val fixationDirectionsForVariables: MutableMap<VariableWithConstraints, FixationDirection> =
         newLinkedHashMapWithExpectedSize(context.notFixedTypeVariables.size)
-    private val variablesWithQueuedConstraints = mutableSetOf<TypeVariableMarker>()
+    private val variablesWithQueuedConstraints: MutableSet<TypeVariableMarker> = []
     private val typesToProcess: Queue<KotlinTypeMarker> = ArrayDeque()
 
     private val postponedAtoms: List<ConePostponedResolvedAtom> by lazy {
@@ -112,7 +112,7 @@ private class CalculatorForNestedCall(
             if (!type.contains { it.typeConstructor() in notFixedTypeVariables })
                 continue
 
-            val fixationDirectionsFromType = mutableSetOf<FixationDirectionForVariable>()
+            val fixationDirectionsFromType: MutableSet<FixationDirectionForVariable> = []
             collectRequiredDirectionsForVariables(type, TypeVariance.OUT, fixationDirectionsFromType)
 
             for (directionForVariable in fixationDirectionsFromType) {

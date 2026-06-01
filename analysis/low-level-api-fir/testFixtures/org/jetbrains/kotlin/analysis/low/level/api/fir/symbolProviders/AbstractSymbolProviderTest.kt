@@ -39,7 +39,7 @@ abstract class AbstractSymbolProviderTest : AbstractAnalysisApiBasedTest() {
     }
 
     override val additionalDirectives: List<DirectivesContainer>
-        get() = super.additionalDirectives + listOf(Directives)
+        get() = super.additionalDirectives + Directives
 
     /**
      * The test output would get confusing if we support multiple symbol provider instances from the main module, so this functions has to

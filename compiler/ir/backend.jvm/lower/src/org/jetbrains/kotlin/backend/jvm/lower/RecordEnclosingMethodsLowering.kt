@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitor
 internal class RecordEnclosingMethodsLowering(val context: JvmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) =
         irFile.accept(object : IrVisitor<Unit, IrFunction?>() {
-            private val classStack = mutableListOf<IrClass>()
+            private val classStack: MutableList<IrClass> = []
 
             override fun visitClass(declaration: IrClass, data: IrFunction?) {
                 classStack.add(declaration)

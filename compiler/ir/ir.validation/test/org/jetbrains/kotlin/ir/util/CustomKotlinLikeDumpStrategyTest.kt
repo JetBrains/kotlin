@@ -178,7 +178,7 @@ class CustomKotlinLikeDumpStrategyTest {
 
     companion object {
         private fun qualifiedName(declaration: IrDeclarationWithName, skipCompanion: Boolean): String {
-            val parts = mutableListOf<String>()
+            val parts: MutableList<String> = []
             var current: IrDeclarationWithName? = declaration
             while (current != null) {
                 if (!(skipCompanion && current.name == SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT)) {

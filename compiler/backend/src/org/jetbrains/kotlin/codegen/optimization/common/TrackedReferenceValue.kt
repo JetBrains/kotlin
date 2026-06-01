@@ -28,7 +28,7 @@ sealed class TrackedReferenceValue(type: Type) : StrictBasicValue(type) {
 
 class ProperTrackedReferenceValue(type: Type, val descriptor: ReferenceValueDescriptor) : TrackedReferenceValue(type) {
     override val descriptors: Set<ReferenceValueDescriptor>
-        get() = setOf(descriptor)
+        get() = [descriptor]
 
     override fun equals(other: Any?): Boolean =
         other === this ||

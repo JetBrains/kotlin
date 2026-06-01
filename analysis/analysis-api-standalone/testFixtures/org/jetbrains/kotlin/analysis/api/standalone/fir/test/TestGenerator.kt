@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
  */
 fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
-        AnalysisApiTestGenerator(this, listOf(AnalysisApiFirStandaloneModeTestConfiguratorFactory)).run {
+        AnalysisApiTestGenerator(this, [AnalysisApiFirStandaloneModeTestConfiguratorFactory]).run {
             generateAnalysisApiTests()
         }
 

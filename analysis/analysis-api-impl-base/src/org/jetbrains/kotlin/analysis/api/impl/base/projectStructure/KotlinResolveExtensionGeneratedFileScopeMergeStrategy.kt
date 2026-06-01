@@ -17,6 +17,6 @@ internal class KotlinResolveExtensionGeneratedFileScopeMergeStrategy : KotlinGlo
             scopes.flatMap { scope ->
                 scope.useSiteModules
             }
-        return listOf(KaBaseResolveExtensionGeneratedFilesScope(useSiteModules))
+        return [KaBaseResolveExtensionGeneratedFilesScope(useSiteModules)]
     }
 }

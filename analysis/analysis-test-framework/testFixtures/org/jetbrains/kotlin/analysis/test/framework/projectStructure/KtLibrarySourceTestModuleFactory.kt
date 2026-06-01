@@ -69,7 +69,7 @@ fun createKtLibrarySourceModule(
         targetPlatform,
         StandaloneProjectFactory.createLibraryModuleSearchScope(
             libraryJars,
-            emptyList(),
+            [],
             testServices.environmentManager.getApplicationEnvironment(),
             project,
         ),

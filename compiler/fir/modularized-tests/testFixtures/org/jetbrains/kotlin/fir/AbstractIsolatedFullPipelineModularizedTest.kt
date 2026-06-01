@@ -138,11 +138,11 @@ open class AbstractIsolatedFullPipelineModularizedTest(private val config: Modul
             sourceFiles = moduleData.sources,
             javaSourceRoots = moduleData.javaSourceRoots.map { JvmSourceRoot(it.path, it.packagePrefix) },
             classpathRoots = moduleData.classpath,
-            commonSourceFiles = emptyList(),
+            commonSourceFiles = [],
             modularJdkRoot = moduleData.modularJdkRoot,
             "java-production",
             isTests = false,
-            emptySet(),
+            [],
             friendDirs = moduleData.friendDirs,
             isIncrementalCompilation = true
         )

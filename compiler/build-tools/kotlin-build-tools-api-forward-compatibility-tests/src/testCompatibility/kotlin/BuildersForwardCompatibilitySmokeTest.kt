@@ -32,7 +32,7 @@ class BuildersForwardCompatibilitySmokeTest : BaseCompilationTest() {
     @DisplayName("Test all APIs using legacy non-builders")
     @Test
     fun testAllApisUsingLegacyNonBuilders() {
-        val sources = listOf(workingDirectory.resolve("a.kt").also { it.writeText("class A") })
+        val sources = [workingDirectory.resolve("a.kt").also { it.writeText("class A") }]
         val destination = workingDirectory.resolve("classes")
 
         val jvmOperation = toolchain.jvm.createJvmCompilationOperation(sources, destination)
@@ -48,7 +48,7 @@ class BuildersForwardCompatibilitySmokeTest : BaseCompilationTest() {
         val icConfig = JvmSnapshotBasedIncrementalCompilationConfiguration(
             workingDirectory.resolve("ic-cache"),
             SourcesChanges.Unknown,
-            emptyList(),
+            [],
             workingDirectory.resolve("shrunk-classpath-snapshot.bin"),
             icOptions
         )

@@ -45,7 +45,7 @@ internal class LazyClasspathSnapshot(
                     classpathSnapshot.removeDuplicateAndInaccessibleClasses()
                 }
             }
-            else -> emptyList()
+            else -> []
         }
         currentClasspathSnapshot = computed
         return computed
@@ -85,7 +85,7 @@ internal class LazyClasspathSnapshot(
                 ListExternalizer(AccessibleClassSnapshotExternalizer)
                     .loadFromFile(classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile)
             }
-            else -> emptyList()
+            else -> []
         }
         savedShrunkClasspathSnapshot = loaded
         return loaded

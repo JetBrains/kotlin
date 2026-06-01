@@ -108,7 +108,7 @@ fun AllModulesFrontendOutput.convertToIrAndActualizeForJvm(
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
         if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-            { emptyList() }
+            { [] }
         } else {
             { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
         },
@@ -162,7 +162,7 @@ fun generateCodeFromIr(
                 environment.projectEnvironment.project,
                 input.configuration,
                 environment.diagnosticsReporter.hasErrors,
-                listOf(generationState),
+                [generationState],
                 mainClassFqName = null,
             )
         }
@@ -179,7 +179,7 @@ private class ProjectEnvironmentWithCoreEnvironmentEmulation(
     val configuration: CompilerConfiguration
 ) : VfsBasedProjectEnvironment(project, knownFileSystems, getPackagePartProviderFn) {
 
-    val packagePartProviders = mutableListOf<JvmPackagePartProvider>()
+    val packagePartProviders: MutableList<JvmPackagePartProvider> = []
 
     override fun getPackagePartProvider(fileSearchScope: AbstractProjectFileSearchScope): PackagePartProvider {
         return super.getPackagePartProvider(fileSearchScope).also {

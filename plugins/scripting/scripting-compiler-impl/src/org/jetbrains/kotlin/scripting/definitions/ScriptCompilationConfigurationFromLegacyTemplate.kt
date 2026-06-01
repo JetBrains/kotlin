@@ -61,9 +61,9 @@ class ScriptCompilationConfigurationFromLegacyTemplate(
                     kotlin.script.experimental.location.ScriptExpectedLocation.Project -> ScriptAcceptedLocation.Project
                     kotlin.script.experimental.location.ScriptExpectedLocation.Everywhere -> ScriptAcceptedLocation.Everywhere
                 }
-            } ?: listOf(
+            } ?: [
                 ScriptAcceptedLocation.Sources, ScriptAcceptedLocation.Tests
-            )
+            ]
 
         val additionalCompilerArguments = takeUnlessError {
             template.annotations.firstIsInstanceOrNull<ScriptTemplateAdditionalCompilerArguments>()?.let {
@@ -137,7 +137,7 @@ private class ScriptContentsFromRefinementContext(val context: ScriptConfigurati
     override val file: File?
         get() = (context.script as? FileBasedScriptSource)?.file
     override val annotations: Iterable<Annotation>
-        get() = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation } ?: emptyList()
+        get() = context.collectedData?.get(ScriptCollectedData.collectedAnnotations)?.map { it.annotation } ?: []
     override val text: CharSequence
         get() = context.script.text
 }
@@ -162,14 +162,14 @@ private fun refineWithResolver(
             )
         }
     }.getOrElse {
-        ScriptDependencies() to listOf(
+        ScriptDependencies() to [
             ScriptDiagnostic(
                 code = ScriptDiagnostic.unspecifiedError,
                 message = "Failed to resolve dependencies. resolver=$dependencyResolver of type=${dependencyResolver::class.simpleName}",
                 sourcePath = context.script.locationId,
                 exception = it
             )
-        )
+        ]
     }
 
     return if (resolvedDeps == null) ResultWithDiagnostics.Failure(diagnostics)

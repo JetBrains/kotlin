@@ -46,7 +46,7 @@ class FragmentContext(
             // fragmentContext solves k2-only issues; also, in k1 mode we don't even expect the fragment-related args
             val isCorrectLanguageVersion = (LanguageVersion.fromVersionString(args.languageVersion) ?: LanguageVersion.LATEST_STABLE).usesK2
 
-            val hasAllRequiredArguments = listOf(args.fragments, args.fragmentRefines, args.fragmentSources).none {
+            val hasAllRequiredArguments = [args.fragments, args.fragmentRefines, args.fragmentSources].none {
                 it.isNullOrEmpty()
             }
             return isCorrectLanguageVersion && hasAllRequiredArguments

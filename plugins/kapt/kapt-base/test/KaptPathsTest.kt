@@ -36,7 +36,7 @@ class KaptPathsTest {
             val symlinkToOtherJava = Files.createSymbolicLink(File(tempDir, "Other.java").toPath(), otherJava.toPath()).toFile()
             val symlinkToNotJava = Files.createSymbolicLink(File(tempDir, "NotJava.java").toPath(), notJava.toPath()).toFile()
 
-            val javaRoots = listOf(simpleJava, symlinkToOtherJava, symlinkToNotJava, javaRootDir)
+            val javaRoots = [simpleJava, symlinkToOtherJava, symlinkToNotJava, javaRootDir]
 
             val paths = KaptOptions.Builder().apply {
                 javaSourceRoots.addAll(javaRoots)

@@ -659,7 +659,7 @@ public class ArrayDeque<E> : AbstractMutableList<E> {
     internal fun testRemoveRange(fromIndex: Int, toIndex: Int) = removeRange(fromIndex, toIndex)
 
     internal companion object {
-        private val emptyElementData = emptyArray<Any?>()
+        private val emptyElementData: Array<Any?> = []
         private const val defaultMinCapacity = 10
     }
 

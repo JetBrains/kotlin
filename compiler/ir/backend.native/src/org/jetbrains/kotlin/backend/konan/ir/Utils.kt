@@ -66,7 +66,7 @@ fun buildSimpleAnnotation(irBuiltIns: IrBuiltIns, startOffset: Int, endOffset: I
 
 val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
     get() {
-        val result = mutableSetOf<IrSimpleFunction>()
+        val result: MutableSet<IrSimpleFunction> = []
 
         fun traverse(function: IrSimpleFunction) {
             if (function in result) return

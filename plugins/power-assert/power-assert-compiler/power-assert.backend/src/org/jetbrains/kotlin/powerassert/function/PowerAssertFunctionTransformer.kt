@@ -33,6 +33,6 @@ class PowerAssertFunctionTransformer(
         // This in turn helps make sure the compiler-plugin is applied to functions which use `@PowerAssert`.
         originalFunction.transformChildrenVoid(transformer)
 
-        return listOf(originalFunction, powerAssertFunction)
+        return [originalFunction, powerAssertFunction]
     }
 }

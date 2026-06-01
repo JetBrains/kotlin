@@ -89,13 +89,14 @@ private fun JavaType?.toConeKotlinType(
     toConeTypeProjection(session, javaTypeParameterStack, Variance.INVARIANT, mode, source, additionalAnnotations).type
         ?: ConeFlexibleType(session.builtinTypes.anyType.coneType, session.builtinTypes.nullableAnyType.coneType, isTrivial = true)
 
+@Suppress("ConvertToCollectionLiterals")
 private fun JavaType?.toConeTypeProjection(
     session: FirSession, javaTypeParameterStack: JavaTypeParameterStack,
     parameterVariance: Variance, mode: FirJavaTypeConversionMode,
     source: KtSourceElement?,
     additionalAnnotations: Collection<JavaAnnotation>? = null
 ): ConeTypeProjection {
-    val attributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
+    val attributes: ConeAttributes = if (this != null && (annotations.isNotEmpty() || additionalAnnotations != null)) {
         val convertedAnnotations = buildList {
             if (annotations.isNotEmpty()) {
                 addAll(this@toConeTypeProjection.convertAnnotationsToFir(session, source))
@@ -106,9 +107,9 @@ private fun JavaType?.toConeTypeProjection(
             }
         }
 
-        ConeAttributes.create(listOf(CustomAnnotationTypeAttribute(convertedAnnotations)))
+        [CustomAnnotationTypeAttribute(convertedAnnotations)]
     } else {
-        ConeAttributes.Empty
+        []
     }
 
     return when (this) {

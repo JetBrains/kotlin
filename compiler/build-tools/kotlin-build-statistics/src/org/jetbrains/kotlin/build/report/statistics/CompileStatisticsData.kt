@@ -40,7 +40,7 @@ interface CompileStatisticsData<B : BuildTimeMetric, P : BuildPerformanceMetric>
     fun getGcCountMetrics(): Map<String, Long>?
     fun getType(): String = BuildDataType.TASK_DATA.name
     fun getFromKotlinPlugin(): Boolean?
-    fun getCompiledSources(): List<String> = emptyList()
+    fun getCompiledSources(): List<String> = []
     fun getSkipMessage(): String?
     fun getIcLogLines(): List<String>
 }
@@ -69,10 +69,10 @@ enum class BuildDataType {
 //Sensitive data. This object is used directly for statistic via http
 data class BuildStartParameters(
     val tasks: List<String>,
-    val excludedTasks: Set<String> = emptySet(),
+    val excludedTasks: Set<String> = [],
     val currentDir: String? = null,
-    val projectProperties: List<String> = emptyList(),
-    val systemProperties: List<String> = emptyList(),
+    val projectProperties: List<String> = [],
+    val systemProperties: List<String> = [],
 ) : java.io.Serializable
 
 //Sensitive data. This object is used directly for statistic via http

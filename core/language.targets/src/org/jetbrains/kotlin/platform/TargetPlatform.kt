@@ -116,6 +116,6 @@ fun TargetPlatform?.isMultiplatformWeb(): Boolean {
     return isMultiPlatform() && all { it is PotentiallyWebPlatform && it.isWeb }
 }
 
-fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform(setOf(this))
+fun SimplePlatform.toTargetPlatform(): TargetPlatform = TargetPlatform([this])
 
 fun SimplePlatform.serializeToString(): String = "$platformName [$targetName]"

@@ -27,7 +27,7 @@ class AdditionalDiagnosticsSourceFilesProvider(testServices: TestServices) : Add
     )
 
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(AdditionalFilesDirectives)
+        [AdditionalFilesDirectives]
 
     @OptIn(ExperimentalStdlibApi::class)
     override fun produceAdditionalFiles(

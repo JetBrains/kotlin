@@ -196,7 +196,7 @@ object KotlinTypeFactory {
     ): SimpleType = simpleTypeWithNonTrivialMemberScope(
         attributes,
         constructor,
-        emptyList(),
+        [],
         nullable,
         ErrorUtils.createErrorScope(ErrorScopeKind.INTEGER_LITERAL_TYPE_SCOPE, throwExceptions = true, "unknown integer literal type")
     )

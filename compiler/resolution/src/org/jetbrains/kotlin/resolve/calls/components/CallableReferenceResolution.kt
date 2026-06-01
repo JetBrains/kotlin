@@ -158,7 +158,7 @@ fun extractInputOutputTypesFromCallableReferenceExpectedType(expectedType: Unwra
             extractInputOutputTypesFromFunctionType(expectedType)
 
         ReflectionTypes.isBaseTypeForNumberedReferenceTypes(expectedType) ->
-            InputOutputTypes(emptyList(), expectedType.arguments.single().type.unwrap())
+            InputOutputTypes([], expectedType.arguments.single().type.unwrap())
 
         ReflectionTypes.isNumberedKFunction(expectedType) -> {
             val functionFromSupertype = expectedType.immediateSupertypes().first { it.isFunctionType }.unwrap()

@@ -47,7 +47,7 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
 
     override fun runCompiler(context: CompilerInvocationContext) {
         runNativeCompiler(context.messageCollector, context.expectedExitCode) {
-            this.freeArgs = listOf(context.sourceFile.absolutePath)
+            this.freeArgs = [context.sourceFile.absolutePath]
             this.libraries = (context.additionalLibraries + context.fakeLibraryPath).toTypedArray()
             this.outputName = context.outputDir.resolve(context.moduleName).absolutePath
             this.moduleName = context.moduleName
@@ -56,13 +56,13 @@ abstract class NativeLibrarySpecialCompatibilityChecksTest : LibrarySpecialCompa
             this.kotlinHome = nativeHome.absolutePath
             if (context.exportKlibToOlderAbiVersion) {
                 this.languageVersion = "${LanguageVersion.LATEST_STABLE.major}.${LanguageVersion.LATEST_STABLE.minor - 1}"
-                this.internalArguments = listOf(
+                this.internalArguments = [
                     ManualLanguageFeatureSetting(
                         LanguageFeature.ExportKlibToOlderAbiVersion,
                         LanguageFeature.State.ENABLED,
                         "-XXLanguage:+ExportKlibToOlderAbiVersion"
                     )
-                )
+                ]
             }
         }
     }

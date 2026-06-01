@@ -122,7 +122,7 @@ fun FirClassSymbol<*>.isSupertypeOf(other: FirClassSymbol<*>, session: FirSessio
         return false
     }
 
-    return isSupertypeOf(other, mutableSetOf())
+    return isSupertypeOf(other, [])
 }
 
 fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
@@ -219,20 +219,20 @@ context(context: CheckerContext)
 fun FirMemberDeclaration.redundantModalities(defaultModality: Modality): Set<Modality> {
     if (this is FirRegularClass) {
         return when (classKind) {
-            ClassKind.INTERFACE -> setOf(Modality.ABSTRACT, Modality.OPEN)
-            else -> setOf(defaultModality)
+            ClassKind.INTERFACE -> [Modality.ABSTRACT, Modality.OPEN]
+            else -> [defaultModality]
         }
     }
 
-    val containingClass = context.findClosestClassOrObject() ?: return setOf(defaultModality)
+    val containingClass = context.findClosestClassOrObject() ?: return [defaultModality]
 
     return when {
-        isOverride && !containingClass.isFinal -> setOf(Modality.OPEN)
+        isOverride && !containingClass.isFinal -> [Modality.OPEN]
         containingClass.isInterface -> when {
-            hasBody() -> setOf(Modality.OPEN)
-            else -> setOf(Modality.ABSTRACT, Modality.OPEN)
+            hasBody() -> [Modality.OPEN]
+            else -> [Modality.ABSTRACT, Modality.OPEN]
         }
-        else -> setOf(defaultModality)
+        else -> [defaultModality]
     }
 }
 
@@ -603,7 +603,7 @@ fun extractArgumentsTypeRefAndSource(qualifier: FirResolvedQualifier): List<FirT
 
 fun extractArgumentsTypeRefAndSource(typeRef: FirTypeRef?): List<FirTypeRefSource>? {
     if (typeRef !is FirResolvedTypeRef) return null
-    val result = mutableListOf<FirTypeRefSource>()
+    val result: MutableList<FirTypeRefSource> = []
     when (val delegatedTypeRef = typeRef.delegatedTypeRef) {
         is FirUserTypeRef -> {
             val qualifier = delegatedTypeRef.qualifier
@@ -821,8 +821,8 @@ private fun findDefaultValue(source: KtLightSourceElement): KtLightSourceElement
 context(context: CheckerContext)
 @OptIn(ScopeFunctionRequiresPrewarm::class)
 fun FirCallableSymbol<*>.directOverriddenSymbolsSafe(): List<FirCallableSymbol<*>> {
-    if (!this.isOverride) return emptyList()
-    val scope = containingClassUnsubstitutedScope() ?: return emptyList()
+    if (!this.isOverride) return []
+    val scope = containingClassUnsubstitutedScope() ?: return []
     scope.processFunctionsByName(this.name) { }
     return scope.getDirectOverriddenMembers(this, true)
 }
@@ -990,7 +990,7 @@ fun isExplicitTypeArgumentSource(source: KtSourceElement?): Boolean =
 val FirTypeProjection.isExplicit: Boolean get() = isExplicitTypeArgumentSource(source)
 
 fun FirAnonymousFunctionSymbol.getReturnedExpressions(): List<FirExpression> {
-    val exitNode = resolvedControlFlowGraphReference?.controlFlowGraph?.exitNode ?: return emptyList()
+    val exitNode = resolvedControlFlowGraphReference?.controlFlowGraph?.exitNode ?: return []
 
     fun extractReturnedExpression(it: CFGNode<*>): FirExpression? {
         return when (it) {

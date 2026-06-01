@@ -19,9 +19,9 @@ package org.jetbrains.kotlin.js.inline.clean
 import org.jetbrains.kotlin.js.backend.ast.JsClass
 
 class ClassPostProcessor(val root: JsClass) {
-    val optimizations = listOf(
+    val optimizations = [
         { TrivialConstructorRemoval(root).apply() }
-    )
+    ]
 
     fun apply() {
         do {

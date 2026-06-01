@@ -68,7 +68,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
 
         generateStubsBody(constructor, irClass, delegate, factory)
 
-        return listOf(delegate, factory)
+        return [delegate, factory]
     }
 
     private fun generateStubsBody(constructor: IrConstructor, irClass: IrClass, delegate: IrSimpleFunction, factory: IrSimpleFunction) {
@@ -98,7 +98,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
         stub.body = context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
             val type = irClass.defaultType
             val createFunctionIntrinsic = context.symbols.jsObjectCreateSymbol
-            val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic, type, listOf(type))
+            val irCreateCall = JsIrBuilder.buildCall(createFunctionIntrinsic, type, [type])
             val irDelegateCall = JsIrBuilder.buildCall(delegate.symbol, type).also { call ->
                 for (i in 0 until stub.typeParameters.size) {
                     call.typeArguments[i] = stub.typeParameters[i].toIrType()
@@ -178,7 +178,7 @@ class SecondaryConstructorLowering(val context: JsIrBackendContext) : Declaratio
     }
 }
 
-private fun IrTypeParameter.toIrType() = IrSimpleTypeImpl(symbol, true, emptyList(), emptyList())
+private fun IrTypeParameter.toIrType() = IrSimpleTypeImpl(symbol, true, [], [])
 
 private fun JsIrBackendContext.buildInitDeclaration(constructor: IrConstructor, irClass: IrClass): IrSimpleFunction {
     val type = irClass.defaultType

@@ -35,7 +35,7 @@ class FirBodyRenderer {
         }
     }
 
-    fun renderBody(block: FirBlock?, additionalStatements: List<FirStatement> = emptyList()) {
+    fun renderBody(block: FirBlock?, additionalStatements: List<FirStatement> = []) {
         if (block == null) return
         when (block) {
             is FirLazyBlock -> {

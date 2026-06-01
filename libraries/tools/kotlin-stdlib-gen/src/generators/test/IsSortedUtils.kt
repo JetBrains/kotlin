@@ -72,7 +72,7 @@ private fun signedIntConfig(suffix: String, absExpr: String): IsSortedTypeConfig
     selectorSortedValues = listOf("1", "-2", "3").map { "$it$suffix" },
     sampleNeedsAbsImport = true,
     sampleSelectorValues = listOf("1", "-2", "3", "-4", "5").map { "$it$suffix" },
-    sampleSelectorAssertions = listOf("it * it" to true, absExpr to true, "it" to false)
+    sampleSelectorAssertions = ["it * it" to true, absExpr to true, "it" to false]
 )
 
 private fun unsignedIntConfig(suffix: String, modExpr: String): IsSortedTypeConfig = IsSortedTypeConfig(
@@ -80,7 +80,7 @@ private fun unsignedIntConfig(suffix: String, modExpr: String): IsSortedTypeConf
     selectorExpr = modExpr,
     selectorSortedValues = listOf("3", "1", "2").map { "$it$suffix" },
     sampleSelectorValues = listOf("3", "1", "4", "2").map { "$it$suffix" },
-    sampleSelectorAssertions = listOf(modExpr to true, "it" to false)
+    sampleSelectorAssertions = [modExpr to true, "it" to false]
 )
 
 private fun floatingPointConfig(suffix: String): IsSortedTypeConfig = IsSortedTypeConfig(
@@ -89,7 +89,7 @@ private fun floatingPointConfig(suffix: String): IsSortedTypeConfig = IsSortedTy
     selectorSortedValues = listOf("-0.5", "1.0", "-1.5").map { "$it$suffix" },
     sampleNeedsAbsImport = true,
     sampleSelectorValues = listOf("-0.5", "1.0", "-1.5", "2.0").map { "$it$suffix" },
-    sampleSelectorAssertions = listOf("it * it" to true, "abs(it)" to true, "it" to false)
+    sampleSelectorAssertions = ["it * it" to true, "abs(it)" to true, "it" to false]
 )
 
 fun nullSelectorCondition(primitive: PrimitiveType?, value: String): String = when (primitive) {
@@ -108,30 +108,30 @@ fun nullSelectorTypeArgs(family: Family, primitive: PrimitiveType?): String {
 
 fun isSortedConfigFor(primitive: PrimitiveType?): IsSortedTypeConfig = when (primitive) {
     PrimitiveType.Char -> IsSortedTypeConfig(
-        sortedValues = listOf("'a'", "'b'", "'c'"),
+        sortedValues = ["'a'", "'b'", "'c'"],
         selectorExpr = "it.uppercaseChar()",
-        selectorSortedValues = listOf("'A'", "'b'", "'C'"),
-        sampleSelectorValues = listOf("'A'", "'b'", "'C'"),
-        sampleSelectorAssertions = listOf("it.uppercaseChar()" to true, "it.lowercaseChar()" to true, "it" to false)
+        selectorSortedValues = ["'A'", "'b'", "'C'"],
+        sampleSelectorValues = ["'A'", "'b'", "'C'"],
+        sampleSelectorAssertions = ["it.uppercaseChar()" to true, "it.lowercaseChar()" to true, "it" to false]
     )
     PrimitiveType.Boolean -> IsSortedTypeConfig(
-        sortedValues = listOf("false", "true", "true"),
+        sortedValues = ["false", "true", "true"],
         selectorExpr = "it.compareTo(false)",
-        sampleSortedValues = listOf("false", "false", "true"),
-        sampleSelectorValues = listOf("false", "false", "true"),
-        sampleSelectorAssertions = listOf("it.compareTo(false)" to true, "it" to true, "!it" to false)
+        sampleSortedValues = ["false", "false", "true"],
+        sampleSelectorValues = ["false", "false", "true"],
+        sampleSelectorAssertions = ["it.compareTo(false)" to true, "it" to true, "!it" to false]
     )
     null -> IsSortedTypeConfig(
-        sortedValues = listOf("\"a\"", "\"b\"", "\"c\""),
+        sortedValues = ["\"a\"", "\"b\"", "\"c\""],
         selectorExpr = "it.length",
-        selectorSortedValues = listOf("\"a\"", "\"bb\"", "\"ccc\""),
+        selectorSortedValues = ["\"a\"", "\"bb\"", "\"ccc\""],
         caseInsensitiveValues = CaseInsensitiveTestData(
-            sorted = listOf("\"Apple\"", "\"banana\"", "\"Cherry\""),
-            unsorted = listOf("\"banana\"", "\"Apple\"", "\"Cherry\"")
+            sorted = ["\"Apple\"", "\"banana\"", "\"Cherry\""],
+            unsorted = ["\"banana\"", "\"Apple\"", "\"Cherry\""]
         ),
-        sampleSortedValues = listOf("\"apple\"", "\"banana\"", "\"cherry\""),
-        sampleSelectorValues = listOf("\"c\"", "\"bb\"", "\"aaa\""),
-        sampleSelectorAssertions = listOf("it.length" to true, "it" to false)
+        sampleSortedValues = ["\"apple\"", "\"banana\"", "\"cherry\""],
+        sampleSelectorValues = ["\"c\"", "\"bb\"", "\"aaa\""],
+        sampleSelectorAssertions = ["it.length" to true, "it" to false]
     )
     PrimitiveType.Byte, PrimitiveType.Short -> signedIntConfig(suffix = "", absExpr = "abs(it.toInt())")
     PrimitiveType.Int -> signedIntConfig(suffix = "", absExpr = "abs(it)")

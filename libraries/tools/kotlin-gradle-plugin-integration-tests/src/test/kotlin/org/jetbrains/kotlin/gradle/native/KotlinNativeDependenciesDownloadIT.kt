@@ -60,7 +60,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
 
             build(
                 "assemble", buildOptions = defaultBuildOptions.copy(
-                    freeArgs = listOf("-Pkotlin.native.toolchain.enabled=false"),
+                    freeArgs = ["-Pkotlin.native.toolchain.enabled=false"],
                 )
             ) {
                 // Only klib-compilation tasks are launched, so no dependencies should be downloaded
@@ -104,7 +104,7 @@ class KotlinNativeDependenciesDownloadIT : KGPBaseTest() {
                 assertTrue(dependencies.listFiles() != null, "Dependencies were not downloaded")
                 dependencies.listFiles()?.filter { it.name != "cache" }?.forEach {
                     val processRunResult =
-                        runProcess(listOf("clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath), workingDir.toFile())
+                        runProcess(["clang", "-Werror", "-c", file.path, "-isysroot", it.absolutePath], workingDir.toFile())
                     processRunResult.assertProcessRunResult {
                         assertTrue(isSuccessful)
                     }

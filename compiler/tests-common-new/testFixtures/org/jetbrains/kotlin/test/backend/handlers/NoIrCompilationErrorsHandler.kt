@@ -26,7 +26,7 @@ class NoIrCompilationErrorsHandler(testServices: TestServices) : BackendInputHan
     doNotRunIfThereWerePreviousFailures = false,
 ) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(::DiagnosticsService))
+        get() = [service(::DiagnosticsService)]
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         val diagnosticsByFilePath = info.diagnosticReporter.diagnosticsByFile

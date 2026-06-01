@@ -19,7 +19,7 @@ abstract class AbstractNativeLinkerOutputTest : AbstractNativeCInteropBaseTest()
     private fun createTestCaseNoTestRun(module: TestModule.Exclusive, compilerArgs: TestCompilerArgs) = TestCase(
         id = TestCaseId.Named(module.name),
         kind = TestKind.STANDALONE_NO_TR,
-        modules = setOf(module),
+        modules = [module],
         freeCompilerArgs = compilerArgs,
         nominalPackageName = PackageName.EMPTY,
         checks = TestRunChecks.Default(testRunSettings.get<Timeouts>().executionTimeout),
@@ -31,7 +31,7 @@ abstract class AbstractNativeLinkerOutputTest : AbstractNativeCInteropBaseTest()
     internal fun compileToExecutable(
         module: TestModule.Exclusive,
         dependencies: List<TestCompilationDependency<*>>,
-        args: List<String> = emptyList()
+        args: List<String> = []
     ) = compileToExecutable(
         createTestCaseNoTestRun(module, TestCompilerArgs(args)),
         dependencies

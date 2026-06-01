@@ -97,10 +97,10 @@ object KnownStableConstructs {
         "kotlinx.collections.immutable.persistentMapOf" to 0b11,
     )
 
-    val stableMarkers = setOf(
+    val stableMarkers: Set<ClassId> = [
         ClassId(
             FqName("com.google.errorprone.annotations"),
             Name.identifier("Immutable")
         )
-    )
+    ]
 }

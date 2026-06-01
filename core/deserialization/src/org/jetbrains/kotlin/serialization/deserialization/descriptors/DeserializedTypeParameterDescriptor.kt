@@ -46,7 +46,7 @@ class DeserializedTypeParameterDescriptor(
     override fun resolveUpperBounds(): List<KotlinType> {
         val upperBounds = proto.upperBounds(c.typeTable)
         if (upperBounds.isEmpty()) {
-            return listOf(this.builtIns.defaultBound)
+            return [this.builtIns.defaultBound]
         }
         return upperBounds.map(c.typeDeserializer::type)
     }

@@ -1786,7 +1786,7 @@ public inline fun UIntArray.dropLastWhile(predicate: (UInt) -> Boolean): List<UI
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -1803,7 +1803,7 @@ public inline fun ULongArray.dropLastWhile(predicate: (ULong) -> Boolean): List<
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -1820,7 +1820,7 @@ public inline fun UByteArray.dropLastWhile(predicate: (UByte) -> Boolean): List<
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -1837,7 +1837,7 @@ public inline fun UShortArray.dropLastWhile(predicate: (UShort) -> Boolean): Lis
             return take(index + 1)
         }
     }
-    return emptyList()
+    return []
 }
 
 /**
@@ -2266,7 +2266,7 @@ public inline fun <C : MutableCollection<in UShort>> UShortArray.filterTo(destin
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.slice(indices: IntRange): List<UInt> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -2276,7 +2276,7 @@ public fun UIntArray.slice(indices: IntRange): List<UInt> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.slice(indices: IntRange): List<ULong> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -2286,7 +2286,7 @@ public fun ULongArray.slice(indices: IntRange): List<ULong> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.slice(indices: IntRange): List<UByte> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -2296,7 +2296,7 @@ public fun UByteArray.slice(indices: IntRange): List<UByte> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.slice(indices: IntRange): List<UShort> {
-    if (indices.isEmpty()) return listOf()
+    if (indices.isEmpty()) return []
     return copyOfRange(indices.start, indices.endInclusive + 1).asList()
 }
 
@@ -2307,7 +2307,7 @@ public fun UShortArray.slice(indices: IntRange): List<UShort> {
 @ExperimentalUnsignedTypes
 public fun UIntArray.slice(indices: Iterable<Int>): List<UInt> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<UInt>(size)
     for (index in indices) {
         list.add(get(index))
@@ -2322,7 +2322,7 @@ public fun UIntArray.slice(indices: Iterable<Int>): List<UInt> {
 @ExperimentalUnsignedTypes
 public fun ULongArray.slice(indices: Iterable<Int>): List<ULong> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<ULong>(size)
     for (index in indices) {
         list.add(get(index))
@@ -2337,7 +2337,7 @@ public fun ULongArray.slice(indices: Iterable<Int>): List<ULong> {
 @ExperimentalUnsignedTypes
 public fun UByteArray.slice(indices: Iterable<Int>): List<UByte> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<UByte>(size)
     for (index in indices) {
         list.add(get(index))
@@ -2352,7 +2352,7 @@ public fun UByteArray.slice(indices: Iterable<Int>): List<UByte> {
 @ExperimentalUnsignedTypes
 public fun UShortArray.slice(indices: Iterable<Int>): List<UShort> {
     val size = indices.collectionSizeOrDefault(10)
-    if (size == 0) return emptyList()
+    if (size == 0) return []
     val list = ArrayList<UShort>(size)
     for (index in indices) {
         list.add(get(index))
@@ -2443,9 +2443,9 @@ public fun UShortArray.sliceArray(indices: IntRange): UShortArray {
 @ExperimentalUnsignedTypes
 public fun UIntArray.take(n: Int): List<UInt> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<UInt>(n)
     for (item in this) {
@@ -2467,9 +2467,9 @@ public fun UIntArray.take(n: Int): List<UInt> {
 @ExperimentalUnsignedTypes
 public fun ULongArray.take(n: Int): List<ULong> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<ULong>(n)
     for (item in this) {
@@ -2491,9 +2491,9 @@ public fun ULongArray.take(n: Int): List<ULong> {
 @ExperimentalUnsignedTypes
 public fun UByteArray.take(n: Int): List<UByte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<UByte>(n)
     for (item in this) {
@@ -2515,9 +2515,9 @@ public fun UByteArray.take(n: Int): List<UByte> {
 @ExperimentalUnsignedTypes
 public fun UShortArray.take(n: Int): List<UShort> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[0])
+    if (n == 1) return [this[0]]
     var count = 0
     val list = ArrayList<UShort>(n)
     for (item in this) {
@@ -2539,10 +2539,10 @@ public fun UShortArray.take(n: Int): List<UShort> {
 @ExperimentalUnsignedTypes
 public fun UIntArray.takeLast(n: Int): List<UInt> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<UInt>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -2560,10 +2560,10 @@ public fun UIntArray.takeLast(n: Int): List<UInt> {
 @ExperimentalUnsignedTypes
 public fun ULongArray.takeLast(n: Int): List<ULong> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<ULong>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -2581,10 +2581,10 @@ public fun ULongArray.takeLast(n: Int): List<ULong> {
 @ExperimentalUnsignedTypes
 public fun UByteArray.takeLast(n: Int): List<UByte> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<UByte>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -2602,10 +2602,10 @@ public fun UByteArray.takeLast(n: Int): List<UByte> {
 @ExperimentalUnsignedTypes
 public fun UShortArray.takeLast(n: Int): List<UShort> {
     require(n >= 0) { "Requested element count $n is less than zero." }
-    if (n == 0) return emptyList()
+    if (n == 0) return []
     val size = size
     if (n >= size) return toList()
-    if (n == 1) return listOf(this[size - 1])
+    if (n == 1) return [this[size - 1]]
     val list = ArrayList<UShort>(n)
     for (index in size - n until size)
         list.add(this[index])
@@ -3344,7 +3344,7 @@ public inline fun UShortArray.reverse(fromIndex: Int, toIndex: Int): Unit {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UIntArray.reversed(): List<UInt> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -3358,7 +3358,7 @@ public fun UIntArray.reversed(): List<UInt> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun ULongArray.reversed(): List<ULong> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -3372,7 +3372,7 @@ public fun ULongArray.reversed(): List<ULong> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UByteArray.reversed(): List<UByte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -3386,7 +3386,7 @@ public fun UByteArray.reversed(): List<UByte> {
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
 public fun UShortArray.reversed(): List<UShort> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     val list = toMutableList()
     list.reverse()
     return list
@@ -10311,7 +10311,7 @@ public inline fun UShortArray.reduceRightOrNull(operation: (UShort, acc: UShort)
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.runningFold(initial: R, operation: (acc: R, UInt) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -10336,7 +10336,7 @@ public inline fun <R> UIntArray.runningFold(initial: R, operation: (acc: R, UInt
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.runningFold(initial: R, operation: (acc: R, ULong) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -10361,7 +10361,7 @@ public inline fun <R> ULongArray.runningFold(initial: R, operation: (acc: R, ULo
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.runningFold(initial: R, operation: (acc: R, UByte) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -10386,7 +10386,7 @@ public inline fun <R> UByteArray.runningFold(initial: R, operation: (acc: R, UBy
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.runningFold(initial: R, operation: (acc: R, UShort) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (element in this) {
@@ -10412,7 +10412,7 @@ public inline fun <R> UShortArray.runningFold(initial: R, operation: (acc: R, US
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UIntArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, UInt) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -10438,7 +10438,7 @@ public inline fun <R> UIntArray.runningFoldIndexed(initial: R, operation: (index
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> ULongArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, ULong) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -10464,7 +10464,7 @@ public inline fun <R> ULongArray.runningFoldIndexed(initial: R, operation: (inde
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UByteArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, UByte) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -10490,7 +10490,7 @@ public inline fun <R> UByteArray.runningFoldIndexed(initial: R, operation: (inde
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun <R> UShortArray.runningFoldIndexed(initial: R, operation: (index: Int, acc: R, UShort) -> R): List<R> {
-    if (isEmpty()) return listOf(initial)
+    if (isEmpty()) return [initial]
     val result = ArrayList<R>(size + 1).apply { add(initial) }
     var accumulator = initial
     for (index in indices) {
@@ -10515,7 +10515,7 @@ public inline fun <R> UShortArray.runningFoldIndexed(initial: R, operation: (ind
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.runningReduce(operation: (acc: UInt, UInt) -> UInt): List<UInt> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UInt>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10540,7 +10540,7 @@ public inline fun UIntArray.runningReduce(operation: (acc: UInt, UInt) -> UInt):
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.runningReduce(operation: (acc: ULong, ULong) -> ULong): List<ULong> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<ULong>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10565,7 +10565,7 @@ public inline fun ULongArray.runningReduce(operation: (acc: ULong, ULong) -> ULo
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.runningReduce(operation: (acc: UByte, UByte) -> UByte): List<UByte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UByte>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10590,7 +10590,7 @@ public inline fun UByteArray.runningReduce(operation: (acc: UByte, UByte) -> UBy
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.runningReduce(operation: (acc: UShort, UShort) -> UShort): List<UShort> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UShort>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10616,7 +10616,7 @@ public inline fun UShortArray.runningReduce(operation: (acc: UShort, UShort) -> 
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UIntArray.runningReduceIndexed(operation: (index: Int, acc: UInt, UInt) -> UInt): List<UInt> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UInt>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10642,7 +10642,7 @@ public inline fun UIntArray.runningReduceIndexed(operation: (index: Int, acc: UI
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun ULongArray.runningReduceIndexed(operation: (index: Int, acc: ULong, ULong) -> ULong): List<ULong> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<ULong>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10668,7 +10668,7 @@ public inline fun ULongArray.runningReduceIndexed(operation: (index: Int, acc: U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UByteArray.runningReduceIndexed(operation: (index: Int, acc: UByte, UByte) -> UByte): List<UByte> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UByte>(size).apply { add(accumulator) }
     for (index in 1 until size) {
@@ -10694,7 +10694,7 @@ public inline fun UByteArray.runningReduceIndexed(operation: (index: Int, acc: U
 @ExperimentalUnsignedTypes
 @kotlin.internal.InlineOnly
 public inline fun UShortArray.runningReduceIndexed(operation: (index: Int, acc: UShort, UShort) -> UShort): List<UShort> {
-    if (isEmpty()) return emptyList()
+    if (isEmpty()) return []
     var accumulator = this[0]
     val result = ArrayList<UShort>(size).apply { add(accumulator) }
     for (index in 1 until size) {

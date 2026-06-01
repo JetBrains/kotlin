@@ -337,9 +337,9 @@ open class ReturnTypeCalculatorWithJump(
             val script = file?.declarations?.firstIsInstanceOrNull<FirScript>()
 
             val containingClassLookupTag = symbol.containingClassLookupTag()
-            val outerClasses = generateSequence(containingClassLookupTag) { lookupTag ->
+            val outerClasses: MutableList<FirClassLikeDeclaration?> = generateSequence(containingClassLookupTag) { lookupTag ->
                 lookupTag.toSymbol(session)?.getContainingClassLookupTag()
-            }.mapTo(mutableListOf()) { it.toSymbol(session)?.fir }
+            }.mapTo([]) { it.toSymbol(session)?.fir }
 
             if (file == null || outerClasses.any { it == null }) {
                 return buildErrorTypeRef {
@@ -417,12 +417,12 @@ open class FirDesignatedBodyResolveTransformerForReturnTypeCalculator(
 
 open class ImplicitBodyResolveComputationSession {
     private val implicitBodyResolveStatusMap = hashMapOf<FirCallableSymbol<*>, ImplicitBodyResolveComputationStatus>()
-    private val computingSymbolsStack: MutableList<FirCallableSymbol<*>> = mutableListOf()
+    private val computingSymbolsStack: MutableList<FirCallableSymbol<*>> = []
 
     /**
      * Stores all symbols that belong to a loop of length > 1
      */
-    private val nonTrivialLoops: MutableSet<FirCallableSymbol<*>> = mutableSetOf()
+    private val nonTrivialLoops: MutableSet<FirCallableSymbol<*>> = []
 
     internal fun getStatus(symbol: FirCallableSymbol<*>): ImplicitBodyResolveComputationStatus {
         if (symbol is FirSyntheticPropertySymbol) {

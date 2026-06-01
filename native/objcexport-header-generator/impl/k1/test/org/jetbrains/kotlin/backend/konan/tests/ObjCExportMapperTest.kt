@@ -67,14 +67,14 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
 
         val objcExportTranslator = ObjCExportTranslatorImpl(
             generator = ObjCExportHeaderGeneratorImpl(
-                moduleDescriptors = listOf(module),
+                moduleDescriptors = [module],
                 mapper = objcExportMapper,
                 namer = objcExportNamer,
                 problemCollector = ObjCExportProblemCollector.SILENT,
                 objcGenerics = true,
                 objcExportBlockExplicitParameterNames = false,
                 shouldExportKDoc = false,
-                additionalImports = emptyList()
+                additionalImports = []
             ),
             mapper = objcExportMapper,
             namer = objcExportNamer,
@@ -88,16 +88,16 @@ class ObjCExportMapperTest : InlineSourceTestEnvironment {
 
         /* Represents List<Int> */
         val listOfIntType = KotlinTypeFactory.simpleNotNullType(
-            TypeAttributes.Empty, listClassDescriptor, listOf(
-                TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, emptyList()))
-            )
+            TypeAttributes.Empty, listClassDescriptor, [
+                TypeProjectionImpl(KotlinTypeFactory.simpleNotNullType(TypeAttributes.Empty, intClassDescriptor, []))
+            ]
         )
 
         val typeMapper = assertNotNull(objcExportMapper.getCustomTypeMapper(listClassDescriptor))
         assertEquals(ClassId.fromString("kotlin/collections/List"), typeMapper.mappedClassId)
         val listOfIntMapped = typeMapper.mapType(listOfIntType, objcExportTranslator, objCExportScope = ObjCRootExportScope)
 
-        assertEquals(ObjCClassType("NSArray", typeArguments = listOf(ObjCClassType("Int"))), listOfIntMapped)
+        assertEquals(ObjCClassType("NSArray", typeArguments = [ObjCClassType("Int")]), listOfIntMapped)
         assertEquals("NSArray<Int *> *", listOfIntMapped.toString())
     }
 }

@@ -24,7 +24,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
 
     protected val repository: File by lazy { File(workingDir, "repository") }
     private val modulesInfo: MutableMap<String, ModuleBuildConfiguration> = mutableMapOf()
-    private val modulesOrder: MutableList<String> = mutableListOf()
+    private val modulesOrder: MutableList<String> = []
 
     private val dirToModule = mutableMapOf<File, IncrementalModuleEntry>()
     private val nameToModules = mutableMapOf<String, MutableSet<IncrementalModuleEntry>>()
@@ -63,7 +63,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
                 match.find()
                 val moduleName = match.group(1)
                 val fileName = match.group(2)
-                val sources = results.getOrPut(moduleName) { mutableListOf() }
+                val sources = results.getOrPut(moduleName) { [] }
                 sources.add(it to fileName)
             }
         }
@@ -90,7 +90,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
             setupModuleApiHistory(moduleName, outDir, cacheDir)
         }
 
-        return listOf(srcDir)
+        return [srcDir]
     }
 
     protected open fun setupModuleApiHistory(moduleName: String, outDir: File, cacheDir: File) {
@@ -103,7 +103,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
         val moduleEntry = IncrementalModuleEntry(workingDir.absolutePath, moduleName, outDir, moduleBuildHistoryFile, abiSnapshotFile)
 
         dirToModule[moduleBuildDir] = moduleEntry
-        nameToModules.getOrPut(moduleName) { mutableSetOf() }.add(moduleEntry)
+        nameToModules.getOrPut(moduleName) { [] }.add(moduleEntry)
         jarToModule[depArtifactFile] = moduleEntry
     }
 
@@ -112,8 +112,8 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
         private val modulePattern = Pattern.compile("^(module\\d+)_(\\w+\\.kt)$")
 
         private fun File.getFiles(): List<File> {
-            return if (isDirectory) listFiles()?.flatMap { it.getFiles() } ?: emptyList()
-            else listOf(this)
+            return if (isDirectory) listFiles()?.flatMap { it.getFiles() } ?: []
+            else [this]
         }
 
         private fun parseDependencies(testDir: File): Map<String, List<ModuleDependency>> {
@@ -132,7 +132,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
                 val moduleName = it[0]
                 val dependencyPart = it[1]
 
-                val dependencies = result.getOrPut(moduleName) { mutableListOf() }
+                val dependencies = result.getOrPut(moduleName) { [] }
 
                 if (dependencyPart.isNotBlank()) {
                     val idx = dependencyPart.indexOf('[')
@@ -142,7 +142,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
                         val flagsString = dependencyPart.substring(idx + 1, dependencyPart.length - 1)
                         val flags = flagsString.split(",").map { s -> s.trim() }.filter { s -> s.isNotEmpty() }.toSet()
                         ModuleDependency(depModuleName, flags)
-                    } else ModuleDependency(dependencyPart, emptySet())
+                    } else ModuleDependency(dependencyPart, [])
                     dependencies.add(dependency)
                 }
             }
@@ -166,7 +166,7 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
     )
 
     private fun collectEffectiveDependencies(moduleName: String): List<String> {
-        val result = mutableSetOf<String>()
+        val result: MutableSet<String> = []
 
         val moduleInfo = modulesInfo[moduleName] ?: error("Cannot find module info for $moduleName")
 
@@ -201,8 +201,8 @@ abstract class AbstractIncrementalMultiModuleCompilerRunnerTest<Args : CommonCom
         val reporter = TestICReporter()
         val messageCollector = MessageCollectorImpl()
 
-        val modifiedLibraries = mutableListOf<Pair<String, File>>()
-        val deletedLibraries = mutableListOf<Pair<String, File>>()
+        val modifiedLibraries: MutableList<Pair<String, File>> = []
+        val deletedLibraries: MutableList<Pair<String, File>> = []
 
         var compilationIsEnabled = true
         val isInitial = repository.list()?.isEmpty() ?: true

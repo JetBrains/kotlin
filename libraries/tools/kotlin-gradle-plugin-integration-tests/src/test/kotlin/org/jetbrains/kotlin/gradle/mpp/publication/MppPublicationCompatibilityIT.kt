@@ -28,24 +28,24 @@ import kotlin.io.path.walk
 @ExtendWith(GradleParameterResolver::class)
 class MppPublicationCompatibilityIT : KGPBaseTest() {
     companion object {
-        private val agpVersions = listOf(
+        private val agpVersions = [
             TestVersions.AGP.MIN_SUPPORTED,
             TestVersions.AGP.MAX_SUPPORTED,
-        )
+        ]
 
-        private val kotlinVersions = listOf(
+        private val kotlinVersions = [
             TestVersions.Kotlin.STABLE_RELEASE,
             TestVersions.Kotlin.CURRENT
-        )
+        ]
 
         private val projectVariants = with(ProjectVariant) {
-            listOf(
+            [
                 native + jvm,
                 native + android,
                 native + jvm + android,
                 javaOnly,
                 androidOnly,
-            )
+            ]
         }
 
         private fun generateScenarios(gradleVersions: List<String>): Set<Scenario> {
@@ -97,15 +97,15 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
 
         @JvmStatic
         fun scenarios(specificGradleVersion: GradleVersion?): Iterable<Scenario> {
-            val supportedGradleVersions = listOf(
+            val supportedGradleVersions = [
                 TestVersions.Gradle.MIN_SUPPORTED,
                 TestVersions.Gradle.MAX_SUPPORTED,
-            )
+            ]
 
             if (specificGradleVersion != null) {
-                if (specificGradleVersion.version !in supportedGradleVersions) return emptyList()
+                if (specificGradleVersion.version !in supportedGradleVersions) return []
                 println("Generate scenarios for $specificGradleVersion Gradle version")
-                return generateScenarios(listOf(specificGradleVersion.version))
+                return generateScenarios([specificGradleVersion.version])
             } else {
                 println("Generate scenarios for $supportedGradleVersions Gradle versions")
                 return generateScenarios(supportedGradleVersions)
@@ -115,7 +115,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
         @JvmStatic
         fun rerunScenariosForDebugging(specificGradleVersion: GradleVersion?): Iterable<Scenario> {
             val rerunIndex = 2
-            return listOf(scenarios(specificGradleVersion).toList()[rerunIndex])
+            return [scenarios(specificGradleVersion).toList()[rerunIndex]]
         }
 
         @JvmStatic
@@ -190,7 +190,7 @@ class MppPublicationCompatibilityIT : KGPBaseTest() {
             localRepoDir = repoDir,
             buildJdk = jdk17Info.javaHome
         ) {
-            prepareConsumerProject(consumer, listOf(producer), repoDir)
+            prepareConsumerProject(consumer, [producer], repoDir)
             val buildOptions = if (consumer.hasAndroid) {
                 val androidVersion = consumer.agpVersionString!!
                 defaultBuildOptions.copy(androidVersion = androidVersion)

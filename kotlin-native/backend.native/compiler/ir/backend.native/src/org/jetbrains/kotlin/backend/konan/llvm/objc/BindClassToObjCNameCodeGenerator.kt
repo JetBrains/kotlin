@@ -24,7 +24,7 @@ internal fun CodeGenerator.processBindClassToObjCNameAnnotations(file: IrFile) {
             -1
         else
             generationState.context.getLayoutBuilder(it.kotlinClass).vtableEntries.size
-        val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: emptyList()
+        val reverseAdapters = reverseBridgesByClass[it.kotlinClass] ?: []
         val adapter = ObjCTypeAdapterForBindClassToObjCName(it.kotlinClass, it.objCName, vtableSize, reverseAdapters)
         val typeAdapter = staticData.placeGlobal("", adapter).pointer
         try {

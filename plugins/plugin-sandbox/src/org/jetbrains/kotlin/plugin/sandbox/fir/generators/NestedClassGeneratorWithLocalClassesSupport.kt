@@ -40,8 +40,8 @@ class NestedClassGeneratorWithLocalClassesSupport(session: FirSession) : FirDecl
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
         return when {
-            session.predicateBasedProvider.matches(PREDICATE, classSymbol) -> setOf(GENERATED)
-            else -> emptySet()
+            session.predicateBasedProvider.matches(PREDICATE, classSymbol) -> [GENERATED]
+            else -> []
         }
     }
 

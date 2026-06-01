@@ -33,7 +33,7 @@ class JpsCompileStatisticsData(
     private val gcCountMetrics: Map<String, Long>?,
     private val type: String,
     private val fromKotlinPlugin: Boolean?,
-    private val compiledSources: List<String> = emptyList(),
+    private val compiledSources: List<String> = [],
     private val skipMessage: String?,
     private val icLogLines: List<String>,
 ) : CompileStatisticsData<JpsBuildTimeMetric, JpsBuildPerformanceMetric> {

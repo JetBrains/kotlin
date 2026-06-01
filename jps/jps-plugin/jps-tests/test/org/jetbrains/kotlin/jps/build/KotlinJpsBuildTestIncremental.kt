@@ -91,7 +91,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             reportFile.delete()
         }
 
-        val reportMetricsList = arrayOf(
+        val reportMetricsList: Array<String> = [
             "Task 'kotlinProject' finished in",
             "Task info:",
             "Kotlin language version: " + LanguageVersion.LATEST_STABLE,
@@ -100,7 +100,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
             "Compiler initialization time:",
             "Compiler code analysis:",
             "Compiler code generation:"
-        )
+        ]
 
         fun testImpl() {
             assertTrue("Daemon was not enabled!", isDaemonEnabled())
@@ -163,7 +163,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
 
         checkWhen(createTouchAction("src/main.kt"), null, packageClasses("kotlinProject", "src/main.kt", "foo.MainKt"))
         checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(createTouchAction("src/Bar.kt"), arrayOf("src/Bar.kt"), arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/Bar.kt"), ["src/Bar.kt"], [module("kotlinProject"), klass("kotlinProject", "foo.Bar")])
 
         checkWhen(
             createDeleteAction("src/main.kt"),
@@ -174,7 +174,7 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         assertFilesNotExistInOutput(module, "foo/MainKt.class")
 
         checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
-        checkWhen(createTouchAction("src/Bar.kt"), null, arrayOf(module("kotlinProject"), klass("kotlinProject", "foo.Bar")))
+        checkWhen(createTouchAction("src/Bar.kt"), null, [module("kotlinProject"), klass("kotlinProject", "foo.Bar")])
     }
 
     fun testManyFilesForPackage() {
@@ -187,12 +187,12 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
             createTouchAction("src/Bar.kt"),
-            arrayOf("src/Bar.kt"),
-            arrayOf(
+            ["src/Bar.kt"],
+            [
                 klass("kotlinProject", "foo.Bar"),
                 packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
                 module("kotlinProject")
-            )
+            ]
         )
 
         checkWhen(
@@ -205,11 +205,11 @@ class KotlinJpsBuildTestIncremental : KotlinJpsBuildTest() {
         checkWhen(createTouchAction("src/boo.kt"), null, packageClasses("kotlinProject", "src/boo.kt", "boo.BooKt"))
         checkWhen(
             createTouchAction("src/Bar.kt"), null,
-            arrayOf(
+            [
                 klass("kotlinProject", "foo.Bar"),
                 packagePartClass("kotlinProject", "src/Bar.kt", "foo.MainKt"),
                 module("kotlinProject")
-            )
+            ]
         )
     }
 

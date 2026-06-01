@@ -24,8 +24,8 @@ import java.io.File
 import java.net.URLClassLoader
 
 // using '#' to avoid collisions with xml escaping
-private val SOURCE_CHARS: List<String> = listOf("\r", "\n", "#")
-private val XML_REPLACEMENTS: List<String> = listOf("#r", "#n", "#diez")
+private val SOURCE_CHARS: List<String> = ["\r", "\n", "#"]
+private val XML_REPLACEMENTS: List<String> = ["#r", "#n", "#diez"]
 
 private val END_LINE: String = LineSeparator.getSystemLineSeparator().separatorString
 private const val XML_PREAMBLE = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"

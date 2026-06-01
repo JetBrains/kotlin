@@ -46,6 +46,6 @@ interface ReplCompiler<CompiledSnippetT : CompiledSnippet> {
     suspend fun compile(
         snippet: SourceCode,
         configuration: ScriptCompilationConfiguration
-    ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippetT>> = compile(listOf(snippet), configuration)
+    ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippetT>> = compile([snippet], configuration)
 }
 

@@ -91,7 +91,7 @@ fun generateProxyIrModuleWith(
     return JsIrModule(
         safeName,
         externalName,
-        listOf(programFragment),
+        [programFragment],
         importedWithEffectInModuleWithName = importedWithEffectInModuleWithName
     )
 }
@@ -237,7 +237,7 @@ class IrModuleToJsTransformer(
 
     private fun <E> generateExportWithExternals(rootFile: IrFile, generate: (IrPackageFragment) -> List<E>): List<E> {
         val exports = generate(rootFile)
-        val additionalExports = backendContext.externalPackageFragment[rootFile.symbol]?.let(generate) ?: emptyList()
+        val additionalExports = backendContext.externalPackageFragment[rootFile.symbol]?.let(generate) ?: []
         return additionalExports + exports
     }
 
@@ -374,7 +374,7 @@ class IrModuleToJsTransformer(
         return JsIrModule(
             moduleFragmentToNameMapper.getSafeNameFor(file),
             moduleFragmentToNameMapper.getExternalNameFor(file),
-            listOf(programFragment),
+            [programFragment],
             importedWithEffectInModuleWithName = runIf(programFragment.hasEffect) { module.fragment.safeName }
         )
     }
@@ -383,7 +383,7 @@ class IrModuleToJsTransformer(
         return JsIrModule(
             moduleFragmentToNameMapper.getSafeNameExporterFor(file),
             moduleFragmentToNameMapper.getExternalNameForExporterFile(file),
-            listOf(programFragment),
+            [programFragment],
             module.fragment.safeName
         )
     }
@@ -407,7 +407,7 @@ class IrModuleToJsTransformer(
                 it.dts = tsDeclarations
                 it.exports.statements += ExportModelToJsStatements(staticContext, backendContext.es6mode)
                     .generateModuleExport(ExportedModule(mainModuleName, exports), internalModuleName, isEsModules)
-                it.computeAndSaveNameBindings(emptySet(), nameGenerator)
+                it.computeAndSaveNameBindings([], nameGenerator)
             }
     }
 

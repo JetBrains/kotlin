@@ -21,7 +21,7 @@ data class PluginDataFrameSchema(
     private val columns: List<SimpleCol>,
 ) {
     companion object {
-        val EMPTY = PluginDataFrameSchema(emptyList())
+        val EMPTY = PluginDataFrameSchema([])
     }
 
     /**
@@ -132,8 +132,8 @@ fun simpleColumnOf(name: String, type: ConeKotlinType): SimpleCol {
 
     if (type.isNullableNothing || type.isNothing) return SimpleDataColumn(name, type.wrap())
 
-    val nullableDataRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection), isMarkedNullable = true)
-    val dataFrame = Names.DF_CLASS_ID.constructClassLikeType(arrayOf(ConeStarProjection))
+    val nullableDataRow = Names.DATA_ROW_CLASS_ID.constructClassLikeType([ConeStarProjection], isMarkedNullable = true)
+    val dataFrame = Names.DF_CLASS_ID.constructClassLikeType([ConeStarProjection])
     return if (!type.isNullableNothing && type.isSubtypeOf(nullableDataRow, facade.session)) {
         val schema = extractSchema()
         val group = SimpleColumnGroup(name, schema.columns())

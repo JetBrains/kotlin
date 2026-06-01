@@ -82,7 +82,7 @@ internal class BuiltinOperatorLowering(val context: Context) : FileLoweringPass,
             reinterpret(expression, expression.type, toType)
 
     private fun IrBuilderWithScope.reinterpret(expression: IrExpression, fromType: IrType, toType: IrType) =
-            irCallWithSubstitutedType(symbols.reinterpret.owner, listOf(fromType, toType)).apply {
+            irCallWithSubstitutedType(symbols.reinterpret.owner, [fromType, toType]).apply {
                 arguments[0] = expression
             }
 

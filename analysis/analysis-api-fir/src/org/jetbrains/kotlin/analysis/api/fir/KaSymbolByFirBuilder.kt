@@ -652,7 +652,7 @@ internal fun FirDeclaration.buildSymbol(builder: KaSymbolByFirBuilder): KaSymbol
 internal fun FirBasedSymbol<*>.buildSymbol(builder: KaSymbolByFirBuilder): KaSymbol = builder.buildSymbol(this)
 
 private fun collectReferencedTypeParameters(declaration: FirCallableDeclaration): Set<ConeTypeParameterLookupTag> {
-    val allUsedTypeParameters = mutableSetOf<ConeTypeParameterLookupTag>()
+    val allUsedTypeParameters: MutableSet<ConeTypeParameterLookupTag> = []
 
     declaration.accept(object : FirVisitorVoid() {
         override fun visitElement(element: FirElement) {

@@ -88,9 +88,9 @@ internal class CompilerArgumentCompatibilityTest : BaseCompilationTest() {
     }
 
     private fun createSimpleJvmOperation(): JvmCompilationOperation {
-        val sources = listOf(workingDirectory.resolve("Foo.kt").also {
+        val sources = [workingDirectory.resolve("Foo.kt").also {
             it.writeText("class Foo")
-        })
+        }]
         val destination = workingDirectory.resolve("classes")
         return toolchain.jvm.createJvmCompilationOperation(sources, destination).apply {
             compilerArguments[NO_REFLECT] = true

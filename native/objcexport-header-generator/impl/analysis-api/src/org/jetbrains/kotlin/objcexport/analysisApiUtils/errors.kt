@@ -41,32 +41,32 @@ internal val KtObjCExportSession.errorInterface
         name = errorClassName,
         comment = null,
         origin = null,
-        attributes = emptyList(),
-        superProtocols = emptyList(),
-        members = listOf(
+        attributes = [],
+        superProtocols = [],
+        members = [
             ObjCMethod(
                 comment = null,
                 origin = null,
                 isInstanceMethod = true,
                 returnType = ObjCInstanceType,
-                selectors = listOf("init"),
-                parameters = emptyList(),
-                attributes = listOf("swift_name(\"init()\")", "objc_designated_initializer")
+                selectors = ["init"],
+                parameters = [],
+                attributes = ["swift_name(\"init()\")", "objc_designated_initializer"]
             ),
             ObjCMethod(
                 comment = null,
                 origin = null,
                 isInstanceMethod = false,
                 returnType = ObjCInstanceType,
-                selectors = listOf("new"),
-                parameters = emptyList(),
-                attributes = listOf("availability(swift, unavailable, message=\"use object initializers instead\")")
+                selectors = ["new"],
+                parameters = [],
+                attributes = ["availability(swift, unavailable, message=\"use object initializers instead\")"]
             )
-        ),
+        ],
         categoryName = null,
-        generics = emptyList(),
+        generics = [],
         superClass = getDefaultSuperClassOrProtocolName().objCName,
-        superClassGenerics = emptyList()
+        superClassGenerics = []
     )
 
 internal val objCErrorType = ObjCClassType(errorClassName, extras = objCTypeExtras {

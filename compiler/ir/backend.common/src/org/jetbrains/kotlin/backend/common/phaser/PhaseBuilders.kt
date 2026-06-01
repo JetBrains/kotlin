@@ -33,7 +33,7 @@ infix fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, 
 ): CompilerPhase<Context, Input, Output> {
     val unsafeThis = this as CompilerPhase<Context, Any?, Any?>
     val unsafeOther = other as CompilerPhase<Context, Any?, Any?>
-    return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else listOf(unsafeThis, unsafeOther))
+    return CompositePhase(if (this is CompositePhase<Context, *, *>) phases + unsafeOther else [unsafeThis, unsafeOther])
 }
 
 fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input, Mid>.thenIf(
@@ -61,9 +61,9 @@ fun <Context : LoggingContext, Input, Mid, Output> CompilerPhase<Context, Input,
 
 fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
     name: String,
-    preactions: Set<Action<Input, Context>> = emptySet(),
-    postactions: Set<Action<Output, Context>> = emptySet(),
-    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
+    preactions: Set<Action<Input, Context>> = [],
+    postactions: Set<Action<Output, Context>> = [],
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = [],
     outputIfNotEnabled: (PhaseConfig, PhaserState, Context, Input) -> Output,
     op: (Context, Input) -> Output
 ): NamedCompilerPhase<Context, Input, Output> = object : NamedCompilerPhase<Context, Input, Output>(
@@ -83,9 +83,9 @@ fun <Context : LoggingContext, Input, Output> createSimpleNamedCompilerPhase(
 
 fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
     name: String,
-    preactions: Set<Action<Input, Context>> = emptySet(),
-    postactions: Set<Action<Input, Context>> = emptySet(),
-    prerequisite: Set<NamedCompilerPhase<*, *, *>> = emptySet(),
+    preactions: Set<Action<Input, Context>> = [],
+    postactions: Set<Action<Input, Context>> = [],
+    prerequisite: Set<NamedCompilerPhase<*, *, *>> = [],
     op: (Context, Input) -> Unit
 ): NamedCompilerPhase<Context, Input, Unit> = object : NamedCompilerPhase<Context, Input, Unit>(
     name,
@@ -104,9 +104,9 @@ fun <Context : LoggingContext, Input> createSimpleNamedCompilerPhase(
 fun <Context : LoweringContext> makeIrModulePhase(
     lowering: (Context) -> ModuleLoweringPass,
     name: String,
-    prerequisite: Set<NamedCompilerPhase<Context, *, *>> = emptySet(),
-    preconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
-    postconditions: Set<Action<IrModuleFragment, Context>> = emptySet(),
+    prerequisite: Set<NamedCompilerPhase<Context, *, *>> = [],
+    preconditions: Set<Action<IrModuleFragment, Context>> = [],
+    postconditions: Set<Action<IrModuleFragment, Context>> = [],
 ): NamedCompilerPhase<Context, IrModuleFragment, IrModuleFragment> =
     createSimpleNamedCompilerPhase(
         name = name,

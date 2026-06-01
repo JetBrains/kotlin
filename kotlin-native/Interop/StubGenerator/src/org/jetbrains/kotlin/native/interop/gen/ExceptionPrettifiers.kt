@@ -24,9 +24,9 @@ sealed interface ExceptionPrettifier {
  */
 object ClangModulesDisabledPrettifier : ExceptionPrettifier {
 
-    private val supportedPatterns = listOf(
-            "use of '@import' when modules are disabled"
-    )
+    private val supportedPatterns = [
+        "use of '@import' when modules are disabled"
+    ]
 
     override fun matches(throwable: Throwable): Boolean {
         return supportedPatterns.any { throwable.message?.contains(it) == true }
@@ -48,9 +48,9 @@ inline fun <T> withExceptionPrettifier(disabled: Boolean = false, action: () -> 
     return try {
         action()
     } catch (throwable: Throwable) {
-        val prettifiers = listOf(
-                ClangModulesDisabledPrettifier,
-        )
+        val prettifiers = [
+            ClangModulesDisabledPrettifier,
+        ]
         throw prettifiers.firstOrNull { it.matches(throwable) }?.prettify(throwable) ?: throwable
     }
 }

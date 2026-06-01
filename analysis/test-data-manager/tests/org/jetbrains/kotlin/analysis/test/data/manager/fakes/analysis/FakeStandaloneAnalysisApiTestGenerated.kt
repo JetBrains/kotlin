@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 
 @TestMetadata("testData/analysis/api")
 class FakeStandaloneAnalysisApiTestGenerated : FakeManagedTest() {
-    override val variantChain = listOf("standalone")
+    override val variantChain = ["standalone"]
 
     @Test
     @TestMetadata("symbols.kt")

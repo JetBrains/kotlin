@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 context(relationProvider: KaFirSymbolRelationProvider)
 internal fun <T : KaCallableSymbol> getAllOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
     require(callableSymbol is KaFirSymbol<*>)
-    val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
+    val overriddenElement: MutableSet<FirCallableSymbol<*>> = []
     processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
         firTypeScope.processAllOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
             overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
@@ -45,7 +45,7 @@ internal fun <T : KaCallableSymbol> getAllOverriddenSymbols(callableSymbol: T): 
 context(relationProvider: KaFirSymbolRelationProvider)
 internal fun <T : KaCallableSymbol> getDirectlyOverriddenSymbols(callableSymbol: T): Sequence<KaCallableSymbol> {
     require(callableSymbol is KaFirSymbol<*>)
-    val overriddenElement = mutableSetOf<FirCallableSymbol<*>>()
+    val overriddenElement: MutableSet<FirCallableSymbol<*>> = []
     processOverrides(callableSymbol) { firTypeScope, firCallableDeclaration ->
         firTypeScope.processDirectOverriddenDeclarations(firCallableDeclaration) { overriddenDeclaration ->
             overriddenDeclaration.symbol.collectIntersectionOverridesSymbolsTo(
@@ -83,7 +83,7 @@ private inline fun getOverriddenAccessorSymbols(
     accessorSymbol: KaPropertyAccessorSymbol,
     overriddenProperties: (KaPropertySymbol) -> Sequence<KaCallableSymbol>,
 ): Sequence<KaCallableSymbol> {
-    val propertySymbol = with(analysisSession) { accessorSymbol.containingDeclaration } as? KaPropertySymbol ?: return emptySequence()
+    val propertySymbol = with(analysisSession) { accessorSymbol.containingDeclaration } as? KaPropertySymbol ?: return []
     val overriddenProperties = overriddenProperties(propertySymbol)
     return if (accessorSymbol is KaPropertyGetterSymbol) {
         overriddenProperties
@@ -230,11 +230,11 @@ private fun isSubClassOf(subClass: KaClassSymbol, superClass: KaClassSymbol, all
 context(relationProvider: KaFirSymbolRelationProvider)
 internal fun getIntersectionOverriddenSymbols(symbol: KaCallableSymbol): List<KaCallableSymbol> {
     if (!symbol.mayHaveOverriddenCallables) {
-        return emptyList()
+        return []
     }
 
     require(symbol is KaFirSymbol<*>)
-    if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return emptyList()
+    if (symbol.origin != KaSymbolOrigin.INTERSECTION_OVERRIDE) return []
     return symbol.firSymbol
         .getIntersectionOverriddenSymbols(symbol.analysisSession.firSession)
         .map { analysisSession.firSymbolBuilder.callableBuilder.buildCallableSymbol(it) }
@@ -252,6 +252,6 @@ private fun FirBasedSymbol<*>.getIntersectionOverriddenSymbols(useSiteSession: F
                 getNonSubsumedOverriddenSymbols()
             }
         }
-        else -> listOf(this)
+        else -> [this]
     }
 }

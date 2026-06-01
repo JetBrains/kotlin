@@ -31,7 +31,7 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
     override val configurator: AnalysisApiTestConfigurator = LLSourceLikeTestConfigurator()
 
     override val additionalServiceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>>
-        get() = super.additionalServiceRegistrars + listOf(ResolveExtensionDisposalTestServiceRegistrar)
+        get() = super.additionalServiceRegistrars + ResolveExtensionDisposalTestServiceRegistrar
 
     override fun doTestByMainFile(
         mainFile: KtFile,
@@ -54,8 +54,8 @@ abstract class AbstractResolveExtensionDisposalAfterModificationEventTest : Abst
 }
 
 class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
-    override fun getKtFiles(): List<KaResolveExtensionFile> = emptyList()
-    override fun getContainedPackages(): Set<FqName> = emptySet()
+    override fun getKtFiles(): List<KaResolveExtensionFile> = []
+    override fun getContainedPackages(): Set<FqName> = []
     override fun getShadowedScope(): GlobalSearchScope = GlobalSearchScope.EMPTY_SCOPE
 
     var isDisposed: Boolean = false
@@ -66,7 +66,7 @@ class KaResolveExtensionWithDisposalTracker() : KaResolveExtension() {
 }
 
 class KaResolveExtensionWithDisposalTrackerProvider() : KaResolveExtensionProvider() {
-    override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> = listOf(KaResolveExtensionWithDisposalTracker())
+    override fun provideExtensionsFor(module: KaModule): List<KaResolveExtension> = [KaResolveExtensionWithDisposalTracker()]
 }
 
 object ResolveExtensionDisposalTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {

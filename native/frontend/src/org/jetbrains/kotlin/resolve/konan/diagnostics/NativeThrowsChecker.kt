@@ -127,7 +127,7 @@ object NativeThrowsChecker : DeclarationChecker {
     }
 
     private fun AnnotationDescriptor.getVariadicArguments(): List<ConstantValue<*>> {
-        val argument = this.firstArgument() as? ArrayValue ?: return emptyList()
+        val argument = this.firstArgument() as? ArrayValue ?: return []
         return argument.value
     }
 

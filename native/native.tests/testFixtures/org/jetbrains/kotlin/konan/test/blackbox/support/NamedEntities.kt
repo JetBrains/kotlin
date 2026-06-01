@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.konan.test.blackbox.support
  */
 class PackageName private constructor(private val fqn: String, val segments: List<String>): Comparable<PackageName> {
     constructor(segments: List<String>) : this(segments.joinToString("."), segments)
-    constructor(fqn: String) : this(fqn, if (fqn.isNotEmpty()) fqn.split('.') else emptyList())
+    constructor(fqn: String) : this(fqn, if (fqn.isNotEmpty()) fqn.split('.') else [])
 
     fun isEmpty(): Boolean = segments.isEmpty()
 
@@ -21,7 +21,7 @@ class PackageName private constructor(private val fqn: String, val segments: Lis
     override fun compareTo(other: PackageName) = fqn.compareTo(other.fqn)
 
     companion object {
-        val EMPTY = PackageName("", emptyList())
+        val EMPTY = PackageName("", [])
     }
 }
 

@@ -38,7 +38,7 @@ internal open class PlatformImplementations {
     public open fun getSuppressed(exception: Throwable): List<Throwable> {
         @Suppress("UNCHECKED_CAST")
         return ReflectThrowable.getSuppressed?.invoke(exception)?.let { (it as Array<Throwable>).asList() }
-            ?: emptyList()
+            ?: []
     }
 
     public open fun getMatchResultNamedGroup(matchResult: MatchResult, name: String): MatchGroup? {

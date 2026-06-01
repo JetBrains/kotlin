@@ -19,13 +19,13 @@ class SirInitBuilder {
     var origin: SirOrigin = SirOrigin.Unknown
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
-    val attributes: MutableList<SirAttribute> = mutableListOf()
-    val bridges: MutableList<SirBridge> = mutableListOf()
+    val attributes: MutableList<SirAttribute> = []
+    val bridges: MutableList<SirBridge> = []
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
     var isAsync: Boolean = false
     var isFailable: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
-    val parameters: MutableList<SirParameter> = mutableListOf()
+    val parameters: MutableList<SirParameter> = []
     var isConvenience: Boolean = false
     var isRequired: Boolean = false
     var isOverride: Boolean = false

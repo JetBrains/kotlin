@@ -142,10 +142,10 @@ internal object StaticInitializersOptimization {
 
             context.log { "THIRD PHASE: collect call sites" }
 
-            val callSitesRequiringGlobalInitializerCall = mutableSetOf<IrCall>()
-            val callSitesRequiringThreadLocalInitializerCall = mutableSetOf<IrCall>()
-            val callSitesNotRequiringGlobalInitializerCall = mutableSetOf<IrCall>()
-            val callSitesNotRequiringThreadLocalInitializerCall = mutableSetOf<IrCall>()
+            val callSitesRequiringGlobalInitializerCall: MutableSet<IrCall> = []
+            val callSitesRequiringThreadLocalInitializerCall: MutableSet<IrCall> = []
+            val callSitesNotRequiringGlobalInitializerCall: MutableSet<IrCall> = []
+            val callSitesNotRequiringThreadLocalInitializerCall: MutableSet<IrCall> = []
 
             for (node in callGraph.directEdges.values) {
                 intraproceduralAnalysis(node, initializedFiles, AnalysisGoal.CollectCallSites,
@@ -157,7 +157,7 @@ internal object StaticInitializersOptimization {
                     initializedFiles: Map<IrSimpleFunction, BitSet>,
                     functionsWhoseInitializerCallCanBeExtractedToCallSites: Set<IrSimpleFunction>
             ): Set<IrSimpleFunction> {
-                val result = mutableSetOf<IrSimpleFunction>()
+                val result: MutableSet<IrSimpleFunction> = []
                 initializedFiles.forEach { [function, functionInitializedFiles] ->
                     val containter = function.calledInitializer ?: return@forEach
                     val backingField = function.correspondingPropertySymbol?.owner?.backingField
@@ -231,7 +231,7 @@ internal object StaticInitializersOptimization {
         private val executeImplSymbol = context.symbols.executeImpl
         private val getContinuationSymbol = context.symbols.getContinuation
 
-        private var dummySet = mutableSetOf<IrCall>()
+        private var dummySet: MutableSet<IrCall> = []
 
         private enum class AnalysisGoal {
             ComputeInitializedAfterCall,
@@ -279,7 +279,7 @@ internal object StaticInitializersOptimization {
                 else if (irCall.origin == STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocations[irCall.arguments[0] as IrCall] = irCall
                 if (call !is DataFlowIR.Node.VirtualCall) continue
-                virtualCallSites.getOrPut(irCall) { mutableListOf() }.add(callSite)
+                virtualCallSites.getOrPut(irCall) { [] }.add(callSite)
             }
             val returnTargetsInitializedFiles = mutableMapOf<IrReturnTargetSymbol, BitSet>()
             val initializedFilesAtLoopsBreaks = mutableMapOf<IrLoop, BitSet>()
@@ -529,7 +529,7 @@ internal object StaticInitializersOptimization {
         var numberOfCallSitesWithExtractedGlobalInitializerCall = 0
         var numberOfCallSitesWithExtractedThreadLocalInitializerCall = 0
 
-        val changedDeclarations = mutableSetOf<IrDeclaration>()
+        val changedDeclarations: MutableSet<IrDeclaration> = []
         irModule.transformChildren(object : IrTransformer<IrBuilderWithScope?>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope?): IrStatement {
                 return super.visitDeclaration(declaration,

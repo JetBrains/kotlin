@@ -141,7 +141,7 @@ object FirExpectActualDeclarationChecker : FirBasicDeclarationChecker(MppChecker
                 expectContainingClass,
                 expectActualMatchingContext,
             )
-        } else emptyList()
+        } else []
 
         checkAmbiguousExpects(symbol, matchingCompatibilityToMembersMap, symbol)
 

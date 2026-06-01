@@ -66,7 +66,7 @@ internal fun LargeDynamicMappedBuffer.parseCentralDirectory(): List<ZipEntryDesc
 
     var currentStart = offsetOfCentralDirectory
 
-    val result = mutableListOf<ZipEntryDescription>()
+    val result: MutableList<ZipEntryDescription> = []
     for (i in 0 until entriesNumber) {
         withMappedRangeFrom(currentStart) {
             val headerConst = getInt(0)

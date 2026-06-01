@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.syntax
 
+import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.KtLightSourceElement
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtPsiSourceElement
@@ -55,5 +56,5 @@ object FirMissingConstructorKeywordSyntaxChecker : FirDeclarationSyntaxChecker<F
         }
     }
 
-    private val importantNodeTypes = setOf(KtNodeTypes.MODIFIER_LIST, KtTokens.CONSTRUCTOR_KEYWORD)
+    private val importantNodeTypes: Set<IElementType> = [KtNodeTypes.MODIFIER_LIST, KtTokens.CONSTRUCTOR_KEYWORD]
 }

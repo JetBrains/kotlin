@@ -48,7 +48,7 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
 
         // Local classes cannot be sealed.
         if (firClass.isLocal) {
-            return emptyList()
+            return []
         }
 
         return cache.computeIfAbsent(classId) { searchInheritors(firClass) }
@@ -80,12 +80,12 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
                 val contextModule = classModule.baseContextModule
                 val contextSession = LLFirSessionCache.getInstance(project).getSession(contextModule, preferBinary = true)
                 val originalFirSymbol = contextSession.symbolProvider.getClassLikeSymbolByClassId(firClass.classId)
-                val originalFirClass = originalFirSymbol?.fir as? FirClass ?: return emptyList()
+                val originalFirClass = originalFirSymbol?.fir as? FirClass ?: return []
                 contextModule to originalFirClass
             }
             else -> classModule to firClass
         }
-        val targetKtClass = targetFirClass.psi as? KtClass ?: return emptyList()
+        val targetKtClass = targetFirClass.psi as? KtClass ?: return []
 
         // `FirClass.isExpect` does not depend on the `STATUS` phase because it's already set during FIR building.
         val scope = if (targetFirClass.isExpect) {
@@ -105,5 +105,5 @@ internal class LLSealedInheritorsProvider(private val project: Project) : Sealed
             .filter { it.packageFqName == classId.packageFqName }
             // Enforce a deterministic order on the result, e.g. for stable test output.
             .sortedBy { it.toString() }
-            .ifEmpty { emptyList() }
+            .ifEmpty { [] }
 }

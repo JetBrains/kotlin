@@ -23,16 +23,16 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     val objcExportBlockExplicitParameterNames: Boolean,
     problemCollector: ObjCExportProblemCollector,
 ) {
-    private val stubs = mutableListOf<ObjCExportStub>()
+    private val stubs: MutableList<ObjCExportStub> = []
 
     private val classForwardDeclarations = linkedSetOf<ObjCClassForwardDeclaration>()
     private val protocolForwardDeclarations = linkedSetOf<String>()
-    private val extraClassesToTranslate = mutableSetOf<ClassDescriptor>()
+    private val extraClassesToTranslate: MutableSet<ClassDescriptor> = []
 
     private val translator =
         ObjCExportTranslatorImpl(this, mapper, namer, problemCollector, objcGenerics, objcExportBlockExplicitParameterNames)
 
-    private val generatedClasses = mutableSetOf<ClassDescriptor>()
+    private val generatedClasses: MutableSet<ClassDescriptor> = []
     private val extensions = mutableMapOf<ClassDescriptor, MutableList<CallableMemberDescriptor>>()
     private val topLevel = mutableMapOf<SourceFile, MutableList<CallableMemberDescriptor>>()
 
@@ -61,7 +61,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             stubs
         )
 
-    protected open fun getAdditionalImports(): List<String> = emptyList()
+    protected open fun getAdditionalImports(): List<String> = []
 
     fun translateModule() {
         // TODO: make the translation order stable
@@ -125,18 +125,18 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
                 .forEach {
                     val classDescriptor = getClassIfCategory(it)
                     if (classDescriptor == null) {
-                        topLevel.getOrPut(it.findSourceFile(), { mutableListOf() }) += it
+                        topLevel.getOrPut(it.findSourceFile(), { [] }) += it
                     } else {
                         // If a class is hidden from Objective-C API then it is meaningless
                         // to export its extensions.
                         if (!classDescriptor.isHiddenFromObjC()) {
-                            extensions.getOrPut(classDescriptor, { mutableListOf() }) += it
+                            extensions.getOrPut(classDescriptor, { [] }) += it
                         }
                     }
                 }
         }
 
-        val classesToTranslate = mutableListOf<ClassDescriptor>()
+        val classesToTranslate: MutableList<ClassDescriptor> = []
 
         packageFragments.forEach { packageFragment ->
             packageFragment.getMemberScope().collectClasses(classesToTranslate)
@@ -224,7 +224,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
     }
 
     companion object {
-        val foundationImports = listOf(
+        val foundationImports = [
             "Foundation/NSArray.h",
             "Foundation/NSDictionary.h",
             "Foundation/NSError.h",
@@ -232,7 +232,7 @@ abstract class ObjCExportHeaderGenerator @InternalKotlinNativeApi constructor(
             "Foundation/NSSet.h",
             "Foundation/NSString.h",
             "Foundation/NSValue.h"
-        )
+        ]
 
         private fun MutableList<String>.addImports(imports: Iterable<String>) {
             imports.forEach {

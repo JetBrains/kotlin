@@ -34,7 +34,7 @@ public actual fun Throwable.addSuppressed(exception: Throwable) {
     if (this !== exception) {
         val suppressed = this.asDynamic()._suppressed.unsafeCast<MutableList<Throwable>?>()
         if (suppressed == null) {
-            this.asDynamic()._suppressed = mutableListOf(exception)
+            this.asDynamic()._suppressed = [exception]
         } else {
             suppressed.add(exception)
         }
@@ -47,13 +47,13 @@ public actual fun Throwable.addSuppressed(exception: Throwable) {
 @SinceKotlin("1.4")
 public actual val Throwable.suppressedExceptions: List<Throwable>
     get() {
-        return this.asDynamic()._suppressed?.unsafeCast<List<Throwable>>() ?: emptyList()
+        return this.asDynamic()._suppressed?.unsafeCast<List<Throwable>>() ?: []
     }
 
 
 private class ExceptionTraceBuilder {
     private val target = StringBuilder()
-    private val visited = arrayOf<Throwable>()
+    private val visited: Array<Throwable> = []
     private var topStack: String = ""
     private var topStackStart: Int = 0
 

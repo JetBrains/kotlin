@@ -26,8 +26,8 @@ class InlineScopesGenerator {
         var callSiteLineNumber: Int? = null
         var surroundingScopeNumber: Int? = null
 
-        val variables = mutableListOf<LocalVariableNode>()
-        val children = mutableListOf<InlineScopeNode>()
+        val variables: MutableList<LocalVariableNode> = []
+        val children: MutableList<InlineScopeNode> = []
 
         val isRoot: Boolean
             get() = parent == null
@@ -57,7 +57,7 @@ class InlineScopesGenerator {
 
             // Inline function and lambda parameters are introduced before the corresponding inline marker variable,
             // so we need to keep track of them to assign to the correct scope later.
-            val variablesWithNotMatchingDepth = mutableListOf<LocalVariableNode>()
+            val variablesWithNotMatchingDepth: MutableList<LocalVariableNode> = []
 
             val labelToIndex = methodNode.getLabelToIndexMap()
             val sortedVariables = localVariables.sortedBy { labelToIndex[it.start.label] }
@@ -91,7 +91,7 @@ class InlineScopesGenerator {
 
         private fun renameVariables(rootNode: InlineScopeNode): Int {
             var seenInlineScopesNumber = 0
-            val nodeStack = mutableListOf<InlineScopeNode>()
+            val nodeStack: MutableList<InlineScopeNode> = []
             nodeStack.addAll(rootNode.children)
             while (nodeStack.isNotEmpty()) {
                 val node = nodeStack.removeLast()

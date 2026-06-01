@@ -94,7 +94,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
         declaration.declarations.transformFlat {
             (it as? IrConstructor)?.let { constructor ->
                 buildLoweredConstructorFunction(constructor)?.let { loweredConstructorFunction ->
-                    listOf(constructor, loweredConstructorFunction)
+                    [constructor, loweredConstructorFunction]
                 }
             }
         }
@@ -178,7 +178,7 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             constructor.constructedClass.isArray -> {
                 require(expression.dispatchReceiver == null) { "An array constructor call cannot have the dispatch receiver: ${expression.render()}" }
                 require(expression.arguments.size == 1) { "Expected a call to the array constructor with a single argument: ${expression.render()}" }
-                irBuilder.irCall(createUninitializedArray, constructedType, listOf(constructedType)).apply {
+                irBuilder.irCall(createUninitializedArray, constructedType, [constructedType]).apply {
                     arguments[0] = expression.arguments[0]!!
                 }
             }
@@ -190,10 +190,10 @@ internal class ConstructorsLowering(private val context: Context) : FileLowering
             constructedType.isAny() -> {
                 require(expression.dispatchReceiver == null) { "A kotlin.Any constructor call cannot have the dispatch receiver: ${expression.render()}" }
                 require(expression.arguments.isEmpty()) { "Expected a call to the kotlin.Any constructor with no arguments: ${expression.render()}" }
-                irBuilder.irCall(createUninitializedInstance, constructedType, listOf(constructedType))
+                irBuilder.irCall(createUninitializedInstance, constructedType, [constructedType])
             }
             else -> irBuilder.irBlock {
-                val instance = irTemporary(irCall(createUninitializedInstance, constructedType, listOf(constructedType)), "inst")
+                val instance = irTemporary(irCall(createUninitializedInstance, constructedType, [constructedType]), "inst")
                 +irCall(loweredConstructorFunction).apply {
                     dispatchReceiver = irGet(instance)
                     fillArgumentsFrom(expression)

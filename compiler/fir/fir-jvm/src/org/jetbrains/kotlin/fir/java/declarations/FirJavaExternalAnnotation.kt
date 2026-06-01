@@ -30,14 +30,14 @@ class FirJavaExternalAnnotation @FirImplementationDetail constructor(
     override val source: KtSourceElement? get() = null
 
     override val typeArguments: List<FirTypeProjection>
-        get() = emptyList()
+        get() = []
 
     @OptIn(UnresolvedExpressionTypeAccess::class)
     override val coneTypeOrNull: ConeKotlinType?
         get() = annotationTypeRef.coneTypeOrNull
 
     override val annotations: List<FirAnnotation>
-        get() = emptyList()
+        get() = []
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotationTypeRef.accept(visitor, data)

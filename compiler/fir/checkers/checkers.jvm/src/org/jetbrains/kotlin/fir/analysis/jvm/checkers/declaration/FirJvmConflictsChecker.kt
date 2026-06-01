@@ -36,7 +36,7 @@ object FirJvmConflictsChecker : FirClassLikeChecker(MppCheckerKind.Common) {
         }
         val javaSymbol = context.session.javaSymbolProvider?.getClassLikeSymbolByClassId(declaration.classId) ?: return
         reporter.reportOn(
-            declaration.source, FirErrors.CLASSIFIER_REDECLARATION, listOf(declaration.symbol, javaSymbol)
+            declaration.source, FirErrors.CLASSIFIER_REDECLARATION, [declaration.symbol, javaSymbol]
         )
     }
 }

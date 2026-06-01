@@ -223,7 +223,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     }
 
     override fun getTopLevelCallableSymbols(packageFqName: FqName, name: Name): List<FirCallableSymbol<*>> {
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return []
         return getTopLevelCallableSymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
@@ -243,7 +243,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     }
 
     private fun getTopLevelCallableSymbols(callableId: CallableId, callableFiles: Collection<KtFile>?): List<FirCallableSymbol<*>> {
-        if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return emptyList()
+        if (!allowKotlinPackage && callableId.packageName.isKotlinPackage()) return []
 
         val functions = getTopLevelFunctionSymbols(callableId, callableFiles)
         val properties = getTopLevelPropertySymbols(callableId, callableFiles)
@@ -252,7 +252,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     }
 
     override fun getTopLevelFunctionSymbols(packageFqName: FqName, name: Name): List<FirNamedFunctionSymbol> {
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return []
         return getTopLevelFunctionSymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
@@ -281,7 +281,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     }
 
     override fun getTopLevelPropertySymbols(packageFqName: FqName, name: Name): List<FirPropertySymbol> {
-        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return emptyList()
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return []
         return getTopLevelPropertySymbols(CallableId(packageFqName, name), callableFiles = null)
     }
 
@@ -329,7 +329,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         // to retrieve the files in the IDE mode
         val files = context ?: declarationProvider.getTopLevelCallableFiles(callableId)
 
-        if (files.isEmpty()) return emptyList()
+        if (files.isEmpty()) return []
 
         return buildList {
             files.forEach { ktFile ->

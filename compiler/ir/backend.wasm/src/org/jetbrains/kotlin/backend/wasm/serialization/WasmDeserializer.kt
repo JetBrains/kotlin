@@ -42,7 +42,7 @@ import kotlin.collections.MutableMap
 
 class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boolean = false) {
     private val input: MyByteReader = MyByteReader(inputStream)
-    private val deserializedReferences: MutableList<Any?> = mutableListOf()
+    private val deserializedReferences: MutableList<Any?> = []
 
     companion object {
         private val OPCODE_TO_WASM_OP by lazy { enumValues<WasmOp>().associateBy { it.opcode } }

@@ -123,7 +123,7 @@ object AbstractExpectActualMatcher {
 
         mismatchedMembers?.add(expectMember to mismatched)
         onMismatchedMembersFromClassScope(expectMember, mismatched, expectClassSymbol, actualClassSymbol)
-        return emptyList()
+        return []
     }
 
     private fun ExpectActualMatchingContext<*>.getCallablesCompatibility(

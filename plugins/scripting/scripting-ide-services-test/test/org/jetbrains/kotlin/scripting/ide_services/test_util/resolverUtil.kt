@@ -23,11 +23,11 @@ annotation class DependsOn(val value: String = "")
 open class ScriptDependenciesResolver {
 
     private val resolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
-    private val addedClasspath = mutableListOf<File>()
+    private val addedClasspath: MutableList<File> = []
 
     fun resolveFromAnnotations(script: ScriptContents): ResultWithDiagnostics<List<File>> {
-        val scriptDiagnostics = mutableListOf<ScriptDiagnostic>()
-        val classpath = mutableListOf<File>()
+        val scriptDiagnostics: MutableList<ScriptDiagnostic> = []
+        val classpath: MutableList<File> = []
 
         script.annotations.forEach { annotation ->
             when (annotation) {

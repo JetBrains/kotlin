@@ -25,8 +25,8 @@ class InMemoryStorageTest {
         val storageRoot = workingDir.resolve("storage")
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = false) {
             val key = LookupSymbolKey("a", "a")
-            it[key] = setOf(1, 2)
-            it.append(key, setOf(3))
+            it[key] = [1, 2]
+            it.append(key, [3])
         }
         assertFalse(Files.exists(storageRoot))
     }
@@ -36,8 +36,8 @@ class InMemoryStorageTest {
         val storageRoot = workingDir.resolve("storage")
         val key = LookupSymbolKey("a", "a")
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = true) {
-            it[key] = setOf(1, 2)
-            it.append(key, setOf(3))
+            it[key] = [1, 2]
+            it.append(key, [3])
         }
         assertTrue(Files.isDirectory(storageRoot))
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
@@ -65,16 +65,16 @@ class InMemoryStorageTest {
         val key4 = LookupSymbolKey("d", "d")
         val key5 = LookupSymbolKey("e", "e")
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
-            it[key1] = setOf(1, 2)
-            it[key2] = setOf(1, 2)
-            it[key3] = setOf(1)
+            it[key1] = [1, 2]
+            it[key2] = [1, 2]
+            it[key3] = [1]
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = true) {
-            it.append(key1, setOf(3))
+            it.append(key1, [3])
             it.remove(key2)
-            it[key3] = setOf(5)
-            it.append(key4, setOf(4))
-            it.append(key5, setOf(5))
+            it[key3] = [5]
+            it.append(key4, [4])
+            it.append(key5, [5])
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
             assertEquals(setOf(1, 2, 3), it[key1])
@@ -85,7 +85,7 @@ class InMemoryStorageTest {
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = true) {
             it.clear()
-            it.append(key1, setOf(4))
+            it.append(key1, [4])
         }
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
             assertEquals(setOf(4), it[key1])
@@ -103,16 +103,16 @@ class InMemoryStorageTest {
         val key2 = LookupSymbolKey("b", "b")
         val key3 = LookupSymbolKey("c", "c")
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = false, successful = true) {
-            it[key1] = setOf(1, 2)
-            it[key2] = setOf(1, 2)
+            it[key1] = [1, 2]
+            it[key2] = [1, 2]
         }
         val savedState = workingDir.resolve("backup")
         storageRoot.toFile().copyRecursively(savedState.toFile())
         withLookupMapInTransaction(storageRoot, useInMemoryWrapper = true, successful = false) {
             it.clear()
-            it.append(key1, setOf(3))
+            it.append(key1, [3])
             it.remove(key2)
-            it[key3] = setOf(5)
+            it[key3] = [5]
         }
         assertEqualDirectories(savedState.toFile(), storageRoot.toFile(), forgiveExtraFiles = false)
     }

@@ -58,7 +58,7 @@ private fun isReachable(
     neighbors: DFS.Neighbors<TypeConstructor>
 ): Boolean {
     var result = false
-    DFS.dfs(listOf(from), neighbors, DFS.VisitedWithSet(), object : DFS.AbstractNodeHandler<TypeConstructor, Unit>() {
+    DFS.dfs([from], neighbors, DFS.VisitedWithSet(), object : DFS.AbstractNodeHandler<TypeConstructor, Unit>() {
         override fun beforeChildren(current: TypeConstructor): Boolean {
             if (current == to) {
                 result = true

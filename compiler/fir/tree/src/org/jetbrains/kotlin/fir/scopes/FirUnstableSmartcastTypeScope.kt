@@ -24,8 +24,8 @@ class FirUnstableSmartcastTypeScope(
     private val smartcastScope: FirTypeScope,
     private val originalScope: FirTypeScope
 ) : FirTypeScope() {
-    private val scopes = listOf(originalScope, smartcastScope)
-    private val symbolsFromUnstableSmartcast = mutableSetOf<FirCallableSymbol<*>>()
+    private val scopes = [originalScope, smartcastScope]
+    private val symbolsFromUnstableSmartcast: MutableSet<FirCallableSymbol<*>> = []
     override fun processClassifiersByNameWithSubstitution(
         name: Name,
         processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit
@@ -40,7 +40,7 @@ class FirUnstableSmartcastTypeScope(
         name: Name,
         noinline processor: (T) -> Unit
     ) {
-        val unique = mutableSetOf<T>()
+        val unique: MutableSet<T> = []
         originalScope.process(name) {
             unique += it
             processor(it)
@@ -66,7 +66,7 @@ class FirUnstableSmartcastTypeScope(
         processDirectOverriddenSymbolsWithBaseScope: FirTypeScope.(S, (S, FirTypeScope) -> ProcessorAction) -> ProcessorAction,
         noinline processor: (S, FirTypeScope) -> ProcessorAction
     ): ProcessorAction {
-        val unique = mutableSetOf<S>()
+        val unique: MutableSet<S> = []
         originalScope.processDirectOverriddenSymbolsWithBaseScope(originalSymbol) { symbol, firTypeScope ->
             unique += symbol
             processor(symbol, firTypeScope)

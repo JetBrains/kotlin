@@ -60,7 +60,7 @@ internal class StubBasedFirTypeDeserializer(
         val typeParameters = owner?.typeParameters
         if (!typeParameters.isNullOrEmpty()) {
             typeParametersByName = mutableMapOf()
-            val builders = mutableListOf<FirTypeParameterBuilder>()
+            val builders: MutableList<FirTypeParameterBuilder> = []
             for (typeParameter in typeParameters) {
                 val name = typeParameter.nameAsSafeName
                 val symbol = FirTypeParameterSymbol().also {
@@ -388,8 +388,8 @@ internal class StubBasedFirTypeDeserializer(
  * which is set during cls analysis only.
  */
 internal fun KtUserType.classId(): ClassId {
-    val packageFragments = mutableListOf<String>()
-    val classFragments = mutableListOf<String>()
+    val packageFragments: MutableList<String> = []
+    val classFragments: MutableList<String> = []
 
     fun collectFragments(type: KtUserType) {
         type.qualifier?.let(::collectFragments)

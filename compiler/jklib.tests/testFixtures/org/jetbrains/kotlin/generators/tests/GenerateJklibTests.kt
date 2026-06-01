@@ -14,7 +14,7 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "compiler/testData") {
             testClass<AbstractFirJKlibIrTextTest> {
-                model("ir/irText", excludeDirs = listOf("declarations/multiplatform/k1"))
+                model("ir/irText", excludeDirs = ["declarations/multiplatform/k1"])
             }
         }
     }

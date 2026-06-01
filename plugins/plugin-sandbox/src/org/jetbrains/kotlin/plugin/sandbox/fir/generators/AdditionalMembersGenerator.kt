@@ -54,11 +54,11 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        if (context == null) return emptyList()
+        if (context == null) return []
 
         val function = when (callableId.callableName) {
             MATERIALIZE_NAME -> {
-                val matchedClassSymbol = matchedClasses.firstOrNull { it == context.owner } ?: return emptyList()
+                val matchedClassSymbol = matchedClasses.firstOrNull { it == context.owner } ?: return []
                 createMemberFunction(
                     context.owner, AdditionalMembersGeneratorKey, callableId.callableName, matchedClassSymbol.constructStarProjectedType(),
                 ) {
@@ -77,10 +77,10 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
                     withGeneratedDefaultBody()
                 }
             }
-            else -> return emptyList()
+            else -> return []
         }
 
-        return listOf(function.symbol)
+        return [function.symbol]
     }
 
     override fun generateNestedClassLikeDeclaration(
@@ -95,19 +95,19 @@ class AdditionalMembersGenerator(session: FirSession) : FirDeclarationGeneration
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
         val createConstructor =
             createConstructor(context.owner, AdditionalMembersGeneratorKey, generateDelegatedNoArgConstructorCall = true)
-        return listOf(createConstructor.symbol)
+        return [createConstructor.symbol]
     }
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return when {
-            classSymbol in matchedClasses -> setOf(MATERIALIZE_NAME, ID_WITH_DEFAULT_NAME)
-            classSymbol.classId in nestedClassIds -> setOf(SpecialNames.INIT)
-            else -> emptySet()
+            classSymbol in matchedClasses -> [MATERIALIZE_NAME, ID_WITH_DEFAULT_NAME]
+            classSymbol.classId in nestedClassIds -> [SpecialNames.INIT]
+            else -> []
         }
     }
 
     override fun getNestedClassifiersNames(classSymbol: FirClassSymbol<*>, context: NestedClassGenerationContext): Set<Name> {
-        return if (classSymbol in matchedClasses) setOf(NESTED_NAME) else emptySet()
+        return if (classSymbol in matchedClasses) [NESTED_NAME] else []
     }
 
     data object AdditionalMembersGeneratorKey : GeneratedDeclarationKey()

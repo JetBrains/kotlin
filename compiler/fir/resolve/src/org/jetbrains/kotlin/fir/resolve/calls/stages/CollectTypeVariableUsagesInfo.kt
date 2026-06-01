@@ -129,7 +129,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
 
     private fun NewConstraintSystemImpl.getDependentTypeParameters(
         variable: TypeConstructorMarker,
-        dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = listOf()
+        dependentTypeParametersSeen: List<Pair<TypeConstructorMarker, ConeKotlinType?>> = []
     ): List<Pair<ConeTypeVariableTypeConstructor, ConeKotlinType?>> {
         val dependentTypeParameters = getBuilder().currentStorage().notFixedTypeVariables.asSequence()
             .flatMap { [typeConstructor, constraints] ->
@@ -152,7 +152,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
         return dependentTypeParameters + dependentTypeParameters.flatMapTo(SmartList()) { [typeConstructor, _] ->
             if (typeConstructor != variable) {
                 getDependentTypeParameters(typeConstructor, dependentTypeParameters + dependentTypeParametersSeen)
-            } else emptyList()
+            } else []
         }
     }
 
@@ -179,7 +179,7 @@ object CollectTypeVariableUsagesInfo : ResolutionStage() {
             if (it.position.from is ConeDeclaredUpperBoundConstraintPosition && it.kind == ConstraintKind.UPPER) {
                 it.type.typeConstructor() as? ConeTypeVariableTypeConstructor
             } else null
-        } ?: emptyList()
+        } ?: []
 
     private fun ConeTypeVariable.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter() {
         this.typeConstructor.recordInfoAboutTypeVariableUsagesAsInvariantOrContravariantParameter()

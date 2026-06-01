@@ -242,7 +242,8 @@ private class CaseBuilder {
     val cases = arrayListOf<Case>()
 
     fun case(name: String, testDeclaration: String, testDeclarationInit: String, testBlock: String,
-             ignore: Boolean = false, additionalShouldBeEscaped: Set<String> = setOf()) {
+             ignore: Boolean = false, additionalShouldBeEscaped: Set<String> = []
+    ) {
         cases.add(Case(name, testDeclaration, testDeclarationInit, testBlock, ignore, additionalShouldBeEscaped))
     }
 }

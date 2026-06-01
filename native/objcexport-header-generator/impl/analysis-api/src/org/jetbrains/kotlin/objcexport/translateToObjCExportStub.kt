@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportStub
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 internal fun ObjCExportContext.translateToObjCExportStub(symbol: KaCallableSymbol): List<ObjCExportStub> {
-    val result = mutableListOf<ObjCExportStub>()
+    val result: MutableList<ObjCExportStub> = []
     when (symbol) {
         is KaPropertySymbol -> {
             if (analysisSession.isObjCProperty(symbol)) {

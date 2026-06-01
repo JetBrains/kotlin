@@ -54,7 +54,7 @@ private class RemoveAnnotationsExtension : IrGenerationExtension {
         override fun visitElement(element: IrElement) {
             element.acceptChildrenVoid(this)
             if (element is IrDeclaration) {
-                element.annotations = emptyList()
+                element.annotations = []
             }
         }
     }

@@ -11,10 +11,10 @@ object AccessorNames {
     const val SET = "set"
 }
 
-fun toPropertyName(name: String, prefixesToStrip: List<String> = emptyList()): String =
+fun toPropertyName(name: String, prefixesToStrip: List<String> = []): String =
     name.stripPrefixes(prefixesToStrip).decapitalize()
 
-fun toPropertyNameCapitalized(name: String, prefixesToStrip: List<String> = emptyList()): String =
+fun toPropertyNameCapitalized(name: String, prefixesToStrip: List<String> = []): String =
     name.stripPrefixes(prefixesToStrip).capitalize()
 
 private fun String.stripPrefixes(prefixes: List<String>): String =

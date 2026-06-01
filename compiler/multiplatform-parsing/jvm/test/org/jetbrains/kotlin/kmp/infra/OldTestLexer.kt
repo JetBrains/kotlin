@@ -34,7 +34,7 @@ class OldTestLexer : AbstractTestLexer<IElementType>() {
                         tokenizeSubsequence(subSequence, mainTokenStart, subLexer)
                     }
                     else -> {
-                        emptyList()
+                        []
                     }
                 }
                 add(TestToken(tokenType.toString(), mainTokenStart, mainTokenEnd, tokenType, children))

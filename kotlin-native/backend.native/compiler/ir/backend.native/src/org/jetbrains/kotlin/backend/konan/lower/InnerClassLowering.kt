@@ -93,7 +93,7 @@ internal class OuterThisLowering(val context: Context) : ClassLoweringPass {
 
             if (implicitThisClass == irClass) return expression
 
-            val parentScopeSymbols = listOf(container.symbol) + allScopes.map { it.scope.scopeOwnerSymbol }
+            val parentScopeSymbols = [container.symbol] + allScopes.map { it.scope.scopeOwnerSymbol }
             var functionSymbol: IrFunctionSymbol? = null
             for (i in parentScopeSymbols.size - 1 downTo 0) {
                 val currentSymbol = parentScopeSymbols[i] as? IrFunctionSymbol ?: break
@@ -175,7 +175,7 @@ internal class InnerClassLowering(val context: Context) : ClassLoweringPass {
         private fun lowerConstructors() {
             irClass.declarations.transformFlat { irMember ->
                 if (irMember is IrConstructor)
-                    listOf(lowerConstructor(irMember))
+                    [lowerConstructor(irMember)]
                 else
                     null
             }

@@ -210,7 +210,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             declaration.isTopLevel || declaration.isStatic || isExportedJsStaticWithIgnoredCompanion -> runIf(
                 isExportedJsStaticWithIgnoredCompanion || declaration.isExported(context)
             ) {
-                listOf(generatePromisifiedWrapper(declaration), declaration)
+                [generatePromisifiedWrapper(declaration), declaration]
             }
             else -> {
                 val originallyExportedSuspendMemberFunction = declaration.originallyExportedMember ?: return null
@@ -255,29 +255,29 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
                     // we should generate an implementation bridge containing the logic specific to this class.
                     // To minimize output, we could skip generating such bridge functions for non-interface suspend functions
                     // and the rest classes from the same class hierarchy, since the bridge will be inherited through a prototype chain
-                    declaration.isMemberOfFirstClassOverridingTheOriginalDeclaration -> listOf(
+                    declaration.isMemberOfFirstClassOverridingTheOriginalDeclaration -> [
                         declaration,
-                        generatePromisifiedWrapper(declaration, overriddenSymbols = listOf(promisifiedWrapperFunction.symbol)),
+                        generatePromisifiedWrapper(declaration, overriddenSymbols = [promisifiedWrapperFunction.symbol]),
                         generateImplementorBridgeFunction(
                             declaration,
                             promisifiedWrapperFunction,
                             false,
-                            overriddenSymbols = listOf(implementationBridgeFunction.symbol)
+                            overriddenSymbols = [implementationBridgeFunction.symbol]
                         ),
-                    )
+                    ]
 
                     // For real overrides of exported suspend member functions, we should generate a fake override of promisified wrapper
                     // since it could have different signature from the original suspend function. We need it only for TypeScript export,
                     // so this could be removed after migrating to Analysis API based TypeScript generation
                     currentDeclarationParent.isExported(context) && (declaration.isReal || declaration.doesOverrideImplementationFromNotExportedClass) ->
-                        listOf(
+                        [
                             declaration,
                             generatePromisifiedWrapper(
                                 declaration,
                                 isFakeOverride = true,
-                                overriddenSymbols = listOf(promisifiedWrapperFunction.symbol)
+                                overriddenSymbols = [promisifiedWrapperFunction.symbol]
                             )
-                        )
+                        ]
 
                     else -> null
                 }
@@ -336,7 +336,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         originalFunc: IrSimpleFunction,
         promisifiedWrapperFunction: IrSimpleFunction,
         isInterfaceMethod: Boolean,
-        overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList()
+        overriddenSymbols: List<IrSimpleFunctionSymbol> = []
     ): IrSimpleFunction =
         buildBridgeFunction("${originalFunc.name}$EXPORTED_SUSPEND_FUNCTION_BRIDGE_SUFFIX", originalFunc) { bridgeFunction ->
             bridgeFunction.overriddenSymbols = overriddenSymbols
@@ -428,7 +428,7 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     private fun generatePromisifiedWrapper(
         originalFunc: IrSimpleFunction,
         isFakeOverride: Boolean = false,
-        overriddenSymbols: List<IrSimpleFunctionSymbol> = emptyList(),
+        overriddenSymbols: List<IrSimpleFunctionSymbol> = [],
     ): IrSimpleFunction =
         context.irFactory.buildFun {
             updateFrom(originalFunc)

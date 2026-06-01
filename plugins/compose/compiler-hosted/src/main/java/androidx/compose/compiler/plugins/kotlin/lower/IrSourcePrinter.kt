@@ -198,8 +198,8 @@ class IrSourcePrinterVisitor(
     private val IrBody.statements: List<IrStatement>
         get() = when (this) {
             is IrBlockBody -> statements
-            is IrExpressionBody -> listOf(expression)
-            is IrSyntheticBody -> emptyList()
+            is IrExpressionBody -> [expression]
+            is IrSyntheticBody -> []
         }
 
 
@@ -498,8 +498,8 @@ class IrSourcePrinterVisitor(
         forceParameterNames: Boolean = false,
         forceSingleLine: Boolean = false,
     ) {
-        val arguments = mutableListOf<IrExpression>()
-        val paramNames = mutableListOf<String>()
+        val arguments: MutableList<IrExpression> = []
+        val paramNames: MutableList<String> = []
         var trailingLambda: IrExpression? = null
         var useParameterNames = forceParameterNames
         for (i in this.arguments.indices) {
@@ -1178,7 +1178,7 @@ class IrSourcePrinterVisitor(
             declaration.typeParameters.printJoin(", ")
             print("> ")
         }
-        val ctorProperties = mutableSetOf<IrProperty>()
+        val ctorProperties: MutableSet<IrProperty> = []
         if (primaryConstructor != null) {
             val namedParameters = primaryConstructor.namedParameters
             if (namedParameters.isNotEmpty()) {

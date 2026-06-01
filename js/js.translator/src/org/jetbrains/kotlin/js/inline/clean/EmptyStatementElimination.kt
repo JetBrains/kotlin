@@ -79,7 +79,7 @@ internal class EmptyStatementElimination(private val root: JsStatement) {
                     || x.cases.all { it.statements.isEmpty() }
                 ) {
                     hasChanges = true
-                    val replacement = mutableListOf(JsAstUtils.asSyntheticStatement(x.expression))
+                    val replacement: MutableList<JsStatement?> = [JsAstUtils.asSyntheticStatement(x.expression)]
                     x.cases.lastOrNull()?.apply { replacement.addAll(statements) }
                     ctx.replaceMe(JsBlock(replacement))
                 }

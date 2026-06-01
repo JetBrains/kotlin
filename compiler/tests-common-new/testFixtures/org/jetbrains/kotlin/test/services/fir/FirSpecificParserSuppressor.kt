@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 
 class FirSpecificParserSuppressor(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(FirDiagnosticsDirectives)
+        get() = [FirDiagnosticsDirectives]
 
     override fun shouldSkipTest(): Boolean {
         val directives = testServices.moduleStructure.allDirectives

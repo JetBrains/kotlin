@@ -108,11 +108,11 @@ class SimpleAddSupertypeExtension(session: FirSession): FirSupertypeGenerationEx
         resolvedSupertypes: List<FirResolvedTypeRef>,
         typeResolver: TypeResolveService,
     ): List<ConeKotlinType> {
-        val annotation = classLikeDeclaration.annotations.singleOrNull() ?: return emptyList()
-        val argument = annotation.findArgumentByName(StandardNames.DEFAULT_VALUE_PARAMETER) ?: return emptyList()
+        val annotation = classLikeDeclaration.annotations.singleOrNull() ?: return []
+        val argument = annotation.findArgumentByName(StandardNames.DEFAULT_VALUE_PARAMETER) ?: return []
         check(argument is FirGetClassCall)
-        val typeToAdd = argument.resolvedClassArgumentTarget(typeResolver) ?: return emptyList()
-        return listOf(typeToAdd)
+        val typeToAdd = argument.resolvedClassArgumentTarget(typeResolver) ?: return []
+        return [typeToAdd]
     }
 
     private fun FirGetClassCall.resolvedClassArgumentTarget(

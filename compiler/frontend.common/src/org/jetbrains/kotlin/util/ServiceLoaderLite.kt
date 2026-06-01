@@ -45,7 +45,7 @@ object ServiceLoaderLite {
     }
 
     fun <Service> loadImplementations(service: Class<out Service>, files: List<File>, classLoader: ClassLoader): MutableList<Service> {
-        val implementations = mutableListOf<Service>()
+        val implementations: MutableList<Service> = []
 
         for (className in findImplementations(service, files)) {
             val instance = Class.forName(className, false, classLoader).newInstance()
@@ -77,12 +77,12 @@ object ServiceLoaderLite {
         return when {
             file.isDirectory -> findImplementationsInDirectory(classIdentifier, file)
             file.isFile && file.extension.lowercase() == "jar" -> findImplementationsInJar(classIdentifier, file)
-            else -> emptySet()
+            else -> []
         }
     }
 
     private fun findImplementationsInDirectory(classId: String, file: File): Set<String> {
-        val serviceFile = File(file, SERVICE_DIRECTORY_LOCATION + classId).takeIf { it.isFile } ?: return emptySet()
+        val serviceFile = File(file, SERVICE_DIRECTORY_LOCATION + classId).takeIf { it.isFile } ?: return []
 
         try {
             return serviceFile.useLines { parseLines(file, it) }
@@ -93,7 +93,7 @@ object ServiceLoaderLite {
 
     private fun findImplementationsInJar(classId: String, file: File): Set<String> {
         ZipFile(file).use { zipFile ->
-            val entry = zipFile.getEntry(SERVICE_DIRECTORY_LOCATION + classId) ?: return emptySet()
+            val entry = zipFile.getEntry(SERVICE_DIRECTORY_LOCATION + classId) ?: return []
             zipFile.getInputStream(entry).use { inputStream ->
                 return inputStream.bufferedReader().useLines { parseLines(file, it) }
             }

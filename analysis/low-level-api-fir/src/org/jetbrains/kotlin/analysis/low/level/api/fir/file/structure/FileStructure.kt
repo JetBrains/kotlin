@@ -153,7 +153,7 @@ internal class FileStructure private constructor(
     }
 
     fun getAllStructureElements(): Collection<FileStructureElement> {
-        val structureElements = mutableSetOf<FileStructureElement>()
+        val structureElements: MutableSet<FileStructureElement> = []
         addStructureElementForTo(ktFile, structureElements)
 
         ktFile.accept(object : KtVisitorVoid() {

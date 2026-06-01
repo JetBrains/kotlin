@@ -35,14 +35,14 @@ abstract class IrBuiltinOperatorDescriptorBase(containingDeclaration: Declaratio
     IrBuiltinOperatorDescriptor {
     override fun getDispatchReceiverParameter(): ReceiverParameterDescriptor? = null
     override fun getExtensionReceiverParameter(): ReceiverParameterDescriptor? = null
-    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = emptyList()
+    override fun getContextReceiverParameters(): List<ReceiverParameterDescriptor> = []
     override fun getOriginal(): SimpleFunctionDescriptor = this
     override fun substitute(substitutor: TypeSubstitutor): FunctionDescriptor = throw UnsupportedOperationException()
-    override fun getOverriddenDescriptors(): Collection<FunctionDescriptor> = emptyList()
+    override fun getOverriddenDescriptors(): List<FunctionDescriptor> = []
     override fun setOverriddenDescriptors(overriddenDescriptors: Collection<CallableMemberDescriptor>) =
         throw UnsupportedOperationException()
 
-    override fun getTypeParameters(): List<TypeParameterDescriptor> = emptyList()
+    override fun getTypeParameters(): List<TypeParameterDescriptor> = []
     override fun getVisibility(): DescriptorVisibility = DescriptorVisibilities.PUBLIC
     override fun getModality(): Modality = Modality.FINAL
     override fun getKind(): CallableMemberDescriptor.Kind = CallableMemberDescriptor.Kind.SYNTHESIZED
@@ -114,7 +114,7 @@ class IrBuiltinValueParameterDescriptorImpl(
 
     override fun declaresDefaultValue(): Boolean = false
     override fun getOriginal(): ValueParameterDescriptor = this
-    override fun getOverriddenDescriptors(): Collection<ValueParameterDescriptor> = emptyList()
+    override fun getOverriddenDescriptors(): List<ValueParameterDescriptor> = []
     override val isCrossinline: Boolean get() = false
     override val isNoinline: Boolean get() = false
     override val varargElementType: KotlinType? get() = null

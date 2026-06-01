@@ -179,9 +179,9 @@ object KtTokens : SyntaxElementTypesWithIds() {
     const val ACTUAL_MODIFIER_ID: Int = EXPECT_MODIFIER_ID + 1
     // Remember to update the first ID constant in `KtNodeTypes` after adding a new token
 
-    private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
-    private val hardKeywordsAndModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
-    private val allModifiers: MutableSet<SyntaxElementType> = mutableSetOf()
+    private val softKeywordsAndModifiers: MutableSet<SyntaxElementType> = []
+    private val hardKeywordsAndModifiers: MutableSet<SyntaxElementType> = []
+    private val allModifiers: MutableSet<SyntaxElementType> = []
 
     val EOF: SyntaxElementType = register(EOF_ID, "EOF")
 

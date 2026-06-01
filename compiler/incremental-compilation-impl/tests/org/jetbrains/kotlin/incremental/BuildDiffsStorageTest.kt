@@ -42,10 +42,10 @@ class BuildDiffsStorageTest {
 
     @Test
     fun testToString() {
-        val lookupSymbols = listOf(LookupSymbol("foo", "bar"))
-        val fqNames = listOf(FqName("fizz.Buzz"))
+        val lookupSymbols = [LookupSymbol("foo", "bar")]
+        val fqNames = [FqName("fizz.Buzz")]
         val diff = BuildDifference(100, true, DirtyData(lookupSymbols, fqNames))
-        val diffs = BuildDiffsStorage(listOf(diff))
+        val diffs = BuildDiffsStorage([diff])
         Assert.assertEquals(
             "BuildDiffsStorage(buildDiffs=[BuildDifference(ts=100, isIncremental=true, dirtyData=DirtyData(dirtyLookupSymbols=[LookupSymbol(name=foo, scope=bar)], dirtyClassesFqNames=[fizz.Buzz], dirtyClassesFqNamesForceRecompile=[]))])",
             diffs.toString()
@@ -54,7 +54,7 @@ class BuildDiffsStorageTest {
 
     @Test
     fun writeReadSimple() {
-        val diffs = BuildDiffsStorage(listOf(getRandomDiff()))
+        val diffs = BuildDiffsStorage([getRandomDiff()])
         BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val diffsDeserialized = BuildDiffsStorage.readFromFile(storageFile, reporter = null)
@@ -82,7 +82,7 @@ class BuildDiffsStorageTest {
 
     @Test
     fun versionChanged() {
-        val diffs = BuildDiffsStorage(listOf(getRandomDiff()))
+        val diffs = BuildDiffsStorage([getRandomDiff()])
         BuildDiffsStorage.writeToFile(icContext, storageFile, diffs)
 
         val versionBackup = BuildDiffsStorage.CURRENT_VERSION
@@ -97,8 +97,8 @@ class BuildDiffsStorageTest {
 
     private fun getRandomDiff(): BuildDifference {
         val ts = random.nextLong()
-        val lookupSymbols = listOf(LookupSymbol("foo", "bar"))
-        val fqNames = listOf(FqName("fizz.Buzz"))
+        val lookupSymbols = [LookupSymbol("foo", "bar")]
+        val fqNames = [FqName("fizz.Buzz")]
         return BuildDifference(ts, true, DirtyData(lookupSymbols, fqNames))
     }
 }

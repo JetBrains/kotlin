@@ -39,9 +39,9 @@ class LombokAdditionalSourceFileProvider(testServices: TestServices) : Additiona
             // Include the common file only in a single module to get rid of errors and exceptions
             module.allDependencies.any { dependency -> dependency.dependencyModule.files.any { it.originalFile.endsWith(COMMON_SOURCE_PATH) } }
         ) {
-            return emptyList()
+            return []
         }
-        return listOf(ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile())
+        return [ForTestCompileRuntime.transformTestDataPath(COMMON_SOURCE_PATH).toTestFile()]
     }
 }
 
@@ -74,7 +74,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(LombokDirectives)
+        get() = [LombokDirectives]
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         if (ENABLE_LOMBOK !in module.directives) return
@@ -114,7 +114,7 @@ class LombokEnvironmentConfigurator(testServices: TestServices) : EnvironmentCon
 
 class LombokRuntimeClassPathProvider(testServices: TestServices) : RuntimeClasspathProvider(testServices) {
     override fun runtimeClassPaths(module: TestModule): List<File> {
-        if (ENABLE_LOMBOK !in module.directives) return emptyList()
+        if (ENABLE_LOMBOK !in module.directives) return []
         return buildList {
             if (WITH_GUAVA in module.directives) {
                 add(GUAVA_JAR)

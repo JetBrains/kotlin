@@ -190,7 +190,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 val typeArgumentClass = typeArgument.getClass()!!
                 require(!typeArgumentClass.isExternalObjCClass())
                 val typeInfo = codegen.typeInfoValue(typeArgumentClass)
-                listOf(constPointer(typeInfo))
+                [constPointer(typeInfo)]
             }
             ConstantConstructorIntrinsicType.OBJC_KCLASS_IMPL -> {
                 require(args.isEmpty())
@@ -199,7 +199,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
                 require(typeArgumentClass.isExternalObjCClass() && !typeArgumentClass.isInterface)
                 val binaryName = typeArgumentClass.getExternalObjCClassBinaryName()
                 val objcClassPtr = codegen.objCDataGenerator!!.genClassRef(binaryName)
-                listOf(objcClassPtr)
+                [objcClassPtr]
             }
         }
     }
@@ -260,10 +260,10 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val field = callSite.symbol.owner.volatileField!!
         return if (callSite.dispatchReceiver != null) {
             require(!field.isStatic)
-            listOf(environment.getObjectFieldPointer(args[0], field)) + args.drop(1)
+            [environment.getObjectFieldPointer(args[0], field)] + args.drop(1)
         } else {
             require(field.isStatic)
-            listOf(environment.getStaticFieldPointer(field)) + args
+            [environment.getStaticFieldPointer(field)] + args
         }
     }
 
@@ -284,9 +284,9 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val receiver = callSite.arguments[0]
         require(receiver != null)
         return when {
-            receiver.type.isIntArray() -> call(llvm.Kotlin_intArrayGetElementAddress, listOf(array, index))
-            receiver.type.isLongArray() -> call(llvm.Kotlin_longArrayGetElementAddress, listOf(array, index))
-            receiver.type.isArray() -> call(llvm.Kotlin_arrayGetElementAddress, listOf(array, index), environment.calculateLifetime(callSite))
+            receiver.type.isIntArray() -> call(llvm.Kotlin_intArrayGetElementAddress, [array, index])
+            receiver.type.isLongArray() -> call(llvm.Kotlin_longArrayGetElementAddress, [array, index])
+            receiver.type.isArray() -> call(llvm.Kotlin_arrayGetElementAddress, [array, index], environment.calculateLifetime(callSite))
             else -> error("Only IntArray, LongArray and Array<T> are supported for atomic array intrinsics.")
         }
     }
@@ -307,7 +307,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
 
     private fun FunctionGenerationContext.transformArgsForAtomicArray(callSite: IrCall, args: List<LLVMValueRef>): List<LLVMValueRef> {
         val address = arrayGetElementAddress(callSite, args[0], args[1])
-        return listOf(address) + args.drop(2)
+        return [address] + args.drop(2)
     }
 
     private fun FunctionGenerationContext.emitGetAndSetArrayElement(callSite: IrCall, args: List<LLVMValueRef>, resultSlot: LLVMValueRef?): LLVMValueRef {
@@ -476,7 +476,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
         val messengerNameSuffix = if (isStret) "_stret" else ""
 
         val functionReturnType = LlvmRetType(llvm.pointerType, isObjectType = false)
-        val functionParameterTypes = listOf(LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType))
+        val functionParameterTypes = [LlvmParamType(llvm.pointerType), LlvmParamType(llvm.pointerType)]
 
         val normalMessenger = codegen.llvm.externalNativeRuntimeFunction(
                 "objc_msgSend$messengerNameSuffix",
@@ -644,7 +644,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitThrowIfZero(divider: LLVMValueRef) {
         ifThen(icmpEq(divider, Zero(divider.type).llvm)) {
             val throwArithExc = codegen.llvmFunction(context.symbols.throwArithmeticException.owner)
-            call(throwArithExc, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
+            call(throwArithExc, [], Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }
     }
@@ -652,7 +652,7 @@ internal class IntrinsicGenerator(private val environment: IntrinsicGeneratorEnv
     private fun FunctionGenerationContext.emitThrowIfOOB(index: LLVMValueRef, size: LLVMValueRef) {
         ifThen(icmpUGe(index, size)) {
             val throwIndexOutOfBoundsException = codegen.llvmFunction(context.symbols.throwIndexOutOfBoundsException.owner)
-            call(throwIndexOutOfBoundsException, emptyList(), Lifetime.GLOBAL, environment.exceptionHandler)
+            call(throwIndexOutOfBoundsException, [], Lifetime.GLOBAL, environment.exceptionHandler)
             unreachable()
         }
     }

@@ -88,10 +88,10 @@ class FirJavaField @FirImplementationDetail constructor(
     }
 
     override val typeParameters: List<FirTypeParameterRef>
-        get() = emptyList()
+        get() = []
 
     override val contextParameters: List<FirValueParameter>
-        get() = emptyList()
+        get() = []
 
     override val isLocal: Boolean
         get() = false

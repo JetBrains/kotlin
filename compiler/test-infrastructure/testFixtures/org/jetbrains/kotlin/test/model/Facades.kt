@@ -12,10 +12,10 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 
 interface ServicesAndDirectivesContainer {
     val additionalServices: List<ServiceRegistrationData>
-        get() = emptyList()
+        get() = []
 
     val directiveContainers: List<DirectivesContainer>
-        get() = emptyList()
+        get() = []
 }
 
 sealed class AbstractTestFacadeBase<InputArtifact, OutputArtifact> : ServicesAndDirectivesContainer

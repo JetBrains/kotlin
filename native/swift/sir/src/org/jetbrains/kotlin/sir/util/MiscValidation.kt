@@ -74,7 +74,7 @@ private val swiftIdentifierNonCompliantRegex =
     Regex("^[^$SWIFT_IDENTIFIER_HEADER][^$SWIFT_IDENTIFIER_BODY]*|(?<!^)[^$SWIFT_IDENTIFIER_BODY]+")
 
 // https://docs.swift.org/swift-book/documentation/the-swift-programming-language/lexicalstructure/
-private val swiftKeywords = setOf(
+private val swiftKeywords: Set<String> = [
     "_", // behaves like a wildcard pattern rather than identifier name
     // Declarations
     "associatedtype", "borrowing", "class", "consuming", "deinit", "enum", "extension", "fileprivate", "func", "import", "init", "inout",
@@ -87,7 +87,7 @@ private val swiftKeywords = setOf(
 
     // Expressions and types
     "Any", "as", "await", "catch", "false", "is", "nil", "rethrows", "self", "Self", "super", "throw", "throws", "true", "try",
-)
+]
 
 public val String.swiftSanitizedName: String
     get() = this.takeIf(swiftIdentifierRegex::matches) ?: this.replace(swiftIdentifierNonCompliantRegex) { match ->

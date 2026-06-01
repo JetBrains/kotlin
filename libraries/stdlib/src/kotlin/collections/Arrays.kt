@@ -18,7 +18,7 @@ import kotlin.contracts.*
  */
 public fun <T> Array<out Array<out T>>.flatten(): List<T> {
     val totalSizeLong = sumOf { it.size.toLong() }
-    if (totalSizeLong == 0L) return emptyList()
+    if (totalSizeLong == 0L) return []
     require(totalSizeLong <= Int.MAX_VALUE.toLong()) {
         "Sum of all arrays lengths ($totalSizeLong) exceeds maximum list size (${Int.MAX_VALUE})"
     }
@@ -131,7 +131,7 @@ internal fun <T> Array<out T>?.contentDeepToStringImpl(): String {
     if (this == null) return "null"
     val length = size.coerceAtMost((Int.MAX_VALUE - 2) / 5) * 5 + 2 // in order not to overflow Int.MAX_VALUE
     return buildString(length) {
-        contentDeepToStringInternal(this, mutableListOf())
+        contentDeepToStringInternal(this, [])
     }
 }
 

@@ -203,7 +203,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
         fakeClass.parent = context.symbols.kotlinJvmInternalInvokeDynamicPackage
         val fakeInstanceMethod = buildFakeOverrideMember(samType, samMethod, fakeClass) as IrSimpleFunction
         (fakeInstanceMethod as IrFunctionWithLateBinding).acquireSymbol(IrSimpleFunctionSymbolImpl())
-        fakeInstanceMethod.overriddenSymbols = listOf(samMethod.symbol)
+        fakeInstanceMethod.overriddenSymbols = [samMethod.symbol]
 
         // Compute signature adaptation constraints for a fake instance method signature against all relevant overrides.
         // If at any step we encounter a conflict (e.g., one override requires boxing a parameter, and another requires
@@ -285,7 +285,7 @@ internal class LambdaMetafactoryArgumentsBuilder(
             return LambdaMetafactoryArguments(
                 nonFakeOverriddenFuns.single(),
                 fakeInstanceMethod,
-                listOf(),
+                [],
                 shouldBeSerializable
             )
         }

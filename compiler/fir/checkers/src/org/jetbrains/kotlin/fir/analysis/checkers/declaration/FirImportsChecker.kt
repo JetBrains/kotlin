@@ -215,7 +215,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
             this,
             context.session,
             useSiteFileSymbol,
-            emptyList(),
+            [],
             null,
             skipCheckForContainingClassVisibility = true,
         )
@@ -329,7 +329,7 @@ object FirImportsChecker : FirFileChecker(MppCheckerKind.Common) {
     private fun FirRegularClassSymbol.getImportStatusOfCallableMembers(name: Name): ImportStatus {
         return if (classKind.isSingleton) {
             // Use declaredMemberScope first because it's faster, and it's relatively rare to import members declared from super types.
-            val scopes = listOf(context.session.declaredMemberScope(this, memberRequiredPhase = null), unsubstitutedScope())
+            val scopes = [context.session.declaredMemberScope(this, memberRequiredPhase = null), unsubstitutedScope()]
             getImportStatus(scopes, name) { true }
         } else {
             val scopes = listOfNotNull(

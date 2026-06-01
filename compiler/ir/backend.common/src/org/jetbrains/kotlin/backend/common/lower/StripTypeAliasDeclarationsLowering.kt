@@ -13,6 +13,6 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeAlias
 class StripTypeAliasDeclarationsLowering(@Suppress("unused") context: LoweringContext) : DeclarationTransformer {
 
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
-        return if (declaration is IrTypeAlias) listOf() else null
+        return if (declaration is IrTypeAlias) [] else null
     }
 }

@@ -54,19 +54,19 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("}")
     }
 
-    private fun failuresForEqualAndUnequalLeft(lhs: String, equalRhs: String, unequalRhs: String) =
-        arrayOf(
+    private fun failuresForEqualAndUnequalLeft(lhs: String, equalRhs: String, unequalRhs: String): Array<String> =
+        [
             "$lhs != $equalRhs",
             "$lhs == $unequalRhs",
             "!($lhs == $equalRhs)",
             "!($lhs != $unequalRhs)"
-        )
+        ]
 
-    private fun failuresForUnequalLeft(lhs: String, unequalRhs: String) =
-        arrayOf(
+    private fun failuresForUnequalLeft(lhs: String, unequalRhs: String): Array<String> =
+        [
             "$lhs == $unequalRhs",
             "!($lhs != $unequalRhs)"
-        )
+        ]
 
     private fun PrintWriter.generateLocalVals(type: String, x: String, y: String, boxedType: String = "$type?") {
         println("    val ax: $boxedType = $x")
@@ -184,19 +184,19 @@ object GeneratePrimitiveVsObjectEqualityTestData {
         println("}")
     }
 
-    private fun failuresForEqualAndUnequalRight(equalLhs: String, unequalLhs: String, rhs: String) =
-        arrayOf(
+    private fun failuresForEqualAndUnequalRight(equalLhs: String, unequalLhs: String, rhs: String): Array<String> =
+        [
             "$equalLhs != $rhs",
             "$unequalLhs == $rhs",
             "!($equalLhs == $rhs)",
             "!($unequalLhs != $rhs)"
-        )
+        ]
 
-    private fun failuresForUnequalRight(unequalLhs: String, rhs: String) =
-        arrayOf(
+    private fun failuresForUnequalRight(unequalLhs: String, rhs: String): Array<String> =
+        [
             "$unequalLhs == $rhs",
             "!($unequalLhs != $rhs)"
-        )
+        ]
 
 
     @JvmStatic

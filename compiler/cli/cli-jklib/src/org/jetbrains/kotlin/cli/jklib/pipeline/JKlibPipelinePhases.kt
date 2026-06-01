@@ -64,8 +64,8 @@ import java.io.File
 
 object JKlibConfigurationPhase : AbstractConfigurationPhase<K2JKlibCompilerArguments>(
     name = "JKlibConfigurationPhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector),
-    configurationUpdaters = listOf(JKlibConfigurationUpdater)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector],
+    configurationUpdaters = [JKlibConfigurationUpdater]
 ) {
     override fun createMetadataVersion(versionArray: IntArray): BinaryVersion {
         return MetadataVersion(*versionArray)
@@ -174,7 +174,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
 
 object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, JKlibFrontendPipelineArtifact>(
     name = "JKlibFrontendPipelinePhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): JKlibFrontendPipelineArtifact? {
         val configuration = input.configuration
@@ -254,7 +254,7 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
 object JKlibFir2IrPipelinePhase : PipelinePhase<JKlibFrontendPipelineArtifact, JKlibFir2IrPipelineArtifact>(
     name = "JKlibFir2IrPipelinePhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: JKlibFrontendPipelineArtifact): JKlibFir2IrPipelineArtifact {
         val configuration = input.configuration
@@ -299,7 +299,7 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
         ::JvmIrTypeSystemContext,
         JvmIrSpecialAnnotationSymbolProvider,
         if (configuration.languageVersionSettings.getFlag(AnalysisFlags.stdlibCompilation)) {
-            { emptyList() }
+            { [] }
         } else {
             { listOfNotNull(FirDirectJavaActualDeclarationExtractor.initializeIfNeeded(it)) }
         },
@@ -308,7 +308,7 @@ private fun AllModulesFrontendOutput.convertToIrAndActualize(
 
 object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, JKlibSerializationArtifact>(
     name = "JKlibKlibSerializationPhase",
-    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: JKlibFir2IrPipelineArtifact): JKlibSerializationArtifact {
         val fir2IrResult = input.result
@@ -324,8 +324,8 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
                 diagnosticsReporter.deduplicating(),
                 configuration.languageVersionSettings
             ),
-            cleanFiles = emptyList(),
-            dependencies = emptyList(),
+            cleanFiles = [],
+            dependencies = [],
             createModuleSerializer = { irDiagnosticReporter: IrDiagnosticReporter ->
                 JKlibModuleSerializer(IrSerializationSettings(configuration), irDiagnosticReporter, fir2IrResult.irBuiltIns)
             },
@@ -349,7 +349,7 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
             manifest {
                 moduleName(configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
                 versions(versions)
-                platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+                platformAndTargets(BuiltInsPlatform.JKLIB, [])
             }
             includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
             includeIr(serializerOutput.serializedIr)

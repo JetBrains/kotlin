@@ -91,12 +91,12 @@ private class LLFirResolveExtensionToolSymbolNamesProvider(
     override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
     override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
-        if (!packageFilter.packageExists(packageFqName)) return emptySet()
+        if (!packageFilter.packageExists(packageFqName)) return []
         fileProvider.getFilesByPackage(packageFqName).flatMap { it.getTopLevelClassifierNames() }.toSet()
     }
 
     override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name> = forbidAnalysis {
-        if (!packageFilter.packageExists(packageFqName)) return emptySet()
+        if (!packageFilter.packageExists(packageFqName)) return []
         fileProvider.getFilesByPackage(packageFqName)
             .flatMapTo(mutableSetOf()) { it.getTopLevelCallableNames() }
     }
@@ -150,10 +150,10 @@ class LLFirResolveExtensionToolPackageFilter(
     private fun MutableMap<FqName, MutableSet<Name>>.collectAllSubPackages(packageName: FqName) {
         var currentPackage = FqName.ROOT
         for (packagePart in packageName.pathSegments()) {
-            getOrPut(currentPackage) { mutableSetOf<Name>() }.add(packagePart)
+            getOrPut(currentPackage) { [] }.add(packagePart)
             currentPackage = currentPackage.child(packagePart)
         }
-        putIfAbsent(currentPackage, mutableSetOf())
+        putIfAbsent(currentPackage, [])
     }
 }
 
@@ -236,7 +236,7 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
     }
 
     override fun findFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
-        if (facadeFqName.isRoot) return emptyList()
+        if (facadeFqName.isRoot) return []
         val packageFqName = facadeFqName.parent()
         return getDeclarationProvidersByPackage(packageFqName) { file ->
             facadeFqName.shortName().asString() == PackagePartClassUtils.getFilePartShortName(file.getFileName())
@@ -246,16 +246,15 @@ class LLFirResolveExtensionToolDeclarationProvider internal constructor(
 
     override fun findInternalFilesForFacade(facadeFqName: FqName): Collection<KtFile> = forbidAnalysis {
         // no decompiled files here (see the `org.jetbrains.kotlin.analysis.api.platform.KotlinDeclarationProvider.findInternalFilesForFacade` KDoc)
-        return emptyList()
+        return []
     }
 
     override fun findFilesForScript(scriptFqName: FqName): Collection<KtScript> = forbidAnalysis {
-        if (scriptFqName.isRoot) return emptyList()
+        if (scriptFqName.isRoot) return []
         val packageFqName = scriptFqName.parent()
         return getDeclarationProvidersByPackage(packageFqName) { file ->
             scriptFqName.shortName() == NameUtils.getScriptNameForFile(file.getFileName())
-        }
-            .mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
+        }.mapNotNullTo(mutableListOf()) { it.kotlinFile.script }
     }
 
     override fun computePackageNames(): Set<String> =
@@ -351,7 +350,7 @@ private class LLFirResolveExtensionToolPackageProvider(
 
     override fun doesPlatformSpecificPackageExist(packageFqName: FqName, platform: TargetPlatform): Boolean = false
 
-    override fun getPlatformSpecificSubpackageNames(packageFqName: FqName, platform: TargetPlatform) = emptySet<Name>()
+    override fun getPlatformSpecificSubpackageNames(packageFqName: FqName, platform: TargetPlatform): Set<Name> = []
 
     override fun doesKotlinOnlyPackageExist(packageFqName: FqName): Boolean =
         packageFilter.packageExists(packageFqName)

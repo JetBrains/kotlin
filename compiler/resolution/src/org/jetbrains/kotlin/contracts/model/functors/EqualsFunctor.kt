@@ -42,7 +42,7 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
         assert(arguments.size == 2) { "Equals functor expected 2 arguments, got ${arguments.size}" }
 
         // TODO: AnnotationConstructorCaller kills this with implicit receiver. Investigate, how.
-        if (arguments.size != 2) return emptyList()
+        if (arguments.size != 2) return []
         return invokeWithArguments(arguments[0], arguments[1])
     }
 
@@ -61,11 +61,11 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
         }
 
         // Otherwise, don't even try to produce something. We can improve this in future, if we would like to
-        return emptyList()
+        return []
     }
 
     private fun equateCallAndConstant(call: Computation, constant: ESConstant): List<ESEffect> {
-        val resultingClauses = mutableListOf<ESEffect>()
+        val resultingClauses: MutableList<ESEffect> = []
 
         for (effect in call.effects) {
             if (effect !is ConditionalEffect || effect.simpleEffect !is ESReturns || effect.simpleEffect.value.isWildcard) {
@@ -107,9 +107,9 @@ class EqualsFunctor(val isNegated: Boolean) : AbstractFunctor() {
     }
 
     private fun equateValues(left: ESValue, right: ESValue): List<ESEffect> {
-        return listOf(
+        return [
             ConditionalEffect(ESEqual(left, right, isNegated), ESReturns(ESConstants.trueValue)),
             ConditionalEffect(ESEqual(left, right, isNegated.not()), ESReturns(ESConstants.falseValue))
-        )
+        ]
     }
 }

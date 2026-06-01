@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirBasicDeclaratio
  * Checkers, which only run in IDE and don't run in CLI mode.
  */
 object CommonIdeOnlyDeclarationCheckers : DeclarationCheckers() {
-    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(
+    override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = [
         FirActualAnnotationsMatchExpectChecker,
-    )
+    ]
 }

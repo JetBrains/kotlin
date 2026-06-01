@@ -34,12 +34,12 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         val irFile = container.file
-        val classesToTransformToConstants = listOf(
-                symbols.kTypeImpl,
-                symbols.kTypeProjectionList,
-                symbols.kTypeParameterImpl,
-                symbols.kTypeImplForTypeParametersWithRecursiveBounds
-        )
+        val classesToTransformToConstants = [
+            symbols.kTypeImpl,
+            symbols.kTypeProjectionList,
+            symbols.kTypeParameterImpl,
+            symbols.kTypeImplForTypeParametersWithRecursiveBounds
+        ]
         irBody.transformChildren(object : IrTransformer<IrBuilderWithScope>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrBuilderWithScope) =
                     super.visitDeclaration(declaration,
@@ -83,7 +83,7 @@ internal class PostInlineLowering(val context: Context) : BodyLoweringPass {
                 expression.transformChildren(this, data)
 
                 return data.at(expression).run {
-                    irCallWithSubstitutedType(symbols.kClassImplConstructor, listOf(expression.argument.type)).apply {
+                    irCallWithSubstitutedType(symbols.kClassImplConstructor, [expression.argument.type]).apply {
                         val typeInfo = irCall(symbols.getObjectTypeInfo).apply {
                             arguments[0] = expression.argument
                         }

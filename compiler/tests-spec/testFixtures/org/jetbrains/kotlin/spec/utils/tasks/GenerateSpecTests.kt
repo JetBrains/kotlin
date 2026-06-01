@@ -19,7 +19,7 @@ fun generateTests() {
                 model(
                     relativeRootPath = "psi",
                     testMethod = "doParsingTest",
-                    excludeDirs = listOf("helpers", "templates") + detectDirsWithTestsMapFileOnly("psi")
+                    excludeDirs = ["helpers", "templates"] + detectDirsWithTestsMapFileOnly("psi")
                 )
             }
         }

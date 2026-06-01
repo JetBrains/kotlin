@@ -41,7 +41,7 @@ class SourceFilePathResolver(
     private fun calculatePathRelativeToSourceRoots(file: File): String {
         val pathRelativeToOutput = calculatePathRelativeToOutput(file)
         if (pathRelativeToOutput != null) return pathRelativeToOutput
-        val parts = mutableListOf<String>()
+        val parts: MutableList<String> = []
         var currentFile: File? = file.absoluteFile.normalize()
         while (currentFile != null) {
             if (sourceRoots.contains(currentFile)) {

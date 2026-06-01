@@ -159,7 +159,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         )
         Files.createDirectories(executionPolicy[LOGS_PATH])
 
-        val additionalJvmArguments = mutableListOf<String>()
+        val additionalJvmArguments: MutableList<String> = []
         val daemonOptions = configureDaemonOptions(
             DaemonOptions().apply {
                 executionPolicy[SHUTDOWN_DELAY_MILLIS]?.let { shutdownDelay ->
@@ -173,7 +173,7 @@ internal abstract class BaseCompilationOperationImpl<BtaCompilerArgs : CommonCom
         val jvmOptions = configureDaemonJVMOptions(
             inheritMemoryLimits = true, inheritOtherJvmOptions = false, inheritAdditionalProperties = true
         ).also { opts ->
-            val effectiveJvmArguments = additionalJvmArguments + (executionPolicy[JVM_ARGUMENTS] ?: emptyList())
+            val effectiveJvmArguments = additionalJvmArguments + (executionPolicy[JVM_ARGUMENTS] ?: [])
             if (effectiveJvmArguments.isNotEmpty()) {
                 opts.jvmParams.addAll(
                     effectiveJvmArguments.filterExtractProps(opts.mappers, "", opts.restMapper)

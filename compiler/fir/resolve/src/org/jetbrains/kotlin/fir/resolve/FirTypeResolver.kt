@@ -63,7 +63,7 @@ class TypeResolutionConfiguration private constructor(
         ): TypeResolutionConfiguration {
             require(sealedClassForContextSensitiveResolution.isSealed)
             return TypeResolutionConfiguration(
-                scopes = emptyList(),
+                scopes = [],
                 containingClassDeclarations, useSiteFile, topContainer,
                 sealedClassForContextSensitiveResolution,
             )

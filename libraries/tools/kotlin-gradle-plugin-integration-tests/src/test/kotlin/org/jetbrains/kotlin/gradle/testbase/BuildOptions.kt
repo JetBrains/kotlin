@@ -51,12 +51,12 @@ data class BuildOptions(
     val androidVersion: String? = null,
     val jsOptions: JsOptions? = JsOptions(),
     val wasmOptions: WasmOptions? = WasmOptions(),
-    val buildReport: List<BuildReportType> = emptyList(),
+    val buildReport: List<BuildReportType> = [],
     val usePreciseJavaTracking: Boolean? = null,
     val useFirJvmRunner: Boolean? = null,
     val languageVersion: String? = null,
     val languageApiVersion: String? = null,
-    val freeArgs: List<String> = emptyList(),
+    val freeArgs: List<String> = [],
     val statisticsForceValidation: Boolean = true,
     val enableUnsafeIncrementalCompilationForMultiplatform: Boolean? = null,
     val enableMonotonousIncrementalCompileSetExpansion: Boolean? = null,
@@ -180,7 +180,7 @@ data class BuildOptions(
     fun toArguments(
         gradleVersion: GradleVersion,
     ): List<String> {
-        val arguments = mutableListOf<String>()
+        val arguments: MutableList<String> = []
         when (logLevel) {
             LogLevel.DEBUG -> arguments.add("--debug")
             LogLevel.INFO -> arguments.add("--info")
@@ -501,4 +501,4 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
     }
 }
 
-fun rerunTask(taskName: String) = arrayOf(taskName, "--rerun")
+fun rerunTask(taskName: String): Array<String> = [taskName, "--rerun"]

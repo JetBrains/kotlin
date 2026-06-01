@@ -25,7 +25,7 @@ fun ClassDescriptor.createFunction(
     name: Name,
     valueParameters: List<LombokValueParameter>,
     returnType: KotlinType?,
-    typeParameters: List<TypeParameterDescriptor> = emptyList(),
+    typeParameters: List<TypeParameterDescriptor> = [],
     modality: Modality? = Modality.OPEN,
     visibility: DescriptorVisibility = DescriptorVisibilities.PUBLIC,
     receiver: ReceiverParameterDescriptor? = this.thisAsReceiverParameter
@@ -94,7 +94,7 @@ private fun CallableDescriptor.makeValueParameter(param: LombokValueParameter, i
 }
 
 fun ClassDescriptor.getJavaFields(): List<PropertyDescriptor> {
-    val variableNames = getJavaClass()?.fields?.map { it.name } ?: emptyList()
+    val variableNames = getJavaClass()?.fields?.map { it.name } ?: []
     return variableNames
         .mapNotNull { this.unsubstitutedMemberScope.getContributedVariables(it, NoLookupLocation.FROM_SYNTHETIC_SCOPE).singleOrNull() }
         .filter { it.isJavaField }

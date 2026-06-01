@@ -95,10 +95,10 @@ object JsStandardClassIds {
         val DoNotIntrinsify = "DoNotIntrinsify".jsId()
 
         @JvmField
-        val annotationsRequiringExternal = setOf(JsModule, JsQualifier)
+        val annotationsRequiringExternal: Set<ClassId> = [JsModule, JsQualifier]
 
         @JvmField
-        val nativeAnnotations = setOf(JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter)
+        val nativeAnnotations: Set<ClassId> = [JsNative, JsNativeInvoke, JsNativeGetter, JsNativeSetter]
 
         @JvmField
         val JsNoLifting = "JsNoLifting".jsId()

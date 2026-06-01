@@ -43,9 +43,9 @@ fun LexicalScope.getImplicitReceiversHierarchy(): List<ReceiverParameterDescript
 
 fun LexicalScope.getDeclarationsByLabel(labelName: Name): Collection<DeclarationDescriptor> = collectAllFromMeAndParent {
     if (it is LexicalScope && it.isOwnerDescriptorAccessibleByLabel && it.ownerDescriptor.name == labelName) {
-        listOf(it.ownerDescriptor)
+        [it.ownerDescriptor]
     } else {
-        listOf()
+        []
     }
 }
 
@@ -55,7 +55,7 @@ fun HierarchicalScope.collectDescriptorsFiltered(
     nameFilter: (Name) -> Boolean = MemberScope.ALL_NAME_FILTER,
     changeNamesForAliased: Boolean = false
 ): Collection<DeclarationDescriptor> {
-    if (kindFilter.kindMask == 0) return listOf()
+    if (kindFilter.kindMask == 0) return []
     return collectAllFromMeAndParent {
         if (it is ImportingScope)
             it.getContributedDescriptors(kindFilter, nameFilter, changeNamesForAliased)
@@ -210,7 +210,7 @@ private inline fun <T : Any> HierarchicalScope.collectFromMeAndParent(
             result.add(element)
         }
     }
-    return result ?: emptyList()
+    return result ?: []
 }
 
 inline fun <T : Any> HierarchicalScope.collectAllFromMeAndParent(
@@ -229,7 +229,7 @@ inline fun <T : Any> HierarchicalScope.findFirstFromMeAndParent(fetch: (Hierarch
 inline fun <T : Any> HierarchicalScope.collectAllFromImportingScopes(
     collect: (ImportingScope) -> Collection<T>
 ): Collection<T> {
-    return collectAllFromMeAndParent { if (it is ImportingScope) collect(it) else emptyList() }
+    return collectAllFromMeAndParent { if (it is ImportingScope) collect(it) else [] }
 }
 
 inline fun <T : Any> HierarchicalScope.findFirstFromImportingScopes(fetch: (ImportingScope) -> T?): T? {
@@ -243,7 +243,7 @@ fun LexicalScope.addImportingScopes(importScopes: List<ImportingScope>): Lexical
     return replaceImportingScopes(newFirstImporting)
 }
 
-fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope = addImportingScopes(listOf(importScope))
+fun LexicalScope.addImportingScope(importScope: ImportingScope): LexicalScope = addImportingScopes([importScope])
 
 fun ImportingScope.withParent(newParent: ImportingScope?): ImportingScope {
     return object : ImportingScope by this {
@@ -263,7 +263,7 @@ fun LexicalScope.replaceImportingScopes(importingScopeChain: ImportingScope?): L
 fun LexicalScope.createScopeForDestructuring(newReceiver: ReceiverParameterDescriptor?): LexicalScope {
     return LexicalScopeImpl(
         parent, ownerDescriptor, isOwnerDescriptorAccessibleByLabel,
-        newReceiver, listOf(),
+        newReceiver, [],
         LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING
     )
 }
@@ -310,14 +310,14 @@ class ErrorLexicalScope : LexicalScope {
 
         override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-        override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
+        override fun getContributedVariables(name: Name, location: LookupLocation): Set<VariableDescriptor> = []
 
-        override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptySet()
+        override fun getContributedFunctions(name: Name, location: LookupLocation): Set<FunctionDescriptor> = []
 
         override fun getContributedDescriptors(
             kindFilter: DescriptorKindFilter,
             nameFilter: (Name) -> Boolean
-        ): Collection<DeclarationDescriptor> = emptySet()
+        ): Set<DeclarationDescriptor> = []
     }
 
     override fun printStructure(p: Printer) {
@@ -328,17 +328,17 @@ class ErrorLexicalScope : LexicalScope {
         ErrorClassDescriptor(Name.special(ErrorEntity.ERROR_CLASS.debugText.format("unknown")))
     override val isOwnerDescriptorAccessibleByLabel: Boolean = false
     override val implicitReceiver: ReceiverParameterDescriptor? = null
-    override val contextReceiversGroup: List<ReceiverParameterDescriptor> = emptyList()
+    override val contextReceiversGroup: List<ReceiverParameterDescriptor> = []
     override val kind: LexicalScopeKind = LexicalScopeKind.THROWING
 
     override fun getContributedClassifier(name: Name, location: LookupLocation): ClassifierDescriptor? = null
 
-    override fun getContributedVariables(name: Name, location: LookupLocation): Collection<VariableDescriptor> = emptySet()
+    override fun getContributedVariables(name: Name, location: LookupLocation): Set<VariableDescriptor> = []
 
-    override fun getContributedFunctions(name: Name, location: LookupLocation): Collection<FunctionDescriptor> = emptySet()
+    override fun getContributedFunctions(name: Name, location: LookupLocation): Set<FunctionDescriptor> = []
 
     override fun getContributedDescriptors(
         kindFilter: DescriptorKindFilter,
         nameFilter: (Name) -> Boolean
-    ): Collection<DeclarationDescriptor> = emptySet()
+    ): Set<DeclarationDescriptor> = []
 }

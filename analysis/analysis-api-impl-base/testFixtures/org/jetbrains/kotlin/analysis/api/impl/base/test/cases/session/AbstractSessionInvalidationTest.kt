@@ -152,6 +152,6 @@ abstract class AbstractSessionInvalidationTest<S> : AbstractAnalysisApiBasedTest
     }
 
     companion object {
-        val TEST_OUTPUT_DIRECTORY_NAMES = listOf("firSession", "analysisSession")
+        val TEST_OUTPUT_DIRECTORY_NAMES = ["firSession", "analysisSession"]
     }
 }

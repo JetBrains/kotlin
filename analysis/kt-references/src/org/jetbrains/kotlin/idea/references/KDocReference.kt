@@ -50,7 +50,7 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
             // Text check is required to distinguish between '`this`'/'`super`' and 'this'/'super' cases
             if (name in FORBIDDEN_NAMES && element.textMatches(name)) {
                 // According to the KDoc, `this`/`super` cannot be properly expressed in terms of this API
-                return emptyList()
+                return []
             }
 
             return listOfNotNull(
@@ -61,4 +61,4 @@ abstract class KDocReference(element: KDocName) : KtMultiReference<KDocName>(ele
         }
 }
 
-private val FORBIDDEN_NAMES = listOf(KtTokens.THIS_KEYWORD.value, KtTokens.SUPER_KEYWORD.value)
+private val FORBIDDEN_NAMES = [KtTokens.THIS_KEYWORD.value, KtTokens.SUPER_KEYWORD.value]

@@ -31,7 +31,7 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
     private val memberToTransformer = MemberToTransformer().apply {
 
         val primitiveNumbers =
-            irBuiltIns.run { listOf(intType, shortType, byteType, floatType, doubleType) }
+            irBuiltIns.run { [intType, shortType, byteType, floatType, doubleType] }
 
         for (type in primitiveNumbers) {
             add(type, OperatorNames.UNARY_PLUS, symbols.jsUnaryPlus)

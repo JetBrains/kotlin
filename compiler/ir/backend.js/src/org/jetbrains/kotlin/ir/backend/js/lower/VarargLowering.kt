@@ -39,13 +39,13 @@ private class VarargTransformer(
     val context: JsIrBackendContext
 ) : IrElementTransformerVoid() {
 
-    var externalVarargs = mutableSetOf<IrVararg>()
+    var externalVarargs: MutableSet<IrVararg> = []
 
     override fun visitVararg(expression: IrVararg): IrExpression {
         expression.transformChildrenVoid(this)
 
-        val currentList = mutableListOf<IrExpression>()
-        val segments = mutableListOf<IrExpression>()
+        val currentList: MutableList<IrExpression> = []
+        val segments: MutableList<IrExpression> = []
 
         val arrayInfo = InlineClassArrayInfo(context, expression.varargElementType, expression.type)
 
@@ -72,7 +72,7 @@ private class VarargTransformer(
         // empty vararg => empty array literal
         if (segments.isEmpty()) {
             with(arrayInfo) {
-                return boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList<IrExpression>(), expression.startOffset, expression.endOffset))
+                return boxArrayIfNeeded(toPrimitiveArrayLiteral([], expression.startOffset, expression.endOffset))
             }
         }
 
@@ -91,7 +91,7 @@ private class VarargTransformer(
         val arrayLiteral =
             segments.toArrayLiteral(
                 context,
-                IrSimpleTypeImpl(context.irBuiltIns.arrayClass, false, emptyList(), emptyList()), // TODO: Substitution
+                IrSimpleTypeImpl(context.irBuiltIns.arrayClass, false, [], []), // TODO: Substitution
                 context.irBuiltIns.anyType,
                 expression.startOffset,
                 expression.endOffset,
@@ -165,7 +165,7 @@ private class VarargTransformer(
             if (argument == null && varargElementType != null) {
                 val arrayInfo = InlineClassArrayInfo(context, varargElementType, parameter.type)
                 val emptyArray = with(arrayInfo) {
-                    boxArrayIfNeeded(toPrimitiveArrayLiteral(emptyList(), UNDEFINED_OFFSET, UNDEFINED_OFFSET))
+                    boxArrayIfNeeded(toPrimitiveArrayLiteral([], UNDEFINED_OFFSET, UNDEFINED_OFFSET))
                 }
 
                 expression.arguments[parameter] = emptyArray

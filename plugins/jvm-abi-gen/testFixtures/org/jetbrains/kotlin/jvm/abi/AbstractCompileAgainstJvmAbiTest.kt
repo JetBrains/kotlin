@@ -7,7 +7,7 @@ abstract class AbstractCompileAgainstJvmAbiTest : BaseJvmAbiTest() {
     fun doTest(path: String) {
         val testDir = File(path)
         val lib = Compilation(testDir, "lib").also { make(it) }
-        val app = Compilation(testDir, "app", dependencies = listOf(lib)).also { make(it) }
+        val app = Compilation(testDir, "app", dependencies = [lib]).also { make(it) }
         runApp(app)
     }
 
@@ -17,7 +17,7 @@ abstract class AbstractCompileAgainstJvmAbiTest : BaseJvmAbiTest() {
             dep.destinationDir
         }
 
-        val runtimeClasspath = listOf(compilation.destinationDir) + runtimeDeps + kotlinJvmStdlib
+        val runtimeClasspath = [compilation.destinationDir] + runtimeDeps + kotlinJvmStdlib
         val urls = runtimeClasspath.map { it.toURI().toURL() }.toTypedArray()
         val classloader = URLClassLoader(urls)
         val appClass = classloader.loadClass("app.AppKt")

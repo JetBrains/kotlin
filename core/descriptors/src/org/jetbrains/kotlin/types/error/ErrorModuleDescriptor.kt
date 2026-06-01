@@ -16,15 +16,15 @@ import org.jetbrains.kotlin.platform.TargetPlatform
 object ErrorModuleDescriptor : ModuleDescriptor {
     override val stableName: Name = Name.special(ErrorEntity.ERROR_MODULE.debugText)
     override val platform: TargetPlatform? = null
-    override val allDependencyModules: List<ModuleDescriptor> = emptyList()
-    override val expectedByModules: List<ModuleDescriptor> = emptyList()
-    override val allExpectedByModules: Set<ModuleDescriptor> = emptySet()
+    override val allDependencyModules: List<ModuleDescriptor> = []
+    override val expectedByModules: List<ModuleDescriptor> = []
+    override val allExpectedByModules: Set<ModuleDescriptor> = []
     override val annotations: Annotations get() = Annotations.EMPTY
     override val builtIns: KotlinBuiltIns by lazy { DefaultBuiltIns.Instance }
     override val isValid: Boolean = false
 
     override fun <T> getCapability(capability: ModuleCapability<T>): T? = null
-    override fun getSubPackagesOf(fqName: FqName, nameFilter: Function1<Name, Boolean>): Collection<FqName> = emptyList()
+    override fun getSubPackagesOf(fqName: FqName, nameFilter: Function1<Name, Boolean>): List<FqName> = []
     override fun getName(): Name = stableName
     override fun getPackage(fqName: FqName): PackageViewDescriptor = throw IllegalStateException("Should not be called!")
     override fun getOriginal(): DeclarationDescriptor = this

@@ -285,7 +285,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         }
 
         fun getLambdaConstructorCalls(constructorSymbol: IrConstructorSymbol): List<IrConstructorCall> =
-            lambdaConstructorCalls[constructorSymbol] ?: emptyList()
+            lambdaConstructorCalls[constructorSymbol] ?: []
     }
 
     private inner class CallableReferenceClassTransformer(
@@ -458,14 +458,14 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             superQualifierSymbol = null
         )
 
-        invokeExpression.arguments.assignFrom(listOf(instance) + lambdaDeclaration.parameters) {
+        invokeExpression.arguments.assignFrom([instance] + lambdaDeclaration.parameters) {
             IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, it.symbol)
         }
 
         return context.irFactory.createBlockBody(
             UNDEFINED_OFFSET,
             UNDEFINED_OFFSET,
-            listOf(
+            [
                 IrReturnImpl(
                     UNDEFINED_OFFSET,
                     UNDEFINED_OFFSET,
@@ -473,7 +473,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     lambdaDeclaration.symbol,
                     invokeExpression
                 )
-            )
+            ]
         )
     }
 
@@ -493,7 +493,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             )
         return statements
             .asSequence()
-            .flatMap { if (it is IrBlock) it.statements.asSequence() else sequenceOf(it) }
+            .flatMap { if (it is IrBlock) it.statements.asSequence() else [it] }
             .filterIsInstance<IrSetField>()
             .mapNotNull { irSetField ->
                 remapVP(irSetField.value.cast<IrGetValue>().symbol.cast())?.let {
@@ -672,7 +672,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         ctorToFactoryMap: MutableMap<IrConstructorSymbol, IrSimpleFunctionSymbol>,
         lambdaInfo: LambdaInfo
     ): List<IrDeclaration> {
-        val newDeclarations = mutableListOf<IrDeclaration>()
+        val newDeclarations: MutableList<IrDeclaration> = []
         val constructor = lambdaInfo.lambdaClass.constructors.single()
 
         val factoryDeclaration = context.irFactory.stageController.restrictTo(lambdaInfo.lambdaClass) {
@@ -737,7 +737,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         lambdaInfo: LambdaInfo
     ): List<IrDeclaration> {
         val constructor = lambdaInfo.lambdaClass.constructors.single()
-        val newDeclarations = mutableListOf<IrDeclaration>()
+        val newDeclarations: MutableList<IrDeclaration> = []
         val freeFunctionDeclaration = createLambdaDeclaration(
             lambdaInfo.invokeFun,
             lambdaInfo.lambdaClass.name,

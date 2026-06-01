@@ -132,7 +132,7 @@ private fun <T : Any> Parser<T>.zeroOrMore(): Parser<List<T>> {
 
 private data class ZeroOrMoreParser<T : Any>(val parser: Parser<T>) : Parser<List<T>> {
     override fun invoke(tokens: List<IdentityStringToken>): ParserOutput<List<T>>? {
-        val outputs = mutableListOf<T>()
+        val outputs: MutableList<T> = []
         var remainingTokens = tokens
         while (true) {
             val output = parser(remainingTokens) ?: break

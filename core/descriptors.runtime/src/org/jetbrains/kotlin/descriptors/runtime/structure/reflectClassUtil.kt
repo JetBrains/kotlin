@@ -30,7 +30,7 @@ fun Class<*>.isEnumClassOrSpecializedEnumEntryClass(): Boolean =
     Enum::class.java.isAssignableFrom(this)
 
 private val PRIMITIVE_CLASSES: List<KClass<*>> =
-    listOf(Boolean::class, Byte::class, Char::class, Double::class, Float::class, Int::class, Long::class, Short::class)
+    [Boolean::class, Byte::class, Char::class, Double::class, Float::class, Int::class, Long::class, Short::class]
 private val WRAPPER_TO_PRIMITIVE: Map<Class<*>, Class<*>?> = PRIMITIVE_CLASSES.associate { it.javaObjectType to it.javaPrimitiveType }
 private val PRIMITIVE_TO_WRAPPER: Map<Class<*>?, Class<*>> = PRIMITIVE_CLASSES.associate { it.javaPrimitiveType to it.javaObjectType }
 
@@ -91,7 +91,7 @@ val Class<*>.desc: String
  */
 val Type.parameterizedTypeArguments: List<Type>
     get() {
-        if (this !is ParameterizedType) return emptyList()
+        if (this !is ParameterizedType) return []
         if (ownerType == null) return actualTypeArguments.toList()
 
         return generateSequence(this) { it.ownerType as? ParameterizedType }.flatMap { it.actualTypeArguments.asSequence() }.toList()

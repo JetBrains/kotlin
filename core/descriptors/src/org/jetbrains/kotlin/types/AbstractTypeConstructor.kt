@@ -71,12 +71,12 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : Classif
     // The first one is used for computation of neighbours in supertypes graph (see Companion.computeNeighbours)
     private class Supertypes(val allSupertypes: Collection<KotlinType>) {
         // initializer is only needed as a stub for case when 'getSupertypes' is called while 'supertypes' are being calculated
-        var supertypesWithoutCycles: List<KotlinType> = listOf(ErrorUtils.errorTypeForLoopInSupertypes)
+        var supertypesWithoutCycles: List<KotlinType> = [ErrorUtils.errorTypeForLoopInSupertypes]
     }
 
     private val supertypes = storageManager.createLazyValueWithPostCompute(
         { Supertypes(computeSupertypes()) },
-        { Supertypes(listOf(ErrorUtils.errorTypeForLoopInSupertypes)) },
+        { Supertypes([ErrorUtils.errorTypeForLoopInSupertypes]) },
         { supertypes ->
             // It's important that loops disconnection begins in post-compute phase, because it guarantees that
             // when we start calculation supertypes of supertypes (for computing neighbours), they start their disconnection loop process
@@ -89,7 +89,7 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : Classif
                 )
 
             if (resultWithoutCycles.isEmpty()) {
-                resultWithoutCycles = defaultSupertypeIfEmpty()?.let { listOf(it) }.orEmpty()
+                resultWithoutCycles = defaultSupertypeIfEmpty()?.let { [it] }.orEmpty()
             }
 
             // We also check if there are a loop with additional edges going from owner of companion to
@@ -123,7 +123,7 @@ abstract class AbstractTypeConstructor(storageManager: StorageManager) : Classif
     protected open fun reportScopesLoopError(type: KotlinType) {}
     protected open val shouldReportCyclicScopeWithCompanionWarning: Boolean = false
 
-    protected open fun getAdditionalNeighboursInSupertypeGraph(useCompanions: Boolean): Collection<KotlinType> = emptyList()
+    protected open fun getAdditionalNeighboursInSupertypeGraph(useCompanions: Boolean): Collection<KotlinType> = []
     protected open fun defaultSupertypeIfEmpty(): KotlinType? = null
 
     // Only for debugging

@@ -117,7 +117,7 @@ class ArrayTypeCreatorDslTestCases(session: KaSession, caretToType: Map<String, 
 
         val type = getTypeByCaret("type")
         return session.typeCreator.arrayType(type) {
-            annotations(listOf(annotationClassId1, annotationClassId2, annotationClassId3))
+            annotations([annotationClassId1, annotationClassId2, annotationClassId3])
         }
     }
 }

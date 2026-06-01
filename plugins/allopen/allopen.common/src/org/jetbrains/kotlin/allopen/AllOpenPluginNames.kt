@@ -7,32 +7,32 @@ package org.jetbrains.kotlin.allopen
 
 object AllOpenPluginNames {
     val SUPPORTED_PRESETS = mapOf(
-        "spring" to listOf(
+        "spring" to [
             "org.springframework.stereotype.Component",
             "org.springframework.transaction.annotation.Transactional",
             "org.springframework.scheduling.annotation.Async",
             "org.springframework.cache.annotation.Cacheable",
             "org.springframework.boot.test.context.SpringBootTest",
             "org.springframework.validation.annotation.Validated"
-        ),
-        "quarkus" to listOf(
+        ],
+        "quarkus" to [
             "javax.enterprise.context.ApplicationScoped",
             "javax.enterprise.context.RequestScoped"
-        ),
-        "micronaut" to listOf(
+        ],
+        "micronaut" to [
             "io.micronaut.aop.Around",
             "io.micronaut.aop.Introduction",
             "io.micronaut.aop.InterceptorBinding",
             "io.micronaut.aop.InterceptorBindingDefinitions"
-        ),
-        "jpa" to listOf(
+        ],
+        "jpa" to [
             "javax.persistence.Entity",
             "javax.persistence.Embeddable",
             "javax.persistence.MappedSuperclass",
             "jakarta.persistence.Entity",
             "jakarta.persistence.Embeddable",
             "jakarta.persistence.MappedSuperclass"
-        )
+        ]
     )
 
     const val PLUGIN_ID = "org.jetbrains.kotlin.allopen"

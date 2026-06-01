@@ -28,7 +28,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
     abstract val implementationKind: ImplementationKind
 
     open val symbolRemapperSuperTypes: List<ClassRef<*>>
-        get() = emptyList()
+        get() = []
 
     open val kDoc: String?
         get() = null
@@ -39,7 +39,7 @@ internal abstract class AbstractSymbolRemapperPrinter(
         val symbolParameter = FunctionParameter("symbol", symbolClass)
         printFunctionDeclaration(
             symbolRemapperMethodName(symbolClass, role),
-            parameters = listOf(symbolParameter),
+            parameters = [symbolParameter],
             returnType = returnType,
             override = symbolRemapperSuperTypes.isNotEmpty(),
         )
@@ -125,7 +125,7 @@ internal class DeclaredSymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.DECLARED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, roles = [SymbolFieldRole.DECLARED]) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -137,7 +137,7 @@ internal class ReferencedSymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = listOf(SymbolFieldRole.REFERENCED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, roles = [SymbolFieldRole.REFERENCED]) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
@@ -149,12 +149,12 @@ internal class SymbolRemapperInterfacePrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
     override val symbolRemapperType: ClassRef<*>,
-) : AbstractSymbolRemapperPrinter(printer, elements, roles = emptyList()) {
+) : AbstractSymbolRemapperPrinter(printer, elements, roles = []) {
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.Interface
 
     override val symbolRemapperSuperTypes: List<ClassRef<*>>
-        get() = listOf(declaredSymbolRemapperType, referencedSymbolRemapperType)
+        get() = [declaredSymbolRemapperType, referencedSymbolRemapperType]
 
     override fun ImportCollectingPrinter.printAdditionalDeclarations() {
         println()
@@ -170,12 +170,12 @@ internal class SymbolRemapperInterfacePrinter(
 private class EmptySymbolRemapperPrinter(
     printer: ImportCollectingPrinter,
     elements: List<Element>,
-) : AbstractSymbolRemapperPrinter(printer, elements, listOf(SymbolFieldRole.DECLARED, SymbolFieldRole.REFERENCED)) {
+) : AbstractSymbolRemapperPrinter(printer, elements, [SymbolFieldRole.DECLARED, SymbolFieldRole.REFERENCED]) {
 
     override val symbolRemapperType = emptySymbolRemapperType
 
     override val symbolRemapperSuperTypes: List<ClassRef<*>>
-        get() = listOf(org.jetbrains.kotlin.ir.generator.symbolRemapperType)
+        get() = [org.jetbrains.kotlin.ir.generator.symbolRemapperType]
 
     override val implementationKind: ImplementationKind
         get() = ImplementationKind.OpenClass

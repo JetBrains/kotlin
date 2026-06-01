@@ -38,7 +38,7 @@ class NonExistingNativeDirectoriesInKlibTest {
 
     @Test
     fun `no Native included binaries dir`() {
-        val nativeIncludedBinaryFileNames = setOf("included1.txt", "included2.kt")
+        val nativeIncludedBinaryFileNames: Set<String> = ["included1.txt", "included2.kt"]
 
         val klibDir = writeLibrary(includedBinaryFileNames = nativeIncludedBinaryFileNames)
         val klibFile = klibDir.compressKlib()
@@ -55,7 +55,7 @@ class NonExistingNativeDirectoriesInKlibTest {
 
     @Test
     fun `no bitcode dir`() {
-        val bitcodeFileNames = setOf("bitc0de.000", "btc.123")
+        val bitcodeFileNames: Set<String> = ["bitc0de.000", "btc.123"]
 
         val klibDir = writeLibrary(bitcodeFileNames = bitcodeFileNames)
         val klibFile = klibDir.compressKlib()
@@ -76,8 +76,8 @@ class NonExistingNativeDirectoriesInKlibTest {
     }
 
     private fun writeLibrary(
-        bitcodeFileNames: Collection<String> = emptyList(),
-        includedBinaryFileNames: Collection<String> = emptyList(),
+        bitcodeFileNames: Collection<String> = [],
+        includedBinaryFileNames: Collection<String> = [],
     ): KFile {
         fun createEmptyFile(name: String): String {
             val file = KFile(tmpDir.resolve(name))
@@ -99,7 +99,7 @@ class NonExistingNativeDirectoriesInKlibTest {
                 )
                 platformAndTargets(BuiltInsPlatform.NATIVE, TEST_TARGET.name)
             }
-            includeMetadata(SerializedMetadata(byteArrayOf(), emptyList(), emptyList(), MetadataVersion.INSTANCE.toArray()))
+            includeMetadata(SerializedMetadata([], [], [], MetadataVersion.INSTANCE.toArray()))
             includeBitcode(TEST_TARGET, bitcodeFileNames.map(::createEmptyFile))
             includeNativeIncludedBinaries(TEST_TARGET, includedBinaryFileNames.map(::createEmptyFile))
         }.writeTo(klibDir.path)

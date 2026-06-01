@@ -428,7 +428,7 @@ object FirExpressionEvaluator {
                     // are resolved at previous IMPLICIT_TYPES_BODY_RESOLVE phase
                     if (propertySymbol.resolvedInitializer == null) return ResolutionError
 
-                    val receivers = listOf(propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver)
+                    val receivers = [propertyAccessExpression.dispatchReceiver, propertyAccessExpression.extensionReceiver]
                     if (receivers.count { it != null } == 2) return NotConst
 
                     // We are not interested in the result, but we must check the receivers anyway

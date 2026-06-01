@@ -87,7 +87,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
             statements += createCall(evaluateScriptFunction)
         }
 
-        return listOf(irScript)
+        return [irScript]
     }
 
     private fun getFunctionBodyOffsets(irScript: IrScript): Pair<Int, Int> {
@@ -127,7 +127,7 @@ class CreateScriptFunctionsPhase(val context: CommonBackendContext) : FileLoweri
                 last() as IrExpression
             )
             dropLast(1) + returnStatement
-        } else emptyList()
+        } else []
     }
 
     private fun createIrSetField(field: IrField, expression: IrExpression): IrSetField {

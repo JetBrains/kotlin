@@ -25,7 +25,7 @@ import org.jetbrains.org.objectweb.asm.tree.ClassNode
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = [CodegenTestDirectives]
 
     private val multiModuleInfoDumper = MultiModuleInfoDumper()
 

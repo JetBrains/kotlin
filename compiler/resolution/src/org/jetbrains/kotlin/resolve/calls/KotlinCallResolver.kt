@@ -238,7 +238,7 @@ class KotlinCallResolver(
                             val enumEntryDescriptor =
                                 (enumEntryCandidate.resolvedCall.candidateDescriptor as FakeCallableDescriptorForObject).classDescriptor
                             otherCandidate.addDiagnostic(EnumEntryAmbiguityWarning(propertyDescriptor, enumEntryDescriptor))
-                            return setOf(otherCandidate)
+                            return [otherCandidate]
                         }
                     }
                 }

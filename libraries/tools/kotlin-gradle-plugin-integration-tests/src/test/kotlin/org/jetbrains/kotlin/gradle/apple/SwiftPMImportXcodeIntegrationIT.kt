@@ -110,7 +110,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf("LocalSwiftPackage"),
+                            products = ["LocalSwiftPackage"],
                         )
                     }
                 }
@@ -136,7 +136,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     message = "Synthetic package product type should be '.dynamic' when isStatic=false"
                 )
                 assertEquals(
-                    setOf("kotlinmultiplatformlinkedpackagedylib"),
+                    ["kotlinmultiplatformlinkedpackagedylib"],
                     manifest.dependencies.map { it.identity }.toSet(),
                 )
 
@@ -180,7 +180,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         tvosMinimumDeploymentTarget.set("18.6")
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf("LocalSwiftPackage"),
+                            products = ["LocalSwiftPackage"],
                         )
                     }
 
@@ -249,32 +249,32 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-exact.git"),
                             version = exact("1.32.0-exact"),
-                            products = listOf(),
+                            products = [],
                         )
                         swiftPackage(
                             url = "https://github.com/apple/swift-protobuf-string.git",
                             version = "1.32.0-string",
-                            products = listOf(),
+                            products = [],
                         )
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-from.git"),
                             version = from("1.32.0-from"),
-                            products = listOf(),
+                            products = [],
                         )
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-range.git"),
                             version = range("1.32.0-range1", "1.32.0-range2"),
-                            products = listOf(),
+                            products = [],
                         )
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-branch.git"),
                             version = branch("git-branch"),
-                            products = listOf(),
+                            products = [],
                         )
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf-revision.git"),
                             version = revision("git-revision"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }
@@ -312,7 +312,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPackage(
                             repository = id("mona.LinkedList"),
                             version = from("1.0.0"),
-                            products = listOf(),
+                            products = [],
                             packageName = "LinkedList",
                         )
                     }
@@ -328,9 +328,9 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 val manifestFileDir = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME")
                 val dependencies = describeSwiftPackage(manifestFileDir).dependencies
 
-                assertEquals(listOf("registry"), dependencies.map { it.type }, "id-based dependency type should be 'registry'")
+                assertEquals(["registry"], dependencies.map { it.type }, "id-based dependency type should be 'registry'")
                 assertEquals(
-                    listOf("mona.LinkedList"),
+                    ["mona.LinkedList"],
                     dependencies.map { it.identity },
                     "id-based dependency identity should be 'mona.LinkedList'"
                 )
@@ -360,12 +360,12 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/aws-amplify/aws-sdk-ios-spm.git"),
                             version = from("2.41.0"),
-                            products = listOf(
-                                product("AWSS3", platforms = setOf(iOS())),
-                                product("AWSEC2", platforms = setOf(macOS(), tvOS())),
-                                product("AWSMobileClient", platforms = setOf(watchOS())),
+                            products = [
+                                product("AWSS3", platforms = [iOS()]),
+                                product("AWSEC2", platforms = [macOS(), tvOS()]),
+                                product("AWSMobileClient", platforms = [watchOS()]),
                                 product("AWSCore"),
-                            ),
+                            ],
                         )
                     }
                 }
@@ -455,17 +455,17 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf("LocalSwiftPackage"),
+                            products = ["LocalSwiftPackage"],
                         )
                         if (project.hasProperty(includeSecondPackageProp)) {
                             localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir(secondLocalSwiftPackageRelativePath),
-                                products = listOf("SecondLocalSwiftPackage"),
+                                products = ["SecondLocalSwiftPackage"],
                             )
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -482,7 +482,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             ) {
                 val dependencies = describeSwiftPackage(manifestFile.parent).dependencies
                 assertEquals(
-                    listOf("localswiftpackage"),
+                    ["localswiftpackage"],
                     dependencies.map { it.identity },
                     message = "synthetic package depends only on LocalSwiftPackage"
                 )
@@ -496,7 +496,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             ) {
                 val dependencies = describeSwiftPackage(manifestFile.parent).dependencies
                 assertEquals(
-                    listOf("localswiftpackage", "secondlocalswiftpackage", "swift-protobuf"),
+                    ["localswiftpackage", "secondlocalswiftpackage", "swift-protobuf"],
                     dependencies.map { it.identity },
                     message = "synthetic package depends on LocalSwiftPackage and SecondLocalSwiftPackage and swift-protobuf"
                 )
@@ -530,13 +530,13 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     swiftPMDependencies {
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                            products = listOf("LocalSwiftPackage"),
+                            products = ["LocalSwiftPackage"],
                         )
                         if (project.hasProperty(includeSecondPackageProp)) {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -553,7 +553,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             ) {
                 val dependencies = describeSwiftPackage(manifestFile.parent).dependencies
                 assertEquals(
-                    listOf("localswiftpackage", "swift-protobuf"),
+                    ["localswiftpackage", "swift-protobuf"],
                     dependencies.map { it.identity },
                     message = "synthetic package depends on LocalSwiftPackage and swift-protobuf"
                 )
@@ -569,7 +569,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
                 val dependencies = describeSwiftPackage(manifestFile.parent).dependencies
                 assertEquals(
-                    listOf("localswiftpackage"),
+                    ["localswiftpackage"],
                     dependencies.map { it.identity },
                     message = "synthetic package depends only on LocalSwiftPackage"
                 )
@@ -600,7 +600,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectA.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -617,7 +617,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectB.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -637,7 +637,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 val manifestDependencies = describeSwiftPackage(manifestFile.parent).dependencies
 
                 assertEquals(
-                    listOf("localswiftpackage", "_subprojecta", "_subprojectb"),
+                    ["localswiftpackage", "_subprojecta", "_subprojectb"],
                     manifestDependencies.map { it.identity },
                     message = "Manifest should contain subprojectA and subprojectB dependencies"
                 )
@@ -663,7 +663,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 val manifestDependencies = describeSwiftPackage(manifestFile.parent).dependencies
 
                 assertEquals(
-                    listOf("localswiftpackage", "_subprojecta"),
+                    ["localswiftpackage", "_subprojecta"],
                     manifestDependencies.map { it.identity },
                     message = "Manifest should contain subprojectA dependency"
                 )
@@ -702,7 +702,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectA.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -719,7 +719,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf-subprojectB.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -788,7 +788,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }
@@ -867,7 +867,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPackage(
                             url = url("https://github.com/apple/swift-protobuf.git"),
                             version = exact("1.32.0"),
-                            products = listOf(),
+                            products = [],
                         )
                     }
                 }
@@ -978,7 +978,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                         swiftPMDependencies {
                             localSwiftPackage(
                                 directory = project.layout.projectDirectory.dir("../$localSwiftPackageRelativePath"),
-                                products = listOf("LocalSwiftPackage"),
+                                products = ["LocalSwiftPackage"],
                             )
                         }
                     }
@@ -995,7 +995,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -1077,7 +1077,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -1098,7 +1098,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
                 val rootManifestDependencies = describeSwiftPackage(rootManifest.parent).dependencies
                 assertEquals(
-                    listOf("localswiftpackage", includedCoordinates),
+                    ["localswiftpackage", includedCoordinates],
                     rootManifestDependencies.map { it.identity },
                     "published dependency should be added to the manifest"
                 )
@@ -1108,7 +1108,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                 val subpackageManifestDependencies = describeSwiftPackage(subpackageManifest.parent).dependencies
 
                 assertEquals(
-                    listOf("https://github.com/apple/swift-protobuf.git"),
+                    ["https://github.com/apple/swift-protobuf.git"],
                     subpackageManifestDependencies.map { it.url },
                     "published dependency should be added to the manifest"
                 )
@@ -1175,7 +1175,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -1240,7 +1240,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                             swiftPackage(
                                 url = url("https://github.com/apple/swift-protobuf.git"),
                                 version = exact("1.32.0"),
-                                products = listOf(),
+                                products = [],
                             )
                         }
                     }
@@ -1322,7 +1322,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
             val symlinkedDeveloperDir = createSymlinkedDeveloperDir(projectPath)
             val xcodeSelectOutput = runProcess(
-                cmd = listOf("xcode-select", "-p"),
+                cmd = ["xcode-select", "-p"],
                 workingDir = projectPath.toFile(),
                 environmentVariables = mapOf(
                     "DEVELOPER_DIR" to symlinkedDeveloperDir.toString()
@@ -1346,7 +1346,7 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
 
 private fun createSymlinkedDeveloperDir(projectPath: Path): Path {
     val xcodeSelectOutput = runProcess(
-        cmd = listOf("xcode-select", "-p"),
+        cmd = ["xcode-select", "-p"],
         workingDir = projectPath.toFile(),
     )
     assertEquals(0, xcodeSelectOutput.exitCode)
@@ -1382,7 +1382,7 @@ private fun TestProject.initDefaultKmpWithLocalSPM(extra: KotlinMultiplatformExt
             swiftPMDependencies {
                 localSwiftPackage(
                     directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
-                    products = listOf("LocalSwiftPackage"),
+                    products = ["LocalSwiftPackage"],
                 )
             }
 
@@ -1399,35 +1399,35 @@ private fun assertXcodeBuildDependencyChain(iosAppPath: Path) {
     val iosAppTarget = pifFileTargets.single { it.contents.name == "iosApp" }
 
     assertEquals(
-        listOf("PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"),
+        ["PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME"],
         iosAppTarget.contents.dependencies.map { it.guid },
         message = "iosApp target should depend on synthetic package product"
     )
 
     val syntheticPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
     assertEquals(
-        listOf("PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME", "PACKAGE-PRODUCT:LocalSwiftPackage"),
+        ["PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME", "PACKAGE-PRODUCT:LocalSwiftPackage"],
         syntheticPackageProduct.contents.dependencies.map { it.guid },
         message = "Synthetic package product should depend on synthetic package target and LocalSwiftPackage product"
     )
 
     val syntheticPackageTarget = pifFileTargets.single { it.contents.guid == "PACKAGE-TARGET:$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME" }
     assertEquals(
-        listOf("PACKAGE-PRODUCT:LocalSwiftPackage"),
+        ["PACKAGE-PRODUCT:LocalSwiftPackage"],
         syntheticPackageTarget.contents.dependencies.map { it.guid },
         message = "Synthetic package target should depend on LocalSwiftPackage product"
     )
 
     val localSwiftPackageProduct = pifFileTargets.single { it.contents.guid == "PACKAGE-PRODUCT:LocalSwiftPackage" }
     assertEquals(
-        listOf("PACKAGE-TARGET:LocalSwiftPackage"),
+        ["PACKAGE-TARGET:LocalSwiftPackage"],
         localSwiftPackageProduct.contents.dependencies.map { it.guid },
         message = "LocalSwiftPackage product should depend on LocalSwiftPackage target"
     )
 
     val localSwiftPackageTarget = pifFileTargets.single { it.contents.guid == "PACKAGE-TARGET:LocalSwiftPackage" }
     assertEquals(
-        emptyList(),
+        [],
         localSwiftPackageTarget.contents.dependencies.map { it.guid },
         message = "LocalSwiftPackage target should not depend on anything"
     )

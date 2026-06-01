@@ -126,7 +126,7 @@ class KaptJavaLog(
     }
 
     private fun String.stripCompilerKeyPrefix(): String {
-        for (kind in listOf("err", "warn", "misc", "note")) {
+        for (kind in ["err", "warn", "misc", "note"]) {
             val prefix = "compiler.$kind."
             if (startsWith(prefix)) {
                 return drop(prefix.length)
@@ -218,7 +218,7 @@ class KaptJavaLog(
     companion object {
         private const val KOTLIN_LOCATION_PREFIX = "Kotlin location: "
 
-        private val IGNORED_DIAGNOSTICS = setOf(
+        private val IGNORED_DIAGNOSTICS: Set<String> = [
             "compiler.err.name.clash.same.erasure",
             "compiler.err.name.clash.same.erasure.no.override",
             "compiler.err.name.clash.same.erasure.no.override.1",
@@ -230,7 +230,7 @@ class KaptJavaLog(
             "compiler.err.not.def.access.package.cant.access",
             "compiler.err.package.not.visible",
             "compiler.err.not.def.public.cant.access"
-        )
+        ]
     }
 }
 

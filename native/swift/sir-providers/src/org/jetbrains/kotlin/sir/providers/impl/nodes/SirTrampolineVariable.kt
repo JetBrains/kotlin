@@ -27,9 +27,9 @@ public class SirTrampolineVariable(
         buildGetterCopy(source.getter) {
             origin = SirOrigin.Trampoline(source.getter)
             body = SirFunctionBody(
-                listOf(
+                [
                     source.swiftFqName
-                )
+                ]
             ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
         }
     }
@@ -39,9 +39,9 @@ public class SirTrampolineVariable(
             buildSetterCopy(setter) {
                 origin = SirOrigin.Trampoline(setter)
                 body = SirFunctionBody(
-                    listOf(
+                    [
                         "${source.swiftFqName} = newValue"
-                    )
+                    ]
                 ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
             }
         }

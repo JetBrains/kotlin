@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.resolve.calls.util.isFakePsiElement
 
 class LineCollector : RecursiveJsVisitor() {
-    val lines = mutableListOf<Int?>()
+    val lines: MutableList<Int?> = []
     private var currentStatement: JsStatement? = null
     val lineNumbersByStatement = mutableMapOf<JsStatement, MutableList<Int>>()
-    val statementsWithoutLineNumbers = mutableSetOf<JsStatement>()
+    val statementsWithoutLineNumbers: MutableSet<JsStatement> = []
 
     override fun visitElement(node: JsNode) {
         handleNodeLocation(node)

@@ -61,7 +61,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
-                setOf("https://jitpack.io")
+                ["https://jitpack.io"]
             )
         ) {
             build("assembleDebug") {
@@ -85,7 +85,7 @@ open class KaptAndroidExternalIT : KaptBaseIT() {
             "android-realm".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
+                .copy(androidVersion = agpVersion, freeArgs = ["-Prealm_version=$realmVersion"]),
             buildJdk = jdkVersion.location,
         ) {
             if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6)) {

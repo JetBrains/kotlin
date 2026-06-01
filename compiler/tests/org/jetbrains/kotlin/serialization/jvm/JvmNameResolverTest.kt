@@ -98,14 +98,14 @@ class JvmNameResolverTest : KtUsefulTestCase() {
 
     fun testSubstring() {
         val n = create {
-            string("kotlin", substringIndex = listOf(0, 6))
-            string("kotlin", substringIndex = listOf(1, 4))
-            string("kotlin", substringIndex = listOf(6, 6))
+            string("kotlin", substringIndex = [0, 6])
+            string("kotlin", substringIndex = [1, 4])
+            string("kotlin", substringIndex = [6, 6])
 
             // Invalid operations
-            string("kotlin", substringIndex = listOf(7, 5))
-            string("kotlin", substringIndex = listOf(0, -2))
-            string("kotlin", substringIndex = listOf(3, 1))
+            string("kotlin", substringIndex = [7, 5])
+            string("kotlin", substringIndex = [0, -2])
+            string("kotlin", substringIndex = [3, 1])
         }
 
         assertEquals("kotlin", n.getString(0))
@@ -118,18 +118,18 @@ class JvmNameResolverTest : KtUsefulTestCase() {
 
     fun testSubstringHappensAfterOperation() {
         assertEquals("tl", create {
-            string("kotlin", substringIndex = listOf(1, 5), operation = DESC_TO_CLASS_ID)
+            string("kotlin", substringIndex = [1, 5], operation = DESC_TO_CLASS_ID)
         }.getString(0))
     }
 
     fun testReplaceAll() {
         val n = create {
-            string("kotlin", replaceChar = listOf('k', 'm'))
-            string("java", replaceChar = listOf('a', 'o', 'a', 'b', 'c', 'd')) // All chars after the first two are ignored
+            string("kotlin", replaceChar = ['k', 'm'])
+            string("java", replaceChar = ['a', 'o', 'a', 'b', 'c', 'd']) // All chars after the first two are ignored
 
             // Invalid operations
-            string("kotlin", replaceChar = listOf())
-            string("kotlin", replaceChar = listOf('k'))
+            string("kotlin", replaceChar = [])
+            string("kotlin", replaceChar = ['k'])
         }
 
         assertEquals("motlin", n.getString(0))
@@ -154,7 +154,7 @@ class JvmNameResolverTest : KtUsefulTestCase() {
     fun testRangeWithDifferentOperations() {
         val n = create {
             string("a\$b\$c", operation = INTERNAL_TO_CLASS_ID, range = 2)
-            string("d\$e\$f", operation = NONE, substringIndex = listOf(2, 5))
+            string("d\$e\$f", operation = NONE, substringIndex = [2, 5])
         }
 
         assertEquals("a.b.c", n.getString(0))

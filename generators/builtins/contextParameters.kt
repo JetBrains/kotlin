@@ -12,7 +12,7 @@ class GenerateContextFunctions(out: PrintWriter) : BuiltInsSourceGenerator(out) 
     override fun getMultifileClassName(): String = "ContextParametersKt"
 
     override fun generateBody() {
-        generateSingleFunction(listOf("with"), listOf("T"), "R")
+        generateSingleFunction(["with"], ["T"], "R")
         for (i in 2..6) {
             val parameterNames = ('a' .. 'z').take(i)
             generateSingleFunction(

@@ -145,7 +145,7 @@ private fun nameTypeParameters(descriptor: DeclarationDescriptor): Map<TypeParam
 
 private fun collectTypeParameters(descriptor: DeclarationDescriptor): List<List<TypeParameterDescriptor>> {
     var currentDescriptor: DeclarationDescriptor? = descriptor
-    val result = mutableListOf<List<TypeParameterDescriptor>>()
+    val result: MutableList<List<TypeParameterDescriptor>> = []
     while (currentDescriptor != null) {
         getOwnTypeParameters(currentDescriptor)?.let { result += it }
         currentDescriptor = if (currentDescriptor is ConstructorDescriptor) {

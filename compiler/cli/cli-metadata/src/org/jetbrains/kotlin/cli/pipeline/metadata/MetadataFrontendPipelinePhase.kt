@@ -38,7 +38,7 @@ import java.io.File
 
 object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, MetadataFrontendPipelineArtifact>(
     name = "MetadataFrontendPipelinePhase",
-    postActions = setOf(PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector)
+    postActions = [PerformanceNotifications.AnalysisFinished, CheckCompilationErrors.CheckDiagnosticCollector]
 ) {
     override fun executePhase(input: ConfigurationPipelineArtifact): MetadataFrontendPipelineArtifact {
         val (configuration, rootDisposable) = input
@@ -50,7 +50,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
             dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.path })
             dependencies(configuration.jvmModularRoots.map { it.path })
-            friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: emptyList())
+            friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: [])
             dependsOnDependencies(refinedPaths.map { it.path })
         }
 
@@ -77,7 +77,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         val [librariesScope, incrementalCompilationContext] = prepareIncrementalCompilationContextAndLibrariesScope(
             configuration,
             projectEnvironment,
-            previousStepsSymbolProviders = emptyList(),
+            previousStepsSymbolProviders = [],
             incrementalExcludesScope = null
         )
 

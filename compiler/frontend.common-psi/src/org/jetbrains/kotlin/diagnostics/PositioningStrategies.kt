@@ -480,7 +480,7 @@ object PositioningStrategies {
                     return ranges
                 }
             }
-            return listOf(element.textRange)
+            return [element.textRange]
         }
     }
 
@@ -658,7 +658,7 @@ object PositioningStrategies {
                 else -> return dotRanges
             }
 
-            return listOf(TextRange(dotRange.startOffset, callElementRange.endOffset))
+            return [TextRange(dotRange.startOffset, callElementRange.endOffset)]
         }
     }
 
@@ -840,7 +840,7 @@ object PositioningStrategies {
             if (element is KtConstantExpression) {
                 if (element.node.elementType == KtNodeTypes.CHARACTER_CONSTANT) {
                     val elementTextRange = element.getTextRange()
-                    return listOf(TextRange.create(elementTextRange.startOffset + 1, elementTextRange.endOffset - 1))
+                    return [TextRange.create(elementTextRange.startOffset + 1, elementTextRange.endOffset - 1)]
                 }
             }
             return markElement(element)
@@ -853,7 +853,7 @@ object PositioningStrategies {
             if (element is KtConstantExpression) {
                 if (element.node.elementType == KtNodeTypes.INTEGER_CONSTANT) {
                     val endOffset = element.endOffset
-                    return listOf(TextRange.create(endOffset - 1, endOffset))
+                    return [TextRange.create(endOffset - 1, endOffset)]
                 }
             }
             return markElement(element)
@@ -906,21 +906,21 @@ object PositioningStrategies {
     @JvmField
     val UNUSED_VALUE: PositioningStrategy<KtBinaryExpression> = object : PositioningStrategy<KtBinaryExpression>() {
         override fun mark(element: KtBinaryExpression): List<TextRange> {
-            return listOf(TextRange(element.left!!.startOffset, element.operationReference.endOffset))
+            return [TextRange(element.left!!.startOffset, element.operationReference.endOffset)]
         }
     }
 
     @JvmField
     val USELESS_ELVIS: PositioningStrategy<KtBinaryExpression> = object : PositioningStrategy<KtBinaryExpression>() {
         override fun mark(element: KtBinaryExpression): List<TextRange> {
-            return listOf(TextRange(element.operationReference.startOffset, element.endOffset))
+            return [TextRange(element.operationReference.startOffset, element.endOffset)]
         }
     }
 
     @JvmField
     val USELESS_ELVIS_LEFT: PositioningStrategy<KtBinaryExpression> = object : PositioningStrategy<KtBinaryExpression>() {
         override fun mark(element: KtBinaryExpression): List<TextRange> {
-            return listOf(TextRange(element.startOffset, element.operationReference.endOffset))
+            return [TextRange(element.startOffset, element.operationReference.endOffset)]
         }
     }
 

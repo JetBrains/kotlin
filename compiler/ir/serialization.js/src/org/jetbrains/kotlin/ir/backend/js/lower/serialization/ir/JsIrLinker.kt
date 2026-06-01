@@ -43,7 +43,7 @@ class JsIrLinker(
     configuration = configuration,
     builtIns = builtIns,
     symbolTable = symbolTable,
-    exportedDependencies = emptyList(),
+    exportedDependencies = [],
     deserializedSymbolPostProcessor = { symbol, signature, fileSymbol ->
         runIf(signature.isLocal) {
             symbol.privateSignature = IdSignature.CompositeSignature(IdSignature.FileSignature(fileSymbol), signature)
@@ -111,6 +111,6 @@ class JsIrLinker(
     }
 
     fun getDeserializedFilesInKlibOrder(fragment: IrModuleFragment): List<IrFile> {
-        return deserializedFilesInKlibOrder[fragment] ?: emptyList()
+        return deserializedFilesInKlibOrder[fragment] ?: []
     }
 }

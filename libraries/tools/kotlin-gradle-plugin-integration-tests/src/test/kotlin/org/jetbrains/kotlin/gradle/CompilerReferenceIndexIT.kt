@@ -115,7 +115,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
             val baseSubtypeEntry = assertNotNull(
                 initialSubtypes.singleOrNull { it.fqNameHashCode == baseHash }
             )
-            assertEquals(listOf("Derived"), baseSubtypeEntry.subtypes)
+            assertEquals(["Derived"], baseSubtypeEntry.subtypes)
 
             // adding new subtype and lookup entries to another source file
             kotlinSourcesDir().source(source2Filename) {
@@ -154,8 +154,8 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
             val baseSubtypeEntries = modifiedSubtypes.filter { it.fqNameHashCode == baseHash }
             assertEquals(2, baseSubtypeEntries.size)
-            assertEquals(listOf("Derived"), baseSubtypeEntries.first().subtypes)
-            assertEquals(listOf("Derived2"), baseSubtypeEntries.last().subtypes)
+            assertEquals(["Derived"], baseSubtypeEntries.first().subtypes)
+            assertEquals(["Derived2"], baseSubtypeEntries.last().subtypes)
 
             // force rebuild to clean stale CRI data
             build("assemble", "--rerun-tasks")
@@ -171,7 +171,7 @@ class CompilerReferenceIndexIT : KGPDaemonsBaseTest() {
 
             val afterRebuildBaseSubtypeEntry = assertNotNull(afterRebuildSubtypes.singleOrNull { it.fqNameHashCode == baseHash })
             // stale `Derived` entry should not be there anymore
-            assertEquals(listOf("Derived2"), afterRebuildBaseSubtypeEntry.subtypes)
+            assertEquals(["Derived2"], afterRebuildBaseSubtypeEntry.subtypes)
         }
     }
 

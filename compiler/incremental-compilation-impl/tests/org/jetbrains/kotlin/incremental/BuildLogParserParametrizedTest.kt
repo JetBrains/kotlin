@@ -66,7 +66,7 @@ class BuildLogParserParametrizedTest {
         @JvmStatic
         fun data(): List<Array<String>> {
             val directories = TEST_ROOT.listFiles().filter { it.isDirectory }
-            return directories.map { arrayOf(it.name) }
+            return directories.map { [it.name] }
         }
     }
 }

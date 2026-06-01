@@ -46,7 +46,7 @@ fun BodyResolveComponents.findTypesForSuperCandidates(
         else -> {
             resolveSupertypesByPropertyName(
                 supertypes,
-                (containingCall.calleeReference as? FirNamedReference)?.name ?: return emptyList()
+                (containingCall.calleeReference as? FirNamedReference)?.name ?: return []
             )
         }
     }
@@ -65,7 +65,7 @@ private fun BodyResolveComponents.resolveSupertypesForMethodOfAny(
         getFunctionMembers(it, calleeName)
     }
     return typesWithConcreteOverride.ifEmpty {
-        listOf(session.builtinTypes.anyType.coneType)
+        [session.builtinTypes.anyType.coneType]
     }
 }
 

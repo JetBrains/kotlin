@@ -27,7 +27,7 @@ open class DiagnosticCodeMetaInfoRenderConfiguration(
 
     private fun getParamsString(codeMetaInfo: DiagnosticCodeMetaInfo): String {
         if (!renderParams) return ""
-        val params = mutableListOf<String>()
+        val params: MutableList<String> = []
 
         @Suppress("UNCHECKED_CAST")
         val renderer = when (codeMetaInfo.diagnostic.factory) {

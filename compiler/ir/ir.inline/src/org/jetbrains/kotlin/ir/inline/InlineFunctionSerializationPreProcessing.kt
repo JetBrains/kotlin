@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 class InlineFunctionSerializationPreProcessing(
     private val crossModuleFunctionInliner: FunctionInlining?,
 ) : IrVisitorVoid(), ModuleLoweringPass {
-    private val preprocessedFunctions = mutableListOf<IrSimpleFunction>()
+    private val preprocessedFunctions: MutableList<IrSimpleFunction> = []
 
     override fun lower(irModule: IrModuleFragment) {
         irModule.acceptChildrenVoid(this)

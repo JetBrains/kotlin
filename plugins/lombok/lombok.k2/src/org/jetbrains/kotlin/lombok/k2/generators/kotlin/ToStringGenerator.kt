@@ -67,7 +67,7 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
     companion object {
         val TO_STRING_NAME = Name.identifier("toString")
 
-        private val PREDICATE = DeclarationPredicate.create { annotated(listOf(LombokNames.TO_STRING)) }
+        private val PREDICATE = DeclarationPredicate.create { annotated([LombokNames.TO_STRING]) }
     }
 
     override fun FirDeclarationPredicateRegistrar.registerPredicates() {
@@ -79,14 +79,14 @@ class ToStringGenerator(session: FirSession) : FirDeclarationGenerationExtension
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return if (cache.getValue(classSymbol, context) != null) {
-            setOf(TO_STRING_NAME)
+            [TO_STRING_NAME]
         } else {
-            emptySet()
+            []
         }
     }
 
     override fun generateFunctions(callableId: CallableId, context: MemberGenerationContext?): List<FirNamedFunctionSymbol> {
-        val classSymbol = context?.owner ?: return emptyList()
+        val classSymbol = context?.owner ?: return []
         return listOfNotNull(cache.getValue(classSymbol, context))
     }
 

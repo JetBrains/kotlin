@@ -67,9 +67,9 @@ internal class CommonNativeManifestDataProvider(
             isCInterop = isCInterop,
             packageFqName = rawManifests.first().packageFqName,
             exportForwardDeclarations = if (isCInterop) rawManifests.map { it.exportForwardDeclarations }
-                .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
+                .reduce { acc, list -> acc.intersect(list).toList() } else [],
             includedForwardDeclarations = if (isCInterop) rawManifests.map { it.includedForwardDeclarations }
-                .reduce { acc, list -> acc.intersect(list).toList() } else emptyList(),
+                .reduce { acc, list -> acc.intersect(list).toList() } else [],
             nativeTargets = rawManifests.flatMapTo(mutableSetOf()) { it.nativeTargets },
             shortName = rawManifests.first().shortName,
             commonizerTarget = target

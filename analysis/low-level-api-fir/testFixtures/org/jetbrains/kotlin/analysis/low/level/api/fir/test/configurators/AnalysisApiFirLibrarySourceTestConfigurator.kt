@@ -64,10 +64,10 @@ class AnalysisApiFirLibrarySourceTestConfigurator(override val defaultTargetPlat
     }
 
     override val serviceRegistrars: List<AnalysisApiServiceRegistrar<TestServices>> =
-        listOf(
+        [
             AnalysisApiBaseTestServiceRegistrar,
             AnalysisApiIdeModeTestServiceRegistrar,
             FirStandaloneServiceRegistrar,
             AnalysisApiFirTestServiceRegistrar,
-        )
+        ]
 }

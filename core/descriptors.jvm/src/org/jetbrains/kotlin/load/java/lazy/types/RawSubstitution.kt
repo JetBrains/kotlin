@@ -55,9 +55,9 @@ internal class RawSubstitution(typeParameterUpperBoundEraser: TypeParameterUpper
 
         if (KotlinBuiltIns.isArray(type)) {
             val componentTypeProjection = type.arguments[0]
-            val arguments = listOf(
+            val arguments = [
                 TypeProjectionImpl(componentTypeProjection.projectionKind, eraseType(componentTypeProjection.type, attr))
-            )
+            ]
             return KotlinTypeFactory.simpleType(
                 type.attributes, type.constructor, arguments, type.isMarkedNullable
             ) to false

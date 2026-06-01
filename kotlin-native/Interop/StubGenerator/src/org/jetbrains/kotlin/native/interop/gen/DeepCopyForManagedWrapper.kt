@@ -16,7 +16,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: Stubs
                 returnType = transformCPointerToManaged(element.returnType),
                 parameters = element.parameters.map { visitFunctionParameter(it) },
                 origin = element.origin,
-                annotations = mutableListOf(),
+                annotations = [],
                 external = false,
                 receiver = element.receiver?.let { visitReceiverParameter(it) },
                 modality = element.modality,
@@ -31,7 +31,7 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: Stubs
                 name = element.name,
                 type = element.type,
                 origin = element.origin,
-                annotations = mutableListOf(),
+                annotations = [],
                 receiverType = element.receiverType,
                 modality = element.modality,
                 isOverride = element.isOverride,
@@ -51,23 +51,23 @@ class DeepCopyForManagedWrapper(val originalClass: ClassStub, val context: Stubs
     override fun visitConstructor(constructorStub: ConstructorStub): ConstructorStub {
         return if (constructorStub.isPrimary)
             ConstructorStub(
-                    parameters = listOf(
-                            FunctionParameterStub(
-                                    name = "cpp",
-                                    type = ClassifierStubType(originalClass.classifier)
-                            ),
-                            FunctionParameterStub(
-                                    name = "managed",
-                                    type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean"))
-                            )
-                    ),
+                    parameters = [
+                        FunctionParameterStub(
+                                name = "cpp",
+                                type = ClassifierStubType(originalClass.classifier)
+                        ),
+                        FunctionParameterStub(
+                                name = "managed",
+                                type = ClassifierStubType(Classifier.topLevel("kotlin", "Boolean"))
+                        )
+                    ],
                     isPrimary = true,
                     visibility = constructorStub.visibility,
                     origin = constructorStub.origin
             )
         else ConstructorStub(
                 parameters = constructorStub.parameters.map { visitFunctionParameter(it) },
-                annotations = emptyList(),
+                annotations = [],
                 isPrimary = constructorStub.isPrimary,
                 visibility = constructorStub.visibility,
                 origin = constructorStub.origin

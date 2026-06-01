@@ -146,10 +146,10 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
             }
             if (tree is JCTree.JCFieldAccess) {
                 val enclosingType = TreeBasedType.create(tree.selected, compilationUnit, javac, annotations, containingElement)
-                return (enclosingType as? JavaClassifierType)?.typeArguments ?: emptyList()
+                return (enclosingType as? JavaClassifierType)?.typeArguments ?: []
             } else {
-                val classifier = classifier as? JavaClass ?: return emptyList()
-                if (classifier is MockKotlinClassifier || classifier.isStatic) return emptyList()
+                val classifier = classifier as? JavaClass ?: return []
+                if (classifier is MockKotlinClassifier || classifier.isStatic) return []
 
                 return arrayListOf<JavaClass>().apply {
                     var outer = classifier.outerClass
@@ -170,7 +170,7 @@ sealed class TreeBasedClassifierType<out T : JCTree>(
 class TreeBasedTypeParameterType(override val classifier: JavaTypeParameter) : JavaClassifierType {
 
     override val typeArguments: List<JavaType>
-        get() = emptyList()
+        get() = []
 
     override val isRaw: Boolean
         get() = false
@@ -238,7 +238,7 @@ class TreeBasedGenericClassifierType(
         }
 
     override val typeArguments: List<JavaType?>
-        get() = tree.arguments.map { create(it, compilationUnit, javac, emptyList(), containingElement) }
+        get() = tree.arguments.map { create(it, compilationUnit, javac, [], containingElement) }
             .toMutableList<JavaType?>()
             .apply { addAll(super.typeArguments) }
 

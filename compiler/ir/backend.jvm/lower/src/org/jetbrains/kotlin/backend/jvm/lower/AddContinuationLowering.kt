@@ -56,7 +56,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
     private fun addContinuationParameterToSuspendCalls(irFile: IrFile) {
         irFile.transformChildrenVoid(object : IrElementTransformerVoid() {
-            val functionStack = mutableListOf<IrFunction>()
+            val functionStack: MutableList<IrFunction> = []
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
                 functionStack.push(declaration)
@@ -311,7 +311,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
 
-                val result = mutableListOf(view)
+                val result: MutableList<IrSimpleFunction> = [view]
                 if (function.body == null || !function.hasContinuation()) return result
 
                 // Sometimes, suspend methods of SAM adapters or function references require a continuation class.

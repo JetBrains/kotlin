@@ -20,7 +20,7 @@ abstract class JsMultiArtifactCache<T : JsMultiArtifactCache.CacheInfo> {
     open fun commitOnyTypeScriptFiles(cacheInfo: T): Boolean = false
 
     protected fun CodedInputStream.fetchJsIrModuleHeaderNames(): JsIrModuleHeaderNames {
-        val definitions = mutableSetOf<String>()
+        val definitions: MutableSet<String> = []
         val nameBindings = mutableMapOf<String, String>()
         val optionalCrossModuleImports = hashSetOf<String>()
 

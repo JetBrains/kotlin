@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.FirLazyResolveContractViolationException
 class FirCompilerLazyDeclarationResolverWithPhaseChecking : FirLazyDeclarationResolver() {
     private var currentTransformerPhase: FirResolvePhase? = null
 
-    private val exceptions = mutableListOf<FirLazyResolveContractViolationException>()
+    private val exceptions: MutableList<FirLazyResolveContractViolationException> = []
 
     fun getContractViolationExceptions(): List<FirLazyResolveContractViolationException> =
         exceptions

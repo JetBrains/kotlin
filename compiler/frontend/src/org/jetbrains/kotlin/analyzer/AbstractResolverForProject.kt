@@ -172,7 +172,7 @@ abstract class AbstractResolverForProject<M : ModuleInfo>(
 
     private fun checkModuleIsCorrect(moduleInfo: M) {
         if (!isCorrectModuleInfo(moduleInfo)) {
-            diagnoseUnknownModuleInfo(listOf(moduleInfo))
+            diagnoseUnknownModuleInfo([moduleInfo])
         }
     }
 
@@ -278,7 +278,7 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
 
     @Suppress("OverridingDeprecatedMember", "OVERRIDE_DEPRECATION")
     override fun getPackageFragments(fqName: FqName): List<PackageFragmentDescriptor> {
-        if (certainlyDoesNotExist(fqName)) return emptyList()
+        if (certainlyDoesNotExist(fqName)) return []
 
         @Suppress("DEPRECATION")
         return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getPackageFragments(fqName)
@@ -299,7 +299,7 @@ private class DelegatingPackageFragmentProvider<M : ModuleInfo>(
     }
 
     override fun getSubPackagesOf(fqName: FqName, nameFilter: (Name) -> Boolean): Collection<FqName> {
-        if (certainlyDoesNotExist(fqName)) return emptyList()
+        if (certainlyDoesNotExist(fqName)) return []
 
         return resolverForProject.resolverForModuleDescriptor(module).packageFragmentProvider.getSubPackagesOf(fqName, nameFilter)
     }

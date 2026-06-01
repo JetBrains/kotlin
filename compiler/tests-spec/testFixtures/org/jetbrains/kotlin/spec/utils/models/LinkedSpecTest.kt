@@ -54,7 +54,7 @@ class LinkedSpecTest(
 ) : AbstractSpecTest(
     testArea,
     testType,
-    mainLink?.sections ?: listOf(),
+    mainLink?.sections ?: [],
     testNumber,
     description,
     cases,

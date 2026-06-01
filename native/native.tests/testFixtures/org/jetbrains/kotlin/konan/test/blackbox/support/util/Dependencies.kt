@@ -19,7 +19,7 @@ internal fun <N : Any> StorageManager.lazyNeighbors(
         computable = {
             val neighbors = directNeighbors()
             if (neighbors.isEmpty())
-                emptySet()
+                []
             else
                 hashSetOf<N>().apply {
                     addAll(neighbors)
@@ -36,7 +36,7 @@ internal fun <N : Any> StorageManager.lazyNeighbors(
 }
 
 private class CyclicNeighborsException : Exception() {
-    private val backtrace = mutableListOf<String>()
+    private val backtrace: MutableList<String> = []
 
     fun trace(element: String) = apply { backtrace += element }
 

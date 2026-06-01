@@ -19,7 +19,7 @@ abstract class AbstractAnalysisSessionInvalidationTest : AbstractSessionInvalida
     override fun getSessions(ktTestModule: KtTestModule): List<TestSession<KaSession>> {
         val sessionProvider = KaSessionProvider.getInstance(ktTestModule.ktModule.project)
         val analysisSession = sessionProvider.getAnalysisSession(ktTestModule.ktModule)
-        return listOf(AnalysisTestSession(ktTestModule, analysisSession))
+        return [AnalysisTestSession(ktTestModule, analysisSession)]
     }
 
     /**

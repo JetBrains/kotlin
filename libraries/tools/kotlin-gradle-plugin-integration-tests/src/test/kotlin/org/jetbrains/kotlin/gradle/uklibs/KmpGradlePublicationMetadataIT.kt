@@ -188,7 +188,7 @@ class KmpGradlePublicationMetadataIT : KGPBaseTest() {
     }
 }
 
-private val rootVariantsSharedByAllPublications = mutableSetOf(
+private val rootVariantsSharedByAllPublications: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -488,9 +488,9 @@ private val rootVariantsSharedByAllPublications = mutableSetOf(
         ),
         name = "wasmWasiSourcesElements-published",
     ),
-)
+]
 
-private val standardKmpPublicationMetadataVariants = mutableSetOf(
+private val standardKmpPublicationMetadataVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -525,9 +525,9 @@ private val standardKmpPublicationMetadataVariants = mutableSetOf(
         ),
         name = "metadataSourcesElements",
     ),
-)
+]
 
-private val jvmSubcomponentVariants = mutableSetOf(
+private val jvmSubcomponentVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -575,9 +575,9 @@ private val jvmSubcomponentVariants = mutableSetOf(
         ),
         name = "jvmSourcesElements-published",
     ),
-)
+]
 
-private val uklibVariants = mutableSetOf(
+private val uklibVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -608,9 +608,9 @@ private val uklibVariants = mutableSetOf(
         ),
         name = "uklibApiElements",
     ),
-)
+]
 
-private val uklibJvmStubVariants = mutableSetOf(
+private val uklibJvmStubVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -641,11 +641,11 @@ private val uklibJvmStubVariants = mutableSetOf(
         ),
         name = "javaRuntimeElements",
     ),
-)
+]
 
 private val uklibJvmVariants = jvmSubcomponentVariants
 
-private val uklibCompatibilityMetadataVariants = mutableSetOf(
+private val uklibCompatibilityMetadataVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -680,9 +680,9 @@ private val uklibCompatibilityMetadataVariants = mutableSetOf(
         ),
         name = "metadataSourcesElements",
     ),
-)
+]
 
-private val kmpAndroidLibraryVariants = mutableSetOf(
+private val kmpAndroidLibraryVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -730,9 +730,9 @@ private val kmpAndroidLibraryVariants = mutableSetOf(
         ),
         name = "androidSourcesElements-published",
     ),
-)
+]
 
-private val androidLibraryDebugVariants = mutableSetOf(
+private val androidLibraryDebugVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "com.android.build.api.attributes.BuildTypeAttr" to "debug",
@@ -781,9 +781,9 @@ private val androidLibraryDebugVariants = mutableSetOf(
         ),
         name = "debugSourcesElements-published",
     ),
-)
+]
 
-private val androidLibraryReleaseVariants = mutableSetOf(
+private val androidLibraryReleaseVariants: MutableSet<Variant> = [
     Variant(
         attributes = mutableMapOf(
             "org.gradle.category" to "library",
@@ -829,4 +829,4 @@ private val androidLibraryReleaseVariants = mutableSetOf(
         ),
         name = "releaseSourcesElements-published",
     ),
-)
+]

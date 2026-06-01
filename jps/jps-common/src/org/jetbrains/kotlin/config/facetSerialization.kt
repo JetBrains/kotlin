@@ -168,7 +168,7 @@ private fun readV2AndLaterConfig(
         isTestModule = element.getAttributeValue("isTestModule")?.toBoolean() ?: false
         externalProjectId = element.getAttributeValue("externalProjectId") ?: ""
         isHmppEnabled = element.getAttribute("isHmppProject")?.booleanValue ?: false
-        pureKotlinSourceFolders = element.getAttributeValue("pureKotlinSourceFolders")?.split(";")?.toList() ?: emptyList()
+        pureKotlinSourceFolders = element.getAttributeValue("pureKotlinSourceFolders")?.split(";")?.toList() ?: []
         element.getChild("compilerSettings")?.let {
             compilerSettings = CompilerSettings()
             XmlSerializer.deserializeInto(compilerSettings!!, it)

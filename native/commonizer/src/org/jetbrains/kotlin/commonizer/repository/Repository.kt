@@ -16,7 +16,7 @@ internal operator fun Repository.plus(other: Repository): Repository {
     if (this is CompositeRepository) {
         return CompositeRepository(this.repositories + other)
     }
-    return CompositeRepository(listOf(this, other))
+    return CompositeRepository([this, other])
 }
 
 private class CompositeRepository(val repositories: Iterable<Repository>) : Repository {

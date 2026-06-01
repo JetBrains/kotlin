@@ -156,7 +156,7 @@ object TestIrBuiltins : IrBuiltIns() {
     override val ulongArray: IrClassSymbol by builtinClass("ULongArray")
     val booleanArrayType: IrType by builtinType(booleanArray)
     val array: IrClassSymbol by builtinClass("Array")
-    val arrayOfStringType: IrType by builtinType(array, listOf(stringType))
+    val arrayOfStringType: IrType by builtinType(array, [stringType])
 
     override val primitiveArraysToPrimitiveTypes: Map<IrClassSymbol, PrimitiveType>
         get() = missingBuiltIn()
@@ -278,14 +278,14 @@ object TestIrBuiltins : IrBuiltIns() {
     }
 
     private fun builtinType(klass: IrClassSymbol, nullable: Boolean = false) = object {
-        val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), emptyList(), emptyList())
+        val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), [], [])
         operator fun getValue(thisRef: TestIrBuiltins, property: KProperty<*>): IrType {
             return type
         }
     }
 
     private fun builtinType(klass: IrClassSymbol, arguments: List<IrTypeArgument>, nullable: Boolean = false) = object {
-        val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), arguments, emptyList())
+        val type = IrSimpleTypeImpl(klass, SimpleTypeNullability.fromHasQuestionMark(nullable), arguments, [])
         operator fun getValue(thisRef: TestIrBuiltins, property: KProperty<*>): IrType {
             return type
         }

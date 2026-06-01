@@ -33,10 +33,10 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
         put(ComposeConfiguration.SOURCE_INFORMATION_ENABLED_KEY, true)
         put(
-            ComposeConfiguration.FEATURE_FLAGS, listOf(
+            ComposeConfiguration.FEATURE_FLAGS, [
                 FeatureFlag.StrongSkipping.featureName,
                 FeatureFlag.OptimizeNonSkippingGroups.featureName,
-            )
+            ]
         )
     }
 
@@ -74,7 +74,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             "",
             validator = validator,
             dumpTree = dumpTree,
-            additionalPaths = listOf(classesDirectory.root)
+            additionalPaths = [classesDirectory.root]
         )
     }
 
@@ -102,7 +102,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
             "",
             validator = validator,
             dumpTree = dumpTree,
-            additionalPaths = listOf(classesDirectory.root)
+            additionalPaths = [classesDirectory.root]
         )
     }
 
@@ -114,11 +114,11 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         validator: (element: IrElement) -> Unit = {},
         dumpTree: Boolean = false,
         truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY,
-        additionalPaths: List<File> = listOf(),
+        additionalPaths: List<File> = [],
     ): String {
-        val files = listOf(SourceFile("Test.kt", source), SourceFile("Extra.kt", extra))
+        val files = [SourceFile("Test.kt", source), SourceFile("Extra.kt", extra)]
         val irModule = compileToIr(files, additionalPaths)
-        val keySet = mutableListOf<Int>()
+        val keySet: MutableList<Int> = []
         fun IrElement.validate(): IrElement = this.also { validator(it) }
         val actualTransformed = irModule
             .files[0]
@@ -237,7 +237,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         validator: (element: IrElement) -> Unit = {},
         dumpTree: Boolean = false,
         truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY,
-        additionalPaths: List<File> = listOf(),
+        additionalPaths: List<File> = [],
     ) {
         val actualTransformed =
             transform(source, extra, validator, dumpTree, truncateTracingInfoMode, additionalPaths)
@@ -257,7 +257,7 @@ abstract class AbstractIrTransformTest : AbstractCodegenTest() {
         validator: (element: IrElement) -> Unit = {},
         dumpTree: Boolean = false,
         truncateTracingInfoMode: TruncateTracingInfoMode = TruncateTracingInfoMode.TRUNCATE_KEY,
-        additionalPaths: List<File> = listOf(),
+        additionalPaths: List<File> = [],
     ) {
         val actualTransformed =
             transform(source, extra, validator, dumpTree, truncateTracingInfoMode, additionalPaths)

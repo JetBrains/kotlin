@@ -53,13 +53,13 @@ abstract class AbstractModularizedTest(val config: ModularizedTestConfig) {
 
         println("BASE PATH: ${root.absolutePath}")
 
-        val additionalMessages = mutableListOf<String>()
+        val additionalMessages: MutableList<String> = []
 
         val filterRegex = config.outputDirRegexFilter.toRegex()
         val moduleName = config.moduleNameFilter
         val moduleNameRegexOutFilter = config.moduleNameRegexOut?.toRegex()
         val containsSourcesFilter = config.containsSourcesRegexFilter?.toRegex()
-        val files = root.listFiles() ?: emptyArray()
+        val files = root.listFiles() ?: []
         val modules = files.filter {
             it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
         }

@@ -64,7 +64,7 @@ data class ArgumentMapping(
     }
 }
 
-private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), emptyList())
+private val EmptyArgumentMapping = ArgumentMapping(linkedMapOf(), [])
 
 fun BodyResolveComponents.mapArguments(
     arguments: List<ConeResolutionAtom>,
@@ -77,8 +77,8 @@ fun BodyResolveComponents.mapArguments(
         return EmptyArgumentMapping
     }
 
-    val nonLambdaArguments: MutableList<ConeResolutionAtom> = mutableListOf()
-    val excessLambdaArguments: MutableList<ConeResolutionAtom> = mutableListOf()
+    val nonLambdaArguments: MutableList<ConeResolutionAtom> = []
+    val excessLambdaArguments: MutableList<ConeResolutionAtom> = []
     var externalArgument: ConeResolutionAtom? = null
     for (argument in arguments) {
         val argumentExpression = argument.expression
@@ -109,7 +109,7 @@ fun BodyResolveComponents.mapArguments(
     processor.processExcessLambdaArguments(excessLambdaArguments)
     processor.processDefaultsAndRunChecks()
 
-    return ArgumentMapping(processor.result, processor.diagnostics ?: emptyList())
+    return ArgumentMapping(processor.result, processor.diagnostics.orEmpty())
 }
 
 private class FirCallArgumentsProcessor(
@@ -307,7 +307,7 @@ private class FirCallArgumentsProcessor(
                     ) ->
                         result[parameter] = ResolvedCallArgument.DefaultArgument
                     parameter.isVararg ->
-                        result[parameter] = ResolvedCallArgument.VarargArgument(emptyList())
+                        result[parameter] = ResolvedCallArgument.VarargArgument([])
                     else ->
                         addDiagnostic(NoValueForParameter(parameter, function))
                 }
@@ -449,7 +449,7 @@ private class FirCallArgumentsProcessor(
 
     private fun addDiagnostic(diagnostic: ResolutionDiagnostic) {
         if (diagnostics == null) {
-            diagnostics = mutableListOf()
+            diagnostics = []
         }
         diagnostics!!.add(diagnostic)
     }

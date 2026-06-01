@@ -302,7 +302,7 @@ open class KJvmReplCompilerBase<AnalyzerT : ReplCodeAnalyzerBase>(
 
         val skipFirstTime = allPreviousLines.subList(0, minOf(1, allPreviousLines.size))
         val skipAlways =
-            if (allPreviousLines.isEmpty()) emptyList()
+            if (allPreviousLines.isEmpty()) []
             else allPreviousLines.subList(1, allPreviousLines.size)
 
         return ScriptCompilationConfiguration(configuration) {

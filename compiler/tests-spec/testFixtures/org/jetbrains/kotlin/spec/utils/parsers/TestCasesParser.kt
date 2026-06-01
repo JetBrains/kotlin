@@ -80,7 +80,7 @@ fun parseTestCases(testFiles: TestFiles): SpecTestCasesSet {
 
             SpecTestCase(
                 code = matcher.group("codeSL") ?: matcher.group("codeML"),
-                ranges = mutableListOf(range),
+                ranges = [range],
                 unexpectedBehavior = caseInfoElements.contains(CommonInfoElementType.UNEXPECTED_BEHAVIOUR),
                 unspecifiedBehavior = caseInfoElements.contains(LinkedSpecTestFileInfoElementType.UNSPECIFIED_BEHAVIOR),
                 issues = CommonParser.parseIssues(caseInfoElements[CommonInfoElementType.ISSUES]).toMutableList(),

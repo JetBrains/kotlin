@@ -35,7 +35,7 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
         @Suppress("DEPRECATION") // KT-78356
-        val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()
+        val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return []
         return importList.childrenStubs.filterIsInstance<KotlinImportDirectiveStub>().filter {
             it.childrenStubs.firstIsInstanceOrNull<KotlinImportAliasStub>()?.name == alias
         }

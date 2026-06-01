@@ -21,14 +21,14 @@ class SpecHelpersSourceFilesProvider(testServices: TestServices, testType: Strin
     private val helpersDirPath = ForTestCompileRuntime.transformTestDataPath("compiler/tests-spec/testData/$testType/helpers").absolutePath
 
     override val directiveContainers: List<DirectivesContainer> =
-        listOf(AdditionalFilesDirectives)
+        [AdditionalFilesDirectives]
 
     override fun produceAdditionalFiles(
         globalDirectives: RegisteredDirectives,
         module: TestModule,
         testModuleStructure: TestModuleStructure
     ): List<TestFile> {
-        if (SPEC_HELPERS !in module.directives) return emptyList()
+        if (SPEC_HELPERS !in module.directives) return []
         return File(helpersDirPath).walkTopDown().mapNotNull {
             if (it.isDirectory) return@mapNotNull null
             it.toTestFile()

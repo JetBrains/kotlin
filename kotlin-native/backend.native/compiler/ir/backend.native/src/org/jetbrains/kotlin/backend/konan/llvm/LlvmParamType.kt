@@ -10,9 +10,9 @@ import llvm.LLVMTypeRef
 /**
  * LLVM function's parameter type with its attributes.
  */
-class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList())
+class LlvmParamType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = [])
 
 /**
  * LLVM function's return type with its attributes.
  */
-class LlvmRetType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = emptyList(), val isObjectType: Boolean)
+class LlvmRetType(val llvmType: LLVMTypeRef, val attributes: List<LlvmParameterAttribute> = [], val isObjectType: Boolean)

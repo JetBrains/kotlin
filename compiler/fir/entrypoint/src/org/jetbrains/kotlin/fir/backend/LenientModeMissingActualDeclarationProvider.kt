@@ -306,7 +306,7 @@ class LenientModeMissingActualDeclarationProvider(
                         endOffset = UNDEFINED_OFFSET,
                         type = parameterType.type,
                         varargElementType = (parameterType.type as IrSimpleType).arguments.first().typeOrFail,
-                        elements = listOf(
+                        elements = [
                             IrClassReferenceImpl(
                                 startOffset = UNDEFINED_OFFSET,
                                 endOffset = UNDEFINED_OFFSET,
@@ -314,7 +314,7 @@ class LenientModeMissingActualDeclarationProvider(
                                 symbol = (notImplementedErrorConstructorSymbol.owner.parent as IrClass).symbol,
                                 classType = notImplementedErrorConstructorSymbol.owner.returnType,
                             )
-                        )
+                        ]
                     )
                 }
         }

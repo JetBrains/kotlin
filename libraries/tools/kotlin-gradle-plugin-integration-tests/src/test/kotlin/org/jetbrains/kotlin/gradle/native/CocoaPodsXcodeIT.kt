@@ -244,7 +244,7 @@ private fun TestProject.manualPodInstall(taskPrefix: String, iosAppPath: Path) {
     environmentalVariables.getOrPut("LC_ALL") { "en_US.UTF-8" }
 
     runProcess(
-        cmd = listOf("env", "pod", "install"),
+        cmd = ["env", "pod", "install"],
         environmentVariables = environmentalVariables,
         workingDir = iosAppPath.toFile(),
     ).assertProcessRunResult { assertTrue(isSuccessful) }

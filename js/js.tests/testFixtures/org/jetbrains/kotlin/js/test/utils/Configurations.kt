@@ -24,7 +24,7 @@ fun TestConfigurationBuilder.configureLineNumberTests(createLineNumberHandler: (
         +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
         +JsEnvironmentConfigurationDirectives.NO_COMMON_FILES
         -JsEnvironmentConfigurationDirectives.GENERATE_NODE_JS_RUNNER
-        JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with(listOf("JS", "JS_IR", "JS_IR_ES6"))
+        JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with(["JS", "JS_IR", "JS_IR_ES6"])
     }
     configureJsArtifactsHandlersStep {
         useHandlers(createLineNumberHandler)

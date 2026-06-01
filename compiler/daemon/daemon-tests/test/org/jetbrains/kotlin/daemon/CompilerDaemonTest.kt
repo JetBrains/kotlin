@@ -56,8 +56,8 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     val compilerWithScriptingClassPath = getKotlinPaths().classPath(KotlinPaths.ClassPaths.CompilerWithScripting)
 
-    val daemonClientClassPath = listOf( File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
-                                        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar"))
+    val daemonClientClassPath = [File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-daemon-client.jar"),
+        File(KotlinIntegrationTestBase.getCompilerLib(), "kotlin-compiler.jar")]
     val compilerId by lazy(LazyThreadSafetyMode.NONE) { CompilerId.makeCompilerId(compilerClassPath) }
 
     val compilerWithScriptingId by lazy(LazyThreadSafetyMode.NONE) {
@@ -100,7 +100,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                       verbose = true,
                                       reportPerf = true)
 
-    fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384, args: Iterable<String> = listOf()): DaemonJVMOptions {
+    fun makeTestDaemonJvmOptions(logFile: File? = null, xmx: Int = 384, args: Iterable<String> = []): DaemonJVMOptions {
         val additionalArgs = arrayListOf<String>()
         if (logFile != null) {
             additionalArgs.add("D${CompilerSystemProperties.COMPILE_DAEMON_LOG_PATH_PROPERTY.property}=\"${logFile.loggerCompatiblePath}\"")
@@ -184,12 +184,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     }
 
     fun testDaemonAssertsOptions() {
-        val allAssetionsArgs = setOf(
+        val allAssetionsArgs: Set<String> = [
             "-ea", "-enableassertions",
             "-da", "-disableassertions",
             "-esa", "-enablesystemassertions",
             "-dsa", "-disablesystemassertions"
-        )
+        ]
 
         fun assertionsJvmArgs() = configureDaemonJVMOptions(
             inheritMemoryLimits = true,
@@ -356,7 +356,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 val jar = testTempDir.absolutePath + File.separator + "hello1.jar"
                 val strm = ByteArrayOutputStream()
                 val code = KotlinCompilerClient.compile(daemon!!, CompileService.NO_SESSION, CompileService.TargetPlatform.JVM,
-                                                        arrayOf(K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
+                                                        [K2JVMCompilerArguments::includeRuntime.cliArgument, File(
+                                                            getHelloAppBaseDir(),
+                                                            "hello.kt"
+                                                        ).absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar],
                                                         PrintingMessageCollector(PrintStream(strm), MessageRenderer.WITHOUT_PATHS, true),
                                                         reportSeverity = ReportSeverity.DEBUG)
                 assertEquals("compilation failed:\n$strm", 0, code)
@@ -511,13 +514,13 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
         val clientAliveFile = FileUtil.createTempFile("kotlin-daemon-transitive-run-test", ".run")
         val daemonOptions = makeTestDaemonOptions(getTestName(true))
         val jar = testTempDir.absolutePath + File.separator + "hello.jar"
-        val args = listOf(
+        val args = [
             File(File(System.getProperty("java.home"), "bin"), "java").absolutePath,
             "-Xmx256m",
             "-D${CompilerSystemProperties.COMPILE_DAEMON_VERBOSE_REPORT_PROPERTY.property}",
             "-cp",
             daemonClientClassPath.joinToString(File.pathSeparator) { it.absolutePath },
-            KotlinCompilerClient::class.qualifiedName!!) +
+            KotlinCompilerClient::class.qualifiedName!!] +
                    daemonOptions.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    compilerId.mappers.flatMap { it.toArgs(COMPILE_DAEMON_CMDLINE_OPTIONS_PREFIX) } +
                    File(getHelloAppBaseDir(), "hello.kt").absolutePath +
@@ -569,12 +572,15 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                         thread {
                             val jar = testTempDir.absolutePath + File.separator + "hello.$threadNo.jar"
                             val res = KotlinCompilerClient.compile(
-                                    daemon!!,
-                                    CompileService.NO_SESSION,
-                                    CompileService.TargetPlatform.JVM,
-                                    arrayOf(K2JVMCompilerArguments::includeRuntime.cliArgument, File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
-                                    PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
-                                    port = port)
+                                daemon!!,
+                                CompileService.NO_SESSION,
+                                CompileService.TargetPlatform.JVM,
+                                [K2JVMCompilerArguments::includeRuntime.cliArgument, File(
+                                    getHelloAppBaseDir(),
+                                    "hello.kt"
+                                ).absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar],
+                                PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true),
+                                port = port)
                             synchronized(resultCodes) {
                                 resultCodes[threadNo] = res
                             }
@@ -632,7 +638,10 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                                     compileServiceSession.compileService,
                                     compileServiceSession.sessionId,
                                     CompileService.TargetPlatform.JVM,
-                                    arrayOf(File(getHelloAppBaseDir(), "hello.kt").absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar),
+                                    [File(
+                                        getHelloAppBaseDir(),
+                                        "hello.kt"
+                                    ).absolutePath, K2JVMCompilerArguments::destination.cliArgument, jar],
                                     PrintingMessageCollector(PrintStream(outStreams[threadNo]), MessageRenderer.WITHOUT_PATHS, true))
                             }
                             else -> 0 // compilation skipped, assuming - successful
@@ -733,7 +742,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
             var isErrorThrown = false
             try {
                 repl = KotlinRemoteReplCompilerClient(
-                    daemon, null, CompileService.TargetPlatform.JVM, emptyArray(), MessageCollectorImpl(),
+                    daemon, null, CompileService.TargetPlatform.JVM, [], MessageCollectorImpl(),
                     classpathFromClassloader(), ScriptWithNoParam::class.qualifiedName!!
                 )
                 repl.createState()
@@ -753,12 +762,12 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
     fun testDaemonReplLocalEvalNoParams() {
         withDaemon(compilerWithScriptingId) { daemon ->
             val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM,
-                                                      emptyArray(),
+                                                      [],
                                                       MessageCollectorImpl(),
                                                       classpathFromClassloader(),
                                                       ScriptWithNoParam::class.qualifiedName!!)
 
-            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader)
+            val localEvaluator = GenericReplEvaluator([], Thread.currentThread().contextClassLoader)
 
             doReplTestWithLocalEval(repl, localEvaluator)
             repl.dispose()
@@ -767,13 +776,14 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
 
     fun testDaemonReplLocalEvalStandardTemplate() {
         withDaemon(compilerWithScriptingId) { daemon ->
-            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, emptyArray(),
+            val repl = KotlinRemoteReplCompilerClient(daemon, null, CompileService.TargetPlatform.JVM, [],
                                                       MessageCollectorImpl(),
                                                       classpathFromClassloader(),
                                                       "kotlin.script.templates.standard.ScriptTemplateWithArgs")
 
-            val localEvaluator = GenericReplEvaluator(emptyList(), Thread.currentThread().contextClassLoader,
-                                                      ScriptArgsWithTypes(arrayOf(emptyArray<String>()), arrayOf(Array<String>::class)))
+            val localEvaluator = GenericReplEvaluator(
+                [], Thread.currentThread().contextClassLoader,
+                ScriptArgsWithTypes([emptyArray<String>()], [Array<String>::class]))
 
             doReplTestWithLocalEval(repl, localEvaluator)
             repl.dispose()
@@ -819,7 +829,7 @@ class CompilerDaemonTest : KotlinIntegrationTestBase() {
                 assertNotNull("failed to connect daemon", daemon)
 
                 val replCompiler = KotlinRemoteReplCompilerClient(daemon!!, null, CompileService.TargetPlatform.JVM,
-                                                                  emptyArray(),
+                                                                  [],
                                                                   MessageCollectorImpl(),
                                                                   classpathFromClassloader(),
                                                                   ScriptWithNoParam::class.qualifiedName!!)
@@ -961,7 +971,7 @@ open class TestKotlinScriptDummyDependenciesResolver : DependenciesResolver {
     override fun resolve(scriptContents: ScriptContents, environment: Environment): ResolveResult {
         return ScriptDependencies(
             classpath = classpathFromClassloader(),
-            imports = listOf("org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo")
+            imports = ["org.jetbrains.kotlin.scripts.DependsOn", "org.jetbrains.kotlin.scripts.DependsOnTwo"]
         ).asSuccess()
     }
 }
@@ -975,7 +985,7 @@ internal fun classpathFromClassloader(): List<File> {
     return ((TestKotlinScriptDummyDependenciesResolver::class.java.classLoader as? URLClassLoader)?.urLs
                    ?.mapNotNull(URL::toFile)
                    ?.filter { it.path.contains("out") && it.path.contains("test") }
-           ?: emptyList()
+           ?: []
            ) + additionalClasspath
 }
 

@@ -62,10 +62,10 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
         }
         val [firDeclaration, kind] = findFirDeclaration(declaration)
         return when (kind) {
-            null -> annotationsStorage.getOrPut(firDeclaration) { mutableListOf() }
+            null -> annotationsStorage.getOrPut(firDeclaration) { [] }
             else -> {
                 val storageForDeclaration = annotationsOnParametersStorage.getOrPut(firDeclaration) { mutableMapOf() }
-                storageForDeclaration.getOrPut(kind) { mutableListOf() }
+                storageForDeclaration.getOrPut(kind) { [] }
             }
         }
     }
@@ -192,8 +192,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private fun TypeConverter.updateFunctionCommon(firFunction: FirFunction, irFunction: IrFunction) = with(firFunction) {
         replaceReturnTypeRef(irFunction.returnType.toConeType().toFirResolvedTypeRef())
-        val contextParameters = mutableListOf<FirValueParameter>()
-        val valueParameters = mutableListOf<FirValueParameter>()
+        val contextParameters: MutableList<FirValueParameter> = []
+        val valueParameters: MutableList<FirValueParameter> = []
 
         for (parameter in irFunction.parameters) {
             when (parameter.kind) {
@@ -478,7 +478,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
 
     private inner class Provider : FirAdditionalMetadataProvider() {
         override fun findGeneratedAnnotationsFor(declaration: FirDeclaration): List<FirAnnotation> {
-            val irAnnotations = extractGeneratedIrDeclarations(declaration).takeUnless { it.isEmpty() } ?: return emptyList()
+            val irAnnotations = extractGeneratedIrDeclarations(declaration).takeUnless { it.isEmpty() } ?: return []
             return irAnnotations.map { it.toFirAnnotation() }
         }
 
@@ -490,7 +490,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             when (declaration.origin) {
                 is FirDeclarationOrigin.Synthetic,
                 is FirDeclarationOrigin.Delegated
-                    -> return emptyList()
+                    -> return []
                 else -> {}
             }
             val [keyDeclaration, kind] = when (declaration) {

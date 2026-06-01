@@ -21,7 +21,7 @@ public class TypeReference @SinceKotlin("1.6") constructor(
     ) : this(classifier, arguments, null, if (isMarkedNullable) IS_MARKED_NULLABLE else 0)
 
     override val annotations: List<Annotation>
-        get() = emptyList()
+        get() = []
 
     override val isMarkedNullable: Boolean
         get() = flags and IS_MARKED_NULLABLE != 0

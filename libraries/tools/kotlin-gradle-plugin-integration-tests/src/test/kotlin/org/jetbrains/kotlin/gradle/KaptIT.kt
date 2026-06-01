@@ -753,7 +753,7 @@ open class KaptIT : KaptBaseIT() {
         project(
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(["https://jitpack.io"]),
             // KT-76289 KAPT Gradle Project Isolation Violation
             buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {
@@ -1041,10 +1041,10 @@ open class KaptIT : KaptBaseIT() {
 
                 val sourcesDir = subProject("dac").kotlinSourcesDir("commonMain")
                 // KT-61622: checking if kapt tasks are getting common sources in default configuration
-                val commonSources = arrayOf(
+                val commonSources: Array<String> = [
                     sourcesDir.resolve("DocumentationService.kt").toAbsolutePath().toString(),
                     sourcesDir.resolve("Item.kt").toAbsolutePath().toString(),
-                )
+                ]
                 assertCompilerArguments(":dac:kaptGenerateStubsKotlinJvm", *commonSources)
             }
         }
@@ -1072,7 +1072,7 @@ open class KaptIT : KaptBaseIT() {
             }
 
             // The test must not contain any java sources in order to detect the issue.
-            assertEquals(emptyList(), projectPath.resolve("src").allJavaSources)
+            assertEquals([], projectPath.resolve("src").allJavaSources)
             kotlinSourcesDir().resolve("Dummy.kt").modify {
                 it.replace("class Dummy", "@example.KotlinFilerGenerated class Dummy")
             }
@@ -1174,7 +1174,7 @@ open class KaptIT : KaptBaseIT() {
         project(
             "localAnnotationProcessor".withPrefix,
             gradleVersion,
-            dependencyManagement = DependencyManagement.DefaultDependencyManagement(setOf("https://jitpack.io")),
+            dependencyManagement = DependencyManagement.DefaultDependencyManagement(["https://jitpack.io"]),
             // KT-76289 KAPT Gradle Project Isolation Violation
             buildOptions = defaultBuildOptions.copy(isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED),
         ) {

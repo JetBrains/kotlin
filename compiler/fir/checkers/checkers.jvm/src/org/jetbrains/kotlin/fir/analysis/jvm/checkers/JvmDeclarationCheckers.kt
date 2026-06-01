@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration.*
 
 object JvmDeclarationCheckers : DeclarationCheckers() {
     override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker>
-        get() = setOf(
+        get() = [
             FirJvmExternalDeclarationChecker,
             FirJvmNameChecker,
             FirJvmExposeBoxedChecker,
@@ -19,7 +19,7 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirRepeatableAnnotationChecker,
             FirJvmInvalidAndDangerousCharactersChecker,
             FirJvmRedundantRepeatableChecker,
-        )
+        ]
 
     override val constructorCheckers: Set<FirConstructorChecker>
         get() = setOf(
@@ -27,20 +27,20 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         )
 
     override val classCheckers: Set<FirClassChecker>
-        get() = setOf(
+        get() = [
             FirStrictfpApplicabilityChecker,
             FirOverrideJavaNullabilityWarningChecker.Regular,
             FirOverrideJavaNullabilityWarningChecker.ForExpectClass,
             FirImplementationByDelegationWithDifferentGenericSignatureChecker,
             FirPropertyHidesJavaFieldChecker,
             FirIncompatibleAnnotationsChecker,
-        )
+        ]
 
     override val regularClassCheckers: Set<FirRegularClassChecker>
-        get() = setOf(
+        get() = [
             FirJvmRecordChecker,
             FirJvmInlineApplicabilityChecker,
-        )
+        ]
 
     override val classLikeCheckers: Set<FirClassLikeChecker>
         get() = setOf(
@@ -53,19 +53,19 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
         )
 
     override val propertyCheckers: Set<FirPropertyChecker>
-        get() = setOf(
+        get() = [
             FirJvmFieldApplicabilityChecker,
             FirJvmSyntheticApplicabilityChecker,
             FirPropertyJavaNullabilityWarningChecker,
-        )
+        ]
 
     override val functionCheckers: Set<FirFunctionChecker>
-        get() = setOf(
+        get() = [
             FirSynchronizedAnnotationChecker,
             FirOverloadsChecker,
             FirJvmThrowsChecker,
             FirJvmVersionOverloadsChecker,
-        )
+        ]
 
     override val typeParameterCheckers: Set<FirTypeParameterChecker>
         get() = setOf(

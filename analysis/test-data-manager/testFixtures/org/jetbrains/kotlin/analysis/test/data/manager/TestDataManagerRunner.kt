@@ -32,7 +32,7 @@ internal fun validateConflicts(tests: List<DiscoveredTest>): List<VariantChainCo
     // Work with unique variant chains only - no need to check same chains multiple times
     val uniqueChains = tests.mapTo(linkedSetOf()) { it.variantChain }.toList()
 
-    val conflicts = mutableListOf<VariantChainConflict>()
+    val conflicts: MutableList<VariantChainConflict> = []
 
     for (i in uniqueChains.indices) {
         for (j in i + 1 until uniqueChains.size) {
@@ -213,8 +213,8 @@ internal object TestDataManagerRunner {
         discoveredTests: List<DiscoveredTest>,
     ) {
         val allMismatches = mutableMapOf<String, MutableSet<TestVariantChain>>()
-        val allErrors = mutableSetOf<TestError>()
-        val allFinalFailedTestIds = mutableSetOf<String>()
+        val allErrors: MutableSet<TestError> = []
+        val allFinalFailedTestIds: MutableSet<String> = []
 
         val useIncremental = when {
             !incremental -> false
@@ -231,7 +231,7 @@ internal object TestDataManagerRunner {
             else -> true
         }
 
-        var changedTestDataPaths: Set<String> = emptySet()
+        var changedTestDataPaths: Set<String> = []
         var skippedTests = 0
 
         for ([index, group] in groupingResult.groups.withIndex()) {
@@ -266,7 +266,7 @@ internal object TestDataManagerRunner {
             val groupTime = measureTime {
                 val result = runGroupWithConvergence(launcher, effectiveGroup)
                 result.mismatchesByPath.forEach { [path, variantChains] ->
-                    allMismatches.getOrPut(path) { mutableSetOf() }.addAll(variantChains)
+                    allMismatches.getOrPut(path) { [] }.addAll(variantChains)
                 }
 
                 allErrors.addAll(result.errors)
@@ -346,7 +346,7 @@ internal object TestDataManagerRunner {
      * Discovers all tests from a test plan and transforms them using the provided function.
      */
     internal fun <T> discoverTests(testPlan: TestPlan, transform: (TestIdentifier) -> T): List<T> {
-        val result = mutableListOf<T>()
+        val result: MutableList<T> = []
 
         for (root in testPlan.roots) {
             for (descriptor in testPlan.getDescendants(root)) {
@@ -423,8 +423,8 @@ internal object TestDataManagerRunner {
 
     private fun runConvergenceLoop(launcher: Launcher, group: TestGroup): RunResult {
         val aggregatedMismatches = mutableMapOf<String, MutableSet<TestVariantChain>>()
-        val aggregatedErrors = mutableSetOf<TestError>()
-        var lastPassFailedTestIds: Set<String> = emptySet()
+        val aggregatedErrors: MutableSet<TestError> = []
+        var lastPassFailedTestIds: Set<String> = []
         var lastErrorTestCount = 0
         var lastMismatchedTestCount = 0
         var testIdsToExecute: Collection<String> = group.tests.map { it.uniqueId }
@@ -473,7 +473,7 @@ internal object TestDataManagerRunner {
 
             // Aggregate mismatches and errors from this pass
             mismatchesByPath.forEach { [path, prefixSets] ->
-                aggregatedMismatches.getOrPut(path) { mutableSetOf() }.addAll(prefixSets)
+                aggregatedMismatches.getOrPut(path) { [] }.addAll(prefixSets)
             }
 
             aggregatedErrors.addAll(fileTrackingListener.getTestErrors())

@@ -127,7 +127,7 @@ class TestHiddenContextParameters(
                     )
                 )
             ) {
-                val actual = translateToObjCHeader(listOf(KtObjCExportFile(file)), false).toString()
+                val actual = translateToObjCHeader([KtObjCExportFile(file)], false).toString()
                 assertEquals(
                     expected, actual
                 )

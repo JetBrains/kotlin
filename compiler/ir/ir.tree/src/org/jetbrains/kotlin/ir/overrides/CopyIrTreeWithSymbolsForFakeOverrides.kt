@@ -91,9 +91,9 @@ class CopyIrTreeWithSymbolsForFakeOverrides(
 
     private companion object {
         // TODO (KT-64715): RawTypeAnnotation, FlexibleMutability, RawType, FlexibleArrayElementVariance?
-        val TYPE_ANNOTATIONS_TO_MERGE = listOf(
+        val TYPE_ANNOTATIONS_TO_MERGE = [
             FlexibleNullability.asSingleFqName(),
             EnhancedNullability.asSingleFqName(),
-        )
+        ]
     }
 }

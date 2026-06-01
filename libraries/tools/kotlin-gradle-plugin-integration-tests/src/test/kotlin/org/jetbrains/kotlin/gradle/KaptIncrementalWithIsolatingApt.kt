@@ -258,7 +258,7 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 """.trimIndent()
             )
 
-            val annotatedKotlinStubs = listOf(
+            val annotatedKotlinStubs = [
                 "$KAPT_STUBS_PATH/foo/A.java",
                 "$KAPT_STUBS_PATH/bar/B.java",
                 "$KAPT_STUBS_PATH/bar/UseBKt.java",
@@ -266,8 +266,9 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 "$KAPT_STUBS_PATH/baz/UtilKt.java",
                 "$KAPT_STUBS_PATH/jvmName/Math.java",
                 "$KAPT_STUBS_PATH/error/NonExistentClass.java"
-            )
+            ]
 
+            @Suppress("ConvertToCollectionLiterals")
             val allKotlinStubs = annotatedKotlinStubs + listOf(
                 "$KAPT_STUBS_PATH/delegate/Delegate.java",
                 "$KAPT_STUBS_PATH/delegate/Usage.java"
@@ -404,11 +405,11 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
                 )
             }
 
-            val allKotlinStubs = setOf(
+            val allKotlinStubs: Set<String> = [
                 "build/tmp/kapt3/stubs/main/example/ExampleAnnotation.java",
                 "build/tmp/kapt3/stubs/main/example/A.java",
                 "build/tmp/kapt3/stubs/main/error/NonExistentClass.java"
-            )
+            ]
 
             build("clean", "assemble") {
                 assertEquals(
@@ -421,8 +422,8 @@ class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             // change type that the aggregated generated source reference
             classpathTypeSource.writeText(classpathTypeSource.readText().replace("}", "int i = 10;\n}"))
             build("assemble") {
-                assertEquals(emptySet(), getProcessedSources(output))
-                assertEquals(setOf("example.AGenerated"), getProcessedTypes(output))
+                assertEquals([], getProcessedSources(output))
+                assertEquals(["example.AGenerated"], getProcessedTypes(output))
                 assertFileInProjectExists("build/generated/source/kapt/main/com/example/AggGenerated.java")
             }
         }

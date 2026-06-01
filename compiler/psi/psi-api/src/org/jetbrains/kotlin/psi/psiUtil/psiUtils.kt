@@ -257,7 +257,7 @@ inline fun <reified T : PsiElement> PsiElement.getChildOfType(): T? {
 }
 
 inline fun <reified T : PsiElement> PsiElement.getChildrenOfType(): Array<T> {
-    return PsiTreeUtil.getChildrenOfType(this, T::class.java) ?: arrayOf()
+    return PsiTreeUtil.getChildrenOfType(this, T::class.java) ?: []
 }
 
 fun PsiElement.getNextSiblingIgnoringWhitespaceAndComments(withItself: Boolean = false): PsiElement? {
@@ -320,7 +320,7 @@ fun PsiChildRange.trimWhiteSpaces(): PsiChildRange {
 /**
  * See [unwrap()][org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilder.unwrap]
  */
-val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = setOf(PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION)
+val UNWRAPPABLE_TOKEN_TYPES: Set<IElementType> = [PARENTHESIZED, LABELED_EXPRESSION, ANNOTATED_EXPRESSION]
 
 /**
  * This function should only be called for a source element corresponding to

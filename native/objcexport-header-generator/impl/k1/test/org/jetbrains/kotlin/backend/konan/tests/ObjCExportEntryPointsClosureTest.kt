@@ -67,7 +67,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         }
 
-        val closure = computeDownwardClosure(entryPoints, listOf(module))
+        val closure = computeDownwardClosure(entryPoints, [module])
 
         assertTrue(runnableRun in closure, "Runnable.run should be in closure")
         assertTrue(aRun in closure, "A.run should be in closure")
@@ -109,7 +109,7 @@ class ObjCExportEntryPointsClosureTest : InlineSourceTestEnvironment {
             }
         }
 
-        val closure = computeDownwardClosure(entryPoints, listOf(module))
+        val closure = computeDownwardClosure(entryPoints, [module])
 
         assertFalse(runnableRun.original in closure, "Runnable.run should not be in closure")
         assertTrue(aRun in closure, "A.run should be in closure")

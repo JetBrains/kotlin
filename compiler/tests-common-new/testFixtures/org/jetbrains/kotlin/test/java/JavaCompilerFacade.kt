@@ -29,7 +29,7 @@ class JavaCompilerFacade(private val testServices: TestServices) {
         if (module.javaFiles.isEmpty()) return
 
         val outputDir = testServices.compiledClassesManager.compileKotlinToDiskAndGetOutputDir(module, classFileFactory)
-        val javaClasspath = listOf(outputDir.path) +
+        val javaClasspath = [outputDir.path] +
                 configuration.jvmClasspathRoots.map { it.absolutePath } +
                 configuration.jvmModularRoots.map { it.absolutePath }
 

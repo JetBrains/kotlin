@@ -135,7 +135,7 @@ fun <SourceFile> serializeModuleIntoKlib(
         languageVersionSettings = configuration.languageVersionSettings,
         moduleName = moduleName,
         fragmentNames = compiledKotlinFiles.map { it.fqName }.distinct().sorted(),
-        emptyPackages = emptyList(),
+        emptyPackages = [],
     ).toByteArray()
 
     processKlibHeader(header)

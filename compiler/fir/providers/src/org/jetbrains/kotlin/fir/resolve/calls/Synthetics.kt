@@ -102,7 +102,7 @@ class FirSyntheticPropertiesScope private constructor(
         syntheticNamesProvider.possiblePropertyNamesByAccessorName(propertyName)
     }
 
-    override fun getClassifierNames(): Set<Name> = emptySet()
+    override fun getClassifierNames(): Set<Name> = []
 
     private fun checkGetAndCreateSynthetic(
         propertyName: Name,
@@ -281,7 +281,7 @@ class FirSyntheticPropertiesScope private constructor(
         var result = Incompatible
         var originalJavaGetter: FirNamedFunctionSymbol? = null
 
-        val visited = mutableSetOf<MemberWithBaseScope<FirNamedFunctionSymbol>>()
+        val visited: MutableSet<MemberWithBaseScope<FirNamedFunctionSymbol>> = []
         fun checkJavaOrigin(symbol: FirNamedFunctionSymbol, scope: FirTypeScope, isOverridden: Boolean) {
             val hidden = symbol.hiddenStatusOfCall(isSuperCall = isSuperCall, isCallToOverride = isOverridden)
             when (hidden) {
