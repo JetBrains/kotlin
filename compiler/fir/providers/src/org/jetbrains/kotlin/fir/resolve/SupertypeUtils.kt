@@ -354,7 +354,7 @@ fun createSubstitutionForSupertype(superType: ConeLookupTagBasedType, session: F
 /**
  * @return `null` only if symbol for `kotlin.Any` is not found (in no-runtime environments)
  */
-fun FirRegularClassSymbol.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol? {
+fun FirClassSymbol<*>.getSuperClassSymbolOrAny(session: FirSession): FirRegularClassSymbol? {
     for (superType in resolvedSuperTypes) {
         val symbol = superType.fullyExpandedType(session).toRegularClassSymbol(session) ?: continue
         if (symbol.classKind == ClassKind.CLASS) return symbol
