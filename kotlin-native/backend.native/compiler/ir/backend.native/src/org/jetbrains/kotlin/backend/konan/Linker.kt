@@ -15,6 +15,22 @@ import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.uniqueName
 
+private data class ExecutableTarget(
+        val path: String,
+        val flags: List<String>
+)
+
+private fun List<String>.asLinkerArgs(useCompilerDriverAsLinker: Boolean): List<String> {
+    if (useCompilerDriverAsLinker) return this
+    return flatMap { arg ->
+        if (arg.startsWith("-Wl,")) {
+            arg.substring(4).split(',')
+        } else {
+            listOf(arg)
+        }
+    }
+}
+
 internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOutputKind =
         when (context.config.produce) {
             CompilerOutputKind.FRAMEWORK -> {
@@ -42,10 +58,10 @@ internal fun determineLinkerOutput(context: NativeBackendPhaseContext): LinkerOu
 
 // TODO: We have a Linker.kt file in the shared module.
 internal class Linker(
-    private val config: NativeSecondStageCompilationConfig,
-    private val linkerOutput: LinkerOutputKind,
-    private val outputFiles: OutputFiles,
-    private val tempFiles: TempFiles,
+        private val config: NativeSecondStageCompilationConfig,
+        private val linkerOutput: LinkerOutputKind,
+        private val outputFiles: OutputFiles,
+        private val tempFiles: TempFiles,
 ) {
     private val platform = config.platform
     private val linker = platform.linker
@@ -58,32 +74,64 @@ internal class Linker(
             objectFiles: List<ObjectFile>,
             dependenciesTrackingResult: DependenciesTrackingResult,
             caches: ResolvedCacheBinaries,
+            extraLinkerFlags: List<String> = emptyList()
     ): List<Command> {
         val nativeDependencies = dependenciesTrackingResult.nativeDependenciesToLink
 
         val includedBinariesLibraries = config.libraryToCache?.let { listOf(it.klib) }
                 ?: nativeDependencies.filterNot { config.cachedLibraries.isLibraryCached(it) }
-        val includedBinaries = includedBinariesLibraries.map { it.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths.orEmpty() }.flatten()
+        val includedBinaries = includedBinariesLibraries.flatMap {
+            it.nativeIncludedBinaries(config.target)?.nativeIncludedBinaryFilePaths.orEmpty()
+        }
 
-        val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.map { it.linkerOpts }.flatten()
-        return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, caches)
+        val libraryProvidedLinkerFlags = dependenciesTrackingResult.allNativeDependencies.flatMap { it.linkerOpts }
+        return runLinker(outputFile, objectFiles, includedBinaries, libraryProvidedLinkerFlags, extraLinkerFlags, caches)
     }
 
-    private fun asLinkerArgs(args: List<String>): List<String> {
-        if (linker.useCompilerDriverAsLinker) {
-            return args
-        }
-
-        val result = mutableListOf<String>()
-        for (arg in args) {
-            // If user passes compiler arguments to us - transform them to linker ones.
-            if (arg.startsWith("-Wl,")) {
-                result.addAll(arg.substring(4).split(','))
-            } else {
-                result.add(arg)
+    private fun resolveExecutableTarget(outputFile: String): ExecutableTarget = when (config.produce) {
+        CompilerOutputKind.TEST_BUNDLE -> {
+            require(target.family.isAppleFamily) {
+                "Test Bundle requires a target belonging to Apple family"
             }
+            val bundleDir = File(outputFile)
+            val name = bundleDir.name.removeSuffix(config.produce.suffix())
+            val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
+
+            ExecutableTarget(
+                    path = bundleDir.child(bundleRelativePath).absolutePath,
+                    flags = listOf("-bundle", "-dead_strip")
+            )
         }
-        return result
+        CompilerOutputKind.FRAMEWORK -> {
+            val framework = File(outputFile)
+            val dylibName = framework.name.removeSuffix(".framework")
+            val dylibRelativePath = when (target.family) {
+                Family.IOS, Family.TVOS, Family.WATCHOS -> dylibName
+                Family.OSX -> "Versions/A/$dylibName"
+                else -> error("Unsupported target family for Framework: $target")
+            }
+
+            ExecutableTarget(
+                    path = framework.child(dylibRelativePath).absolutePath,
+                    flags = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
+            )
+        }
+        else -> {
+            val flags = if (target.family.isAppleFamily) {
+                when (config.produce) {
+                    CompilerOutputKind.DYNAMIC_CACHE -> listOf("-install_name", outputFiles.dynamicCacheInstallName)
+                    else -> listOf("-dead_strip")
+                }
+            } else emptyList()
+
+            ExecutableTarget(outputFiles.nativeBinaryFile, flags)
+        }
+    }
+
+    private fun prepareFileSystem(executablePath: String) {
+        val file = File(executablePath)
+        file.parentFile.mkdirs()
+        file.delete()
     }
 
     private fun runLinker(
@@ -91,60 +139,23 @@ internal class Linker(
             objectFiles: List<ObjectFile>,
             includedBinaries: List<String>,
             libraryProvidedLinkerFlags: List<String>,
+            extraLinkerFlags: List<String>,
             caches: ResolvedCacheBinaries,
     ): List<Command> {
-        val additionalLinkerArgs: List<String>
-        val executable: String
 
-        when (config.produce) {
-            CompilerOutputKind.TEST_BUNDLE -> {
-                val bundleDir = File(outputFile)
-                val name = bundleDir.name.removeSuffix(config.produce.suffix())
-                require(target.family.isAppleFamily)
-                val bundleRelativePath = if (target.family == Family.OSX) "Contents/MacOS/$name" else name
-                additionalLinkerArgs = listOf("-bundle", "-dead_strip")
-                val bundlePath = bundleDir.child(bundleRelativePath)
-                bundlePath.parentFile.mkdirs()
-                executable = bundlePath.absolutePath
-            }
-            CompilerOutputKind.FRAMEWORK -> {
-                val framework = File(outputFile)
-                val dylibName = framework.name.removeSuffix(".framework")
-                val dylibRelativePath = when (target.family) {
-                    Family.IOS,
-                    Family.TVOS,
-                    Family.WATCHOS -> dylibName
-                    Family.OSX -> "Versions/A/$dylibName"
-                    else -> error(target)
-                }
-                additionalLinkerArgs = listOf("-dead_strip", "-install_name", "@rpath/${framework.name}/$dylibRelativePath")
-                val dylibPath = framework.child(dylibRelativePath)
-                dylibPath.parentFile.mkdirs()
-                executable = dylibPath.absolutePath
-            }
-            else -> {
-                additionalLinkerArgs = if (target.family.isAppleFamily) {
-                    when (config.produce) {
-                        CompilerOutputKind.DYNAMIC_CACHE ->
-                            listOf("-install_name", outputFiles.dynamicCacheInstallName)
-                        else -> listOf("-dead_strip")
-                    }
-                } else {
-                    emptyList()
-                }
-                executable = outputFiles.nativeBinaryFile
-            }
+        val [executablePath, produceKindFlags] = resolveExecutableTarget(outputFile).also {
+            prepareFileSystem(it.path)
         }
-        File(executable).delete()
 
-        val linkerArgs = asLinkerArgs(config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)) +
-                libraryProvidedLinkerFlags + additionalLinkerArgs
+        val driverLinkerFlags = config.configuration.getNotNull(NativeConfigurationKeys.LINKER_ARGS)
+                .asLinkerArgs(linker.useCompilerDriverAsLinker)
+        val linkerArgs = driverLinkerFlags + libraryProvidedLinkerFlags + produceKindFlags + extraLinkerFlags
 
         return with(linker) {
             LinkerArguments(
                     tempFiles = tempFiles,
                     objectFiles = objectFiles,
-                    executable = executable,
+                    executable = executablePath,
                     staticLibraries = linker.linkStaticLibraries(includedBinaries) + caches.static,
                     dynamicLibraries = caches.dynamic,
                     linkerArgs = linkerArgs,

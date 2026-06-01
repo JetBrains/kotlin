@@ -21,6 +21,7 @@ internal data class LinkerPhaseInput(
         val outputFiles: OutputFiles,
         val tempFiles: TempFiles,
         val resolvedCacheBinaries: ResolvedCacheBinaries,
+        val extraLinkerFlags: List<String> = emptyList()
 )
 
 internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, LinkerPhaseInput>(
@@ -36,7 +37,8 @@ internal val LinkerPhase = createSimpleNamedCompilerPhase<NativeBackendPhaseCont
             input.outputFile,
             input.objectFiles,
             input.dependenciesTrackingResult,
-            input.resolvedCacheBinaries
+            input.resolvedCacheBinaries,
+            input.extraLinkerFlags
     )
     runLinkerCommands(context, commands, cachingInvolved = !input.resolvedCacheBinaries.isEmpty())
 }
