@@ -102,7 +102,7 @@ open class IncrementalFirJvmCompilerRunner(
         @OptIn(PipelineArtifact.CliPipelineInternals::class)
         val incrementalCompilationConfiguration = baseCompilationConfiguration.withCompilerConfiguration(
             baseCompilationConfiguration.configuration.copy().apply {
-                // JVMConfigurationKeys.MODULES and JVMConfigurationKeys.MODULE_CHUNK seems to be unrelevant
+                // JVMConfigurationKeys.MODULES and JVMConfigurationKeys.MODULE_CHUNK seem to be unrelevant
                 // and generally not used in the new pipeline
                 val hmppCliModuleStructure = get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
                 val kotlinContentRoots = sourcesToCompile.map {
