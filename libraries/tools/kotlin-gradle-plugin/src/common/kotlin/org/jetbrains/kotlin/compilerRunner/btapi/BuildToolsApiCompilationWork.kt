@@ -160,7 +160,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
         val printingLogger =
             CapturingDelegatingKotlinLogger(
-                getTaskLogger(taskPath, null, BuildToolsApiCompilationWork::class.java.simpleName, true),
+                getTaskLogger(taskPath, "${workArguments.taskPath} ", BuildToolsApiCompilationWork::class.java.simpleName, true),
                 workArguments.reportingSettings.buildReportMode,
             )
         val log: KotlinLogger = CompositeKotlinLogger(

@@ -603,7 +603,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
         shouldInclude: Iterable<Pair<String, String>> = emptyList(),
         shouldNotInclude: Iterable<Pair<String, String>> = emptyList(),
     ) {
-        val compilerArgsLine = output.lines().single { "$taskPath Kotlin compiler args:" in it }
+        val compilerArgsLine = output.lines().single { taskPath in it && "Kotlin compiler args:" in it }
         val classpathItems = compilerArgsLine.substringAfter("-classpath").substringBefore(" -").split(File.pathSeparator)
 
         val actualClasspath = classpathItems.joinToString("\n")
