@@ -151,12 +151,12 @@ open class IncrementalFirJvmCompilerRunner(
             return ExitCode.COMPILATION_ERROR to sourcesToCompile
         } catch (_: CompilationCanceledException) {
             collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
-            return ExitCode.OK to emptyList()
+            return ExitCode.OK to sourcesToCompile
         } catch (e: RuntimeException) {
             val cause = e.cause
             if (cause is CompilationCanceledException) {
                 collector.report(CompilerMessageSeverity.INFO, "Compilation was canceled", null)
-                return ExitCode.OK to emptyList()
+                return ExitCode.OK to sourcesToCompile
             } else {
                 throw e
             }
