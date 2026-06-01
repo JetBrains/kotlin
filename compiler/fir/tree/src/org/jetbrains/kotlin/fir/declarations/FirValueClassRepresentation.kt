@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.BasicValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
 import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.interpretAsInlineClassRepresentationOrNull
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -49,6 +50,7 @@ val FirRegularClassSymbol.valueClassRepresentation: ValueClassRepresentation<Con
  *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
  *         parameter; otherwise, `null`.
  */
+@ValueClassBackendAgnosticApi
 fun FirRegularClassSymbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic: Boolean): InlineClassRepresentation<ConeRigidType>? =
     valueClassRepresentation?.interpretAsInlineClassRepresentationOrNull(treatFullValueClassesWithOneFieldAsBasic)
 

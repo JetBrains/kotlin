@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.jvm.functionByName
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.*
@@ -631,6 +632,7 @@ open class SerializerIrGenerator(
 
 
     companion object {
+        @OptIn(ValueClassBackendAgnosticApi::class)
         fun generate(
             irClass: IrClass,
             context: SerializationPluginContext,
