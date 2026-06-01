@@ -26,6 +26,20 @@ import kotlin.test.assertEquals
 
 class CocoapodsUnitTests {
     @Test
+    fun `migration warning is reported when cocoapods plugin is applied`() {
+        buildProjectWithCocoapods {
+            assertContainsDiagnostic(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested)
+        }
+    }
+
+    @Test
+    fun `migration warning is not reported when cocoapods plugin is not applied`() {
+        buildProjectWithMPP {
+            assertNoDiagnostics(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested)
+        }
+    }
+
+    @Test
     fun `warning is reported on non-mac machines`() {
         Assumptions.assumeTrue(!HostManager.hostIsMac)
 

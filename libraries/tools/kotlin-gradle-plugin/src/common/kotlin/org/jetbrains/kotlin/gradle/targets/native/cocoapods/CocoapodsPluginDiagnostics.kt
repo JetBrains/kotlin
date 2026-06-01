@@ -80,6 +80,22 @@ internal object CocoapodsPluginDiagnostics {
         }
     }
 
+    object SwiftPMMigrationSuggested : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Deprecation) {
+        operator fun invoke() = build {
+            title("CocoaPods Plugin: Consider Migrating to Swift Package Manager")
+                .description {
+                    "The Kotlin CocoaPods Gradle plugin is in maintenance mode. " +
+                            "Swift Package Manager (SPM) is the recommended way to integrate Apple frameworks into your Kotlin Multiplatform project."
+                }
+                .solution {
+                    "Migrate to the Swift Package Manager integration"
+                }
+                .documentationLink(URI("https://kotl.in/cocoapods-to-swiftpm-migration")) { url ->
+                    "For migration instructions, see: $url"
+                }
+        }
+    }
+
     object EmbedAndSignUsedWithPodDependencies : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke() = build {
             title("Incompatible 'embedAndSign' Task with CocoaPods Dependencies")
