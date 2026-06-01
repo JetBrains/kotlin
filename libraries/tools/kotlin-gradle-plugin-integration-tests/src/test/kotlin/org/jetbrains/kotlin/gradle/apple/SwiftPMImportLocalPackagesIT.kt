@@ -790,8 +790,6 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                         it.binaries.framework {
                             baseName = "Shared"
                             isStatic = false
-                            // WA for KT-86593 SwiftPM import: dynamic framework build fails on linkage if both ios simulators are used
-                            linkerOpts("-framework", "KotlinMultiplatformLinkedPackageDylib")
                         }
                     }
 
