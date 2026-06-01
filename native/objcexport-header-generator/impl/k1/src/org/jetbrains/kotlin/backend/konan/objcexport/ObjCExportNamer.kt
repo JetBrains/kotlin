@@ -393,7 +393,7 @@ class ObjCExportNamerImpl(
             "retain", "release", "autorelease",
             "class", "superclass",
             "hash"
-        )
+        ) + objCMacroDefinitions
 
         override fun reserved(name: String) = name in reserved
 
@@ -1083,14 +1083,8 @@ private class ObjCName(
 
     fun asString(forSwift: Boolean): String = swiftName.takeIf { forSwift } ?: objCName ?: kotlinName
 
-    fun asIdentifier(forSwift: Boolean, default: (String) -> String = { it.toIdentifier() }): String {
-        val identifier = swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
-        return if (objCMacroDefinitions.contains(identifier)) {
-            identifier + "_"
-        } else {
-            identifier
-        }
-    }
+    fun asIdentifier(forSwift: Boolean, default: (String) -> String = { it.toIdentifier() }): String =
+        swiftName.takeIf { forSwift } ?: objCName ?: default(kotlinName)
 }
 
 class ObjCEnumEntryName(
