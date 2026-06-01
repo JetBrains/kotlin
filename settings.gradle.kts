@@ -608,7 +608,8 @@ include(
     ":compiler:build-tools:kotlin-build-tools-jdk-utils",
     ":compiler:build-tools:kotlin-build-tools-generator",
     ":compiler:build-tools:util-kotlinpoet",
-    ":compiler:build-tools:kotlin-build-tools-cri-impl"
+    ":compiler:build-tools:kotlin-build-tools-cri-impl",
+    ":compiler:build-tools:kotlin-build-tools-version-coverage-check"
 )
 
 include(
