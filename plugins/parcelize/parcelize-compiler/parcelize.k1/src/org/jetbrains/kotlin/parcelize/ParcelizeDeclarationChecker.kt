@@ -272,6 +272,7 @@ open class ParcelizeDeclarationChecker(
         if (type.hasAnyAnnotation(ParcelizeNames.RAW_VALUE_ANNOTATION_FQ_NAMES)
             || type.hasAnyAnnotation(ParcelizeNames.WRITE_WITH_FQ_NAMES)
             || type in customParcelerTypes
+            || TypeUtils.makeNotNullable(type) in customParcelerTypes
             || type.isBuiltinFunctionalTypeOrSubtype
         ) return emptySet()
 

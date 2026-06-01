@@ -112,7 +112,11 @@ class FirParcelizePropertyChecker(private val parcelizeAnnotations: List<ClassId
         inDataClass: Boolean = false
     ): Set<ConeKotlinType> {
         val session = context.session
-        if (type.hasParcelerAnnotation(session) || type in customParcelerTypes) {
+        if (
+            type.hasParcelerAnnotation(session) ||
+            type in customParcelerTypes ||
+            (type.isMarkedNullable && type.withNullability(nullable = false, session.typeContext) in customParcelerTypes)
+        ) {
             return emptySet()
         }
 

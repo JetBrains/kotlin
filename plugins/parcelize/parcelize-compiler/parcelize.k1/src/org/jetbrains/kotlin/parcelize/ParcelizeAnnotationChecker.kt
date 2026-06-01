@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.resolve.calls.checkers.CallCheckerContext
 import org.jetbrains.kotlin.resolve.calls.model.ResolvedCall
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isSubtypeOf
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.types.typeUtil.supertypes
@@ -165,7 +166,8 @@ open class ParcelizeAnnotationChecker(val parcelizeAnnotations : List<FqName>) :
         val parcelerSuperType = parcelerClass.defaultType.supertypes().firstOrNull { it.fqName() == PARCELER_FQN } ?: return
         val expectedType = parcelerSuperType.arguments.singleOrNull()?.type ?: return
 
-        if (!actualType.isSubtypeOf(expectedType)) {
+        val nonNullableActualType = if (actualType.isMarkedNullable) TypeUtils.makeNotNullable(actualType) else actualType
+        if (!nonNullableActualType.isSubtypeOf(expectedType)) {
             context.trace.report(ErrorsParcelize.PARCELER_TYPE_INCOMPATIBLE.on(reportElement(), expectedType, actualType))
         }
     }

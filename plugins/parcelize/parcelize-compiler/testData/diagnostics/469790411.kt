@@ -16,13 +16,13 @@ object MyClassParceler : Parceler<MyClass> {
 @TypeParceler<MyClass, MyClassParceler>
 data class MyParcelableThing1(
     val p1: MyClass,
-    val p2: <!PARCELABLE_TYPE_NOT_SUPPORTED!>MyClass?<!>,
+    val p2: MyClass?,
 ) : Parcelable
 
 @Parcelize
 data class MyParcelableThing2(
     val p1: @WriteWith<MyClassParceler> MyClass,
-    val p2: @WriteWith<<!PARCELER_TYPE_INCOMPATIBLE!>MyClassParceler<!>> MyClass?,
+    val p2: @WriteWith<MyClassParceler> MyClass?,
     val p3: @WriteWith<MyClassParceler> MySubClass,
-    val p4: @WriteWith<<!PARCELER_TYPE_INCOMPATIBLE!>MyClassParceler<!>> MySubClass?,
+    val p4: @WriteWith<MyClassParceler> MySubClass?,
 ) : Parcelable
