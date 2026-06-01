@@ -63,7 +63,6 @@ Compiler:
  - compiler/util-klib-abi
  - compiler/util-klib-metadata
  - core
- - plugins/plugin-sandbox
 
 Wasm:
  - wasm
@@ -126,6 +125,9 @@ CompilerPlugins:
  - plugins/sam-with-receiver
  - plugins/scripting
  - plugins/test-plugins
+
+Compiler, CompilerPlugins:
+ - plugins/plugin-sandbox
 
 Gradle:
  - libraries/tools/gradle

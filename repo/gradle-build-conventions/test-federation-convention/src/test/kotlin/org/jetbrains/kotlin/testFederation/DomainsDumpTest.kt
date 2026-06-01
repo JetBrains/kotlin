@@ -35,8 +35,8 @@ class DomainsDumpTest {
             appendLine()
 
             conflatedTree.withClosure { it.children }.filter { it.children.isEmpty() }
-                .groupBy { it.domain }.entries.sortedBy { it.key }.forEach { (subsystem, nodes) ->
-                    appendLine("${subsystem.name}:")
+                .groupBy { it.domains }.entries.sortedBy { it.key.sumOf { it.ordinal } }.forEach { (domains, nodes) ->
+                    appendLine("${domains.joinToString(", ") { it.name }}:")
                     nodes.toList().sortedBy { it.path.value.invariantSeparatorsPathString }.forEach { node ->
                         appendLine(" - ${node.path.value.invariantSeparatorsPathString}")
                     }
@@ -62,20 +62,20 @@ class DomainsDumpTest {
 
     private data class Node(
         val path: RepositoryPath,
-        val domain: Domain,
+        val domains: List<Domain>,
         val children: List<Node>,
     )
 
     private fun Path.toNode(): Node? {
         val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this))
-        val domain = repositoryPath.domain
+        val domains = repositoryPath.domains
         val children = if (isDirectory()) {
             listDirectoryEntries()
                 .filter { child -> !child.isGitIgnored() }.sorted()
                 .mapNotNull { child -> child.toNode() }
                 .ifEmpty { return null }
         } else emptyList()
-        return Node(repositoryPath, domain, children)
+        return Node(repositoryPath, domains, children)
     }
 
     private fun Node.conflate(): Node {
@@ -86,7 +86,7 @@ class DomainsDumpTest {
             return copy(children = emptyList())
         }
 
-        val newChildren = if (conflatedChildren.any { child -> child.domain != domain || child.children.isNotEmpty() }) conflatedChildren
+        val newChildren = if (conflatedChildren.any { child -> child.domains != domains || child.children.isNotEmpty() }) conflatedChildren
         else emptyList()
 
         return copy(children = newChildren)

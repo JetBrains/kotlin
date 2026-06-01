@@ -22,15 +22,13 @@ enum class Domain {
 }
 
 internal object CompilerDomainInfo : DomainInfo {
-    override val home = "compiler"
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "plugins/plugin-sandbox/**")
-    override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(UnknownDomainInfo, CoreLibsDomainInfo) }
+    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "plugins/plugin-sandbox/**", "compiler/psi/parser/**")
+    override val exclude: List<String> = listOf("compiler/psi/**")
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
 
 internal object WasmDomainInfo : DomainInfo {
-    override val home = "wasm"
     override val domain = Domain.Wasm
     override val include: List<String> = listOf("wasm/**")
     override val exclude: List<String> = listOf()
@@ -38,7 +36,6 @@ internal object WasmDomainInfo : DomainInfo {
 }
 
 internal object JsDomainInfo : DomainInfo {
-    override val home = "js"
     override val domain = Domain.Js
     override val include: List<String> = listOf("js/**")
     override val exclude: List<String> = listOf()
@@ -46,15 +43,13 @@ internal object JsDomainInfo : DomainInfo {
 }
 
 internal object NativeDomainInfo : DomainInfo {
-    override val home = "kotlin-native"
     override val domain = Domain.Native
     override val include: List<String> = listOf("native/**", "kotlin-native/**")
-    override val exclude: List<String> = listOf()
+    override val exclude: List<String> = listOf("native/swift/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object CoreLibsDomainInfo : DomainInfo {
-    override val home = "stdlib"
     override val domain = Domain.CoreLibs
     override val include: List<String> = listOf("libraries/stdlib/**", "libraries/reflect/**", "libraries/kotlin.test/**")
     override val exclude: List<String> = listOf()
@@ -62,7 +57,6 @@ internal object CoreLibsDomainInfo : DomainInfo {
 }
 
 internal object AnalysisApiDomainInfo : DomainInfo {
-    override val home = "analysis"
     override val domain = Domain.AnalysisApi
     override val include: List<String> = listOf("analysis/**", "compiler/psi/**")
     override val exclude: List<String> = listOf("compiler/psi/parser/**")
@@ -70,7 +64,6 @@ internal object AnalysisApiDomainInfo : DomainInfo {
 }
 
 internal object SwiftExportDomainInfo : DomainInfo {
-    override val home = "native/swift"
     override val domain = Domain.SwiftExport
     override val include: List<String> = listOf("native/swift/**")
     override val exclude: List<String> = listOf()
@@ -78,7 +71,6 @@ internal object SwiftExportDomainInfo : DomainInfo {
 }
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
-    override val home = "plugins"
     override val domain = Domain.CompilerPlugins
     override val include: List<String> = listOf("plugins/**")
     override val exclude: List<String> = listOf()
@@ -86,7 +78,6 @@ internal object CompilerPluginsDomainInfo : DomainInfo {
 }
 
 internal object GradleDomainInfo : DomainInfo {
-    override val home = "libraries/tools/kotlin-gradle-plugin"
     override val domain = Domain.Gradle
     override val include: List<String> = listOf("libraries/tools/*gradle*/**")
     override val exclude: List<String> = listOf()
@@ -94,7 +85,6 @@ internal object GradleDomainInfo : DomainInfo {
 }
 
 internal object MavenDomainInfo : DomainInfo {
-    override val home = "libraries/tools/kotlin-maven-plugin"
     override val domain = Domain.Maven
     override val include: List<String> = listOf("libraries/tools/*maven*/**")
     override val exclude: List<String> = listOf()
@@ -102,7 +92,6 @@ internal object MavenDomainInfo : DomainInfo {
 }
 
 internal object IntelliJDomainInfo : DomainInfo {
-    override val home = "idea"
     override val domain = Domain.IntelliJ
     override val include: List<String> = listOf()
     override val exclude: List<String> = listOf()
@@ -110,7 +99,6 @@ internal object IntelliJDomainInfo : DomainInfo {
 }
 
 internal object BuildInfrastructureDomainInfo : DomainInfo {
-    override val home = "repo"
     override val domain = Domain.BuildInfrastructure
     override val include: List<String> = listOf("repo/**", "gradle/**", "build.gradle.kts", "settings.gradle.kts", "gradle.properties", "scripts/**", ".space/**", ".idea/**")
     override val exclude: List<String> = listOf()
@@ -118,9 +106,8 @@ internal object BuildInfrastructureDomainInfo : DomainInfo {
 }
 
 internal object UnknownDomainInfo : DomainInfo {
-    override val home = "."
     override val domain = Domain.Unknown
-    override val include: List<String> = listOf("**/*")
+    override val include: List<String> = listOf()
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
 }

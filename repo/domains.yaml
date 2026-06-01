@@ -1,25 +1,24 @@
 $schema: domains.schema.json
 
 Compiler:
-  home: "compiler"
   include:
     - "compiler/**"
     - "core/**"
     - "build-common/**"
     - "plugins/plugin-sandbox/**"
+    - "compiler/psi/parser/**"
+  exclude:
+    - "compiler/psi/**"
   fullyAffectedBy:
-    - Unknown
     - CoreLibs
 
 Wasm:
-  home: "wasm"
   include:
     - "wasm/**"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 Js:
-  home: "js"
   include:
     - "js/**"
   fullyAffectedBy:
@@ -27,23 +26,22 @@ Js:
     - CoreLibs
 
 Native:
-  home: "kotlin-native"
   include:
     - "native/**"
     - "kotlin-native/**"
+  exclude:
+    - "native/swift/**"
   fullyAffectedBy:
     - Compiler
     - CoreLibs
 
 CoreLibs:
-  home: "stdlib"
   include:
     - "libraries/stdlib/**"
     - "libraries/reflect/**"
     - "libraries/kotlin.test/**"
 
 AnalysisApi:
-  home: "analysis"
   include:
     - "analysis/**"
     - "compiler/psi/**"
@@ -53,14 +51,12 @@ AnalysisApi:
     - Compiler
 
 SwiftExport:
-  home: "native/swift"
   include:
     - "native/swift/**"
   fullyAffectedBy:
     - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
-  home: "plugins"
   include:
     - "plugins/**"
   fullyAffectedBy:
@@ -68,27 +64,23 @@ CompilerPlugins:
     - Unknown
 
 Gradle:
-  home: "libraries/tools/kotlin-gradle-plugin"
   include:
     - "libraries/tools/*gradle*/**"
 
 Maven:
-  home: "libraries/tools/kotlin-maven-plugin"
   include:
     - "libraries/tools/*maven*/**"
 
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
-  home: "idea"
-  include: []
+  include: [ ]
   fullyAffectedBy:
     - Compiler
     - AnalysisApi
     - CoreLibs
 
 BuildInfrastructure:
-  home: "repo"
   include:
     - "repo/**"
     - "gradle/**"
@@ -100,8 +92,7 @@ BuildInfrastructure:
     - ".idea/**"
 
 Unknown:
-  home: "."
-  include:
-    - "**/*"
+  # Files not matching other domains will be sorted into 'Unknown' by default.
+  include: [ ]
   fullyAffectedBy:
     - Compiler

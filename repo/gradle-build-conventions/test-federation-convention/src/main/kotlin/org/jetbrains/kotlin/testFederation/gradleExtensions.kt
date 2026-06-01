@@ -22,8 +22,8 @@ internal val Project.testFederationEnabled: Boolean
 /**
  * Returns the [Domain] the current project belongs to
  */
-internal val Project.testFederationDomain: Provider<Domain>
-    get() = project.provider { repositoryPath(this.projectDir.toPath()).domain }
+internal val Project.testFederationDomain: Provider<List<Domain>>
+    get() = project.provider { repositoryPath(this.projectDir.toPath()).domains }
 
 internal val Project.testFederationMode: Provider<TestFederationMode>
     get() {
@@ -35,7 +35,7 @@ internal val Project.testFederationMode: Provider<TestFederationMode>
             .orElse(providers.environmentVariable(TEST_FEDERATION_MODE_ENV_KEY)))
             .map(TestFederationMode::valueOf)
             .orElse(project.testFederationAffectedDomains.zip(testFederationDomain) { affectedTestSystems, domain ->
-                if (domain in affectedTestSystems) TestFederationMode.Full
+                if (domain.intersect(affectedTestSystems).isNotEmpty()) TestFederationMode.Full
                 else TestFederationMode.Smoke
             })
     }

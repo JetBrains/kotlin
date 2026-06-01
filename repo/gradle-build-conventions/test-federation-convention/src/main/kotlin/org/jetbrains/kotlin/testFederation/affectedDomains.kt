@@ -10,6 +10,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
+import org.jetbrains.kotlin.testFederation.withAffectedDependencies
 import org.jetbrains.kotlin.tooling.core.withLinearClosure
 import java.io.File
 import kotlin.io.path.Path
@@ -53,7 +54,7 @@ internal abstract class AffectedDomainsBuildService : BuildService<AffectedDomai
 }
 
 private fun inferAffectedDomains(changes: List<RepositoryPath>, commitMessages: List<String>): Set<Domain> {
-    return changes.map { it.domain }
+    return changes.flatMap { it.domains }
         .plus(resolveAffectedDomainsFromCommitMessages(commitMessages))
         .withAffectedDependencies()
 }

@@ -26,7 +26,6 @@ e.g., the `Native` domain could be defined as:
 
 ```yaml
 Native:
-  home: "kotlin-native"
   include:
     - "native/**"
     - "kotlin-native/**"
@@ -34,7 +33,6 @@ Native:
     - Compiler
 ```
 
-The domain is assigned the 'kotlin-native' directory as its home.
 Files belonging to this 'Native' domain are included using the `native/**` and `kotlin-native/**` globs.
 A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
 
