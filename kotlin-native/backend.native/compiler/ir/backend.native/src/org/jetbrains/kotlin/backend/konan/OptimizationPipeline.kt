@@ -185,7 +185,7 @@ internal fun createLTOFinalPipelineConfig(
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE && !config.hotReloadEnabled
+    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params
@@ -214,7 +214,6 @@ internal fun createLTOFinalPipelineConfig(
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
-            hotReloadEnabled = config.hotReloadEnabled
     )
 }
 
@@ -333,9 +332,8 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        when {
-            config.makeDeclarationsHidden -> makeVisibilityHiddenLikeLlvmInternalizePass(module)
-            config.hotReloadEnabled -> module.setSymbolsVisibilityToDefault()
+        if (config.makeDeclarationsHidden) {
+            makeVisibilityHiddenLikeLlvmInternalizePass(module)
         }
     }
 }
@@ -352,7 +350,7 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
     override val passes =
             if (config.ltoPasses != null) listOf(config.ltoPasses)
             else buildList {
-                if (!config.hotReloadEnabled && config.internalize) {
+                if (config.internalize) {
                     add("internalize")
                 }
 
