@@ -83,7 +83,7 @@ fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
     is JvmInlineMultiFieldValueClassRepresentation -> null
     is FullValueClassRepresentation if !treatFullValueClassesWithOneFieldAsBasic -> null
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
-        ?.let { (name, type) -> InlineClassRepresentation(name, type) }
+        ?.let { [name, type] -> InlineClassRepresentation(name, type) }
 }
 
 @RequiresOptIn("Use backend-specific APIs instead of this one. See usages for examples.")
