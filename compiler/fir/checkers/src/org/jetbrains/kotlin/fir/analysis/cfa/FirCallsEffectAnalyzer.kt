@@ -115,6 +115,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                     is VariableAssignmentNode -> {
                         node.fir.rValue.mark()
                     }
+                    is JumpNode -> {
+                        (node.fir as? FirReturnExpression)?.result?.mark()
+                    }
                     is FunctionCallExitNode -> {
                         node.firAsFunctionCallOrNull?.forEachArgument { arg, range ->
                             if (!isValidScope || range == null) {
