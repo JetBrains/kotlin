@@ -140,7 +140,7 @@ internal val FirCallableSymbol<*>.isExtensionMember: Boolean
 fun FirTypeRef.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = coneType.needsMultiFieldValueClassFlattening(session)
 
 fun ConeKotlinType.needsMultiFieldValueClassFlattening(session: FirSession): Boolean = with(session.typeContext) {
-    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType(session).isMarkedNullable
+    typeConstructor().isMultiFieldValueClass() && !fullyExpandedType().isMarkedNullable
 }
 
 val FirCallableSymbol<*>.hasExplicitReturnType: Boolean

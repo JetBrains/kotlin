@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.expressions.*
@@ -34,8 +35,9 @@ import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.fir.expressions.withNewTypeSince as coneWithNewTypeSince
 
-interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
-    val session: FirSession
+interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext,
+    SessionHolder {
+    override val session: FirSession
 
     override fun TypeConstructorMarker.isIntegerLiteralTypeConstructor(): Boolean {
         return this is ConeIntegerLiteralType
@@ -81,7 +83,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.asRigidType(): ConeRigidType? {
         require(this is ConeKotlinType)
         return when (this) {
-            is ConeClassLikeType -> fullyExpandedType(session)
+            is ConeClassLikeType -> fullyExpandedType()
             is ConeRigidType -> this
             is ConeFlexibleType -> null
         }
@@ -130,12 +132,12 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
         require(this is ConeKotlinType)
-        return fullyExpandedType(session).isMarkedNullable
+        return fullyExpandedType().isMarkedNullable
     }
 
     override fun RigidTypeMarker.withNullability(nullable: Boolean): ConeRigidType {
         require(this is ConeKotlinType)
-        return fullyExpandedType(session).withNullability(nullable, session.typeContext) as ConeRigidType
+        return fullyExpandedType().withNullability(nullable, session.typeContext) as ConeRigidType
     }
 
     override fun RigidTypeMarker.typeConstructor(): ConeTypeConstructorMarker {
@@ -501,7 +503,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             return ParameterNameTypeAttribute.KEY in attributes
         }
         return customAnnotations.any {
-            it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
+            it.resolvedType.fullyExpandedType().classId?.asSingleFqName() == fqName
         }
     }
 
@@ -509,7 +511,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         require(this is ConeKotlinType)
         // We don't check for compiler attributes because all of them doesn't have parameters
         val annotationCall = customAnnotations.firstOrNull {
-            it.resolvedType.fullyExpandedType(session).classId?.asSingleFqName() == fqName
+            it.resolvedType.fullyExpandedType().classId?.asSingleFqName() == fqName
         } ?: return null
 
         if (annotationCall is FirAnnotationCall) {
