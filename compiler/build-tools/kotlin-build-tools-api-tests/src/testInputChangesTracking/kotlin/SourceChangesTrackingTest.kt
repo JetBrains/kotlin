@@ -11,10 +11,13 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogDoesNotContainPatterns
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoCompiledSources
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.test.TestMetadata
@@ -41,6 +44,52 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
                 assertCompiledSources("bar.kt")
                 assertRemovedOutputs("SecretKt.class")
             }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output when an externally-tracked source file is deleted")
+    @TestMetadata("source-file-modification")
+    fun testSourceFileDeletedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            // the internally-tracked deletion path is already covered by `testConsequentBuilds`.
+            val module = module("source-file-modification")
+
+            module.deleteFile("Dummy.kt")
+
+            module.compile {
+                assertNoCompiledSources()
+                assertRemovedOutputs("Dummy.class")
+            }
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output and produces a new one when an internally-tracked class is renamed")
+    @TestMetadata("source-file-modification")
+    fun testClassRenamedInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("source-file-modification").renameClassAndAssertOutputs()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC removes the stale output and produces a new one when an externally-tracked class is renamed")
+    @TestMetadata("source-file-modification")
+    fun testClassRenamedExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("source-file-modification").renameClassAndAssertOutputs()
+        }
+    }
+
+    private fun ScenarioModule.renameClassAndAssertOutputs() {
+        changeFile("Dummy.kt") { it.replace("Dummy", "ForDummies") }
+
+        compile {
+            assertCompiledSources("Dummy.kt")
+            // `Dummy.class` is intentionally absent: IC must drop the stale output of the renamed class while
+            // producing `ForDummies.class` and leaving the untouched `Stay.class` in place.
+            assertOutputs("Stay.class", "ForDummies.class")
         }
     }
 

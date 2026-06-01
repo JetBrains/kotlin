@@ -8,6 +8,11 @@ import java.nio.file.Path
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+/**
+ * The incremental-compilation variants of these scenarios (stale class-file removal on source delete/rename) are
+ * build-system-agnostic and live in the Build Tools API tests as `SourceFileModificationTrackingTest`.
+ * What remains here is Gradle-specific: non-incremental output cleanup, task up-to-date checks, and task wiring.
+ */
 @DisplayName("Source file modifications")
 @JvmGradlePluginTests
 class SourceFileIsModifiedIT : KGPBaseTest() {
@@ -16,12 +21,6 @@ class SourceFileIsModifiedIT : KGPBaseTest() {
     @GradleTest
     fun testClassIsRemovedNonIC(gradleVersion: GradleVersion) {
         doTestClassIsRemoved(gradleVersion, defaultBuildOptions)
-    }
-
-    @DisplayName("Removed in incremental compilation")
-    @GradleTest
-    fun testClassIsRemovedIC(gradleVersion: GradleVersion) {
-        doTestClassIsRemoved(gradleVersion, defaultBuildOptions.copy(incremental = true))
     }
 
     private fun doTestClassIsRemoved(
@@ -37,12 +36,6 @@ class SourceFileIsModifiedIT : KGPBaseTest() {
     @GradleTest
     fun testClassIsRenamedNonIC(gradleVersion: GradleVersion) {
         doTestClassIsRenamed(gradleVersion, defaultBuildOptions)
-    }
-
-    @DisplayName("Renamed in incremental compilation")
-    @GradleTest
-    fun testClassIsRenamedIC(gradleVersion: GradleVersion) {
-        doTestClassIsRenamed(gradleVersion, defaultBuildOptions.copy(incremental = true))
     }
 
     private fun doTestClassIsRenamed(
