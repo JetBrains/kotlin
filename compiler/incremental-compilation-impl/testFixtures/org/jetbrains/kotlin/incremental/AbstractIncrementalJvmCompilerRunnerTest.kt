@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime
 import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.incremental.multiproject.EmptyModulesApiHistory
 import org.jetbrains.kotlin.incremental.utils.*
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import java.io.ByteArrayOutputStream
@@ -73,7 +72,9 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
         val rootsWalk = sourceRoots.asSequence().flatMap { it.walk() }
         val files = rootsWalk.filter(File::isFile)
         val sourceFiles = files.filter { it.extension.lowercase() in allExtensions }.toList()
-        val buildHistoryFile = File(cachesDir, "build-history.bin")
+        // Using workingDir here simulates externally managed caches, so IC runner will not wipe it on non-incremental build
+        val classpathSnapshotDir = File(workingDir, "classpathSnapshot").apply { mkdirs() }
+        val classpathChanges = makeEmptyClasspathChangesForSingleModuleTests(classpathSnapshotDir)
         args.javaSourceRoots = sourceRoots.map { it.absolutePath }.toTypedArray()
         args.noStdlib = true
         val buildReporter = TestBuildReporter(testICReporter = reporter, buildMetricsReporter = DoNothingBuildMetricsReporter)
@@ -83,13 +84,11 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
 
             val compiler =
                 if (k2Mode && args.useFirIC && args.useFirLT /* TODO by @Ilya.Chernikov: move LT check into runner */) {
-                    val snapshotsDir = File(workingDir, "classpath-snapshots").apply { mkdirs() }
-
                     IncrementalFirJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
                         outputDirs = null,
-                        makeEmptyClasspathChangesForSingleModuleTests(snapshotsDir),
+                        classpathChanges,
                         kotlinExtensions,
                         lookupTrackerDelegate = testLookupTracker
                     )
@@ -98,9 +97,8 @@ abstract class AbstractIncrementalJvmCompilerRunnerTest : AbstractIncrementalCom
                     IncrementalJvmCompilerTestRunner(
                         cachesDir,
                         buildReporter,
-                        buildHistoryFile = buildHistoryFile,
+                        classpathChanges,
                         outputDirs = null,
-                        modulesApiHistory = EmptyModulesApiHistory,
                         kotlinSourceFilesExtensions = kotlinExtensions,
                         icFeatures = IncrementalCompilationFeatures(
                             withAbiSnapshot = false,
