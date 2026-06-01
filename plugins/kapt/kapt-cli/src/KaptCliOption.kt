@@ -201,6 +201,14 @@ enum class KaptCliOption(
         cliToolOption = CliToolOption("-Kapt-strip-metadata", FLAG)
     ),
 
+    STUB_GENERATION_SCHEME_OPTION(
+        "stubGenerationScheme",
+        "<direct|jtree>",
+        "Stub generation scheme: 'jtree' (default) is the historical scheme that uses javac AST; " +
+                "'direct' is a new experimental scheme that generates Java text directly.",
+        cliToolOption = CliToolOption("-Kapt-stub-generation-scheme", VALUE)
+    ),
+
     DETECT_MEMORY_LEAKS_OPTION("detectMemoryLeaks", "true | false", "Detect memory leaks in annotation processors"),
     INCLUDE_COMPILE_CLASSPATH(
         "includeCompileClasspath",

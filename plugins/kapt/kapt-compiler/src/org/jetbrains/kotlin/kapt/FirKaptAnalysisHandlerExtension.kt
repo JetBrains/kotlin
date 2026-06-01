@@ -266,10 +266,10 @@ open class FirKaptAnalysisHandlerExtension(
         val sourceFiles = mutableListOf<String>()
 
         for (kaptStub in stubs) {
-            val stub = kaptStub.file
-            val className = (stub.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
+            val stubFile = kaptStub.file
+            val className = (stubFile.defs.first { it is JCTree.JCClassDecl } as JCTree.JCClassDecl).simpleName.toString()
 
-            val packageName = stub.getPackageNameJava9Aware()?.toString() ?: ""
+            val packageName = stubFile.getPackageNameJava9Aware()?.toString() ?: ""
             val packageDir =
                 if (packageName.isEmpty()) options.stubsOutputDir else File(options.stubsOutputDir, packageName.replace('.', '/'))
             packageDir.mkdirs()
@@ -296,7 +296,12 @@ open class FirKaptAnalysisHandlerExtension(
             }
 
             reportStubsOutputForIC(sourceFile)
-            sourceFile.writeText(stub.prettyPrint(kaptContext.context))
+            sourceFile.writeText(
+                if (options.stubGenerationScheme == StubGenerationScheme.DIRECT)
+                    kaptStub.content
+                else
+                    stubFile.prettyPrint(kaptContext.context)
+            )
 
             kaptStub.writeMetadataIfNeeded(forSource = sourceFile, ::reportStubsOutputForIC)
         }

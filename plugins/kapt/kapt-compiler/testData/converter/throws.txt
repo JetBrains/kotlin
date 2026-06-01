@@ -1,0 +1,42 @@
+/**
+ * public final class ThrowsExample : kotlin/Any {
+ *
+ *   // signature: <init>()V
+ *   public constructor()
+ *
+ *   // signature: genericThrows(Ljava/lang/Object;)Ljava/lang/Object;
+ *   public final fun <T#0 (* T *)> genericThrows(value: T#0): T#0
+ *
+ *   // signature: throwsFromFunction()V
+ *   public final fun throwsFromFunction(): kotlin/Unit
+ *
+ *   // getter: getThrowsFromGetter()Ljava/lang/String;
+ *   public final val throwsFromGetter: kotlin/String
+ *     public final (* non-default *) get
+ *
+ *   // module name: main
+ * }
+ */
+@kotlin.Metadata()
+public final class ThrowsExample {
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public ThrowsExample() throws java.io.IOException {
+        super();
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class, java.sql.SQLException.class})
+    public final void throwsFromFunction() throws java.io.IOException, java.sql.SQLException {
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.EOFException.class})
+    @org.jetbrains.annotations.NotNull()
+    public final java.lang.String getThrowsFromGetter() throws java.io.EOFException {
+        return null;
+    }
+
+    @kotlin.jvm.Throws(exceptionClasses = {java.io.IOException.class})
+    public final <T extends java.lang.Object>T genericThrows(T value) throws java.io.IOException {
+        return null;
+    }
+}

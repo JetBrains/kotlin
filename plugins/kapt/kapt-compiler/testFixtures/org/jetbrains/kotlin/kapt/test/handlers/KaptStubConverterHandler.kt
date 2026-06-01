@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
+import java.io.File
 import java.util.*
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
@@ -29,6 +30,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
         val kaptContext = info.kaptContext
 
+        // TODO decide whether use JCTree here. Probably it is OK, as generated stubs are parsed here
         val convertedFiles = convert(module, kaptContext, generateNonExistentClass)
 
         val actualRaw = convertedFiles
@@ -41,7 +43,16 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
         checkErrors(module, kaptContext, actual)
 
-        assertions.assertEqualsToFile(module.files.first().originalFile.withExtension("txt"), actual)
+        assertions.assertEqualsToFile(module.getExpectedStubsFile(kaptContext), actual)
+    }
+
+    private fun TestModule.getExpectedStubsFile(kaptContext: KaptContextForStubGeneration): File {
+        val sourceFile = files.first().originalFile
+        val commonExpectationFile = sourceFile.withExtension("txt")
+        return if (commonExpectationFile.exists())
+            commonExpectationFile
+        else
+            sourceFile.withExtension("${kaptContext.options.stubGenerationScheme.stringValue}.txt")
     }
 
     private fun KaptStubConverterHandler.checkErrors(

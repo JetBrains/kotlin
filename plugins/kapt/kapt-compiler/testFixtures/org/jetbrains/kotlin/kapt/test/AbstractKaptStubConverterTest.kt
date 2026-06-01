@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.kapt.test
 
+import org.jetbrains.kotlin.kapt.base.StubGenerationScheme
 import org.jetbrains.kotlin.kapt.base.util.doOpenInternalPackagesIfRequired
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.MAP_DIAGNOSTIC_LOCATIONS
+import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.STUB_GENERATION_SCHEME
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
@@ -19,7 +21,9 @@ import org.jetbrains.kotlin.test.services.CompilationStage
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 
-open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
+abstract class AbstractKaptStubConverterTest(
+    private val stubGenerationScheme: StubGenerationScheme,
+) : AbstractKotlinCompilerTest() {
     init {
         doOpenInternalPackagesIfRequired()
     }
@@ -34,6 +38,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
         defaultDirectives {
             +MAP_DIAGNOSTIC_LOCATIONS
             +WITH_STDLIB
+            STUB_GENERATION_SCHEME with stubGenerationScheme.stringValue
         }
 
         useConfigurators(
@@ -50,3 +55,7 @@ open class AbstractKaptStubConverterTest : AbstractKotlinCompilerTest() {
         useFailureSuppressors(::BlackBoxCodegenSuppressor)
     }
 }
+
+open class AbstractKaptStubConverterJTreeTest : AbstractKaptStubConverterTest(StubGenerationScheme.JTREE)
+
+open class AbstractKaptStubConverterDirectTest : AbstractKaptStubConverterTest(StubGenerationScheme.DIRECT)

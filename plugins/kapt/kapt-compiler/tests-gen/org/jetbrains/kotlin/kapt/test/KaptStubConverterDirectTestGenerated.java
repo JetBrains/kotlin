@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("plugins/kapt/kapt-compiler/testData/converter")
 @TestDataPath("$PROJECT_ROOT")
-public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTest {
+public class KaptStubConverterDirectTestGenerated extends AbstractKaptStubConverterDirectTest {
   private void run(String fileName) {
     runTest("plugins/kapt/kapt-compiler/testData/converter/" + fileName);
   }
@@ -74,6 +74,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   @TestMetadata("annotationWithFqNames.kt")
   public void testAnnotationWithFqNames() {
     run("annotationWithFqNames.kt");
+  }
+
+  @Test
+  @TestMetadata("annotationWithMixedInvalidArrayArgument.kt")
+  public void testAnnotationWithMixedInvalidArrayArgument() {
+    run("annotationWithMixedInvalidArrayArgument.kt");
   }
 
   @Test
@@ -731,6 +737,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("multipleTypeConstraints2.kt")
+  public void testMultipleTypeConstraints2() {
+    run("multipleTypeConstraints2.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClassInAnnotation.kt")
   public void testNestedClassInAnnotation() {
     run("nestedClassInAnnotation.kt");
@@ -878,6 +890,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   @TestMetadata("suspendFunctionWithBigArity.kt")
   public void testSuspendFunctionWithBigArity() {
     run("suspendFunctionWithBigArity.kt");
+  }
+
+  @Test
+  @TestMetadata("throws.kt")
+  public void testThrows() {
+    run("throws.kt");
   }
 
   @Test
