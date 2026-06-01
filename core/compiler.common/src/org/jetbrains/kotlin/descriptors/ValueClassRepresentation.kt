@@ -75,6 +75,7 @@ fun <Type : RigidTypeMarker> createValueClassRepresentation(context: TypeSystemC
  *         representation and meets the conditions specified by the `treatFullValueClassesWithOneFieldAsBasic`
  *         parameter; otherwise, `null`.
  */
+@ValueClassBackendAgnosticApi
 fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
     treatFullValueClassesWithOneFieldAsBasic: Boolean
 ): InlineClassRepresentation<T>? = when (this) {
@@ -84,3 +85,6 @@ fun <T : RigidTypeMarker> ValueClassRepresentation<T>.toInlineRepresentation(
     is FullValueClassRepresentation -> underlyingPropertyNamesToTypes?.singleOrNull()
         ?.let { (name, type) -> InlineClassRepresentation(name, type) }
 }
+
+@RequiresOptIn("Use backend-specific APIs instead of this one. See usages for examples.")
+annotation class ValueClassBackendAgnosticApi

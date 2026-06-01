@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend.utils
 
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
@@ -159,11 +160,15 @@ fun IrType.getArrayElementType(builtins: Fir2IrBuiltinSymbolsContainer): IrType 
     }
 }
 
-val FirCallableSymbol<*>.isInlineClassProperty: Boolean
+@OptIn(ValueClassBackendAgnosticApi::class)
+val FirCallableSymbol<*>.isPotentialInlineClassProperty: Boolean
     get() {
         if (this !is FirPropertySymbol || dispatchReceiverType == null || receiverParameterSymbol != null || hasContextParameters) return false
         val containingClass = getContainingClassSymbol() as? FirRegularClassSymbol ?: return false
-        val inlineClassRepresentation = containingClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true) ?: return false
+        // when we are not sure if the class is full value class or basic value class,
+        // treat it better as potential inline class when not sure
+        val inlineClassRepresentation = containingClass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)
+            ?: return false
         return inlineClassRepresentation.underlyingPropertyName == this.name
     }
 

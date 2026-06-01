@@ -8,11 +8,13 @@ package org.jetbrains.kotlinx.serialization.compiler.backend.ir
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.jvm.lower.getSingletonOrConstantForOptimizableDelegatedProperty
 import org.jetbrains.kotlin.backend.jvm.lower.returnsResultOfStdlibCall
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.declarations.createBlockBody
+import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass as isSingleFieldValueClassOriginal
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrPropertyReference
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
@@ -167,3 +169,7 @@ internal fun IrProperty.isJvmOptimizableDelegate(): Boolean =
 
 
 internal val IrProperty.isNonStaticWithField get() = backingField != null && getter?.dispatchReceiverParameter != null
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+internal fun IrClass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic: Boolean): Boolean =
+    isSingleFieldValueClassOriginal(treatFullValueClassesWithOneFieldAsBasic)

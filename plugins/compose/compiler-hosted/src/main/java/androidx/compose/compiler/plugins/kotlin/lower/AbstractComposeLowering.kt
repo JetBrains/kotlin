@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -131,7 +131,7 @@ abstract class AbstractComposeLowering(
 
         return when {
             type.isPrimitiveType() -> type
-            type.isInlineClassType() -> {
+            type.isInlineClassType(isJvm = context.platform.isJvm()) -> {
                 // TODO migrate to more precise constructor accessibility test in k2.4
                 val constructorAccessible = type.classOrNull?.owner?.primaryConstructor != null
                 if (context.platform.isJvm() || constructorAccessible) {
@@ -165,10 +165,13 @@ abstract class AbstractComposeLowering(
 
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
+    @OptIn(ValueClassBackendAgnosticApi::class)
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false) ?: return null
-        if (!isInlineClassType()) return null
+        val representation = klass.inlineClassRepresentation(
+            treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()
+        ) ?: return null
+        if (!isInlineClassType(isJvm = context.platform.isJvm())) return null
 
         // TODO: Apply type substitutions
         val underlyingType = representation.underlyingType.unboxInlineClass()
@@ -182,7 +185,7 @@ abstract class AbstractComposeLowering(
         if (type.isNullable()) return this
         val classSymbol = type.classOrNull ?: return this
         val klass = classSymbol.owner
-        if (type.isInlineClassType()) {
+        if (type.isInlineClassType(isJvm = context.platform.isJvm())) {
             if (context.platform.isJvm()) {
                 return coerceInlineClasses(
                     this,
@@ -1056,7 +1059,7 @@ abstract class AbstractComposeLowering(
     private fun IrConstructorCall.isStatic(fileContainingDependent: IrFile?): Boolean {
         // special case constructors of inline classes as static if their underlying
         // value is static.
-        if (type.isInlineClassType()) {
+        if (type.isInlineClassType(isJvm = context.platform.isJvm())) {
             return stabilityInferencer.stabilityOf(
                 type.unboxInlineClass(), fileContainingDependent
             ).knownStable() &&
@@ -1909,3 +1912,13 @@ fun IrClass.invokeFunctionNForComposable(context: IrPluginContext, invokeFn: IrS
 
 fun IrFunction.isExternalFunction(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
+    // Workaround for KT-69856
+    return if (this is IrSimpleType && classifier.owner is IrScript) {
+        false
+    } else {
+        erasedUpperBound.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm)
+    }
+}
