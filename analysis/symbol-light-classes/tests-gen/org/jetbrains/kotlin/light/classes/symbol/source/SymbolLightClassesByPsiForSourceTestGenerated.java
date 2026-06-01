@@ -275,6 +275,12 @@ public class SymbolLightClassesByPsiForSourceTestGenerated extends AbstractSymbo
   }
 
   @Test
+  @TestMetadata("jvmOverloadsOverride.kt")
+  public void testJvmOverloadsOverride() {
+    run("jvmOverloadsOverride.kt");
+  }
+
+  @Test
   @TestMetadata("jvmRecord.kt")
   public void testJvmRecord() {
     run("jvmRecord.kt");
