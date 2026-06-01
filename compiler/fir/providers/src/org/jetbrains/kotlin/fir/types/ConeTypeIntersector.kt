@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object ConeTypeIntersector {
     fun intersectTypes(
-        context: ConeInferenceContext,
+        context: ConeTypeContext,
         types: Collection<ConeKotlinType>
     ): ConeKotlinType {
         when (types.size) {
@@ -40,9 +40,7 @@ object ConeTypeIntersector {
             // under the assumption that it is purely nullable.
             return if (lowerBound.isNothing) upperBound else coneFlexibleOrSimpleType(context, lowerBound, upperBound, isTrivial = false)
         }
-        val isResultNotNullable = with(context) {
-            inputTypes.any { !it.isNullableType() }
-        }
+        val isResultNotNullable = inputTypes.any { !it.canBeNull(context.session) }
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
             if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
