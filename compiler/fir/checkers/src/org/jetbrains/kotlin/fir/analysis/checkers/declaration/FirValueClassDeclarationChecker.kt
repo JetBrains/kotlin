@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
 sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegularClassChecker(mppKind) {
     object Regular : FirValueClassDeclarationChecker(MppCheckerKind.Platform) {
@@ -209,16 +210,18 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
         }
 
         val isJvmInlineMultiFieldEnabled = LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()
+        val finalOrBasicValueClassPrefix = when {
+            !supportsFullValueClasses -> "value"
+            isFullValueClass -> "final value"
+            else -> "@JvmInline value"
+        }
         if (primaryConstructor?.source?.kind is KtRealSourceElementKind) {
             if (isJvmInlineMultiFieldEnabled || isFullValueClass) {
                 if (primaryConstructorParametersByName.isEmpty() && (!isFullValueClass || declaration.isFinal)) {
-                    val valueClassDescription = when {
-                        !supportsFullValueClasses -> "Value"
-                        isFullValueClass -> "Final value"
-                        else -> "@JvmInline value"
-                    }
                     reporter.reportOn(
-                        primaryConstructor.source, FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR, valueClassDescription
+                        primaryConstructor.source,
+                        FirErrors.VALUE_CLASS_EMPTY_CONSTRUCTOR,
+                        finalOrBasicValueClassPrefix.capitalizeAsciiOnly(),
                     )
                     return
                 }
@@ -227,19 +230,16 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
                 return
             }
         } else if (!isFullValueClass || declaration.isFinal) {
-            val valueClassDescription = when {
-                !supportsFullValueClasses -> "value"
-                isFullValueClass -> "final value"
-                else -> "@JvmInline value"
-            }
             if (!declaration.isExpect || LanguageFeature.AllowExpectValueClassesWithNoPrimaryConstructor.isDisabled()) {
                 reporter.reportOn(
-                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, valueClassDescription
+                    declaration.source, FirErrors.ABSENCE_OF_PRIMARY_CONSTRUCTOR_FOR_VALUE_CLASS, finalOrBasicValueClassPrefix
                 )
             } else {
                 declaration.constructors(context.session).filter { !it.isPrimary }.forEach { constructor ->
                     reporter.reportOn(
-                        constructor.source, FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY, valueClassDescription
+                        constructor.source,
+                        FirErrors.EXPECT_VALUE_CLASS_WITH_NO_PRIMARY_CONSTRUCTOR_HAS_SECONDARY,
+                        finalOrBasicValueClassPrefix,
                     )
                 }
             }
