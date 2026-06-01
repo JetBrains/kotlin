@@ -429,6 +429,62 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
     }
 
     @GradleTest
+    fun `KT-86155 - forEmbedAndSignLinkage prints changed files when linkage package is mutated`(version: GradleVersion) {
+        project("emptyxcode", version, buildOptions = defaultBuildOptions.disableConfigurationCacheForGradle7(version)) {
+            initDefaultKmpWithLocalSPM()
+
+            // Step 1: generate the synthetic project via the standard flow so it exists on disk.
+            build(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                )
+            )
+
+            // Step 2: mutate a tracked file inside the synthetic project root so the next
+            // generation produces a non-idempotent diff.
+            val syntheticRoot = projectPath.resolve("iosApp/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME")
+            val mutatedFile = syntheticRoot.resolve(
+                "Sources/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.m"
+            )
+            assertTrue(mutatedFile.exists(), "expected generated synthetic source file at $mutatedFile")
+            mutatedFile.writeText("// tampered content - KT-86155 reproducer")
+
+            val taskName = ":generateSyntheticLinkageSwiftPMImportProjectForEmbedAndSignLinkage"
+
+            val iosAppXcodeProj = projectPath.resolve("iosApp/iosApp.xcodeproj")
+            val xcodeBuildOutput = projectPath.resolve("build/xcodeOutput")
+
+            // Step 3: run the embed-and-sign-variant of the task; it has failOnNonIdempotentChanges=true.
+            buildAndFail(
+                taskName,
+                environmentVariables = EnvironmentalVariables(
+                    "CONFIGURATION" to "Debug",
+                    "ARCHS" to "arm64",
+                    "SDK_NAME" to "iphonesimulator",
+                    "FRAMEWORKS_FOLDER_PATH" to "Frameworks",
+                    "TARGET_BUILD_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "BUILT_PRODUCTS_DIR" to xcodeBuildOutput.absolutePathString(),
+                    "XCODEPROJ_PATH" to "iosApp/iosApp.xcodeproj",
+                    "PROJECT_FILE_PATH" to iosAppXcodeProj.absolutePathString(),
+                )
+            ) {
+                // Legacy prelude must still be present (back-compat with any existing user tooling that scrapes it).
+                assertOutputContains("Synthetic project regenerated")
+                // The Gradle exception message surfaced by error(...) in the task.
+                assertOutputContains("Synthetic project state updated")
+
+                // The new diagnostic: file-level breakdown.
+                assertOutputContains("Synthetic linkage package files changed during the build:")
+                assertOutputContains("Sources/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME.m (modified)")
+                // Only the tampered file is reported; no spurious added/removed entries.
+                assertOutputDoesNotContain("(added)")
+                assertOutputDoesNotContain("(removed)")
+            }
+        }
+    }
+
+    @GradleTest
     fun `integrateLinkagePackage reruns synthetic manifest generation when new Package is added`(version: GradleVersion) {
         project("emptyxcode", version) {
             val includeSecondPackageProp = "includeSecondPackage"
