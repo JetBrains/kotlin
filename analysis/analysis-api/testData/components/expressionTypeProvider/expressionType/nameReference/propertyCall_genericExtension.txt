@@ -1,2 +1,3 @@
 expression: fooExt
+expression PSI: KtNameReferenceExpression
 type: WithGeneric<kotlin.String>

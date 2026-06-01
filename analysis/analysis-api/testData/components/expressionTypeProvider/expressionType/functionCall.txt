@@ -1,2 +1,3 @@
 expression: 12.toByte()
+expression PSI: KtDotQualifiedExpression
 type: kotlin.Byte

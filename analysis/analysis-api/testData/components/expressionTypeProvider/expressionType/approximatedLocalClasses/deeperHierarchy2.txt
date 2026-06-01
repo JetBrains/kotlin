@@ -1,2 +1,3 @@
 expression: B()
+expression PSI: KtCallExpression
 type: T

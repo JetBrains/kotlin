@@ -1,2 +1,3 @@
 expression: a.externalNotNullMethod() to "myPair"
+expression PSI: KtBinaryExpression
 type: kotlin.Pair<kotlin.String, kotlin.String>

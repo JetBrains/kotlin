@@ -51,6 +51,7 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
 
         val actual = buildString {
             appendLine("expression: ${expression.text}")
+            appendLine("expression PSI: ${expression::class.simpleName}")
             appendLine("type: $type")
         }
         testServices.assertions.assertEqualsToTestOutputFile(actual)

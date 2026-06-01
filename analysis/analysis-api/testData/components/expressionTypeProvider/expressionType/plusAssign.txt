@@ -1,2 +1,3 @@
 expression: i += 1
+expression PSI: KtBinaryExpression
 type: kotlin.Unit

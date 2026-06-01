@@ -1,2 +1,3 @@
 expression: classloader?.loadClass("hi")?.kotlin
+expression PSI: KtSafeQualifiedExpression
 type: kotlin.reflect.KClass<out kotlin.Any>?

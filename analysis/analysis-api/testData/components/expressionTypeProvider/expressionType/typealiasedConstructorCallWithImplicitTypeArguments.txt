@@ -1,2 +1,3 @@
 expression: TypeAlias(MyClass())
+expression PSI: KtCallExpression
 type: test.TypeAlias<test.MyClass> /* = test.GenericClass<test.MyClass> */

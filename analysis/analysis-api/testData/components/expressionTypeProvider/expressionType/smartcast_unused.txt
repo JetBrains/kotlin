@@ -1,2 +1,3 @@
 expression: a
+expression PSI: KtNameReferenceExpression
 type: kotlin.String

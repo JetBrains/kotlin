@@ -1,2 +1,3 @@
 expression: object: A() {}
+expression PSI: KtObjectLiteralExpression
 type: kotlin.Any

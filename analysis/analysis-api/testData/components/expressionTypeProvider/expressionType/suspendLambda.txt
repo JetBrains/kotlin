@@ -1,2 +1,3 @@
 expression: suspend {}
+expression PSI: KtCallExpression
 type: suspend () -> kotlin.Unit

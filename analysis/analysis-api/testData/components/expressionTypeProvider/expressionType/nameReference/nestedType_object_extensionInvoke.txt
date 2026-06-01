@@ -1,2 +1,3 @@
 expression: Bar
+expression PSI: KtNameReferenceExpression
 type: Foo.Bar

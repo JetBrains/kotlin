@@ -1,2 +1,3 @@
 expression: "abc"
+expression PSI: KtStringTemplateExpression
 type: kotlin.String
