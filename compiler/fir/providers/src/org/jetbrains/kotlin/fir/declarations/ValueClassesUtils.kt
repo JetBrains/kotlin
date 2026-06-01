@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@OptIn(ValueClassBackendAgnosticApi::class)
 internal fun ConeKotlinType.unsubstitutedUnderlyingTypeForInlineClass(session: FirSession): ConeKotlinType? {
     val symbol = this.fullyExpandedType(session).toRegularClassSymbol(session) ?: return null
+    // All the usages are JVM-only, so treatFullValueClassesWithOneFieldAsBasic is effectively false
     return symbol.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false)?.underlyingType
 }
 

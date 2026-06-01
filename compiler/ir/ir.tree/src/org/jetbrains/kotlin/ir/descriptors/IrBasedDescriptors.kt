@@ -587,6 +587,7 @@ open class IrBasedClassDescriptor(owner: IrClass) : ClassDescriptor, IrBasedDecl
 
     override fun isData() = owner.isData
 
+    @OptIn(ValueClassBackendAgnosticApi::class)
     override fun isInline() = owner.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = false)
 
     override fun isFun() = owner.isFun

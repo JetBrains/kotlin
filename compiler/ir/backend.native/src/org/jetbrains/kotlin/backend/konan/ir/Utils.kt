@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
@@ -83,8 +84,10 @@ val IrSimpleFunction.allOverriddenFunctions: Set<IrSimpleFunction>
         return result
     }
 
+@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.isSingleFieldValueClass: Boolean
     get() = isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
 
+@OptIn(ValueClassBackendAgnosticApi::class)
 val IrClass.inlineClassRepresentation: InlineClassRepresentation<IrSimpleType>?
     get() = inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = true)

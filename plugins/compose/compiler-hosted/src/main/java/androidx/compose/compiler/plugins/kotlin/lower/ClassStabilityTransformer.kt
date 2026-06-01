@@ -116,7 +116,7 @@ class ClassStabilityTransformer(
             cls.isInner ||
             cls.isFileClass ||
             cls.isCompanion ||
-            cls.defaultType.isInlineClassType()
+            cls.defaultType.isInlineClassType(isJvm = context.platform.isJvm())
         ) return cls
 
         if (declaration.hasStableMarker()) {

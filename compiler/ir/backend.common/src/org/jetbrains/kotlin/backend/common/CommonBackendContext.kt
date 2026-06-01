@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrConstructor
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSupportForLowerings
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
@@ -71,10 +72,12 @@ interface InlineClassesUtils {
     /**
      * Should this class be treated as inline class?
      */
-    fun isClassInlineLike(klass: IrClass): Boolean = klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    fun isClassInlineLike(klass: IrClass): Boolean =
+        klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true) // used only in non-JVM backends
 
     /**
-     * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because
+     * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.valueClassRepresentation] because
      * for some reason it can be called for classes which are not inline, e.g. `kotlin.Double`.
      */
     fun getInlineClassUnderlyingType(irClass: IrClass): IrType =

@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.lower.getArity
 import org.jetbrains.kotlin.ir.backend.js.lower.getFlags
+import org.jetbrains.kotlin.ir.backend.js.utils.getInlineClassUnderlyingType
 import org.jetbrains.kotlin.ir.backend.js.utils.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.declarations.addFunction
@@ -309,7 +310,7 @@ class WasmCallableReferenceLowering(val backendContext: WasmBackendContext) : Fi
         }
         val clazz = this.getClass() ?: return backendContext.irBuiltIns.anyNType
         if (clazz.isSingleFieldValueClass) {
-            val underlyingErased = getInlineClassUnderlyingType(clazz, treatFullValueClassesWithOneFieldAsBasic = true).eraseIfReferenceType()
+            val underlyingErased = getInlineClassUnderlyingType(clazz).eraseIfReferenceType()
             return if (underlyingErased.isPrimitiveType() || underlyingErased.isUnsignedType()) {
                 this
             } else {
