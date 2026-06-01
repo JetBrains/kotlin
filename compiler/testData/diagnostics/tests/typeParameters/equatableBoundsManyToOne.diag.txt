@@ -1,0 +1,7 @@
+/equatableBoundsManyToOne.kt:11:5: error: Equatable type bound violated.
+
+/equatableBoundsManyToOne.kt:15:5: error: Equatable type bound violated.
+
+/equatableBoundsManyToOne.kt:19:5: error: Equatable type bound violated.
+
+/equatableBoundsManyToOne.kt:19:5: error: Equatable type bound violated.

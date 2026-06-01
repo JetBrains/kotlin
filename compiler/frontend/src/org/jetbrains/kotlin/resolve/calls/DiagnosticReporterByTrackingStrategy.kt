@@ -605,6 +605,7 @@ class DiagnosticReporterByTrackingStrategy(
             ProvideDelegateFixationPosition,
             is ThrowableUpperBoundAllowingToFixIntoIt,
             is SemiFixVariableConstraintPosition,
+            is EquatableBoundConstraintPosition,
             -> {
                 if (AbstractTypeChecker.RUN_SLOW_ASSERTIONS) {
                     throw AssertionError("Constraint error in unexpected position: $position")

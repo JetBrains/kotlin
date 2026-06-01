@@ -1,0 +1,7 @@
+/equatableBoundsChain.kt:11:5: error: Equatable type bound violated.
+
+/equatableBoundsChain.kt:15:5: error: Equatable type bound violated.
+
+/equatableBoundsChain.kt:19:5: error: Equatable type bound violated.
+
+/equatableBoundsChain.kt:19:5: error: Equatable type bound violated.

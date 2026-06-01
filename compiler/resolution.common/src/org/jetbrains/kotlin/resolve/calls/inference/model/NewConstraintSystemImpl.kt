@@ -222,6 +222,17 @@ class NewConstraintSystemImpl(
         constraintInjector.addInitialEqualityConstraint(a, b, position)
     }
 
+    override fun addEquatableBound(
+        left: TypeVariableMarker,
+        right: TypeVariableMarker,
+        position: ConstraintPosition,
+    ) {
+        checkState(State.BUILDING, State.COMPLETION)
+        storage.equatableBounds.add(
+            EquatableBoundEntry(left.freshTypeConstructor(), right.freshTypeConstructor(), position)
+        )
+    }
+
     @K1Deprecation
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
@@ -707,9 +718,31 @@ class NewConstraintSystemImpl(
         storage.fixedTypeVariables[freshTypeConstructor] = resultType
         inferenceLogger?.logFixVariable(variable, resultType, this@NewConstraintSystemImpl)
 
+        injectEquatableConstraintsFor(freshTypeConstructor, resultType)
+
         postponeOnlyInputTypesCheck(variableWithConstraints, resultType)
 
         doPostponedComputationsIfAllVariablesAreFixed()
+    }
+
+    private fun injectEquatableConstraintsFor(
+        fixedConstructor: TypeConstructorMarker,
+        fixedType: KotlinTypeMarker,
+    ) {
+        if (storage.equatableBounds.isEmpty()) return
+        if (fixedType.isError()) return
+        val bound = with(utilContext) { fixedType.equalityBound() }
+        for (entry in storage.equatableBounds) {
+            val partnerConstructor = when (fixedConstructor) {
+                entry.left -> entry.right
+                entry.right -> entry.left
+                else -> continue
+            }
+            if (partnerConstructor in storage.fixedTypeVariables) continue
+            val partnerVariableWithConstraints = storage.notFixedTypeVariables[partnerConstructor] ?: continue
+            val partnerType = partnerVariableWithConstraints.typeVariable.defaultType()
+            constraintInjector.addInitialSubtypeConstraint(partnerType, bound, entry.position)
+        }
     }
 
     override fun getEmptyIntersectionTypeKind(types: Collection<KotlinTypeMarker>): EmptyIntersectionTypeInfo? {

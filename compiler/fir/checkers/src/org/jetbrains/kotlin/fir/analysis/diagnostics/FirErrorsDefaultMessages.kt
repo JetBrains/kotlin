@@ -821,6 +821,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_NO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENTS_REDUNDANT_IN_SUPER_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_ARGUMENT_ON_TYPED_VALUE_CLASS_EQUALS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_CANT_BE_USED_FOR_CONST_VAL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EQUATABLE_TYPE_BOUND_VIOLATED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INTERSECTION_AS_REIFIED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_INTERSECTION_AS_REIFIED_DEPRECATION_WARNING
@@ -1759,6 +1760,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
             "Type inference failed. The value of the type parameter ''{0}'' must be mentioned in input types (argument types, receiver type, or expected type). Try to specify it explicitly.",
             SYMBOL,
+        )
+        map.put(
+            EQUATABLE_TYPE_BOUND_VIOLATED,
+            "Equatable type bound violated.",
         )
         map.put(
             MEMBER_PROJECTED_OUT,

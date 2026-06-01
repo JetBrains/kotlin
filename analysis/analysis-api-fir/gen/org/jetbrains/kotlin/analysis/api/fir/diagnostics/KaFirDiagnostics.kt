@@ -1683,6 +1683,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val typeParameter: KaTypeParameterSymbol
     }
 
+    interface EquatableTypeBoundViolated : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = EquatableTypeBoundViolated::class
+    }
+
     interface MemberProjectedOut : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = MemberProjectedOut::class
         val receiver: KaType

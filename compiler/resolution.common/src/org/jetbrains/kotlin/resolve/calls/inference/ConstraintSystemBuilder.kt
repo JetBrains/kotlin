@@ -48,6 +48,11 @@ interface ConstraintSystemOperation {
 
     fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition)
     fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition)
+    fun addEquatableBound(
+        left: TypeVariableMarker,
+        right: TypeVariableMarker,
+        position: ConstraintPosition,
+    )
 
     fun isProperType(type: KotlinTypeMarker): Boolean
     fun isTypeVariable(type: KotlinTypeMarker): Boolean

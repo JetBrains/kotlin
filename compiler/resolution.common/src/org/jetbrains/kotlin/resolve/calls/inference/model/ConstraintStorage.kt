@@ -80,6 +80,8 @@ interface ConstraintStorage {
 
     val usesOuterCs: Boolean
 
+    val equatableBounds: List<EquatableBoundEntry>
+
     object Empty : ConstraintStorage {
         override val allTypeVariables: Map<TypeConstructorMarker, TypeVariableMarker> get() = emptyMap()
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
@@ -99,10 +101,18 @@ interface ConstraintStorage {
 
         override val usesOuterCs: Boolean get() = false
 
+        override val equatableBounds: List<EquatableBoundEntry> get() = emptyList()
+
         override val approximatorCaches: TypeApproximatorCachesPerConfiguration
             get() = mutableMapOf()
     }
 }
+
+data class EquatableBoundEntry(
+    val left: TypeConstructorMarker,
+    val right: TypeConstructorMarker,
+    val position: ConstraintPosition,
+)
 
 enum class ConstraintKind {
     LOWER,

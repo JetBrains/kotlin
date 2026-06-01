@@ -300,6 +300,12 @@ private fun KaDiagnosticConverterBuilder.addConversions0() {
             token,
         )
     }
+    add(FirErrors.EQUATABLE_TYPE_BOUND_VIOLATED) { firDiagnostic ->
+        EquatableTypeBoundViolatedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.MANY_LAMBDA_EXPRESSION_ARGUMENTS) { firDiagnostic ->
         ManyLambdaExpressionArgumentsImpl(
             firDiagnostic as KtPsiDiagnostic,

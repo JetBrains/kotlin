@@ -138,4 +138,6 @@ class ClassicConstraintSystemUtilContext(
             TYPE_VARIABLE_NAME_FOR_CR_RETURN_TYPE
         )
     }
+
+    override fun KotlinTypeMarker.equalityBound(): KotlinTypeMarker = this
 }

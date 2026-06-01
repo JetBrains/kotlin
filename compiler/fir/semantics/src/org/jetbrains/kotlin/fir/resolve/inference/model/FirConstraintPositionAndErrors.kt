@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.types.asCone
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
 
@@ -68,3 +69,8 @@ class ConeReceiverConstraintPosition(
 ) : ReceiverConstraintPosition<FirExpression>(receiver) {
     override fun toString(): String = "Receiver ${argument.render()}"
 }
+
+class ConeEquatableBoundConstraintPosition(
+    val fixedTypeVariable: TypeVariableMarker,
+    val boundTypeParameterSymbol: FirTypeParameterSymbol,
+) : EquatableBoundConstraintPosition()

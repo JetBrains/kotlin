@@ -337,6 +337,8 @@ internal class MutableConstraintStorage : ConstraintStorage {
 
     override var usesOuterCs: Boolean = false
 
+    override val equatableBounds: MutableList<EquatableBoundEntry> = SmartList()
+
     override val approximatorCaches: TypeApproximatorCachesPerConfiguration = mutableMapOf()
 
     @AssertionsOnly

@@ -53,4 +53,6 @@ interface ConstraintSystemUtilContext {
     ): TypeVariableMarker
 
     val isForcedAllowForkingInferenceSystem get() = false
+
+    fun KotlinTypeMarker.equalityBound(): KotlinTypeMarker
 }

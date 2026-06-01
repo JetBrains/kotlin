@@ -90,6 +90,8 @@ open class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : Constra
     override fun toString(): String = "Constraint from call $topLevelCall for delegated property"
 }
 
+abstract class EquatableBoundConstraintPosition : ConstraintPosition()
+
 data class IncorporationConstraintPosition(
     val initialConstraint: InitialConstraint,
     var isFromDeclaredUpperBound: Boolean = false

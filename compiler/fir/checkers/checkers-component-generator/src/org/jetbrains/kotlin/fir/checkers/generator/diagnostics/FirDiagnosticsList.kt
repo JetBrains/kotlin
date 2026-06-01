@@ -760,6 +760,8 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirTypeParameterSymbol>("typeParameter")
         }
 
+        val EQUATABLE_TYPE_BOUND_VIOLATED by error<PsiElement>()
+
         val MEMBER_PROJECTED_OUT by error<PsiElement> {
             parameter<ConeKotlinType>("receiver")
             parameter<String>("projection")

@@ -179,4 +179,6 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
 
     override val isForcedAllowForkingInferenceSystem: Boolean
         get() = true
+
+    override fun KotlinTypeMarker.equalityBound(): KotlinTypeMarker = this
 }

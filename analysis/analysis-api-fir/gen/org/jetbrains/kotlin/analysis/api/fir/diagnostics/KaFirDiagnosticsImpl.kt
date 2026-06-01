@@ -2019,6 +2019,11 @@ internal class TypeInferenceOnlyInputTypesErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeInferenceOnlyInputTypesError
 
+internal class EquatableTypeBoundViolatedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.EquatableTypeBoundViolated
+
 internal class MemberProjectedOutImpl(
     override val receiver: KaType,
     override val projection: String,

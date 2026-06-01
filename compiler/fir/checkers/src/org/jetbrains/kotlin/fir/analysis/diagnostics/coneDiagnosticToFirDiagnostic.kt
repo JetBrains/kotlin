@@ -892,6 +892,9 @@ private fun ConstraintSystemError.mapConstraintSystemError(
                     )
                 }
 
+                is EquatableBoundConstraintPosition ->
+                    FirErrors.EQUATABLE_TYPE_BOUND_VIOLATED.createOn(source, session)
+
                 else -> null
             }
         }
