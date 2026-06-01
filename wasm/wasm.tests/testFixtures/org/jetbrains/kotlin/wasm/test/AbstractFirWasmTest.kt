@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.wasm.test.converters.WasmBackendFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasiBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmBoxRunner
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDebugRunner
+import org.jetbrains.kotlin.wasm.test.handlers.WasmLocalVariableDebugRunner
 import org.jetbrains.kotlin.wasm.test.providers.WasmJsSteppingTestAdditionalSourceProvider
 import org.jetbrains.kotlin.wasm.test.utils.configureIgnoredTestSuppressor
 
@@ -186,9 +187,10 @@ open class AbstractFirWasmJsTranslatorTest : AbstractFirWasmJsTest(
 )
 
 open class AbstractFirWasmJsSteppingTest(
+    pathToTestDir: String = "compiler/testData/debug/stepping/",
     testGroupOutputDirPrefix: String = "debug/stepping/firBox"
 ) : AbstractFirWasmJsTest(
-    "compiler/testData/debug/stepping/",
+    pathToTestDir,
     testGroupOutputDirPrefix
 ) {
     override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
@@ -259,6 +261,14 @@ open class AbstractFirWasmJsSteppingSplitWithInlinedFunInKlibTest : AbstractFirW
             useMetaTestConfigurators(::SplittingTestConfigurator)
         }
     }
+}
+
+open class AbstractFirWasmJsLocalVariableTest : AbstractFirWasmJsSteppingTest(
+    pathToTestDir = "compiler/testData/debug/localVariables/",
+    testGroupOutputDirPrefix = "debug/localVariables/firBox"
+) {
+    override val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
+        get() = ::WasmLocalVariableDebugRunner
 }
 
 open class AbstractFirWasmWasiTest(

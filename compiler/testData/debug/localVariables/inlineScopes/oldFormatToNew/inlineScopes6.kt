@@ -53,27 +53,56 @@ fun box() {
 // test.kt:44 box: m:int=-1:int
 // library.kt:11 box: m:int=-1:int, $i$f$bar\1\44:int=0:int
 // library.kt:12 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int
-// library.kt:21 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int
-// library.kt:22 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int
-// library.kt:27 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, $i$f$x2\3\92:int=0:int
-// library.kt:28 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, $i$f$x2\3\92:int=0:int, x2\3:int=2:int
-// library.kt:23 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int
-// library.kt:24 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\82:int=0:int, x1\2:int=1:int, x3\2:int=3:int
+// library.kt:21 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int
+// library.kt:22 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int, x1\2:int=1:int
+// library.kt:27 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int, x1\2:int=1:int, $i$f$x2\3\121:int=0:int
+// library.kt:28 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int, x1\2:int=1:int, $i$f$x2\3\121:int=0:int, x2\3:int=2:int
+// library.kt:23 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int, x1\2:int=1:int
+// library.kt:24 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int, $i$f$x1\2\111:int=0:int, x1\2:int=1:int, x3\2:int=3:int
 // library.kt:13 box: m:int=-1:int, $i$f$bar\1\44:int=0:int, x0\1:int=0:int
 // test.kt:45 box: m:int=-1:int
 // library.kt:5 box: m:int=-1:int, $i$f$foo\4\45:int=0:int
 // library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
-// test.kt:46 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int
-// test.kt:47 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\100\0:int=0:int, x8\5:int=8:int
+// test.kt:46 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\129\0:int=0:int
+// test.kt:47 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, it\5:int=8:int, $i$a$-foo-TestKt$box$1\5\129\0:int=0:int, x8\5:int=8:int
 // library.kt:6 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
 // library.kt:7 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int
 // library.kt:8 box: m:int=-1:int, $i$f$foo\4\45:int=0:int, x6\4:int=6:int, x7\4:int=7:int
 // test.kt:48 box: m:int=-1:int
 // library.kt:16 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
-// library.kt:31 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\103:int=0:int
-// library.kt:32 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\103:int=0:int, x4\7:int=4:int
+// library.kt:31 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\132:int=0:int
+// library.kt:32 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x4\7\132:int=0:int, x4\7:int=4:int
 // library.kt:17 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
-// library.kt:35 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\106:int=0:int
-// library.kt:36 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\106:int=0:int, x5\8:int=5:int
+// library.kt:35 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\135:int=0:int
+// library.kt:36 box: m:int=-1:int, $i$f$baz\6\48:int=0:int, $i$f$x5\8\135:int=0:int, x5\8:int=5:int
 // library.kt:18 box: m:int=-1:int, $i$f$baz\6\48:int=0:int
 // test.kt:49 box: m:int=-1:int
+
+// EXPECTATIONS WASM
+// test.kt:43 $box: $m:i32=0:i32, $x0:i32=0:i32, $x1:i32=0:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (12, 12)
+// test.kt:44 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=0:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:11 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=0:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13)
+// library.kt:12 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=0:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:21 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=0:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13)
+// library.kt:22 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=0:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:27 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13, 13)
+// library.kt:28 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=0:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (1, 1)
+// library.kt:23 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13, 13)
+// library.kt:24 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (1, 1, 1)
+// library.kt:13 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (1, 1)
+// test.kt:45 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:5 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=0:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13)
+// library.kt:6 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=0:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (6, 6, 4, 4, 4)
+// test.kt:46 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (17, 17, 17)
+// test.kt:47 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=0:i32, $x4:i32=0:i32, $x5:i32=0:i32 (5, 5)
+// library.kt:7 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=0:i32, $x5:i32=0:i32 (13, 13, 13)
+// library.kt:8 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=0:i32, $x5:i32=0:i32 (1, 1)
+// test.kt:48 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:16 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=0:i32, $x5:i32=0:i32 (4)
+// library.kt:31 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=0:i32 (13, 13, 13)
+// library.kt:32 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=0:i32 (1, 1)
+// library.kt:17 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=0:i32 (4)
+// library.kt:35 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=5:i32 (13, 13, 13)
+// library.kt:36 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=5:i32 (1, 1, 1)
+// library.kt:18 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=5:i32 (1, 1)
+// test.kt:49 $box: $m:i32=-1:i32, $x0:i32=0:i32, $x1:i32=1:i32, $x2:i32=2:i32, $x3:i32=3:i32, $x6:i32=6:i32, $x8:i32=8:i32, $x7:i32=7:i32, $x4:i32=4:i32, $x5:i32=5:i32 (1, 1)

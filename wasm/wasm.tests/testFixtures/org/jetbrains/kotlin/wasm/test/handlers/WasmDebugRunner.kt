@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.test.model.WasmCompilationSetsBinaryArtifact
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
-class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServices) {
+open class WasmDebugRunner(testServices: TestServices, includeLocalVariableInformation: Boolean = false) :
+    WasmDebugRunnerBase(testServices, includeLocalVariableInformation) {
     private fun processCompilationSet(compilationSet: WasmCompilationSet, mode: String) {
         val outputDirBase = testServices.getWasmTestOutputDirectory()
         val devDir = File(outputDirBase, mode)
@@ -39,3 +40,6 @@ class WasmDebugRunner(testServices: TestServices) : WasmDebugRunnerBase(testServ
         }
     }
 }
+
+class WasmLocalVariableDebugRunner(testServices: TestServices) :
+        WasmDebugRunner(testServices, includeLocalVariableInformation = true)

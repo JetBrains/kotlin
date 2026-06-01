@@ -45,7 +45,7 @@ open class AbstractFirWasmTypeScriptExportMultiModuleTest : AbstractFirWasmTypeS
 open class AbstractFirWasmJsMultiModuleSteppingTest(
     testGroupOutputDirPrefix: String = "debug/stepping/firBoxMultiModule",
 ) : AbstractFirWasmJsSteppingTest(
-    testGroupOutputDirPrefix
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

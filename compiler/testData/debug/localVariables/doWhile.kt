@@ -49,3 +49,19 @@ fun box() {
 // test.kt:15 box: x=2:number, z=2:number
 // test.kt:16 box: x=2:number, z=2:number, y=12:number
 // test.kt:17 box: x=2:number, z=2:number, y=12:number
+
+// EXPECTATIONS WASM
+// test.kt:6 $box: $x:i32=0:i32, $z:i32=0:i32, $y:i32=0:i32 (10, 10)
+// test.kt:8 $box: $x:i32=0:i32, $z:i32=0:i32, $y:i32=0:i32 (14, 14)
+// test.kt:9 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (25, 25, 25, 26, 26, 26, 26, 26, 26, 25, 25, 10)
+// test.kt:3 $shouldContinue: $i:i32=0:i32 (29, 33, 29, 34)
+// test.kt:9 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (10)
+// test.kt:10 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (10)
+// test.kt:16 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (11, 15, 11, 11)
+// test.kt:8 $box: $x:i32=1:i32, $z:i32=2:i32, $y:i32=0:i32 (14, 14)
+// test.kt:9 $box: $x:i32=2:i32, $z:i32=2:i32, $y:i32=0:i32 (25, 25, 25, 26, 26, 26, 26, 26, 26, 25, 25, 10)
+// test.kt:3 $shouldContinue: $i:i32=1:i32 (29, 33, 29, 34)
+// test.kt:9 $box: $x:i32=2:i32, $z:i32=2:i32, $y:i32=0:i32 (10)
+// test.kt:15 $box: $x:i32=2:i32, $z:i32=2:i32, $y:i32=12:i32 (14, 14, 14)
+// test.kt:16 $box: $x:i32=2:i32, $z:i32=2:i32, $y:i32=12:i32 (11, 15, 11, 11, 11, 11)
+// test.kt:17 $box: $x:i32=2:i32, $z:i32=2:i32, $y:i32=12:i32 (1, 1)
