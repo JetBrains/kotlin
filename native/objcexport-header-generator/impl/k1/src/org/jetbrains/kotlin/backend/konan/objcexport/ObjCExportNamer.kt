@@ -445,7 +445,7 @@ class ObjCExportNamerImpl(
             "useStoredAccessor"
         )
 
-        override fun reserved(name: String) = (name in reserved) || (name in cKeywords)
+        override fun reserved(name: String) = (name in reserved) || (name in cKeywords) || (name in cMacroDefinitions) || (name in objCMacroDefinitions)
     }
 
     private val objectInstanceSelectors = object : ClassSelectorNameMapping<ClassDescriptor>() {
@@ -793,6 +793,7 @@ class ObjCExportNamerImpl(
 
     private object Reserved {
         val propertyNames = cKeywords +
+            objCMacroDefinitions +
             setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
     }
 

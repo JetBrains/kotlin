@@ -623,7 +623,7 @@ class ObjCExportTranslatorImpl(
 
     private fun unifyName(initialName: String, usedNames: Set<String>): String {
         var unique = initialName.toValidObjCSwiftIdentifier()
-        while (unique in usedNames || unique in cKeywords) {
+        while (unique in usedNames || unique in cKeywords || unique in objCMacroDefinitions) {
             unique += "_"
         }
         return unique

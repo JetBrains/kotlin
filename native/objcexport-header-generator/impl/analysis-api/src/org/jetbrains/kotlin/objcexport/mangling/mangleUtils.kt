@@ -1,6 +1,7 @@
 package org.jetbrains.kotlin.objcexport.mangling
 
 import org.jetbrains.kotlin.backend.konan.cKeywords
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.objcexport.toValidObjCSwiftIdentifier
 
 internal fun String.mangleSelector(postfix: String): String {
@@ -10,7 +11,7 @@ internal fun String.mangleSelector(postfix: String): String {
 
 internal fun unifyName(initialName: String, usedNames: Set<String>): String {
     var unique = initialName.toValidObjCSwiftIdentifier()
-    while (unique in usedNames || unique in cKeywords) {
+    while (unique in usedNames || unique in cKeywords || unique in objCMacroDefinitions) {
         unique += "_"
     }
     return unique
