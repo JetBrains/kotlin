@@ -56,8 +56,15 @@ class SourceMap3Builder(
     }
 
     private fun appendSources(json: JsonObject) {
+        val prefixedPaths = orderedSources.map { pathPrefix + it }
+        val [sourceRoot, paths] = calculateCommonPathPrefix(prefixedPaths)
+
+        if (sourceRoot != null) {
+            json.properties["sourceRoot"] = JsonString(sourceRoot)
+        }
+
         json.properties["sources"] = JsonArray(
-            orderedSources.mapTo(mutableListOf()) { JsonString(pathPrefix + it) }
+            paths.mapTo(mutableListOf()) { JsonString(it) }
         )
     }
 
@@ -113,6 +120,63 @@ class SourceMap3Builder(
             orderedNames.add(name)
         }
         return nameIndex
+    }
+
+    private fun calculateCommonPathPrefix(paths: List<String>): Pair<String?, List<String>> {
+        // Special handling for [JsLocation.IGNORED] as it is virtual file without a real path,
+        // it should not participate in sourceRoot calculation and should be kept as-is.
+        fun String.shouldKeepOriginalPrefix() =
+            this == JsLocation.IGNORED.file
+
+        /**
+         * Calculates the length of the common directory prefix for given Unix-style paths,
+         * including the trailing '/' separator.
+         *
+         * Returns 0 if:
+         * - Paths list is empty or contains less than 2 entries
+         * - There is no common directory prefix, i.e. paths have no shared '/'-separated segments
+         *
+         * Example:
+         * For paths
+         * ```
+         * foo/bar.kt
+         * foo/bar/a.kt
+         * ```
+         * Returns 4 (the length of 'foo/').
+         */
+        fun commonUnixPathPrefixLength(paths: List<String>): Int {
+            // There is no sense in calculating common parent for the single path, we will save it as is
+            if (paths.size < 2) return 0
+
+            // The idea is to find common path between least common paths - first one and last one of sorted paths list.
+            val first = paths.max()
+            val last = paths.min()
+
+            val [shorter, longer] = if (first.length < last.length) first to last else last to first
+
+            var latestSeparatorIndex = -1
+
+            for (i in shorter.indices) {
+                if (shorter[i] == '/') latestSeparatorIndex = i
+                if (shorter[i] != longer[i]) break
+            }
+
+            return latestSeparatorIndex + 1
+        }
+
+        val applicablePaths = paths.filter { !it.shouldKeepOriginalPrefix() }
+        val sourceRootLength = commonUnixPathPrefixLength(applicablePaths)
+        if (sourceRootLength == 0) return null to paths
+
+        // Common prefix should contain the leading '/', so upper index also includes it
+        val commonPrefix = applicablePaths
+            .first()
+            .substring(0, sourceRootLength)
+
+        return commonPrefix to paths.map {
+            if (it.shouldKeepOriginalPrefix()) it
+            else it.substring(sourceRootLength)
+        }
     }
 
     private val String.unixStylePath: String

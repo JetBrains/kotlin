@@ -57,6 +57,25 @@ class RewriteSourceMapFilterReaderTest {
     }
 
     @Test
+    fun testSourceRootSpecified() {
+        val filter =
+            RewriteSourceMapFilterReaderMock(
+                StringReader(
+                    //language=JSON
+                    """{"version":3,"file":"single-platform.js","sourceRoot":"../../../../","sources":["src/main/kotlin/main.kt","src/main/kotlin/lib.kt"],"sourcesContent":[null],"names":[],"mappings":""}"""
+                ),
+                "/root/build/classes/kotlin/test/",
+                "/root/build/test_node_modules/"
+            )
+
+        assertEquals(
+            //language=JSON
+            """{"version":3,"file":"single-platform.js","sourceRoot":"TRANSFORMED(../../../../)","sources":["src/main/kotlin/main.kt","src/main/kotlin/lib.kt"],"sourcesContent":[null],"names":[],"mappings":""}""",
+            filter.readText()
+        )
+    }
+
+    @Test
     fun testPrologWithoutSourcesContent() {
         val filter =
             RewriteSourceMapFilterReaderMock(
