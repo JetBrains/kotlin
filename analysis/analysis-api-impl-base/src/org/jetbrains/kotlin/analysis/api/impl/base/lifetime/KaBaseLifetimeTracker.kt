@@ -21,13 +21,14 @@ internal class KaBaseLifetimeTracker : KaLifetimeTracker {
         lifetimeOwnersStack.set(lifetimeOwnersStack.get().adding(session.token))
     }
 
+    @Suppress("DEPRECATION") // TODO(KT-86641): back to removingAt() once the dist bundles k.c.i >= 0.5.0
     fun afterLeavingAnalysis(session: KaSession) {
         val stack = lifetimeOwnersStack.get()
         val last = stack.last()
         check(last == session.token) {
             "The last token on the stack should be the same as the one from the outgoing session."
         }
-        lifetimeOwnersStack.set(stack.removingAt(stack.lastIndex))
+        lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
     }
 
     companion object {
