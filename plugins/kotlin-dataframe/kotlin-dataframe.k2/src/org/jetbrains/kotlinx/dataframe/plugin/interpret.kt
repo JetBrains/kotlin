@@ -322,14 +322,9 @@ interface InterpretationErrorReporter {
 }
 
 context(sessionHolder: SessionHolder)
-fun ConeTypeProjection.pluginDataFrameSchema(): PluginDataFrameSchema {
-    val schema = if (isStarProjection) {
-        PluginDataFrameSchema.EMPTY
-    } else {
-        val coneClassLikeType = type as? ConeClassLikeType ?: return PluginDataFrameSchema.EMPTY
-        coneClassLikeType.pluginDataFrameSchema()
-    }
-    return schema
+fun ConeTypeProjection.pluginDataFrameSchema(): PluginDataFrameSchema = when (val t = type) {
+    is ConeClassLikeType -> t.pluginDataFrameSchema()
+    else -> PluginDataFrameSchema.EMPTY
 }
 
 context(sessionHolder: SessionHolder)
