@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isArrayLambdaConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -18,7 +19,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
-import org.jetbrains.kotlin.fir.types.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -129,19 +129,6 @@ object FirInlineBodyResolvableExpressionChecker : FirBasicExpressionChecker(MppC
                 }
             }
             return null
-        }
-
-        /**
-         * @return true if the symbol is the constructor of one of 9 array classes (`Array<T>`,
-         * `IntArray`, `FloatArray`, ...) which takes the size and an initializer lambda as parameters.
-         * Such constructors are marked as `inline` but they are not loaded as such because the `inline`
-         * flag is not stored for constructors in the binary metadata. Therefore, we pretend that they
-         * are inline.
-         */
-        private fun FirFunctionSymbol<*>.isArrayLambdaConstructor(): Boolean {
-            return this is FirConstructorSymbol &&
-                    valueParameterSymbols.size == 2 &&
-                    resolvedReturnType.isArrayOrPrimitiveArray
         }
 
         context(context: CheckerContext, reporter: DiagnosticReporter)

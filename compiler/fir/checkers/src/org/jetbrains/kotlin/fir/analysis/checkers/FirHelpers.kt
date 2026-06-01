@@ -1156,3 +1156,16 @@ fun canBeEvaluated(expression: FirExpression, allowErrors: Boolean = true): Bool
         else -> false
     }
 }
+
+/**
+ * @return true if the symbol is the constructor of one of 9 array classes (`Array<T>`,
+ * `IntArray`, `FloatArray`, ...) which takes the size and an initializer lambda as parameters.
+ * Such constructors are marked as `inline` but they are not loaded as such because the `inline`
+ * flag is not stored for constructors in the binary metadata. Therefore, we pretend that they
+ * are inline.
+ */
+fun FirFunctionSymbol<*>.isArrayLambdaConstructor(): Boolean {
+    return this is FirConstructorSymbol &&
+            valueParameterSymbols.size == 2 &&
+            resolvedReturnType.isArrayOrPrimitiveArray
+}

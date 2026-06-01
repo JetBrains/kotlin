@@ -8,16 +8,20 @@ package org.jetbrains.kotlin.fir.analysis.cfa
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.cfa.util.*
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.cfa.FirControlFlowChecker
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.isArrayLambdaConstructor
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.effects
 import org.jetbrains.kotlin.fir.declarations.FirContractDescriptionOwner
 import org.jetbrains.kotlin.fir.declarations.FirFunction
+import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.utils.contextParametersForFunctionOrContainingProperty
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -29,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.isNonReflectFunctionType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.util.SetMultimap
 import org.jetbrains.kotlin.fir.util.setMultimapOf
@@ -64,9 +69,9 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
         if (argumentsCalledInPlace.isEmpty()) return
 
-        val leakedSymbols = graph.findNonInPlaceUsesOf(argumentsCalledInPlace.keys)
+        val leakedSymbols = graph.findNonInPlaceUsesOf(argumentsCalledInPlace.keys, context.session)
         val invocationData = graph.traverseToFixedPoint(
-            InvocationDataCollector(argumentsCalledInPlace.keys - leakedSymbols.keys)
+            InvocationDataCollector(argumentsCalledInPlace.keys - leakedSymbols.keys, context.session)
         )
 
         for ([symbol, uses] in leakedSymbols) {
@@ -93,7 +98,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         else -> this
     }
 
-    private fun ControlFlowGraph.findNonInPlaceUsesOf(lambdaSymbols: Set<FirCallableSymbol<*>>): SetMultimap<FirCallableSymbol<*>, FirExpression> {
+    private fun ControlFlowGraph.findNonInPlaceUsesOf(
+        lambdaSymbols: Set<FirCallableSymbol<*>>,
+        session: FirSession,
+    ): SetMultimap<FirCallableSymbol<*>, FirExpression> {
         val result = setMultimapOf<FirCallableSymbol<*>, FirExpression>()
 
         fun FirExpression.mark() {
@@ -119,7 +127,7 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
                         (node.fir as? FirReturnExpression)?.result?.mark()
                     }
                     is FunctionCallExitNode -> {
-                        node.firAsFunctionCallOrNull?.forEachArgument { arg, range ->
+                        node.firAsFunctionCallOrNull?.forEachArgument(session) { arg, range ->
                             if (!isValidScope || range == null) {
                                 arg.mark()
                             }
@@ -139,14 +147,15 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
     }
 
     private class InvocationDataCollector(
-        val lambdaSymbols: Set<FirCallableSymbol<*>>
+        val lambdaSymbols: Set<FirCallableSymbol<*>>,
+        val session: FirSession,
     ) : EventCollectingControlFlowGraphVisitor<LambdaInvocationEvent>() {
         override fun visitFunctionCallExitNode(
             node: FunctionCallExitNode,
             data: PathAwareLambdaInvocationInfo
         ): PathAwareLambdaInvocationInfo {
             var dataForNode = visitNode(node, data)
-            node.firAsFunctionCallOrNull?.forEachArgument { arg, range ->
+            node.firAsFunctionCallOrNull?.forEachArgument(session) { arg, range ->
                 if (range != null) {
                     val symbol = arg.qualifiedAccessSymbol()?.takeIf { it in lambdaSymbols } ?: return@forEachArgument
                     dataForNode = dataForNode.addRange(symbol, EventOccurrencesRangeAtNode(range.at(node), mustBeLateinit = false))
@@ -156,9 +165,10 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
     }
 
-    private fun FirFunctionCall.forEachArgument(block: (FirExpression, EventOccurrencesRange?) -> Unit) {
+    private fun FirFunctionCall.forEachArgument(session: FirSession, block: (FirExpression, EventOccurrencesRange?) -> Unit) {
         val functionSymbol = toResolvedCallableSymbol() as? FirFunctionSymbol<*>
         val effects = functionSymbol?.resolvedContractDescription?.effects?.mapNotNull { it.effect as? ConeCallsEffectDeclaration }
+        val isInline = functionSymbol?.isInline == true || functionSymbol?.isArrayLambdaConstructor() == true
         explicitReceiver?.let { arg ->
             // Special hardcoded contract for `Function<N>.invoke`:
             //   callsInPlace(this, InvocationKind.EXACTLY_ONCE)
@@ -170,13 +180,24 @@ object FirCallsEffectAnalyzer : FirControlFlowChecker(MppCheckerKind.Common) {
         }
         (argumentList as? FirResolvedArgumentList)?.mapping?.forEach { [value, parameter] ->
             val index = functionSymbol?.valueParameterSymbols?.indexOf(parameter.symbol) ?: -1
-            val range = if (index >= 0) effects?.find { it.valueParameterReference.parameterIndex == index }?.kind else null
+            val range = if (index >= 0) {
+                effects?.find { it.valueParameterReference.parameterIndex == index }?.kind
+                    ?: EventOccurrencesRange.UNKNOWN.takeIf {
+                        parameter.isEffectivelyInline(isInline, session)
+                    }
+            } else {
+                null
+            }
             block(value, range)
         }
         contextArguments.forEachIndexed { i, expression ->
             val range = effects?.find { it.valueParameterReference.parameterIndex == i + functionSymbol.valueParameterSymbols.size }?.kind
             block(expression, range)
         }
+    }
+
+    private fun FirValueParameter.isEffectivelyInline(isInline: Boolean, session: FirSession) : Boolean {
+        return isInline && !isNoinline && !isCrossinline && returnTypeRef.coneType.isNonReflectFunctionType(session)
     }
 
     private fun FirExpression.qualifiedAccessSymbol(): FirCallableSymbol<*>? =
