@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import java.io.File
 import java.io.Serializable
-import java.security.MessageDigest
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -196,28 +195,25 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             work()
             return
         }
-        val sha = MessageDigest.getInstance("SHA-256")
-        val hashProjectFiles: () -> ByteArray = {
-            projectRootTrackedFiles.files.sorted().forEach {
-                sha.update(it.readBytes())
-            }
-            sha.digest()
-        }
+        val root = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
 
-        val initialDigest = hashProjectFiles()
+        val initialSnapshot = SyntheticPackageChangeReport.snapshot(root, projectRootTrackedFiles.files)
         work()
-        val finalDigest = hashProjectFiles()
+        val finalSnapshot = SyntheticPackageChangeReport.snapshot(root, projectRootTrackedFiles.files)
 
-        if (!initialDigest.contentEquals(finalDigest)) {
-            println("error: Synthetic project regenerated")
-            if (buildingFromXcode.get()) {
-                println("error: Please go to File -> Package -> Resolve Package Versions in Xcode")
-            } else {
-                // KMP IJ plugin
-                println("error: Please go to Tools -> Swift Package Manager -> Resolve Dependencies")
-            }
-            error("Synthetic project state updated")
+        val changes = SyntheticPackageChangeReport.diff(initialSnapshot, finalSnapshot)
+        if (changes.isEmpty) return
+
+        logger.error("Synthetic project regenerated")
+        if (buildingFromXcode.get()) {
+            logger.error("Please go to File -> Package -> Resolve Package Versions in Xcode")
+        } else {
+            // KMP IJ plugin
+            logger.error("Please go to Tools -> Swift Package Manager -> Resolve Dependencies")
         }
+        val rendered = SyntheticPackageChangeReport.render(changes)
+        if (rendered.isNotEmpty()) logger.error(rendered)
+        error("Synthetic project state updated")
     }
 
     internal data class BinaryTarget(
