@@ -52,6 +52,8 @@ internal class KaFirExpressionTypeProvider(
 
     override val KtExpression.expressionType: KaType?
         get() = withPsiValidityAssertion {
+            getExpressionTypeByPsiOrNull()?.let { return it }
+
             // There are various cases where we have no corresponding fir due to invalid code
             // Some examples:
             // ```
@@ -238,13 +240,38 @@ internal class KaFirExpressionTypeProvider(
             is KtPropertyAccessor -> bodyExpression
             else -> null
         }
-        return when (singleExpression) {
-            is KtStringTemplateExpression -> analysisSession.builtinTypes.string
-            is KtConstantExpression -> {
-                val classId = singleExpression.inferClassIdByPsi()
-                primitiveTypesMap[classId]?.value
+        return singleExpression?.getExpressionTypeByPsiOrNull()
+    }
+
+    private fun KtExpression.getExpressionTypeByPsiOrNull(): KaType? {
+        val unwrappedExpression = when (this) {
+            is KtParenthesizedExpression -> expression
+            is KtAnnotatedExpression -> baseExpression
+            else -> this
+        }
+
+        return with(analysisSession.builtinTypes) {
+            when (unwrappedExpression) {
+                is KtStringTemplateExpression -> string
+                is KtConstructorDelegationReferenceExpression, is KtLoopExpression -> unit
+                is KtBinaryExpression -> {
+                    when (unwrappedExpression.operationToken) {
+                        KtTokens.EQ, KtTokens.EXCLEQ -> unit
+                        // Not overloadable, always boolean
+                        KtTokens.EQEQEQ, KtTokens.EXCLEQEQEQ -> boolean
+                        // Only used for boolean operations. Bitwise operations use infix functions
+                        KtTokens.ANDAND, KtTokens.OROR, KtTokens.EXCL -> boolean
+                        else -> null
+                    }
+                }
+                is KtIsExpression -> boolean
+                is KtContinueExpression, is KtBreakExpression, is KtThrowExpression, is KtReturnExpression -> nothing
+                is KtConstantExpression -> {
+                    val classId = unwrappedExpression.inferClassIdByPsi()
+                    primitiveTypesMap[classId]?.value
+                }
+                else -> null
             }
-            else -> null
         }
     }
 
