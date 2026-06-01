@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.light.classes.symbol.classes
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.util.ModificationTracker
 import com.intellij.psi.*
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.getExpectsForActual
 import org.jetbrains.kotlin.analysis.api.getModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
@@ -228,9 +230,9 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
 
     val parameterMaskFilter = valueParameterMaskFilter(valueParameters, parameterCount)
 
+    val defaultValueMask = defaultParameterValueMask(declaration)
     for (index in parameterCount - 1 downTo 0) {
-        val valueParameter = valueParameters[index]
-        if (!valueParameter.hasDeclaredDefaultValue || !pickMask[index]) continue
+        if (!defaultValueMask[index] || !pickMask[index]) continue
         pickMask.clear(index)
 
         if (parameterMaskFilter.accepts(pickMask)) {
@@ -241,6 +243,43 @@ internal fun <T : KaFunctionSymbol> KaSession.createMethodsJvmOverloadsAware(
             )
         }
     }
+}
+
+/**
+ * For each value parameter of the [declaration] (a function or a constructor), tells whether it has a default value
+ * that the compiler takes into account when generating `@JvmOverloads` variants (or the synthetic no-arg constructor)
+ * *on this very declaration*.
+ *
+ * - A default value declared on the parameter itself always counts;
+ * - For an `actual` declaration, a default value declared on the corresponding `expect` parameter counts, because the
+ *   overloads are emitted on the `actual` declaration (the `expect` one has no body);
+ * - A default value inherited from an *overridden* function is intentionally ignored: `@JvmOverloads` has no effect on
+ *   an override, the overloads belong to the base declaration.
+ */
+@OptIn(KaContextParameterApi::class)
+context(_: KaSession)
+internal fun defaultParameterValueMask(declaration: KaFunctionSymbol): BitSet {
+    val valueParameters = declaration.valueParameters
+    val mask = BitSet(valueParameters.size)
+
+    valueParameters.forEachIndexed { index, valueParameter ->
+        if (valueParameter.hasDeclaredDefaultValue) {
+            mask.set(index)
+        }
+    }
+
+    if (declaration.isActual) {
+        for (expectSymbol in declaration.getExpectsForActual()) {
+            val expectParameters = (expectSymbol as? KaFunctionSymbol)?.valueParameters ?: continue
+            for (index in valueParameters.indices) {
+                if (!mask[index] && expectParameters.getOrNull(index)?.hasDeclaredDefaultValue == true) {
+                    mask.set(index)
+                }
+            }
+        }
+    }
+
+    return mask
 }
 
 private sealed class ValueParameterMaskFilter {
