@@ -627,6 +627,14 @@ class IrDeclarationDeserializer(
                     )
                 }
             }.apply {
+                // TODO KT-83545: `overriddenSymbols` are recalculated later by `IrFakeOverrideBuilder`, so deserializing them here should be
+                //  in principle redundant. However, the JS/Wasm incremental-compilation dependency tracking (`CacheUpdater` /
+                //  `IdSignatureHashCalculator`) reads these symbols on partially deserialized IR (before final fakeoverrides recalculation)
+                //  where `IrFakeOverrideBuilder` cannot reconstruct the full override chain (supertypes are loaded with reduced strategies),
+                //  so the recalculated symbols are not stable across IC steps. Therefore, for JS/Wasm the overriddenSymbols _must_ be deserialized,
+                //  while for Native backend, it _should_ be also deserialized just for consistency with JS/Wasm.
+                // TODO KT-86658: Reorganize dependency calculation and dirty files calculation in JS/Wasm to not use fake overrides.
+                //  After it, this deserialization can be dropped.
                 overriddenSymbols =
                     proto.overriddenList.memoryOptimizedMap { deserializeIrSymbol(it).checkSymbolType(FUNCTION_SYMBOL) }
             }
