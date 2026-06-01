@@ -49,7 +49,7 @@ val ConeKotlinType.isMarkedNullable: Boolean
         is ConeIntegerLiteralType -> isMarkedNullable
         is ConeTypeVariableType -> isMarkedNullable
         is ConeDefinitelyNotNullType -> false
-        is ConeIntersectionType -> false
+        is ConeIntersectionType -> intersectedTypes.all { it.isMarkedNullable }
         is ConeStubType -> isMarkedNullable
     }
 

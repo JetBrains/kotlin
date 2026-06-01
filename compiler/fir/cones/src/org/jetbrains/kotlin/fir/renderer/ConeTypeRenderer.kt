@@ -92,7 +92,7 @@ open class ConeTypeRenderer(
 
     fun render(
         type: ConeKotlinType,
-        nullabilityMarker: String = if (type !is ConeFlexibleType && type.isMarkedNullable) "?" else "",
+        nullabilityMarker: String = if (type !is ConeFlexibleType && type !is ConeIntersectionType && type.isMarkedNullable) "?" else "",
     ) {
         if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType && type.classId?.isFunctionType() != true) {
             // We don't render attributes for flexible/definitely not null/extension function types here,
