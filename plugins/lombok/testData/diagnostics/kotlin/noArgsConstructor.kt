@@ -51,7 +51,13 @@ class B(x: String) : A(x)
 @NoArgsConstructor
 class D(x: String) : A(x), <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C<!>()
 
+interface I
+
+@NoArgsConstructor
+class H(var y: String) : I
+
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.
-    <!NO_VALUE_FOR_PARAMETER!>D<!>()
+    <!NO_VALUE_FOR_PARAMETER!>D<!>() // Don't generate no-args constructor because there are multiple super classes (`MANY_CLASSES_IN_SUPERTYPE_LIST`)
+    H() // Valid case: H has implicit `Any` call
 }

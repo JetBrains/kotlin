@@ -23,8 +23,8 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildDelegatedConstructorCal
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.defaultType
+import org.jetbrains.kotlin.fir.resolve.getSuperClassSymbolOrAny
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
@@ -173,15 +173,9 @@ private fun FirConstructor.tryPopulatingNoArgDelegatingConstructorCall(session: 
  */
 public fun FirClassSymbol<*>.tryGeneratingNoArgDelegatingConstructorCall(session: FirSession): FirDelegatedConstructorCall? {
     return buildDelegatedConstructorCall {
-        val superClasses = resolvedSuperTypes.filter { it.toRegularClassSymbol(session)?.classKind == ClassKind.CLASS }
-        val singleSupertype = when (superClasses.size) {
-            0 -> session.builtinTypes.anyType.coneType
-            1 -> superClasses.first()
-            else -> return null
-        }
-        constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
-        val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
-        val superConstructorSymbol = superSymbol.declaredMemberScope(session, memberRequiredPhase = null)
+        val superClassSymbol = getSuperClassSymbolOrAny(session) ?: return null
+        constructedTypeRef = superClassSymbol.defaultType().toFirResolvedTypeRef()
+        val superConstructorSymbol = superClassSymbol.declaredMemberScope(session, memberRequiredPhase = null)
             .getDeclaredConstructors()
             .firstOrNull { it.valueParameterSymbols.isEmpty() } ?: return null
         calleeReference = buildResolvedNamedReference {
