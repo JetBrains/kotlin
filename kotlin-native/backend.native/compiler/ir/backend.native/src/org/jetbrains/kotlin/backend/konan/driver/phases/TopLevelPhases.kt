@@ -281,6 +281,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         val outputPath = context.config.outputPath
         val outputFiles = OutputFiles(outputPath, context.config.target, context.config.produce)
         bitcodeEngine.runBitcodePostProcessing()
+        runAndMeasurePhase(InsertEntryPointAliasPhase, InsertEntryPointAliasInput(context.llvm.module))
         runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
         compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
@@ -379,6 +380,12 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         cExportFiles: CExportFiles?,
 ) {
     runBackendCodegen(module, irBuiltIns, cExportFiles)
+    runPostCodegen()
+    runAndMeasurePhase(InsertEntryPointAliasPhase, InsertEntryPointAliasInput(context.llvm.module))
+    runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
+}
+
+internal fun PhaseEngine<NativeGenerationState>.runPostCodegen() {
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runAndMeasurePhase(CheckExternalCallsPhase)
@@ -390,9 +397,7 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
     if (context.config.produce.isFullCache) {
         runAndMeasurePhase(SaveAdditionalCacheInfoPhase)
     }
-    runAndMeasurePhase(WriteBitcodeFilePhase, WriteBitcodeFileInput(context.llvm.module, bitcodeFile))
 }
-
 
 internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.compileAndLink(
         moduleCompilationOutput: ModuleCompilationOutput,
