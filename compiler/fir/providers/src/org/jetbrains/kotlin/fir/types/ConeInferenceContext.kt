@@ -133,10 +133,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
             is ConeIntersectionType -> if (coneAttributes === constructor.attributes) {
                 constructor
             } else {
-                ConeIntersectionType(
-                    constructor.intersectedTypes.map { it.withAttributes(coneAttributes) },
-                    constructor.upperBoundForApproximation?.withAttributes(coneAttributes)
-                )
+                constructor.mapTypes { it.withAttributes(coneAttributes) }
             }
             is ConeCapturedTypeConstructor,
             is ConeIntegerLiteralType,
