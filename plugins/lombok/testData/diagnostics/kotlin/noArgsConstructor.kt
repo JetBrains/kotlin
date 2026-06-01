@@ -1,6 +1,6 @@
 import lombok.NoArgsConstructor
 
-class C {
+open class C {
     <!ANNOTATION_HAS_NO_EFFECT!>@NoArgsConstructor<!>
     companion object
 }
@@ -48,7 +48,10 @@ abstract class A(val x: String)
 @NoArgsConstructor
 class B(x: String) : A(x)
 
+@NoArgsConstructor
+class D(x: String) : A(x), <!MANY_CLASSES_IN_SUPERTYPE_LIST!>C<!>()
+
 fun test() {
     <!NO_VALUE_FOR_PARAMETER!>B<!>() // Don't generate no-args constructor because delegated no-args constructor is missing.
+    <!NO_VALUE_FOR_PARAMETER!>D<!>()
 }
-

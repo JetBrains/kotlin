@@ -177,7 +177,7 @@ public fun FirClassSymbol<*>.tryGeneratingNoArgDelegatingConstructorCall(session
         val singleSupertype = when (superClasses.size) {
             0 -> session.builtinTypes.anyType.coneType
             1 -> superClasses.first()
-            else -> error("Object $this has more than one class supertypes: $superClasses")
+            else -> return null
         }
         constructedTypeRef = singleSupertype.toFirResolvedTypeRef()
         val superSymbol = singleSupertype.toRegularClassSymbol(session) ?: error("Symbol for supertype $singleSupertype not found")
