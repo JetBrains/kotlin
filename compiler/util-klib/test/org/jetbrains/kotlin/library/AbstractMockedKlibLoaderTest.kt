@@ -25,26 +25,22 @@ abstract class AbstractMockedKlibLoaderTest(
     }
 
     final override fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
-        withCompanionBlocksAndExtensionsFeature: Boolean
+        parameters: CompilationParameters
     ) {
-        val klibDir = if (asFile)
-            klibLocation.resolveSibling(klibLocation.name + "-dir")
+        val klibDir = if (parameters.asFile)
+            parameters.klibLocation.resolveSibling(parameters.klibLocation.name + "-dir")
         else
-            tmpDir.resolve(klibLocation.name)
+            tmpDir.resolve(parameters.klibLocation.name)
 
         mockKlib(
-            uniqueName = sourceFile.nameWithoutExtension,
+            uniqueName = parameters.sourceFile.nameWithoutExtension,
             klibDir = klibDir,
-            abiVersion = abiVersion,
-            withCompanionBlocksAndExtensionsFeature = withCompanionBlocksAndExtensionsFeature,
+            abiVersion = parameters.abiVersion,
+            withCompanionBlocksAndExtensionsFeature = parameters.withCompanionBlocksAndExtensionsFeature,
         )
 
-        if (asFile) {
-            klibDir.zipDirAs(klibLocation)
+        if (parameters.asFile) {
+            klibDir.zipDirAs(parameters.klibLocation)
         }
     }
 

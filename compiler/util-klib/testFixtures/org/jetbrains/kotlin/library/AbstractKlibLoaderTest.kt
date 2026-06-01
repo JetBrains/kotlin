@@ -690,11 +690,13 @@ abstract class AbstractKlibLoaderTest {
         assertFalse(klibLocation.exists()) { "KLIB should not exist before compilation: $klibLocation" }
 
         compileKlib(
-            asFile = asFile,
-            sourceFile = sourceFile,
-            klibLocation = klibLocation,
-            abiVersion = abiVersion,
-            withCompanionBlocksAndExtensionsFeature = withCompanionBlocksAndExtensionsFeature,
+            parameters = CompilationParameters(
+                asFile = asFile,
+                sourceFile = sourceFile,
+                klibLocation = klibLocation,
+                abiVersion = abiVersion,
+                withCompanionBlocksAndExtensionsFeature = withCompanionBlocksAndExtensionsFeature
+            )
         )
 
         // Sometimes the compiler sets file extension on its own. This needs to be fixed specifically for KLIB loader tests.
@@ -709,11 +711,15 @@ abstract class AbstractKlibLoaderTest {
         return klibLocation.path
     }
 
+    data class CompilationParameters(
+        val asFile: Boolean,
+        val sourceFile: File,
+        val klibLocation: File,
+        val abiVersion: KotlinAbiVersion,
+        val withCompanionBlocksAndExtensionsFeature: Boolean = false,
+    )
+
     protected abstract fun compileKlib(
-        asFile: Boolean,
-        sourceFile: File,
-        klibLocation: File,
-        abiVersion: KotlinAbiVersion,
-        withCompanionBlocksAndExtensionsFeature: Boolean = false,
+        parameters: CompilationParameters
     )
 }
