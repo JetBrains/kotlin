@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.testTaskName
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeSimulatorTest
 import org.jetbrains.kotlin.gradle.targets.native.tasks.KotlinNativeTest
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -348,7 +349,9 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                 val swiftPMImportCinterop = mainCompilationCinterops.create(cinteropName)
                 tasks.configureEach {
                     if (it.name == swiftPMImportCinterop.interopProcessingTaskName) {
+                        it as CInteropProcess
                         it.onlyIf { hasDirectOrTransitiveSwiftPMDependencies.get() }
+                        it.macroNamesCollectingMode.set(kotlinPropertiesProvider.swiftPMMacroCollectingMode)
                     }
                 }
                 swiftPMImportCinterop.definitionFile.set(defFile)

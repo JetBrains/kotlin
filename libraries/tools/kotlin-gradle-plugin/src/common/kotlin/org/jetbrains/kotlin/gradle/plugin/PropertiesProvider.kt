@@ -61,6 +61,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionSt
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.publication.KmpPublicationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinIrJsGeneratedTSValidationStrategy
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrOutputGranularity
+import org.jetbrains.kotlin.gradle.tasks.CInteropProcess
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import org.jetbrains.kotlin.gradle.utils.NativeCompilerDownloader
 import org.jetbrains.kotlin.gradle.utils.localProperties
@@ -630,6 +631,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_DISABLE_SWIFTPM_IMPORT) ?: false
 
     /**
+     * Speed up findMacros in SwiftPM import cinterops: KT-85797
+     */
+    val swiftPMMacroCollectingMode: CInteropProcess.MacroNamesCollectingMode
+        get() = enumProperty(PropertyNames.KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE, CInteropProcess.MacroNamesCollectingMode.LIBCLANGEXT_PARALLEL)
+
+    /**
      * Suppress Xcode integration checks that SwiftPM does during the embedAndSign integration
      */
     val suppressXcodeIntegrationCheck: Boolean
@@ -825,6 +832,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_CLASSLOADER_CACHE_TIMEOUT = property("$KOTLIN_INTERNAL_NAMESPACE.classloaderCache.timeoutSeconds")
         val ABI_VALIDATION_BANNED_TARGETS = property(ABI_VALIDATION_BANNED_TARGETS_NAME)
         val KOTLIN_PARSE_INLINED_LOCAL_CLASSES = property("$KOTLIN_INTERNAL_NAMESPACE.classpathSnapshot.parseInlinedLocalClasses")
+        val KOTLIN_SWIFTPM_MACRO_COLLECTING_MODE = property("$KOTLIN_INTERNAL_NAMESPACE.swiftPMCinteropMacroNamesCollectingMode")
 
         val FUNCTIONAL_TEST_MODE_PROPERTY = "$KOTLIN_INTERNAL_NAMESPACE.functionalTestMode"
     }
