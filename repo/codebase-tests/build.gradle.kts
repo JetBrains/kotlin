@@ -20,7 +20,9 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(testFixtures("org.jetbrains.kotlin:repo-test-fixtures"))
+    testImplementation("org.jetbrains.kotlin:test-federation-convention")
     testImplementation(gradleTestKit())
+    testImplementation(libs.intellij.asm)
 }
 
 configureJvmToolchain(JdkMajorVersion.JDK_21_0)
@@ -52,6 +54,7 @@ open class TestSystemPropertiesProvider @Inject constructor(
 projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5, javaLauncher = JdkMajorVersion.JDK_21_0) {
         dependsOn(":dist")
+        dependsOn(":compileAll")
         workingDir = rootDir
         jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
         withJunit5ParallelExecution(2)

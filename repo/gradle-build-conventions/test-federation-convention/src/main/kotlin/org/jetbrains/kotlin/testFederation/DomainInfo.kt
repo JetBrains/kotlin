@@ -11,7 +11,7 @@ import java.nio.file.FileSystem
 import java.nio.file.Path
 import kotlin.io.path.isDirectory
 
-internal sealed interface DomainInfo {
+sealed interface DomainInfo {
     /**
      * @see DeclaredDomain.home
      */
@@ -67,7 +67,7 @@ internal fun Project.repositoryPath(path: Path): RepositoryPath {
 /**
  * Resolves the domain by the 'most specific' rule.
  */
-internal fun DomainInfo.Companion.resolveDomainInfoOf(path: RepositoryPath): DomainInfo {
+fun DomainInfo.Companion.resolveDomainInfoOf(path: RepositoryPath): DomainInfo {
     val fileSystem = path.fileSystem
     val value = if (path.resolve().isDirectory()) path.value.resolve(".") else path.value
 
