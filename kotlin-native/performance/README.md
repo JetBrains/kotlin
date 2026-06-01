@@ -49,3 +49,19 @@ The benchmarks are split into several groups:
 `./gradlew :konanRun` runs all the groups;
 use something like `./gradlew :konanRun -Pgroups=ring,startup`
 to only run a subset of groups. *NOTE*: `-Pgroups=` is treated as "enable all groups"
+
+## Writing benchmarks
+
+Except `swiftInterop`, all other benchmarks are written with [kotlinx-benchmark](https://github.com/Kotlin/kotlinx-benchmark).
+
+See [the official documentation](https://github.com/Kotlin/kotlinx-benchmark/blob/master/docs/writing-benchmarks.md) how to write
+benchmarks using `kotlinx-benchmark`. Additionally:
+- use `skipWhenBaseOnly()` for long benchmarks. This will disable a benchmark, when running debug builds on CI
+- some benchmarks have `HideName` postfix; this is a hack to preserve old benchmark names. There's no need to use it for the new benchmarks
+- package names are currently absent from the final benchmark reports
+- when using `Random`, don't forget to initialize it with a fixed seed; otherwise the benchmark might be flaky
+- by default, annotate all benchmarks with `@Measurement(time = 100, timeUnit = BenchmarkTimeUnit.MILLISECONDS)`. For longer benchmarks,
+  use 1 second.
+- even though `kotlinx-benchmark` allows the benchmarks to return a result instead of using a `Blackhole`, don't use it. In Native
+  returning an `Int` from a benchmark will force boxing, which will skew the results for some microbenchmarks. `Blackhole` has the
+  appropriate overloads to avoid boxing.
