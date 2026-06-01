@@ -515,6 +515,20 @@ class StabilityInferencer(
                 analysisEntryFile
             )
 
+            type.isFullValueClassType() -> {
+                val valueClassDeclaration = type.getClass()
+                    ?: error("Failed to resolve the class definition of full value class type $type")
+                if (valueClassDeclaration.hasStableMarker()) {
+                    Stability.Stable
+                } else {
+                    val primaryProperties = valueClassDeclaration.valueClassRepresentation?.underlyingPropertyNamesToTypes
+                        ?: return Stability.Unstable // is abstract value class
+                    primaryProperties
+                        .map { [_, type] -> stabilityOf(type, substitutions, currentlyAnalyzing, analysisEntryFile) }
+                        .let { Stability.Combined(it) }
+                }
+            }
+
             type.isInlineClassType() -> {
                 val inlineClassDeclaration = type.getClass()
                     ?: error("Failed to resolve the class definition of inline type $type")
