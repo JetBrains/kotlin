@@ -102,7 +102,10 @@ private fun createAutoboxingTransformerPhase(context: JsCommonBackendContext): A
 }
 
 private fun createObjectDeclarationLoweringPhase(context: JsCommonBackendContext): ObjectDeclarationLowering {
-    return ObjectDeclarationLowering(context, initializeParentCompanions = true)
+    return ObjectDeclarationLowering(context,
+                                     initializeParentCompanions = true,
+                                     initializeObjectEnumParent = false,
+    )
 }
 
 //@PhasePrerequisites(FunctionInlining::class) // This prerequisite is hard to represent for common lowering
@@ -245,7 +248,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     ::EraseVirtualDispatchReceiverParametersTypes,
     ::WasmBridgesConstruction,
 
-    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmStaticCallableReferenceLowering`, but it is hard to represent in the common phase
+    ::createObjectDeclarationLoweringPhase, // Also depends on `WasmCallableReferenceLowering`, but it is hard to represent in the common phase
     ::GenericReturnTypeLowering,
     ::UnitToVoidLowering,
 
