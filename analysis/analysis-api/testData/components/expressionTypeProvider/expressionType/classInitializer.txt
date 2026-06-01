@@ -1,0 +1,5 @@
+expression: init {
+        1
+    }
+expression PSI: KtClassInitializer
+type: null

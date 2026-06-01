@@ -1,0 +1,3 @@
+expression: var x = 2
+expression PSI: KtProperty
+type: kotlin.Unit

@@ -1,0 +1,3 @@
+expression: true or false
+expression PSI: KtBinaryExpression
+type: kotlin.Boolean

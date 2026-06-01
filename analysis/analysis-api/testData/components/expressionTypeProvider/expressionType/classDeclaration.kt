@@ -1,0 +1,1 @@
+<expr>class MyClass</expr>

@@ -1,0 +1,3 @@
+expression: a xor b
+expression PSI: KtBinaryExpression
+type: kotlin.Int

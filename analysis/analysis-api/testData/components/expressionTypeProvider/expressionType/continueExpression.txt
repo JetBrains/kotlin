@@ -1,0 +1,3 @@
+expression: continue
+expression PSI: KtContinueExpression
+type: kotlin.Nothing

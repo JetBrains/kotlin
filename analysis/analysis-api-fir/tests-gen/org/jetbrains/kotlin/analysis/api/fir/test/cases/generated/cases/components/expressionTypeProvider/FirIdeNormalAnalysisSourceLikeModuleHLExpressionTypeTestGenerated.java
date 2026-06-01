@@ -123,6 +123,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("assignmentExpression.kt")
+  public void testAssignmentExpression() {
+    run("assignmentExpression.kt");
+  }
+
+  @Test
   @TestMetadata("assignmentExpressionTarget.kt")
   public void testAssignmentExpressionTarget() {
     run("assignmentExpressionTarget.kt");
@@ -132,6 +138,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   @TestMetadata("binaryExpression.kt")
   public void testBinaryExpression() {
     run("binaryExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("bitwiseXor.kt")
+  public void testBitwiseXor() {
+    run("bitwiseXor.kt");
+  }
+
+  @Test
+  @TestMetadata("bitwiseXorLongs.kt")
+  public void testBitwiseXorLongs() {
+    run("bitwiseXorLongs.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanExpression.kt")
+  public void testBooleanExpression() {
+    run("booleanExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("booleanExpressionIncorrectOperands.kt")
+  public void testBooleanExpressionIncorrectOperands() {
+    run("booleanExpressionIncorrectOperands.kt");
   }
 
   @Test
@@ -153,6 +183,30 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("classDeclaration.kt")
+  public void testClassDeclaration() {
+    run("classDeclaration.kt");
+  }
+
+  @Test
+  @TestMetadata("classInitializer.kt")
+  public void testClassInitializer() {
+    run("classInitializer.kt");
+  }
+
+  @Test
+  @TestMetadata("compareExpression.kt")
+  public void testCompareExpression() {
+    run("compareExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("constructorDelegationExpression.kt")
+  public void testConstructorDelegationExpression() {
+    run("constructorDelegationExpression.kt");
+  }
+
+  @Test
   @TestMetadata("contextParameter.kt")
   public void testContextParameter() {
     run("contextParameter.kt");
@@ -162,6 +216,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   @TestMetadata("contextParameterUsage.kt")
   public void testContextParameterUsage() {
     run("contextParameterUsage.kt");
+  }
+
+  @Test
+  @TestMetadata("continueExpression.kt")
+  public void testContinueExpression() {
+    run("continueExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("eagerBooleanExpression.kt")
+  public void testEagerBooleanExpression() {
+    run("eagerBooleanExpression.kt");
   }
 
   @Test
@@ -177,6 +243,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("functionDeclaration.kt")
+  public void testFunctionDeclaration() {
+    run("functionDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("inParens.kt")
   public void testInParens() {
     run("inParens.kt");
@@ -186,6 +258,24 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   @TestMetadata("incompleteGet.kt")
   public void testIncompleteGet() {
     run("incompleteGet.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectCompareOverload.kt")
+  public void testIncorrectCompareOverload() {
+    run("incorrectCompareOverload.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectContainsOverload.kt")
+  public void testIncorrectContainsOverload() {
+    run("incorrectContainsOverload.kt");
+  }
+
+  @Test
+  @TestMetadata("incorrectPlusAssignOverload.kt")
+  public void testIncorrectPlusAssignOverload() {
+    run("incorrectPlusAssignOverload.kt");
   }
 
   @Test
@@ -210,6 +300,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   @TestMetadata("intLiteral.kt")
   public void testIntLiteral() {
     run("intLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("isExpression.kt")
+  public void testIsExpression() {
+    run("isExpression.kt");
   }
 
   @Test
@@ -273,6 +369,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("loopExpression.kt")
+  public void testLoopExpression() {
+    run("loopExpression.kt");
+  }
+
+  @Test
   @TestMetadata("methodReference_instance_convertedTo_Runnable.kt")
   public void testMethodReference_instance_convertedTo_Runnable() {
     run("methodReference_instance_convertedTo_Runnable.kt");
@@ -294,6 +396,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   @TestMetadata("nonExpression.kt")
   public void testNonExpression() {
     run("nonExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("objectDeclaration.kt")
+  public void testObjectDeclaration() {
+    run("objectDeclaration.kt");
   }
 
   @Test
@@ -369,6 +477,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("referenceEquality.kt")
+  public void testReferenceEquality() {
+    run("referenceEquality.kt");
+  }
+
+  @Test
   @TestMetadata("resolvedSuper.kt")
   public void testResolvedSuper() {
     run("resolvedSuper.kt");
@@ -429,6 +543,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("throwExpression.kt")
+  public void testThrowExpression() {
+    run("throwExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("tryExpression.kt")
+  public void testTryExpression() {
+    run("tryExpression.kt");
+  }
+
+  @Test
   @TestMetadata("typealiasedConstructorCallWithImplicitTypeArguments.kt")
   public void testTypealiasedConstructorCallWithImplicitTypeArguments() {
     run("typealiasedConstructorCallWithImplicitTypeArguments.kt");
@@ -477,9 +603,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated e
   }
 
   @Test
+  @TestMetadata("variableDeclaration.kt")
+  public void testVariableDeclaration() {
+    run("variableDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("whileExpression.kt")
   public void testWhileExpression() {
     run("whileExpression.kt");
+  }
+
+  @Test
+  @TestMetadata("whileLoop.kt")
+  public void testWhileLoop() {
+    run("whileLoop.kt");
   }
 
   @Nested
