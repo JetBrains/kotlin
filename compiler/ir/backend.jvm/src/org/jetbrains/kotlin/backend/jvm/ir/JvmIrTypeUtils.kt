@@ -51,6 +51,9 @@ fun IrType.defaultValue(startOffset: Int, endOffset: Int, context: JvmBackendCon
     }
 }
 
+fun IrType.isFullValueClassType(): Boolean =
+    erasedUpperBound.isFullValueClass
+
 fun IrType.isInlineClassType(): Boolean {
     // Workaround for KT-69856
     return if (this is IrSimpleType && classifier.owner is IrScript) {
