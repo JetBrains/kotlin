@@ -4155,11 +4155,11 @@ class ComposableFunctionBodyTransformer(
 
             private fun parameterInformation(): String =
                 if (!transformer.emitParameterNames) {
-                    function.parameterInformation()
+                    function.parameterInformation(transformer.context.platform.isJvm())
                 } else {
                     // D8 removes all parameter information when processing invokedynamic.
                     // It does not sort parameters by name though, so we only need the parameter names here.
-                    function.parameterNameInformation()
+                    function.parameterNameInformation(transformer.context.platform.isJvm())
                 }
 
             override fun sourceLocationOf(call: IrElement): SourceLocation {
@@ -5000,7 +5000,7 @@ private fun IrFunction.callInformation(): String =
 // of the parameter information that implies the rest of the parameters are in order.
 // If the parameter information is missing it implies "P()" which implies all the
 // parameters are in sorted order.
-private fun IrFunction.parameterInformation(): String {
+private fun IrFunction.parameterInformation(isJvm: Boolean): String {
     val builder = StringBuilder("P(")
     val parameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
@@ -5030,7 +5030,7 @@ private fun IrFunction.parameterInformation(): String {
 
     parameters.fastForEachIndexed { originalIndex, parameter ->
         if (expectedIndexes.first() == sortIndex[originalIndex] &&
-            !parameter.type.isInlineClassType()
+            !parameter.type.isInlineClassType(isJvm)
         ) {
             run++
             expectedIndexes.removeAt(0)
@@ -5040,7 +5040,7 @@ private fun IrFunction.parameterInformation(): String {
             val index = sortIndex[originalIndex]
             builder.append(index)
             expectedIndexes.remove(index)
-            if (parameter.type.isInlineClassType()) {
+            if (parameter.type.isInlineClassType(isJvm)) {
                 builder.appendParameterType(parameter)
             }
             parameterEmitted = true
@@ -5056,7 +5056,7 @@ private fun IrFunction.parameterInformation(): String {
 //   parameters: "N(" <name> [":" <inline-class>] ["," <name> [":" <inline-class>]]* ")"
 //   name, inline-class: <chars not "," or ":">
 //
-private fun IrFunction.parameterNameInformation(): String {
+private fun IrFunction.parameterNameInformation(isJvm: Boolean): String {
     val sourceParameters = namedParameters.filter {
         !it.name.asString().startsWith("$")
     }
@@ -5067,7 +5067,7 @@ private fun IrFunction.parameterNameInformation(): String {
                 if (i > 0) append(',')
                 val p = sourceParameters[i]
                 append(p.name.asString())
-                if (p.type.isInlineClassType()) {
+                if (p.type.isInlineClassType(isJvm)) {
                     appendParameterType(p)
                 }
             }

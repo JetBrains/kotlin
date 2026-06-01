@@ -26,11 +26,11 @@ import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.isInlineClassType
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
 import org.jetbrains.kotlin.fir.declarations.utils.klibSourceFile
 import org.jetbrains.kotlin.fir.lazy.Fir2IrLazyClass
@@ -165,9 +165,12 @@ abstract class AbstractComposeLowering(
 
     // NOTE(lmr): This implementation mimics the kotlin-provided unboxInlineClass method, except
     // this one makes sure to bind the symbol if it is unbound, so is a bit safer to use.
+    @OptIn(ValueClassBackendAgnosticApi::class)
     fun IrType.unboxType(): IrType? {
         val klass = classOrNull?.owner ?: return null
-        val representation = klass.inlineClassRepresentation(treatFullValueClassesWithOneFieldAsBasic = false) ?: return null
+        val representation = klass.inlineClassRepresentation(
+            treatFullValueClassesWithOneFieldAsBasic = !context.platform.isJvm()
+        ) ?: return null
         if (!isInlineClassType()) return null
 
         // TODO: Apply type substitutions
@@ -1822,6 +1825,8 @@ abstract class AbstractComposeLowering(
         this is IrSimpleFunction &&
                 (isVirtualFunctionWithDefaultParam == true ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
+
+    fun IrType.isInlineClassType(): Boolean = isInlineClassType(isJvm = context.platform.isJvm())
 }
 
 private val unsafeSymbolsRegex = "[ <>]".toRegex()
@@ -1908,3 +1913,13 @@ fun IrClass.invokeFunctionNForComposable(context: IrPluginContext, invokeFn: IrS
 
 fun IrFunction.isExternalFunction(): Boolean =
     origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB || origin == IrDeclarationOrigin.FAKE_OVERRIDE && getPackageFragment() is IrExternalPackageFragment
+
+@OptIn(ValueClassBackendAgnosticApi::class)
+fun IrType.isInlineClassType(isJvm: Boolean): Boolean {
+    // Workaround for KT-69856
+    return if (this is IrSimpleType && classifier.owner is IrScript) {
+        false
+    } else {
+        erasedUpperBound.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = !isJvm)
+    }
+}

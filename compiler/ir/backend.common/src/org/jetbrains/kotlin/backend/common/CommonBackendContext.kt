@@ -72,7 +72,7 @@ interface InlineClassesUtils {
     fun isClassInlineLike(klass: IrClass): Boolean
 
     /**
-     * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.inlineClassRepresentation] because
+     * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.valueClassRepresentation] because
      * for some reason it can be called for classes which are not inline, e.g. `kotlin.Double`.
      */
     fun getInlineClassUnderlyingType(irClass: IrClass): IrType =
