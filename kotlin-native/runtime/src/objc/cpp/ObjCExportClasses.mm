@@ -306,14 +306,14 @@ using RegularRef = kotlin::mm::ObjCBackRef;
 }
 
 - (NSString *)description {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    kotlin::CalledFromNativeGuard guard;
     ObjHolder h1;
     ObjHolder h2;
     return Kotlin_Interop_CreateNSStringFromKString(Kotlin_toString([self toKotlin:h1.slot()], h2.slot()));
 }
 
 - (NSUInteger)hash {
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    kotlin::CalledFromNativeGuard guard;
     ObjHolder holder;
     return (NSUInteger)Kotlin_hashCode([self toKotlin:holder.slot()]);
 }
@@ -334,7 +334,7 @@ using RegularRef = kotlin::mm::ObjCBackRef;
         return NO;
     }
 
-    kotlin::ThreadStateGuard guard(kotlin::ThreadState::kRunnable);
+    kotlin::CalledFromNativeGuard guard;
     ObjHolder lhsHolder;
     ObjHolder rhsHolder;
     KRef lhs = [self toKotlin:lhsHolder.slot()];
