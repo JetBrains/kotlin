@@ -29,6 +29,11 @@ public func getX(
 ) -> Swift.String {
     ExportedKotlinPackages.org.kotlin.foo.getX(receiver)
 }
+public func renamedParameter(
+    _ input: Swift.String
+) -> Swift.Void {
+    ExportedKotlinPackages.org.kotlin.foo.renamedParameter(input)
+}
 public func y(
     _ receiver: Swift.String
 ) -> Swift.Int32 {
@@ -77,6 +82,11 @@ extension ExportedKotlinPackages.org.kotlin.foo {
         _ receiver: Swift.Int32
     ) -> Swift.String {
         return org_kotlin_foo_x_get__TypesOfArgumentsE__Swift_Int32__(receiver)
+    }
+    public static func renamedParameter(
+        _ input: Swift.String
+    ) -> Swift.Void {
+        return { org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__(input); return () }()
     }
     public static func y(
         _ receiver: Swift.String

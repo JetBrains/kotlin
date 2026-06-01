@@ -156,12 +156,12 @@ internal abstract class SirAbstractGetter(
             kotlinFqName = fqName,
             kotlinOptIns = getterSymbol?.allRequiredOptIns ?: emptyList(),
             selfParameter = (variable.parent !is SirModule && variable.isInstance).ifTrue {
-                SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
+                SirParameter(null, "self", selfType ?: error("Only a member can have a self parameter"))
             },
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "_out_error", it)
+                SirParameter(null, "_out_error", it)
             },
             isAsync = false,
         )
@@ -226,12 +226,12 @@ internal abstract class SirAbstractSetter(
             kotlinFqName = fqName,
             kotlinOptIns = setterSymbol?.allRequiredOptIns ?: emptyList(),
             selfParameter = (parent !is SirModule && variable.isInstance).ifTrue {
-                SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
+                SirParameter(null, "self", selfType ?: error("Only a member can have a self parameter"))
             },
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "_out_error", it)
+                SirParameter(null, "_out_error", it)
             },
             isAsync = false,
         )
