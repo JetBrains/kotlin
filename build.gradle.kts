@@ -533,9 +533,7 @@ tasks {
     // technically or semantically depend on Xcode SDK.
     testLifecycleTask("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
-        dependsOn(":native:swift:swift-export-embeddable:testCoroutinesITWithEmbeddable")
-        dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
-        dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
+        dependsOn(":native:swift:swift-export-embeddable:check")
         dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-ide:test")
         dependsOn(":native:swift:sir-light-classes:check")

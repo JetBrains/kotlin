@@ -55,5 +55,3 @@ projectTests {
         generateTestsInBuildDirectory = true,
     )
 }
-
-testsJar()
