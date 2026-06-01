@@ -55,6 +55,8 @@ SwiftExport:
   home: "native/swift"
   include:
     - "native/swift/**"
+  fullyAffectedBy:
+    - AnalysisApi # todo: Replace this dependency with a reviewed set of @AffectedByAnalysisApi tests
 
 CompilerPlugins:
   home: "plugins"

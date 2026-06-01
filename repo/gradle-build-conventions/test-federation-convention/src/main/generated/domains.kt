@@ -74,7 +74,7 @@ internal object SwiftExportDomainInfo : DomainInfo {
     override val domain = Domain.SwiftExport
     override val include: List<String> = listOf("native/swift/**")
     override val exclude: List<String> = listOf()
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf() }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(AnalysisApiDomainInfo) }
 }
 
 internal object CompilerPluginsDomainInfo : DomainInfo {
