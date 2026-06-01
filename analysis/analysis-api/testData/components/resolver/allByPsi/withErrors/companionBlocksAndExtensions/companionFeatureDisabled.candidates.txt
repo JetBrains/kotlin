@@ -1,0 +1,132 @@
+KtFile: 'companionFeatureDisabled.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(43,55): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'test'
+  NO_CANDIDATES
+
+KtImportList(55,55): ''
+  NO_CANDIDATES
+
+KtClass(57,111): 'class C {'
+  NO_CANDIDATES
+
+KtClassBody(65,111): '{'
+  NO_CANDIDATES
+
+KtCompanionBlock(71,109): 'companion {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(71,80): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(81,109): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(91,103): 'fun foo() {}'
+  NO_CANDIDATES
+
+KtParameterList(98,100): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(101,103): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(113,140): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(122,124): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(125,140): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(131,138): 'C.foo()'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(131,132): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(133,138): 'foo()'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtNameReferenceExpression(133,136): 'foo'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/C.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/C.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<UNSUPPORTED_FEATURE: The feature "companion blocks and extensions" is experimental and should be enabled explicitly. This can be done by supplying the compiler argument '-Xcompanion-blocks-and-extensions', but note that no stability guarantees are provided.>
+    isInBestCandidates = true
+
+KtValueArgumentList(136,138): '()'
+  NO_CANDIDATES

@@ -363,6 +363,68 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCandidatesByFileTestGene
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions")
+  @TestDataPath("$PROJECT_ROOT")
+  public class CompanionBlocksAndExtensions {
+    private void run(String fileName) {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions/" + fileName);
+    }
+
+    @Test
+    public void testAllFilesPresentInCompanionBlocksAndExtensions() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/companionBlocksAndExtensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("companionBlock.kt")
+    public void testCompanionBlock() {
+      run("companionBlock.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockAndCompanionObject.kt")
+    public void testCompanionBlockAndCompanionObject() {
+      run("companionBlockAndCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("companionBlockViaTypeAlias.kt")
+    public void testCompanionBlockViaTypeAlias() {
+      run("companionBlockViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtension.kt")
+    public void testCompanionExtension() {
+      run("companionExtension.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionInOtherFile.kt")
+    public void testCompanionExtensionInOtherFile() {
+      run("companionExtensionInOtherFile.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionOperatorInvoke.kt")
+    public void testCompanionExtensionOperatorInvoke() {
+      run("companionExtensionOperatorInvoke.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionViaTypeAlias.kt")
+    public void testCompanionExtensionViaTypeAlias() {
+      run("companionExtensionViaTypeAlias.kt");
+    }
+
+    @Test
+    @TestMetadata("companionExtensionWinsOverCompanionObjectMember.kt")
+    public void testCompanionExtensionWinsOverCompanionObjectMember() {
+      run("companionExtensionWinsOverCompanionObjectMember.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/contextSensitiveResolution")
   @TestDataPath("$PROJECT_ROOT")
   public class ContextSensitiveResolution {
@@ -1325,6 +1387,74 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCandidatesByFileTestGene
     @TestMetadata("typeParameterAsSuperType.kt")
     public void testTypeParameterAsSuperType() {
       run("typeParameterAsSuperType.kt");
+    }
+
+    @Nested
+    @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CompanionBlocksAndExtensions {
+      private void run(String fileName) {
+        runTest("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions/" + fileName);
+      }
+
+      @Test
+      public void testAllFilesPresentInCompanionBlocksAndExtensions() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors/companionBlocksAndExtensions"), Pattern.compile("^(.+)\\.(kt|kts)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("companionBlockNoCompanionQualifier.kt")
+      public void testCompanionBlockNoCompanionQualifier() {
+        run("companionBlockNoCompanionQualifier.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionAmbiguity.kt")
+      public void testCompanionExtensionAmbiguity() {
+        run("companionExtensionAmbiguity.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionInapplicableOperator.kt")
+      public void testCompanionExtensionInapplicableOperator() {
+        run("companionExtensionInapplicableOperator.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionInvalidReceivers.kt")
+      public void testCompanionExtensionInvalidReceivers() {
+        run("companionExtensionInvalidReceivers.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionOperatorInvokeAmbiguity.kt")
+      public void testCompanionExtensionOperatorInvokeAmbiguity() {
+        run("companionExtensionOperatorInvokeAmbiguity.kt");
+      }
+
+      @Test
+      @TestMetadata("companionExtensionShadowedByMember.kt")
+      public void testCompanionExtensionShadowedByMember() {
+        run("companionExtensionShadowedByMember.kt");
+      }
+
+      @Test
+      @TestMetadata("companionFeatureDisabled.kt")
+      public void testCompanionFeatureDisabled() {
+        run("companionFeatureDisabled.kt");
+      }
+
+      @Test
+      @TestMetadata("illegalCompanionBlock.kt")
+      public void testIllegalCompanionBlock() {
+        run("illegalCompanionBlock.kt");
+      }
+
+      @Test
+      @TestMetadata("nestedCompanionBlock.kt")
+      public void testNestedCompanionBlock() {
+        run("nestedCompanionBlock.kt");
+      }
     }
 
     @Nested

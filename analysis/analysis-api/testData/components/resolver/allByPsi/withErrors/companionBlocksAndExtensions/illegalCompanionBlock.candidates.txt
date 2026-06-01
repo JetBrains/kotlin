@@ -1,0 +1,223 @@
+KtFile: 'illegalCompanionBlock.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(43,55): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'test'
+  NO_CANDIDATES
+
+KtImportList(55,55): ''
+  NO_CANDIDATES
+
+KtObjectDeclaration(57,112): 'object O {'
+  NO_CANDIDATES
+
+KtClassBody(66,112): '{'
+  NO_CANDIDATES
+
+KtCompanionBlock(72,110): 'companion {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(72,81): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(82,110): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(92,104): 'fun foo() {}'
+  NO_CANDIDATES
+
+KtParameterList(99,101): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(102,104): '{}'
+  NO_CANDIDATES
+
+KtClass(114,204): 'enum class E {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(114,118): 'enum'
+  NO_CANDIDATES
+
+KtClassBody(127,204): '{'
+  NO_CANDIDATES
+
+KtEnumEntry(133,202): 'Entry {'
+  NO_CANDIDATES
+
+KtClassBody(139,201): '{'
+  NO_CANDIDATES
+
+KtCompanionBlock(149,195): 'companion {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(149,158): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(159,195): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(173,185): 'fun bar() {}'
+  NO_CANDIDATES
+
+KtParameterList(180,182): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(183,185): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(206,245): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(215,217): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(218,245): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(224,231): 'O.foo()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = O
+        isSafeNavigation = false
+        type = test.O
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/O.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/O.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(224,225): 'O'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.O
+        symbol = <constructor>(): test.O
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtCallExpression(226,231): 'foo()'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = O
+        isSafeNavigation = false
+        type = test.O
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/O.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/O.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(226,229): 'foo'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = O
+        isSafeNavigation = false
+        type = test.O
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = test/O.foo(): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/O.foo
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    isInBestCandidates = true
+
+KtValueArgumentList(229,231): '()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(236,243): 'E.Entry'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = E
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = Entry
+        receiverType = null
+        returnType = test.E
+        symbol = test/E.Entry
+        contextParameters = []
+        callableId = test/E.Entry
+      typeArgumentsMapping = {}
+    isInBestCandidates = true
+
+KtNameReferenceExpression(236,237): 'E'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.E
+        symbol = <constructor>(): test.E
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(238,243): 'Entry'
+  KaApplicableCallCandidate:
+    candidate = KaSimpleVariableAccessCall:
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = E
+        isSafeNavigation = false
+        type = kotlin.Unit
+      extensionReceiver = null
+      isContextSensitive = false
+      kind = Read
+      signature = KaVariableSignature:
+        name = Entry
+        receiverType = null
+        returnType = test.E
+        symbol = test/E.Entry
+        contextParameters = []
+        callableId = test/E.Entry
+      typeArgumentsMapping = {}
+    isInBestCandidates = true

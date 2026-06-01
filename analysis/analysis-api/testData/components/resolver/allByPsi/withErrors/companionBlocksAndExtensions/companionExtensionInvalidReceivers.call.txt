@@ -1,0 +1,299 @@
+KtFile: 'companionExtensionInvalidReceivers.kt'
+  null
+
+KtPackageDirective(43,55): 'package test'
+  null
+
+KtNameReferenceExpression(51,55): 'test'
+  null
+
+KtImportList(55,55): ''
+  null
+
+KtClass(57,64): 'class C'
+  null
+
+KtClass(65,75): 'class G<T>'
+  null
+
+KtTypeParameterList(72,75): '<T>'
+  null
+
+KtTypeParameter(73,74): 'T'
+  null
+
+KtObjectDeclaration(76,84): 'object O'
+  null
+
+KtNamedFunction(86,124): 'companion fun C?.nullableReceiver() {}'
+  null
+
+KtDeclarationModifierList(86,95): 'companion'
+  null
+
+KtTypeReference(100,102): 'C?'
+  null
+
+KtNullableType(100,102): 'C?'
+  null
+
+KtUserType(100,101): 'C'
+  null
+
+KtNameReferenceExpression(100,101): 'C'
+  null
+
+KtParameterList(119,121): '()'
+  null
+
+KtBlockExpression(122,124): '{}'
+  null
+
+KtNamedFunction(125,160): 'companion fun O.objectReceiver() {}'
+  null
+
+KtDeclarationModifierList(125,134): 'companion'
+  null
+
+KtTypeReference(139,140): 'O'
+  null
+
+KtUserType(139,140): 'O'
+  null
+
+KtNameReferenceExpression(139,140): 'O'
+  null
+
+KtParameterList(155,157): '()'
+  null
+
+KtBlockExpression(158,160): '{}'
+  null
+
+KtNamedFunction(161,222): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
+  null
+
+KtDeclarationModifierList(161,177): 'companion inline'
+  null
+
+KtTypeParameterList(182,193): '<reified T>'
+  null
+
+KtTypeParameter(183,192): 'reified T'
+  null
+
+KtDeclarationModifierList(183,190): 'reified'
+  null
+
+KtTypeReference(194,195): 'T'
+  null
+
+KtUserType(194,195): 'T'
+  null
+
+KtNameReferenceExpression(194,195): 'T'
+  null
+
+KtParameterList(217,219): '()'
+  null
+
+KtBlockExpression(220,222): '{}'
+  null
+
+KtNamedFunction(223,273): 'companion fun G<String>.typeArgumentsReceiver() {}'
+  null
+
+KtDeclarationModifierList(223,232): 'companion'
+  null
+
+KtTypeReference(237,246): 'G<String>'
+  null
+
+KtUserType(237,246): 'G<String>'
+  null
+
+KtNameReferenceExpression(237,238): 'G'
+  null
+
+KtTypeArgumentList(238,246): '<String>'
+  null
+
+KtTypeProjection(239,245): 'String'
+  null
+
+KtTypeReference(239,245): 'String'
+  null
+
+KtUserType(239,245): 'String'
+  null
+
+KtNameReferenceExpression(239,245): 'String'
+  null
+
+KtParameterList(268,270): '()'
+  null
+
+KtBlockExpression(271,273): '{}'
+  null
+
+KtNamedFunction(275,368): 'fun usage() {'
+  null
+
+KtParameterList(284,286): '()'
+  null
+
+KtBlockExpression(287,368): '{'
+  null
+
+KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(293,294): 'C'
+  null
+
+KtCallExpression(295,313): 'nullableReceiver()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(295,311): 'nullableReceiver'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = C
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.C?
+        returnType = kotlin.Unit
+        symbol = test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/nullableReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(311,313): '()'
+  null
+
+KtDotQualifiedExpression(318,336): 'O.objectReceiver()'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtNameReferenceExpression(318,319): 'O'
+  null
+
+KtCallExpression(320,336): 'objectReceiver()'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtNameReferenceExpression(320,334): 'objectReceiver'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtValueArgumentList(334,336): '()'
+  null
+
+KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(341,342): 'G'
+  null
+
+KtCallExpression(343,366): 'typeArgumentsReceiver()'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = KaExplicitReceiverValue:
+        expression = G
+        isSafeNavigation = false
+        type = kotlin.Unit
+      signature = KaFunctionSignature:
+        receiverType = test.G<kotlin.String>
+        returnType = kotlin.Unit
+        symbol = test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+        valueParameters = []
+        contextParameters = []
+        callableId = test/typeArgumentsReceiver
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtValueArgumentList(364,366): '()'
+  null

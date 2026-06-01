@@ -1,0 +1,81 @@
+KtFile: 'companionBlockNoCompanionQualifier.kt'
+  NO_CANDIDATES
+
+KtPackageDirective(43,55): 'package test'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(51,55): 'test'
+  NO_CANDIDATES
+
+KtImportList(55,55): ''
+  NO_CANDIDATES
+
+KtClass(57,111): 'class C {'
+  NO_CANDIDATES
+
+KtClassBody(65,111): '{'
+  NO_CANDIDATES
+
+KtCompanionBlock(71,109): 'companion {'
+  NO_CANDIDATES
+
+KtDeclarationModifierList(71,80): 'companion'
+  NO_CANDIDATES
+
+KtClassBody(81,109): '{'
+  NO_CANDIDATES
+
+KtNamedFunction(91,103): 'fun foo() {}'
+  NO_CANDIDATES
+
+KtParameterList(98,100): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(101,103): '{}'
+  NO_CANDIDATES
+
+KtNamedFunction(113,266): 'fun usage() {'
+  NO_CANDIDATES
+
+KtParameterList(122,124): '()'
+  NO_CANDIDATES
+
+KtBlockExpression(125,266): '{'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(247,264): 'C.Companion.foo()'
+  NO_CANDIDATES
+
+KtDotQualifiedExpression(247,258): 'C.Companion'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(247,248): 'C'
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = test.C
+        symbol = <constructor>(): test.C
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
+
+KtNameReferenceExpression(249,258): 'Companion'
+  NO_CANDIDATES
+
+KtCallExpression(259,264): 'foo()'
+  NO_CANDIDATES
+
+KtNameReferenceExpression(259,262): 'foo'
+  NO_CANDIDATES
+
+KtValueArgumentList(262,264): '()'
+  NO_CANDIDATES

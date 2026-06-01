@@ -1,0 +1,299 @@
+KtFile: 'companionExtensionInvalidReceivers.kt'
+  null
+
+KtPackageDirective(43,55): 'package test'
+  null
+
+KtNameReferenceExpression(51,55): 'test'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(55,55): ''
+  null
+
+KtClass(57,64): 'class C'
+  null
+
+KtClass(65,75): 'class G<T>'
+  null
+
+KtTypeParameterList(72,75): '<T>'
+  null
+
+KtTypeParameter(73,74): 'T'
+  null
+
+KtObjectDeclaration(76,84): 'object O'
+  null
+
+KtNamedFunction(86,124): 'companion fun C?.nullableReceiver() {}'
+  null
+
+KtDeclarationModifierList(86,95): 'companion'
+  null
+
+KtTypeReference(100,102): 'C?'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNullableType(100,102): 'C?'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtUserType(100,101): 'C'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtNameReferenceExpression(100,101): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtParameterList(119,121): '()'
+  null
+
+KtBlockExpression(122,124): '{}'
+  null
+
+KtNamedFunction(125,160): 'companion fun O.objectReceiver() {}'
+  null
+
+KtDeclarationModifierList(125,134): 'companion'
+  null
+
+KtTypeReference(139,140): 'O'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O
+    ]
+
+KtUserType(139,140): 'O'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O
+    ]
+
+KtNameReferenceExpression(139,140): 'O'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O
+    ]
+
+KtParameterList(155,157): '()'
+  null
+
+KtBlockExpression(158,160): '{}'
+  null
+
+KtNamedFunction(161,222): 'companion inline fun <reified T> T.typeParameterReceiver() {}'
+  null
+
+KtDeclarationModifierList(161,177): 'companion inline'
+  null
+
+KtTypeParameterList(182,193): '<reified T>'
+  null
+
+KtTypeParameter(183,192): 'reified T'
+  null
+
+KtDeclarationModifierList(183,190): 'reified'
+  null
+
+KtTypeReference(194,195): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtUserType(194,195): 'T'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtNameReferenceExpression(194,195): 'T'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      T
+    ]
+
+KtParameterList(217,219): '()'
+  null
+
+KtBlockExpression(220,222): '{}'
+  null
+
+KtNamedFunction(223,273): 'companion fun G<String>.typeArgumentsReceiver() {}'
+  null
+
+KtDeclarationModifierList(223,232): 'companion'
+  null
+
+KtTypeReference(237,246): 'G<String>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/G
+    ]
+
+KtUserType(237,246): 'G<String>'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/G
+    ]
+
+KtNameReferenceExpression(237,238): 'G'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/G
+    ]
+
+KtTypeArgumentList(238,246): '<String>'
+  null
+
+KtTypeProjection(239,245): 'String'
+  null
+
+KtTypeReference(239,245): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtUserType(239,245): 'String'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtNameReferenceExpression(239,245): 'String'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/String
+    ]
+
+KtParameterList(268,270): '()'
+  null
+
+KtBlockExpression(271,273): '{}'
+  null
+
+KtNamedFunction(275,368): 'fun usage() {'
+  null
+
+KtParameterList(284,286): '()'
+  null
+
+KtBlockExpression(287,368): '{'
+  null
+
+KtDotQualifiedExpression(293,313): 'C.nullableReceiver()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(293,294): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(295,313): 'nullableReceiver()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(295,311): 'nullableReceiver'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/nullableReceiver(<extension receiver>: test.C?): kotlin.Unit
+    ]
+
+KtValueArgumentList(311,313): '()'
+  null
+
+KtDotQualifiedExpression(318,336): 'O.objectReceiver()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtNameReferenceExpression(318,319): 'O'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/O
+    ]
+
+KtCallExpression(320,336): 'objectReceiver()'
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtNameReferenceExpression(320,334): 'objectReceiver'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionError:
+    candidateSymbols = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'objectReceiver'.>
+
+KtValueArgumentList(334,336): '()'
+  null
+
+KtDotQualifiedExpression(341,366): 'G.typeArgumentsReceiver()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(341,342): 'G'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/G
+    ]
+
+KtCallExpression(343,366): 'typeArgumentsReceiver()'
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+    ]
+
+KtNameReferenceExpression(343,364): 'typeArgumentsReceiver'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/typeArgumentsReceiver(<extension receiver>: test.G<kotlin.String>): kotlin.Unit
+    ]
+
+KtValueArgumentList(364,366): '()'
+  null

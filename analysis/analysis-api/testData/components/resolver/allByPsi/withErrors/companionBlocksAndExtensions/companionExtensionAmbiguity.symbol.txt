@@ -1,0 +1,115 @@
+KtFile: 'main.kt'
+  null
+
+KtPackageDirective(32,44): 'package test'
+  null
+
+KtNameReferenceExpression(40,44): 'test'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test
+    ]
+
+KtImportList(46,71): 'import a.foo'
+  null
+
+KtImportDirective(46,58): 'import a.foo'
+  null
+
+KtDotQualifiedExpression(53,58): 'a.foo'
+  null
+
+KtNameReferenceExpression(53,54): 'a'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a
+    ]
+
+KtNameReferenceExpression(55,58): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      a/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtImportDirective(59,71): 'import b.foo'
+  null
+
+KtDotQualifiedExpression(66,71): 'b.foo'
+  null
+
+KtNameReferenceExpression(66,67): 'b'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b
+    ]
+
+KtNameReferenceExpression(68,71): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      b/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+
+KtClass(73,80): 'class C'
+  null
+
+KtNamedFunction(82,109): 'fun usage() {'
+  null
+
+KtParameterList(91,93): '()'
+  null
+
+KtBlockExpression(94,109): '{'
+  null
+
+KtDotQualifiedExpression(100,107): 'C.foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      a/foo(<extension receiver>: test.C): kotlin.Unit,
+      b/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtNameReferenceExpression(100,101): 'C'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionSuccess:
+    symbols = [
+      test/C
+    ]
+
+KtCallExpression(102,107): 'foo()'
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      a/foo(<extension receiver>: test.C): kotlin.Unit,
+      b/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtNameReferenceExpression(102,105): 'foo'
+  isImplicitReferenceToCompanion: false
+  usesContextSensitiveResolution: false
+  KaSymbolResolutionError:
+    candidateSymbols = [
+      a/foo(<extension receiver>: test.C): kotlin.Unit,
+      b/foo(<extension receiver>: test.C): kotlin.Unit
+    ]
+    diagnostic = ERROR<OVERLOAD_RESOLUTION_AMBIGUITY: Overload resolution ambiguity between candidates:
+    companion fun C.foo(): Unit
+    companion fun C.foo(): Unit>
+
+KtValueArgumentList(105,107): '()'
+  null
