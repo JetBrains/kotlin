@@ -19,8 +19,6 @@ sourceSets {
     }
 }
 
-testsJar {}
-
 projectTests {
     nativeTestTask(
         "test",

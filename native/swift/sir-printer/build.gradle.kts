@@ -36,8 +36,6 @@ projectTests {
     testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
-testsJar()
-
 publish()
 
 runtimeJar()

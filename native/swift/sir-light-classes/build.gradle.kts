@@ -50,8 +50,6 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-testsJar()
-
 publish()
 
 runtimeJar()

@@ -21,8 +21,6 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-testsJar {}
-
 projectTests {
     testData(isolated, "testData")
 
