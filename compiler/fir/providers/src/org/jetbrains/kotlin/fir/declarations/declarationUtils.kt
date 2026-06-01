@@ -261,19 +261,14 @@ fun FirBasedSymbol<*>.isAnnotationConstructor(session: FirSession): Boolean {
 fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSession): Boolean {
     contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
     if (this !is FirConstructorSymbol) return false
-    return getConstructedClass(session)?.isInlineOrValueClass() == true && this.isPrimary
+    val constructedClass = getConstructedClass(session) ?: return false
+    return constructedClass.isInlineOrValue && this.isPrimary
 }
 
 fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {
     return resolvedReturnTypeRef.coneType
         .fullyExpandedType(session)
         .toRegularClassSymbol(session)
-}
-
-fun FirRegularClassSymbol.isInlineOrValueClass(): Boolean {
-    if (this.classKind != ClassKind.CLASS) return false
-
-    return isInlineOrValue
 }
 
 @PrivateForInline
