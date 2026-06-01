@@ -25,7 +25,7 @@ class DomainsDumpTest {
 
     @Test
     fun `test - domains dump is up to date`() {
-        val tree = repositoryRoot.toNode()
+        val tree = repositoryRoot.toNode() ?: error("Missing root tree")
 
         val conflatedTree = tree.conflate()
         val actualText = buildString {
@@ -66,13 +66,14 @@ class DomainsDumpTest {
         val children: List<Node>,
     )
 
-    private fun Path.toNode(): Node {
+    private fun Path.toNode(): Node? {
         val repositoryPath = RepositoryPath(repositoryRoot, repositoryRoot.relativize(this))
         val domain = repositoryPath.domain
         val children = if (isDirectory()) {
             listDirectoryEntries()
                 .filter { child -> !child.isGitIgnored() }.sorted()
-                .map { child -> child.toNode() }
+                .mapNotNull { child -> child.toNode() }
+                .ifEmpty { return null }
         } else emptyList()
         return Node(repositoryPath, domain, children)
     }
