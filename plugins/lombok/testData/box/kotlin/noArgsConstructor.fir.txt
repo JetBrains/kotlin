@@ -47,6 +47,22 @@ FILE: ConstructorExample.kt
         public final val int: R|kotlin/Int| = R|<local>/int|
             public get(): R|kotlin/Int|
 
+        public final val x: R|kotlin/Int| = Int(5)
+            public get(): R|kotlin/Int|
+
+        public final val y: R|kotlin/String|
+            public get(): R|kotlin/String| {
+                ^ String(y)
+            }
+
+        public final val z: R|kotlin/String|by R|kotlin/lazy|<R|kotlin/String|>(<L> = lazy@fun <anonymous>(): R|kotlin/String| <inline=NoInline>  {
+            ^ String(TEST)
+        }
+        )
+            public get(): R|kotlin/String| {
+                ^ this@R|/ConstructorExampleWithForce|.D|/ConstructorExampleWithForce.z|.R|kotlin/getValue|<R|kotlin/String|>(this@R|/ConstructorExampleWithForce|, ::R|/ConstructorExampleWithForce.z|)
+            }
+
         public constructor(): R|ConstructorExampleWithForce| {
             super<R|kotlin/Any|>()
         }

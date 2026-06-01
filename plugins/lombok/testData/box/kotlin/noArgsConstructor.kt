@@ -10,7 +10,13 @@ open class ConstructorExample(var boolean: Boolean, var char: Char, var int: Int
 class ConstructorExampleWithGenerics<T>(var param: T)
 
 @NoArgsConstructor(force = true)
-class ConstructorExampleWithForce(val int: Int)
+class ConstructorExampleWithForce(val int: Int) {
+    // The following properties should not affect generation
+    val x = 5
+    val y: String
+        get() = "y"
+    val z by lazy { "TEST" }
+}
 
 fun box(): String {
     val zeroObject = ConstructorExample()
