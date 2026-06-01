@@ -142,11 +142,11 @@ CompilerPlugins:
  - plugins/plugins-interactions-testing
  - plugins/power-assert
  - plugins/sam-with-receiver
- - plugins/scripting
  - plugins/test-plugins
 
 Compiler, CompilerPlugins:
  - plugins/plugin-sandbox
+ - plugins/scripting
 
 Gradle:
  - libraries/tools/gradle

@@ -5,8 +5,9 @@ Compiler:
     - "compiler/**"
     - "core/**"
     - "build-common/**"
-    - "plugins/plugin-sandbox/**"
     - "compiler/psi/parser/**"
+    - "plugins/plugin-sandbox/**"
+    - "plugins/scripting/**"
     - "jps/**"
   exclude:
     - "compiler/psi/**"

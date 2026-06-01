@@ -23,7 +23,7 @@ enum class Domain {
 
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "plugins/plugin-sandbox/**", "compiler/psi/parser/**", "jps/**")
+    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "compiler/psi/parser/**", "plugins/plugin-sandbox/**", "plugins/scripting/**", "jps/**")
     override val exclude: List<String> = listOf("compiler/psi/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
