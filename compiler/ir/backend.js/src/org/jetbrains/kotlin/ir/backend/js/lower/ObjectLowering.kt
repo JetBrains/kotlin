@@ -91,7 +91,12 @@ class ObjectDeclarationLowering(
             var superClass = declaration.parent.safeAs<IrClass>()?.superClass
             var result: IrSimpleFunction? = null
             while (superClass != null && result == null) {
-                result = superClass.companionObject()?.let { getOrCreateGetInstanceFunction(it) }
+                val companion = superClass.companionObject()
+                if (companion != null) {
+                    result = declaration.factory.stageController.restrictTo(companion) {
+                        getOrCreateGetInstanceFunction(companion)
+                    }
+                }
                 superClass = superClass.superClass
             }
             result
