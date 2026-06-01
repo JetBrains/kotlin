@@ -84,8 +84,14 @@ internal object CocoapodsPluginDiagnostics {
         operator fun invoke() = build {
             title("CocoaPods Plugin: Consider Migrating to Swift Package Manager")
                 .description {
-                    "The Kotlin CocoaPods Gradle plugin is in maintenance mode. " +
-                            "Swift Package Manager (SPM) is the recommended way to integrate Apple frameworks into your Kotlin Multiplatform project."
+                    """
+                    The Kotlin CocoaPods Gradle plugin is in maintenance mode.
+                    Swift Package Manager (SPM) is the recommended way to integrate Apple frameworks into your Kotlin Multiplatform project.
+                    
+                    To suppress this warning if migration is not yet possible, add the following to your gradle.properties:
+                    
+                        ${PropertiesProvider.PropertyNames.KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN}=true
+                    """.trimIndent()
                 }
                 .solution {
                     "Migrate to the Swift Package Manager integration"

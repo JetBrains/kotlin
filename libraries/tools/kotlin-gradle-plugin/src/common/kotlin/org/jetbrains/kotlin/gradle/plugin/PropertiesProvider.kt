@@ -500,6 +500,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val appleIgnoreXcodeVersionCompatibility: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN) ?: false
 
+    val cocoapodsSwiftPMMigrationNowarn: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN) ?: false
+
     val appleCreateSymbolicLinkToFrameworkInBuiltProductsDir: Boolean
         get() = booleanProperty(PropertyNames.KOTLIN_APPLE_CREATE_SYMBOLIC_LINK_TO_FRAMEWORK_IN_BUILT_PRODUCTS_DIR) ?: true
 
@@ -774,6 +777,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
             property("kotlin.apple.createSymbolicLinkToFrameworkInBuiltProductsDir")
         val KOTLIN_APPLE_COPY_DSYM_DURING_ARCHIVING = property("kotlin.apple.copyDsymDuringArchiving")
         val KOTLIN_APPLE_XCODE_COMPATIBILITY_NOWARN = property("kotlin.apple.xcodeCompatibility.nowarn")
+        val KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN = property("kotlin.native.cocoapods.swiftpmMigration.nowarn")
         val KOTLIN_APPLE_COCOAPODS_EXECUTABLE = property("kotlin.apple.cocoapods.bin")
         val KOTLIN_APPLE_ALLOW_EMBED_AND_SIGN_WITH_COCOAPODS =
             property("kotlin.apple.deprecated.allowUsingEmbedAndSignWithCocoaPodsDependencies")

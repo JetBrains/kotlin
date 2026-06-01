@@ -8,6 +8,7 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.CFLAGS_PROPERTY
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.KotlinCocoapodsPlugin.Companion.FRAMEWORK_PATHS_PROPERTY
@@ -35,6 +36,15 @@ class CocoapodsUnitTests {
     @Test
     fun `migration warning is not reported when cocoapods plugin is not applied`() {
         buildProjectWithMPP {
+            assertNoDiagnostics(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested)
+        }
+    }
+
+    @Test
+    fun `migration warning is not reported when suppressed via property`() {
+        buildProjectWithMPP {
+            propertiesExtension.set(PropertyNames.KOTLIN_NATIVE_COCOAPODS_SWIFTPM_MIGRATION_NOWARN, "true")
+            applyCocoapodsPlugin()
             assertNoDiagnostics(CocoapodsPluginDiagnostics.SwiftPMMigrationSuggested)
         }
     }
