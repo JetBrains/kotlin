@@ -7,6 +7,7 @@ Compiler:
     - "build-common/**"
     - "plugins/plugin-sandbox/**"
     - "compiler/psi/parser/**"
+    - "jps/**"
   exclude:
     - "compiler/psi/**"
   fullyAffectedBy:
@@ -15,6 +16,7 @@ Compiler:
 Wasm:
   include:
     - "wasm/**"
+    - "js/js.translator/testData/**"
   fullyAffectedBy:
     - Compiler
     - CoreLibs

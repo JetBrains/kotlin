@@ -23,14 +23,14 @@ enum class Domain {
 
 internal object CompilerDomainInfo : DomainInfo {
     override val domain = Domain.Compiler
-    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "plugins/plugin-sandbox/**", "compiler/psi/parser/**")
+    override val include: List<String> = listOf("compiler/**", "core/**", "build-common/**", "plugins/plugin-sandbox/**", "compiler/psi/parser/**", "jps/**")
     override val exclude: List<String> = listOf("compiler/psi/**")
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CoreLibsDomainInfo) }
 }
 
 internal object WasmDomainInfo : DomainInfo {
     override val domain = Domain.Wasm
-    override val include: List<String> = listOf("wasm/**")
+    override val include: List<String> = listOf("wasm/**", "js/js.translator/testData/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }

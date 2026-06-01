@@ -63,12 +63,28 @@ Compiler:
  - compiler/util-klib-abi
  - compiler/util-klib-metadata
  - core
+ - jps
 
 Wasm:
  - wasm
 
 Js:
- - js
+ - js/ReadMe.md
+ - js/js.ast
+ - js/js.config
+ - js/js.frontend
+ - js/js.frontend.common
+ - js/js.parser
+ - js/js.serializer
+ - js/js.sourcemap
+ - js/js.tests
+ - js/js.translator/ReadMe.md
+ - js/js.translator/build.gradle.kts
+ - js/js.translator/src
+ - js/npm
+ - js/typescript-export-model
+ - js/typescript-export-standalone
+ - js/typescript-printer
 
 Native:
  - kotlin-native
@@ -89,6 +105,9 @@ Native:
  - native/objcexport-header-generator
  - native/unsafe-mem
  - native/utils
+
+Js, Wasm:
+ - js/js.translator/testData
 
 CoreLibs:
  - libraries/kotlin.test
@@ -190,7 +209,6 @@ Unknown:
  - gradlew.bat
  - idea
  - intellij.yaml
- - jps
  - kotlin-js-store
  - libraries/.gitignore
  - libraries/.mvn
