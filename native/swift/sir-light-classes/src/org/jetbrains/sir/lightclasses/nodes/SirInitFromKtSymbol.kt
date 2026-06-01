@@ -46,7 +46,7 @@ import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 import kotlin.lazy
 
 private val obj = SirParameter(
-    "", "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
+    null, "__kt", SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
 )
 
 internal sealed class SirInitFromKtSymbol(
@@ -262,7 +262,7 @@ internal class SirRegularInitFromKtSymbol(
             contextParameters = emptyList(),
             extensionReceiverParameter = null,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "__error", it)
+                SirParameter(null, "__error", it)
             },
             isAsync = false,
         )

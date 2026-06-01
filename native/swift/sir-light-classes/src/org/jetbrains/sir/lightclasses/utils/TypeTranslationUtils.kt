@@ -54,7 +54,11 @@ internal inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.translateP
         this@translateParameters.ktSymbol.valueParameters.map { parameter ->
             val sirType = createParameterType(ktSymbol, parameter).escaping
             val objCNameAnnotation = parameter.objCNameAnnotation
-            val argumentName = objCNameAnnotation?.argumentName ?: parameter.name.asString()
+            val argumentName: String? = when (val raw = objCNameAnnotation?.argumentName) {
+                null -> parameter.name.asString()
+                "" -> null
+                else -> raw
+            }
             val parameterName = objCNameAnnotation?.name ?: parameter.name.asString()
             SirParameter(
                 argumentName = argumentName,

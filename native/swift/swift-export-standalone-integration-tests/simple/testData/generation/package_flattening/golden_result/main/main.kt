@@ -33,6 +33,13 @@ public fun org_kotlin_foo_function__TypesOfArguments__Swift_Int32__(arg: Int): I
     return _result
 }
 
+@ExportedBridge("org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__")
+public fun org_kotlin_foo_renamedParameter__TypesOfArguments__Swift_String__(input: kotlin.native.internal.NativePtr): Boolean {
+    val __input = interpretObjCPointer<kotlin.String>(input)
+    val _result = run { org.kotlin.foo.renamedParameter(__input) }
+    return run { _result; true }
+}
+
 @ExportedBridge("org_kotlin_foo_variable_get")
 public fun org_kotlin_foo_variable_get(): Int {
     val _result = run { org.kotlin.foo.variable }

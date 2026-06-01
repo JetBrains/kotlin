@@ -26,3 +26,6 @@ fun String.y(): Int = 5
 var variable: Int = 0
 
 val constant: Int = 0
+
+@OptIn(kotlin.experimental.ExperimentalObjCName::class)
+fun renamedParameter(@ObjCName(swiftName="_") input: String): Unit = TODO()

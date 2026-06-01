@@ -117,7 +117,7 @@ internal open class SirFunctionFromKtSymbol(
 
         val contextParameters = contextParameters?.second ?: emptyList()
         val extensionReceiverParameter = extensionReceiverParameter?.let {
-            SirParameter("", "receiver", it.type)
+            SirParameter(null, "receiver", it.type)
         }
 
         // For F-bounded methods, use the interface type as self type to generate direct cast
@@ -130,12 +130,12 @@ internal open class SirFunctionFromKtSymbol(
             kotlinFqName = fqName,
             kotlinOptIns = ktSymbol.allRequiredOptIns,
             selfParameter = (parent !is SirModule && isInstance).ifTrue {
-                SirParameter("", "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
+                SirParameter(null, "self", effectiveSelfType ?: error("Only a member can have a self parameter"))
             },
             contextParameters = contextParameters,
             extensionReceiverParameter = extensionReceiverParameter,
             errorParameter = errorType.takeIf { it != SirType.never }?.let {
-                SirParameter("", "_out_error", it)
+                SirParameter(null, "_out_error", it)
             },
             isAsync = isAsync,
         )
