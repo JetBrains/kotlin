@@ -53,7 +53,7 @@ value class Delegation(val x: Int) : Comparable<Int> by x
 value class Delegation1(val x: Int) : <!VALUE_CLASS_CANNOT_IMPLEMENT_INTERFACE_BY_DELEGATION!>Comparable<Int><!> by (x.let { 2 + 2 })
 
 @JvmInline
-<!VALUE_CLASS_NOT_FINAL!>abstract<!> value class AbstractOld(val x: Int)
+<!VALUE_CLASS_NOT_FINAL("@JvmInline value")!>abstract<!> value class AbstractOld(val x: Int)
 @JvmInline
 <!VALUE_CLASS_NOT_FINAL!>open<!> value class OpenOld(val x: Int)
 @JvmInline
