@@ -102,6 +102,16 @@ val compatibilityTestsVersions = listOf(
     BuildToolsVersion(KotlinToolingVersion(2, 3, 20, null)),
 )
 
+val compatibilityTestsExcludedVersions = listOf(
+    BuildToolsVersion(KotlinToolingVersion(2, 3, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 20, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 2, 0, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 21, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 10, null)),
+    BuildToolsVersion(KotlinToolingVersion(2, 1, 0, null)),
+)
+
 class BuildToolsVersion(val version: KotlinToolingVersion, val isCurrent: Boolean = false) {
     override fun toString() = if (isCurrent) "Snapshot" else version.toString()
 }
@@ -364,4 +374,38 @@ testing {
 
 tasks.named("check") {
     dependsOn(testing.suites.matching { it.name != "testExample" }) // do not run example tests by default
+}
+
+val checkCompatibilityCoverageTask = checkCompatibilityCoverage(
+    btaVersion = project.version.toString(),
+    compatibilityTestsVersions = compatibilityTestsVersions.map { it.version },
+    compatibilityTestsExcludedVersions = compatibilityTestsExcludedVersions.map { it.version },
+)
+
+fun Project.checkCompatibilityCoverage(
+    btaVersion: String,
+    compatibilityTestsVersions: List<KotlinToolingVersion>,
+    compatibilityTestsExcludedVersions: List<KotlinToolingVersion>,
+): TaskProvider<JavaExec> {
+    val checkerClasspath = configurations.register("checkerClasspath") {
+        isCanBeConsumed = false
+        isCanBeResolved = true
+    }
+
+    dependencies {
+        checkerClasspath(project(":compiler:build-tools:kotlin-build-tools-version-coverage-check"))
+    }
+
+    return tasks.register<JavaExec>("checkCompatibilityCoverage") {
+        group = "verification"
+        description = "Verify that tests cover all versions required by backward compatibility guarantees"
+        classpath = checkerClasspath.get()
+        mainClass.set("org.jetbrains.kotlin.buildtools.versioncoverage.MainKt")
+        args(
+            btaVersion,
+            "backward",
+            compatibilityTestsVersions.joinToString(",") { it.toString() },
+            compatibilityTestsExcludedVersions.joinToString(",") { it.toString() },
+        )
+    }
 }
