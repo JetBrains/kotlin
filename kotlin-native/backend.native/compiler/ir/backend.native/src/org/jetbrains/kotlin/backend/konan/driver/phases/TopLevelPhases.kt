@@ -207,11 +207,7 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
                     generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
                     // Split here
-                    val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
-                    val depsFilePath = config.writeSerializedDependencies
-                    if (!depsFilePath.isNullOrEmpty()) {
-                        depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
-                    }
+                    val dependenciesTrackingResult = generationStateEngine.collectAndMaybeSerializeDependencies()
                     val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
                     generationStateEngine.compileAndLink(
                             moduleCompilationOutput,
@@ -288,6 +284,18 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBitcodeBackend(
         val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependencies)
         compileAndLink(moduleCompilationOutput, outputFiles.mainFileName, outputFiles, tempFiles)
     }
+}
+
+private fun PhaseEngine<NativeGenerationState>.collectAndMaybeSerializeDependencies(): DependenciesTrackingResult {
+    val deps = context.dependenciesTracker.collectResult()
+    val depsFilePath = context.config.writeSerializedDependencies ?: return deps
+
+    if (depsFilePath.isNotEmpty()) {
+        val fileWriteSerializedDependencies = depsFilePath.File()
+        fileWriteSerializedDependencies.writeLines(DependenciesTrackingResult.serialize(deps))
+    }
+
+    return deps
 }
 
 private fun isReferencedByNativeRuntime(declarations: List<IrDeclaration>): Boolean =
