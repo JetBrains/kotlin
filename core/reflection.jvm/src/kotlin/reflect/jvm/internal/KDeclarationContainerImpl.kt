@@ -146,8 +146,6 @@ internal abstract class KDeclarationContainerImpl : ClassBasedDeclarationContain
     }
 
     fun findFunctionMetadata(name: String, signature: String): KmFunction {
-        require(this is KPackageImpl) { "Only top-level functions are supported for now: $this/$name ($signature)" }
-
         val functions = functionsMetadata.filter { it.name == name && it.signature.toString() == signature }
         if (functions.size != 1) {
             val allMembers = functionsMetadata.joinToString("\n") { function ->

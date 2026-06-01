@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import java.lang.reflect.GenericArrayType
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
@@ -84,11 +85,15 @@ internal class TypeParameterTable private constructor(
                 KTypeParameterImpl(unbound, km.name, km.variance.toKVariance(), km.isReified)
             }
             val map = kmTypeParameters.withIndex().associate { (index, km) -> km.id to kTypeParameters[index] }
+            // If we're creating type parameters of a callable that is a fake override, their upper bounds should be substituted with the
+            // callable's type substitutor.
+            val substitutor = (container as? ReflectKCallable<*>)?.overriddenStorage?.getTypeSubstitutor(kTypeParameters, container.name)
             return TypeParameterTable(kTypeParameters, map, parent).also { table ->
                 for ((i, typeParameter) in kTypeParameters.withIndex()) {
                     typeParameter.upperBounds = kmTypeParameters[i].upperBounds.map {
                         // Upper bounds of type parameters should always have underlying wrapper (not primitive) classes.
-                        it.toKType(classLoader, table, forceWrapperClass = true)
+                        val type = it.toKType(classLoader, table, forceWrapperClass = true)
+                        substitutor?.substituteTopLevelType(type) ?: type
                     }.ifEmpty { listOf(StandardKTypes.NULLABLE_ANY) }
                 }
             }
@@ -217,7 +222,7 @@ private fun KmClassifier.toClassifier(
         }
 }
 
-internal class ErrorTypeParameter(private val id: Int) : KClassifier {
+internal class ErrorTypeParameter(private val id: Int) : KClassifier, TypeConstructorMarker {
     override fun toString(): String = "[Error type parameter $id]"
 }
 
@@ -341,9 +346,12 @@ internal fun createUnboundProperty(property: KmProperty, container: KDeclaration
 }
 
 internal fun createUnboundFunction(function: KmFunction, container: KDeclarationContainerImpl): KotlinKFunction {
-    val signature = function.signature?.toString()
-        ?: throw KotlinReflectionInternalError("No signature for function: ${function.name}")
-    return KotlinKNamedFunction(container, signature, CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
+    // In JVM metadata, functions always have `signature`. In builtins metadata, they don't (*), so we compute it manually. In JVM metadata,
+    // this might also help in cases when metadata was corrupted or generated incorrectly for some reason and lacks the signature.
+    // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
+    // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
+    val signature = function.signature ?: function.mapSignature(container)
+    return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
 }
 
 internal fun createUnboundConstructor(constructor: KmConstructor, container: KDeclarationContainerImpl): KotlinKFunction {

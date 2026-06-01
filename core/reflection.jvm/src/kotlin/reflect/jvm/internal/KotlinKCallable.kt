@@ -39,8 +39,8 @@ internal fun KotlinKCallable<*>.computeParameters(
                     add(InstanceParameter(callable, container.java.declaringClass.kotlin))
                 }
             } else {
-                require(isLocalDelegatedProperty) {
-                    "Only top-level callables are supported for now: $container/$name"
+                if (!isLocalDelegatedProperty && (callable as? KotlinKNamedFunction)?.isCompanionBlockMember != true) {
+                    add(InstanceParameter(callable, container))
                 }
             }
         }

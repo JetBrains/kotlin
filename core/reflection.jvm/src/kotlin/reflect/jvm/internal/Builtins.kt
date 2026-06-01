@@ -16,6 +16,8 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.metadata.*
 import kotlin.metadata.internal.common.KmModuleFragment
 import kotlin.metadata.internal.common.KotlinCommonMetadata
+import kotlin.metadata.jvm.JvmMethodSignature
+import kotlin.metadata.jvm.signature
 import kotlin.reflect.KClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClass
 import kotlin.reflect.jvm.internal.types.MutableCollectionKClassImpl
@@ -39,7 +41,23 @@ internal fun createFunctionKmClass(arity: Int): KmClass = KmClass().apply {
         }))
     })
 
-    // TODO (KT-80710): `invoke` function.
+    functions.add(KmFunction("invoke").apply {
+        for (i in 1..arity) {
+            valueParameters.add(KmValueParameter("p$i").apply {
+                type = KmType().apply {
+                    classifier = KmClassifier.TypeParameter(i)
+                }
+            })
+        }
+        returnType = KmType().apply {
+            classifier = KmClassifier.TypeParameter(returnTypeParameterId)
+        }
+        modality = Modality.ABSTRACT
+        visibility = Visibility.PUBLIC
+        isOperator = true
+
+        signature = JvmMethodSignature("invoke", "(" + "Ljava/lang/Object;".repeat(arity) + ")Ljava/lang/Object;")
+    })
 }
 
 internal fun createCloneableKmClass(): KmClass = KmClass().apply {
@@ -54,7 +72,41 @@ internal fun createCloneableKmClass(): KmClass = KmClass().apply {
         returnType = KmType().apply {
             classifier = KmClassifier.Class("kotlin/Any")
         }
+
+        signature = JvmMethodSignature("clone", "()Ljava/lang/Object;")
     })
+}
+
+internal fun createEnumValuesKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("values").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class("kotlin/Array")
+        arguments += KmTypeProjection(KmVariance.INVARIANT, KmType().apply {
+            classifier = KmClassifier.Class(klass.classId.asString())
+        })
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
+
+    signature = JvmMethodSignature("values", "()[L${klass.classId.asString().replace('.', '$')};")
+}
+
+internal fun createEnumValueOfKmFunction(klass: KClassImpl<*>): KmFunction = KmFunction("valueOf").apply {
+    returnType = KmType().apply {
+        classifier = KmClassifier.Class(klass.classId.asString())
+    }
+    valueParameters += KmValueParameter("value").apply {
+        type = KmType().apply {
+            classifier = KmClassifier.Class("kotlin/String")
+        }
+    }
+    modality = Modality.FINAL
+    visibility = Visibility.PUBLIC
+    @OptIn(ExperimentalCompanionBlocksAndExtensions::class)
+    isStatic = true
+
+    signature = JvmMethodSignature("valueOf", "(Ljava/lang/String;)L${klass.classId.asString().replace('.', '$')};")
 }
 
 private class BuiltinClassCache(fragment: KmModuleFragment?) {

@@ -20,6 +20,7 @@
 package kotlin.reflect.full
 
 import org.jetbrains.kotlin.utils.DFS
+import java.lang.reflect.Type
 import kotlin.reflect.*
 import kotlin.reflect.jvm.internal.*
 import kotlin.reflect.jvm.internal.types.AbstractKType
@@ -69,10 +70,10 @@ val KClass<*>.companionObjectInstance: Any?
 val KClass<*>.defaultType: KType
     get() = createDefaultType()
 
-internal fun KClass<*>.createDefaultType(): KType =
+internal fun KClass<*>.createDefaultType(computeJavaType: (() -> Type)? = null): KType =
     createTypeImpl(allTypeParameters().map { typeParameter ->
         KTypeProjection(KVariance.INVARIANT, typeParameter.createType())
-    })
+    }, computeJavaType = computeJavaType)
 
 
 /**
