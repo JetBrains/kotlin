@@ -64,7 +64,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirRegularClass) {
-        if (!declaration.symbol.isInlineOrValueClass()) {
+        if (declaration.classKind != ClassKind.CLASS || !declaration.symbol.isInlineOrValue) {
             return
         }
 
