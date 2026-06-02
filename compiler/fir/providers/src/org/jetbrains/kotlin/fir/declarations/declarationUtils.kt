@@ -262,7 +262,7 @@ fun FirBasedSymbol<*>.isPrimaryConstructorOfInlineOrValueClass(session: FirSessi
     contract { returns(true) implies (this@isPrimaryConstructorOfInlineOrValueClass is FirConstructorSymbol) }
     if (this !is FirConstructorSymbol) return false
     val constructedClass = getConstructedClass(session) ?: return false
-    return constructedClass.classKind == ClassKind.CLASS && constructedClass.isInlineOrValue && this.isPrimary
+    return constructedClass.isInlineOrValue && this.isPrimary
 }
 
 fun FirConstructorSymbol.getConstructedClass(session: FirSession): FirRegularClassSymbol? {
