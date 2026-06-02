@@ -156,6 +156,7 @@ MODULE_FRAGMENT
         VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:6 type:kotlin.Int
         annotations:
           Composable
+          FunctionKeyMeta(key = -1246486053, startOffset = 145, endOffset = 282)
         BLOCK_BODY
           CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
             ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.C.foo' type=androidx.compose.runtime.Composer? origin=null
@@ -310,6 +311,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:5 type:kotlin.Int
       annotations:
         Composable
+        FunctionKeyMeta(key = -1482845267, startOffset = 298, endOffset = 419)
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.bar' type=androidx.compose.runtime.Composer? origin=null
@@ -364,6 +366,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
       annotations:
         Composable
+        FunctionKeyMeta(key = 1109586197, startOffset = 433, endOffset = 578)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in example.test' type=kotlin.Unit origin=null

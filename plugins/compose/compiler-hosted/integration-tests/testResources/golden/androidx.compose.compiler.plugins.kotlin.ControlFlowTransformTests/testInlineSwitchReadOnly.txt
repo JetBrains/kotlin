@@ -26,6 +26,7 @@ val Local: ProvidableCompositionLocal<Nothing?> = staticCompositionLocalOf {
   null
 }
 @Composable
+@FunctionKeyMeta(key = -378182080, startOffset = 131, endOffset = 441)
 fun Test(clicked: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(clicked)*<curren...>,<curren...>,<curren...>,<curren...>:Test.kt")

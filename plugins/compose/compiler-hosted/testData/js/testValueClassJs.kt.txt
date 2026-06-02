@@ -47,6 +47,7 @@ value class Test {
 }
 
 @Composable
+@FunctionKeyMeta(key = 1970342417, startOffset = 218, endOffset = 261)
 fun Content(/* var */ test: Test, /* var */ $composer: Composer?, $changed: Int, $default: Int) {
   var test: Test = test
   var $composer: Composer? = $composer
@@ -103,6 +104,7 @@ fun Content(/* var */ test: Test, /* var */ $composer: Composer?, $changed: Int,
 
 @Composable
 @Deprecated(message = "Binary compatibility stub for default parameters", level = DeprecationLevel.HIDDEN)
+@FunctionKeyMeta(key = 1970342417, startOffset = 218, endOffset = 261)
 fun Content(/* var */ test: Test?, /* var */ $composer: Composer?, $changed: Int, $default: Int) {
   var test: Test? = test
   var $composer: Composer? = $composer
@@ -121,6 +123,7 @@ fun Content(/* var */ test: Test?, /* var */ $composer: Composer?, $changed: Int
 // FILE: main.kt
 
 @Composable
+@FunctionKeyMeta(key = -1205517295, startOffset = 108, endOffset = 136)
 fun Test(/* var */ $composer: Composer?, $changed: Int) {
   var $composer: Composer? = $composer
   { // BLOCK

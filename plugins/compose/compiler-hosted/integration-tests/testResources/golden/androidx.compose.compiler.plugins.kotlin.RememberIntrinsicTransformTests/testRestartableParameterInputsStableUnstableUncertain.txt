@@ -43,6 +43,7 @@ class KnownUnstable(var x: Int) {
 }
 interface Uncertain
 @Composable
+@FunctionKeyMeta(key = -473819879, startOffset = 169, endOffset = 220)
 fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test1)N(x)<rememb...>:Test.kt")
@@ -71,6 +72,7 @@ fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
+@FunctionKeyMeta(key = -301765569, startOffset = 233, endOffset = 286)
 fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test2)N(x)<rememb...>:Test.kt")
@@ -99,6 +101,7 @@ fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
+@FunctionKeyMeta(key = -2145116948, startOffset = 299, endOffset = 348)
 fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(test3)N(x)<rememb...>:Test.kt")

@@ -22,6 +22,7 @@ fun Test(level: Int) {
 // ------------------------------------------
 
 @Composable
+@FunctionKeyMeta(key = -1502623783, startOffset = 84, endOffset = 434)
 fun Test(level: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
