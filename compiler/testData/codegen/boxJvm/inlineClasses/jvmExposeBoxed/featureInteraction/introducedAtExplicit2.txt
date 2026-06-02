@@ -1,0 +1,27 @@
+@kotlin.Metadata
+public final class BoxKt {
+    // source: 'box.kt'
+    public final static @org.jetbrains.annotations.NotNull method box(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class MyClass {
+    // source: 'Test.kt'
+    private final field property: int
+    private final @org.jetbrains.annotations.NotNull field s: java.lang.String
+    public @kotlin.jvm.JvmExposeBoxed method <init>(): void
+    public @kotlin.jvm.JvmExposeBoxed method <init>(@org.jetbrains.annotations.NotNull p0: java.lang.String, @kotlin.IntroducedAt(version="3") @org.jetbrains.annotations.NotNull p1: kotlin.UInt): void
+    public synthetic deprecated @kotlin.Deprecated(message="This method is kept for binary compatibility purposes, please use the main overload. This overload corresponds to the initial version.", level=HIDDEN) @kotlin.jvm.JvmExposeBoxed method <init>(p0: java.lang.String): void
+    public synthetic method <init>(p0: java.lang.String, @kotlin.IntroducedAt(version="3") p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: kotlin.jvm.internal.DefaultConstructorMarker): void
+    private method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker): void
+    public synthetic method <init>(p0: java.lang.String, p1: int, p2: kotlin.jvm.internal.BoxingConstructorMarker, p3: int, p4: kotlin.jvm.internal.DefaultConstructorMarker): void
+    public final method getProperty-pVg5ArA(): int
+    public final @org.jetbrains.annotations.NotNull method getS(): java.lang.String
+}
+
+@kotlin.Metadata
+public final class TestKt {
+    // source: 'Test.kt'
+    public final static @kotlin.jvm.JvmExposeBoxed(jvmName="create") @org.jetbrains.annotations.NotNull method create(): kotlin.UInt
+    public final static method createUInt(): int
+}

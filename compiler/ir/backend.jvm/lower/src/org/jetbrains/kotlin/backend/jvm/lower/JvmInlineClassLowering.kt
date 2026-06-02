@@ -348,6 +348,11 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
         // If there is @JvmOverloads, it covers no-arg constructor for us.
         if (original.hasAnnotation(JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME)) return null
+
+        // As well as @IntroducedAt
+        if (original.parameters.all { it.annotations.hasAnnotation(StandardNames.FqNames.introducedAt) })
+            return null
+
         return constructor.parentAsClass.factory.buildConstructor {
             updateFrom(constructor)
             isPrimary = false
