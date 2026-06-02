@@ -794,7 +794,6 @@ class SwiftPMImportLocalPackagesIT : KGPBaseTest() {
                     }
 
                     swiftPMDependencies {
-                        watchosMinimumDeploymentTarget.set("26.1") // WA for KT-86215 invalid default watchOS minimum deployment target version
                         localSwiftPackage(
                             directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
                             products = listOf(targetName),

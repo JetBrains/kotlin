@@ -381,9 +381,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 identifier,
             )
 
+        // Align these with konan.properties: KT-86663
         const val IOS_DEPLOYMENT_TARGET_DEFAULT = "15.0"
-        const val MACOS_DEPLOYMENT_TARGET_DEFAULT = "10.15"
-        const val WATCHOS_DEPLOYMENT_TARGET_DEFAULT = "15.0"
-        const val TVOS_DEPLOYMENT_TARGET_DEFAULT = "9.0"
+        const val MACOS_DEPLOYMENT_TARGET_DEFAULT = "12.0"
+        const val WATCHOS_DEPLOYMENT_TARGET_DEFAULT = "9.0"
+        const val TVOS_DEPLOYMENT_TARGET_DEFAULT = "15.0"
     }
 }
