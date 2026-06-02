@@ -11,6 +11,7 @@ import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.npm.*
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.File
 
 class YarnWorkspaces internal constructor(
@@ -90,11 +91,11 @@ class YarnWorkspaces internal constructor(
         resolutions: Map<String, String>,
         rootPackageJsonFile: File,
     ) {
-        val nodeJsWorldDir = rootPackageJsonFile.parentFile
+        val nodeJsWorldDir = rootPackageJsonFile.toPath().parent
         val rootPackageJson = PackageJson(rootProjectName, rootProjectVersion)
         rootPackageJson.private = true
 
-        val npmProjectWorkspaces = npmProjects.map { it.npmProjectDir.getFile().relativeTo(nodeJsWorldDir).path }
+        val npmProjectWorkspaces = npmProjects.map { nodeJsWorldDir.relativize(it.npmProjectDir.getFile().toPath()).invariantSeparatorsPathString }
         val importedProjectWorkspaces =
             NpmImportedPackagesVersionResolver(npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 

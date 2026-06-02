@@ -66,7 +66,7 @@ internal abstract class NativeVersionValueSource :
         kotlinNativeBundleConfiguration: ConfigurableFileCollection,
     ) {
         val lock =
-            NativeDistributionCommonizerLock(bundleDir) { message -> logger.info("Kotlin Native Bundle: $message") }
+            NativeDistributionCommonizerLock(bundleDir.toPath()) { message -> logger.info("Kotlin Native Bundle: $message") }
 
         lock.withLock {
             val needToReinstall = isSnapshotVersion(parameters.simpleKotlinNativeVersion.get())

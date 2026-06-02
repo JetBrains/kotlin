@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
+import java.nio.file.Path
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -188,8 +189,9 @@ internal class PlatformLibrariesGenerator(
         }
 
         // Don't run the generator if libraries/caches for this target were already built during this Gradle invocation.
-        val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsDirectory)
-        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind.get())
+        val platformLibsPath = platformLibsDirectory.toPath()
+        val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsPath)
+        val alreadyCached = alreadyProcessed.isCached(platformLibsPath, konanCacheKind.get())
         if ((alreadyGenerated && alreadyCached) || !defDirectory.exists()) {
             return
         }
@@ -197,12 +199,12 @@ internal class PlatformLibrariesGenerator(
         // Check if libraries/caches for this target already exist (requires reading from disc).
         val platformLibsAreReady = checkLibrariesInDistribution()
         if (platformLibsAreReady) {
-            alreadyProcessed.setGenerated(platformLibsDirectory)
+            alreadyProcessed.setGenerated(platformLibsPath)
         }
 
         val cachesAreReady = checkCaches()
         if (cachesAreReady) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
+            alreadyProcessed.setCached(platformLibsPath, konanCacheKind.get())
         }
 
         val generationMessage = when {
@@ -223,19 +225,20 @@ internal class PlatformLibrariesGenerator(
         val librariesAreActuallyGenerated = checkLibrariesInDistribution()
         assert(librariesAreActuallyGenerated) { "Some platform libraries were not generated" }
         if (librariesAreActuallyGenerated) {
-            alreadyProcessed.setGenerated(platformLibsDirectory)
+            alreadyProcessed.setGenerated(platformLibsPath)
         }
 
         val librariesAreActuallyCached = checkCaches()
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
-            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
+            alreadyProcessed.setCached(platformLibsPath, konanCacheKind.get())
         }
     }
 
     private fun generatePlatformLibs(generationMessage: String) {
-        val lock = commonizerLockForDirectory.getOrPut(platformLibsDirectory) {
-            NativeDistributionCommonizerLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
+        val platformLibsPath = platformLibsDirectory.toPath()
+        val lock = commonizerLockForDirectory.getOrPut(platformLibsPath) {
+            NativeDistributionCommonizerLock(platformLibsPath) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
         }
 
         lock.withLock {
@@ -247,36 +250,36 @@ internal class PlatformLibrariesGenerator(
     }
 
     internal class PlatformLibsInfo {
-        private val generated: MutableSet<File> = Collections.newSetFromMap(ConcurrentHashMap<File, Boolean>())
-        private val cached: ConcurrentHashMap<NativeCacheKind, MutableSet<File>> = ConcurrentHashMap()
+        private val generated: MutableSet<Path> = Collections.newSetFromMap(ConcurrentHashMap<Path, Boolean>())
+        private val cached: ConcurrentHashMap<NativeCacheKind, MutableSet<Path>> = ConcurrentHashMap()
 
-        private fun cached(cacheKind: NativeCacheKind): MutableSet<File> = cached.getOrPut(cacheKind) {
-            Collections.newSetFromMap(ConcurrentHashMap<File, Boolean>())
+        private fun cached(cacheKind: NativeCacheKind): MutableSet<Path> = cached.getOrPut(cacheKind) {
+            Collections.newSetFromMap(ConcurrentHashMap<Path, Boolean>())
         }
 
         /**
          * Are platform libraries in the given directory (e.g. <dist>/klib/platform/ios_x64) generated.
          */
-        fun isGenerated(path: File): Boolean =
+        fun isGenerated(path: Path): Boolean =
             generated.contains(path)
 
         /**
          * Register that platform libraries in the given directory are generated.
          */
-        fun setGenerated(path: File) {
+        fun setGenerated(path: Path) {
             generated.add(path)
         }
 
         /**
          * Are platform libraries in the given directory (e.g. <dist>/klib/platform/ios_x64) cached with the given cache kind.
          */
-        fun isCached(path: File, kind: NativeCacheKind): Boolean =
+        fun isCached(path: Path, kind: NativeCacheKind): Boolean =
             kind == NativeCacheKind.NONE || cached(kind).contains(path)
 
         /**
          * Register that platform libraries in the give directory are cached with the given cache kind.
          */
-        fun setCached(path: File, kind: NativeCacheKind) {
+        fun setCached(path: Path, kind: NativeCacheKind) {
             if (kind != NativeCacheKind.NONE) {
                 cached(kind).add(path)
             }
@@ -292,6 +295,6 @@ internal class PlatformLibrariesGenerator(
             return project.gradle.registerClassLoaderScopedBuildService(GeneratedPlatformLibrariesService::class)
         }
 
-        private val commonizerLockForDirectory = ConcurrentHashMap<File, NativeDistributionCommonizerLock>()
+        private val commonizerLockForDirectory = ConcurrentHashMap<Path, NativeDistributionCommonizerLock>()
     }
 }

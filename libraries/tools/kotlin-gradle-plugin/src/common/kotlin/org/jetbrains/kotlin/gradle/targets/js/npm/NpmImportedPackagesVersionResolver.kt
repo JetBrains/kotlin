@@ -7,14 +7,12 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
-import java.io.File
 import java.nio.file.Path
 
 class NpmImportedPackagesVersionResolver(
     npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-    nodeJsWorldDir: File
+    private val nodeJsWorldDir: Path
 ) {
-    private val nodeJsWorldDir: Path = nodeJsWorldDir.toPath()
     private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()
     private val importedProjectWorkspaces = mutableListOf<String>()
     private val externalModules = npmProjects.flatMapTo(mutableSetOf()) {

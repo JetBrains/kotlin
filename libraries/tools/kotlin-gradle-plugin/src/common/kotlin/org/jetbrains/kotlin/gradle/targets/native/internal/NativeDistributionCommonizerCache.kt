@@ -47,7 +47,7 @@ class NativeDistributionCommonizerCache(
     private fun todoTargets(
         outputTargets: Set<SharedCommonizerTarget>
     ): Set<SharedCommonizerTarget> {
-        lock.checkLocked(outputDirectory)
+        lock.checkLocked(outputDirectory.toPath())
         logInfo("Calculating cache state for $outputTargets")
 
         if (!isCachingEnabled) {
@@ -96,13 +96,13 @@ class NativeDistributionCommonizerCache(
      * even between multiple process (Gradle Daemons)
      */
     @Transient
-    private var lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
+    private var lock = NativeDistributionCommonizerLock(outputDirectory.toPath(), ::logInfo)
 
     private fun logInfo(message: String) =
         logger.info("Native Distribution Commonization: $message")
 
     private fun readObject(input: ObjectInputStream) {
         input.defaultReadObject()
-        lock = NativeDistributionCommonizerLock(outputDirectory, ::logInfo)
+        lock = NativeDistributionCommonizerLock(outputDirectory.toPath(), ::logInfo)
     }
 }
