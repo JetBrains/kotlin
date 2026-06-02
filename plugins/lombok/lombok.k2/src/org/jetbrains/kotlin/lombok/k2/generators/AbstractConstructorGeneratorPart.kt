@@ -45,11 +45,13 @@ import org.jetbrains.kotlin.lombok.k2.config.LombokService
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.tryBuildingJvmStaticAnnotationCall
+import org.jetbrains.kotlin.lombok.k2.java.JavaTypeParameterStub
+import org.jetbrains.kotlin.lombok.k2.java.JavaTypeParameterTypeStub
+import org.jetbrains.kotlin.lombok.k2.java.JavaTypeSubstitutor
+import org.jetbrains.kotlin.lombok.k2.java.JavaTypeSubstitutorByMap
 import org.jetbrains.kotlin.name.CallableId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.callableIdForConstructor
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.ConstructorAnnotation>(private val session: FirSession) {
     protected val lombokService: LombokService
@@ -280,90 +282,3 @@ abstract class AbstractConstructorGeneratorPart<T : ConeLombokAnnotations.Constr
     }
 }
 
-private class JavaTypeParameterStub(val original: JavaTypeParameter) : JavaTypeParameter {
-    override val name: Name
-        get() = original.name
-    override val isFromSource: Boolean
-        get() = true
-    override val annotations: Collection<JavaAnnotation>
-        get() = original.annotations
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = original.isDeprecatedInJavaDoc
-
-    override fun findAnnotation(fqName: FqName): JavaAnnotation? {
-        return original.findAnnotation(fqName)
-    }
-
-    override val upperBounds: Collection<JavaClassifierType>
-        get() = original.upperBounds
-}
-
-private class JavaClassifierTypeStub(
-    val original: JavaClassifierType,
-    override val typeArguments: List<JavaType?>,
-) : JavaClassifierType {
-    override val annotations: Collection<JavaAnnotation>
-        get() = original.annotations
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = original.isDeprecatedInJavaDoc
-    override val classifier: JavaClassifier?
-        get() = original.classifier
-    override val isRaw: Boolean
-        get() = original.isRaw
-    override val classifierQualifiedName: String
-        get() = original.classifierQualifiedName
-    override val presentableText: String
-        get() = original.presentableText
-}
-
-private class JavaTypeParameterTypeStub(
-    override val classifier: JavaTypeParameter,
-) : JavaClassifierType {
-    override val annotations: Collection<JavaAnnotation>
-        get() = emptyList()
-    override val isDeprecatedInJavaDoc: Boolean
-        get() = false
-    override val typeArguments: List<JavaType?>
-        get() = emptyList()
-    override val isRaw: Boolean
-        get() = false
-    override val classifierQualifiedName: String
-        get() = classifier.name.identifier
-    override val presentableText: String
-        get() = classifierQualifiedName
-}
-
-private sealed class JavaTypeSubstitutor {
-    object Empty : JavaTypeSubstitutor() {
-        override fun substituteOrNull(type: JavaType): JavaType? {
-            return null
-        }
-    }
-
-    fun substituteOrSelf(type: JavaType): JavaType {
-        return substituteOrNull(type) ?: type
-    }
-
-    abstract fun substituteOrNull(type: JavaType): JavaType?
-}
-
-private class JavaTypeSubstitutorByMap(val map: Map<JavaClassifier, JavaType>) : JavaTypeSubstitutor() {
-    override fun substituteOrNull(type: JavaType): JavaType? {
-        if (type !is JavaClassifierType) return null
-        map[type.classifier]?.let { return it }
-        var hasNewArguments = false
-        val newArguments = type.typeArguments.map { argument ->
-            if (argument == null) return@map null
-            val newArgument = substituteOrSelf(argument)
-            if (newArgument !== argument) {
-                hasNewArguments = true
-                newArgument
-            } else {
-                argument
-            }
-        }
-        return runIf(hasNewArguments) {
-            JavaClassifierTypeStub(type, newArguments)
-        }
-    }
-}
