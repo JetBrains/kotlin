@@ -774,11 +774,19 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
         it.configureWithExtension(swiftPMImportExtension)
         it.syntheticImportProjectRoot.set(
-            projectPathProvider.flatMap {
-                project.layout.dir(
-                    project.provider { File(it).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) }
+            projectPathProvider
+                .flatMap { xcodeprojPath ->
+                    project.layout.dir(
+                        project.provider {
+                            File(xcodeprojPath).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
+                        }
+                    )
+                }
+                .orElse(
+                    // Fallback so Gradle can configure the task graph without XCODEPROJ_PATH.
+                    // The integrate* tasks will surface an actionable error from their @TaskAction.
+                    project.layout.buildDirectory.dir("tmp/swiftImport-unconfigured/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME")
                 )
-            }
         )
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
