@@ -20,7 +20,7 @@ val resolveDependenciesInAllProjects by tasks.registering {
             logger.lifecycle("Resolving dependencies in ${project.displayName}")
 
             // resolve implicit dependencies one by one to avoid conflicts between them
-            configurations.implicitDependencies.get().allDependencies.forEach { implicitDependency ->
+            configurations.findByName("implicitDependencies")?.allDependencies?.forEach { implicitDependency ->
                 configurations.detachedConfiguration(implicitDependency).resolve()
             }
 

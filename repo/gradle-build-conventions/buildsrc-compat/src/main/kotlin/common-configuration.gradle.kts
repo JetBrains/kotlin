@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileCommon
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 // Contains common configuration that should be applied to all projects
+plugins {
+    id("implicit-dependencies")
+}
 
 // Common Group and version
 val kotlinVersion: String by rootProject.extra
@@ -19,7 +22,6 @@ version = kotlinVersion
 
 project.configureJvmDefaultToolchain()
 project.addEmbeddedConfigurations()
-project.addImplicitDependenciesConfiguration()
 project.configureJavaCompile()
 project.configureJavaBasePlugin()
 project.configureKotlinCompilationOptions()
@@ -31,21 +33,6 @@ project.configureTests()
 //  - idea seems unable to exclude common buildDir from indexing
 // therefore it is disabled by default
 // buildDir = File(commonBuildDir, project.name)
-
-fun Project.addImplicitDependenciesConfiguration() {
-    configurations.maybeCreate("implicitDependencies").apply {
-        isCanBeConsumed = false
-        isCanBeResolved = false
-    }
-
-    if (kotlinBuildProperties.isInIdeaSync.get()) {
-        afterEvaluate {
-            // IDEA manages to download dependencies from `implicitDependencies`, even if it is created with `isCanBeResolved = false`
-            // Clear `implicitDependencies` to avoid downloading unnecessary dependencies during import
-            configurations.implicitDependencies.get().dependencies.clear()
-        }
-    }
-}
 
 fun Project.addEmbeddedConfigurations() {
     configurations.maybeCreate("embedded").apply {

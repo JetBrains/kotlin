@@ -56,7 +56,7 @@ val jsonNativeRuntimeForTests by configurations.creating {
 
 val serializationPluginForTests by configurations.creating
 
-fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
+fun DependencyHandlerScope.implicitKotlinApiDependency(notation: String) {
     implicitDependencies(notation) {
         attributes {
             attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
