@@ -7,16 +7,17 @@ package org.jetbrains.kotlin.gradle.tasks.internal
 
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.time.Instant
 
 internal fun File.cleanDir(expirationDate: Instant) {
-    fun modificationDate(file: File): Instant {
-        return Files.getLastModifiedTime(file.toPath()).toInstant()
+    fun modificationDate(file: Path): Instant {
+        return Files.getLastModifiedTime(file).toInstant()
     }
 
     listFiles()
         ?.filter { file ->
-            modificationDate(file).isBefore(expirationDate)
+            modificationDate(file.toPath()).isBefore(expirationDate)
         }
         ?.forEach { file -> file.deleteRecursively() }
 }

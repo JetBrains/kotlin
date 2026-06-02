@@ -15,7 +15,7 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.SingleActionPerProject
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
-import java.io.File
+import java.nio.file.Path
 import java.util.concurrent.ConcurrentHashMap
 
 internal interface UsesLibraryFilterCachingService : Task {
@@ -24,11 +24,11 @@ internal interface UsesLibraryFilterCachingService : Task {
 }
 
 internal abstract class LibraryFilterCachingService : BuildService<BuildServiceParameters.None>, AutoCloseable {
-    internal data class LibraryFilterCacheKey(val dependency: File)
+    internal data class LibraryFilterCacheKey(val dependency: Path)
 
     private val cache = ConcurrentHashMap<LibraryFilterCacheKey, Boolean>()
 
-    fun getOrCompute(key: LibraryFilterCacheKey, compute: (File) -> Boolean) = cache.computeIfAbsent(key) {
+    fun getOrCompute(key: LibraryFilterCacheKey, compute: (Path) -> Boolean) = cache.computeIfAbsent(key) {
         compute(it.dependency)
     }
 

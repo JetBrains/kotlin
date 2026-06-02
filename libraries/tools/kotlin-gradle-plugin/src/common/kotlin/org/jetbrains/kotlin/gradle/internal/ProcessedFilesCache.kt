@@ -12,6 +12,9 @@ import com.google.gson.stream.JsonWriter
 import org.gradle.internal.hash.FileHasher
 import org.jetbrains.kotlin.gradle.targets.js.internal.toHex
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Cache for preventing processing some files twice.
@@ -25,8 +28,8 @@ import java.io.File
  */
 internal open class ProcessedFilesCache(
     val fileHasher: FileHasher,
-    val projectDir: File,
-    val targetDir: File,
+    val projectDir: Path,
+    val targetDir: Path,
     stateFileName: String,
     val version: String,
 ) : AutoCloseable {
@@ -157,16 +160,18 @@ internal open class ProcessedFilesCache(
     private val state: State
 
     init {
-        targetDir.mkdirs()
+        Files.createDirectories(targetDir)
 
-        state = (if (stateFile.exists()) {
+        state = (if (Files.exists(stateFile)) {
             try {
-                GsonBuilder().setPrettyPrinting().create().newJsonReader(stateFile.reader()).use { readFrom(it) }
+                Files.newBufferedReader(stateFile).use { reader ->
+                    GsonBuilder().setPrettyPrinting().create().newJsonReader(reader).use { readFrom(it) }
+                }
             } catch (e: Throwable) {
                 System.err.println("Cannot read $stateFile")
                 e.printStackTrace()
-                if (targetDir.exists()) {
-                    targetDir.deleteRecursively()
+                if (Files.exists(targetDir)) {
+                    targetDir.toFile().deleteRecursively()
                 }
                 null
             }
@@ -176,7 +181,7 @@ internal open class ProcessedFilesCache(
     internal fun getOrCompute(
         file: File,
         compute: () -> File?,
-    ): File? = getOrComputeKey(file, compute)?.let { File(targetDir, it) }
+    ): File? = getOrComputeKey(file, compute)?.let { targetDir.resolve(it).toFile() }
 
     private fun getOrComputeKey(
         file: File,
@@ -191,13 +196,13 @@ internal open class ProcessedFilesCache(
 
         if (old != null) {
             if (checkTarget(old.target)) return old.target
-            else System.err.println("Cannot find ${File(targetDir.relativeTo(projectDir), old.target!!)}, rebuilding")
+            else System.err.println("Cannot find ${projectDir.relativize(targetDir).resolve(old.target!!)}, rebuilding")
         }
 
-        val key = compute()?.relativeTo(targetDir)?.toString()
+        val key = compute()?.toPath()?.let { targetDir.relativize(it) }?.toString()
         val existedTarget = state.byTarget[key]
         if (key != null && existedTarget != null) {
-            if (!File(existedTarget.src).exists()) {
+            if (!Files.exists(Paths.get(existedTarget.src))) {
                 System.err.println("Removing cache for removed source `${existedTarget.src}`")
                 state.remove(existedTarget)
             }
@@ -209,13 +214,15 @@ internal open class ProcessedFilesCache(
 
     private fun checkTarget(target: String?): Boolean {
         if (target == null) return true
-        return targetDir.resolve(target).exists()
+        return Files.exists(targetDir.resolve(target))
     }
 
     override fun close() {
-        stateFile.parentFile.mkdirs()
-        GsonBuilder().setPrettyPrinting().create().newJsonWriter(stateFile.writer()).use {
-            state.writeTo(it)
+        Files.createDirectories(stateFile.parent)
+        Files.newBufferedWriter(stateFile).use { writer ->
+            GsonBuilder().setPrettyPrinting().create().newJsonWriter(writer).use {
+                state.writeTo(it)
+            }
         }
     }
 }

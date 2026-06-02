@@ -33,8 +33,8 @@ abstract class AbstractNodeModulesCache : AutoCloseable, BuildService<AbstractNo
     private val cache by lazy {
         ProcessedFilesCache(
             fileHasher,
-            parameters.rootProjectDir.get().asFile,
-            parameters.cacheDir.get().asFile,
+            parameters.rootProjectDir.get().asFile.toPath(),
+            parameters.cacheDir.get().asFile.toPath(),
             "$STATE_FILE_NAME-$type",
             "9"
         )

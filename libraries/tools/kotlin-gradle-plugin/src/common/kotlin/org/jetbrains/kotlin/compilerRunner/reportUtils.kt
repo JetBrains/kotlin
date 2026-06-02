@@ -35,11 +35,12 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassVisitor
 import org.jetbrains.org.objectweb.asm.FieldVisitor
 import org.jetbrains.org.objectweb.asm.Opcodes
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 
 
-internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
+internal fun loadCompilerVersion(compilerClasspath: Iterable<Path>): String {
     var result: String? = null
 
     fun checkVersion(bytes: ByteArray) {
@@ -58,9 +59,9 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
 
     try {
         val versionClassFileName = KotlinCompilerVersion::class.java.name.replace('.', '/') + ".class"
-        for (cpFile in compilerClasspath) {
-            if (cpFile.isFile && cpFile.extension.toLowerCaseAsciiOnly() == "jar") {
-                ZipFile(cpFile).use { jar ->
+        for (cpPath in compilerClasspath) {
+            if (Files.isRegularFile(cpPath) && cpPath.fileName.toString().substringAfterLast('.', "").toLowerCaseAsciiOnly() == "jar") {
+                ZipFile(cpPath.toFile()).use { jar ->
                     val versionFileEntry = jar.getEntry(KotlinCompilerVersion.VERSION_FILE_PATH)
                     if (versionFileEntry != null) {
                         result = jar.getInputStream(versionFileEntry).bufferedReader().use { it.readText() }
@@ -69,13 +70,13 @@ internal fun loadCompilerVersion(compilerClasspath: Iterable<File>): String {
                         checkVersion(bytes)
                     }
                 }
-            } else if (cpFile.isDirectory) {
-                val versionFile = File(cpFile, KotlinCompilerVersion.VERSION_FILE_PATH)
-                if (versionFile.isFile) {
-                    result = versionFile.readText()
+            } else if (Files.isDirectory(cpPath)) {
+                val versionFile = cpPath.resolve(KotlinCompilerVersion.VERSION_FILE_PATH)
+                if (Files.isRegularFile(versionFile)) {
+                    result = Files.newBufferedReader(versionFile).use { it.readText() }
                 } else {
-                    File(cpFile, versionClassFileName).takeIf { it.isFile }?.let {
-                        checkVersion(it.readBytes())
+                    cpPath.resolve(versionClassFileName).takeIf { Files.isRegularFile(it) }?.let {
+                        checkVersion(Files.readAllBytes(it))
                     }
                 }
             }
