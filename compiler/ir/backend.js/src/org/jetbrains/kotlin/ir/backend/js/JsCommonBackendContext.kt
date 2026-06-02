@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.InlineClassesUtils
+import org.jetbrains.kotlin.descriptors.ValueClassBackendAgnosticApi
 import org.jetbrains.kotlin.ir.backend.js.utils.isDispatchReceiver
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
@@ -47,6 +48,10 @@ interface JsCommonInlineClassesUtils : InlineClassesUtils {
      * Returns the inlined class for the given type, or `null` if the type is not inlined.
      */
     fun getInlinedClass(type: IrType, includingExported: Boolean = false): IrClass?
+
+    @OptIn(ValueClassBackendAgnosticApi::class)
+    override fun isClassInlineLike(klass: IrClass): Boolean =
+        klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true)
 
     fun isTypeInlined(type: IrType): Boolean {
         return getInlinedClass(type) != null

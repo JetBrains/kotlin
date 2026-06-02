@@ -72,9 +72,7 @@ interface InlineClassesUtils {
     /**
      * Should this class be treated as inline class?
      */
-    @OptIn(ValueClassBackendAgnosticApi::class)
-    fun isClassInlineLike(klass: IrClass): Boolean =
-        klass.isSingleFieldValueClass(treatFullValueClassesWithOneFieldAsBasic = true) // used only in non-JVM backends
+    fun isClassInlineLike(klass: IrClass): Boolean
 
     /**
      * Unlike [org.jetbrains.kotlin.ir.util.getInlineClassUnderlyingType], doesn't use [IrClass.valueClassRepresentation] because
@@ -85,4 +83,8 @@ interface InlineClassesUtils {
             ?: error("Class has no primary constructor: ${irClass.fqNameWhenAvailable}")
 }
 
-object DefaultInlineClassesUtils : InlineClassesUtils
+object DefaultInlineClassesUtils : InlineClassesUtils {
+    override fun isClassInlineLike(klass: IrClass): Boolean {
+        error("Not supported in JVM")
+    }
+}
