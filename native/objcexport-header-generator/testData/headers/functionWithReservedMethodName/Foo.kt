@@ -28,4 +28,16 @@ class Foo {
      */
     fun retain() {
     }
+
+    /**
+     * Documented [NULL] method.
+     */
+    fun NULL() {
+    }
+
+    /**
+     * Documented [DEBUG] method.
+     */
+    fun DEBUG() {
+    }
 }
