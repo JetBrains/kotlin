@@ -18,6 +18,7 @@ import com.intellij.psi.util.elementType
 import com.intellij.util.FileContentUtilCore
 import com.intellij.util.IncorrectOperationException
 import org.jetbrains.kotlin.idea.KotlinFileType
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.ABSTRACT_KEYWORD
 import org.jetbrains.kotlin.lexer.KtTokens.ACTUAL_KEYWORD
@@ -813,6 +814,12 @@ internal class KtPsiMutationServiceImpl : KtPsiMutationService {
         }
 
         return ElementManipulators.handleContentChange(expression, text)
+    }
+
+    override fun updateKDocSectionText(section: KDocSection, text: String): PsiLanguageInjectionHost {
+        val comment = KtPsiFactory(section.project).createComment("/**\n$text\n*/")
+        val snippet = PsiTreeUtil.findChildOfType(comment, KDocSection::class.java)
+        return snippet ?: section
     }
 
     private inline fun <T : KtElement> T.doSetReceiverTypeReference(

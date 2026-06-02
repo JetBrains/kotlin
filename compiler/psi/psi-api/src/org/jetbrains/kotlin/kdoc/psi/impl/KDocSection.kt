@@ -21,9 +21,9 @@ import com.intellij.psi.ContributedReferenceHost
 import com.intellij.psi.LiteralTextEscaper
 import com.intellij.psi.PsiLanguageInjectionHost
 import com.intellij.psi.PsiReference
-import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService
-import org.jetbrains.kotlin.psi.KtPsiFactory
+import org.jetbrains.kotlin.psi.KtNonPublicApi
+import org.jetbrains.kotlin.psi.KtPsiMutationService
 import org.jetbrains.kotlin.psi.psiUtil.getChildrenOfType
 
 /**
@@ -62,12 +62,9 @@ class KDocSection(node: ASTNode) : KDocTag(node), ContributedReferenceHost, PsiL
 
     override fun isValidHost(): Boolean = true
 
-    override fun updateText(text: String): PsiLanguageInjectionHost {
-        val factory = KtPsiFactory(project)
-        val text = factory.createComment("/**\n$text\n*/")
-        val snippet = PsiTreeUtil.findChildOfType<KDocSection?>(text, KDocSection::class.java)
-        return snippet as? PsiLanguageInjectionHost ?: this
-    }
+    @OptIn(KtNonPublicApi::class)
+    override fun updateText(text: String): PsiLanguageInjectionHost =
+        KtPsiMutationService.getInstance().updateKDocSectionText(this, text)
 
     override fun createLiteralTextEscaper(): LiteralTextEscaper<out PsiLanguageInjectionHost> =
         LiteralTextEscaper.createSimple(this, false)

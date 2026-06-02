@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.psi
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiLanguageInjectionHost
+import org.jetbrains.kotlin.kdoc.psi.impl.KDocSection
 import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.name.FqName
 
@@ -347,6 +348,11 @@ interface KtPsiMutationService {
      * Updates the text of [expression] for language injection.
      */
     fun updateStringTemplateText(expression: KtStringTemplateExpression, text: String): PsiLanguageInjectionHost
+
+    /**
+     * Updates the text of [section] for language injection.
+     */
+    fun updateKDocSectionText(section: KDocSection, text: String): PsiLanguageInjectionHost
 
     @KtNonPublicApi
     companion object {
