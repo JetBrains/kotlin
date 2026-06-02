@@ -93,6 +93,9 @@ abstract class KotlinCompile @Inject constructor(
     @get:Input
     internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    @get:Input
+    internal val enableJvmClasspathMetadata: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
