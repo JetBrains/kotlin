@@ -58,7 +58,6 @@ class FqNameUnsafe {
             when (fqName[index]) {
                 '.' if !isBacktick -> return index
                 '`' -> isBacktick = !isBacktick
-                '\\' -> index--
             }
 
             index--
