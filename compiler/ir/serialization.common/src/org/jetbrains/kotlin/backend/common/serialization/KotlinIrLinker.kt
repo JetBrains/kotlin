@@ -105,22 +105,30 @@ abstract class KotlinIrLinker(
         // Note: The top-level symbol might be gone in newer version of dependency KLIB. Then the KLIB that was compiled against
         // the older version of dependency KLIB will still have a reference to non-existing symbol. And the linker will have to
         // handle such situation appropriately. See KT-41378.
-        val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
-            moduleDeserializer
-        } else {
-            val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            candidateModules.firstOrNull { it != moduleDeserializer && topLevelSignature in it }
+        var symbol: IrSymbol? = null
+        var actualModuleDeserializer: IrModuleDeserializer? = null
+        for (deserializer in getModulesDefiningPackage(topLevelSignature.packageFqName())) {
+            if (topLevelSignature in deserializer) {
+                // Attempt to deserialize a symbol from all the Klibs, but use only the first one.
+                // Normally there should be only one declaration with a given signature across all the Klibs. The situation when there are
+                // more is not well handled yet (KT-82172), but at least we try to be deterministic. It is expected that the attempt to
+                // declare the same symbol in a symbol table for the second time will make the compiler fail during linkage (instead of
+                // in some later phase) and with a descriptive enough error.
+                val s = deserializer.tryDeserializeIrSymbol(idSignature, symbolKind)
+                if (symbol == null) {
+                    actualModuleDeserializer = deserializer
+                    symbol = s
+                }
+            }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
-        // Then the `actualModuleDeserializer` will be non-null, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
+        // Then the `actualModuleDeserializer.contains()` will return true, but `actualModuleDeserializer.tryDeserializeIrSymbol()` call
         // might return null (like KonanInteropModuleDeserializer does) or non-null unbound symbol (like JsModuleDeserializer does).
-        val symbol: IrSymbol? = actualModuleDeserializer?.tryDeserializeIrSymbol(idSignature, symbolKind)
-
         if (symbol != null) {
             moduleDependencyTracker.trackDependency(
                 fromModule = moduleDeserializer.moduleFragment,
-                toModule = actualModuleDeserializer.moduleFragment
+                toModule = actualModuleDeserializer!!.moduleFragment
             )
 
             return symbol
@@ -265,7 +273,7 @@ abstract class KotlinIrLinker(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
         deserializationStrategy: (String) -> DeserializationStrategy = { DeserializationStrategy.ONLY_REFERENCED },
-        _moduleName: String? = null
+        _moduleName: String? = null,
     ): IrModuleFragment {
         assert(kotlinLibrary != null || _moduleName != null) { "Either library or explicit name have to be provided $moduleDescriptor" }
         val moduleName = kotlinLibrary?.uniqueName?.let { "<$it>" } ?: _moduleName!!
@@ -294,7 +302,7 @@ abstract class KotlinIrLinker(
     private fun registerModuleDeserializer(
         moduleName: String,
         moduleDescriptor: ModuleDescriptor,
-        moduleDeserializer: IrModuleDeserializer
+        moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer {
         val deserializer = maybeWrapWithBuiltIn(moduleDescriptor, moduleDeserializer)
         deserializersForModules[moduleName] = deserializer
@@ -346,7 +354,11 @@ abstract class KotlinIrLinker(
     fun deserializeHeadersWithInlineBodies(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary): IrModuleFragment =
         deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, { DeserializationStrategy.WITH_INLINE_BODIES })
 
-    fun deserializeDirtyFiles(moduleDescriptor: ModuleDescriptor, kotlinLibrary: KotlinLibrary, dirtyFiles: Collection<String>): IrModuleFragment {
+    fun deserializeDirtyFiles(
+        moduleDescriptor: ModuleDescriptor,
+        kotlinLibrary: KotlinLibrary,
+        dirtyFiles: Collection<String>,
+    ): IrModuleFragment {
         return deserializeIrModuleHeader(moduleDescriptor, kotlinLibrary, {
             if (it in dirtyFiles) DeserializationStrategy.ALL
             else DeserializationStrategy.WITH_INLINE_BODIES
@@ -359,7 +371,7 @@ enum class DeserializationStrategy(
     val needBodies: Boolean,
     val explicitlyExported: Boolean,
     val theWholeWorld: Boolean,
-    val inlineBodies: Boolean
+    val inlineBodies: Boolean,
 ) {
     ON_DEMAND(true, false, false, false, false),
     ONLY_REFERENCED(false, true, false, false, true),
