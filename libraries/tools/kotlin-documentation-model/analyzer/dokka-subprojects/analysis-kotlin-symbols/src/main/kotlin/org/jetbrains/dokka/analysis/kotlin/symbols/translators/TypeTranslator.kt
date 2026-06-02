@@ -138,9 +138,10 @@ internal class TypeTranslator(
             // but the PSI module doesn't wrap Java types in Nullable, and changing that would be too invasive.
             // Using the lower bound (non-nullable) for consistency with the PSI implementation.
             is KaFlexibleType -> toBoundFrom(type.lowerBound, location)
-            is KaCapturedType -> throw NotImplementedError()
-            is KaIntersectionType -> throw NotImplementedError()
-            else -> throw NotImplementedError()
+            // can occur in the return type of Kotlin getters
+            is KaIntersectionType -> toBoundFromNoAbbreviation(@OptIn(KaExperimentalApi::class) type.approximateToDenotableSupertypeOrSelf(false), location)
+            is KaCapturedType -> throw NotImplementedError("`KaCapturedType` is not supported")
+            else -> throw NotImplementedError("$type is unknown type")
         }.let {
             asNullableIfMarked(type, it)
         }
