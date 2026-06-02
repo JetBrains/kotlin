@@ -7,7 +7,7 @@ package kotlin.test
 
 import kotlin.math.abs
 
-internal fun messagePrefix(message: String?) = if (message == null) "" else "$message. "
+internal fun messagePrefix(message: String?) = if (message.isNullOrBlank()) "" else "$message. "
 internal expect fun lookupAsserter(): Asserter
 
 @PublishedApi // required to get stable name as it's called from box tests

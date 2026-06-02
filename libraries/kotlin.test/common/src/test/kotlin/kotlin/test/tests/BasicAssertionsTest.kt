@@ -358,6 +358,22 @@ class BasicAssertionsTest {
         assertTrue(message.startsWith("Expected value to not be of type"), onFailure)
         assertTrue(message.contains(typeOf<Int>().toString()), onFailure)
     }
+
+    @Test
+    fun testMessagePrefixSanitization() {
+        testFailureMessage("Expected <A>, actual <B>.") {
+            assertEquals("A", "B", message = null)
+        }
+        testFailureMessage("Expected <A>, actual <B>.") {
+            assertEquals("A", "B", message = "")
+        }
+        testFailureMessage("Expected <A>, actual <B>.") {
+            assertEquals("A", "B", message = "   ")
+        }
+        testFailureMessage("Oops. Expected <A>, actual <B>.") {
+            assertEquals("A", "B", message = "Oops")
+        }
+    }
 }
 
 
