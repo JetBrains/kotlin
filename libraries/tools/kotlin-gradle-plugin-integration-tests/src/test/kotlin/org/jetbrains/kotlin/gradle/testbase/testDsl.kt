@@ -771,6 +771,10 @@ private fun MutableList<String>.addJacocoAgentIfEnabled() {
     add("-Djacoco-agent.destfile=${reportFile.absolutePath}")
     add("-Djacoco-agent.append=true")
     add("-Djacoco-agent.output=file")
+    // In `file` mode the .exec is written only from the JVM shutdown hook. TestKit daemons are
+    // long-lived, so the coverage is flushed when they are stopped by the `flushTestKitCoverage` task
+    // (see kotlin-gradle-plugin-integration-tests/build.gradle.kts) before the report reads the file.
+    add("-Djacoco-agent.dumponexit=true")
 }
 
 private fun collectKotlinJvmArgs(

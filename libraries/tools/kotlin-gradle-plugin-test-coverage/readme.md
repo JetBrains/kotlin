@@ -5,6 +5,12 @@ For functional/unit tests the JaCoCo Gradle plugin is used and instrumentation i
 For integration tests we replace the `kotlin-gradle-plugin` JAR file in mavenLocal with its
 instrumented version and run tests against it, passing the JaCoCo agent to the Gradle TestKit.
 
+Integration tests run inside long-lived Gradle TestKit daemons, and the JaCoCo agent (in `output=file`
+mode) writes its `.exec` only when that JVM shuts down. Because the daemons outlive the test task, the
+`flushTestKitCoverage` task (in `:kotlin-gradle-plugin-integration-tests`) gracefully stops them after the
+tests and before the report is generated, so the report is built from a complete coverage dump rather than
+a partial one.
+
 Reports are aggregated using Gradle's
 [`jacoco-report-aggregation`](https://docs.gradle.org/current/userguide/jacoco_report_aggregation_plugin.html)
 plugin: the producer projects (`:kotlin-gradle-plugin`, `:kotlin-gradle-plugin-api`,

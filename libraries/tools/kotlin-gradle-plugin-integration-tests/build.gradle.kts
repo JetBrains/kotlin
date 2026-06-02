@@ -595,11 +595,26 @@ tasks.withType<Test>().configureEach {
 
 excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()
 
+val integrationTestCoverageExecFile = layout.buildDirectory.file("jacoco/testkit/integration-tests.exec")
+
+// TestKit daemons that execute the instrumented KGP code are long-lived and write their JaCoCo `.exec`
+// only on JVM shutdown (`dumponexit`). Stop them after the tests so the report reads a complete dump
+// instead of whatever the still-alive daemons happened to have flushed.
+val flushTestKitCoverage by tasks.registering(FlushTestKitCoverageDaemons::class) {
+    description = "Stops JaCoCo-instrumented TestKit daemons so their coverage is flushed before reporting"
+    val testCoverageEnabled = project.providers.gradleProperty("kgp.jacoco.enabled").orNull?.toBoolean() ?: false
+    onlyIf { testCoverageEnabled }
+    dependsOn("kgpAllParallelTests")
+    execFile.set(integrationTestCoverageExecFile)
+}
+
 registerKgpTestCoverageDataVariant(
     configurationName = "integrationTestCoverageDataElements",
     suiteName = "integrationTest",
-    execFile = layout.buildDirectory.file("jacoco/testkit/integration-tests.exec"),
-    testTask = tasks.named("kgpAllParallelTests"),
+    execFile = integrationTestCoverageExecFile,
+    // `builtBy` the flush task (which depends on the tests) so the report only resolves the `.exec`
+    // after every instrumented daemon has dumped its coverage.
+    testTask = flushTestKitCoverage,
 )
 
 val instrumentKgpJarsForCoverage by tasks.registering(InstrumentKgpJarsForCoverage::class) {
