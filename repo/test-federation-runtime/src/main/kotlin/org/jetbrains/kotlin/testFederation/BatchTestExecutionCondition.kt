@@ -21,7 +21,8 @@ class TestBatchPostDiscoveryFilter : PostDiscoveryFilter {
 
     override fun apply(test: TestDescriptor): FilterResult {
         if (currentBatch < 0 || totalBatches < 0) return included("No batches configured")
-        if (test.type != TestDescriptor.Type.TEST) return included("Classes/Containers are always enabled")
+        val isTestMethod = test.type == TestDescriptor.Type.TEST || test.mayRegisterTests()
+        if (!isTestMethod) return included("Classes/Containers are always enabled")
         val checksum = CRC32()
 
         checksum.update(batchSeed)
