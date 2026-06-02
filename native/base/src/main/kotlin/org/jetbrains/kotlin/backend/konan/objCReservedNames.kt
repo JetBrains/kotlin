@@ -19,4 +19,4 @@ val reservedObjCClassOrObjectNames = setOf(
     "classFallbacksForKeyedArchiver", "classForKeyedUnarchiver",
     "description", "debugDescription", "version", "hash",
     "useStoredAccessor"
-) + cKeywords
+) + cKeywords + objCMacroDefinitions

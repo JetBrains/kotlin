@@ -592,7 +592,7 @@ class ObjCExportNamerImpl(
                     )
                     append(name.replaceFirstChar(Char::uppercaseChar))
                 } else {
-                    append(name)
+                    append(name.mangleIfReservedObjCName())
                 }
 
                 append(':')
@@ -1210,3 +1210,5 @@ internal fun String.toValidObjCSwiftIdentifier(): String {
 
 // Private shortcut.
 private fun String.toIdentifier(): String = this.toValidObjCSwiftIdentifier()
+
+private fun String.mangleIfReservedObjCName(): String = if (objCMacroDefinitions.contains(this)) this + "_" else this
