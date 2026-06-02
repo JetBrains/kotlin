@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test
 
 class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
     @Test
+    @OptIn(DelicateIntersectionConstructor::class)
     fun `approximation of intersection type with upper bound`() {
         runWithSession { session ->
             val intersectionType = ConeIntersectionType(
