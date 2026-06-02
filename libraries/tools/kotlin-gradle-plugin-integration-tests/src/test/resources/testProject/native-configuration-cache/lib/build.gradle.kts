@@ -30,9 +30,9 @@ kotlin {
 
     targets.filterIsInstance<KotlinNativeTarget>().forEach {
         it.compilations {
-            val main by getting {
+            val main = getByName("main") {
                 cinterops {
-                    val myCinterop by creating {
+                    val myCinterop = create("myCinterop") {
                         defFile(project.file("src/my.def"))
                     }
                 }
@@ -41,7 +41,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonTest by getting {
+        val commonTest = getByName("commonTest") {
             dependencies {
                 implementation(kotlin("test"))
             }

@@ -12,7 +12,7 @@ kotlin {
     mingwX64()
 
     sourceSets {
-        val myCustomSourceSet by creating
+        val myCustomSourceSet = create("myCustomSourceSet")
         commonMain.get().dependsOn(myCustomSourceSet)
     }
 }

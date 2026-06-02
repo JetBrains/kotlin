@@ -10,15 +10,14 @@ kotlin {
     <SingleNativeTarget>("native")
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":lib"))
-            }
+        val commonMain = getByName("commonMain")
+        commonMain.dependencies {
+            implementation(project(":lib"))
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+
+        val commonTest = getByName("commonTest")
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 }

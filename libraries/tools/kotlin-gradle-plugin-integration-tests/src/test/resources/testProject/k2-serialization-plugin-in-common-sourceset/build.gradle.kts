@@ -23,7 +23,7 @@ kotlin {
         }
     }
     sourceSets {
-        val commonMain by getting{
+        val commonMain = getByName("commonMain") {
             dependencies{
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0-RC")
             }

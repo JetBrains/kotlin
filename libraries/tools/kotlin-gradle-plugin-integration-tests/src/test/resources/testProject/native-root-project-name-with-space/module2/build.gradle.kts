@@ -6,6 +6,6 @@ kotlin {
     <SingleNativeTarget>("host")
 
     sourceSets {
-        val commonMain by getting
+        val commonMain = getByName("commonMain")
     }
 }

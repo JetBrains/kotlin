@@ -16,7 +16,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 implementation("org.sample.kt72965:lib-annotation-site:1.0")
             }

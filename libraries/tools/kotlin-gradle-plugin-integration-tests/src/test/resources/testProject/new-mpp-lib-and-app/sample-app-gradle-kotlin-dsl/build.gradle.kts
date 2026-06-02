@@ -43,21 +43,21 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 implementation("com.example:sample-lib:1.0")
             }
         }
-        val allJvm by creating {
+        val allJvm = create("allJvm") {
             dependsOn(commonMain)
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib")
             }
         }
-        val jvm6Main by getting {
+        val jvm6Main = getByName("jvm6Main") {
             dependsOn(allJvm)
         }
-        val jvm8Main by getting {
+        val jvm8Main = getByName("jvm8Main") {
             dependsOn(allJvm)
             dependencies {
                 implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

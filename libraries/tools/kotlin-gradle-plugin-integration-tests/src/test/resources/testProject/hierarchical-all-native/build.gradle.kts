@@ -19,16 +19,15 @@ kotlin {
     val linuxArm = linuxArm64()
 
 	sourceSets {
-		val allNative by creating {
+		val allNative = create("allNative").apply {
 			dependsOn(getByName("commonMain"))
 			listOf(mingw, linux, macos).forEach {
 				it.compilations["main"].defaultSourceSet.dependsOn(this@creating)
 			}
 		}
 
-    	val currentHostAndLinux by creating {
-    		dependsOn(allNative)
-    	}
+    	val currentHostAndLinux = create("currentHostAndLinux")
+        currentHostAndLinux.dependsOn(allNative)
 
     	configure(listOf(linuxArm, targets.getByName(currentHostTargetName))) {
 			compilations["main"].defaultSourceSet.dependsOn(currentHostAndLinux)

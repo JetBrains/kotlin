@@ -16,7 +16,7 @@ kotlin {
     jvm("desktop")
     
     sourceSets {
-        val desktopMain by getting
+        val desktopMain = getByName("desktopMain")
         
         androidMain.dependencies {
             implementation("androidx.compose.ui:ui-tooling-preview:1.7.4")

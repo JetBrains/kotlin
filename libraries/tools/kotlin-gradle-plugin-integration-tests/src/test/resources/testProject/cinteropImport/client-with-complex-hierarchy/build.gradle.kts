@@ -8,23 +8,22 @@ kotlin {
     linuxX64("linux").compilations.getByName("main").cinterops.create("w")
 
     sourceSets {
-        val commonMain by getting
-        val commonTest by getting
-        val linuxMain by getting
-        val linuxTest by getting
-        val linuxArmMain by getting
-        val linuxArmTest by getting
+        val commonMain = getByName("commonMain")
+        val commonTest = getByName("commonTest")
+        val linuxMain = getByName("linuxMain")
+        val linuxTest = getByName("linuxTest")
+        val linuxArmMain = getByName("linuxArmMain")
+        val linuxArmTest = getByName("linuxArmTest")
 
-        val nativeMain by creating {
-            this.dependsOn(commonMain)
-            linuxArmMain.dependsOn(this)
-        }
-        val nativeTest by creating {
-            this.dependsOn(commonTest)
-            linuxArmTest.dependsOn(this)
-        }
+        val nativeMain = create("nativeMain")
+        nativeMain.dependsOn(commonMain)
+        linuxArmMain.dependsOn(nativeMain)
 
-        val linuxIntermediateMain by creating {
+        val nativeTest = create("nativeTest")
+        nativeTest.dependsOn(commonTest)
+        linuxArmTest.dependsOn(nativeTest)
+
+        val linuxIntermediateMain = create("linuxIntermediateMain").apply {
             this.dependsOn(nativeMain)
             linuxMain.dependsOn(this)
 
@@ -32,7 +31,7 @@ kotlin {
                 implementation(project(":dep-with-cinterop"))
             }
         }
-        val linuxIntermediateTest by creating {
+        val linuxIntermediateTest = create("linuxIntermediateTest").apply {
             this.dependsOn(nativeTest)
             linuxTest.dependsOn(this)
         }
