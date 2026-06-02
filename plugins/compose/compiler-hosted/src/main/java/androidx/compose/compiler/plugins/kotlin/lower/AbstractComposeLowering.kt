@@ -1638,11 +1638,15 @@ abstract class AbstractComposeLowering(
     }
 
     protected var IrDeclaration.composeMetadata: ComposeMetadata?
-        get() = context.metadataDeclarationRegistrar.getCustomMetadataExtension(this, COMPOSE_PLUGIN_ID)
-            ?.let { ComposeMetadata(it) }
+        get() {
+            val attributeOwner = attributeOwnerId as? IrDeclaration ?: return null
+            return context.metadataDeclarationRegistrar.getCustomMetadataExtension(attributeOwner, COMPOSE_PLUGIN_ID)
+                ?.let { ComposeMetadata(it) }
+        }
         set(value) {
-            if (value != null && this.hasFirDeclaration()) {
-                context.metadataDeclarationRegistrar.addCustomMetadataExtension(this, COMPOSE_PLUGIN_ID, value.data)
+            val attributeOwner = attributeOwnerId as? IrDeclaration ?: return
+            if (value != null && attributeOwner.hasFirDeclaration()) {
+                context.metadataDeclarationRegistrar.addCustomMetadataExtension(attributeOwner, COMPOSE_PLUGIN_ID, value.data)
             }
         }
 

@@ -22,8 +22,6 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
 import kotlin.test.assertFalse
 
 class ComposeCrossModuleTests : AbstractCodegenTest() {
@@ -1555,6 +1553,46 @@ class ComposeCrossModuleTests : AbstractCodegenTest() {
                 assertTrue(
                     "The B.%stable field initializer should directly access A.%stable",
                     it.contains("GETSTATIC main/A.%stable : I"),
+                )
+            }
+        )
+    }
+
+    @Test
+    fun openFunctionDefaultParameterCrossModule() {
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class Test {
+                        @Composable open fun Test(int: Int = 0) = int
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import base.Test
+                    import androidx.compose.runtime.Composable
+                    
+                    class TestImpl : Test() {
+                        @Composable override fun Test(int: Int) = -1
+                    }
+                    """
+                )
+            ),
+            validate = { bytecode ->
+                val matcher = Regex("public Test\\(ILandroidx/compose/runtime/Composer;I\\)I")
+                val methodCount = matcher.findAll(bytecode).count()
+                assertEquals(
+                    "Expected exactly 2 methods with that signature, one for definition, one for override",
+                    2,
+                    methodCount
                 )
             }
         )
