@@ -122,6 +122,12 @@ public class FirIdeDependentAnalysisSourceLikeModuleTypeReferenceTestGenerated e
   }
 
   @Test
+  @TestMetadata("functionReceiverDanglingAnnotation.kt")
+  public void testFunctionReceiverDanglingAnnotation() {
+    run("functionReceiverDanglingAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("functionReturn.kt")
   public void testFunctionReturn() {
     run("functionReturn.kt");

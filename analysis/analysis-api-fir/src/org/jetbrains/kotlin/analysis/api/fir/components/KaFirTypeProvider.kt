@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.diagnostic.logger
+import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
@@ -205,8 +206,14 @@ internal class KaFirTypeProvider(
      * in which code can be broken in the source file.
      */
     private fun handleUnexpectedFirElementError(fir: FirElement?, element: KtElement): KaErrorType {
-        val exception = InvalidFirElementTypeException(fir, element, emptyList())
-        logger<KaFirTypeProvider>().error(exception)
+        // A missing PSI-to-FIR mapping is expected for syntactically broken code: it is impossible to anticipate every
+        // way in which the source can be malformed (e.g. a dangling annotation on an incomplete declaration, see KT-83287).
+        // The error is only logged when the surrounding code is syntactically valid, as that indicates a genuine gap in
+        // the mapping which is worth fixing (see KT-77264). For broken code we silently fall back to an error type.
+        if (!PsiTreeUtil.hasErrorElements(element.containingFile)) {
+            val exception = InvalidFirElementTypeException(fir, element, emptyList())
+            logger<KaFirTypeProvider>().error(exception)
+        }
 
         val coneErrorType = ConeErrorType(
             diagnostic = ConeUnsupported(
