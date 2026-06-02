@@ -80,7 +80,7 @@ internal abstract class JavaKProperty<out V>(
         override val isPackagePrivate: Boolean get() = property.isPackagePrivate
 
         final override fun shallowCopy(
-            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
         ): ReflectKCallable<ReturnType> =
             error("Property accessors can only be copied by copying the corresponding property")
 

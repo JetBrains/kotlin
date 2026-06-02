@@ -154,6 +154,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         final override fun shallowCopy(
             container: KDeclarationContainerImpl,
             overriddenStorage: KCallableOverriddenStorage,
+            boundReceiver: Any?,
         ): DescriptorKCallable<V> =
             error("Property accessors can only be copied by copying the corresponding property")
 
@@ -185,6 +186,7 @@ internal abstract class DescriptorKProperty<out V> private constructor(
         final override fun shallowCopy(
             container: KDeclarationContainerImpl,
             overriddenStorage: KCallableOverriddenStorage,
+            boundReceiver: Any?,
         ): DescriptorKCallable<Unit> =
             error("Property accessors can only be copied by copying the corresponding property")
 

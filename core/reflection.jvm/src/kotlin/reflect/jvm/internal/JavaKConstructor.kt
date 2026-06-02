@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.Modality
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
@@ -70,8 +69,10 @@ internal class JavaKConstructor(
 
     override val callerWithDefaults: Caller<*>? get() = null
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> {
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<Any?> {
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
-        return JavaKConstructor(container, jConstructor, CallableReference.NO_RECEIVER)
+        return JavaKConstructor(container, jConstructor, boundReceiver)
     }
 }

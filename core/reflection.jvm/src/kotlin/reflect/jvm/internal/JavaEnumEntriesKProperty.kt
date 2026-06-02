@@ -46,7 +46,7 @@ internal class JavaEnumEntriesKProperty(
     override fun getDelegate(): Any? = null
 
     override fun shallowCopy(
-        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
     ): ReflectKCallable<EnumEntries<*>> = JavaEnumEntriesKProperty(enumClass)
 
     override val caller: Caller<*> = JavaEnumEntriesCaller()
@@ -94,7 +94,7 @@ internal class JavaEnumEntriesKProperty(
         override fun invoke(): EnumEntries<*> = this@JavaEnumEntriesKProperty.get()
 
         override fun shallowCopy(
-            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage,
+            container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
         ): ReflectKCallable<EnumEntries<*>> =
             error("Property accessors can only be copied by copying the corresponding property")
 

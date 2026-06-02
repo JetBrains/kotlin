@@ -22,8 +22,10 @@ internal open class JavaKProperty0<out V>(
 
     override fun invoke(): V = get()
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaKProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<V> =
+        JavaKProperty0(container, jField, boundReceiver, overriddenStorage)
 
     class Getter<out R>(override val property: JavaKProperty0<R>) : JavaKProperty.Getter<R>(), KProperty0.Getter<R> {
         override fun invoke(): R = property.get()
@@ -38,8 +40,10 @@ internal open class JavaKMutableProperty0<V>(
 
     override fun set(value: V): Unit = setter.call(value)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        JavaKMutableProperty0(container, jField, rawBoundReceiver, overriddenStorage)
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<V> =
+        JavaKMutableProperty0(container, jField, boundReceiver, overriddenStorage)
 
     class Setter<R>(override val property: JavaKMutableProperty0<R>) : JavaKProperty.Setter<R>(), KMutableProperty0.Setter<R> {
         override fun invoke(value: R): Unit = property.set(value)

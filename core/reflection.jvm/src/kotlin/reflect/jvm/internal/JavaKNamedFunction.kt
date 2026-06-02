@@ -12,7 +12,6 @@ import java.lang.reflect.Modifier
 import java.lang.reflect.Type
 import java.lang.reflect.TypeVariable
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.reflect.KParameter
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.calls.Caller
@@ -130,6 +129,8 @@ internal class JavaKNamedFunction(
 
     override val callerWithDefaults: Caller<*>? get() = null
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> =
-        JavaKNamedFunction(container, jMethod, CallableReference.NO_RECEIVER, overriddenStorage)
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<Any?> =
+        JavaKNamedFunction(container, jMethod, boundReceiver, overriddenStorage)
 }

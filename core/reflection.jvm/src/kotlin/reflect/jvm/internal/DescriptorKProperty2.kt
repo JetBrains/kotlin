@@ -46,6 +46,7 @@ internal open class DescriptorKProperty2<D, E, out V> : KProperty2<D, E, V>, Des
     override fun shallowCopy(
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
+        boundReceiver: Any?,
     ): DescriptorKProperty2<D, E, V> =
         DescriptorKProperty2<D, E, V>(container, descriptor, overriddenStorage)
 
@@ -70,6 +71,7 @@ internal class DescriptorKMutableProperty2<D, E, V> : DescriptorKProperty2<D, E,
     override fun shallowCopy(
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
+        boundReceiver: Any?,
     ): DescriptorKMutableProperty2<D, E, V> =
         DescriptorKMutableProperty2<D, E, V>(container, descriptor, overriddenStorage)
 

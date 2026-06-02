@@ -6,7 +6,6 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
@@ -44,8 +43,10 @@ internal class KotlinKConstructor(
 
     override val isPrimaryConstructor: Boolean get() = !kmConstructor.isSecondary
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> {
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<Any?> {
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
-        return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, kmConstructor)
+        return KotlinKConstructor(container, signature, boundReceiver, kmConstructor)
     }
 }

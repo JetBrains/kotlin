@@ -59,6 +59,7 @@ internal interface ReflectKCallable<out R> : KCallable<R>, KTypeParameterOwnerIm
     fun shallowCopy(
         container: KDeclarationContainerImpl,
         overriddenStorage: KCallableOverriddenStorage,
+        boundReceiver: Any? = CallableReference.NO_RECEIVER,
     ): ReflectKCallable<R>
 
     @Suppress("UNCHECKED_CAST")

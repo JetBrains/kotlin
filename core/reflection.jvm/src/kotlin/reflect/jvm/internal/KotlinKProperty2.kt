@@ -6,7 +6,6 @@
 package kotlin.reflect.jvm.internal
 
 import kotlin.LazyThreadSafetyMode.PUBLICATION
-import kotlin.jvm.internal.CallableReference
 import kotlin.metadata.KmProperty
 import kotlin.reflect.KMutableProperty2
 import kotlin.reflect.KProperty2
@@ -25,8 +24,10 @@ internal open class KotlinKProperty2<D, E, out V>(
 
     override fun invoke(receiver1: D, receiver2: E): V = get(receiver1, receiver2)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        KotlinKProperty2<D, E, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<V> =
+        KotlinKProperty2<D, E, V>(container, signature, boundReceiver, kmProperty, overriddenStorage)
 
     class Getter<D, E, out V>(override val property: KotlinKProperty2<D, E, V>) : KotlinKProperty.Getter<V>(), KProperty2.Getter<D, E, V> {
         override fun invoke(receiver1: D, receiver2: E): V = property.get(receiver1, receiver2)
@@ -41,8 +42,10 @@ internal class KotlinKMutableProperty2<D, E, V>(
 
     override fun set(receiver1: D, receiver2: E, value: V): Unit = setter.call(receiver1, receiver2, value)
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<V> =
-        KotlinKMutableProperty2<D, E, V>(container, signature, CallableReference.NO_RECEIVER, kmProperty, overriddenStorage)
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<V> =
+        KotlinKMutableProperty2<D, E, V>(container, signature, boundReceiver, kmProperty, overriddenStorage)
 
     class Setter<D, E, V>(override val property: KotlinKMutableProperty2<D, E, V>) :
         KotlinKProperty.Setter<V>(), KMutableProperty2.Setter<D, E, V> {

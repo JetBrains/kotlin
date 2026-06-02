@@ -7,6 +7,7 @@
 package kotlin.reflect.jvm.internal;
 
 import kotlin.Metadata;
+import kotlin.collections.CollectionsKt;
 import kotlin.jvm.internal.*;
 import kotlin.metadata.KmConstructor;
 import kotlin.metadata.KmFunction;
@@ -20,7 +21,6 @@ import kotlin.text.MatchResult;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +77,7 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
         KDeclarationContainerImpl container = getOwner(f);
         String name = f.getName();
         String signature = f.getSignature();
+        Object boundReceiver = f.getBoundReceiver();
         if (!SystemPropertiesKt.getUseK1Implementation()) {
             boolean isJava =
                     container instanceof KClassImpl &&
@@ -85,25 +86,35 @@ public class ReflectionFactoryImpl extends ReflectionFactory {
             if (name.equals("<init>")) {
                 if (isJava) {
                     Constructor<?> constructor = container.findJavaConstructor(signature);
-                    return new JavaKConstructor(container, constructor, f.getBoundReceiver());
+                    return new JavaKConstructor(container, constructor, boundReceiver);
                 }
                 else {
                     KmConstructor kmConstructor = container.findConstructorMetadata(signature);
-                    return new KotlinKConstructor(container, signature, f.getBoundReceiver(), kmConstructor);
+                    return new KotlinKConstructor(container, signature, boundReceiver, kmConstructor);
                 }
             }
             else if (container instanceof KPackageImpl) {
                 KmFunction kmFunction = container.findFunctionMetadata(name, signature);
-                return new KotlinKNamedFunction(container, signature, f.getBoundReceiver(), kmFunction, KCallableOverriddenStorage.EMPTY);
+                return new KotlinKNamedFunction(container, signature, boundReceiver, kmFunction, KCallableOverriddenStorage.EMPTY);
             }
             else if (container instanceof KClassImpl<?> && !((KClassImpl<?>) container).isComplicatedBuiltinSubclass()) {
                 if (isJava) {
-                    Method method = container.findJavaMethod(name, signature);
-                    return new JavaKNamedFunction(container, method, f.getBoundReceiver(), KCallableOverriddenStorage.EMPTY);
+                    ReflectKFunction result = (ReflectKFunction) CollectionsKt.firstOrNull(
+                            ((KClassImpl<?>) container).getData().getValue().getMembersByName(name),
+                            it -> ((ReflectKFunction) it).getSignature().equals(signature)
+                    );
+                    if (result == null) {
+                        throw new KotlinReflectionInternalError(
+                                "Function '" + name + "' (JVM signature: " + signature + ") not resolved in " + container
+                        );
+                    }
+                    return boundReceiver == CallableReference.NO_RECEIVER
+                           ? result
+                           : (KFunction<?>) result.shallowCopy(container, result.getOverriddenStorage(), boundReceiver);
                 }
             }
         }
-        return new DescriptorKFunction(container, name, signature, f.getBoundReceiver());
+        return new DescriptorKFunction(container, name, signature, boundReceiver);
     }
 
     // Properties

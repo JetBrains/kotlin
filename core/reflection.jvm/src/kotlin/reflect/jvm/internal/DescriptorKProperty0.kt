@@ -42,7 +42,9 @@ internal open class DescriptorKProperty0<out V> : KProperty0<V>, DescriptorKProp
 
     override fun invoke(): V = get()
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): DescriptorKProperty0<V> =
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): DescriptorKProperty0<V> =
         DescriptorKProperty0<V>(container, descriptor, overriddenStorage)
 
     class Getter<out R>(override val property: DescriptorKProperty0<R>) : DescriptorKProperty.Getter<R>(), KProperty0.Getter<R> {
@@ -66,8 +68,7 @@ internal class DescriptorKMutableProperty0<V> : DescriptorKProperty0<V>, KMutabl
     override fun set(value: V) = setter.call(value)
 
     override fun shallowCopy(
-        container: KDeclarationContainerImpl,
-        overriddenStorage: KCallableOverriddenStorage,
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
     ): DescriptorKMutableProperty0<V> =
         DescriptorKMutableProperty0<V>(container, descriptor, overriddenStorage)
 

@@ -70,7 +70,9 @@ internal class JavaAnnotationConstructor(
         AnnotationConstructorCaller(klass.java, methods.map { it.name }, CALL_BY_NAME, JAVA, methods)
     }
 
-    override fun shallowCopy(container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage): ReflectKCallable<Any?> {
+    override fun shallowCopy(
+        container: KDeclarationContainerImpl, overriddenStorage: KCallableOverriddenStorage, boundReceiver: Any?,
+    ): ReflectKCallable<Any?> {
         require(overriddenStorage == KCallableOverriddenStorage.EMPTY) { "Constructors cannot have fake overrides: $this" }
         return JavaAnnotationConstructor(klass)
     }
