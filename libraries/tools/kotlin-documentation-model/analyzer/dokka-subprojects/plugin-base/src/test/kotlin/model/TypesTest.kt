@@ -12,6 +12,7 @@ import utils.AbstractModelTest
 import utils.OnlyDescriptors
 import utils.OnlySymbols
 import utils.assertIsInstance
+import utils.assertNotNull
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -279,6 +280,39 @@ class TypesTest : AbstractModelTest("/src/main/kotlin/classes/Test.kt", "types")
                 nestedTypeAlias.assertIsInstance<TypeAliased>()
                 nestedTypeAlias.driOrNull equals DRI("types", "AliasHolder.NestedAlias")
                 nestedTypeAlias.inner.driOrNull equals DRI("kotlin", "String")
+            }
+        }
+    }
+
+    @Test
+    fun `getter type of a val with an inferred type from a list of providers`() {
+        inlineModelTest(
+            """
+            |interface ParameterDataProvider<T : Any>
+            |internal abstract class AbstractParameterDataProvider<T : Any> : ParameterDataProvider<T>
+            |internal class BooleanParameterDataProvider : AbstractParameterDataProvider<Boolean>()
+            |internal class EnumParameterDataProvider : ParameterDataProvider<Enum<*>>
+            |
+            |val defaultDataProviders by lazy { listOf(BooleanParameterDataProvider(), EnumParameterDataProvider()) }"""
+        ) {
+            with((this / "types" / "defaultDataProviders").cast<DProperty>()) {
+                name equals "defaultDataProviders"
+                type equals getter?.type
+
+                with(getter.assertNotNull("Getter")) {
+                    // the getter return type must match the property's inferred type
+                    val getterType = type
+                    getterType.assertIsInstance<GenericTypeConstructor>()
+                    getterType.driOrNull equals DRI("kotlin.collections", "List")
+
+                    val elementType = (getterType.projections.single() as Variance<*>).inner
+                    elementType.assertIsInstance<GenericTypeConstructor>()
+                    elementType.driOrNull equals DRI("types", "ParameterDataProvider")
+
+                    val elementTypeOfParameterDataProvider = (elementType.projections.single() as Variance<*>).inner
+                    elementTypeOfParameterDataProvider.assertIsInstance<GenericTypeConstructor>()
+                    elementTypeOfParameterDataProvider.driOrNull equals DRI("kotlin", "Any")
+                }
             }
         }
     }
