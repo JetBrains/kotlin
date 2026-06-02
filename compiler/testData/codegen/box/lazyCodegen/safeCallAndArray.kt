@@ -4,8 +4,8 @@ class C {
     }
 }
 
-fun box(): String? {
+fun box(): String {
     val c: C? = C()
     val arrayList = arrayOf(c?.calc(), "")
-    return arrayList[0]
+    return arrayList[0]!!
 }

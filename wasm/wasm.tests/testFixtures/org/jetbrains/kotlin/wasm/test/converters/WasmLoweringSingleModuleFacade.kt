@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.wasm.config.wasmDependencyResolutionMap
 import org.jetbrains.kotlin.wasm.config.wasmForceDebugFriendlyCompilation
+import org.jetbrains.kotlin.wasm.config.wasmTestBoxFunctionToExport
 import org.jetbrains.kotlin.wasm.config.wasmUseNewExceptionProposal
 import org.jetbrains.kotlin.wasm.test.PrecompileSetup
 import org.jetbrains.kotlin.wasm.test.handlers.getWasmTestOutputDirectory
@@ -63,7 +64,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         val mainModule = MainModule.Klib(inputArtifact.klib.absolutePath)
 
         val testPackage = extractTestPackage(testServices)
-        val exportedDeclarations = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
         with(configuration) {
             configureWith(testServices.moduleStructure.allDirectives)
@@ -91,7 +92,7 @@ class WasmLoweringSingleModuleFacade(testServices: TestServices) :
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, exportedDeclarations, allModules, context)
+            compiler.lowerIr(moduleInfo, allModules, context)
         }
 
         val compiledIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

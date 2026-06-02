@@ -10,6 +10,8 @@ inline fun processRecords(s: String?, block: String.(String) -> String) = s?.blo
 
 import test.*
 
-fun box(): String? {
+fun test(): String? {
     return processRecords("O") { this + "K" }
 }
+
+fun box(): String = test()!!

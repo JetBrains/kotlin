@@ -44,7 +44,6 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
     abstract val irFactory: IrFactoryImplForWasmIC
     abstract fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts
@@ -55,7 +54,6 @@ abstract class WasmCompilerBase(val configuration: CompilerConfiguration) {
 abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, private val noCrossFileOptimisations: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
@@ -63,7 +61,6 @@ abstract class WholeWorldCompilerBase(configuration: CompilerConfiguration, priv
         return compileToLoweredIr(
             configuration = configuration,
             irLinker = irModuleInfo.deserializer,
-            exportedDeclarations = exportedDeclarations,
             allModules = allModules,
             context = context,
         )
@@ -114,7 +111,6 @@ class WholeWorldMultiModuleCompiler(configuration: CompilerConfiguration, overri
 class SingleModuleCompiler(configuration: CompilerConfiguration, override val irFactory: IrFactoryImplForWasmIC, val isWasmStdlib: Boolean) : WasmCompilerBase(configuration) {
     override fun lowerIr(
         irModuleInfo: IrModuleInfo,
-        exportedDeclarations: Set<FqName>,
         allModules: List<IrModuleFragment>,
         context: WasmBackendContext,
     ): LoweredIrWithExtraArtifacts {
@@ -122,7 +118,6 @@ class SingleModuleCompiler(configuration: CompilerConfiguration, override val ir
         return compileToLoweredIr(
             configuration = configuration,
             irLinker = irModuleInfo.deserializer,
-            exportedDeclarations = exportedDeclarations,
             allModules = allModules,
             context = context,
         )
