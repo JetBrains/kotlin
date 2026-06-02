@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.konan.test.klib.fileCheckDump
 import org.jetbrains.kotlin.konan.test.klib.fileCheckStage
 import org.jetbrains.kotlin.native.executors.runProcess
+import org.jetbrains.kotlin.test.TestInfrastructureException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.groupingStageInputs
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -42,11 +44,14 @@ class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<Binary
         val originalModuleStructures = testServices.groupingStageInputs.map { it.testServices.moduleStructure }
         if (originalModuleStructures.first().allDirectives[TestDirectives.FILECHECK_STAGE].isEmpty())
             return
-        require(originalModuleStructures.size == 1) {
+        // Test-infrastructure invariant violations (not failures of the code under test): throw
+        // TestInfrastructureException so they are never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(originalModuleStructures.size == 1) {
             "Test having FILECHECK_STAGE must be standalone: ${originalModuleStructures.first().originalTestDataFiles}"
         }
         val module = originalModuleStructures.single().modules.first()
-        val fileCheckStage = module.fileCheckStage() ?: error("FILECHECK_STAGE directive is missing in module ${module.name}")
+        val fileCheckStage = module.fileCheckStage()
+            ?: throw TestInfrastructureException("FILECHECK_STAGE directive is missing in module ${module.name}")
         val testDataFile = module.files.first().originalFile
         val fileCheckDump = artifact.executable.fileCheckDump(fileCheckStage)
 
@@ -54,7 +59,9 @@ class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<Binary
         val prefixes = getPrefixes(settings)
         val fileCheckExecutable = settings.configurables.absoluteLlvmHome + File.separator + "bin" + File.separator +
                 if (SystemInfo.isWindows) "FileCheck.exe" else "FileCheck"
-        require(File(fileCheckExecutable).exists()) {
+        // Test-infrastructure/environment invariant violation (not a failure of the code under test): throw
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        checkTestInfrastructure(File(fileCheckExecutable).exists()) {
             "$fileCheckExecutable does not exist. Make sure Distribution for `settings.configurables` " +
                     "was created using `propertyOverrides` to specify development variant of LLVM instead of user variant."
         }

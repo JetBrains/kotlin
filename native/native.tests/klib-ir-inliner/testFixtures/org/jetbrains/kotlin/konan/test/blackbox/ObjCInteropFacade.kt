@@ -19,10 +19,10 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTar
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.ClangMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.compileWithClangToStaticLibrary
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
-import org.jetbrains.kotlin.konan.test.klib.CustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.klib.customNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.klib.defaultLanguageVersion
+import org.jetbrains.kotlin.test.TestInfrastructureException
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -62,7 +62,10 @@ class ObjCInteropFacade(
         val sourceFiles = module.files.map { sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val defFiles = sourceFiles.filter { it.name.endsWith(".def") }
-        val defFile = defFiles.singleOrNull() ?: error("Only one .def file is allowed: ${defFiles.map { it.name }}")
+        // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+        // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        val defFile = defFiles.singleOrNull()
+            ?: throw TestInfrastructureException("Only one .def file is allowed: ${defFiles.map { it.name }}")
         val defRealFileFolder = defFile.parentFile
         val cSourceFiles = sourceFiles.filter {
             it.name.substringAfterLast(".") in CINTEROP_SOURCE_EXTENSIONS
@@ -78,7 +81,9 @@ class ObjCInteropFacade(
                 clangMode = when (it.extension) {
                     "c", "m" -> ClangMode.C
                     "cpp", "mm" -> ClangMode.CXX
-                    else -> error("unexpected file extension: $it")
+                    // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                    // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                    else -> throw TestInfrastructureException("unexpected file extension: $it")
                 },
                 sourceFiles = listOf(it),
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),

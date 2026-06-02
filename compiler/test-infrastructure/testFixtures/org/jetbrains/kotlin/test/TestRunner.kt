@@ -144,11 +144,15 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
         }
 
         fun filterFailedExceptions(failedExceptions: List<WrappedException>): List<Throwable> {
-            return testConfiguration.failureSuppressors
-                .fold(failedExceptions) { assertions, suppressor ->
+            // Failures coming from the test infrastructure itself must never be suppressed (e.g. by IGNORE_BACKEND),
+            // otherwise an infra problem would be masked as a green test, hiding the real (unknown) test status.
+            val [infrastructureFailures, suppressableFailures] = failedExceptions.partition { it.isTestInfrastructureFailure }
+            val notSuppressedFailures = testConfiguration.failureSuppressors
+                .fold(suppressableFailures) { assertions, suppressor ->
                     if (assertions.isEmpty()) return@fold assertions
                     suppressor.suppressIfNeeded(assertions)
                 }
+            return (infrastructureFailures + notSuppressedFailures)
                 .sorted()
                 .map { it.cause }
         }
