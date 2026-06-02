@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.assignment.plugin
 
+import org.jetbrains.kotlin.assignment.plugin.test.analysisApi.AbstractExpressionTypeTestForAssignment
+import org.jetbrains.kotlin.assignment.plugin.test.analysisApi.AbstractGetOrBuildFirTestForAssignment
 import org.jetbrains.kotlin.generators.dsl.junit5.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
 
@@ -17,6 +19,12 @@ fun main(args: Array<String>) {
             }
             testClass<AbstractFirLightTreeBlackBoxCodegenTestForAssignmentPlugin> {
                 model("codegen", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+            testClass<AbstractExpressionTypeTestForAssignment> {
+                model("analysisApi/expressionType", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+            testClass<AbstractGetOrBuildFirTestForAssignment> {
+                model("analysisApi/getOrBuildFir", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
     }

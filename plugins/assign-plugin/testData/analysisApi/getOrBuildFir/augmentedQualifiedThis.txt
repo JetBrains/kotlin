@@ -1,0 +1,44 @@
+KT element: KtDotQualifiedExpression
+FIR element: FirPropertyAccessExpressionImpl
+FIR source kind: DesugaredPlusAssign
+
+FIR element rendered:
+this@R|/Foo|.R|/Foo.property|
+
+FIR FILE:
+FILE: [ResolvedTo(IMPORTS)] augmentedQualifiedThis.kt
+    public final? [ResolvedTo(RAW_FIR)] annotation class ValueContainer : R|kotlin/Annotation| {
+        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=ValueContainer] constructor(): R|ValueContainer| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+    }
+    @R|ValueContainer|[Types]() public final [ResolvedTo(STATUS)] class Container : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Container] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Container.storage] storage: R|kotlin/String|): R|Container| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        private final [ResolvedTo(STATUS)] [IsFromPrimaryConstructor=true] var storage: R|kotlin/String| = R|<local>/storage|
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Container] get(): R|kotlin/String|
+            private [ResolvedTo(STATUS)] [ContainingClassKey=Container] set([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit|
+
+        public final [ResolvedTo(STATUS)] fun assign([ResolvedTo(STATUS)] value: R|kotlin/String|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final [ResolvedTo(STATUS)] fun assign([ResolvedTo(STATUS)] container: R|Container|): R|kotlin/Unit| { LAZY_BLOCK }
+
+        public final operator [ResolvedTo(STATUS)] fun plus([ResolvedTo(STATUS)] value: R|kotlin/String|): R|Container| { LAZY_BLOCK }
+
+    }
+    public final [ResolvedTo(STATUS)] class Foo : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Foo] constructor(): R|Foo| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val property: R|Container| = R|/Container.Container|(String(foo))
+            public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ContainingClassKey=Foo] get(): R|Container|
+
+        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+            this@R|/Foo|.R|/Foo.property|.R|/Container.assign|(this@R|/Foo|.R|/Foo.property|.R|/Container.plus|(String(bar)))
+        }
+
+    }
