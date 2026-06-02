@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.ExperimentalSerializationApi
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.BufferedOutputStream
 import java.io.File
@@ -26,20 +23,17 @@ internal fun Uklib.serializeToZipArchive(
     // FIXME: Remove rezipping and the temporary directory KT-75395
     temporariesDirectory: File,
 ) {
-    val manifest = GsonBuilder().setPrettyPrinting().create().toJson(
-        mapOf(
-            FRAGMENTS to module.fragments.sortedBy {
-                // Make sure we have some stable order of fragments
-                it.identifier
-            }.map {
-                mapOf(
-                    FRAGMENT_IDENTIFIER to it.identifier,
-                    ATTRIBUTES to it.attributes
-                        // Make sure we have some stable order of attributes
-                        .sorted(),
+    @OptIn(ExperimentalSerializationApi::class)
+    val manifest = KgpJson.prettyPrinted.encodeToString(
+        UklibManifest.serializer(),
+        UklibManifest(
+            fragments = module.fragments.sortedBy { it.identifier }.map {
+                UklibManifestFragment(
+                    identifier = it.identifier,
+                    targets = it.attributes.sorted(),
                 )
             },
-            UMANIFEST_VERSION to manifestVersion,
+            manifestVersion = manifestVersion,
         )
     )
     zipUklibContents(

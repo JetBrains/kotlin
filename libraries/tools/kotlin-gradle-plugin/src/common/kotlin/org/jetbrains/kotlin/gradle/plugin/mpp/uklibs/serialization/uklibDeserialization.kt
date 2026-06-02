@@ -5,15 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization
 
-import com.google.gson.Gson
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_FILES
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.MAXIMUM_COMPATIBLE_UMANIFEST_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_FILE_NAME
-import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import java.io.File
@@ -30,20 +25,20 @@ internal fun deserializeUklibFromDirectory(
     val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
     if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
     return umanifest.reader().use { umanifestStream ->
-        @Suppress("UNCHECKED_CAST")
-        val json = Gson().fromJson(umanifestStream, Map::class.java) as Map<String, Any>
+        val manifest = KgpJson.default.decodeFromString(
+            UklibManifest.serializer(),
+            umanifestStream.readText()
+        )
 
-        val manifestVersion = json.property<String>(UMANIFEST_VERSION)
-        assertCanReadUManifest(manifestVersion, directory)
+        assertCanReadUManifest(manifest.manifestVersion, directory)
 
-        val fragments = (json.property<List<Map<String, Any>>>(FRAGMENTS)).map { fragment ->
-            val fragmentIdentifier = fragment.property<String>(FRAGMENT_IDENTIFIER)
+        val fragments = manifest.fragments.map { fragment ->
             UklibFragment(
-                identifier = fragmentIdentifier,
-                attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
-                files = if (fragment.keys.contains(FRAGMENT_FILES))
-                    fragment.property<List<String>>(FRAGMENT_FILES).map(::File)
-                else listOf(directory.resolve(fragmentIdentifier))
+                identifier = fragment.identifier,
+                attributes = fragment.targets.toSet(),
+                files = if (fragment.files != null)
+                    fragment.files.map(::File)
+                else listOf(directory.resolve(fragment.identifier))
             )
         }.toSet()
 
@@ -51,30 +46,9 @@ internal fun deserializeUklibFromDirectory(
             module = UklibModule(
                 fragments = fragments,
             ),
-            manifestVersion = manifestVersion,
+            manifestVersion = manifest.manifestVersion,
         )
     }
-}
-
-internal inline fun <reified T> Map<String, Any>.property(named: String): T {
-    if (!containsKey(named)) {
-        error(
-            """
-            Json object missing required property $named
-            $this
-            """.trimIndent()
-        )
-    }
-    val value = get(named)
-    if (value !is T) {
-        error(
-            """
-            Couldn't cast $value to type ${T::class}:                    
-            $this
-            """.trimIndent()
-        )
-    }
-    return value
 }
 
 private fun assertCanReadUManifest(manifestVersion: String, directory: File) {
