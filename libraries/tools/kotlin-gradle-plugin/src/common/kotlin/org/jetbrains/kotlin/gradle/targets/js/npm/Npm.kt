@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.internal.execWithProgress
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.File
 
 class Npm internal constructor(
@@ -131,11 +132,11 @@ class Npm internal constructor(
         overrides: Map<String, String>,
         rootPackageJsonFile: File,
     ) {
-        val nodeJsWorldDir = rootPackageJsonFile.parentFile
+        val nodeJsWorldDir = rootPackageJsonFile.toPath().parent
         val rootPackageJson = PackageJson(rootProjectName, rootProjectVersion)
         rootPackageJson.private = true
 
-        val npmProjectWorkspaces = npmProjects.map { it.npmProjectDir.getFile().relativeTo(nodeJsWorldDir).invariantSeparatorsPath }
+        val npmProjectWorkspaces = npmProjects.map { nodeJsWorldDir.relativize(it.npmProjectDir.getFile().toPath()).invariantSeparatorsPathString }
         val importedProjectWorkspaces =
             NpmImportedPackagesVersionResolver(npmProjects, nodeJsWorldDir).resolveAndUpdatePackages()
 

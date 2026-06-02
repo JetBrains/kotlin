@@ -43,17 +43,19 @@ internal class TaskOutputsBackup(
         // property. To avoid snapshot sync collisions, each snapshot output directory has also 'index' as prefix.
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
             if (outputPath.isDirectory) {
-                val snapshotFile = File(snapshotsDir.get().asFile, index.asSnapshotArchiveName)
-                logger.debug("Packing ${outputPath.invariantSeparatorsPath} as ${snapshotFile.invariantSeparatorsPath} to make a backup")
+                val snapshotFile = snapshotsDir.get().asFile.toPath().resolve(index.asSnapshotArchiveName)
+                logger.debug("Packing ${outputPath.invariantSeparatorsPath} as ${snapshotFile.invariantSeparatorsPathString} to make a backup")
                 compressDirectoryToZip(
                     snapshotFile,
-                    outputPath
+                    outputPath.toPath()
                 )
             } else if (!outputPath.exists()) {
                 logger.debug("Creating is-empty marker file for ${outputPath.invariantSeparatorsPath} as it does not exist")
-                val markerFile = File(snapshotsDir.get().asFile, index.asNotExistsMarkerFile)
-                markerFile.parentFile.mkdirs()
-                markerFile.createNewFile()
+                val markerFile = snapshotsDir.get().asFile.toPath().resolve(index.asNotExistsMarkerFile)
+                Files.createDirectories(markerFile.parent)
+                if (!Files.exists(markerFile)) {
+                    Files.createFile(markerFile)
+                }
             } else { // it's not a directory, but it exists -> it's a file
                 val personalSnapshotDir = snapshotsDir.map { it.file(index.asSnapshotHolderDirectory).asFile }.get()
                 logger.debug("Copying ${outputPath.invariantSeparatorsPath} into ${personalSnapshotDir.invariantSeparatorsPath} to make a backup")
@@ -71,23 +73,23 @@ internal class TaskOutputsBackup(
         }
 
         outputsToRestore.toSortedSet().forEachIndexed { index, outputPath ->
-            val possibleDir = snapshotsDir.get().file(index.asSnapshotHolderDirectory).asFile
-            val possibleArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile
-            val possibleNotExistsMarker = snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile
+            val possibleDir = snapshotsDir.get().file(index.asSnapshotHolderDirectory).asFile.toPath()
+            val possibleArchive = snapshotsDir.get().file(index.asSnapshotArchiveName).asFile.toPath()
+            val possibleNotExistsMarker = snapshotsDir.get().file(index.asNotExistsMarkerFile).asFile.toPath()
 
-            if (possibleArchive.exists()) {
-                logger.debug("Unpacking ${possibleArchive.invariantSeparatorsPath} into ${outputPath.invariantSeparatorsPath} to restore from backup")
-                outputPath.mkdirs()
-                uncompressZipIntoDirectory(possibleArchive, outputPath)
-            } else if (possibleDir.exists()) {
-                logger.debug("Copying file from ${possibleDir.invariantSeparatorsPath} into ${outputPath.parentFile.invariantSeparatorsPath} to restore ${outputPath.name} from backup")
+            if (Files.exists(possibleArchive)) {
+                logger.debug("Unpacking ${possibleArchive.invariantSeparatorsPathString} into ${outputPath.invariantSeparatorsPath} to restore from backup")
+                Files.createDirectories(outputPath.toPath())
+                uncompressZipIntoDirectory(possibleArchive, outputPath.toPath())
+            } else if (Files.exists(possibleDir)) {
+                logger.debug("Copying file from ${possibleDir.invariantSeparatorsPathString} into ${outputPath.parentFile.invariantSeparatorsPath} to restore ${outputPath.name} from backup")
                 fileSystemOperations.copy { spec ->
-                    spec.from(possibleDir)
+                    spec.from(possibleDir.toFile())
                     spec.into(outputPath.parentFile)
                 }
-            } else if (possibleNotExistsMarker.exists()) {
+            } else if (Files.exists(possibleNotExistsMarker)) {
                 // do nothing
-                logger.debug("Found marker ${possibleNotExistsMarker.invariantSeparatorsPath} for ${outputPath.invariantSeparatorsPath}, doing nothing")
+                logger.debug("Found marker ${possibleNotExistsMarker.invariantSeparatorsPathString} for ${outputPath.invariantSeparatorsPath}, doing nothing")
             } else {
                 logger.warn(
                     """
@@ -119,36 +121,38 @@ internal class TaskOutputsBackup(
      * time up to half ot the time needed to copy similar files.
      */
     private fun compressDirectoryToZip(
-        snapshotFile: File,
-        outputPath: File
+        snapshotFile: Path,
+        outputPath: Path
     ) {
-        snapshotFile.parentFile.mkdirs()
-        snapshotFile.createNewFile()
+        Files.createDirectories(snapshotFile.parent)
+        if (!Files.exists(snapshotFile)) {
+            Files.createFile(snapshotFile)
+        }
 
-        ZipOutputStream(snapshotFile.outputStream().buffered()).use { zip ->
+        ZipOutputStream(Files.newOutputStream(snapshotFile).buffered()).use { zip ->
             zip.setLevel(Deflater.NO_COMPRESSION)
-            outputPath
-                .walkTopDown()
-                .filter { file -> !file.isDirectory || file.isEmptyDirectory }
-                .forEach { file ->
-                    val suffix = if (file.isDirectory) "/" else ""
-                    val entry = ZipEntry(file.relativeTo(outputPath).invariantSeparatorsPath + suffix)
-                    zip.putNextEntry(entry)
-                    if (!file.isDirectory) {
-                        file.inputStream().buffered().use { it.copyTo(zip) }
+            Files.walk(outputPath).use { paths ->
+                paths
+                    .filter { file -> !Files.isDirectory(file) || file.isEmptyDirectory }
+                    .forEach { file ->
+                        val suffix = if (Files.isDirectory(file)) "/" else ""
+                        val entry = ZipEntry(outputPath.relativize(file).invariantSeparatorsPathString + suffix)
+                        zip.putNextEntry(entry)
+                        if (!Files.isDirectory(file)) {
+                            Files.newInputStream(file).buffered().use { it.copyTo(zip) }
+                        }
+                        zip.closeEntry()
                     }
-                    zip.closeEntry()
-                }
+            }
             zip.flush()
         }
     }
 
     private fun uncompressZipIntoDirectory(
-        snapshotFile: File,
-        outputDirectory: File
+        snapshotFile: Path,
+        outputPath: Path
     ) {
-        val outputPath = outputDirectory.toPath()
-        val snapshotUri = URI.create("jar:${snapshotFile.toURI()}")
+        val snapshotUri = URI.create("jar:${snapshotFile.toUri()}")
         FileSystems.newFileSystem(snapshotUri, emptyMap<String, Any>()).use { zipFs ->
             zipFs.rootDirectories.forEach { rootDir ->
                 Files.walk(rootDir).use { paths ->
@@ -164,8 +168,8 @@ internal class TaskOutputsBackup(
         }
     }
 
-    private val File.isEmptyDirectory: Boolean
-        get() = !Files.list(toPath()).use { it.findFirst().isPresent }
+    private val Path.isEmptyDirectory: Boolean
+        get() = !Files.list(this).use { it.findFirst().isPresent }
 
     private val Path.normalizedToBeRelative: String
         get() = if (toString() == "/") "." else toString().removePrefix("/")

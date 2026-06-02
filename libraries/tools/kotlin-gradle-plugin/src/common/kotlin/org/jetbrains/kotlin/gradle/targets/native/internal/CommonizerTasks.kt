@@ -243,8 +243,8 @@ internal abstract class CleanNativeDistributionCommonizerTask : DefaultTask() {
 
     @TaskAction
     fun action() {
-        NativeDistributionCommonizerLock(commonizerDirectory.get()).withLock { lockFile ->
-            val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile
+        NativeDistributionCommonizerLock(commonizerDirectory.get().toPath()).withLock { lockFile ->
+            val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile.toFile()
             fileSystemOperations.delete {
                 it.delete(files)
             }

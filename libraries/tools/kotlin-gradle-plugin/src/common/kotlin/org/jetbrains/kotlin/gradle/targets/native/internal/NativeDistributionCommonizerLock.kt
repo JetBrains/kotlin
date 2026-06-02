@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.internal
 
-import java.io.File
-import java.io.FileOutputStream
 import java.nio.channels.FileChannel
 import java.nio.channels.FileLock
 import java.nio.channels.OverlappingFileLockException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.concurrent.withLock
 
 internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
-    private val outputDirectory: File,
+    private val outputDirectory: Path,
     private val logInfo: (message: String) -> Unit = {}
 ) {
     private companion object {
         val intraProcessLock: ReentrantLock = ReentrantLock()
-        val lockedOutputDirectories = hashSetOf<File>()
+        val lockedOutputDirectories = hashSetOf<Path>()
     }
 
-    fun <T> withLock(action: (lockFile: File) -> T): T {
+    fun <T> withLock(action: (lockFile: Path) -> T): T {
         /* Enter intra-process wide lock */
         intraProcessLock.withLock {
             val lockFile = outputDirectory.resolve(".lock")
@@ -32,25 +33,25 @@ internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
             }
 
             /* Lock output directory inter-process wide */
-            outputDirectory.mkdirs()
-            logInfo("Acquire lock: ${lockFile.path} ...")
-            FileOutputStream(outputDirectory.resolve(".lock")).use { stream ->
-                val lock: FileLock = stream.channel.lockWithRetries(lockFile)
+            Files.createDirectories(outputDirectory)
+            logInfo("Acquire lock: $lockFile ...")
+            FileChannel.open(lockFile, StandardOpenOption.CREATE, StandardOpenOption.WRITE).use { channel ->
+                val lock: FileLock = channel.lockWithRetries(lockFile)
                 assert(lock.isValid)
                 return try {
-                    logInfo("Lock acquired: ${lockFile.path}")
+                    logInfo("Lock acquired: $lockFile")
                     lockedOutputDirectories.add(outputDirectory)
                     action(lockFile)
                 } finally {
                     lockedOutputDirectories.remove(outputDirectory)
                     lock.release()
-                    logInfo("Lock released: ${lockFile.path}")
+                    logInfo("Lock released: $lockFile")
                 }
             }
         }
     }
 
-    private fun FileChannel.lockWithRetries(file: File): FileLock {
+    private fun FileChannel.lockWithRetries(file: Path): FileLock {
         var retries = 0
         while (true) {
             try {
@@ -78,7 +79,7 @@ internal class NativeDistributionCommonizerLock @JvmOverloads constructor(
         }
     }
 
-    fun checkLocked(outputDirectory: File) {
+    fun checkLocked(outputDirectory: Path) {
         check(intraProcessLock.isHeldByCurrentThread) {
             "Expected lock to be held by current thread ${Thread.currentThread().name}"
         }

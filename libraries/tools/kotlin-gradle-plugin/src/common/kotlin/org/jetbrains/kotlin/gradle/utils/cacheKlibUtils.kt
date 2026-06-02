@@ -9,19 +9,20 @@ import org.gradle.api.artifacts.result.ResolvedArtifactResult
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.library.uniqueName
 import org.slf4j.Logger
-import java.io.File
 import java.nio.charset.StandardCharsets
+import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 
 internal fun getCacheDirectory(
-    rootCacheDirectory: File,
+    rootCacheDirectory: Path,
     dependency: ResolvedDependencyResult,
     artifact: ResolvedArtifactResult?,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     logger: Logger,
-): File {
-    val moduleCacheDirectory = File(rootCacheDirectory, dependency.selected.moduleVersion?.name ?: "undefined")
-    val versionCacheDirectory = File(moduleCacheDirectory, dependency.selected.moduleVersion?.version ?: "undefined")
+): Path {
+    val moduleCacheDirectory = rootCacheDirectory.resolve(dependency.selected.moduleVersion?.name ?: "undefined")
+    val versionCacheDirectory = moduleCacheDirectory.resolve(dependency.selected.moduleVersion?.version ?: "undefined")
     val uniqueName = artifact
         ?.let {
             if (libraryFilter(it))
@@ -40,7 +41,7 @@ internal fun getCacheDirectory(
         versionCacheDirectory.resolve(hash)
     } else versionCacheDirectory
 
-    return File(cacheDirectory, computeDependenciesHash(dependency, resolvedConfiguration))
+    return cacheDirectory.resolve(computeDependenciesHash(dependency, resolvedConfiguration))
 }
 
 internal fun ByteArray.toHexString() = joinToString("") { (0xFF and it.toInt()).toString(16).padStart(2, '0') }
@@ -66,12 +67,12 @@ private fun computeDependenciesHash(
 }
 
 internal fun getDependenciesCacheDirectories(
-    rootCacheDirectory: File,
+    rootCacheDirectory: Path,
     dependency: ResolvedDependencyResult,
     resolvedConfiguration: LazyResolvedConfigurationWithArtifacts,
     considerArtifact: Boolean,
     logger: Logger,
-): List<File>? {
+): List<Path>? {
     return getAllDependencies(dependency)
         .flatMap { childDependency ->
             resolvedConfiguration.getArtifacts(childDependency).map {
@@ -83,7 +84,7 @@ internal fun getDependenciesCacheDirectories(
                         resolvedConfiguration = resolvedConfiguration,
                         logger = logger,
                     )
-                    if (!cacheDirectory.exists()) return null
+                    if (!Files.exists(cacheDirectory)) return null
                     cacheDirectory
                 } else {
                     null
@@ -91,7 +92,7 @@ internal fun getDependenciesCacheDirectories(
             }
         }
         .filterNotNull()
-        .filter { it.exists() }
+        .filter { Files.exists(it) }
 }
 
 internal fun getAllDependencies(dependency: ResolvedDependencyResult): Set<ResolvedDependencyResult> {
