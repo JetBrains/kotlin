@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider
 import org.jetbrains.kotlin.analysis.api.components.containingSymbol
 import org.jetbrains.kotlin.analysis.api.components.createInheritanceTypeSubstitutor
@@ -78,7 +79,11 @@ internal class KaFirExpressionTypeProvider(
         }
 
     private fun getKtExpressionType(expression: KtExpression, fir: FirElement): KaType? = when (fir) {
-        is FirFunctionCall -> getReturnTypeForArrayStyleAssignmentTarget(expression, fir) ?: fir.resolvedType.asKaType()
+        is FirFunctionCall -> {
+            getReturnTypeForArrayStyleAssignmentTarget(expression, fir)
+                ?: getReturnTypeForPluginModifiedAssignment(fir)
+                ?: fir.resolvedType.asKaType()
+        }
         is FirSuperReceiverExpression -> {
             // For unresolved `super`, we manually create an intersection type so that IDE features like completion can work correctly.
             val containingClass = (fir.dispatchReceiver as? FirThisReceiverExpression)?.calleeReference?.boundSymbol as? FirClassSymbol<*>
@@ -178,6 +183,18 @@ internal class KaFirExpressionTypeProvider(
 
         val setTargetParameterType = fir.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType ?: return null
         return setTargetParameterType.asKaType()
+    }
+
+    private fun getReturnTypeForPluginModifiedAssignment(firCall: FirFunctionCall): KaType? {
+        if (firCall.source?.kind != KtFakeSourceElementKind.AssignmentPluginAltered) return null
+        val firArgument = firCall.resolvedArgumentMapping?.keys?.lastOrNull() ?: return null
+
+        val firEffectiveCall = when (firArgument) {
+            is FirFunctionCall if firArgument.source?.kind is KtFakeSourceElementKind.DesugaredAugmentedAssign -> firArgument
+            else -> firCall
+        }
+
+        return firEffectiveCall.resolvedArgumentMapping?.values?.lastOrNull()?.symbol?.resolvedReturnType?.asKaType()
     }
 
     private data class SubstitutedValueParameter(val parameter: FirValueParameter, val substitutedType: ConeKotlinType)

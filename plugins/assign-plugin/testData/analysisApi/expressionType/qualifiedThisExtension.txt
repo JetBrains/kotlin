@@ -1,2 +1,2 @@
 expression: this.property
-type: kotlin.Unit
+type: kotlin.String
