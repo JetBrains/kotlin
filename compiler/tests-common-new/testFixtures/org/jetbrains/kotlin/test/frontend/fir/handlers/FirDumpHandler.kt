@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.EXPLICITLY_GENERATE_PLUGIN_FILES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.RENDER_FIR_DECLARATION_ATTRIBUTES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE_FEATURE_TOGGLED_IDENTICAL
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.TESTED_LANGUAGE_FEATURE_DISABLED
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
@@ -37,8 +39,10 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputPartForDependsOnModule
 import org.jetbrains.kotlin.test.impl.testConfiguration
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
+import org.jetbrains.kotlin.test.utils.lfDisabledTestDataFile
 import java.io.File
 
 @OptIn(DirectDeclarationsAccess::class)
@@ -57,7 +61,7 @@ class FirDumpHandler(
             val currentModule = part.module
             byteCodeListingEnabled = byteCodeListingEnabled || CHECK_BYTECODE_LISTING in module.directives
             val isFirDumpEnabled =
-                expectedFile().exists() || FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives
+                expectedFile(testServices.moduleStructure.originalTestDataFiles.first()).exists() || FirDiagnosticsDirectives.FIR_DUMP in currentModule.directives
 
             if (!isFirDumpEnabled) return
 
@@ -82,19 +86,35 @@ class FirDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (testServices.moduleStructure.allDirectives.shouldSkip()) return
-        val expectedFile = expectedFile()
+        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
+        val firDumpFile = expectedFile(testDataFile)
 
         if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.FIR_DUMP)
+            assertions.assertFileDoesntExist(firDumpFile, FirDiagnosticsDirectives.FIR_DUMP)
         } else {
             val actualText = dumper.generateResultingDump()
-            assertions.assertEqualsToFile(expectedFile, actualText, message = { "Content is not equal" })
+
+            if (TESTED_LANGUAGE_FEATURE_DISABLED in testServices.moduleStructure.allDirectives &&
+                LANGUAGE_FEATURE_TOGGLED_IDENTICAL in testServices.moduleStructure.allDirectives
+            ) {
+                val lfDisabledDumpFile = expectedFile(testDataFile.lfDisabledTestDataFile)
+
+                if (firDumpFile.exists() && firDumpFile.readText().sanitize() == actualText.sanitize()) {
+                    testServices.assertions.assertFileDoesntExist(lfDisabledDumpFile) { "No need for a separate FIR dump, deleting..." }
+                } else {
+                    testServices.assertions.assertEqualsToFile(lfDisabledDumpFile, actualText, message = { "Content is not equal" })
+                }
+                return
+            }
+
+            assertions.assertEqualsToFile(firDumpFile, actualText, message = { "Content is not equal" })
         }
     }
 
-    private fun expectedFile(): File {
+    private fun String.sanitize() = trim().lines().joinToString("\n")
+
+    private fun expectedFile(testDataFile: File): File {
         // TODO: change according to multiple testdata files
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
         val originalExpectedFilePath = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension").path
 
