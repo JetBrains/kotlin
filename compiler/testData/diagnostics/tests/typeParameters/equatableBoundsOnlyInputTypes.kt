@@ -8,10 +8,12 @@ class C : A()
 class Inv<T>
 
 fun <S, T> Iterable<S>.contains2(element: T) where S == T {}
+fun <S, T> contains(collection: List<S>, element: T) where S == T {}
 fun <S, T> assertEquals2(expected: S, actual: T) where S == T {}
 fun <S, T, V> Map<out S, V>.containsKey2(key: T): Boolean where S == T = false
 
 fun <T> emptyIterable(): Iterable<T> = TODO()
+fun <T> emptyList(): List<T> = TODO()
 
 fun testContainsSameType(ints: Iterable<Int>, strs: Iterable<String>) {
     ints.contains2(4)
@@ -33,6 +35,10 @@ fun testContainsSubtype(as_: Iterable<B>) {
 
 fun testContainsUnboundNestedTypeParam(nested: Iterable<Iterable<Int>>) {
     nested.contains2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Iterable<kotlin.Int>")!>emptyIterable()<!>)
+}
+
+fun testContainsNotEnoughInformation() {
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>contains<!>(<!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>(), <!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>())
 }
 
 fun testContainsInvariantDifferent(invNums: Iterable<Inv<Number>>) {
