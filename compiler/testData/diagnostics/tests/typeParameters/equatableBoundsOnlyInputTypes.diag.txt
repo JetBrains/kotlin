@@ -1,9 +1,9 @@
-/equatableBoundsOnlyInputTypes.kt:21:10: error: Equatable type bound violated.
+/equatableBoundsOnlyInputTypes.kt:22:10: error: Equatable type bound violated.
 
-/equatableBoundsOnlyInputTypes.kt:33:13: error: Equatable type bound violated.
+/equatableBoundsOnlyInputTypes.kt:34:13: error: Equatable type bound violated.
 
-/equatableBoundsOnlyInputTypes.kt:47:5: error: Equatable type bound violated.
+/equatableBoundsOnlyInputTypes.kt:48:5: error: Equatable type bound violated.
 
-/equatableBoundsOnlyInputTypes.kt:51:5: error: Equatable type bound violated.
+/equatableBoundsOnlyInputTypes.kt:52:5: error: Equatable type bound violated.
 
-/equatableBoundsOnlyInputTypes.kt:59:9: error: Equatable type bound violated.
+/equatableBoundsOnlyInputTypes.kt:60:9: error: Equatable type bound violated.

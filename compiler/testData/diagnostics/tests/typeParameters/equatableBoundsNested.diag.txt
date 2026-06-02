@@ -1,3 +1,3 @@
-/equatableBoundsNested.kt:13:5: error: Equatable type bound violated.
+/equatableBoundsNested.kt:14:5: error: Equatable type bound violated.
 
-/equatableBoundsNested.kt:13:5: error: Equatable type bound violated.
+/equatableBoundsNested.kt:14:5: error: Equatable type bound violated.

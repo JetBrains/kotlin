@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// DISABLE_WITH_PARSER: Psi
 
 fun <S, T> same(s: S, t: T) where S == T {}
 fun <S, T, U> chain(s: S, t: T, u: U) where S == T, T == U {}

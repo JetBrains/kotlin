@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // RENDER_DIAGNOSTICS_FULL_TEXT
+// DISABLE_WITH_PARSER: Psi
 
 fun <S, T, U> chain3(s: S, t: T, u: U): S where S == T, T == U = s
 

@@ -1,1 +1,1 @@
-/equatableBounds.kt:8:5: error: Equatable type bound violated.
+/equatableBounds.kt:9:5: error: Equatable type bound violated.

@@ -1,0 +1,11 @@
+/equatableBoundsLowerAndUpperBound.kt:13:5: warning: Expression is unused.
+
+/equatableBoundsLowerAndUpperBound.kt:18:5: warning: Expression is unused.
+
+/equatableBoundsLowerAndUpperBound.kt:22:18: warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: Int, String (multiple incompatible classes). This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KT-51221.
+
+/equatableBoundsLowerAndUpperBound.kt:23:5: warning: Expression is unused.
+
+/equatableBoundsLowerAndUpperBound.kt:28:18: warning: Type argument for type parameter 'T' cannot be inferred because it has incompatible upper bounds: DerivedB, DerivedA (multiple incompatible classes). This will become an error in a future release. See https://youtrack.jetbrains.com/issue/KT-51221.
+
+/equatableBoundsLowerAndUpperBound.kt:29:5: warning: Expression is unused.
