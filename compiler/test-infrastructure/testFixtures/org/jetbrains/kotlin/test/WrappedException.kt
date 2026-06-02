@@ -119,6 +119,17 @@ sealed class WrappedException(
         }
     }
 
+    /**
+     * `true` if this failure originates from the test infrastructure itself rather than from the code under test
+     * (e.g. an internal invariant of the test runner was violated).
+     *
+     * Such failures must never be suppressed by [org.jetbrains.kotlin.test.model.TestFailureSuppressor]s
+     * (for instance, by an `IGNORE_BACKEND` directive). Otherwise an infrastructure problem would be masked as a
+     * green test, hiding the real (unknown) test status.
+     */
+    val isTestInfrastructureFailure: Boolean
+        get() = cause is TestInfrastructureException
+
     final override val cause: Throwable
         get() = super.cause!!
 

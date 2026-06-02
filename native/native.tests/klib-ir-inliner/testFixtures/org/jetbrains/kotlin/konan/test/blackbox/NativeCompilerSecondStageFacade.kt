@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.settings.OptimizationMod
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.withPlatformLibs
 import org.jetbrains.kotlin.konan.test.blackbox.testRunSettings
 import org.jetbrains.kotlin.test.GroupingStageInputArtifact
+import org.jetbrains.kotlin.test.TestInfrastructureException
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.test.klib.CustomKlibCompilerException
@@ -70,7 +72,9 @@ class NativeCompilerSecondStageFacade private constructor(
         ): BinaryArtifacts.Native {
             val facade = NativeCompilerSecondStageFacade(testServices, customNativeCompilerSettings)
             val compilerConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.SECOND)
-            require(compilerConfiguration.konanTarget == facade.kotlinNativeTargets.testTarget.name) {
+            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+            checkTestInfrastructure(compilerConfiguration.konanTarget == facade.kotlinNativeTargets.testTarget.name) {
                 "Internal error: konanTargets in `compilerConfiguration`(${compilerConfiguration.konanTarget}) " +
                         "and `facade.kotlinNativeTargets`(${facade.kotlinNativeTargets.testTarget.name}) don't match.\n" +
                         "Check, if NativeSecondStageEnvironmentConfigurator has calculated `konanTarget` properly."
@@ -260,7 +264,11 @@ internal fun TestModule.fileCheckStage(): String? {
     if (!directives.contains(FILECHECK_STAGE))
         return null
     return directives[FILECHECK_STAGE].singleOrNull()
-        ?: error("Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files")
+    // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+    // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+        ?: throw TestInfrastructureException(
+            "Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files"
+        )
 }
 
 /**
