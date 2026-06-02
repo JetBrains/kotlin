@@ -22,6 +22,9 @@ class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProv
         module: TestModule,
         testModuleStructure: TestModuleStructure,
     ): List<TestFile> {
+        if (DataFrameDirectives.DISABLE_TEST_UTILS in module.directives) {
+            return emptyList()
+        }
         return buildList {
             add(this::class.java.classLoader.getResource(COMMON_SOURCE_PATH)!!.toTestFile())
 
