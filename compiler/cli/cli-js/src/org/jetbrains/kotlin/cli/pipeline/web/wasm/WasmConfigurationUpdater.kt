@@ -55,6 +55,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         initializeFinalArtifactConfiguration(configuration, arguments)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, arguments.wasmEnableArrayRangeChecks)
         configuration.put(WasmConfigurationKeys.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION, arguments.wasmDisableArrayRangeChecksSafeElimination)
+        configuration.put(WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION, arguments.wasmDisableOobeHandlerInsertion)
         configuration.put(WasmConfigurationKeys.WASM_DEBUG, arguments.wasmDebug)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, arguments.wasmEnableAsserts)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_WAT, arguments.wasmGenerateWat)

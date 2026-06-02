@@ -84,6 +84,16 @@ sealed class K2WasmCompilerArguments : CommonJsAndWasmCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-disable-oobe-handler-insertion",
+        description = "Disable trap-based out-of-bounds exception handling. When disabled, software range checks are used instead.",
+    )
+    var wasmDisableOobeHandlerInsertion: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-enable-array-range-checks",
         description = "Turn on range checks for array access functions.",
     )

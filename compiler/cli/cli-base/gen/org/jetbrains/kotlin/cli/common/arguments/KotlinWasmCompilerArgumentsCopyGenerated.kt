@@ -20,6 +20,7 @@ fun copyKotlinWasmCompilerArguments(from: KotlinWasmCompilerArguments, to: Kotli
     to.wasm = from.wasm
     to.wasmDebug = from.wasmDebug
     to.wasmDisableArrayRangeChecksSafeElimination = from.wasmDisableArrayRangeChecksSafeElimination
+    to.wasmDisableOobeHandlerInsertion = from.wasmDisableOobeHandlerInsertion
     to.wasmEnableArrayRangeChecks = from.wasmEnableArrayRangeChecks
     to.wasmEnableAsserts = from.wasmEnableAsserts
     to.wasmGenerateClosedWorldMultimodule = from.wasmGenerateClosedWorldMultimodule

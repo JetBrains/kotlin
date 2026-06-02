@@ -170,6 +170,10 @@ open class WasmSecondStageEnvironmentConfigurator(
             WasmConfigurationKeys.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION,
             WasmEnvironmentConfigurationDirectives.WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in registeredDirectives
         )
+        configuration.put(
+            WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION,
+            WasmEnvironmentConfigurationDirectives.WASM_DISABLE_OOBE_HANDLER_INSERTION in registeredDirectives
+        )
 
         val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
         configuration.sourceMapSourceRoots = sourceDirs

@@ -132,6 +132,16 @@ public interface WasmArguments : CommonJsAndWasmArguments {
         WasmArgument("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION", KotlinReleaseVersion(2, 4, 0))
 
     /**
+     * Disable trap-based out-of-bounds exception handling. When disabled, software range checks are used instead.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_WASM_DISABLE_OOBE_HANDLER_INSERTION: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_DISABLE_OOBE_HANDLER_INSERTION", KotlinReleaseVersion(2, 1, 20))
+
+    /**
      * Turn on range checks for array access functions.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

@@ -126,6 +126,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     // BEGIN: Common Native/JS/Wasm prefix.
     ::KlibIrValidationBeforeLoweringPhase,
     ::InlineCallCycleCheckerLowering,
+    ::WasmOOBEHandlerInsertionLowering,
     ::createUpgradeCallableReferences,
     ::LateinitLowering,
     ::createSharedVariablesLoweringPhase,

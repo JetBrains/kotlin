@@ -11807,6 +11807,49 @@
                                                 }
                                             },
                                             {
+                                                "name": "Xwasm-disable-oobe-handler-insertion",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Disable trap-based out-of-bounds exception handling. When disabled, software range checks are used instead.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                }
+                                            },
+                                            {
                                                 "name": "Xwasm-enable-array-range-checks",
                                                 "shortName": null,
                                                 "deprecatedName": null,
@@ -13644,6 +13687,49 @@
                                                 },
                                                 "releaseVersionsMetadata": {
                                                     "introducedVersion": "2.4.0",
+                                                    "stabilizedVersion": null,
+                                                    "deprecatedVersion": null,
+                                                    "removedVersion": null
+                                                },
+                                                "argumentType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                "name": "Xwasm-disable-oobe-handler-insertion",
+                                                "shortName": null,
+                                                "deprecatedName": null,
+                                                "description": {
+                                                    "current": "Disable trap-based out-of-bounds exception handling. When disabled, software range checks are used instead.",
+                                                    "valueInVersions": []
+                                                },
+                                                "delimiter": null,
+                                                "affectsCompilationOutcome": true,
+                                                "valueType": {
+                                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                                    "isNullable": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    },
+                                                    "defaultValue": {
+                                                        "current": false,
+                                                        "valueInVersions": []
+                                                    }
+                                                },
+                                                "valueDescription": {
+                                                    "current": null,
+                                                    "valueInVersions": []
+                                                },
+                                                "releaseVersionsMetadata": {
+                                                    "introducedVersion": "2.1.20",
                                                     "stabilizedVersion": null,
                                                     "deprecatedVersion": null,
                                                     "removedVersion": null

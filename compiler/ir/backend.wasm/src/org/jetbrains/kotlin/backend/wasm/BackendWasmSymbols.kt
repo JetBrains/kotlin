@@ -289,6 +289,8 @@ class BackendWasmSymbols(
         val kotlinULongToJsBigInt = CallableIds.kotlinULongToJsBigInt.functionSymbol()
 
         val getCachedJsObject = CallableIds.getCachedJsObject.functionSymbol()
+
+        val withJsOutOfBoundsExceptionToKotlinAdapter = CallableIds.withJsOutOfBoundsExceptionToKotlinAdapter.functionSymbol()
     }
 
     inner class JsRelatedSymbols {
@@ -330,6 +332,8 @@ class BackendWasmSymbols(
 
         val jsConcat = CallableIds.jsConcat.functionSymbol()
     }
+
+    val indexOutOfBoundsException: IrClassSymbol = ClassIds.IndexOutOfBoundsException.classSymbol()
 
     val wasmExportConstructor by ClassIds.WasmExport.primaryConstructorSymbol()
 
@@ -396,6 +400,7 @@ private object ClassIds {
     val typedfuncref = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE.child(Name.identifier("reftypes")), Name.identifier("typedfuncref"))
     val anyref = ClassId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE.child(Name.identifier("reftypes")), Name.identifier("anyref"))
     val WasmExport = ClassId(WasmStandardClassIds.BASE_WASM_PACKAGE, Name.identifier("WasmExport"))
+    val IndexOutOfBoundsException = ClassId(StandardClassIds.BASE_KOTLIN_PACKAGE, Name.identifier("IndexOutOfBoundsException"))
 }
 
 private val String.wasmCallableId get() = CallableId(WasmStandardClassIds.BASE_WASM_INTERNAL_PACKAGE, Name.identifier(this))
@@ -523,6 +528,8 @@ private object CallableIds {
     val getCachedJsObject = "getCachedJsObject".wasmCallableId
 
     val jsConcat = "jsConcat".wasmCallableId
+
+    val withJsOutOfBoundsExceptionToKotlinAdapter = "withJsOutOfBoundsExceptionToKotlinAdapter".wasmCallableId
 
     // Collection functions
     private val String.collectionCallableId get() = CallableId(StandardNames.COLLECTIONS_PACKAGE_FQ_NAME, Name.identifier(this))

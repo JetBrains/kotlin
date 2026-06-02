@@ -367,3 +367,52 @@ internal fun newJsArray(): ExternalInterfaceType =
 internal fun jsArrayPush(array: ExternalInterfaceType, element: ExternalInterfaceType) {
     js("array.push(element);")
 }
+
+/**
+ * This wrapper establishes a try/catch block in JS that will rethrow
+ * an OOB trap error as a Kotlin IndexOutOfBoundsException.
+ */
+@UsedFromCompilerGeneratedCode
+internal fun withJsOutOfBoundsExceptionToKotlinAdapter(block: () -> Any?): Any? {
+    var result: Any? = null
+    var isKotlinException = false
+
+    val threwOutOfBounds = withJsOutOfBoundsExceptionHandler {
+        try {
+            result = block()
+        } catch (t: Throwable) {
+            // If the block threw a normal, catchable Kotlin exception,
+            // store it so we can rethrow it unmodified.
+            result = t
+            isKotlinException = true
+        }
+    }
+
+    if (threwOutOfBounds) {
+        throw IndexOutOfBoundsException("Out of bounds array access.")
+    }
+
+    if (isKotlinException) {
+        throw result as Throwable
+    }
+
+    return result
+}
+
+/**
+ * Package-level helper to execute a Kotlin lambda inside a native JS try/catch block.
+ * Returns false if execution was successful, true if an OOB trap was caught.
+ */
+private fun withJsOutOfBoundsExceptionHandler(action: () -> Unit): Boolean = js("""{
+    try {
+        action();
+        return false;
+    } catch (e) {
+        // The error message is not standardized between JS engines, but they all contain "of bounds" as a substring.
+        if (e instanceof WebAssembly.RuntimeError && e.message.includes("of bounds")) {
+            return true;
+        }
+        throw e;
+    }
+    }
+""")

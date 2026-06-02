@@ -904,6 +904,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Wa
 	public static final field X_WASM_DEBUG_FRIENDLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUG_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
+	public static final field X_WASM_DISABLE_OOBE_HANDLER_INSERTION Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_ENABLE_ARRAY_RANGE_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_ENABLE_ASSERTS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
 	public static final field X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
