@@ -89,6 +89,8 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
         val substitutedUpperBound = substituteOrNull(upperBoundForApproximation)
         if (!somethingIsSubstituted && substitutedUpperBound == null) return null
+
+        @OptIn(DelicateIntersectionConstructor::class)
         return ConeIntersectionType(substitutedTypes, substitutedUpperBound ?: upperBoundForApproximation)
     }
 

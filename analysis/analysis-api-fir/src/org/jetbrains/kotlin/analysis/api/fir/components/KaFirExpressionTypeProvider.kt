@@ -87,7 +87,7 @@ internal class KaFirExpressionTypeProvider(
                 null -> fir.resolvedType.asKaType()
                 0 -> analysisSession.builtinTypes.any
                 1 -> superTypes.single().asKaType()
-                else -> ConeIntersectionType(superTypes).asKaType()
+                else -> @OptIn(DelicateIntersectionConstructor::class) ConeIntersectionType(superTypes, null).asKaType()
             }
         }
         is FirPropertyAccessExpression -> fir.resolvedType.asKaType()

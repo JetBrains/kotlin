@@ -140,10 +140,12 @@ fun ConeKotlinType.lowerBoundIfFlexible(): ConeRigidType {
     }
 }
 
+@OptIn(DelicateIntersectionConstructor::class)
 fun ConeIntersectionType.withUpperBound(upperBound: ConeKotlinType?): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes, upperBoundForApproximation = upperBound)
 }
 
+@OptIn(DelicateIntersectionConstructor::class)
 inline fun ConeIntersectionType.mapTypes(func: (ConeKotlinType) -> ConeKotlinType): ConeIntersectionType {
     return ConeIntersectionType(intersectedTypes.map(func), upperBoundForApproximation?.let(func))
 }
