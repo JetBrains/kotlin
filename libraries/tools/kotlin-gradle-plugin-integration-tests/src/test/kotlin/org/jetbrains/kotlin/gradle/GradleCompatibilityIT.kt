@@ -57,6 +57,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             build("help") {
                 val expectedVariant = when (gradleVersion) {
+                    GradleVersion.version(TestVersions.Gradle.G_9_6) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_5) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_4) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_3) -> "gradle813"
