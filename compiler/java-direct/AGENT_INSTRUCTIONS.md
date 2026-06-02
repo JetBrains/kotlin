@@ -127,6 +127,11 @@ After a run, **grep the saved file** — never rerun Gradle just to see a differ
 
 # PSI regression (only after shared FIR file or test data changes)
 ./gradlew :compiler:fir:analysis-tests:test --tests "PhasedJvmDiagnosticLightTreeTestGenerated.*" --stacktrace -q 2>&1 | tee "$JD_TMP/psi_test.txt"
+
+# Cross-module bytecode-vs-source regression (MUST run after any edit to shared FIR JVM files
+# below — covers cases the PSI gate above does not, e.g. `@file:JvmPackageName`-shifted
+# top-level callables read across modules. See ITERATION_RESULTS.md 2026-06-02 entry).
+./gradlew :compiler:fir:fir2ir:test --tests "*FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*" --stacktrace -q 2>&1 | tee "$JD_TMP/ckk_test.txt"
 ```
 
 ### Extracting failures
@@ -146,14 +151,23 @@ grep -A5 "FAILED" "$JD_TMP/jd_test.txt" | grep -E "IllegalState|NoSuch|Exception
 - `compiler/fir/fir-jvm/src/.../FirJavaFacade.kt`
 - `compiler/fir/fir-jvm/src/.../JavaTypeConversion.kt`
 - `compiler/fir/fir-jvm/src/.../javaAnnotationsMapping.kt`
+- `compiler/fir/fir-jvm/src/.../JavaSymbolProvider.kt`
+- `compiler/fir/fir-jvm/src/.../deserialization/JvmClassFileBasedSymbolProvider.kt`
+- `compiler/fir/fir-jvm/src/.../deserialization/JvmBinaryClassFinderInputs.kt`
+- `compiler/fir/entrypoint/src/.../session/FirJvmSessionFactory.kt`
+- `compiler/cli/cli-jvm/src/.../pipeline/jvm/JvmFrontendPipelinePhase.kt`
 - `core/compiler.common.jvm/src/.../load/java/structure/*.kt`
 
 For any edit to these: always compare with upstream first —
 ```bash
 git show origin/master:<path> | grep -A10 "relevantFunction"
 ```
-Then run PSI regression BEFORE and AFTER the change. If new PSI failures appear,
-**revert immediately**.
+Then run BOTH regression gates (PSI **and** `CompileKotlinAgainstKotlin`) BEFORE and AFTER
+the change. If new failures appear in either gate, **revert immediately**. The
+`CompileKotlinAgainstKotlin` gate is the only routine suite that exercises
+cross-module bytecode-vs-source resolution (`@file:JvmPackageName` shifting,
+`MULTIFILE_CLASS_PART`, etc.) — the PSI gate alone is insufficient for any edit
+to the deserializer / library-session wiring path.
 
 ---
 

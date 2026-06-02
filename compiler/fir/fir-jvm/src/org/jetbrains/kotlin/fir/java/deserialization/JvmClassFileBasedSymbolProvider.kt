@@ -221,8 +221,26 @@ open class JvmClassFileBasedSymbolProvider(
     override fun isNewPlaceForBodyGeneration(classProto: ProtoBuf.Class): Boolean =
         JvmFlags.IS_COMPILED_IN_JVM_DEFAULT_MODE.get(classProto.getExtension(JvmProtoBuf.jvmClassFlags))
 
-    override fun hasPackage(fqName: FqName): Boolean =
-        binaryClassFinderInputs?.hasBinaryPackage(fqName) ?: javaFacade.hasPackage(fqName)
+    override fun hasPackage(fqName: FqName): Boolean {
+        // On the `java-direct` path (Stage 2 §6.3) the deserializer reads binary-package
+        // presence through the injected [binaryClassFinderInputs] adapter, which only knows
+        // about physical `.class`-bearing directories on the classpath. A Kotlin package
+        // that exists *only* via metadata — i.e. `@file:JvmPackageName("bar")` on top-level
+        // declarations of `package foo` — has NO `foo/` directory on disk; its existence is
+        // recorded exclusively in the consumer's `.kotlin_module` and is enumerated by
+        // [packagePartProvider] via [findPackageParts] / [computePackageSetWithNonClassDeclarations].
+        //
+        // The legacy PSI-backed [javaFacade.hasPackage] returned `true` for such packages
+        // because `KotlinJavaPsiFacade.findPackage` consulted both directory- and
+        // metadata-derived package sources. Mirror that semantics here, otherwise
+        // cross-module resolution of `@file:JvmPackageName`-shifted top-level callables
+        // short-circuits at the package-presence gate (see
+        // `compiler/testData/codegen/boxJvm/compileKotlinAgainstKotlin/jvmPackageName.kt`
+        // and siblings).
+        if (binaryClassFinderInputs == null) return javaFacade.hasPackage(fqName)
+        if (binaryClassFinderInputs.hasBinaryPackage(fqName)) return true
+        return packagePartProvider.findPackageParts(fqName.asString()).isNotEmpty()
+    }
 
     // Stage 2 §6.3 (see [JvmBinaryClassFinderInputs]): on the `java-direct` library-session
     // path the deserializer reads binary class presence / materialization through the

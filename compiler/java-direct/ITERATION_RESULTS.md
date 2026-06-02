@@ -4213,6 +4213,140 @@ typical annotation patterns). Lombok back to 100% green.
 
 ---
 
+## 2026-06-02 — `@file:JvmPackageName` cross-module regression (`CompileKotlinAgainstKotlin.testJvmPackageName*`)
+
+### Symptom
+
+Three sibling tests of
+`FirLightTreeBlackBoxCodegenTestGenerated.BoxJvm.CompileKotlinAgainstKotlin`:
+
+- `testJvmPackageName`
+- `testJvmPackageNameWithJvmName`
+- `testJvmPackageNameMultifileClass`
+
+failed with `UNRESOLVED_REFERENCE 'v'` / `'f'` on the main module while compiling
+`B.kt` against lib's pre-built `.class` output. The fourth sibling,
+`testJvmPackageNameInRootPackage`, was green throughout. The shared distinguishing
+factor: the failing testdata places lib's top-level callables in `package foo`
+but ships the bytecode under `bar/AKt.class` via `@file:JvmPackageName("bar")`;
+the passing test has no source package, hence no source-vs-bytecode home shift.
+
+### Investigation path
+
+The previous session falsified the working hypothesis that the §6.4/§6.5
+binary-class-finder series caused the regression — a whole-tree revert of all
+`[j]` deltas left the three failures unchanged. After the user's redirection
+("investigate from the other side; the tests pass in master, so the cause is
+inside the java-direct implementation"), instrumentation in
+`JvmClassFileBasedSymbolProvider` made the actual gate visible:
+
+1. **Test routing**: `setupJvmPipelineSteps` registers `FirCliJvmFacade`, **not**
+   `FirFrontendFacade`, so every JVM black-box codegen test runs through
+   `JvmCliPipeline` → `JvmFrontendPipelinePhase`. The `[j]` series wired
+   `JvmFrontendPipelinePhase` to unconditionally install
+   `createJavaDirectBinaryClassFinderInputsBuilder`, so the deserializer of every
+   such test ends up with `binaryClassFinderInputs = JvmBinaryClassFinderInputsOverIndex`
+   regardless of whether `JavaDirectFacadeBuilderProvider` is registered at the
+   test fixture level.
+2. **Metadata visibility**: `JvmClassFileBasedSymbolProvider.computePackageSetWithNonClassDeclarations()`
+   on main's library session returned a set containing `"foo"` (lib's
+   `.kotlin_module` is properly read).
+3. **Suppressed call**: yet `computePackagePartsInfos("foo")` was **never**
+   invoked. The gate sits upstream of the deserializer:
+   `JvmClassFileBasedSymbolProvider.hasPackage("foo")` returned `false`, causing
+   every callable-presence probe through the composite to skip the `foo` package
+   entirely.
+
+### Root cause
+
+`JvmClassFileBasedSymbolProvider.hasPackage` on the `java-direct` path delegated
+**solely** to `binaryClassFinderInputs.hasBinaryPackage(fqName)`:
+
+```kotlin
+override fun hasPackage(fqName: FqName): Boolean =
+    binaryClassFinderInputs?.hasBinaryPackage(fqName) ?: javaFacade.hasPackage(fqName)
+```
+
+`JvmBinaryClassFinderInputsOverIndex.hasBinaryPackage(fqName)` only asks the
+`JvmDependenciesIndex` whether a physical `.class`-bearing directory `fqName/`
+exists on the classpath. For `@file:JvmPackageName("bar")` on
+`package foo` lib code, the only physical directory is `bar/`; `foo/` does not
+exist on disk and never will. The legacy PSI-backed `FirJavaFacade.hasPackage`
+returned `true` for such metadata-only packages because
+`KotlinJavaPsiFacade.findPackage` consulted both directory- and metadata-derived
+package sources. The `[j]` adapter dropped that second source.
+
+### Fix
+
+Smallest scope: `JvmClassFileBasedSymbolProvider.hasPackage`. When the
+binary-only check returns `false`, fall back to
+`packagePartProvider.findPackageParts(fqName.asString()).isNotEmpty()`, which is
+metadata-aware (reads `.kotlin_module`). This mirrors the legacy PSI semantics
+without touching the binary adapter contract:
+
+```kotlin
+override fun hasPackage(fqName: FqName): Boolean {
+    if (binaryClassFinderInputs == null) return javaFacade.hasPackage(fqName)
+    if (binaryClassFinderInputs.hasBinaryPackage(fqName)) return true
+    return packagePartProvider.findPackageParts(fqName.asString()).isNotEmpty()
+}
+```
+
+This leaves `JvmBinaryClassFinderInputs` itself purely directory-oriented (its
+documented role) and keeps the metadata source where it belongs — on
+`PackagePartProvider`, which the deserializer already holds a reference to.
+Non-`java-direct` paths (PSI / LL / IDE / scripting / IC / jklib) take the early
+return through `javaFacade.hasPackage` and are completely unaffected.
+
+### Verification
+
+| Suite | Tests | Failures |
+|-------|------:|---------:|
+| `*FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*testJvmPackageName*` | 4 | 0 |
+| `*FirLightTreeBlackBoxCodegenTestGenerated*CompileKotlinAgainstKotlin*` (full sub-suite) | n | 0 |
+| `:compiler:fir:analysis-tests:test --tests PhasedJvmDiagnosticLightTreeTestGenerated.*` (PSI regression gate) | n | 0 |
+| `:compiler:java-direct:test` (full java-direct suite) | n | 0 |
+
+### Files Modified
+
+| File | Change |
+|------|--------|
+| `compiler/fir/fir-jvm/src/.../deserialization/JvmClassFileBasedSymbolProvider.kt` | `hasPackage`: on the `java-direct` path, combine binary-directory presence (`binaryClassFinderInputs.hasBinaryPackage`) with metadata-declared presence (`packagePartProvider.findPackageParts(...).isNotEmpty()`). |
+
+### Key Learnings
+
+- **`JvmBinaryClassFinderInputs.hasBinaryPackage` ≠ `FirSymbolProvider.hasPackage`.**
+  The former is purely about physical binary directories on the classpath (its
+  documented job). The latter answers "does this Kotlin/Java package exist in
+  this provider's view of the world", which is a strictly broader question:
+  `@file:JvmPackageName`-shifted Kotlin source packages exist as `.kotlin_module`
+  entries only. Conflating the two collapses cross-module resolution of
+  bytecode-home-shifted top-level callables.
+
+- **Coverage gap of the routine regression gate.** The pre-existing "PSI
+  regression" command (`PhasedJvmDiagnosticLightTreeTestGenerated.*`) is a
+  single-compilation-unit diagnostic suite. It cannot catch cross-module
+  bytecode-against-source bugs. The `*CompileKotlinAgainstKotlin*` suite is the
+  canonical regression gate for such bugs and has been added to
+  `AGENT_INSTRUCTIONS.md` (§4 Routine regression suites).
+
+- **The CLI pipeline is where `java-direct` is actually exercised by codegen
+  tests.** Repeating the lesson from the Lombok iteration (above): every black-box
+  codegen test goes through `FirCliJvmFacade` → `JvmFrontendPipelinePhase`, so
+  `binaryClassFinderInputs` is always non-null in those tests regardless of any
+  fixture-level `useAdditionalService` registration. That is why this bug
+  surfaced through `CompileKotlinAgainstKotlin` (a CLI-pipeline-driven codegen
+  suite) and not through any `FirFrontendFacade`-driven analysis-tests path.
+
+- **Debug-the-gate, not the symptom.** Three earlier rounds of investigation
+  hunted the symptom (`UNRESOLVED 'v' at B.kt`) and bisected commits with no
+  result. A 4-line `File.appendText` instrumentation inside
+  `computePackagePartsInfos` revealed in one test run that the call was never
+  reached for `pkg=foo`, which immediately pointed at the upstream gate and
+  shortened the investigation by an order of magnitude.
+
+---
+
 ## Archived Iteration History
 
 Earlier entries have been moved to dated archives under `implDocs/archive/`:
