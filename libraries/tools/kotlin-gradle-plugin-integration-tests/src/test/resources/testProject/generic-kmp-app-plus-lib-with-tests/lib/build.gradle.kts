@@ -12,10 +12,9 @@ kotlin {
     <SingleNativeTarget>("native")
 
     sourceSets {
-        val commonTest by getting {
-            dependencies {
-                implementation(kotlin("test"))
-            }
+        val commonTest = getByName("commonTest")
+        commonTest.dependencies {
+            implementation(kotlin("test"))
         }
     }
 

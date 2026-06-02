@@ -18,9 +18,8 @@ kotlin {
         }
         compilations.getByName("main") {
             cinterops {
-                val cinterop by creating {
-                    definitionFile.set(createDefFileTask.flatMap { it.defFile })
-                }
+                val cinterop = create("cinterop")
+                cinterop.definitionFile.set(createDefFileTask.flatMap { it.defFile })
             }
         }
     }

@@ -7,7 +7,7 @@ repositories {
     mavenCentral()
 }
 
-val kotlin_version: String by extra
+val kotlin_version = extra["kotlin_version"]
 
 kotlin {
     sourceSets {

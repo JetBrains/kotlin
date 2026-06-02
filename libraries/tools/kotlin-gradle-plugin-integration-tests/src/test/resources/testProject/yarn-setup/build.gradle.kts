@@ -19,14 +19,14 @@ kotlin.js {
 
 tasks {
     val yarnSpec = project.the<YarnRootEnvSpec>()
-    val yarnFolderRemove by registering {
+    val yarnFolderRemove = register("yarnFolderRemove") {
         val installationDirectory = yarnSpec.installationDirectory
         doLast {
             installationDirectory.get().asFile.deleteRecursively()
         }
     }
 
-    val yarnFolderCheck by registering {
+    val yarnFolderCheck = register("yarnFolderCheck") {
         dependsOn(getByName("kotlinYarnSetup"))
         val installationDirectory = yarnSpec.installationDirectory
 
@@ -37,7 +37,7 @@ tasks {
         }
     }
 
-    val yarnConcreteVersionFolderChecker by registering {
+    val yarnConcreteVersionFolderChecker = register("yarnConcreteVersionFolderChecker") {
         dependsOn(getByName("kotlinYarnSetup"))
         val installationDirectory = yarnSpec.installationDirectory
 

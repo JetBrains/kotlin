@@ -59,7 +59,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                     sourceSets.jsMain {
                         dependencies {
                             implementation(
-                                project.dependencies.create(project.rootProject)
+                                dependencies.project(mapOf("path" to ":"))
                             )
                         }
                     }
@@ -128,7 +128,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                         |    }
                         |}
                         |
-                        |dependencies { implementation rootProject }
+                        |dependencies { implementation(project(":")) }
                         |
                         """.trimMargin()
                     )
@@ -147,7 +147,7 @@ class VariantAwareDependenciesMppIT : KGPBaseTest() {
                 it.replace("kotlinOptions.jvmTarget = \"1.7\"", "kotlinOptions.jvmTarget = \"11\"") +
                         """
                         |
-                        |dependencies { implementation rootProject }
+                        |dependencies { implementation(project(":")) }
                         |
                         """.trimMargin()
             }

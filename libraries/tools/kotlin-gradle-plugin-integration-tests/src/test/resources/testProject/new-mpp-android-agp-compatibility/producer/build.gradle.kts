@@ -1,4 +1,4 @@
-val kotlin_version: String by extra
+val kotlin_version = extra["kotlin_version"]
 plugins {
     `maven-publish`
     id("com.android.library")

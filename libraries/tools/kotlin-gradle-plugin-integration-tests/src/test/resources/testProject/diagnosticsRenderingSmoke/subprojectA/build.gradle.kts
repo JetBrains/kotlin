@@ -8,11 +8,10 @@ kotlin {
     linuxX64()
 
     sourceSets {
-        val myCustomSourceSet by creating
+        val myCustomSourceSet = create("myCustomSourceSet")
 
         // check that usual diagnostics are not deduplicated even if they are exactly the same
-        val commonMain by getting {
-            dependsOn(myCustomSourceSet)
-        }
+        val commonMain = getByName("commonMain")
+        commonMain.dependsOn(myCustomSourceSet)
     }
 }

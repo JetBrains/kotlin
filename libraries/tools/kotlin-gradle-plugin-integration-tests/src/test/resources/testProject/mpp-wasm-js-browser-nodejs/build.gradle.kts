@@ -17,7 +17,7 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsTest by getting {
+        val wasmJsTest = getByName("wasmJsTest") {
             dependencies {
                 implementation(kotlin("test"))
             }

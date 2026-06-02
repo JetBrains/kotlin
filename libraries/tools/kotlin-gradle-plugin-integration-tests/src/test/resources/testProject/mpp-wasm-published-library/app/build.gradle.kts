@@ -16,7 +16,7 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsMain by getting {
+        val wasmJsMain = getByName("wasmJsMain") {
             dependencies {
                 implementation("com.example.mpp-wasm-published-library:library:0.0.1")
             }
