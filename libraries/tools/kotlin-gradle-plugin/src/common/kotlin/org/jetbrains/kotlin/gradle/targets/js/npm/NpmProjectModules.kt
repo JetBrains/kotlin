@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODU
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import java.io.File
 import java.io.Serializable
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * Search modules in node_modules according to https://nodejs.org/api/modules.html.
@@ -25,7 +28,7 @@ open class NpmProjectModules(
      * Require [request] nodejs module and return canonical path to it's main js file.
      */
     fun require(request: String): String {
-        return resolve(request)?.absolutePath ?: error("Cannot find node module \"$request\" in \"$this\"")
+        return resolvePath(request)?.toAbsolutePath()?.toString() ?: error("Cannot find node module \"$request\" in \"$this\"")
     }
 
     fun copy(
@@ -38,14 +41,17 @@ open class NpmProjectModules(
      * Find node module according to https://nodejs.org/api/modules.html#modules_all_together
      */
     internal fun resolve(name: String, context: File = dir): File? =
-        if (name.startsWith("/")) resolve(name.removePrefix("/"), File("/"))
+        resolvePath(name, context.toPath())?.toFile()
+
+    private fun resolvePath(name: String, context: Path = dir.toPath()): Path? =
+        if (name.startsWith("/")) resolvePath(name.removePrefix("/"), Paths.get("/"))
         else resolveAsRelative("./", name, context)
             ?: resolveAsRelative("/", name, context)
             ?: resolveAsRelative("../", name, context)
             ?: resolveInNodeModulesDir(name, context.resolve(NODE_MODULES))
-            ?: context.parentFile?.let { resolve(name, it) }
+            ?: context.parent?.let { resolvePath(name, it) }
 
-    private fun resolveAsRelative(prefix: String, name: String, context: File): File? {
+    private fun resolveAsRelative(prefix: String, name: String, context: Path): Path? {
         if (!name.startsWith(prefix)) return null
 
         val relative = context.resolve(name.removePrefix(prefix))
@@ -53,16 +59,16 @@ open class NpmProjectModules(
             ?: resolveAsDirectory(relative)
     }
 
-    private fun resolveInNodeModulesDir(name: String, nodeModulesDir: File): File? {
+    private fun resolveInNodeModulesDir(name: String, nodeModulesDir: Path): Path? {
         return resolveAsFile(nodeModulesDir.resolve(name))
             ?: resolveAsDirectory(nodeModulesDir.resolve(name))
     }
 
-    private fun resolveAsDirectory(dir: File): File? {
+    private fun resolveAsDirectory(dir: Path): Path? {
         val packageJsonFile = dir.resolve(PACKAGE_JSON)
 
-        val main: String? = if (packageJsonFile.isFile) {
-            val packageJson = packageJsonFile.reader().use {
+        val main: String? = if (Files.isRegularFile(packageJsonFile)) {
+            val packageJson = Files.newBufferedReader(packageJsonFile).use {
                 Gson().fromJson(it, JsonObject::class.java)
             }
 
@@ -89,7 +95,7 @@ open class NpmProjectModules(
         return null
     }
 
-    private fun resolveIndex(dir: File): File? {
+    private fun resolveIndex(dir: Path): Path? {
         for (it in indexFileNames) {
             return resolveAsFile(dir.resolve(it)) ?: continue
         }
@@ -97,12 +103,12 @@ open class NpmProjectModules(
         return null
     }
 
-    private fun resolveAsFile(file: File): File? {
-        if (file.isFile) return file
+    private fun resolveAsFile(file: Path): Path? {
+        if (Files.isRegularFile(file)) return file
 
         indexFileSuffixes.forEach {
-            val js = File(file.path + it)
-            if (js.isFile) return js
+            val js = Paths.get(file.toString() + it)
+            if (Files.isRegularFile(js)) return js
         }
 
         return null

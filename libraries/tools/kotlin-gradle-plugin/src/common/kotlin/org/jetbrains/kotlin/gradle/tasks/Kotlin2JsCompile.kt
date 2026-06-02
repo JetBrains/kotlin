@@ -250,7 +250,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
 
     private val File.asLibraryFilterCacheKey: LibraryFilterCachingService.LibraryFilterCacheKey
         get() = LibraryFilterCachingService.LibraryFilterCacheKey(
-            this
+            toPath()
         )
 
     /**
@@ -258,7 +258,7 @@ abstract class Kotlin2JsCompile @Inject constructor(
      */
     private fun isSomeKindOfAKlib(location: File): Boolean =
         libraryFilterCacheService.get().getOrCompute(location.asLibraryFilterCacheKey) {
-            KlibLoader { libraryPaths(it.absolutePath) }.load().librariesStdlibFirst.isNotEmpty()
+            KlibLoader { libraryPaths(it.toAbsolutePath().toString()) }.load().librariesStdlibFirst.isNotEmpty()
         }
 
     @get:Internal

@@ -184,7 +184,7 @@ internal open class GradleCompilerRunner(
     ): WorkQueue? {
         if (compilerArgs.version) {
             loggerProvider.lifecycle(
-                "Kotlin version " + loadCompilerVersion(environment.compilerClasspath) +
+                "Kotlin version " + loadCompilerVersion(environment.compilerClasspath.map { it.toPath() }) +
                         " (JRE " + System.getProperty("java.runtime.version") + ")"
             )
             compilerArgs.version = false

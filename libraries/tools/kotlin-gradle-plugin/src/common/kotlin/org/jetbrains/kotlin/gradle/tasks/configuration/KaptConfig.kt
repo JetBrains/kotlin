@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.tasks.toCompilerPluginOptions
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
+import java.nio.file.Path
 
 internal open class KaptConfig<TASK : KaptTask>(
     project: Project,
@@ -79,8 +80,8 @@ internal open class KaptConfig<TASK : KaptTask>(
                 .matching { it.include("**/*.java") }
                 .filter {
                     it.exists() &&
-                            !isAncestor(task.destinationDir.get().asFile, it) &&
-                            !isAncestor(task.classesDir.get().asFile, it)
+                            !isAncestor(task.destinationDir.get().asFile.toPath(), it.toPath()) &&
+                            !isAncestor(task.classesDir.get().asFile.toPath(), it.toPath())
                 }
             task.source.from(kaptSources).disallowChanges()
         }
@@ -141,9 +142,9 @@ internal open class KaptConfig<TASK : KaptTask>(
 }
 
 //Have to avoid using FileUtil because it is required system property reading that is not allowed for configuration cache
-private fun isAncestor(dir: File, file: File): Boolean {
-    val path = file.normalize().absolutePath
-    val prefix = dir.normalize().absolutePath
+private fun isAncestor(dir: Path, file: Path): Boolean {
+    val path = file.toAbsolutePath().normalize().toString()
+    val prefix = dir.toAbsolutePath().normalize().toString()
     val pathLength = path.length
     val prefixLength = prefix.length
     val caseSensitive = true

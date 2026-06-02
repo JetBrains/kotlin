@@ -16,6 +16,7 @@ import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationSideEffect
 import java.io.File
+import java.nio.file.Path
 
 @InternalKotlinGradlePluginApi
 abstract class K2MultiplatformStructure {
@@ -78,7 +79,7 @@ abstract class K2MultiplatformStructure {
 internal val K2MultiplatformStructure.fragmentsCompilerArgs: Array<String>
     get() = fragments.get().map { it.fragmentName }.toSet().toTypedArray()
 
-private fun fragmentSourceCompilerArg(sourceFile: File, fragmentName: String) = "$fragmentName:${sourceFile.absolutePath}"
+private fun fragmentSourceCompilerArg(sourceFile: Path, fragmentName: String) = "$fragmentName:${sourceFile.toAbsolutePath()}"
 
 internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
     allSources: Collection<File>,
@@ -90,14 +91,14 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
             .run { if (sourceFileFilter != null) asFileTree.matching(sourceFileFilter) else this }
             .files.map { sourceFile ->
                 sourcesWithKnownFragment.add(sourceFile)
-                fragmentSourceCompilerArg(sourceFile, sourceSet.fragmentName)
+                fragmentSourceCompilerArg(sourceFile.toPath(), sourceSet.fragmentName)
             }
     }.toMutableList()
 
     val sourcesWithUnknownFragment = allSources - sourcesWithKnownFragment
     val defaultFragmentName = defaultFragmentName.orNull
     if (defaultFragmentName != null) {
-        sourcesWithUnknownFragment.mapTo(fragmentSourcesCompilerArgs) { fragmentSourceCompilerArg(it, defaultFragmentName) }
+        sourcesWithUnknownFragment.mapTo(fragmentSourcesCompilerArgs) { fragmentSourceCompilerArg(it.toPath(), defaultFragmentName) }
     }
 
     return fragmentSourcesCompilerArgs.toTypedArray()
@@ -106,14 +107,14 @@ internal fun K2MultiplatformStructure.fragmentSourcesCompilerArgs(
 internal val K2MultiplatformStructure.fragmentDependenciesCompilerArgs: Array<String>
     get() = fragments.get().flatMap { fragment ->
         fragment.dependencies.files.map { dependencyFile ->
-            "${fragment.fragmentName}:${dependencyFile.absolutePath}"
+            fragmentSourceCompilerArg(dependencyFile.toPath(), fragment.fragmentName)
         }
     }.toTypedArray()
 
 internal val K2MultiplatformStructure.fragmentFriendsCompilerArgs: Array<String>
     get() = fragments.get().flatMap { fragment ->
         fragment.friends.files.map { dependencyFile ->
-            "${fragment.fragmentName}:${dependencyFile.absolutePath}"
+            fragmentSourceCompilerArg(dependencyFile.toPath(), fragment.fragmentName)
         }
     }.toTypedArray()
 
@@ -121,4 +122,3 @@ internal val K2MultiplatformStructure.fragmentRefinesCompilerArgs: Array<String>
     get() = refinesEdges.get().map { edge ->
         "${edge.fromFragmentName}:${edge.toFragmentName}"
     }.toTypedArray()
-

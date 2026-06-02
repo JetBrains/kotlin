@@ -6,12 +6,15 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.File
+import java.nio.file.Path
 
 class NpmImportedPackagesVersionResolver(
     npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
-    private val nodeJsWorldDir: File
+    nodeJsWorldDir: File
 ) {
+    private val nodeJsWorldDir: Path = nodeJsWorldDir.toPath()
     private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()
     private val importedProjectWorkspaces = mutableListOf<String>()
     private val externalModules = npmProjects.flatMapTo(mutableSetOf()) {
@@ -31,17 +34,17 @@ class NpmImportedPackagesVersionResolver(
                 val selected = sorted.last()
                 resolvedVersion[name] = ResolvedNpmDependency(
                     version = selected.version,
-                    file = selected.path
+                    path = selected.path.toPath()
                 )
                 selected
             } else versions.single()
 
-            importedProjectWorkspaces.add(selected.path.relativeTo(nodeJsWorldDir).invariantSeparatorsPath)
+            importedProjectWorkspaces.add(nodeJsWorldDir.relativize(selected.path.toPath()).invariantSeparatorsPathString)
         }
     }
 }
 
 private data class ResolvedNpmDependency(
     val version: String,
-    val file: File
+    val path: Path
 )
