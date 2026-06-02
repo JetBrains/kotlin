@@ -79,7 +79,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(loadedIr, exportedDeclarations = setOf(FqName("main")), allModules, context)
+            compiler.lowerIr(loadedIr, allModules, context)
         }
 
         return configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

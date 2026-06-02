@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 @Suppress("unused")
@@ -28,4 +29,5 @@ object WasmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.wasm
     val WASM_DISABLE_CROSS_FILE_OPTIMISATIONS by key<Boolean>("Disables cross-file optimizations. Required to for IC.")
     val WASM_INTERNAL_LOCAL_VARIABLE_PREFIX by key<String>("Prefix for the name of internal/synthetic local variables.")
     val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE by key<Boolean>("Enables multi-module closed-world mode.")
+    val WASM_TEST_BOX_FUNCTION_TO_EXPORT by key<FqName>("FQ Name of the test `box` function to be exported and called by the compiler test infrastructure.")
 }

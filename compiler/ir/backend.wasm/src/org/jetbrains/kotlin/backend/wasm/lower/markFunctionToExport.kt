@@ -10,23 +10,18 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.builders.irAnnotation
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
-import org.jetbrains.kotlin.name.FqName
 
 /**
- * Mark declarations from [exportedFqNames] with @JsExport annotation
+ * Mark functions matched by [matcher] with @JsExport and @WasmExport annotations, respectively for wasm-js and wasm-wasi.
  */
-fun markExportedDeclarations(context: WasmBackendContext, irFile: IrFile, exportedFqNames: Set<FqName>) {
+fun markFunctionToExport(context: WasmBackendContext, irFile: IrFile, matcher: IrFunction.() -> Boolean) {
     val exportConstructor = when (context.isWasmJsTarget) {
         true -> context.wasmSymbols.jsRelatedSymbols.jsExportConstructor
         else -> context.wasmSymbols.wasmExportConstructor
     }
 
-    for (declaration in irFile.declarations) {
-        if (declaration is IrFunction && declaration.fqNameWhenAvailable in exportedFqNames) {
-            val builder = context.createIrBuilder(irFile.symbol)
-            declaration.annotations +=
-                builder.irAnnotation(exportConstructor, typeArguments = emptyList())
-        }
+    irFile.declarations.find { it is IrFunction && it.matcher() }?.let {
+        val builder = context.createIrBuilder(irFile.symbol)
+        it.annotations += builder.irAnnotation(exportConstructor, typeArguments = emptyList())
     }
 }

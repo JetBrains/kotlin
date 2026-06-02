@@ -97,7 +97,7 @@ class WasmLoweringFacade(
         }
 
         val testPackage = extractTestPackage(testServices)
-        val exportedBoxDeclaration = setOf(FqName.fromSegments(listOfNotNull(testPackage, "box")))
+        configuration.wasmTestBoxFunctionToExport = FqName.fromSegments(listOfNotNull(testPackage, "box"))
 
         configuration.perfManager?.notifyPhaseFinished(PhaseType.Initialization)
 
@@ -114,7 +114,7 @@ class WasmLoweringFacade(
         }
 
         val loweredIr = configuration.perfManager.tryMeasurePhaseTime(PhaseType.IrLowering) {
-            compiler.lowerIr(moduleInfo, exportedBoxDeclaration, allModules, context)
+            compiler.lowerIr(moduleInfo, allModules, context)
         }
 
         val parameters = configuration.perfManager.tryMeasurePhaseTime(PhaseType.Backend) {

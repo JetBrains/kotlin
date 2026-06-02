@@ -20,7 +20,7 @@ object O {
     var s: String? by Store
 }
 
-fun box(): String? {
+fun box(): String {
     O.s = "OK"
-    return O.s
+    return O.s!!
 }

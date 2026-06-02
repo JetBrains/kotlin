@@ -14,6 +14,7 @@ package org.jetbrains.kotlin.wasm.config
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.CompilerConfigurationKey
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 
 object WasmConfigurationKeys {
@@ -76,6 +77,10 @@ object WasmConfigurationKeys {
     // Enables multi-module closed-world mode.
     @JvmField
     val WASM_GENERATE_CLOSED_WORLD_MULTIMODULE = CompilerConfigurationKey.create<Boolean>("WASM_GENERATE_CLOSED_WORLD_MULTIMODULE")
+
+    // FQ Name of the test `box` function to be exported and called by the compiler test infrastructure.
+    @JvmField
+    val WASM_TEST_BOX_FUNCTION_TO_EXPORT = CompilerConfigurationKey.create<FqName>("WASM_TEST_BOX_FUNCTION_TO_EXPORT")
 
 }
 
@@ -150,4 +155,8 @@ var CompilerConfiguration.wasmInternalLocalVariablePrefix: String?
 var CompilerConfiguration.wasmGenerateClosedWorldMultimodule: Boolean
     get() = getBoolean(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)
     set(value) { put(WasmConfigurationKeys.WASM_GENERATE_CLOSED_WORLD_MULTIMODULE, value) }
+
+var CompilerConfiguration.wasmTestBoxFunctionToExport: FqName?
+    get() = get(WasmConfigurationKeys.WASM_TEST_BOX_FUNCTION_TO_EXPORT)
+    set(value) { put(WasmConfigurationKeys.WASM_TEST_BOX_FUNCTION_TO_EXPORT, requireNotNull(value) { "nullable values are not allowed" }) }
 

@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.ic.overrideBuiltInsSignatures
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.*
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.JsCodeSnippet
 import org.jetbrains.kotlin.backend.wasm.lower.JsInteropFunctionsLowering
-import org.jetbrains.kotlin.backend.wasm.lower.markExportedDeclarations
+import org.jetbrains.kotlin.backend.wasm.lower.markFunctionToExport
 import org.jetbrains.kotlin.backend.wasm.utils.DwarfGenerator
 import org.jetbrains.kotlin.backend.wasm.utils.SourceMapGenerator
 import org.jetbrains.kotlin.cli.report
@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
 import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.types.isString
+import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
@@ -35,15 +37,10 @@ import org.jetbrains.kotlin.js.config.generateDts
 import org.jetbrains.kotlin.js.config.sourceMap
 import org.jetbrains.kotlin.js.config.useDebuggerCustomFormatters
 import org.jetbrains.kotlin.library.isWasmStdlib
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
-import org.jetbrains.kotlin.wasm.config.wasmDebug
-import org.jetbrains.kotlin.wasm.config.wasmGenerateDwarf
-import org.jetbrains.kotlin.wasm.config.wasmGenerateWat
-import org.jetbrains.kotlin.wasm.config.wasmNoJsTag
+import org.jetbrains.kotlin.wasm.config.*
 import org.jetbrains.kotlin.wasm.ir.ByteWriterWithOffsetWrite
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData
 import org.jetbrains.kotlin.wasm.ir.WasmBinaryData.Companion.writeTo
@@ -121,13 +118,24 @@ fun linkIr(
 fun compileToLoweredIr(
     configuration: CompilerConfiguration,
     irLinker: KotlinIrLinker,
-    exportedDeclarations: Set<FqName> = emptySet(),
     allModules: List<IrModuleFragment>,
     context: WasmBackendContext,
 ): LoweredIrWithExtraArtifacts {
-    for (module in allModules)
-        for (file in module.files)
-            markExportedDeclarations(context, file, exportedDeclarations)
+    // Ad-hoc export for box functions in compiler tests.
+    configuration.wasmTestBoxFunctionToExport?.let { testBoxFunToExport ->
+        val boxPackage = testBoxFunToExport.parent()
+        val boxName = testBoxFunToExport.shortName()
+        for (module in allModules) {
+            for (file in module.files) {
+                if (file.packageFqName != boxPackage) continue
+                markFunctionToExport(context, file) {
+                    // The majority of tests use `fun box(): String` as entry point.
+                    // But some parts of stepping tests may have `box` fun returning `Unit`.
+                    name == boxName && parameters.isEmpty() && (returnType.isString() || returnType.isUnit())
+                }
+            }
+        }
+    }
 
     val typeScriptFragment = runIf(configuration.generateDts) {
         val exportModel = ExportModelGenerator(context).generateExport(allModules)
