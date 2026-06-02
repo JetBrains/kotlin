@@ -612,6 +612,36 @@ public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated 
     }
 
     @Test
+    @TestMetadata("augmentedAssignment.kt")
+    public void testAugmentedAssignment() {
+      run("augmentedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("augmentedAssignmentPlusAssign.kt")
+    public void testAugmentedAssignmentPlusAssign() {
+      run("augmentedAssignmentPlusAssign.kt");
+    }
+
+    @Test
+    @TestMetadata("augmentedQualifiedAssignment.kt")
+    public void testAugmentedQualifiedAssignment() {
+      run("augmentedQualifiedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifedAssignment.kt")
+    public void testQualifedAssignment() {
+      run("qualifedAssignment.kt");
+    }
+
+    @Test
+    @TestMetadata("qualifedAssignmentExtension.kt")
+    public void testQualifedAssignmentExtension() {
+      run("qualifedAssignmentExtension.kt");
+    }
+
+    @Test
     @TestMetadata("readArrayElement.kt")
     public void testReadArrayElement() {
       run("readArrayElement.kt");
