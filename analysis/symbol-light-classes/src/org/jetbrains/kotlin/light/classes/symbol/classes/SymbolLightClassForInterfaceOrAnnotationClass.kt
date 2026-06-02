@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.CompositeAdditionalAnnotationsProvider
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeprecationAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.cachedValue
@@ -69,7 +71,12 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ),
         annotationsBox = GranularAnnotationsBox(
             annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
-            additionalAnnotationsProvider = AbstractClassAdditionalAnnotationsProvider,
+            additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                AbstractClassAdditionalAnnotationsProvider,
+                // KT-60993: the compiler marks a @Deprecated interface/annotation with the JVM `Deprecated` attribute,
+                // which is surfaced as @java.lang.Deprecated in the Java PSI view.
+                DeprecationAnnotationsProvider { isDeprecated() },
+            ),
         ),
     )
 

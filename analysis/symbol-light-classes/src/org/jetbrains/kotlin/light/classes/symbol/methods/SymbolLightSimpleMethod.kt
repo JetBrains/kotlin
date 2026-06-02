@@ -177,6 +177,9 @@ internal open class SymbolLightSimpleMethod protected constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    // KT-60993: the compiler marks a @Deprecated function with the JVM `Deprecated` attribute, which is
+                    // surfaced as @java.lang.Deprecated in the Java PSI view.
+                    DeprecationAnnotationsProvider { isDeprecated() },
                 ),
             )
         )

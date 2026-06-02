@@ -1,16 +1,22 @@
 public final class Test /* test.pkg.Test*/ {
+  @java.lang.Deprecated()
   @kotlin.Deprecated()
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String getPOld_accessors_deprecatedOnGetter();//  getPOld_accessors_deprecatedOnGetter()
 
+  @java.lang.Deprecated()
   @kotlin.Deprecated()
   public final void setPOld_accessors_deprecatedOnSetter(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  setPOld_accessors_deprecatedOnSetter(@org.jetbrains.annotations.Nullable() java.lang.String)
 
-  @org.jetbrains.annotations.Nullable()
-  public final @org.jetbrains.annotations.Nullable() java.lang.String getPNew_accessors();//  getPNew_accessors()
-
+  @java.lang.Deprecated()
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String getPOld_accessors_deprecatedOnProperty();//  getPOld_accessors_deprecatedOnProperty()
+
+  @java.lang.Deprecated()
+  public final void setPOld_accessors_deprecatedOnProperty(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  setPOld_accessors_deprecatedOnProperty(@org.jetbrains.annotations.Nullable() java.lang.String)
+
+  @org.jetbrains.annotations.Nullable()
+  public final @org.jetbrains.annotations.Nullable() java.lang.String getPNew_accessors();//  getPNew_accessors()
 
   @org.jetbrains.annotations.Nullable()
   public final @org.jetbrains.annotations.Nullable() java.lang.String getPOld_accessors_deprecatedOnSetter();//  getPOld_accessors_deprecatedOnSetter()
@@ -20,6 +26,4 @@ public final class Test /* test.pkg.Test*/ {
   public final void setPNew_accessors(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  setPNew_accessors(@org.jetbrains.annotations.Nullable() java.lang.String)
 
   public final void setPOld_accessors_deprecatedOnGetter(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  setPOld_accessors_deprecatedOnGetter(@org.jetbrains.annotations.Nullable() java.lang.String)
-
-  public final void setPOld_accessors_deprecatedOnProperty(@org.jetbrains.annotations.Nullable() @org.jetbrains.annotations.Nullable() java.lang.String);//  setPOld_accessors_deprecatedOnProperty(@org.jetbrains.annotations.Nullable() java.lang.String)
 }

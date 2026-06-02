@@ -213,6 +213,9 @@ internal class SymbolLightAccessorMethod private constructor(
                     },
                     MethodAdditionalAnnotationsProvider,
                     JvmExposeBoxedAdditionalAnnotationsProvider,
+                    // KT-60993: the compiler marks the accessors of a @Deprecated property with the JVM `Deprecated`
+                    // attribute, which is surfaced as @java.lang.Deprecated in the Java PSI view.
+                    DeprecationAnnotationsProvider { isDeprecated() },
                 ),
                 annotationFilter = jvmExposeBoxedAwareAnnotationFilter,
             ),

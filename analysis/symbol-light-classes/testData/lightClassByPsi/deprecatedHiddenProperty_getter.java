@@ -1,12 +1,13 @@
 public final class Test /* test.pkg.Test*/ {
+  @java.lang.Deprecated()
+  @org.jetbrains.annotations.Nullable()
+  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_getter_deprecatedOnProperty = null /* initializer type: null */;
+
   @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.lang.String pNew_getter = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.lang.String pOld_getter_deprecatedOnGetter = null /* initializer type: null */;
-
-  @org.jetbrains.annotations.Nullable()
-  private @org.jetbrains.annotations.Nullable() java.lang.String pOld_getter_deprecatedOnProperty = null /* initializer type: null */;
 
   @org.jetbrains.annotations.Nullable()
   private @org.jetbrains.annotations.Nullable() java.lang.String pOld_getter_deprecatedOnSetter = null /* initializer type: null */;

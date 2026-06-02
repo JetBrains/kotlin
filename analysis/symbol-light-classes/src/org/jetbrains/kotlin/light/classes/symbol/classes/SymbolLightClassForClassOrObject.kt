@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.light.classes.symbol.annotations.DeprecationAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.ExcludeAnnotationFilter
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -99,6 +100,9 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
             modifiersBox = GranularModifiersBox(computer = ::computeModifiers),
             annotationsBox = GranularAnnotationsBox(
                 annotationsProvider = SymbolAnnotationsProvider(ktModule, classSymbolPointer),
+                // KT-60993: the compiler marks a @Deprecated class with the JVM `Deprecated` attribute, which is
+                // surfaced as @java.lang.Deprecated in the Java PSI view.
+                additionalAnnotationsProvider = DeprecationAnnotationsProvider { isDeprecated() },
                 annotationFilter = ExcludeAnnotationFilter.JvmExposeBoxed,
             ),
         )

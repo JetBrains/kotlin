@@ -206,15 +206,20 @@ internal class SymbolLightFieldForProperty private constructor(
                 annotationsProvider = (backingFieldSymbolPointer)?.let { pointer ->
                     SymbolAnnotationsProvider(ktModule = ktModule, annotatedSymbolPointer = pointer)
                 } ?: EmptyAnnotationsProvider,
-                additionalAnnotationsProvider = NullabilityAnnotationsProvider {
-                    withPropertySymbol { propertySymbol ->
-                        when {
-                            propertySymbol.isDelegatedProperty -> NullabilityAnnotation.NON_NULLABLE
-                            !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
-                            else -> NullabilityAnnotation.NOT_REQUIRED
+                additionalAnnotationsProvider = CompositeAdditionalAnnotationsProvider(
+                    NullabilityAnnotationsProvider {
+                        withPropertySymbol { propertySymbol ->
+                            when {
+                                propertySymbol.isDelegatedProperty -> NullabilityAnnotation.NON_NULLABLE
+                                !(propertySymbol is KaKotlinPropertySymbol && propertySymbol.isLateInit) -> getRequiredNullabilityAnnotation(propertySymbol.returnType)
+                                else -> NullabilityAnnotation.NOT_REQUIRED
+                            }
                         }
-                    }
-                }
+                    },
+                    // KT-60993: the compiler marks the backing field of a @Deprecated property with the JVM `Deprecated`
+                    // attribute, which is surfaced as @java.lang.Deprecated in the Java PSI view.
+                    DeprecationAnnotationsProvider { isDeprecated() },
+                ),
             ),
         )
     }

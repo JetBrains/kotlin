@@ -1,12 +1,13 @@
 public final class Test /* test.pkg.Test*/ {
+  @java.lang.Deprecated()
+  @org.jetbrains.annotations.NotNull()
+  private @org.jetbrains.annotations.NotNull() java.lang.String pOld_noAccessor_deprecatedOnProperty = "42" /* initializer type: java.lang.String */;
+
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String pNew_noAccessor = "42" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String pOld_noAccessor_deprecatedOnGetter = "42" /* initializer type: java.lang.String */;
-
-  @org.jetbrains.annotations.NotNull()
-  private @org.jetbrains.annotations.NotNull() java.lang.String pOld_noAccessor_deprecatedOnProperty = "42" /* initializer type: java.lang.String */;
 
   @org.jetbrains.annotations.NotNull()
   private @org.jetbrains.annotations.NotNull() java.lang.String pOld_noAccessor_deprecatedOnSetter = "42" /* initializer type: java.lang.String */;
