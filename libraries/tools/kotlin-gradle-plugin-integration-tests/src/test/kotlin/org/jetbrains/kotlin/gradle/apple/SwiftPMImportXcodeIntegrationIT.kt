@@ -1342,6 +1342,59 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
             }
         }
     }
+
+    @GradleTest
+    fun `integrateLinkagePackage without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateLinkagePackage",
+                // No XCODEPROJ_PATH — intentional
+                environmentVariables = EnvironmentalVariables(),
+            ) {
+                assertOutputContains("Please specify the path to the Xcode project in the XCODEPROJ_PATH environment variable")
+                assertOutputContains("./gradlew :integrateLinkagePackage")
+                assertOutputDoesNotContain("syntheticImportProjectRoot")
+                assertOutputDoesNotContain("because it has no value available")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateEmbedAndSign without XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateEmbedAndSign",
+                environmentVariables = EnvironmentalVariables(),
+            ) {
+                assertOutputContains("Please specify the path to the Xcode project in the XCODEPROJ_PATH environment variable")
+                assertOutputContains("./gradlew :integrateEmbedAndSign")
+                assertOutputDoesNotContain("syntheticImportProjectRoot")
+                assertOutputDoesNotContain("because it has no value available")
+            }
+        }
+    }
+
+    @GradleTest
+    fun `integrateLinkagePackage with invalid XCODEPROJ_PATH fails with actionable error`(version: GradleVersion) {
+        project("emptyxcode", version) {
+            initDefaultKmpWithLocalSPM()
+
+            buildAndFail(
+                "integrateLinkagePackage",
+                environmentVariables = EnvironmentalVariables(
+                    "XCODEPROJ_PATH" to "does-not-exist/iosApp.xcodeproj",
+                ),
+            ) {
+                assertOutputContains("does not point to an Xcode project directory")
+                assertOutputContains("does-not-exist/iosApp.xcodeproj")
+                assertOutputDoesNotContain("plutil")
+            }
+        }
+    }
 }
 
 private fun createSymlinkedDeveloperDir(projectPath: Path): Path {
