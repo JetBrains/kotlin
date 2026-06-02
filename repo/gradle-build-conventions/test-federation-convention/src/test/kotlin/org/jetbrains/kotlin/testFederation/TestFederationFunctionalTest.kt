@@ -312,6 +312,53 @@ class TestFederationFunctionalTest {
             assertEquals(setOf(TestResult("PseudoTest", "smoke test"), TestResult("PseudoTest", "wasm contract test")), executedTests)
         }
     }
+
+    @Test
+    fun `test - 3 test batches`() {
+        cleanTest()
+        val batch1Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=1", "-Ptests.totalBatches=3")
+        )
+
+        val batch2Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=2", "-Ptests.totalBatches=3")
+        )
+
+        val batch3Result = runTestBuild(
+            mode = TestFederationMode.Full,
+            additionalCliArgs = listOf("-Ptests.currentBatch=3", "-Ptests.totalBatches=3")
+        )
+
+        val batch1Tests = batch1Result.executedTests
+        val batch2Tests = batch2Result.executedTests
+        val batch3Tests = batch3Result.executedTests
+
+        batch1Tests.intersect(batch2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch1 and batch2 both executed the same tests: $duplicatedTests")
+        }
+
+        batch1Tests.intersect(batch2Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch1 and batch3 both executed the same tests: $duplicatedTests")
+        }
+
+        batch2Tests.intersect(batch3Tests).takeIf { it.isNotEmpty() }?.also { duplicatedTests ->
+            fail("batch2 and batch3 both executed the same tests: $duplicatedTests")
+        }
+
+        assertEquals(
+            setOf(
+                TestResult("PseudoTest", "domain test"),
+                TestResult("PseudoTest", "smoke test"),
+                TestResult("PseudoTest", "js contract test"),
+                TestResult("PseudoTest", "wasm contract test"),
+                TestResult("PseudoTest", "gradle contract test"),
+                TestResult("PseudoTest", "nightly test"),
+            ),
+            batch1Tests + batch2Tests + batch3Tests
+        )
+    }
 }
 
 private data class TestBuildResult(

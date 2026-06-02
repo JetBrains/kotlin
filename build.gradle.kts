@@ -76,6 +76,7 @@ plugins {
     id("com.autonomousapps.dependency-analysis") version "3.6.1"
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
+    id("test-buckets-convention") apply false
     id("test-data-manager-root")
 }
 
@@ -206,6 +207,7 @@ allprojects {
     if (!project.path.startsWith(":kotlin-ide.")) {
         pluginManager.apply("common-configuration")
         pluginManager.apply("test-federation-convention")
+        pluginManager.apply("test-buckets-convention")
     }
     if (!project.path.startsWith(":compiler:build-tools")) {
         pluginManager.apply("com.autonomousapps.dependency-analysis")

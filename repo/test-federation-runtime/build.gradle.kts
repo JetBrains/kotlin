@@ -56,4 +56,6 @@ dependencies {
     testImplementation(libs.junit.jupiter.engine)
     testImplementation(libs.junit.platform.launcher)
     testImplementation(libs.junit.jupiter.api)
+
+    compileOnly(libs.junit.platform.launcher)
 }
