@@ -54,9 +54,9 @@ class FirAssignmentPluginAssignAltererExtension(
         val leftResolvedType = leftSymbol.resolvedReturnTypeRef
         val rightArgument = variableAssignment.rValue
         return buildFunctionCall {
-            source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.AssignmentPluginAltered)
+            source = variableAssignment.source
             explicitReceiver = buildPropertyAccessExpression {
-                source = leftArgument.source
+                source = variableAssignment.lValue.source
                 coneTypeOrNull = leftResolvedType.coneType
                 calleeReference = leftArgument
                 (variableAssignment.lValue as? FirQualifiedAccessExpression)?.typeArguments?.let(typeArguments::addAll)
@@ -68,7 +68,7 @@ class FirAssignmentPluginAssignAltererExtension(
             }
             argumentList = buildUnaryArgumentList(rightArgument)
             calleeReference = buildSimpleNamedReference {
-                source = variableAssignment.source
+                source = variableAssignment.source?.fakeElement(KtFakeSourceElementKind.AssignmentPluginAltered)
                 name = ASSIGN_METHOD
             }
             origin = FirFunctionCallOrigin.Regular
