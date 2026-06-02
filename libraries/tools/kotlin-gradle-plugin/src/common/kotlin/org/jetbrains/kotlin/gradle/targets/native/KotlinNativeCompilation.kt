@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
@@ -37,6 +38,14 @@ abstract class AbstractKotlinNativeCompilation internal constructor(
     @Suppress("UNCHECKED_CAST", "DEPRECATION")
     override val compilerOptions: DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
         get() = compilation.compilerOptions as DeprecatedHasCompilerOptions<KotlinNativeCompilerOptions>
+
+    /**
+     * File collection of all cinterop klib outputs produced by this compilation.
+     * Populated by [org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCreateNativeCInteropTasksSideEffect]
+     * and used by [org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinNativeCompilationAssociator]
+     * to propagate cinterop klibs to all associated compilations (e.g. test, swiftExportMain).
+     */
+    internal val cinteropOutputs: ConfigurableFileCollection = compilation.project.objects.fileCollection()
 }
 
 open class KotlinNativeCompilation @Inject internal constructor(
