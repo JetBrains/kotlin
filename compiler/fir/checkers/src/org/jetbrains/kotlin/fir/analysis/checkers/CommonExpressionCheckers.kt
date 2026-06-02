@@ -86,7 +86,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         PlatformClassMappedToKotlinConstructorCallChecker,
         RedundantCallOfConversionMethodChecker,
         FirImplicitPropertyTypeMakesBehaviorOrderDependantChecker,
-        FirUnsupportedCollectionLiteralChecker.CollectionLiteralMode,
+        FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
@@ -185,7 +185,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
     )
 
     override val collectionLiteralCheckers: Set<FirCollectionLiteralChecker> = @OptIn(ArrayLiteralResolution::class) setOf(
-        FirUnsupportedCollectionLiteralChecker.ArrayLiteralMode,
+        FirUnsupportedCollectionLiteralWithArrayLiteralResolutionChecker,
     )
 
     override val inaccessibleReceiverCheckers: Set<FirInaccessibleReceiverChecker> = setOf(

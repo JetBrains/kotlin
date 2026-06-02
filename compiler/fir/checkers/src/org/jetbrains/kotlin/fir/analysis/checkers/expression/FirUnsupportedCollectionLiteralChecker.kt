@@ -33,112 +33,108 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.useArrayLiteralResolution
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
-object FirUnsupportedCollectionLiteralChecker {
+@ArrayLiteralResolution
+object FirUnsupportedCollectionLiteralWithArrayLiteralResolutionChecker : FirCollectionLiteralChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirCollectionLiteral) {
+        if (!useArrayLiteralResolution()) return
+        if (isInsideAnnotationConstructor()) return
 
-    @ArrayLiteralResolution
-    object ArrayLiteralMode : FirCollectionLiteralChecker(MppCheckerKind.Common) {
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        override fun check(expression: FirCollectionLiteral) {
-            if (!useArrayLiteralResolution()) return
-            if (isInsideAnnotationConstructor()) return
-
-            when (containingCallKind()) {
-                ContainingCallKind.Annotation -> {}
-                ContainingCallKind.FunctionReturningAnnotation -> {
-                    reportUnsupported(expression, forceError = expression.isInDefinitelyFailingPosition())
-                }
-                ContainingCallKind.NotFound -> {
-                    reportUnsupported(expression, forceError = true)
-                }
+        when (containingCallKind()) {
+            ContainingCallKind.Annotation -> {}
+            ContainingCallKind.FunctionReturningAnnotation -> {
+                reportUnsupported(expression, forceError = expression.isInDefinitelyFailingPosition())
             }
-        }
-
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        private fun reportUnsupported(expression: FirCollectionLiteral, forceError: Boolean) {
-            if (forceError) {
-                reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.errorFactory)
-            } else {
-                reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION)
+            ContainingCallKind.NotFound -> {
+                reportUnsupported(expression, forceError = true)
             }
-
-            if (forceError || LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts.isEnabled()) {
-                reporter.reportOn(
-                    expression.source,
-                    FirErrors.UNSUPPORTED_FEATURE,
-                    LanguageFeature.CollectionLiterals to context.languageVersionSettings,
-                )
-            }
-        }
-
-        private enum class ContainingCallKind {
-            NotFound, FunctionReturningAnnotation, Annotation
-        }
-
-        // See KT-81141
-        context(context: CheckerContext)
-        private fun containingCallKind(): ContainingCallKind {
-            var functionCallFound = ContainingCallKind.NotFound
-            for (call in context.callsOrAssignments.asReversed()) {
-                when (call) {
-                    is FirAnnotationCall ->
-                        return ContainingCallKind.Annotation
-                    is FirFunctionCall if call.resolvedType.isAnnotationClass() ->
-                        functionCallFound = ContainingCallKind.FunctionReturningAnnotation
-                }
-            }
-            return functionCallFound
-        }
-
-        /**
-         * In some cases when a collection literal is used as an independent statement, it crashes Fir2Ir.
-         * Therefore, we always need to report an error for such cases.
-         * ```
-         * run {
-         *     ["42"]
-         *     Anno()
-         * }
-         *
-         * run {
-         *     if (true) { ["42"] }
-         *     Anno()
-         * }
-         * ```
-         *
-         * In other (similar) cases, the code might still work.
-         * ```
-         * run {
-         *     if (true) ["42"]
-         *     Anno()
-         * }
-         * ```
-         */
-        context(context: CheckerContext)
-        private fun FirCollectionLiteral.isInDefinitelyFailingPosition(): Boolean {
-            val containingBlock = context.secondToLastContainer as? FirBlock ?: return false
-
-            return when (context.nthLastContainer(3)) {
-                is FirAnonymousFunction -> containingBlock.isUnitCoerced || containingBlock.lastExpression !== this
-                else -> containingBlock !is FirSingleExpressionBlock
-            }
-        }
-
-        context(context: CheckerContext)
-        private fun isInsideAnnotationConstructor(): Boolean {
-            return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType.isAnnotationClass()
-        }
-
-        context(context: CheckerContext)
-        private fun ConeKotlinType?.isAnnotationClass(): Boolean {
-            return this?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
         }
     }
 
-    object CollectionLiteralMode : FirFunctionCallChecker(MppCheckerKind.Common) {
-        context(context: CheckerContext, reporter: DiagnosticReporter)
-        override fun check(expression: FirFunctionCall) {
-            if (LanguageFeature.CollectionLiterals.isEnabled() || LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isDisabled()) {
-                return
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun reportUnsupported(expression: FirCollectionLiteral, forceError: Boolean) {
+        if (forceError) {
+            reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION.errorFactory)
+        } else {
+            reporter.reportOn(expression.source, FirErrors.UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION)
+        }
+
+        if (forceError || LanguageFeature.ForbidArrayLiteralsInNonAnnotationContexts.isEnabled()) {
+            reporter.reportOn(
+                expression.source,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.CollectionLiterals to context.languageVersionSettings,
+            )
+        }
+    }
+
+    private enum class ContainingCallKind {
+        NotFound, FunctionReturningAnnotation, Annotation
+    }
+
+    // See KT-81141
+    context(context: CheckerContext)
+    private fun containingCallKind(): ContainingCallKind {
+        var functionCallFound = ContainingCallKind.NotFound
+        for (call in context.callsOrAssignments.asReversed()) {
+            when (call) {
+                is FirAnnotationCall ->
+                    return ContainingCallKind.Annotation
+                is FirFunctionCall if call.resolvedType.isAnnotationClass() ->
+                    functionCallFound = ContainingCallKind.FunctionReturningAnnotation
             }
+        }
+        return functionCallFound
+    }
+
+    /**
+     * In some cases when a collection literal is used as an independent statement, it crashes Fir2Ir.
+     * Therefore, we always need to report an error for such cases.
+     * ```
+     * run {
+     *     ["42"]
+     *     Anno()
+     * }
+     *
+     * run {
+     *     if (true) { ["42"] }
+     *     Anno()
+     * }
+     * ```
+     *
+     * In other (similar) cases, the code might still work.
+     * ```
+     * run {
+     *     if (true) ["42"]
+     *     Anno()
+     * }
+     * ```
+     */
+    context(context: CheckerContext)
+    private fun FirCollectionLiteral.isInDefinitelyFailingPosition(): Boolean {
+        val containingBlock = context.secondToLastContainer as? FirBlock ?: return false
+
+        return when (context.nthLastContainer(3)) {
+            is FirAnonymousFunction -> containingBlock.isUnitCoerced || containingBlock.lastExpression !== this
+            else -> containingBlock !is FirSingleExpressionBlock
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun isInsideAnnotationConstructor(): Boolean {
+        return context.findClosest<FirConstructorSymbol>()?.resolvedReturnType.isAnnotationClass()
+    }
+
+    context(context: CheckerContext)
+    private fun ConeKotlinType?.isAnnotationClass(): Boolean {
+        return this?.toRegularClassSymbol()?.classKind == ClassKind.ANNOTATION_CLASS
+    }
+}
+
+object FirUnsupportedCollectionLiteralWithCollectionLiteralResolutionChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirFunctionCall) {
+        if (LanguageFeature.CollectionLiterals.isDisabled() && LanguageFeature.CollectionLiteralsBasedAnnotationResolution.isEnabled()) {
             if ((expression.calleeReference.name == OperatorNameConventions.OF && expression.origin == FirFunctionCallOrigin.Operator)
                 || expression.origin == FirFunctionCallOrigin.StdlibCollectionLiteral
             ) {
