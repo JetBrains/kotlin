@@ -1,3 +1,0 @@
-/equatableBoundsFixationOrder.kt:12:5: error: Equatable type bound violated.
-
-/equatableBoundsFixationOrder.kt:16:5: error: Equatable type bound violated.

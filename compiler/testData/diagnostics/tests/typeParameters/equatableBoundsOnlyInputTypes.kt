@@ -26,6 +26,11 @@ fun testContainsSubtype(as_: Iterable<A>) {
     as_.contains2(B())
 }
 
+fun testContainsSubtype(as_: Iterable<B>) {
+    // May be updated once equality bound is computed properly.
+    as_.<!EQUATABLE_TYPE_BOUND_VIOLATED!>contains2<!>(A())
+}
+
 fun testContainsUnboundNestedTypeParam(nested: Iterable<Iterable<Int>>) {
     nested.contains2(<!DEBUG_INFO_EXPRESSION_TYPE("kotlin.collections.Iterable<kotlin.Int>")!>emptyIterable()<!>)
 }
@@ -45,10 +50,12 @@ fun testAssertEqualsSameType() {
 
 fun testAssertEqualsSubtype(a: A, b: B) {
     assertEquals2(a, b)
+    // May be updated once equality bound is computed properly.
     <!EQUATABLE_TYPE_BOUND_VIOLATED!>assertEquals2<!>(b, a)
 }
 
 fun testAssertEqualsSiblingTypes(b: B, c: C) {
+    // May be updated once equality bound is computed properly.
     <!EQUATABLE_TYPE_BOUND_VIOLATED!>assertEquals2<!>(b, c)
 }
 

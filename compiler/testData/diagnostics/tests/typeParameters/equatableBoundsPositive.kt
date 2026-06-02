@@ -59,6 +59,7 @@ fun testSameConcreteSubtype() {
 }
 
 fun testInferredCommonSupertype() {
+    // May be updated once equality bound is computed properly.
     <!EQUATABLE_TYPE_BOUND_VIOLATED!>same<!>(ChildA(), ChildB())
 }
 

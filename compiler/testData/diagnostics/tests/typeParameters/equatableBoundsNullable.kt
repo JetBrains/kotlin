@@ -13,6 +13,7 @@ fun testNonNullableAndNullable() {
 fun testNullableAndNonNullable() {
     val a: Int? = null
     val b: Int = 1
+    // May be updated once equality bound is computed properly.
     <!EQUATABLE_TYPE_BOUND_VIOLATED!>same<!>(b, a)
 }
 
