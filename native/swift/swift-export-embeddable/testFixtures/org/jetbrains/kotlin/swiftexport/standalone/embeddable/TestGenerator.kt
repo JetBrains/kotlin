@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.embeddable
 
-import org.jetbrains.kotlin.swiftexport.standalone.test.coroutines.main as generateCoroutinesSuite
-import org.jetbrains.kotlin.swiftexport.standalone.test.simple.main as generateSimpleSuite
+import org.jetbrains.kotlin.swiftexport.standalone.test.coroutines.generateCoroutinesSuite
+import org.jetbrains.kotlin.swiftexport.standalone.test.simple.generateSimpleSuite
 
 fun main(args: Array<String>) {
-    generateSimpleSuite(args)
-    generateCoroutinesSuite(args)
+    val prefix = "Embeddable"
+    generateSimpleSuite(args, classNamePrefix = prefix)
+    generateCoroutinesSuite(args, classNamePrefix = prefix)
 }

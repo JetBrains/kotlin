@@ -9,8 +9,8 @@ import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TestMetadata
 
-@TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
+@TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/execution")
 @TestDataPath("\$PROJECT_ROOT")
 @UseExtTestCaseGroupProvider
 @Suppress("JUnitTestCaseWithNoTests")
-class ExternalProjectGenerationTests : AbstractExternalProjectGenerationTest()
+class EmbeddableExternalProjectExecutionTests : AbstractExternalProjectExecutionTest()

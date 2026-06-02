@@ -13,11 +13,15 @@ import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithB
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithResultValidationTest
 
 fun main(args: Array<String>) {
+    generateSimpleSuite(args)
+}
+
+fun generateSimpleSuite(args: Array<String>, classNamePrefix: String = "") {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/simple/testData/generation") {
             testClass<AbstractSwiftExportWithResultValidationTest>(
-                suiteTestClassName = "SwiftExportWithResultValidationTest",
+                suiteTestClassName = "${classNamePrefix}SwiftExportWithResultValidationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                 ),
@@ -27,7 +31,7 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/simple/testData/generation") {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
-                suiteTestClassName = "SwiftExportWithBinaryCompilationTest",
+                suiteTestClassName = "${classNamePrefix}SwiftExportWithBinaryCompilationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                 ),
@@ -37,7 +41,7 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/simple/testData/execution") {
             testClass<AbstractSwiftExportExecutionTest>(
-                suiteTestClassName = "SwiftExportExecutionTestGenerated",
+                suiteTestClassName = "${classNamePrefix}SwiftExportExecutionTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                 ),

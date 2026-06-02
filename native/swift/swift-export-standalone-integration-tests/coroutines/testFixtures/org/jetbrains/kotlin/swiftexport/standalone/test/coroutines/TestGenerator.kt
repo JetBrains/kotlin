@@ -16,11 +16,15 @@ import org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithCoroutine
 import org.junit.jupiter.api.extension.ExtendWith
 
 fun main(args: Array<String>) {
+    generateCoroutinesSuite(args)
+}
+
+fun generateCoroutinesSuite(args: Array<String>, classNamePrefix: String = "") {
     val testsRoot = args[0]
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation") {
             testClass<AbstractSwiftExportWithResultValidationTest>(
-                suiteTestClassName = "SwiftExportCoroutinesWithResultValidationTest",
+                suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesWithResultValidationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
@@ -31,7 +35,7 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/coroutines/testData/generation") {
             testClass<AbstractSwiftExportWithBinaryCompilationTest>(
-                suiteTestClassName = "SwiftExportCoroutinesWithBinaryCompilationTest",
+                suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesWithBinaryCompilationTest",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
@@ -42,7 +46,7 @@ fun main(args: Array<String>) {
         }
         testGroup(testsRoot, "native/swift/swift-export-standalone-integration-tests/coroutines/testData/execution") {
             testClass<AbstractSwiftExportExecutionTest>(
-                suiteTestClassName = "SwiftExportCoroutinesExecutionTestGenerated",
+                suiteTestClassName = "${classNamePrefix}SwiftExportCoroutinesExecutionTestGenerated",
                 annotations = listOf(
                     provider<UseExtTestCaseGroupProvider>(),
                     annotation(ExtendWith::class.java, SwiftExportWithCoroutinesTestSupport::class.java)
