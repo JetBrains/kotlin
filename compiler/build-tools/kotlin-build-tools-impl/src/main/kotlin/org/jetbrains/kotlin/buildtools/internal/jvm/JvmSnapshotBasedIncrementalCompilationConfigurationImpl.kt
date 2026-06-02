@@ -115,6 +115,8 @@ internal class JvmSnapshotBasedIncrementalCompilationConfigurationImpl @Suppress
 
         val USE_FIR_RUNNER: Option<Boolean> = Option("USE_FIR_RUNNER", false)
 
+        val KMP_CLASSPATH_KLIB: Option<Boolean> = Option("KMP_CLASSPATH_KLIB", false)
+
         // copied from BaseCompilationConfigurationImpl so initializeOptions works
 
         val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR", null)

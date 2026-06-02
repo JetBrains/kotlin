@@ -357,6 +357,19 @@ constructor(
         @JvmField
         @ExperimentalCompilerArgument
         public val MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION: Option<Boolean> = Option("MONOTONOUS_INCREMENTAL_COMPILE_SET_EXPANSION", KotlinReleaseVersion(2, 3, 0))
+
+        /**
+         * Enables generation of a JVM classpath klib as a side effect of JVM compilation, used to optimize
+         * incremental compilation of common KMP sources targeting JVM.
+         *
+         * When enabled, each non-leaf fragment (e.g. `commonMain`) receives an isolated dependency view
+         * from the generated klib instead of the full JVM classpath, ensuring correct incremental builds.
+         * Disabled by default. This is an experimental feature.
+         */
+        @JvmField
+        @ExperimentalCompilerArgument
+        public val KMP_CLASSPATH_KLIB: Option<Boolean> = Option("KMP_CLASSPATH_KLIB", KotlinReleaseVersion(2, 4, 2))
+
     }
 }
 

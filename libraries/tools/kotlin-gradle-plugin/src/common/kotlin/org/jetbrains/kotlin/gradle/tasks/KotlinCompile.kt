@@ -93,6 +93,9 @@ abstract class KotlinCompile @Inject constructor(
     @get:Input
     internal val useFirRunner: Property<Boolean> = objectFactory.propertyWithConvention(false)
 
+    @get:Input
+    internal val enableKmpJvmClasspathKlib: Property<Boolean> = objectFactory.propertyWithConvention(false)
+
     @get:Nested
     abstract val classpathSnapshotProperties: ClasspathSnapshotProperties
 
@@ -352,7 +355,7 @@ abstract class KotlinCompile @Inject constructor(
     }
 
     private fun overrideXJvmDefaultInPresenceOfKotlinDslPlugin(
-        args: K2JVMCompilerArguments
+        args: K2JVMCompilerArguments,
     ) {
         val kotlinCompilerVersion = kotlinCompilerVersion.orNull
         val shouldSkipCheck = runViaBuildToolsApi.get() &&
@@ -420,6 +423,7 @@ abstract class KotlinCompile @Inject constructor(
                 multiModuleICSettings = multiModuleICSettings,
                 icFeatures = makeIncrementalCompilationFeatures(),
                 useJvmFirRunner = useFirRunner.get(),
+                useKmpJvmClasspathKlib = enableKmpJvmClasspathKlib.get(),
             )
         } else null
 
