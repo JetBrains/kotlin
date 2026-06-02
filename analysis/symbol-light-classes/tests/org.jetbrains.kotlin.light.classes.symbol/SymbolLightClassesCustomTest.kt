@@ -6,9 +6,11 @@
 package org.jetbrains.kotlin.light.classes.symbol
 
 import com.intellij.psi.PsiClassType
+import com.intellij.psi.PsiDocCommentOwner
 import com.intellij.psi.PsiEnumConstant
 import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiModifierListOwner
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
@@ -87,6 +89,48 @@ class SymbolLightClassesCustomTest : AbstractAnalysisApiExecutionTest(testDirPat
         // Trigger full body resolve for property. This is crucial to resolve only the property first
         analyze(property) { property.directDiagnostics(KaDiagnosticCheckerFilter.ONLY_COMMON_CHECKERS) }
         assertMethodAnnotation(topLevelClass, testServices)
+    }
+
+    /**
+     * A reproducer for KT-60993.
+     *
+     * The Kotlin compiler marks the accessors and the backing field of a property annotated with [kotlin.Deprecated]
+     * with the JVM `Deprecated` attribute (see `compiler/testData/codegen/bytecodeListing/javaDeprecated.txt` and the
+     * `ACC_DEPRECATED` handling in `FunctionCodegen`). When such bytecode is read back into Java PSI, that attribute is
+     * surfaced as a synthetic `@java.lang.Deprecated` annotation. Symbol Light Classes are expected to mirror the
+     * bytecode, but currently they do not add `@java.lang.Deprecated` to the accessors and the backing field, even
+     * though [com.intellij.psi.PsiDocCommentOwner.isDeprecated] already returns `true` for them.
+     *
+     * This test pins the current (buggy) behavior. Once KT-60993 is fixed, flip the `assertFalse` checks below to
+     * `assertTrue` (the `isDeprecated` checks should keep passing).
+     */
+    @Test
+    fun deprecatedPropertyJavaLangDeprecated(file: KtFile, testServices: TestServices) {
+        val ktClass = file.declarations.first() as KtClass
+        val lightClass = ktClass.toLightClass() ?: error("Light class was not found")
+
+        val getter = lightClass.findMethodsByName("getX", false).single()
+        val setter = lightClass.findMethodsByName("setX", false).single()
+        val field = lightClass.fields.single { it.name == "x" }
+
+        val members = listOf<Pair<String, PsiModifierListOwner>>(
+            "getter 'getX'" to getter,
+            "setter 'setX'" to setter,
+            "backing field 'x'" to field,
+        )
+
+        for ([description, member] in members) {
+            testServices.assertions.assertTrue((member as PsiDocCommentOwner).isDeprecated) {
+                "Expected the $description of a @Deprecated property to be deprecated"
+            }
+
+            // KT-60993: should become `assertTrue` once the accessors and the backing field are marked
+            // with @java.lang.Deprecated.
+            testServices.assertions.assertFalse(member.modifierList?.hasAnnotation("java.lang.Deprecated") == true) {
+                "KT-60993: the $description of a @Deprecated property is not yet marked with @java.lang.Deprecated, " +
+                        "but the annotation was found"
+            }
+        }
     }
 
     private fun assertMethodAnnotation(topLevelClass: KtClass, testServices: TestServices) {
