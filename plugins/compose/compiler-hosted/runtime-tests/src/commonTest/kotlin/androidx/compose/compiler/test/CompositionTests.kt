@@ -468,6 +468,22 @@ class CompositionTests {
         clicked = !clicked
         advance()
     }
+
+    // Regression test for b/509945632
+    @Test
+    fun testInlineFunctionWith2Lambdas() = compositionTest {
+        var elements by mutableStateOf(emptyList<String>())
+        var counter = 0
+        compose {
+            // if lambdas introduce a group, `ReceiveValueGroup` is removed after update
+            elements.associateBy({ it }, { it.length })
+            ReceiveValueGroup(counter)
+        }
+
+        elements = List(100) { "$it" }
+        counter += 10
+        advance()
+    }
 }
 
 @Composable
@@ -479,6 +495,12 @@ fun getCondition() = remember { false }
 @NonRestartableComposable
 @Composable
 fun ReceiveValue(value: Int) {
+    val string = remember { "$value" }
+    assertEquals(1, string.length)
+}
+
+@Composable
+fun ReceiveValueGroup(value: Int) {
     val string = remember { "$value" }
     assertEquals(1, string.length)
 }
