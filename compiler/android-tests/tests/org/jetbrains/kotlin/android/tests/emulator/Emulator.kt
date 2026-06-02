@@ -254,7 +254,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         val commandLine = createAdbCommand()
         commandLine.addParameters(*parameters)
         println("Diagnostic command: ${commandLine.commandLineString}")
-        val result = runProcessCancellable(commandLine, checkExitCode = false)
+        val result = runProcessCancellable(commandLine, checkExitCode = false, timeout = 30.seconds)
         println("Diagnostic exit code: ${result.exitCode}")
     }
 
