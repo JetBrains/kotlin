@@ -1,2 +1,2 @@
 expression: this.property
-type: null
+type: kotlin.Unit

@@ -1,2 +1,2 @@
 expression: this.property
-type: Container
+type: kotlin.Unit

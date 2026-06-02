@@ -1,9 +1,9 @@
 KT element: KtDotQualifiedExpression
-FIR element: FirPropertyAccessExpressionImpl
-FIR source kind: DesugaredPlusAssign
+FIR element: FirFunctionCallImpl
+FIR source kind: AssignmentPluginAltered
 
 FIR element rendered:
-this@R|/Foo|.R|/Foo.property|
+this@R|/Foo|.R|/Foo.property|.R|/Container.assign|(this@R|/Foo|.R|/Foo.property|.R|/Container.plus|(String(bar)))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] augmentedQualifiedThis.kt

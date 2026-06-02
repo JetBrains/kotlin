@@ -118,6 +118,20 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         visitElement(variableAssignment, data)
     }
 
+    override fun visitFunctionCall(functionCall: FirFunctionCall, data: MutableMap<KtElement, FirElement>) {
+        if (functionCall.source?.kind == KtFakeSourceElementKind.AssignmentPluginAltered) {
+            val psi = functionCall.source?.psi
+            if (psi is KtBinaryExpression && KtPsiUtil.isAssignment(psi)) {
+                /**
+                 * This is LHS promotion similar to one in [visitVariableAssignment].
+                 * For assignments transformed by the assignment plugin, there's no [FirVariableAssignment] – instead, there's a call.
+                 */
+                psi.left?.let { cache(it, functionCall, data) }
+            }
+        }
+        super.visitFunctionCall(functionCall, data)
+    }
+
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: MutableMap<KtElement, FirElement>) {
         cacheElement(literalExpression, data)
         literalExpression.annotations.forEach {

@@ -1,9 +1,9 @@
 KT element: KtNameReferenceExpression
-FIR element: FirPropertyAccessExpressionImpl
-FIR source kind: ReferenceInAtomicQualifiedAccess
+FIR element: FirFunctionCallImpl
+FIR source kind: AssignmentPluginAltered
 
 FIR element rendered:
-R|/property|
+R|/property|.R|/Container.assign|(String(bar))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] simple.kt

@@ -1,9 +1,9 @@
 KT element: KtDotQualifiedExpression
-FIR element: null
-FIR source kind: null
+FIR element: FirFunctionCallImpl
+FIR source kind: AssignmentPluginAltered
 
 FIR element rendered:
-null
+this@R|/test|.R|/Foo.property|.R|/Container.assign|(String(bar))
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] qualifiedThisExtension.kt
