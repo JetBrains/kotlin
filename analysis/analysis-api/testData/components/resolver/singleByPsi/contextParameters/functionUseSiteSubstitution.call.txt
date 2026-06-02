@@ -11,6 +11,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -35,6 +36,7 @@ KtCallExpression(168,182): 'foo(1L, "str")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

@@ -43,6 +43,7 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
+  isDelegated: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false

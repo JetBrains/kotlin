@@ -19,6 +19,7 @@ KtCallExpression(78,85): 'block()'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

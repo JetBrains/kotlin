@@ -27,6 +27,7 @@ KaValueParameterSymbol:
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -96,6 +97,7 @@ KaValueParameterSymbol:
     isActual: false
     isCompanion: false
     isConst: false
+    isDelegated: false
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
@@ -142,6 +144,7 @@ KaValueParameterSymbol:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -181,6 +184,7 @@ KaValueParameterSymbol:
           isActual: false
           isCompanion: false
           isCrossinline: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -233,6 +237,7 @@ KaValueParameterSymbol:
   isActual: false
   isCompanion: false
   isCrossinline: false
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false

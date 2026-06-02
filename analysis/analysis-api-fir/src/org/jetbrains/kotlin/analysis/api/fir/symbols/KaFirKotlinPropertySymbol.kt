@@ -246,6 +246,11 @@ private class KaFirKotlinPropertyKtPropertyBasedSymbol : KaFirKotlinPropertySymb
             backingPsi?.hasDelegate() ?: firSymbol.isDelegatedProperty
         }
 
+    override val isDelegated: Boolean
+        get() = withValidityAssertion {
+            backingPsi?.hasDelegate() ?: firSymbol.isDelegatedProperty
+        }
+
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion {
             KaFirReceiverParameterSymbol.create(backingPsi, analysisSession, this)
@@ -442,6 +447,9 @@ private class KaFirKotlinPropertyKtParameterBasedSymbol : KaFirKotlinPropertySym
     override val isDelegatedProperty: Boolean
         get() = withValidityAssertion { false }
 
+    override val isDelegated: Boolean
+        get() = withValidityAssertion { false }
+
     override val receiverParameter: KaReceiverParameterSymbol?
         get() = withValidityAssertion { null }
 
@@ -545,6 +553,9 @@ private class KaFirKotlinPropertyKtDestructuringDeclarationEntryBasedSymbol : Ka
         get() = withValidityAssertion { backingPsi?.entryName ?: firSymbol.name }
 
     override val isDelegatedProperty: Boolean
+        get() = withValidityAssertion { false }
+
+    override val isDelegated: Boolean
         get() = withValidityAssertion { false }
 
     override val receiverParameter: KaReceiverParameterSymbol?

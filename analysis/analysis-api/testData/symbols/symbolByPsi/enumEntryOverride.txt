@@ -96,6 +96,7 @@ KaEnumEntrySymbol:
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -170,6 +171,7 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -235,6 +237,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
+  isDelegated: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
@@ -277,6 +280,7 @@ KaEnumEntrySymbol:
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -385,6 +389,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -429,6 +434,7 @@ KaEnumEntrySymbol:
   enumEntryInitializer: KaAnonymousObjectSymbol(<local>/<no name provided>)
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -537,6 +543,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -582,6 +589,7 @@ KaKotlinPropertySymbol:
     contextReceivers: []
     isActual: false
     isCompanion: false
+    isDelegated: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -651,6 +659,7 @@ KaKotlinPropertySymbol:
   isActual: false
   isCompanion: false
   isConst: false
+  isDelegated: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false

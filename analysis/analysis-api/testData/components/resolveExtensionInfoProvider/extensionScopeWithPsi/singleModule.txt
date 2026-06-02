@@ -108,6 +108,7 @@ callables: 5
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -163,6 +164,7 @@ callables: 5
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -198,6 +200,7 @@ callables: 5
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -249,6 +252,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
+    isDelegated: false
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
@@ -283,6 +287,7 @@ callables: 5
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -334,6 +339,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
+    isDelegated: false
     isDelegatedProperty: false
     isExpect: false
     isExtension: false
@@ -380,6 +386,7 @@ callables: 5
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -414,6 +421,7 @@ callables: 5
           isActual: false
           isCompanion: false
           isCrossinline: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -448,6 +456,7 @@ callables: 5
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -492,6 +501,7 @@ callables: 5
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -520,6 +530,7 @@ callables: 5
     isActual: false
     isCompanion: false
     isConst: false
+    isDelegated: false
     isDelegatedProperty: false
     isExpect: false
     isExtension: true
@@ -540,6 +551,7 @@ callables: 5
       contextReceivers: []
       isActual: false
       isCompanion: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false

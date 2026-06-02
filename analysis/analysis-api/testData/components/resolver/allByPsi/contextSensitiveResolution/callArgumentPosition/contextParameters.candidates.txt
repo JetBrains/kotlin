@@ -351,6 +351,7 @@ KtCallExpression(339,344): 'foo()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -428,6 +429,7 @@ KtNameReferenceExpression(339,342): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -678,6 +680,7 @@ KtCallExpression(403,408): 'foo()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -755,6 +758,7 @@ KtNameReferenceExpression(403,406): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1063,6 +1067,7 @@ KtDotQualifiedExpression(548,552): '"".a'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1120,6 +1125,7 @@ KtNameReferenceExpression(551,552): 'a'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

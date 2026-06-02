@@ -351,6 +351,7 @@ KtCallExpression(295,303): 'yield(m)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -413,6 +414,7 @@ KtNameReferenceExpression(295,300): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -499,6 +501,7 @@ KtCallExpression(312,320): 'yield(X)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -561,6 +564,7 @@ KtNameReferenceExpression(312,317): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -740,6 +744,7 @@ KtCallExpression(351,359): 'yield(X)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -802,6 +807,7 @@ KtNameReferenceExpression(351,356): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -891,6 +897,7 @@ KtCallExpression(368,376): 'yield(m)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -953,6 +960,7 @@ KtNameReferenceExpression(368,373): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1139,6 +1147,7 @@ KtCallExpression(423,431): 'yield(X)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1201,6 +1210,7 @@ KtNameReferenceExpression(423,428): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1380,6 +1390,7 @@ KtCallExpression(462,470): 'yield(X)'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1441,6 +1452,7 @@ KtNameReferenceExpression(462,467): 'yield'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

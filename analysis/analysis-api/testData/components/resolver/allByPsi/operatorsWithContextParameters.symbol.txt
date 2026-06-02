@@ -567,6 +567,7 @@ KtThisExpression(337,341): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -596,6 +597,7 @@ KtNameReferenceExpression(337,341): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1162,6 +1164,7 @@ KtThisExpression(877,881): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -1191,6 +1194,7 @@ KtNameReferenceExpression(877,881): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

@@ -182,6 +182,7 @@ KtThisExpression(147,160): 'this@iterator'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -211,6 +212,7 @@ KtNameReferenceExpression(147,151): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -294,6 +296,7 @@ KtThisExpression(207,220): 'this@iterator'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -323,6 +326,7 @@ KtNameReferenceExpression(207,211): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

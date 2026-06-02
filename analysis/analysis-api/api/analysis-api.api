@@ -877,6 +877,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaBackingFieldSy
 	public abstract fun getOwningProperty ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaKotlinPropertySymbol;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
+	public final fun isDelegated ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z
@@ -984,6 +985,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaEnumEntrySymbo
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
+	public final fun isDelegated ()Z
 	public final fun isExtension ()Z
 	public final fun isVal ()Z
 }
@@ -1007,6 +1009,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaJavaFieldSymbo
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
+	public final fun isDelegated ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z
@@ -1028,7 +1031,6 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaLocalVariableS
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
-	public abstract fun isDelegated ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z
@@ -1072,6 +1074,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaParameterSymbo
 	public final fun getModality ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolModality;
 	public final fun getReceiverParameter ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaReceiverParameterSymbol;
 	public final fun isActual ()Z
+	public final fun isDelegated ()Z
 	public final fun isExpect ()Z
 	public final fun isExtension ()Z
 	public final fun isExternal ()Z
@@ -1255,6 +1258,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaSyntheticJavaP
 	public abstract fun getJavaSetterSymbol ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaNamedFunctionSymbol;
 	public final fun getLocation ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolLocation;
 	public fun getOrigin ()Lorg/jetbrains/kotlin/analysis/api/symbols/KaSymbolOrigin;
+	public final fun isDelegated ()Z
 	public final fun isDelegatedProperty ()Z
 	public final fun isFromPrimaryConstructor ()Z
 }
@@ -1293,6 +1297,7 @@ public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaValueParameter
 
 public abstract class org/jetbrains/kotlin/analysis/api/symbols/KaVariableSymbol : org/jetbrains/kotlin/analysis/api/symbols/KaCallableSymbol, org/jetbrains/kotlin/analysis/api/symbols/markers/KaNamedSymbol {
 	public abstract fun createPointer ()Lorg/jetbrains/kotlin/analysis/api/symbols/pointers/KaSymbolPointer;
+	public abstract fun isDelegated ()Z
 	public abstract fun isVal ()Z
 }
 

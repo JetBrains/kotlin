@@ -92,6 +92,7 @@ KtThisExpression(27,31): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -121,6 +122,7 @@ KtNameReferenceExpression(27,31): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -256,6 +258,7 @@ KtThisExpression(71,75): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -285,6 +288,7 @@ KtNameReferenceExpression(71,75): 'this'
         contextReceivers: []
         isActual: false
         isCompanion: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

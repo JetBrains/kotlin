@@ -114,6 +114,7 @@ CONSTRUCTOR:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false

@@ -43,6 +43,7 @@ KaSyntheticJavaPropertySymbol:
   initializer: null
   isActual: false
   isCompanion: false
+  isDelegated: false
   isDelegatedProperty: false
   isExpect: false
   isExtension: false
@@ -90,6 +91,7 @@ KaSyntheticJavaPropertySymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -129,6 +131,7 @@ KaSyntheticJavaPropertySymbol:
         isActual: false
         isCompanion: false
         isCrossinline: false
+        isDelegated: false
         isExpect: false
         isExtension: false
         isExternal: false

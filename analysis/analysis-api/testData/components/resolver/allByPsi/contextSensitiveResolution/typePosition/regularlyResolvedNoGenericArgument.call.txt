@@ -184,6 +184,7 @@ KtNameReferenceExpression(305,306): 'y'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

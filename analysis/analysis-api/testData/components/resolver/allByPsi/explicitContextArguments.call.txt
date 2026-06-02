@@ -1088,6 +1088,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1112,6 +1113,7 @@ KtCallExpression(691,736): 'unnamed/*explicit regular*/(regular = "str2")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1185,6 +1187,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1209,6 +1212,7 @@ KtNameReferenceExpression(691,698): 'unnamed'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1300,6 +1304,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1324,6 +1329,7 @@ KtCallExpression(745,788): 'named/*explicit regular*/(regular = "str2")'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1397,6 +1403,7 @@ KtNameReferenceExpression(745,750): 'named'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1421,6 +1428,7 @@ KtNameReferenceExpression(745,750): 'named'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1520,6 +1528,7 @@ KtCallExpression(800,864): 'unnamed/*all explicit*/(explicit = Explicit(), regul
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1605,6 +1614,7 @@ KtNameReferenceExpression(800,807): 'unnamed'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1754,6 +1764,7 @@ KtCallExpression(869,931): 'named/*all explicit*/(explicit = Explicit(), regular
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1839,6 +1850,7 @@ KtNameReferenceExpression(869,874): 'named'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

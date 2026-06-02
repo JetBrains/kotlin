@@ -6,6 +6,7 @@ KaEnumEntrySymbol:
   enumEntryInitializer: null
   isActual: false
   isCompanion: true
+  isDelegated: false
   isExpect: false
   isExtension: false
   isExternal: false

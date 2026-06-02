@@ -1024,6 +1024,7 @@ KtCallExpression(488,499): 'funMember()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1049,6 +1050,7 @@ KtCallExpression(488,499): 'funMember()'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1097,6 +1099,7 @@ KtNameReferenceExpression(488,497): 'funMember'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1122,6 +1125,7 @@ KtNameReferenceExpression(488,497): 'funMember'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1172,6 +1176,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1197,6 +1202,7 @@ KtNameReferenceExpression(512,526): 'propertyMember'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1427,6 +1433,7 @@ KtCallExpression(611,629): 'funMember(a = A())'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1488,6 +1495,7 @@ KtNameReferenceExpression(611,620): 'funMember'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

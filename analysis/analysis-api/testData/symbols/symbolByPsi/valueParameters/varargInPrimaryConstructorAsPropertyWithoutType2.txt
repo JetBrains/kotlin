@@ -35,6 +35,7 @@ KaConstructorSymbol:
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -112,6 +113,7 @@ KaConstructorSymbol:
         isActual: false
         isCompanion: false
         isConst: false
+        isDelegated: false
         isDelegatedProperty: false
         isExpect: false
         isExtension: false
@@ -154,6 +156,7 @@ KaConstructorSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false

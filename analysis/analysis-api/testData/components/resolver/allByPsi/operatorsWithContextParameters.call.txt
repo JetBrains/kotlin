@@ -933,6 +933,7 @@ KtPrefixExpression(890,899): '+thisProp'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -986,6 +987,7 @@ KtOperationReferenceExpression(890,891): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1056,6 +1058,7 @@ KtPrefixExpression(908,910): '+a'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1109,6 +1112,7 @@ KtOperationReferenceExpression(908,909): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1179,6 +1183,7 @@ KtBinaryExpression(919,931): 'thisProp + 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1265,6 +1270,7 @@ KtOperationReferenceExpression(928,929): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1337,6 +1343,7 @@ KtBinaryExpression(940,945): 'a + 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1423,6 +1430,7 @@ KtOperationReferenceExpression(942,943): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1495,6 +1503,7 @@ KtArrayAccessExpression(954,965): 'thisProp[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1587,6 +1596,7 @@ KtArrayAccessExpression(974,978): 'a[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1679,6 +1689,7 @@ KtBinaryExpression(987,1004): 'thisProp[1] = A()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1762,6 +1773,7 @@ KtArrayAccessExpression(987,998): 'thisProp[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1868,6 +1880,7 @@ KtOperationReferenceExpression(999,1000): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1988,6 +2001,7 @@ KtBinaryExpression(1013,1023): 'a[1] = A()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2071,6 +2085,7 @@ KtArrayAccessExpression(1013,1017): 'a[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2177,6 +2192,7 @@ KtOperationReferenceExpression(1018,1019): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2297,6 +2313,7 @@ KtCallExpression(1032,1042): 'thisProp()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2370,6 +2387,7 @@ KtCallExpression(1051,1054): 'a()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2443,6 +2461,7 @@ KtBinaryExpression(1063,1076): 'thisProp += 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2529,6 +2548,7 @@ KtOperationReferenceExpression(1072,1074): '+='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2601,6 +2621,7 @@ KtBinaryExpression(1085,1091): 'a += 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2687,6 +2708,7 @@ KtOperationReferenceExpression(1087,1089): '+='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -2762,6 +2784,7 @@ KtPostfixExpression(1100,1110): 'thisProp++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -2850,6 +2873,7 @@ KtOperationReferenceExpression(1108,1110): '++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -2975,6 +2999,7 @@ KtPostfixExpression(1123,1126): 'a++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -3063,6 +3088,7 @@ KtOperationReferenceExpression(1124,1126): '++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -3131,6 +3157,7 @@ KtBinaryExpression(1136,1141): 'b + 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3217,6 +3244,7 @@ KtOperationReferenceExpression(1138,1139): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3289,6 +3317,7 @@ KtPrefixExpression(1150,1152): '+b'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3342,6 +3371,7 @@ KtOperationReferenceExpression(1150,1151): '+'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3412,6 +3442,7 @@ KtArrayAccessExpression(1161,1165): 'b[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3504,6 +3535,7 @@ KtBinaryExpression(1174,1184): 'b[1] = A()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3587,6 +3619,7 @@ KtArrayAccessExpression(1174,1178): 'b[1]'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3693,6 +3726,7 @@ KtOperationReferenceExpression(1179,1180): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3813,6 +3847,7 @@ KtCallExpression(1193,1196): 'b()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3886,6 +3921,7 @@ KtBinaryExpression(1205,1211): 'b += 1'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -3972,6 +4008,7 @@ KtOperationReferenceExpression(1207,1209): '+='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -4047,6 +4084,7 @@ KtPostfixExpression(1220,1223): 'b++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false
@@ -4135,6 +4173,7 @@ KtOperationReferenceExpression(1221,1223): '++'
                 contextReceivers: []
                 isActual: false
                 isCompanion: false
+                isDelegated: false
                 isExpect: false
                 isExtension: false
                 isExternal: false

@@ -155,6 +155,7 @@ KtNameReferenceExpression(255,256): 'x'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -212,6 +213,7 @@ KtNameReferenceExpression(273,274): 'y'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

@@ -131,6 +131,7 @@ KtCallExpression(251,263): 'InnerClass()'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -171,6 +172,7 @@ KtNameReferenceExpression(251,261): 'InnerClass'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

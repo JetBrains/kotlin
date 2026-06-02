@@ -41,6 +41,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false
@@ -74,6 +75,7 @@ KaNamedFunctionSymbol:
       isActual: false
       isCompanion: false
       isCrossinline: false
+      isDelegated: false
       isExpect: false
       isExtension: false
       isExternal: false

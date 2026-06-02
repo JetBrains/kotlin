@@ -241,6 +241,7 @@ KtNameReferenceExpression(217,220): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -283,6 +284,7 @@ KtBinaryExpression(229,238): 'baz = baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -326,6 +328,7 @@ KtNameReferenceExpression(229,232): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -369,6 +372,7 @@ KtOperationReferenceExpression(233,234): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -412,6 +416,7 @@ KtNameReferenceExpression(235,238): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -455,6 +460,7 @@ KtCallExpression(247,252): 'baz()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -497,6 +503,7 @@ KtNameReferenceExpression(247,250): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -672,6 +679,7 @@ KtNameReferenceExpression(333,336): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -714,6 +722,7 @@ KtBinaryExpression(349,358): 'baz = baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -757,6 +766,7 @@ KtNameReferenceExpression(349,352): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -800,6 +810,7 @@ KtOperationReferenceExpression(353,354): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -843,6 +854,7 @@ KtNameReferenceExpression(355,358): 'baz'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -983,6 +995,7 @@ KtNameReferenceExpression(383,386): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1025,6 +1038,7 @@ KtBinaryExpression(399,408): 'foo = foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1068,6 +1082,7 @@ KtNameReferenceExpression(399,402): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1111,6 +1126,7 @@ KtOperationReferenceExpression(403,404): '='
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1154,6 +1170,7 @@ KtNameReferenceExpression(405,408): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1197,6 +1214,7 @@ KtCallExpression(422,427): 'foo()'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1239,6 +1257,7 @@ KtNameReferenceExpression(422,425): 'foo'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false

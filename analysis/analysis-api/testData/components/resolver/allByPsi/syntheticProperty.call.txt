@@ -756,6 +756,7 @@ KtPostfixExpression(219,230): 'something++'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -796,6 +797,7 @@ KtNameReferenceExpression(219,228): 'something'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -857,6 +859,7 @@ KtOperationReferenceExpression(228,230): '++'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -918,6 +921,7 @@ KtPostfixExpression(235,248): '(something)++'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -961,6 +965,7 @@ KtNameReferenceExpression(236,245): 'something'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1022,6 +1027,7 @@ KtOperationReferenceExpression(246,248): '++'
             contextReceivers: []
             isActual: false
             isCompanion: false
+            isDelegated: false
             isExpect: false
             isExtension: false
             isExternal: false
@@ -1062,6 +1068,7 @@ KtBinaryExpression(253,268): '(something) = 1'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1106,6 +1113,7 @@ KtNameReferenceExpression(254,263): 'something'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false
@@ -1147,6 +1155,7 @@ KtOperationReferenceExpression(265,266): '='
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

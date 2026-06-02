@@ -10,6 +10,7 @@ KtCallableReferenceExpression(102,107): '::add'
           contextReceivers: []
           isActual: false
           isCompanion: false
+          isDelegated: false
           isExpect: false
           isExtension: false
           isExternal: false

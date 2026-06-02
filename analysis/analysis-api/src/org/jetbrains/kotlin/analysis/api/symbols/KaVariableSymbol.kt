@@ -32,6 +32,11 @@ public sealed class KaVariableSymbol : KaCallableSymbol(), KaNamedSymbol {
      */
     public abstract val isVal: Boolean
 
+    /**
+     * Whether the variable is a [delegated variable](https://kotlinlang.org/docs/delegated-properties.html).
+     */
+    public abstract val isDelegated: Boolean
+
     abstract override fun createPointer(): KaSymbolPointer<KaVariableSymbol>
 }
 
@@ -83,6 +88,7 @@ public abstract class KaBackingFieldSymbol : KaVariableSymbol() {
     final override val callableId: CallableId? get() = withValidityAssertion { null }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
+    final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     // KT-70767: for the backing field expect/action is meaningless as it doesn't have such a semantic
@@ -145,6 +151,7 @@ public abstract class KaEnumEntrySymbol : KaVariableSymbol() {
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
+    final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
 
     @KaExperimentalApi
@@ -199,6 +206,7 @@ public abstract class KaJavaFieldSymbol : KaVariableSymbol() {
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
     final override val isExtension: Boolean get() = withValidityAssertion { false }
     final override val receiverParameter: KaReceiverParameterSymbol? get() = withValidityAssertion { null }
+    final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val modality: KaSymbolModality get() = withValidityAssertion { KaSymbolModality.FINAL }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isActual: Boolean get() = withValidityAssertion { false }
@@ -453,6 +461,7 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
 
     final override val hasBackingField: Boolean get() = withValidityAssertion { true }
     final override val isDelegatedProperty: Boolean get() = withValidityAssertion { false }
+    final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val hasGetter: Boolean get() = withValidityAssertion { true }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }
 
@@ -492,11 +501,6 @@ public abstract class KaLocalVariableSymbol : KaVariableSymbol() {
      */
     public abstract val isLateInit: Boolean
 
-    /**
-     * Whether the variable is a [delegated variable](https://kotlinlang.org/docs/delegated-properties.html#local-delegated-properties).
-     */
-    public abstract val isDelegated: Boolean
-
     @KaExperimentalApi
     final override val compilerVisibility: Visibility get() = withValidityAssertion { Visibilities.Local }
 
@@ -520,6 +524,7 @@ public sealed class KaParameterSymbol : KaVariableSymbol() {
     @KaExperimentalApi
     final override val contextReceivers: List<KaContextReceiver> get() = withValidityAssertion { emptyList() }
     final override val isVal: Boolean get() = withValidityAssertion { true }
+    final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val isExpect: Boolean get() = withValidityAssertion { false }
     final override val isActual: Boolean get() = withValidityAssertion { false }
     final override val isExternal: Boolean get() = withValidityAssertion { false }

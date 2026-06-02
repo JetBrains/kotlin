@@ -95,6 +95,11 @@ internal class KaFe10PsiKotlinPropertySymbol(
             psi.hasDelegate()
         }
 
+    override val isDelegated: Boolean
+        get() = withValidityAssertion {
+            psi.hasDelegate()
+        }
+
     override val isFromPrimaryConstructor: Boolean
         get() = withValidityAssertion { false }
 
