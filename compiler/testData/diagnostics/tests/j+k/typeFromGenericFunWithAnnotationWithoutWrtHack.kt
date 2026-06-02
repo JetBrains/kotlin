@@ -92,7 +92,7 @@ fun genericFunWithAnnotations(x: GenericFunWithAnnotation) {
     x.foo5<String?>(JavaBox(null))
     takeString(x.<!CANNOT_INFER_PARAMETER_TYPE!>bar5<!>()?.a)
 
-    x.foo6(JavaBox(null))
+    x.foo6(<!ARGUMENT_TYPE_MISMATCH!>JavaBox(null)<!>)
     x.foo6<String>(JavaBox(null))
     x.foo6<String?>(JavaBox(null))
     x.<!CANNOT_INFER_PARAMETER_TYPE!>foo6<!>(<!NULL_FOR_NONNULL_TYPE!>null<!>)

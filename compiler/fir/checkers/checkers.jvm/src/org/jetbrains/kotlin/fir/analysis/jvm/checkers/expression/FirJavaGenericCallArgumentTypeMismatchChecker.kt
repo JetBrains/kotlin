@@ -19,7 +19,9 @@ import org.jetbrains.kotlin.fir.expressions.impl.FirResolvedArgumentList
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedFunctionSymbol
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeCapturedType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.contains
 import org.jetbrains.kotlin.fir.types.isSubtypeOf
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -43,7 +45,9 @@ object FirJavaGenericCallArgumentTypeMismatchChecker : FirFunctionCallChecker(Mp
             val parameterType = parameter.returnTypeRef.coneType.let(substitutor::substituteOrSelf)
             if (parameterType.toRegularClassSymbol()?.isJavaOrEnhancement != true) continue
             val argumentType = argument.resolvedType
-            if (!argumentType.isSubtypeOf(parameterType, context.session)) {
+            if (!parameterType.contains { it is ConeCapturedType } &&
+                !argumentType.isSubtypeOf(parameterType, context.session)
+            ) {
                 reporter.reportOn(
                     argument.source,
                     FirErrors.ARGUMENT_TYPE_MISMATCH,
