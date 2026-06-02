@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("power-assert-convention")
     id("gradle-plugin-compiler-dependency-configuration")
     id("project-tests-convention")
     id("test-inputs-check")

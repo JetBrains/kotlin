@@ -45,6 +45,7 @@ dependencies {
     api(project(":utilities"))
     implementation(kotlinBuildHelpers())
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-power-assert:${project.bootstrapKotlinVersion}")
     implementation(libs.gradle.pluginPublish.gradlePlugin)
 
     // Shadow plugin has some interaction with spdx plugin leading to:

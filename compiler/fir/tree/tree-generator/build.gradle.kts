@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("power-assert-convention")
     application
 }
 

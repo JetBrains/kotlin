@@ -9,6 +9,7 @@ import TestCompilePaths.KOTLIN_STDLIB_SOURCES_ROOT_PATH
 
 plugins {
     kotlin("jvm")
+    id("power-assert-convention")
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
