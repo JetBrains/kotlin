@@ -1538,6 +1538,47 @@ class ComposeCrossModuleTests(useFir: Boolean) : AbstractCodegenTest(useFir) {
         )
     }
 
+    @Test
+    fun openFunctionDefaultParameterCrossModule() {
+        assumeTrue(useFir)
+        compile(
+            mapOf(
+                "Base" to mapOf(
+                    "base/Base.kt" to """
+                    package base
+
+                    import androidx.compose.runtime.Composable
+
+                    open class Test {
+                        @Composable open fun Test(int: Int = 0) = int
+                    }
+                    """
+                ),
+                "Main" to mapOf(
+                    "Main.kt" to """
+                    package main
+
+                    import base.Test
+                    import androidx.compose.runtime.Composable
+                    
+                    class TestImpl : Test() {
+                        @Composable override fun Test(int: Int) = -1
+                    }
+                    """
+                )
+            ),
+            validate = { bytecode ->
+                val matcher = Regex("public Test\\(ILandroidx/compose/runtime/Composer;I\\)I")
+                val methodCount = matcher.findAll(bytecode).count()
+                assertEquals(
+                    "Expected exactly 2 methods with that signature, one for definition, one for override",
+                    2,
+                    methodCount
+                )
+            }
+        )
+    }
+
     private fun compile(
         modules: Map<String, Map<String, String>>,
         dumpClasses: Boolean = false,
