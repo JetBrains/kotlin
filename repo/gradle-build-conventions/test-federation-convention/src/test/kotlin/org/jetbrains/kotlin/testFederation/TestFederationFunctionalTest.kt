@@ -313,6 +313,13 @@ class TestFederationFunctionalTest {
         }
     }
 
+    /**
+     * We test running tests in 'test batches'.
+     * The test will run tests in three 'buckets'/batches.
+     * We then make sure that
+     * a) Test batches do not overlap
+     * b) Combining tests from all batches will result in all tests being executed
+     */
     @Test
     fun `test - 3 test batches`() {
         cleanTest()
