@@ -5,10 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonObject
-import com.google.gson.JsonParser
-import com.google.gson.stream.JsonWriter
+import kotlinx.serialization.ExperimentalSerializationApi
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.Input
@@ -252,33 +249,94 @@ internal fun KotlinProjectStructureMetadata.toXmlDocument(): Document {
     }
 }
 
+@OptIn(ExperimentalSerializationApi::class)
 internal fun KotlinProjectStructureMetadata.toJson(): String {
-    val gson = GsonBuilder().setPrettyPrinting().create()
-    val stringWriter = StringWriter()
-    with(gson.newJsonWriter(stringWriter)) {
-        val obj: JsonWriter.(String, JsonWriter.() -> Unit) -> Unit =
-            { name, content -> if (name.isNotEmpty()) name(name); beginObject(); content(); endObject() }
-        val property: JsonWriter.(String, String) -> Unit = { name, value -> name(name); value(value) }
-        val array: JsonWriter.(String, JsonWriter.() -> Unit) -> Unit =
-            { name, contents -> name(name); beginArray(); contents(); endArray() }
-
-        beginObject()
-        serialize(this, obj, array, { _, fn -> obj("", fn) }, property, { key, values -> array(key) { values.forEach { value(it) } } })
-        endObject()
-    }
-    return stringWriter.toString()
+    val json = KotlinProjectStructureMetadataJson(
+        projectStructure = KotlinProjectStructureMetadataNodeJson(
+            formatVersion = formatVersion,
+            isPublishedAsRoot = isPublishedAsRoot.toString(),
+            variants = sourceSetNamesByVariantName.map { (variantName, sourceSets) ->
+                VariantWrapperJson(
+                    variant = VariantNodeJson(
+                        name = variantName,
+                        sourceSet = sourceSets.toList(),
+                    )
+                )
+            },
+            sourceSets = sourceSetNames.map { sourceSetName ->
+                SourceSetWrapperJson(
+                    sourceSet = SourceSetNodeJson(
+                        name = sourceSetName,
+                        dependsOn = sourceSetsDependsOnRelation[sourceSetName].orEmpty().toList(),
+                        moduleDependency = sourceSetModuleDependencies[sourceSetName].orEmpty().map { moduleDependency ->
+                            moduleDependency.groupId + ":" + moduleDependency.moduleId
+                        },
+                        sourceSetCInteropMetadataDirectory = sourceSetCInteropMetadataDirectory[sourceSetName],
+                        binaryLayout = sourceSetBinaryLayout[sourceSetName]?.name,
+                        hostSpecific = if (sourceSetName in hostSpecificSourceSets) "true" else null,
+                    )
+                )
+            },
+        )
+    )
+    return org.jetbrains.kotlin.gradle.internal.json.KgpJson.prettyPrinted
+        .encodeToString(KotlinProjectStructureMetadataJson.serializer(), json)
 }
 
 private val NodeList.elements: Iterable<Element> get() = (0 until length).map { this@elements.item(it) }.filterIsInstance<Element>()
 
+@OptIn(ExperimentalSerializationApi::class)
 internal fun parseKotlinSourceSetMetadataFromJson(string: String): KotlinProjectStructureMetadata {
-    @Suppress("DEPRECATION") // The replacement doesn't compile against old dependencies such as AS 4.0
-    val json = JsonParser().parse(string).asJsonObject
-    val valueNamed: JsonObject.(String) -> String? = { name -> get(name)?.asString }
-    val multiObjects: JsonObject.(String?) -> Iterable<JsonObject> = { name -> get(name).asJsonArray.map { it.asJsonObject } }
-    val multiValues: JsonObject.(String?) -> Iterable<String> = { name -> get(name).asJsonArray.map { it.asString } }
+    val json = org.jetbrains.kotlin.gradle.internal.json.KgpJson.default
+        .decodeFromString(KotlinProjectStructureMetadataJson.serializer(), string)
+    val projectStructure = json.projectStructure
 
-    return parseKotlinSourceSetMetadata({ json.get(ROOT_NODE_NAME).asJsonObject }, valueNamed, multiObjects, multiValues)
+    val sourceSetsByVariant = projectStructure.variants.associate { wrapper ->
+        wrapper.variant.name to wrapper.variant.sourceSet.toSet()
+    }
+
+    val sourceSetDependsOnRelation = mutableMapOf<String, Set<String>>()
+    val sourceSetModuleDependencies = mutableMapOf<String, Set<ModuleDependencyIdentifier>>()
+    val sourceSetBinaryLayout = mutableMapOf<String, SourceSetMetadataLayout>()
+    val sourceSetCInteropMetadataDirectory = mutableMapOf<String, String>()
+    val hostSpecificSourceSets = mutableSetOf<String>()
+    val sourceSetNames = mutableSetOf<String>()
+
+    projectStructure.sourceSets.forEach { wrapper ->
+        val sourceSetNode = wrapper.sourceSet
+        val sourceSetName = sourceSetNode.name
+        sourceSetNames.add(sourceSetName)
+
+        sourceSetDependsOnRelation[sourceSetName] = sourceSetNode.dependsOn.toSet()
+        sourceSetModuleDependencies[sourceSetName] = sourceSetNode.moduleDependency.mapTo(mutableSetOf()) {
+            val (groupId, moduleId) = it.split(":")
+            ModuleDependencyIdentifier(groupId, moduleId)
+        }
+
+        sourceSetNode.sourceSetCInteropMetadataDirectory?.let { directory ->
+            sourceSetCInteropMetadataDirectory[sourceSetName] = directory
+        }
+        sourceSetNode.binaryLayout?.let { layoutName ->
+            SourceSetMetadataLayout.byName(layoutName)?.let { layout ->
+                sourceSetBinaryLayout[sourceSetName] = layout
+            }
+        }
+        if (sourceSetNode.hostSpecific?.toBoolean() == true) {
+            hostSpecificSourceSets.add(sourceSetName)
+        }
+    }
+
+    return KotlinProjectStructureMetadata(
+        sourceSetNamesByVariantName = sourceSetsByVariant,
+        sourceSetsDependsOnRelation = sourceSetDependsOnRelation,
+        sourceSetBinaryLayout = sourceSetBinaryLayout,
+        sourceSetModuleDependencies = sourceSetModuleDependencies,
+        sourceSetCInteropMetadataDirectory = sourceSetCInteropMetadataDirectory,
+        hostSpecificSourceSets = hostSpecificSourceSets,
+        isPublishedAsRoot = projectStructure.isPublishedAsRoot.toBoolean(),
+        sourceSetNames = sourceSetNames,
+        formatVersion = projectStructure.formatVersion,
+    )
 }
 
 internal fun parseKotlinSourceSetMetadataFromXml(document: Document): KotlinProjectStructureMetadata {
