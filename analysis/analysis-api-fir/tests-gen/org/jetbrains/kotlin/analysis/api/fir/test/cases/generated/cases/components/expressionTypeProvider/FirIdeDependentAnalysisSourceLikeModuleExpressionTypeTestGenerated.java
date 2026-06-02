@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisSessionMode;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiMode;
 import org.jetbrains.kotlin.analysis.test.framework.services.TargetPlatformEnum;
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest;
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest;
 import org.jetbrains.kotlin.test.TestMetadata;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -27,14 +27,14 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType")
 @TestDataPath("$PROJECT_ROOT")
-public class FirIdeNormalAnalysisSourceLikeModuleHLExpressionTypeTestGenerated extends AbstractHLExpressionTypeTest {
+public class FirIdeDependentAnalysisSourceLikeModuleExpressionTypeTestGenerated extends AbstractExpressionTypeTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
     return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
         TestModuleKind.SourceLike,
-        AnalysisSessionMode.Normal,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide,
         TargetPlatformEnum.JVM
       )
