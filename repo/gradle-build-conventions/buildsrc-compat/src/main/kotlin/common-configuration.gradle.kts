@@ -23,7 +23,6 @@ version = kotlinVersion
 project.configureJvmDefaultToolchain()
 project.addEmbeddedConfigurations()
 project.configureJavaCompile()
-project.configureJavaBasePlugin()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
 project.configureTests()
@@ -62,23 +61,6 @@ fun Project.configureJavaCompile() {
             if (!kotlinBuildProperties.disableWerror) {
                 options.compilerArgs.add("-Werror")
             }
-        }
-    }
-}
-
-fun Project.configureJavaBasePlugin() {
-    plugins.withId("java-base") {
-        fun File.toProjectRootRelativePathOrSelf() = (relativeToOrNull(rootDir)?.takeUnless { it.startsWith("..") } ?: this).path
-
-        fun FileCollection.printClassPath(role: String) =
-            println("${project.path} $role classpath:\n  ${joinToString("\n  ") { it.toProjectRootRelativePathOrSelf() }}")
-
-        val javaExtension = javaPluginExtension()
-        tasks {
-            register("printCompileClasspath") { doFirst { javaExtension.sourceSets["main"].compileClasspath.printClassPath("compile") } }
-            register("printRuntimeClasspath") { doFirst { javaExtension.sourceSets["main"].runtimeClasspath.printClassPath("runtime") } }
-            register("printTestCompileClasspath") { doFirst { javaExtension.sourceSets["test"].compileClasspath.printClassPath("test compile") } }
-            register("printTestRuntimeClasspath") { doFirst { javaExtension.sourceSets["test"].runtimeClasspath.printClassPath("test runtime") } }
         }
     }
 }
