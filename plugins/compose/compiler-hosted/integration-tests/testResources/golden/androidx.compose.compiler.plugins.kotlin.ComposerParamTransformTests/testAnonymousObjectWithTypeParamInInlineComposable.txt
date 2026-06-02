@@ -16,6 +16,7 @@ fun <T> state(): StateCell<T> {
 // ------------------------------------------
 
 @Composable
+@FunctionKeyMeta(key = -1059696382, startOffset = 84, endOffset = 223)
 fun <T> state(%composer: Composer?, %changed: Int): StateCell<T> {
   sourceInformationMarkerStart(%composer, <>, "C(state)<scope>:Test.kt")
   if (isTraceInProgress()) {

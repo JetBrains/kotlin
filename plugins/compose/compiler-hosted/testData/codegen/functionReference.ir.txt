@@ -9,6 +9,7 @@ MODULE_FRAGMENT
               VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
               annotations:
                 Composable
+                FunctionKeyMeta(key = -1823347100, startOffset = 131, endOffset = 144)
               BLOCK_BODY
                 BLOCK type=kotlin.Unit origin=null
                   CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
@@ -38,6 +39,7 @@ MODULE_FRAGMENT
               VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
               annotations:
                 Composable
+                FunctionKeyMeta(key = 1703528495, startOffset = 157, endOffset = 190)
               BLOCK_BODY
                 BLOCK type=kotlin.Unit origin=null
                   CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
@@ -65,6 +67,7 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
       annotations:
         Composable
+        FunctionKeyMeta(key = 1442719953, startOffset = 129, endOffset = 160)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.App' type=kotlin.Unit origin=null

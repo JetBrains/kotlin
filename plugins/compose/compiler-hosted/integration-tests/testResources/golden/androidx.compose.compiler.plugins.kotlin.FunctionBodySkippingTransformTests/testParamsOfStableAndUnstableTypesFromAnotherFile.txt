@@ -18,6 +18,7 @@ internal fun Test(stable: Stable, unstable: Unstable) {
 // ------------------------------------------
 
 @Composable
+@FunctionKeyMeta(key = 1947762947, startOffset = 174, endOffset = 258)
 internal fun Test(stable: Stable, unstable: Unstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(stable,unstable):Test.kt")

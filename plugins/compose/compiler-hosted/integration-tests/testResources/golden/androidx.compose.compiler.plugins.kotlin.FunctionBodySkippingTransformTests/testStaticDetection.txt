@@ -43,6 +43,7 @@ val stableTopLevelProp: Modifier = Modifier
 val normInt: Int = 345
 val stableTopLevelProp: Modifier = Companion
 @Composable
+@FunctionKeyMeta(key = -1415351701, startOffset = 268, endOffset = 545)
 fun A(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)<D>,<{}>,<C({})>,<C(stab...>,<C(16.d...>,<C(Dp(1...>,<C(16.d...>,<C(norm...>,<C(Int....>,<C(stab...>,<C(Modi...>,<C(Foo....>,<C(cons...>,<C(123)>,<C(123>,<C(x)>,<C(x>:Test.kt")
@@ -86,6 +87,7 @@ fun A(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
+@FunctionKeyMeta(key = -1064551764, startOffset = 598, endOffset = 658)
 fun B(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)<C(Math...>,<C(Math...>:Test.kt")

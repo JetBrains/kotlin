@@ -29,6 +29,7 @@ fun A(x: Int) {
 
 val fooGlobal: Int = 10
 @Composable
+@FunctionKeyMeta(key = 1831661318, startOffset = 185, endOffset = 385)
 fun A(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)N(x)<B(>:Test.kt")

@@ -28,6 +28,7 @@ class Foo(val foo: Int) {
     }
 }
 @Composable
+@FunctionKeyMeta(key = 526939746, startOffset = 124, endOffset = 194)
 fun Test(x: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(x)<A(x)>,<A(Foo(...>,<rememb...>,<A(reme...>:Test.kt")

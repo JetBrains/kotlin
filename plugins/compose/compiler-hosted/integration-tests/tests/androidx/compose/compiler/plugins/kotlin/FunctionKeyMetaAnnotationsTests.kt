@@ -131,7 +131,7 @@ class FunctionKeyMetaAnnotationsTests : AbstractCodegenTest() {
     }
 
     private fun renderAnnotatedDeclarations(files: List<OutputFile>): String = buildString {
-        files.forEachIndexed forEachFile@{ fileIndex, file ->
+        files.forEachIndexed { fileIndex, file ->
             val node = ClassNode()
             val reader = ClassReader(file.asByteArray())
             reader.accept(node, 0)
@@ -139,10 +139,11 @@ class FunctionKeyMetaAnnotationsTests : AbstractCodegenTest() {
 
             appendLine("${node.name} {")
 
-            node.methods.forEachIndexed forEachMethod@{ methodIndex, method ->
-                val annotation = method.visibleAnnotations.orEmpty().find { annotationNode ->
-                    annotationNode.desc == "Landroidx/compose/runtime/internal/FunctionKeyMeta;"
-                }
+            node.methods.forEachIndexed { _, method ->
+                val annotation = (method.visibleAnnotations.orEmpty() + method.invisibleAnnotations.orEmpty())
+                    .find { annotationNode ->
+                        annotationNode.desc == "Landroidx/compose/runtime/internal/FunctionKeyMeta;"
+                    }
                 appendLine(
                     "    ${method.name} ${method.desc} ${
                         annotation?.values?.chunked(2)?.joinToString(", ", prefix = "[", postfix = "]") { [k, v] -> "$k=$v" }

@@ -24,6 +24,7 @@ class Unstable(var x: Int) {
     }
 }
 @Composable
+@FunctionKeyMeta(key = 175113561, startOffset = 112, endOffset = 271)
 fun Test(param: String, unstable: Unstable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(param,unstable)<{>,<Wrappe...>:Test.kt")

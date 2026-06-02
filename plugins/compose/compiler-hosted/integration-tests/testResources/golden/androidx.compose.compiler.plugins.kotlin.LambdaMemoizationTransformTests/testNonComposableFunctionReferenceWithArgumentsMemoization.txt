@@ -26,6 +26,7 @@ class Stable {
     }
 }
 @Composable
+@FunctionKeyMeta(key = 2053756612, startOffset = 218, endOffset = 350)
 fun Something(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Something)<rememb...>,<x::qux>:Test.kt")

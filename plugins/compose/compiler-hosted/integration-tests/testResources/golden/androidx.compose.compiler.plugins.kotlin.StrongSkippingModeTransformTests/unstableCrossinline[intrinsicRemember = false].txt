@@ -35,6 +35,7 @@ class MyUnstableViewModel(var text: String?) {
     }
 }
 @Composable
+@FunctionKeyMeta(key = 905288344, startOffset = 455, endOffset = 741)
 fun Scratch(vm: MyUnstableViewModel, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
