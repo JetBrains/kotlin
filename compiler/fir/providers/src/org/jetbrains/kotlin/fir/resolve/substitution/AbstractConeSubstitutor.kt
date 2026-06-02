@@ -78,7 +78,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
     }
 
-    private fun ConeIntersectionType.substituteIntersectedTypes(): ConeIntersectionType? {
+    private fun ConeIntersectionType.substituteIntersectedTypes(): ConeKotlinType? {
         val substitutedTypes = ArrayList<ConeKotlinType>(intersectedTypes.size)
         var somethingIsSubstituted = false
         for (type in intersectedTypes) {
@@ -90,8 +90,9 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         val substitutedUpperBound = substituteOrNull(upperBoundForApproximation)
         if (!somethingIsSubstituted && substitutedUpperBound == null) return null
 
-        @OptIn(DelicateIntersectionConstructor::class)
-        return ConeIntersectionType(substitutedTypes, substitutedUpperBound ?: upperBoundForApproximation)
+        return ConeTypeIntersector.intersectTypes(typeContext, substitutedTypes).let {
+            if (it is ConeIntersectionType) it.withUpperBound(substitutedUpperBound ?: upperBoundForApproximation) else it
+        }
     }
 
     protected fun ConeDefinitelyNotNullType.substituteOriginal(): ConeKotlinType? {
