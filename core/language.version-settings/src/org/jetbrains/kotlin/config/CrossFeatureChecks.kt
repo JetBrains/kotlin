@@ -17,7 +17,7 @@ class CrossFeatureChecksResultsCollector {
 }
 
 context(context: CrossFeatureChecksResultsCollector)
-internal fun LanguageFeature.checkSinceVersionIsAtLeast(vararg otherFeatures: LanguageFeature) {
+internal fun LanguageFeature.checkEnabledNotEarlierThan(vararg otherFeatures: LanguageFeature) {
     sinceVersion?.let {
         for (other in otherFeatures) {
             if (other.sinceVersion == null || other.sinceVersion > sinceVersion) {
@@ -27,24 +27,25 @@ internal fun LanguageFeature.checkSinceVersionIsAtLeast(vararg otherFeatures: La
     }
 }
 
+/**
+ * @param sinceVersionMustBeSet if `true`, also check that the feature targets some version once dependee targets one
+ */
 context(context: CrossFeatureChecksResultsCollector)
-internal fun LanguageFeature.checkSinceVersionIsNotSetOrMoreThan(vararg otherFeatures: LanguageFeature) {
-    sinceVersion?.let {
+internal fun LanguageFeature.checkEnabledLaterThan(
+    vararg otherFeatures: LanguageFeature,
+    sinceVersionMustBeSet: Boolean = false,
+) {
+    if (sinceVersion != null) {
         for (other in otherFeatures) {
             if (other.sinceVersion == null || other.sinceVersion >= sinceVersion) {
                 context.addFailedCheck("Expected $this.sinceVersion > $other.sinceVersion")
             }
         }
-    }
-}
-
-context(context: CrossFeatureChecksResultsCollector)
-internal fun LanguageFeature.checkSinceVersionIsSetIfSetFor(vararg otherFeatures: LanguageFeature) {
-    if (sinceVersion != null) return
-    for (other in otherFeatures) {
-        if (other.sinceVersion != null) {
-            context.addFailedCheck("Expected $this.sinceVersion != null because $other.sinceVersion != null")
-            return
+    } else if (sinceVersionMustBeSet) {
+        for (other in otherFeatures) {
+            if (other.sinceVersion != null) {
+                context.addFailedCheck("Expected $this.sinceVersion != null because $other.sinceVersion != null")
+            }
         }
     }
 }

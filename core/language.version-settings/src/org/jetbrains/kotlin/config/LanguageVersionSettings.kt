@@ -17,7 +17,9 @@ sealed class LanguageFeatureBehaviorAfterSinceVersion {
 }
 
 /**
- * @property sinceVersion determines in which Language Version the feature becomes enabled by default
+ * @property sinceVersion
+ * Determines in which Language Version the feature becomes enabled by default. If `null`, then it means LV is
+ * not decided yet. When comparing `sinceVersion` fields, `null` should be considered greater than any version.
  * @property sinceApiVersion determines minimal API Version required for using the feature
  * @property enabledInProgressiveMode
  * If 'true', then this feature will be automatically enabled under '-progressive' mode if `sinceKotlin` is set.
@@ -545,7 +547,7 @@ enum class LanguageFeature(
     EagerLambdaAnalysis(sinceVersion = KOTLIN_2_5, "KT-51107") {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {
-            checkSinceVersionIsAtLeast(
+            checkEnabledNotEarlierThan(
                 CallCompletionRefinementsFor25,
                 UnitConversionsOnArbitraryExpressions,
                 InferThrowableTypeParameterToUpperBound,
@@ -627,8 +629,7 @@ enum class LanguageFeature(
     ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {
-            checkSinceVersionIsNotSetOrMoreThan(CompanionBlocksAndExtensions)
-            checkSinceVersionIsSetIfSetFor(CompanionBlocksAndExtensions)
+            checkEnabledLaterThan(CompanionBlocksAndExtensions, sinceVersionMustBeSet = true)
         }
     },
 
