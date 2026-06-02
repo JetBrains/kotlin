@@ -62,7 +62,7 @@ KtCallExpression(122,125): 'C()'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    isInBestCandidates = true
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -79,7 +79,7 @@ KtCallExpression(122,125): 'C()'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    isInBestCandidates = false
+    isInBestCandidates = true
 
 KtNameReferenceExpression(122,123): 'C'
   KaApplicableCallCandidate:
@@ -100,7 +100,7 @@ KtNameReferenceExpression(122,123): 'C'
         callableId = test/invoke
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    isInBestCandidates = true
+    isInBestCandidates = false
 
   KaApplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
@@ -117,7 +117,7 @@ KtNameReferenceExpression(122,123): 'C'
         callableId = null
       typeArgumentsMapping = {}
       valueArgumentMapping = {}
-    isInBestCandidates = false
+    isInBestCandidates = true
 
 KtValueArgumentList(123,125): '()'
   NO_CANDIDATES

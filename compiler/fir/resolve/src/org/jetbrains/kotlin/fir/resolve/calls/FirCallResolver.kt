@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
+import org.jetbrains.kotlin.resolve.calls.tower.shouldStopResolve
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -1094,6 +1095,7 @@ class AllCandidatesCollector(
     resolutionStageRunner: ResolutionStageRunner
 ) : CandidateCollector(components, resolutionStageRunner) {
     private val allCandidatesMap = mutableMapOf<FirBasedSymbol<*>, Candidate>()
+    private var bestCandidates: List<Candidate>? = null
 
     override fun consumeCandidate(group: TowerGroup, candidate: Candidate, context: ResolutionContext): CandidateApplicability {
         // Filter duplicate symbols. In the case of typealias constructor calls, we consider the original constructor for uniqueness.
@@ -1108,6 +1110,28 @@ class AllCandidatesCollector(
 
     // We want to get candidates at all tower levels.
     override fun shouldStopAtTheGroup(group: TowerGroup): Boolean = false
+
+    /**
+     * `result.candidates` is computed via [AllCandidatesCollector], which never stops the tower walk
+     * (`shouldStopAtTheGroup == false`). Because of that, a candidate found on a higher-priority tower level that
+     * normal stop-early resolution would never reach can evict the candidate actually selected by the call.
+     *
+     * For example, for a qualifier call `C()` with a `companion operator fun C.invoke()` (KT-86685), the all-candidate
+     * walk reaches the companion `invoke` extension and reports it as the only best candidate, even though the call
+     * resolves to the constructor. To keep `isInBestCandidates` consistent with the actual resolution result, anchor
+     * the best candidate to the first resolved group.
+     */
+    override fun dropOldCandidates() {
+        if (currentApplicability.shouldStopResolve && bestCandidates == null) {
+            bestCandidates = super.bestCandidates().toList()
+        }
+
+        super.dropOldCandidates()
+    }
+
+    override fun bestCandidates(): List<Candidate> {
+        return bestCandidates ?: super.bestCandidates()
+    }
 
     val allCandidates: Collection<Candidate>
         get() = allCandidatesMap.values
