@@ -7,6 +7,7 @@ plugins {
     id("common-configuration")
     id("com.autonomousapps.dependency-analysis")
     kotlin("jvm")
+    id("power-assert-convention")
     id("d8-configuration")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")

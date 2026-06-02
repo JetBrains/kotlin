@@ -97,6 +97,7 @@ val distLibraryProjects = listOfNotNull(
     ":kotlin-daemon-client",
     ":kotlin-main-kts",
     ":kotlin-preloader",
+    ":kotlin-power-assert-runtime",
     // Although, Kotlin compiler is compiled against reflect of an older version (which is bundled into minimal supported IDEA). We put
     // SNAPSHOT reflect into the dist because we use reflect dist in user code compile classpath (see JvmArgumentsKt.configureStandardLibs).
     // We can use reflect of a bigger version in Kotlin compiler runtime, because kotlin-reflect follows backwards binary compatibility
