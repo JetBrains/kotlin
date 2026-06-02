@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.express
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionInfoProvider.AbstractWhenMissingCasesTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractDeclarationReturnTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpectedExpressionTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractHLExpressionTypeTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.expressionTypeProvider.AbstractExpressionTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.fileAnnotationProvider.AbstractContainingFileAnnotationProviderTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
@@ -408,7 +408,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTestsForSourceLike
             model(it, "expectedExpressionType")
         }
 
-        test<AbstractHLExpressionTypeTest> {
+        test<AbstractExpressionTypeTest> {
             model(it, "expressionType")
         }
 
