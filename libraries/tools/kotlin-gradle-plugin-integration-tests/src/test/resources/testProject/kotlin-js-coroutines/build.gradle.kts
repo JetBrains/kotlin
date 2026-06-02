@@ -14,7 +14,7 @@ kotlin {
     }
 
     sourceSets {
-        val jsMain by getting {
+        val jsMain = getByName("jsMain") {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
             }

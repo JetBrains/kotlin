@@ -262,7 +262,7 @@ class SubpluginsIT : KGPBaseTest() {
                 }
                 
                 buildscript {
-                    val kotlin_version: String by extra
+                    val kotlin_version = extra["kotlin_version"]
                     repositories {
                         mavenLocal()
                     }

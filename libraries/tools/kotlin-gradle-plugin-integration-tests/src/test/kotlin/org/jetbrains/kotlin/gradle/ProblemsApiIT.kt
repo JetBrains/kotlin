@@ -14,14 +14,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 @DisplayName("Problems API tests")
-@GradleTestVersions(
-    minVersion = TestVersions.Gradle.G_8_6 // Problems Api available only from Gradle 8.6
-)
 @OtherGradlePluginTests
 class ProblemsApiIT : KGPBaseTest() {
     @GradleTest
     @GradleTestVersions(
-        minVersion = TestVersions.Gradle.G_8_11 // html reports available only from Gradle 8.11
+        minVersion = TestVersions.Gradle.G_8_11, // html reports available only from Gradle 8.11
+        additionalVersions = [TestVersions.Gradle.G_9_5],
     )
     @DisplayName("Test problems emitted")
     fun testProblemsEmitted(gradleVersion: GradleVersion) {
@@ -101,7 +99,7 @@ class ProblemsApiIT : KGPBaseTest() {
                             )
                         )
                     }
-                } else {
+                } else if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) {
                     buildList {
                         add(
                             ProblemsApiDiagnosticG94(
@@ -146,6 +144,65 @@ class ProblemsApiIT : KGPBaseTest() {
                                 locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
                                 problem = emptyList(),
                                 severity = "ERROR",
+                                problemDetails = "ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.",
+                                contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
+                                problemId = listOf(
+                                    ProblemIdentifier("kotlin", "Kotlin"),
+                                    ProblemIdentifier("kgp:misconfiguration", "Kotlin Gradle Plugin Misconfiguration"),
+                                    ProblemIdentifier(
+                                        "internal-kotlin-gradle-plugin-properties-used",
+                                        "Usage of Internal Kotlin Gradle Plugin Properties Detected"
+                                    )
+                                ),
+                                solutions = listOf("Please consider using the public API instead of internal properties.")
+                            )
+                        )
+                    }
+                } else {
+                    buildList {
+                        add(
+                            ProblemsApiDiagnosticG94(
+                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
+                                problem = emptyList(),
+                                severity = "WARNING",
+                                problemDetails = "The `kotlin.internal.single.build.metrics.file` deprecated property is used in your build.",
+                                contextualLabel = "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used",
+                                problemId = listOf(
+                                    ProblemIdentifier("kotlin", "Kotlin"),
+                                    ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
+                                    ProblemIdentifier(
+                                        "deprecated-warning-gradle-properties",
+                                        "Deprecated Gradle Property 'kotlin.internal.single.build.metrics.file' Used"
+                                    )
+                                ),
+                                solutions = listOf("It is unsupported, please stop using it.")
+                            )
+                        )
+
+                        add(
+                            ProblemsApiDiagnosticG94(
+                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
+                                problem = emptyList(),
+                                severity = "WARNING",
+                                problemDetails = "The `kotlin.build.report.dir` deprecated property is used in your build.",
+                                contextualLabel = "Deprecated Gradle Property 'kotlin.build.report.dir' Used",
+                                problemId = listOf(
+                                    ProblemIdentifier("kotlin", "Kotlin"),
+                                    ProblemIdentifier("kgp:deprecation", "Kotlin Gradle Plugin Deprecation"),
+                                    ProblemIdentifier(
+                                        "deprecated-warning-gradle-properties",
+                                        "Deprecated Gradle Property 'kotlin.build.report.dir' Used"
+                                    )
+                                ),
+                                solutions = listOf("It is unsupported, please stop using it.")
+                            )
+                        )
+
+                        add(
+                            ProblemsApiDiagnosticG94(
+                                locations = listOf(ProblemsApiLocation("org.jetbrains.kotlin.jvm")),
+                                problem = emptyList(),
+                                severity = "WARNING",
                                 problemDetails = "ATTENTION! This build uses the following Kotlin Gradle Plugin properties:\n\nkotlin.internal.compiler.arguments.log.level\nkotlin.internal.diagnostics.showStacktrace\nkotlin.internal.diagnostics.useParsableFormatting\n\nInternal properties are not recommended for production use.\nStability and future compatibility of the build is not guaranteed.",
                                 contextualLabel = "Usage of Internal Kotlin Gradle Plugin Properties Detected",
                                 problemId = listOf(

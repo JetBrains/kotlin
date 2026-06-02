@@ -26,7 +26,7 @@ kotlin.js {
 
 kotlin.js().compilations.create("benchmark") {
     defaultSourceSet.dependencies {
-        val main by kotlin.js().compilations
+        val main = kotlin.js().compilations.getByName("main")
         implementation(main.compileDependencyFiles + main.output.classesDirs)
         runtimeOnly(files(main.runtimeDependencyFiles))
     }

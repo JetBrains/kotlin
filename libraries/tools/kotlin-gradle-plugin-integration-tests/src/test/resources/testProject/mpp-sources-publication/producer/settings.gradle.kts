@@ -3,9 +3,10 @@ pluginManagement {
 		mavenLocal()
 		gradlePluginPortal()
 	}
-	val kotlin_version: String by settings
+    
 	plugins {
-		val test_fixes_version: String by settings
+        val kotlin_version: String = providers.gradleProperty("kotlin_version").get()
+		val test_fixes_version: String = providers.gradleProperty("test_fixes_version").get()
 		kotlin("multiplatform").version(kotlin_version)
 		id("org.jetbrains.kotlin.test.fixes.android") version test_fixes_version
 	}

@@ -9,7 +9,7 @@ allprojects {
     }
 }
 
-val kotlin_version by properties
+val kotlin_version = extra["kotlin_version"]
 dependencies {
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
 }

@@ -17,10 +17,10 @@ kotlin {
     linuxX64()
     linuxArm64()
 
-    val commonMain by sourceSets.getting
-    val linuxX64Main by sourceSets.getting
-    val linuxArm64Main by sourceSets.getting
-    val nativeMain by sourceSets.creating
+    val commonMain = sourceSets.getByName("commonMain")
+    val linuxX64Main = sourceSets.getByName("linuxX64Main")
+    val linuxArm64Main = sourceSets.getByName("linuxArm64Main")
+    val nativeMain = sourceSets.create("nativeMain")
 
     nativeMain.dependsOn(commonMain)
     linuxX64Main.dependsOn(nativeMain)

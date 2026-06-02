@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
 import org.jetbrains.kotlin.gradle.testbase.plugins
 import org.jetbrains.kotlin.gradle.testbase.project
 import org.jetbrains.kotlin.gradle.utils.setInvisibleIfSupported
-import org.jetbrains.kotlin.testFederation.SmokeTest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import java.io.File
@@ -59,7 +58,7 @@ class GradleCompatibilityIT : KGPBaseTest() {
         project("kotlinProject", gradleVersion) {
             build("help") {
                 val expectedVariant = when (gradleVersion) {
-                    //GradleVersion.version(TestVersions.Gradle.G_9_6) -> "gradle96"
+                    GradleVersion.version(TestVersions.Gradle.G_9_6) -> "gradle96"
                     GradleVersion.version(TestVersions.Gradle.G_9_5) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_4) -> "gradle813"
                     GradleVersion.version(TestVersions.Gradle.G_9_3) -> "gradle813"

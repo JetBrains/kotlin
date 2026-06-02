@@ -18,7 +18,7 @@ kotlin {
     }
 
     sourceSets {
-        val wasmJsMain by getting {
+        val wasmJsMain = getByName("wasmJsMain") {
             dependencies {
                 implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
             }

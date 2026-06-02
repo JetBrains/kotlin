@@ -1,1 +1,1 @@
-root project : => [linuxX64CompileKlibraries]
+root project 'kmp' => [linuxX64CompileKlibraries]

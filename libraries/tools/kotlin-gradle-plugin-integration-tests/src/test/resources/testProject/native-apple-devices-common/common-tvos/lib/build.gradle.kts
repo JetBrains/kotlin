@@ -24,9 +24,9 @@ kotlin {
     }
 
     sourceSets {
-        val tvosLibMain by creating
-        val tvosLibX64Main by getting
-        val tvosLibArm64Main by getting
+        val tvosLibMain = create("tvosLibMain")
+        val tvosLibX64Main = getByName("tvosLibX64Main")
+        val tvosLibArm64Main = getByName("tvosLibArm64Main")
         tvosLibX64Main.dependsOn(tvosLibMain)
         tvosLibArm64Main.dependsOn(tvosLibMain)
     }

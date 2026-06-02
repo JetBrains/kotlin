@@ -8,10 +8,10 @@ repositories {
 }
 
 kotlin {
-	val mingwTargetName: String by project
-	val linuxTargetName: String by project
-	val macosTargetName: String by project
-	val currentHostTargetName: String by project
+	val mingwTargetName: String = providers.gradleProperty("mingwTargetName").get()
+	val linuxTargetName: String = providers.gradleProperty("linuxTargetName").get()
+	val macosTargetName: String = providers.gradleProperty("macosTargetName").get()
+	val currentHostTargetName: String = providers.gradleProperty("currentHostTargetName").get()
 
     val mingw = mingwX64(mingwTargetName) { }
     val linux = linuxX64(linuxTargetName) { }
@@ -19,16 +19,14 @@ kotlin {
     val linuxArm = linuxArm64()
 
 	sourceSets {
-		val allNative by creating {
-			dependsOn(getByName("commonMain"))
-			listOf(mingw, linux, macos).forEach {
-				it.compilations["main"].defaultSourceSet.dependsOn(this@creating)
-			}
+		val allNative = create("allNative")
+		allNative.dependsOn(getByName("commonMain"))
+		listOf(mingw, linux, macos).forEach {
+			it.compilations["main"].defaultSourceSet.dependsOn(allNative)
 		}
 
-    	val currentHostAndLinux by creating {
-    		dependsOn(allNative)
-    	}
+    	val currentHostAndLinux = create("currentHostAndLinux")
+        currentHostAndLinux.dependsOn(allNative)
 
     	configure(listOf(linuxArm, targets.getByName(currentHostTargetName))) {
 			compilations["main"].defaultSourceSet.dependsOn(currentHostAndLinux)

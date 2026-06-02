@@ -22,7 +22,7 @@ kotlin {
                 runtimeOnly(files(tasks.named("otherKlib")))
             }
         }
-        val jsOther by getting {
+        val jsOther = getByName("jsOther") {
             kotlin.srcDirs("src/other/kotlin/other")
             dependencies {
                 implementation(project(path = project.path))

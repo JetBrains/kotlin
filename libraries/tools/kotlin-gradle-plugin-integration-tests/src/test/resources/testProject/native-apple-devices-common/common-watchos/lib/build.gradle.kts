@@ -34,13 +34,13 @@ kotlin {
     }
 
     sourceSets {
-        val watchosLibMain by creating
-        val watchosLibDeviceMain by creating
+        val watchosLibMain = create("watchosLibMain")
+        val watchosLibDeviceMain = create("watchosLibDeviceMain")
 
-        val watchosLibDeviceArm64Main by getting
-        val watchosLibSimulatorArm64Main by getting
-        val watchosLibArm64Main by getting
-        val watchosLibX64Main by getting
+        val watchosLibDeviceArm64Main = getByName("watchosLibDeviceArm64Main")
+        val watchosLibSimulatorArm64Main = getByName("watchosLibSimulatorArm64Main")
+        val watchosLibArm64Main = getByName("watchosLibArm64Main")
+        val watchosLibX64Main = getByName("watchosLibX64Main")
 
         watchosLibDeviceMain.dependsOn(watchosLibMain)
         watchosLibX64Main.dependsOn(watchosLibMain)

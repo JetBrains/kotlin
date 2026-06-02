@@ -463,14 +463,20 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     fun `test native project dependencies resolve leniently`(gradleVersion: GradleVersion) {
         project("kt-61466-lenient-dependency-resolution", gradleVersion) {
             resolveIdeDependencies(":consumer") { dependencies ->
+                val unresolvedProjectName = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) {
+                    "project :producer"
+                } else {
+                    "project ':producer'"
+                }
+
                 dependencies["commonMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
-                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
+                    unresolvedDependenciesDiagnosticMatcher(unresolvedProjectName),
                 )
 
                 dependencies["linuxMain"].assertMatches(
                     kotlinNativeDistributionDependencies,
-                    unresolvedDependenciesDiagnosticMatcher("project :producer"),
+                    unresolvedDependenciesDiagnosticMatcher(unresolvedProjectName),
                     dependsOnDependency(":consumer/commonMain"),
                     dependsOnDependency(":consumer/nativeMain")
                 )
@@ -1043,11 +1049,11 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
     }
 
     @GradleTest
-    fun `KT-81973_npe_when_strange_dependency_is-added`(gradleVersions: GradleVersion) {
+    fun `KT-81973_npe_when_strange_dependency_is-added`(gradleVersion: GradleVersion) {
         // it covers this bug https://github.com/gradle/gradle/issues/36284
         // info is needed to check case when the "bad" error is logged out
         val withLogLevelInfo = defaultBuildOptions.copy(logLevel = LogLevel.INFO)
-        project("empty", gradleVersions, buildOptions = withLogLevelInfo) {
+        project("empty", gradleVersion, buildOptions = withLogLevelInfo) {
             plugins { kotlin("multiplatform") }
             buildScriptInjection {
                 kotlinMultiplatform.jvm()
@@ -1057,8 +1063,13 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 }
             }
         }.resolveIdeDependencies { dependencies ->
-            val cause = "Got class org.gradle.internal.resolve.ModuleVersionResolveException error when trying to resolve Artifact, but explanation message can't be displayed because it failed with class java.lang.NullPointerException. For details please visit https://github.com/gradle/gradle/issues/36284"
-            assertOutputContains(cause)
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_9_6)) {
+                val cause =
+                    "Got class org.gradle.internal.resolve.ModuleVersionResolveException error when trying to resolve Artifact, but " +
+                            "explanation message can't be displayed because it failed with class java.lang.NullPointerException. " +
+                            "For details please visit https://github.com/gradle/gradle/issues/36284"
+                assertOutputContains(cause)
+            }
             dependencies["commonTest"].assertMatches(
                 kotlinStdlibDependencies,
                 jetbrainsAnnotationDependencies,
@@ -1072,7 +1083,6 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
                 IdeaKotlinDependencyMatcher("Unresolved androidx.room:room-sqlite-wrapper:2.8.3") { dependency ->
                     dependency is IdeaKotlinUnresolvedBinaryDependency
                             && dependency.coordinates.toString() == "androidx.room:room-sqlite-wrapper:2.8.3"
-                            && dependency.cause == cause
                 },
             )
         }
