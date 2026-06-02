@@ -35,5 +35,6 @@ class AllEqualByteArrayTest {
         assertTrue(byteArrayOf(1, -1, 1).allEqualBy { it * it })
         assertFalse(byteArrayOf(1, 2).allEqualBy { it * it })
         assertTrue(byteArrayOf(1, 2).allEqualBy { 0 })
+        assertTrue(byteArrayOf(1, -1, 1).allEqualBy { null })
     }
 }

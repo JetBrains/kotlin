@@ -35,5 +35,6 @@ class AllEqualUIntArrayTest {
         assertTrue(uintArrayOf(1u, 3u, 5u).allEqualBy { it % 2u })
         assertFalse(uintArrayOf(1u, 2u).allEqualBy { it % 2u })
         assertTrue(uintArrayOf(1u, 2u).allEqualBy { 0 })
+        assertTrue(uintArrayOf(1u, 3u, 5u).allEqualBy { null })
     }
 }

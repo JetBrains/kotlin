@@ -35,6 +35,7 @@ class AllEqualSequencesTest {
         assertTrue(sequenceOf("a", "b", "c").allEqualBy { it.length })
         assertFalse(sequenceOf("a", "bb").allEqualBy { it.length })
         assertTrue(sequenceOf("a", "bb").allEqualBy { 0 })
+        assertTrue(sequenceOf("a", "b", "c").allEqualBy { null })
     }
 
     @Test

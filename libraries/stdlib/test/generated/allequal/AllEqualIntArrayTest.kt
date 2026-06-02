@@ -35,5 +35,6 @@ class AllEqualIntArrayTest {
         assertTrue(intArrayOf(1, -1, 1).allEqualBy { it * it })
         assertFalse(intArrayOf(1, 2).allEqualBy { it * it })
         assertTrue(intArrayOf(1, 2).allEqualBy { 0 })
+        assertTrue(intArrayOf(1, -1, 1).allEqualBy { null })
     }
 }

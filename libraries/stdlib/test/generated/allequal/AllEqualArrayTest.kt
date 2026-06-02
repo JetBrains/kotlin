@@ -35,6 +35,7 @@ class AllEqualArrayTest {
         assertTrue(arrayOf("a", "b", "c").allEqualBy { it.length })
         assertFalse(arrayOf("a", "bb").allEqualBy { it.length })
         assertTrue(arrayOf("a", "bb").allEqualBy { 0 })
+        assertTrue(arrayOf("a", "b", "c").allEqualBy { null })
     }
 
     @Test

@@ -6154,7 +6154,9 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
-        if (firstKey != selector(this[i])) return false
+        val key = selector(this[i])
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
     }
     return true
 }
@@ -6181,7 +6183,9 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
-        if (firstKey != selector(this[i])) return false
+        val key = selector(this[i])
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
     }
     return true
 }
@@ -6208,7 +6212,9 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
-        if (firstKey != selector(this[i])) return false
+        val key = selector(this[i])
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
     }
     return true
 }
@@ -6235,7 +6241,9 @@ public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
     if (size < 2) return true
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
-        if (firstKey != selector(this[i])) return false
+        val key = selector(this[i])
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
     }
     return true
 }

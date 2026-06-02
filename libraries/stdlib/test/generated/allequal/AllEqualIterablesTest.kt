@@ -35,6 +35,7 @@ class AllEqualIterablesTest {
         assertTrue(listOf("a", "b", "c").allEqualBy { it.length })
         assertFalse(listOf("a", "bb").allEqualBy { it.length })
         assertTrue(listOf("a", "bb").allEqualBy { 0 })
+        assertTrue(listOf("a", "b", "c").allEqualBy { null })
     }
 
     @Test

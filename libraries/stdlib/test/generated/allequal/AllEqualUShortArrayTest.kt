@@ -35,5 +35,6 @@ class AllEqualUShortArrayTest {
         assertTrue(ushortArrayOf(1u, 3u, 5u).allEqualBy { it.toUInt() % 2u })
         assertFalse(ushortArrayOf(1u, 2u).allEqualBy { it.toUInt() % 2u })
         assertTrue(ushortArrayOf(1u, 2u).allEqualBy { 0 })
+        assertTrue(ushortArrayOf(1u, 3u, 5u).allEqualBy { null })
     }
 }

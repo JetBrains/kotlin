@@ -35,5 +35,6 @@ class AllEqualLongArrayTest {
         assertTrue(longArrayOf(1L, -1L, 1L).allEqualBy { it * it })
         assertFalse(longArrayOf(1L, 2L).allEqualBy { it * it })
         assertTrue(longArrayOf(1L, 2L).allEqualBy { 0 })
+        assertTrue(longArrayOf(1L, -1L, 1L).allEqualBy { null })
     }
 }

@@ -35,5 +35,6 @@ class AllEqualULongArrayTest {
         assertTrue(ulongArrayOf(1uL, 3uL, 5uL).allEqualBy { it % 2uL })
         assertFalse(ulongArrayOf(1uL, 2uL).allEqualBy { it % 2uL })
         assertTrue(ulongArrayOf(1uL, 2uL).allEqualBy { 0 })
+        assertTrue(ulongArrayOf(1uL, 3uL, 5uL).allEqualBy { null })
     }
 }

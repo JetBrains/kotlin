@@ -35,5 +35,6 @@ class AllEqualUByteArrayTest {
         assertTrue(ubyteArrayOf(1u, 3u, 5u).allEqualBy { it.toUInt() % 2u })
         assertFalse(ubyteArrayOf(1u, 2u).allEqualBy { it.toUInt() % 2u })
         assertTrue(ubyteArrayOf(1u, 2u).allEqualBy { 0 })
+        assertTrue(ubyteArrayOf(1u, 3u, 5u).allEqualBy { null })
     }
 }

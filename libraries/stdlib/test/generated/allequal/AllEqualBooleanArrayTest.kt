@@ -35,5 +35,6 @@ class AllEqualBooleanArrayTest {
         assertTrue(booleanArrayOf(true, true, true).allEqualBy { it })
         assertFalse(booleanArrayOf(true, false).allEqualBy { it })
         assertTrue(booleanArrayOf(true, false).allEqualBy { 0 })
+        assertTrue(booleanArrayOf(true, true, true).allEqualBy { null })
     }
 }

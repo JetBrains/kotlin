@@ -35,5 +35,6 @@ class AllEqualCharArrayTest {
         assertTrue(charArrayOf('a', 'A', 'a').allEqualBy { it.uppercaseChar() })
         assertFalse(charArrayOf('a', 'B').allEqualBy { it.uppercaseChar() })
         assertTrue(charArrayOf('a', 'B').allEqualBy { 0 })
+        assertTrue(charArrayOf('a', 'A', 'a').allEqualBy { null })
     }
 }

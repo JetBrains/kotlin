@@ -317,7 +317,9 @@ object Aggregates : TemplateGroupBase() {
             if (!iterator.hasNext()) return true
             val firstKey = selector(first)
             do {
-                if (firstKey != selector(iterator.next())) return false
+                val key = selector(iterator.next())
+                val equal = firstKey?.equals(key) ?: (key == null)
+                if (!equal) return false
             } while (iterator.hasNext())
             return true
             """
@@ -327,7 +329,9 @@ object Aggregates : TemplateGroupBase() {
             if (size < 2) return true
             val firstKey = selector(this[0])
             for (i in 1..lastIndex) {
-                if (firstKey != selector(this[i])) return false
+                val key = selector(this[i])
+                val equal = firstKey?.equals(key) ?: (key == null)
+                if (!equal) return false
             }
             return true
             """

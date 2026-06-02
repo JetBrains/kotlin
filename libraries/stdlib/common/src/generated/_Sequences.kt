@@ -1471,7 +1471,9 @@ public inline fun <T, K> Sequence<T>.allEqualBy(selector: (T) -> K): Boolean {
     if (!iterator.hasNext()) return true
     val firstKey = selector(first)
     do {
-        if (firstKey != selector(iterator.next())) return false
+        val key = selector(iterator.next())
+        val equal = firstKey?.equals(key) ?: (key == null)
+        if (!equal) return false
     } while (iterator.hasNext())
     return true
 }

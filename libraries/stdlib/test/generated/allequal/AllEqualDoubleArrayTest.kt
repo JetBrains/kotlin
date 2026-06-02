@@ -35,6 +35,7 @@ class AllEqualDoubleArrayTest {
         assertTrue(doubleArrayOf(1.0, -1.0, 1.0).allEqualBy { it * it })
         assertFalse(doubleArrayOf(1.0, 2.0).allEqualBy { it * it })
         assertTrue(doubleArrayOf(1.0, 2.0).allEqualBy { 0 })
+        assertTrue(doubleArrayOf(1.0, -1.0, 1.0).allEqualBy { null })
     }
 
     @Test

@@ -35,6 +35,7 @@ class AllEqualFloatArrayTest {
         assertTrue(floatArrayOf(1.0f, -1.0f, 1.0f).allEqualBy { it * it })
         assertFalse(floatArrayOf(1.0f, 2.0f).allEqualBy { it * it })
         assertTrue(floatArrayOf(1.0f, 2.0f).allEqualBy { 0 })
+        assertTrue(floatArrayOf(1.0f, -1.0f, 1.0f).allEqualBy { null })
     }
 
     @Test

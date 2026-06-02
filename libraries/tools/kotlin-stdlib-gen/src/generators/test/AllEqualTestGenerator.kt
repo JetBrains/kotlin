@@ -83,6 +83,7 @@ object AllEqualTestGenerator {
         assertTrue($ctor($equalSelectorArgs).allEqualBy { $selectorExpr })
         assertFalse($ctor($diffSelectorArgs).allEqualBy { $selectorExpr })
         assertTrue($ctor($diffSelectorArgs).allEqualBy { 0 })
+        assertTrue($ctor($equalSelectorArgs).allEqualBy { null })
     }"""
         )
     }

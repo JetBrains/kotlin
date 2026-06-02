@@ -35,5 +35,6 @@ class AllEqualShortArrayTest {
         assertTrue(shortArrayOf(1, -1, 1).allEqualBy { it * it })
         assertFalse(shortArrayOf(1, 2).allEqualBy { it * it })
         assertTrue(shortArrayOf(1, 2).allEqualBy { 0 })
+        assertTrue(shortArrayOf(1, -1, 1).allEqualBy { null })
     }
 }
