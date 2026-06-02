@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.standalone.fir.test.cases.session.buil
 
 import com.intellij.psi.JavaPsiFacade
 import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiLiteralExpression
 import com.intellij.psi.PsiPrimitiveType
 import com.intellij.psi.PsiTypes
 import com.intellij.psi.impl.source.PsiClassReferenceType
@@ -690,5 +691,75 @@ class StandaloneSessionBuilderTest : AbstractStandaloneTest() {
         val fooReturnType = fooMethod.returnType as PsiClassReferenceType
         assert(fooReturnType.canonicalText == "java.lang.String")
         assert(fooReturnType.resolve() == null)
+    }
+
+    /**
+     * Regression test for KT-65608: `SymbolLightLazyAnnotationParameterList` should have a valid `getText` implementation.
+     *
+     * A type-use annotation that comes from a binary library has no source PSI (`KaAnnotation.psi == null`), so its
+     * parameter list cannot delegate `getText()` to a `KtValueArgumentList`. It must reconstruct the text from the
+     * attributes instead. `PsiType.getCanonicalText(true)` relies on this via `PsiNameHelper.appendAnnotations`.
+     */
+    @Test
+    fun testTypeAnnotationParameterListText() {
+        val root = "typeAnnotationFromLibrary"
+        lateinit var sourceModule: KaSourceModule
+        val session = buildStandaloneAnalysisAPISession(disposable) {
+            buildKtModuleProvider {
+                platform = JvmPlatforms.defaultJvmPlatform
+                val stdlib = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(ForTestCompileRuntime.runtimeJarForTests().toPath())
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "stdlib"
+                    }
+                )
+                val library = addModule(
+                    buildKtLibraryModule {
+                        addBinaryRoot(compileToJar(testDataPath(root).resolve("dependent")))
+                        addRegularDependency(stdlib)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        libraryName = "dependent"
+                    }
+                )
+                sourceModule = addModule(
+                    buildKtSourceModule {
+                        addSourceRoot(testDataPath(root).resolve("main"))
+                        addRegularDependency(stdlib)
+                        addRegularDependency(library)
+                        platform = JvmPlatforms.defaultJvmPlatform
+                        moduleName = "main"
+                    }
+                )
+            }
+        }
+
+        val containerClass = analyze(sourceModule) {
+            findClass(ClassId.fromString("main/Container"))!!.psi as KtClassOrObject
+        }
+
+        val lightClass = containerClass.toLightClass()!!
+        val method = lightClass.methods.single { it.name == "annotated" }
+        val returnType = method.returnType!!
+
+        val typeAnnotation = returnType.annotations.single { it.qualifiedName == "dependent.TypeAnno" }
+        val parameterList = typeAnnotation.parameterList
+
+        // The attribute itself is known: the annotation does carry `value = "hello"`.
+        val attribute = parameterList.attributes.single()
+        assertEquals("value", attribute.name)
+        assertEquals("hello", (attribute.value as PsiLiteralExpression).value)
+
+        // KT-65608: the parameter list's text must reflect the arguments instead of being empty.
+        val parameterListText = parameterList.text
+        Assertions.assertTrue("hello" in parameterListText) {
+            "Parameter list text should contain the annotation argument, but was: '$parameterListText'"
+        }
+
+        // The real-world trigger from the issue: `PsiType.getCanonicalText(true)` must not drop the argument.
+        val canonicalText = returnType.getCanonicalText(/* annotated = */ true)
+        Assertions.assertTrue("hello" in canonicalText) {
+            "Canonical text should contain the annotation argument, but was: '$canonicalText'"
+        }
     }
 }
