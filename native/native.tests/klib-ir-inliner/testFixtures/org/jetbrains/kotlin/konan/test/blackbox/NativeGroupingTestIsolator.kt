@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.AssertionsMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.FREE_COMPILER_ARGS
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestKind
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.isDisabledNative
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.isIgnoredTarget
 import org.jetbrains.kotlin.konan.test.blackbox.support.testKind
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
@@ -30,21 +32,21 @@ class NativeGroupingTestIsolator(testServices: TestServices) : GroupingTestIsola
 
     override fun computeBatchToken(moduleStructure: TestModuleStructure): BatchToken {
         val isolationDirectives = listOf(
-            CodegenTestDirectives.IGNORE_BACKEND,
-            CodegenTestDirectives.IGNORE_BACKEND_K2,
             TestDirectives.NATIVE_STANDALONE,
             TestDirectives.FILECHECK_STAGE,
-            TestDirectives.IGNORE_NATIVE,
-            TestDirectives.DISABLE_NATIVE,
             TestDirectives.EXPECTED_TIMEOUT_FAILURE,
             TestDirectives.MUTED,
         )
 
         // KT-84713: Migrate here full grouping logic from TestRunProvider.withTestExecutable(): respect ignores, difference of compiler args, etc.
-        val shouldBeIsolated = testServices.testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
-                || isolationDirectives.any { it in moduleStructure.allDirectives }
+        val registeredDirectives = moduleStructure.allDirectives
+        val testRunSettings = testServices.testRunSettings
+        val shouldBeIsolated = testRunSettings.testKind(moduleStructure.modules.firstOrNull()?.directives) != TestKind.REGULAR
+                || isolationDirectives.any { it in registeredDirectives }
                 || moduleStructure.sourceContains(packageKotlinInternalRegex)
                 || moduleStructure.modules.any { module -> module.files.any { it.name.endsWith(".def") } }
+                || testRunSettings.isIgnoredTarget(registeredDirectives) // considers IGNORE_BACKEND* and IGNORE_NATIVE directives
+                || testRunSettings.isDisabledNative(registeredDirectives) // considers DISABLE_NATIVE directive
         if (shouldBeIsolated) return BatchToken.Isolated
 
         val specificTokens = listOfNotNull(
