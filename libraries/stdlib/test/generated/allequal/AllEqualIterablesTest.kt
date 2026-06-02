@@ -72,6 +72,22 @@ class AllEqualIterablesTest {
     }
 
     @Test
+    fun allEqualDifferentNaNBitsDouble() {
+        assertTrue(listOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+        assertTrue(listOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqual())
+        assertTrue(listOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allEqual())
+        assertFalse(listOf(Double.NaN, 1.0).allEqual())
+        assertFalse(listOf(1.0, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsDouble() {
+        assertTrue(listOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqualBy { it })
+        assertTrue(listOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqualBy { it })
+        assertFalse(listOf(Double.NaN, 1.0).allEqualBy { it })
+    }
+
+    @Test
     fun allEqualNaNFloat() {
         assertTrue(listOf(Float.NaN, Float.NaN).allEqual())
         assertTrue(listOf(Float.NaN, Float.NaN, Float.NaN).allEqual())
@@ -103,5 +119,21 @@ class AllEqualIterablesTest {
         assertTrue(listOf(-0.0f, -0.0f).allEqualBy { it })
         assertFalse(listOf(0.0f, -0.0f).allEqualBy { it })
         assertFalse(listOf(-0.0f, 0.0f).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualDifferentNaNBitsFloat() {
+        assertTrue(listOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+        assertTrue(listOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqual())
+        assertTrue(listOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allEqual())
+        assertFalse(listOf(Float.NaN, 1.0f).allEqual())
+        assertFalse(listOf(1.0f, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsFloat() {
+        assertTrue(listOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqualBy { it })
+        assertTrue(listOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqualBy { it })
+        assertFalse(listOf(Float.NaN, 1.0f).allEqualBy { it })
     }
 }

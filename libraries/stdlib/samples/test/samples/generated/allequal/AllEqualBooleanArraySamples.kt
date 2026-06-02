@@ -29,12 +29,11 @@ class AllEqualBooleanArraySamples {
 
     @Sample
     fun allEqualBy() {
-        assertPrints(booleanArrayOf().allEqualBy { true }, "true")
-        assertPrints(booleanArrayOf(true).allEqualBy { true }, "true")
+        assertPrints(booleanArrayOf().allEqualBy { 0 }, "true")
+        assertPrints(booleanArrayOf(true).allEqualBy { 0 }, "true")
 
         val values = booleanArrayOf(true, false, true)
-        assertPrints(values.allEqualBy { true }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
-        assertPrints(values.allEqualBy { !it }, "false")
+        assertPrints(values.allEqualBy { 0 }, "true")
+        assertPrints(values.allEqualBy { if (it) 1 else 0 }, "false")
     }
 }

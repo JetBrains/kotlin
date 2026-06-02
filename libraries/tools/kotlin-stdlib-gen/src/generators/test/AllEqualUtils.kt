@@ -28,7 +28,7 @@ private fun signedIntConfig(suffix: String, absExpr: String): AllEqualTypeConfig
     valuesWithDiffSelector = listOf("1", "2").map { "$it$suffix" },
     sampleNeedsAbsImport = true,
     sampleSelectorValues = listOf("1", "-1", "1").map { "$it$suffix" },
-    sampleSelectorAssertions = listOf("it * it" to true, absExpr to true, "it" to false),
+    sampleSelectorAssertions = listOf("it * it" to true, absExpr to true, "it * it * it" to false),
 )
 
 private fun unsignedIntConfig(suffix: String, modExpr: String): AllEqualTypeConfig = AllEqualTypeConfig(
@@ -49,7 +49,7 @@ private fun floatingPointConfig(suffix: String): AllEqualTypeConfig = AllEqualTy
     valuesWithDiffSelector = listOf("1.0", "2.0").map { "$it$suffix" },
     sampleNeedsAbsImport = true,
     sampleSelectorValues = listOf("1.0", "-1.0", "1.0").map { "$it$suffix" },
-    sampleSelectorAssertions = listOf("it * it" to true, "abs(it)" to true, "it" to false),
+    sampleSelectorAssertions = listOf("it * it" to true, "abs(it)" to true, "it * it * it" to false),
 )
 
 fun allEqualConfigFor(primitive: PrimitiveType?): AllEqualTypeConfig = when (primitive) {
@@ -66,7 +66,7 @@ fun allEqualConfigFor(primitive: PrimitiveType?): AllEqualTypeConfig = when (pri
         equalValue = "true",
         otherValue = "false",
         sampleSelectorValues = listOf("true", "false", "true"),
-        sampleSelectorAssertions = listOf("true" to true, "it" to false, "!it" to false),
+        sampleSelectorAssertions = listOf("0" to true, "if (it) 1 else 0" to false),
     )
     null -> AllEqualTypeConfig(
         equalValue = "\"a\"",

@@ -36,6 +36,6 @@ class AllEqualLongArraySamples {
         val values = longArrayOf(1L, -1L, 1L)
         assertPrints(values.allEqualBy { it * it }, "true")
         assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertPrints(values.allEqualBy { it * it * it }, "false")
     }
 }

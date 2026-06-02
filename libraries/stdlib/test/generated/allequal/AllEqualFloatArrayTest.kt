@@ -70,4 +70,20 @@ class AllEqualFloatArrayTest {
         assertFalse(floatArrayOf(0.0f, -0.0f).allEqualBy { it })
         assertFalse(floatArrayOf(-0.0f, 0.0f).allEqualBy { it })
     }
+
+    @Test
+    fun allEqualDifferentNaNBitsFloat() {
+        assertTrue(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+        assertTrue(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqual())
+        assertTrue(floatArrayOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allEqual())
+        assertFalse(floatArrayOf(Float.NaN, 1.0f).allEqual())
+        assertFalse(floatArrayOf(1.0f, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsFloat() {
+        assertTrue(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqualBy { it })
+        assertTrue(floatArrayOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqualBy { it })
+        assertFalse(floatArrayOf(Float.NaN, 1.0f).allEqualBy { it })
+    }
 }

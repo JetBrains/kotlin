@@ -36,6 +36,6 @@ class AllEqualByteArraySamples {
         val values = byteArrayOf(1, -1, 1)
         assertPrints(values.allEqualBy { it * it }, "true")
         assertPrints(values.allEqualBy { abs(it.toInt()) }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertPrints(values.allEqualBy { it * it * it }, "false")
     }
 }

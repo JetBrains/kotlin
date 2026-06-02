@@ -70,4 +70,20 @@ class AllEqualDoubleArrayTest {
         assertFalse(doubleArrayOf(0.0, -0.0).allEqualBy { it })
         assertFalse(doubleArrayOf(-0.0, 0.0).allEqualBy { it })
     }
+
+    @Test
+    fun allEqualDifferentNaNBitsDouble() {
+        assertTrue(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+        assertTrue(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqual())
+        assertTrue(doubleArrayOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allEqual())
+        assertFalse(doubleArrayOf(Double.NaN, 1.0).allEqual())
+        assertFalse(doubleArrayOf(1.0, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsDouble() {
+        assertTrue(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqualBy { it })
+        assertTrue(doubleArrayOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqualBy { it })
+        assertFalse(doubleArrayOf(Double.NaN, 1.0).allEqualBy { it })
+    }
 }

@@ -94,6 +94,11 @@ object AllEqualTestGenerator {
         val zeroPos = "0.0$suffix"
         val zeroNeg = "-0.0$suffix"
         val finite = "1.0$suffix"
+        val [negNaN, mantissaNaN] = when (fpType) {
+            PrimitiveType.Double -> "$typeName.fromBits(0xFFF80000L shl 32)" to "$typeName.fromBits(0x7FF8000000000001L)"
+            PrimitiveType.Float -> "$typeName.fromBits(0xFFFC0000.toInt())" to "$typeName.fromBits(0x7FC00001)"
+            else -> error("Unexpected floating-point type: $fpType")
+        }
         appendLine(
             """
     @Test
@@ -128,6 +133,22 @@ object AllEqualTestGenerator {
         assertTrue($ctor($zeroNeg, $zeroNeg).allEqualBy { it })
         assertFalse($ctor($zeroPos, $zeroNeg).allEqualBy { it })
         assertFalse($ctor($zeroNeg, $zeroPos).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualDifferentNaNBits$typeName() {
+        assertTrue($ctor($nanVal, $negNaN).allEqual())
+        assertTrue($ctor($nanVal, $negNaN, $mantissaNaN).allEqual())
+        assertTrue($ctor($mantissaNaN, $negNaN, $nanVal).allEqual())
+        assertFalse($ctor($nanVal, $finite).allEqual())
+        assertFalse($ctor($finite, $negNaN).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBits$typeName() {
+        assertTrue($ctor($nanVal, $negNaN).allEqualBy { it })
+        assertTrue($ctor($nanVal, $negNaN, $mantissaNaN).allEqualBy { it })
+        assertFalse($ctor($nanVal, $finite).allEqualBy { it })
     }"""
         )
     }

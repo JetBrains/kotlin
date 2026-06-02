@@ -36,6 +36,6 @@ class AllEqualDoubleArraySamples {
         val values = doubleArrayOf(1.0, -1.0, 1.0)
         assertPrints(values.allEqualBy { it * it }, "true")
         assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertPrints(values.allEqualBy { it * it * it }, "false")
     }
 }

@@ -1423,8 +1423,8 @@ public inline fun <T> Sequence<T>.all(predicate: (T) -> Boolean): Boolean {
  * Returns `true` for an empty sequence.
  * 
  * The elements are compared sequentially using structural equality (`==`),
- * and the sequence is considered all-equal if the first element equals every
- * subsequent element.
+ * and all elements are considered equal if the first element equals
+ * every subsequent element.
  * 
  * For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
  * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
@@ -1452,8 +1452,8 @@ public fun <T> Sequence<T>.allEqual(): Boolean {
  * Returns `true` for an empty sequence.
  * 
  * The [selector] values are compared sequentially using structural equality (`==`),
- * and the sequence is considered all-equal-by if the [selector] value of the first
- * element equals the [selector] value of every subsequent element.
+ * and all elements are considered equal by the [selector] value if the [selector]
+ * value of the first element equals the [selector] value of every subsequent element.
  * 
  * For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
  * and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].

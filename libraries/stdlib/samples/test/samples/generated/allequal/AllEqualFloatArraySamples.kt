@@ -36,6 +36,6 @@ class AllEqualFloatArraySamples {
         val values = floatArrayOf(1.0f, -1.0f, 1.0f)
         assertPrints(values.allEqualBy { it * it }, "true")
         assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertPrints(values.allEqualBy { it * it * it }, "false")
     }
 }

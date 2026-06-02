@@ -243,8 +243,8 @@ object Aggregates : TemplateGroupBase() {
             Returns `true` for an empty ${f.collection}.
 
             The ${f.element.pluralize()} are compared sequentially using $equalityPhrase,
-            and the ${f.collection} is considered all-equal if the first ${f.element} equals every
-            subsequent ${f.element}.
+            and all ${f.element.pluralize()} are considered equal if the first ${f.element} equals
+            every subsequent ${f.element}.
             """
         }
         appendAllEqualFloatingPointNote()
@@ -303,8 +303,8 @@ object Aggregates : TemplateGroupBase() {
             Returns `true` for an empty ${f.collection}.
 
             The [selector] values are compared sequentially using structural equality (`==`),
-            and the ${f.collection} is considered all-equal-by if the [selector] value of the first
-            ${f.element} equals the [selector] value of every subsequent ${f.element}.
+            and all ${f.element.pluralize()} are considered equal by the [selector] value if the [selector]
+            value of the first ${f.element} equals the [selector] value of every subsequent ${f.element}.
             """
         }
         appendAllEqualByFloatingPointNote()

@@ -72,6 +72,22 @@ class AllEqualSequencesTest {
     }
 
     @Test
+    fun allEqualDifferentNaNBitsDouble() {
+        assertTrue(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+        assertTrue(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqual())
+        assertTrue(sequenceOf(Double.fromBits(0x7FF8000000000001L), Double.fromBits(0xFFF80000L shl 32), Double.NaN).allEqual())
+        assertFalse(sequenceOf(Double.NaN, 1.0).allEqual())
+        assertFalse(sequenceOf(1.0, Double.fromBits(0xFFF80000L shl 32)).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsDouble() {
+        assertTrue(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32)).allEqualBy { it })
+        assertTrue(sequenceOf(Double.NaN, Double.fromBits(0xFFF80000L shl 32), Double.fromBits(0x7FF8000000000001L)).allEqualBy { it })
+        assertFalse(sequenceOf(Double.NaN, 1.0).allEqualBy { it })
+    }
+
+    @Test
     fun allEqualNaNFloat() {
         assertTrue(sequenceOf(Float.NaN, Float.NaN).allEqual())
         assertTrue(sequenceOf(Float.NaN, Float.NaN, Float.NaN).allEqual())
@@ -103,5 +119,21 @@ class AllEqualSequencesTest {
         assertTrue(sequenceOf(-0.0f, -0.0f).allEqualBy { it })
         assertFalse(sequenceOf(0.0f, -0.0f).allEqualBy { it })
         assertFalse(sequenceOf(-0.0f, 0.0f).allEqualBy { it })
+    }
+
+    @Test
+    fun allEqualDifferentNaNBitsFloat() {
+        assertTrue(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+        assertTrue(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqual())
+        assertTrue(sequenceOf(Float.fromBits(0x7FC00001), Float.fromBits(0xFFFC0000.toInt()), Float.NaN).allEqual())
+        assertFalse(sequenceOf(Float.NaN, 1.0f).allEqual())
+        assertFalse(sequenceOf(1.0f, Float.fromBits(0xFFFC0000.toInt())).allEqual())
+    }
+
+    @Test
+    fun allEqualByDifferentNaNBitsFloat() {
+        assertTrue(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt())).allEqualBy { it })
+        assertTrue(sequenceOf(Float.NaN, Float.fromBits(0xFFFC0000.toInt()), Float.fromBits(0x7FC00001)).allEqualBy { it })
+        assertFalse(sequenceOf(Float.NaN, 1.0f).allEqualBy { it })
     }
 }

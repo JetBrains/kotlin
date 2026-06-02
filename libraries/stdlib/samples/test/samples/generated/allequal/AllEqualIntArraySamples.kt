@@ -36,6 +36,6 @@ class AllEqualIntArraySamples {
         val values = intArrayOf(1, -1, 1)
         assertPrints(values.allEqualBy { it * it }, "true")
         assertPrints(values.allEqualBy { abs(it) }, "true")
-        assertPrints(values.allEqualBy { it }, "false")
+        assertPrints(values.allEqualBy { it * it * it }, "false")
     }
 }
