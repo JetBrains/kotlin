@@ -28,7 +28,7 @@ class DeserializationFailureTest {
         @Language("JSON") val json =
             """
             {
-              "schemaVersion": ${SchemaVersion.current},
+              "schemaVersion": "${SchemaVersion.current}",
               "buildSystem": "Gradle",
               "buildSystemVersion": "6.7",
               "buildPlugin": "org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper",
