@@ -19,6 +19,7 @@ import java.lang.reflect.Field
 // { name: "foo", private: null, customFields: { customField1: null }, customField1: null }
 // but just
 // { name: "foo", customField1: "foo" }
+@Deprecated("Unused by the Kotlin Gradle Plugin, which writes package.json without Gson. Scheduled for removal in Kotlin 2.7")
 class PackageJsonTypeAdapter : TypeAdapterFactory {
 
     override fun <T : Any?> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
