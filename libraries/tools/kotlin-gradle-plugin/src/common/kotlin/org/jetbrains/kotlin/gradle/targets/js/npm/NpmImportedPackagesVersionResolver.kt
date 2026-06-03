@@ -7,12 +7,22 @@ package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompilationNpmResolution
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
+import java.io.File
 import java.nio.file.Path
 
-class NpmImportedPackagesVersionResolver(
+class NpmImportedPackagesVersionResolver internal constructor(
     npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
     private val nodeJsWorldDir: Path
 ) {
+    @Deprecated(
+        message = "Use NpmImportedPackagesVersionResolver(npmProjects: Collection<PreparedKotlinCompilationNpmResolution>, nodeJsWorldDir: Path) instead. This File-based constructor is retained for callers compiled against the old API.",
+        replaceWith = ReplaceWith("NpmImportedPackagesVersionResolver(npmProjects, nodeJsWorldDir.toPath())"),
+    )
+    constructor(
+        npmProjects: Collection<PreparedKotlinCompilationNpmResolution>,
+        nodeJsWorldDir: File,
+    ) : this(npmProjects, nodeJsWorldDir.toPath())
+
     private val resolvedVersion = mutableMapOf<String, ResolvedNpmDependency>()
     private val importedProjectWorkspaces = mutableListOf<String>()
     private val externalModules = npmProjects.flatMapTo(mutableSetOf()) {

@@ -103,7 +103,7 @@ abstract class PublicPackageJsonTask :
                 ).forEach { it.processDependencies() }
             }
 
-            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile)
+            packageJson.saveTo(this@PublicPackageJsonTask.packageJsonFile.toPath())
         }
     }
 

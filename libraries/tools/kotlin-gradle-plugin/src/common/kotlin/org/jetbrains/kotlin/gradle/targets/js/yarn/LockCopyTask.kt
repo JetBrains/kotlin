@@ -11,7 +11,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockFileMismatchReport
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockStoreTask
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 @DisableCachingByDefault
 abstract class YarnLockCopyTask : LockCopyTask()
@@ -30,7 +31,7 @@ abstract class YarnLockUpgradeTask internal constructor() : YarnLockCopyTask() {
     override fun copy() {
         val inputFile = inputFile.getOrNull()?.asFile
 
-        val isInputLockFileEmpty = isEmptyYarnLock(inputFile)
+        val isInputLockFileEmpty = isEmptyYarnLock(inputFile?.toPath())
 
         if (!isInputLockFileEmpty) {
             super.copy()
@@ -73,7 +74,7 @@ abstract class YarnLockStoreTask : LockStoreTask() {
         val inputFile = inputFile.getOrNull()?.asFile
         val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
 
-        if (isEmptyYarnLock(inputFile) && !outputFile.exists()) {
+        if (isEmptyYarnLock(inputFile?.toPath()) && !outputFile.exists()) {
             logger.info("[$path] No NPM dependencies detected, and stored lockfile does not exist - skipping copy $inputFile")
             return
         } else {
@@ -82,10 +83,10 @@ abstract class YarnLockStoreTask : LockStoreTask() {
     }
 }
 
-private fun isEmptyYarnLock(file: File?): Boolean =
+private fun isEmptyYarnLock(file: Path?): Boolean =
     file == null ||
-            !file.exists() ||
-            file.useLines { lines ->
+            !Files.exists(file) ||
+            Files.newBufferedReader(file).useLines { lines ->
                 lines.all { it.startsWith("#") || it.isBlank() }
             }
 

@@ -37,7 +37,7 @@ abstract class LockStoreTask : LockCopyTask() {
         val shouldReportMismatch = if (!outputFile.exists()) {
             reportNewLockFile.get()
         } else {
-            lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEqualsIgnoringLineEndings(value.asFile, outputFile)
+            lockFileMismatchReport.get() != LockFileMismatchReport.NONE && !contentEqualsIgnoringLineEndings(value.asFile.toPath(), outputFile.toPath())
         }
 
         // outputFile is updated only with auto replace or not existed, but we need to delete all other files initially

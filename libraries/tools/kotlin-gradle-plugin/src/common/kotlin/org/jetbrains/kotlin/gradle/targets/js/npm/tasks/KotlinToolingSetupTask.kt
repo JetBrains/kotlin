@@ -81,7 +81,7 @@ internal constructor() :
                     )
                 }
 
-                toolingPackageJson.saveTo(packageJsonFile)
+                toolingPackageJson.saveTo(packageJsonFile.toPath())
 
                 nodeJsEnvironment.get().packageManager.prepareTooling(destinationDir)
 

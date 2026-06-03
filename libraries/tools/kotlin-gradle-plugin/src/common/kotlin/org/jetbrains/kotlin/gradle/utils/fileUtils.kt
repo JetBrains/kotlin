@@ -14,7 +14,6 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.util.*
 import java.util.function.Consumer
 
@@ -44,7 +43,14 @@ internal fun String.fileExtensionCasePermutations(): List<String> {
 }
 
 internal fun File.relativeOrAbsolute(base: File): String =
-    relativeToOrNull(base)?.path ?: normalize().absolutePath
+    toPath().relativeOrAbsolute(base.toPath())
+
+internal fun Path.relativeOrAbsolute(base: Path): String =
+    try {
+        base.relativize(this).toString()
+    } catch (_: IllegalArgumentException) {
+        toAbsolutePath().normalize().toString()
+    }
 
 /**
  * Returns an absolute path with `.` and `..` segments resolved lexically, without filesystem I/O.
@@ -53,35 +59,48 @@ internal fun File.relativeOrAbsolute(base: File): String =
  * Does not resolve symlinks. Avoids [java.io.File.getCanonicalFile] (banned per KT-69613).
  */
 internal fun File.normalizedAbsoluteFile(): File =
-    toPath().toAbsolutePath().normalize().toFile()
+    toPath().normalizedAbsolutePath().toFile()
+
+internal fun Path.normalizedAbsolutePath(): Path =
+    toAbsolutePath().normalize()
 
 internal fun Iterable<File>.pathsAsStringRelativeTo(base: File): String =
+    map { it.toPath() }.pathsAsStringRelativeTo(base.toPath())
+
+internal fun Iterable<Path>.pathsAsStringRelativeTo(base: Path): String =
     map { it.relativeOrAbsolute(base) }.sorted().joinToString()
 
 internal fun Iterable<File>.toPathsArray(): Array<String> =
-    map { it.normalize().absolutePath }.toTypedArray()
+    map { it.toPath() }.toPathStringsArray()
+
+internal fun Iterable<Path>.toPathStringsArray(): Array<String> =
+    map { it.toAbsolutePath().normalize().toString() }.toTypedArray()
 
 internal fun newTmpFile(prefix: String, suffix: String? = null, directory: File? = null, deleteOnExit: Boolean = true): File {
-    return try {
-        (if (directory == null) Files.createTempFile(prefix, suffix) else Files.createTempFile(directory.toPath(), prefix, suffix))
-    } catch (e: NoSuchFileException) {
-        val parentDir = e.file.parentFile
-
-        if (parentDir.isFile) throw IOException("Temp folder $parentDir is not a directory")
-        if (!parentDir.isDirectory) {
-            if (!parentDir.mkdirs()) throw IOException("Could not create temp directory $parentDir")
-        }
-
-        Files.createTempFile(parentDir.toPath(), prefix, suffix)
-    }.toFile().apply { if (deleteOnExit) deleteOnExit() }
+    return newTmpPath(prefix, suffix, directory?.toPath(), deleteOnExit).toFile()
 }
 
-internal fun File.isParentOf(childCandidate: File, strict: Boolean = false): Boolean {
-    val parentPath = Paths.get(this.absolutePath).normalize()
-    val childCandidatePath = Paths.get(childCandidate.absolutePath).normalize()
+internal fun newTmpPath(prefix: String, suffix: String? = null, directory: Path? = null, deleteOnExit: Boolean = true): Path {
+    return try {
+        if (directory == null) Files.createTempFile(prefix, suffix) else Files.createTempFile(directory, prefix, suffix)
+    } catch (e: NoSuchFileException) {
+        val parentDir = e.file.toPath().parent
+
+        if (Files.isRegularFile(parentDir)) throw IOException("Temp folder $parentDir is not a directory")
+        if (!Files.isDirectory(parentDir)) {
+            Files.createDirectories(parentDir)
+        }
+
+        Files.createTempFile(parentDir, prefix, suffix)
+    }.apply { if (deleteOnExit) toFile().deleteOnExit() }
+}
+
+internal fun Path.isParentOf(childCandidate: Path, strict: Boolean = false): Boolean {
+    val parentPath = toAbsolutePath().normalize()
+    val childCandidatePath = childCandidate.toAbsolutePath().normalize()
 
     return if (strict) {
-        childCandidatePath.startsWith(parentPath) && parentPath != childCandidate
+        childCandidatePath.startsWith(parentPath) && parentPath != childCandidatePath
     } else {
         childCandidatePath.startsWith(parentPath)
     }
@@ -91,12 +110,12 @@ internal fun File.listFilesOrEmpty() = (if (exists()) listFiles() else null).orE
 
 @Deprecated("Internal KGP utility. Scheduled for removal in Kotlin 2.7.")
 fun contentEquals(file1: File, file2: File): Boolean {
-    return contentEqualsIgnoringLineEndings(file1, file2)
+    return contentEqualsIgnoringLineEndings(file1.toPath(), file2.toPath())
 }
 
-internal fun contentEqualsIgnoringLineEndings(file1: File, file2: File): Boolean {
-    file1.useLines { seq1 ->
-        file2.useLines { seq2 ->
+internal fun contentEqualsIgnoringLineEndings(file1: Path, file2: Path): Boolean {
+    Files.newBufferedReader(file1).useLines { seq1 ->
+        Files.newBufferedReader(file2).useLines { seq2 ->
             val iterator1 = seq1.iterator()
             val iterator2 = seq2.iterator()
 
@@ -168,6 +187,10 @@ internal fun Project.fileCollectionFromConfigurableFileTree(fileTree: Configurab
 
 // copied from IJ
 internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
+    return getJdkClassesRootPaths(home, isJre).map { it.toFile() }
+}
+
+internal fun getJdkClassesRootPaths(home: Path, isJre: Boolean): List<Path> {
     val jarDirs: Array<Path>
     val fileName = home.fileName
     if (fileName != null && "Home" == fileName.toString() && Files.exists(home.resolve("../Classes/classes.jar"))) {
@@ -233,7 +256,7 @@ internal fun getJdkClassesRoots(home: Path, isJre: Boolean): List<File> {
         }
     }
 
-    return rootFiles.map { it.toFile() }
+    return rootFiles
 }
 
 internal val FileCollection.onlyJars: FileCollection get() = filter { it.extension == "jar" }

@@ -8,8 +8,10 @@ package org.jetbrains.kotlin.gradle.targets.js
 import com.google.gson.GsonBuilder
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import java.io.File
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.StringWriter
+import java.nio.file.Files
+import java.nio.file.Path
 
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
@@ -29,18 +31,19 @@ const val META_JS = "meta.js"
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""html""""))
 const val HTML = "html"
 
-internal fun writeWasmUnitTestRunner(workingDir: File, compiledFile: File): File {
-    val static = workingDir.resolve("static").also {
-        it.mkdirs()
-    }
+internal fun writeWasmUnitTestRunner(workingDir: Path, compiledFile: Path): Path {
+    val static = workingDir.resolve("static")
+    Files.createDirectories(static)
 
     val testRunnerFile = static.resolve("runUnitTests.mjs")
-    testRunnerFile.writeText(
-        """
-        import * as exports from './${compiledFile.relativeTo(static).invariantSeparatorsPath}';
-        exports["startUnitTests"]?.();
-        """.trimIndent()
-    )
+    Files.newBufferedWriter(testRunnerFile).use {
+        it.write(
+            """
+            import * as exports from './${static.relativize(compiledFile).invariantSeparatorsPathString}';
+            exports["startUnitTests"]?.();
+            """.trimIndent()
+        )
+    }
     return testRunnerFile
 }
 

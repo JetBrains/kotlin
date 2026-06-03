@@ -10,6 +10,8 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ArtifactMetadataProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.MetadataDependencyResolution.ChooseVisibleSourceSets.MetadataProvider.ProjectMetadataProvider
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Returns a map from 'visibleSourceSetName' to the transformed metadata libraries.
@@ -27,7 +29,7 @@ internal fun Project.transformMetadataLibrariesForIde(
         }
 
         is ArtifactMetadataProvider -> transformMetadataLibrariesForIde(
-            kotlinTransformedMetadataLibraryDirectoryForIde, resolution, metadataProvider
+            kotlinTransformedMetadataLibraryDirectoryPathForIde, resolution, metadataProvider
         )
     }
 }
@@ -39,7 +41,7 @@ internal fun Project.transformMetadataLibrariesForIde(
  * In case the [resolution] points to a project dependency, then the output file collections will be returned.
  */
 internal fun transformMetadataLibrariesForBuild(
-    resolution: MetadataDependencyResolution.ChooseVisibleSourceSets, outputDirectory: File, materializeFiles: Boolean
+    resolution: MetadataDependencyResolution.ChooseVisibleSourceSets, outputDirectory: Path, materializeFiles: Boolean
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
     return when (resolution.metadataProvider) {
         is ProjectMetadataProvider -> resolution.visibleSourceSetNamesExcludingDependsOn.associateWith { visibleSourceSetName ->
@@ -55,7 +57,7 @@ internal fun transformMetadataLibrariesForBuild(
 /* Implementations for transforming the Composite Metadata Artifact */
 
 private fun transformMetadataLibrariesForIde(
-    baseOutputDirectory: File,
+    baseOutputDirectory: Path,
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets,
     compositeMetadataArtifact: CompositeMetadataArtifact
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
@@ -64,20 +66,20 @@ private fun transformMetadataLibrariesForIde(
             val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return@mapNotNull null
             val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
             val metadataLibraryOutputFile = baseOutputDirectory.resolve(sourceSetMetadataBinary.relativeFile)
-            metadataLibraryOutputFile.parentFile.mkdirs()
-            if (!metadataLibraryOutputFile.exists()) {
+            metadataLibraryOutputFile.parent?.let { Files.createDirectories(it) }
+            if (!Files.exists(metadataLibraryOutputFile)) {
                 sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
-                if (!metadataLibraryOutputFile.exists()) return@mapNotNull null
+                if (!Files.exists(metadataLibraryOutputFile)) return@mapNotNull null
             }
 
-            visibleSourceSetName to listOf(metadataLibraryOutputFile)
+            visibleSourceSetName to listOf(metadataLibraryOutputFile.toFile())
         }.toMap()
     }
 }
 
 private fun transformMetadataLibrariesForBuild(
     resolution: MetadataDependencyResolution.ChooseVisibleSourceSets,
-    outputDirectory: File,
+    outputDirectory: Path,
     materializeFiles: Boolean,
     compositeMetadataArtifact: CompositeMetadataArtifact
 ): Map<String /* visibleSourceSetName */, Iterable<File>> {
@@ -97,10 +99,10 @@ private fun transformMetadataLibrariesForBuild(
             val metadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
             val metadataLibraryFile = outputDirectory.resolve(metadataBinary.relativeFile)
             if (materializeFiles) {
-                metadataLibraryFile.parentFile?.mkdirs()
+                metadataLibraryFile.parent?.let { Files.createDirectories(it) }
                 metadataBinary.copyTo(metadataLibraryFile)
             }
-            visibleSourceSetName to listOf(metadataLibraryFile)
+            visibleSourceSetName to listOf(metadataLibraryFile.toFile())
         }
     }.toMap()
 }

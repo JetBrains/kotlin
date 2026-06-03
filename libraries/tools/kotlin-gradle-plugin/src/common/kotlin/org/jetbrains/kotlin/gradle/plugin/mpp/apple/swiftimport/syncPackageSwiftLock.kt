@@ -16,6 +16,8 @@ import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.contentEqualsIgnoringLineEndings
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -46,7 +48,7 @@ internal abstract class SyncPackageResolvedTask : DefaultTask() {
             return
         }
 
-        if (hasSameContent(src, dest)) return
+        if (hasSameContent(src.toPath(), dest.toPath())) return
 
         if (!dest.parentFile.exists()) dest.parentFile.mkdirs()
 
@@ -73,7 +75,8 @@ private fun copySwiftLockFile(
     }
 }
 
-private fun hasSameContent(dest: File, src: File): Boolean = dest.exists() && src.exists() && contentEqualsIgnoringLineEndings(src, dest)
+private fun hasSameContent(dest: Path, src: Path): Boolean =
+    Files.exists(dest) && Files.exists(src) && contentEqualsIgnoringLineEndings(src, dest)
 
 /**
  * One project's contribution to a shared lock bucket.

@@ -16,25 +16,24 @@ import org.jetbrains.kotlin.gradle.internal.TeamCityMessageCommonClient
 import org.jetbrains.kotlin.gradle.internal.execWithErrorLogger
 import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessageOutputStreamHandler
-import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle
 import org.jetbrains.kotlin.gradle.utils.processes.ExecAsyncHandle.Companion.execAsync
-import java.io.File
+import java.nio.file.Path
 
 internal data class KotlinWebpackRunner(
     val name: String,
     val npmProjectDir: File,
     val nodeExecutable: String,
     val logger: Logger,
-    val configFile: File,
+    val configFile: Path,
     val tool: String,
     val args: List<String>,
     val nodeArgs: List<String>,
     val config: KotlinWebpackConfig,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
-    private val npmToolingEnvDir: File,
+    private val npmToolingEnvDir: Path,
     private val resolveModulesFromKotlinToolingDir: Boolean,
 ) {
 
@@ -116,7 +115,7 @@ internal data class KotlinWebpackRunner(
             logger = errorClient.log
         )
 
-        config.save(configFile)
+        config.save(configFile.toFile())
 
         val args = buildArgs()
 

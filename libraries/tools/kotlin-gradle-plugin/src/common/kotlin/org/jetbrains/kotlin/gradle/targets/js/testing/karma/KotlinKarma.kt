@@ -42,12 +42,15 @@ import org.jetbrains.kotlin.gradle.targets.web.nodejs.BaseNodeJsRootExtension
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.getValue
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import org.jetbrains.kotlin.gradle.utils.processes.ProcessLaunchOptions
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.slf4j.Logger
 import java.io.File
 import java.io.PrintWriter
+import java.nio.file.Files
+import java.nio.file.Path
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
@@ -601,7 +604,7 @@ class KotlinKarma internal constructor(
         }
 
         appendLine()
-        appendConfigsFromDir(configDirectory)
+        appendConfigsFromDir(configDirectory.toPath())
         appendLine()
     }
 }
@@ -611,18 +614,18 @@ class KotlinKarma internal constructor(
 // `base` is using because of how Karma works with proxies
 // http://karma-runner.github.io/6.4/config/configuration-file.html#proxies
 // http://karma-runner.github.io/6.4/config/files.html#loading-assets
-internal fun basify(npmProjectDir: File, file: File): String {
-    return "/base/${file.relativeTo(npmProjectDir).invariantSeparatorsPath}"
+internal fun basify(npmProjectDir: Path, file: Path): String {
+    return "/base/${npmProjectDir.relativize(file).invariantSeparatorsPathString}"
 }
 
-internal fun createLoadWasm(npmProjectDir: File, file: File): File {
+internal fun createLoadWasm(npmProjectDir: Path, file: Path): Path {
     val static = npmProjectDir.resolve("static").also {
-        it.mkdirs()
+        Files.createDirectories(it)
     }
     val loadJs = static.resolve("load.mjs")
-    loadJs.printWriter().use { writer ->
-        val relativePath = file.relativeTo(static).invariantSeparatorsPath
-        writer.println(
+    Files.newBufferedWriter(loadJs).use { writer ->
+        val relativePath = static.relativize(file).invariantSeparatorsPathString
+        writer.appendLine(
             """
                 import * as exports from "$relativePath"
                 try {
@@ -682,7 +685,7 @@ internal fun writeConfig(
     } else {
 
         config.files.add(
-            createLoadWasm(npmProjectDir, file).normalize().absolutePath
+            createLoadWasm(npmProjectDir.toPath(), file.toPath()).toAbsolutePath().normalize().toString()
         )
 
         config.customContextFile = modules.require("kotlin-web-helpers/dist/static/context.html")

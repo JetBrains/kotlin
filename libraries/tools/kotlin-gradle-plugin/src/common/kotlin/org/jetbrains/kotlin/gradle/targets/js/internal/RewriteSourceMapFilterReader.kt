@@ -5,7 +5,13 @@ import com.google.gson.stream.JsonToken
 import com.google.gson.stream.JsonWriter
 import com.google.gson.stream.MalformedJsonException
 import org.slf4j.LoggerFactory
-import java.io.*
+import java.io.FilterReader
+import java.io.Reader
+import java.io.StringReader
+import java.io.StringWriter
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.math.min
 
 open class RewriteSourceMapFilterReader(
@@ -153,22 +159,29 @@ open class RewriteSourceMapFilterReader(
     }
 
     protected open fun transformString(value: String): String {
-        val sourceFileResolved = File(srcSourceRoot)
+        val sourceFileResolved = Paths.get(srcSourceRoot)
             .resolve(value)
-            .normalize().absoluteFile
+            .toAbsolutePath()
+            .normalize()
+        val targetSourceRootResolved = Paths.get(targetSourceRoot)
+            .toAbsolutePath()
+            .normalize()
 
         val transformedPath = sourceFileResolved
-            .takeIf { it.exists() }
-            ?.relativeToOrNull(File(targetSourceRoot))
-            ?.path
+            .takeIf { Files.exists(it) }
+            ?.relativeToOrNull(targetSourceRootResolved)
+            ?.toString()
             ?: return value
 
-        return if (File.separatorChar == '\\') {
+        return if (java.io.File.separatorChar == '\\') {
             transformedPath.replace('\\', '/')
         } else {
             transformedPath
         }
     }
+
+    private fun Path.relativeToOrNull(base: Path): Path? =
+        if (startsWith(base)) base.relativize(this) else null
 
 
     override fun read(): Int {

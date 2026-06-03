@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.gradle.internal.kapt.incremental
 
 import java.io.*
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 import kotlin.collections.HashMap
 
@@ -21,26 +23,27 @@ open class ClasspathSnapshot protected constructor(
 ) {
     object ClasspathSnapshotFactory {
         fun loadFrom(cacheDir: File): ClasspathSnapshot {
-            val classpathEntries = cacheDir.resolve(CLASSPATH_ENTRIES_FILE)
-            val classpathStructureData = cacheDir.resolve(CLASSPATH_STRUCTURE_FILE)
-            val annotationProcessorClasspathEntries= cacheDir.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
-            if (!classpathEntries.exists() || !classpathStructureData.exists() || !annotationProcessorClasspathEntries.exists()) {
+            val cacheDirPath = cacheDir.toPath()
+            val classpathEntries = cacheDirPath.resolve(CLASSPATH_ENTRIES_FILE)
+            val classpathStructureData = cacheDirPath.resolve(CLASSPATH_STRUCTURE_FILE)
+            val annotationProcessorClasspathEntries= cacheDirPath.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
+            if (!Files.exists(classpathEntries) || !Files.exists(classpathStructureData) || !Files.exists(annotationProcessorClasspathEntries)) {
                 return UnknownSnapshot
             }
 
-            val classpathFiles = ObjectInputStream(BufferedInputStream(classpathEntries.inputStream())).use {
+            val classpathFiles = ObjectInputStream(BufferedInputStream(Files.newInputStream(classpathEntries))).use {
                 @Suppress("UNCHECKED_CAST")
                 it.readObject() as List<File>
             }
 
             val annotationProcessorClasspathFiles =
-                ObjectInputStream(BufferedInputStream(annotationProcessorClasspathEntries.inputStream())).use {
+                ObjectInputStream(BufferedInputStream(Files.newInputStream(annotationProcessorClasspathEntries))).use {
                     @Suppress("UNCHECKED_CAST")
                     it.readObject() as List<File>
                 }
 
             val dataForFiles =
-                ObjectInputStream(BufferedInputStream(classpathStructureData.inputStream())).use {
+                ObjectInputStream(BufferedInputStream(Files.newInputStream(classpathStructureData))).use {
                     @Suppress("UNCHECKED_CAST")
                     it.readObject() as MutableMap<File, ClasspathEntryData?>
                 }
@@ -141,18 +144,19 @@ open class ClasspathSnapshot protected constructor(
     fun writeToCache() {
         loadAll()
 
-        val classpathEntries = cacheDir.resolve(CLASSPATH_ENTRIES_FILE)
-        ObjectOutputStream(BufferedOutputStream(classpathEntries.outputStream())).use {
+        val cacheDirPath = cacheDir.toPath()
+        val classpathEntries = cacheDirPath.resolve(CLASSPATH_ENTRIES_FILE)
+        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(classpathEntries))).use {
             it.writeObject(classpath)
         }
 
-        val annotationProcessorClasspathEntries = cacheDir.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
-        ObjectOutputStream(BufferedOutputStream(annotationProcessorClasspathEntries.outputStream())).use {
+        val annotationProcessorClasspathEntries = cacheDirPath.resolve(ANNOTATION_PROCESSOR_CLASSPATH_ENTRIES_FILE)
+        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(annotationProcessorClasspathEntries))).use {
             it.writeObject(annotationProcessorClasspath)
         }
 
-        val classpathStructureData = cacheDir.resolve(CLASSPATH_STRUCTURE_FILE)
-        ObjectOutputStream(BufferedOutputStream(classpathStructureData.outputStream())).use {
+        val classpathStructureData = cacheDirPath.resolve(CLASSPATH_STRUCTURE_FILE)
+        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(classpathStructureData))).use {
             it.writeObject(dataForFiles)
         }
     }

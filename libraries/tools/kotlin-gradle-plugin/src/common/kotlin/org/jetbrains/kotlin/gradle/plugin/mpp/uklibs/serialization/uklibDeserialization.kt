@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_V
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibModule
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 internal data class IncompatibleUklibVersion(
     val uklibDirectory: File,
@@ -26,10 +28,14 @@ internal data class IncompatibleUklibVersion(
 
 internal fun deserializeUklibFromDirectory(
     directory: File,
+): Uklib = deserializeUklibFromDirectory(directory.toPath())
+
+private fun deserializeUklibFromDirectory(
+    directory: Path,
 ): Uklib {
     val umanifest = directory.resolve(UMANIFEST_FILE_NAME)
-    if (!umanifest.exists()) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
-    return umanifest.reader().use { umanifestStream ->
+    if (!Files.exists(umanifest)) error("Can't deserialize Uklib from ${directory} because $UMANIFEST_FILE_NAME doesn't exist")
+    return Files.newBufferedReader(umanifest).use { umanifestStream ->
         @Suppress("UNCHECKED_CAST")
         val json = Gson().fromJson(umanifestStream, Map::class.java) as Map<String, Any>
 
@@ -43,7 +49,7 @@ internal fun deserializeUklibFromDirectory(
                 attributes = fragment.property<List<String>>(ATTRIBUTES).toSet(),
                 files = if (fragment.keys.contains(FRAGMENT_FILES))
                     fragment.property<List<String>>(FRAGMENT_FILES).map(::File)
-                else listOf(directory.resolve(fragmentIdentifier))
+                else listOf(directory.resolve(fragmentIdentifier).toFile())
             )
         }.toSet()
 
@@ -77,9 +83,9 @@ internal inline fun <reified T> Map<String, Any>.property(named: String): T {
     return value
 }
 
-private fun assertCanReadUManifest(manifestVersion: String, directory: File) {
+private fun assertCanReadUManifest(manifestVersion: String, directory: Path) {
     if (manifestVersion != MAXIMUM_COMPATIBLE_UMANIFEST_VERSION) throw IncompatibleUklibVersion(
-        directory,
+        directory.toFile(),
         manifestVersion,
         MAXIMUM_COMPATIBLE_UMANIFEST_VERSION
     )

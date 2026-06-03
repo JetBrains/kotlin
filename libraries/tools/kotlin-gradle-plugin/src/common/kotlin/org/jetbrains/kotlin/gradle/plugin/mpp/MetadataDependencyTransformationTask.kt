@@ -28,6 +28,8 @@ import org.jetbrains.kotlin.gradle.tasks.locateTask
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.gradle.utils.setProperty
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 /* Keep typealias for source compatibility */
@@ -79,7 +81,10 @@ abstract class MetadataDependencyTransformationTask
     internal val taskInputs = MetadataDependencyTransformationTaskInputs(project, kotlinSourceSet)
 
     @get:OutputDirectory
-    internal val outputsDir: File get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(transformationParameters.sourceSetName)
+    internal val outputsDir: File get() = outputsDirPath.toFile()
+
+    private val outputsDirPath: Path
+        get() = projectLayout.kotlinTransformedMetadataLibraryDirectoryPathForBuild(transformationParameters.sourceSetName)
 
     @Transient // Only needed for configuring task inputs
     private val parentTransformationTasksLazy: Lazy<List<TaskProvider<MetadataDependencyTransformationTask>>>? = lazy {
@@ -100,7 +105,7 @@ abstract class MetadataDependencyTransformationTask
     @get:OutputFile
     protected val transformedLibrariesIndexFile: RegularFileProperty = objectFactory
         .fileProperty()
-        .apply { set(outputsDir.resolve("${kotlinSourceSet.name}.json")) }
+        .apply { set(outputsDirPath.resolve("${kotlinSourceSet.name}.json").toFile()) }
 
     @get:PathSensitive(PathSensitivity.RELATIVE)
     @get:InputFiles
@@ -146,7 +151,7 @@ abstract class MetadataDependencyTransformationTask
 
     private fun MetadataDependencyResolution.ChooseVisibleSourceSets.toTransformedLibrariesRecords(): List<TransformedMetadataLibraryRecord> {
         val moduleId = KmpModuleIdentifier.from(dependency, buildIdentifierCompatAccessor)
-        val transformedLibraries = transformMetadataLibrariesForBuild(this, outputsDir, true)
+        val transformedLibraries = transformMetadataLibrariesForBuild(this, outputsDirPath, true)
         return transformedLibraries.flatMap { (sourceSetName, libraryFiles) ->
             libraryFiles.map { file ->
                 TransformedMetadataLibraryRecord(
@@ -175,14 +180,14 @@ abstract class MetadataDependencyTransformationTask
             },
         )
 
-        if (outputsDir.isDirectory) {
-            outputsDir.deleteRecursively()
+        if (Files.isDirectory(outputsDirPath)) {
+            outputsDirPath.toFile().deleteRecursively()
         }
-        outputsDir.mkdirs()
+        Files.createDirectories(outputsDirPath)
 
         val metadataDependencyResolutions = transformation.metadataDependencyResolutions
         val transformedLibrariesRecords = metadataDependencyResolutions.toTransformedLibrariesRecords()
-        KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile).write(transformedLibrariesRecords)
+        KotlinMetadataLibrariesIndexFile(transformedLibrariesIndexFile.get().asFile.toPath()).write(transformedLibrariesRecords)
     }
 
     internal fun ownTransformedLibraries(): Provider<List<File>> {
@@ -198,7 +203,7 @@ abstract class MetadataDependencyTransformationTask
 
     companion object {
         @JvmStatic
-        private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile).read()
+        private fun RegularFile.records() = KotlinMetadataLibrariesIndexFile(asFile.toPath()).read()
 
         private fun transformedLibraries(records: List<TransformedMetadataLibraryRecord>): List<File> {
             return records.distinctBy { it.moduleId to it.sourceSetName }.map { File(it.file) }

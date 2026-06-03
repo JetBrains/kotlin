@@ -5,18 +5,18 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import java.io.BufferedInputStream
-import java.io.File
 import java.nio.ByteBuffer
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 import java.util.zip.CRC32
 
 private val checksumStringEncoder: Base64.Encoder = Base64.getUrlEncoder().withoutPadding()
 
-internal fun File.crc32Checksum(): Int {
+internal fun Path.crc32Checksum(): Int {
     val crc32 = CRC32()
     val buffer = ByteArray(2048)
-    BufferedInputStream(inputStream()).use { fileStream ->
+    Files.newInputStream(this).buffered().use { fileStream ->
         while (true) {
             val read = fileStream.read(buffer)
             if (read < 0) break
@@ -26,7 +26,7 @@ internal fun File.crc32Checksum(): Int {
     return crc32.value.toInt()
 }
 
-internal fun File.crc32ChecksumString(): String {
+internal fun Path.crc32ChecksumString(): String {
     return checksumString(crc32Checksum())
 }
 

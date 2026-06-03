@@ -19,6 +19,8 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.mapOrNull
 import java.io.File
 import java.net.URI
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -119,9 +121,9 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         logger.kotlinInfo("Using distribution from '$dist'")
 
         extractWithUpToDate(
-            destinationProvider.getFile(),
-            destinationHashFileProvider.getFile(),
-            dist!!,
+            destinationProvider.getFile().toPath(),
+            destinationHashFileProvider.getFile().toPath(),
+            dist!!.toPath(),
             fileHasher,
             ::extract
         )
@@ -149,55 +151,60 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
     }
 
     private fun extractWithUpToDate(
-        destination: File,
-        destinationHashFile: File,
-        dist: File,
+        destination: Path,
+        destinationHashFile: Path,
+        dist: Path,
         fileHasher: FileHasher,
         extract: (File) -> Unit,
     ) {
         val upToDate = isUpToDate(
             destinationHashFile = destinationHashFile,
             destination = destination,
+            dist = dist,
         )
 
         if (upToDate) return
 
-        logger.info("[$path] Extracting distribution ${dist.name} to $destination")
+        logger.info("[$path] Extracting distribution ${dist.fileName} to $destination")
 
-        if (destination.isDirectory) {
-            destination.deleteRecursively()
+        if (Files.isDirectory(destination)) {
+            destination.toFile().deleteRecursively()
         }
 
-        extract(dist)
+        extract(dist.toFile())
 
-        destinationHashFile.writeText(
-            CACHE_VERSION +
-                    " " +
-                    fileHasher.calculateDirHash(destination)!! +
-                    " " +
-                    fileHasher.hash(dist).toByteArray().toHex()
-        )
+        Files.newBufferedWriter(destinationHashFile).use {
+            it.write(
+                CACHE_VERSION +
+                        " " +
+                        fileHasher.calculateDirHash(destination)!! +
+                        " " +
+                        fileHasher.hash(dist.toFile()).toByteArray().toHex()
+            )
+        }
     }
 
     private fun isUpToDate(
-        destinationHashFile: File,
-        destination: File,
+        destinationHashFile: Path,
+        destination: Path,
+        dist: Path,
     ): Boolean {
         fun notUpToDate(reason: String): Boolean {
-            logger.info("[$path] ${destination.name} Not up-to-date: $reason")
+            logger.info("[$path] ${destination.fileName} Not up-to-date: $reason")
             return false
         }
 
-        if (!destinationHashFile.exists()) {
+        if (!Files.exists(destinationHashFile)) {
             return notUpToDate("no hash file $destinationHashFile")
         }
 
-        val cacheData = destinationHashFile.useLines { seq ->
+        val cacheData = Files.newBufferedReader(destinationHashFile).useLines { seq ->
             seq.firstOrNull().orEmpty().split(" ")
         }
 
         if (cacheData.size != 3) {
-            return notUpToDate("invalid format ${destinationHashFile.readText()}")
+            val hashFileText = Files.newBufferedReader(destinationHashFile).use { it.readText() }
+            return notUpToDate("invalid format $hashFileText")
         }
 
         if (cacheData[0] != CACHE_VERSION) {
@@ -211,7 +218,7 @@ abstract class AbstractSetupTask<Env : AbstractEnv, Spec : EnvSpec<Env>>(
         }
 
         val expectedDistHash = cacheData[2]
-        val currentDistHash = fileHasher.hash(dist).toByteArray().toHex()
+        val currentDistHash = fileHasher.hash(dist.toFile()).toByteArray().toHex()
         if (expectedDistHash != currentDistHash) {
             return notUpToDate("distribution hash mismatch expected:$expectedDistHash != current:$currentDistHash")
         }

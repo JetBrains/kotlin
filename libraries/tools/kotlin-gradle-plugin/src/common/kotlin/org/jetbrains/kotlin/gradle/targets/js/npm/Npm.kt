@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.resolved.PreparedKotlinCompila
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import java.io.File
+import java.nio.file.Paths
 
 class Npm internal constructor(
     private val execOps: ExecOperations,
@@ -112,7 +113,7 @@ class Npm internal constructor(
 
             if (!environment.standalone) {
                 val nodeExecutable = nodeJs.nodeExecutable
-                val nodePath = File(nodeExecutable).parent
+                val nodePath = Paths.get(nodeExecutable).parent
                 execSpec.environment["PATH"] =
                     "$nodePath${File.pathSeparator}${System.getenv("PATH")}"
             }
@@ -143,7 +144,7 @@ class Npm internal constructor(
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
         rootPackageJson.overrides = overrides
         rootPackageJson.saveTo(
-            rootPackageJsonFile
+            rootPackageJsonFile.toPath()
         )
     }
 }

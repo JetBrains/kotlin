@@ -10,25 +10,41 @@ import org.gradle.api.file.ProjectLayout
 import org.jetbrains.kotlin.gradle.utils.compositeBuildRootProject
 import org.jetbrains.kotlin.gradle.utils.kotlinMetadataDir
 import java.io.File
+import java.nio.file.Path
 
 private const val kotlinTransformedMetadataLibraries = "kotlinTransformedMetadataLibraries"
 private const val kotlinCInteropLibraries = "kotlinCInteropLibraries"
 private const val kotlinTransformedCInteropMetadataLibraries = "kotlinTransformedCInteropMetadataLibraries"
 
 internal fun ProjectLayout.kotlinTransformedMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
-    buildDirectory.get().asFile.resolve(kotlinTransformedMetadataLibraries).resolve(sourceSetName)
+    kotlinTransformedMetadataLibraryDirectoryPathForBuild(sourceSetName).toFile()
+
+internal fun ProjectLayout.kotlinTransformedMetadataLibraryDirectoryPathForBuild(sourceSetName: String): Path =
+    buildDirectory.get().asFile.toPath().resolve(kotlinTransformedMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinTransformedMetadataLibraryDirectoryForIde: File
-    get() = kotlinMetadataDir(compositeBuildRootProject)
+    get() = kotlinTransformedMetadataLibraryDirectoryPathForIde.toFile()
+
+internal val Project.kotlinTransformedMetadataLibraryDirectoryPathForIde: Path
+    get() = kotlinMetadataDir(compositeBuildRootProject).toPath()
         .resolve(kotlinTransformedMetadataLibraries)
 
 internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryForBuild(sourceSetName: String): File =
-    buildDirectory.get().asFile.resolve(kotlinTransformedCInteropMetadataLibraries).resolve(sourceSetName)
+    kotlinTransformedCInteropMetadataLibraryDirectoryPathForBuild(sourceSetName).toFile()
+
+internal fun ProjectLayout.kotlinTransformedCInteropMetadataLibraryDirectoryPathForBuild(sourceSetName: String): Path =
+    buildDirectory.get().asFile.toPath().resolve(kotlinTransformedCInteropMetadataLibraries).resolve(sourceSetName)
 
 internal val Project.kotlinCInteropLibraryDirectoryForIde: File
-    get() = kotlinMetadataDir(compositeBuildRootProject)
+    get() = kotlinCInteropLibraryDirectoryPathForIde.toFile()
+
+internal val Project.kotlinCInteropLibraryDirectoryPathForIde: Path
+    get() = kotlinMetadataDir(compositeBuildRootProject).toPath()
         .resolve(kotlinCInteropLibraries)
 
 internal val Project.kotlinTransformedCInteropMetadataLibraryDirectoryForIde: File
-    get() = kotlinMetadataDir(compositeBuildRootProject)
+    get() = kotlinTransformedCInteropMetadataLibraryDirectoryPathForIde.toFile()
+
+internal val Project.kotlinTransformedCInteropMetadataLibraryDirectoryPathForIde: Path
+    get() = kotlinMetadataDir(compositeBuildRootProject).toPath()
         .resolve(kotlinTransformedCInteropMetadataLibraries)

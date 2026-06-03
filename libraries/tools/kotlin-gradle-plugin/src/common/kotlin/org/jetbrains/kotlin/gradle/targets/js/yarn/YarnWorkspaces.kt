@@ -102,7 +102,7 @@ class YarnWorkspaces internal constructor(
         rootPackageJson.workspaces = npmProjectWorkspaces + importedProjectWorkspaces
         rootPackageJson.customField("resolutions", resolutions)
         rootPackageJson.saveTo(
-            rootPackageJsonFile
+            rootPackageJsonFile.toPath()
         )
     }
 }

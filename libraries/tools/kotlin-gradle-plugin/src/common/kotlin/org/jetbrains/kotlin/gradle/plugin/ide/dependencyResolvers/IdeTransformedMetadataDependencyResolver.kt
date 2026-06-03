@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.read
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.plugin.sources.metadataTransformation
 import org.jetbrains.kotlin.tooling.core.mutableExtrasOf
+import java.nio.file.Files
 
 internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver {
     override fun resolve(sourceSet: KotlinSourceSet): Set<IdeaKotlinDependency> {
@@ -39,17 +40,18 @@ internal object IdeTransformedMetadataDependencyResolver : IdeDependencyResolver
                 val sourceSetMetadataBinary = sourceSetContent.metadataBinary ?: return@mapNotNull null
 
                 val metadataLibraryOutputFile = sourceSet.internal.project.kotlinTransformedMetadataLibraryDirectoryForIde
+                    .toPath()
                     .resolve(sourceSetMetadataBinary.relativeFile)
 
-                metadataLibraryOutputFile.parentFile.mkdirs()
-                if (!metadataLibraryOutputFile.exists()) {
+                metadataLibraryOutputFile.parent?.let { Files.createDirectories(it) }
+                if (!Files.exists(metadataLibraryOutputFile)) {
                     sourceSetMetadataBinary.copyTo(metadataLibraryOutputFile)
-                    if (!metadataLibraryOutputFile.exists()) return@mapNotNull null
+                    if (!Files.exists(metadataLibraryOutputFile)) return@mapNotNull null
                 }
 
                 IdeaKotlinResolvedBinaryDependency(
                     binaryType = IdeaKotlinBinaryDependency.KOTLIN_COMPILE_BINARY_TYPE,
-                    classpath = IdeaKotlinClasspath(metadataLibraryOutputFile),
+                    classpath = IdeaKotlinClasspath(metadataLibraryOutputFile.toFile()),
                     extras = mutableExtrasOf(),
                     coordinates = IdeaKotlinBinaryCoordinates(
                         group = metadataProvider.moduleDependencyIdentifier.groupId ?: "",

@@ -31,7 +31,7 @@ abstract class DefaultIncrementalSyncTask : DefaultTask(), IncrementalSyncTask {
             into(destinationDir)
             duplicatesStrategy = this@DefaultIncrementalSyncTask.duplicatesStrategy
             // Rewrite relative paths in sourcemaps in the target directory
-            remapJavaScriptSourceMapSourcePaths(destinationDir)
+            remapJavaScriptSourceMapSourcePaths(destinationDir.toPath())
         }
 
         val work = if (!inputChanges.isIncremental) {

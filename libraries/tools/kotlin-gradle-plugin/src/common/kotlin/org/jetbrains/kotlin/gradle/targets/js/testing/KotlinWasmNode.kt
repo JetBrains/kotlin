@@ -55,8 +55,8 @@ internal class KotlinWasmNode(
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val testRunnerFile = writeWasmUnitTestRunner(
-            workingDir = launchOpts.workingDir.getFile(),
-            compiledFile = task.inputFileProperty.get().asFile,
+            workingDir = launchOpts.workingDir.getFile().toPath(),
+            compiledFile = task.inputFileProperty.get().asFile.toPath(),
         )
 
         val clientSettings = TCServiceMessagesClientSettings(
@@ -75,7 +75,7 @@ internal class KotlinWasmNode(
         val args = mutableListOf<String>()
         with(args) {
             addAll(nodeJsArgs)
-            add(testRunnerFile.absolutePath)
+            add(testRunnerFile.toAbsolutePath().toString())
             addAll(cliArgs.toList())
         }
 

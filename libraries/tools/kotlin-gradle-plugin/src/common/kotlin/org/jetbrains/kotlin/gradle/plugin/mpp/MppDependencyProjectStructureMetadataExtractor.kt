@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipFile
 import javax.xml.parsers.DocumentBuilderFactory
 
@@ -34,11 +36,11 @@ internal class ProjectMppDependencyProjectStructureMetadataExtractorDeprecated(
 }
 
 internal class ProjectStructureMetadataFileExtractor(
-    private val projectStructureMetadataFile: File,
+    private val projectStructureMetadataFile: Path,
 ) : AbstractProjectMppDependencyProjectStructureMetadataExtractor(null) {
 
     override fun getProjectStructureMetadata(): KotlinProjectStructureMetadata {
-        return parseKotlinSourceSetMetadataFromJson(projectStructureMetadataFile.readText())
+        return parseKotlinSourceSetMetadataFromJson(Files.newBufferedReader(projectStructureMetadataFile).use { it.readText() })
     }
 }
 

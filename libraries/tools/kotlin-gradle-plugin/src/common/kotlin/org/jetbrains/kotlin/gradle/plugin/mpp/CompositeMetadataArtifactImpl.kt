@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.gradle.utils.copyPartially
 import org.jetbrains.kotlin.gradle.utils.ensureValidZipDirectoryPath
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import java.io.Closeable
-import java.io.File
 import java.io.IOException
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.zip.CRC32
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
@@ -20,13 +22,13 @@ internal class CompositeMetadataArtifactImpl(
     override val moduleDependencyIdentifier: ModuleDependencyIdentifier,
     override val moduleDependencyVersion: String,
     private val kotlinProjectStructureMetadata: KotlinProjectStructureMetadata,
-    private val primaryArtifactFile: File,
-    private val hostSpecificArtifactFilesBySourceSetName: Map<String, File>,
+    private val primaryArtifactFile: Path,
+    private val hostSpecificArtifactFilesBySourceSetName: Map<String, Path>,
     private val computeChecksum: Boolean = true,
 ) : CompositeMetadataArtifact {
 
     override fun exists(): Boolean {
-        return primaryArtifactFile.exists() && hostSpecificArtifactFilesBySourceSetName.values.all { it.exists() }
+        return Files.exists(primaryArtifactFile) && hostSpecificArtifactFilesBySourceSetName.values.all { Files.exists(it) }
     }
 
     override fun open(): CompositeMetadataArtifactContent {
@@ -114,7 +116,7 @@ internal class CompositeMetadataArtifactImpl(
          * Example:
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-Vk5pxQ.klib
          */
-        override val relativeFile: File = File(buildString {
+        override val relativeFile: Path = Paths.get(buildString {
             append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
             append("-")
             append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
@@ -126,14 +128,15 @@ internal class CompositeMetadataArtifactImpl(
             append(archiveExtension)
         })
 
-        override fun copyTo(file: File): Boolean {
-            require(file.extension == archiveExtension) {
-                "Expected file.extension == '$archiveExtension'. Found ${file.extension}"
+        override fun copyTo(file: Path): Boolean {
+            val extension = file.fileName.toString().substringAfterLast('.', "")
+            require(extension == archiveExtension) {
+                "Expected file.extension == '$archiveExtension'. Found $extension"
             }
 
             val libraryPath = "${containingSourceSetContent.sourceSetName}/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
-            file.parentFile.mkdirs()
+            file.parent?.let { Files.createDirectories(it) }
             artifactFile.zip.copyPartially(file, libraryPath)
 
             return true
@@ -157,7 +160,7 @@ internal class CompositeMetadataArtifactImpl(
          * org.jetbrains.sample-sampleLibrary-1.0.0-SNAPSHOT-appleAndLinuxMain-cinterop/
          *     org.jetbrains.sample_sampleLibrary-cinterop-simple-Vk5pxQ.klib
          */
-        override val relativeFile: File = File(buildString {
+        override val relativeFile: Path = Paths.get(buildString {
             append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyIdentifier)
             append("-")
             append(containingSourceSetContent.containingArtifactContent.containingArtifact.moduleDependencyVersion)
@@ -166,9 +169,10 @@ internal class CompositeMetadataArtifactImpl(
             append("-cinterop")
         }).resolve("$cinteropLibraryName-${this.checksum}.${archiveExtension}")
 
-        override fun copyTo(file: File): Boolean {
-            require(file.extension == archiveExtension) {
-                "Expected 'file.extension == '${SourceSetMetadataLayout.KLIB.archiveExtension}'. Found ${file.extension}"
+        override fun copyTo(file: Path): Boolean {
+            val extension = file.fileName.toString().substringAfterLast('.', "")
+            require(extension == archiveExtension) {
+                "Expected 'file.extension == '${SourceSetMetadataLayout.KLIB.archiveExtension}'. Found $extension"
             }
 
             val sourceSetName = containingSourceSetContent.sourceSetName
@@ -178,7 +182,7 @@ internal class CompositeMetadataArtifactImpl(
 
             val libraryPath = "$cinteropMetadataDirectoryPath$cinteropLibraryName/"
             if (!artifactFile.containsKlibDirectory(libraryPath)) return false
-            file.parentFile.mkdirs()
+            file.parent?.let { Files.createDirectories(it) }
             artifactFile.zip.copyPartially(file, "$cinteropMetadataDirectoryPath$cinteropLibraryName/")
 
             return true
@@ -189,13 +193,13 @@ internal class CompositeMetadataArtifactImpl(
      * Interface to the underlying [zip][file] that only opens the file lazily and keeps references to
      * all [entries] and infers all potential directory paths (see [directoryPaths] and [containsKlibDirectory])
      */
-    private class ArtifactFile(private val file: File) : Closeable {
+    private class ArtifactFile(private val file: Path) : Closeable {
 
         private var isClosed = false
 
         private val lazyZip = lazy {
             ensureNotClosed()
-            ZipFile(file)
+            ZipFile(file.toFile())
         }
 
         val zip: ZipFile get() = lazyZip.value

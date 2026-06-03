@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.reportLoadingProblemsIfAny
 import org.slf4j.Logger
-import java.io.File
+import java.nio.file.Path
 
 internal fun Project.moduleName(
     baseName: Provider<String> = baseModuleName(),
@@ -46,7 +46,7 @@ private fun KotlinToolingVersion.supportsModuleNameWithGroupPrefix(): Boolean = 
  * In case of failure, returns `null` and reports the problem to [Project.logger].
  * The problem is reported at [LogLevel.INFO] level if [reportProblemsAtInfoLevel] is `true`, otherwise at [LogLevel.ERROR].
  */
-internal fun Project.loadSingleKlib(location: File, reportProblemsAtInfoLevel: Boolean = false): KotlinLibrary? =
+internal fun Project.loadSingleKlib(location: Path, reportProblemsAtInfoLevel: Boolean = false): KotlinLibrary? =
     loadSingleKlib(location, logger, reportProblemsAtInfoLevel)
 
 /**
@@ -54,9 +54,8 @@ internal fun Project.loadSingleKlib(location: File, reportProblemsAtInfoLevel: B
  * In case of failure, returns `null` and reports the problem to [logger].
  * The problem is reported at [LogLevel.INFO] level if [reportProblemsAtInfoLevel] is `true`, otherwise at [LogLevel.ERROR].
  */
-internal fun loadSingleKlib(location: File, logger: Logger, reportProblemsAtInfoLevel: Boolean = false): KotlinLibrary? {
+internal fun loadSingleKlib(location: Path, logger: Logger, reportProblemsAtInfoLevel: Boolean = false): KotlinLibrary? {
     val result = KlibLoader { libraryPaths(location) }.load()
     result.reportLoadingProblemsIfAny { _, message -> if (reportProblemsAtInfoLevel) logger.info(message) else logger.error(message) }
     return result.librariesStdlibFirst.singleOrNull()
 }
-

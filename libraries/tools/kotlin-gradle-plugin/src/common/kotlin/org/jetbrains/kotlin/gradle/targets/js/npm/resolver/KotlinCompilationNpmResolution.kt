@@ -147,7 +147,7 @@ class KotlinCompilationNpmResolution(
             it.execute(packageJson)
         }
 
-        packageJson.saveTo(resolution.npmProjectDir.getFile().resolve(NpmProject.PACKAGE_JSON))
+        packageJson.saveTo(resolution.npmProjectDir.getFile().toPath().resolve(NpmProject.PACKAGE_JSON))
     }
 
     private fun disambiguateDependencies(

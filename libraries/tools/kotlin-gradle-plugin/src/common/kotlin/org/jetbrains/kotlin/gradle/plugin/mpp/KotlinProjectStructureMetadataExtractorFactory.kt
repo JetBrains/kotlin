@@ -41,7 +41,7 @@ private constructor(
         }
 
         return ProjectStructureMetadataFileExtractor(
-            projectStructureMetadataFile = psmFile
+            projectStructureMetadataFile = psmFile.toPath()
         )
     }
 
