@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.gradle.plugin.statistics.ConfigurationTimeFusMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.MultiplatformBuildStatsReportSetupAction
 import org.jetbrains.kotlin.gradle.scripting.internal.ScriptingGradleSubpluginSetupAction
 import org.jetbrains.kotlin.gradle.targets.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.ConfigureKotlinPlaywrightTestRunner
 import org.jetbrains.kotlin.gradle.targets.js.npm.AddNpmDependencyExtensionProjectSetupAction
 import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmCompilationWireJavaSourcesSideEffect
 import org.jetbrains.kotlin.gradle.targets.jvm.ConfigureJavaTestFixturesSideEffect
@@ -139,6 +140,7 @@ internal fun Project.registerKotlinPluginExtensions() {
             register(project, ConfigureNonPackedKlibConsumingSideEffect)
         }
         register(project, WasmBinaryPreparationSetupAction)
+        register(project, ConfigureKotlinPlaywrightTestRunner)
     }
 
     KotlinCompilationSideEffect.extensionPoint.apply {
