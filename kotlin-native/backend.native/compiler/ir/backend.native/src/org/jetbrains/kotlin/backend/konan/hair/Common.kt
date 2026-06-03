@@ -3,14 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(org.jetbrains.kotlin.config.MessageCollectorAccess::class)
+
 package org.jetbrains.kotlin.backend.konan.hair
 
 import hair.compilation.Compilation
 import hair.compilation.Config
 import hair.compilation.HairDumper
 import hair.sym.HairFunction
-import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
 import org.jetbrains.kotlin.backend.konan.llvm.computeFunctionName
@@ -36,7 +39,7 @@ private fun createHairDumper(context: Context, module: IrModuleFragment): HairDu
     val moduleDumpDir = compilationDumpDir.resolve(module.name.toString())
     val created = moduleDumpDir.mkdirs()
     if (!created) {
-        context.reportCompilationWarning("Failed to create HaIR dump directory: $moduleDumpDir")
+        context.configuration.messageCollector.report(CompilerMessageSeverity.WARNING, "Failed to create HaIR dump directory: $moduleDumpDir")
         return null
     }
     return object : HairDumper() {

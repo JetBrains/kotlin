@@ -3,6 +3,8 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
+@file:OptIn(org.jetbrains.kotlin.config.MessageCollectorAccess::class)
+
 package org.jetbrains.kotlin.backend.konan.hair
 
 import org.jetbrains.kotlin.backend.konan.*
@@ -28,16 +30,15 @@ import org.jetbrains.kotlin.backend.konan.ir.isTypedIntrinsic
 import org.jetbrains.kotlin.backend.konan.ir.tryGetIntrinsicType
 import org.jetbrains.kotlin.ir.visitors.*
 import org.jetbrains.kotlin.backend.konan.llvm.*
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER
-import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER
+import org.jetbrains.kotlin.backend.konan.lower.StaticInitializersOrigins
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isChar
 import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.types.isUnit
-import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
@@ -80,10 +81,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     funCompilations[container] = generateHair(container)
                     context.log { "# Successfully generated HaIR for ${container.computeFullName()}" }
                 } catch (e: HairNotImplementedYet) {
-                    context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e", container.fileOrNull, container)
+                    context.configuration.messageCollector.report(CompilerMessageSeverity.WARNING, "Failed to generate HaIR for ${container.computeFullName()}: $e")
                 } catch (e: Throwable) {
                     println("# Failed with $e")
-                    context.reportWarning("Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}", container.fileOrNull, container)
+                    context.configuration.messageCollector.report(CompilerMessageSeverity.WARNING, "Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}")
                 }
             } else {
                 // TODO non-simple functions ?
@@ -115,7 +116,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 // FIXME
                 val unitConst by lazy { UnitValue() }
 
-                for ((idx, param) in f.parameters.withIndex()) {
+                for ([idx, param] in f.parameters.withIndex()) {
                     val v = getVar(param.symbol)
                     val node = Param(idx)
                     AssignVar(v)(node)
@@ -185,9 +186,9 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         return when {
                             function.isTypedIntrinsic -> generateIntrinsic(expression, resultType, args)
                             function.isBuiltInOperator -> generateBuiltinOperator(expression, resultType, args)
-                            function.origin == DECLARATION_ORIGIN_STATIC_GLOBAL_INITIALIZER -> GlobalInit()
-                            function.origin == DECLARATION_ORIGIN_STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
-                            function.origin == DECLARATION_ORIGIN_STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
+                            function.origin == StaticInitializersOrigins.STATIC_GLOBAL_INITIALIZER -> GlobalInit()
+                            function.origin == StaticInitializersOrigins.STATIC_THREAD_LOCAL_INITIALIZER -> ThreadLocalInit()
+                            function.origin == StaticInitializersOrigins.STATIC_STANDALONE_THREAD_LOCAL_INITIALIZER -> StandaloneThreadLocalInit()
                             !function.isReal -> notImplemented(HairTODO.FAKE_OVERRIDE_CALL)
                             else -> if (expression.isVirtual()) {
                                 notImplemented(HairTODO.VIRTUAL_CALLS)
@@ -298,7 +299,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                                 val exit = if (controlBuilder.lastControl != null) Goto() else null
                                 value to exit
                             } else {
-                                val (trueExit, falseExit) = IfExits(it.condition.accept(this, Unit))
+                                val [trueExit, falseExit] = IfExits(it.condition.accept(this, Unit))
 
                                 BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
                                 val trueValue = it.result.accept(this, Unit)
@@ -310,7 +311,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             }
                         } + listOf(NoValue() to (if (exhaustive) null else Goto()))
 
-                        val (values, exits) = pairs.filter { it.second != null }.unzip()
+                        val [values, exits] = pairs.filter { it.second != null }.unzip()
 
                         val result = if (exits.isNotEmpty()) {
                             require(exits.size == values.size)
@@ -327,7 +328,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                     override fun visitWhileLoop(loop: IrWhileLoop, data: Unit): Node {
                         val condBlock = BlockEntry(Goto(), null) as BlockEntry
                         val cond = loop.condition.accept(this, Unit)
-                        val (trueExit, falseExit) = IfExits(cond)
+                        val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
                         loop.body?.accept(this, Unit)
@@ -353,7 +354,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         loop.body?.accept(this, Unit)
 
                         val cond = loop.condition.accept(this, Unit)
-                        val (trueExit, falseExit) = IfExits(cond)
+                        val [trueExit, falseExit] = IfExits(cond)
 
                         BlockEntry(trueExit)
                         entryBlock.preds[1] = Goto() // FIXME what if no exit
