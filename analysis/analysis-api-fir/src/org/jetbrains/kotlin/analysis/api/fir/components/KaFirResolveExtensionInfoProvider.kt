@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.components.KaResolveExtensionInfoProvid
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
@@ -53,7 +54,7 @@ internal class KaFirResolveExtensionInfoProvider(
 private class KaFirResolveExtensionScope(
     private val analysisSession: KaFirSession,
     private val tools: List<LLFirResolveExtensionTool>,
-) : KaScope {
+) : KaBaseScope() {
     init {
         require(tools.isNotEmpty())
     }

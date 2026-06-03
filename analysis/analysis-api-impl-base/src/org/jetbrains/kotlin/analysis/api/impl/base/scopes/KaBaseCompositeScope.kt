@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.name.Name
 class KaBaseCompositeScope private constructor(
     private val subScopes: List<KaScope>,
     override val token: KaLifetimeToken,
-) : KaScope {
+) : KaBaseScope() {
 
     init {
         require(subScopes.size > 1) {

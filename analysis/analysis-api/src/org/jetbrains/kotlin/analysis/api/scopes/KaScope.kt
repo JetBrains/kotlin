@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.scopes
 
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
-import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.name.Name
 
@@ -34,13 +33,6 @@ public interface KaScope : KaScopeLike {
      * constructors, which cannot be meaningfully filtered by name.
      */
     public val declarations: Sequence<KaDeclarationSymbol>
-        get() = withValidityAssertion {
-            sequence {
-                yieldAll(callables)
-                yieldAll(classifiers)
-                yieldAll(constructors)
-            }
-        }
 
     /**
      * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the [nameFilter].
@@ -55,12 +47,7 @@ public interface KaScope : KaScopeLike {
      * @see classifiers
      */
     @KaExperimentalApi
-    public fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol> = withValidityAssertion {
-        sequence {
-            yieldAll(callables(nameFilter))
-            yieldAll(classifiers(nameFilter))
-        }
-    }
+    public fun declarations(nameFilter: (Name) -> Boolean): Sequence<KaDeclarationSymbol>
 
     /**
      * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
@@ -75,12 +62,7 @@ public interface KaScope : KaScopeLike {
      * @see classifiers
      */
     @KaExperimentalApi
-    public fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol> = withValidityAssertion {
-        sequence {
-            yieldAll(callables(names))
-            yieldAll(classifiers(names))
-        }
-    }
+    public fun declarations(names: Collection<Name>): Sequence<KaDeclarationSymbol>
 
     /**
      * Returns a sequence of [KaDeclarationSymbol]s contained in the scope which match the given [names].
@@ -95,8 +77,7 @@ public interface KaScope : KaScopeLike {
      * @see classifiers
      */
     @KaExperimentalApi
-    public fun declarations(vararg names: Name): Sequence<KaDeclarationSymbol> =
-        declarations(names.toList())
+    public fun declarations(vararg names: Name): Sequence<KaDeclarationSymbol>
 
     /**
      * A sequence of [KaCallableSymbol]s contained in the scope.
@@ -105,7 +86,6 @@ public interface KaScope : KaScopeLike {
      * `Collection<Name>` should be used when the candidate name set is known.
      */
     public val callables: Sequence<KaCallableSymbol>
-        get() = callables { true }
 
     /**
      * Returns a sequence of [KaCallableSymbol]s contained in the scope which match the [nameFilter].
@@ -129,8 +109,7 @@ public interface KaScope : KaScopeLike {
      * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
      * known.
      */
-    public fun callables(vararg names: Name): Sequence<KaCallableSymbol> =
-        callables(names.toList())
+    public fun callables(vararg names: Name): Sequence<KaCallableSymbol>
 
     /**
      * A sequence of [KaClassifierSymbol]s contained in the scope.
@@ -146,7 +125,6 @@ public interface KaScope : KaScopeLike {
      * `Collection<Name>` should be used when the candidate name set is known.
      */
     public val classifiers: Sequence<KaClassifierSymbol>
-        get() = classifiers { true }
 
     /**
      * Returns a sequence of [KaClassifierSymbol]s contained in the scope which match the [nameFilter].
@@ -191,8 +169,7 @@ public interface KaScope : KaScopeLike {
      * The implementation of this function is optimized compared to using a name filter and should be used when the candidate name set is
      * known.
      */
-    public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol> =
-        classifiers(names.toList())
+    public fun classifiers(vararg names: Name): Sequence<KaClassifierSymbol>
 
     /**
      * A sequence of [KaConstructorSymbol] contained in the scope.

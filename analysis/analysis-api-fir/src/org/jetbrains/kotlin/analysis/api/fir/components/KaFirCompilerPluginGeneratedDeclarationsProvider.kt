@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseCompilerPluginGeneratedDeclarations
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseEmptyScope
+import org.jetbrains.kotlin.analysis.api.impl.base.scopes.KaBaseScope
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -54,7 +55,7 @@ internal class KaFirCompilerPluginGeneratedDeclarationsProvider(
 private class KaFirTopLevelCompilerPluginGeneratedDeclarationsScope(
     private val generatedDeclarationsSymbolProvider: FirSwitchableExtensionDeclarationsSymbolProvider,
     private val symbolByFirBuilder: KaSymbolByFirBuilder,
-) : KaScope {
+) : KaBaseScope() {
 
     override val token: KaLifetimeToken get() = symbolByFirBuilder.token
 
