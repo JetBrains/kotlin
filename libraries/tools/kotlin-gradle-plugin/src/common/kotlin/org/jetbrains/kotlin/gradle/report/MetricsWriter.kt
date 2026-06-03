@@ -12,18 +12,19 @@ import org.jetbrains.kotlin.gradle.internal.build.metrics.BuildOperationData
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
 import org.jetbrains.kotlin.gradle.logging.kotlinDebug
 import org.jetbrains.kotlin.gradle.report.data.BuildExecutionData
-import java.io.File
 import java.io.ObjectOutputStream
 import java.io.Serializable
+import java.nio.file.Files
+import java.nio.file.Path
 
 internal class MetricsWriter(
-    private val outputFile: File,
+    private val outputFile: Path,
 ): Serializable {
     fun process(build: BuildExecutionData, log: Logger) {
         if (build.failureMessages.isNotEmpty()) return
 
         try {
-            outputFile.parentFile?.apply { mkdirs() }
+            outputFile.parent?.let { Files.createDirectories(it) }
 
             val buildMetricsData = GradleBuildMetricsData()
             for (metric in allBuildTimeMetrics) {
@@ -45,7 +46,7 @@ internal class MetricsWriter(
                     )
             }
 
-            ObjectOutputStream(outputFile.outputStream().buffered()).use { out ->
+            ObjectOutputStream(Files.newOutputStream(outputFile).buffered()).use { out ->
                 out.writeObject(buildMetricsData)
             }
         } catch (e: Exception) {

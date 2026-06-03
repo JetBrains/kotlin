@@ -81,7 +81,7 @@ class BuildReportsService {
         }
 
         reportingSettings.singleOutputFile?.also { singleOutputFile ->
-            MetricsWriter(singleOutputFile.absoluteFile).process(buildData, log)
+            MetricsWriter(singleOutputFile.absoluteFile.toPath()).process(buildData, log)
         }
 
         if (reportingSettings.experimentalTryNextConsoleOutput) {
