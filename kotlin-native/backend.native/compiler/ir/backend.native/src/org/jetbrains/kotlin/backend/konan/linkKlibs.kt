@@ -44,8 +44,6 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
 
-    val reflectionTypes: KonanReflectionTypes
-
     val builtIns: KonanBuiltIns
 
     val bindingContext: BindingContext
