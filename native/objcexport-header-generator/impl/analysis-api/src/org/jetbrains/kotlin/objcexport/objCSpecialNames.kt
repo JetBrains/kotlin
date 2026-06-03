@@ -1,6 +1,6 @@
 package org.jetbrains.kotlin.objcexport
 
-internal val objCSpecialNames = listOf("alloc", "copy", "mutableCopy", "new", "init") /* + objCMacroDefinitions */
+internal val objCSpecialNames = listOf("alloc", "copy", "mutableCopy", "new", "init")
 
 internal fun String.handleSpecialNames(prefix: String): String {
     val trimmed = this.dropWhile { it == '_' }
