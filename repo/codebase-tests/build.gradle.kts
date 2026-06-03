@@ -70,3 +70,55 @@ projectTests {
 }
 
 testsJar()
+
+
+/* Create synthetic test tasks */
+val junit5TestCompilation = kotlin.target.compilations.create("junit5Tests")
+val junit4TestCompilation = kotlin.target.compilations.create("junit4Tests")
+
+tasks.register<Test>("junit5Tests") {
+    description = "Synthetic Tests: Used by functional tests to create test build behavior (on junit5)"
+    useJUnitPlatform()
+    testClassesDirs = junit5TestCompilation.output.classesDirs
+    classpath = junit5TestCompilation.runtimeDependencyFiles
+}
+
+tasks.register<Test>("junit4Tests") {
+    description = "Synthetic Tests: Used by functional tests to create test build behavior (on junit4)"
+    useJUnit()
+    testClassesDirs = junit4TestCompilation.output.classesDirs
+    classpath = junit4TestCompilation.runtimeDependencyFiles
+}
+
+tasks.withType<Test>().configureEach {
+    environment
+    testLogging {
+        events("passed", "skipped", "failed")
+    }
+
+    /* Nested/Deep debugging support */
+    val debuggerDispatchPort = providers.systemProperty("idea.debugger.dispatch.port")
+    val additionalTestJvmArgument = providers.gradleProperty("tests.additionalJvmArgument")
+    inputs.property("idea.debugger.dispatch.port", debuggerDispatchPort).optional(true)
+    inputs.property("tests.additionalJvmArgument", additionalTestJvmArgument).optional(true)
+
+    doFirst {
+        if (debuggerDispatchPort.isPresent) {
+            systemProperty("idea.debugger.dispatch.port", debuggerDispatchPort.get())
+        }
+
+        if (additionalTestJvmArgument.isPresent) {
+            jvmArgs(additionalTestJvmArgument.get())
+        }
+    }
+}
+
+dependencies {
+    junit5TestCompilation.configurations.implementationConfiguration(kotlin("test-junit5"))
+    junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.api)
+    junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.engine)
+    junit5TestCompilation.configurations.implementationConfiguration(libs.junit.jupiter.params)
+
+    junit4TestCompilation.configurations.implementationConfiguration(kotlin("test-junit"))
+    junit4TestCompilation.configurations.implementationConfiguration(libs.junit4)
+}

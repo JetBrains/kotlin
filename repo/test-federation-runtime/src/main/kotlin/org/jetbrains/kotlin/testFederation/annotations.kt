@@ -33,3 +33,6 @@ annotation class SmokeTest
  */
 @Tag("nightly")
 annotation class NightlyTest
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class InternalTestFederationApi

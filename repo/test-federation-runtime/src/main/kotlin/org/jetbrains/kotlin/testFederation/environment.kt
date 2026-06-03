@@ -5,12 +5,19 @@
 
 package org.jetbrains.kotlin.testFederation
 
-internal const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
-internal const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
-internal const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
-internal const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
-internal const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
+@InternalTestFederationApi
+const val TEST_FEDERATION_ENABLED_KEY = "test.federation.enabled"
+@InternalTestFederationApi
+const val TEST_FEDERATION_ENABLED_ENV_KEY = "TEST_FEDERATION_ENABLED"
+@InternalTestFederationApi
+const val TEST_FEDERATION_MODE_KEY = "test.federation.mode"
+@InternalTestFederationApi
+const val TEST_FEDERATION_MODE_ENV_KEY = "TEST_FEDERATION_MODE"
+@InternalTestFederationApi
+const val TEST_FEDERATION_AFFECTED_DOMAINS_KEY = "test.federation.affected.domains"
+@InternalTestFederationApi
+
+const val TEST_FEDERATION_AFFECTED_DOMAINS_ENV_KEY = "TEST_FEDERATION_AFFECTED_DOMAINS"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_KEY = "test.federation.auto.smoke.test.percentage"
 internal const val TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE_ENV_KEY = "TEST_FEDERATION_AUTO_SMOKE_TEST_PERCENTAGE"
 const val TEST_FEDERATION_NIGHTLY_KEY = "test.federation.nightly"
