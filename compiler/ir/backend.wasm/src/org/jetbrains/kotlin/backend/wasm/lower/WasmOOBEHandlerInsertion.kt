@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBreak
 import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
+import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrLoop
@@ -125,6 +126,21 @@ private fun collectNonLocalJumps(expression: IrExpression): List<Pair<IrLoop, Bo
     return jumps.toList()
 }
 
+private fun containsSuspendCalls(expression: IrExpression): Boolean {
+    var found = false
+    expression.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            if (!found) element.acceptChildrenVoid(this)
+        }
+
+        override fun visitCall(expression: IrCall) {
+            if (expression.symbol.owner.isSuspend) found = true
+            else super.visitCall(expression)
+        }
+    })
+    return found
+}
+
 private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val adapterSymbol = ctx.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.withJsOutOfBoundsExceptionToKotlinAdapter
     private val ioobeClass = ctx.wasmSymbols.indexOutOfBoundsException.owner
@@ -142,6 +158,9 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
 
         // Make sure we don't insert the adapter in the adapter definition itself.
         if (allScopes.any { (it.irElement as? IrFunction)?.symbol == adapterSymbol }) return aTry
+
+        // The adapter lambda is non-suspend, so we can't wrap try bodies with suspend calls.
+        if (containsSuspendCalls(aTry.tryResult)) return aTry
 
         val anyNType = ctx.irBuiltIns.anyNType
 
