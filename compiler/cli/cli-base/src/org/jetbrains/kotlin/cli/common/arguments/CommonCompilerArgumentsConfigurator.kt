@@ -2,6 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("UNRESOLVED_REFERENCE")
 
 package org.jetbrains.kotlin.cli.common.arguments
 
@@ -58,7 +59,10 @@ open class CommonCompilerArgumentsConfigurator {
             putAnalysisFlag(AnalysisFlags.dontWarnOnErrorSuppression, dontWarnOnErrorSuppression)
             putAnalysisFlag(AnalysisFlags.lenientMode, lenientMode)
             putAnalysisFlag(AnalysisFlags.headerMode, headerMode)
-            putAnalysisFlag(AnalysisFlags.headerModeType, headerModeType)
+            HeaderMode.fromString(headerModeType)?.also { putAnalysisFlag(AnalysisFlags.headerModeType, it) }
+                ?: reporter.reportError(
+                    "Unknown value for parameter -Xheader-mode-type: '$headerModeType'. Value should be one of ${HeaderMode.availableValues()}"
+                )
             putAnalysisFlag(AnalysisFlags.hierarchicalMultiplatformCompilation, separateKmpCompilationScheme && multiPlatform)
             fillWarningLevelMap(arguments, reporter)
             ReturnValueCheckerMode.fromString(returnValueChecker)?.also { putAnalysisFlag(AnalysisFlags.returnValueCheckerMode, it) }

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.mpp.FirExpectActualMatcherP
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.*
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.optimization.FirAggressivePruningProcessor
 
@@ -92,7 +93,8 @@ fun FirResolvePhase.createCompilerProcessorByPhase(
         ANNOTATION_ARGUMENTS -> FirAnnotationArgumentsProcessor(session, scopeSession)
         BODY_RESOLVE -> {
             val processor = FirBodyResolveProcessor(session, scopeSession)
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode)) {
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.headerMode) &&
+                session.languageVersionSettings.getFlag(AnalysisFlags.headerModeType) != HeaderMode.COMPILATION) {
                 FirAggressivePruningProcessor(processor)
             } else {
                 processor

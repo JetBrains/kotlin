@@ -2,9 +2,11 @@
  * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+@file:Suppress("CANNOT_INFER_PARAMETER_TYPE", "UNRESOLVED_REFERENCE")
 
 package org.jetbrains.kotlin.native.pipeline
 
+import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.backend.common.phaser.then
 import org.jetbrains.kotlin.backend.common.phaser.thenIf
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -15,7 +17,11 @@ import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.HeaderMode
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.phaser.CompilerPhase
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.getRetention
+import org.jetbrains.kotlin.fir.declarations.toAnnotationClass
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 import org.jetbrains.kotlin.util.PerformanceManager
 
@@ -55,22 +61,27 @@ class NativeKlibCliPipeline(
     private fun requireIrForHeaderCompilationMode(frontendOutput: AllModulesFrontendOutput): Boolean {
         for (output in frontendOutput.outputs) {
             for (file in output.fir) {
-                if (requireIrForHeaderCompilationMode(file.declarations)) return true
+                if (requireIrForHeaderCompilationMode(file.declarations, output.session)) return true
             }
         }
         return false
     }
 
     @OptIn(DirectDeclarationsAccess::class)
-    private fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>): Boolean {
+    private fun requireIrForHeaderCompilationMode(declarations: List<FirDeclaration>, session: FirSession): Boolean {
         for (declaration in declarations) {
+            if (declaration is FirRegularClass && declaration.classKind == ClassKind.ANNOTATION_CLASS) {
+                val retention = declaration.getRetention(session)
+                if (retention == AnnotationRetention.BINARY || retention == AnnotationRetention.RUNTIME) return true
+            }
+            if (declaration is FirMemberDeclaration && declaration.isExpect) return true
             if (declaration is FirFunction && declaration.status.isInline) return true
             if (declaration is FirProperty) {
                 if (declaration.getter?.status?.isInline == true || declaration.setter?.status?.isInline == true) return true
             }
             if (declaration is FirClass) {
                 if (declaration.status.isValue) return true
-                if (requireIrForHeaderCompilationMode(declaration.declarations)) return true
+                if (requireIrForHeaderCompilationMode(declaration.declarations, session)) return true
             }
         }
         return false
