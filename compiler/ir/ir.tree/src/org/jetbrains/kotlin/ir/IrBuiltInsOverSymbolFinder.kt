@@ -245,7 +245,7 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
 
     override val ororSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.oror.functionSymbol()
 
-    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.noWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 0) }
+    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.noWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 1) }
 
     override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.illegalArgumentException.functionSymbol()
 

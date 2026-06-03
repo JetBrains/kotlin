@@ -138,7 +138,7 @@ class IrSyntheticProvider(
         name = noWhenBranchMatchedException.callableName,
         returnType = nothingType,
         parent = operatorsPackageFragment,
-        valueParameterTypes = arrayOf<Pair<String, IrType>>(),
+        valueParameterTypes = arrayOf("" to stringType),
     )
 
     val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol = createFunction(

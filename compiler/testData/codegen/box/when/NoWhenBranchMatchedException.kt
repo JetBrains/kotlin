@@ -1,3 +1,4 @@
+// WITH_STDLIB
 // DUMP_IR
 // MODULE: m1
 // FILE: m1.kt
@@ -20,8 +21,8 @@ fun box(): String {
     try {
         test(K2())
     } catch (e: Exception) {
-        val m = e.message
-        if (m != null) return "wrong message: $m"
+        val m = e.message!!
+        if (!m.startsWith("No branch matched for subject: K2")) return "wrong message: $m"
         return "OK"
     }
     return "exception was expected"

@@ -77,7 +77,7 @@ class BackendWasmSymbols(
     override val throwTypeCastException by CallableIds.THROW_CCE.functionSymbol()
     val throwTypeCastWithInfoException by CallableIds.THROW_CCE_WITH_INFO.functionSymbol()
     override val throwIAE by CallableIds.THROW_IAE.functionSymbol()
-    val throwNoBranchMatchedException by CallableIds.throwNoBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 0) }
+    val throwNoBranchMatchedException by CallableIds.throwNoBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 1) }
     override val throwKotlinNothingValueException by CallableIds.throwKotlinNothingValueException.functionSymbol()
     override val stringBuilder = ClassIds.StringBuilder.classSymbol()
     override val getContinuation by CallableIds.getContinuation.functionSymbol()

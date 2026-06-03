@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.backend
 
 import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
@@ -19,12 +20,15 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.*
 import org.jetbrains.kotlin.fir.deserialization.toQualifiedPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.expressions.builder.buildFunctionCall
 import org.jetbrains.kotlin.fir.expressions.impl.*
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.resolve.*
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -1369,11 +1373,35 @@ class Fir2IrVisitor(
                         startOffset, endOffset, builtins.nothingType,
                         builtins.noWhenBranchMatchedExceptionSymbol,
                         typeArgumentsCount = 0,
-                        valueArgumentsCount = 0,
+                        valueArgumentsCount = 1,
                         contextParameterCount = 0,
                         hasDispatchReceiver = false,
                         hasExtensionReceiver = false,
                     )
+                    irResult.arguments[0] = IrStringConcatenationImpl(startOffset, endOffset, builtins.stringType, buildList {
+                        this += IrConstImpl(
+                            startOffset,
+                            endOffset,
+                            builtins.stringType,
+                            IrConstKind.String,
+                            "No branch matched for subject: "
+                        )
+                        this += convertToIrExpression(buildFunctionCall {
+                            val toStringExtensionSymbol = session.symbolProvider.getTopLevelFunctionSymbols(
+                                StandardNames.BUILT_INS_PACKAGE_FQ_NAME,
+                                StandardNames.TO_STRING_NAME
+                            ).first()
+
+                            calleeReference = buildResolvedNamedReference {
+                                name = StandardNames.TO_STRING_NAME
+                                resolvedSymbol = toStringExtensionSymbol
+                            }
+
+                            extensionReceiver = whenExpression.subjectVariable!!.initializer
+
+                            coneTypeOrNull = session.builtinTypes.stringType.coneType
+                        })
+                    })
                     irBranches += IrElseBranchImpl(
                         IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true), irResult
                     )

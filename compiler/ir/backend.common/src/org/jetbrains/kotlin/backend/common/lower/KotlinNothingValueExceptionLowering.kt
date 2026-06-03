@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.isNothing
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
  * Throws a proper exception for calls returning value of type [Nothing].
@@ -49,7 +50,9 @@ open class KotlinNothingValueExceptionLowering(
                 backendContext.createIrBuilder(parent, expression.startOffset, expression.endOffset).run {
                     irBlock(expression, null, context.irBuiltIns.nothingType) {
                         +super.visitCall(expression)
-                        +irCall(backendContext.symbols.throwKotlinNothingValueException)
+                        +irCall(backendContext.symbols.throwKotlinNothingValueException).apply {
+                            arguments.assignFrom(expression.arguments)
+                        }
                     }
                 }
             } else {

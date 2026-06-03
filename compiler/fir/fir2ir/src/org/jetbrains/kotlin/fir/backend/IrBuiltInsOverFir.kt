@@ -174,7 +174,7 @@ class IrBuiltInsOverFir(
         name = BuiltInOperatorNames.NO_WHEN_BRANCH_MATCHED_EXCEPTION,
         symbol = syntheticSymbolsContainer.noWhenBranchMatchedExceptionSymbol,
         returnType = nothingType,
-        valueParameterTypes = arrayOf<Pair<String, IrType>>(),
+        valueParameterTypes = arrayOf("" to stringType),
         isIntrinsicConst = false
     )
 

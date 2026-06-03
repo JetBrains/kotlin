@@ -16,17 +16,21 @@
 
 package org.jetbrains.kotlin.backend.jvm.intrinsics
 
-import org.jetbrains.kotlin.backend.jvm.codegen.ClassCodegen
-import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
+import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
+import org.jetbrains.kotlin.resolve.jvm.AsmTypes.JAVA_STRING_TYPE
+import org.jetbrains.org.objectweb.asm.Type
 
-object IrNoWhenBranchMatchedException : CallBasedIntrinsicMethod() {
-    override fun toCallable(
-        expression: IrFunctionAccessExpression, signature: JvmMethodSignature, classCodegen: ClassCodegen,
-    ): IntrinsicFunction {
-        return IntrinsicFunction.create(expression, signature, classCodegen) {
-            genThrow(it, "kotlin/NoWhenBranchMatchedException", null)
-        }
+object IrNoWhenBranchMatchedException : IntrinsicMethod() {
+    override fun invoke(expression: IrFunctionAccessExpression, codegen: ExpressionCodegen, data: BlockInfo): PromisedValue {
+        val v = codegen.mv
+        with(codegen) { expression.markLineNumber(startOffset = true) }
+        v.anew(Type.getObjectType("kotlin/NoWhenBranchMatchedException"))
+        v.dup()
+        val argument = expression.arguments.single()!!
+        argument.accept(codegen, data).materializeAt(JAVA_STRING_TYPE, argument.type)
+        v.invokespecial("kotlin/NoWhenBranchMatchedException", "<init>", Type.getMethodDescriptor(Type.VOID_TYPE, JAVA_STRING_TYPE), false)
+        v.athrow()
+        return MaterialValue(codegen, Type.VOID_TYPE, expression.type)
     }
 }

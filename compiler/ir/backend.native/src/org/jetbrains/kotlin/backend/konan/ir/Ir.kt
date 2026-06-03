@@ -490,7 +490,7 @@ class BackendNativeSymbols(
 
     override val throwNullPointerException by CallableIds.throwNullPointerException.functionSymbol()
 
-    val throwNoWhenBranchMatchedException by CallableIds.throwNoWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 0) }
+    val throwNoWhenBranchMatchedException by CallableIds.throwNoWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 1) }
     val throwIrLinkageError by CallableIds.throwIrLinkageError.functionSymbol()
 
     override val throwTypeCastException by CallableIds.throwTypeCastException.functionSymbol()
