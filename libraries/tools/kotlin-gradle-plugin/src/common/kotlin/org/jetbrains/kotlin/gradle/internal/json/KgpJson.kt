@@ -7,6 +7,12 @@ package org.jetbrains.kotlin.gradle.internal.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.serializerOrNull
 
 /**
  * Pre-configured [Json] instances for use inside the Kotlin Gradle Plugin.
@@ -35,6 +41,22 @@ internal object KgpJson {
         explicitNulls = false
     }
 
+    /** As [default], but fails on a key the target class doesn't declare. For input whose every key must be understood. */
+    val strict: Json = Json(default) {
+        ignoreUnknownKeys = false
+    }
+
+    /**
+     * As [default], but also accepts unquoted keys and values, comments and trailing commas. For files written by
+     * people or other tools, such as a `package.json`, where a quirk the format's own tooling tolerates must not
+     * fail the build.
+     */
+    val lenient: Json = Json(default) {
+        isLenient = true
+        allowComments = true
+        allowTrailingComma = true
+    }
+
     /**
      * Pretty-printed instance for human-readable output (config files, diagnostics, etc.).
      * Inherits all leniency settings from [default].
@@ -42,4 +64,50 @@ internal object KgpJson {
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
     }
+}
+
+/** kotlinx-serialization fails on a leading byte order mark. */
+internal fun String.removeBom(): String = removePrefix("\uFEFF")
+
+/**
+ * Converts the values build authors pass to the JS DSLs as `Any`.
+ *
+ * Map entries with a null value are left out unless [serializeNulls] is set, since webpack's schema rejects an explicit
+ * null for many options. A `@Serializable` class is written by its serializer. Anything else fails, so a typo or private
+ * state never ends up in a generated file.
+ */
+internal fun anyToJsonElement(value: Any?, serializeNulls: Boolean = false): JsonElement = when (value) {
+    null -> JsonNull
+    is JsonElement -> value
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is Char -> JsonPrimitive(value.toString())
+    is Map<*, *> -> buildJsonObject {
+        value.forEach { (k, v) -> if (v != null || serializeNulls) put(k.toString(), anyToJsonElement(v, serializeNulls)) }
+    }
+    is Iterable<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it, serializeNulls)) }
+    }
+    is Array<*> -> anyToJsonElement(value.asList(), serializeNulls)
+    is Enum<*> -> JsonPrimitive(value.name)
+    is CharSequence -> JsonPrimitive(value.toString())
+    else -> primitiveArrayToJsonElement(value, serializeNulls)
+        ?: serializableToJsonElement(value)
+        ?: error("Cannot write ${value.javaClass.name} to a JS configuration file. Pass a Map, a list or a primitive value instead.")
+}
+
+/** `null` unless [value] is an IntArray, BooleanArray or another primitive array, which are not `Array<*>`. */
+private fun primitiveArrayToJsonElement(value: Any, serializeNulls: Boolean): JsonElement? {
+    if (!value.javaClass.isArray) return null
+    return buildJsonArray {
+        for (i in 0 until java.lang.reflect.Array.getLength(value)) {
+            add(anyToJsonElement(java.lang.reflect.Array.get(value, i), serializeNulls))
+        }
+    }
+}
+
+/** `null` when [value]'s class has no serializer, or one built against a different kotlinx-serialization copy. */
+private fun serializableToJsonElement(value: Any): JsonElement? {
+    val serializer = runCatching { serializerOrNull(value::class.java) }.getOrNull() ?: return null
+    return KgpJson.default.encodeToJsonElement(serializer, value)
 }
