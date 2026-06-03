@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Co
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DEBUG_FRIENDLY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DEBUG_INFO
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_DISABLE_OOBE_HANDLER_INSERTION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ARRAY_RANGE_CHECKS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_ENABLE_ASSERTS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.WasmArgumentsImpl.Companion.X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE
@@ -108,6 +109,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
     if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
+    if (X_WASM_DISABLE_OOBE_HANDLER_INSERTION in this) { arguments.wasmDisableOobeHandlerInsertion = get(X_WASM_DISABLE_OOBE_HANDLER_INSERTION)}
     if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
     if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
     if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
@@ -136,6 +138,7 @@ internal class WasmArgumentsImpl(
     try { this[X_WASM_DEBUG_INFO] = arguments.wasmDebug } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION] = arguments.wasmDisableArrayRangeChecksSafeElimination } catch (_: NoSuchMethodError) {  }
+    try { this[X_WASM_DISABLE_OOBE_HANDLER_INSERTION] = arguments.wasmDisableOobeHandlerInsertion } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts } catch (_: NoSuchMethodError) {  }
     try { this[X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE] = arguments.wasmGenerateClosedWorldMultimodule } catch (_: NoSuchMethodError) {  }
@@ -162,6 +165,7 @@ internal class WasmArgumentsImpl(
     if (X_WASM_DEBUG_INFO in this) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)}
     if (X_WASM_DEBUGGER_CUSTOM_FORMATTERS in this) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)}
     if (X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION in this) { arguments.wasmDisableArrayRangeChecksSafeElimination = get(X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION)}
+    if (X_WASM_DISABLE_OOBE_HANDLER_INSERTION in this) { arguments.wasmDisableOobeHandlerInsertion = get(X_WASM_DISABLE_OOBE_HANDLER_INSERTION)}
     if (X_WASM_ENABLE_ARRAY_RANGE_CHECKS in this) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)}
     if (X_WASM_ENABLE_ASSERTS in this) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)}
     if (X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE in this) { arguments.wasmGenerateClosedWorldMultimodule = get(X_WASM_GENERATE_CLOSED_WORLD_MULTIMODULE)}
@@ -226,6 +230,9 @@ internal class WasmArgumentsImpl(
 
     public val X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION: WasmArgument<Boolean> =
         WasmArgument("X_WASM_DISABLE_ARRAY_RANGE_CHECKS_SAFE_ELIMINATION")
+
+    public val X_WASM_DISABLE_OOBE_HANDLER_INSERTION: WasmArgument<Boolean> =
+        WasmArgument("X_WASM_DISABLE_OOBE_HANDLER_INSERTION")
 
     public val X_WASM_ENABLE_ARRAY_RANGE_CHECKS: WasmArgument<Boolean> =
         WasmArgument("X_WASM_ENABLE_ARRAY_RANGE_CHECKS")
