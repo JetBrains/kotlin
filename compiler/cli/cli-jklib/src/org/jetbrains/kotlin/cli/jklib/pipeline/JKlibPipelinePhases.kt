@@ -94,6 +94,7 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
             )
         }
 
+        // TODO(KT-84899): Reuse code from K2JVM
         with(configuration) {
             if (arguments.noJdk) {
                 put(JVMConfigurationKeys.NO_JDK, true)
@@ -101,6 +102,41 @@ object JKlibConfigurationUpdater : ConfigurationUpdater<K2JKlibCompilerArguments
                 configureJdkHomeFromSystemProperty()
             }
             configureJdkClasspathRoots()
+            val paths = PathUtil.kotlinPathsForCompiler
+            if (!arguments.noStdlib) {
+                getLibraryFromHome(
+                    paths,
+                    KotlinPaths::stdlibPath,
+                    PathUtil.KOTLIN_JAVA_STDLIB_JAR,
+                    configuration,
+                    "'-no-stdlib'",
+                )?.let { file ->
+                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.stdlib")
+                }
+                getLibraryFromHome(
+                    paths,
+                    KotlinPaths::scriptRuntimePath,
+                    PathUtil.KOTLIN_JAVA_SCRIPT_RUNTIME_JAR,
+                    configuration,
+                    "'-no-stdlib'",
+                )?.let { file ->
+                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.script.runtime")
+                }
+            }
+            if (!arguments.noReflect && !arguments.noStdlib) {
+                getLibraryFromHome(
+                    paths,
+                    KotlinPaths::reflectPath,
+                    PathUtil.KOTLIN_JAVA_REFLECT_JAR,
+                    configuration,
+                    "'-no-reflect' or '-no-stdlib'",
+                )?.let { file ->
+                    add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                    add(JVMConfigurationKeys.ADDITIONAL_JAVA_MODULES, "kotlin.reflect")
+                }
+            }
             arguments.klibLibraries?.let { libraries ->
                 put(
                     JVMConfigurationKeys.KLIB_PATHS,
@@ -328,4 +364,63 @@ object JKlibKlibSerializationPhase : PipelinePhase<JKlibFir2IrPipelineArtifact, 
         )
     }
 }
+
+object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArtifact, JKlibSerializationArtifact>(
+    name = "JKlibMetadataSerializationPhase",
+    postActions = setOf(CheckCompilationErrors.CheckDiagnosticCollector)
+) {
+    override fun executePhase(input: JKlibFrontendPipelineArtifact): JKlibSerializationArtifact {
+        val configuration = input.configuration
+        val diagnosticsReporter = configuration.diagnosticsCollector
+        val destination = File(configuration.jklibOutputDestination ?: "result.klib")
+
+        val moduleName = configuration.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME
+
+        val serializerOutput = serializeModuleIntoKlib(
+            moduleName = moduleName,
+            irModuleFragment = null,
+            configuration = configuration,
+            diagnosticReporter = KtDiagnosticReporterWithImplicitIrBasedContext(
+                diagnosticsReporter.deduplicating(),
+                configuration.languageVersionSettings
+            ),
+            cleanFiles = emptyList(),
+            dependencies = emptyList(),
+            createModuleSerializer = { error("Should not be called for metadata-only serialization") },
+            metadataSerializer = Fir2KlibMetadataSerializer(
+                configuration,
+                input.frontendOutput.outputs,
+                fir2IrActualizedResult = null,
+                exportKDoc = false,
+                produceHeaderKlib = true,
+            ),
+        )
+
+        val versions = KotlinLibraryVersioning(
+            abiVersion = KotlinAbiVersion.CURRENT,
+            compilerVersion = KotlinCompilerVersion.getVersion(),
+            metadataVersion = configuration.metadataVersion(),
+        )
+
+        KlibWriter {
+            format(KlibFormat.ZipArchive)
+            manifest {
+                moduleName(moduleName)
+                versions(versions)
+                platformAndTargets(BuiltInsPlatform.JKLIB, emptyList())
+            }
+            includeMetadata(serializerOutput.serializedMetadata ?: error("expected serialized metadata"))
+            includeIr(serializerOutput.serializedIr)
+        }.writeTo(destination.absolutePath)
+
+        return JKlibSerializationArtifact(
+            destination.absolutePath,
+            configuration,
+            input.projectEnvironment,
+            input.rootDisposable,
+            hasIr = false,
+        )
+    }
+}
+
 

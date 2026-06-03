@@ -87,6 +87,9 @@ class JKlibIrCompilationPhase :
 
     override fun executePhase(input: JKlibSerializationArtifact): JKlibIrCompilationArtifact {
         val configuration = input.configuration
+        if (!input.hasIr) {
+            error("Cannot run JKlibIrCompilationPhase on a metadata-only KLib (no IR present)")
+        }
         val klib = File(input.outputKlibPath)
         val messageCollector = configuration.messageCollector
 

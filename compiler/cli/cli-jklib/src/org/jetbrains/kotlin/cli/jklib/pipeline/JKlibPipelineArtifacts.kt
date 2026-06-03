@@ -54,6 +54,7 @@ data class JKlibSerializationArtifact(
     val projectEnvironment: VfsBasedProjectEnvironment,
     val rootDisposable: Disposable,
     override val exitCode: ExitCode = ExitCode.OK,
+    val hasIr: Boolean = true,
 ) : PipelineArtifactWithExitCode() {
     @CliPipelineInternals(OPT_IN_MESSAGE)
     override fun withCompilerConfiguration(newConfiguration: CompilerConfiguration): PipelineArtifact {
