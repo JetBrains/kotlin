@@ -10,6 +10,12 @@ interface CoroutineTracerShim {
     var coroutineTracer: CoroutineTracerShim = object : CoroutineTracerShim {
       override fun rootTrace() = EmptyCoroutineContext
     }
+
+    fun foo() {
+        class Local : CoroutineTracerShim {
+            override fun rootTrace() = EmptyCoroutineContext
+        }
+    }
   }
 
   fun rootTrace(): CoroutineContext
