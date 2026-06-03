@@ -489,7 +489,7 @@ public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V
 @SinceKotlin("2.4")
 @kotlin.internal.InlineOnly
 @ExperimentalStdlibApi
-@Suppress("LEAKED_IN_PLACE_LAMBDA")
+@Suppress("LEAKED_IN_PLACE_LAMBDA", "WRONG_INVOCATION_KIND")
 public inline fun <K, V> MutableMap<K, V>.getOrPutIfNull(key: K, crossinline defaultValue: () -> V): V {
     contract {
         callsInPlace(defaultValue, InvocationKind.AT_MOST_ONCE)
