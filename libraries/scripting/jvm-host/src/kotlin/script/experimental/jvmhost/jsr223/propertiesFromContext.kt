@@ -148,7 +148,7 @@ fun eval(script: String, newBindings: javax.script.Bindings): Any? {
             newBindings[k] = if (v == null) KotlinType(Any::class, isNullable = true) else KotlinType(v::class)
         }
 
-        newBindings.forEach { (name, type) ->
+        newBindings.forEach { [name, type] ->
             val encodedName = encodeBindingNameToKotlinIdentifier(name)!!
             val safeKey = escapeForKotlinStringLiteral(name)
             bindingsSnippet +=

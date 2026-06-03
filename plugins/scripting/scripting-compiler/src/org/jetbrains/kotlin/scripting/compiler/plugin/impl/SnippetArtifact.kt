@@ -41,7 +41,7 @@ data class SnippetArtifact(
         if (this === other) return true
         if (other !is SnippetArtifact) return false
         if (classFiles.keys != other.classFiles.keys) return false
-        for ((k, v) in classFiles) {
+        for ([k, v] in classFiles) {
             val o = other.classFiles[k] ?: return false
             if (!v.contentEquals(o)) return false
         }
@@ -51,7 +51,7 @@ data class SnippetArtifact(
 
     override fun hashCode(): Int {
         var result = 1
-        for ((k, v) in classFiles) {
+        for ([k, v] in classFiles) {
             result = 31 * result + k.hashCode()
             result = 31 * result + v.contentHashCode()
         }
@@ -285,7 +285,7 @@ object SnippetArtifactJsonCodec {
         writeItem: (StringBuilder, T) -> Unit,
     ) {
         appendJsonString(name); append(":[")
-        for ((idx, item) in items.withIndex()) {
+        for ([idx, item] in items.withIndex()) {
             if (idx > 0) append(',')
             writeItem(this, item)
         }
@@ -533,7 +533,7 @@ object SnippetArtifactCodec {
         val classFilesRaw = obj["classFiles"] as? Map<String, Any?>
             ?: error("SnippetArtifactCodec: missing 'classFiles' field")
         val classFiles = LinkedHashMap<String, ByteArray>(classFilesRaw.size)
-        for ((k, v) in classFilesRaw) {
+        for ([k, v] in classFilesRaw) {
             val s = v as? String ?: error("SnippetArtifactCodec: classFiles['$k'] is not a string")
             classFiles[k] = b64.decode(s)
         }

@@ -271,7 +271,7 @@ class K2ReplStatelessCompilerTest {
         )
 
         // Class-file content is preserved byte-for-byte (not just structurally).
-        for ((name, bytes) in artifact.classFiles) {
+        for ([name, bytes] in artifact.classFiles) {
             val roundtripped = decoded.classFiles[name]
                 ?: fail("decoded artifact missing class file `$name`")
             assertTrue(

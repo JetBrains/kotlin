@@ -83,7 +83,7 @@ interface KotlinJsr223JvmInvocableScriptEngine : Invocable {
     private fun invokeImpl(prioritizedCallOrder: List<EvalClassWithInstanceAndLoader>, name: String, args: Array<out Any?>): Any? {
         // TODO: cache the method lookups?
 
-        val (fn, mapping, invokeWrapper) = prioritizedCallOrder.firstNotNullOfOrNull { (klass, instance, invokeWrapper) ->
+        val [fn, mapping, invokeWrapper] = prioritizedCallOrder.firstNotNullOfOrNull { (klass, instance, invokeWrapper) ->
             val candidates = klass.functions.filter { it.name == name }
             candidates.findMapping(listOf(instance) + args)?.let {
                 Triple(it.first, it.second, invokeWrapper)

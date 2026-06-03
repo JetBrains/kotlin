@@ -197,7 +197,7 @@ internal class ArtifactBackedFirReplHistoryProvider(
     @OptIn(SymbolInternals::class, DirectDeclarationsAccess::class)
     private fun materialize(session: FirSession): List<FirReplSnippetSymbol> {
         val result = ArrayList<FirReplSnippetSymbol>(priorSnippets.size)
-        for ((index, artifact) in priorSnippets.withIndex()) {
+        for ([index, artifact] in priorSnippets.withIndex()) {
             val sidecar = decodedSidecars[index]
             val classId = sidecar.toClassId()
             val classSymbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) as? FirRegularClassSymbol

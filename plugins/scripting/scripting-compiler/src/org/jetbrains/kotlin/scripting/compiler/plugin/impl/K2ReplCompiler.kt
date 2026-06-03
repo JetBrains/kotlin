@@ -77,7 +77,7 @@ class K2ReplCompiler(
         configuration: ScriptCompilationConfiguration,
     ): ResultWithDiagnostics<LinkedSnippet<CompiledSnippet>> {
         snippets.forEach { mainSnippet ->
-            val (updatedConfiguration, syntheticSnippets) = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
+            val [updatedConfiguration, syntheticSnippets] = configuration.prependSyntheticSnippets(mainSnippet).valueOr { return it }
             val snippetsWithSynthetics = syntheticSnippets + mainSnippet
             snippetsWithSynthetics.forEach { snippet ->
                 // Messages from earlier snippets should not leak into the next snippet
@@ -450,7 +450,7 @@ private fun compileImpl(
 
     // Wrap IR conversion + codegen so a crash on error-laden FIR does not surface a raw
     // exception in best-effort mode — fall back to "no artifact" (observer simply doesn't fire).
-    val (irInputOrNull, generationStateOrNull) = try {
+    val [irInputOrNull, generationStateOrNull] = try {
         val irIn = convertAnalyzedFirToIr(compilerConfiguration, targetId, frontendOutput, compilerEnvironment)
         // Best-effort detour around JvmIrCodegenFactory's hardcoded short-circuit:
         //

@@ -136,7 +136,7 @@ class K2ReplStatelessCompiler {
             return makeFailureResult("stateless REPL: failed to decode prior snippet sidecar: ${t.message}")
         }
         val callerStateObjectFqName = hostConfiguration[ScriptingHostConfiguration.repl.replStateObjectFqName]
-        for ((index, sidecar) in sidecars.withIndex()) {
+        for ([index, sidecar] in sidecars.withIndex()) {
             if (sidecar.stateObjectFqName.isEmpty()) continue
             if (callerStateObjectFqName != null && sidecar.stateObjectFqName != callerStateObjectFqName) {
                 return makeFailureResult(
@@ -162,7 +162,7 @@ class K2ReplStatelessCompiler {
         val tempDir: Path = Files.createTempDirectory("k2-repl-stateless-")
         val sessionRef = AtomicReference<FirSession?>()
         try {
-            for ((i, artifact) in priorSnippets.withIndex()) {
+            for ([i, artifact] in priorSnippets.withIndex()) {
                 val sidecar = sidecars[i]
                 writeClassFiles(tempDir, artifact, sidecar)
             }
@@ -222,7 +222,7 @@ class K2ReplStatelessCompiler {
             // best-effort mode (i.e. compile returned [ResultWithDiagnostics.Failure] but
             // codegen still emitted usable bytes) — see `compileImpl` in `K2ReplCompiler.kt`.
             val captured = capturedRef.get()
-            val artifactOrNull: SnippetArtifact? = captured?.let { (firSnippet, session, generationState) ->
+            val artifactOrNull: SnippetArtifact? = captured?.let { [firSnippet, session, generationState] ->
                 val classFileCount = generationState.factory.asList().size
                 if (classFileCount == 0) {
                     debug("compile(): capture hook fired but codegen produced 0 class files — best-effort artifact unavailable")
@@ -273,7 +273,7 @@ class K2ReplStatelessCompiler {
 
     @OptIn(kotlin.io.path.ExperimentalPathApi::class)
     private fun writeClassFiles(tempDir: Path, artifact: SnippetArtifact, sidecar: SnippetArtifactSidecar) {
-        for ((internalName, bytes) in artifact.classFiles) {
+        for ([internalName, bytes] in artifact.classFiles) {
             val rel = internalName + ".class"
             val target = tempDir.resolve(rel.replace('/', File.separatorChar))
             target.parent?.createDirectories()
