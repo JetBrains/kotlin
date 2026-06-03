@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.File
+import java.nio.file.Path
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -48,11 +49,12 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
         // FIXME: KT-84800 Fingerprint transitive local packages
         val localPackageFiles = localPackages.get().flatMap { packageRoot ->
+            val packageRootPath = packageRoot.toPath()
             listOf(
-                packageRoot.resolve("Package.swift")
-            ) + findLocalPackageSources(packageRoot)
+                packageRootPath.resolve("Package.swift")
+            ) + findLocalPackageSources(packageRootPath)
         }.map {
-            it.path
+            it.toString()
         }
         filesToTrackFromLocalPackages.getFile().writeText(
             localPackageFiles.joinToString("\n")
@@ -72,10 +74,10 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
     }
 
     @Suppress("UNCHECKED_CAST")
-    private fun findLocalPackageSources(path: File): List<File> {
+    private fun findLocalPackageSources(path: Path): List<Path> {
         val jsonBuffer = ByteArrayOutputStream()
         execOps.exec { exec ->
-            exec.workingDir(path)
+            exec.workingDir(path.toFile())
             exec.standardOutput = jsonBuffer
             exec.commandLine("swift", "package", "describe", "--type", "json")
             exec.environment.keys.filter {
