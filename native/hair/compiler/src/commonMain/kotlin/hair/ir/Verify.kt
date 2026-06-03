@@ -25,7 +25,7 @@ fun Session.verify() {
     }
     fun sameElements(a: List<Node>, b: List<Node>) =
         a.groupingBy { it }.eachCount() == b.groupingBy { it }.eachCount()
-    for ((node, uses) in uses) {
+    for ([node, uses] in uses) {
         require(sameElements(node.uses.toList(), uses)) {
             "Node $node has invalid uses list: ${node.uses.toList()}, expected $uses"
         }

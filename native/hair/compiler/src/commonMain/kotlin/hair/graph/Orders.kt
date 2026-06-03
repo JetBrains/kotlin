@@ -31,7 +31,7 @@ fun <N> postOrder(graph: DiGraph<N>, roots: List<N>): Sequence<N> {
     val visited = mutableSetOf<N>()
     return generateSequence {
         while (stack.isNotEmpty()) {
-            val (top, topsNext) = stack.last()
+            val [top, topsNext] = stack.last()
             if (topsNext.hasNext()) {
                 val next = topsNext.next()
                 if (next !in visited) {

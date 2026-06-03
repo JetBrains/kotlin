@@ -1,17 +1,6 @@
 package hair.ir
 
-import hair.ir.nodes.ArgsUpdater
-import hair.ir.nodes.BlockEntry
-import hair.ir.nodes.BlockExit
-import hair.ir.nodes.ControlFlowBuilder
-import hair.ir.nodes.Controlling
-import hair.ir.nodes.Goto
-import hair.ir.nodes.If
-import hair.ir.nodes.Node
-import hair.ir.nodes.NodeBuilder
-import hair.ir.nodes.Throwing
-import hair.ir.nodes.Unreachable
-import hair.ir.nodes.set
+import hair.ir.nodes.*
 import hair.sym.HairClass
 import hair.sym.HairType
 import hair.sym.HairType.*
@@ -86,7 +75,7 @@ fun branch(
     trueInit: BodyBuilder,
     falseInit: BodyBuilder
 ) {
-    val (trueExit, falseExit) = IfExits(cond)
+    val [trueExit, falseExit] = IfExits(cond)
 
     BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
     trueInit()
@@ -106,12 +95,12 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 fun branch(
     branches: List<Pair<(context(NodeBuilder, ControlFlowBuilder) () -> Node)?, BodyBuilder>>,
 ) {
-    val exits = branches.map { (cond, body) ->
+    val exits = branches.map { [cond, body] ->
         if (cond == null) {
             body()
             if (controlBuilder.lastControl != null) Goto() else null
         } else {
-            val (trueExit, falseExit) = IfExits(cond())
+            val [trueExit, falseExit] = IfExits(cond())
 
             BlockEntry(trueExit).ensuring { controlBuilder.lastControl == it }
             body()
@@ -132,7 +121,7 @@ fun branch(
 context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
 fun whileLoop(cond: Node, body: BodyBuilder) {
     val condBlock = BlockEntry(Goto(), null) as BlockEntry
-    val (trueExit, falseExit) = IfExits(cond)
+    val [trueExit, falseExit] = IfExits(cond)
 
     BlockEntry(trueExit)
     body()
@@ -165,7 +154,7 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBui
         val handlerBlock = BlockEntry(*unwinds) as BlockEntry // FIXME cast?
         val exception = Catch(Phi(EXCEPTION)(handlerBlock, *unwinds))
 
-        for ((type, catchBody) in catches) {
+        for ([type, catchBody] in catches) {
             // FIXME what do we know about the catchers order? Are all the type checks always possible?
             if (type == allCatcher) {
                 catchBody(exception)
@@ -173,7 +162,7 @@ fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBui
                 break
             }
 
-            val (trueExit, falseExit) = IfExits(IsInstanceOf(type)(exception))
+            val [trueExit, falseExit] = IfExits(IsInstanceOf(type)(exception))
 
             BlockEntry(trueExit)
             catchBody(exception)

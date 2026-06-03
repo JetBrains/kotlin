@@ -21,7 +21,7 @@ fun Session.buildSSA(variableType: (Any) -> HairType) {
         val defs = allNodes<AssignVar>().groupBy { it.variable }
         // FIXME find some general terms to do this?
         val handlersWithPossibleRedefs = allNodes<Unwind>().map { it.handler }.filter { it.preds.size > 1 }.toSet()
-        for ((variable, assigns) in defs) {
+        for ([variable, assigns] in defs) {
             val assignBlocks = assigns.map { it.block }.toSet()
             val redefBlocks = assignBlocks.flatMap { doms.dominanceFrontier(it) }.toSet().closure {
                 doms.dominanceFrontier(it).toList()

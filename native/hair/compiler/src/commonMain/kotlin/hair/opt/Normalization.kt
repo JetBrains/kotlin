@@ -58,7 +58,7 @@ class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater:
 
                 // try to reorder operands
                 if (op.commutative) {
-                    val (newLhs, newRhs) = if (lhs is ConstAny) {
+                    val [newLhs, newRhs] = if (lhs is ConstAny) {
                         rhs to lhs
                     } else if (rhs is Add && lhs !is Add) {
                         rhs to lhs
