@@ -11,7 +11,7 @@ class RawNodeBuilder(override val session: Session) : NodeBuilder {
     override fun onNodeBuilt(node: Node): Node = node
 }
 
-object RawArgsUpdater : ArgsUpdater {
+object RawArgsUpdater : ArgumentUpdater {
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         // FIXME consider moving into the base updateArg
         require(newValue != oldValue)
@@ -41,7 +41,7 @@ class RegisteringNodeBuilder(session: Session) : NormalizingGvnNodeBuilder(sessi
     }
 }
 
-class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpdater {
+class ArgumentUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgumentUpdater {
     val normalization = Normalization(session, nodeBuilder, this)
     override fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?) {
         require(newValue != oldValue)
@@ -68,7 +68,7 @@ class ArgsUpdaterImpl(val session: Session, nodeBuilder: NodeBuilder) : ArgsUpda
 }
 
 private val Session.nodeBuilder: RegisteringNodeBuilder get() = RegisteringNodeBuilder(this)
-private val Session.argsUpdater: ArgsUpdaterImpl get() = ArgsUpdaterImpl(this, nodeBuilder)
+private val Session.argUpdater: ArgumentUpdaterImpl get() = ArgumentUpdaterImpl(this, nodeBuilder)
 
 context(nodeBuilder: NodeBuilder)
 val normalization: Normalization get() = when (nodeBuilder) {
@@ -77,10 +77,10 @@ val normalization: Normalization get() = when (nodeBuilder) {
 }
 
 fun <T> Session.buildInitialIR(
-    builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
+    builderAction: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> T
 ): T {
-    return context(nodeBuilder, argsUpdater, ControlFlowBuilder(entry)) {
-        builderAction().also {
+    return context(nodeBuilder, ControlFlowBuilder(entry)) {
+        argUpdater.builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
             verify()
@@ -89,10 +89,10 @@ fun <T> Session.buildInitialIR(
 }
 
 fun <T> Session.modifyIR(
-    builderAction: context(NodeBuilder, ArgsUpdater, NoControlFlowBuilder) () -> T
+    builderAction: context(NodeBuilder, NoControlFlowBuilder) ArgumentUpdater.() -> T
 ): T {
-    return context(nodeBuilder, argsUpdater, NoControlFlowBuilder) {
-        builderAction().also {
+    return context(nodeBuilder, NoControlFlowBuilder) {
+        argUpdater.builderAction().also {
             eliminateDeadFoam()
             verify()
         }
@@ -101,10 +101,10 @@ fun <T> Session.modifyIR(
 
 fun <T> Session.modifyControlFlow(
     at: Controlling,
-    builderAction: context(NodeBuilder, ArgsUpdater, ControlFlowBuilder) () -> T
+    builderAction: context(NodeBuilder, ControlFlowBuilder) ArgumentUpdater.() -> T
 ): T {
-    return context(nodeBuilder, argsUpdater, ControlFlowBuilder(at)) {
-        builderAction().also {
+    return context(nodeBuilder, ControlFlowBuilder(at)) {
+        argUpdater.builderAction().also {
             eliminateDeadBlocks()
             eliminateDeadFoam()
             verify()
@@ -113,15 +113,15 @@ fun <T> Session.modifyControlFlow(
 }
 
 // TODO require cfg modificator
-context(_: ArgsUpdater)
+context(_: ArgumentUpdater)
 fun Controlled.eraseControl() {
     // FIXME use controlIndex or something
     args.erase(0)
 }
 
 // TODO move into control manipulator
-context(_: ArgsUpdater)
-fun BlockBody.removeFromControl() {
+context(argUpdater: ArgumentUpdater)
+fun BlockBody.removeFromControl() = with(argUpdater) {
 //    for (arg in args) {
 //        arg.removeUse(this)
 //        //updateArg(arg, null) {} // FIXME find a better way
@@ -133,27 +133,27 @@ fun BlockBody.removeFromControl() {
     kill()
 }
 
-context(_: ArgsUpdater)
+context(argUpdater: ArgumentUpdater)
 fun <N: BlockBody> Session.insertAfter(point: Controlling, createNode: context(NodeBuilder, ControlFlowBuilder) () -> N): N {
     val next = point.next
     val node = modifyControlFlow(point) { createNode() }
-    next.control = node
+    with(argUpdater) { next.control = node }
     return node
 }
 
-context(_: ArgsUpdater)
+context(_: ArgumentUpdater)
 fun <N: BlockBody> Session.insertBefore(point: Controlled, createNode: context(NodeBuilder, ControlFlowBuilder) () -> N): N {
     return insertAfter(point.control, createNode)
 }
 
-context(_: ArgsUpdater)
+context(_: ArgumentUpdater)
 fun Node.kill() {
     require(uses.isEmpty())
-    args.withIndex().forEach { (index, _) -> args[index] = null }
+    args.withIndex().forEach { [index, _] -> args[index] = null }
     deregister()
 }
 
-context(_: ArgsUpdater)
+context(_: ArgumentUpdater)
 fun Node.replaceValueUsesAndKill(replacement: Node) {
     replaceValueUses(replacement)
     kill()

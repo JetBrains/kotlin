@@ -40,23 +40,23 @@ class VarArgsList<N: Node>(val argsList: ArgsList, val firstVarargIndex: Int, va
 
 inline fun <reified N: Node> VarArgsList<N>.toTypedArray(): Array<N> = toList().toTypedArray()
 
-interface ArgsUpdater {
+interface ArgumentUpdaterBase {
     fun onArgUpdate(node: Node, index: Int, oldValue: Node?, newValue: Node?)
 }
 
-context(argsUpdater: ArgsUpdater)
+context(argsUpdater: ArgumentUpdaterBase)
 fun Node.replaceValueUses(by: Node) {
     // TODO optimize, perhaps introduce abstraction of edge?
     for (use in this.uses.toList()) {
         val drop = if (use is Controlled) 1 else 0
         val useEdges = use.args.withIndex().drop(drop).filter { it.value == this }
-        for ((argIndex, _) in useEdges) {
+        for ([argIndex, _] in useEdges) {
             use.args[argIndex] = by
         }
     }
 }
 
-context(argsUpdater: ArgsUpdater)
+context(argsUpdater: ArgumentUpdaterBase)
 private fun Node.updateArg(index: Int, oldValue: Node?, newValue: Node?, update: () -> Unit) {
     if (oldValue == newValue) return
 
@@ -71,7 +71,7 @@ private fun Node.updateArg(index: Int, oldValue: Node?, newValue: Node?, update:
     argsUpdater.onArgUpdate(this, index, oldValue, newValue)
 }
 
-context(argsUpdater: ArgsUpdater)
+context(argsUpdater: ArgumentUpdaterBase)
 operator fun ArgsList.set(index: Int, element: Node?): Node? {
     val old = elements[index]
     host.updateArg(index, old, element) {
@@ -82,7 +82,7 @@ operator fun ArgsList.set(index: Int, element: Node?): Node? {
 
 // FIXME maybe it would be enough to have just add args for varargs?
 // FIXME make safer. Use with care
-context(argsUpdater: ArgsUpdater)
+context(argsUpdater: ArgumentUpdaterBase)
 fun Node.replaceArgs(newArgs: Array<Node?>): Node {
     this as NodeBase
     val oldArgs = args_
@@ -107,10 +107,10 @@ fun Node.replaceArgs(newArgs: Array<Node?>): Node {
     } else this
 }
 
-context(_: ArgsUpdater)
+context(_: ArgumentUpdaterBase)
 fun ArgsList.erase(index: Int): Node? = set(index, null)
 
-context(argsUpdater: ArgsUpdater)
+context(argsUpdater: ArgumentUpdaterBase)
 operator fun <N : Node> VarArgsList<N>.set(index: Int, value: N?) {
     argsList[index + firstVarargIndex] = value
 }

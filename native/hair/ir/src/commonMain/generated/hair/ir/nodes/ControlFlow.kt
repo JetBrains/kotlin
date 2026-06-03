@@ -7,20 +7,16 @@ import hair.sym.Type.*
 sealed interface ControlFlow : Node {
     
     
-    
 }
 
 
 sealed interface Projection : ControlFlow {
-    val owner: ControlFlow
-    val ownerOrNull: ControlFlow?
-    
+    val ownerIndex: Int
     
 }
 
 
 sealed interface Controlling : ControlFlow {
-    
     
     
 }
@@ -29,12 +25,10 @@ sealed interface Controlling : ControlFlow {
 sealed interface Throwing : ControlFlow {
     
     
-    
 }
 
 
 sealed interface BlockExit : ControlFlow {
-    
     
     
 }
@@ -55,9 +49,7 @@ class Unreachable internal constructor(form: Form, ) : NodeBase(form, listOf()),
 
 
 class BlockEntry internal constructor(form: Form, vararg preds: BlockExit?) : NodeBase(form, listOf(*preds)), Controlling {
-    val preds: VarArgsList<BlockExit>
-        get() = VarArgsList(args, 0, BlockExit::class)
-    
+    val predsIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         else -> "preds"
@@ -71,18 +63,7 @@ class BlockEntry internal constructor(form: Form, vararg preds: BlockExit?) : No
 
 
 sealed class Controlled(form: Form, args: List<Node?>) : NodeBase(form, args), ControlFlow {
-    val control: Controlling
-        get() = args[0] as Controlling
-    val controlOrNull: Controlling?
-        get() = args.getOrNull(0)?.let { it as Controlling }
-    context(_: ArgsUpdater)
-     var control: Controlling
-        get() = args[0] as Controlling
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var controlOrNull: Controlling?
-        get() = args.getOrNull(0)?.let { it as Controlling }
-        set(value) { args[0] = value }
+    val controlIndex: Int = 0
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitControlled(this)
 }
@@ -110,18 +91,7 @@ sealed class BlockEnd(form: Form, args: List<Node?>) : Controlled(form, args) {
 
 
 class Return internal constructor(form: Form, control: Controlling?, result: Node?) : BlockEnd(form, listOf(control, result)) {
-    val result: Node
-        get() = args[1]
-    val resultOrNull: Node?
-        get() = args.getOrNull(1)
-    context(_: ArgsUpdater)
-     var result: Node
-        get() = args[1]
-        set(value) { args[1] = value }
-    context(_: ArgsUpdater)
-     var resultOrNull: Node?
-        get() = args.getOrNull(1)
-        set(value) { args[1] = value }
+    val resultIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
@@ -152,18 +122,7 @@ class Goto internal constructor(form: Form, control: Controlling?) : BlockEnd(fo
 
 
 class If internal constructor(form: Form, control: Controlling?, cond: Node?) : BlockEnd(form, listOf(control, cond)) {
-    val cond: Node
-        get() = args[1]
-    val condOrNull: Node?
-        get() = args.getOrNull(1)
-    context(_: ArgsUpdater)
-     var cond: Node
-        get() = args[1]
-        set(value) { args[1] = value }
-    context(_: ArgsUpdater)
-     var condOrNull: Node?
-        get() = args.getOrNull(1)
-        set(value) { args[1] = value }
+    val condIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
@@ -179,18 +138,7 @@ class If internal constructor(form: Form, control: Controlling?, cond: Node?) : 
 
 
 sealed class IfProjection(form: Form, args: List<Node?>) : NodeBase(form, args), Projection, BlockExit {
-    override val owner: If
-        get() = args[0] as If
-    override val ownerOrNull: If?
-        get() = args.getOrNull(0)?.let { it as If }
-    context(_: ArgsUpdater)
-     var owner: If
-        get() = args[0] as If
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var ownerOrNull: If?
-        get() = args.getOrNull(0)?.let { it as If }
-        set(value) { args[0] = value }
+    override val ownerIndex: Int = 0
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitIfProjection(this)
 }
@@ -227,18 +175,7 @@ class FalseExit internal constructor(form: Form, owner: If?) : IfProjection(form
 
 
 class Throw internal constructor(form: Form, control: Controlling?, exception: Node?) : BlockEnd(form, listOf(control, exception)), Throwing {
-    val exception: Node
-        get() = args[1]
-    val exceptionOrNull: Node?
-        get() = args.getOrNull(1)
-    context(_: ArgsUpdater)
-     var exception: Node
-        get() = args[1]
-        set(value) { args[1] = value }
-    context(_: ArgsUpdater)
-     var exceptionOrNull: Node?
-        get() = args.getOrNull(1)
-        set(value) { args[1] = value }
+    val exceptionIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
@@ -254,18 +191,7 @@ class Throw internal constructor(form: Form, control: Controlling?, exception: N
 
 
 class Unwind internal constructor(form: Form, thrower: Throwing?) : NodeBase(form, listOf(thrower)), BlockExit {
-    val thrower: Throwing
-        get() = args[0] as Throwing
-    val throwerOrNull: Throwing?
-        get() = args.getOrNull(0)?.let { it as Throwing }
-    context(_: ArgsUpdater)
-     var thrower: Throwing
-        get() = args[0] as Throwing
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var throwerOrNull: Throwing?
-        get() = args.getOrNull(0)?.let { it as Throwing }
-        set(value) { args[0] = value }
+    val throwerIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "thrower"

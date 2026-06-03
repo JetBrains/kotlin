@@ -15,6 +15,7 @@ fun main(args: Array<String>) {
     generator.generate(Memory)
     generator.generate(Calls)
 
+    generator.generateArgumentAccessors()
     generator.generateSession()
     generator.generateVisitor()
     generator.generateBuilder()

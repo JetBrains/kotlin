@@ -7,7 +7,6 @@ import hair.sym.Type.*
 sealed interface ConstAny : Node {
     
     
-    
 }
 
 
@@ -102,30 +101,8 @@ class Null internal constructor(form: Form, ) : NodeBase(form, listOf()), ConstA
 
 
 sealed class BinaryOp(form: Form, args: List<Node?>) : NodeBase(form, args) {
-    val lhs: Node
-        get() = args[0]
-    val lhsOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var lhs: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var lhsOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
-    val rhs: Node
-        get() = args[1]
-    val rhsOrNull: Node?
-        get() = args.getOrNull(1)
-    context(_: ArgsUpdater)
-     var rhs: Node
-        get() = args[1]
-        set(value) { args[1] = value }
-    context(_: ArgsUpdater)
-     var rhsOrNull: Node?
-        get() = args.getOrNull(1)
-        set(value) { args[1] = value }
+    val lhsIndex: Int = 0
+    val rhsIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitBinaryOp(this)
 }
@@ -363,18 +340,7 @@ class Ushr internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(f
 
 
 class Neg internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
-    val operand: Node
-        get() = args[0]
-    val operandOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var operand: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var operandOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
+    val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "operand"
@@ -411,18 +377,7 @@ class Cmp internal constructor(form: Form, lhs: Node?, rhs: Node?) : BinaryOp(fo
 
 
 class Not internal constructor(form: Form, operand: Node?) : NodeBase(form, listOf(operand)) {
-    val operand: Node
-        get() = args[0]
-    val operandOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var operand: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var operandOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
+    val operandIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "operand"
@@ -437,18 +392,7 @@ class Not internal constructor(form: Form, operand: Node?) : NodeBase(form, list
 
 
 sealed class Cast(form: Form, args: List<Node?>) : NodeBase(form, args) {
-    val operand: Node
-        get() = args[0]
-    val operandOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var operand: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var operandOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
+    val operandIndex: Int = 0
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitCast(this)
 }
