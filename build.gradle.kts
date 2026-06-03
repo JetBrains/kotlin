@@ -230,7 +230,9 @@ allprojects {
             return@all
         }
         resolutionStrategy {
-            failOnNonReproducibleResolution()
+            if (!kotlinBuildProperties.localBootstrap.getOrElse(false)) {
+                failOnNonReproducibleResolution()
+            }
             eachDependency {
                 if (requested.group != "org.jetbrains.kotlin") {
                     return@eachDependency
