@@ -20,3 +20,5 @@ val reservedObjCClassOrObjectNames = setOf(
     "description", "debugDescription", "version", "hash",
     "useStoredAccessor"
 ) + cKeywords + objCMacroDefinitions
+
+fun String.mangleIfStdMacro(): String = if (objCMacroDefinitions.contains(this)) this + "_" else this

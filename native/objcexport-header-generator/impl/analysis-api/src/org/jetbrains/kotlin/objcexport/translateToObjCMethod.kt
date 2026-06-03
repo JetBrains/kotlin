@@ -10,7 +10,7 @@ package org.jetbrains.kotlin.objcexport
 import org.jetbrains.kotlin.analysis.api.export.utilities.isFakeOverride
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
-import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
+import org.jetbrains.kotlin.backend.konan.mangleIfStdMacro
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -245,7 +245,8 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
         return anyMethodSelector
     }
 
-    sb.append(getMangledName(symbol, forSwift = false))
+    // Subsequent mangling attempt if getMangledName() couldn't mangle anything.
+    sb.append(getMangledName(symbol, forSwift = false).mangleIfStdMacro())
 
     parameters.forEachIndexed { index, [bridge, parameter] ->
         val name = when (bridge) {
@@ -279,7 +280,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
             )
             sb.append(name.replaceFirstChar(Char::uppercaseChar))
         } else {
-            sb.append(name.mangleIfReservedObjCName())
+            sb.append(name.mangleIfStdMacro())
         }
 
         if (!isPropertyGetter) sb.append(':')
