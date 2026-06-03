@@ -4,5 +4,5 @@
 
 fun main() {
     val x: kotlin.<!UNRESOLVED_REFERENCE!>Cloneable<!> = if (true) intArrayOf(1) else longArrayOf(1)
-    <!UNUSED_EXPRESSION!>x<!>
+    x
 }
