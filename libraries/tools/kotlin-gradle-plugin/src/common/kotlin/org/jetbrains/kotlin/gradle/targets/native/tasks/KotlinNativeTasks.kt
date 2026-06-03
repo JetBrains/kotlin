@@ -54,6 +54,8 @@ import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.tasks.filterKlibsPassedToCompiler
+import kotlinx.serialization.decodeFromString
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.utils.*
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -1061,7 +1063,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
         if (!allHeadersHashesFile.get().asFile.exists()) {
             return false
         }
-        val previousBuildHeaders = JsonUtils.toMap<String, String>(allHeadersHashesFile.get().asFile.readText())
+        val previousBuildHeaders = KgpJson.default.decodeFromString<Map<String, String>>(allHeadersHashesFile.get().asFile.readText())
 
         val currentBuildHeaders = createHeadersHashByPathMap()
 
