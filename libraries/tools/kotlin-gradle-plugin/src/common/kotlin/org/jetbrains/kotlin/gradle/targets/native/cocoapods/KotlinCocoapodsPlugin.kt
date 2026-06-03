@@ -371,7 +371,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                         interopTask.doFirst { _ ->
                             // Since we cannot expand the configuration phase of interop tasks
                             // receiving the required environment variables happens on execution phase.
-                            val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile())
+                            val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile().toPath())
 
                             podBuildSettings.cflags?.let { args ->
                                 // Xcode quotes around paths with spaces.
@@ -619,7 +619,7 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                 val isDynamicFramework = project.provider { binary is Framework && !binary.isStatic }
 
                 task.doFirst {
-                    val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile())
+                    val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFileProvider.getFile().toPath())
                     val frameworkSearchPaths = podBuildSettings.frameworkSearchPaths
 
                     val linkerOpts = task.additionalLinkerOpts
@@ -871,5 +871,4 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
         const val GENERATE_WRAPPER_PROPERTY = "kotlin.native.cocoapods.generate.wrapper"
     }
 }
-
 

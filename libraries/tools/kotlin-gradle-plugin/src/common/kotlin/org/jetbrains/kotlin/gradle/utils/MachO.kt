@@ -7,9 +7,9 @@ package org.jetbrains.kotlin.gradle.utils
 
 import org.gradle.api.logging.Logger
 import org.jetbrains.kotlin.resolve.constants.fromUIntToLong
-import java.io.File
 import java.io.IOException
 import java.io.RandomAccessFile
+import java.nio.file.Path
 
 // https://github.com/aidansteele/osx-abi-macho-file-format-reference
 @Suppress("SpellCheckingInspection")
@@ -30,9 +30,9 @@ internal object MachO {
      * Checks if the [file] is a Mach-O dynamic shared library
      * or a Mach-O fat binary containing a number of dynamic libraries
      */
-    fun isDylib(file: File, logger: Logger): Boolean {
+    fun isDylib(file: Path, logger: Logger): Boolean {
         try {
-            RandomAccessFile(file, "r").use { raf ->
+            RandomAccessFile(file.toFile(), "r").use { raf ->
                 val magic = raf.readInt().fromUIntToLong()
 
                 val fileTypeOffset = when (magic) {

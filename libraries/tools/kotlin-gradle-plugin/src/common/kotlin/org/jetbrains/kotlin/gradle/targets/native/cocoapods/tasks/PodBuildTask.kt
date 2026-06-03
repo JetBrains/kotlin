@@ -89,7 +89,7 @@ abstract class PodBuildTask @Inject constructor(
 
     @TaskAction
     fun buildDependencies() {
-        val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFile.getFile())
+        val podBuildSettings = PodBuildSettingsProperties.readSettingsFromFile(buildSettingsFile.getFile().toPath())
 
         val podsXcodeProjDir = podsXcodeProjDir.get()
 

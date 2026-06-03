@@ -9,6 +9,8 @@ package org.jetbrains.kotlin.gradle.targets.native.tasks
 
 import java.io.File
 import java.io.Reader
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.*
 
 data class PodBuildSettingsProperties(
@@ -53,8 +55,8 @@ data class PodBuildSettingsProperties(
         const val PUBLIC_HEADERS_FOLDER_PATH = "PUBLIC_HEADERS_FOLDER_PATH"
         const val FRAMEWORK_SEARCH_PATHS = "FRAMEWORK_SEARCH_PATHS"
 
-        internal fun readSettingsFromFile(file: File): PodBuildSettingsProperties {
-            return file.reader().use { readSettingsFromReader(it) }
+        internal fun readSettingsFromFile(file: Path): PodBuildSettingsProperties {
+            return Files.newBufferedReader(file).use { readSettingsFromReader(it) }
         }
 
         fun readSettingsFromReader(reader: Reader): PodBuildSettingsProperties {

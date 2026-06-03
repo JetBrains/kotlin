@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.commonizer.CommonizerOutputFileLayout.resolveCommoni
 import java.io.File
 import java.io.ObjectInputStream
 import java.io.Serializable
+import java.nio.file.FileAlreadyExistsException
+import java.nio.file.Files
+import java.nio.file.Path
 
 class NativeDistributionCommonizerCache(
     private val outputDirectory: File,
@@ -39,15 +42,15 @@ class NativeDistributionCommonizerCache(
         writeCacheAction(todoOutputTargets)
 
         todoOutputTargets
-            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget) }
-            .filter { commonizedDirectory -> commonizedDirectory.isDirectory }
+            .map { outputTarget -> resolveCommonizedDirectory(outputDirectory, outputTarget).toPath() }
+            .filter { commonizedDirectory -> Files.isDirectory(commonizedDirectory) }
             .forEach { commonizedDirectory -> commonizedDirectory.resolve(".success").createNewFile() }
     }
 
     private fun todoTargets(
         outputTargets: Set<SharedCommonizerTarget>
     ): Set<SharedCommonizerTarget> {
-        lock.checkLocked(outputDirectory.toPath())
+        lock.checkLocked(outputDirectoryPath)
         logInfo("Calculating cache state for $outputTargets")
 
         if (!isCachingEnabled) {
@@ -57,7 +60,7 @@ class NativeDistributionCommonizerCache(
         }
 
         val cachedOutputTargets = outputTargets
-            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget)) }
+            .filter { outputTarget -> isCached(resolveCommonizedDirectory(outputDirectory, outputTarget).toPath()) }
             .onEach { outputTarget -> logInfo("Cache hit: $outputTarget already commonized") }
             .toSet()
 
@@ -82,13 +85,23 @@ class NativeDistributionCommonizerCache(
         //  the commonizer
         return missingOutputTargets.allLeaves()
             .map { target -> target.konanTarget }
-            .map { konanTarget -> KonanDistribution(konanHome).platformLibsDir.resolve(konanTarget.name) }
-            .none { platformLibsDir -> platformLibsDir.exists() }
+            .map { konanTarget -> KonanDistribution(konanHome).platformLibsDir.resolve(konanTarget.name).toPath() }
+            .none { platformLibsDir -> Files.exists(platformLibsDir) }
     }
 
-    private fun isCached(directory: File): Boolean {
+    private fun isCached(directory: Path): Boolean {
         val successMarkerFile = directory.resolve(".success")
-        return successMarkerFile.isFile
+        return Files.isRegularFile(successMarkerFile)
+    }
+
+    private val outputDirectoryPath: Path
+        get() = outputDirectory.toPath()
+
+    private fun Path.createNewFile() {
+        try {
+            Files.createFile(this)
+        } catch (_: FileAlreadyExistsException) {
+        }
     }
 
     /**
@@ -96,13 +109,13 @@ class NativeDistributionCommonizerCache(
      * even between multiple process (Gradle Daemons)
      */
     @Transient
-    private var lock = NativeDistributionCommonizerLock(outputDirectory.toPath(), ::logInfo)
+    private var lock = NativeDistributionCommonizerLock(outputDirectoryPath, ::logInfo)
 
     private fun logInfo(message: String) =
         logger.info("Native Distribution Commonization: $message")
 
     private fun readObject(input: ObjectInputStream) {
         input.defaultReadObject()
-        lock = NativeDistributionCommonizerLock(outputDirectory.toPath(), ::logInfo)
+        lock = NativeDistributionCommonizerLock(outputDirectoryPath, ::logInfo)
     }
 }
