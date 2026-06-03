@@ -21,12 +21,12 @@ val Phi.allPossibleValues get() = closure<Node>(this) {
 }.filterNot { it is Phi }
 
 // FIXME better name
-val Phi.inputs: List<Pair<Node, BlockExit>> get() = joinedValues.withIndex().map { (idx, value) ->
+val Phi.inputs: List<Pair<Node, BlockExit>> get() = joinedValues.withIndex().map { [idx, value] ->
     // FIXME support handlers?
     value to block.preds[idx]
 }
 // FIXME delete the one above
-val Phi.inputs0: List<Pair<BlockExit, Node>> get() = joinedValues.withIndex().map { (idx, value) ->
+val Phi.inputs0: List<Pair<BlockExit, Node>> get() = joinedValues.withIndex().map { [idx, value] ->
     // FIXME support handlers?
     block.preds[idx] to value
 }

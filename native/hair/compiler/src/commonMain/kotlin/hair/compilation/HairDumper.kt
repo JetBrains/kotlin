@@ -6,15 +6,16 @@
 package hair.compilation
 
 import hair.sym.HairFunction
+import hair.transform.GCMResult
 import hair.transform.withGCM
 import hair.utils.generateGraphviz
 
 abstract class HairDumper {
     fun dump(compilation: FunctionCompilation, title: String) {
         with (compilation.session) {
-            val (dump, withGCM) = try {
+            val [dump, withGCM] = try {
                 withGCM {
-                    generateGraphviz() to true
+                    generateGraphviz(contextOf<GCMResult>()) to true
                 }
             } catch (_: Throwable) {
                 generateGraphviz() to false
