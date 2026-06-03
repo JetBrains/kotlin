@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlinx.dataframe.plugin.ImportedSchemaMetadata
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.FirDataFrameErrors.MATERIALIZED_SCHEMA_INFO
 import org.jetbrains.kotlinx.dataframe.plugin.extensions.SchemaInfoDiagnostics.GENERATED_FROM_SOURCE_SCHEMA
+import org.jetbrains.kotlinx.dataframe.plugin.extensions.impl.toMaterializedSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.PluginDataFrameSchema
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleColumnGroup
 import org.jetbrains.kotlinx.dataframe.plugin.impl.SimpleFrameColumn
@@ -80,11 +81,11 @@ class DataSchemaInfoCheckers(
 }
 
 object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
-    val PROPERTY_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
-    val FUNCTION_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
-    val FUNCTION_CALL_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val PROPERTY_ACCESS_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
-    val GENERATED_FROM_SOURCE_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val PROPERTY_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
+    val FUNCTION_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
+    val FUNCTION_CALL_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val PROPERTY_ACCESS_SCHEMA by info1<String>(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
+    val GENERATED_FROM_SOURCE_SCHEMA by info1<String>(SourceElementPositioningStrategies.DECLARATION_NAME)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = SchemaRenderers
 
@@ -126,8 +127,12 @@ private data object MaterializedSchemaReporter : FirFunctionCallChecker(mppKind 
                 val name = containingProperty
                     ?.let { containingProperty.name.identifierOrNullIfSpecial?.toDataSchemaName() }
                     ?: expressionSchema.type.renderReadable()
-                val text = expressionSchema.schema.renderAsKotlin(name, asDataClass = true)
-                reporter.reportOn(expression.source, MATERIALIZED_SCHEMA_INFO, text, context)
+                reporter.reportOn(
+                    expression.source,
+                    MATERIALIZED_SCHEMA_INFO,
+                    expressionSchema.schema.toMaterializedSchema(name, asDataClass = true),
+                    context
+                )
             }
         }
     }
@@ -245,7 +250,7 @@ fun StringBuilder.appendComponentSchemaIfApplicable(componentName: String, type:
 }
 
 context(container: KtDiagnosticsContainer)
-internal fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
+internal fun <A> info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<A> {
     return DiagnosticFactory1DelegateProvider(
         Severity.INFO,
         positioningStrategy,
