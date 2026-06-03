@@ -55,7 +55,7 @@ fun Session.generateGraphviz(gcm: GCMResult?): String = buildString {
             "fontcolor" to color,
             "dir" to "back"
         ) + extraAttrs
-        return "${arg.id}->${node.id}[${attrs.joinToString(",") { (k, v) -> "$k=\"$v\"" }}]"
+        return "${arg.id}->${node.id}[${attrs.joinToString(",") { [k, v] -> "$k=\"$v\"" }}]"
     }
 
     fun block(gcm: GCMResult, b: BlockEntry) {
@@ -82,7 +82,7 @@ fun Session.generateGraphviz(gcm: GCMResult?): String = buildString {
         if (n !in printed) {
             appendLine(node(n, unorderedColor))
         }
-        for ((idx, arg) in n.args.filterNotNull().withIndex()) {
+        for ([idx, arg] in n.args.filterNotNull().withIndex()) {
             appendLine(arg(arg, idx, n))
         }
     }
@@ -90,13 +90,10 @@ fun Session.generateGraphviz(gcm: GCMResult?): String = buildString {
     appendLine("}")
 }
 
-context(gcm: GCMResult)
-fun Session.generateGraphviz() = generateGraphviz(gcm)
-
 fun Session.generateGraphviz() = generateGraphviz(null)
 
 fun Session.printGraphviz() {
-    println(withGCM { generateGraphviz() })
+    println(withGCM { generateGraphviz(contextOf<GCMResult>()) })
 }
 
 fun Session.printGraphvizNoGCM() {

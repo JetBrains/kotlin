@@ -2,18 +2,10 @@ package hair.ir.opt
 
 import hair.ir.*
 import hair.ir.Add
-import hair.ir.nodes.Add
-import hair.ir.nodes.BlockEntry
-import hair.ir.nodes.ConstI
-import hair.ir.nodes.ControlFlowBuilder
-import hair.ir.nodes.Node
-import hair.ir.nodes.Return
-import hair.ir.nodes.Throw
-import hair.ir.nodes.Use
+import hair.ir.nodes.*
 import hair.sym.HairType
 import hair.sym.HairType.*
 import hair.test.Fun
-import sun.rmi.transport.TransportConstants.Return
 import kotlin.test.*
 
 class NormalizationTest : IrTest {

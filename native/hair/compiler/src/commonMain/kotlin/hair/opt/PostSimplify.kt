@@ -64,7 +64,7 @@ fun Session.simplify(): Boolean {
                         // TODO a tool like node.replaceControlUsesAndKill(prevGoto)
                         next.preds.withIndex()
                             .filter { it.value == node }
-                            .forEach { (index, _) ->
+                            .forEach { [index, _] ->
                                 next.preds[index] = prevGoto
                             }
                         node.kill()
@@ -77,7 +77,7 @@ fun Session.simplify(): Boolean {
 
                 changed = true
 
-                val (takenExit, droppedExit) = if (constCond.value == 0) {
+                val [takenExit, droppedExit] = if (constCond.value == 0) {
                     node.falseExit to node.trueExit
                 } else {
                     node.trueExit to node.falseExit
@@ -90,12 +90,12 @@ fun Session.simplify(): Boolean {
                 // FIXME better tool
                 takenExit.next.preds.withIndex()
                     .filter { it.value == takenExit }
-                    .forEach { (index, _) ->
+                    .forEach { [index, _] ->
                         takenExit.next.preds[index] = goto
                     }
                 droppedExit.next.preds.withIndex()
                     .filter { it.value == droppedExit }
-                    .forEach { (index, _) ->
+                    .forEach { [index, _] ->
                         droppedExit.next.preds[index] = unreachable
                     }
 
