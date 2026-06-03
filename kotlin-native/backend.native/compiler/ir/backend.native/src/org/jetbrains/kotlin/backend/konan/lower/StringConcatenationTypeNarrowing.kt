@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.konan.Context
+import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.lower.IrBuildingTransformer
-import org.jetbrains.kotlin.backend.common.lower.at
+import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.shallowCopy
-import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -34,7 +33,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
  * - "if (arg==null) null else arg.toString()"  to pass to StringBuilder.append(String?)
  * - "if (arg==null) "null" else arg.toString()"  to pass to other methods as non-nullable String
  */
-internal class StringConcatenationTypeNarrowing(val context: Context) : FileLoweringPass, IrBuildingTransformer(context) {
+internal class StringConcatenationTypeNarrowing(val generationState: NativeGenerationState) : FileLoweringPass {
+    val context: Context = generationState.context
 
     private val string = context.irBuiltIns.stringClass.owner
     private val stringBuilder = context.symbols.stringBuilder.owner
@@ -65,31 +65,48 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
         )
     }
 
+    // Aliased because inside `IrBuilderWithScope` extensions, `context` resolves to the builder's
+    // `IrGeneratorContext`, which has no `symbols`.
+    private val memberStringPlusSymbol = context.symbols.memberStringPlus
+    private val extensionStringPlusSymbol = context.symbols.extensionStringPlus
+    private val memberToStringSymbol = context.symbols.memberToString
+
     override fun lower(irFile: IrFile) {
-        irFile.transformChildrenVoid(this)
-    }
+        val index = generationState.fileLowerState.irElementIndex
+        if (!index.any<IrCall> { matchesNarrowing(it) }) return
 
-    override fun visitCall(expression: IrCall): IrExpression {
-        expression.transformChildrenVoid(this)
-        return with(expression) {
-            builder.at(this)
-            when (symbol) {
-                appendAnyFunction.symbol -> // StringBuilder.append(Any?)
-                    buildConcatenationCall(appendNullableStringFunction, arguments[0]!!, buildArgForAppend(arguments[1]!!))
+        index.forEach<IrCall> { call ->
+            if (!matchesNarrowing(call)) return@forEach
+            val scope = index.scopeOf(call) ?: return@forEach
+            val builder = context.createIrBuilder(scope, call.startOffset, call.endOffset)
 
-                context.symbols.memberStringPlus ->
-                    buildConcatenationCall(plusImplFunction, arguments[0]!!, buildNullableArgToString(arguments[1]!!))
+            val replacement: IrExpression = with(builder) {
+                when (call.symbol) {
+                    appendAnyFunction.symbol ->
+                        buildConcatenationCall(appendNullableStringFunction, call.arguments[0]!!, buildArgForAppend(call.arguments[1]!!))
 
-                context.symbols.extensionStringPlus ->
-                    buildConcatenationCall(plusImplFunction, buildNullableArgToString(arguments[0]!!), buildNullableArgToString(arguments[1]!!))
+                    memberStringPlusSymbol ->
+                        buildConcatenationCall(plusImplFunction, call.arguments[0]!!, buildNullableArgToString(call.arguments[1]!!))
 
-                else -> expression
+                    extensionStringPlusSymbol ->
+                        buildConcatenationCall(plusImplFunction, buildNullableArgToString(call.arguments[0]!!), buildNullableArgToString(call.arguments[1]!!))
+
+                    else -> call
+                }
             }
+            index.spliceIfNeeded(call, replacement, reindexNewSubtree = true)
         }
     }
 
-    private fun buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
-            builder.irCall(function.symbol, function.returnType, typeArgumentsCount = 0)
+    private fun matchesNarrowing(call: IrCall): Boolean {
+        val s = call.symbol
+        return s == appendAnyFunction.symbol
+                || s == context.symbols.memberStringPlus
+                || s == context.symbols.extensionStringPlus
+    }
+
+    private fun IrBuilderWithScope.buildConcatenationCall(function: IrSimpleFunction, receiver: IrExpression, argument: IrExpression): IrExpression =
+            irCall(function.symbol, function.returnType, typeArgumentsCount = 0)
                     .apply {
                         arguments[0] = receiver
                         arguments[1] = argument
@@ -100,9 +117,9 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
      * - "argument.toString()", otherwise
      * Note: should side effects are possible, temporary val is introduced
      */
-    private fun buildNullableArgToString(argument: IrExpression): IrExpression =
+    private fun IrBuilderWithScope.buildNullableArgToString(argument: IrExpression): IrExpression =
             if (argument.type.isNullable()) {
-                builder.irBlock {
+                irBlock {
                     nullableArgToStringType(argument, context.irBuiltIns.stringType, irString("null"))
                 }
             } else buildNonNullableArgToString(argument)
@@ -112,10 +129,10 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
      * - "argument.toString()", otherwise
      * Note: should side effects are possible, temporary val is introduced
      */
-    private fun buildArgForAppend(argument: IrExpression): IrExpression =
+    private fun IrBuilderWithScope.buildArgForAppend(argument: IrExpression): IrExpression =
             if (argument.type.isNullable()) {
                 // Transform argument of `StringBuilder.append(Any?)` to `ARG?.toString()`, of type "String?"
-                builder.irBlock {
+                irBlock {
                     nullableArgToStringType(argument, context.irBuiltIns.stringType.makeNullable(), irNull())
                 }
             } else {
@@ -144,16 +161,15 @@ internal class StringConcatenationTypeNarrowing(val context: Context) : FileLowe
      * - "argument", in case argument's type is String?, due to smart-cast and no-op
      * - "argument.toString()", otherwise
      */
-    private fun buildNonNullableArgToString(argument: IrExpression): IrExpression {
+    private fun IrBuilderWithScope.buildNonNullableArgToString(argument: IrExpression): IrExpression {
         return if (argument.type.isString() || argument.type.isNullableString())
             argument
         else {
             val calleeOrNull = argument.type.classOrNull?.owner?.functions?.singleOrNull {
                 it.name == OperatorNameConventions.TO_STRING && it.nonDispatchParameters.isEmpty()
             }?.symbol
-            val callee = calleeOrNull ?: context.symbols.memberToString  // defaults to `Any.toString()`
-            builder
-                    .irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
+            val callee = calleeOrNull ?: memberToStringSymbol  // defaults to `Any.toString()`
+            irCall(callee, callee.owner.returnType, typeArgumentsCount = 0)
                     .apply { arguments[0] = argument }
         }
     }

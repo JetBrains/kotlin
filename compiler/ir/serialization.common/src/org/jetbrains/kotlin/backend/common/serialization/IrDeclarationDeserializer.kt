@@ -388,6 +388,7 @@ class IrDeclarationDeserializer(
                     val oldDeclarations = declarations.toSet()
                     proto.declarationList
                         .asSequence()
+                        // TODO Candidate
                         .filterNot { isSkippedFakeOverride(it, this) }
                         // On JVM, deserialization may fill bodies of existing declarations, so avoid adding duplicates.
                         .mapNotNullTo(declarations) { declProto -> deserializeDeclaration(declProto, startOffset).takeIf { it !in oldDeclarations } }

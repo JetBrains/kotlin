@@ -65,9 +65,16 @@ class StringConcatenationLowering(context: CommonBackendContext) : FileLoweringP
     }
 
     private val appendFunctions: Map<IrType, IrSimpleFunction?> =
-        typesWithSpecialAppendFunction.associate { type ->
-            type to stringBuilder.functions.toList().atMostOne {
-                it.name == nameAppend && it.hasShape(dispatchReceiver = true, regularParameters = 1, parameterTypes = listOf(null, type))
+        run {
+            val functions = stringBuilder.functions.toList()
+            typesWithSpecialAppendFunction.associateWith { type ->
+                functions.atMostOne {
+                    it.name == nameAppend && it.hasShape(
+                        dispatchReceiver = true,
+                        regularParameters = 1,
+                        parameterTypes = listOf(null, type)
+                    )
+                }
             }
         }
 

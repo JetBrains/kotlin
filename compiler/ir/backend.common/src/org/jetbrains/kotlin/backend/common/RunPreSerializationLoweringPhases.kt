@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 
+// Optimization candidate?
 fun <T : PreSerializationLoweringContext> PhaseEngine<T>.runPreSerializationLoweringPhases(
     lowerings: List<NamedCompilerPhase<T, IrModuleFragment, IrModuleFragment>>,
     irModuleFragment: IrModuleFragment,

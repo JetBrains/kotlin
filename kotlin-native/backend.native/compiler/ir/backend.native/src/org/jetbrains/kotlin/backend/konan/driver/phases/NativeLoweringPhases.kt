@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.expressions.IrBody
+import org.jetbrains.kotlin.ir.expressions.IrCall
+import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
@@ -184,22 +186,44 @@ private val forLoopsPhase = createFileLoweringPhase(
         prerequisite = setOf(functionsWithoutBoundCheck)
 )
 
+/**
+ * Builds [IrElementIndex] for the current file and stores it, so the following lowerings can consult it.
+ */
+private val buildIrElementIndexPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>(
+        name = "BuildIrElementIndex",
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+) { state, irFile ->
+    state.fileLowerState.irElementIndex.buildFor(irFile, IrStringConcatenation::class, IrCall::class)
+    irFile
+}
+
 private val flattenStringConcatenationPhase = createFileLoweringPhase(
-        ::FlattenStringConcatenationLowering,
         name = "FlattenStringConcatenationLowering",
+        lowering = ::NativeFlattenStringConcatenationLowering,
 )
 
 private val stringConcatenationPhase = createFileLoweringPhase(
-        ::StringConcatenationLowering,
         name = "StringConcatenation",
+        lowering = ::NativeStringConcatenationLowering,
         prerequisite = setOf(flattenStringConcatenationPhase, forLoopsPhase)
 )
 
 private val stringConcatenationTypeNarrowingPhase = createFileLoweringPhase(
-        ::StringConcatenationTypeNarrowing,
         name = "StringConcatenationTypeNarrowing",
+        lowering = ::StringConcatenationTypeNarrowing,
         prerequisite = setOf(stringConcatenationPhase)
 )
+
+/**
+ * See [buildIrElementIndexPhase].
+ */
+private val clearIrElementIndexPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>(
+        name = "ClearIrElementIndex",
+        outputIfNotEnabled = { _, _, _, irFile -> irFile },
+) { state, irFile ->
+    state.fileLowerState.irElementIndex.clear()
+    irFile
+}
 
 private val kotlinNothingValueExceptionPhase = createFileLoweringPhase(
         ::KotlinNothingValueExceptionLowering,
@@ -651,9 +675,11 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         finallyBlocksPhase,
         computeTypesPhase, // Inliner erases generics. Trying to restore some of the information and simplify IR.
         forLoopsPhase,
+        buildIrElementIndexPhase,
         flattenStringConcatenationPhase,
         stringConcatenationPhase,
         stringConcatenationTypeNarrowingPhase.takeIf { this.optimizationsEnabled },
+        clearIrElementIndexPhase,
         defaultParameterExtentPhase,
         innerClassPhase,
         dataClassesPhase,

@@ -182,6 +182,7 @@ private class AutoboxingTransformer(val context: Context) : AbstractValueUsageTr
                     || this.symbol.isSubtypeOfClass(expectedClass.symbol)
 
     private fun IrExpression.adaptIfNecessary(actualType: IrType, expectedType: IrType, skipTypeCheck: Boolean = false): IrExpression {
+        // TODO Maybe cache this? It is quite heavy.
         val conversion = context.getTypeConversion(actualType, expectedType)
         return if (conversion == null) {
             val actualClass = actualType.classOrNull?.owner
