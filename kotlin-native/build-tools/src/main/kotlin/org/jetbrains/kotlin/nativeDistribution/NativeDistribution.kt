@@ -56,6 +56,12 @@ class NativeDistribution(val root: Directory) {
         get() = root.dir("klib/cache")
 
     /**
+     * Root directory for compiler acaches for the specific [target].
+     */
+    fun cachesRoot(target: String): Directory =
+            cachesRoot.dir("${target}-gSTATIC-system")
+
+    /**
      * Directory with distribution sources.
      *
      * @see stdlibSources
@@ -140,7 +146,7 @@ class NativeDistribution(val root: Directory) {
      * Static compiler cache of library [name] for a specific [target].
      */
     fun cache(name: String, target: String, perFile: Boolean): Directory =
-            cachesRoot.dir("${target}-gSTATIC-system/${name}-${if (perFile) "per-file-cache" else "cache"}")
+            cachesRoot(target).dir(cacheDirectoryName(name, perFile))
 
     /**
      * Archive with stdlib sources.
@@ -175,6 +181,11 @@ class NativeDistribution(val root: Directory) {
      * Fingerprint of [runtime] contents for [target].
      */
     fun runtimeFingerprint(target: String) = root.file("konan/targets/$target/runtime.fingerprint")
+
+    companion object {
+        fun cacheDirectoryName(name: String, perFile: Boolean) =
+                "${name}-${if (perFile) "per-file-cache" else "cache"}"
+    }
 }
 
 fun DirectoryProperty.asNativeDistribution(): Provider<NativeDistribution> = this.map(::NativeDistribution)

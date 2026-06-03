@@ -7,10 +7,14 @@ package org.jetbrains.kotlin.gradle.plugin.konan.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.ConfigurableFileCollection
+import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.FileCollection
+import org.gradle.api.file.RegularFile
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
 import org.gradle.workers.WorkAction
@@ -21,6 +25,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
 import org.jetbrains.kotlin.konan.target.PlatformManager
+import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.asNativeDistribution
 import javax.inject.Inject
 
@@ -55,8 +60,23 @@ open class KonanCacheTask @Inject constructor(
     @get:Input
     val makePerFileCache: Property<Boolean> = objectFactory.property(Boolean::class.java).convention(false)
 
+    // Ideally, this would be an output, because that's what we give the compiler and it infers
+    // cache name all by itself. But this will break for platform libs which all share the same
+    // `cacheDirectory` and we trust the compiler to write into individual folders.
+    @get:Internal("used to compute outputDirectory")
+    val cacheDirectory: DirectoryProperty = objectFactory.directoryProperty()
+
+    @get:Internal("used to compute outputDirectory")
+    val cacheName: Property<String> = objectFactory.property(String::class.java)
+
+    private fun fullCacheDirectory(perFile: Provider<Boolean>) =
+            cacheDirectory.dir(perFile.zip(cacheName) { perFile, name -> NativeDistribution.cacheDirectoryName(name, perFile) })
+
     @get:OutputDirectory
-    val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
+    val outputDirectory: Provider<Directory> = fullCacheDirectory(makePerFileCache)
+
+    @get:OutputDirectory // This will be deleted, not created.
+    protected val alternativeCacheDirectory: Provider<Directory> = fullCacheDirectory(makePerFileCache.map { !it })
 
     @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
     val compilerDistributionRoot: DirectoryProperty = objectFactory.directoryProperty()
@@ -64,17 +84,17 @@ open class KonanCacheTask @Inject constructor(
     private val compilerDistribution = compilerDistributionRoot.asNativeDistribution()
 
     @get:Classpath
-    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
+    protected val compilerClasspath: Provider<FileCollection> = compilerDistribution.map { it.compilerClasspath }
 
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val codegenLibs = compilerDistribution.map { it.nativeLibs }
+    protected val codegenLibs: Provider<Directory> = compilerDistribution.map { it.nativeLibs }
 
     @get:InputFile
     @get:PathSensitive(PathSensitivity.NONE)
     @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = compilerDistribution.map { it.konanProperties }
+    protected val konanProperties: Provider<RegularFile> = compilerDistribution.map { it.konanProperties }
 
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
@@ -84,6 +104,12 @@ open class KonanCacheTask @Inject constructor(
         val outDir = outputDirectory.get().asFile
         outDir.prepareAsOutput()
 
+        // Native compiler will not build per-file cache, when monolithic cache exists.
+        // Before running the compiler, delete both kinds of caches. The cache that will
+        // be built, was deleted above; the other cache is deleted here.
+        // See https://youtrack.jetbrains.com/issue/KT-86726
+        alternativeCacheDirectory.get().asFile.deleteRecursively()
+
         val klibFile = klib.get().asFile
         val args = buildList {
             add("-g")
@@ -92,11 +118,11 @@ open class KonanCacheTask @Inject constructor(
             add("-produce")
             add("static_cache")
             add("-Xadd-cache=${klibFile.absolutePath}")
-            add("-Xcache-directory=${outDir.parentFile.absolutePath}")
+            add("-Xcache-directory=${cacheDirectory.get().asFile.absolutePath}")
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
-            add("-Xdebug-prefix-map=${outDir.parentFile.absolutePath}=out")
+            add("-Xdebug-prefix-map=${cacheDirectory.get().asFile.absolutePath}=out")
             if (makePerFileCache.get()) {
                 add("-Xmake-per-file-cache")
             }
