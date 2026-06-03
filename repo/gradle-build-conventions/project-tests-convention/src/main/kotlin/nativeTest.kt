@@ -439,7 +439,13 @@ fun ProjectTestsExtension.nativeTestTask(
             testTags?.let { includeTags(it) }
         }
 
-        if (!allowParallelExecution) {
+        systemProperty("junit.jupiter.execution.timeout.default", "30 m")
+        if (allowParallelExecution) {
+            systemProperty("junit.jupiter.execution.parallel.enabled", "true")
+            systemProperty("junit.jupiter.execution.parallel.mode.default", "concurrent")
+            systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "concurrent")
+            systemProperty("junit.jupiter.execution.timeout.thread.mode.default", "separate_thread")
+        } else {
             systemProperty("junit.jupiter.execution.parallel.enabled", "false")
         }
 
