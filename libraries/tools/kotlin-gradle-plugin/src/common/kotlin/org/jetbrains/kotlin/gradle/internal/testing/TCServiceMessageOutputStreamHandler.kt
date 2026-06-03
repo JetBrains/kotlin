@@ -41,6 +41,10 @@ internal class TCServiceMessageOutputStreamHandler(
         flushLine()
     }
 
+    fun writeEndLine() {
+        write('\n'.code)
+    }
+
     override fun write(b: ByteArray, off: Int, len: Int) {
         if (closed) throw IOException("The stream has been closed.")
         var i = off
