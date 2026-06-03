@@ -28,22 +28,22 @@ kotlin {
 
     mingwX64("windowsX64")
 
-    val commonMain by sourceSets.getting
-    val concurrentMain by sourceSets.creating
-    val jvmMain by sourceSets.getting
-    val jsMain by sourceSets.getting
-    val nativeMain by sourceSets.creating
-    val appleAndLinuxMain by sourceSets.creating
-    val linuxMain by sourceSets.creating
-    val linuxX64Main by sourceSets.getting
-    val linuxArm64Main by sourceSets.getting
-    val appleMain by sourceSets.creating
-    val macosMain by sourceSets.getting
-    val iosMain by sourceSets.creating
-    val iosX64Main by sourceSets.getting
-    val iosArm64Main by sourceSets.getting
-    val iosSimulatorArm64Main by sourceSets.getting
-    val windowsX64Main by sourceSets.getting
+    val commonMain = sourceSets.getByName("commonMain")
+    val concurrentMain = sourceSets.create("concurrentMain")
+    val jvmMain = sourceSets.getByName("jvmMain")
+    val jsMain = sourceSets.getByName("jsMain")
+    val nativeMain = sourceSets.create("nativeMain")
+    val appleAndLinuxMain = sourceSets.create("appleAndLinuxMain")
+    val linuxMain = sourceSets.create("linuxMain")
+    val linuxX64Main = sourceSets.getByName("linuxX64Main")
+    val linuxArm64Main = sourceSets.getByName("linuxArm64Main")
+    val appleMain = sourceSets.create("appleMain")
+    val macosMain = sourceSets.getByName("macosMain")
+    val iosMain = sourceSets.create("iosMain")
+    val iosX64Main = sourceSets.getByName("iosX64Main")
+    val iosArm64Main = sourceSets.getByName("iosArm64Main")
+    val iosSimulatorArm64Main = sourceSets.getByName("iosSimulatorArm64Main")
+    val windowsX64Main = sourceSets.getByName("windowsX64Main")
 
     commonMain {
         -jsMain

@@ -12,10 +12,10 @@ kotlin {
     val targetA = <targetA>("targetA")
     val targetB = <targetB>("targetB")
 
-    val commonMain by sourceSets.getting
-    val nativeMain by sourceSets.creating
-    val targetAMain by sourceSets.getting
-    val targetBMain by sourceSets.getting
+    val commonMain = sourceSets.getByName("commonMain")
+    val nativeMain = sourceSets.create("nativeMain")
+    val targetAMain = sourceSets.getByName("targetAMain")
+    val targetBMain = sourceSets.getByName("targetBMain")
 
     nativeMain.dependsOn(commonMain)
     targetAMain.dependsOn(nativeMain)

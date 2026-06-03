@@ -2,7 +2,7 @@ plugins {
     id("base")
 }
 
-val aggregation by configurations.creating {
+val aggregation = configurations.create("aggregation") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {

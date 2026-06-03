@@ -9,14 +9,14 @@ kotlin {
     linuxArm64()
     mingwX64("windowsX64")
 
-    val commonMain by sourceSets.getting
-    val iosMain by sourceSets.creating
-    val linuxMain by sourceSets.creating
+    val commonMain = sourceSets.getByName("commonMain")
+    val iosMain = sourceSets.create("iosMain")
+    val linuxMain = sourceSets.create("linuxMain")
 
-    val iosX64Main by sourceSets.getting
-    val iosArm64Main by sourceSets.getting
-    val linuxX64Main by sourceSets.getting
-    val linuxArm64Main by sourceSets.getting
+    val iosX64Main = sourceSets.getByName("iosX64Main")
+    val iosArm64Main = sourceSets.getByName("iosArm64Main")
+    val linuxX64Main = sourceSets.getByName("linuxX64Main")
+    val linuxArm64Main = sourceSets.getByName("linuxArm64Main")
 
     iosMain.dependsOn(commonMain)
     linuxMain.dependsOn(commonMain)
