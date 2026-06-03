@@ -530,6 +530,8 @@ data class KotlinWebpackConfig(
     private fun json(obj: Any): String = KgpJson.prettyPrinted.encodeToString(anyToJsonElement(obj))
 }
 
+// Local anyToJsonElement that also handles webpack-specific types (DevServer, Optimization, WatchOptions)
+// not covered by KgpJson.anyToJsonElement.
 private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
     null -> JsonNull
     is Boolean -> JsonPrimitive(value)

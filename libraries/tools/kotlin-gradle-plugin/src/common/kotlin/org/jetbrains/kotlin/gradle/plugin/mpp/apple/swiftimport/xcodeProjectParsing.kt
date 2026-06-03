@@ -11,6 +11,7 @@ import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.*
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -110,11 +111,7 @@ internal sealed class StringOrStringList {
     }
 }
 
-private val json = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-    explicitNulls = false
-}
+private val json = KgpJson.default
 
 @Serializable(with = PbxObjectEntitySerializer::class)
 internal sealed class PbxObject

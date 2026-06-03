@@ -7,8 +7,8 @@ package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -744,7 +744,7 @@ private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3
 private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
 
-private val karmaJson = Json { prettyPrint = true }
+private val karmaJson = KgpJson.prettyPrinted
 
 private fun karmaConfigToJson(config: KarmaConfig): String =
     karmaJson.encodeToString(config.toJsonElement())

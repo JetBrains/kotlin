@@ -9,8 +9,8 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.SetProperty
@@ -96,8 +96,6 @@ internal abstract class ComputeLocalPackageDependencyInputFiles : DefaultTask() 
 
     companion object {
         const val TASK_NAME = "computeLocalPackageDependencyInputFiles"
-        private val packageDescriptionJson = Json {
-            ignoreUnknownKeys = true
-        }
+        private val packageDescriptionJson = KgpJson.default
     }
 }

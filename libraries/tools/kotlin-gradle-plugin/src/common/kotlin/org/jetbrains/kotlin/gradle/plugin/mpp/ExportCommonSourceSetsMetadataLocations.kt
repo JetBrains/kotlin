@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.MapSerializer
-import kotlinx.serialization.builtins.serializer
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.Internal

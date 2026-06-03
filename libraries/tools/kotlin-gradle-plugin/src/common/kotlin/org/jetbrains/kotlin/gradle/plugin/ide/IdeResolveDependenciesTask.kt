@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.ide
 
 import kotlinx.serialization.json.*
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ArtifactResult
@@ -56,7 +57,7 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
     fun resolveDependencies() {
         val outputDirectory = outputDirectory.get().asFile
         outputDirectory.deleteRecursively()
-        val prettyJson = Json { prettyPrint = true }
+        val prettyJson = KgpJson.prettyPrinted
 
         kotlinExtension.sourceSets.forEach { sourceSet ->
             val dependencies = kotlinIdeMultiplatformImport.get().resolveDependencies(sourceSet)

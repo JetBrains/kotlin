@@ -7,8 +7,8 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import kotlinx.serialization.json.decodeFromStream
 import kotlinx.serialization.json.encodeToStream
 import org.gradle.api.DomainObjectSet
@@ -536,10 +536,7 @@ internal data class SwiftPMImportMetadata(
     val dependencies: Set<SwiftPMDependency>
 ) : Serializable
 
-private val swiftPMMetadataJson = Json {
-    ignoreUnknownKeys = true
-    encodeDefaults = true
-}
+private val swiftPMMetadataJson = KgpJson.default
 
 internal fun deserializeSwiftPMImportMetadata(inputStream: InputStream) =
     swiftPMMetadataJson.decodeFromStream<SwiftPMImportMetadata>(inputStream)

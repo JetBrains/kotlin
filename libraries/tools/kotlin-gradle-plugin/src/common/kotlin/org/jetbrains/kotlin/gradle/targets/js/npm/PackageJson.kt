@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
@@ -86,7 +86,7 @@ class PackageJson(
     }
 
     companion object {
-        internal val prettyJson = Json { prettyPrint = true }
+        internal val prettyJson = KgpJson.prettyPrinted
 
         fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(
             scope = name.substringBeforeLast("/").removePrefix("@"),
@@ -147,7 +147,7 @@ fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { pa
 
 private fun parsePackageJson(text: String): PackageJson? {
     return try {
-        val obj = Json.parseToJsonElement(text).jsonObject
+        val obj = KgpJson.default.parseToJsonElement(text).jsonObject
         val name = obj["name"]?.jsonPrimitive?.content ?: return null
         val version = obj["version"]?.jsonPrimitive?.content ?: return null
         PackageJson(name, version).also { pkg ->
@@ -157,10 +157,10 @@ private fun parsePackageJson(text: String): PackageJson? {
             pkg.workspaces = obj["workspaces"]?.let { el ->
                 (el as? JsonArray)?.map { it.jsonPrimitive.content }
             }
-            obj["dependencies"]?.jsonObject?.forEach { (k, v) -> pkg.dependencies[k] = v.jsonPrimitive.content }
-            obj["devDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.devDependencies[k] = v.jsonPrimitive.content }
-            obj["peerDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.peerDependencies[k] = v.jsonPrimitive.content }
-            obj["optionalDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.optionalDependencies[k] = v.jsonPrimitive.content }
+            obj["dependencies"]?.jsonObject?.let { map: Map<String, JsonElement> -> for (entry in map) pkg.dependencies[entry.key] = entry.value.jsonPrimitive.content }
+            obj["devDependencies"]?.jsonObject?.let { map: Map<String, JsonElement> -> for (entry in map) pkg.devDependencies[entry.key] = entry.value.jsonPrimitive.content }
+            obj["peerDependencies"]?.jsonObject?.let { map: Map<String, JsonElement> -> for (entry in map) pkg.peerDependencies[entry.key] = entry.value.jsonPrimitive.content }
+            obj["optionalDependencies"]?.jsonObject?.let { map: Map<String, JsonElement> -> for (entry in map) pkg.optionalDependencies[entry.key] = entry.value.jsonPrimitive.content }
         }
     } catch (_: Exception) {
         null

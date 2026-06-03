@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
@@ -144,7 +144,7 @@ constructor(
         )
     }
 
-    protected fun json(obj: Any): String = Json { prettyPrint = true }.encodeToString(anyToJsonElement(obj))
+    protected fun json(obj: Any): String = KgpJson.prettyPrinted.encodeToString(anyToJsonElement(obj))
 
     @Internal
     override fun getName(): String = name

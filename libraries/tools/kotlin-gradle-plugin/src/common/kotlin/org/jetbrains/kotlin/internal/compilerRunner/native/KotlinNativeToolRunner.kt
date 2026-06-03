@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonNull
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -52,7 +52,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
     companion object {
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
-        private val unitStatsJson = Json { ignoreUnknownKeys = true; coerceInputValues = true }
+        private val unitStatsJson = KgpJson.default
     }
     private val logger = Logging.getLogger(toolSpec.displayName.get())
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
