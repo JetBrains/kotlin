@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.declarations.directInheritors
 import org.jetbrains.kotlin.fir.declarations.utils.classId
 import org.jetbrains.kotlin.fir.declarations.utils.isActual
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
+import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.resolve.providers.getRegularClassSymbolByClassIdFromDependencies
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -60,11 +61,11 @@ class DirectClassInheritorsResolver(override val session: FirSession) : SessionH
             parent.addDirectInheritors(symbol)
         }
 
-        collectInheritorsOfCorrespondingExpectClass(symbol.classId, regularClass)
+        if (!symbol.isLocal) collectInheritorsOfCorrespondingExpectClass(symbol.classId, regularClass)
     }
 
     fun resolveTypeAlias(typeAlias: FirTypeAlias) {
-        if (!typeAlias.isActual) return
+        if (!typeAlias.isActual || typeAlias.isLocal) return
         val expansionClass = typeAlias.expandedTypeRef.coneType.toRegularClassSymbol(session)?.fir ?: return
         collectInheritorsOfCorrespondingExpectClass(typeAlias.classId, expansionClass)
     }
