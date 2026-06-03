@@ -60,7 +60,7 @@ internal object AnalysisApiDomainInfo : DomainInfo {
     override val domain = Domain.AnalysisApi
     override val include: List<String> = listOf("analysis/**", "compiler/psi/**")
     override val exclude: List<String> = listOf("compiler/psi/parser/**")
-    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo) }
+    override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, CoreLibsDomainInfo) }
 }
 
 internal object SwiftExportDomainInfo : DomainInfo {

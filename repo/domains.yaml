@@ -52,6 +52,7 @@ AnalysisApi:
     - "compiler/psi/parser/**"
   fullyAffectedBy:
     - Compiler
+    - CoreLibs
 
 SwiftExport:
   include:
