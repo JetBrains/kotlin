@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.file.CopySpec
 import org.jetbrains.kotlin.gradle.targets.js.internal.RewriteSourceMapFilterReader
-import java.io.File
+import java.nio.file.Path
 
-internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: File) {
+internal fun CopySpec.remapJavaScriptSourceMapSourcePaths(destinationDir: Path) {
     eachFile {
         if (it.name.endsWith(".js.map") || it.name.endsWith(".mjs.map")) {
             it.filter(
                 mapOf(
-                    RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.parentFile,
-                    RewriteSourceMapFilterReader::targetSourceRoot.name to it.relativePath.getFile(destinationDir).parentFile
+                    RewriteSourceMapFilterReader::srcSourceRoot.name to it.file.toPath().parent.toString(),
+                    RewriteSourceMapFilterReader::targetSourceRoot.name to destinationDir.resolve(it.relativePath.pathString).parent.toString()
                 ),
                 RewriteSourceMapFilterReader::class.java
             )

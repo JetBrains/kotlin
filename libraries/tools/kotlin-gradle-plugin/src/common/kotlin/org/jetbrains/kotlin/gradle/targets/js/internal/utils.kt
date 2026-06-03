@@ -8,22 +8,24 @@ package org.jetbrains.kotlin.gradle.targets.js.internal
 import org.gradle.internal.hash.FileHasher
 import org.gradle.internal.hash.Hashing.defaultFunction
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 
-internal fun Appendable.appendConfigsFromDir(confDir: File) {
-    val files = confDir.listFiles() ?: return
+internal fun Appendable.appendConfigsFromDir(confDir: Path) {
+    if (!Files.isDirectory(confDir)) return
 
-    files.asSequence()
-        .filter { it.isFile }
-        .filter { it.extension == "js" }
-        .sortedBy { it.name }
-        .forEach {
-            appendLine("// ${it.name}")
-            append(it.readText())
-            appendLine()
-            appendLine()
-        }
+    Files.list(confDir).use { files ->
+        files
+            .filter { Files.isRegularFile(it) }
+            .filter { it.fileName.toString().substringAfterLast('.', "") == "js" }
+            .sorted(compareBy<Path> { it.fileName.toString() })
+            .forEach {
+                appendLine("// ${it.fileName}")
+                append(Files.newBufferedReader(it).use { reader -> reader.readText() })
+                appendLine()
+                appendLine()
+            }
+    }
 }
 
 internal fun ByteArray.toHex(): String {
@@ -38,21 +40,24 @@ internal fun ByteArray.toHex(): String {
 }
 
 internal fun FileHasher.calculateDirHash(
-    dir: File,
+    dir: Path,
 ): String? {
-    if (!dir.isDirectory) return null
+    if (!Files.isDirectory(dir)) return null
 
     val hasher = defaultFunction().newHasher()
-    dir.walk()
-        .forEach { file ->
-            hasher.putString(file.toRelativeString(dir))
-            if (file.isFile) {
-                if (!Files.isSymbolicLink(file.toPath())) {
-                    hasher.putHash(hash(file))
-                } else {
-                    val absoluteFile = file.absoluteFile
-                    hasher.putHash(hash(absoluteFile))
-                    hasher.putString(absoluteFile.toRelativeString(dir))
+    val baseDir = dir.toAbsolutePath()
+    Files.walk(baseDir)
+        .use { paths ->
+            paths.forEach { file ->
+                hasher.putString(baseDir.relativize(file).toString())
+                if (Files.isRegularFile(file)) {
+                    if (!Files.isSymbolicLink(file)) {
+                        hasher.putHash(hash(file.toFile()))
+                    } else {
+                        val absoluteFile = file.toAbsolutePath()
+                        hasher.putHash(hash(absoluteFile.toFile()))
+                        hasher.putString(baseDir.relativize(absoluteFile).toString())
+                    }
                 }
             }
         }

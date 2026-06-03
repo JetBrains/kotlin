@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProjectModules
 import org.jetbrains.kotlin.gradle.targets.js.testing.KotlinTestRunnerCliArgs
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import kotlin.test.Test
 import java.nio.file.Files.createTempDirectory
 import java.nio.file.Path
@@ -22,11 +23,11 @@ class KotlinKarmaTest {
         val npmProjectDir = createTempDirectory("tmp")
         val executableFile = npmProjectDir.resolve("kotlin/main.mjs")
 
-        val loadWasm = createLoadWasm(npmProjectDir.toFile(), executableFile.toFile())
+        val loadWasm = createLoadWasm(npmProjectDir, executableFile)
 
         assertEquals(
             "static/load.mjs",
-            loadWasm.relativeTo(npmProjectDir.toFile()).invariantSeparatorsPath
+            npmProjectDir.relativize(loadWasm).invariantSeparatorsPathString
         )
 
         assertEquals(
@@ -40,7 +41,7 @@ class KotlinKarmaTest {
                 window.__karma__.error("Problem with loading", void 0, void 0, void 0, e)
             }
             """.trimIndent(),
-            loadWasm.readText().trimIndent()
+            loadWasm.toFile().readText().trimIndent()
         )
     }
 
@@ -49,7 +50,7 @@ class KotlinKarmaTest {
         val npmProjectDir = createTempDirectory("tmp")
         val executableFile = npmProjectDir.resolve("kotlin/main.wasm")
 
-        val based = basify(npmProjectDir.toFile(), executableFile.toFile())
+        val based = basify(npmProjectDir, executableFile)
 
         assertEquals(
             "/base/kotlin/main.wasm",

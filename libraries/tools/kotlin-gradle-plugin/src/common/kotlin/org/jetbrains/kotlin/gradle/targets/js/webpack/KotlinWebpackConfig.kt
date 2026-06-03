@@ -22,6 +22,8 @@ import java.io.File
 import java.io.Serializable
 import java.io.StringWriter
 import java.lang.reflect.Type
+import java.nio.file.Files
+import java.nio.file.Path
 import kotlin.collections.joinToString
 
 /**
@@ -262,7 +264,11 @@ data class KotlinWebpackConfig(
     ) : Serializable
 
     fun save(configFile: File) {
-        configFile.writer().use {
+        save(configFile.toPath())
+    }
+
+    private fun save(configFile: Path) {
+        Files.newBufferedWriter(configFile).use {
             appendTo(it)
         }
     }
@@ -321,10 +327,11 @@ data class KotlinWebpackConfig(
     }
 
     private fun Appendable.appendFromConfigDir() {
-        if (configDirectory == null || !configDirectory!!.isDirectory) return
+        val configDirectory = configDirectory?.toPath()
+        if (configDirectory == null || !Files.isDirectory(configDirectory)) return
 
         appendLine()
-        appendConfigsFromDir(configDirectory!!)
+        appendConfigsFromDir(configDirectory)
         appendLine()
     }
 

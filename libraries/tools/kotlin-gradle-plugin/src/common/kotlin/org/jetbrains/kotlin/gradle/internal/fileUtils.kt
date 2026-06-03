@@ -6,12 +6,16 @@
 package org.jetbrains.kotlin.gradle.internal
 
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+
+fun Path.ensureParentDirsCreated() {
+    val parent = parent
+    if (!Files.exists(parent)) {
+        Files.createDirectories(parent)
+    }
+}
 
 fun File.ensureParentDirsCreated() {
-    val parentFile = parentFile
-    if (!parentFile.exists()) {
-        check(parentFile.mkdirs()) {
-            "Cannot create parent directories for $this"
-        }
-    }
+    toPath().ensureParentDirsCreated()
 }

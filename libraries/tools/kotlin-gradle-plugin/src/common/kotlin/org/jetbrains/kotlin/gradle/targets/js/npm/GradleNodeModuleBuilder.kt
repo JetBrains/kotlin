@@ -11,6 +11,8 @@ import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.FileTree
 import org.jetbrains.kotlin.gradle.targets.js.ir.KLIB_TYPE
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 /**
  * Creates fake NodeJS module directory from given Gradle `dependency`.
@@ -23,22 +25,24 @@ internal class GradleNodeModuleBuilder(
     val srcFiles: Collection<File>,
     val cacheDir: File,
 ) {
-    private var srcPackageJsonFile: File? = null
-    private val files = mutableListOf<File>()
+    private var srcPackageJsonFile: Path? = null
+    private val files = mutableListOf<Path>()
     private val fileTrees: MutableList<FileTree> = mutableListOf()
 
     fun visitArtifacts() {
         srcFiles.forEach { srcFile ->
+            val srcPath = srcFile.toPath()
             when {
-                isKotlinJsRuntimeFile(srcFile) -> files.add(srcFile)
+                isKotlinJsRuntimeFile(srcPath) -> files.add(srcPath)
                 srcFile.name == NpmProject.PACKAGE_JSON -> {
-                    srcPackageJsonFile = srcFile
+                    srcPackageJsonFile = srcPath
                 }
                 srcFile.isCompatibleArchive -> {
                     archiveOperations.zipTree(srcFile).forEach { innerFile ->
+                        val innerPath = innerFile.toPath()
                         when {
-                            innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerFile
-                            isKotlinJsRuntimeFile(innerFile) -> files.add(innerFile)
+                            innerFile.name == NpmProject.PACKAGE_JSON -> srcPackageJsonFile = innerPath
+                            isKotlinJsRuntimeFile(innerPath) -> files.add(innerPath)
                         }
                     }
 
@@ -46,7 +50,7 @@ internal class GradleNodeModuleBuilder(
                         archiveOperations.zipTree(srcFile)
                             .matching {
                                 it.include {
-                                    isKotlinJsRuntimeFile(it.file)
+                                    isKotlinJsRuntimeFile(it.file.toPath())
                                 }
                             }
                     )
@@ -66,10 +70,10 @@ internal class GradleNodeModuleBuilder(
 
         val metaJsExt = ".meta.js"
 
-        val metaFiles = files.filter { it.name.endsWith(metaJsExt) }
+        val metaFiles = files.filter { it.fileName.toString().endsWith(metaJsExt) }
         if (metaFiles.size == 1) {
             val metaFile = metaFiles.single()
-            val name = metaFile.name.removeSuffix(metaJsExt)
+            val name = metaFile.fileName.toString().removeSuffix(metaJsExt)
             packageJson.name = name
             packageJson.main = "${name}.js"
         }
@@ -79,24 +83,27 @@ internal class GradleNodeModuleBuilder(
         // npm requires semver
         packageJson.version = fixSemver(packageJson.version)
 
-        return createNodeModule(cacheDir, packageJson) { nodeModule ->
+        return createNodeModule(cacheDir.toPath(), packageJson) { nodeModule ->
             fs.copy { copy ->
                 copy.from(fileTrees)
-                copy.into(nodeModule)
+                copy.into(nodeModule.toFile())
             }
-        }
+        }.toFile()
     }
 }
 
 internal val File.isCompatibleArchive
-    get() = isFile
-            && (extension == "jar"
-            || extension == "zip"
-            || extension == KLIB_TYPE)
+    get() = toPath().isCompatibleArchive
 
-private fun isKotlinJsRuntimeFile(file: File): Boolean {
-    if (!file.isFile) return false
-    val name = file.name
+internal val Path.isCompatibleArchive
+    get() = Files.isRegularFile(this)
+            && (fileName.toString().substringAfterLast('.', "") == "jar"
+            || fileName.toString().substringAfterLast('.', "") == "zip"
+            || fileName.toString().substringAfterLast('.', "") == KLIB_TYPE)
+
+private fun isKotlinJsRuntimeFile(file: Path): Boolean {
+    if (!Files.isRegularFile(file)) return false
+    val name = file.fileName.toString()
     return name.endsWith(".js")
             || name.endsWith(".mjs")
             || name.endsWith(".wasm")
@@ -105,16 +112,16 @@ private fun isKotlinJsRuntimeFile(file: File): Boolean {
 }
 
 private fun createNodeModule(
-    container: File,
+    container: Path,
     packageJson: PackageJson,
-    files: (File) -> Unit,
-): File {
+    files: (Path) -> Unit,
+): Path {
     /** imported package directory */
     val dir = container.resolve(packageJson.name).resolve(packageJson.version)
 
-    if (dir.exists()) dir.deleteRecursively()
+    if (Files.exists(dir)) dir.toFile().deleteRecursively()
 
-    check(dir.mkdirs()) {
+    check(Files.createDirectories(dir) != null) {
         "Cannot create directory: $dir"
     }
 
@@ -125,7 +132,7 @@ private fun createNodeModule(
 
     files(dir)
 
-    dir.resolve("package.json").writer().use {
+    Files.newBufferedWriter(dir.resolve("package.json")).use {
         gson.toJson(packageJson, it)
     }
 

@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.gradle.internal.newBuildOpLogger
 import org.jetbrains.kotlin.gradle.targets.js.npm.NodeJsEnvironment
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmApiExecution
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 abstract class YarnBasics internal constructor(
     private val execOps: ExecOperations,
@@ -50,7 +53,7 @@ abstract class YarnBasics internal constructor(
 
             val nodeExecutable = nodeJs.nodeExecutable
             if (!environment.ignoreScripts) {
-                val nodePath = File(nodeExecutable).parent
+                val nodePath = Paths.get(nodeExecutable).parent
                 exec.environment("PATH", "$nodePath${File.pathSeparator}${System.getenv("PATH")}")
             }
 
@@ -68,11 +71,13 @@ abstract class YarnBasics internal constructor(
     }
 
     override fun prepareTooling(dir: File) {
-        dir.resolve("yarn.lock")
-            .outputStream()
-            .use { out ->
-                YarnBasics::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
-                    ?.copyTo(out)
-            }
+        prepareTooling(dir.toPath())
+    }
+
+    private fun prepareTooling(dir: Path) {
+        Files.newOutputStream(dir.resolve("yarn.lock")).use { out ->
+            YarnBasics::class.java.getResourceAsStream("/org/jetbrains/kotlin/gradle/targets/js/yarn/yarn.lock")
+                ?.copyTo(out)
+        }
     }
 }

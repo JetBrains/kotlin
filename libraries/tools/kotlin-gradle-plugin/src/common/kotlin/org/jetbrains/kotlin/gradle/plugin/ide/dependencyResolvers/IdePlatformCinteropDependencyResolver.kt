@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeDependencyResolver
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImport
 import org.jetbrains.kotlin.gradle.plugin.ide.IdeMultiplatformImportLogger
-import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinCInteropLibraryDirectoryForIde
+import org.jetbrains.kotlin.gradle.plugin.mpp.kotlinCInteropLibraryDirectoryPathForIde
 import org.jetbrains.kotlin.gradle.plugin.sources.DefaultKotlinSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.internal.getPlatformCinteropDependenciesOrEmpty
 import org.jetbrains.kotlin.gradle.utils.crc32ChecksumString
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 internal class IdePlatformCinteropDependencyResolver(
     private val errorReporter: IdeMultiplatformImportLogger,
@@ -26,26 +27,27 @@ internal class IdePlatformCinteropDependencyResolver(
         val project = sourceSet.project
 
         val cinteropFiles = project.getPlatformCinteropDependenciesOrEmpty(sourceSet).map { file ->
-            project.copyCInteropFileForIdeIfNecessary(file)
+            project.copyCInteropFileForIdeIfNecessary(file.toPath())
         }
 
-        return project.resolveCInteropDependencies(errorReporter, cinteropFiles)
+        return project.resolveCInteropDependencies(errorReporter, cinteropFiles.map { it.toFile() })
     }
 
     /**
      * Copies the file into a directory specifically for the IDE, so it survives ./gradlew clean
      */
-    private fun Project.copyCInteropFileForIdeIfNecessary(file: File): File {
-        if (!file.exists()) return file
-        val newFileName = "${file.nameWithoutExtension}-${file.crc32ChecksumString()}.${file.extension}"
-        val outputFile = kotlinCInteropLibraryDirectoryForIde.resolve(newFileName)
+    private fun Project.copyCInteropFileForIdeIfNecessary(file: Path): Path {
+        if (!Files.exists(file)) return file
+        val fileName = file.fileName.toString()
+        val newFileName = "${fileName.substringBeforeLast('.')}-${file.crc32ChecksumString()}.${fileName.substringAfterLast('.', "")}"
+        val outputPath = kotlinCInteropLibraryDirectoryPathForIde.resolve(newFileName)
 
         /* Copy only if really necessary */
-        if (!outputFile.exists()) {
-            file.copyTo(outputFile)
+        if (!Files.exists(outputPath)) {
+            Files.copy(file, outputPath)
         }
 
-        return outputFile
+        return outputPath
     }
 
     override fun dependencies(project: Project): Iterable<Any> {

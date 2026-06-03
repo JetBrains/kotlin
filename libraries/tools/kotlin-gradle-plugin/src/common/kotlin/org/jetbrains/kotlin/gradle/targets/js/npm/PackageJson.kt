@@ -11,6 +11,8 @@ import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
 import java.io.File
 import java.io.Serializable
+import java.nio.file.Files
+import java.nio.file.Path
 
 // Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
@@ -90,6 +92,10 @@ class PackageJson(
     }
 
     fun saveTo(packageJsonFile: File) {
+        saveTo(packageJsonFile.toPath())
+    }
+
+    internal fun saveTo(packageJsonFile: Path) {
         val gson = GsonBuilder()
             .setPrettyPrinting()
             .disableHtmlEscaping()
@@ -99,14 +105,14 @@ class PackageJson(
 
         packageJsonFile.ensureParentDirsCreated()
         val jsonTree = gson.toJsonTree(this)
-        val previous = if (packageJsonFile.exists()) {
-            packageJsonFile.reader().use {
+        val previous = if (Files.exists(packageJsonFile)) {
+            Files.newBufferedReader(packageJsonFile).use {
                 JsonParser.parseReader(it)
             }
         } else null
 
         if (jsonTree != previous) {
-            packageJsonFile.writer().use {
+            Files.newBufferedWriter(packageJsonFile).use {
                 gson.toJson(jsonTree, it)
             }
         }
@@ -114,7 +120,10 @@ class PackageJson(
 }
 
 fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
+    fromSrcPackageJson(packageJson?.toPath())
+
+internal fun fromSrcPackageJson(packageJson: Path?): PackageJson? =
+    packageJson?.let { Files.newBufferedReader(it) }?.use {
         Gson().fromJson(it, PackageJson::class.java)
     }
 

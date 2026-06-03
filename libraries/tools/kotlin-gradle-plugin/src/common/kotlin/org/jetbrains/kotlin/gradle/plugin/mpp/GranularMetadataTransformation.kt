@@ -488,8 +488,8 @@ internal class GranularMetadataTransformation(
                     moduleDependencyIdentifier = dependency.toModuleDependencyIdentifier(),
                     moduleDependencyVersion = module.moduleVersion?.version ?: "unspecified",
                     kotlinProjectStructureMetadata = projectStructureMetadata,
-                    primaryArtifactFile = compositeMetadataArtifact.file,
-                    hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet,
+                    primaryArtifactFile = compositeMetadataArtifact.file.toPath(),
+                    hostSpecificArtifactFilesBySourceSetName = hostSpecificMetadataArtifactBySourceSet.mapValues { it.value.toPath() },
                     computeChecksum = params.computeTransformedLibraryChecksum
                 )
             )

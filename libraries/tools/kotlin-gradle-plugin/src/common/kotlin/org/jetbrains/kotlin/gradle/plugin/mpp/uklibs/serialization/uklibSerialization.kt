@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.ATTRIBUTES
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENTS
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.FRAGMENT_IDENTIFIER
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib.Companion.UMANIFEST_VERSION
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import org.jetbrains.kotlin.incremental.deleteDirectoryContents
 import java.io.BufferedOutputStream
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileOutputStream
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -77,10 +77,22 @@ private fun zipUklibContents(
     fragmentToArtifact: Map<String, File>,
     outputZip: File,
     temporariesDirectory: File,
+) = zipUklibContents(
+    manifest = manifest,
+    fragmentToArtifact = fragmentToArtifact.mapValues { it.value.toPath() },
+    outputZip = outputZip.toPath(),
+    temporariesDirectory = temporariesDirectory.toPath(),
+)
+
+private fun zipUklibContents(
+    manifest: String,
+    fragmentToArtifact: Map<String, Path>,
+    outputZip: Path,
+    temporariesDirectory: Path,
 ) {
     ZipOutputStream(
         BufferedOutputStream(
-            FileOutputStream(outputZip)
+            Files.newOutputStream(outputZip)
         )
     ).use { zipOutputStream ->
         // Pack the manifest
@@ -89,25 +101,25 @@ private fun zipUklibContents(
 
         fragmentToArtifact.forEach { (identifier, file) ->
             // Assume we are handling unpacked metadata and platform klibs
-            if (!file.exists()) {
-                throw MissingUklibFragmentFile(file)
+            if (!Files.exists(file)) {
+                throw MissingUklibFragmentFile(file.toFile())
             }
-            if (file.isDirectory) {
+            if (Files.isDirectory(file)) {
                 packDirectory(
                     directory = file,
                     identifier = identifier,
                     zipOutputStream = zipOutputStream,
                 )
-            } else if (file.extension in packArchiveAsIs) {
+            } else if (file.fileName.toString().substringAfterLast('.', "") in packArchiveAsIs) {
                 packFile(
                     file = file,
                     identifier = identifier,
                     zipOutputStream = zipOutputStream,
                 )
-            } else if (file.extension in allowRepackingArchivesWithExtensions) {
+            } else if (file.fileName.toString().substringAfterLast('.', "") in allowRepackingArchivesWithExtensions) {
                 val temp = temporariesDirectory.resolve(identifier)
-                if (temp.exists()) temp.deleteDirectoryContents()
-                temp.mkdirs()
+                if (Files.exists(temp)) temp.toFile().deleteDirectoryContents()
+                Files.createDirectories(temp)
                 unzip(
                     zipFilePath = file,
                     outputFolderPath = temp,
@@ -118,7 +130,7 @@ private fun zipUklibContents(
                     zipOutputStream = zipOutputStream,
                 )
             } else {
-                throw IncompatibleUklibFragmentFile(file)
+                throw IncompatibleUklibFragmentFile(file.toFile())
             }
         }
         zipOutputStream.closeEntry()
@@ -126,45 +138,47 @@ private fun zipUklibContents(
 }
 
 private fun packDirectory(
-    directory: File,
+    directory: Path,
     identifier: String,
     zipOutputStream: ZipOutputStream
 ) {
-    Files.walk(directory.toPath()).forEach { path ->
-        val zipEntry = ZipEntry(identifier + "/" + path.toFile().toRelativeString(directory))
-        if (!Files.isDirectory(path)) {
-            zipOutputStream.putNextEntry(zipEntry)
-            Files.newInputStream(path).use { inputStream ->
-                inputStream.copyTo(zipOutputStream)
+    Files.walk(directory).use { paths ->
+        paths.forEach { path ->
+            val zipEntry = ZipEntry(identifier + "/" + directory.relativize(path).invariantSeparatorsPathString)
+            if (!Files.isDirectory(path)) {
+                zipOutputStream.putNextEntry(zipEntry)
+                Files.newInputStream(path).use { inputStream ->
+                    inputStream.copyTo(zipOutputStream)
+                }
+                zipOutputStream.closeEntry()
             }
-            zipOutputStream.closeEntry()
         }
     }
 }
 
 private fun packFile(
-    file: File,
+    file: Path,
     identifier: String,
     zipOutputStream: ZipOutputStream
 ) {
     val zipEntry = ZipEntry(identifier)
     zipOutputStream.putNextEntry(zipEntry)
-    file.inputStream().use { inputStream ->
+    Files.newInputStream(file).use { inputStream ->
         inputStream.copyTo(zipOutputStream)
     }
     zipOutputStream.closeEntry()
 }
 
-private fun unzip(zipFilePath: File, outputFolderPath: File) {
-    ZipInputStream(FileInputStream(zipFilePath)).use { zipInputStream ->
+private fun unzip(zipFilePath: Path, outputFolderPath: Path) {
+    ZipInputStream(Files.newInputStream(zipFilePath)).use { zipInputStream ->
         var zipEntry: ZipEntry? = zipInputStream.nextEntry
         while (zipEntry != null) {
-            val newFile = File(outputFolderPath, zipEntry.name)
+            val newFile = outputFolderPath.resolve(zipEntry.name)
             if (zipEntry.isDirectory) {
-                newFile.mkdirs()
+                Files.createDirectories(newFile)
             } else {
-                newFile.parentFile?.mkdirs()
-                FileOutputStream(newFile).use { fileOutputStream ->
+                newFile.parent?.let { Files.createDirectories(it) }
+                Files.newOutputStream(newFile).use { fileOutputStream ->
                     zipInputStream.copyTo(fileOutputStream)
                 }
             }

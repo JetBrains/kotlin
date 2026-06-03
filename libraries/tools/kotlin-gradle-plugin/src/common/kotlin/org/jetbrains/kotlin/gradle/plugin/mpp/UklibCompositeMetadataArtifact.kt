@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
 import org.jetbrains.kotlin.utils.keysToMap
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import java.security.MessageDigest
 
 /**
@@ -96,8 +98,8 @@ private class UklibCompositeMetadataBinary(
 ) : CompositeMetadataArtifactContent.MetadataBinary {
     override val archiveExtension: String
         get() = ""
-    override val relativeFile: File
-        get() = File("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}")
+    override val relativeFile: Path
+        get() = Paths.get("uklib-${moduleId.group}-${moduleId.name}-${moduleId.version}-${fragment.identifier}-${checksum}")
 
     // Rely on unique transform path
     override val checksum: String
@@ -107,11 +109,12 @@ private class UklibCompositeMetadataBinary(
                 .joinToString(separator = "") { byte -> "%02x".format(byte) }
         } else ""
 
-    override fun copyTo(file: File): Boolean {
+    override fun copyTo(file: Path): Boolean {
         val metadataSlice = fragment.singleExpectedFileFromModularUklib
-        if (!metadataSlice.exists()) return false
+        if (!Files.exists(metadataSlice.toPath())) return false
+        file.parent?.let { Files.createDirectories(it) }
         return metadataSlice.copyRecursively(
-            file,
+            file.toFile(),
             overwrite = true,
         )
     }

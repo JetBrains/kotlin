@@ -117,7 +117,7 @@ internal constructor(
                 fileTree.from(npmProjectDir)
                     .matching {
                         it.include { element: FileTreeElement ->
-                            this.inputFilesDirectory.get().asFile.isParentOf(element.file)
+                            this.inputFilesDirectory.get().asFile.toPath().isParentOf(element.file.toPath())
                         }
                     }
             }
@@ -280,14 +280,14 @@ internal constructor(
             npmProjectDir = npmProject.dir.get().asFile,
             nodeExecutable = npmProject.nodeExecutable,
             logger = logger,
-            configFile = configFile.get(),
+            configFile = configFile.get().toPath(),
             tool = bin,
             args = webpackArgs,
             nodeArgs = nodeArgs,
             config = config,
             objects = objects,
             execOps = execOps,
-            npmToolingEnvDir = npmToolingEnvDir.getFile(),
+            npmToolingEnvDir = npmToolingEnvDir.getFile().toPath(),
             resolveModulesFromKotlinToolingDir = getIsWasm.get(),
         )
     }

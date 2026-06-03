@@ -148,7 +148,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
     @get:Internal
     internal val outputLibraryFiles: FileCollection = project.filesProvider {
         outputLibrariesFileIndex.map { file ->
-            KotlinMetadataLibrariesIndexFile(file.asFile).readFiles()
+            KotlinMetadataLibrariesIndexFile(file.asFile.toPath()).readFiles()
         }
     }
 
@@ -172,7 +172,7 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
                 )
             }
         }
-        KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile).write(transformedLibraries)
+        KotlinMetadataLibrariesIndexFile(outputLibrariesFileIndex.get().asFile.toPath()).write(transformedLibraries)
     }
 
     private fun materializeMetadata(
@@ -187,8 +187,8 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
                 val visibleSourceSetName = chooseVisibleSourceSets.visibleSourceSetProvidingCInterops ?: return emptyList()
                 val sourceSetContent = artifactContent.findSourceSet(visibleSourceSetName) ?: return emptyList()
                 sourceSetContent.cinteropMetadataBinaries
-                    .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory) }
-                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.resolve(cInteropMetadataBinary.relativeFile) }
+                    .onEach { cInteropMetadataBinary -> cInteropMetadataBinary.copyIntoDirectory(outputDirectory.toPath()) }
+                    .map { cInteropMetadataBinary -> visibleSourceSetName to outputDirectory.toPath().resolve(cInteropMetadataBinary.relativeFile).toFile() }
             }
         }
     }
@@ -199,4 +199,3 @@ internal abstract class CInteropMetadataDependencyTransformationTask @Inject con
             .filterNot { it.dependency.id is ProjectComponentIdentifier }
     }
 }
-

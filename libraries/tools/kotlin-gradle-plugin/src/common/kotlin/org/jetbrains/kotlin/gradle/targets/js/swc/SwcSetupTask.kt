@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.InternalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.targets.js.AbstractSetupTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import java.io.File
+import java.nio.file.Paths
 import javax.inject.Inject
 
 @DisableCachingByDefault
@@ -40,7 +41,8 @@ internal constructor(
             it.into(destinationProvider.getFile())
         }
 
-        File(executable.get()).setExecutable(true)
+        val executablePath = Paths.get(executable.get())
+        executablePath.toFile().setExecutable(true)
     }
 
     companion object {

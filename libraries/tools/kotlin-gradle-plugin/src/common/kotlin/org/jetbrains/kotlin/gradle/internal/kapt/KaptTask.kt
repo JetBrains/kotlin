@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.*
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.jar.JarFile
 import javax.inject.Inject
 
@@ -115,7 +117,7 @@ abstract class KaptTask @Inject constructor(
 
         val kaptClasspath = kaptClasspath.toSet()
         val processorsFromCompileClasspath = classpath.files.filterTo(LinkedHashSet()) {
-            hasAnnotationProcessors(it)
+            hasAnnotationProcessors(it.toPath())
         }
         val processorsAbsentInKaptClasspath = processorsFromCompileClasspath.filter { it !in kaptClasspath }
         if (processorsAbsentInKaptClasspath.isNotEmpty()) {
@@ -241,16 +243,16 @@ abstract class KaptTask @Inject constructor(
         }
     }
 
-    private fun hasAnnotationProcessors(file: File): Boolean {
+    private fun hasAnnotationProcessors(file: Path): Boolean {
         val processorEntryPath = "META-INF/services/javax.annotation.processing.Processor"
 
         try {
             when {
-                file.isDirectory -> {
-                    return file.resolve(processorEntryPath).exists()
+                Files.isDirectory(file) -> {
+                    return Files.exists(file.resolve(processorEntryPath))
                 }
-                file.isFile && file.extension.equals("jar", ignoreCase = true) -> {
-                    return JarFile(file).use { jar ->
+                Files.isRegularFile(file) && file.fileName.toString().substringAfterLast('.', "").equals("jar", ignoreCase = true) -> {
+                    return JarFile(file.toFile()).use { jar ->
                         jar.getJarEntry(processorEntryPath) != null
                     }
                 }

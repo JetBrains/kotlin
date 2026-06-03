@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.CompositeMetadataArtifactContent.SourceSetContent
 import java.io.Closeable
-import java.io.File
+import java.nio.file.Path
 
 internal interface CompositeMetadataArtifact {
     val moduleDependencyIdentifier: ModuleDependencyIdentifier
@@ -97,7 +97,7 @@ internal interface CompositeMetadataArtifactContent : Closeable {
          * This can actually include several path parts if the [Binary] requires additional scoping (e.g. [CInteropMetadataBinary]s
          * need to be put into another folder)
          */
-        val relativeFile: File
+        val relativeFile: Path
 
         val checksum: String
 
@@ -106,13 +106,13 @@ internal interface CompositeMetadataArtifactContent : Closeable {
          * The [file] will be overwritten when it already exists.
          * Parent directories will be created if necessary.
          */
-        fun copyTo(file: File): Boolean
+        fun copyTo(file: Path): Boolean
 
         /**
          * Copies the content of this [Binary] into the [directory] appending the [relativeFile] to it.
          * @see copyTo
          */
-        fun copyIntoDirectory(directory: File) = copyTo(directory.resolve(relativeFile))
+        fun copyIntoDirectory(directory: Path) = copyTo(directory.resolve(relativeFile))
     }
 
 

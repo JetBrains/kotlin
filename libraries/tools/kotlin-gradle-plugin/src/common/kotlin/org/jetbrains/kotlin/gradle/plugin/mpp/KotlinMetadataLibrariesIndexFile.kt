@@ -9,9 +9,10 @@ import com.google.gson.*
 import com.google.gson.reflect.TypeToken
 import org.jetbrains.kotlin.gradle.targets.native.internal.CInteropMetadataDependencyTransformationTask
 import java.io.File
-import java.io.FileReader
-import java.io.FileWriter
 import java.lang.reflect.Type
+import java.nio.charset.Charset
+import java.nio.file.Files
+import java.nio.file.Path
 
 private val gson = GsonBuilder()
     .setStrictness(Strictness.LENIENT)
@@ -72,15 +73,15 @@ internal data class TransformedMetadataLibraryRecord(
  * Files used by the [MetadataDependencyTransformationTask] and [CInteropMetadataDependencyTransformationTask] to
  * store the resulting 'metadata path' in this index file.
  */
-internal class KotlinMetadataLibrariesIndexFile(private val file: File) {
+internal class KotlinMetadataLibrariesIndexFile(private val file: Path) {
     private val typeToken = object : TypeToken<Collection<TransformedMetadataLibraryRecord>>() {}
 
-    fun read(): List<TransformedMetadataLibraryRecord> = FileReader(file).use {
+    fun read(): List<TransformedMetadataLibraryRecord> = Files.newBufferedReader(file, Charset.defaultCharset()).use {
         gson.fromJson<Collection<TransformedMetadataLibraryRecord>>(it, typeToken.type).toList()
     }
 
     fun write(records: List<TransformedMetadataLibraryRecord>) {
-        FileWriter(file).use {
+        Files.newBufferedWriter(file, Charset.defaultCharset()).use {
             gson.toJson(records, typeToken.type, it)
         }
     }

@@ -53,7 +53,7 @@ class LibraryConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     it.into(destinationDir)
 
                     destinationDir.asFile.map { destinationDirFile ->
-                        it.remapJavaScriptSourceMapSourcePaths(destinationDirFile)
+                        it.remapJavaScriptSourceMapSourcePaths(destinationDirFile.toPath())
                     }
                 }
 

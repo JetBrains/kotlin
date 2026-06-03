@@ -42,7 +42,7 @@ internal class KotlinWasmD8(
         debug: Boolean,
     ): TCServiceMessagesTestExecutionSpec {
         val compiledFile = task.inputFileProperty.get().asFile
-        val testRunnerFile = writeWasmUnitTestRunner(launchOpts.workingDir.get().asFile, compiledFile)
+        val testRunnerFile = writeWasmUnitTestRunner(launchOpts.workingDir.get().asFile.toPath(), compiledFile.toPath())
 
         val clientSettings = TCServiceMessagesClientSettings(
             task.name,
@@ -58,7 +58,7 @@ internal class KotlinWasmD8(
         )
 
         val args = mutableListOf<String>().apply {
-            add(testRunnerFile.absolutePath)
+            add(testRunnerFile.toAbsolutePath().toString())
             add("--")
             addAll(cliArgs.toList())
         }

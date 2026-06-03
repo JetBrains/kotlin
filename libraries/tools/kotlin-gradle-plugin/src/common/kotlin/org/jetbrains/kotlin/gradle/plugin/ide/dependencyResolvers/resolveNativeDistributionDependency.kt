@@ -27,7 +27,7 @@ internal fun resolveNativeDistributionLibraryForIde(
     kotlinNativeVersion: String,
     logger: Logger
 ): IdeaKotlinResolvedBinaryDependency? {
-    val resolvedLibrary = loadSingleKlib(library, logger) ?: return null
+    val resolvedLibrary = loadSingleKlib(library.toPath(), logger) ?: return null
 
     val isFakeNativeDistributionDependency = library.name == fakeCommonizedNativeDistributionKlibs
     val module = if (!isFakeNativeDistributionDependency) {
@@ -64,5 +64,4 @@ internal fun resolveNativeDistributionLibraryForIde(
         }
     }
 }
-
 

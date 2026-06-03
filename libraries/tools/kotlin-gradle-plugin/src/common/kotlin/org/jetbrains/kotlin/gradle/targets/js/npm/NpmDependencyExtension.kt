@@ -115,7 +115,7 @@ private abstract class NpmDependencyExtensionDelegate(
 
     override fun invoke(directory: File): NpmDependency =
         invoke(
-            name = moduleName(directory),
+            name = moduleName(directory.toPath()),
             directory = directory,
         )
 

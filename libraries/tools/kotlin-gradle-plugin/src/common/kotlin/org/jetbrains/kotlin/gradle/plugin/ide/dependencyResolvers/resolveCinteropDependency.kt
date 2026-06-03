@@ -35,7 +35,7 @@ private fun Project.createCinteropLibraryDependency(
         )
     }
 
-    val library = loadSingleKlib(libraryFile, importLogger.logger) ?: return null
+    val library = loadSingleKlib(libraryFile.toPath(), importLogger.logger) ?: return null
 
     val (group, module) = cinteropGroupAndModule(library)
     val libraryTargets = library.commonizerNativeTargets ?: library.nativeTargets

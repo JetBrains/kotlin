@@ -10,9 +10,12 @@ import org.gradle.api.file.FileSystemLocation
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.Classpath
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import org.jetbrains.kotlin.gradle.utils.invariantSeparatorsPathString
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.ClassWriter
 import java.io.*
+import java.nio.file.Files
+import java.nio.file.Path
 import java.security.MessageDigest
 import java.util.zip.ZipFile
 
@@ -28,7 +31,7 @@ abstract class StructureTransformAction : TransformAction<TransformParameters.No
 
     override fun transform(outputs: TransformOutputs) {
         try {
-            transform(inputArtifact.get().asFile, outputs)
+            transform(inputArtifact.get().asFile.toPath(), outputs)
         } catch (e: Throwable) {
             throw e
         }
@@ -50,15 +53,15 @@ abstract class StructureTransformLegacyAction : TransformAction<TransformParamet
 
     override fun transform(outputs: TransformOutputs) {
         try {
-            transform(inputArtifact, outputs)
+            transform(inputArtifact.toPath(), outputs)
         } catch (e: Throwable) {
             throw e
         }
     }
 }
 
-internal fun transform(input: File, outputs: TransformOutputs) {
-    val data = if (input.isDirectory) {
+internal fun transform(input: Path, outputs: TransformOutputs) {
+    val data = if (Files.isDirectory(input)) {
         visitDirectory(input)
     } else {
         visitJar(input)
@@ -68,27 +71,29 @@ internal fun transform(input: File, outputs: TransformOutputs) {
     data.saveTo(dataFile)
 }
 
-private fun visitDirectory(directory: File): ClasspathEntryData {
+private fun visitDirectory(directory: Path): ClasspathEntryData {
     val entryData = ClasspathEntryData()
 
-    directory.walk().filter {
-        it.extension == "class"
-                && !it.relativeTo(directory).toString().toLowerCaseAsciiOnly().startsWith("meta-inf")
-                && it.name != MODULE_INFO
-    }.forEach {
-        val internalName = it.relativeTo(directory).invariantSeparatorsPath.dropLast(".class".length)
-        BufferedInputStream(it.inputStream()).use { inputStream ->
-            analyzeInputStream(inputStream, internalName, entryData)
+    Files.walk(directory).use { paths ->
+        paths.filter {
+            it.fileName.toString().endsWith(".class")
+                    && !directory.relativize(it).toString().toLowerCaseAsciiOnly().startsWith("meta-inf")
+                    && it.fileName.toString() != MODULE_INFO
+        }.forEach {
+            val internalName = directory.relativize(it).invariantSeparatorsPathString.dropLast(".class".length)
+            BufferedInputStream(Files.newInputStream(it)).use { inputStream ->
+                analyzeInputStream(inputStream, internalName, entryData)
+            }
         }
     }
 
     return entryData
 }
 
-private fun visitJar(jar: File): ClasspathEntryData {
+private fun visitJar(jar: Path): ClasspathEntryData {
     val entryData = ClasspathEntryData()
 
-    ZipFile(jar).use { zipFile ->
+    ZipFile(jar.toFile()).use { zipFile ->
         val entries = zipFile.entries()
         while (entries.hasMoreElements()) {
             val entry = entries.nextElement()
@@ -127,7 +132,11 @@ class ClasspathEntryData : Serializable {
 
     object ClasspathEntrySerializer {
         fun loadFrom(file: File): ClasspathEntryData {
-            ObjectInputStream(BufferedInputStream(file.inputStream())).use {
+            return loadFrom(file.toPath())
+        }
+
+        fun loadFrom(file: Path): ClasspathEntryData {
+            ObjectInputStream(BufferedInputStream(Files.newInputStream(file))).use {
                 return it.readObject() as ClasspathEntryData
             }
         }
@@ -233,7 +242,11 @@ class ClasspathEntryData : Serializable {
     }
 
     fun saveTo(file: File) {
-        ObjectOutputStream(BufferedOutputStream(file.outputStream())).use {
+        saveTo(file.toPath())
+    }
+
+    fun saveTo(file: Path) {
+        ObjectOutputStream(BufferedOutputStream(Files.newOutputStream(file))).use {
             it.writeObject(this)
         }
     }

@@ -31,7 +31,7 @@ internal fun getCacheDirectory(
                 null
         }
         ?.let {
-            loadSingleKlib(it, logger, reportProblemsAtInfoLevel = true)
+            loadSingleKlib(it.toPath(), logger, reportProblemsAtInfoLevel = true)
         }
         ?.uniqueName
 

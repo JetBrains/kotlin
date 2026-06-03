@@ -26,7 +26,7 @@ internal object IdeNativeStdlibDependencyResolver : IdeDependencyResolver {
         val stdlibFile = konanDistribution.stdlib
 
         val klibExtra = try {
-            val kotlinLibrary = sourceSet.project.loadSingleKlib(stdlibFile, reportProblemsAtInfoLevel = true)
+            val kotlinLibrary = sourceSet.project.loadSingleKlib(stdlibFile.toPath(), reportProblemsAtInfoLevel = true)
             kotlinLibrary?.let(::KlibExtra)
         } catch (_: Throwable) {
             null

@@ -5,22 +5,23 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
 
-internal fun copyZipFilePartially(sourceZipFile: File, destinationZipFile: File, path: String) {
+internal fun copyZipFilePartially(sourceZipFile: Path, destinationZipFile: Path, path: String) {
     requireValidZipDirectoryPath(path)
-    ZipFile(sourceZipFile).use { zip -> zip.copyPartially(destinationZipFile, path) }
+    ZipFile(sourceZipFile.toFile()).use { zip -> zip.copyPartially(destinationZipFile, path) }
 }
 
-internal fun ZipFile.copyPartially(destinationZipFile: File, path: String) {
+internal fun ZipFile.copyPartially(destinationZipFile: Path, path: String) {
     requireValidZipDirectoryPath(path)
     val entries = listDescendants(path).toList()
     if (entries.isEmpty()) return
 
-    ZipOutputStream(destinationZipFile.outputStream()).use { destinationZipOutputStream ->
+    ZipOutputStream(Files.newOutputStream(destinationZipFile)).use { destinationZipOutputStream ->
         entries.forEach { sourceEntry ->
             val destinationEntry = ZipEntry(sourceEntry.name.substringAfter(path))
 

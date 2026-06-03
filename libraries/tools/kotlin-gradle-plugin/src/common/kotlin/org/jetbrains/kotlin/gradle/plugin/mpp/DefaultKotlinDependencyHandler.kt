@@ -115,7 +115,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         directory: File,
     ): NpmDependency =
         npm(
-            name = moduleName(directory),
+            name = moduleName(directory.toPath()),
             directory = directory,
         )
 
@@ -142,7 +142,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
 
     override fun devNpm(directory: File): NpmDependency =
         devNpm(
-            name = moduleName(directory),
+            name = moduleName(directory.toPath()),
             directory = directory
         )
 
@@ -171,7 +171,7 @@ internal open class DefaultKotlinDependencyHandler @Inject constructor(
         directory: File,
     ): NpmDependency =
         optionalNpm(
-            name = moduleName(directory),
+            name = moduleName(directory.toPath()),
             directory = directory,
         )
 
