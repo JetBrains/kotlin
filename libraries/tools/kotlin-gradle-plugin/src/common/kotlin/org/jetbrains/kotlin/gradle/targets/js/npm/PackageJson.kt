@@ -9,7 +9,6 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
@@ -19,6 +18,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import java.io.File
 import java.io.Serializable
 
@@ -141,17 +141,6 @@ class PackageJson(
         // Inline customFields, honouring user-supplied null values
         customFields.forEach { (k, v) -> put(k, anyToJsonElement(v)) }
     }
-}
-
-private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
-    null -> JsonNull
-    is Boolean -> JsonPrimitive(value)
-    is Number -> JsonPrimitive(value)
-    is String -> JsonPrimitive(value)
-    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
-    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    else -> JsonPrimitive(value.toString())
 }
 
 fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJson(it.readText()) }

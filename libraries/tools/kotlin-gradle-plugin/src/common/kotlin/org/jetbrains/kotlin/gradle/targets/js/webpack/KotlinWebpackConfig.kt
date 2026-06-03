@@ -8,7 +8,6 @@
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
 import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
@@ -18,6 +17,7 @@ import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWebpackRulesContainer
@@ -527,10 +527,8 @@ data class KotlinWebpackConfig(
         )
     }
 
-    private fun json(obj: Any): String = prettyJson.encodeToString(anyToJsonElement(obj))
+    private fun json(obj: Any): String = KgpJson.prettyPrinted.encodeToString(anyToJsonElement(obj))
 }
-
-private val prettyJson = Json { prettyPrint = true }
 
 private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
     null -> JsonNull

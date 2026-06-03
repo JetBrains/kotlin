@@ -8,10 +8,9 @@ package org.jetbrains.kotlin.gradle.targets.js.webpack
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -182,13 +181,4 @@ constructor(
     )
 }
 
-private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
-    null -> JsonNull
-    is Boolean -> JsonPrimitive(value)
-    is Number -> JsonPrimitive(value)
-    is String -> JsonPrimitive(value)
-    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
-    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
-    else -> JsonPrimitive(value.toString())
-}
+

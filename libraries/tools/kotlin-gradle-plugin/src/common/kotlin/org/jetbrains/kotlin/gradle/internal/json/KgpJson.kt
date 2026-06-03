@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.gradle.internal.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 
 /**
  * Pre-configured [Json] instances for use inside the Kotlin Gradle Plugin.
@@ -39,4 +44,26 @@ internal object KgpJson {
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
     }
+}
+
+/**
+ * Recursively converts any Kotlin/Java value to a [JsonElement].
+ * Handles: null, Boolean, Number, String, Map, Iterable, Array, and falls back to toString() for anything else.
+ */
+internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is JsonElement -> value
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Map<*, *> -> buildJsonObject {
+        value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) }
+    }
+    is Iterable<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    is Array<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    else -> JsonPrimitive(value.toString())
 }

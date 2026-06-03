@@ -5,12 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonArray
-import kotlinx.serialization.json.buildJsonObject
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import java.io.File
@@ -107,24 +104,5 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
 /**
  * Default JSON emitter — converts arbitrary Map/List/primitive trees to pretty-printed JSON.
  */
-private val prettyJson = Json { prettyPrint = true }
-
 internal fun json(obj: Any): String =
-    prettyJson.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
-
-private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
-    null -> JsonNull
-    is Boolean -> JsonPrimitive(value)
-    is Number -> JsonPrimitive(value)
-    is String -> JsonPrimitive(value)
-    is Map<*, *> -> buildJsonObject {
-        value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) }
-    }
-    is Iterable<*> -> buildJsonArray {
-        value.forEach { add(anyToJsonElement(it)) }
-    }
-    is Array<*> -> buildJsonArray {
-        value.forEach { add(anyToJsonElement(it)) }
-    }
-    else -> JsonPrimitive(value.toString())
-}
+    KgpJson.prettyPrinted.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
