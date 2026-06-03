@@ -32,6 +32,8 @@ public interface KaResolver : KaSessionComponent {
      * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
      * and not the parent call. For more details, see [KtNameReferenceExpression].
      *
+     * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
+     *
      * @see KaSymbolResolutionSuccess
      * @see KaSymbolResolutionError
      * @see KtNameReferenceExpression
@@ -689,7 +691,9 @@ public interface KaResolver : KaSessionComponent {
      * }
      * ```
      *
-     * Returns a [KaCallResolutionAttempt], or `null` if no result is available
+     * Returns a [KaCallResolutionAttempt], or `null` if no result is available.
+     *
+     * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
      *
      * @see resolveCall
      */
@@ -1175,6 +1179,11 @@ public interface KaResolver : KaSessionComponent {
      * Resolves the given [KtReference] to symbols.
      *
      * Returns an empty collection if the reference cannot be resolved, or multiple symbols if the reference is ambiguous.
+     *
+     * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+     *
+     * @see KtResolvable.tryResolveSymbols
+     * @see KtResolvableCall.tryResolveCall
      */
     public fun KtReference.resolveToSymbols(): Collection<KaSymbol>
 
@@ -1182,6 +1191,11 @@ public interface KaResolver : KaSessionComponent {
      * Resolves the given [KtReference] to a symbol.
      *
      * Returns `null` if the reference cannot be resolved, or resolves to multiple symbols due to being ambiguous.
+     *
+     * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+     *
+     * @see KtResolvable.tryResolveSymbols
+     * @see KtResolvableCall.tryResolveCall
      */
     public fun KtReference.resolveToSymbol(): KaSymbol?
 
@@ -1280,6 +1294,10 @@ public interface KaResolver : KaSessionComponent {
      * a list of candidate calls and a diagnostic.
      *
      * Returns `null` if the element does not correspond to a call.
+     *
+     * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+     *
+     * @see KtResolvableCall.tryResolveCall
      */
     public fun KtElement.resolveToCall(): KaCallInfo?
 
@@ -1289,6 +1307,10 @@ public interface KaResolver : KaSessionComponent {
      *
      * To compare, the [resolveToCall] function only returns the final result of overload resolution, i.e. the most specific callable
      * passing all compatibility checks.
+     *
+     * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+     *
+     * @see KtResolvableCall.collectCallCandidates
      */
     public fun KtElement.resolveToCallCandidates(): List<KaCallCandidateInfo>
 }
@@ -1306,6 +1328,8 @@ public interface KaResolver : KaSessionComponent {
  *
  * The main idea is that [tryResolveSymbols] could represent more cases, so it prefers exactly the referenced symbol
  * and not the parent call. For more details, see [KtNameReferenceExpression].
+ *
+ * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
  * @see KaSymbolResolutionSuccess
  * @see KaSymbolResolutionError
@@ -2139,7 +2163,9 @@ public fun KtDelegatedSuperTypeEntry.resolveSymbol(): KaClassifierSymbol? {
  * }
  * ```
  *
- * Returns a [KaCallResolutionAttempt], or `null` if no result is available
+ * Returns a [KaCallResolutionAttempt], or `null` if no result is available.
+ *
+ * See [References and Calls](https://kotlin.github.io/analysis-api/references-and-calls.html) for a top-level overview.
  *
  * @see resolveCall
  */
@@ -2772,6 +2798,11 @@ public fun KtResolvableCall.collectCallCandidates(): List<KaCallCandidate> {
  * Resolves the given [KtReference] to symbols.
  *
  * Returns an empty collection if the reference cannot be resolved, or multiple symbols if the reference is ambiguous.
+ *
+ * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+ *
+ * @see KtResolvable.tryResolveSymbols
+ * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -2786,6 +2817,11 @@ public fun KtReference.resolveToSymbols(): Collection<KaSymbol> {
  * Resolves the given [KtReference] to a symbol.
  *
  * Returns `null` if the reference cannot be resolved, or resolves to multiple symbols due to being ambiguous.
+ *
+ * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+ *
+ * @see KtResolvable.tryResolveSymbols
+ * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -2912,6 +2948,10 @@ public val KtSimpleNameExpression.usesContextSensitiveResolution: Boolean
  * a list of candidate calls and a diagnostic.
  *
  * Returns `null` if the element does not correspond to a call.
+ *
+ * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+ *
+ * @see KtResolvableCall.tryResolveCall
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
@@ -2928,6 +2968,10 @@ public fun KtElement.resolveToCall(): KaCallInfo? {
  *
  * To compare, the [resolveToCall] function only returns the final result of overload resolution, i.e. the most specific callable
  * passing all compatibility checks.
+ *
+ * Consider using the [new resolution API](https://kotlin.github.io/analysis-api/migrating-resolution-api.html).
+ *
+ * @see KtResolvableCall.collectCallCandidates
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaContextParameterApi
