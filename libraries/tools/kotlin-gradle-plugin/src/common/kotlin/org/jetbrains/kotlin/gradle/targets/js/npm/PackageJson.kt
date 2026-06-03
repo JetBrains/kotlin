@@ -7,16 +7,21 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonParser
+import kotlinx.serialization.Serializable as JsonSerializable
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
 import org.gradle.api.Action
 import org.gradle.api.GradleException
+import org.gradle.api.logging.Logging
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
+import org.jetbrains.kotlin.gradle.internal.json.removeBom
 import java.io.File
 import java.io.Serializable
 import kotlin.io.path.createDirectories
 
-// Gson set nulls reflectively no matter on default values and non-null types
 class PackageJson(
     var name: String,
     var version: String,
@@ -43,25 +48,15 @@ class PackageJson(
 
     var types: String? = null
 
-    @Suppress("USELESS_ELVIS")
     val devDependencies = mutableMapOf<String, String>()
-        get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val dependencies = mutableMapOf<String, String>()
-        get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val peerDependencies = mutableMapOf<String, String>()
-        get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val optionalDependencies = mutableMapOf<String, String>()
-        get() = field ?: mutableMapOf()
 
-    @Suppress("USELESS_ELVIS")
     val bundledDependencies = mutableListOf<String>()
-        get() = field ?: mutableListOf()
 
     fun customField(pair: Pair<String, Any?>) {
         customFields[pair.first] = pair.second
@@ -94,36 +89,107 @@ class PackageJson(
     }
 
     fun saveTo(packageJsonFile: File) {
-        val gson = GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .serializeNulls()
-            .registerTypeAdapterFactory(PackageJsonTypeAdapter())
-            .create()
-
         packageJsonFile.toPath().parent.createDirectories()
 
-        val jsonTree = gson.toJsonTree(this)
+        val jsonTree = toJsonElement()
+        // an interrupted build can leave an empty or truncated file behind: rewrite whatever cannot be read
+        // instead of failing every build from now on
         val previous = if (packageJsonFile.exists()) {
-            packageJsonFile.reader().use {
-                JsonParser.parseReader(it)
-            }
+            runCatching { parsePackageJsonObject(packageJsonFile) }.getOrNull()
         } else {
             null
         }
 
         if (jsonTree != previous) {
-            packageJsonFile.writer().use {
-                gson.toJson(jsonTree, it)
-            }
+            packageJsonFile.writeText(KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonObject.serializer(), jsonTree))
         }
+    }
+
+    /** [customFields] go last and override a declared key with the same name. */
+    private fun toJsonElement(): JsonObject {
+        val file = PackageJsonFile(
+            name = name,
+            version = version,
+            private = private,
+            main = main,
+            workspaces = workspaces?.toList(),
+            overrides = overrides,
+            types = types,
+            devDependencies = devDependencies,
+            dependencies = dependencies,
+            peerDependencies = peerDependencies,
+            optionalDependencies = optionalDependencies,
+            bundledDependencies = bundledDependencies,
+        )
+        val declared = KgpJson.default.encodeToJsonElement(PackageJsonFile.serializer(), file).jsonObject
+        return JsonObject(declared + customFields.mapValues { (_, value) -> anyToJsonElement(value, serializeNulls = true) })
     }
 }
 
-fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
-        Gson().fromJson(it, PackageJson::class.java)
+fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJsonOrWarn(it) }
+
+/** As [parsePackageJson], but a file that can't be read, or has no "name" to fall back on, is skipped with a warning. */
+internal fun parsePackageJsonOrWarn(file: File, defaultName: String? = null): PackageJson? =
+    try {
+        parsePackageJson(file, defaultName) ?: run {
+            logger.warn("Cannot read '$file': it declares no \"name\". Ignoring it.")
+            null
+        }
+    } catch (e: Exception) {
+        logger.warn("Cannot parse '$file'. Ignoring it.", e)
+        null
     }
+
+private val logger = Logging.getLogger(PackageJson::class.java)
+
+/** Strips a byte order mark, as Node does. */
+private fun File.readJsonText(): String = readText().removeBom()
+
+internal fun parsePackageJsonObject(file: File): JsonObject =
+    KgpJson.lenient.parseToJsonElement(file.readJsonText()).jsonObject
+
+/** The entries of the object under [key] with a primitive value; empty when there is no such object. */
+internal fun JsonObject.stringMap(key: String): Map<String, String> = buildMap {
+    (this@stringMap[key] as? JsonObject)?.forEach { (name, value) -> (value as? JsonPrimitive)?.contentOrNull?.let { put(name, it) } }
+}
+
+/**
+ * Throws on malformed JSON. A missing "name" falls back to [defaultName], and the result is `null` without one.
+ * A missing "version" falls back to [defaultVersion]. Callers decide what is worth reporting.
+ */
+internal fun parsePackageJson(file: File, defaultName: String? = null, defaultVersion: String = ""): PackageJson? {
+    val json = KgpJson.lenient.decodeFromString(PackageJsonFile.serializer(), file.readJsonText())
+    val name = json.name ?: defaultName ?: return null
+    return PackageJson(name, json.version ?: defaultVersion).also { pkg ->
+        pkg.private = json.private
+        pkg.main = json.main
+        pkg.types = json.types
+        pkg.workspaces = json.workspaces
+        pkg.overrides = json.overrides
+        json.bundledDependencies?.let { pkg.bundledDependencies.addAll(it) }
+        json.dependencies?.let { pkg.dependencies.putAll(it) }
+        json.devDependencies?.let { pkg.devDependencies.putAll(it) }
+        json.peerDependencies?.let { pkg.peerDependencies.putAll(it) }
+        json.optionalDependencies?.let { pkg.optionalDependencies.putAll(it) }
+    }
+}
+
+/** The declared part of `package.json`; property order is key order. */
+@JsonSerializable
+internal class PackageJsonFile(
+    val name: String?,
+    val version: String?,
+    val private: Boolean?,
+    val main: String?,
+    val workspaces: List<String>?,
+    val overrides: Map<String, String>?,
+    val types: String?,
+    val devDependencies: Map<String, String>?,
+    val dependencies: Map<String, String>?,
+    val peerDependencies: Map<String, String>?,
+    val optionalDependencies: Map<String, String>?,
+    val bundledDependencies: List<String>?,
+)
 
 internal fun packageJson(
     name: String,
