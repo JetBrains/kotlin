@@ -27,12 +27,14 @@ import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTry
 import org.jetbrains.kotlin.ir.expressions.impl.IrFunctionExpressionImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrRichFunctionReferenceImpl
 import org.jetbrains.kotlin.ir.expressions.implicitCastTo
 import org.jetbrains.kotlin.ir.symbols.IrReturnTargetSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.isSubclassOf
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -110,29 +112,20 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
 
         // Make sure we don't insert the adapter in the adapter definition itself.
         if (allScopes.any { (it.irElement as? IrFunction)?.symbol == adapterSymbol }) return aTry
-
-        // Skip try/catch inside inline function bodies. Those will be inlined into
-        // call sites later, and wrapping them here would introduce lambda captures
-        // that SharedVariablesLowering (which runs after this pass) can't handle
-        // because it intentionally skips inline lambda parameters.
-        if (allScopes.any { (it.irElement as? IrFunction)?.isInline == true }) return aTry
         val anyNType = ctx.irBuiltIns.anyNType
 
-        val outerFunction = currentFunction!!.irElement as IrFunction
-        val outerFunctionSymbol = outerFunction.symbol
+        val outerFunctionSymbol = (currentFunction!!.irElement as IrFunction).symbol
         val outerReturnType = outerFunctionSymbol.owner.returnType
 
         ctx.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
 
-            val lambdaFunction = ctx.irFactory.stageController.restrictTo(outerFunction) {
-                ctx.irFactory.buildFun {
-                    startOffset = aTry.startOffset
-                    endOffset = aTry.endOffset
-                    origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                    name = Name.special("<OOBEWrapper>")
-                    visibility = DescriptorVisibilities.LOCAL
-                    returnType = anyNType
-                }
+            val lambdaFunction = ctx.irFactory.buildFun {
+                startOffset = aTry.startOffset
+                endOffset = aTry.endOffset
+                origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                name = Name.special("<OOBEWrapper>")
+                visibility = DescriptorVisibilities.LOCAL
+                returnType = anyNType
             }.apply {
                 this.parent = scope.getLocalDeclarationParent()
             }
@@ -190,12 +183,15 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
             }
             lambdaFunction.patchDeclarationParents(lambdaFunction.parent)
 
-            val lambdaExpression = IrFunctionExpressionImpl(
-                aTry.startOffset,
-                aTry.endOffset,
-                ctx.irBuiltIns.functionN(0).typeWith(anyNType),
-                lambdaFunction,
-                IrStatementOrigin.LAMBDA
+            val funType = ctx.irBuiltIns.functionN(0)
+            val lambdaExpression = IrRichFunctionReferenceImpl(
+                startOffset = aTry.startOffset,
+                endOffset = aTry.endOffset,
+                type = funType.typeWith(anyNType),
+                reflectionTargetSymbol = null,
+                overriddenFunctionSymbol = funType.selectSAMOverriddenFunction().symbol,
+                invokeFunction = lambdaFunction,
+                origin = IrStatementOrigin.LAMBDA
             )
 
             val newTryBody = irBlock(startOffset = aTry.startOffset, endOffset = aTry.endOffset) {

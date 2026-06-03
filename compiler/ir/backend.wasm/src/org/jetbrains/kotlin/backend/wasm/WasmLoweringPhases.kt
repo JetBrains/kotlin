@@ -143,9 +143,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
     // END: Common Native/JS/Wasm prefix.
 
     ::WasmOOBEHandlerInsertionLowering,
-    ::createUpgradeCallableReferences,
-    ::createSharedVariablesLoweringPhase,
-
+    ::createSharedVariablesLoweringPhase, // Required by OOBEHandlerInsertionLowering.
     ::createConstEvaluationPhase,
     ::createSpecializeSharedVariableBoxesPhase,
     ::RemoveInlineDeclarationsWithReifiedTypeParametersLowering,
