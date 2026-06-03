@@ -15,18 +15,22 @@ fun RepositoryHandler.mavenCentralCacheRedirector(): MavenArtifactRepository =
     maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
 
 /**
- * Build-local Kotlin artifacts via Maven local repository format.
+ * Resolves Kotlin build artifacts from the appropriate repository for the current environment.
  *
- * The kotlin-gradle-plugin build script redirects maven.repo.local to build/functionalTestDependencies
- * (unless already set externally, e.g. on CI), so this resolves to build-local Kotlin artifacts
- * rather than ~/.m2 on developer machines.
- *
- * Uses unfiltered mavenLocal(): filtering via mavenContent switches Gradle to the remote Maven
- * resolver which requires maven-metadata.xml and cannot resolve non-unique SNAPSHOTs produced
- * by publishToMavenLocal. Since build/functionalTestDependencies only contains Kotlin artifacts,
- * no content filter is needed — other artifacts naturally fall through to subsequent repos.
+ * When `-DkotlinBuildRepo` is set (dev machines), resolves from `build/repo` via a standard
+ * `maven { url }` repository. When `maven.repo.local` is set instead (CI), falls back to
+ * `mavenLocal()` pointing at that external path.
  */
-fun RepositoryHandler.kotlinBuildDeps(): MavenArtifactRepository = mavenLocal()
+fun RepositoryHandler.kotlinBuildDeps(): MavenArtifactRepository {
+    val buildRepo = System.getProperty("kotlinBuildRepo")
+    return if (buildRepo != null) {
+        // Dev: build/repo — standard remote Maven layout, resolved via the remote Maven resolver.
+        maven { it.setUrl(java.io.File(buildRepo).toURI()) }
+    } else {
+        // CI: maven.repo.local is set externally; resolve via Maven Local.
+        mavenLocal()
+    }
+}
 
 fun Project.configureRepositoriesForTests() {
     allprojects {
