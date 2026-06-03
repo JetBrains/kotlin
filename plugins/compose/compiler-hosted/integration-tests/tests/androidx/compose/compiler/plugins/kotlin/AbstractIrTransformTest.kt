@@ -27,7 +27,7 @@ import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import java.io.File
 
-internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/src/jvmTest/resources"
+internal const val TEST_RESOURCES_ROOT = "plugins/compose/compiler-hosted/integration-tests/testResources"
 
 abstract class AbstractIrTransformTest : AbstractCodegenTest() {
     override fun CompilerConfiguration.updateConfiguration() {
