@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.konan.test.klib
 
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.enums.VerifyIrMode
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -50,6 +52,7 @@ class NativeCompilerSecondStageFacade private constructor(
     class NonGrouping(
         testServices: TestServices,
         private val customNativeCompilerSettings: CustomNativeCompilerSettings,
+        private val isCompatibilityTesting: Boolean,
     ) : CustomKlibCompilerSecondStageFacade<BinaryArtifacts.Native>(testServices) {
         override val outputKind get() = ArtifactKinds.Native
         override fun isMainModule(module: TestModule): Boolean {
@@ -72,6 +75,7 @@ class NativeCompilerSecondStageFacade private constructor(
                         "and `facade.kotlinNativeTargets`(${facade.kotlinNativeTargets.testTarget.name}) don't match.\n" +
                         "Check, if NativeSecondStageEnvironmentConfigurator has calculated `konanTarget` properly."
             }
+            @OptIn(ExperimentalCompilerArgument::class)
             val (exitCode, output, executableFile) = facade.runCli(
                 dirName = File(mainLibrary).name,
                 executableFileName = "${module.name}.${facade.executableExtension}",
@@ -83,6 +87,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 withPlatformLibs = module.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = module.directives[LanguageSettingsDirectives.LANGUAGE],
                 freeArgs = module.directives[FREE_COMPILER_ARGS] + customArgs,
+                verifyIrMode = if (isCompatibilityTesting) VerifyIrMode.NONE else VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
@@ -134,6 +139,7 @@ class NativeCompilerSecondStageFacade private constructor(
             // limit of 260 characters for executable file path. So we use the hash of the module name
             // instead.
             val moduleNameHash = someModule.name.hashCode().toHexString()
+            @OptIn(ExperimentalCompilerArgument::class)
             val (exitCode, output, executableFile) = facade.runCli(
                 dirName = someLibrary!!.resolveSibling(moduleNameHash).absolutePath,
                 executableFileName = "$moduleNameHash.${facade.executableExtension}",
@@ -145,6 +151,7 @@ class NativeCompilerSecondStageFacade private constructor(
                 withPlatformLibs = someModule.directives.contains(WITH_PLATFORM_LIBS),
                 customLanguageFeatures = someModule.directives[LanguageSettingsDirectives.LANGUAGE],
                 freeArgs = freeArgs + "-Xklib-duplicated-unique-name-strategy=allow-all-with-warning",
+                verifyIrMode = VerifyIrMode.ERROR,
             )
 
             if (exitCode == ExitCode.OK) {
@@ -185,6 +192,7 @@ class NativeCompilerSecondStageFacade private constructor(
 
     data class CliRunResult(val exitCode: ExitCode, val output: ByteArrayOutputStream, val executableFile: File)
 
+    @OptIn(ExperimentalCompilerArgument::class)
     fun runCli(
         dirName: String,
         executableFileName: String,
@@ -195,7 +203,8 @@ class NativeCompilerSecondStageFacade private constructor(
         enableAssertions: Boolean,
         withPlatformLibs: Boolean,
         customLanguageFeatures: List<String>,
-        freeArgs: List<String>
+        freeArgs: List<String>,
+        verifyIrMode: VerifyIrMode = VerifyIrMode.ERROR,
     ): CliRunResult {
         val executableFile = getNativeArtifactsOutputDir(testServices, dirName).resolve(executableFileName)
 
@@ -210,7 +219,7 @@ class NativeCompilerSecondStageFacade private constructor(
                     K2NativeCompilerArguments::kotlinHome.cliArgument, nativeHome.absolutePath,
                     optimizationArgument.cliArgument,
                     K2NativeCompilerArguments::binaryOptions.cliArgument("runtimeAssertionsMode=panic"),
-                    K2NativeCompilerArguments::verifyIr.cliArgument("error"),
+                    K2NativeCompilerArguments::verifyIr.cliArgument(verifyIrMode.name),
                     K2NativeCompilerArguments::llvmVariant.cliArgument("dev"),
                     K2NativeCompilerArguments::produce.cliArgument, "program",
                     K2NativeCompilerArguments::outputName.cliArgument, executableFile.path,

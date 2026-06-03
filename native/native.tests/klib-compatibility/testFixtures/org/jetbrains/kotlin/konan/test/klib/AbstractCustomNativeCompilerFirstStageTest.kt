@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.konan.test.klib
 
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCoreTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives
-import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.handlers.NativeBoxRunner
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
@@ -87,7 +86,10 @@ open class AbstractCustomNativeCompilerFirstStageTest : AbstractNativeCoreTest()
             ::CustomFirstStageCInteropTestSuppressor,
         )
         useDirectives(TestDirectives)
-        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(currentCustomNativeCompilerSettings))
+        facadeStep(NativeCompilerSecondStageFacade::NonGrouping.bind(
+                currentCustomNativeCompilerSettings,
+                /*isCompatibilityTesting*/ true,
+            ))
         nativeArtifactsHandlersStep {
             useHandlers(::NativeBoxRunner)
         }
