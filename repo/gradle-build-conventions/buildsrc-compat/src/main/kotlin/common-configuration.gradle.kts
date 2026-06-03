@@ -42,15 +42,6 @@ fun Project.addEmbeddedConfigurations() {
             attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))
         }
     }
-
-    configurations.maybeCreate("embeddedElements").apply {
-        extendsFrom(configurations["embedded"])
-        isCanBeConsumed = true
-        isCanBeResolved = false
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named("embedded-java-runtime"))
-        }
-    }
 }
 
 fun Project.configureJavaCompile() {
@@ -271,17 +262,6 @@ fun Project.configureArtifacts() {
             ignore("kotlin/KotlinVersionCurrentValue.class")
         }
     }
-
-    fun Task.listConfigurationContents(configName: String) {
-        doFirst {
-            project.configurations.findByName(configName)?.let {
-                println("$configName configuration files:\n${it.allArtifacts.files.files.joinToString("\n  ", "  ")}")
-            }
-        }
-    }
-
-    tasks.register("listArchives") { listConfigurationContents("archives") }
-    tasks.register("listDistJar") { listConfigurationContents("distJar") }
 }
 
 fun Project.configureTests() {
