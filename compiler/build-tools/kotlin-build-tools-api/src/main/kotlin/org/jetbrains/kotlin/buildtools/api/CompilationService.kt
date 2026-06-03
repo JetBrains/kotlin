@@ -23,9 +23,11 @@ import java.io.File
  *  val service = CompilationService.loadImplementation(ClassLoader.getSystemClassLoader())
  *  val executionConfig = service.makeCompilerExecutionStrategyConfiguration()
  *  val compilationConfig = service.makeJvmCompilationConfiguration()
- *  service.compileJvm(executionConfig, compilationConfig, listOf(File("src/a.kt")), listOf("-Xexplicit-api=strict"))
+ *  val id: ProjectId = ProjectId.ProjectUUID(UUID.randomUUID())
+ *  service.compileJvm(id, executionConfig, compilationConfig, listOf(File("src/a.kt")), listOf("-Xexplicit-api=strict"))
+ *  service.finishProjectCompilation(id)
  * ```
- *
+ * 
  * This interface is not intended to be implemented by the API consumers. An instance of [CompilationService] is expected to be obtained from [loadImplementation].
  */
 @Deprecated("Use the new BTA API with entry points in KotlinToolchain instead", level = DeprecationLevel.ERROR)
