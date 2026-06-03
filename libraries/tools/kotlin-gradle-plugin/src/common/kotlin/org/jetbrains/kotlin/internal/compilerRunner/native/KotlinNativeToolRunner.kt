@@ -5,7 +5,12 @@
 
 package org.jetbrains.kotlin.internal.compilerRunner.native
 
-import com.google.gson.Gson
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import org.gradle.api.file.FileCollection
 import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
@@ -28,8 +33,6 @@ import org.jetbrains.kotlin.gradle.utils.escapeStringCharacters
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.FusMetricRetrievalException
 import org.jetbrains.kotlin.util.PhaseType
-import org.jetbrains.kotlin.util.UnitStats
-import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import java.io.File
 import java.io.IOException
 import java.io.PrintWriter
@@ -49,7 +52,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
     companion object {
         private val dumpPerfArgument = CommonCompilerArguments::dumpPerf.argumentAnnotation.value
-        private val gson = Gson()
+        private val unitStatsJson = Json { ignoreUnknownKeys = true; coerceInputValues = true }
     }
     private val logger = Logging.getLogger(toolSpec.displayName.get())
     private val errorMessageCollector = GradleErrorMessageCollector(logger)
@@ -295,26 +298,56 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     ) {
         if (!jsonFile.isFile()) return
         try {
-            val unitStats = gson.fromJson(jsonFile.readText(), UnitStats::class.java)
+            val root = unitStatsJson.parseToJsonElement(jsonFile.readText()).jsonObject
 
-            unitStats.forEachPhaseMeasurement { phaseType, time ->
-                if (time == null) return@forEachPhaseMeasurement
-
-                addTimeMetricNs(phaseType.toGradleBuildTime(), time.nanos)
+            // Phase measurements: each PhaseType maps to a nullable Time object
+            for ((phaseType, key) in PHASE_TYPE_JSON_KEYS) {
+                val timeObj = root[key]?.takeIf { it !is JsonNull }?.jsonObject ?: continue
+                val nanos = timeObj["nanos"]?.jsonPrimitive?.longOrNull ?: continue
+                addTimeMetricNs(phaseType.toGradleBuildTime(), nanos)
             }
 
-            unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
-                addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, parentPhaseType.toGradleBuildTime()), time.nanos)
+            // Dynamic stats
+            root["dynamicStats"]?.jsonArray?.forEach { element ->
+                val obj = element.jsonObject
+                val parentPhaseTypeName = obj["parentPhaseType"]?.jsonPrimitive?.content ?: return@forEach
+                val parentPhaseType = enumValues<PhaseType>().find { it.name == parentPhaseTypeName } ?: return@forEach
+                val name = obj["name"]?.jsonPrimitive?.content ?: return@forEach
+                val nanos = obj["time"]?.jsonObject?.get("nanos")?.jsonPrimitive?.longOrNull ?: return@forEach
+                addTimeMetricNs(
+                    CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, parentPhaseType.toGradleBuildTime()),
+                    nanos
+                )
             }
 
-            unitStats.klibElementStats?.forEach { (path, size) ->
+            // Klib element stats
+            root["klibElementStats"]?.jsonArray?.forEach { element ->
+                val obj = element.jsonObject
+                val path = obj["path"]?.jsonPrimitive?.content ?: return@forEach
+                val size = obj["size"]?.jsonPrimitive?.longOrNull ?: return@forEach
                 addMetric(KlibSizeMetric.createIfDoesNotExistAndReturn(path), size)
             }
         } catch (e: Exception) {
-            errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
+            errorMessageCollector.report(
+                FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e),
+                location = null
+            )
         }
     }
 }
+
+/** Maps each [PhaseType] to the JSON field name used by [org.jetbrains.kotlin.util.UnitStats]. */
+private val PHASE_TYPE_JSON_KEYS: List<Pair<PhaseType, String>> = listOf(
+    PhaseType.Initialization to "initStats",
+    PhaseType.Analysis to "analysisStats",
+    PhaseType.TranslationToIr to "translationToIrStats",
+    PhaseType.IrPreLowering to "irPreLoweringStats",
+    PhaseType.IrSerialization to "irSerializationStats",
+    PhaseType.KlibWriting to "klibWritingStats",
+    PhaseType.IrLinking to "irLinkingStats",
+    PhaseType.IrLowering to "irLoweringStats",
+    PhaseType.Backend to "backendStats",
+)
 
 private fun PhaseType.toGradleBuildTime() = when (this) {
     PhaseType.Initialization -> COMPILER_INITIALIZATION
