@@ -5,7 +5,17 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.*
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.jetbrains.kotlin.gradle.internal.ensureParentDirsCreated
@@ -76,6 +86,8 @@ class PackageJson(
     }
 
     companion object {
+        internal val prettyJson = Json { prettyPrint = true }
+
         fun scopedName(name: String): ScopedName = if (name.contains("/")) ScopedName(
             scope = name.substringBeforeLast("/").removePrefix("@"),
             name = name.substringAfterLast("/")
@@ -90,33 +102,81 @@ class PackageJson(
     }
 
     fun saveTo(packageJsonFile: File) {
-        val gson = GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .serializeNulls()
-            .registerTypeAdapterFactory(PackageJsonTypeAdapter())
-            .create()
-
         packageJsonFile.ensureParentDirsCreated()
-        val jsonTree = gson.toJsonTree(this)
-        val previous = if (packageJsonFile.exists()) {
-            packageJsonFile.reader().use {
-                JsonParser.parseReader(it)
-            }
-        } else null
-
-        if (jsonTree != previous) {
-            packageJsonFile.writer().use {
-                gson.toJson(jsonTree, it)
-            }
+        val jsonTree = toJsonElement()
+        val newText = prettyJson.encodeToString(jsonTree)
+        val previousText = if (packageJsonFile.exists()) packageJsonFile.readText() else null
+        if (newText != previousText) {
+            packageJsonFile.writeText(newText)
         }
+    }
+
+    private fun toJsonElement(): JsonObject = buildJsonObject {
+        put("name", JsonPrimitive(name))
+        put("version", JsonPrimitive(version))
+        if (private != null) put("private", JsonPrimitive(private!!))
+        if (main != null) put("main", JsonPrimitive(main!!))
+        if (types != null) put("types", JsonPrimitive(types!!))
+        if (workspaces != null) put("workspaces", buildJsonArray {
+            workspaces!!.forEach { add(JsonPrimitive(it)) }
+        })
+        if (overrides != null) put("overrides", buildJsonObject {
+            overrides!!.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+        if (dependencies.isNotEmpty()) put("dependencies", buildJsonObject {
+            dependencies.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+        if (devDependencies.isNotEmpty()) put("devDependencies", buildJsonObject {
+            devDependencies.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+        if (peerDependencies.isNotEmpty()) put("peerDependencies", buildJsonObject {
+            peerDependencies.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+        if (optionalDependencies.isNotEmpty()) put("optionalDependencies", buildJsonObject {
+            optionalDependencies.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+        })
+        if (bundledDependencies.isNotEmpty()) put("bundledDependencies", buildJsonArray {
+            bundledDependencies.forEach { add(JsonPrimitive(it)) }
+        })
+        // Inline customFields, honouring user-supplied null values
+        customFields.forEach { (k, v) -> put(k, anyToJsonElement(v)) }
     }
 }
 
-fun fromSrcPackageJson(packageJson: File?): PackageJson? =
-    packageJson?.reader()?.use {
-        Gson().fromJson(it, PackageJson::class.java)
+private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
+    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    else -> JsonPrimitive(value.toString())
+}
+
+fun fromSrcPackageJson(packageJson: File?): PackageJson? = packageJson?.let { parsePackageJson(it.readText()) }
+
+private fun parsePackageJson(text: String): PackageJson? {
+    return try {
+        val obj = Json.parseToJsonElement(text).jsonObject
+        val name = obj["name"]?.jsonPrimitive?.content ?: return null
+        val version = obj["version"]?.jsonPrimitive?.content ?: return null
+        PackageJson(name, version).also { pkg ->
+            pkg.private = obj["private"]?.jsonPrimitive?.content?.toBoolean()
+            pkg.main = obj["main"]?.jsonPrimitive?.content
+            pkg.types = obj["types"]?.jsonPrimitive?.content
+            pkg.workspaces = obj["workspaces"]?.let { el ->
+                (el as? JsonArray)?.map { it.jsonPrimitive.content }
+            }
+            obj["dependencies"]?.jsonObject?.forEach { (k, v) -> pkg.dependencies[k] = v.jsonPrimitive.content }
+            obj["devDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.devDependencies[k] = v.jsonPrimitive.content }
+            obj["peerDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.peerDependencies[k] = v.jsonPrimitive.content }
+            obj["optionalDependencies"]?.jsonObject?.forEach { (k, v) -> pkg.optionalDependencies[k] = v.jsonPrimitive.content }
+        }
+    } catch (_: Exception) {
+        null
     }
+}
 
 internal fun packageJson(
     name: String,

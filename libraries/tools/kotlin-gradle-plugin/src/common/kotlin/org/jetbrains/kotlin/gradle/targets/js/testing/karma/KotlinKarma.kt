@@ -5,8 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.karma
 
-import com.google.gson.GsonBuilder
 import jetbrains.buildServer.messages.serviceMessages.BaseTestSuiteMessage
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.Project
 import org.gradle.api.file.Directory
 import org.gradle.api.file.DirectoryProperty
@@ -720,11 +726,7 @@ internal fun writeConfig(
         confWriter.println()
 
         confWriter.print("config.set(")
-        GsonBuilder()
-            .setPrettyPrinting()
-            .disableHtmlEscaping()
-            .create()
-            .toJson(config, confWriter)
+        confWriter.print(karmaConfigToJson(config))
         confWriter.println(");")
 
         newConfJsWriters.forEach { it(confWriter) }
@@ -741,3 +743,53 @@ private val KARMA_MESSAGE = "^.*\\d{2} \\d{2} \\d{4,} \\d{2}:\\d{2}:\\d{2}.\\d{3
 
 private val PROXY_FALSE_WARN = "\"/\" is proxied, you should probably change urlRoot to avoid conflicts".toRegex()
 private val WEBPACK_OUTPUT_WARN = "All files matched by \".+\" were excluded or matched by prior matchers\\.".toRegex()
+
+private val karmaJson = Json { prettyPrint = true }
+
+private fun karmaConfigToJson(config: KarmaConfig): String =
+    karmaJson.encodeToString(config.toJsonElement())
+
+private fun KarmaConfig.toJsonElement() = buildJsonObject {
+    put("singleRun", JsonPrimitive(singleRun))
+    put("autoWatch", JsonPrimitive(autoWatch))
+    if (basePath != null) put("basePath", JsonPrimitive(basePath!!))
+    put("files", buildJsonArray { files.forEach { add(anyToJsonElement(it)) } })
+    put("frameworks", buildJsonArray { frameworks.forEach { add(JsonPrimitive(it)) } })
+    put("client", buildJsonObject { put("args", buildJsonArray { client.args.forEach { add(JsonPrimitive(it)) } }) })
+    put("browsers", buildJsonArray { browsers.forEach { add(JsonPrimitive(it)) } })
+    if (customLaunchers.isNotEmpty()) put("customLaunchers", buildJsonObject {
+        customLaunchers.forEach { (name, launcher) ->
+            put(name, buildJsonObject {
+                put("base", JsonPrimitive(launcher.base))
+                if (launcher.flags.isNotEmpty()) put("flags", buildJsonArray { launcher.flags.forEach { add(JsonPrimitive(it)) } })
+                if (launcher.debug != null) put("debug", JsonPrimitive(launcher.debug!!))
+            })
+        }
+    })
+    if (customContextFile != null) put("customContextFile", JsonPrimitive(customContextFile!!))
+    if (customDebugFile != null) put("customDebugFile", JsonPrimitive(customDebugFile!!))
+    put("failOnFailingTestSuite", JsonPrimitive(failOnFailingTestSuite))
+    put("failOnEmptyTestSuite", JsonPrimitive(failOnEmptyTestSuite))
+    put("reporters", buildJsonArray { reporters.forEach { add(JsonPrimitive(it)) } })
+    if (preprocessors.isNotEmpty()) put("preprocessors", buildJsonObject {
+        preprocessors.forEach { (file, procs) ->
+            put(file, buildJsonArray { procs.forEach { add(JsonPrimitive(it)) } })
+        }
+    })
+    if (proxies.isNotEmpty()) put("proxies", buildJsonObject {
+        proxies.forEach { (k, v) -> put(k, JsonPrimitive(v)) }
+    })
+    if (port != null) put("port", JsonPrimitive(port!!))
+    if (webpackCopy.isNotEmpty()) put("webpackCopy", buildJsonArray { webpackCopy.forEach { add(JsonPrimitive(it)) } })
+}
+
+private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
+    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    else -> JsonPrimitive(value.toString())
+}

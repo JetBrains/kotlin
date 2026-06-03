@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.webpack
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.Named
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
@@ -14,7 +20,6 @@ import org.gradle.api.tasks.Internal
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import java.io.StringWriter
 import javax.inject.Inject
 
 /**
@@ -140,9 +145,7 @@ constructor(
         )
     }
 
-    protected fun json(obj: Any) = StringWriter().also {
-        GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-    }.toString()
+    protected fun json(obj: Any): String = Json { prettyPrint = true }.encodeToString(anyToJsonElement(obj))
 
     @Internal
     override fun getName(): String = name
@@ -169,7 +172,7 @@ constructor(
          */
         val loader: String,
         /**
-         * Loader options map if any. Will be converted to JSON object via Gson.
+         * Loader options map if any. Will be converted to a JSON object.
          */
         val options: Map<String, Any?> = mapOf(),
         /**
@@ -177,4 +180,15 @@ constructor(
          */
         val prerequisites: List<String> = listOf(),
     )
+}
+
+private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Map<*, *> -> buildJsonObject { value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) } }
+    is Iterable<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    is Array<*> -> buildJsonArray { value.forEach { add(anyToJsonElement(it)) } }
+    else -> JsonPrimitive(value.toString())
 }
