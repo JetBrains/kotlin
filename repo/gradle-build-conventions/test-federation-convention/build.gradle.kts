@@ -14,6 +14,11 @@ apply(from = "codegen.gradle.kts")
 
 repositories {
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies") {
+        content {
+            includeGroupByRegex("org\\.jetbrains\\.intellij\\.deps(\\..+)?")
+        }
+    }
 }
 
 kotlin {
@@ -70,6 +75,7 @@ dependencies {
     implementation(kotlin("tooling-core", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.jackson.module.kotlin)
     implementation(libs.jackson.dataformat.yaml)
+    implementation(libs.intellij.asm)
 
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
