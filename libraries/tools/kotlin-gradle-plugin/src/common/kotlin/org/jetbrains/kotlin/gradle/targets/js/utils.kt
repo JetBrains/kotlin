@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import java.io.File
-import java.io.StringWriter
 
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
@@ -104,11 +109,37 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
 }
 
 /**
- * Default JSON emitter
+ * Default JSON emitter — converts arbitrary Map/List/primitive trees to pretty-printed JSON.
  */
-internal fun json(obj: Any) = StringWriter().also {
-    GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-}.toString()
+internal fun json(obj: Any): String =
+    prettyJson.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
+
+/**
+ * Gson, which used to emit these files, indents with two spaces where kotlinx-serialization defaults to four.
+ * Keep the two-space indent so that generated configs stay diff-comparable with the ones previous versions wrote.
+ */
+@OptIn(ExperimentalSerializationApi::class)
+private val prettyJson = Json {
+    prettyPrint = true
+    prettyPrintIndent = "  "
+}
+
+private fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Map<*, *> -> buildJsonObject {
+        value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) }
+    }
+    is Iterable<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    is Array<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    else -> JsonPrimitive(value.toString())
+}
 
 /**
  * A converter from a string `target` option to an [EcmaVersion]

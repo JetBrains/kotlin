@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.npm
 
-import com.google.gson.Gson
-import com.google.gson.JsonObject
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonObject
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.NODE_MODULES
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject.Companion.PACKAGE_JSON
 import java.io.File
@@ -62,10 +64,7 @@ open class NpmProjectModules(
         val packageJsonFile = dir.resolve(PACKAGE_JSON)
 
         val main: String? = if (packageJsonFile.isFile) {
-            val packageJson = packageJsonFile.reader().use {
-                Gson().fromJson(it, JsonObject::class.java)
-            }
-
+            val packageJson = Json.parseToJsonElement(packageJsonFile.readText()).jsonObject
             var result: String? = null
             for (key in packageJsonEntries) {
                 result = packageJson.getStringOrNull(key)
@@ -82,11 +81,8 @@ open class NpmProjectModules(
     }
 
     private fun JsonObject.getStringOrNull(key: String): String? {
-        val value = get(key)
-        if (value == null || !value.isJsonPrimitive) return null
-        val jsonPrimitive = value.asJsonPrimitive
-        if (jsonPrimitive.isString) return jsonPrimitive.asString
-        return null
+        val value = get(key) as? JsonPrimitive ?: return null
+        return if (value.isString) value.content else null
     }
 
     private fun resolveIndex(dir: File): File? {

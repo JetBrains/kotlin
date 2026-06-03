@@ -1,9 +1,14 @@
 package org.jetbrains.kotlin.gradle.targets.js.internal
 
-import com.google.gson.stream.JsonReader
-import com.google.gson.stream.JsonToken
-import com.google.gson.stream.JsonWriter
-import com.google.gson.stream.MalformedJsonException
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.int
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import org.slf4j.LoggerFactory
 import java.io.*
 import kotlin.math.min
@@ -37,7 +42,6 @@ open class RewriteSourceMapFilterReader(
 
     // buffer with transformed prolog, that wil be emitted first
     private lateinit var bufferWriter: StringWriter
-    private lateinit var bufferJsonWriter: JsonWriter
     private val buffer: StringBuffer get() = bufferWriter.buffer
     private var bufferReadPos = 0
     private val bufferAvailable get() = buffer.length - bufferReadPos
@@ -86,57 +90,54 @@ open class RewriteSourceMapFilterReader(
 
         // create StringWriter to write transformed prolog and contents that was read after PROLOG_END
         bufferWriter = StringWriter(jsonString.length)
-        bufferJsonWriter = JsonWriter(bufferWriter)
 
-        // parse json in prolog and write it back to bufferJsonWriter with transformed source paths
-        val json = JsonReader(StringReader(jsonString.toString()))
-        var sourceRootSpecified = false
+        // Parse the prolog and write it back with transformed source paths.
+        //
+        // [jsonPrologPos] points at the `]` that closes the "sources" array, so the prolog is cut in the middle of
+        // that array: append `]}` to make it parseable, and strip the same two tokens off the re-encoded result.
+        // The raw tail, which starts with `],"sourcesContent":` or `],"names":`, supplies them again.
+        val prologText = jsonString.substring(0, jsonPrologPos) + "]}"
         try {
-            json.beginObject()
-            bufferJsonWriter.beginObject()
+            val prolog = Json.parseToJsonElement(prologText).jsonObject
 
-            reading@ while (true) {
-                val token = json.peek()
-                check(token == JsonToken.NAME) { "JSON key expected, but $token found" }
-                val key = json.nextName()
-                when (key) {
-                    "sourceRoot" -> {
-                        val srcSourceRootPath = transformString(json.nextString())
-                        bufferJsonWriter.name(key).value(srcSourceRootPath)
-                        sourceRootSpecified = true
-                    }
-                    "sources" -> {
-                        json.beginArray()
-                        bufferJsonWriter.name("sources").beginArray()
-                        while (json.peek() != JsonToken.END_ARRAY) {
-                            val path = json.nextString()
-                            val transformed = if (sourceRootSpecified) path else transformString(path)
-                            bufferJsonWriter.value(transformed)
+            var sourceRootSpecified = false
+            val transformed = buildJsonObject {
+                for ((key, value) in prolog) {
+                    when (key) {
+                        "sourceRoot" -> {
+                            put(key, JsonPrimitive(transformString(value.jsonPrimitive.content)))
+                            sourceRootSpecified = true
                         }
-                        json.endArray()
+                        "sources" -> put(key, JsonArray(value.jsonArray.map { source ->
+                            val path = source.jsonPrimitive.content
+                            // paths are relative to "sourceRoot" when it is present, so only rewrite them otherwise
+                            JsonPrimitive(if (sourceRootSpecified) path else transformString(path))
+                        }))
+                        "version" -> put(key, JsonPrimitive(value.jsonPrimitive.int))
+                        "file" -> put(key, JsonPrimitive(value.jsonPrimitive.content))
+                        else -> throw IllegalStateException("Unknown key \"$key\"")
                     }
-                    "version" -> bufferJsonWriter.name(key).value(json.nextInt())
-                    "file" -> bufferJsonWriter.name(key).value(json.nextString())
-                    "sourcesContent", "names" -> break@reading
-                    else -> throw IllegalStateException("Unknown key \"$key\"")
                 }
             }
 
-            // leave bufferJsonWriter unclosed
+            val encoded = Json.encodeToString(JsonObject.serializer(), transformed)
+            check(encoded.endsWith("]}")) { "\"sources\" is expected to be the last key of the prolog, but got `$encoded`" }
+            bufferWriter.append(encoded.dropLast("]}".length))
 
             // push back contents that was read after PROLOG_END
             bufferWriter.append(jsonString.substring(jsonPrologPos))
         } catch (e: IllegalStateException) {
-            writeBackUnsupported(jsonString, json, e.message!!)
-        } catch (e: MalformedJsonException) {
-            writeBackUnsupported(jsonString, json, "Malformed JSON")
+            writeBackUnsupported(jsonString, e)
+        } catch (e: IllegalArgumentException) {
+            // kotlinx.serialization.SerializationException, thrown on malformed JSON, is an IllegalArgumentException
+            writeBackUnsupported(jsonString, e)
         }
     }
 
-    private fun writeBackUnsupported(jsonString: StringBuilder, reader: JsonReader, message: String) =
+    private fun writeBackUnsupported(jsonString: StringBuilder, cause: Exception) =
         writeBackUnsupported(
             jsonString,
-            "$UNSUPPORTED_FORMAT_MESSAGE. $message at ${reader.toString().replace("JsonReader at ", "")} in `$jsonString"
+            "$UNSUPPORTED_FORMAT_MESSAGE. ${cause.message} in `$jsonString"
         )
 
     private fun writeBackUnsupported(jsonString: StringBuilder, reason: String) =
