@@ -101,7 +101,7 @@ class LLGenericAnalysisTest : AbstractAnalysisApiExecutionTest("testData/generic
 
             testServices.assertions.assertEquals(
                 """
-                        ^g R|<local>/e|.R|/myMap<Inapplicable(INAPPLICABLE): /myMap>#|<R|T|, R|kotlin/Int|>(::<Inapplicable(INAPPLICABLE): /G.f>#)
+                        ^g R|<local>/e|.R|/myMap|<R|T|, R|kotlin/Int|>(::R|SubstitutionOverride</G.f: R|kotlin/Int|>|)
                     """.trimIndent(),
                 renderTarget(lastFirElement),
             )
