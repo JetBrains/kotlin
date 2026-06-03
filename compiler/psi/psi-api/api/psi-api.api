@@ -208,6 +208,13 @@ public class org/jetbrains/kotlin/idea/KotlinModuleFileType : com/intellij/opena
 	public fun isReadOnly ()Z
 }
 
+public abstract interface class org/jetbrains/kotlin/idea/references/KtReference : com/intellij/psi/PsiPolyVariantReference {
+	public synthetic fun getElement ()Lcom/intellij/psi/PsiElement;
+	public abstract fun getElement ()Lorg/jetbrains/kotlin/psi/KtElement;
+	public abstract fun getResolver ()Lcom/intellij/psi/impl/source/resolve/ResolveCache$PolyVariantResolver;
+	public abstract fun getResolvesByNames ()Ljava/util/Collection;
+}
+
 public class org/jetbrains/kotlin/kdoc/lexer/KDocToken : org/jetbrains/kotlin/lexer/KtToken {
 	public fun <init> (Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;I)V

@@ -228,6 +228,8 @@ org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils:atLocation(PsiElement)
 org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils:atLocation(PsiFile, TextRange)
 org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils:atLocation(PsiFile, TextRange, Document)
 org.jetbrains.kotlin.diagnostics.PsiDiagnosticUtils:offsetToLineAndColumn(Document, int)
+org.jetbrains.kotlin.idea.references.KtReference
+org.jetbrains.kotlin.idea.references.KtReference.resolver
 org.jetbrains.kotlin.kdoc.psi.api.KDoc
 org.jetbrains.kotlin.kdoc.psi.api.KDoc.findSectionByName(String)
 org.jetbrains.kotlin.kdoc.psi.api.KDoc.findSectionByTag(KDocKnownTag)

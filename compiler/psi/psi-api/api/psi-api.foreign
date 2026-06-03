@@ -27,11 +27,13 @@ com/intellij/psi/PsiFile
 com/intellij/psi/PsiLanguageInjectionHost
 com/intellij/psi/PsiNameIdentifierOwner
 com/intellij/psi/PsiNamedElement
+com/intellij/psi/PsiPolyVariantReference
 com/intellij/psi/PsiReference
 com/intellij/psi/PsiType
 com/intellij/psi/SingleRootFileViewProvider
 com/intellij/psi/SmartPsiElementPointer
 com/intellij/psi/StubBasedPsiElement
+com/intellij/psi/impl/source/resolve/ResolveCache$PolyVariantResolver
 com/intellij/psi/impl/source/tree/LazyParseablePsiElement
 com/intellij/psi/impl/source/tree/LeafPsiElement
 com/intellij/psi/search/GlobalSearchScope
