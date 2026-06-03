@@ -2573,7 +2573,10 @@ internal class CodeGeneratorVisitor(
         val needsNativeThreadState: Boolean
         val filterExceptionWith: ForeignExceptionMode.Mode?
 
-        if (llvmCallable.name in context.config.forceNativeThreadStateForFunctions) {
+        val forceNativeThreadState = llvmCallable.name in context.config.forceNativeThreadStateForFunctions
+                || function.annotations.hasAnnotation(RuntimeNames.forceNativeThreadStateAnnotation)
+
+        if (forceNativeThreadState) {
             // This is a quick hack for functions that break the contract of `SymbolName` by being blocking,
             // and therefore need the native thread state.
             // See e.g., KT-75895 and KT-79384.

@@ -9963,6 +9963,11 @@ open annotation class kotlin.native/EagerInitialization : kotlin/Annotation { //
 }
 
 // Targets: [native]
+open annotation class kotlin.native/ForceNativeThreadState : kotlin/Annotation { // kotlin.native/ForceNativeThreadState|null[0]
+    constructor <init>() // kotlin.native/ForceNativeThreadState.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.native/HiddenFromObjC : kotlin/Annotation { // kotlin.native/HiddenFromObjC|null[0]
     constructor <init>() // kotlin.native/HiddenFromObjC.<init>|<init>(){}[0]
 }

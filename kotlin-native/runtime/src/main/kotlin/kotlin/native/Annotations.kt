@@ -37,6 +37,26 @@ internal annotation class SymbolNameIsInternal
 public annotation class SymbolName(val name: String)
 
 /**
+ * Forces a thread state switch from Runnable to Native around a direct call to the
+ * annotated `@SymbolName external fun`.
+ *
+ * It also alters the exception handling: if a foreign exception is thrown from the annotated function,
+ * it terminates the program (unless overridden by [kotlin.native.internal.FilterExceptions]).
+ *
+ * Intended for blocking native functions called via `@SymbolName` where leaving the thread
+ * in the Runnable state would block GC progress.
+ *
+ * This is a dangerous internal annotation. Please avoid using it.
+ *
+ * If you absolutely need to use the annotation, please comment at
+ * [KT-46649](https://youtrack.jetbrains.com/issue/KT-46649).
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+@SymbolNameIsInternal
+public annotation class ForceNativeThreadState
+
+/**
  * Preserve the function entry point during global optimizations.
  */
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
