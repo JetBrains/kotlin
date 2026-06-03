@@ -2,7 +2,8 @@
 
 The mono-repository is split into multiple 'Domains' (like 'Compiler', 'AnalysisApi', ...).
 The CI can verify commits into such Domains independently.
-'Plain old tests' of 'unaffected Domains' are not required to be executed on CI.
+'Plain old tests' of 'unaffected Domains' are not required for commits to prove correctness.
+All tests, however, will be executed on master builds.
 
 ### What is a Domain? (Quick intuition)
 
@@ -37,7 +38,9 @@ Files belonging to this 'Native' domain are included using the `native/**` and `
 A domain is always marked as 'affected' if any file, belonging to the domain, is changed.
 
 ## '^affects' commit command
+
 If a commit is known to affect another domain, the commit command `^affects:` can be used declare additional affected domains.
+
 ```
 ^affects: Gradle, AnalysisApi
 ^affects: Compiler
@@ -49,7 +52,8 @@ If a commit is known to affect another domain, the commit command `^affects:` ca
 ### Domains fully affecting other Domains
 
 Some domains might form a 'Domain/Subdomain' relationship, which can be expressed using 'fullyAffectedBy'.
-A domain that is fully affected by another domain will always be marked as 'affected' by a set of changes if any of the dependencies are marked affected. In the example above:
+A domain that is fully affected by another domain will always be marked as 'affected' by a set of changes if any of the dependencies are
+marked affected. In the example above:
 
 A change which marks the 'larger Compiler domain' as affected will also mark the 'Native' domain as affected, while
 a change isolated within the 'Native' domain will not affect the 'Compiler' domain.
@@ -65,6 +69,7 @@ The declared domains will be 'expanded' into the actual files belonging to each 
 ```
 
 #### Updating the dump
+
 Changes to the domains.yaml file might require an update of the dump file.
 This can be done by executing the 'update-domains' script:
 
@@ -150,6 +155,7 @@ tasks.withType<Test>().configureEach {
 ```
 
 Sometimes an entire test task should *always* run, even in 'smoke test mode'.
+
 ```kotlin
 tasks.withType<Test>().configureEach {
     smokeTestConfig = SmokeTestConfig.RunAllTests
@@ -179,12 +185,13 @@ class MyImportantJsTests {
 Any commit to the `Js` domain will verify all contracts.
 
 ##### Contracts require approval from the target team
-Declaring a contract is transactional between at least two teams (owning their domains). Defining and changing a contract requires
-the explicit approval of both teams. 
 
+Declaring a contract is transactional between at least two teams (owning their domains). Defining and changing a contract requires
+the explicit approval of both teams.
 
 ### Nightly Tests
-Some tests, test-classes or even entire suites of tests might not qualify for our 'master aggregate'. 
+
+Some tests, test-classes or even entire suites of tests might not qualify for our 'master aggregate'.
 Typically, nightly tests are 'long' or have not proven their stability (yet), while not being 'necessary' as 'mater quality gate'.
 Marking a test as 'nighlty' is done by using the `@NightlyTest` annotation
 
@@ -195,10 +202,10 @@ class MyTests {
     fun `my looong nightly test`() {
         superLongOperation()
     }
-    
+
     @Test
     fun `my regular test`() {
-        
+
     }
 }
 ```
