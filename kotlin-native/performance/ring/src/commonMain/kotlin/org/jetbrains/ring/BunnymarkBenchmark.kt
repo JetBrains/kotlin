@@ -23,13 +23,19 @@ class BunnymarkBenchmark {
     val framesCount = 60
     val containerSize = 800_000
 
+    // Use the same seed for reproducibility
+    private val rnd = Random(584)
+    private val randomFloats = FloatArray(1000) { rnd.nextFloat() }
+    private var nextFloatIndex = 0
+    private fun nextFloat() = randomFloats[nextFloatIndex].also {
+        nextFloatIndex = (nextFloatIndex + 1) % randomFloats.size
+    }
+
     @Benchmark
     fun testBunnymark(bh: Blackhole) {
         val bunnys = BunnyContainer(containerSize)
 
         for (n in 0 until bunnys.maxSize) bunnys.alloc()
-
-        val random = Random(0)
 
         fun executeFrame() {
             bunnys.fastForEach { bunny ->
@@ -48,9 +54,9 @@ class BunnymarkBenchmark {
                 if (bunny.y > maxY) {
                     bunny.speedYf *= -0.85f
                     bunny.y = maxY
-                    bunny.radiansf = (random.nextFloat() - 0.5f) * 0.2f
-                    if (random.nextFloat() > 0.5) {
-                        bunny.speedYf -= random.nextFloat() * 6
+                    bunny.radiansf = (nextFloat() - 0.5f) * 0.2f
+                    if (nextFloat() > 0.5) {
+                        bunny.speedYf -= nextFloat() * 6
                     }
                 } else if (bunny.y < minY) {
                     bunny.speedYf = 0f

@@ -5,7 +5,6 @@
 
 package org.jetbrains.ring
 
-import kotlin.random.Random
 import kotlinx.benchmark.*
 import org.jetbrains.benchmarksLauncher.SkipWhenBaseOnly
 

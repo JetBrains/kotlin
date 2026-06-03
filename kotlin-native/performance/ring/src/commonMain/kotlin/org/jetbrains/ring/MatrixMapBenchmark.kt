@@ -25,14 +25,14 @@ private const val BENCHMARK_SIZE = 10000
 /**
  * This class emulates matrix behaviour using a hash map as its implementation
  */
-class KMatrix internal constructor(val rows: Int, val columns: Int) {
-    private val matrix: MutableMap<Pair<Int, Int>, Double> = HashMap();
+class KMatrix internal constructor(val rows: Int, val columns: Int, data: DoubleArray) {
+    private val matrix: MutableMap<Pair<Int, Int>, Double> = HashMap()
 
-    fun randomize(rnd: Random) {
-        for (row in 0..rows-1) {
-            for (col in 0..columns-1) {
-                matrix.put(Pair(row, col), rnd.nextDouble())
-            }
+    init {
+        for (i in data.indices) {
+            val row = i / columns
+            val col = i % columns
+            matrix.put(Pair(row, col), data[i])
         }
     }
 
@@ -64,18 +64,27 @@ class MatrixMap {
     // Use the same seed for reproducibility
     private val rnd = Random(501)
 
-    @Benchmark
-    fun add(bh: Blackhole) {
-        var rows = BENCHMARK_SIZE
-        var cols = 1
+    private val data1 = DoubleArray(BENCHMARK_SIZE) {
+        rnd.nextDouble()
+    }
+
+    private val data2 = DoubleArray(BENCHMARK_SIZE) {
+        rnd.nextDouble()
+    }
+
+    private var rows = BENCHMARK_SIZE
+    private var cols = 1
+    init {
         while (rows > cols) {
             rows /= 2
             cols *= 2
         }
-        val a = KMatrix(rows, cols)
-        a.randomize(rnd)
-        val b = KMatrix(rows, cols)
-        b.randomize(rnd)
+    }
+
+    @Benchmark
+    fun add(bh: Blackhole) {
+        val a = KMatrix(rows, cols, data1)
+        val b = KMatrix(rows, cols, data2)
         a += b
         bh.consume(a)
     }

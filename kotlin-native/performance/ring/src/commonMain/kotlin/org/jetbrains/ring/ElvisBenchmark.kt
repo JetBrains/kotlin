@@ -49,6 +49,10 @@ class Elvis : SkipWhenBaseOnly() {
 
     class Composite(val x : Int, val y : Composite?)
 
+    private val composites = Array(BENCHMARK_SIZE) {
+        Composite(rnd.nextInt(100), Composite(rnd.nextInt(100), null))
+    }
+
     fun check(a : Composite?) : Int {
         return a?.y?.x ?: (a?.x ?: 3)
     }
@@ -57,8 +61,9 @@ class Elvis : SkipWhenBaseOnly() {
     fun testCompositeElvis(bh: Blackhole) {
         skipWhenBaseOnly()
         var result = 0
-        for (i in 0..BENCHMARK_SIZE)
-            result += check(Composite(rnd.nextInt(100), Composite(rnd.nextInt(100), null)))
+        for (composite in composites) {
+            result += check(composite)
+        }
         bh.consume(result)
     }
 }

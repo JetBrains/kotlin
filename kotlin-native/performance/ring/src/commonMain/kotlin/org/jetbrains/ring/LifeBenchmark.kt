@@ -86,27 +86,21 @@ class Universe(val width: Int, val height: Int) {
     }
 }
 
-fun run(bh: Blackhole, space: Int, time: Int) {
-    val width = space
-    val height = space
-    val universe = Universe(width, height)
-    for (i in 0 until time) {
-        universe.evolve()
-    }
-    bh.consume(universe)
-}
-
 @State(Scope.Benchmark)
 // Big benchmark, needs more iterations
 @Measurement(time = 1, timeUnit = BenchmarkTimeUnit.SECONDS)
 class LifeHideName : SkipWhenBaseOnly() {
     val spaceScale = BENCHMARK_SIZE / 40
     val timeScale = 5
+    private val universe = Universe(spaceScale, spaceScale)
 
     @Benchmark
     fun Life(bh: Blackhole) {
         skipWhenBaseOnly()
-        run(bh, spaceScale, timeScale)
+        repeat(timeScale) {
+            universe.evolve()
+        }
+        bh.consume(universe)
     }
 }
 
@@ -117,6 +111,7 @@ class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
     val spaceScale = BENCHMARK_SIZE / 40
     val timeScale = 5
     val numberOfMarkHelpers = 5;
+    private val universe = Universe(spaceScale, spaceScale)
 
     @Volatile
     var done = false
@@ -147,7 +142,10 @@ class LifeWithMarkHelpersHideName : SkipWhenBaseOnly() {
     @Benchmark
     fun LifeWithMarkHelpers(bh: Blackhole) {
         skipWhenBaseOnly()
-        run(bh, spaceScale, timeScale)
+        repeat(timeScale) {
+            universe.evolve()
+        }
+        bh.consume(universe)
     }
 
     @TearDown
