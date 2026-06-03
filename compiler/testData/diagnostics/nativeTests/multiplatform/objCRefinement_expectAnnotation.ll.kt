@@ -1,7 +1,7 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // LL_FIR_DIVERGENCE
 // Checkers are run with Common session in Analysis API, so they can't see actualized declarations
 // LL_FIR_DIVERGENCE
+// RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +MultiPlatformProjects
 // WITH_STDLIB
 
@@ -32,7 +32,7 @@ expect annotation class MyRefinesInSwift()
 @kotlin.experimental.ExperimentalObjCRefinement
 expect annotation class MyShouldRefineInSwift()
 
-<!INVALID_REFINES_IN_SWIFT_TARGETS!>@MyRefinesInSwift<!>
+@MyRefinesInSwift
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
 expect annotation class MyWrongShouldRefineInSwift()
@@ -54,17 +54,17 @@ annotation class PluginMyShouldRefineInSwift
 @file:OptIn(kotlin.experimental.ExperimentalObjCRefinement::class)
 
 @MyHidesFromObjC
-<!REDUNDANT_SWIFT_REFINEMENT!>@MyRefinesInSwift<!>
+@MyRefinesInSwift
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationA
 
-<!INVALID_OBJC_HIDES_TARGETS!>@MyHidesFromObjC<!>
+@MyHidesFromObjC
 @Target(AnnotationTarget.PROPERTY, AnnotationTarget.FILE)
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationB
 
-<!INVALID_REFINES_IN_SWIFT_TARGETS!>@MyRefinesInSwift<!>
+@MyRefinesInSwift
 @Retention(AnnotationRetention.BINARY)
 annotation class MyRefinedAnnotationC
 
@@ -76,11 +76,11 @@ annotation class MyRefinedAnnotationD
 typealias HFOC = MyHiddenFromObjC
 
 @HFOC
-<!REDUNDANT_SWIFT_REFINEMENT!>@MyShouldRefineInSwift<!>
+@MyShouldRefineInSwift
 var refinedProperty: Int = 0
 
 @PluginMyHiddenFromObjC
-<!REDUNDANT_SWIFT_REFINEMENT!>@PluginMyShouldRefineInSwift<!>
+@PluginMyShouldRefineInSwift
 fun pluginRefinedFunction() { }
 
 @MyHiddenFromObjC
@@ -93,8 +93,8 @@ fun multipleSwiftRefinementsFunction() { }
 
 @MyHiddenFromObjC
 @PluginMyHiddenFromObjC
-<!REDUNDANT_SWIFT_REFINEMENT!>@MyShouldRefineInSwift<!>
-<!REDUNDANT_SWIFT_REFINEMENT!>@PluginMyShouldRefineInSwift<!>
+@MyShouldRefineInSwift
+@PluginMyShouldRefineInSwift
 fun multipleMixedRefinementsFunction() { }
 
 interface InterfaceA {
@@ -116,11 +116,11 @@ interface InterfaceB {
 }
 
 open class ClassA: InterfaceA, InterfaceB {
-    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyHiddenFromObjC<!>
+    @MyHiddenFromObjC
     override val barA: Int = 0
-    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyShouldRefineInSwift<!>
+    @MyShouldRefineInSwift
     override val barB: Int = 0
-    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>override fun fooA() { }<!>
+    override fun fooA() { }
     override fun fooB() { }
     @MyHiddenFromObjC
     open fun fooC() { }
@@ -129,7 +129,7 @@ open class ClassA: InterfaceA, InterfaceB {
 class ClassB: ClassA() {
     @MyHiddenFromObjC
     override fun fooB() { }
-    <!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>@MyShouldRefineInSwift<!>
+    @MyShouldRefineInSwift
     override fun fooC() { }
 }
 
@@ -142,7 +142,7 @@ interface I {
     fun foo()
 }
 
-<!INCOMPATIBLE_OBJC_REFINEMENT_OVERRIDE!>open class Derived : Base(), I<!>
+open class Derived : Base(), I
 
 open class Derived2 : Derived() {
     override fun foo() {}

@@ -1,4 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects +ImplicitSignedToUnsignedIntegerConversion
+// ALLOW_KOTLIN_PACKAGE
 // WITH_STDLIB
 
 // MODULE: common

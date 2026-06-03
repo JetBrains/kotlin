@@ -676,7 +676,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
 
     private val cache: MutableMap<FirOutputArtifact, DiagnosticsMap> = mutableMapOf()
 
-    open fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
+    fun getFrontendDiagnosticsForModule(info: FirOutputArtifact): DiagnosticsMap {
         return cache.getOrPut(info) { computeDiagnostics(info) }
     }
 
@@ -689,7 +689,7 @@ open class FirDiagnosticCollectorService(val testServices: TestServices) : TestS
         return getFrontendDiagnosticsForModule(info).values.any { it.diagnostic.severity == Severity.ERROR }
     }
 
-    private fun computeDiagnostics(info: FirOutputArtifact): ListMultimap<FirFile, DiagnosticWithKmpCompilationMode> {
+    protected open fun computeDiagnostics(info: FirOutputArtifact): DiagnosticsMap {
         val allFiles = info.partsForDependsOnModules.flatMap { it.firFilesByTestFile.values }
         val platformPart = info.partsForDependsOnModules.last()
         val lazyDeclarationResolver = platformPart.session.lazyDeclarationResolver

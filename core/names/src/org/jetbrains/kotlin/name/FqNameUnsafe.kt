@@ -40,13 +40,15 @@ class FqNameUnsafe {
     private fun compute() {
         val lastDot = indexOfLastDotWithBackticksSupport(fqName)
         if (lastDot >= 0) {
-            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1))
+            shortName = Name.guessByFirstCharacter(fqName.substring(lastDot + 1).removeSurroundingQuotes())
             parent = FqNameUnsafe(fqName.substring(0, lastDot))
         } else {
-            shortName = Name.guessByFirstCharacter(fqName)
+            shortName = Name.guessByFirstCharacter(fqName.removeSurroundingQuotes())
             parent = FqName.ROOT.toUnsafe()
         }
     }
+
+    private fun String.removeSurroundingQuotes(): String = removeSurrounding("`")
 
     private fun indexOfLastDotWithBackticksSupport(fqName: String): Int {
         var index = fqName.length - 1
@@ -56,7 +58,6 @@ class FqNameUnsafe {
             when (fqName[index]) {
                 '.' if !isBacktick -> return index
                 '`' -> isBacktick = !isBacktick
-                '\\' -> index--
             }
 
             index--

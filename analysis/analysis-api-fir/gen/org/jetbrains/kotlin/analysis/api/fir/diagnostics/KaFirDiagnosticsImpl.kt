@@ -328,6 +328,11 @@ internal class ParenthesizedPackageQualifierWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ParenthesizedPackageQualifierWarning
 
+internal class KotlinPackageUsageImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.KotlinPackageUsage
+
 internal class UnsupportedArrayLiteralOutsideOfAnnotationErrorImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

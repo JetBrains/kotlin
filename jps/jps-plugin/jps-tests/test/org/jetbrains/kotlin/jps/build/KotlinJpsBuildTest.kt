@@ -665,7 +665,7 @@ open class KotlinJpsBuildTest : KotlinJpsBuildTestBase() {
         result.assertFailed()
         val errors = result.getMessages(BuildMessage.Kind.ERROR)
 
-        Assert.assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package", errors.single().messageText)
+        Assert.assertEquals("Only the Kotlin standard library is allowed to use the 'kotlin' package.", errors.single().messageText)
     }
 
     fun testDoNotCreateUselessKotlinIncrementalCaches() {

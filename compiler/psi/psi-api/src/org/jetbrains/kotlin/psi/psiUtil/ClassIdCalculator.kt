@@ -27,7 +27,7 @@ internal object ClassIdCalculator {
                     return null
                 }
                 is KtClassLikeDeclaration -> {
-                    containingClassNames += element.name ?: SpecialNames.NO_NAME_PROVIDED.asString()
+                    containingClassNames += element.name?.quoteIfNeeded() ?: SpecialNames.NO_NAME_PROVIDED.asString()
                 }
                 is KtFile -> {
                     ktFile = element
@@ -36,7 +36,7 @@ internal object ClassIdCalculator {
                 is KtScript -> {
                     @OptIn(KtExperimentalApi::class)
                     if (element.isReplSnippet) {
-                        containingClassNames += element.name
+                        containingClassNames += element.name.quoteIfNeeded()
                     } else {
                         // Skip script parent
                     }

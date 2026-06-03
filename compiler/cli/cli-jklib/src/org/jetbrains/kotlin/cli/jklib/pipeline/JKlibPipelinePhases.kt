@@ -242,9 +242,6 @@ object JKlibFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact,
 
         outputs.runPlatformCheckers(diagnosticsReporter)
 
-        val firFiles = outputs.flatMap { it.fir }
-        checkKotlinPackageUsageForLightTree(configuration, firFiles)
-
         return JKlibFrontendPipelineArtifact(
             AllModulesFrontendOutput(outputs), configuration, projectEnvironment,
             rootDisposable,

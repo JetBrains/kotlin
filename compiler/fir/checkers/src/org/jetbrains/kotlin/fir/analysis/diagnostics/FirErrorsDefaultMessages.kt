@@ -512,6 +512,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_PACKAGE_USAGE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.K_SUSPEND_FUNCTION_TYPE_OF_DANGEROUSLY_LARGE_ARITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LATEINIT_INTRINSIC_CALL_IN_INLINE_FUNCTION
@@ -1036,6 +1037,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             PARENTHESIZED_PACKAGE_QUALIFIER,
             "Wrapping package qualifiers in parentheses is not allowed.",
+        )
+        map.put(
+            KOTLIN_PACKAGE_USAGE,
+            "Only the Kotlin standard library is allowed to use the 'kotlin' package.",
         )
         map.put(
             UNSUPPORTED_ARRAY_LITERAL_OUTSIDE_OF_ANNOTATION,
