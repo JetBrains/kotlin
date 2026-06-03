@@ -7,6 +7,11 @@ package org.jetbrains.kotlin.gradle.internal.json
 
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
 
 /**
  * Pre-configured [Json] instances for use inside the Kotlin Gradle Plugin.
@@ -32,6 +37,11 @@ internal object KgpJson {
         explicitNulls = false
     }
 
+    /** As [default], but also accepts unquoted keys and strings. For files this plugin did not write. */
+    val lenient: Json = Json(default) {
+        isLenient = true
+    }
+
     /**
      * Pretty-printed instance for human-readable output (config files, diagnostics, etc.).
      * Inherits all leniency settings from [default].
@@ -39,4 +49,31 @@ internal object KgpJson {
     val prettyPrinted: Json = Json(default) {
         prettyPrint = true
     }
+
+    /** Two-space indent, as Gson wrote, so generated files don't change. */
+    val prettyPrintedTwoSpaceIndent: Json = Json(prettyPrinted) {
+        prettyPrintIndent = "  "
+    }
+}
+
+/** Converts the `Map`/`List`/primitive trees that build authors pass to the JS DSLs. Other types are rejected. */
+internal fun anyToJsonElement(value: Any?): JsonElement = when (value) {
+    null -> JsonNull
+    is JsonElement -> value
+    is Boolean -> JsonPrimitive(value)
+    is Number -> JsonPrimitive(value)
+    is String -> JsonPrimitive(value)
+    is Char -> JsonPrimitive(value.toString())
+    is Map<*, *> -> buildJsonObject {
+        value.forEach { (k, v) -> put(k.toString(), anyToJsonElement(v)) }
+    }
+    is Iterable<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    is Array<*> -> buildJsonArray {
+        value.forEach { add(anyToJsonElement(it)) }
+    }
+    is Enum<*> -> JsonPrimitive(value.name)
+    is CharSequence -> JsonPrimitive(value.toString())
+    else -> throw IllegalArgumentException("Cannot write ${value::class.java.name} as JSON, use a Map instead")
 }

@@ -5,14 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.targets.js
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.json.JsonElement
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.dsl.KotlinJsCompilerOptions
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.gradle.internal.json.anyToJsonElement
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import java.io.File
-import java.io.StringWriter
 
 @Deprecated("Unused string constant. Scheduled for removal in Kotlin 2.6.", ReplaceWith(""""js""""))
 const val JS = "js"
@@ -103,12 +104,9 @@ internal fun <T> KotlinJsIrTarget.webTargetVariant(
     wasmVariant
 }
 
-/**
- * Default JSON emitter
- */
-internal fun json(obj: Any) = StringWriter().also {
-    GsonBuilder().setPrettyPrinting().create().toJson(obj, it)
-}.toString()
+/** Converts arbitrary Map/List/primitive trees to pretty-printed JSON. */
+internal fun json(obj: Any): String =
+    KgpJson.prettyPrintedTwoSpaceIndent.encodeToString(JsonElement.serializer(), anyToJsonElement(obj))
 
 /**
  * A converter from a string `target` option to an [EcmaVersion]

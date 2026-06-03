@@ -80,7 +80,9 @@ internal fun moduleName(directory: File): String {
     val packageJson = directory.resolve(PACKAGE_JSON)
 
     if (packageJson.isFile) {
-        return fromSrcPackageJson(packageJson)!!.name
+        // a private package may declare no "name": fall back to the directory name, as when there is no
+        // package.json at all
+        fromSrcPackageJson(packageJson)?.let { return it.name }
     }
 
     return directory.name
