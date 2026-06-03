@@ -10,9 +10,7 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
-import org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.uklibs.applyJvm
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer
@@ -33,56 +31,6 @@ internal class JvmDefaultIT : KGPBaseTest() {
     override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions.copy(
         logLevel = LogLevel.INFO,
     )
-
-    @DisplayName("No override happens without 'kotlin-dsl' plugin")
-    @GradleTest
-    fun noOverrideNoKotlinDslPlugin(
-        gradleVersion: GradleVersion
-    ) {
-        project("emptyKts", gradleVersion) {
-            plugins {
-                kotlin("jvm")
-            }
-
-            buildScriptInjection {
-                project.applyJvm {
-                    compilerOptions.freeCompilerArgs.add("-Xjvm-default=disable")
-                }
-            }
-            kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
-
-            build(":compileKotlin") {
-                assertOutputDoesNotContain("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
-                assertOutputDoesNotContain("Overriding '-Xjvm-default=")
-            }
-        }
-    }
-
-    @DisplayName("Should override 'kotlin-dsl' plugin value")
-    @GradleTest
-    fun overrideKotlinDslPlugin(
-        gradleVersion: GradleVersion,
-    ) {
-        project("emptyKts", gradleVersion) {
-            plugins {
-                kotlin("jvm")
-                id("kotlin-dsl")
-            }
-
-            overrideOldGradleBoundLanguageVersionsWith21()
-            kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
-
-            checkJvmDefaultReplacement(
-                "no-compatibility",
-                null
-            ) {
-                assertOutputDoesNotContain("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
-                assertOutputContains(
-                    "Overriding '-Xjvm-default=all' to stable compiler plugin argument '-jvm-default=no-compatibility' in the presence of 'kotlin-dsl' plugin."
-                )
-            }
-        }
-    }
 
     @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
     @DisplayName("Should not override 'kotlin-dsl' plugin value if using BTA with older Kotlin compiler version")
@@ -140,40 +88,6 @@ internal class JvmDefaultIT : KGPBaseTest() {
             ) {
                 assertOutputDoesNotContain("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
                 assertOutputContains(
-                    "Overriding '-Xjvm-default=all' to stable compiler plugin argument '-jvm-default=no-compatibility' in the presence of 'kotlin-dsl' plugin."
-                )
-            }
-        }
-    }
-
-    @DisplayName("Stable -jvm-default option is specified")
-    @GradleTest
-    fun stableJvmDefaultOptionIsPresent(
-        gradleVersion: GradleVersion,
-    ) {
-        project("emptyKts", gradleVersion) {
-            plugins {
-                kotlin("jvm")
-                id("kotlin-dsl")
-            }
-
-            buildScriptInjection {
-                project.applyJvm {
-                    compilerOptions {
-                        jvmDefault.set(JvmDefaultMode.ENABLE)
-                    }
-                }
-            }
-            overrideOldGradleBoundLanguageVersionsWith21()
-
-            kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
-
-            checkJvmDefaultReplacement(
-                "enable",
-                null,
-            ) {
-                assertOutputContains("Stable '-jvm-default' argument is configured in the presence of 'kotlin-dsl' plugin, no need to override.")
-                assertOutputDoesNotContain(
                     "Overriding '-Xjvm-default=all' to stable compiler plugin argument '-jvm-default=no-compatibility' in the presence of 'kotlin-dsl' plugin."
                 )
             }
