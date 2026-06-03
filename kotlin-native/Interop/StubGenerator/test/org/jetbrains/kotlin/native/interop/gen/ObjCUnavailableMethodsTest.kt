@@ -363,7 +363,7 @@ class ObjCUnavailableMethodsTest : IndexerTestsBase() {
                 org.jetbrains.kotlin.native.interop.gen.mirror(declarationMapper, type)
 
         override val macroConstantsByName: Map<String, MacroDef> get() = unsupported()
-        override fun generateNextUniqueId(prefix: String): String = unsupported()
+        override fun generateBridgeSymbol(category: String, stubName: String): String = unsupported()
         override fun isStrictEnum(enumDef: EnumDef): Boolean = unsupported()
         override fun tryCreateIntegralStub(type: Type, value: Long): IntegralConstantStub? = unsupported()
         override fun tryCreateDoubleStub(type: Type, value: Double): DoubleConstantStub? = unsupported()

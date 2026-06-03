@@ -533,7 +533,7 @@ internal abstract class ObjCContainerStubBuilder(
                 }
                 else -> {
                     // TODO: handle the case when protocol getter stub can't be compiled.
-                    "${context.generateNextUniqueId("kniprot_")}_${container.name}"
+                    context.generateBridgeSymbol("kniprot", container.name)
                 }
             }
 

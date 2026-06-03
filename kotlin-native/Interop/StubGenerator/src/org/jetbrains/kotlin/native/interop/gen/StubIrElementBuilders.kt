@@ -538,7 +538,7 @@ internal abstract class FunctionalStubBuilder(
                     name = func.name,
                     directAccess = func.directAccess,
                     direct = { symbolName -> listOf(AnnotationStub.CCall.Direct(symbolName)) },
-                    indirect = { AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${stubName}") }
+                    indirect = { AnnotationStub.CCall.Symbol(context.generateBridgeSymbol("knifunptr", stubName)) },
             )
 
     protected fun FunctionDecl.returnsVoid(): Boolean = this.returnType.unwrapTypedefs() is VoidType
@@ -671,7 +671,7 @@ internal class GlobalStubBuilder(
                             isPointer = true,
                             indirect = {
                                 AnnotationStub.CCall.Symbol(
-                                        "${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter"
+                                        context.generateBridgeSymbol("knifunptr", "${global.fullName}_getter")
                                 )
                             }
                     )
@@ -696,7 +696,7 @@ internal class GlobalStubBuilder(
                             val annotations = cCallOrGlobalAccess(
                                     isPointer = false,
                                     indirect = {
-                                        AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
+                                        AnnotationStub.CCall.Symbol(context.generateBridgeSymbol("knifunptr", "${global.fullName}_getter"))
                                     }
                             )
                             PropertyAccessor.Getter.ExternalGetter(annotations).also {
@@ -718,7 +718,7 @@ internal class GlobalStubBuilder(
                                 val annotations = cCallOrGlobalAccess(
                                         isPointer = false,
                                         indirect = {
-                                            AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_setter")
+                                            AnnotationStub.CCall.Symbol(context.generateBridgeSymbol("knifunptr", "${global.fullName}_setter"))
                                         }
                                 )
                                 PropertyAccessor.Setter.ExternalSetter(annotations).also {
@@ -739,7 +739,7 @@ internal class GlobalStubBuilder(
                             val annotations = cCallOrGlobalAccess(
                                     isPointer = true,
                                     indirect = {
-                                        AnnotationStub.CCall.Symbol("${context.generateNextUniqueId("knifunptr_")}_${global.fullName}_getter")
+                                        AnnotationStub.CCall.Symbol(context.generateBridgeSymbol("knifunptr", "${global.fullName}_getter"))
                                     }
                             )
                             PropertyAccessor.Getter.ExternalGetter(annotations).also {
