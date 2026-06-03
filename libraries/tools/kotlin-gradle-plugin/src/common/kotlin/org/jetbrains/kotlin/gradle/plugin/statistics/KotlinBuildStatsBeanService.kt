@@ -17,8 +17,8 @@ import org.jetbrains.kotlin.statistics.metrics.StatisticsValuesConsumer
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import org.jetbrains.kotlin.statistics.metrics.StringMetrics
 import java.io.Closeable
-import java.io.File
 import java.lang.management.ManagementFactory
+import java.nio.file.Files
 import javax.management.MBeanServer
 import javax.management.ObjectName
 
@@ -100,7 +100,7 @@ internal abstract class KotlinBuildStatsBeanService internal constructor(
             gradle: Gradle,
             providerFactory: ProviderFactory,
         ): Boolean {
-            return if (File(gradle.gradleUserHomeDir, DISABLE_STATISTICS_FILE_NAME).exists()) {
+            return if (Files.exists(gradle.gradleUserHomeDir.toPath().resolve(DISABLE_STATISTICS_FILE_NAME))) {
                 false
             } else {
                 providerFactory.gradleProperty(ENABLE_STATISTICS_PROPERTY_NAME)

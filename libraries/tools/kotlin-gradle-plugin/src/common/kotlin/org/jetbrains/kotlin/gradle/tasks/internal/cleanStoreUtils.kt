@@ -5,17 +5,16 @@
 
 package org.jetbrains.kotlin.gradle.tasks.internal
 
-import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.time.Instant
 
-internal fun File.cleanDir(expirationDate: Instant) {
+internal fun Path.cleanDir(expirationDate: Instant) {
     fun modificationDate(file: Path): Instant {
         return Files.getLastModifiedTime(file).toInstant()
     }
 
-    listFiles()
+    toFile().listFiles()
         ?.filter { file ->
             modificationDate(file.toPath()).isBefore(expirationDate)
         }

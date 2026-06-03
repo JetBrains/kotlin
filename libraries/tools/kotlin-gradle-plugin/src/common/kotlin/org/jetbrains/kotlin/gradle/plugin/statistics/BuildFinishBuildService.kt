@@ -28,7 +28,11 @@ import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.addMetricFromFusKotlinProfileFile
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer.Companion.createValidateAndAnonymizeCopy
 import java.io.File
+import java.nio.file.FileAlreadyExistsException
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.atomic.AtomicBoolean
+import java.util.stream.Collectors
 
 internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildService.Parameters>, AutoCloseable,
     OperationCompletionListener {
@@ -89,7 +93,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
 
         internal fun collectAllFusReportsIntoOne(
             buildUid: String,
-            fusReportDirectory: File,
+            fusReportDirectory: Path,
             kotlinVersion: String,
             log: Logger,
         ): Errors {
@@ -98,11 +102,11 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
 
                 fusReportDirectory.findFusFilesByBuildId(buildUid)
                     ?.forEach {
-                        metricContainer.addMetricFromFusKotlinProfileFile(it)
+                        metricContainer.addMetricFromFusKotlinProfileFile(it.toFile())
                     }
 
                 val fusFile = fusReportDirectory.resolve("$buildUid.profile")
-                fusFile.writer().buffered().use {
+                Files.newBufferedWriter(fusFile).use {
                     it.appendLine("Build: $buildUid")
                     it.appendLine("Kotlin version: $kotlinVersion")
                     metricContainer.createValidateAndAnonymizeCopy().flush(it)
@@ -121,9 +125,27 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             return emptyList()
         }
 
-        internal fun File.findFusFilesByBuildId(buildUid: String): List<File>? = listFiles()
-            ?.sortedWith(compareBy({ it.lastModified() }, { it.name }))
-            ?.filter { it.name.startsWith(buildUid) && (it.name.endsWith("plugin-profile") || it.name.endsWith("kotlin-profile")) }
+        internal fun Path.findFusFilesByBuildId(buildUid: String): List<Path>? {
+            if (!Files.isDirectory(this)) return null
+            return Files.list(this).use { paths ->
+                paths
+                    .sorted(compareBy({ Files.getLastModifiedTime(it).toMillis() }, { it.fileName.toString() }))
+                    .filter { file ->
+                        val fileName = file.fileName.toString()
+                        fileName.startsWith(buildUid) && (fileName.endsWith("plugin-profile") || fileName.endsWith("kotlin-profile"))
+                    }
+                    .collect(Collectors.toList())
+            }
+        }
+
+        private fun Path.createNewFile(): Boolean {
+            return try {
+                Files.createFile(this)
+                true
+            } catch (_: FileAlreadyExistsException) {
+                false
+            }
+        }
     }
 
     override fun onFinish(p0: FinishEvent?) {
@@ -137,16 +159,16 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
         }
     }
 
-    private fun File.errorFile() = resolve("errors-$buildId-${System.currentTimeMillis()}.log")
+    private fun Path.errorFile() = resolve("errors-$buildId-${System.currentTimeMillis()}.log")
 
     internal fun collectAllFusReportsIntoOne() {
-        val errorMessages = collectAllFusReportsIntoOne(buildId, parameters.fusReportDirectory.get(), parameters.kotlinVersion.get(), log)
+        val errorMessages = collectAllFusReportsIntoOne(buildId, parameters.fusReportDirectory.get().toPath(), parameters.kotlinVersion.get(), log)
 
         //KT-79408 skip reporting to IDE if there is already a reported fus related error file with the same buildId
         if (errorMessages.isNotEmpty()) {
             if (errorWasReported.compareAndSet(false, true)) {
                 errorMessages.reportToIde(
-                    parameters.errorDirs.get().map { it.errorFile() }, parameters.kotlinVersion.get(), buildId,
+                    parameters.errorDirs.get().map { it.toPath().errorFile().toFile() }, parameters.kotlinVersion.get(), buildId,
                     GradleKotlinLogger(log)
                 )
             }

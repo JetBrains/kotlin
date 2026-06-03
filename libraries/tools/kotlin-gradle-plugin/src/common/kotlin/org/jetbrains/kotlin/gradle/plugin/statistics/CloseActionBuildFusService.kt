@@ -37,7 +37,7 @@ abstract class CloseActionBuildFusService :
         //To ensure ".profile" file is created only after ".kotlin-profile", call it manually from here
         BuildFinishBuildService.collectAllFusReportsIntoOne(
             buildId,
-            parameters.buildStatisticsConfiguration.get().sessionLoggerPath,
+            parameters.buildStatisticsConfiguration.get().sessionLoggerPath.toPath(),
             parameters.kotlinVersion.get(),
             log
         )

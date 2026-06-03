@@ -72,7 +72,7 @@ class BuildFinishBuildServiceTest {
         )
 
 
-        val errorMessages = BuildFinishBuildService.collectAllFusReportsIntoOne(buildId, fusDir, "test version", logger)
+        val errorMessages = BuildFinishBuildService.collectAllFusReportsIntoOne(buildId, fusDir.toPath(), "test version", logger)
         assertTrue("No error messages expected") { errorMessages.isEmpty() }
 
         assertTrue("finish-profile file should be created after build finish") {
@@ -120,7 +120,7 @@ class BuildFinishBuildServiceTest {
             it.setLastModified(modificationTime + 1)
         }
 
-        val fusFiles = fusReportDirectory.findFusFilesByBuildId(buildId)?.map { it.name }
+        val fusFiles = fusReportDirectory.toPath().findFusFilesByBuildId(buildId)?.map { it.fileName.toString() }
         assertEquals(listOf("$buildId.2.plugin-profile", "$buildId.3.kotlin-profile", "$buildId.1.plugin-profile"), fusFiles)
     }
 
