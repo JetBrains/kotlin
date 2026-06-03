@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultTypeWithoutArguments
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
@@ -244,7 +245,7 @@ abstract class IrBuiltInsOverSymbolFinder(override val symbolFinder: SymbolFinde
 
     override val ororSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.oror.functionSymbol()
 
-    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.noWhenBranchMatchedException.functionSymbol()
+    override val noWhenBranchMatchedExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.noWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 0) }
 
     override val illegalArgumentExceptionSymbol: IrSimpleFunctionSymbol by IrSyntheticProvider.illegalArgumentException.functionSymbol()
 

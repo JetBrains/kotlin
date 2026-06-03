@@ -60,6 +60,11 @@ internal fun throwNoBranchMatchedException(): Nothing {
 }
 
 @UsedFromCompilerGeneratedCode
+internal fun throwNoBranchMatchedException(message: String): Nothing {
+    throw NoWhenBranchMatchedException(message)
+}
+
+@UsedFromCompilerGeneratedCode
 internal fun throwKotlinNothingValueException(): Nothing {
     throw KotlinNothingValueException()
 }

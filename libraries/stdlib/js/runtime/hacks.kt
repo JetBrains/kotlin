@@ -15,6 +15,9 @@ internal fun throwKotlinNothingValueException(): Nothing =
 internal fun noWhenBranchMatchedException(): Nothing = throw NoWhenBranchMatchedException()
 
 @UsedFromCompilerGeneratedCode
+internal fun noWhenBranchMatchedException(msg: String): Nothing = throw NoWhenBranchMatchedException(msg)
+
+@UsedFromCompilerGeneratedCode
 internal fun THROW_ISE(): Nothing {
     throw IllegalStateException()
 }

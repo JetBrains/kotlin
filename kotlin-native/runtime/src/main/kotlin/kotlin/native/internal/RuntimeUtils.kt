@@ -85,6 +85,11 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
+@UsedFromCompilerGeneratedCode
+internal fun ThrowNoWhenBranchMatchedException(message: String): Nothing {
+    throw NoWhenBranchMatchedException(message)
+}
+
 @ExportForCppRuntime
 @UsedFromCompilerGeneratedCode
 internal fun ThrowIllegalArgumentException() : Nothing {

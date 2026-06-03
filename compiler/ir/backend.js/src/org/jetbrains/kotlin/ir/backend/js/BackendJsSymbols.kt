@@ -59,7 +59,7 @@ class BackendJsSymbols(
     private val stageController: StageController,
     private val compileLongAsBigint: Boolean
 ) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), BackendWebSymbols(irBuiltIns) {
-    val noWhenBranchMatchedException by CallableIds.noWhenBranchMatchedException.functionSymbol()
+    val noWhenBranchMatchedException by CallableIds.noWhenBranchMatchedException.functionSymbol { it.hasShape(regularParameters = 0) }
 
     override val throwNullPointerException by CallableIds.throwNpe.functionSymbol()
 
