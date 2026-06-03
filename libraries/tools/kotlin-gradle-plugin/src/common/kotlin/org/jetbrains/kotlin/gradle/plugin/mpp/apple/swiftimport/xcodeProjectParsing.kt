@@ -14,8 +14,8 @@ import kotlinx.serialization.json.*
 import org.gradle.process.ExecOperations
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.OutputStream
+import java.nio.file.Path
 
 internal open class JsonElementBacked {
     @Transient
@@ -209,7 +209,7 @@ internal class XcodeProject(
 ) : JsonElementBacked()
 
 internal fun deserializeXcodeProject(
-    pbxprojPath: File,
+    pbxprojPath: Path,
     execOps: ExecOperations,
 ): XcodeProject {
     val output = ByteArrayOutputStream()
@@ -218,7 +218,7 @@ internal fun deserializeXcodeProject(
         it.commandLine(
             "/usr/bin/plutil",
             "-convert", "json",
-            pbxprojPath,
+            pbxprojPath.toFile(),
             "-o", "-"
         )
     }

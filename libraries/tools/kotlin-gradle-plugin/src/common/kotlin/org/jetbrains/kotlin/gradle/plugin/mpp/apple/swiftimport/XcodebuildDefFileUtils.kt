@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport
 
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import org.jetbrains.kotlin.gradle.utils.appendLine
-import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 private val MODULE_NAME_REGEX = Regex("\\bmodule ([A-Za-z0-9_.]+) ")
 
@@ -44,12 +46,12 @@ internal object XcodebuildDefFileUtils {
         val librarySearchPaths: Set<String>,
     )
 
-    fun parseClangCall(architectureSpecificProductClangCall: File): ParsedClangCall {
+    fun parseClangCall(architectureSpecificProductClangCall: Path): ParsedClangCall {
         val cinteropClangArgs = mutableListOf<String>()
         val compileTimeFrameworkSearchPaths = mutableSetOf<String>()
         val includeSearchPaths = mutableSetOf<String>()
         val explicitModuleMaps = mutableSetOf<String>()
-        architectureSpecificProductClangCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR).forEach { arg ->
+        Files.newBufferedReader(architectureSpecificProductClangCall).use { it.readLines().single() }.split(DUMP_FILE_ARGS_SEPARATOR).forEach { arg ->
             val frameworkSearchPathArg = "-F"
             if (arg.startsWith(frameworkSearchPathArg)) {
                 cinteropClangArgs.add(arg)
@@ -74,8 +76,8 @@ internal object XcodebuildDefFileUtils {
         )
     }
 
-    fun parseLdCall(architectureSpecificProductLdCall: File): ParsedLdCall {
-        val resplitLdCall = architectureSpecificProductLdCall.readLines().single().split(DUMP_FILE_ARGS_SEPARATOR)
+    fun parseLdCall(architectureSpecificProductLdCall: Path): ParsedLdCall {
+        val resplitLdCall = Files.newBufferedReader(architectureSpecificProductLdCall).use { it.readLines().single() }.split(DUMP_FILE_ARGS_SEPARATOR)
         val ldArgs = mutableListOf<String>()
         val filelist = mutableListOf<String>()
         val kotlinDylibProduct = mutableListOf<String>()
@@ -111,7 +113,7 @@ internal object XcodebuildDefFileUtils {
                 }
                 if (arg.endsWith(".dylib")) {
                     ldArgs.add(arg)
-                    librarySearchPaths.add((File(arg).parentFile.path))
+                    librarySearchPaths.add(Paths.get(arg).parent.toString())
                 }
 
                 if (arg.endsWith("/" + GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_DYLIB)) {
@@ -122,7 +124,7 @@ internal object XcodebuildDefFileUtils {
                         ldArgs.add(arg)
                     }
                     linkTimeFrameworkSearchPaths.add(
-                        File(arg).parentFile.parentFile.path
+                        Paths.get(arg).parent.parent.toString()
                     )
                 }
             }
@@ -137,7 +139,9 @@ internal object XcodebuildDefFileUtils {
     }
 
     fun discoverClangModules(parsedClangCall: ParsedClangCall): Set<String> {
-        fun inferModuleName(modulemap: File): String? = MODULE_NAME_REGEX.find(modulemap.readText())?.let {
+        fun inferModuleName(modulemap: Path): String? = Files.newBufferedReader(modulemap).use { reader ->
+            MODULE_NAME_REGEX.find(reader.readText())
+        }?.let {
             it.groups[1]?.value
         }
 
@@ -145,24 +149,24 @@ internal object XcodebuildDefFileUtils {
          * FIXME: KT-84809 Discovery logic will break on incremental runs as it will discover stale modules (same issue with Xcode)
          */
         val implicitlyDiscoveredModules = mutableSetOf<String>()
-        parsedClangCall.compileTimeFrameworkSearchPaths.map { File(it) }.filter { it.exists() }.forEach {
+        parsedClangCall.compileTimeFrameworkSearchPaths.map { Paths.get(it) }.filter { Files.exists(it) }.forEach {
             implicitlyDiscoveredModules.addAll(
-                it.listFilesOrEmpty().filter { child ->
-                    child.extension == "framework"
+                it.listChildrenOrEmpty().filter { child ->
+                    child.fileName.toString().endsWith(".framework")
                 }.filter { framework ->
-                    val children = framework.listFilesOrEmpty()
-                    val hasModules = children.any { child -> child.name == "Modules" }
+                    val children = framework.listChildrenOrEmpty()
+                    val hasModules = children.any { child -> child.fileName.toString() == "Modules" }
                     // Some libraries like GoogleAppMeasurement have a modulemap with dangling header references
-                    val hasHeaders = children.any { child -> child.name == "Headers" }
+                    val hasHeaders = children.any { child -> child.fileName.toString() == "Headers" }
                     hasModules && hasHeaders
                 }.map { framework ->
-                    framework.nameWithoutExtension
+                    framework.fileName.toString().substringBeforeLast(".framework")
                 }
             )
         }
-        parsedClangCall.includeSearchPaths.map { File(it) }.filter { it.exists() }.forEach { searchPath ->
-            searchPath.listFilesOrEmpty().forEach { searchPathFile ->
-                if (searchPathFile.name == "module.modulemap") {
+        parsedClangCall.includeSearchPaths.map { Paths.get(it) }.filter { Files.exists(it) }.forEach { searchPath ->
+            searchPath.listChildrenOrEmpty().forEach { searchPathFile ->
+                if (searchPathFile.fileName.toString() == "module.modulemap") {
                     val module = inferModuleName(searchPathFile)
                     if (module != null) {
                         implicitlyDiscoveredModules.add(module)
@@ -172,13 +176,13 @@ internal object XcodebuildDefFileUtils {
                 // -I/search/path
                 // /search/path/ModuleName/module.modulemap
                 // E.g. GoogleMaps
-                if (searchPathFile.isDirectory) {
-                    searchPathFile.listFilesOrEmpty().filter {
-                        it.name == "module.modulemap"
+                if (Files.isDirectory(searchPathFile)) {
+                    searchPathFile.listChildrenOrEmpty().filter {
+                        it.fileName.toString() == "module.modulemap"
                     }.forEach { subsearchPathFile ->
                         val module = inferModuleName(subsearchPathFile)
                         // The module must be equal to the directory name, same as with frameworks
-                        if (module != null && module == searchPathFile.name) {
+                        if (module != null && module == searchPathFile.fileName.toString()) {
                             implicitlyDiscoveredModules.add(module)
                         }
                     }
@@ -187,7 +191,7 @@ internal object XcodebuildDefFileUtils {
         }
         implicitlyDiscoveredModules.addAll(
             parsedClangCall.explicitModuleMaps.mapNotNull {
-                inferModuleName(File(it))
+                inferModuleName(Paths.get(it))
             }
         )
         return implicitlyDiscoveredModules
@@ -201,30 +205,43 @@ internal object XcodebuildDefFileUtils {
         cinteropNamespace: String,
         discoverModulesImplicitly: Boolean,
     ) {
+        writeDefFile(parsedClangCall, clangModules, architecture, defFilesDir.toPath(), cinteropNamespace, discoverModulesImplicitly)
+    }
+
+    private fun writeDefFile(
+        parsedClangCall: ParsedClangCall,
+        clangModules: Set<String>,
+        architecture: AppleArchitecture,
+        defFilesDir: Path,
+        cinteropNamespace: String,
+        discoverModulesImplicitly: Boolean,
+    ) {
         val defFileSearchPaths = parsedClangCall.cinteropClangArgs.joinToString(" ") { "\"${it}\"" }
         val modules = clangModules.joinToString(" ") { "\"${it}\"" }
 
         val defFile = defFilesDir.resolve("${architecture.xcodebuildArch}.def")
-        defFile.writeText(
-            buildString {
-                appendLine("language = Objective-C")
-                appendLine("compilerOpts = -fmodules $defFileSearchPaths")
-                appendLine("package = $cinteropNamespace")
-                if (modules.isNotEmpty()) {
-                    appendLine("modules = $modules")
-                }
-                val invalidateDownstreamCinterops = System.currentTimeMillis()
-                if (discoverModulesImplicitly) {
-                    appendLine("skipNonImportableModules = true")
-                }
-                appendLine(
-                    """
+        Files.newBufferedWriter(defFile).use { writer ->
+            writer.write(
+                buildString {
+                    appendLine("language = Objective-C")
+                    appendLine("compilerOpts = -fmodules $defFileSearchPaths")
+                    appendLine("package = $cinteropNamespace")
+                    if (modules.isNotEmpty()) {
+                        appendLine("modules = $modules")
+                    }
+                    val invalidateDownstreamCinterops = System.currentTimeMillis()
+                    if (discoverModulesImplicitly) {
+                        appendLine("skipNonImportableModules = true")
+                    }
+                    appendLine(
+                        """
                         ---
                         // $invalidateDownstreamCinterops
                     """.trimIndent()
-                )
-            }
-        )
+                    )
+                }
+            )
+        }
     }
 
     fun clangArgsDumpScript(): String = argsDumpScript(KOTLIN_CLANG_ARGS_DUMP_FILE_ENV)
@@ -244,4 +261,9 @@ internal object XcodebuildDefFileUtils {
 
         clang "$@"
     """.trimIndent()
+
+    private fun Path.listChildrenOrEmpty(): List<Path> {
+        if (!Files.isDirectory(this)) return emptyList()
+        return Files.newDirectoryStream(this).use { children -> children.toList() }
+    }
 }
