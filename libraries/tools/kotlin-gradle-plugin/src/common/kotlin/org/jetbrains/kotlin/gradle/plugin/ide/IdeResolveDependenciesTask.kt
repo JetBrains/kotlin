@@ -5,11 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.ide
 
-import com.google.gson.*
+import kotlinx.serialization.json.*
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.artifacts.result.ArtifactResult
-import org.gradle.api.artifacts.result.DependencyResult
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskAction
@@ -18,14 +17,11 @@ import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinDependencyCoordinates
 import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesChecker
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.locateOrRegisterPartiallyResolvedDependenciesCheckerTask
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.tooling.core.Extras
 import java.io.File
-import java.lang.reflect.Type
+import java.util.IdentityHashMap
 
 internal val IdeResolveDependenciesTaskSetupAction = KotlinProjectSetupAction {
     locateOrRegisterIdeResolveDependenciesTask()
@@ -52,7 +48,6 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
     private val outputDirectory = project.layout.buildDirectory.dir("ide/dependencies")
     private val kotlinExtension = project.kotlinExtension
     private val kotlinIdeMultiplatformImportStatistics = project.kotlinIdeMultiplatformImportStatistics
-    private val gsonFileAdapter = FileAdapter(project)
 
     @get:Internal
     internal abstract val kotlinIdeMultiplatformImport: Property<IdeMultiplatformImport>
@@ -61,19 +56,13 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
     fun resolveDependencies() {
         val outputDirectory = outputDirectory.get().asFile
         outputDirectory.deleteRecursively()
-        val gson = GsonBuilder().setStrictness(Strictness.LENIENT).setPrettyPrinting()
-            .registerTypeHierarchyAdapter(IdeDependencyResolver::class.java, IdeDependencyResolverAdapter)
-            .registerTypeHierarchyAdapter(Extras::class.java, ExtrasAdapter)
-            .registerTypeHierarchyAdapter(IdeaKotlinDependencyCoordinates::class.java, IdeaKotlinDependencyCoordinatesAdapter)
-            .registerTypeHierarchyAdapter(ArtifactResult::class.java, ToStringAdapter)
-            .registerTypeAdapter(File::class.java, gsonFileAdapter)
-            .create()
+        val prettyJson = Json { prettyPrint = true }
 
         kotlinExtension.sourceSets.forEach { sourceSet ->
             val dependencies = kotlinIdeMultiplatformImport.get().resolveDependencies(sourceSet)
             val jsonOutput = outputDirectory.resolve("json/${sourceSet.name}.json")
             jsonOutput.parentFile.mkdirs()
-            jsonOutput.writeText(gson.toJson(dependencies))
+            jsonOutput.writeText(prettyJson.encodeToString(JsonElement.serializer(), toJsonElement(dependencies)))
 
             kotlinIdeMultiplatformImport.get().serialize(dependencies).forEachIndexed { index, proto ->
                 val protoOutput = outputDirectory.resolve("proto/${sourceSet.name}/$index.bin")
@@ -92,44 +81,80 @@ internal abstract class IdeResolveDependenciesTask : DefaultTask() {
         }
     }
 
-    private object IdeDependencyResolverAdapter : JsonSerializer<IdeDependencyResolver> {
-        override fun serialize(src: IdeDependencyResolver, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-            return JsonPrimitive(src.javaClass.name)
+    // --- Reflective JSON walker -----------------------------------------------------------------
+
+    private fun toJsonElement(value: Any?, seen: IdentityHashMap<Any, Unit> = IdentityHashMap()): JsonElement {
+        if (value == null) return JsonNull
+        // Stable toString() types
+        when (value) {
+            is Boolean -> return JsonPrimitive(value)
+            is Number -> return JsonPrimitive(value)
+            is String -> return JsonPrimitive(value)
+            is Enum<*> -> return JsonPrimitive(value.name)
+        }
+        // Special-cased types matching the previous Gson adapters
+        if (value is IdeDependencyResolver) return JsonPrimitive(value.javaClass.name)
+        if (value is IdeaKotlinDependencyCoordinates) return JsonPrimitive(value.toString())
+        if (value is ArtifactResult) return JsonPrimitive(value.toString())
+        if (value is File) return JsonPrimitive(fileToString(value))
+        if (value is Extras) return extrasToJsonObject(value, seen)
+        // Collections
+        if (value is Iterable<*>) {
+            if (seen.containsKey(value)) return JsonPrimitive("<cycle>")
+            seen[value] = Unit
+            val arr = JsonArray(value.mapNotNull { toJsonElement(it, seen) })
+            seen.remove(value)
+            return arr
+        }
+        if (value is Map<*, *>) {
+            if (seen.containsKey(value)) return JsonPrimitive("<cycle>")
+            seen[value] = Unit
+            val obj = buildJsonObject {
+                value.entries.forEach { (k, v) -> put(k.toString(), toJsonElement(v, seen)) }
+            }
+            seen.remove(value)
+            return obj
+        }
+        // Arbitrary objects: reflect over declared fields
+        if (seen.containsKey(value)) return JsonPrimitive("<cycle>")
+        seen[value] = Unit
+        val obj = reflectToJsonObject(value, seen)
+        seen.remove(value)
+        return obj
+    }
+
+    private fun fileToString(file: File): String {
+        val projectDir = project.projectDir
+        val rootDir = project.rootDir
+        return when {
+            file.startsWith(projectDir) -> file.relativeTo(projectDir).path
+            file.startsWith(rootDir) -> file.relativeTo(rootDir).path
+            else -> file.path
         }
     }
 
-    private object IdeaKotlinDependencyCoordinatesAdapter : JsonSerializer<IdeaKotlinDependencyCoordinates> {
-        override fun serialize(src: IdeaKotlinDependencyCoordinates, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
-            return JsonPrimitive(src.toString())
+    private fun extrasToJsonObject(extras: Extras, seen: IdentityHashMap<Any, Unit>): JsonElement {
+        return buildJsonObject {
+            extras.entries.forEach { entry ->
+                val valueElement = runCatching { toJsonElement(entry.value, seen) }.getOrElse { JsonPrimitive(entry.value.toString()) }
+                put(entry.key.stableString, valueElement)
+            }
         }
     }
 
-    private object ExtrasAdapter : JsonSerializer<Extras> {
-        override fun serialize(src: Extras, typeOfSrc: Type, context: JsonSerializationContext): JsonElement {
-            return JsonObject().apply {
-                src.entries.forEach { entry ->
-                    val valueElement = runCatching { context.serialize(entry.value) }.getOrElse { JsonPrimitive(entry.value.toString()) }
-                    add(entry.key.stableString, valueElement)
+    private fun reflectToJsonObject(value: Any, seen: IdentityHashMap<Any, Unit>): JsonElement {
+        return buildJsonObject {
+            put("@type", value.javaClass.name)
+            var clazz: Class<*>? = value.javaClass
+            while (clazz != null && clazz != Any::class.java) {
+                clazz.declaredFields.forEach { field ->
+                    if (java.lang.reflect.Modifier.isStatic(field.modifiers)) return@forEach
+                    field.isAccessible = true
+                    val fieldValue = runCatching { field.get(value) }.getOrNull()
+                    put(field.name, toJsonElement(fieldValue, seen))
                 }
+                clazz = clazz.superclass
             }
-        }
-    }
-
-    private class FileAdapter(private val project: Project) : JsonSerializer<File> {
-        override fun serialize(src: File, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
-            return if (src.startsWith(project.projectDir)) {
-                JsonPrimitive(src.relativeTo(project.projectDir).path)
-            } else if (src.startsWith(project.rootDir)) {
-                JsonPrimitive(src.relativeTo(project.rootDir).path)
-            } else {
-                JsonPrimitive(src.path)
-            }
-        }
-    }
-
-    object ToStringAdapter : JsonSerializer<Any> {
-        override fun serialize(src: Any, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
-            return JsonPrimitive(src.toString())
         }
     }
 }
