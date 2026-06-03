@@ -15,6 +15,8 @@ import org.gradle.api.tasks.TaskAction
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Paths
 
 @DisableCachingByDefault(because = "No outputs to cache")
 internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
@@ -47,11 +49,11 @@ internal abstract class CheckCocoaPodsHasNoSwiftPMDependencies : DefaultTask() {
         val transitiveSwiftPMDependencies = transitiveSwiftPMDependencies.get().metadataByDependencyIdentifier
         if (directSwiftPMDependencies.isNotEmpty() || transitiveSwiftPMDependencies.isNotEmpty()) {
             val xcodeProjectPath = workspacePath.orNull?.let {
-                File(it).listFiles().firstOrNull {
-                    it.name.endsWith(".xcodeproj")
+                Files.list(Paths.get(it)).use { paths ->
+                    paths.filter { path -> path.fileName.toString().endsWith(".xcodeproj") }.findFirst().orElse(null)
                 }
             } ?: "/path/to/iosApp.xcodeproj"
-            val gradlewPath = searchForGradlew(projectPath.get())
+            val gradlewPath = searchForGradlew(projectPath.get().toPath())
             val message = buildString {
                 appendLine("You are using CocoaPods integration with SwiftPM dependencies. Please follow the migration guide https://kotl.in/cocoapods-to-swiftpm-migration")
                 appendLine("and run the following command to switch your Xcode project to the SwiftPM integration:")

@@ -29,6 +29,8 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleArchitecture
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 @DisableCachingByDefault(because = "KT-84827 - SwiftPM import doesn't support caching yet")
@@ -67,7 +69,7 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:PathSensitive(PathSensitivity.RELATIVE)
     protected val localPackageSources: Provider<List<File>>
         get() = filesToTrackFromLocalPackages.map {
-            it.asFile.readLines().filter { line -> line.isNotEmpty() }.map { line -> File(line) }
+            readLocalPackageSourcePaths(it.asFile.toPath()).map { path -> path.toFile() }
         }
 
     @get:IgnoreEmptyDirectories
@@ -187,5 +189,11 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     companion object {
         const val TASK_NAME = "convertSyntheticImportProjectIntoDefFile"
+
+        private fun readLocalPackageSourcePaths(file: Path): List<Path> {
+            return Files.newBufferedReader(file).useLines { lines ->
+                lines.filter { line -> line.isNotEmpty() }.map { line -> file.fileSystem.getPath(line) }.toList()
+            }
+        }
     }
 }

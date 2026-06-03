@@ -425,7 +425,7 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
     xcodeProjectThatCalledEmbedAndSign: File,
     rootProjectDir: File,
 ) {
-    val xcodeProject = deserializeXcodeProject(xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj"), execOperations)
+    val xcodeProject = deserializeXcodeProject(xcodeProjectThatCalledEmbedAndSign.resolve("project.pbxproj").toPath(), execOperations)
     val linkageProducts = linkageProductsReferencedInPBXObjects(xcodeProject)
     val hasSyntheticImportProjectReference = linkageProducts.isNotEmpty()
     if (!hasSyntheticImportProjectReference) {
@@ -433,7 +433,7 @@ internal fun checkIfTheLinkageProjectIsConnectedToTheXcodeProject(
             ":${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
         } else "${gradleProjectPath}:${IntegrateLinkagePackageIntoXcodeProject.TASK_NAME}"
 
-        val gradleCommand = searchForGradlew(xcodeProjectThatCalledEmbedAndSign)?.path
+        val gradleCommand = searchForGradlew(xcodeProjectThatCalledEmbedAndSign.toPath())?.toString()
             ?: rootProjectDir.resolve("gradlew").takeIf { it.exists() }?.path
             ?: "gradle"
         val messageLines = listOf(
