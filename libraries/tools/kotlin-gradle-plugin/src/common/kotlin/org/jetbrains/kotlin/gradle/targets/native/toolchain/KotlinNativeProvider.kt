@@ -126,14 +126,17 @@ internal class KotlinNativeFromToolchainProvider(
             nativeVersion
         }
 
+    @get:Internal
+    internal val actualNativeHomeDirectory: Provider<File> = project.nativeProperties.actualNativeHomeDirectory
+
     @get:Input
     val kotlinNativeDependencies: Provider<Set<String>> =
         kotlinNativeBundleVersion
-            .zip(bundleDirectory) { _, bundleDir ->
+            .zip(actualNativeHomeDirectory) { _, bundleDir ->
                 if (toolchainEnabled.get() && enableDependenciesDownloading) {
                     kotlinNativeBundleBuildService.get()
                         .downloadNativeDependencies(
-                            File(bundleDir),
+                            bundleDir,
                             konanDataDir.orNull,
                             konanTargets,
                         )
@@ -147,9 +150,6 @@ internal class KotlinNativeFromToolchainProvider(
 
     @get:Internal
     internal val nativeJvmArgs = project.listProperty { project.nativeProperties.jvmArgs.get() }
-
-    @get:Internal
-    internal val actualNativeHomeDirectory: Provider<File> = project.nativeProperties.actualNativeHomeDirectory
 
     @get:Internal
     internal val konanTargetsWithNativeCacheKind: Map<KonanTarget, Provider<NativeCacheKind>> =

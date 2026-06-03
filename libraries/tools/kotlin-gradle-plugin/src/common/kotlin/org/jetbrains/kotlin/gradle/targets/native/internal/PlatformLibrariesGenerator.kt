@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NativeVersionValueSource
 import org.jetbrains.kotlin.gradle.tasks.addArg
 import org.jetbrains.kotlin.gradle.utils.lifecycleWithDuration
-import org.jetbrains.kotlin.gradle.utils.listFilesOrEmpty
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeLibraryGenerationRunner
 import org.jetbrains.kotlin.gradle.utils.registerClassLoaderScopedBuildService
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -33,7 +32,9 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.target.customerDistribution
 import org.jetbrains.kotlin.konan.util.visibleName
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.Paths
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -73,10 +74,10 @@ internal class PlatformLibrariesGenerator(
     )
 
     private val platformLibsDirectory =
-        File(distribution.platformLibs(konanTarget)).absoluteFile
+        Paths.get(distribution.platformLibs(konanTarget)).toAbsolutePath()
 
     private val defDirectory =
-        File(distribution.platformDefs(konanTarget)).absoluteFile
+        Paths.get(distribution.platformDefs(konanTarget)).toAbsolutePath()
 
     private val konanCacheKind: Provider<NativeCacheKind> = nativeCacheKind
 
@@ -85,9 +86,10 @@ internal class PlatformLibrariesGenerator(
                 konanCacheKind.get() != NativeCacheKind.NONE
 
     private val presentDefs: Set<String> by lazy {
-        defDirectory
-            .listFiles { file -> file.extension == "def" }.orEmpty()
-            .map { it.nameWithoutExtension }.toSet()
+        if (!Files.isDirectory(defDirectory)) emptySet()
+        else Files.newDirectoryStream(defDirectory, "*.def").use { stream ->
+            stream.map { it.fileName.toString().removeSuffix(".def") }.toSet()
+        }
     }
 
     private fun Set<String>.toPlatformLibNames(): Set<String> =
@@ -97,9 +99,10 @@ internal class PlatformLibrariesGenerator(
      * Checks that all platform libs for [konanTarget] actually exist in the [distribution].
      */
     private fun checkLibrariesInDistribution(): Boolean {
-        val presentPlatformLibs = platformLibsDirectory
-            .listFiles { file -> file.isDirectory }.orEmpty()
-            .map { it.name }.toSet()
+        val presentPlatformLibs = if (!Files.isDirectory(platformLibsDirectory)) emptySet()
+        else Files.newDirectoryStream(platformLibsDirectory).use { stream ->
+            stream.filter { Files.isDirectory(it) }.map { it.fileName.toString() }.toSet()
+        }
 
         // TODO: Check that all directories in presentPlatformLibs are real klibs when klib componentization is merged.
         return presentDefs.toPlatformLibNames().all { it in presentPlatformLibs }
@@ -114,14 +117,14 @@ internal class PlatformLibrariesGenerator(
         }
 
         val cacheDirectory = getRootCacheDirectory(
-            konanHome, konanTarget, true, konanCacheKind.get()
+            konanHome.toPath(), konanTarget, true, konanCacheKind.get()
         )
         return presentDefs.toPlatformLibNames().all {
-            cacheDirectory.resolve(getCacheFileName(it, konanCacheKind.get())).listFilesOrEmpty().isNotEmpty()
+            cacheDirectory.resolve(getCacheFileName(it, konanCacheKind.get())).isNotEmptyDirectory()
         }
     }
 
-    private fun getRootCacheDirectory(konanHome: File, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): File {
+    private fun getRootCacheDirectory(konanHome: Path, target: KonanTarget, debuggable: Boolean, cacheKind: NativeCacheKind): Path {
         require(cacheKind != NativeCacheKind.NONE) { "Unsupported cache kind: ${NativeCacheKind.NONE}" }
         val optionsAwareCacheName = "$target${if (debuggable) "-g" else ""}$cacheKind"
         return konanHome.resolve("klib/cache/$optionsAwareCacheName")
@@ -161,11 +164,11 @@ internal class PlatformLibrariesGenerator(
             args.addArg(
                 "-cache-directory",
                 getRootCacheDirectory(
-                    actualNativeHomeDirectory.get(),
+                    actualNativeHomeDirectory.get().toPath(),
                     konanTarget,
                     true,
                     konanCacheKind.get()
-                ).absolutePath
+                ).toAbsolutePath().toString()
             )
             args.addArg("-cache-arg", "-g")
             val additionalCacheFlags = konanPropertiesService.get().additionalCacheFlags(konanTarget)
@@ -189,22 +192,21 @@ internal class PlatformLibrariesGenerator(
         }
 
         // Don't run the generator if libraries/caches for this target were already built during this Gradle invocation.
-        val platformLibsPath = platformLibsDirectory.toPath()
-        val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsPath)
-        val alreadyCached = alreadyProcessed.isCached(platformLibsPath, konanCacheKind.get())
-        if ((alreadyGenerated && alreadyCached) || !defDirectory.exists()) {
+        val alreadyGenerated = alreadyProcessed.isGenerated(platformLibsDirectory)
+        val alreadyCached = alreadyProcessed.isCached(platformLibsDirectory, konanCacheKind.get())
+        if ((alreadyGenerated && alreadyCached) || !Files.exists(defDirectory)) {
             return
         }
 
         // Check if libraries/caches for this target already exist (requires reading from disc).
         val platformLibsAreReady = checkLibrariesInDistribution()
         if (platformLibsAreReady) {
-            alreadyProcessed.setGenerated(platformLibsPath)
+            alreadyProcessed.setGenerated(platformLibsDirectory)
         }
 
         val cachesAreReady = checkCaches()
         if (cachesAreReady) {
-            alreadyProcessed.setCached(platformLibsPath, konanCacheKind.get())
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
 
         val generationMessage = when {
@@ -225,20 +227,19 @@ internal class PlatformLibrariesGenerator(
         val librariesAreActuallyGenerated = checkLibrariesInDistribution()
         assert(librariesAreActuallyGenerated) { "Some platform libraries were not generated" }
         if (librariesAreActuallyGenerated) {
-            alreadyProcessed.setGenerated(platformLibsPath)
+            alreadyProcessed.setGenerated(platformLibsDirectory)
         }
 
         val librariesAreActuallyCached = checkCaches()
         assert(librariesAreActuallyCached) { "Some platform libraries were not precompiled" }
         if (librariesAreActuallyCached) {
-            alreadyProcessed.setCached(platformLibsPath, konanCacheKind.get())
+            alreadyProcessed.setCached(platformLibsDirectory, konanCacheKind.get())
         }
     }
 
     private fun generatePlatformLibs(generationMessage: String) {
-        val platformLibsPath = platformLibsDirectory.toPath()
-        val lock = commonizerLockForDirectory.getOrPut(platformLibsPath) {
-            NativeDistributionCommonizerLock(platformLibsPath) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
+        val lock = commonizerLockForDirectory.getOrPut(platformLibsDirectory) {
+            NativeDistributionCommonizerLock(platformLibsDirectory) { message -> NativeVersionValueSource.Companion.logger.info("Kotlin Native Platform Libraries: $message") }
         }
 
         lock.withLock {
@@ -248,6 +249,9 @@ internal class PlatformLibrariesGenerator(
             }
         }
     }
+
+    private fun Path.isNotEmptyDirectory(): Boolean =
+        Files.isDirectory(this) && Files.list(this).use { it.findAny().isPresent }
 
     internal class PlatformLibsInfo {
         private val generated: MutableSet<Path> = Collections.newSetFromMap(ConcurrentHashMap<Path, Boolean>())

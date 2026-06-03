@@ -53,7 +53,7 @@ class MachOTest {
     private fun assertDylib(expected: Boolean, resource: String) {
         val tmp = temporaryFolder.resolve("tmp").also { it.createNewFile() }
         tmp.writeResource(resource)
-        return assertEquals(expected, MachO.isDylib(tmp, buildProject().logger))
+        return assertEquals(expected, MachO.isDylib(tmp.toPath(), buildProject().logger))
     }
 
     private fun File.writeResource(resource: String) {

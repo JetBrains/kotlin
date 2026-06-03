@@ -23,6 +23,8 @@ import org.jetbrains.kotlin.gradle.utils.MachO
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.incremental.createDirectory
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import javax.inject.Inject
 
 /**
@@ -74,21 +76,22 @@ abstract class DummyFrameworkTask @Inject constructor(
     private val dummyFrameworkResource: String
         get() = "/cocoapods/$linkageName/dummy.framework/"
 
-    private fun copyResource(from: String, to: File) {
-        to.parentFile.mkdirs()
-        to.outputStream().use { file ->
+    private fun copyResource(from: String, to: Path) {
+        Files.createDirectories(to.parent)
+        Files.newOutputStream(to).use { file ->
             javaClass.getResourceAsStream(from)!!.use { resource ->
                 resource.copyTo(file)
             }
         }
     }
 
-    private fun copyTextResource(from: String, to: File, transform: (String) -> String = { it }) {
-        to.parentFile.mkdirs()
-        to.printWriter().use { file ->
+    private fun copyTextResource(from: String, to: Path, transform: (String) -> String = { it }) {
+        Files.createDirectories(to.parent)
+        Files.newBufferedWriter(to).use { file ->
             javaClass.getResourceAsStream(from)!!.use {
                 it.reader().forEachLine { str ->
-                    file.println(transform(str))
+                    file.append(transform(str))
+                    file.newLine()
                 }
             }
         }
@@ -97,7 +100,7 @@ abstract class DummyFrameworkTask @Inject constructor(
     private fun copyFrameworkFile(relativeFrom: String, relativeTo: String = relativeFrom) =
         copyResource(
             "$dummyFrameworkResource$relativeFrom",
-            outputFramework.getFile().resolve(relativeTo)
+            outputFramework.getFile().toPath().resolve(relativeTo)
         )
 
     private fun copyFrameworkTextFile(
@@ -106,7 +109,7 @@ abstract class DummyFrameworkTask @Inject constructor(
         transform: (String) -> String = { it },
     ) = copyTextResource(
         "$dummyFrameworkResource$relativeFrom",
-        outputFramework.getFile().resolve(relativeTo),
+        outputFramework.getFile().toPath().resolve(relativeTo),
         transform
     )
 
@@ -155,7 +158,7 @@ abstract class DummyFrameworkTask @Inject constructor(
                 logger.info("Generating dummy-framework because the framework is missing")
                 copyFramework()
             }
-            MachO.isDylib(binary, logger) == !useStaticFramework.get() -> {
+            MachO.isDylib(binary.toPath(), logger) == !useStaticFramework.get() -> {
                 logger.info("Skipping dummy-framework generation because a $linkageName framework is already present")
             }
             else -> {

@@ -181,32 +181,32 @@ internal abstract class KotlinNativeBundleBuildService : BuildService<KotlinNati
         override fun extract(archive: File, targetDirectory: File, archiveType: ArchiveType) {
             when (archiveType) {
                 ArchiveType.ZIP -> archive.toPath().unzipTo(targetDirectory.toPath())
-                ArchiveType.TAR_GZ -> unzipTarGz(archive, targetDirectory)
+                ArchiveType.TAR_GZ -> unzipTarGz(archive.toPath(), targetDirectory.toPath())
                 else -> error("Unsupported format for unzipping $archive")
             }
         }
 
-        private fun unzipTarGz(archive: File, targetDir: File) {
-            GZIPInputStream(BufferedInputStream(archive.inputStream())).use { gzipInputStream ->
+        private fun unzipTarGz(archive: Path, targetDir: Path) {
+            GZIPInputStream(BufferedInputStream(Files.newInputStream(archive))).use { gzipInputStream ->
                 val hardLinks = HashMap<Path, Path>()
 
                 TarArchiveInputStream(gzipInputStream).use { tarInputStream ->
                     generateSequence {
                         tarInputStream.nextEntry
                     }.forEach { entry: TarArchiveEntry ->
-                        val outputFile = File("$targetDir/${entry.name}")
+                        val outputFile = targetDir.resolve(entry.name)
                         if (entry.isDirectory) {
-                            outputFile.mkdirs()
+                            Files.createDirectories(outputFile)
                         } else {
                             if (entry.isSymbolicLink) {
-                                Files.createSymbolicLink(outputFile.toPath(), Paths.get(entry.linkName))
+                                Files.createSymbolicLink(outputFile, Paths.get(entry.linkName))
                             } else if (entry.isLink) {
-                                hardLinks.put(outputFile.toPath(), targetDir.resolve(entry.linkName).toPath())
+                                hardLinks.put(outputFile, targetDir.resolve(entry.linkName))
                             } else {
-                                outputFile.outputStream().use {
+                                Files.newOutputStream(outputFile).use {
                                     tarInputStream.copyTo(it)
                                 }
-                                Files.setPosixFilePermissions(outputFile.toPath(), getPosixFilePermissions(entry.mode))
+                                Files.setPosixFilePermissions(outputFile, getPosixFilePermissions(entry.mode))
                             }
                         }
                     }

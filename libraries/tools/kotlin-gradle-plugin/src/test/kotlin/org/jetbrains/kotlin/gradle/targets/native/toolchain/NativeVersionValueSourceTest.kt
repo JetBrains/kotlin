@@ -35,7 +35,7 @@ class NativeVersionValueSourceTest : WithTemporaryFolder {
         versionDir.resolve("A.kt").createFile()
         versionDir.resolve("C.kt").createFile()
 
-        NativeVersionValueSource.copyNativeBundleDistribution(createTarGz(), versionDir.toFile())
+        NativeVersionValueSource.copyNativeBundleDistribution(createTarGz().toPath(), versionDir)
         assertEquals("class A {}", versionDir.resolve("A.kt").toFile().readText())
         assertTrue("File B.kt should be copied from directory") { versionDir.resolve("B.kt").exists() }
         assertTrue("Marker file should be created") { versionDir.resolve(NativeVersionValueSource.Companion.MARKER_FILE).exists() }

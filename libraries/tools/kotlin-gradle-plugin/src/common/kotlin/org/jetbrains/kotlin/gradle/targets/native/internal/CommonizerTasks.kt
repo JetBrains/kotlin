@@ -38,6 +38,9 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.konan.target.HostManager
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import javax.inject.Inject
 
 internal suspend fun Project.cInteropCommonizationEnabled(): Boolean {
@@ -169,13 +172,13 @@ internal fun Project.commonizedNativeDistributionKlibsOrNull(target: SharedCommo
     val task = commonizeNativeDistributionTask ?: return null
     // task.map to preserve task dependency
     if (kotlinPropertiesProvider.isFunctionalTestMode) return task.map { listOf(project.file(fakeCommonizedNativeDistributionKlibs)) }
-    return task.flatMap { it.commonizedNativeDistributionLocationFile.map { getCommonizedPlatformLibrariesFor(it.asFile, target) } }
+    return task.flatMap { it.commonizedNativeDistributionLocationFile.map { getCommonizedPlatformLibrariesFor(it.asFile.toPath(), target) } }
 }
 
-private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: SharedCommonizerTarget): List<File> {
-    val rootOutputDirectory = commonizerFile.readText().trim().let(::File)
-    val targetOutputDirectory = CommonizerOutputFileLayout.resolveCommonizedDirectory(rootOutputDirectory, target)
-    return targetOutputDirectory.listLibraryFiles()
+private fun getCommonizedPlatformLibrariesFor(commonizerFile: Path, target: SharedCommonizerTarget): List<File> {
+    val rootOutputDirectory = Files.newBufferedReader(commonizerFile).use { Paths.get(it.readText().trim()) }
+    val targetOutputDirectory = with(CommonizerOutputFileLayout) { rootOutputDirectory.resolve(target.fileName) }
+    return targetOutputDirectory.toFile().listLibraryFiles()
 }
 
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
@@ -244,7 +247,7 @@ internal abstract class CleanNativeDistributionCommonizerTask : DefaultTask() {
     @TaskAction
     fun action() {
         NativeDistributionCommonizerLock(commonizerDirectory.get().toPath()).withLock { lockFile ->
-            val files = commonizerDirectory.get().listFiles().orEmpty().toSet() - lockFile.toFile()
+            val files = commonizerDirectory.get().listFiles().orEmpty().filter { it.toPath() != lockFile }.toSet()
             fileSystemOperations.delete {
                 it.delete(files)
             }
