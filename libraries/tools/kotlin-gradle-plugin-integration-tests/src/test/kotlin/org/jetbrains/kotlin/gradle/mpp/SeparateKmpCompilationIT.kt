@@ -45,7 +45,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
             applyMultiplatform {
                 sourceSets {
                     val jvmAndJs = it.create("jvmAndJs") {
-                        dependsOn(it.commonMain.get())
+                        it.dependsOn(sourceSets.commonMain.get())
                     }
                     it.jvmMain {
                         dependsOn(jvmAndJs)
