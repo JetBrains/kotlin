@@ -27,6 +27,17 @@ val FirRegularClass.directInheritors: Set<FirClassSymbol<*>> get() = directInher
 
 val FirRegularClassSymbol.directInheritors: Set<FirClassSymbol<*>> get() = directInheritorsAttr?.value ?: emptySet()
 
-private fun <T, C : MutableCollection<T>> C.plus(others: Array<out T>): C = apply { others.forEach(this::add) }
+val FirRegularClass.allInheritors: Set<FirClassSymbol<*>> get() = symbol.allInheritors
 
-private fun <T, C : MutableCollection<T>> C.plus(others: Collection<T>): C = apply { others.forEach(this::add) }
+val FirRegularClassSymbol.allInheritors: Set<FirClassSymbol<*>>
+    get() = buildSet {
+        val worklist = mutableSetOf<FirClassSymbol<*>>(this@allInheritors)
+        while (worklist.isNotEmpty()) {
+            val current = worklist.first().apply(::add) as? FirRegularClassSymbol ?: continue
+            worklist.addAll(current.directInheritors)
+        }
+    }
+
+private fun <T, C : MutableCollection<T>> C.plus(others: Array<out T>): C = apply { others.forEach(::add) }
+
+private fun <T, C : MutableCollection<T>> C.plus(others: Collection<T>): C = apply { addAll(others) }
