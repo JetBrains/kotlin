@@ -128,7 +128,7 @@ fun ScopeBuilder.method(
 ) {
     member {
         context?.let {
-            appendLine("context(${context.joinToString { (param, type) -> "$param: $type" }})")
+            appendLine("context(${context.joinToString { [param, type] -> "$param: $type" }})")
         }
         modifiers?.let {
             for (modifier in modifiers) {
@@ -160,7 +160,7 @@ fun ScopeBuilder.property(
     val kind = if (settable) "var" else "val"
     member {
         context?.let {
-            appendLine("context(${context.joinToString { (param, type) -> "$param: $type" }})")
+            appendLine("context(${context.joinToString { [param, type] -> "$param: $type" }})")
         }
         modifiers?.let { append(it.joinToString(" ", postfix = " ")) }
         append("$kind $name")

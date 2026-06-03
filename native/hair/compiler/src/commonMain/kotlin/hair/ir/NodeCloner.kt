@@ -29,7 +29,7 @@ fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) ->
     for (original in originals) {
         if (original in replacements) continue
         val shallowClone = clones[original]!!
-        for ((idx, originalArg) in original.args.withIndex()) {
+        for ([idx, originalArg] in original.args.withIndex()) {
             shallowClone.args[idx] = clones[originalArg] ?: originalArg
         }
     }

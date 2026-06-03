@@ -458,7 +458,7 @@ class Generator(private val generationPath: File) {
         val fixedArgs = node.allParams()
         val variadic = node.variadicWithInherited()
         appendLine("override fun paramName(index: Int): String = when (index) {")
-        for ((idx, arg) in fixedArgs.withIndex()) {
+        for ([idx, arg] in fixedArgs.withIndex()) {
             appendLine("    $idx -> \"${arg.name}\"")
         }
         if (variadic != null) {
@@ -569,7 +569,7 @@ class Generator(private val generationPath: File) {
         val drop = if (dropControl && hasControlInput()) 1 else 0
         val params = allParams().drop(drop).map { it.name to it } +
                 listOfNotNull(variadicWithInherited()).map { "vararg " + it.name to it }
-        return params.map { (name, param) ->
+        return params.map { [name, param] ->
             val default = if (param.optional) " = null" else ""
             name to (renderType(param, dropNullable = true) + "?" + default)
         }
