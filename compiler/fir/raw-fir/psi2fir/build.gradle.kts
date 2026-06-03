@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("require-explicit-types")
 }
 
 dependencies {

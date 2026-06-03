@@ -12,6 +12,7 @@ plugins {
     id("java-test-fixtures")
     id("project-tests-convention")
     id("test-inputs-check")
+    id("require-explicit-types")
 }
 
 dependencies {

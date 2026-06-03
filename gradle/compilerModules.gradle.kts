@@ -332,17 +332,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-tools:deprecated-k1-frontend-internals-for-ide-generated",
             )
 
-/**
- * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
- *   not specified return types for public declarations
- */
-val modulesWithRequiredExplicitTypes: Array<String> by extra {
-    firCompilerModules + arrayOf(
-        ":compiler:fir:analysis-tests",
-        ":compiler:fir:analysis-tests:legacy-fir-tests"
-    )
-}
-
 extra["projectsUsedInIntelliJKotlinPlugin"] = projectsUsedInIntelliJKotlinPlugin
 
 // They are embedded just because we don't publish those dependencies as separate Maven artifacts (yet)

@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("project-tests-convention")
+    id("require-explicit-types")
 }
 
 group = "org.jetbrains.kotlin.fir"

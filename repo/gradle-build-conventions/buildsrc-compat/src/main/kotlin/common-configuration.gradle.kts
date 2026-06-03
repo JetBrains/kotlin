@@ -59,12 +59,6 @@ fun Project.configureJavaCompile() {
 val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
 val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
 
-/**
- * In all specified modules `-XXexplicit-return-types` flag will be added to warn about
- *   not specified return types for public declarations
- */
-val modulesWithRequiredExplicitTypes: Array<String> by rootProject.extra
-
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val kotlinLanguageVersion: String by rootProject.extra
@@ -101,9 +95,6 @@ fun Project.configureKotlinCompilationOptions() {
 
                 if (project.path in projectsUsedInIntelliJKotlinPlugin) {
                     apiVersion.set(KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin))
-                }
-                if (project.path in modulesWithRequiredExplicitTypes) {
-                    freeCompilerArgs.add("-XXexplicit-return-types=warning")
                 }
             }
 

@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {

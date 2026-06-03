@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("java-test-fixtures")
     id("generated-sources")
+    id("require-explicit-types")
 }
 
 dependencies {
