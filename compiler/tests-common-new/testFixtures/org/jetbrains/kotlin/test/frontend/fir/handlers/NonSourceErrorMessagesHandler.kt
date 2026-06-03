@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.test.frontend.fir.handlers
 import org.jetbrains.kotlin.config.MessageCollectorAccess
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.test.CompilerTestUtil
-import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.cli.CliDirectives.CHECK_COMPILER_OUTPUT
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
-import org.jetbrains.kotlin.test.utils.withExtension
 
 /**
  * This handler checks all message collectors from all modules for diagnostics not attached to specific source location
@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
  */
 class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     override fun check(thereWereFailures: Boolean) {
         if (CHECK_COMPILER_OUTPUT !in testServices.moduleStructure.allDirectives) return
@@ -39,20 +39,10 @@ class NonSourceErrorMessagesHandler(testServices: TestServices) : AfterAnalysisC
     }
 
     fun check(resultingDump: String) {
-        val sourceFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val outFile = sourceFile.withExtension(".cli.out")
-
-        val assertions = testServices.assertions
-        if (resultingDump.isEmpty()) {
-            assertions.assertFileDoesntExist(outFile, CHECK_COMPILER_OUTPUT)
-            return
-        }
-
-        val actualOutput = CompilerTestUtil.normalizeCompilerOutput(
-            resultingDump,
-            testServices.temporaryDirectoryManager.rootDir.path,
-        )
-        assertions.assertEqualsToFile(outFile, actualOutput)
+        val actualDump =
+            if (resultingDump.isEmpty()) null
+            else CompilerTestUtil.normalizeCompilerOutput(resultingDump, testServices.temporaryDirectoryManager.rootDir.path)
+        testServices.assertions.assertEqualsToDump(testServices.moduleStructure, extension = ".cli.out", actualDump)
     }
 }
 

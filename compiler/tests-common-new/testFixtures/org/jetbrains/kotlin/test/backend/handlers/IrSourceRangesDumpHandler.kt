@@ -19,15 +19,14 @@ import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.re
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SOURCE_RANGES_IR
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
-import java.io.File
 
 class IrSourceRangesDumpHandler(
     testServices: TestServices,
@@ -38,10 +37,9 @@ class IrSourceRangesDumpHandler(
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives)
 
     private val baseDumper = MultiModuleInfoDumper()
-    private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_SOURCE_RANGES_IR !in module.directives) return
@@ -108,18 +106,7 @@ class IrSourceRangesDumpHandler(
 
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
-        val defaultExpectedFile = moduleStructure.originalTestDataFiles.first()
-            .withExtension(DUMP_EXTENSION)
-        checkOneExpectedFile(defaultExpectedFile, baseDumper.generateResultingDump())
-        buildersForSeparateFileDumps.entries.forEach { [expectedFile, dump] -> checkOneExpectedFile(expectedFile, dump.toString()) }
-    }
-
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
-        if (actualDump.isNotEmpty()) {
-            assertions.assertEqualsToFile(expectedFile, actualDump)
-        } else {
-            assertions.assertFileDoesntExist(expectedFile, DUMP_SOURCE_RANGES_IR)
-        }
+        val actualDump = if (baseDumper.isEmpty()) null else baseDumper.generateResultingDump()
+        assertEqualsToDump(DUMP_EXTENSION, actualDump)
     }
 }

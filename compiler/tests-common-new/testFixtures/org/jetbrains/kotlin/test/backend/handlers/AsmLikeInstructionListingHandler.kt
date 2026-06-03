@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.LOCAL_VARIABLE_TABLE
 import org.jetbrains.kotlin.test.directives.AsmLikeInstructionListingDirectives.RENDER_ANNOTATIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.USE_INLINE_SCOPES_NUMBERS
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -46,7 +47,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
     }
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(AsmLikeInstructionListingDirectives)
+        get() = listOf(TestDumpDirectives, AsmLikeInstructionListingDirectives)
 
     private val baseDumper = MultiModuleInfoDumper()
 
@@ -386,14 +387,7 @@ class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryAr
             else -> DUMP_EXTENSION
         }
 
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val file = testDataFile.withExtension(extension)
-
-        if (baseDumper.isEmpty()) {
-            assertions.assertFileDoesntExist(file, CHECK_ASM_LIKE_INSTRUCTIONS)
-            return
-        }
-
-        assertions.assertEqualsToFile(file, baseDumper.generateResultingDump())
+        val actualDump = if (baseDumper.isEmpty()) null else baseDumper.generateResultingDump()
+        assertEqualsToDump(extension, actualDump)
     }
 }

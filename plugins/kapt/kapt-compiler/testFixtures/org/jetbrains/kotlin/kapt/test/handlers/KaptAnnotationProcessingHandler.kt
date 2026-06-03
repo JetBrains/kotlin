@@ -10,12 +10,18 @@ import org.jetbrains.kotlin.kapt.base.doAnnotationProcessing
 import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.kotlin.test.utils.withExtension
 
 class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives)
+
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val kaptContext = info.kaptContext
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)
@@ -28,8 +34,7 @@ class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHand
         val stubJavaFiles = kaptContext.options.sourcesOutputDir.walkTopDown().filter { it.isFile && it.extension == "java" }
         val actualRaw = stubJavaFiles.sortedBy { it.name }.joinToString(FILE_SEPARATOR) { it.name + ":\n\n" + it.readText() }
         val actual = StringUtil.convertLineSeparators(actualRaw.trim { it <= ' ' }).trimTrailingWhitespacesAndAddNewlineAtEOF()
-        val expectedFile = module.files.first().originalFile.withExtension(".txt")
-        assertions.assertEqualsToFile(expectedFile, actual)
+        assertEqualsToDump(extension = ".txt", actual)
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

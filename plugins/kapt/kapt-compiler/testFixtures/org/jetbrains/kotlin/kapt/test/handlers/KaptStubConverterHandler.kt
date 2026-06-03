@@ -11,19 +11,26 @@ import com.sun.tools.javac.util.Log
 import org.jetbrains.kotlin.kapt.KaptContextForStubGeneration
 import org.jetbrains.kotlin.kapt.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
+import org.jetbrains.kotlin.kapt.test.KaptTestDirectives
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
 import org.jetbrains.kotlin.kapt.util.prettyPrint
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
-import org.jetbrains.kotlin.test.utils.withExtension
 import java.util.*
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     companion object {
         const val FILE_SEPARATOR = "\n\n////////////////////\n\n"
     }
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(TestDumpDirectives, KaptTestDirectives)
 
     override fun processModule(module: TestModule, info: KaptContextBinaryArtifact) {
         val generateNonExistentClass = NON_EXISTENT_CLASS in module.directives
@@ -41,7 +48,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
 
         checkErrors(module, kaptContext, actual)
 
-        assertions.assertEqualsToFile(module.files.first().originalFile.withExtension("txt"), actual)
+        assertEqualsToDump(extension = "txt", actual)
     }
 
     private fun KaptStubConverterHandler.checkErrors(

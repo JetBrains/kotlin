@@ -10,15 +10,15 @@ import org.jetbrains.kotlin.library.KotlinIrSignatureVersion
 import org.jetbrains.kotlin.library.abi.*
 import org.jetbrains.kotlin.library.abi.AbiReadingFilter.*
 import org.jetbrains.kotlin.test.directives.KlibAbiDumpDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.singleOrZeroValue
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifactHandler
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 
 /**
  * Dumps KLIB ABI in the format of [LibraryAbiReader].
@@ -33,7 +33,7 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
     failureDisablesNextSteps = true,
     doNotRunIfThereWerePreviousFailures = true,
 ) {
-    override val directiveContainers get() = listOf(KlibAbiDumpDirectives)
+    override val directiveContainers get() = listOf(TestDumpDirectives, KlibAbiDumpDirectives)
 
     private val kotlinPackage = AbiCompoundName(StandardNames.BUILT_INS_PACKAGE_NAME.asString())
     private val dumpers = hashMapOf<AbiSignatureVersion, MultiModuleInfoDumper>()
@@ -59,16 +59,10 @@ class KlibAbiDumpHandler(testServices: TestServices) : BinaryArtifactHandler<Bin
 
         assertions.assertAll(
             dumpers.map { [abiSignatureVersion, dumper] ->
-                val dumpFileExtension = abiDumpFileExtension(abiSignatureVersion.versionNumber)
-                val lambda = {
-                    val expectedFile = testServices
-                        .moduleStructure
-                        .originalTestDataFiles
-                        .first()
-                        .withExtension(dumpFileExtension)
-                    assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+                return@map {
+                    val dumpFileExtension = abiDumpFileExtension(abiSignatureVersion.versionNumber)
+                    assertEqualsToDump(dumpFileExtension, dumper.generateResultingDump())
                 }
-                lambda
             }
         )
     }

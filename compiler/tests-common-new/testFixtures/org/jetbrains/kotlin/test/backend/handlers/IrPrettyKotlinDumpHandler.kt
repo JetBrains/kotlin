@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.backend.handlers
 import org.jetbrains.kotlin.ir.util.FakeOverridesStrategy
 import org.jetbrains.kotlin.ir.util.KotlinLikeDumpOptions
 import org.jetbrains.kotlin.ir.util.dumpKotlinLike
-import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.backend.handlers.IrTextDumpHandler.Companion.groupWithTestFiles
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
@@ -16,14 +15,14 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.EXTERNAL_FILE
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_KT_DUMP
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.TestDumpDirectives
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.BackendKind
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 
 /**
  * Uses [dumpKotlinLike] to compare the human-readable representation of an IR tree with
@@ -43,7 +42,7 @@ class IrPrettyKotlinDumpHandler(
     private val dumper = MultiModuleInfoDumper("// MODULE: %s")
 
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(CodegenTestDirectives, FirDiagnosticsDirectives)
+        get() = listOf(TestDumpDirectives, CodegenTestDirectives, FirDiagnosticsDirectives)
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_KT_IR !in module.directives || SKIP_KT_DUMP in module.directives) return
@@ -63,14 +62,8 @@ class IrPrettyKotlinDumpHandler(
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val moduleStructure = testServices.moduleStructure
-        val expectedFile = moduleStructure.originalTestDataFiles.first().withExtension(DUMP_EXTENSION)
-
-        if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, DUMP_KT_IR)
-        } else {
-            assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
-        }
+        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
+        assertEqualsToDump(DUMP_EXTENSION, actualDump)
     }
 }
 

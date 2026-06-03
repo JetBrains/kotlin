@@ -12,15 +12,14 @@ import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_SMAP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.NO_SMAP_DUMP
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SEPARATE_SMAP_DUMPS
+import org.jetbrains.kotlin.test.directives.assertEqualsToDump
+import org.jetbrains.kotlin.test.directives.getClassifiedDumpFile
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
-import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
@@ -77,35 +76,25 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
             else -> SMAP_NON_SEP_EXT
         }
 
-        val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val firExpectedFile = testDataFile.withExtension("fir.$extension")
-        val expectedFile =
-            if (testServices.defaultsProvider.frontendKind == FrontendKinds.FIR && firExpectedFile.exists())
-                firExpectedFile
-            else testDataFile.withExtension(extension)
-
-        if (dumper.isEmpty()) {
-            assertions.assertFileDoesntExist(expectedFile, DUMP_SMAP)
-            return
-        }
-
-        assertions.assertEqualsToFile(expectedFile, dumper.generateResultingDump())
+        val actualDump = if (dumper.isEmpty()) null else dumper.generateResultingDump()
+        assertEqualsToDump(extension, actualDump)
+        if (actualDump == null) return
 
         if (separateDumpEnabled && isSeparateCompilation) {
-            val otherExtension = if (isSeparateCompilation) SMAP_NON_SEP_EXT else SMAP_SEP_EXT
-            val otherFile = expectedFile.withExtension(otherExtension)
+            val otherFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_NON_SEP_EXT)
             if (!otherFile.exists()) return
+
+            val expectedFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_SEP_EXT)
             val expectedText = expectedFile.readText()
             if (expectedText == otherFile.readText()) {
-                val smapFile = expectedFile.withExtension(SMAP_EXT)
+                val smapFile = testServices.moduleStructure.getClassifiedDumpFile(SMAP_EXT)
                 smapFile.writeText(expectedText)
                 expectedFile.delete()
                 otherFile.delete()
                 assertions.fail {
                     """
-                    Contents of ${expectedFile.name} and ${otherFile.name} are equals, so they are deleted
-                     and joined to ${smapFile.name}. Please remove $SEPARATE_SMAP_DUMPS directive from
-                     ${testDataFile.name} and rerun test
+                    Contents of ${expectedFile.name} and ${otherFile.name} are equals, so they were deleted and joined to ${smapFile.name}.
+                    Please remove $SEPARATE_SMAP_DUMPS directive from ${testServices.moduleStructure.originalTestDataFiles.first().name} and rerun test
                     """.trimIndent()
                 }
             }
