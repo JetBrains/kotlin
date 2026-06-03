@@ -136,8 +136,11 @@ abstract class AbstractRawFirBuilderTestCase : KtParsingTestCase(
         return renderer.renderElementAsString(firFile)
     }
 
-    protected fun KtFile.toFirFile(bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL): FirFile {
-        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(this.text))
+    protected fun KtFile.toFirFile(
+        bodyBuildingMode: BodyBuildingMode = BodyBuildingMode.NORMAL,
+        features: Map<LanguageFeature, LanguageFeature.State> = emptyMap(),
+    ): FirFile {
+        val session = FirSessionFactoryHelper.createEmptySession(parseLanguageFeatures(this.text) + features)
         return toFirFile(session, bodyBuildingMode)
     }
 
