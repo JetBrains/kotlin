@@ -47,7 +47,7 @@ tasks.withType<Test>().configureEach {
 }
 
 dependencies {
-    compileOnly(kotlin("stdlib"))
+    compileOnly(kotlin("stdlib", version = libs.versions.kotlin.`for`.gradle.plugins.compilation.get()))
     implementation(libs.junit.jupiter.api)
     compileOnly(libs.junit4)
 
