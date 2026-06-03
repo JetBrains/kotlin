@@ -94,8 +94,13 @@ class NativeSecondStageCompilationConfig(
 
     // TODO: debug info generation mode and debug/release variant selection probably requires some refactoring.
     val debug: Boolean get() = configuration.debug
-    val lightDebug: Boolean = configuration[NativeConfigurationKeys.LIGHT_DEBUG]
-            ?: target.family.isAppleFamily // Default is true for Apple targets.
+    val lightDebug: Boolean by lazy {
+        configuration[NativeConfigurationKeys.LIGHT_DEBUG]?.let {
+            return@lazy it
+        }
+        if (enableHair) return@lazy false
+        target.family.isAppleFamily // Default is true for Apple targets.
+    }
     val generateDebugTrampoline = debug && configuration.generateDebugTrampoline
     val optimizationsEnabled = configuration.optimization
 
