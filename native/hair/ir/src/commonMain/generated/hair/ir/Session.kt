@@ -44,8 +44,6 @@ class Session: SessionBase() {
 
     internal val notForm = Not.form(this).also { register(it) }
 
-    internal val checkNotNullForm = CheckNotNull.form(this).also { register(it) }
-
     internal val typeInfoForm = TypeInfo.form(this).also { register(it) }
 
     

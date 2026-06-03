@@ -102,8 +102,6 @@ class ShallowNodeCloner(val nodeBuilder: NodeBuilder): NodeVisitor<Node>() {
 
     override fun visitCheckCast(node: CheckCast): CheckCast = context(nodeBuilder, NoControlFlowBuilder) { CheckCast(node.targetType)(null, null) } as CheckCast
 
-    override fun visitCheckNotNull(node: CheckNotNull): CheckNotNull = context(nodeBuilder, NoControlFlowBuilder) { CheckNotNull(null, null) } as CheckNotNull
-
     override fun visitTypeInfo(node: TypeInfo): TypeInfo = context(nodeBuilder, NoControlFlowBuilder) { TypeInfo(null) } as TypeInfo
 
     override fun visitConstTypeInfo(node: ConstTypeInfo): ConstTypeInfo = context(nodeBuilder, NoControlFlowBuilder) { ConstTypeInfo(node.type) }

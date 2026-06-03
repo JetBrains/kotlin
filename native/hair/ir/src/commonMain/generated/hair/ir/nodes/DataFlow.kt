@@ -37,18 +37,7 @@ class AssignVar internal constructor(form: Form, control: Controlling?, assigned
     }
     
     val variable: Any by form::variable
-    val assignedValue: Node
-        get() = args[1]
-    val assignedValueOrNull: Node?
-        get() = args.getOrNull(1)
-    context(_: ArgsUpdater)
-     var assignedValue: Node
-        get() = args[1]
-        set(value) { args[1] = value }
-    context(_: ArgsUpdater)
-     var assignedValueOrNull: Node?
-        get() = args.getOrNull(1)
-        set(value) { args[1] = value }
+    val assignedValueIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "control"
@@ -69,21 +58,8 @@ class Phi internal constructor(form: Form, block: BlockEntry?, vararg joinedValu
     }
     
     val type: HairType by form::type
-    val block: BlockEntry
-        get() = args[0] as BlockEntry
-    val blockOrNull: BlockEntry?
-        get() = args.getOrNull(0)?.let { it as BlockEntry }
-    context(_: ArgsUpdater)
-     var block: BlockEntry
-        get() = args[0] as BlockEntry
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var blockOrNull: BlockEntry?
-        get() = args.getOrNull(0)?.let { it as BlockEntry }
-        set(value) { args[0] = value }
-    val joinedValues: VarArgsList<Node>
-        get() = VarArgsList(args, 1, Node::class)
-    
+    val blockIndex: Int = 0
+    val joinedValuesIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "block"
@@ -103,21 +79,8 @@ class PhiPlaceholder internal constructor(form: Form, block: BlockEntry?, vararg
     }
     
     val origin: Any by form::origin
-    val block: BlockEntry
-        get() = args[0] as BlockEntry
-    val blockOrNull: BlockEntry?
-        get() = args.getOrNull(0)?.let { it as BlockEntry }
-    context(_: ArgsUpdater)
-     var block: BlockEntry
-        get() = args[0] as BlockEntry
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var blockOrNull: BlockEntry?
-        get() = args.getOrNull(0)?.let { it as BlockEntry }
-        set(value) { args[0] = value }
-    val joinedValues: VarArgsList<Node>
-        get() = VarArgsList(args, 1, Node::class)
-    
+    val blockIndex: Int = 0
+    val joinedValuesIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "block"
@@ -151,18 +114,7 @@ class Param internal constructor(form: Form) : NodeBase(form, listOf()) {
 
 
 class Catch internal constructor(form: Form, unwind: Node?) : NodeBase(form, listOf(unwind)) {
-    val unwind: Node
-        get() = args[0]
-    val unwindOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var unwind: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var unwindOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
+    val unwindIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "unwind"

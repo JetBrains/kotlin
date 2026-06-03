@@ -33,7 +33,7 @@ fun pos(n: Node): Controlling = gcm.pos(n)
 // FIXME make thread-safe
 private val activeGCM = mutableMapOf<Session, GCMResult>()
 
-fun <T> Session.withGCM(action: context(GCMResult, NodeBuilder, ArgsUpdater) () -> T): T = withGCMImpl {
+fun <T> Session.withGCM(action: context(GCMResult, NodeBuilder, ArgumentUpdater) () -> T): T = withGCMImpl {
     // FIXME why modify IR? And how come here can be dying values at this point?
     // TODO require no dad nodes
     modifyIR { action() }

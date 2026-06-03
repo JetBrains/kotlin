@@ -63,7 +63,6 @@ abstract class NodeVisitor<R> {
     open fun visitIsInstanceOf(node: IsInstanceOf): R = visitNode(node)
     open fun visitThrowingCheck(node: ThrowingCheck): R = visitBlockBodyWithException(node)
     open fun visitCheckCast(node: CheckCast): R = visitThrowingCheck(node)
-    open fun visitCheckNotNull(node: CheckNotNull): R = visitThrowingCheck(node)
     open fun visitTypeInfo(node: TypeInfo): R = visitNode(node)
     open fun visitConstTypeInfo(node: ConstTypeInfo): R = visitNode(node)
     open fun visitDirectMemoryOp(node: DirectMemoryOp): R = visitNode(node)
