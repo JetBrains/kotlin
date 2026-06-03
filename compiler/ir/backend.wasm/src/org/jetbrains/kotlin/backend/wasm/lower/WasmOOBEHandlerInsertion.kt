@@ -74,8 +74,11 @@ import org.jetbrains.kotlin.name.Name
  * }
  *
  * Note that because neither Kotlin nor Wasm supports non-local returns for non-inline
- * functions, we have to fake non-local returns by scanning the body of the try block and rewriting
- * early returns with a state machine.
+ * functions or non-local exits more generally, we have to fake non-local returns and other exits by
+ * scanning the body of the try block and rewriting them into a state machine-like contraption.
+ *
+ * One limitation of this pass is that try bodies with suspend calls can't easily be lowered.
+ Perhaps the stack-switching mechanism will help remove this limitation.
  *
  */
 internal class WasmOOBEHandlerInsertionLowering(private val ctx: WasmBackendContext) : FileLoweringPass {
