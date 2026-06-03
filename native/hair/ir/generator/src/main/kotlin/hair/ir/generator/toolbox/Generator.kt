@@ -14,7 +14,7 @@ class Generator(private val generationPath: File) {
     private val sessionBase = "SessionBase"
     private val session = "Session"
 
-    private val ArgsUpdater = "ArgsUpdater"
+    private val ArgumentUpdaterBase = "ArgumentUpdaterBase"
 
     private val sessionForms = mutableListOf<Node>()
     private val sessionMetaForms = mutableListOf<Node>()
@@ -474,87 +474,139 @@ class Generator(private val generationPath: File) {
             val override = if (iface.superDecl(param) != null) "override " else ""
             appendLine("${override}val ${renderParam(param)}")
         }
-        appendLine(renderOwnParams(iface, declOnly = true))
+        append(renderOwnParams(iface))
     }
 
-    private fun renderOwnParams(elem: Element, declOnly: Boolean = false): String = buildString {
+    // Emits per-argument index constants on the node/interface itself. Concrete on classes
+    // (`val lhsIndex: Int = 0`), abstract on model interfaces (`val lhsIndex: Int`) so that
+    // interface-typed accessors can read the operand polymorphically via `args[lhsIndex]`.
+    private fun renderOwnParams(elem: Element): String = buildString {
         with(MembersBuilder()) {
-            fun argAccessor(
-                name: String,
-                type: String,
-                index: Int,
-                override: Boolean,
-                settable: Boolean,
-                nullable: Boolean,
-                context: List<Pair<String, String>>? = null,
-            ) {
-                val typeAdapter = if (type == nodeInterface) "" else if (nullable) "?.let { it as $type }" else " as $type"
-                val getter = if (nullable) "args.getOrNull($index)$typeAdapter" else "args[$index]$typeAdapter"
+            fun indexConst(name: String, index: Int?, override: Boolean) {
                 property(
-                    name = name,
-                    modifiers = listOfNotNull(
-                        "override".takeIf { override }
-                    ),
-                    type = type + if (nullable) "?" else "",
-                    getter = getter.takeIf { !declOnly },
-                    setter = "{ args[$index] = value }".takeIf { settable && !declOnly },
-                    settable = settable,
-                    context = context,
+                    name = "${name}Index",
+                    modifiers = listOfNotNull("override".takeIf { override }),
+                    type = "Int",
+                    initial = index?.toString(),
                 )
             }
-            fun argAccessor(
-                arg: Element.NodeParam,
-                index: Int,
-                override: Boolean,
-                settable: Boolean,
-                context: List<Pair<String, String>>? = null,
-            ) {
-                require(!settable || arg.variable)
-                val type = renderType(arg, dropNullable = true)
-                if (arg.optional) {
-                    argAccessor(arg.name, type, index, override, settable, nullable = true, context = context)
-                } else {
-                    argAccessor(arg.name, type, index, override, settable, nullable = false, context = context)
-                    argAccessor(arg.name + "OrNull", type, index, override, settable, nullable = true, context = context)
+            when (elem) {
+                is ElementWithParams -> {
+                    for ([index, param] in elem.ownParamsWithIndex()) {
+                        indexConst(param.name, index, override = elem.superDecl(param) != null)
+                    }
+                    elem.variadicParam?.let {
+                        indexConst(it.name, elem.allParams().size, override = elem.superDeclVariadic() != null)
+                    }
                 }
-            }
-
-            val paramsWithIndex = when (elem) {
-                is ElementWithParams -> elem.ownParamsWithIndex()
-                is Interface -> elem.nodeParams.map { IndexedValue(-1, it) }
-            }
-            for ((index, param) in paramsWithIndex) {
-                val superDecl = elem.superDecl(param)
-                argAccessor(param, index, override = superDecl != null, settable = false)
-                if (param.variable) {
-                    argAccessor(
-                        param,
-                        index,
-                        override = superDecl?.variable ?: false,
-                        settable = true,
-                        context = listOf("_" to "ArgsUpdater")
-                    )
+                is Interface -> {
+                    for (param in elem.nodeParams) {
+                        indexConst(param.name, null, override = elem.superDecl(param) != null)
+                    }
+                    elem.variadicParam?.let {
+                        indexConst(it.name, null, override = elem.superDeclVariadic() != null)
+                    }
                 }
-            }
-            elem.variadicParam?.let { param ->
-                val type = renderType(param)
-                property(
-                    name = param.name,
-                    modifiers = listOfNotNull(
-                        "override".takeIf { elem.superDecl(param) != null }
-                    ),
-                    type = "VarArgsList<$type>",
-                    getter = if (declOnly) null else {
-                        elem as ElementWithParams
-                        "VarArgsList(args, ${elem.allParams().size}, ${renderType(param, dropNullable = true)}::class)"
-                    },
-                )
-                blankLine()
             }
             appendSimple(this@buildString)
         }
     }
 
+
+    // Emits an extension property (`val Host.foo`, or `var` when settable) backed by `args[fooIndex]`.
+    // For non-optional params both `foo` and `fooOrNull` are produced.
+    private fun MembersBuilder.argAccessor(host: Element, arg: Element.NodeParam, settable: Boolean, override: Boolean) {
+        val type = renderType(arg, dropNullable = true)
+        val indexName = "${arg.name}Index"
+        fun one(propName: String, nullable: Boolean) {
+            val typeAdapter = if (type == nodeInterface) "" else if (nullable) "?.let { it as $type }" else " as $type"
+            val getter = if (nullable) "args.getOrNull($indexName)$typeAdapter" else "args[$indexName]$typeAdapter"
+            property(
+                name = "${refName(host)}.$propName",
+                modifiers = listOfNotNull("override".takeIf { override }),
+                type = type + if (nullable) "?" else "",
+                getter = getter,
+                setter = "{ args[$indexName] = value }".takeIf { settable },
+                settable = settable,
+            )
+        }
+        if (arg.optional) {
+            one(arg.name, nullable = true)
+        } else {
+            one(arg.name, nullable = false)
+            one(arg.name + "OrNull", nullable = true)
+        }
+    }
+
+    // Emits accessors for every argument of every generated interface and class.
+    // settable=false -> read-only `val`s; settable=true -> writable `var`s (variable params only).
+    private fun MembersBuilder.generateAccessors(settable: Boolean, override: Boolean) {
+        fun emit(host: Element, params: List<Element.NodeParam>, variadic: Element.NodeParam?) {
+            for (param in params) {
+                if (settable && !param.variable) continue
+                argAccessor(host, param, settable = settable, override = override)
+                blankLine()
+            }
+            if (!settable) variadic?.let {
+                val type = renderType(it, dropNullable = true)
+                property(
+                    name = "${refName(host)}.${it.name}",
+                    modifiers = listOfNotNull("override".takeIf { override }),
+                    type = "VarArgsList<$type>",
+                    getter = "VarArgsList(args, ${it.name}Index, $type::class)",
+                )
+                blankLine()
+            }
+        }
+        for (iface in generatedElements.filterIsInstance<Interface>()) {
+            emit(iface, iface.nodeParams, iface.variadicParam)
+        }
+        for (elem in generatedElements.filterIsInstance<ElementWithParams>()) {
+            emit(elem, elem.nodeParams, elem.variadicParam)
+            // Disambiguate an operand inherited from two unrelated supertypes (e.g. a class parent
+            // and an interface that both declare it): emit a most-specific accessor on `elem` itself,
+            // otherwise the two supertype extensions are equally applicable and the call is ambiguous.
+            for (param in elem.allParams()) {
+                if (param in elem.nodeParams) continue
+                if (settable && !param.variable) continue
+                val declarers = (elem.allParents() + elem.allInterfaces()).count { param in it.nodeParams }
+                if (declarers >= 2) {
+                    argAccessor(elem, param, settable = settable, override = override)
+                    blankLine()
+                }
+            }
+        }
+    }
+
+    fun generateArgumentAccessors() {
+        val nodesDir = generationPath.resolve(nodesPkg.replace(".", "/")).also { it.mkdirs() }
+        val file = nodesDir.resolve("ArgumentAccessors.kt")
+        file.createNewFile().also { require(it) { "Failed to create $file" } }
+        file.writeText(buildString {
+            appendLine("package $nodesPkg")
+            appendLine()
+            appendLine("import hair.sym.*")
+            appendLine("import hair.ir.*")
+            appendLine("import hair.sym.Type.*")
+            appendLine()
+
+            // Free, context-less reads available everywhere.
+            with(MembersBuilder()) {
+                generateAccessors(settable = false, override = false)
+                appendSimple(this@buildString)
+            }
+            appendLine()
+            // Read capability.
+            appendLine(renderInterface("ArgumentAccessor") {
+                generateAccessors(settable = false, override = false)
+            })
+            appendLine()
+            // Read + write capability; writes route through `args[..] = value` (ArgumentUpdater).
+            appendLine(renderInterface("ArgumentUpdater", listOf("ArgumentAccessor", ArgumentUpdaterBase)) {
+                generateAccessors(settable = true, override = true)
+            })
+        })
+    }
 
     private fun renderParam(p: Element.NodeParam) = "${p.name}: ${renderType(p)}"
     private fun renderParam(p: Element.FormParam) = "${p.name}: ${p.type.simpleName!!}"

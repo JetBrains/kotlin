@@ -7,38 +7,23 @@ import hair.sym.Type.*
 sealed interface MemoryOp : Node {
     
     
-    
 }
 
 
 sealed interface AnyLoad : MemoryOp {
     
     
-    
 }
 
 
 sealed interface AnyStore : MemoryOp {
-    val value: Node
-    val valueOrNull: Node?
-    
+    val valueIndex: Int
     
 }
 
 
 sealed class DirectMemoryOp(form: Form, args: List<Node?>) : NodeBase(form, args), MemoryOp {
-    val location: Node
-        get() = args[0]
-    val locationOrNull: Node?
-        get() = args.getOrNull(0)
-    context(_: ArgsUpdater)
-     var location: Node
-        get() = args[0]
-        set(value) { args[0] = value }
-    context(_: ArgsUpdater)
-     var locationOrNull: Node?
-        get() = args.getOrNull(0)
-        set(value) { args[0] = value }
+    val locationIndex: Int = 0
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitDirectMemoryOp(this)
 }
@@ -86,9 +71,7 @@ class Store internal constructor(form: Form, location: Node?) : DirectMemoryOp(f
 
 sealed interface InstanceFieldOp : MemoryOp {
     val field: Field
-    val obj: Node
-    val objOrNull: Node?
-    
+    val objIndex: Int
     
 }
 
@@ -99,10 +82,7 @@ class LoadField internal constructor(form: Form, obj: Node?) : NodeBase(form, li
     }
     
     override val field: Field by form::field
-    override val obj: Node
-        get() = args[0]
-    override val objOrNull: Node?
-        get() = args.getOrNull(0)
+    override val objIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "obj"
@@ -122,14 +102,8 @@ class StoreField internal constructor(form: Form, obj: Node?, value: Node?) : No
     }
     
     override val field: Field by form::field
-    override val obj: Node
-        get() = args[0]
-    override val objOrNull: Node?
-        get() = args.getOrNull(0)
-    override val value: Node
-        get() = args[1]
-    override val valueOrNull: Node?
-        get() = args.getOrNull(1)
+    override val objIndex: Int = 0
+    override val valueIndex: Int = 1
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "obj"
@@ -146,7 +120,6 @@ class StoreField internal constructor(form: Form, obj: Node?, value: Node?) : No
 
 sealed interface GlobalOp : MemoryOp {
     val field: Global
-    
     
     
 }
@@ -177,10 +150,7 @@ class StoreGlobal internal constructor(form: Form, value: Node?) : NodeBase(form
     }
     
     override val field: Global by form::field
-    override val value: Node
-        get() = args[0]
-    override val valueOrNull: Node?
-        get() = args.getOrNull(0)
+    override val valueIndex: Int = 0
     
     override fun paramName(index: Int): String = when (index) {
         0 -> "value"

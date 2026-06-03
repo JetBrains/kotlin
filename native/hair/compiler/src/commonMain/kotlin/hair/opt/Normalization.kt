@@ -7,7 +7,7 @@ import hair.utils.ensuring
 
 // TODO Throw with handler -> Goto
 
-class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater: ArgsUpdater) {
+class Normalization(val session: Session, nodeBuilder: NodeBuilder, argsUpdater: ArgumentUpdater) {
 
     fun normalize(node: Node): Node {
         if (node.args.any { it == null }) return node

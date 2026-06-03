@@ -118,7 +118,7 @@ fun branch(
 }
 
 // FIXME cond should be a builder
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
 fun whileLoop(cond: Node, body: BodyBuilder) {
     val condBlock = BlockEntry(Goto(), null) as BlockEntry
     val [trueExit, falseExit] = IfExits(cond)
@@ -130,7 +130,7 @@ fun whileLoop(cond: Node, body: BodyBuilder) {
     BlockEntry(falseExit)
 }
 
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgsUpdater)
+context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder, _: ArgumentUpdaterBase)
 fun tryCatch(tryBody: BodyBuilder, catches: List<Pair<HairClass, context(NodeBuilder, ControlFlowBuilder) (Node) -> Unit>>, allCatcher: Type.Reference? = null) {
     val throwers = mutableListOf<Throwing>()
     val observingBuilder = object : NodeBuilder by nodeBuilder {
