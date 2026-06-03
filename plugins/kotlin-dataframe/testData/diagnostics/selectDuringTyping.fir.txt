@@ -16,6 +16,6 @@ FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|kotlin/collections/List<kotlin/Int>|
-        public get(): R|kotlin/collections/List<kotlin/Int>|
+        @R|kotlin/jvm/JvmName|(name = String(ExplodeSchema_timestamps)) public get(): R|kotlin/collections/List<kotlin/Int>|
     public final val R|org/jetbrains/kotlinx/dataframe/ColumnsContainer<org/jetbrains/kotlinx/dataframe/ExplodeSchema>|.timestamps: R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
-        public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|
+        @R|kotlin/jvm/JvmName|(name = String(ExplodeSchema_timestamps)) public get(): R|org/jetbrains/kotlinx/dataframe/DataColumn<kotlin/collections/List<kotlin/Int>>|

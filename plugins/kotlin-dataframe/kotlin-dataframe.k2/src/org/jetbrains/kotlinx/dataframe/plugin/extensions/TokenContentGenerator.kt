@@ -67,6 +67,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                         receiverType = Names.DATA_ROW_CLASS_ID.constructClassLikeType(
                             typeArguments = arrayOf(schemaProperty.marker)
                         ),
+                        marker = schemaProperty.marker,
                         propertyName = propertyName.identifier,
                         returnType = schemaProperty.dataRowReturnType,
                         symbol = k,
@@ -79,6 +80,7 @@ class TokenContentGenerator(session: FirSession) : FirDeclarationGenerationExten
                         receiverType = Names.COLUMNS_SCOPE_CLASS_ID.constructClassLikeType(
                             typeArguments = arrayOf(schemaProperty.marker)
                         ),
+                        marker = schemaProperty.marker,
                         propertyName = propertyName.identifier,
                         returnType = schemaProperty.columnContainerReturnType,
                         symbol = k,

@@ -63,8 +63,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-name> visibility:public modality:FINAL returnType:kotlin.String
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_name")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
@@ -77,8 +75,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-name> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_name")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:name visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-name> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
@@ -91,8 +87,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-age> visibility:public modality:FINAL returnType:kotlin.Int
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_age")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.Int declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
@@ -105,8 +99,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-age> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int>
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_age")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:age visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-age> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.Int> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
@@ -119,8 +111,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-myCol> visibility:public modality:FINAL returnType:kotlin.String
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_myCol")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.DataRow<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): kotlin.String declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
@@ -133,8 +123,6 @@ MODULE_FRAGMENT
                           FUN GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:<get-myCol> visibility:public modality:FINAL returnType:org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String>
                             VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0
                             VALUE_PARAMETER kind:ExtensionReceiver name:<this> index:1 type:org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>
-                            annotations:
-                              JvmName(name = "_myCol")
                             correspondingProperty: PROPERTY GENERATED[org.jetbrains.kotlinx.dataframe.plugin.DataFramePlugin] name:myCol visibility:public modality:FINAL [val]
                             BLOCK_BODY
                               RETURN type=kotlin.Nothing from='public final fun <get-myCol> (<this>: org.jetbrains.kotlinx.dataframe.ColumnsScope<<root>.CodeFragment.run.<anonymous>.DataFrameOf_23I>): org.jetbrains.kotlinx.dataframe.DataColumn<kotlin.String> declared in <root>.CodeFragment.run.<anonymous>.DataFramePropertiesScope0'
