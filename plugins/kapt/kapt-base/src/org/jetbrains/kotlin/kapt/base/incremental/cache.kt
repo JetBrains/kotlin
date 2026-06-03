@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.kapt.base.incremental
 
+import org.jetbrains.kotlin.kapt.base.util.KaptLogger
 import java.io.*
 
-// TODO(gavra): switch away from Java serialization
-class JavaClassCacheManager(val file: File) : Closeable {
+// TODO(gavra): switch away from Java serialization (KT-86712)
+class JavaClassCacheManager(val file: File, val logger: KaptLogger?) : Closeable {
 
     private val javaCacheFile = file.resolve("java-cache.bin")
     internal val javaCache = maybeGetJavaCacheFromFile()
@@ -139,14 +140,7 @@ class JavaClassCacheManager(val file: File) : Closeable {
     private fun maybeGetAptCacheFromFile(): IncrementalAptCache {
 
         return if (aptCacheFile.exists()) {
-            try {
-                ObjectInputStream(BufferedInputStream(aptCacheFile.inputStream())).use {
-                    it.readObject() as IncrementalAptCache
-                }
-            } catch (_: Throwable) {
-                // cache corrupt
-                IncrementalAptCache()
-            }
+            readCacheFromFile(aptCacheFile, APT_CACHE_ALLOWED_CLASSES, IncrementalAptCache::class.java) ?: IncrementalAptCache()
         } else {
             IncrementalAptCache()
         }
@@ -154,15 +148,29 @@ class JavaClassCacheManager(val file: File) : Closeable {
 
     private fun maybeGetJavaCacheFromFile(): JavaClassCache {
         return if (javaCacheFile.exists()) {
-            try {
-                ObjectInputStream(BufferedInputStream(javaCacheFile.inputStream())).use {
-                    it.readObject() as JavaClassCache
-                }
-            } catch (e: Throwable) {
-                JavaClassCache()
-            }
+            readCacheFromFile(javaCacheFile, JAVA_CACHE_ALLOWED_CLASSES, JavaClassCache::class.java) ?: JavaClassCache()
         } else {
             JavaClassCache()
+        }
+    }
+
+    private fun <T> readCacheFromFile(file: File, allowedClasses: Set<String>, expectedClass: Class<T>): T? {
+        try {
+            val cache = FilteringObjectInputStream(BufferedInputStream(file.inputStream()), allowedClasses).use {
+                it.readObject()
+            }
+            if (expectedClass.isInstance(cache)) {
+                return expectedClass.cast(cache)
+            } else {
+                logger?.warn("${expectedClass.name} is not supported in APT cache")
+                file.delete()
+                return null
+            }
+        } catch (_: Exception) {
+            logger?.warn("${expectedClass.name} is not supported in APT cache or the cache is corrupt")
+            // Cache is corrupt or was rejected by the class whitelist.
+            file.delete()
+            return null
         }
     }
 
@@ -226,3 +234,86 @@ private fun countClassFilesUpToLimit(root: File, limit: Int): Int {
 
     return cnt
 }
+
+// Since java.io.ObjectInputFilter is Java 17 class, and KAPT still supports Java 8, we have to implement
+// our own version.
+private class FilteringObjectInputStream(
+    input: InputStream,
+    private val allowedClasses: Set<String>
+) : ObjectInputStream(input) {
+    override fun resolveClass(desc: ObjectStreamClass): Class<*> {
+        if (!isAllowedClass(desc.name)) {
+            throw InvalidClassException(desc.name, "Class is not allowed in KAPT incremental cache")
+        }
+        return super.resolveClass(desc)
+    }
+
+    override fun resolveProxyClass(interfaces: Array<out String>): Class<*> {
+        throw InvalidClassException(interfaces.joinToString(), "Proxy classes are not allowed in KAPT incremental cache")
+    }
+
+    private fun isAllowedClass(name: String): Boolean {
+        if (name in PRIMITIVE_TYPES || name in allowedClasses) {
+            return true
+        }
+
+        if (!name.startsWith("[")) {
+            return false
+        }
+
+        val componentType = getNonPrimitiveArrayComponentType(name) ?: return true
+        return isAllowedClass(componentType)
+    }
+}
+
+private fun getNonPrimitiveArrayComponentType(name: String): String? {
+    var componentName = name
+    while (componentName.startsWith("[")) {
+        componentName = componentName.drop(1)
+    }
+
+    if (componentName.length == 1) {
+        return null
+    }
+
+    return componentName.takeIf { it.startsWith("L") && it.endsWith(";") }?.let {
+        it.substring(1, it.length - 1)
+    }
+}
+
+private val PRIMITIVE_TYPES = setOf(
+    "boolean",
+    "byte",
+    "char",
+    "double",
+    "float",
+    "int",
+    "long",
+    "short",
+    "void"
+)
+
+private val JAVA_CACHE_ALLOWED_CLASSES = setOf(
+    "java.lang.Object",
+    "java.lang.String",
+    "java.net.URI",
+    "java.util.Collections\$SingletonSet",
+    "java.util.HashMap",
+    "java.util.HashSet",
+    "java.util.LinkedHashMap",
+    "java.util.LinkedHashSet",
+    JavaClassCache::class.java.name,
+    ClassFileStructure::class.java.name,
+    SourceFileStructure::class.java.name
+)
+
+private val APT_CACHE_ALLOWED_CLASSES = setOf(
+    "java.io.File",
+    "java.lang.Object",
+    "java.lang.String",
+    "java.util.HashMap",
+    "java.util.HashSet",
+    "java.util.LinkedHashMap",
+    "java.util.LinkedHashSet",
+    IncrementalAptCache::class.java.name
+)

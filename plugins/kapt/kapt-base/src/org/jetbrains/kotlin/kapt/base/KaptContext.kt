@@ -56,7 +56,7 @@ open class KaptContext(val options: KaptOptions, val withJdk: Boolean, val logge
         KaptJavaCompiler.preRegister(context)
 
         cacheManager = options.incrementalCache?.let {
-            JavaClassCacheManager(it)
+            JavaClassCacheManager(it, logger)
         }
         if (options.flags[KaptFlag.INCREMENTAL_APT]) {
             sourcesToReprocess = run {

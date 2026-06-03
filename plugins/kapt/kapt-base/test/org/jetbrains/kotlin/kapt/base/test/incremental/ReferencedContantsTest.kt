@@ -31,7 +31,7 @@ class ReferencedConstantsTest {
             val compiledClasses = tmp.newFolder("compiledClasses")
             compileSources(listOf(MY_TEST_DIR.resolve("CKlass.java")), compiledClasses)
 
-            cache = JavaClassCacheManager(tmp.newCacheFolder())
+            cache = JavaClassCacheManager(tmp.newCacheFolder(), null)
             generatedSources = tmp.newGeneratedSourcesFolder()
             cache.close()
             val processor = SimpleProcessor().toAggregating()
