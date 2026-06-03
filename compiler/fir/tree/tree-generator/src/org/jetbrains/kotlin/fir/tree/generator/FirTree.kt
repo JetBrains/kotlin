@@ -1611,6 +1611,7 @@ object FirTree : AbstractFirTreeBuilder() {
 
     val placeholderProjection: Element by element(TypeRefElement) {
         parent(typeProjection)
+        kDoc = "Represents an underscore type argument."
     }
 
     val contractElementDeclaration: Element by element(Contracts) {
