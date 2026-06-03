@@ -2481,6 +2481,17 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinJsReportAggre
 	public fun setExecutionSourceFrom (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
 }
 
+public abstract class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTarget : org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl {
+	public fun browser (Lkotlin/jvm/functions/Function1;)V
+	public fun browser (Z)V
+	public fun browser (ZLkotlin/jvm/functions/Function1;)V
+	public fun browser (ZLorg/gradle/api/Action;)V
+	public fun d8 ()V
+	public fun d8 (Lkotlin/jvm/functions/Function1;)V
+	public fun d8 (Lorg/gradle/api/Action;)V
+	public fun getD8 ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl;
+}
+
 public final class org/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute : java/lang/Enum, java/io/Serializable, org/gradle/api/Named {
 	public static final field Companion Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute$Companion;
 	public static final field js Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTargetAttribute;
@@ -2654,9 +2665,6 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/Kotli
 	public abstract fun browser ()V
 	public abstract fun browser (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun browser (Lorg/gradle/api/Action;)V
-	public abstract fun browser (Z)V
-	public abstract fun browser (ZLkotlin/jvm/functions/Function1;)V
-	public abstract fun browser (ZLorg/gradle/api/Action;)V
 	public abstract fun generateTypeScriptDefinitions ()V
 	public abstract fun getBinaries ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsBinaryContainer;
 	public abstract fun getCompilations ()Lorg/gradle/api/NamedDomainObjectContainer;
@@ -2672,10 +2680,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl$
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Z)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;ZLorg/gradle/api/Action;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun compilerOptions (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun getDisambiguationClassifier (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl;)Ljava/lang/String;
@@ -2708,6 +2713,9 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl$De
 }
 
 public abstract interface class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl : org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmTargetDsl {
+	public abstract fun browser (Z)V
+	public abstract fun browser (ZLkotlin/jvm/functions/Function1;)V
+	public abstract fun browser (ZLorg/gradle/api/Action;)V
 	public abstract fun d8 ()V
 	public abstract fun d8 (Lkotlin/jvm/functions/Function1;)V
 	public abstract fun d8 (Lorg/gradle/api/Action;)V
@@ -2719,7 +2727,6 @@ public final class org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTarget
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun attributes (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;)V
-	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lkotlin/jvm/functions/Function1;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Lorg/gradle/api/Action;)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;Z)V
 	public static fun browser (Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl;ZLorg/gradle/api/Action;)V
@@ -3146,7 +3153,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/ir/Kotlin
 	public abstract fun processBinary ()V
 }
 
-public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl {
+public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget : org/jetbrains/kotlin/gradle/plugin/mpp/KotlinTargetWithBinaries, org/jetbrains/kotlin/gradle/plugin/KotlinTargetWithTests, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsTargetDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmSubTargetContainerDsl, org/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmWasiTargetDsl {
 	public fun <init> (Lorg/gradle/api/Project;Lorg/jetbrains/kotlin/gradle/plugin/KotlinPlatformType;Z)V
 	public fun applyBinaryen ()V
 	public fun applyBinaryen (Lkotlin/jvm/functions/Function1;)V
@@ -3154,22 +3161,15 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrTarget
 	public fun browser ()V
 	public fun browser (Lkotlin/jvm/functions/Function1;)V
 	public fun browser (Lorg/gradle/api/Action;)V
-	public fun browser (Z)V
-	public fun browser (ZLkotlin/jvm/functions/Function1;)V
-	public fun browser (ZLorg/gradle/api/Action;)V
 	public fun compilerOptions (Lkotlin/jvm/functions/Function1;)V
 	public fun compilerOptions (Lorg/gradle/api/Action;)V
 	protected fun createKotlinVariant (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/KotlinCompilation;Ljava/util/Set;)Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinVariant;
-	public fun d8 ()V
-	public fun d8 (Lkotlin/jvm/functions/Function1;)V
-	public fun d8 (Lorg/gradle/api/Action;)V
 	public fun generateTypeScriptDefinitions ()V
 	public synthetic fun getBinaries ()Lorg/gradle/api/DomainObjectSet;
 	public fun getBinaries ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsBinaryContainer;
 	public fun getBrowser ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsBrowserDsl;
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinJsCompilerOptions;
-	public fun getD8 ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinWasmD8Dsl;
 	public fun getKotlinComponents ()Ljava/util/Set;
 	public fun getNodejs ()Lorg/jetbrains/kotlin/gradle/targets/js/dsl/KotlinJsNodeDsl;
 	public fun getSubTargets ()Lorg/gradle/api/NamedDomainObjectContainer;
@@ -3207,6 +3207,12 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinNodeJsIr :
 	public fun passCliArgumentsToMainFunction ()V
 	public fun passProcessArgvToMainFunction ()V
 	public fun runTask (Lorg/gradle/api/Action;)V
+}
+
+public class org/jetbrains/kotlin/gradle/targets/js/ir/KotlinWasmTargetConfigurator : org/jetbrains/kotlin/gradle/plugin/KotlinOnlyTargetConfigurator {
+	public fun <init> ()V
+	public synthetic fun configureTarget (Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;)V
+	public fun configureTarget (Lorg/jetbrains/kotlin/gradle/targets/js/KotlinWasmTarget;)V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/ir/Library : org/jetbrains/kotlin/gradle/targets/js/ir/JsIrBinary {
