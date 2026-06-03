@@ -821,6 +821,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertExactTasksInGraph(
                         ":$sharedProjectName:${SerializeSwiftPMDependenciesMetadataForLockFiles.TASK_NAME}",
+                        ":$sharedProjectName:${FingerprintSyntheticPackage.TASK_NAME}",
                         ":$sharedProjectName:${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":$sharedProjectName:${
                             GenerateSyntheticLinkageImportProject.syntheticUmbrellaPackageGenerationTaskName(
@@ -854,7 +855,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
 
                     assertResolvedVersions(
                         persistedPackageResolved = sharedProject.projectPath.resolve("build/kotlin/swiftImport/Package.resolved"),
-                        checkoutRepoDir = sharedProject.projectPath.resolve("build/kotlin/swiftPMCheckout/checkouts"),
+                        checkoutRepoDir = swiftPMFingerprintCheckoutDir(sharedProject.projectPath, projectPath).resolve("checkouts"),
                         expectedPins = listOf(
                             sharedRepo to "1.0.0",
                         ),
@@ -865,6 +866,7 @@ class SwiftPMImportPersistentIdentifierPackageLockIntegrationTests : KGPBaseTest
                 build(":${FetchSyntheticImportProjectPackages.TASK_NAME}") {
 
                     assertExactTasksInGraph(
+                        ":${FingerprintSyntheticPackage.TASK_NAME}",
                         ":${GenerateSyntheticLinkageImportProject.syntheticImportProjectGenerationTaskName}",
                         ":${FetchSyntheticImportProjectPackages.TASK_NAME}",
                         ":${SyncPackageResolvedTask.SYNC_PERSISTED_PACKAGE_RESOLVED_TO_SYNTHETIC_TASK_NAME}"
