@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.FileSerializer
+import org.jetbrains.kotlin.gradle.internal.json.FileSerializer
 import java.io.File
 import java.io.Serializable as JavaSerializable
 
