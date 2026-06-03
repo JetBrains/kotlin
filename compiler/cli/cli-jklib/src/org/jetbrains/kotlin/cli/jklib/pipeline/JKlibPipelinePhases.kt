@@ -399,7 +399,7 @@ object JKlibMetadataSerializationPhase : PipelinePhase<JKlibFrontendPipelineArti
         val versions = KotlinLibraryVersioning(
             abiVersion = KotlinAbiVersion.CURRENT,
             compilerVersion = KotlinCompilerVersion.getVersion(),
-            metadataVersion = configuration.metadataVersion(),
+            metadataVersion = configuration.klibMetadataVersionOrDefault(),
         )
 
         KlibWriter {
