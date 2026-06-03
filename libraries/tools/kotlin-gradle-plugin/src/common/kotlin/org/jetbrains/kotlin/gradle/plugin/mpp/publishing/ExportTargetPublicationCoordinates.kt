@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.component.ComponentWithCoordinates
@@ -25,12 +26,14 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.internal
 import org.jetbrains.kotlin.gradle.plugin.mpp.originalVariantNameFromPublished
 
+@Serializable
 internal class TargetPublicationCoordinates(
     @get:Nested
     val rootPublicationCoordinates: GAV,
     @get:Nested
     val targetPublicationCoordinates: GAV
 ): KotlinShareableDataAsSecondaryVariant {
+    @Serializable
     internal class GAV(
         @get:Input
         val group: String,
@@ -91,8 +94,7 @@ private suspend fun Project.exportForPomDependenciesRewriter(target: KotlinTarge
 
 internal fun KotlinSecondaryVariantsDataSharing.consumeTargetPublicationCoordinates(
     from: Configuration
-): KotlinProjectSharedDataProvider<TargetPublicationCoordinates> = consume(
+): KotlinProjectSharedDataProvider<TargetPublicationCoordinates> = consume<TargetPublicationCoordinates>(
     key = PROJECT_DATA_SHARING_KEY,
     incomingConfiguration = from,
-    clazz = TargetPublicationCoordinates::class.java
 )

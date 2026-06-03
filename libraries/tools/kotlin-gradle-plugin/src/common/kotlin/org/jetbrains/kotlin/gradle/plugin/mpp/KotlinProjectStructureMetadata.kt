@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable as KxSerializable
 import org.gradle.api.Project
 import org.gradle.api.plugins.ExtensionAware
 import org.gradle.api.tasks.Input
@@ -35,6 +36,7 @@ import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 
 // FIXME support module classifiers for PM2.0 or drop this class in favor of KotlinModuleIdentifier
+@KxSerializable
 open class ModuleDependencyIdentifier(
     @get:Input
     open val groupId: String?,

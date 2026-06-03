@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.publishing
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Nested
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.gradle.utils.currentBuildId
 /**
  * Exported KMP Coordinates to be consumed by other KMP projects
  */
+@Serializable
 internal data class KotlinProjectCoordinatesData(
     @get:Input
     val buildPath: String,
@@ -47,10 +49,9 @@ internal val ExportRootModuleCoordinates = KotlinProjectSetupCoroutine {
     projectDataSharingService.shareDataFromProvider(PROJECT_DATA_SHARING_KEY, metadataApiElements, provider { coordinates })
 }
 
-internal fun KotlinSecondaryVariantsDataSharing.consumeRootModuleCoordinates(sourceSet: InternalKotlinSourceSet) = consume(
+internal fun KotlinSecondaryVariantsDataSharing.consumeRootModuleCoordinates(sourceSet: InternalKotlinSourceSet) = consume<KotlinProjectCoordinatesData>(
     PROJECT_DATA_SHARING_KEY,
     sourceSet.resolvableMetadataConfiguration,
-    KotlinProjectCoordinatesData::class.java
 )
 
 private suspend fun Project.collectKotlinProjectCoordinates(): KotlinProjectCoordinatesData {

@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.Project
 import org.gradle.api.file.FileCollection
+import org.jetbrains.kotlin.gradle.internal.json.AbsoluteFileSerializer
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.awaitMetadataTarget
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -83,7 +85,10 @@ internal fun GenerateProjectStructureMetadata.addMetadataSourceSetsToOutput(proj
     }
 }
 
-internal data class SourceSetToClassDirMap(val map: Map<String, File>) : KotlinShareableDataAsSecondaryVariant
+@Serializable
+internal data class SourceSetToClassDirMap(
+    val map: Map<String, @Serializable(with = AbsoluteFileSerializer::class) File>
+) : KotlinShareableDataAsSecondaryVariant
 
 internal suspend fun KotlinMultiplatformExtension.kotlinMetadataCompilations() = awaitMetadataTarget()
     .awaitMetadataCompilationsCreated()

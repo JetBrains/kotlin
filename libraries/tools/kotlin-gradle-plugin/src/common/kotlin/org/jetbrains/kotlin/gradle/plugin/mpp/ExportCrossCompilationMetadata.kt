@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
+import kotlinx.serialization.Serializable
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.tasks.Input
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
@@ -36,6 +37,7 @@ internal val ExportCrossCompilationMetadata = KotlinProjectSetupCoroutine {
     }
 }
 
+@Serializable
 internal class CrossCompilationData(
     @get:Input
     val crossCompilationSupported: Boolean,
@@ -43,8 +45,7 @@ internal class CrossCompilationData(
 
 internal fun KotlinSecondaryVariantsDataSharing.consumeCrossCompilationMetadata(
     from: Configuration
-): KotlinProjectSharedDataProvider<CrossCompilationData> = consume(
+): KotlinProjectSharedDataProvider<CrossCompilationData> = consume<CrossCompilationData>(
     PROJECT_CROSS_COMPILATION_SHARING_KEY,
     from,
-    CrossCompilationData::class.java
 )
