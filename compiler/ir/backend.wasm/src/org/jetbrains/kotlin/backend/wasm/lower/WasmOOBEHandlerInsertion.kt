@@ -21,7 +21,11 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrVariable
+import org.jetbrains.kotlin.ir.expressions.IrBreak
+import org.jetbrains.kotlin.ir.expressions.IrBreakContinue
+import org.jetbrains.kotlin.ir.expressions.IrContinue
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTry
@@ -95,6 +99,32 @@ private fun containsReturnTargeting(expression: IrExpression, targetSymbol: IrRe
     return found
 }
 
+private fun collectNonLocalJumps(expression: IrExpression): List<Pair<IrLoop, Boolean>> {
+    val localLoops = mutableSetOf<IrLoop>()
+    val jumps = mutableSetOf<Pair<IrLoop, Boolean>>()
+    expression.acceptVoid(object : IrVisitorVoid() {
+        override fun visitElement(element: IrElement) {
+            element.acceptChildrenVoid(this)
+        }
+
+        override fun visitLoop(loop: IrLoop) {
+            localLoops.add(loop)
+            super.visitLoop(loop)
+        }
+
+        override fun visitBreak(jump: IrBreak) {
+            if (jump.loop !in localLoops) jumps.add(jump.loop to true)
+            super.visitBreak(jump)
+        }
+
+        override fun visitContinue(jump: IrContinue) {
+            if (jump.loop !in localLoops) jumps.add(jump.loop to false)
+            super.visitContinue(jump)
+        }
+    })
+    return jumps.toList()
+}
+
 private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendContext) : IrElementTransformerVoidWithContext() {
     private val adapterSymbol = ctx.wasmSymbols.jsRelatedSymbols.jsInteropAdapters.withJsOutOfBoundsExceptionToKotlinAdapter
     private val ioobeClass = ctx.wasmSymbols.indexOutOfBoundsException.owner
@@ -112,6 +142,7 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
 
         // Make sure we don't insert the adapter in the adapter definition itself.
         if (allScopes.any { (it.irElement as? IrFunction)?.symbol == adapterSymbol }) return aTry
+
         val anyNType = ctx.irBuiltIns.anyNType
 
         val outerFunctionSymbol = (currentFunction!!.irElement as IrFunction).symbol
@@ -131,12 +162,13 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
             }
 
             val hasReturns = containsReturnTargeting(aTry.tryResult, outerFunctionSymbol)
+            val nonLocalJumps = collectNonLocalJumps(aTry.tryResult)
+            val hasJumps = nonLocalJumps.isNotEmpty()
 
             var hasReturnedVar: IrVariable? = null
             var returnValueVar: IrVariable? = null
+            var jumpStateVar: IrVariable? = null
 
-            // If there are early returns, rewrite the body to set some state variables with the
-            // returns properly retargeted.
             if (hasReturns) {
                 hasReturnedVar = buildVariable(
                     parent, aTry.startOffset, aTry.endOffset,
@@ -153,22 +185,70 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
                 ).apply {
                     initializer = irNull()
                 }
+            }
 
+            val jumpIndexMap: Map<Pair<IrLoop, Boolean>, Int> = if (hasJumps) {
+                jumpStateVar = buildVariable(
+                    parent, aTry.startOffset, aTry.endOffset,
+                    IrDeclarationOrigin.IR_TEMPORARY_VARIABLE, Name.identifier("jumpState"), ctx.irBuiltIns.intType,
+                    isVar = true
+                ).apply {
+                    initializer = irInt(0)
+                }
+                nonLocalJumps.withIndex().associate { (i, jump) -> jump to (i + 1) }
+            } else {
+                emptyMap()
+            }
+
+            // Rewrite returns and break/continue that can't cross the lambda boundary.
+            if (hasReturns || hasJumps) {
                 aTry.tryResult.transformChildrenVoid(object : IrElementTransformerVoid() {
                     override fun visitReturn(expression: IrReturn): IrExpression {
-                        if (expression.returnTargetSymbol == outerFunctionSymbol) {
+                        if (hasReturns && expression.returnTargetSymbol == outerFunctionSymbol) {
                             return IrReturnImpl(
                                 expression.startOffset, expression.endOffset,
                                 ctx.irBuiltIns.nothingType,
                                 lambdaFunction.symbol,
                                 irBlock {
-                                    +irSet(hasReturnedVar.symbol, irBoolean(true))
-                                    +irSet(returnValueVar.symbol, expression.value.implicitCastTo(anyNType))
+                                    +irSet(hasReturnedVar!!.symbol, irBoolean(true))
+                                    +irSet(returnValueVar!!.symbol, expression.value.implicitCastTo(anyNType))
                                     +irNull()
                                 }
                             )
                         }
                         return super.visitReturn(expression)
+                    }
+
+                    override fun visitBreak(jump: IrBreak): IrExpression {
+                        val index = jumpIndexMap[jump.loop to true]
+                        if (index != null) {
+                            return IrReturnImpl(
+                                jump.startOffset, jump.endOffset,
+                                ctx.irBuiltIns.nothingType,
+                                lambdaFunction.symbol,
+                                irBlock {
+                                    +irSet(jumpStateVar!!.symbol, irInt(index))
+                                    +irNull()
+                                }
+                            )
+                        }
+                        return super.visitBreak(jump)
+                    }
+
+                    override fun visitContinue(jump: IrContinue): IrExpression {
+                        val index = jumpIndexMap[jump.loop to false]
+                        if (index != null) {
+                            return IrReturnImpl(
+                                jump.startOffset, jump.endOffset,
+                                ctx.irBuiltIns.nothingType,
+                                lambdaFunction.symbol,
+                                irBlock {
+                                    +irSet(jumpStateVar!!.symbol, irInt(index))
+                                    +irNull()
+                                }
+                            )
+                        }
+                        return super.visitContinue(jump)
                     }
                 })
             }
@@ -208,17 +288,29 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
                 aTry.finallyExpression
             )
 
-            // Make sure we actually early return if there are any.
-            if (hasReturns) {
-                val hrv = hasReturnedVar!!
-                val rvv = returnValueVar!!
+            if (hasReturns || hasJumps) {
                 return irBlock(startOffset = UNDEFINED_OFFSET, endOffset = UNDEFINED_OFFSET) {
-                    +hrv
-                    +rvv
+                    if (hasReturns) {
+                        +hasReturnedVar!!
+                        +returnValueVar!!
+                    }
+                    if (hasJumps) {
+                        +jumpStateVar!!
+                    }
 
                     val tryExprResult = irTemporary(newTry, nameHint = "try_execution_value")
 
-                    +irIfThen(irGet(hrv), irReturn(irImplicitCast(irGet(rvv), outerReturnType)))
+                    if (hasReturns) {
+                        +irIfThen(irGet(hasReturnedVar!!), irReturn(irImplicitCast(irGet(returnValueVar!!), outerReturnType)))
+                    }
+                    for ((jump, index) in jumpIndexMap) {
+                        val (loop, isBreak) = jump
+                        +irIfThen(
+                            irEquals(irGet(jumpStateVar!!), irInt(index)),
+                            if (isBreak) irBreak(loop) else irContinue(loop)
+                        )
+                    }
+
                     +irGet(tryExprResult)
                 }
             } else {
