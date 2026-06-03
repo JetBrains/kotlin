@@ -47,7 +47,7 @@ class CheckCocoaPodsHasNoSwiftPMDependenciesTests {
             """
                 You are using CocoaPods integration with SwiftPM dependencies. Please follow the migration guide https://kotl.in/cocoapods-to-swiftpm-migration
                 and run the following command to switch your Xcode project to the SwiftPM integration:
-                XCODEPROJ_PATH='/path/to/iosApp.xcodeproj' GRADLE_PROJECT_PATH=':' '${searchForGradlew(project.projectDir)}' -p '${project.projectDir}' ':integrateEmbedAndSign' ':integrateLinkagePackage'
+                XCODEPROJ_PATH='/path/to/iosApp.xcodeproj' GRADLE_PROJECT_PATH=':' '${searchForGradlew(project.projectDir.toPath())}' -p '${project.projectDir}' ':integrateEmbedAndSign' ':integrateLinkagePackage'
                 Direct SwiftPM dependencies: FooPackage
             """.trimIndent(),
             failure.message?.trimIndent()
@@ -89,7 +89,7 @@ class CheckCocoaPodsHasNoSwiftPMDependenciesTests {
             """
                 You are using CocoaPods integration with SwiftPM dependencies. Please follow the migration guide https://kotl.in/cocoapods-to-swiftpm-migration
                 and run the following command to switch your Xcode project to the SwiftPM integration:
-                XCODEPROJ_PATH='/path/to/iosApp.xcodeproj' GRADLE_PROJECT_PATH=':' '${searchForGradlew(project.projectDir)}' -p '${project.projectDir}' ':integrateEmbedAndSign' ':integrateLinkagePackage'
+                XCODEPROJ_PATH='/path/to/iosApp.xcodeproj' GRADLE_PROJECT_PATH=':' '${searchForGradlew(project.projectDir.toPath())}' -p '${project.projectDir}' ':integrateEmbedAndSign' ':integrateLinkagePackage'
                 Transitive SwiftPM dependencies: $identifier: [BarPackage]
             """.trimIndent(),
             failure.message?.trimIndent()

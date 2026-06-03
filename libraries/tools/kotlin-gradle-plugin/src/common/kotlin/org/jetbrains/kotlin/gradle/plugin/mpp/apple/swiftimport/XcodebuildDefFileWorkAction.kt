@@ -184,7 +184,7 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                 }
             }
 
-            val parsedClangCall = XcodebuildDefFileUtils.parseClangCall(architectureSpecificProductClangCalls.single())
+            val parsedClangCall = XcodebuildDefFileUtils.parseClangCall(architectureSpecificProductClangCalls.single().toPath())
 
             val clangModules = if (discoverModulesImplicitly) {
                 XcodebuildDefFileUtils.discoverClangModules(parsedClangCall)
@@ -207,7 +207,7 @@ internal abstract class XcodebuildDefFileWorkAction @Inject constructor(
                         && "-target${DUMP_FILE_ARGS_SEPARATOR}${clangArchitecture}-apple" in ldArgs
             }
 
-            val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single())
+            val parsedLdCall = XcodebuildDefFileUtils.parseLdCall(architectureSpecificProductLdCalls.single().toPath())
 
             ldDumpDir.resolve(XcodebuildDefFileUtils.ldFileName(architecture))
                 .writeText(parsedLdCall.ldArgs.joinToString(DUMP_FILE_ARGS_SEPARATOR))

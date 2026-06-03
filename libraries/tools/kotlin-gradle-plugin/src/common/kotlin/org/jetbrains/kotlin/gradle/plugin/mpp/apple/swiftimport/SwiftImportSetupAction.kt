@@ -46,6 +46,9 @@ import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.jetbrains.kotlin.statistics.metrics.NumericalMetrics
 import java.io.File
 import java.io.ObjectInputStream
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 import kotlin.io.readLines
 import kotlin.io.resolve
 
@@ -738,10 +741,12 @@ private fun Project.registerConvertSyntheticSwiftPMImportProjectIntoDefFile(
 }
 
 internal const val PROJECT_PATH_ENV = "XCODEPROJ_PATH"
-internal fun searchForGradlew(path: File?): File? {
+internal fun searchForGradlew(path: Path?): Path? {
     if (path == null) return null
-    path.listFiles().firstOrNull { it.name == "gradlew" }?.let { return it }
-    return searchForGradlew(path.parentFile)
+    Files.list(path).use { paths ->
+        paths.filter { it.fileName.toString() == "gradlew" }.findFirst().orElse(null)?.let { return it }
+    }
+    return searchForGradlew(path.parent)
 }
 
 internal fun Project.hasDirectOrTransitiveSwiftPMDependencies(): Provider<Boolean> {
@@ -820,14 +825,14 @@ private fun Project.providePersistedPackageResolvedSync(): PackageResolvedSynchr
     return swiftPMImportExtension.packageResolvedSynchronization
 }
 
-private fun Project.rootDirFile(): File = rootProject.projectDir
+private fun Project.rootDirPath(): Path = rootProject.projectDir.toPath()
 
 private fun Project.providePersistedPackageResolved(): RegularFile {
     return when (val syncStrategy = providePersistedPackageResolvedSync()) {
         is PackageResolvedSynchronization.Identifier -> {
             layout.file(
                 provider {
-                    rootDirFile().resolve(".swiftpm-locks/${syncStrategy.identifier}/swiftImport/Package.resolved")
+                    rootDirPath().resolve(".swiftpm-locks/${syncStrategy.identifier}/swiftImport/Package.resolved").toFile()
                 }
             ).get()
         }
@@ -840,7 +845,7 @@ private fun Project.providePersistedPackageResolved(): RegularFile {
 private fun Project.providerIdentifierRoot(identifier: String): Provider<Directory> =
     layout.dir(
         provider {
-            rootDirFile().resolve(".swiftpm-locks/$identifier")
+            rootDirPath().resolve(".swiftpm-locks/$identifier").toFile()
         }
     )
 
