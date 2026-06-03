@@ -262,7 +262,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      * but for sources it is still **true**.
      *
      * @see backingFieldSymbol
-     * @see isDelegatedProperty
+     * @see isDelegated
      */
     public abstract val hasBackingField: Boolean
 
@@ -301,7 +301,7 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      * ```
      *
      * @see hasBackingField
-     * @see isDelegatedProperty
+     * @see isDelegated
      */
     public abstract val backingFieldSymbol: KaBackingFieldSymbol?
 
@@ -310,7 +310,9 @@ public sealed class KaPropertySymbol : KaVariableSymbol(), KaTypeParameterOwnerS
      *
      * @see backingFieldSymbol
      */
-    public abstract val isDelegatedProperty: Boolean
+    @Deprecated("Use `isDelegated` instead", replaceWith = ReplaceWith("isDelegated"))
+    public val isDelegatedProperty: Boolean
+        get() = isDelegated
 
     /**
      * Whether the property is declared in a class's primary constructor.
@@ -460,7 +462,6 @@ public abstract class KaSyntheticJavaPropertySymbol : KaPropertySymbol() {
     public abstract val javaSetterSymbol: KaNamedFunctionSymbol?
 
     final override val hasBackingField: Boolean get() = withValidityAssertion { true }
-    final override val isDelegatedProperty: Boolean get() = withValidityAssertion { false }
     final override val isDelegated: Boolean get() = withValidityAssertion { false }
     final override val hasGetter: Boolean get() = withValidityAssertion { true }
     final override val location: KaSymbolLocation get() = withValidityAssertion { KaSymbolLocation.CLASS }

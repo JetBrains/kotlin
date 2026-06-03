@@ -78,7 +78,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -293,7 +292,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -407,7 +405,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -618,7 +615,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -825,7 +821,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -939,7 +934,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1146,7 +1140,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: true
-  isDelegatedProperty: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1256,7 +1249,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: true
-  isDelegatedProperty: true
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1373,7 +1365,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1487,7 +1478,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1725,7 +1715,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: true
   isExternal: false
@@ -1862,7 +1851,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -1976,7 +1964,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -2191,7 +2178,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: false
   isExtension: false
   isExternal: false
@@ -2333,7 +2319,6 @@ KaConstructorSymbol:
         isCompanion: false
         isConst: false
         isDelegated: false
-        isDelegatedProperty: false
         isExpect: false
         isExtension: false
         isExternal: false

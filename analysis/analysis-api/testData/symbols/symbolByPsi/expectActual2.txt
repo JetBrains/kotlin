@@ -317,7 +317,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: true
   isExtension: false
   isExternal: false
@@ -560,7 +559,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: false
-  isDelegatedProperty: false
   isExpect: true
   isExtension: false
   isExternal: false

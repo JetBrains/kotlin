@@ -123,7 +123,6 @@ scopes:
         isCompanion: false
         isConst: false
         isDelegated: false
-        isDelegatedProperty: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -467,7 +466,6 @@ scopes:
         isCompanion: false
         isConst: false
         isDelegated: false
-        isDelegatedProperty: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -550,7 +548,6 @@ scopes:
         isCompanion: false
         isConst: false
         isDelegated: false
-        isDelegatedProperty: false
         isExpect: false
         isExtension: false
         isExternal: false
@@ -834,7 +831,6 @@ scopes:
         isCompanion: true
         isConst: false
         isDelegated: false
-        isDelegatedProperty: false
         isExpect: false
         isExtension: false
         isExternal: false

@@ -253,7 +253,6 @@ callables: 5
     isCompanion: false
     isConst: false
     isDelegated: false
-    isDelegatedProperty: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -340,7 +339,6 @@ callables: 5
     isCompanion: false
     isConst: false
     isDelegated: false
-    isDelegatedProperty: false
     isExpect: false
     isExtension: false
     isExternal: false
@@ -531,7 +529,6 @@ callables: 5
     isCompanion: false
     isConst: false
     isDelegated: false
-    isDelegatedProperty: false
     isExpect: false
     isExtension: true
     isExternal: false

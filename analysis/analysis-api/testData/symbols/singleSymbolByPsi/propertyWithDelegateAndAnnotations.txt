@@ -78,7 +78,6 @@ KaKotlinPropertySymbol:
   isCompanion: false
   isConst: false
   isDelegated: true
-  isDelegatedProperty: true
   isExpect: false
   isExtension: false
   isExternal: false

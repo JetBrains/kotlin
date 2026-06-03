@@ -459,7 +459,7 @@ private fun hasBackingField(property: KaPropertySymbol): Boolean {
     )
 
     if (property.origin.cannotHasBackingField() || property.isStatic) return false
-    if (property.isLateInit || property.isDelegatedProperty || property.isFromPrimaryConstructor) return true
+    if (property.isLateInit || property.isDelegated || property.isFromPrimaryConstructor) return true
     val hasBackingFieldByPsi: Boolean? = property.psi?.hasBackingField()
     if (hasBackingFieldByPsi == false) {
         return hasBackingFieldByPsi
