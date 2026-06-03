@@ -80,6 +80,7 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class WasmOOBEHandlerInsertionLowering(private val ctx: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        if (!ctx.isWasmJsTarget) return
         if (ctx.configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION)) return
         irFile.transformChildrenVoid(WasmOOBEHandlerInsertionTransformer(ctx))
     }
