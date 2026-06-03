@@ -27,7 +27,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.getFunctions
 import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
-import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
 import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
@@ -133,12 +132,6 @@ internal val RemoveRedundantSafepointsPhase = createSimpleNamedCompilerPhase<Bit
         }
 )
 
-internal val OptimizeTLSDataLoadsPhase = createSimpleNamedCompilerPhase<BitcodePostProcessingContext, Unit>(
-        name = "OptimizeTLSDataLoads",
-        postactions = getDefaultLlvmModuleActions(),
-        op = { context, _ -> removeMultipleThreadDataLoads(context) }
-)
-
 internal val CStubsPhase = createSimpleNamedCompilerPhase<NativeGenerationState, Unit>(
         name = "CStubs",
         postactions = getDefaultLlvmModuleActions(),
@@ -181,7 +174,4 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
         }
     }
     runAndMeasurePhase(RemoveRedundantSafepointsPhase)
-    if (context.config.optimizationsEnabled) {
-        runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
-    }
 }

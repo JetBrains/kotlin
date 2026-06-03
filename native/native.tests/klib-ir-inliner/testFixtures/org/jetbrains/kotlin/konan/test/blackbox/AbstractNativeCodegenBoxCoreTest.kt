@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.konan.test.klib.NativeCompilerSecondStageFacade
 import org.jetbrains.kotlin.konan.test.klib.currentCustomNativeCompilerSettings
 import org.jetbrains.kotlin.konan.test.services.CInteropTestSkipper
 import org.jetbrains.kotlin.konan.test.services.DisabledNativeTestSkipper
-import org.jetbrains.kotlin.konan.test.services.FileCheckTestSkipper
 import org.jetbrains.kotlin.konan.test.services.sourceProviders.NativeLauncherAdditionalSourceProvider
 import org.jetbrains.kotlin.konan.test.suppressors.NativeTestsSuppressor
 import org.jetbrains.kotlin.test.builders.TwoStageTestConfigurationBuilder
@@ -53,7 +52,7 @@ abstract class AbstractNativeCodegenBoxCoreTest : AbstractTwoStageNativeCoreTest
 
             commonConfigurationForNativeCodegenTest()
 
-            useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper, ::FileCheckTestSkipper)
+            useMetaTestConfigurators(::DisabledNativeTestSkipper, ::CInteropTestSkipper)
             useFailureSuppressors(
                 ::FirMetaInfoDiffSuppressor,
                 ::NativeTestsSuppressor,

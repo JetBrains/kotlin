@@ -198,7 +198,6 @@ private class ExtTestDataFile(
                 && structure.directives[LANGUAGE_VERSION].intersect(INCOMPATIBLE_LANGUAGE_VERSIONS).isEmpty()
                 && !(FILECHECK_STAGE in structure.directives
                 && (cacheMode as? CacheMode.WithStaticCache)?.useStaticCacheForUserLibraries == true)
-                && !(optimizationMode != OptimizationMode.OPT && "OptimizeTLSDataLoads" in structure.directives[FILECHECK_STAGE])
                 && !(testDataFileSettings.languageSettings.contains("+${LanguageFeature.MultiPlatformProjects.name}")
                 && testMode == TestMode.ONE_STAGE_MULTI_MODULE)
                 && structure.defFilesContents.all { it.defFileContentsIsSupportedOn(settings.get<KotlinNativeTargets>().testTarget) }
