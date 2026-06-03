@@ -110,20 +110,29 @@ private class WasmOOBEHandlerInsertionTransformer(private val ctx: WasmBackendCo
 
         // Make sure we don't insert the adapter in the adapter definition itself.
         if (allScopes.any { (it.irElement as? IrFunction)?.symbol == adapterSymbol }) return aTry
+
+        // Skip try/catch inside inline function bodies. Those will be inlined into
+        // call sites later, and wrapping them here would introduce lambda captures
+        // that SharedVariablesLowering (which runs after this pass) can't handle
+        // because it intentionally skips inline lambda parameters.
+        if (allScopes.any { (it.irElement as? IrFunction)?.isInline == true }) return aTry
         val anyNType = ctx.irBuiltIns.anyNType
 
-        val outerFunctionSymbol = (currentFunction!!.irElement as IrFunction).symbol
+        val outerFunction = currentFunction!!.irElement as IrFunction
+        val outerFunctionSymbol = outerFunction.symbol
         val outerReturnType = outerFunctionSymbol.owner.returnType
 
         ctx.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
 
-            val lambdaFunction = ctx.irFactory.buildFun {
-                startOffset = aTry.startOffset
-                endOffset = aTry.endOffset
-                origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
-                name = Name.special("<OOBEWrapper>")
-                visibility = DescriptorVisibilities.LOCAL
-                returnType = anyNType
+            val lambdaFunction = ctx.irFactory.stageController.restrictTo(outerFunction) {
+                ctx.irFactory.buildFun {
+                    startOffset = aTry.startOffset
+                    endOffset = aTry.endOffset
+                    origin = IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
+                    name = Name.special("<OOBEWrapper>")
+                    visibility = DescriptorVisibilities.LOCAL
+                    returnType = anyNType
+                }
             }.apply {
                 this.parent = scope.getLocalDeclarationParent()
             }
