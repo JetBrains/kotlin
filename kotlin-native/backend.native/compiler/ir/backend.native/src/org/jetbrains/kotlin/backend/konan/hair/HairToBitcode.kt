@@ -25,9 +25,6 @@ import org.jetbrains.kotlin.backend.konan.llvm.ExceptionHandler
 import org.jetbrains.kotlin.backend.konan.llvm.FunctionGenerationContext
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.llvm.computeFullName
-import org.jetbrains.kotlin.backend.konan.llvm.kNullObjHeaderPtr
-import org.jetbrains.kotlin.backend.konan.llvm.kObjHeaderPtr
-import org.jetbrains.kotlin.backend.konan.llvm.pointerType
 import org.jetbrains.kotlin.backend.konan.llvm.theUnitInstanceRef
 import org.jetbrains.kotlin.backend.konan.llvm.toLLVMType
 import org.jetbrains.kotlin.ir.declarations.IrField
@@ -62,8 +59,8 @@ internal class HairToBitcode(
         HairType.LONG -> llvm.int64Type
         HairType.FLOAT -> llvm.floatType
         HairType.DOUBLE -> llvm.doubleType
-        HairType.REFERENCE -> llvm.kObjHeaderPtr
-        HairType.EXCEPTION -> llvm.voidPtrType
+        HairType.REFERENCE -> llvm.pointerType
+        HairType.EXCEPTION -> llvm.pointerType
     }
 
 
@@ -86,7 +83,7 @@ internal class HairToBitcode(
         fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
             val fieldInfo = generationState.llvmDeclarations.forField(value)
             val classBodyType = fieldInfo.classBodyType
-            val typedBodyPtr = functionGenerationContext.bitcast(pointerType(classBodyType), thisPtr)
+            val typedBodyPtr = functionGenerationContext.bitcast(llvm.pointerType, thisPtr)
             val fieldPtr = LLVMBuildStructGEP2(functionGenerationContext.builder, classBodyType, typedBodyPtr, fieldInfo.index, "")
             return fieldPtr!!
         }
@@ -118,7 +115,7 @@ internal class HairToBitcode(
                 val nodeValues = mutableMapOf<Node, LLVMValueRef>()
                 val deferredPhies = mutableListOf<Phi>()
 
-                for ((block, llvmBlock) in blocks) {
+                for ([block, llvmBlock] in blocks) {
                     functionGenerationContext.appendingTo(llvmBlock) {
                         val blockNodes = gcm.linearOrder(block)
                         println("Generating $block nodes: $blockNodes")
@@ -142,7 +139,7 @@ internal class HairToBitcode(
                                 is ConstL -> llvm.constInt64(node.value).llvm
                                 is ConstF -> llvm.constFloat32(node.value).llvm
                                 is ConstD -> llvm.constFloat64(node.value).llvm
-                                is Null -> llvm.kNullObjHeaderPtr
+                                is Null -> llvm.kNull
 
                                 // TODO respect floating types
                                 is Add -> if (node.type.isIntegral) {
@@ -237,11 +234,11 @@ internal class HairToBitcode(
                                     // FIXME
                                     val llvmParamTypes = when (hairTarget) {
                                         is HairFunctionImpl -> hairTarget.irFunction.parameters.map { it.type.toLLVMType(llvm) }
-                                        RuntimeInterface.isSubtype -> listOf(llvm.voidPtrType, llvm.voidPtrType)
+                                        RuntimeInterface.isSubtype -> listOf(llvm.pointerType, llvm.pointerType)
                                         else -> error("Unexpected function $hairTarget")
                                     }
                                     // TODO there are more to do around the function call?
-                                    val args = node.callArgs.zip(llvmParamTypes).map { (arg, paramType) ->
+                                    val args = node.callArgs.zip(llvmParamTypes).map { [arg, paramType] ->
                                         adaptFromHair(nodeValues[arg]!!, paramType)
                                     }
                                     val res = call(
@@ -404,7 +401,7 @@ internal class HairToBitcode(
                 for (phi in deferredPhies) {
                     val llvmPhi = nodeValues[phi]!!
 
-                    val incoming = phi.inputs.map { (value, blockExit) ->
+                    val incoming = phi.inputs.map { [value, blockExit] ->
                         val inBlock = blockExitBlocks[blockExit] ?: error("Node BB for $blockExit")
                         val inValue = nodeValues[value] ?: error("No value generated for input $value of $phi")
                         inBlock to inValue
