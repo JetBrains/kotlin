@@ -333,7 +333,7 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     // Otherwise, choose either the first IrClass supertype or recurse.
                     // In the first case, all supertypes are interface types and the choice was arbitrary.
                     // In the second case, there is only a single supertype.
-                    val firstBoundType = bounds.first().coneType.fullyExpandedType().coerceToAny()
+                    val firstBoundType = bounds.first().coneType.fullyExpandedType().unwrapLowerBound().coerceToAny()
                     return when (val firstSuper = firstBoundType.toSymbol()?.fir) {
                         is FirRegularClass -> firstSuper
                         is FirTypeParameter -> firstSuper.erasedUpperBound
