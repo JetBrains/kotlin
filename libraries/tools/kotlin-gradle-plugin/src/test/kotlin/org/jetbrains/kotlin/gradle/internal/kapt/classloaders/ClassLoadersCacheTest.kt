@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.internal.kapt.classloaders
 
-import com.google.gson.Gson
+import org.slf4j.Logger
 import kotlin.test.Test
 import java.io.File
 import java.net.URLDecoder
@@ -20,7 +20,7 @@ class ClassLoadersCacheTest {
     private val someClass = Test::class.java
     private val someJar = findJarByClass(someClass)!!
 
-    private val otherClass = Gson::class.java
+    private val otherClass = Logger::class.java
     private val otherJar = findJarByClass(otherClass)!!
 
     @Test

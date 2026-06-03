@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.report
 
-import com.google.gson.GsonBuilder
+import kotlinx.serialization.json.*
+import org.jetbrains.kotlin.gradle.internal.json.KgpJson
+import org.jetbrains.kotlin.internal.compilerRunner.native.UnitStatsJsonDumper
 import org.jetbrains.kotlin.util.*
 import kotlin.test.Test
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import kotlin.test.assertEquals
+import kotlin.test.assertNotNull
 
 class UnitStatsSerializationTest {
     @Test
@@ -54,8 +57,50 @@ class UnitStatsSerializationTest {
 
         val serialized = UnitStatsJsonDumper.dump(moduleStats)
 
-        val deserialized = GsonBuilder().create().fromJson(serialized, UnitStats::class.java)
+        // Parse with production kotlinx-serialization JSON parser and assert key fields
+        val root = KgpJson.default.parseToJsonElement(serialized).jsonObject
 
-        assertEquals(moduleStats, deserialized)
+        assertEquals("all_properties", root["name"]?.jsonPrimitive?.content)
+        assertEquals(JsonNull, root["outputKind"])
+        assertEquals(moduleStats.timeStampMs, root["timeStampMs"]?.jsonPrimitive?.long)
+        assertEquals("Native", root["platform"]?.jsonPrimitive?.content)
+        assertEquals("K1andK2", root["compilerType"]?.jsonPrimitive?.content)
+        assertEquals(true, root["hasErrors"]?.jsonPrimitive?.boolean)
+        assertEquals(10, root["filesCount"]?.jsonPrimitive?.int)
+        assertEquals(11, root["linesCount"]?.jsonPrimitive?.int)
+
+        // Phase stats
+        assertTimeEquals(Time(1_000_000L, 1_000_001L, 1_000_002L), root["initStats"]?.jsonObject)
+        assertTimeEquals(Time(2_000_000L, 2_000_001L, 2_000_002L), root["analysisStats"]?.jsonObject)
+        assertTimeEquals(Time(5_000_000L, 5_000_001L, 5_000_002L), root["backendStats"]?.jsonObject)
+
+        // Dynamic stats
+        val dynStats = assertNotNull(root["dynamicStats"]?.jsonArray)
+        assertEquals(2, dynStats.size)
+        assertEquals("IrPreLowering", dynStats[0].jsonObject["parentPhaseType"]?.jsonPrimitive?.content)
+        assertEquals("Dynamic 1", dynStats[0].jsonObject["name"]?.jsonPrimitive?.content)
+
+        // GC stats
+        val gc = assertNotNull(root["gcStats"]?.jsonArray)
+        assertEquals(2, gc.size)
+        assertEquals("GC", gc[0].jsonObject["kind"]?.jsonPrimitive?.content)
+        assertEquals(8_000L, gc[0].jsonObject["millis"]?.jsonPrimitive?.long)
+        assertEquals(16L, gc[0].jsonObject["count"]?.jsonPrimitive?.long)
+
+        // JIT time
+        assertEquals(9_000L, root["jitTimeMillis"]?.jsonPrimitive?.long)
+
+        // Klib element stats
+        val klibStats = assertNotNull(root["klibElementStats"]?.jsonArray)
+        assertEquals(3, klibStats.size)
+        assertEquals("KLIB directory cumulative size", klibStats[0].jsonObject["path"]?.jsonPrimitive?.content)
+        assertEquals(100_000L, klibStats[0].jsonObject["size"]?.jsonPrimitive?.long)
+    }
+
+    private fun assertTimeEquals(expected: Time, obj: JsonObject?) {
+        assertNotNull(obj)
+        assertEquals(expected.nanos, obj["nanos"]?.jsonPrimitive?.long)
+        assertEquals(expected.userNanos, obj["userNanos"]?.jsonPrimitive?.long)
+        assertEquals(expected.cpuNanos, obj["cpuNanos"]?.jsonPrimitive?.long)
     }
 }
