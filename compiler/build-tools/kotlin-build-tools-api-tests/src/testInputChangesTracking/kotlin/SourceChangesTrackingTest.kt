@@ -16,8 +16,8 @@ import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutput
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
-import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.ScenarioModule
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertAddedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertNoOutputSetChanges
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.assertRemovedOutputs
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
@@ -91,6 +91,62 @@ class SourceChangesTrackingTest : BaseCompilationTest() {
             // `Dummy.class` is intentionally absent: IC must drop the stale output of the renamed class while
             // producing `ForDummies.class` and leaving the untouched `Stay.class` in place.
             assertOutputs("Stay.class", "ForDummies.class")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC recompiles only the visibility-changed class and its direct users (externally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("IC recompiles only the visibility-changed class and its direct users (internally tracked)")
+    @TestMetadata("class-visibility-change")
+    fun testClassVisibilityChangeRecompilesDirectUsersInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("class-visibility-change").changeClassVisibilityAndAssertDirtySet()
+        }
+    }
+
+    private fun ScenarioModule.changeClassVisibilityAndAssertDirtySet() {
+        // Flip `Curry` to `internal`; `UseCurry.kt` references it, `Dummy.kt` does not.
+        changeFile("Curry.kt") { it.replace("class Curry", "internal class Curry") }
+
+        compile {
+            // `Dummy.kt` is intentionally absent: only the changed class and its direct user recompile.
+            assertCompiledSources("Curry.kt", "UseCurry.kt")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (externally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeExternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            module("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("KT-69042: IC recompiles the Kotlin usage when an inlined Java constant changes (internally tracked)")
+    @TestMetadata("kotlin-java-constant")
+    fun testKotlinTracksJavaConstantChangeInternallyTracked(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        jvmScenario(strategyConfig) {
+            trackedModule("kotlin-java-constant").changeJavaConstantAndAssertUsageRecompiled()
+        }
+    }
+
+    private fun ScenarioModule.changeJavaConstantAndAssertUsageRecompiled() {
+        replaceFileWithVersion("JavaConstants.java", "new-value")
+
+        compile {
+            // Regression test for KT-69042: under K2 a changed Java constant must recompile the Kotlin
+            // file that reads it, otherwise the stale value stays inlined in the usage.
+            assertCompiledSources("usage.kt")
         }
     }
 
