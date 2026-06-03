@@ -81,20 +81,22 @@ open class KonanCacheTask @Inject constructor(
 
     @TaskAction
     fun compile() {
-        outputDirectory.get().asFile.prepareAsOutput()
+        val outDir = outputDirectory.get().asFile
+        outDir.prepareAsOutput()
 
+        val klibFile = klib.get().asFile
         val args = buildList {
             add("-g")
             add("-target")
             add(target.get())
             add("-produce")
             add("static_cache")
-            add("-Xadd-cache=${klib.get().asFile.absolutePath}")
-            add("-Xcache-directory=${outputDirectory.get().asFile.parentFile.absolutePath}")
+            add("-Xadd-cache=${klibFile.absolutePath}")
+            add("-Xcache-directory=${outDir.parentFile.absolutePath}")
             PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
-            add("-Xdebug-prefix-map=${outputDirectory.get().asFile.parentFile.absolutePath}=out")
+            add("-Xdebug-prefix-map=${outDir.parentFile.absolutePath}=out")
             if (makePerFileCache.get()) {
                 add("-Xmake-per-file-cache")
             }
@@ -104,6 +106,11 @@ open class KonanCacheTask @Inject constructor(
             this.isolatedClassLoaderService.set(this@KonanCacheTask.isolatedClassLoadersService)
             this.compilerClasspath.from(this@KonanCacheTask.compilerClasspath)
             this.args.addAll(args)
+        }
+        workQueue.await()
+        check(outDir.isDirectory && outDir.list().isNotEmpty()) {
+            val cacheKind = if (makePerFileCache.get()) "Per-file cache" else "Monolithic cache"
+            "$cacheKind for $klibFile for ${target.get()} failed to produce any output in $outDir"
         }
     }
 }
