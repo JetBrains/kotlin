@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.builder
 
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -192,7 +193,9 @@ class RawFirBuilderTotalKotlinTestCase : AbstractRawFirBuilderTestCase() {
         var counter = 0
         testDataPath.walkRepositoryKotlinFilesWithoutTestData { file ->
             val ktFile = createKtFile(file.toRelativeString(root))
-            val firFile: FirFile = ktFile.toFirFile()
+            val firFile: FirFile = ktFile.toFirFile(
+                features = mapOf(LanguageFeature.EnableNameBasedDestructuringShortForm to LanguageFeature.State.ENABLED)
+            )
             val psiSetViaFir = mutableSetOf<KtElement>()
             val psiSetDirect = mutableSetOf<KtElement>()
             firFile.accept(object : FirVisitorVoid() {
