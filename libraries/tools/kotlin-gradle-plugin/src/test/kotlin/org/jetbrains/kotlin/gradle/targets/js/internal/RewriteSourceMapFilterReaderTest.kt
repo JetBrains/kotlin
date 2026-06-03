@@ -134,7 +134,7 @@ class RewriteSourceMapFilterReaderTest {
             filter.readText()
         )
         assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Unknown key \"version1\" at line 1 column 40 path \$.version1 in `{\"file\":\"single-platform.js\",\"version1\":3,\"sources\":[\"../../../../src/main/kotlin/main.kt\"],\"sourcesContent\":[null],\"names\":[],\"mappings\":\"\"}",
+            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Unknown key \"version1\" in `{\"file\":\"single-platform.js\",\"version1\":3,\"sources\":[\"../../../../src/main/kotlin/main.kt\"],\"sourcesContent\":[null],\"names\":[],\"mappings\":\"\"}",
             filter.warning
         )
     }
@@ -150,7 +150,9 @@ class RewriteSourceMapFilterReaderTest {
 
         assertEquals("{:)],\"sourcesContent\":[null]}", filter.readText())
         assertEquals(
-            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. Malformed JSON at line 1 column 3 path \$. in `{:)],\"sourcesContent\":[null]}",
+            "Unsupported format. Contents should starts with `{\"version\":3,\"file\":\"...\",\"sources\":[...],\"sourcesContent\":...`. " +
+                    "Unexpected JSON token at offset 1: Expected end of the object '}', but had ':' instead at path: \$\n" +
+                    "JSON input: {:)]} in `{:)],\"sourcesContent\":[null]}",
             filter.warning
         )
     }
