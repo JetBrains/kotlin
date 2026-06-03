@@ -52,7 +52,6 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmJsTargetDsl,
     KotlinWasmWasiTargetDsl,
     KotlinJsSubTargetContainerDsl,
     KotlinWasmSubTargetContainerDsl {
@@ -142,7 +141,7 @@ internal constructor(
             }
     }
 
-    private fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
+    internal fun <T : KotlinJsIrSubTargetWithBinary> addSubTarget(type: Class<T>, configure: T.() -> Unit): T {
         val subTarget = project.objects.newInstance(type, this).also(configure)
         subTargets.add(subTarget)
         return subTarget
@@ -196,11 +195,11 @@ internal constructor(
     override fun applyBinaryen(body: BinaryenExec.() -> Unit) {
     }
 
+    internal open fun KotlinJsIrSubTarget.bundleConfigurator() {
+        subTargetConfigurators.add(WebpackConfigurator(this))
+    }
+
     //region Browser
-    // Specify if webpack should be used as a bundler.
-    // It is captured on the first access to [browserLazyDelegate] and can't be changed afterwards,
-    // because the corresponding configurator registers its tasks during configuration.
-    private var useWebpack: Boolean = true
 
     private val browserLazyDelegate = lazy {
         commonLazy
@@ -208,28 +207,16 @@ internal constructor(
             configureSubTarget()
             subTargetConfigurators.add(SwcConfigurator(this))
             subTargetConfigurators.add(LibraryConfigurator(this))
-            if (useWebpack) {
-                subTargetConfigurators.add(WebpackConfigurator(this))
-            } else {
-                subTargetConfigurators.add(DevServerConfigurator(this))
-            }
+            bundleConfigurator()
         }
     }
 
     override val browser: KotlinJsBrowserDsl by browserLazyDelegate
 
-    override fun browser(useWebpack: Boolean, body: KotlinJsBrowserDsl.() -> Unit) {
-        if (!browserLazyDelegate.isInitialized()) {
-            this@KotlinJsIrTarget.useWebpack = useWebpack
-        } else if (this@KotlinJsIrTarget.useWebpack != useWebpack) {
-            project.logger.warn(
-                "w: Kotlin browser target '$targetName' is already configured with bundler '${this@KotlinJsIrTarget.useWebpack}'; " +
-                        "the request to use '$useWebpack' will be ignored. " +
-                        "The bundler must be specified on the first 'browser { }' call."
-            )
-        }
+    override fun browser(body: KotlinJsBrowserDsl.() -> Unit) {
         body(browser)
     }
+
     //endregion
 
     //region node.js
@@ -256,29 +243,7 @@ internal constructor(
     }
     //endregion
 
-    //region d8
-    @OptIn(ExperimentalWasmDsl::class)
-    private val d8LazyDelegate = lazy {
-        webTargetVariant(
-            { NodeJsRootPlugin.apply(project.rootProject) },
-            { WasmNodeJsRootPlugin.apply(project.rootProject) },
-        )
-
-        addSubTarget(KotlinD8Ir::class.java) {
-            configureSubTarget()
-            subTargetConfigurators.add(LibraryConfigurator(this))
-            subTargetConfigurators.add(D8EnvironmentConfigurator(this))
-        }
-    }
-
-    override val d8: KotlinWasmD8Dsl by d8LazyDelegate
-
-    override fun d8(body: KotlinWasmD8Dsl.() -> Unit) {
-        body(d8)
-    }
-    //endregion
-
-    private fun KotlinJsIrSubTarget.configureSubTarget() {
+    internal fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
 

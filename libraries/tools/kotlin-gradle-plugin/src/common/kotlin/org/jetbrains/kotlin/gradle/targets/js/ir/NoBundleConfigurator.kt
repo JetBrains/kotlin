@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.gradle.utils.withType
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
 
-internal class DevServerConfigurator(
+internal class NoBundleConfigurator(
     private val subTarget: KotlinJsIrSubTarget,
 ) : SubTargetConfigurator<KotlinSimpleDevServerTask, KotlinSimpleDevServerTask> {
 
@@ -82,7 +82,6 @@ internal class DevServerConfigurator(
                             ""
                         else
                             binary.name,
-                        "Simple",
                         DISTRIBUTION_TASK_NAME,
                     )
                 ) {
