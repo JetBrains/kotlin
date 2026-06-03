@@ -46,8 +46,6 @@ import java.nio.file.Path
 internal interface LinkKlibsContext : NativeBackendPhaseContext {
     val symbolTable: SymbolTable?
 
-    val reflectionTypes: KonanReflectionTypes
-
     @OptIn(K1Deprecation::class)
     val builtIns: KonanBuiltIns
 

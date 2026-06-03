@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.konan.driver.phases
 
 import org.jetbrains.kotlin.backend.common.phaser.createSimpleNamedCompilerPhase
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
-import org.jetbrains.kotlin.backend.konan.KonanReflectionTypes
 import org.jetbrains.kotlin.backend.konan.LinkKlibsContext
 import org.jetbrains.kotlin.backend.konan.LinkKlibsInput
 import org.jetbrains.kotlin.backend.konan.LinkKlibsOutput
@@ -32,10 +31,6 @@ internal class LinkKlibsContextImpl(
 ) : BasicNativeBackendPhaseContext(config), LinkKlibsContext {
     // TODO: Invalidate properly in dispose method.
     override val symbolTable = SymbolTable(KonanIdSignaturer(KonanManglerDesc), IrFactoryImpl)
-
-    override val reflectionTypes: KonanReflectionTypes by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        KonanReflectionTypes(moduleDescriptor)
-    }
 
     override val builtIns: KonanBuiltIns by lazy(LazyThreadSafetyMode.PUBLICATION) {
         moduleDescriptor.builtIns as KonanBuiltIns
