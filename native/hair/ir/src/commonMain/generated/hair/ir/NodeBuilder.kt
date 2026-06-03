@@ -315,12 +315,6 @@ context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
 operator fun CheckCast.Form.invoke(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> this@invoke(ctrl, obj) }
 
 context(nodeBuilder: NodeBuilder)
-fun CheckNotNull(control: Controlling?, obj: Node?): Controlling = nodeBuilder.onNodeBuilt(CheckNotNull(nodeBuilder.session.checkNotNullForm, control, obj)) as Controlling
-
-context(nodeBuilder: NodeBuilder, controlBuilder: ControlFlowBuilder)
-fun CheckNotNull(obj: Node?): Controlling = controlBuilder.appendControlled { ctrl -> CheckNotNull(ctrl, obj) }
-
-context(nodeBuilder: NodeBuilder)
 fun TypeInfo(obj: Node?): Node = nodeBuilder.onNodeBuilt(TypeInfo(nodeBuilder.session.typeInfoForm, obj))
 
 context(nodeBuilder: NodeBuilder)

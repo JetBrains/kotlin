@@ -5,7 +5,7 @@ import hair.ir.nodes.NodeBuilder
 import hair.ir.nodes.*
 import hair.utils.forEachInWorklist
 
-context(_: NodeBuilder, _: ArgsUpdater)
+context(_: NodeBuilder, _: ArgumentUpdater)
 fun Session.cloneNodes(originals: Sequence<Node>, replacementProvider: (Node) -> Node?): Map<Node, Node> {
     val destinationSession = this
     val clones = mutableMapOf<Node, Node>()

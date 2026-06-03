@@ -7,14 +7,11 @@ import hair.sym.Type.*
 sealed interface AnyCall : Node {
     
     
-    
 }
 
 
 sealed class AnyInvoke(form: Form, args: List<Node?>) : BlockBodyWithException(form, args), AnyCall {
-    val callArgs: VarArgsList<Node>
-        get() = VarArgsList(args, 1, Node::class)
-    
+    val callArgsIndex: Int = 1
     
     override fun <R> accept(visitor: NodeVisitor<R>): R = visitor.visitAnyInvoke(this)
 }
