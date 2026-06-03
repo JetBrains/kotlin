@@ -20,10 +20,12 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.util.jar.JarFile;
 
 public final class ResourceData {
     public final File jarFile;
@@ -42,9 +44,15 @@ public final class ResourceData {
             return new URL("jar", null, 0, path, new URLStreamHandler() {
                 @Override
                 protected URLConnection openConnection(URL u) throws IOException {
-                    return new URLConnection(u) {
+                    return new JarURLConnection(u) {
                         @Override
                         public void connect() throws IOException {}
+
+                        // used indirectly in scripting class path from classloader extraction
+                        @Override
+                        public JarFile getJarFile() throws IOException {
+                            return new JarFile(jarFile);
+                        }
 
                         @Override
                         public InputStream getInputStream() throws IOException {
