@@ -147,7 +147,7 @@ enabledTargets(platformManager).forEach { target ->
                 dependsOn(":kotlin-native:${targetName}CrossDist")
                 // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
                 mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
-                inputs.dir(dist.map { it.stdlibCache(targetName) }) // manually depend on the contents of stdlib cache
+                this.stdlibCache.set(dist.map { it.stdlibCache(targetName) })
 
                 // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
                 df.config.depends.forEach { dep ->

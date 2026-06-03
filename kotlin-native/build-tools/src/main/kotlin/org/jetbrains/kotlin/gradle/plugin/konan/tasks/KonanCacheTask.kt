@@ -49,6 +49,11 @@ open class KonanCacheTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val klib: DirectoryProperty = objectFactory.directoryProperty()
 
+    @get:Optional
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    val stdlibCache: DirectoryProperty = objectFactory.directoryProperty()
+
     @get:Input
     val target: Property<String> = objectFactory.property(String::class.java)
 
