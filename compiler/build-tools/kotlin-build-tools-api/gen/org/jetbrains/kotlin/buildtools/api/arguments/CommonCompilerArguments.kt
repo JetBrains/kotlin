@@ -4,7 +4,6 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import java.nio.`file`.Path
-import kotlin.Array
 import kotlin.Boolean
 import kotlin.Deprecated
 import kotlin.DeprecationLevel

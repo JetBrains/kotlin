@@ -182,17 +182,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_BACKEND_THREADS", KotlinReleaseVersion(1, 6, 20))
 
     /**
-     * Specifies the destination for common fragments metadata.
-     * This metadata is used solely for incremental compilation and should not be used directly.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_COMMON_FRAGMENTS_METADATA_DESTINATION: JvmCompilerArgument<String?> =
-        JvmCompilerArgument("X_COMMON_FRAGMENTS_METADATA_DESTINATION", KotlinReleaseVersion(2, 4, 20))
-
-    /**
      * Enable behaviour needed to compile builtins as part of JVM stdlib
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

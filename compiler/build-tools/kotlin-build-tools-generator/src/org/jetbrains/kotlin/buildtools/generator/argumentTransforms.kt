@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerPhase
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.CustomCompilerArgument
 import org.jetbrains.kotlin.buildtools.generator.BtaCompilerArgument.SSoTCompilerArgument
+import org.jetbrains.kotlin.buildtools.generator.drop
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 
 sealed interface ArgumentTransform {
@@ -68,6 +69,7 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
             drop("Xseparate-kmp-compilation")
             drop("Xdirect-java-actualization")
             drop("Xfragment-friend-dependency")
+            drop("Xfragment-incremental-classpath")
 
             // "wrong" metadata in argument description - argument existed before, but was added to argument description in 2.3.0
             fix("XXdump-model") { it.copy(releaseVersionsMetadata = it.releaseVersionsMetadata.copy(introducedVersion = KotlinReleaseVersion.v2_3_0)) }
@@ -113,9 +115,13 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
                 warningSince = KotlinReleaseVersion.v2_4_0,
                 errorSince = KotlinReleaseVersion.v2_5_0
             ) // breaks incremental compilation (KT-75540)
+
             override("Xprofile", CustomCompilerArguments.profileCompilerCommandArgumentFactory)
             override("Xnullability-annotations", CustomCompilerArguments.nullabilityAnnotationFactory)
             override("Xjsr305", CustomCompilerArguments.jsr305Factory)
+
+            // KMP related
+            drop("Xcommon-fragments-metadata-destination")
         }
         with(removedJvmCompilerArguments) {
             drop("Xuse-javac")
