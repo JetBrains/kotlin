@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.utils.listDescendants
 import org.jetbrains.kotlin.util.assertThrows
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
+import java.nio.file.attribute.FileTime
 import java.util.zip.ZipEntry
 import java.util.zip.ZipFile
 import java.util.zip.ZipOutputStream
@@ -31,37 +33,13 @@ class ZipUtilsTest : WithTemporaryFolder {
     override lateinit var temporaryFolder: Path
 
     private val zipContentFolder by lazy {
-        newTempDirectory().toFile().apply {
-            resolve("stub0.txt").apply {
-                parentFile.mkdirs()
-                writeText("stub0 content\n")
-                setLastModified(2411)
-            }
-
-            resolve("a/stub1.txt").apply {
-                parentFile.mkdirs()
-                writeText("stub1 content\n")
-                setLastModified(2412)
-            }
-
-            resolve("a/b/stub2.txt").apply {
-                parentFile.mkdirs()
-                writeText("stub2 content")
-                setLastModified(2413)
-            }
-
-            resolve("a/b/stub3.txt").apply {
-                parentFile.mkdirs()
-                writeText("stub3 content")
-                setLastModified(2414)
-            }
-
-            resolve("c/stub4.txt").apply {
-                parentFile.mkdirs()
-                writeText("stub4 content")
-                setLastModified(2415)
-            }
-        }
+        newTempDirectory().also { root ->
+            root.resolve("stub0.txt").writeZipFixture("stub0 content\n", 2411)
+            root.resolve("a/stub1.txt").writeZipFixture("stub1 content\n", 2412)
+            root.resolve("a/b/stub2.txt").writeZipFixture("stub2 content", 2413)
+            root.resolve("a/b/stub3.txt").writeZipFixture("stub3 content", 2414)
+            root.resolve("c/stub4.txt").writeZipFixture("stub4 content", 2415)
+        }.toFile()
     }
 
     private fun zipDirectory(directory: File): File {
@@ -114,48 +92,48 @@ class ZipUtilsTest : WithTemporaryFolder {
 
     @Test
     fun `test copyZipFilePartially - root path`() {
-        val copiedFile = newTempFile().toFile()
-        copyZipFilePartially(zipFile, copiedFile, path = "")
+        val copiedFile = newTempFile()
+        copyZipFilePartially(zipFile.toPath(), copiedFile, path = "")
         assertZipContentEquals(
-            zipContentFolder, copiedFile,
+            zipContentFolder, copiedFile.toFile(),
             "Expected correct content for copied file with root path"
         )
     }
 
     @Test
     fun `test copyZipFilePartially - a`() {
-        val copiedFile = newTempFile().toFile()
-        copyZipFilePartially(zipFile, copiedFile, path = "a/")
+        val copiedFile = newTempFile()
+        copyZipFilePartially(zipFile.toPath(), copiedFile, path = "a/")
         assertZipContentEquals(
-            zipContentFolder.resolve("a"), copiedFile,
+            zipContentFolder.resolve("a"), copiedFile.toFile(),
             "Expected correct content for copied file with path 'a/'"
         )
     }
 
     @Test
     fun `test copyZipFilePartially - a b`() {
-        val copiedFile = newTempFile().toFile()
-        copyZipFilePartially(zipFile, copiedFile, path = "a/b/")
+        val copiedFile = newTempFile()
+        copyZipFilePartially(zipFile.toPath(), copiedFile, path = "a/b/")
         assertZipContentEquals(
-            zipContentFolder.resolve("a/b"), copiedFile,
+            zipContentFolder.resolve("a/b"), copiedFile.toFile(),
             "Expected correct content for copied file with path 'a/b/'"
         )
     }
 
     @Test
     fun `test copyZipFilePartially - c`() {
-        val copiedFile = newTempFile().toFile()
-        copyZipFilePartially(zipFile, copiedFile, path = "c/")
+        val copiedFile = newTempFile()
+        copyZipFilePartially(zipFile.toPath(), copiedFile, path = "c/")
         assertZipContentEquals(
-            zipContentFolder.resolve("c"), copiedFile,
+            zipContentFolder.resolve("c"), copiedFile.toFile(),
             "Expected correct content for copied file with path 'c/'"
         )
     }
 
     @Test
     fun `test copyZipFilePartially - retains folder entries`() {
-        val sourceZipFile = newTempFile().toFile()
-        ZipOutputStream(sourceZipFile.outputStream()).use { zipOutputStream ->
+        val sourceZipFile = newTempFile()
+        ZipOutputStream(Files.newOutputStream(sourceZipFile)).use { zipOutputStream ->
             zipOutputStream.putNextEntry(ZipEntry("a/"))
             zipOutputStream.closeEntry()
 
@@ -170,10 +148,10 @@ class ZipUtilsTest : WithTemporaryFolder {
             zipOutputStream.closeEntry()
         }
 
-        val destinationZipFile = newTempFile().toFile()
+        val destinationZipFile = newTempFile()
         copyZipFilePartially(sourceZipFile, destinationZipFile, "a/")
 
-        ZipFile(destinationZipFile).use { zip ->
+        ZipFile(destinationZipFile.toFile()).use { zip ->
             assertEquals(
                 setOf("b/", "b/c/", "b/c/stub.txt"),
                 zip.entries().toList().map { it.name }.sorted().toSet()
@@ -183,19 +161,19 @@ class ZipUtilsTest : WithTemporaryFolder {
 
     @Test
     fun `test copyZipFilePartially - creates exact same output file`() {
-        val root1 = newTempFile().toFile()
-        val root2 = newTempFile().toFile()
+        val root1 = newTempFile()
+        val root2 = newTempFile()
 
-        copyZipFilePartially(zipFile, root1, "")
-        copyZipFilePartially(zipFile, root2, "")
+        copyZipFilePartially(zipFile.toPath(), root1, "")
+        copyZipFilePartially(zipFile.toPath(), root2, "")
 
         assertTrue(
-            root1.readBytes().contentEquals(root2.readBytes()),
+            Files.readAllBytes(root1).contentEquals(Files.readAllBytes(root2)),
             "Expected output zip files to be identical"
         )
 
         ZipFile(zipFile).use { original ->
-            ZipFile(root1).use { copy ->
+            ZipFile(root1.toFile()).use { copy ->
                 original.entries().toList().forEach { originalEntry ->
                     val copyEntry = copy.getEntry(originalEntry.name) ?: fail("Missing entry in copy: ${originalEntry.name}")
                     assertEquals(
@@ -249,27 +227,33 @@ class ZipUtilsTest : WithTemporaryFolder {
     fun `test copyZipPartially with 9 compression level for source`() = testWithCompressionLevel(9)
 
     private fun testWithCompressionLevel(level: Int) {
-        val sourceFile = newTempFile().toFile()
-        Compressor.Zip(sourceFile.toPath())
+        val sourceFile = newTempFile()
+        Compressor.Zip(sourceFile)
             .withLevel(level)
             .use { compressor -> compressor.addDirectory(zipContentFolder.toPath()) }
 
-        val allDirectoriesInZip = ZipFile(sourceFile).use { it.entries().toList().filter { it.isDirectory }.map { it.name } }
+        val allDirectoriesInZip = ZipFile(sourceFile.toFile()).use { it.entries().toList().filter { it.isDirectory }.map { it.name } }
 
         assertEquals(setOf("a/", "a/b/", "c/"), allDirectoriesInZip.toSet())
 
         // try to extract each directory in isolated env, check that content matches
         for (directory in allDirectoriesInZip + "") { // "" -- means root
-            val destZip = newTempFile().toFile()
+            val destZip = newTempFile()
             copyZipFilePartially(sourceFile, destZip, directory)
 
             assertZipContentEquals(
                 zipContentFolder.resolve(directory),
-                destZip,
+                destZip.toFile(),
                 "Expected the same content for '${directory.ifEmpty { "<root>" }}'"
             )
         }
     }
+}
+
+private fun Path.writeZipFixture(content: String, lastModifiedMillis: Long) {
+    parent?.let { Files.createDirectories(it) }
+    Files.write(this, content.toByteArray())
+    Files.setLastModifiedTime(this, FileTime.fromMillis(lastModifiedMillis))
 }
 
 fun WithTemporaryFolder.assertZipContentEquals(

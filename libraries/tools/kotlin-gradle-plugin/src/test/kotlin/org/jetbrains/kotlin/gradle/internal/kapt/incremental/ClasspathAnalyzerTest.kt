@@ -13,6 +13,7 @@ import org.jetbrains.org.objectweb.asm.ClassWriter
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
@@ -28,16 +29,14 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
 
     @Test
     fun testDirectory() {
-        val classesDir = newTempDirectory().toFile().also { dir ->
-            dir.resolve("test").mkdirs()
-            dir.resolve("test/A.class").writeBytes(emptyClass("test/A"))
-            dir.resolve("test/B.class").writeBytes(emptyClass("test/B"))
-            dir.resolve("ignore.txt").writeText("")
-            dir.resolve("module-info.class").writeText("")
-            dir.resolve("META-INF/versions/9/A.class").also {
-                it.parentFile.mkdirs()
-                it.writeBytes(emptyClass("A"))
-            }
+        val classesDir = newTempDirectory().also { dir ->
+            Files.createDirectories(dir.resolve("test"))
+            Files.write(dir.resolve("test/A.class"), emptyClass("test/A"))
+            Files.write(dir.resolve("test/B.class"), emptyClass("test/B"))
+            Files.write(dir.resolve("ignore.txt"), byteArrayOf())
+            Files.write(dir.resolve("module-info.class"), byteArrayOf())
+            Files.createDirectories(dir.resolve("META-INF/versions/9"))
+            Files.write(dir.resolve("META-INF/versions/9/A.class"), emptyClass("A"))
         }
         val outputs = TransformOutputsMock(newTempDirectory().toFile())
         transform(classesDir, outputs)
@@ -54,8 +53,8 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
 
     @Test
     fun testJar() {
-        val inputJar = newTempFile("input.jar").toFile().also { jar ->
-            ZipOutputStream(jar.outputStream()).use {
+        val inputJar = newTempFile("input.jar").also { jar ->
+            ZipOutputStream(Files.newOutputStream(jar)).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A"))
                 it.closeEntry()
@@ -90,8 +89,8 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
 
     @Test
     fun testJarWithEntriesShuffled() {
-        val jarA = newTempFile("inputA.jar").toFile().also { jar ->
-            ZipOutputStream(jar.outputStream()).use {
+        val jarA = newTempFile("inputA.jar").also { jar ->
+            ZipOutputStream(Files.newOutputStream(jar)).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A"))
                 it.closeEntry()
@@ -104,8 +103,8 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
         val outputsA = TransformOutputsMock(newTempDirectory().toFile())
         transform(jarA, outputsA)
 
-        val jarB = newTempFile("inputB.jar").toFile().also { jar ->
-            ZipOutputStream(jar.outputStream()).use {
+        val jarB = newTempFile("inputB.jar").also { jar ->
+            ZipOutputStream(Files.newOutputStream(jar)).use {
                 it.putNextEntry(ZipEntry("test/B.class"))
                 it.write(emptyClass("test/B"))
                 it.closeEntry()
@@ -124,7 +123,7 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
     @Test
     fun emptyInput() {
         val outputs = TransformOutputsMock(newTempDirectory().toFile())
-        transform(newTempDirectory("input").toFile(), outputs)
+        transform(newTempDirectory("input"), outputs)
 
         val data = ClasspathEntryData.ClasspathEntrySerializer.loadFrom(outputs.createdOutputs.single())
         assertTrue(data.classAbiHash.isEmpty())
@@ -133,8 +132,8 @@ class ClasspathAnalyzerTest : WithTemporaryFolder {
 
     @Test
     fun testJarsWithDependenciesWithinClasses() {
-        val inputJar = newTempFile("input.jar").toFile().also { jar ->
-            ZipOutputStream(jar.outputStream()).use {
+        val inputJar = newTempFile("input.jar").also { jar ->
+            ZipOutputStream(Files.newOutputStream(jar)).use {
                 it.putNextEntry(ZipEntry("test/A.class"))
                 it.write(emptyClass("test/A", "test/B"))
                 it.closeEntry()
