@@ -31,6 +31,8 @@ int32_t kotlin_Enum_ordinal_get(void * self);
 
 NSString * kotlin_Enum_toString(void * self);
 
+NSString * kotlin_Enum_toString_direct(void * self);
+
 _Bool kotlin_collections_Iterator_hasNext(void * self);
 
 void * _Nullable kotlin_collections_Iterator_next(void * self);

@@ -393,8 +393,22 @@ public fun PublicClassImplHiddenInterface_bar(self: kotlin.native.internal.Nativ
     return run { _result; true }
 }
 
+@ExportedBridge("PublicClassImplHiddenInterface_bar_direct", nonVirtualTargetMethod = "bar")
+public fun PublicClassImplHiddenInterface_bar_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as PublicClassImplHiddenInterface
+    val _result = run { __self.bar() }
+    return run { _result; true }
+}
+
 @ExportedBridge("PublicClassImplHiddenInterface_foo")
 public fun PublicClassImplHiddenInterface_foo(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as PublicClassImplHiddenInterface
+    val _result = run { __self.foo() }
+    return run { _result; true }
+}
+
+@ExportedBridge("PublicClassImplHiddenInterface_foo_direct", nonVirtualTargetMethod = "foo")
+public fun PublicClassImplHiddenInterface_foo_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as PublicClassImplHiddenInterface
     val _result = run { __self.foo() }
     return run { _result; true }
@@ -988,6 +1002,13 @@ public fun deprecatedT_deprecationInheritedF(self: kotlin.native.internal.Native
     return run { _result; true }
 }
 
+@ExportedBridge("deprecatedT_deprecationInheritedF_direct", nonVirtualTargetMethod = "deprecationInheritedF")
+public fun deprecatedT_deprecationInheritedF_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as deprecatedT
+    val _result = run { __self.deprecationInheritedF() }
+    return run { _result; true }
+}
+
 @ExportedBridge("deprecatedT_deprecationInheritedT_init_allocate")
 public fun deprecatedT_deprecationInheritedT_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<deprecatedT.deprecationInheritedT>() }
@@ -1023,6 +1044,13 @@ public fun deprecatedT_deprecationReinforcedT_init_initialize__TypesOfArguments_
 
 @ExportedBridge("deprecatedT_deprecationRestatedF")
 public fun deprecatedT_deprecationRestatedF(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as deprecatedT
+    val _result = run { __self.deprecationRestatedF() }
+    return run { _result; true }
+}
+
+@ExportedBridge("deprecatedT_deprecationRestatedF_direct", nonVirtualTargetMethod = "deprecationRestatedF")
+public fun deprecatedT_deprecationRestatedF_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as deprecatedT
     val _result = run { __self.deprecationRestatedF() }
     return run { _result; true }
@@ -1170,8 +1198,22 @@ public fun normalT_deprecatedF(self: kotlin.native.internal.NativePtr): Boolean 
     return run { _result; true }
 }
 
+@ExportedBridge("normalT_deprecatedF_direct", nonVirtualTargetMethod = "deprecatedF")
+public fun normalT_deprecatedF_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
+    val _result = run { __self.deprecatedF() }
+    return run { _result; true }
+}
+
 @ExportedBridge("normalT_deprecatedInFutureF")
 public fun normalT_deprecatedInFutureF(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
+    val _result = run { __self.deprecatedInFutureF() }
+    return run { _result; true }
+}
+
+@ExportedBridge("normalT_deprecatedInFutureF_direct", nonVirtualTargetMethod = "deprecatedInFutureF")
+public fun normalT_deprecatedInFutureF_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
     val _result = run { __self.deprecatedInFutureF() }
     return run { _result; true }
@@ -1242,6 +1284,13 @@ public fun normalT_normalF(self: kotlin.native.internal.NativePtr): Boolean {
     return run { _result; true }
 }
 
+@ExportedBridge("normalT_normalF_direct", nonVirtualTargetMethod = "normalF")
+public fun normalT_normalF_direct(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
+    val _result = run { __self.normalF() }
+    return run { _result; true }
+}
+
 @ExportedBridge("normalT_normalP_get")
 public fun normalT_normalP_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
@@ -1279,6 +1328,13 @@ public fun normalT_normalV_get(self: kotlin.native.internal.NativePtr): Boolean 
 
 @ExportedBridge("normalT_obsoletedInFutureF")
 public fun normalT_obsoletedInFutureF(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
+    val _result = run { __self.obsoletedInFutureF() }
+    return run { _result; true }
+}
+
+@ExportedBridge("normalT_obsoletedInFutureF_direct", nonVirtualTargetMethod = "obsoletedInFutureF")
+public fun normalT_obsoletedInFutureF_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
     val _result = run { __self.obsoletedInFutureF() }
     return run { _result; true }
@@ -1323,6 +1379,13 @@ public fun normalT_obsoletedP_set__TypesOfArguments__Swift_Int32__(self: kotlin.
 
 @ExportedBridge("normalT_removedInFutureF")
 public fun normalT_removedInFutureF(self: kotlin.native.internal.NativePtr): Boolean {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
+    val _result = run { __self.removedInFutureF() }
+    return run { _result; true }
+}
+
+@ExportedBridge("normalT_removedInFutureF_direct", nonVirtualTargetMethod = "removedInFutureF")
+public fun normalT_removedInFutureF_direct(self: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as normalT
     val _result = run { __self.removedInFutureF() }
     return run { _result; true }

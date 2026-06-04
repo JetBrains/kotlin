@@ -74,7 +74,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_ByteIterator_next(self.__externalRCRef())
         }
         open func nextByte() -> Swift.Int8 {
-            return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.collections.ByteIterator.self {
+                return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.ByteIterator.nextByte': a Swift subclass must override it and must not call super.")
+            }
         }
     }
     open class CharIterator: KotlinRuntime.KotlinBase {
@@ -91,7 +95,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_CharIterator_next(self.__externalRCRef())
         }
         open func nextChar() -> Swift.Unicode.UTF16.CodeUnit {
-            return kotlin_collections_CharIterator_nextChar(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.collections.CharIterator.self {
+                return kotlin_collections_CharIterator_nextChar(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.CharIterator.nextChar': a Swift subclass must override it and must not call super.")
+            }
         }
     }
 }

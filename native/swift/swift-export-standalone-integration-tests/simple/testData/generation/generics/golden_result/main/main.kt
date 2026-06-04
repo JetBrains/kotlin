@@ -191,6 +191,13 @@ public fun StringProducer_produce(self: kotlin.native.internal.NativePtr): kotli
     return _result.objcPtr()
 }
 
+@ExportedBridge("StringProducer_produce_direct", nonVirtualTargetMethod = "produce")
+public fun StringProducer_produce_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as StringProducer
+    val _result = run { __self.produce() }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("__root___A")
 public fun __root___A(): kotlin.native.internal.NativePtr {
     val _result = run { A<kotlin.Any?>() }

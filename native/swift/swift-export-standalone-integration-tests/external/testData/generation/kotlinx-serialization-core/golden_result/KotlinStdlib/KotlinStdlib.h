@@ -829,6 +829,8 @@ int8_t kotlin_Number_toByte(void * self);
 
 uint16_t kotlin_Number_toChar(void * self);
 
+uint16_t kotlin_Number_toChar_direct(void * self);
+
 double kotlin_Number_toDouble(void * self);
 
 float kotlin_Number_toFloat(void * self);
@@ -1016,6 +1018,8 @@ NSString * _Nullable kotlin_Throwable_message_get(void * self);
 _Bool kotlin_Throwable_printStackTrace(void * self);
 
 NSString * kotlin_Throwable_toString(void * self);
+
+NSString * kotlin_Throwable_toString_direct(void * self);
 
 uint8_t kotlin_UByte_Companion_MAX_VALUE_get(void * self);
 
@@ -1509,19 +1513,29 @@ void * kotlin_ranges_CharProgression_Companion_get();
 
 _Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint16_t kotlin_ranges_CharProgression_first_get(void * self);
 
 int32_t kotlin_ranges_CharProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_CharProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_CharProgression_isEmpty(void * self);
 
+_Bool kotlin_ranges_CharProgression_isEmpty_direct(void * self);
+
 void * kotlin_ranges_CharProgression_iterator(void * self);
+
+void * kotlin_ranges_CharProgression_iterator_direct(void * self);
 
 uint16_t kotlin_ranges_CharProgression_last_get(void * self);
 
 int32_t kotlin_ranges_CharProgression_step_get(void * self);
 
 NSString * kotlin_ranges_CharProgression_toString(void * self);
+
+NSString * kotlin_ranges_CharProgression_toString_direct(void * self);
 
 void * kotlin_ranges_CharRange_Companion_EMPTY_get(void * self);
 
@@ -1553,11 +1567,17 @@ void * kotlin_ranges_UIntProgression_Companion_get();
 
 _Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_UIntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint32_t kotlin_ranges_UIntProgression_first_get(void * self);
 
 int32_t kotlin_ranges_UIntProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_UIntProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_UIntProgression_isEmpty(void * self);
+
+_Bool kotlin_ranges_UIntProgression_isEmpty_direct(void * self);
 
 void * kotlin_ranges_UIntProgression_iterator(void * self);
 
@@ -1566,6 +1586,8 @@ uint32_t kotlin_ranges_UIntProgression_last_get(void * self);
 int32_t kotlin_ranges_UIntProgression_step_get(void * self);
 
 NSString * kotlin_ranges_UIntProgression_toString(void * self);
+
+NSString * kotlin_ranges_UIntProgression_toString_direct(void * self);
 
 void * kotlin_ranges_UIntRange_Companion_EMPTY_get(void * self);
 
@@ -1597,11 +1619,17 @@ void * kotlin_ranges_ULongProgression_Companion_get();
 
 _Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
+_Bool kotlin_ranges_ULongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____direct(void * self, void * _Nullable other);
+
 uint64_t kotlin_ranges_ULongProgression_first_get(void * self);
 
 int32_t kotlin_ranges_ULongProgression_hashCode(void * self);
 
+int32_t kotlin_ranges_ULongProgression_hashCode_direct(void * self);
+
 _Bool kotlin_ranges_ULongProgression_isEmpty(void * self);
+
+_Bool kotlin_ranges_ULongProgression_isEmpty_direct(void * self);
 
 void * kotlin_ranges_ULongProgression_iterator(void * self);
 
@@ -1610,6 +1638,8 @@ uint64_t kotlin_ranges_ULongProgression_last_get(void * self);
 int64_t kotlin_ranges_ULongProgression_step_get(void * self);
 
 NSString * kotlin_ranges_ULongProgression_toString(void * self);
+
+NSString * kotlin_ranges_ULongProgression_toString_direct(void * self);
 
 void * kotlin_ranges_ULongRange_Companion_EMPTY_get(void * self);
 

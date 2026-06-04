@@ -11,9 +11,13 @@ _Bool Sub_g__TypesOfArguments__anyU20override_P____reverse_swift(void * self, vo
 
 _Bool Base_g__TypesOfArguments__anyU20override_P__(void * self, void * x);
 
+_Bool Base_g__TypesOfArguments__anyU20override_P___direct(void * self, void * x);
+
 _Bool P_f(void * self);
 
 _Bool Sub_g__TypesOfArguments__anyU20override_P__(void * self, void * x);
+
+_Bool Sub_g__TypesOfArguments__anyU20override_P___direct(void * self, void * x);
 
 void * __root___Base_init_allocate();
 

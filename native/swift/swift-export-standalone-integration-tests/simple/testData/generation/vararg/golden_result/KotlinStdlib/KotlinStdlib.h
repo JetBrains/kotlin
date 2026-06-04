@@ -41,6 +41,8 @@ int8_t kotlin_Number_toByte(void * self);
 
 uint16_t kotlin_Number_toChar(void * self);
 
+uint16_t kotlin_Number_toChar_direct(void * self);
+
 double kotlin_Number_toDouble(void * self);
 
 float kotlin_Number_toFloat(void * self);

@@ -18,7 +18,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_BooleanIterator_next(self.__externalRCRef())
         }
         open func nextBoolean() -> Swift.Bool {
-            return kotlin_collections_BooleanIterator_nextBoolean(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.collections.BooleanIterator.self {
+                return kotlin_collections_BooleanIterator_nextBoolean(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.BooleanIterator.nextBoolean': a Swift subclass must override it and must not call super.")
+            }
         }
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
@@ -35,7 +39,11 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_IntIterator_next(self.__externalRCRef())
         }
         open func nextInt() -> Swift.Int32 {
-            return kotlin_collections_IntIterator_nextInt(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.collections.IntIterator.self {
+                return kotlin_collections_IntIterator_nextInt(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.collections.IntIterator.nextInt': a Swift subclass must override it and must not call super.")
+            }
         }
     }
 }
@@ -147,7 +155,11 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
         open func toByte() -> Swift.Int8 {
-            return kotlin_Number_toByte(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toByte(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toByte': a Swift subclass must override it and must not call super.")
+            }
         }
         @available(*, deprecated, message: """
 Direct conversion to Char is deprecated. Use toInt().toChar() or Char constructor instead.
@@ -155,22 +167,46 @@ If you override toChar() function in your Number inheritor, it's recommended to 
 See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migration. Replacement: this.toInt().toChar()
 """)
         open func toChar() -> Swift.Unicode.UTF16.CodeUnit {
-            return kotlin_Number_toChar(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toChar(self.__externalRCRef())
+            } else {
+                return kotlin_Number_toChar_direct(self.__externalRCRef())
+            }
         }
         open func toDouble() -> Swift.Double {
-            return kotlin_Number_toDouble(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toDouble(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toDouble': a Swift subclass must override it and must not call super.")
+            }
         }
         open func toFloat() -> Swift.Float {
-            return kotlin_Number_toFloat(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toFloat(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toFloat': a Swift subclass must override it and must not call super.")
+            }
         }
         open func toInt() -> Swift.Int32 {
-            return kotlin_Number_toInt(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toInt(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toInt': a Swift subclass must override it and must not call super.")
+            }
         }
         open func toLong() -> Swift.Int64 {
-            return kotlin_Number_toLong(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toLong(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toLong': a Swift subclass must override it and must not call super.")
+            }
         }
         open func toShort() -> Swift.Int16 {
-            return kotlin_Number_toShort(self.__externalRCRef())
+            if Self.self == ExportedKotlinPackages.kotlin.Number.self {
+                return kotlin_Number_toShort(self.__externalRCRef())
+            } else {
+                fatalError("Cannot invoke the inherited implementation of abstract member 'ExportedKotlinPackages.kotlin.Number.toShort': a Swift subclass must override it and must not call super.")
+            }
         }
     }
 }

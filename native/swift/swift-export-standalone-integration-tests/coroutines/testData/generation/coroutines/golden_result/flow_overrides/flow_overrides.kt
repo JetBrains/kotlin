@@ -103,6 +103,13 @@ public fun namespace_Bar_foo(self: kotlin.native.internal.NativePtr): kotlin.nat
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("namespace_Bar_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_Bar_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Bar
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_Bar_init_allocate")
 public fun namespace_Bar_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Bar>() }
@@ -125,6 +132,13 @@ public fun namespace_Bar_voo_get(self: kotlin.native.internal.NativePtr): kotlin
 
 @ExportedBridge("namespace_Foo_foo")
 public fun namespace_Foo_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_Foo_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_Foo_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Foo
     val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -157,6 +171,13 @@ public fun namespace_MutableSharedFoo_foo(self: kotlin.native.internal.NativePtr
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("namespace_MutableSharedFoo_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_MutableSharedFoo_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.MutableSharedFoo
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_MutableSharedFoo_init_allocate")
 public fun namespace_MutableSharedFoo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.MutableSharedFoo>() }
@@ -179,6 +200,13 @@ public fun namespace_MutableSharedFoo_voo_get(self: kotlin.native.internal.Nativ
 
 @ExportedBridge("namespace_MutableStateFoo_foo")
 public fun namespace_MutableStateFoo_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.MutableStateFoo
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_MutableStateFoo_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_MutableStateFoo_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.MutableStateFoo
     val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -211,6 +239,13 @@ public fun namespace_Nar_foo(self: kotlin.native.internal.NativePtr): kotlin.nat
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("namespace_Nar_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_Nar_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Nar
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_Nar_init_allocate")
 public fun namespace_Nar_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.Nar>() }
@@ -233,6 +268,13 @@ public fun namespace_Nar_voo_get(self: kotlin.native.internal.NativePtr): kotlin
 
 @ExportedBridge("namespace_SharedFoo_foo")
 public fun namespace_SharedFoo_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.SharedFoo
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_SharedFoo_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_SharedFoo_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.SharedFoo
     val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -265,6 +307,13 @@ public fun namespace_StateFoo_foo(self: kotlin.native.internal.NativePtr): kotli
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("namespace_StateFoo_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_StateFoo_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.StateFoo
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("namespace_StateFoo_init_allocate")
 public fun namespace_StateFoo_init_allocate(): kotlin.native.internal.NativePtr {
     val _result = run { kotlin.native.internal.createUninitializedInstance<namespace.StateFoo>() }
@@ -287,6 +336,13 @@ public fun namespace_StateFoo_voo_get(self: kotlin.native.internal.NativePtr): k
 
 @ExportedBridge("namespace_Zar_foo")
 public fun namespace_Zar_foo(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Zar
+    val _result = run { __self.foo() }
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("namespace_Zar_foo_direct", nonVirtualTargetMethod = "foo")
+public fun namespace_Zar_foo_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as namespace.Zar
     val _result = run { __self.foo() }
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)

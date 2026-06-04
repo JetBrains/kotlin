@@ -87,7 +87,11 @@ _Bool PublicClassImplDeprecatedInterface_foo(void * self);
 
 _Bool PublicClassImplHiddenInterface_bar(void * self);
 
+_Bool PublicClassImplHiddenInterface_bar_direct(void * self);
+
 _Bool PublicClassImplHiddenInterface_foo(void * self);
+
+_Bool PublicClassImplHiddenInterface_foo_direct(void * self);
 
 _Bool PublicDeprecatedClassImplDeprecatedInterface_foo(void * self);
 
@@ -265,6 +269,8 @@ _Bool deprecatedChildT_deprecationRestatedV_get(void * self);
 
 _Bool deprecatedT_deprecationInheritedF(void * self);
 
+_Bool deprecatedT_deprecationInheritedF_direct(void * self);
+
 void * deprecatedT_deprecationInheritedT_init_allocate();
 
 _Bool deprecatedT_deprecationInheritedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
@@ -276,6 +282,8 @@ void * deprecatedT_deprecationReinforcedT_init_allocate();
 _Bool deprecatedT_deprecationReinforcedT_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
 _Bool deprecatedT_deprecationRestatedF(void * self);
+
+_Bool deprecatedT_deprecationRestatedF_direct(void * self);
 
 void * deprecatedT_deprecationRestatedT_init_allocate();
 
@@ -317,7 +325,11 @@ _Bool normalChildT_removedV_get(void * self);
 
 _Bool normalT_deprecatedF(void * self);
 
+_Bool normalT_deprecatedF_direct(void * self);
+
 _Bool normalT_deprecatedInFutureF(void * self);
+
+_Bool normalT_deprecatedInFutureF_direct(void * self);
 
 int32_t normalT_deprecatedInFutureP_get(void * self);
 
@@ -337,6 +349,8 @@ _Bool normalT_deprecatedV_get(void * self);
 
 _Bool normalT_normalF(void * self);
 
+_Bool normalT_normalF_direct(void * self);
+
 int32_t normalT_normalP_get(void * self);
 
 _Bool normalT_normalP_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
@@ -349,6 +363,8 @@ _Bool normalT_normalV_get(void * self);
 
 _Bool normalT_obsoletedInFutureF(void * self);
 
+_Bool normalT_obsoletedInFutureF_direct(void * self);
+
 int32_t normalT_obsoletedInFutureP_get(void * self);
 
 _Bool normalT_obsoletedInFutureP_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
@@ -360,6 +376,8 @@ int32_t normalT_obsoletedP_get(void * self);
 _Bool normalT_obsoletedP_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
 _Bool normalT_removedInFutureF(void * self);
+
+_Bool normalT_removedInFutureF_direct(void * self);
 
 int32_t normalT_removedInFutureP_get(void * self);
 

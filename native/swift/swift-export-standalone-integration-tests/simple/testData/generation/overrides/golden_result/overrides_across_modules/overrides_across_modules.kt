@@ -33,6 +33,14 @@ public fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32__(self: kotli
     return _result
 }
 
+@ExportedBridge("Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct", nonVirtualTargetMethod = "primitiveTypeFunc")
+public fun Cousin_primitiveTypeFunc__TypesOfArguments__Swift_Int32___direct(self: kotlin.native.internal.NativePtr, arg: Int): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Cousin
+    val __arg = arg
+    val _result = run { __self.primitiveTypeFunc(__arg) }
+    return _result
+}
+
 @ExportedBridge("Cousin_primitiveTypeVar_get")
 public fun Cousin_primitiveTypeVar_get(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Cousin

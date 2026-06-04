@@ -107,6 +107,13 @@ public fun AbstractBase_concreteMethod(self: kotlin.native.internal.NativePtr): 
     return _result
 }
 
+@ExportedBridge("AbstractBase_concreteMethod_direct", nonVirtualTargetMethod = "concreteMethod")
+public fun AbstractBase_concreteMethod_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as AbstractBase
+    val _result = run { __self.concreteMethod() }
+    return _result
+}
+
 @ExportedBridge("Base_count")
 public fun Base_count(self: kotlin.native.internal.NativePtr): Int {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
@@ -114,8 +121,23 @@ public fun Base_count(self: kotlin.native.internal.NativePtr): Int {
     return _result
 }
 
+@ExportedBridge("Base_count_direct", nonVirtualTargetMethod = "count")
+public fun Base_count_direct(self: kotlin.native.internal.NativePtr): Int {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val _result = run { __self.count() }
+    return _result
+}
+
 @ExportedBridge("Base_greet__TypesOfArguments__Swift_String__")
 public fun Base_greet__TypesOfArguments__Swift_String__(self: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
+    val __name = interpretObjCPointer<kotlin.String>(name)
+    val _result = run { __self.greet(__name) }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("Base_greet__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "greet")
+public fun Base_greet__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Base
     val __name = interpretObjCPointer<kotlin.String>(name)
     val _result = run { __self.greet(__name) }
@@ -137,8 +159,23 @@ public fun GreeterBase_greet__TypesOfArguments__Swift_String__(self: kotlin.nati
     return _result.objcPtr()
 }
 
+@ExportedBridge("GreeterBase_greet__TypesOfArguments__Swift_String___direct", nonVirtualTargetMethod = "greet")
+public fun GreeterBase_greet__TypesOfArguments__Swift_String___direct(self: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val __name = interpretObjCPointer<kotlin.String>(name)
+    val _result = run { __self.greet(__name) }
+    return _result.objcPtr()
+}
+
 @ExportedBridge("GreeterBase_salutation")
 public fun GreeterBase_salutation(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
+    val _result = run { __self.salutation() }
+    return _result.objcPtr()
+}
+
+@ExportedBridge("GreeterBase_salutation_direct", nonVirtualTargetMethod = "salutation")
+public fun GreeterBase_salutation_direct(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as GreeterBase
     val _result = run { __self.salutation() }
     return _result.objcPtr()
