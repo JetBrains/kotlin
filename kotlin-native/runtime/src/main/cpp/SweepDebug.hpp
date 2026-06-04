@@ -23,7 +23,6 @@
 #include <cstdint>
 #include <cstdio>
 
-#include "GCStatistics.hpp"
 #include "Porting.h"
 
 namespace kotlin::gc::debug {
@@ -39,11 +38,14 @@ enum SweepEventKind : uint32_t {
 };
 
 struct SweepEvent {
-    std::atomic<uintptr_t> objectDataAddr{0};
-    std::atomic<uintptr_t> aux{0};
-    std::atomic<uintptr_t> threadId{0};
-    std::atomic<uint64_t> epoch{0};
-    std::atomic<uint32_t> kind{0};
+    // Data fields: written by one thread only (the owner of the per-thread buffer);
+    // plain non-atomic stores are sufficient and cheaper than relaxed atomics.
+    uintptr_t objectDataAddr{0};
+    uintptr_t aux{0};
+    uintptr_t threadId{0};
+    uint32_t kind{0};
+    // Publication marker: atomic because readers (lldb post-crash) may need to detect
+    // torn writes. Written last with release ordering.
     std::atomic<uint64_t> seq{0};
 };
 
@@ -78,11 +80,6 @@ inline size_t myThreadSlot() noexcept {
     return cached;
 }
 
-inline uint64_t currentEpochOrZero() noexcept {
-    auto handle = GCHandle::currentEpoch();
-    return handle.has_value() ? handle->getEpoch() : 0;
-}
-
 inline void recordSweepEvent(uintptr_t objectDataAddr, SweepEventKind kind, uintptr_t aux) noexcept {
     size_t slot = myThreadSlot();
     if (slot == kInvalidSlot) return;
@@ -90,11 +87,12 @@ inline void recordSweepEvent(uintptr_t objectDataAddr, SweepEventKind kind, uint
     // localSeq is touched only by this thread → fetch_add is uncontended → ~free.
     uint64_t seq = tlog.localSeq.fetch_add(1, std::memory_order_relaxed);
     auto& evt = tlog.events[seq % kPerThreadLogSize];
-    evt.objectDataAddr.store(objectDataAddr, std::memory_order_relaxed);
-    evt.aux.store(aux, std::memory_order_relaxed);
-    evt.threadId.store(tlog.threadIdSnapshot.load(std::memory_order_relaxed), std::memory_order_relaxed);
-    evt.epoch.store(currentEpochOrZero(), std::memory_order_relaxed);
-    evt.kind.store(static_cast<uint32_t>(kind), std::memory_order_relaxed);
+    // Plain stores — single-writer, no atomic needed.
+    evt.objectDataAddr = objectDataAddr;
+    evt.aux = aux;
+    evt.threadId = tlog.threadIdSnapshot.load(std::memory_order_relaxed);
+    evt.kind = static_cast<uint32_t>(kind);
+    // Release-publish so the reader (in lldb post-crash) sees a consistent slot.
     evt.seq.store(seq, std::memory_order_release);
 }
 
@@ -111,15 +109,12 @@ inline const char* sweepEventName(uint32_t kind) noexcept {
 }
 
 inline void dumpSweepEventSlot(size_t threadSlot, const SweepEvent& evt, uint64_t seq) noexcept {
-    uint32_t kind = evt.kind.load(std::memory_order_relaxed);
-    uintptr_t aux = evt.aux.load(std::memory_order_relaxed);
-    uintptr_t threadId = evt.threadId.load(std::memory_order_relaxed);
-    uint64_t epoch = evt.epoch.load(std::memory_order_relaxed);
-    uintptr_t obj = evt.objectDataAddr.load(std::memory_order_relaxed);
+    // Reader: plain reads OK because either we're post-crash (other threads paused)
+    // or the seq load already provided acquire ordering.
     std::fprintf(
             stderr,
-            "[Diag]   tslot=%zu seq=%" PRIu64 " epoch=%" PRIu64 " tid=0x%" PRIxPTR " kind=%s obj=0x%" PRIxPTR " aux=0x%" PRIxPTR "\n",
-            threadSlot, seq, epoch, threadId, sweepEventName(kind), obj, aux);
+            "[Diag]   tslot=%zu seq=%" PRIu64 " tid=0x%" PRIxPTR " kind=%s obj=0x%" PRIxPTR " aux=0x%" PRIxPTR "\n",
+            threadSlot, seq, evt.threadId, sweepEventName(evt.kind), evt.objectDataAddr, evt.aux);
 }
 
 inline void dumpSweepHistoryForObjectData(uintptr_t objectDataAddr) noexcept {
@@ -134,9 +129,9 @@ inline void dumpSweepHistoryForObjectData(uintptr_t objectDataAddr) noexcept {
         if (limit == 0) continue;
         for (size_t i = 0; i < kPerThreadLogSize; ++i) {
             auto& evt = tlog.events[i];
-            if (evt.objectDataAddr.load(std::memory_order_relaxed) != objectDataAddr) continue;
             uint64_t seq = evt.seq.load(std::memory_order_acquire);
             if (seq + kPerThreadLogSize <= limit) continue; // wrapped: older than window
+            if (evt.objectDataAddr != objectDataAddr) continue;
             dumpSweepEventSlot(s, evt, seq);
             ++matched;
         }
