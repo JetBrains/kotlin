@@ -8,7 +8,7 @@ implicit values:
       type: <local>/Y
     ownerSymbol = KaNamedClassSymbol:
       Y
-    label = null
+    label = Y
 
 
 scopes:

@@ -8,7 +8,7 @@ implicit values:
     type = B
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: B, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
-    label = null
+    label = foo
 
 
   KaScopeImplicitArgumentValue:

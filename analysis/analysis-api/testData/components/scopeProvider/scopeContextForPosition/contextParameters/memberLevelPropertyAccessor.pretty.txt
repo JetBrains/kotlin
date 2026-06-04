@@ -19,7 +19,7 @@ implicit values:
     type = one.B
     ownerSymbol = KaNamedClassSymbol:
       one/B
-    label = null
+    label = B
 
 
 scopes:

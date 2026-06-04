@@ -7,7 +7,7 @@ implicit values:
       type: ERROR_TYPE
     ownerSymbol = KaNamedClassSymbol:
       kotlin/myPackage/SomeClass
-    label = null
+    label = SomeClass
 
 
 scopes:

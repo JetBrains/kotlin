@@ -5,7 +5,7 @@ implicit values:
     type = B
     ownerSymbol = KaKotlinPropertySymbol:
       val foo: kotlin.Boolean
-    label = null
+    label = foo
 
 
   KaScopeImplicitArgumentValue:

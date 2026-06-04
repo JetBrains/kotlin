@@ -5,7 +5,7 @@ implicit values:
     type = Foo
     ownerSymbol = KaNamedClassSymbol:
       Foo
-    label = null
+    label = Foo
 
 
   KaImplicitReceiver:

@@ -8,7 +8,7 @@ implicit values:
       type: <anonymous>
     ownerSymbol = KaAnonymousObjectSymbol:
       <anonymous>
-    label = null
+    label = A
 
 
   KaImplicitReceiver:

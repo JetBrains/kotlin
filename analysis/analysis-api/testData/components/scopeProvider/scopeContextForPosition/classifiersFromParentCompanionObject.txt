@@ -8,7 +8,7 @@ implicit values:
       type: Child
     ownerSymbol = KaNamedClassSymbol:
       /Child
-    label = null
+    label = Child
 
 
   KaImplicitReceiver:

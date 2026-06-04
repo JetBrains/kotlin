@@ -5,7 +5,7 @@ implicit values:
     type = JavaClass
     ownerSymbol = KaNamedFunctionSymbol:
       /test(<extension receiver>: JavaClass): kotlin.Unit
-    label = null
+    label = test
 
 
 scopes:

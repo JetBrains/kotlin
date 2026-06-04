@@ -5,7 +5,7 @@ implicit values:
     type = A
     ownerSymbol = KaNamedFunctionSymbol:
       /test(<extension receiver>: kotlin.Any): kotlin.Int
-    label = null
+    label = test
 
 
 scopes:

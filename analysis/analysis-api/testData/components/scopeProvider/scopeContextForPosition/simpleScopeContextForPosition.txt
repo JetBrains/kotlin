@@ -8,7 +8,7 @@ implicit values:
       type: A
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
-    label = null
+    label = withA
 
 
   KaImplicitReceiver:
@@ -19,7 +19,7 @@ implicit values:
       type: B
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
-    label = null
+    label = withB
 
 
   KaImplicitReceiver:
@@ -30,7 +30,7 @@ implicit values:
       type: C
     ownerSymbol = KaNamedClassSymbol:
       /C
-    label = null
+    label = C
 
 
 scopes:

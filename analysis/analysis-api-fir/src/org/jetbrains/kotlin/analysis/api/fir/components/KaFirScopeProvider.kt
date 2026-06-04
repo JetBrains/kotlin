@@ -304,11 +304,14 @@ internal class KaFirScopeProvider(
 
         val firSymbolBuilder = analysisSession.firSymbolBuilder
 
+        val labelsForShadowing = mutableSetOf<String>()
         val implicitValues = towerDataElementsIndexed.flatMap { [index, towerDataElement] ->
             buildList {
                 val receiver = towerDataElement.implicitReceiver
                 if (receiver != null) {
-                    val label = null
+                    val label = with(towerDataContext.implicitValueStorage) { receiver.label() }
+                        ?.asString()
+                        ?.takeIf(labelsForShadowing::add)
                     val receiverValue = KaBaseScopeImplicitReceiverValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(receiver.type),
                         ownerSymbol = firSymbolBuilder.buildSymbol(receiver.referencedMemberSymbol),

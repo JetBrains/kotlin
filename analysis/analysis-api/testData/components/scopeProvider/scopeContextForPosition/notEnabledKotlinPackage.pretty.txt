@@ -5,7 +5,7 @@ implicit values:
     type = kotlin.myPackage.SomeClass
     ownerSymbol = KaNamedClassSymbol:
       kotlin/myPackage/SomeClass
-    label = null
+    label = SomeClass
 
 
 scopes:

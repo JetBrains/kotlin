@@ -8,7 +8,7 @@ implicit values:
       type: C
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
-    label = null
+    label = action
 
 
   KaScopeImplicitArgumentValue:
@@ -28,7 +28,7 @@ implicit values:
       type: D
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
-    label = null
+    label = with
 
 
   KaScopeImplicitArgumentValue:

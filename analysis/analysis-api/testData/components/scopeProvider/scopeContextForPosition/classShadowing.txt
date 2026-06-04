@@ -8,7 +8,7 @@ implicit values:
       type: <local>/Foo
     ownerSymbol = KaNamedClassSymbol:
       Foo
-    label = null
+    label = Foo
 
 
   KaImplicitReceiver:
