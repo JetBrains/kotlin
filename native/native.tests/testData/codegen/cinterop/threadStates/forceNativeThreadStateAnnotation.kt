@@ -7,7 +7,6 @@
 
 // TARGET_BACKEND: NATIVE
 // NATIVE_STANDALONE
-// FREE_COMPILER_ARGS: -opt-in=kotlin.native.SymbolNameIsInternal
 // MODULE: cinterop
 // FILE: threadStates.def
 language = C
@@ -27,6 +26,7 @@ int kt77616_blockingAnswer(void) {
 }
 
 // MODULE: main(cinterop)
+// OPT_IN: kotlin.native.SymbolNameIsInternal
 // FILE: main.kt
 @file:OptIn(kotlin.native.runtime.NativeRuntimeApi::class)
 
