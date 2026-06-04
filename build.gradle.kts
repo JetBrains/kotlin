@@ -614,6 +614,7 @@ tasks {
         dependsOn(":core:language.targets:check")
         dependsOn(":core:language.targets.jvm:check")
         dependsOn(":core:language.version-settings:check")
+        dependsOn(":core:language.version-settings:test")
     }
 
     testLifecycleTask("miscTest") {
