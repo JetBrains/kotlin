@@ -15,10 +15,10 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
-import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtExperimentalApi
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 /**
@@ -162,7 +162,8 @@ private fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
 
 private fun KaSession.resolveToSymbol(kDocLink: KDocLink): KaSymbol? {
     val lastNameSegment = kDocLink.children.filterIsInstance<KDocName>().lastOrNull()
-    return lastNameSegment?.mainReference?.resolveToSymbols()?.sortedWith(linkCandidatesComparator)?.firstOrNull()
+    @OptIn(KaExperimentalApi::class, KtExperimentalApi::class)
+    return lastNameSegment?.resolveSymbols()?.sortedWith(linkCandidatesComparator)?.firstOrNull()
 }
 
 /**
