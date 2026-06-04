@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.name.FqName
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.konan.diagnostics.NativeObjCRefinementOverridesChecker.check
 
+@K1Deprecation
 object NativeObjCRefinementChecker : DeclarationChecker {
 
     val hidesFromObjCFqName = FqName("kotlin.native.HidesFromObjC")

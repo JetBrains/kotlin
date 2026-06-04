@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.resolve.checkers.DeclarationCheckerContext
 
 // Note: IdentifierChecker doesn't check typealiases, so inheriting DeclarationChecker as well.
 // Originally based on JvmSimpleNameBacktickChecker.
+@K1Deprecation
 class NativeIdentifierChecker(private val languageVersionSettings: LanguageVersionSettings) : IdentifierChecker, DeclarationChecker {
     // Also includes characters used by IR mangler (see MangleConstant).
     private val invalidChars = setOf(

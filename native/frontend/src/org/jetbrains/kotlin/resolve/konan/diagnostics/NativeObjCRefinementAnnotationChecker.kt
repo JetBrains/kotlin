@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.konan.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -39,6 +40,7 @@ internal fun DeclarationDescriptor.findObjCExportMetaAnnotations(): ObjCExportMe
     return ObjCExportMetaAnnotations(objCAnnotation, swiftAnnotation)
 }
 
+@K1Deprecation
 object NativeObjCRefinementAnnotationChecker : DeclarationChecker {
 
     private val hidesFromObjCSupportedTargets = arrayOf(KotlinTarget.FUNCTION, KotlinTarget.PROPERTY, KotlinTarget.CLASS)
