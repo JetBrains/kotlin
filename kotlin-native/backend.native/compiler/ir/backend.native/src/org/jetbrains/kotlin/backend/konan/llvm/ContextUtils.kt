@@ -590,14 +590,7 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             ).toTypedArray()
     )
 
-    var tlsCount = 0
-
-    val tlsKey by lazy {
-        val global = LLVMAddGlobal(module, pointerType, "__KonanTlsKey")!!
-        LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
-        LLVMSetInitializer(global, kNull)
-        global
-    }
+    val referenceTLS = ReferenceTLS(this)
 
     private val personalityFunctionName = when (target) {
         KonanTarget.MINGW_X64 -> "__gxx_personality_seh0"

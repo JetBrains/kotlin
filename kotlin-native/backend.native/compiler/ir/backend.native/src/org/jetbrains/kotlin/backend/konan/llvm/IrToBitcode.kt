@@ -413,10 +413,7 @@ internal class CodeGeneratorVisitor(
                 }
 
                 appendingTo(bbLocalAlloc) {
-                    if (llvm.tlsCount > 0) {
-                        val memory = function.param(1)
-                        call(llvm.addTLSRecord, listOf(memory, llvm.tlsKey, llvm.int32(llvm.tlsCount)))
-                    }
+                    llvm.referenceTLS.generateAllocate()
                     ret(null)
                 }
             }
@@ -684,9 +681,12 @@ internal class CodeGeneratorVisitor(
 
     private fun getThreadLocalInitStateFor(container: IrDeclarationContainer): AddressAccess =
             llvm.initializersGenerationState.fileThreadLocalInitStates.getOrPut(container) {
-                codegen.addKotlinThreadLocal("state_thread_local$${container.initVariableSuffix}", llvm.intptrType,
-                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.intptrType), false).also {
-                    LLVMSetInitializer((it as GlobalAddressAccess).getAddress(null), llvm.intptr(FILE_NOT_INITIALIZED))
+                codegen.addKotlinNonObjectThreadLocal(
+                        "state_thread_local$${container.initVariableSuffix}",
+                        llvm.intptrType,
+                        LLVMPreferredAlignmentOfType(llvm.runtime.targetData, llvm.intptrType)
+                ).also {
+                    LLVMSetInitializer(it.getAddress(null), llvm.intptr(FILE_NOT_INITIALIZED))
                 }
             }
 

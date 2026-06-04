@@ -207,27 +207,16 @@ internal class GlobalAddressAccess(private val address: LLVMValueRef): AddressAc
     override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef = address
 }
 
-internal class TLSAddressAccess(private val index: Int) : AddressAccess() {
-    override fun getAddress(generationContext: FunctionGenerationContext?): LLVMValueRef {
-        val llvm = generationContext!!.llvm
-        return generationContext.call(llvm.lookupTLS, listOf(llvm.tlsKey, llvm.int32(index)))
-    }
-}
-
-internal fun ContextUtils.addKotlinThreadLocal(name: String, type: LLVMTypeRef, alignment: Int, isObjectType: Boolean): AddressAccess {
-    return if (isObjectType) {
-        val index = llvm.tlsCount++
-        require(llvm.runtime.pointerAlignment % alignment == 0)
-        TLSAddressAccess(index)
-    } else {
-        // TODO: This will break if Workers get decoupled from host threads.
-        GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
-            LLVMSetThreadLocalMode(it, LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel)
-            LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
-            LLVMSetAlignment(it, alignment)
-        })
-    }
-}
+// TODO: This will break if Workers get decoupled from host threads.
+internal fun ContextUtils.addKotlinNonObjectThreadLocal(
+        name: String,
+        type: LLVMTypeRef,
+        alignment: Int
+): GlobalAddressAccess = GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {
+    LLVMSetThreadLocalMode(it, LLVMThreadLocalMode.LLVMGeneralDynamicTLSModel)
+    LLVMSetLinkage(it, LLVMLinkage.LLVMInternalLinkage)
+    LLVMSetAlignment(it, alignment)
+})
 
 internal fun ContextUtils.addKotlinGlobal(name: String, type: LLVMTypeRef, alignment: Int, isExported: Boolean): AddressAccess {
     return GlobalAddressAccess(LLVMAddGlobal(llvm.module, type, name)!!.also {

@@ -413,7 +413,11 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val name = "kvar:" + qualifyInternalName(declaration)
             val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
-                addKotlinThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet, declaration.type.binaryTypeIsReference())
+                if (declaration.type.binaryTypeIsReference()) {
+                    llvm.referenceTLS.add(alignmnet)
+                } else {
+                    addKotlinNonObjectThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
+                }
             } else {
                 addKotlinGlobal(name, declaration.type.toLLVMType(llvm), alignmnet, isExported = false)
             }
