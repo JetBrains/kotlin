@@ -360,7 +360,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                         createJvmContext = { jvmSessionFactoryContext },
                         createJsContext = { FirJsSessionFactory.Context(configuration) }
                     ),
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -373,7 +373,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     configuration,
                     jvmSessionFactoryContext!!,
                     needRegisterJavaElementFinder = true,
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
@@ -390,7 +390,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     moduleData,
                     extensionRegistrars,
                     configuration,
-                    isForLeafHmppModule = false,
+                    kmpModuleKind = KmpModuleKind.SingleModule,
                     init = sessionConfigurator
                 ).also(::registerExtraComponents)
             }

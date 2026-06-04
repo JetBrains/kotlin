@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.checkers.registerExperimentalCheckers
 import org.jetbrains.kotlin.fir.checkers.registerExtraCommonCheckers
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
@@ -157,7 +158,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
             configuration = compilerConfiguration,
             context = replCompilationEnvironment.jvmSessionFactoryContext,
             needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
         ) {
             if (FirDiagnosticsDirectives.WITH_EXTRA_CHECKERS in module.directives) {
                 registerExtraCommonCheckers()

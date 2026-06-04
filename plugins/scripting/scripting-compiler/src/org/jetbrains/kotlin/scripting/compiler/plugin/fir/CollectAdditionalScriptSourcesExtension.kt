@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.SessionConfiguration
 import org.jetbrains.kotlin.fir.extensions.CollectAdditionalSourceFilesExtension
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.scripting.compiler.plugin.ScriptingK2CompilerPluginRegistrar
@@ -219,7 +220,7 @@ class CollectAdditionalScriptSourcesExtension : CollectAdditionalSourceFilesExte
                 configuration = configuration,
                 context = sessionFactoryContext,
                 needRegisterJavaElementFinder = true,
-                isForLeafHmppModule = false,
+                kmpModuleKind = KmpModuleKind.SingleModule,
                 init = {},
             ).apply {
                 register(

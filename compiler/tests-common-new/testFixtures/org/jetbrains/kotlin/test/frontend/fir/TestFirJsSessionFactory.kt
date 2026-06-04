@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.session.FirJsSessionFactory
 import org.jetbrains.kotlin.fir.session.FirSessionConfigurator
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.Name
@@ -56,7 +57,7 @@ object TestFirJsSessionFactory {
             mainModuleData,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
             icData = null,
             sessionConfigurator
         )

@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.fir.pipeline.buildResolveAndCheckFirFromKtFiles
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirBuiltinSyntheticFunctionInterfaceProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.CommonPlatforms
@@ -97,7 +98,7 @@ class K2CompilerFacade(environment: KotlinCoreEnvironment) : KotlinCompilerFacad
             configuration,
             context,
             needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
             init = {
                 registerComponent(
                     FirBuiltinSyntheticFunctionInterfaceProvider::class,
