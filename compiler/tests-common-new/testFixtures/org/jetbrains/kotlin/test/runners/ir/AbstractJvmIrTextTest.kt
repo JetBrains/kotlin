@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.utils.bind
 abstract class AbstractJvmIrTextTest(val parser: FirParser) : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.JVM_IR) {
 
     override fun configure(builder: TestConfigurationBuilder): Unit = with(builder) {
-        setupJvmPipelineSteps(parser)
+        setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
         commonHandlersForCodegenTest()
         setupDefaultDirectivesForIrTextTest()
         configureIrHandlersStep {
