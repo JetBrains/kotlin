@@ -172,21 +172,14 @@ fun validateIr(
     customMessagePrefix: String? = null,
 ): Boolean {
     var hasAnyViolations = false
-    var hasAnyErrors = false
     validateIr(element, irBuiltIns, validatorConfig) { error ->
         val severity = getSeverity(error)
         if (severity != null) {
             diagnosticReporter.report(error, severity, phaseName, customMessagePrefix)
             hasAnyViolations = true
         }
-        if (severity == IrValidationSeverity.ERROR) {
-            hasAnyErrors = true
-        }
     }
 
-    if (hasAnyErrors) {
-        throw IrValidationException()
-    }
     return hasAnyViolations
 }
 

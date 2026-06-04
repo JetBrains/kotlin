@@ -166,10 +166,9 @@ class IrValidatorTest {
     }
 
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
+        block()
         if (mode == IrVerificationMode.ERROR) {
-            assertThrows<IrValidationException>(executable = block)
-        } else {
-            block()
+            assert(irDiagnosticReporter.hasErrors)
         }
     }
 
@@ -253,21 +252,6 @@ class IrValidatorTest {
                     CompilerMessageLocation.create(null, 1, 10, null),
                 ),
             ),
-        )
-    }
-
-    @Test
-    fun `sanity check for IrValidatorTest, whether IrVerificationException is really thrown if IrVerificationMode is ERROR`() {
-        val exception = assertThrows<AssertionError> {
-            testValidation(
-                IrVerificationMode.ERROR,
-                buildValidIrTree(),
-                emptyList(),
-            )
-        }
-        assertEquals(
-            "Expected org.jetbrains.kotlin.ir.validation.IrValidationException to be thrown, but nothing was thrown.",
-            exception.message
         )
     }
 
