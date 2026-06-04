@@ -5,6 +5,7 @@
 package model
 
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.Platform
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
@@ -471,6 +472,116 @@ class JavaTest : BaseAbstractTest() {
                         this counts 1
                         first() equals ExtraModifiers.JavaOnlyModifiers.Static
                     }
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `static method is marked as companion-block member`() {
+        testInline(
+            """
+            |/src/java/C.java
+            |package java;
+            |class C {
+            |  public static void foo() {}
+            |}
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                with((module / "java" / "C" / "foo").cast<DFunction>()) {
+                    @OptIn(ExperimentalDokkaApi::class)
+                    extra[IsCompanion].assertNotNull("CompanionBlockMember on Java static method")
+                    assertEquals(
+                        true,
+                        @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion,
+                        "Java static method's DRI.callable should be marked isStatic=true"
+                    )
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `instance method is not marked as companion-block member`() {
+        testInline(
+            """
+            |/src/java/C.java
+            |package java;
+            |class C {
+            |  public void instanceFoo() {}
+            |}
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                with((module / "java" / "C" / "instanceFoo").cast<DFunction>()) {
+                    @OptIn(ExperimentalDokkaApi::class) assertEquals(null, extra[IsCompanion])
+                    assertEquals(false, @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `static field is marked as companion-block member`() {
+        testInline(
+            """
+            |/src/java/C.java
+            |package java;
+            |class C {
+            |  public static final String s = "x";
+            |  public int i;
+            |}
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                with((module / "java" / "C" / "s").cast<DProperty>()) {
+                    @OptIn(ExperimentalDokkaApi::class)
+                    extra[IsCompanion].assertNotNull("CompanionBlockMember on Java static field")
+                    assertEquals(
+                        true,
+                        @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion,
+                        "Java static field's DRI.callable should be marked isStatic=true"
+                    )
+                }
+                with((module / "java" / "C" / "i").cast<DProperty>()) {
+                    @OptIn(ExperimentalDokkaApi::class) assertEquals(null, extra[IsCompanion])
+                    assertEquals(false, @OptIn(ExperimentalDokkaApi::class) dri.callable?.isCompanion)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun `enum synthetic values, valueOf are marked as companion-block members`() {
+        testInline(
+            """
+            |/src/java/E.java
+            |package java;
+            |enum E {
+            |  A, B
+            |}
+            """.trimIndent(), configuration
+        ) {
+            documentablesTransformationStage = { module ->
+                with((module / "java" / "E").cast<DEnum>()) {
+                    val values = functions.firstOrNull { it.name == "values" }
+                        .assertNotNull("synthetic 'values' function")
+                    val valueOf = functions.firstOrNull { it.name == "valueOf" }
+                        .assertNotNull("synthetic 'valueOf' function")
+
+                    @OptIn(ExperimentalDokkaApi::class) values.extra[IsCompanion].assertNotNull("CompanionBlockMember on enum 'values'")
+                    @OptIn(ExperimentalDokkaApi::class) valueOf.extra[IsCompanion].assertNotNull("CompanionBlockMember on enum 'valueOf'")
+                    assertEquals(
+                        true,
+                        @OptIn(ExperimentalDokkaApi::class) values.dri.callable?.isCompanion,
+                        "DRI for 'values' should be marked isStatic=true"
+                    )
+                    assertEquals(
+                        true,
+                        @OptIn(ExperimentalDokkaApi::class) valueOf.dri.callable?.isCompanion,
+                        "DRI for 'valueOf' should be marked isStatic=true"
+                    )
                 }
             }
         }

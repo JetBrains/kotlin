@@ -4,6 +4,7 @@
 
 package org.jetbrains.dokka.analysis.java.util
 
+import com.intellij.lang.jvm.JvmModifier
 import com.intellij.psi.*
 import com.intellij.psi.util.PsiTreeUtil
 import org.jetbrains.dokka.InternalDokkaApi
@@ -47,8 +48,11 @@ public fun DRI.Companion.from(psi: PsiElement): DRI = psi.parentsWithSelf.run {
 internal fun Callable.Companion.from(psi: PsiMethod) = with(psi) {
     Callable(
         name,
-        null,
-        parameterList.parameters.map { param -> JavaClassReference(param.type.canonicalText) })
+        receiver = null,
+        params = parameterList.parameters.map { param -> JavaClassReference(param.type.canonicalText) },
+        isProperty = false,
+        isCompanion = hasModifier(JvmModifier.STATIC)
+    )
 }
 
 internal fun Callable.Companion.from(psi: PsiField): Callable {
@@ -56,7 +60,8 @@ internal fun Callable.Companion.from(psi: PsiField): Callable {
         name = psi.name,
         receiver = null,
         params = emptyList(),
-        isProperty = true
+        isProperty = true,
+        isCompanion = psi.hasModifier(JvmModifier.STATIC)
     )
 }
 

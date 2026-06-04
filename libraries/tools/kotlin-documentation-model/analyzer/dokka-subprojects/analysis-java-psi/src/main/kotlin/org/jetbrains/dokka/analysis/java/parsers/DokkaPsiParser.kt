@@ -11,6 +11,7 @@ import com.intellij.psi.*
 import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import org.jetbrains.dokka.DokkaConfiguration
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.analysis.java.BreakingAbstractionKotlinLightMethodChecker
 import org.jetbrains.dokka.analysis.java.SyntheticElementDocumentationProvider
 import org.jetbrains.dokka.analysis.java.getVisibility
@@ -419,6 +420,7 @@ internal class DokkaPsiParser(
         inheritedFrom: DRI? = null,
         parentDRI: DRI? = null,
     ): DFunction {
+        val isCompanionBlock = !isConstructor && psi.hasModifier(JvmModifier.STATIC)
         val dri = parentDRI?.let { dri ->
             DRI.from(psi).copy(packageName = dri.packageName, classNames = dri.classNames)
         } ?: DRI.from(psi)
@@ -463,7 +465,8 @@ internal class DokkaPsiParser(
                         .toAnnotations(),
                     ObviousMember.takeIf { psi.isObvious(inheritedFrom) },
                     helper.getCheckedExceptionDRIs(psi).takeIf { it.isNotEmpty() }
-                        ?.let { CheckedExceptions(it.toSourceSetDependent()) }
+                        ?.let { CheckedExceptions(it.toSourceSetDependent()) },
+                    @OptIn(ExperimentalDokkaApi::class) IsCompanion.takeIf { isCompanionBlock },
                 )
             }
         )
@@ -638,7 +641,8 @@ internal class DokkaPsiParser(
                     it.toSourceSetDependent().toAdditionalModifiers(),
                     annotations.toSourceSetDependent().toAnnotations(),
                     helper.getConstantExpression(psi)?.let { DefaultValue(it.toSourceSetDependent()) },
-                    takeIf { isVar }?.let { IsVar }
+                    takeIf { isVar }?.let { IsVar },
+                    @OptIn(ExperimentalDokkaApi::class) IsCompanion.takeIf { psi.hasModifier(JvmModifier.STATIC) },
                 )
             }
         )
