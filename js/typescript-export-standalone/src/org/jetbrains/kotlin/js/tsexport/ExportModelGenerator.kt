@@ -627,11 +627,11 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
         }
 
         for (constructor in memberScope.constructors) {
-            if (!shouldDeclarationBeExported(constructor, includingImplicitExport = true)) continue
+            if (!shouldDeclarationBeExported(constructor, includingImplicitExport = true, effectiveParentClass = klass)) continue
             members.addIfNotNull(exportConstructor(constructor, klass, typeParameterScope))
         }
         for (member in memberScope.callables) {
-            if (!shouldDeclarationBeExported(member, includingImplicitExport = true)) continue
+            if (!shouldDeclarationBeExported(member, includingImplicitExport = true, effectiveParentClass = klass)) continue
             if (isCompanionObject && member.isJsStatic()) {
                 // @JsStatic companion members are exported below
                 continue
@@ -642,11 +642,21 @@ internal class ExportModelGenerator(private val config: TypeScriptExportConfig) 
                 klass.classKind == KaClassKind.INTERFACE && implementationStatus == ImplementationStatus.INHERITED_OR_SYNTHESIZED
 
             val original = member.fakeOverrideOriginal
-            val actualParent = original.containingDeclaration as? KaClassSymbol ?: continue
-            // We include only declarations from the class itself, plus inherited interface members that have a default implementation.
-            val shouldInclude =
-                actualParent == klass || (klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent))
-            if (!shouldInclude){
+            val actualParent = original.containingDeclaration as? KaClassSymbol
+
+            // We include only such declarations:
+            val shouldInclude = when {
+                // When they are declared in the class itself explicitly.
+                actualParent == klass -> true
+                // When they are from companion blocks. They are lifted to a top-level, so they are technically not explicitly defined in
+                // a class declaration.
+                member.isCompanion -> true
+                // When they are inherited interface members that have a default implementation.
+                actualParent != null && klass.modality != KaSymbolModality.ABSTRACT && hasDefaultImplementationIn(actualParent) ->
+                    true
+                else -> false
+            }
+            if (!shouldInclude) {
                 continue
             }
             when (member) {
