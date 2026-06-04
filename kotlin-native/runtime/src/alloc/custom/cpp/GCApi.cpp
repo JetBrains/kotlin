@@ -33,6 +33,7 @@
 #include "GCStatistics.hpp"
 #include "KAssert.h"
 #include "Memory.h"
+#include "SweepDebug.hpp"
 
 namespace {
 std::atomic<size_t> allocatedBytesCounter;
@@ -69,6 +70,10 @@ bool kotlin::alloc::ObjectSweepTraits::trySweepElement(uint8_t* object, Finalize
             extraObject->UnlinkFromBaseObject();
             CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
             gcHandle.addSweptObject();
+            gc::debug::recordSweepEvent(
+                    reinterpret_cast<uintptr_t>(&heapObject->heapHeader()),
+                    gc::debug::kReclaim,
+                    reinterpret_cast<uintptr_t>(heapObject->object()->type_info()));
             return true;
         }
         if (!extraObject->getFlag(mm::ExtraObjectData::FLAGS_FINALIZED)) {
@@ -82,6 +87,10 @@ bool kotlin::alloc::ObjectSweepTraits::trySweepElement(uint8_t* object, Finalize
     }
     CustomAllocDebug("SweepObject(%p): can be reclaimed", heapObject);
     gcHandle.addSweptObject();
+    gc::debug::recordSweepEvent(
+            reinterpret_cast<uintptr_t>(&heapObject->heapHeader()),
+            gc::debug::kReclaim,
+            reinterpret_cast<uintptr_t>(heapObject->object()->type_info()));
     return true;
 }
 

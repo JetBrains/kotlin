@@ -12,6 +12,7 @@
 #include "GC.hpp"
 #include "IntrusiveList.hpp"
 #include "KAssert.h"
+#include "SweepDebug.hpp"
 
 namespace kotlin::gc {
 
@@ -30,8 +31,17 @@ public:
     bool marked() const noexcept { return next() != nullptr; }
 
     bool tryResetMark() noexcept {
-        if (next() == nullptr) return false;
+        auto prev = next_.load(std::memory_order_relaxed);
+        if (prev == nullptr) {
+            debug::recordSweepEvent(
+                    reinterpret_cast<uintptr_t>(this), debug::kDead, 0);
+            return false;
+        }
         next_.store(nullptr, std::memory_order_relaxed);
+        debug::recordSweepEvent(
+                reinterpret_cast<uintptr_t>(this),
+                debug::kKeep,
+                reinterpret_cast<uintptr_t>(prev));
         return true;
     }
 
@@ -46,7 +56,21 @@ private:
     bool trySetNext(ObjectData* next) noexcept {
         RuntimeAssert(next, "next cannot be nullptr");
         ObjectData* expected = nullptr;
-        return next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
+        bool ok = next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
+        if (!ok) {
+            // The CAS observed `next_` already non-null. `expected` was updated
+            // by compare_exchange_strong to that observed value. We record this
+            // as a CAS_FAIL with the observed value as aux. The hypothesis being
+            // tested: this read may be a stale view of a prior cycle's mark token
+            // (i.e. the previous-cycle sweep-clear of `next_` was not visible to
+            // this thread), causing this marker to incorrectly conclude the
+            // object is already marked and skip enqueuing it.
+            debug::recordSweepEvent(
+                    reinterpret_cast<uintptr_t>(this),
+                    debug::kCASFail,
+                    reinterpret_cast<uintptr_t>(expected));
+        }
+        return ok;
     }
 
     std::atomic<ObjectData*> next_ = nullptr;

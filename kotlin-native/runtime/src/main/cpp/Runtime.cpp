@@ -4,6 +4,7 @@
  */
 
 #include "std_support/Atomic.hpp"
+#include "Allocator.hpp"
 #include "CompilerConstants.hpp"
 #include "Exceptions.h"
 #include "KAssert.h"
@@ -13,6 +14,7 @@
 #include "Porting.h"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
+#include "SweepDebug.hpp"
 #include "Worker.h"
 #include "KString.h"
 #include "CrashHandler.hpp"
@@ -311,6 +313,22 @@ KBoolean Kotlin_Debugging_isPermanent(KRef obj) {
 
 RUNTIME_NOTHROW KBoolean Kotlin_Debugging_isStack(KRef obj) {
     return obj->stack();
+}
+
+// ----- PMCS consecutive-cycle race diagnostic (temporary) -----
+
+RUNTIME_NOTHROW void Kotlin_Diag_dumpSweepHistory(KRef obj) {
+    if (obj == nullptr) {
+        std::fprintf(stderr, "[Diag] dumpSweepHistory: obj is null\n");
+        std::fflush(stderr);
+        return;
+    }
+    auto& objData = kotlin::alloc::objectDataForObject(obj);
+    auto objectDataAddr = reinterpret_cast<uintptr_t>(&objData);
+    std::fprintf(stderr,
+            "[Diag] dumpSweepHistory: obj=%p objectData=0x%lx\n",
+            obj, static_cast<unsigned long>(objectDataAddr));
+    kotlin::gc::debug::dumpSweepHistoryForObjectData(objectDataAddr);
 }
 
 static void CallInitGlobalAwaitInitialized(uintptr_t* state) {

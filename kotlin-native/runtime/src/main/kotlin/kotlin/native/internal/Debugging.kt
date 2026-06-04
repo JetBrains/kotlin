@@ -29,3 +29,9 @@ public external fun Any.isPermanent(): Boolean
 @InternalForKotlinNative
 @Escapes.Nothing
 public external fun Any.isStack(): Boolean
+
+// ----- PMCS consecutive-cycle race diagnostic (temporary) -----
+
+@GCUnsafeCall("Kotlin_Diag_dumpSweepHistory")
+@Escapes.Nothing
+public external fun Any.diagDumpSweepHistory(): Unit
