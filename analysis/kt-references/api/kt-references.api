@@ -1,8 +1,0 @@
-public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor {
-	public abstract fun getElementClass ()Ljava/lang/Class;
-	public abstract fun getReferenceProvider ()Lorg/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider;
-}
-
-public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider : kotlin/jvm/functions/Function1 {
-}
-

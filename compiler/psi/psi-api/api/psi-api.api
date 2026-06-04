@@ -4270,6 +4270,14 @@ public final class org/jetbrains/kotlin/psi/utils/OperatorTokens {
 	public static final fun operationToken (Lorg/jetbrains/kotlin/name/Name;)Lorg/jetbrains/kotlin/lexer/KtToken;
 }
 
+public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor {
+	public abstract fun getElementClass ()Ljava/lang/Class;
+	public abstract fun getReferenceProvider ()Lorg/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider;
+}
+
+public abstract interface class org/jetbrains/kotlin/references/KotlinPsiReferenceProviderContributor$ReferenceProvider : kotlin/jvm/functions/Function1 {
+}
+
 public class org/jetbrains/kotlin/resolve/StatementFilter {
 	public static final field Companion Lorg/jetbrains/kotlin/resolve/StatementFilter$Companion;
 	public static final field NONE Lorg/jetbrains/kotlin/resolve/StatementFilter;
