@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.common.serialization.mangle.SpecialDeclarationType
+import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.backend.konan.ir.externalSymbolOrThrow
 import org.jetbrains.kotlin.backend.konan.ir.isAbstract
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
 import org.jetbrains.kotlin.ir.util.fqNameForIrSerialization
 import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.parentClassOrNull
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
@@ -140,6 +142,21 @@ fun IrField.computeSymbolName() = with(KonanBinaryInterface) { symbolName }.repl
 fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoSymbolName }.replaceSpecialSymbols()
 
 fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
+
+/*
+ * Delegates to different naming strategies depending on whether the function is exported or not.
+ */
+internal fun IrFunction.computeSymbolName(context: Context, internalSymbolNameBuilder: () -> String? = { -> null }) = with(KonanBinaryInterface) {
+    if (isExported(this@computeSymbolName))
+        computeSymbolName()
+    else {
+        internalSymbolNameBuilder() ?: run {
+            val containerName = parentClassOrNull?.fqNameForIrSerialization?.asString()
+                    ?: context.externalDeclarationFileNameProvider.getExternalDeclarationFileName(this@computeSymbolName)
+            computePrivateSymbolName(containerName)
+        }
+    }
+}
 
 private fun String.replaceSpecialSymbols() =
         // '@' is used for symbol versioning in GCC: https://gcc.gnu.org/wiki/SymbolVersioning.

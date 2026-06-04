@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 import kotlin.math.min
 
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
@@ -440,24 +441,19 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             if (!declaration.shouldGenerateBody()) {
                 return
             }
-            val symbolName = if (declaration.isExported()) {
-                declaration.computeSymbolName().also {
-                    if (declaration.name.asString() != "main") {
-                        assert(LLVMGetNamedFunction(llvm.module, it) == null) {
-                            "Function `$it` is already defined. New definition is required for ${declaration.render()}"
-                        }
-                    } else {
-                        // As a workaround, allow `main` functions to clash because frontend accepts this.
-                        // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
-                    }
-                }
-            } else {
-                if (!context.config.producePerFileCache)
+            val symbolName = declaration.computeSymbolName(context) {
+                runUnless(context.config.producePerFileCache) {
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
-                else {
-                    val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()
-                            ?: (generationState.cacheDeserializationStrategy as CacheDeserializationStrategy.SingleFile).filePath
-                    declaration.computePrivateSymbolName(containerName)
+                }
+            }
+            if (declaration.isExported()) {
+                if (declaration.name.asString() != "main") {
+                    assert(LLVMGetNamedFunction(llvm.module, symbolName) == null) {
+                        "Function `$symbolName` is already defined. New definition is required for ${declaration.render()}"
+                    }
+                } else {
+                    // As a workaround, allow `main` functions to clash because frontend accepts this.
+                    // See [OverloadResolver.isTopLevelMainInDifferentFiles] usage.
                 }
             }
 
