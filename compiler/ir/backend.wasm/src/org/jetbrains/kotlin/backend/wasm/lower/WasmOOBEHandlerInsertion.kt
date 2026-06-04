@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.IrElementTransformerVoidWithContext
+import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
@@ -83,9 +84,12 @@ import org.jetbrains.kotlin.name.Name
  */
 internal class WasmOOBEHandlerInsertionLowering(private val ctx: WasmBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
+        // We don't support trap handling on WASI yet.
         if (!ctx.isWasmJsTarget) return
         if (ctx.configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION)) return
         irFile.transformChildrenVoid(WasmOOBEHandlerInsertionTransformer(ctx))
+        // We need to box shared variables after this pass runs.
+        SharedVariablesLowering(ctx).lower(irFile)
     }
 }
 
