@@ -731,6 +731,9 @@ val hostAssemble by tasks.registering {
 
 tasks.named("clean", Delete::class) {
     this.delete(layout.buildDirectory)
+
+    // Make sure `clean` always run, when requested.
+    this.outputs.upToDateWhen { false }
 }
 
 // region: Stdlib
