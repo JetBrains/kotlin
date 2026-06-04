@@ -87,6 +87,8 @@ abstract class KotlinIrLinker(
 
     private val triedToDeserializeDeclarationForSymbol = hashSetOf<IrSymbol>()
 
+    private val topLevelSignatureToDeserializer = HashMap<IdSignature, IrModuleDeserializer?>()
+
     open val partialLinkageSupport: PartialLinkageSupportForLinker get() = PartialLinkageSupportForLinker.DISABLED
 
     open val returnUnboundSymbolsIfSignatureNotFound: Boolean
@@ -110,10 +112,14 @@ abstract class KotlinIrLinker(
         // handle such situation appropriately. See KT-41378.
         //
         // TODO (KT-84837): The lookup for a IrModuleDeserializer should work through an index.
-        val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
-            moduleDeserializer
-        } else {
-            deserializersForModules.values.firstOrNull { topLevelSignature in it }
+        val actualModuleDeserializer: IrModuleDeserializer? = when {
+            topLevelSignature in moduleDeserializer -> moduleDeserializer
+            topLevelSignatureToDeserializer.containsKey(topLevelSignature) -> topLevelSignatureToDeserializer[topLevelSignature]
+            else -> {
+                val deserializer = deserializersForModules.values.firstOrNull { topLevelSignature in it }
+                topLevelSignatureToDeserializer[topLevelSignature] = deserializer
+                deserializer
+            }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
@@ -144,7 +150,14 @@ abstract class KotlinIrLinker(
     }
 
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
-        return deserializersForModules.values.firstOrNull() { idSignature in it }
+        val topLevelSignature = idSignature.topLevelSignature()
+        return if (topLevelSignatureToDeserializer.containsKey(topLevelSignature)) {
+            topLevelSignatureToDeserializer[topLevelSignature]
+        } else {
+            val deserializer = deserializersForModules.values.firstOrNull() { topLevelSignature in it }
+            topLevelSignatureToDeserializer[topLevelSignature] = deserializer
+            deserializer
+        }
     }
 
     protected abstract fun createModuleDeserializer(
@@ -238,12 +251,14 @@ abstract class KotlinIrLinker(
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment)
             deserializersForModules[moduleFragment.name.asString()] =
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
+            topLevelSignatureToDeserializer.clear()
         }
         deserializersForModules.values.forEach { it.init() }
     }
 
     fun clear() {
         irInterner.reset()
+        topLevelSignatureToDeserializer.clear()
     }
 
     override fun postProcess(irBuiltIns: IrBuiltIns, inOrAfterLinkageStep: Boolean) {
@@ -301,6 +316,7 @@ abstract class KotlinIrLinker(
         }
 
         val moduleFragment = deserializersForModules.getOrPut(moduleName) {
+            topLevelSignatureToDeserializer.clear()
             maybeWrapWithBuiltInAndInit(
                 moduleDescriptor = moduleDescriptor,
                 moduleDeserializer = createModuleDeserializer(
