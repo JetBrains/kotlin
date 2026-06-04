@@ -64,11 +64,15 @@ PERFORMANCE_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* obje
 PERFORMANCE_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
     // Diagnostic: log that the array was traversed in the current epoch.
     // `aux` carries the array's count so we can sanity-check whether
-    // count was misread during this traversal.
-    debug::recordSweepEvent(
-            reinterpret_cast<uintptr_t>(&alloc::objectDataForObject(array->obj())),
-            debug::kArrayTrav,
-            static_cast<uintptr_t>(array->count_));
+    // count was misread during this traversal. Only heap-allocated arrays
+    // have a meaningful `ObjectData`; stack-allocated and permanent ones
+    // come through here too and would trip the heap-residency assert.
+    if (array->obj()->heap()) {
+        debug::recordSweepEvent(
+                reinterpret_cast<uintptr_t>(&alloc::objectDataForObject(array->obj())),
+                debug::kArrayTrav,
+                static_cast<uintptr_t>(array->count_));
+    }
     gc::internal::processArrayInMark<gc::mark::ParallelMark::MarkTraits>(state, array);
 }
 
