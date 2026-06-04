@@ -1,0 +1,14 @@
+FILE: [ResolvedTo(IMPORTS)] main.kt
+    public open [ResolvedTo(STATUS)] class Base : R|kotlin/Any| {
+        public [ResolvedTo(STATUS)] [ContainingClassKey=Base] constructor(): R|Base| {
+            LAZY_super<R|kotlin/Any|>
+        }
+
+        public final [ResolvedTo(STATUS)] val baseProperty: R|kotlin/String| = LAZY_EXPRESSION
+            public [ResolvedTo(STATUS)] [ContainingClassKey=Base] get(): R|kotlin/String|
+
+        public final [ResolvedTo(STATUS)] fun baseFunction(): R|kotlin/String| { LAZY_BLOCK }
+
+        private final [ResolvedTo(STATUS)] fun privateBaseFunction(): R|kotlin/String| { LAZY_BLOCK }
+
+    }
