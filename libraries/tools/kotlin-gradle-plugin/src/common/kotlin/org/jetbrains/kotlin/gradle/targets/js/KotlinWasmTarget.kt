@@ -9,17 +9,10 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserDsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmD8Dsl
-import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinWasmJsTargetDsl
-import org.jetbrains.kotlin.gradle.targets.js.ir.D8EnvironmentConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinD8Ir
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrSubTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrTarget
-import org.jetbrains.kotlin.gradle.targets.js.ir.LibraryConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.ir.NoBundleConfigurator
-import org.jetbrains.kotlin.gradle.targets.js.ir.WebpackConfigurator
+import org.jetbrains.kotlin.gradle.targets.js.dsl.*
+import org.jetbrains.kotlin.gradle.targets.js.ir.*
 import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenExec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import javax.inject.Inject
@@ -34,10 +27,14 @@ abstract class KotlinWasmTarget
 internal constructor(
     project: Project,
     platformType: KotlinPlatformType,
-) : KotlinJsIrTarget(
-    project,
-    platformType
-), KotlinWasmJsTargetDsl {
+) :
+    KotlinJsIrTarget(
+        project,
+        platformType
+    ),
+    KotlinWasmJsTargetDsl,
+    KotlinWasmWasiTargetDsl,
+    KotlinWasmSubTargetContainerDsl {
     // Specify if webpack should be used as a bundler.
     // It is captured on the first access to [browserLazyDelegate] and can't be changed afterwards,
     // because the corresponding configurator registers its tasks during configuration.
@@ -90,5 +87,4 @@ internal constructor(
         body(d8)
     }
     //endregion
-
 }

@@ -52,9 +52,8 @@ internal constructor(
     KotlinTargetWithBinaries<KotlinJsIrCompilation, KotlinJsBinaryContainer>(project, platformType),
     KotlinTargetWithTests<JsAggregatingExecutionSource, KotlinJsReportAggregatingTestRun>,
     KotlinJsTargetDsl,
-    KotlinWasmWasiTargetDsl,
-    KotlinJsSubTargetContainerDsl,
-    KotlinWasmSubTargetContainerDsl {
+    KotlinWasmTargetDsl,
+    KotlinJsSubTargetContainerDsl {
 
     @Deprecated("Creating new KotlinJsIrTarget instances outside of Kotlin Gradle plugin is deprecated. Scheduled for removal in Kotlin 2.7.")
     constructor(
