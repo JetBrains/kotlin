@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
+@K1Deprecation
 class MetadataPackageFragmentProvider(
     storageManager: StorageManager,
     finder: KotlinMetadataFinder,
@@ -76,6 +78,7 @@ class MetadataPackageFragmentProvider(
         else null
 }
 
+@K1Deprecation
 class MetadataPackageFragment(
     fqName: FqName,
     storageManager: StorageManager,

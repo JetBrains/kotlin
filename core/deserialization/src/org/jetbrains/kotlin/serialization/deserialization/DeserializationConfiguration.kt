@@ -5,8 +5,10 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
+@K1Deprecation
 interface DeserializationConfiguration {
 
     val metadataVersion: MetadataVersion

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
@@ -26,6 +27,7 @@ import java.util.*
 
 private val EXPERIMENTAL_CONTINUATION_FQ_NAME = FqName("kotlin.coroutines.experimental.Continuation")
 
+@K1Deprecation
 class TypeDeserializer(
     private val c: DeserializationContext,
     private val parent: TypeDeserializer?,

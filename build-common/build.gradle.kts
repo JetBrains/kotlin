@@ -61,6 +61,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 // test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
 testsJarToBeUsedAlongWithFixtures()
 

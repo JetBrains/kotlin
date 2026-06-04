@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
 import org.jetbrains.kotlin.types.TypeAttributeTranslator
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
+@K1Deprecation
 class DeserializationComponents(
     val storageManager: StorageManager,
     val moduleDescriptor: ModuleDescriptor,
@@ -75,6 +77,7 @@ class DeserializationComponents(
 }
 
 
+@K1Deprecation
 class DeserializationContext(
     val components: DeserializationComponents,
     val nameResolver: NameResolver,

@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.PackageFragmentProvider
 import org.jetbrains.kotlin.descriptors.packageFragments
 import org.jetbrains.kotlin.name.ClassId
 
+@K1Deprecation
 class DeserializedClassDataFinder(private val packageFragmentProvider: PackageFragmentProvider) : ClassDataFinder {
     override fun findClassData(classId: ClassId): ClassData? {
         val packageFragments = packageFragmentProvider.packageFragments(classId.packageFqName)

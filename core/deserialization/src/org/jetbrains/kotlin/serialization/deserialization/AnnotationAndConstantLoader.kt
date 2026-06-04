@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 interface AnnotationAndConstantLoader<out A : Any, out C : Any> : AnnotationLoader<A> {
     fun loadPropertyConstant(
         container: ProtoContainer,

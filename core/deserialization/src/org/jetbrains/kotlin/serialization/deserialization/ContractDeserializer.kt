@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ContractProvider
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
 
+@K1Deprecation
 interface ContractDeserializer {
     fun deserializeContractFromFunction(
         proto: ProtoBuf.Function,

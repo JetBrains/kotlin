@@ -29,6 +29,8 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 publish()
 
 val core = "$rootDir/core"

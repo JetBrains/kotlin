@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.serialization.deserialization.builtins
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.serialization.deserialization.DeserializedPackageFra
 import org.jetbrains.kotlin.storage.StorageManager
 import java.io.InputStream
 
+@K1Deprecation
 class BuiltInsPackageFragmentImpl private constructor(
     fqName: FqName,
     storageManager: StorageManager,

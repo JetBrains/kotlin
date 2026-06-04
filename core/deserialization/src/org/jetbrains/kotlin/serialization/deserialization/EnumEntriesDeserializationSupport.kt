@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.serialization.deserialization
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 interface EnumEntriesDeserializationSupport {
     /**
      * Determines whether `Enum.entries` property can be synthesized for enums in this module,
@@ -18,6 +21,7 @@ interface EnumEntriesDeserializationSupport {
     }
 }
 
+@K1Deprecation
 object JvmEnumEntriesDeserializationSupport : EnumEntriesDeserializationSupport {
 
     // In JVM modules "entries" can be called even on enum compiled without this property.
