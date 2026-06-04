@@ -3,13 +3,14 @@ plugins {
 }
 
 val commonCompilerModules: Array<String> by rootProject.extra
+val descriptorsCompilerModules: Array<String> by rootProject.extra
 val analysisApiModules: Array<String> by rootProject.extra
 
 val excludedAnalysisApiModules = listOf(
     ":analysis:decompiled",
 )
 
-val projects = commonCompilerModules.asList() + analysisApiModules - excludedAnalysisApiModules + listOf(
+val projects = commonCompilerModules.asList() + descriptorsCompilerModules + analysisApiModules - excludedAnalysisApiModules + listOf(
     ":compiler:arguments.common",
     ":compiler:cli-base",
     ":kotlin-build-common",

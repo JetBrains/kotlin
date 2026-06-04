@@ -1,7 +1,11 @@
+val descriptorsCompilerModules = arrayOf(
+    ":core:descriptors",
+).also { extra["descriptorsCompilerModules"] = it }
+
 /**
  * Common modules, used by K1 frontend, K2 frontend, backends, AA and CLI
  */
-val commonCompilerModules = arrayOf(
+val commonCompilerModules = descriptorsCompilerModules + arrayOf(
     ":compiler:psi:psi-api",
     ":compiler:psi:psi-impl",
     ":compiler:psi:psi-utils",
@@ -83,7 +87,6 @@ val firCompilerModules = arrayOf(
 val fe10CompilerModules = arrayOf(
     ":compiler",
     ":core:descriptors.runtime",
-    ":core:descriptors",
     ":core:descriptors.jvm",
     ":compiler:resolution",
     ":compiler:serialization",
