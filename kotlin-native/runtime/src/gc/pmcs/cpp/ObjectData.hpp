@@ -57,27 +57,14 @@ private:
         ObjectData* expected = nullptr;
         bool ok = next_.compare_exchange_strong(expected, next, std::memory_order_relaxed);
         if (!ok) {
-            // The CAS observed `next_` already non-null. `expected` was updated
-            // by compare_exchange_strong to that observed value. We record this
-            // as a CAS_FAIL with the observed value as aux. The hypothesis being
-            // tested: this read may be a stale view of a prior cycle's mark token
-            // (i.e. the previous-cycle sweep-clear of `next_` was not visible to
-            // this thread), causing this marker to incorrectly conclude the
-            // object is already marked and skip enqueuing it.
+            // The CAS observed `next_` already non-null. We record CAS_FAIL
+            // with the observed value as aux. (Logging only the failure path
+            // keeps mark-time overhead low; logging successes pushed overhead
+            // past the bug-masking threshold.)
             debug::recordSweepEvent(
                     reinterpret_cast<uintptr_t>(this),
                     debug::kCASFail,
                     reinterpret_cast<uintptr_t>(expected));
-        } else {
-            // The CAS succeeded: this thread transitioned next_ from null to
-            // non-null. Record so we can later determine, for the failing
-            // object, whether mark ever attempted+succeeded on it in the
-            // failing cycle (presence of MARK_OK in epoch N before DEAD/N
-            // means the mark write didn't propagate to the sweeper's view).
-            debug::recordSweepEvent(
-                    reinterpret_cast<uintptr_t>(this),
-                    debug::kMarkOk,
-                    reinterpret_cast<uintptr_t>(next));
         }
         return ok;
     }

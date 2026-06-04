@@ -33,7 +33,9 @@ enum SweepEventKind : uint32_t {
     kDead = 1,       // sweep observed next_ == null; object about to be reclaimed
     kCASFail = 2,    // mark CAS failed because next_ was already non-null (possibly stale)
     kReclaim = 3,    // trySweepElement returned true; cell is about to be memset'd (not currently logged)
-    kMarkOk = 4,     // mark CAS succeeded: this thread transitioned next_ from null to non-null
+    kMarkOk = 4,     // mark CAS succeeded (not currently logged - too high volume)
+    kArrayTrav = 5,  // processArrayInMark entered for an object-array. Lets us tell whether
+                     // the parent of a failing Vector was actually traversed in the failing cycle.
 };
 
 struct SweepEvent {
@@ -98,12 +100,13 @@ inline void recordSweepEvent(uintptr_t objectDataAddr, SweepEventKind kind, uint
 
 inline const char* sweepEventName(uint32_t kind) noexcept {
     switch (kind) {
-        case kKeep:    return "KEEP";
-        case kDead:    return "DEAD";
-        case kCASFail: return "CAS_FAIL";
-        case kReclaim: return "RECLAIM";
-        case kMarkOk:  return "MARK_OK";
-        default:       return "?";
+        case kKeep:      return "KEEP";
+        case kDead:      return "DEAD";
+        case kCASFail:   return "CAS_FAIL";
+        case kReclaim:   return "RECLAIM";
+        case kMarkOk:    return "MARK_OK";
+        case kArrayTrav: return "ARRAY_TRAV";
+        default:         return "?";
     }
 }
 

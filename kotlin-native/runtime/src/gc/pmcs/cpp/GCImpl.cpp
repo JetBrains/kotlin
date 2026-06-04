@@ -16,6 +16,7 @@
 #include "MarkAndSweepUtils.hpp"
 #include "ObjectOps.hpp"
 #include "ParallelMark.hpp"
+#include "SweepDebug.hpp"
 #include "ThreadData.hpp"
 
 using namespace kotlin;
@@ -61,6 +62,13 @@ PERFORMANCE_INLINE void gc::GC::processObjectInMark(void* state, ObjHeader* obje
 
 // static
 PERFORMANCE_INLINE void gc::GC::processArrayInMark(void* state, ArrayHeader* array) noexcept {
+    // Diagnostic: log that the array was traversed in the current epoch.
+    // `aux` carries the array's count so we can sanity-check whether
+    // count was misread during this traversal.
+    debug::recordSweepEvent(
+            reinterpret_cast<uintptr_t>(&alloc::objectDataForObject(array->obj())),
+            debug::kArrayTrav,
+            static_cast<uintptr_t>(array->count_));
     gc::internal::processArrayInMark<gc::mark::ParallelMark::MarkTraits>(state, array);
 }
 
