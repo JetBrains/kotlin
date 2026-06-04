@@ -29,6 +29,7 @@ import kotlin.math.min
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
     irModule.acceptChildrenVoid(generator)
+    generationState.llvm.referenceTLS.build()
     return LlvmDeclarations(generator.uniques)
 }
 
