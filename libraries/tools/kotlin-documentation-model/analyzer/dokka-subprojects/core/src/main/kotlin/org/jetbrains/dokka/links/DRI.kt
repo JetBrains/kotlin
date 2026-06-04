@@ -89,7 +89,20 @@ public data class Callable(
     val params: List<TypeReference>,
     @property:ExperimentalDokkaApi
     val contextParameters: List<TypeReference> = emptyList(),
-    val isProperty: Boolean = false
+    val isProperty: Boolean = false,
+    /**
+     * Distinguishes callables that do not have an instance receiver from instance ones.
+     *
+     * `true` for:
+     * - Java static methods/fields
+     * - Enum synthetic declarations (`values`, `valueOf`, `entries`)
+     * - Kotlin companion-block members (see [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md))
+     * - Kotlin companion extensions (see [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md))
+     *
+     * @see org.jetbrains.dokka.model.IsCompanion
+     */
+    @property:ExperimentalDokkaApi
+    val isCompanion: Boolean = false,
 ) {
     init {
         if (isProperty) require(
@@ -128,17 +141,39 @@ public data class Callable(
         contextParameters: List<TypeReference>
     ): Callable = Callable(name, receiver, params, contextParameters)
 
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public constructor(
+        name: String,
+        receiver: TypeReference? = null,
+        params: List<TypeReference>,
+        contextParameters: List<TypeReference>,
+        isProperty: Boolean,
+    ) : this(name, receiver, params, contextParameters, isProperty, isCompanion = false)
+
+    @Deprecated("Binary compatibility", level = DeprecationLevel.HIDDEN)
+    public fun copy(
+        name: String = this.name,
+        receiver: TypeReference? = this.receiver,
+        params: List<TypeReference> = this.params,
+        contextParameters: List<TypeReference>,
+        isProperty: Boolean,
+    ): Callable = Callable(name, receiver, params, contextParameters, isProperty, isCompanion = false)
+
     public fun signature(): String {
         /**
          * Compatibility with [signature] without context parameters must be preserved,
          * as package-list (e.g. `DefaultExternalLocationProvider` in the base plugin) and unit tests
-         * rely on `dri.toString`
+         * rely on `dri.toString`.
+         *
+         * The `static` marker is appended only when [isCompanion] is `true` to preserve the existing
+         * signature of regular instance callables.
          */
         val contextParameters = @OptIn(ExperimentalDokkaApi::class) contextParameters
-        return if (contextParameters.isNotEmpty())
+        val base = if (contextParameters.isNotEmpty())
             "${contextParameters.joinToString("#")}#${receiver?.toString().orEmpty()}#${params.joinToString("#")}"
         else
             "${receiver?.toString().orEmpty()}#${params.joinToString("#")}"
+        return if (@OptIn(ExperimentalDokkaApi::class) isCompanion) "$base/companion" else base
     }
 
     public companion object

@@ -5,6 +5,7 @@
 package org.jetbrains.dokka.model
 
 import org.jetbrains.dokka.DokkaConfiguration.DokkaSourceSet
+import org.jetbrains.dokka.ExperimentalDokkaApi
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.properties.ExtraProperty
 import org.jetbrains.dokka.model.properties.MergeStrategy
@@ -40,6 +41,28 @@ public data class ExceptionInSupertypes(val exceptions: SourceSetDependent<List<
 }
 
 public object ObviousMember : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, ObviousMember> {
+    override val key: ExtraProperty.Key<Documentable, *> = this
+}
+
+/**
+ * Marks a callable as belonging to the "companion block" scope of its enclosing classlike,
+ * meaning it has no instance receiver from the enclosing class.
+ *
+ *
+ * This covers, in a unified way:
+ * - Java `static` methods and fields
+ * - Enum synthetic declarations (`values`, `valueOf`, `entries`)
+ * - Kotlin companion-block members
+ *   (see [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md))
+ * - Kotlin companion extensions
+ *   (see [KEEP-0449](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0449-companions-block-extension.md))
+ *
+ * The same condition is reflected in the [org.jetbrains.dokka.links.Callable.isCompanion]
+ * field of the [DRI] so that companion and instance callables with the same name
+ * can be distinguished by their DRI signature.
+ */
+@ExperimentalDokkaApi
+public object IsCompanion : ExtraProperty<Documentable>, ExtraProperty.Key<Documentable, IsCompanion> {
     override val key: ExtraProperty.Key<Documentable, *> = this
 }
 

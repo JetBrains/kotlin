@@ -247,7 +247,9 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                         classNames = "System",
                         callable = Callable(
                             name = "identityHashCode",
-                            params = listOf(JavaClassReference("java.lang.Object"))
+                            params = listOf(JavaClassReference("java.lang.Object")),
+                            isProperty = false,
+                            isCompanion = true
                         )
                     ),
                     (see2Root as See).address
@@ -379,7 +381,8 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                                 callable = Callable(
                                                     name = "CASE_INSENSITIVE_ORDER",
                                                     params = emptyList(),
-                                                    isProperty = true
+                                                    isProperty = true,
+                                                    isCompanion = true
                                                 )
                                             ),
                                             children = listOf(Text("String#CASE_INSENSITIVE_ORDER"))
@@ -430,7 +433,8 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                                 callable = Callable(
                                                     name = "CASE_INSENSITIVE_ORDER",
                                                     params = emptyList(),
-                                                    isProperty = true
+                                                    isProperty = true,
+                                                    isCompanion = true
                                                 )
                                             ),
                                             children = listOf(Text("a field"))
@@ -461,7 +465,9 @@ class JavadocMarkdownTest : BaseAbstractTest() {
                                                 classNames = "String",
                                                 callable = Callable(
                                                     name = "copyValueOf",
-                                                    params = listOf(JavaClassReference("char[]"))
+                                                    params = listOf(JavaClassReference("char[]")),
+                                                    isProperty = false,
+                                                    isCompanion = true
                                                 )
                                             ),
                                             children = listOf(Text("String#copyValueOf(char[])"))
