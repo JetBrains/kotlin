@@ -387,14 +387,21 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     moduleData,
                     javaSourcesScope,
                     createIncrementalCompilationSymbolProviders = { session ->
-                        when {
-                            isForLeafHmppModule -> incrementalCompilationContext?.createSymbolProviders(
+                        when (kmpModuleKind) {
+                            KmpModuleKind.SingleModule,
+                            KmpModuleKind.LeafRegularModule,
+                            KmpModuleKind.LeafHmppModule -> incrementalCompilationContext?.createSymbolProviders(
                                 session,
                                 moduleData,
                                 projectEnvironment
                             )
 
-                            else -> createIncrementalProvidersForNonLeafMppModules(session, moduleData, configuration)
+                            KmpModuleKind.NonLeafRegularModule,
+                            KmpModuleKind.NonLeafHmppModule -> createIncrementalProvidersForNonLeafMppModules(
+                                session,
+                                moduleData,
+                                configuration
+                            )
                         }
                     },
                     extensionRegistrars,
