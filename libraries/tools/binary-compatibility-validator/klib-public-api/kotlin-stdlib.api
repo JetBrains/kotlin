@@ -10052,6 +10052,11 @@ open annotation class kotlin.test/BeforeTest : kotlin/Annotation { // kotlin.tes
 }
 
 // Targets: [native]
+open annotation class kotlin.test/ExperimentalKotlinTestApi : kotlin/Annotation { // kotlin.test/ExperimentalKotlinTestApi|null[0]
+    constructor <init>() // kotlin.test/ExperimentalKotlinTestApi.<init>|<init>(){}[0]
+}
+
+// Targets: [native]
 open annotation class kotlin.test/Ignore : kotlin/Annotation { // kotlin.test/Ignore|null[0]
     constructor <init>() // kotlin.test/Ignore.<init>|<init>(){}[0]
 }
