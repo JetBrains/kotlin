@@ -104,7 +104,7 @@ class ValueAgnosticSanitizer(val actualText: String) {
                                 value = quotedStringGroup
                                 valueType = ValueType.QuotedString
                             } else {
-                                error("The value $valueMatcherOnActual is matched by ${VALUE_PATTERN::class.simpleName}, but it doesn't have a handler.")
+                                testInfraError("The value $valueMatcherOnActual is matched by ${VALUE_PATTERN::class.simpleName}, but it doesn't have a handler.")
                             }
                         }
                     }
@@ -141,7 +141,7 @@ class ValueAgnosticSanitizer(val actualText: String) {
                     continue
                 }
 
-                require(matchFragment is ValueFragment)
+                checkTestInfrastructure(matchFragment is ValueFragment) { "Match fragment must be ValueFragment" }
 
                 // If the expect-actual placeholder-number doesn't match, use generated placeholder from actual data
                 // It's especially useful when expect data doesn't exist, but it's convenient to get it with minimal effort.

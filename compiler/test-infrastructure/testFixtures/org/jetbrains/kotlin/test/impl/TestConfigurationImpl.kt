@@ -106,7 +106,7 @@ sealed class TestConfigurationImplBase<Step : TestStep<*, *>>(
 
             val environmentProvider =
                 compilerConfigurationProvider?.invoke(this, rootDisposable, this@TestConfigurationImplBase.environmentConfigurators)
-                    ?: error("CompilerConfigurationProvider is not initialized")
+                    ?: testInfraError("CompilerConfigurationProvider is not initialized")
             register(CompilerConfigurationProvider::class, environmentProvider)
 
             register(AssertionsService::class, assertions)

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.directives.model
 
 import org.jetbrains.kotlin.test.util.joinToArrayString
+import org.jetbrains.kotlin.test.testInfraError
 
 // --------------------------- Directive declaration ---------------------------
 
@@ -164,7 +165,7 @@ fun RegisteredDirectives.suppressIf(suppressionDirective: Directive, filter: (Th
 }
 
 fun RegisteredDirectives.singleValue(directive: StringDirective): String {
-    return singleOrZeroValue(directive) ?: error("No values passed to $directive")
+    return singleOrZeroValue(directive) ?: testInfraError("No values passed to $directive")
 }
 
 fun RegisteredDirectives.singleOrZeroValue(directive: StringDirective): String? {
@@ -172,16 +173,16 @@ fun RegisteredDirectives.singleOrZeroValue(directive: StringDirective): String? 
     return when (values.size) {
         0 -> null
         1 -> values.single()
-        else -> error("Too many values passed to $directive")
+        else -> testInfraError("Too many values passed to $directive")
     }
 }
 
 fun RegisteredDirectives.notEmptyValues(directive: StringDirective): List<String> = this[directive].ifEmpty {
-    error("No values passed to $directive")
+    testInfraError("No values passed to $directive")
 }
 
 fun <T : Any> RegisteredDirectives.singleValue(directive: ValueDirective<T>): T {
-    return singleOrZeroValue(directive) ?: error("No values passed to $directive")
+    return singleOrZeroValue(directive) ?: testInfraError("No values passed to $directive")
 }
 
 fun <T : Any> RegisteredDirectives.singleOrZeroValue(directive: ValueDirective<T>): T? {
@@ -189,10 +190,10 @@ fun <T : Any> RegisteredDirectives.singleOrZeroValue(directive: ValueDirective<T
     return when (values.size) {
         0 -> null
         1 -> values.single()
-        else -> error("Too many values passed to $directive: ${values.joinToArrayString()}")
+        else -> testInfraError("Too many values passed to $directive: ${values.joinToArrayString()}")
     }
 }
 
 fun <T : Any> RegisteredDirectives.notEmptyValues(directive: ValueDirective<T>): List<T> = this[directive].ifEmpty {
-    error("No values passed to $directive")
+    testInfraError("No values passed to $directive")
 }

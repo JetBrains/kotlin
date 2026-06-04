@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.singleValue
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticCollectorService
 import org.jetbrains.kotlin.test.frontend.fir.handlers.firDiagnosticCollectorService
 import org.jetbrains.kotlin.test.model.FrontendFacade
@@ -252,7 +253,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     extensionRegistrars,
                 ).also(::registerExtraComponents)
             }
-            else -> error("Unsupported")
+            else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
         }
     }
 
@@ -402,7 +403,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                     sessionConfigurator,
                 ).also(::registerExtraComponents)
             }
-            else -> error("Unsupported")
+            else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
         }
     }
 
@@ -461,7 +462,7 @@ open class FirFrontendFacade(testServices: TestServices) : FrontendFacade<FirOut
                             dependencies(transitiveLibraries.map { it.path })
                             friendDependencies(friendLibraries.map { it.path })
                         }
-                        else -> error("Unsupported")
+                        else -> testInfraError("Unsupported targetPlatform: $targetPlatform")
                     }
                 }
             }

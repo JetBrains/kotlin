@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.test
 
+import kotlin.contracts.*
+
 /**
  * Signals a failure caused by the test infrastructure itself (a violated internal invariant of the test runner,
  * handlers, etc.) as opposed to a failure of the code under test (e.g. a compiler bug).
@@ -25,7 +27,11 @@ class TestInfrastructureException(message: String, cause: Throwable? = null) : R
  * The drop-in replacement for [check] for test-infrastructure invariants whose violation must never be masked by
  * failure suppressors (see [TestInfrastructureException]).
  */
+@OptIn(ExperimentalContracts::class)
 inline fun checkTestInfrastructure(value: Boolean, lazyMessage: () -> String) {
+    contract {
+        returns() implies value
+    }
     if (!value) {
         testInfraError(lazyMessage())
     }

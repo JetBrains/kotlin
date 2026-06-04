@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.codeMetaInfo
 
 import org.jetbrains.kotlin.codeMetaInfo.model.ParsedCodeMetaInfo
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 
 object CodeMetaInfoParser {
     val openingRegex = """(<!([^"]*?((".*?")(, ".*?")*?)?[^"]*?)!>)""".toRegex()
@@ -78,8 +79,8 @@ object CodeMetaInfoParser {
                 text.removeRange(closingStartOffset, closing.range.last + 1)
             }
         }
-        if (openings.size != closingOffsets.size) {
-            error("Opening and closing tags counts are not equals")
+        checkTestInfrastructure(openings.size == closingOffsets.size) {
+            "Opening and closing tags counts are not equals"
         }
         while (!openings.isEmpty()) {
             val openingMatchResult = openings.removeLast()

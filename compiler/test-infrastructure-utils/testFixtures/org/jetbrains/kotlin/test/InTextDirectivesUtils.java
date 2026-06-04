@@ -21,6 +21,8 @@ import java.io.StringReader;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.jetbrains.kotlin.test.TestInfrastructureExceptionKt.testInfraError;
+
 public final class InTextDirectivesUtils {
 
     public static final String DIRECTIVES_FILE_NAME = "directives.txt";
@@ -151,8 +153,7 @@ public final class InTextDirectivesUtils {
                         }
                         break;
                     } else if (strict) {
-                        throw new AssertionError(
-                                "Line starts with prefix \"" + prefix + "\", but doesn't have space symbol after it: " + line);
+                        testInfraError("Line starts with prefix \"" + prefix + "\", but doesn't have space symbol after it: " + line);
                     }
                 }
             }
