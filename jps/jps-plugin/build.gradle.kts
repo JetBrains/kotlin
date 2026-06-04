@@ -93,6 +93,8 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 apply(plugin = "idea")
 idea {
     this.module.generatedSourceDirs.add(projectDir.resolve("jps-tests").resolve("tests-gen"))

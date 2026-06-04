@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin.incremental
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartProviderBase
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.CommonCompilerDeserializationConfiguration
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
+@K1Deprecation
 class IncrementalPackagePartProvider(
     languageVersionSettings: LanguageVersionSettings,
     incrementalCaches: List<IncrementalCache>

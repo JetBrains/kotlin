@@ -18,8 +18,10 @@ package org.jetbrains.kotlin.resolve.jvm.modules
 
 import com.intellij.ide.highlighter.JavaFileType
 import com.intellij.openapi.vfs.VirtualFile
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.FqName
 
+@K1Deprecation
 interface JavaModule {
     /**
      * The name of the module. For explicit modules, this is the name specified in the module-info file.
@@ -108,4 +110,5 @@ interface JavaModule {
     }
 }
 
+@K1Deprecation
 const val KOTLIN_STDLIB_MODULE_NAME = "kotlin.stdlib"

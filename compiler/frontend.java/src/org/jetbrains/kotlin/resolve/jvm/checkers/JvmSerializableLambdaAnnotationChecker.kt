@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.Errors
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.AdditionalAnnotationChecker
 import org.jetbrains.kotlin.resolve.BindingContext.ANNOTATION
 import org.jetbrains.kotlin.resolve.BindingTrace
 
+@K1Deprecation
 object JvmSerializableLambdaAnnotationChecker : AdditionalAnnotationChecker {
     override fun checkEntries(
         entries: List<KtAnnotationEntry>,

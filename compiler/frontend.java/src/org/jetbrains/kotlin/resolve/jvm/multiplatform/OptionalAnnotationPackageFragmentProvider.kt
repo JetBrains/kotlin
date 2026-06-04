@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.impl.PackageFragmentDescriptorImpl
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.storage.getValue
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class OptionalAnnotationPackageFragmentProvider(
     module: ModuleDescriptor,
     storageManager: StorageManager,

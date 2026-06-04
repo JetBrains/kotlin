@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.resolve.jvm.checkers
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.load.java.descriptors.getImplClassNameForDeserialized
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.resolve.jvm.modules.JavaModuleResolver.AccessError.*
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedMemberDescriptor
 
+@K1Deprecation
 class JvmModuleAccessibilityChecker(project: Project) : CallChecker {
     private val moduleResolver = JavaModuleResolver.getInstance(project)
 

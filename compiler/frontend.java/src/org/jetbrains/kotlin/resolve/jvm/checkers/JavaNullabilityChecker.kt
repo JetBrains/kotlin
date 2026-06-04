@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.WhenChecker
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.types.model.CustomSubtypingCallback
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 
+@K1Deprecation
 class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : AdditionalTypeChecker {
     override fun checkType(
         expression: KtExpression,
@@ -297,6 +299,7 @@ class JavaNullabilityChecker(val upperBoundChecker: UpperBoundChecker) : Additio
     }
 }
 
+@K1Deprecation
 class EnhancedNullabilityInfo(val enhancedType: KotlinType, val isFromJava: Boolean) {
     val isFromKotlin get() = !isFromJava
 }
@@ -304,6 +307,7 @@ class EnhancedNullabilityInfo(val enhancedType: KotlinType, val isFromJava: Bool
 private fun KotlinType.enhancementFromKotlin() = EnhancedNullabilityInfo(this, isFromJava = false)
 private fun TypeWithEnhancement.enhancementFromJava() = EnhancedNullabilityInfo(enhancement, isFromJava = true)
 
+@K1Deprecation
 fun KotlinType.mustNotBeNull(): EnhancedNullabilityInfo? = when {
     !isError && !isFlexible() && !TypeUtils.acceptsNullable(this) -> enhancementFromKotlin()
     isFlexible() && !TypeUtils.acceptsNullable(asFlexibleType().upperBound) -> enhancementFromKotlin()

@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.getReceiverValueWithSmartCa
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.synthetic.SyntheticJavaPropertyDescriptor
 
+@K1Deprecation
 object ProtectedSyntheticExtensionCallChecker : CallChecker {
     private fun computeSuitableDescriptorAndError(
         descriptor: SyntheticJavaPropertyDescriptor,

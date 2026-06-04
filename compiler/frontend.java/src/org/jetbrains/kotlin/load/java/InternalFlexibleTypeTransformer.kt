@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.TypeResolver.TypeTransformerForTests
 import org.jetbrains.kotlin.types.*
 
+@K1Deprecation
 object InternalFlexibleTypeTransformer : TypeTransformerForTests() {
     // This is a "magic" classifier: when type resolver sees it in the code, e.g. ft<Foo, Foo?>, instead of creating a normal type,
     // it creates a flexible type, e.g. (Foo..Foo?).

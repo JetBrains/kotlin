@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.serialization.deserialization.EnumEntriesDeserializationSupport
 
+@K1Deprecation
 class EnumEntriesDeserializationSupportImpl(
     private val platform: TargetPlatform?,
 ) : EnumEntriesDeserializationSupport {

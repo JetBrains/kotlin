@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.PropertyDescriptorImpl
@@ -46,10 +47,12 @@ import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.Delegates
 
+@K1Deprecation
 fun canBePropertyAccessor(identifier: String): Boolean {
     return identifier.startsWith("get") || identifier.startsWith("is") || identifier.startsWith("set")
 }
 
+@K1Deprecation
 interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropertyDescriptor {
     override val getMethod: FunctionDescriptor
     override val setMethod: FunctionDescriptor?
@@ -91,6 +94,7 @@ interface SyntheticJavaPropertyDescriptor : PropertyDescriptor, SyntheticPropert
     }
 }
 
+@K1Deprecation
 class JavaSyntheticPropertiesScope(
     storageManager: StorageManager,
     private val lookupTracker: LookupTracker,

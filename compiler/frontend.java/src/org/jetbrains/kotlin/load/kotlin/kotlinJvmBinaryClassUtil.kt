@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedCallableMemberDescriptor
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedClassDescriptor
 
+@K1Deprecation
 fun CallableDescriptor.getContainingKotlinJvmBinaryClass(): KotlinJvmBinaryClass? {
     if (this !is DeserializedCallableMemberDescriptor) return null
 

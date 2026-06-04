@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.impl.TypeAliasConstructorDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerState
 import org.jetbrains.kotlin.types.checker.ClassicTypeCheckerStateInternals
 
+@K1Deprecation
 object UpperBoundViolatedInTypealiasConstructorChecker : CallChecker {
     @OptIn(ClassicTypeCheckerStateInternals::class)
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {

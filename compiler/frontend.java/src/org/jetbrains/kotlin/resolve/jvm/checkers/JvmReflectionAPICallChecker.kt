@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.storage.getValue
  * If there's no Kotlin reflection implementation found in the classpath, checks that there are no usages
  * of reflection API which will fail at runtime.
  */
+@K1Deprecation
 class JvmReflectionAPICallChecker(
     private val module: ModuleDescriptor,
     reflectionTypes: ReflectionTypes,

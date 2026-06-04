@@ -95,6 +95,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 kotlin {
     compilerOptions {
         optIn.addAll(

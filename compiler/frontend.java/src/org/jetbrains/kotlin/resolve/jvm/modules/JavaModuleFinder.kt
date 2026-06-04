@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.jvm.modules
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 interface JavaModuleFinder {
     fun findModule(name: String): JavaModule?
 }

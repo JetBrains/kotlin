@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.resolve.PlatformAnnotationFeaturesSupport
 import org.jetbrains.kotlin.resolve.descriptorUtil.getAnnotationRetention
 
+@K1Deprecation
 class JvmPlatformAnnotationFeaturesSupport(
     private val languageVersionSettings: LanguageVersionSettings,
 ) : PlatformAnnotationFeaturesSupport {

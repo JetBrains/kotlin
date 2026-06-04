@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.jvm.checkers
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.JvmDefaultMode
 import org.jetbrains.kotlin.config.JvmDefaultMode.ENABLE
 import org.jetbrains.kotlin.config.jvmDefaultMode
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.jvm.annotations.isCompiledToJvmDefault
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.ErrorsJvm
 import org.jetbrains.kotlin.util.getNonPrivateTraitMembersForDelegation
 
+@K1Deprecation
 class JvmDefaultChecker(project: Project) : DeclarationChecker {
     private val ideService = LanguageVersionSettingsProvider.getInstance(project)
 

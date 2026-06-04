@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.synthetic
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.impl.SimpleFunctionDescriptorImpl
@@ -48,10 +49,12 @@ import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.utils.addIfNotNull
 import kotlin.properties.Delegates
 
+@K1Deprecation
 interface SamAdapterExtensionFunctionDescriptor : FunctionDescriptor, FunctionInterfaceAdapterExtensionFunctionDescriptor {
     override val baseDescriptorForSynthetic: FunctionDescriptor
 }
 
+@K1Deprecation
 class SamAdapterFunctionsScope(
     storageManager: StorageManager,
     private val samResolver: SamConversionResolver,

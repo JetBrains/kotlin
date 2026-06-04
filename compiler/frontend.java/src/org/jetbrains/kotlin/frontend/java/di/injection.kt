@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.frontend.java.di
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsPackageFragmentProvider
 import org.jetbrains.kotlin.config.JvmAnalysisFlags
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.resolve.lazy.AbsentDescriptorHandler
 import org.jetbrains.kotlin.resolve.lazy.declarations.DeclarationProviderFactory
 import org.jetbrains.kotlin.resolve.scopes.optimization.OptimizingOptions
 
+@K1Deprecation
 fun createContainerForLazyResolveWithJava(
     jvmPlatform: TargetPlatform,
     moduleContext: ModuleContext,
@@ -100,12 +102,14 @@ fun createContainerForLazyResolveWithJava(
     initializeJavaSpecificComponents(bindingTrace)
 }
 
+@K1Deprecation
 fun StorageComponentContainer.initializeJavaSpecificComponents(bindingTrace: BindingTrace) {
     get<AbstractJavaClassFinder>().initialize(
         bindingTrace, codeAnalyzer = get(), languageVersionSettings = get(), jvmTarget = get()
     )
 }
 
+@K1Deprecation
 fun StorageComponentContainer.configureJavaSpecificComponents(
     moduleContext: ModuleContext,
     moduleClassResolver: ModuleClassResolver,
@@ -164,10 +168,12 @@ fun StorageComponentContainer.configureJavaSpecificComponents(
     useImpl<JvmDiagnosticComponents>()
 }
 
+@K1Deprecation
 fun ComponentProvider.initJvmBuiltInsForTopDownAnalysis() {
     get<JvmBuiltIns>().initialize(get<ModuleDescriptor>(), get<LanguageVersionSettings>())
 }
 
+@K1Deprecation
 fun JvmBuiltIns.initialize(module: ModuleDescriptor, languageVersionSettings: LanguageVersionSettings) {
     initialize(module, languageVersionSettings.supportsFeature(LanguageFeature.AdditionalBuiltInsMembers))
 }
