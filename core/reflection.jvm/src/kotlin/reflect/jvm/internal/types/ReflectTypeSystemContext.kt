@@ -66,11 +66,11 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun KotlinTypeMarker.makeDefinitelyNotNullOrNotNull(preserveAttributes: Boolean): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(true)
     }
 
     override fun RigidTypeMarker.makeDefinitelyNotNullOrNotNull(): RigidTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).makeDefinitelyNotNullAsSpecified(true)
     }
 
     override fun KotlinTypeMarker.isMarkedNullable(): Boolean {
@@ -97,7 +97,7 @@ object ReflectTypeSystemContext : TypeSystemContext {
     }
 
     override fun KotlinTypeMarker.withNullability(nullable: Boolean): KotlinTypeMarker {
-        shouldNotBeCalled()
+        return (this as AbstractKType).withNullability(nullable)
     }
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean {
