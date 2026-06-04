@@ -59,7 +59,6 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    @TodoAnalysisApi
     fun `test - enumClassWithObjCEnumAndRenamedLiterals`() {
         doTest(headersTestDataDir.resolve("enumClassWithObjCEnumAndRenamedLiterals"))
     }
