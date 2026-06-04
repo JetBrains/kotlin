@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.js.descriptorUtils
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 fun KotlinType.getKotlinTypeFqName(printTypeArguments: Boolean): String {
     val declaration = requireNotNull(constructor.declarationDescriptor) {
         "declarationDescriptor is null for constructor = $constructor with ${constructor.javaClass}"
