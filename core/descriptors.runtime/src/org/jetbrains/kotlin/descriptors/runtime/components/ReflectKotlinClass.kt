@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.runtime.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.runtime.structure.classId
@@ -45,6 +46,7 @@ private val TYPES_ELIGIBLE_FOR_SIMPLE_VISIT = setOf<Class<*>>(
     Class::class.java, String::class.java
 )
 
+@K1Deprecation
 class ReflectKotlinClass private constructor(
     val klass: Class<*>,
     override val classHeader: KotlinClassHeader
