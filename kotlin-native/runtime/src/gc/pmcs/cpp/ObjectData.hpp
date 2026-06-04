@@ -68,6 +68,16 @@ private:
                     reinterpret_cast<uintptr_t>(this),
                     debug::kCASFail,
                     reinterpret_cast<uintptr_t>(expected));
+        } else {
+            // The CAS succeeded: this thread transitioned next_ from null to
+            // non-null. Record so we can later determine, for the failing
+            // object, whether mark ever attempted+succeeded on it in the
+            // failing cycle (presence of MARK_OK in epoch N before DEAD/N
+            // means the mark write didn't propagate to the sweeper's view).
+            debug::recordSweepEvent(
+                    reinterpret_cast<uintptr_t>(this),
+                    debug::kMarkOk,
+                    reinterpret_cast<uintptr_t>(next));
         }
         return ok;
     }

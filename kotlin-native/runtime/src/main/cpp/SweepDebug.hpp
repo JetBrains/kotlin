@@ -32,6 +32,7 @@ enum SweepEventKind : uint32_t {
     kDead = 1,       // sweep observed next_ == null; object about to be reclaimed
     kCASFail = 2,    // mark CAS failed because next_ was already non-null (possibly stale)
     kReclaim = 3,    // trySweepElement returned true; cell is about to be memset'd
+    kMarkOk = 4,     // mark CAS succeeded: this thread transitioned next_ from null to non-null
 };
 
 struct SweepEvent {
@@ -70,6 +71,7 @@ inline const char* sweepEventName(uint32_t kind) noexcept {
         case kDead:    return "DEAD";
         case kCASFail: return "CAS_FAIL";
         case kReclaim: return "RECLAIM";
+        case kMarkOk:  return "MARK_OK";
         default:       return "?";
     }
 }
