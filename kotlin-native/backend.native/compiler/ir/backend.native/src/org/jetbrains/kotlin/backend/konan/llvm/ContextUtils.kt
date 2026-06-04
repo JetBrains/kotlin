@@ -439,7 +439,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
     val appendToInitalizersTail = importRtFunction("AppendToInitializersTail", false)
     val callInitGlobalPossiblyLock = importRtFunction("CallInitGlobalPossiblyLock", false)
     val callInitThreadLocal = importRtFunction("CallInitThreadLocal", false)
-    val addTLSRecord = importRtFunction("AddTLSRecord", false)
     val lookupTLS = importRtFunction("LookupTLS", false)
     val initRuntimeIfNeeded = importRtFunction("Kotlin_initRuntimeIfNeeded", false)
     val Kotlin_getExceptionObject = importRtFunction("Kotlin_getExceptionObject", true)

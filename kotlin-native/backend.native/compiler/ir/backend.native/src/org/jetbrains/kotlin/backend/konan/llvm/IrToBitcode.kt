@@ -376,7 +376,6 @@ internal class CodeGeneratorVisitor(
     //-------------------------------------------------------------------------//
 
     // Must be synchronized with Runtime.cpp
-    val ALLOC_THREAD_LOCAL_GLOBALS = 0
     val INIT_GLOBALS = 1
     val INIT_THREAD_LOCAL_GLOBALS = 2
 
@@ -388,7 +387,6 @@ internal class CodeGeneratorVisitor(
             using(FunctionScope(function, this)) {
                 val bbInit = basicBlock("init", null)
                 val bbLocalInit = basicBlock("local_init", null)
-                val bbLocalAlloc = basicBlock("local_alloc", null)
                 val bbDefault = basicBlock("default", null) {
                     unreachable()
                 }
@@ -396,8 +394,7 @@ internal class CodeGeneratorVisitor(
                 switch(function.param(0),
                         listOf(
                                 llvm.int32(INIT_GLOBALS) to bbInit,
-                                llvm.int32(INIT_THREAD_LOCAL_GLOBALS) to bbLocalInit,
-                                llvm.int32(ALLOC_THREAD_LOCAL_GLOBALS) to bbLocalAlloc
+                                llvm.int32(INIT_THREAD_LOCAL_GLOBALS) to bbLocalInit
                         ),
                         bbDefault)
 
@@ -409,11 +406,6 @@ internal class CodeGeneratorVisitor(
 
                 appendingTo(bbLocalInit) {
                     state.threadLocalEagerInitFunction?.let { call(it, listOf(), exceptionHandler = ExceptionHandler.Caller) }
-                    ret(null)
-                }
-
-                appendingTo(bbLocalAlloc) {
-                    llvm.referenceTLS.generateAllocate()
                     ret(null)
                 }
             }

@@ -93,8 +93,7 @@ TEST(ThreadRootSetTest, Basic) {
 
     TLSKey key;
     mm::ThreadLocalStorage tls;
-    tls.AddRecord(&key, 3);
-    tls.Commit();
+    tls.LookupOrRegister(&key, 3, 0);
 
     mm::ThreadRootSet iter(stack, tls);
 
@@ -108,8 +107,8 @@ TEST(ThreadRootSetTest, Basic) {
     EXPECT_THAT(
             actual,
             testing::ElementsAre(
-                    asStack(entry[0]), asStack(entry[1]), asTLS(*tls.Lookup(&key, 0)), asTLS(*tls.Lookup(&key, 1)),
-                    asTLS(*tls.Lookup(&key, 2))));
+                    asStack(entry[0]), asStack(entry[1]), asTLS(*tls.LookupOrRegister(&key, 3, 0)),
+                    asTLS(*tls.LookupOrRegister(&key, 3, 1)), asTLS(*tls.LookupOrRegister(&key, 3, 2))));
 }
 
 TEST(ThreadRootSetTest, Empty) {

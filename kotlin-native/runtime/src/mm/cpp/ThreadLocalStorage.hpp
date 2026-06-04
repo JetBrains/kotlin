@@ -10,6 +10,7 @@
 #include <utility>
 #include <vector>
 
+#include "FlatteningIterator.hpp"
 #include "Memory.h"
 #include "Types.h"
 #include "Utils.hpp"
@@ -21,56 +22,33 @@ class ThreadLocalStorage : Pinned {
 public:
     using Key = const void*;
 
-    class Iterator {
-    public:
-        explicit Iterator(std::vector<ObjHeader*>::iterator iterator) : iterator_(iterator) {}
+private:
+    // Per-key block of object slots. The backing buffer is heap-allocated once and
+    // never resized, so the slot addresses handed out by `LookupOrRegister` stay
+    // valid for the whole lifetime of the storage (until `Clear`).
+    using Record = std::vector<ObjHeader*>;
+    using Storage = std::unordered_map<Key, Record>;
 
-        ObjHeader** operator*() noexcept { return &*iterator_; }
+public:
+    // Iterates over every object slot in every registered block (used for GC roots),
+    // flattening the per-key blocks into a single sequence. Dereferencing yields the
+    // slot by reference (`ObjHeader*&`).
+    using Iterator = FlatteningIterator<Storage::iterator, SecondOfPair>;
 
-        Iterator& operator++() noexcept {
-            ++iterator_;
-            return *this;
-        }
-
-        bool operator==(const Iterator& rhs) const noexcept { return iterator_ == rhs.iterator_; }
-        bool operator!=(const Iterator& rhs) const noexcept { return iterator_ != rhs.iterator_; }
-
-    private:
-        std::vector<ObjHeader*>::iterator iterator_;
-    };
-
-    // Add TLS record. Can only be called before `Commit`.
-    void AddRecord(Key key, int size) noexcept;
-    // Prepare storage for records added by `AddRecord`.
-    void Commit() noexcept;
-    // Clear storage. Can only be called after `Commit`.
+    // Returns the address of object slot `index` for `key`, lazily registering a block
+    // of `size` slots on the first access for `key`. Slot addresses are stable until `Clear`.
+    ObjHeader** LookupOrRegister(Key key, int size, int index) noexcept;
+    // Free all storage. Subsequent `LookupOrRegister` calls re-register lazily.
     void Clear() noexcept;
-    // Lookup value in storage. Can only be called after `Commit`.
-    ObjHeader** Lookup(Key key, int index) noexcept;
 
-    Iterator begin() noexcept { return Iterator(storage_.begin()); }
-    Iterator end() noexcept { return Iterator(storage_.end()); }
+    Iterator begin() noexcept { return Iterator(storage_.begin(), storage_.end()); }
+    Iterator end() noexcept { return Iterator(storage_.end(), storage_.end()); }
 
 private:
-    enum class State {
-        kBuilding,
-        kCommitted,
-        kCleared,
-    };
-
-    struct Entry {
-        int offset;
-        int size;
-    };
-
-    ObjHeader** Lookup(Entry entry, int index) noexcept;
-
-    std::vector<ObjHeader*> storage_;
-    // TODO: `std::unordered_map` is probably the wrong container here.
-    std::unordered_map<Key, Entry> map_;
-    State state_ = State::kBuilding;
-    int size_ = 0; // Only used in `State::kBuilding`
-    std::pair<Key, Entry> lastKeyAndEntry_;
+    Storage storage_;
+    // Cache the most recently used block for fast repeated lookups.
+    Key lastKey_ = nullptr;
+    Record* lastRecord_ = nullptr;
 };
 
 } // namespace mm

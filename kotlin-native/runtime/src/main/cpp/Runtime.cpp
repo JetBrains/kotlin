@@ -47,7 +47,6 @@ struct RuntimeState {
 
 // Must be synchronized with IrToBitcode.kt
 enum {
-  ALLOC_THREAD_LOCAL_GLOBALS = 0,
   INIT_GLOBALS = 1,
   INIT_THREAD_LOCAL_GLOBALS = 2,
 };
@@ -99,8 +98,6 @@ NO_INLINE RuntimeState* initRuntime() {
   ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
   result->worker = WorkerInit(result->memoryState);
 
-  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
-  CommitTLSStorage(result->memoryState);
   // Keep global variables in state as well.
   if (firstRuntime) {
     InitOrDeinitGlobalVariables(INIT_GLOBALS, result->memoryState);

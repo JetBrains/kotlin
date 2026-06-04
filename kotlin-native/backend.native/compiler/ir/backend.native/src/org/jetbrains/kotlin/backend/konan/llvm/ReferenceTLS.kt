@@ -66,16 +66,6 @@ internal class ReferenceTLS(private val llvm: CodegenLlvmHelpers) {
         require(index < state.count) { "TLS index out of bounds: $index" }
         return gen.call(gen.llvm.lookupTLS, listOf(state.descriptor, gen.llvm.int32(index)))
     }
-
-    context(gen: FunctionGenerationContext)
-    fun generateAllocate() {
-        if (this.state is State.BuiltEmpty) return
-
-        val state = this.state.expect<State.Built>()
-        check(state.count > 0) { "Unexpected TLS count: ${state.count}" }
-        val memory = gen.param(1)
-        gen.call(gen.llvm.addTLSRecord, listOf(memory, state.descriptor))
-    }
 }
 
 internal class TLSAddressAccess(private val tls: ReferenceTLS, private val index: Int) : AddressAccess() {

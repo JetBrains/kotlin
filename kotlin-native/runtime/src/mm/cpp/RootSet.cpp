@@ -23,7 +23,7 @@ mm::ThreadRootSet::Value mm::ThreadRootSet::Iterator::operator*() noexcept {
         case Phase::kStack:
             return {*stackIterator_, Source::kStack};
         case Phase::kTLS:
-            return {**tlsIterator_, Source::kTLS};
+            return {*tlsIterator_, Source::kTLS};
         case Phase::kDone:
             RuntimeFail("Cannot dereference");
     }

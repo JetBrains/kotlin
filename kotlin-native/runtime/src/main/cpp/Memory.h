@@ -240,13 +240,9 @@ struct TLSDescriptor {
     int size;
 };
 
-// Add TLS object storage, called by the generated code.
-void AddTLSRecord(MemoryState* memory, const TLSDescriptor* descriptor) RUNTIME_NOTHROW;
-// Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
-void CommitTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
 // Clear TLS object storage.
 void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
-// Lookup element in TLS object storage.
+// Lookup an object slot in TLS storage, allocating the storage on first access.
 ObjHeader** LookupTLS(const TLSDescriptor* descriptor, int index) RUNTIME_NOTHROW;
 
 void Kotlin_native_internal_GC_collect(ObjHeader*);

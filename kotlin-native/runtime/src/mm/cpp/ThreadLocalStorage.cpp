@@ -8,48 +8,28 @@
 
 using namespace kotlin;
 
-void mm::ThreadLocalStorage::AddRecord(Key key, int size) noexcept {
-    RuntimeAssert(state_ == State::kBuilding, "Storage must be in the building state");
-    RuntimeAssert(size >= 0, "Size cannot be negative");
-    RuntimeLogDebug({kTagTLS}, "Add record key = %p, size = %d\n", key, size);
-    auto it = map_.find(key);
-    if (it != map_.end()) {
-        RuntimeAssert(it->second.size == size, "Attempt to add TLS record with the same key, but different size");
-        return;
+ObjHeader** mm::ThreadLocalStorage::LookupOrRegister(Key key, int size, int index) noexcept {
+    RuntimeLogDebug({kTagTLS}, "Lookup key = %p, size = %d, index = %d", key, size, index);
+    RuntimeAssert(size > 0, "TLS record size must be positive");
+    RuntimeAssert(index < size, "Out of bounds TLS access");
+    if (key == lastKey_) {
+        return &(*lastRecord_)[index];
     }
-    map_.emplace(key, Entry{size_, size});
-    size_ += size;
-}
-
-void mm::ThreadLocalStorage::Commit() noexcept {
-    RuntimeLogDebug({kTagTLS}, "Committed");
-    RuntimeAssert(state_ == State::kBuilding, "Storage must be in the building state");
-    storage_.resize(size_);
-    state_ = State::kCommitted;
+    auto it = storage_.find(key);
+    if (it == storage_.end()) {
+        RuntimeLogDebug({kTagTLS}, "Register key = %p, size = %d", key, size);
+        it = storage_.emplace(key, Record(size, nullptr)).first;
+    } else {
+        RuntimeAssert(static_cast<int>(it->second.size()) == size, "Attempt to look up a TLS record with a different size");
+    }
+    lastKey_ = key;
+    lastRecord_ = &it->second;
+    return &it->second[index];
 }
 
 void mm::ThreadLocalStorage::Clear() noexcept {
     RuntimeLogDebug({kTagTLS}, "Cleared");
-    RuntimeAssert(state_ == State::kCommitted, "Storage must be in the committed state");
-    // Just free the storage.
     storage_.clear();
-    state_ = State::kCleared;
-}
-
-ObjHeader** mm::ThreadLocalStorage::Lookup(Key key, int index) noexcept {
-    RuntimeLogDebug({kTagTLS}, "Lookup key = %p, index = %d", key, index);
-    RuntimeAssert(state_ == State::kCommitted, "Storage must be in the committed state");
-    if (lastKeyAndEntry_.first == key) {
-        return Lookup(lastKeyAndEntry_.second, index);
-    }
-    auto it = map_.find(key);
-    RuntimeAssert(it != map_.end(), "Unknown TLS key");
-    lastKeyAndEntry_ = *it;
-    return Lookup(it->second, index);
-}
-
-ObjHeader** mm::ThreadLocalStorage::Lookup(Entry entry, int index) noexcept {
-    RuntimeLogDebug({kTagTLS}, "Lookup entry = {%d, %d}, index = %d", entry.offset, entry.size, index);
-    RuntimeAssert(index < entry.size, "Out of bounds TLS access");
-    return &storage_[entry.offset + index];
+    lastKey_ = nullptr;
+    lastRecord_ = nullptr;
 }

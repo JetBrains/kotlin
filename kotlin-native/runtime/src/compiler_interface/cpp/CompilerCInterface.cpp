@@ -64,7 +64,6 @@ touchFunction(AppendToInitializersTail)
 touchFunction(CallInitGlobalPossiblyLock)
 touchFunction(CallInitThreadLocal)
 
-touchFunction(AddTLSRecord)
 touchFunction(LookupTLS)
 
 touchFunction(Kotlin_initRuntimeIfNeeded)

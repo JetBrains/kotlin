@@ -23,13 +23,9 @@ TEST(ThreadLocalStorageTest, Lookup) {
     Key key2;
     mm::ThreadLocalStorage tls;
 
-    tls.AddRecord(&key1, 1);
-    tls.AddRecord(&key2, 2);
-    tls.Commit();
-
-    ObjHeader** location1 = tls.Lookup(&key1, 0);
-    ObjHeader** location2 = tls.Lookup(&key2, 0);
-    ObjHeader** location3 = tls.Lookup(&key2, 1);
+    ObjHeader** location1 = tls.LookupOrRegister(&key1, 1, 0);
+    ObjHeader** location2 = tls.LookupOrRegister(&key2, 2, 0);
+    ObjHeader** location3 = tls.LookupOrRegister(&key2, 2, 1);
 
     // Locations are not nulls.
     EXPECT_NE(location1, nullptr);
@@ -47,79 +43,51 @@ TEST(ThreadLocalStorageTest, Lookup) {
     *location3 = nullptr;
 }
 
+TEST(ThreadLocalStorageTest, SlotsAreNullInitialized) {
+    Key key1;
+    mm::ThreadLocalStorage tls;
+
+    EXPECT_EQ(*tls.LookupOrRegister(&key1, 2, 0), nullptr);
+    EXPECT_EQ(*tls.LookupOrRegister(&key1, 2, 1), nullptr);
+}
+
 TEST(ThreadLocalStorageTest, Iterate) {
     Key key1;
     Key key2;
     mm::ThreadLocalStorage tls;
 
-    tls.AddRecord(&key1, 1);
-    tls.AddRecord(&key2, 2);
-    tls.Commit();
-
     std::vector<ObjHeader**> expected;
-    expected.push_back(tls.Lookup(&key1, 0));
-    expected.push_back(tls.Lookup(&key2, 0));
-    expected.push_back(tls.Lookup(&key2, 1));
+    expected.push_back(tls.LookupOrRegister(&key1, 1, 0));
+    expected.push_back(tls.LookupOrRegister(&key2, 2, 0));
+    expected.push_back(tls.LookupOrRegister(&key2, 2, 1));
 
     std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
+    for (auto& item : tls) {
+        actual.push_back(&item);
     }
 
-    EXPECT_THAT(actual, testing::ElementsAreArray(expected));
+    // Blocks of distinct keys are not ordered relative to each other.
+    EXPECT_THAT(actual, testing::UnorderedElementsAreArray(expected));
 }
 
-TEST(ThreadLocalStorageTest, AddRecordEmpty) {
+TEST(ThreadLocalStorageTest, StableAddressesAcrossRegistrations) {
     Key key1;
     Key key2;
-    Key key3;
     mm::ThreadLocalStorage tls;
 
-    tls.AddRecord(&key1, 1);
-    tls.AddRecord(&key2, 0);
-    tls.AddRecord(&key3, 2);
-    tls.Commit();
-
-    std::vector<ObjHeader**> expected;
-    expected.push_back(tls.Lookup(&key1, 0));
-    expected.push_back(tls.Lookup(&key3, 0));
-    expected.push_back(tls.Lookup(&key3, 1));
-
-    std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
-    }
-
-    EXPECT_THAT(actual, testing::ElementsAreArray(expected));
-}
-
-TEST(ThreadLocalStorageTest, AddRecordSameSize) {
-    Key key1;
-    mm::ThreadLocalStorage tls;
-
-    tls.AddRecord(&key1, 1);
-    tls.AddRecord(&key1, 1);
-    tls.Commit();
-
-    std::vector<ObjHeader**> expected;
-    expected.push_back(tls.Lookup(&key1, 0));
-
-    std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
-    }
-
-    EXPECT_THAT(actual, testing::ElementsAreArray(expected));
+    ObjHeader** location1 = tls.LookupOrRegister(&key1, 1, 0);
+    // Registering another key must not move the previously handed out slot.
+    ObjHeader** location2 = tls.LookupOrRegister(&key2, 1, 0);
+    EXPECT_EQ(location1, tls.LookupOrRegister(&key1, 1, 0));
+    EXPECT_NE(location1, location2);
 }
 
 TEST(ThreadLocalStorageTest, NoRecords) {
     mm::ThreadLocalStorage tls;
 
-    tls.Commit();
-
     std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
+    for (auto& item : tls) {
+        actual.push_back(&item);
     }
 
     EXPECT_THAT(actual, testing::IsEmpty());
@@ -128,13 +96,11 @@ TEST(ThreadLocalStorageTest, NoRecords) {
 TEST(ThreadLocalStorageTest, ClearEmpty) {
     mm::ThreadLocalStorage tls;
 
-    tls.Commit();
-
     tls.Clear();
 
     std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
+    for (auto& item : tls) {
+        actual.push_back(&item);
     }
 
     EXPECT_THAT(actual, testing::IsEmpty());
@@ -144,17 +110,29 @@ TEST(ThreadLocalStorageTest, ClearNonEmpty) {
     Key key1;
     mm::ThreadLocalStorage tls;
 
-    tls.AddRecord(&key1, 1);
-    tls.Commit();
+    tls.LookupOrRegister(&key1, 1, 0);
 
     tls.Clear();
 
     std::vector<ObjHeader**> actual;
-    for (auto item : tls) {
-        actual.push_back(item);
+    for (auto& item : tls) {
+        actual.push_back(&item);
     }
 
     EXPECT_THAT(actual, testing::IsEmpty());
+}
+
+TEST(ThreadLocalStorageTest, ReRegisterAfterClear) {
+    Key key1;
+    mm::ThreadLocalStorage tls;
+
+    tls.LookupOrRegister(&key1, 1, 0);
+    tls.Clear();
+
+    // After clearing, the key can be looked up again, allocating fresh storage.
+    ObjHeader** location = tls.LookupOrRegister(&key1, 1, 0);
+    EXPECT_NE(location, nullptr);
+    *location = nullptr;
 }
 
 TEST(ThreadLocalStorageTest, LookupCaching) {
@@ -162,16 +140,12 @@ TEST(ThreadLocalStorageTest, LookupCaching) {
     Key key2;
     mm::ThreadLocalStorage tls;
 
-    tls.AddRecord(&key1, 1);
-    tls.AddRecord(&key2, 1);
-    tls.Commit();
-
-    ObjHeader** location1 = tls.Lookup(&key1, 0);
-    ObjHeader** location2 = tls.Lookup(&key2, 0);
+    ObjHeader** location1 = tls.LookupOrRegister(&key1, 1, 0);
+    ObjHeader** location2 = tls.LookupOrRegister(&key2, 1, 0);
 
     // Lookup same stuff again in different order.
-    EXPECT_EQ(location1, tls.Lookup(&key1, 0));
-    EXPECT_EQ(location2, tls.Lookup(&key2, 0));
-    EXPECT_EQ(location2, tls.Lookup(&key2, 0));
-    EXPECT_EQ(location1, tls.Lookup(&key1, 0));
+    EXPECT_EQ(location1, tls.LookupOrRegister(&key1, 1, 0));
+    EXPECT_EQ(location2, tls.LookupOrRegister(&key2, 1, 0));
+    EXPECT_EQ(location2, tls.LookupOrRegister(&key2, 1, 0));
+    EXPECT_EQ(location1, tls.LookupOrRegister(&key1, 1, 0));
 }
