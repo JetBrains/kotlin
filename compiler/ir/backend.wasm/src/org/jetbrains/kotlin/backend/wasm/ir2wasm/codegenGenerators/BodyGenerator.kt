@@ -800,7 +800,7 @@ class BodyGenerator(
         }
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
-        if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true) {
+        if (false) {
             if (call.symbol == wasmSymbols.rangeCheck) {
                 body.buildGetUnit()
                 return
