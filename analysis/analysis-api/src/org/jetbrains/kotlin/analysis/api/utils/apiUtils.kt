@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,6 @@ import kotlin.reflect.full.allSuperclasses
 private val implementationPackageNames = listOf(
     "org.jetbrains.kotlin.analysis.api.impl.base",
     "org.jetbrains.kotlin.analysis.api.fir",
-    "org.jetbrains.kotlin.analysis.api.descriptors",
-    "org.jetbrains.kotlin.references.fe10",
 )
 
 @KaImplementationDetail
