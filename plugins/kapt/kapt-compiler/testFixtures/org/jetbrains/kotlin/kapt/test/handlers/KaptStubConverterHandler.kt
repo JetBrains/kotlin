@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.kapt.base.javac.KaptJavaLogBase
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.EXPECTED_ERROR
 import org.jetbrains.kotlin.kapt.test.KaptTestDirectives.NON_EXISTENT_CLASS
-import org.jetbrains.kotlin.kapt.test.messageCollectorProvider
 import org.jetbrains.kotlin.kapt.util.prettyPrint
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -79,12 +78,7 @@ class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(tes
             assertions.fail { "There were errors during kapt:\n$actualErrorsStr\n\nStubs:\n\n$actualStubs" }
         } else {
             val expectedErrorsStr = expectedErrors.joinToString(System.lineSeparator()) { it.toDirectiveView() }
-            if (expectedErrorsStr != actualErrorsStr) {
-                assertions.assertEquals(expectedErrorsStr, actualErrorsStr) {
-                    System.err.println(testServices.messageCollectorProvider.getErrorStream(module).toString("UTF8"))
-                    "Expected error matching failed"
-                }
-            }
+            assertions.assertEquals(expectedErrorsStr, actualErrorsStr) { "Expected error matching failed" }
         }
     }
 

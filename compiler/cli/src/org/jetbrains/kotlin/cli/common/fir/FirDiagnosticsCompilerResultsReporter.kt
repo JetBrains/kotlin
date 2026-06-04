@@ -148,6 +148,16 @@ object FirDiagnosticsCompilerResultsReporter {
         reporter.report(severity, textToRender, location, diagnosticId)
     }
 
+    @OptIn(MessageCollectorAccess::class)
+    fun reportDiagnosticToConfiguration(
+        diagnostic: KtDiagnostic,
+        location: CompilerMessageSourceLocation?,
+        configuration: CompilerConfiguration,
+        renderDiagnosticName: Boolean
+    ) {
+        reportDiagnosticToMessageCollector(diagnostic, location, configuration.messageCollector, renderDiagnosticName)
+    }
+
     private fun throwErrorDiagnosticAsException(
         diagnostic: KtDiagnostic,
         location: CompilerMessageSourceLocation?,
