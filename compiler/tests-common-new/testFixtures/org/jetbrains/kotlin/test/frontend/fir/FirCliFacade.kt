@@ -104,6 +104,6 @@ fun processErrorFromCliPhase(configuration: CompilerConfiguration, testServices:
             // errors from message collector would be checked separately
             return null
         }
-    }
-    testInfraError("CLI phase returned null and there are no errors in the message collector ")
+    } else testInfraError("CLI phase returned null and there are no errors in the message collector")
+    error("CLI phase returned null. See errors in the message collector")
 }
