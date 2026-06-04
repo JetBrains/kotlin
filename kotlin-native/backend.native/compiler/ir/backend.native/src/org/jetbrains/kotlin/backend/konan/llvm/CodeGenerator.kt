@@ -11,6 +11,7 @@ import kotlinx.cinterop.memScoped
 import kotlinx.cinterop.toCValues
 import llvm.*
 import org.jetbrains.kotlin.backend.common.lower.enumEntriesMap
+import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.NativeSecondStageCompilationConfig
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.util.*
@@ -770,6 +772,56 @@ internal abstract class FunctionGenerationContext(
             isObjectRef -> updateRef(value, ptr, onStack, isVolatile, alignment)
             else -> store(value, ptr, if (isVolatile) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent else null, alignment)
         }
+    }
+
+    fun staticFieldPtr(value: IrField) =
+            llvmDeclarations
+                    .forStaticField(value.symbol.owner)
+                    .storageAddressAccess
+                    .getAddress(this)
+
+    fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
+        val fieldInfo = llvmDeclarations.forField(value)
+        val classBodyType = fieldInfo.classBodyType
+        val fieldPtr = LLVMBuildStructGEP2(builder, classBodyType, thisPtr, fieldInfo.index, "")
+        return fieldPtr!!
+    }
+
+    fun loadIrField(field: IrField, thisPtr: LLVMValueRef?, resultSlot: LLVMValueRef?): LLVMValueRef {
+        val order =
+                if (field.hasAnnotation(KonanFqNames.volatile)) LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent
+                else null
+        val [fieldAddress, alignment] = if (thisPtr != null) {
+            fieldPtrOfClass(thisPtr, field) to llvmDeclarations.forField(field).alignment
+        } else {
+            staticFieldPtr(field) to llvmDeclarations.forStaticField(field).alignment
+        }
+        return loadSlot(
+                field.type.toLLVMType(llvm),
+                field.type.binaryTypeIsReference(),
+                fieldAddress,
+                !field.isFinal,
+                resultSlot,
+                memoryOrder = order,
+                alignment = alignment,
+        )
+    }
+
+    fun storeIrField(
+            field: IrField,
+            thisPtr: LLVMValueRef?,
+            value: LLVMValueRef,
+    ) {
+        val [fieldAddress, alignment] = if (thisPtr != null) {
+            fieldPtrOfClass(thisPtr, field) to llvmDeclarations.forField(field).alignment
+        } else {
+            staticFieldPtr(field) to llvmDeclarations.forStaticField(field).alignment
+        }
+        storeAny(
+                value, fieldAddress, field.type.binaryTypeIsReference(), false,
+                isVolatile = field.hasAnnotation(KonanFqNames.volatile),
+                alignment = alignment,
+        )
     }
 
     private fun updateReturnRef(value: LLVMValueRef, address: LLVMValueRef) {
