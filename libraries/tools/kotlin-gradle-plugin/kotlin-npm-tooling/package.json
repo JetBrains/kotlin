@@ -15,6 +15,7 @@
     "karma-sourcemap-loader": "^0.4.0",
     "karma-webpack": "^5.0.1",
     "kotlin-web-helpers": "^3.0.0",
+    "playwright": "~1.53.0",
     "mini-css-extract-plugin": "^2.10.2",
     "mocha": "^11.7.5",
     "sass": "^1.99.0",

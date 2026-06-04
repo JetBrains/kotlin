@@ -15,8 +15,10 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightInstall
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PlaywrightTestExecutor
 import org.jetbrains.kotlin.gradle.targets.js.testing.playwright.PwExecutionSpec
+import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -171,9 +173,13 @@ internal constructor(
                 ignoreOutOfRootNodes = true,
             )
 
+            val npmProject = compilation.npmProject
             return PwExecutionSpec(
                 createClient = { processor, logger -> TCServiceMessagesClient(processor, clientSettings, logger) },
-                url = compilation.npmProject.dir.get().asFile.resolve("dist/test.html").toURI().toString()
+                url = npmProject.dir.get().asFile.resolve("dist/test.html").toURI().toString(),
+                nodeExecutable = npmProject.nodeExecutable,
+                nodeModulesDir = npmProject.nodeModulesDir.get().asFile,
+                npmProjectDir = npmProject.dir.get().asFile,
             )
         } else {
             val launchOpts = objects.processLaunchOptions {
@@ -203,5 +209,20 @@ internal constructor(
 
     fun usePlaywright() {
         playwright = true
+
+        val npmProject = compilation.npmProject
+        val playwrightInstallTask = project.locateOrRegisterTask<PlaywrightInstall>(
+            "${name}PlaywrightInstall"
+        ) { task ->
+            task.nodeExecutable.set(npmProject.nodeJs.executable)
+            task.playwrightCliPath.set(
+                npmProject.nodeModulesDir.map { dir ->
+                    dir.file("playwright/cli.js").asFile.absolutePath
+                }
+            )
+            task.workingDir.set(npmProject.dir)
+            task.dependsOn(npmProject.nodeJsRoot.npmInstallTaskProvider)
+        }
+        dependsOn(playwrightInstallTask)
     }
 }
