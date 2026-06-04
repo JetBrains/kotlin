@@ -133,19 +133,16 @@ fun ConeKotlinType.isValueClass(session: FirSession): Boolean {
     return toRegularClassSymbol(session)?.isInlineOrValue == true
 }
 
-fun ConeKotlinType.isBasicSingleFieldValueClass(session: FirSession): Boolean = with(session.typeContext) {
-    getValueClassTypeRecursionType(session, checkFullValueClasses = false, checkMultiField = false) != null ||
-            typeConstructor().isInlineClass()
-}
+fun ConeKotlinType.isBasicSingleFieldValueClass(session: FirSession): Boolean =
+    with(session.typeContext) { typeConstructor().isInlineClass() }
 
-fun ConeKotlinType.getValueClassTypeRecursionType(
-    session: FirSession, checkFullValueClasses: Boolean, checkMultiField: Boolean
-): RecursionType? = getValueClassTypeRecursionType(hashSetOf(), session, checkFullValueClasses, checkMultiField)
+fun ConeKotlinType.getValueClassTypeRecursionType(session: FirSession): RecursionType? =
+    getValueClassTypeRecursionType(hashSetOf(), session)
 
 enum class RecursionType { Plain, ViaTypeParameters }
 
 private fun ConeKotlinType.getValueClassTypeRecursionType(
-    visited: HashSet<ConeKotlinType>, session: FirSession, checkFullValueClasses: Boolean, checkMultiField: Boolean
+    visited: HashSet<ConeKotlinType>, session: FirSession
 ): RecursionType? = context(session.typeContext) {
     val plainRegularClass = toRegularClassSymbol(session)
     val expectedRecursionType = if (plainRegularClass != null) Plain else ViaTypeParameters
@@ -159,16 +156,14 @@ private fun ConeKotlinType.getValueClassTypeRecursionType(
     val isSubjectForCheck = when (asRegularClass.valueClassRepresentation) {
         null -> false
         is BasicValueClassRepresentation -> true
-        is FullValueClassRepresentation if !checkFullValueClasses -> false
         is FullValueClassRepresentation if isNullableType() -> primaryConstructor.valueParameterSymbols.size == 1
         is FullValueClassRepresentation -> true
     }
     if (!isSubjectForCheck) return null
 
-    if (primaryConstructor.valueParameterSymbols.size > 1 && !checkMultiField) return null
     if (!visited.add(this)) return expectedRecursionType
     val hasRecursionInParameters = primaryConstructor.valueParameterSymbols.any {
-        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session, checkFullValueClasses, checkMultiField) != null
+        it.resolvedReturnType.getValueClassTypeRecursionType(visited, session) != null
     }
     return (if (hasRecursionInParameters) expectedRecursionType else null).also { visited.remove(this) }
 }

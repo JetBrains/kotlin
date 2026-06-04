@@ -248,9 +248,7 @@ sealed class FirValueClassDeclarationChecker(mppKind: MppCheckerKind) : FirRegul
 
         for ([name, primaryConstructorParameter] in primaryConstructorParametersByName) {
             val parameterTypeRef = primaryConstructorParameter.resolvedReturnTypeRef
-            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(
-                context.session, checkFullValueClasses = true, checkMultiField = true
-            )
+            val recursionType = parameterTypeRef.coneType.getValueClassTypeRecursionType(context.session)
             when {
                 declaration.isFinal && primaryConstructorParameter.isNotFinalReadOnly(primaryConstructorPropertiesByName[name]) ->
                     reporter.reportOn(
