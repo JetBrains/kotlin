@@ -5,6 +5,7 @@
 
 plugins {
     kotlin("jvm")
+    id("power-assert-convention")
     id("project-tests-convention")
     id("java-test-fixtures")
 }
