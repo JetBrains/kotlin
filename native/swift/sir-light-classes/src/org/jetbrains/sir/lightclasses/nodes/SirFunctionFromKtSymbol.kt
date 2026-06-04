@@ -28,8 +28,10 @@ import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.isUnavailable
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.sir.util.isUnavailable
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.sir.util.unavailableTypes
 import org.jetbrains.kotlin.sir.util.replaceOrAddPropagatedUnavailability
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionBuilder
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
@@ -143,7 +145,7 @@ internal open class SirFunctionFromKtSymbol(
     }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        val forwardBridges = bridgeProxy?.createSirBridges {
+        val forwardKotlinCall: BridgeFunctionBuilder.() -> String = {
             val typeArgs = ktSymbol.typeParameters.map { it.upperBounds.singleOrNull() ?: builtinTypes.nullableAny }
             val renderer = KaTypeRendererForSource.UPPER_BOUNDS_WITH_QUALIFIED_NAMES
             val typesAsString = typeArgs.takeIf { it.isNotEmpty() }?.joinToString(prefix = "<", postfix = ">") {
@@ -153,6 +155,15 @@ internal open class SirFunctionFromKtSymbol(
             val argumentsString = actualArgs.joinToString()
 
             buildCall("$typesAsString($argumentsString)")
+        }
+
+        val forwardBridges = bridgeProxy?.let { proxy ->
+            buildList {
+                addAll(proxy.createSirBridges(forwardKotlinCall))
+                if (needsNonVirtualForwardBridge() && !isAbstractKotlinMethod) {
+                    add(proxy.createDirectDispatchForwardBridge(ktSymbol.name?.asString().orEmpty(), forwardKotlinCall))
+                }
+            }
         }.orEmpty()
 
         val reverseBridges = if (needsReverseBridge()) {
@@ -179,6 +190,13 @@ internal open class SirFunctionFromKtSymbol(
 
         forwardBridges + reverseBridges
     }
+
+    private fun needsNonVirtualForwardBridge(): Boolean = withSessions {
+        needsReverseBridge() && parent is SirClass
+    }
+
+    private val isAbstractKotlinMethod: Boolean
+        get() = ktSymbol.modality == KaSymbolModality.ABSTRACT
 
     private fun needsReverseBridge(): Boolean = withSessions {
         if (!isInstance) return@withSessions false
@@ -243,5 +261,24 @@ internal open class SirFunctionFromKtSymbol(
 
     override var body: SirFunctionBody?
         set(_) {}
-        get() = withSessions { bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody) }
+        get() = withSessions {
+            val proxy = bridgeProxy ?: return@withSessions null
+            if (!needsNonVirtualForwardBridge()) {
+                return@withSessions SirFunctionBody(proxy.createSwiftInvocation { "return $it" })
+            }
+            val wrapperFqName = (parent as SirClass).swiftFqName
+            val virtualLines = proxy.createSwiftInvocation { "return $it" }
+            val fallbackLines = if (isAbstractKotlinMethod) {
+                listOf("fatalError(\"Cannot invoke the inherited implementation of abstract member '$wrapperFqName.$name': a Swift subclass must override it and must not call super.\")")
+            } else {
+                proxy.createSwiftInvocation(useDirectDispatch = true) { "return $it" }
+            }
+            SirFunctionBody(buildList {
+                add("if Self.self == $wrapperFqName.self {")
+                virtualLines.forEach { add("    $it") }
+                add("} else {")
+                fallbackLines.forEach { add("    $it") }
+                add("}")
+            })
+        }
 }
