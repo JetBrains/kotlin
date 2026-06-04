@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.MutableVersionRequirementTable
 
+@K1Deprecation
 interface DescriptorSerializerPlugin {
     fun afterClass(
         descriptor: ClassDescriptor,

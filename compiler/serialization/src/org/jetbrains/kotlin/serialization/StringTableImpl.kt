@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.metadata.serialization.StringTable
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
+@K1Deprecation
 open class SerializableStringTable : StringTable {
 
     private class FqNameProto(val fqName: ProtoBuf.QualifiedNameTable.QualifiedName.Builder) {
@@ -103,6 +105,7 @@ open class SerializableStringTable : StringTable {
     }
 }
 
+@K1Deprecation
 open class StringTableImpl : DescriptorAwareStringTable, SerializableStringTable() {
 
     override fun getQualifiedClassNameIndex(classId: ClassId): Int = getClassIdIndex(classId)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.serialization
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationArgumentVisitor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.types.error.ErrorUtils
 
+@K1Deprecation
 open class AnnotationSerializer(private val stringTable: DescriptorAwareStringTable) {
     fun serializeAnnotation(annotation: AnnotationDescriptor): ProtoBuf.Annotation? = ProtoBuf.Annotation.newBuilder().apply {
         val classId = getAnnotationClassId(annotation) ?: return null
