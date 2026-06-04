@@ -518,6 +518,12 @@ private class ExtTestDataFile(
         private val INCOMPATIBLE_LANGUAGE_VERSIONS = setOf(LanguageVersion.KOTLIN_1_3, LanguageVersion.KOTLIN_1_4)
 
         private val OPT_INS_PURELY_FOR_COMPILER = setOf(
+            /*
+             * `SymbolNameIsInternal` is internal, so it can't be simply mentioned in the source code in `@file:OptIn`
+             * (which is the default way of handling the OPT_IN directive in this test infrastructure).
+             * Adding it here makes the test infra pass it via the `-opt-in` compiler argument instead.
+             */
+            "kotlin.native.SymbolNameIsInternal",
             OptInNames.REQUIRES_OPT_IN_FQ_NAME.asString()
         )
 
