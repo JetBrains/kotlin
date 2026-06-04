@@ -33,15 +33,14 @@ public:
     bool tryResetMark() noexcept {
         auto prev = next_.load(std::memory_order_relaxed);
         if (prev == nullptr) {
+            // Only log DEAD events. KEEP fires once per live object per cycle and
+            // pushes total event volume into the millions, which masks the bug
+            // via timing perturbation.
             debug::recordSweepEvent(
                     reinterpret_cast<uintptr_t>(this), debug::kDead, 0);
             return false;
         }
         next_.store(nullptr, std::memory_order_relaxed);
-        debug::recordSweepEvent(
-                reinterpret_cast<uintptr_t>(this),
-                debug::kKeep,
-                reinterpret_cast<uintptr_t>(prev));
         return true;
     }
 
