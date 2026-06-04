@@ -1,0 +1,15 @@
+// open class Foo
+typealias Foo = Any
+
+// interface Bar
+typealias Bar = Any
+
+interface ParentWithTypeParameter<T>
+class AnotherClassWithTypeParameter<T>(val x: T) : ParentWithTypeParameter<T>
+// open class WithTypeParameter<T>(val x: T)
+typealias WithTypeParameter<T> = AnotherClassWithTypeParameter<T>
+
+class Outer {
+    // open class Nested
+    typealias Nested = Any
+}
