@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.structure.JavaPackage
 import org.jetbrains.kotlin.load.java.structure.MapBasedJavaAnnotationOwner
 import javax.lang.model.element.PackageElement
 
+@K1Deprecation
 interface SymbolBasedPackage : JavaPackage, MapBasedJavaAnnotationOwner {
     val element: PackageElement
 }

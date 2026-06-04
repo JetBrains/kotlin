@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.javac.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceFile
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElement
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
+@K1Deprecation
 class JavacBasedSourceElement(override val javaElement: JavaElement) : JavaSourceElement {
 
     override fun getContainingFile(): SourceFile = SourceFile.NO_SOURCE_FILE

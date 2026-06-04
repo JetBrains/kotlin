@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.sun.tools.javac.code.Symbol
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.*
 import org.jetbrains.kotlin.name.ClassId
@@ -26,6 +27,7 @@ import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.VariableElement
 import javax.lang.model.type.TypeMirror
 
+@K1Deprecation
 sealed class SymbolBasedAnnotationArgument(
         override val name: Name,
         protected val javac: JavacWrapper
@@ -49,6 +51,7 @@ sealed class SymbolBasedAnnotationArgument(
 
 }
 
+@K1Deprecation
 class SymbolBasedAnnotationAsAnnotationArgument(
         private val mirror: AnnotationMirror,
         name: Name,
@@ -59,6 +62,7 @@ class SymbolBasedAnnotationAsAnnotationArgument(
 
 }
 
+@K1Deprecation
 class SymbolBasedReferenceAnnotationArgument(
         val element: VariableElement,
         name: Name,
@@ -77,6 +81,7 @@ class SymbolBasedReferenceAnnotationArgument(
         get() = javaField?.name
 }
 
+@K1Deprecation
 class SymbolBasedClassObjectAnnotationArgument(
         private val type: TypeMirror,
         name : Name,
@@ -87,6 +92,7 @@ class SymbolBasedClassObjectAnnotationArgument(
 
 }
 
+@K1Deprecation
 class SymbolBasedArrayAnnotationArgument(
         val args : List<JavaAnnotationArgument>,
         name : Name,
@@ -97,6 +103,7 @@ class SymbolBasedArrayAnnotationArgument(
 
 }
 
+@K1Deprecation
 class SymbolBasedLiteralAnnotationArgument(
         override val value : Any,
         name : Name,

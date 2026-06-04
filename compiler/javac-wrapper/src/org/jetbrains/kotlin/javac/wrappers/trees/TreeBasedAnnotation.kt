@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavaClassWithClassId
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.javac.resolve.ConstantEvaluator
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class TreeBasedAnnotation(
     val annotation: JCTree.JCAnnotation,
     val compilationUnit: CompilationUnitTree,
@@ -47,17 +49,20 @@ class TreeBasedAnnotation(
 
 }
 
+@K1Deprecation
 sealed class TreeBasedAnnotationArgument(
     override val name: Name,
     val javac: JavacWrapper
 ) : JavaAnnotationArgument, JavaElement
 
+@K1Deprecation
 class TreeBasedLiteralAnnotationArgument(
     name: Name,
     override val value: Any?,
     javac: JavacWrapper
 ) : TreeBasedAnnotationArgument(name, javac), JavaLiteralAnnotationArgument
 
+@K1Deprecation
 class TreeBasedReferenceAnnotationArgument(
     name: Name,
     private val compilationUnit: CompilationUnitTree,
@@ -80,6 +85,7 @@ class TreeBasedReferenceAnnotationArgument(
         get() = javaField?.name
 }
 
+@K1Deprecation
 class TreeBasedArrayAnnotationArgument(
     val args: List<JavaAnnotationArgument>,
     name: Name,
@@ -89,6 +95,7 @@ class TreeBasedArrayAnnotationArgument(
 
 }
 
+@K1Deprecation
 class TreeBasedJavaClassObjectAnnotationArgument(
     private val type: JCTree.JCExpression,
     name: Name,
@@ -102,6 +109,7 @@ class TreeBasedJavaClassObjectAnnotationArgument(
 
 }
 
+@K1Deprecation
 class TreeBasedAnnotationAsAnnotationArgument(
     private val annotation: JCTree.JCAnnotation,
     name: Name,

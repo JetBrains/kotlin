@@ -19,10 +19,12 @@ package org.jetbrains.kotlin.javac.resolve
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.code.TypeTag
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import kotlin.experimental.inv
 
+@K1Deprecation
 class ConstantEvaluator(private val containingClass: JavaClass,
                         private val javac: JavacWrapper,
                         private val compilationUnit: CompilationUnitTree) {

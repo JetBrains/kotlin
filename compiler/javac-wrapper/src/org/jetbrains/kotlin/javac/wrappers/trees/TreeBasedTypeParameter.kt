@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.javac.wrappers.trees
 
 import com.sun.source.tree.CompilationUnitTree
 import com.sun.tools.javac.tree.JCTree
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaClassifierType
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaTypeParameter
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
+@K1Deprecation
 class TreeBasedTypeParameter(
         tree: JCTree.JCTypeParameter,
         compilationUnit: CompilationUnitTree,

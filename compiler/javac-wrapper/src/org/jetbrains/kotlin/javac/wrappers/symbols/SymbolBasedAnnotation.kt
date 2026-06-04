@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.javac.wrappers.symbols
 
 import com.sun.tools.javac.code.Symbol
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.JavacWrapper
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotation
 import org.jetbrains.kotlin.load.java.structure.JavaAnnotationArgument
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.name.Name
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.TypeElement
 
+@K1Deprecation
 open class SymbolBasedAnnotation(
         val annotationMirror: AnnotationMirror,
         val javac: JavacWrapper

@@ -33,6 +33,7 @@ import com.sun.tools.javac.model.JavacElements
 import com.sun.tools.javac.model.JavacTypes
 import com.sun.tools.javac.tree.JCTree
 import com.sun.tools.javac.util.*
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.javac.resolve.ClassifierResolver
 import org.jetbrains.kotlin.javac.resolve.IdentifierResolver
 import org.jetbrains.kotlin.javac.resolve.KotlinClassifiersCache
@@ -57,6 +58,7 @@ import javax.tools.JavaFileObject
 import javax.tools.StandardLocation.*
 import com.sun.tools.javac.util.List as JavacList
 
+@K1Deprecation
 class JavacWrapper(
     javaFiles: Collection<File>,
     kotlinFiles: Collection<KtFile>,

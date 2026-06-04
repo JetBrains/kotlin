@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.javac.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.sources.JavaSourceElementFactory
 import org.jetbrains.kotlin.load.java.structure.JavaElement
 
+@K1Deprecation
 class JavacBasedSourceElementFactory : JavaSourceElementFactory {
 
     override fun source(javaElement: JavaElement) = JavacBasedSourceElement(javaElement)

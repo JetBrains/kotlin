@@ -19,7 +19,9 @@ package org.jetbrains.kotlin.javac
 import com.sun.tools.javac.main.Option
 import com.sun.tools.javac.util.Options
 import java.util.regex.Pattern
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 object JavacOptionsMapper {
 
     fun map(options: Options, arguments: List<String>) {
