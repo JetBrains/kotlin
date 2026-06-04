@@ -74,6 +74,18 @@ inline const char* sweepEventName(uint32_t kind) noexcept {
     }
 }
 
+inline void dumpSweepEventSlot(const SweepEvent& slot, uint64_t seq) noexcept {
+    uint32_t kind = slot.kind.load(std::memory_order_relaxed);
+    uintptr_t aux = slot.aux.load(std::memory_order_relaxed);
+    uintptr_t threadId = slot.threadId.load(std::memory_order_relaxed);
+    uint64_t epoch = slot.epoch.load(std::memory_order_relaxed);
+    uintptr_t obj = slot.objectDataAddr.load(std::memory_order_relaxed);
+    std::fprintf(
+            stderr,
+            "[Diag]   seq=%" PRIu64 " epoch=%" PRIu64 " tid=0x%" PRIxPTR " kind=%s obj=0x%" PRIxPTR " aux=0x%" PRIxPTR "\n",
+            seq, epoch, threadId, sweepEventName(kind), obj, aux);
+}
+
 inline void dumpSweepHistoryForObjectData(uintptr_t objectDataAddr) noexcept {
     uint64_t limit = g_nextSeq.load(std::memory_order_acquire);
     std::fprintf(
@@ -88,17 +100,31 @@ inline void dumpSweepHistoryForObjectData(uintptr_t objectDataAddr) noexcept {
         if (slot.objectDataAddr.load(std::memory_order_relaxed) != objectDataAddr) continue;
         uint64_t seq = slot.seq.load(std::memory_order_acquire);
         if (seq + kSweepLogSize <= limit) continue; // wrapped: entry is older than our window
-        uint32_t kind = slot.kind.load(std::memory_order_relaxed);
-        uintptr_t aux = slot.aux.load(std::memory_order_relaxed);
-        uintptr_t threadId = slot.threadId.load(std::memory_order_relaxed);
-        uint64_t epoch = slot.epoch.load(std::memory_order_relaxed);
-        std::fprintf(
-                stderr,
-                "[Diag]   seq=%" PRIu64 " epoch=%" PRIu64 " tid=0x%" PRIxPTR " kind=%s aux=0x%" PRIxPTR "\n",
-                seq, epoch, threadId, sweepEventName(kind), aux);
+        dumpSweepEventSlot(slot, seq);
         ++matched;
     }
     std::fprintf(stderr, "[Diag] sweep-history end matched=%zu\n", matched);
+    std::fflush(stderr);
+}
+
+// Dump the most-recent `count` events (capped at the buffer size). Useful from
+// lldb post-crash when you don't know which object's history to ask about.
+inline void dumpRecentSweepEvents(size_t count) noexcept {
+    uint64_t limit = g_nextSeq.load(std::memory_order_acquire);
+    if (count > kSweepLogSize) count = kSweepLogSize;
+    if (count > limit) count = static_cast<size_t>(limit);
+    uint64_t start = limit - count;
+    std::fprintf(
+            stderr,
+            "[Diag] recent-events window=[%" PRIu64 ", %" PRIu64 ")\n",
+            start, limit);
+    for (uint64_t seq = start; seq < limit; ++seq) {
+        auto& slot = g_sweepLog[seq % kSweepLogSize];
+        uint64_t slotSeq = slot.seq.load(std::memory_order_acquire);
+        if (slotSeq != seq) continue; // overwritten by a newer write
+        dumpSweepEventSlot(slot, seq);
+    }
+    std::fprintf(stderr, "[Diag] recent-events end\n");
     std::fflush(stderr);
 }
 

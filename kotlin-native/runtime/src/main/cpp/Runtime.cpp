@@ -331,6 +331,20 @@ RUNTIME_NOTHROW void Kotlin_Diag_dumpSweepHistory(KRef obj) {
     kotlin::gc::debug::dumpSweepHistoryForObjectData(objectDataAddr);
 }
 
+// Address-free dump of the most recent events. Intended for lldb invocation:
+//   (lldb) call (void)Kotlin_Diag_dumpRecentEvents(2000)
+// when the program has crashed and you don't have a specific address to query.
+RUNTIME_NOTHROW void Kotlin_Diag_dumpRecentEvents(KInt count) {
+    kotlin::gc::debug::dumpRecentSweepEvents(static_cast<size_t>(count > 0 ? count : 0));
+}
+
+// Address-based dump that takes a raw pointer (uintptr_t) rather than a KRef.
+// Useful from lldb when you know an ObjectData address from a heap inspection
+// but not necessarily a valid Kotlin reference.
+RUNTIME_NOTHROW void Kotlin_Diag_dumpSweepHistoryByAddr(uintptr_t objectDataAddr) {
+    kotlin::gc::debug::dumpSweepHistoryForObjectData(objectDataAddr);
+}
+
 static void CallInitGlobalAwaitInitialized(uintptr_t* state) {
     uintptr_t localState;
     // Switch to the native state to avoid dead-locks.
