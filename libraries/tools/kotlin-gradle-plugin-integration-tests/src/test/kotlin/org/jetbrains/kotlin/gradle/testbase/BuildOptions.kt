@@ -92,6 +92,7 @@ data class BuildOptions(
      */
     val continuousBuild: Boolean? = null,
     val generateCompilerRefIndex: Boolean? = null,
+    val jvmClasspathMetadata: Boolean? = null,
 ) {
     enum class ConfigurationCacheValue {
 
@@ -307,6 +308,10 @@ data class BuildOptions(
             arguments.add("-Pkotlin.internal.incremental.enableMonotonousCompileSetExpansion=$enableMonotonousIncrementalCompileSetExpansion")
         }
 
+        if (jvmClasspathMetadata != null) {
+            arguments.add("-Pkotlin.internal.jvm.classpath.metadata=$jvmClasspathMetadata")
+        }
+
         arguments.add("-Pkotlin.daemon.useFallbackStrategy=$useDaemonFallbackStrategy")
 
         if (useParsableDiagnosticsFormatting) {
@@ -466,7 +471,7 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
 
 // KMP dependencies checker does not work with Gradle isolated projects feature in older Gradle releases
 fun BuildOptions.disableIsolatedProjectsForKmpDependenciesChecker(
-    gradleVersion: GradleVersion
+    gradleVersion: GradleVersion,
 ) = copy(
     isolatedProjects = if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_12)) {
         IsolatedProjectsMode.DISABLED
@@ -502,7 +507,7 @@ fun BuildOptions.suppressAgpWarningSinceGradle814(
             reason = "AGP produces deprecation warning on resolve: https://issuetracker.google.com/issues/408334529"
         )
         currentGradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_14) &&
-                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812-> copy(warningMode = warningMode)
+                currentAgpVersion < TestVersions.AgpCompatibilityMatrix.AGP_812 -> copy(warningMode = warningMode)
         else -> this
     }
 }
