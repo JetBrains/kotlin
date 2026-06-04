@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.native.pipeline
 
-import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.ir.PreSerializationNativeSymbols.Impl
 import org.jetbrains.kotlin.backend.common.phaser.PhaseEngine
@@ -14,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.lower.SpecialBackendChecksTraversal
 import org.jetbrains.kotlin.backend.konan.serialization.KonanManglerIr
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.cli.common.diagnosticsCollector
+import org.jetbrains.kotlin.cli.common.fir.FirDiagnosticsCompilerResultsReporter
 import org.jetbrains.kotlin.cli.hasMessageCollectorErrors
 import org.jetbrains.kotlin.cli.pipeline.CheckCompilationErrors
 import org.jetbrains.kotlin.cli.pipeline.PerformanceNotifications
@@ -111,7 +111,7 @@ object NativeFir2IrPipelinePhase : PipelinePhase<NativeFrontendArtifact, NativeF
         }
         val symbols = Impl(actualizedResult.irBuiltIns)
         if (diagnosticsReporter.hasErrors) {
-            throw CompilationErrorException("Compilation failed: there were some diagnostics during fir2ir")
+            return null
         }
         val fir2IrResult = Fir2IrOutput(frontendOutput, symbols, actualizedResult, usedLibraries)
         try {
