@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
@@ -542,6 +543,7 @@ internal class ClassGenerator(
     }
 }
 
+@K1Deprecation
 fun IrClass.setThisReceiverParameter(context: GeneratorContext) {
     thisReceiver = context.symbolTable.descriptorExtension.declareValueParameter(
         startOffset, endOffset,

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.IrType
  *  This data structure contains "synthesized" descriptors for that class,
  *  method and parameter lay-out.
  */
+@K1Deprecation
 class EvaluatorFragmentInfo(
     val classDescriptor: ClassDescriptor,
     val methodDescriptor: FunctionDescriptor,
@@ -28,6 +30,7 @@ class EvaluatorFragmentInfo(
     val typeArgumentsMap: Map<IrTypeParameterSymbol, IrType>
 )
 
+@K1Deprecation
 data class EvaluatorFragmentParameterInfo(
     val descriptor: DeclarationDescriptor,
     val isLValue: Boolean,

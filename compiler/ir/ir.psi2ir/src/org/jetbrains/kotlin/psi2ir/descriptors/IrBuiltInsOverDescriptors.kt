@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.UnsignedType
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
 @ObsoleteDescriptorBasedAPI
 @OptIn(InternalSymbolFinderAPI::class)
+@K1Deprecation
 class IrBuiltInsOverDescriptors(
     val builtIns: KotlinBuiltIns,
     private val typeTranslator: TypeTranslator,
@@ -559,6 +561,7 @@ private inline fun MemberScope.findFirstFunction(name: String, predicate: (Calla
     getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BACKEND).first(predicate)
 
 @InternalSymbolFinderAPI
+@K1Deprecation
 class SymbolFinderOverDescriptors(private val builtIns: KotlinBuiltIns, private val symbolTable: SymbolTable) : SymbolFinder() {
     internal fun builtInsPackage(vararg packageNameSegments: String) =
         builtIns.builtInsModule.getPackage(FqName.fromSegments(listOf(*packageNameSegments))).memberScope

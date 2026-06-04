@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.ir.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.builtins.functions.FunctionClassDescriptor
@@ -37,6 +38,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+@K1Deprecation
 abstract class IrAbstractDescriptorBasedFunctionFactory : IrAbstractFunctionFactory() {
     companion object {
         val classOrigin = IrDeclarationOriginImpl("FUNCTION_INTERFACE_CLASS")
@@ -49,6 +51,7 @@ abstract class IrAbstractDescriptorBasedFunctionFactory : IrAbstractFunctionFact
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+@K1Deprecation
 class IrDescriptorBasedFunctionFactory(
     private val irBuiltIns: IrBuiltInsOverDescriptors,
     private val symbolTable: SymbolTable,
@@ -504,17 +507,21 @@ private fun reflectFunctionClassFqn(shortName: Name): FqName = KOTLIN_REFLECT_FQ
 private fun reflectionFunctionClassName(isSuspend: Boolean, arity: Int): Name =
     Name.identifier("K${if (isSuspend) "Suspend" else ""}Function$arity")
 
+@K1Deprecation
 fun KotlinBuiltIns.functionClassDescriptor(arity: Int): FunctionClassDescriptor =
     getFunction(arity) as FunctionClassDescriptor
 
+@K1Deprecation
 fun KotlinBuiltIns.suspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor =
     getSuspendFunction(arity) as FunctionClassDescriptor
 
+@K1Deprecation
 fun KotlinBuiltIns.kFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
     val kFunctionFqn = reflectFunctionClassFqn(reflectionFunctionClassName(false, arity))
     return getBuiltInClassByFqName(kFunctionFqn) as FunctionClassDescriptor
 }
 
+@K1Deprecation
 fun KotlinBuiltIns.kSuspendFunctionClassDescriptor(arity: Int): FunctionClassDescriptor {
     val kFunctionFqn =
         reflectFunctionClassFqn(reflectionFunctionClassName(true, arity))

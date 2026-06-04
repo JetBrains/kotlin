@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.descriptors.ValueDescriptor
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ThisClassReceiver
 
 // Used from CodeFragmentCompiler for IDE Debugger Plug-In
 @Suppress("unused")
+@K1Deprecation
 class FragmentCompilerSymbolTableDecorator(
     signatureComposer: IdSignatureComposer,
     irFactory: IrFactory,

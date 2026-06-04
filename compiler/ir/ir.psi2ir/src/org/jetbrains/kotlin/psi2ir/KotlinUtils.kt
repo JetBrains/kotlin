@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi2ir
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.tree.TokenSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 internal fun KotlinType.containsNull(): Boolean =
     TypeUtils.isNullableType(this)
 
+@K1Deprecation
 fun KtElement.deparenthesize(): KtElement =
     if (this is KtExpression) KtPsiUtil.safeDeparenthesize(this) else this
 
@@ -65,6 +67,7 @@ internal fun KtSecondaryConstructor.isConstructorDelegatingToSuper(bindingContex
     }
 }
 
+@K1Deprecation
 fun MemberScope.findSingleFunction(name: Name): FunctionDescriptor =
     getContributedFunctions(name, NoLookupLocation.FROM_BACKEND).single()
 

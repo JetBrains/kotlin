@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators.fragments
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi2ir.generators.setThisReceiverParameter
 import org.jetbrains.kotlin.resolve.BindingContextUtils
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 open class FragmentDeclarationGenerator(
     override val context: GeneratorContext,
     private val fragmentInfo: EvaluatorFragmentInfo

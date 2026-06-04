@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.psi2ir.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.lazy.IrLazyFunctionBase
 import org.jetbrains.kotlin.ir.types.IrType
 
+@K1Deprecation
 interface Psi2IrLazyFunctionBase : IrLazyFunctionBase, Psi2IrLazyDeclarationBase {
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     override val descriptor: FunctionDescriptor

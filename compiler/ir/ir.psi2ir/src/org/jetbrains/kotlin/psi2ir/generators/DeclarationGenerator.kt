@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.backend.common.BackendException
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.DescriptorToSourceUtils
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
+@K1Deprecation
 class DeclarationGenerator(override val context: GeneratorContext) : Generator {
 
     private val typeTranslator = context.typeTranslator
@@ -182,6 +184,7 @@ class DeclarationGenerator(override val context: GeneratorContext) : Generator {
         FunctionGenerator(this).generateFakeOverrideFunction(functionDescriptor, ktElement)
 }
 
+@K1Deprecation
 abstract class DeclarationGeneratorExtension(val declarationGenerator: DeclarationGenerator) : Generator {
     override val context: GeneratorContext get() = declarationGenerator.context
 

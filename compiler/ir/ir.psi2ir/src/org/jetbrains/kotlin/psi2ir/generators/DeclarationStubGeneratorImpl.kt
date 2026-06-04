@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.psi2ir.generators
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrProvider
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class DeclarationStubGeneratorImpl(
     moduleDescriptor: ModuleDescriptor,
     symbolTable: SymbolTable,
@@ -418,6 +420,7 @@ class DeclarationStubGeneratorImpl(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
+@K1Deprecation
 class DeclarationStubGeneratorForNotFoundClasses(
     private val stubGenerator: DeclarationStubGeneratorImpl,
 ) : IrProvider {
