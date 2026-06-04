@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.special.*
 
+@K1Deprecation
 abstract class InstructionVisitorWithResult<out R> {
     abstract fun visitInstruction(instruction: Instruction): R
 

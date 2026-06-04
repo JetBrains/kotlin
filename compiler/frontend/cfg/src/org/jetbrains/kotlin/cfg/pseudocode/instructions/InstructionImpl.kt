@@ -18,9 +18,11 @@ package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import java.util.Collections
 import java.util.LinkedHashSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudoValue
 
+@K1Deprecation
 abstract class InstructionImpl(override val blockScope: BlockScope) : Instruction {
     private var _owner: Pseudocode? = null
 

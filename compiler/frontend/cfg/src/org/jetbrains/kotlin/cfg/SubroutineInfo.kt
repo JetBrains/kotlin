@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 class SubroutineInfo(subroutine: KtElement, entryPoint: Label, exitPoint: Label) : BreakableBlockInfo(subroutine, entryPoint, exitPoint)

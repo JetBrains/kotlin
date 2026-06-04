@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
@@ -43,6 +44,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.ArrayList
 import java.util.LinkedHashSet
 
+@K1Deprecation
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
     val callableDescriptor = resolvedCall.resultingDescriptor
 
@@ -63,6 +65,7 @@ fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: Recei
     return null
 }
 
+@K1Deprecation
 fun getExpectedTypePredicate(
     value: PseudoValue,
     bindingContext: BindingContext,
@@ -164,6 +167,7 @@ fun getExpectedTypePredicate(
     return and(typePredicates.filterNotNull())
 }
 
+@K1Deprecation
 fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingContext): DeclarationDescriptor? {
     return when (this) {
         is CallInstruction -> return resolvedCall.resultingDescriptor
@@ -171,9 +175,11 @@ fun Instruction.getPrimaryDeclarationDescriptorIfAny(bindingContext: BindingCont
     }
 }
 
+@K1Deprecation
 val Instruction.sideEffectFree: Boolean
     get() = owner.isSideEffectFree(this)
 
+@K1Deprecation
 fun Instruction.calcSideEffectFree(): Boolean {
     if (this !is InstructionWithValue) return false
     if (!inputValues.all { it.createdAt?.sideEffectFree == true }) return false
@@ -200,6 +206,7 @@ fun Instruction.calcSideEffectFree(): Boolean {
     }
 }
 
+@K1Deprecation
 fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue> {
     val results = ArrayList<PseudoValue>()
 
@@ -214,6 +221,7 @@ fun Pseudocode.getElementValuesRecursively(element: KtElement): List<PseudoValue
     return results
 }
 
+@K1Deprecation
 fun KtDeclaration.getContainingPseudocode(context: BindingContext): Pseudocode? {
     val enclosingPseudocodeDeclaration = (this as? KtFunctionLiteral)?.let {
         it.parents.firstOrNull { it is KtDeclaration && it !is KtFunctionLiteral } as? KtDeclaration
@@ -223,8 +231,10 @@ fun KtDeclaration.getContainingPseudocode(context: BindingContext): Pseudocode? 
     return enclosingPseudocode.getPseudocodeByElement(this)
 }
 
+@K1Deprecation
 fun KtElement.getContainingPseudocode(context: BindingContext) = containingDeclarationForPseudocode?.getContainingPseudocode(context)
 
+@K1Deprecation
 fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     if (correspondingElement == element) return this
 
@@ -232,5 +242,6 @@ fun Pseudocode.getPseudocodeByElement(element: KtElement): Pseudocode? {
     return null
 }
 
+@K1Deprecation
 val Label.isJumpToError: Boolean
     get() = resolveToInstruction() == pseudocode.errorInstruction

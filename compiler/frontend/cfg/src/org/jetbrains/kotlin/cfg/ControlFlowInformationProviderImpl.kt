@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.cfg
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil.getParentOfType
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cfg.TailRecursionKind.*
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.types.typeUtil.isBooleanOrNullableBoolean
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.record
 
+@K1Deprecation
 class ControlFlowInformationProviderImpl private constructor(
     private val subroutine: KtElement,
     private val trace: BindingTrace,

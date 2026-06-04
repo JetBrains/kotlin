@@ -17,39 +17,46 @@
 package org.jetbrains.kotlin.cfg.pseudocode
 
 import com.intellij.util.SmartFMap
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 
+@K1Deprecation
 interface TypePredicate : (KotlinType) -> Boolean {
     override fun invoke(typeToCheck: KotlinType): Boolean
 }
 
+@K1Deprecation
 data class SingleType(val targetType: KotlinType) : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.equalTypes(typeToCheck, targetType)
     override fun toString(): String = targetType.render()
 }
 
+@K1Deprecation
 data class AllSubtypes(val upperBound: KotlinType) : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = KotlinTypeChecker.DEFAULT.isSubtypeOf(typeToCheck, upperBound)
 
     override fun toString(): String = "{<: ${upperBound.render()}}"
 }
 
+@K1Deprecation
 data class ForAllTypes(val typeSets: List<TypePredicate>) : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = typeSets.all { it(typeToCheck) }
 
     override fun toString(): String = "AND{${typeSets.joinToString(", ")}}"
 }
 
+@K1Deprecation
 data class ForSomeType(val typeSets: List<TypePredicate>) : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = typeSets.any { it(typeToCheck) }
 
     override fun toString(): String = "OR{${typeSets.joinToString(", ")}}"
 }
 
+@K1Deprecation
 object AllTypes : TypePredicate {
     override fun invoke(typeToCheck: KotlinType): Boolean = true
 
@@ -57,6 +64,7 @@ object AllTypes : TypePredicate {
 }
 
 // todo: simplify computed type predicate when possible
+@K1Deprecation
 fun and(predicates: Collection<TypePredicate>): TypePredicate =
     when (predicates.size) {
         0 -> AllTypes
@@ -64,6 +72,7 @@ fun and(predicates: Collection<TypePredicate>): TypePredicate =
         else -> ForAllTypes(predicates.toList())
     }
 
+@K1Deprecation
 fun or(predicates: Collection<TypePredicate>): TypePredicate? =
     when (predicates.size) {
         0 -> null
@@ -71,6 +80,7 @@ fun or(predicates: Collection<TypePredicate>): TypePredicate? =
         else -> ForSomeType(predicates.toList())
     }
 
+@K1Deprecation
 fun KotlinType.getSubtypesPredicate(): TypePredicate = when {
     KotlinBuiltIns.isAnyOrNullableAny(this) && isMarkedNullable -> AllTypes
     TypeUtils.canHaveSubtypes(KotlinTypeChecker.DEFAULT, this) -> AllSubtypes(this)
@@ -80,5 +90,6 @@ fun KotlinType.getSubtypesPredicate(): TypePredicate = when {
 
 private fun KotlinType.render(): String = DescriptorRenderer.SHORT_NAMES_IN_TYPES.renderType(this)
 
+@K1Deprecation
 fun <T : Any> TypePredicate.expectedTypeFor(keys: Iterable<T>): Map<T, TypePredicate> =
     keys.fold(SmartFMap.emptyMap<T, TypePredicate>()) { map, key -> map.plus(key, this) }

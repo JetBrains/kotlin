@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions.jumps
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
 
+@K1Deprecation
 interface JumpInstruction : Instruction

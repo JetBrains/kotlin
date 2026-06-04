@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 class BlockScope(private val parentScope: BlockScope?, val block: KtElement) {
     val depth: Int = (parentScope?.depth ?: 0) + 1
 

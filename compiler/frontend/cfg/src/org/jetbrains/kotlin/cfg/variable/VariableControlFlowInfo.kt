@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cfg.variable
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.ControlFlowInfo
 import org.jetbrains.kotlin.cfg.ReadOnlyControlFlowInfo
 import org.jetbrains.kotlin.descriptors.VariableDescriptor
@@ -16,11 +17,13 @@ import org.jetbrains.kotlin.util.vavr.component2
 typealias VariableUsageReadOnlyControlInfo = ReadOnlyControlFlowInfo<VariableDescriptor, VariableUseState>
 typealias VariableUsageControlFlowInfo<S, D> = ControlFlowInfo<S, VariableDescriptor, D>
 
+@K1Deprecation
 interface VariableInitReadOnlyControlFlowInfo :
     ReadOnlyControlFlowInfo<VariableDescriptor, VariableControlFlowState> {
     fun checkDefiniteInitializationInWhen(merge: VariableInitReadOnlyControlFlowInfo): Boolean
 }
 
+@K1Deprecation
 class VariableInitControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableControlFlowState> = ImmutableHashMap.empty()) :
     VariableUsageControlFlowInfo<VariableInitControlFlowInfo, VariableControlFlowState>(map),
     VariableInitReadOnlyControlFlowInfo {
@@ -42,6 +45,7 @@ class VariableInitControlFlowInfo(map: ImmutableMap<VariableDescriptor, Variable
     }
 }
 
+@K1Deprecation
 class UsageVariableControlFlowInfo(map: ImmutableMap<VariableDescriptor, VariableUseState> = ImmutableHashMap.empty()) :
     VariableUsageControlFlowInfo<UsageVariableControlFlowInfo, VariableUseState>(map),
     VariableUsageReadOnlyControlInfo {
@@ -49,6 +53,7 @@ class UsageVariableControlFlowInfo(map: ImmutableMap<VariableDescriptor, Variabl
         UsageVariableControlFlowInfo(newMap)
 }
 
+@K1Deprecation
 enum class InitState(private val s: String) {
     // Definitely initialized
     INITIALIZED("I"),
@@ -71,6 +76,7 @@ enum class InitState(private val s: String) {
     override fun toString() = s
 }
 
+@K1Deprecation
 class VariableControlFlowState private constructor(val initState: InitState, val isDeclared: Boolean) {
 
     fun definitelyInitialized(): Boolean = initState == InitState.INITIALIZED
@@ -112,6 +118,7 @@ class VariableControlFlowState private constructor(val initState: InitState, val
     }
 }
 
+@K1Deprecation
 enum class VariableUseState(private val priority: Int) {
     READ(3),
     WRITTEN_AFTER_READ(2),

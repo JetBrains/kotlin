@@ -18,17 +18,20 @@ package org.jetbrains.kotlin.cfg
 
 import io.vavr.collection.CharSeq
 import io.vavr.control.Option
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.util.vavr.ImmutableHashMap
 import org.jetbrains.kotlin.util.vavr.ImmutableMap
 import java.io.PrintStream
 import java.io.PrintWriter
 
+@K1Deprecation
 interface ReadOnlyControlFlowInfo<K : Any, D : Any> {
     fun getOrNull(key: K): D?
     // Only used in tests
     fun asMap(): ImmutableMap<K, D>
 }
 
+@K1Deprecation
 abstract class ControlFlowInfo<S : ControlFlowInfo<S, K, D>, K : Any, D : Any>
 internal constructor(
     protected val map: ImmutableMap<K, D> = ImmutableHashMap.empty()

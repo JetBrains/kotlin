@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.cfg.pseudocode
 import com.google.common.collect.HashMultimap
 import com.google.common.collect.Multimap
 import com.intellij.util.containers.BidirectionalMap
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.Label
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.eval.MagicInstruction
@@ -35,6 +36,7 @@ import org.jetbrains.kotlin.cfg.pseudocodeTraverser.traverseFollowingInstruction
 import org.jetbrains.kotlin.psi.KtElement
 import java.util.*
 
+@K1Deprecation
 class PseudocodeImpl(override val correspondingElement: KtElement, override val isInlined: Boolean) : Pseudocode {
 
     internal val mutableInstructionList = ArrayList<Instruction>()

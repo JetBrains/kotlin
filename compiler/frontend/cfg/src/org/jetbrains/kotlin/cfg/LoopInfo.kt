@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.cfg
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtLoopExpression
 
+@K1Deprecation
 class LoopInfo(
     override val element: KtLoopExpression,
     entryPoint: Label,

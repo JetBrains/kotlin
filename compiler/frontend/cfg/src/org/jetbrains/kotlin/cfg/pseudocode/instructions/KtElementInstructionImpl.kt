@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.cfg.pseudocode.instructions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtElement
 
+@K1Deprecation
 abstract class KtElementInstructionImpl(
     override val element: KtElement,
     blockScope: BlockScope

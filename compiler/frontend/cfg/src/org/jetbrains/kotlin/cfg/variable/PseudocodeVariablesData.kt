@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.cfg.variable
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.pseudocode.Pseudocode
 import org.jetbrains.kotlin.cfg.pseudocode.PseudocodeUtil
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingContextUtils.variableDescriptorForDeclaration
 import org.jetbrains.kotlin.util.vavr.*
 
+@K1Deprecation
 class PseudocodeVariablesData(val pseudocode: Pseudocode, private val bindingContext: BindingContext) {
     private val containsDoWhile = pseudocode.rootPseudocode.containsDoWhile
     private val pseudocodeVariableDataCollector =

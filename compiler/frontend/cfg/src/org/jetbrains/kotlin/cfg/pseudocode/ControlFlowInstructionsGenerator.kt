@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.cfg.pseudocode
 
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.*
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.BlockScope
 import org.jetbrains.kotlin.cfg.pseudocode.instructions.Instruction
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.constants.CompileTimeConstant
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import java.util.*
 
+@K1Deprecation
 class ControlFlowInstructionsGenerator : ControlFlowBuilderAdapter() {
     private var builder: ControlFlowBuilder? = null
 
