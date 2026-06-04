@@ -4,7 +4,6 @@
  */
 
 import org.gradle.api.Project
-import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.internal.tasks.testing.filter.DefaultTestFilter
@@ -18,7 +17,6 @@ import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.support.serviceOf
-import org.gradle.kotlin.dsl.withNormalizer
 import org.gradle.process.CommandLineArgumentProvider
 import java.io.File
 import java.lang.Character.isLowerCase
@@ -108,9 +106,6 @@ internal fun Project.createGeneralTestTask(
     }
     val shouldInstrument = project.providers.gradleProperty("kotlin.test.instrumentation.disable")
         .orNull?.toBoolean() != true
-    if (shouldInstrument) {
-        evaluationDependsOn(":test-instrumenter")
-    }
     return getOrCreateTask<Test>(taskName) {
         this.javaLauncher.set(getToolchainLauncherFor(javaLauncher))
 
@@ -180,18 +175,16 @@ internal fun Project.createGeneralTestTask(
         }
 
         if (shouldInstrument) {
-            val instrumentationArgsProperty = project.providers.gradleProperty("kotlin.test.instrumentation.args")
-            val testInstrumenterJar: FileCollection =
-                configurations.detachedConfiguration(dependencies.create(dependencies.project(":test-instrumenter")))
-                    .also { it.isTransitive = false }
-            inputs.files(testInstrumenterJar)
-                .withNormalizer(ClasspathNormalizer::class)
-                .withPropertyName("testInstrumenterClasspath")
-            doFirst {
-                val agent = testInstrumenterJar.singleFile
-                val args = instrumentationArgsProperty.orNull?.let { "=$it" }.orEmpty()
-                jvmArgs("-javaagent:$agent$args")
+            val agentJar = configurations.detachedConfiguration(dependencies.project(":test-instrumenter")).apply { isTransitive = false }
+            val bootClasspathJar = configurations.detachedConfiguration(dependencies.project(":test-instrumenter", "bootClasspath"))
+
+            systemProperty("test.instrumenter.debug", kotlinBuildProperties.booleanProperty("test.instrumenter.debug").get())
+
+            val testInstrumentationProvider = objects.newInstance<TestInstrumentationArgumentProvider>().apply {
+                this.agentJar.from(agentJar)
+                this.bootClasspathJar.from(bootClasspathJar)
             }
+            jvmArgumentProviders.add(testInstrumentationProvider)
         }
 
         // The glibc default number of memory pools on 64bit systems is 8 times the number of CPU cores

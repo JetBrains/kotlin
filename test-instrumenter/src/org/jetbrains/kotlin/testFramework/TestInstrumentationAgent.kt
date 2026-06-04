@@ -1,34 +1,82 @@
 /*
- * Copyright 2010-2017 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.testFramework
 
+import net.bytebuddy.agent.builder.AgentBuilder
+import net.bytebuddy.agent.builder.AgentBuilder.InitializationStrategy
+import net.bytebuddy.agent.builder.AgentBuilder.RedefinitionStrategy
+import net.bytebuddy.agent.builder.AgentBuilder.TypeStrategy
+import net.bytebuddy.asm.Advice
+import net.bytebuddy.asm.AsmVisitorWrapper
+import net.bytebuddy.matcher.ElementMatchers.named
+import net.bytebuddy.matcher.ElementMatchers.none
+import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileExistsAdvice
+import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileReadAdvice
 import java.lang.instrument.Instrumentation
+import java.lang.instrument.ClassFileTransformer
 
-@Suppress("unused")
 object TestInstrumentationAgent {
     @JvmStatic
-    fun premain(arg: String?, instrumentation: Instrumentation) {
-
-        val arguments = arg.orEmpty().split(",")
-
-        val debug = "debug" in arguments
+    fun premain(@Suppress("unused") args: String?, instrumentation: Instrumentation) {
+        val debug = System.getProperty("test.instrumenter.debug") == "true"
         if (debug) {
             println("org.jetbrains.kotlin.testFramework.TestInstrumentationAgent: premain")
         }
+
+        instrumentMockApplicationCreationTracing(instrumentation, debug)
+
+        if (System.getProperty("test.instrumenter.inputs.check.enabled") == "true") {
+            instrumentEmittingCustomJfrEvents(instrumentation)
+        }
+    }
+
+    private fun instrumentMockApplicationCreationTracing(instrumentation: Instrumentation, debug: Boolean) {
         instrumentation.addTransformer(MockApplicationCreationTracingInstrumenter(debug))
     }
+
+    /**
+     * ### InitializationStrategy
+     *
+     * The [InitializationStrategy.NoOp] is just enough initialization strategy for us, because the bytecode from advices is entirely
+     * inlined to instrumented classes, and thus we don't need any auxiliary types to be loaded during initialization.
+     *
+     * ### RedefinitionStrategy
+     *
+     * - We use [RedefinitionStrategy.RETRANSFORMATION] to instruct ByteBuddy to use class retransformation.
+     * - We don't use [RedefinitionStrategy.REDEFINITION], because RETRANSFORMATION gives us better compatibility with other agents.
+     * - We don't use [RedefinitionStrategy.DISABLED], because we wouldn't be able to instrument the already-loaded classes.
+     *
+     * ### TypeStrategy
+     *
+     * The [TypeStrategy.Default.DECORATE] instructs ByteBuddy how to produce the bytecode in the [ClassFileTransformer].
+     *
+     * It's a good fit for us since we only decorate method bodies with advices and don't create any new methods or fields.
+     * Such structural class modifications are not allowed by JVM for the already-loaded classes, anyway.
+     *
+     * The resulting bytecode is the same as if we had used [TypeStrategy.Default.REDEFINE],
+     * but the illegal modifications are caught earlier (by ByteBuddy, not JVM).
+     */
+    private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
+        AgentBuilder.Default()
+            .ignore(none())
+            .with(InitializationStrategy.NoOp.INSTANCE)
+            .with(RedefinitionStrategy.RETRANSFORMATION)
+            .with(TypeStrategy.Default.DECORATE)
+            .type(named("java.io.File"))
+            .advice(Advice.to(InputCheckingFileExistsAdvice::class.java).on(named("exists")))
+            .type(named("java.io.FileInputStream"))
+            .advice(Advice.to(InputCheckingFileReadAdvice::class.java).on(named("read")))
+            .type(named("java.io.RandomAccessFile"))
+            .advice(Advice.to(InputCheckingFileReadAdvice::class.java).on(named("read")))
+            .advice(Advice.to(InputCheckingFileReadAdvice::class.java).on(named("readLine")))
+            .type(named("sun.nio.ch.FileChannelImpl"))
+            .advice(Advice.to(InputCheckingFileReadAdvice::class.java).on(named("read")))
+            .installOn(instrumentation)
+    }
 }
+
+private fun AgentBuilder.Identified.advice(advice: AsmVisitorWrapper.ForDeclaredMethods) =
+    transform { builder, _, _, _, _ -> builder.visit(advice) }

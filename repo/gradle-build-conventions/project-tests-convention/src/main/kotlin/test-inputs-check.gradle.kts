@@ -62,6 +62,8 @@ tasks.withType<Test>().configureEach {
             project.extra["binaryen.path"] as Provider<String>
         } else null
 
+        val testInstrumenterBuildDir = project.project(":test-instrumenter").layout.buildDirectory
+
         doFirst {
             if (!permissionsTemplateFile.exists()) {
                 throw GradleException("Security policy template file not found at: ${permissionsTemplateFile.absolutePath}")
@@ -279,6 +281,10 @@ tasks.withType<Test>().configureEach {
                         .replace(
                             "{{debugger_agent_jar}}",
                             debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
+                        .replace(
+                            "{{test_instrumenter}}",
+                            testInstrumenterBuildDir.get().asFile.absolutePath.let { """permission java.io.FilePermission "$it/-", "read";""" }
+                        )
                         .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
                         .replace(
                             "{{wasm}}",
