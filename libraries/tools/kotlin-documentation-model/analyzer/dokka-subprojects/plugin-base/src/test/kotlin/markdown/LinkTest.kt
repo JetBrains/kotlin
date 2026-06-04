@@ -10,7 +10,6 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.*
 import org.jetbrains.dokka.links.Callable
 import org.jetbrains.dokka.links.TypeConstructor
-import org.jetbrains.dokka.links.Nullable
 import org.jetbrains.dokka.model.*
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.pages.ClasslikePageNode
@@ -1830,6 +1829,93 @@ class LinkTest : BaseAbstractTest() {
                 )
             }
 
+        }
+    }
+
+    @Test
+    @OnlySymbols("KEEP-0449 companion block and companion extensions")
+    fun `KDoc links to companion object, companion block and companion extensions`() {
+        testInline(
+            """
+            |/src/main/kotlin/example/Test.kt
+            |package example
+            |
+            |data class Vector(val x: Double, val y: Double) {
+            |    companion object {
+            |        val ZeroObject: Vector get() = Vector(0.0, 0.0)
+            |    }
+            |    companion {
+            |        val ZeroBlock: Vector get() = Vector(0.0, 0.0)
+            |    }
+            |}
+            |
+            |val Vector.Companion.UnitXObjectExtension get() = Vector(1.0, 0.0)
+            |
+            |companion val Vector.UnitXExtension get() = Vector(1.0, 0.0)
+            |
+            |/**
+            | * - [Vector.ZeroObject]
+            | * - [Vector.Companion.ZeroObject]
+            | * - [Vector.ZeroBlock]
+            | * - [Vector.Companion.ZeroBlock] is unresolved
+            | * - [Vector.UnitXObjectExtension]
+            | * - [Vector.UnitXExtension]
+            | * - [Vector.Companion.UnitXObjectExtension]
+            | * - [Vector.Companion.UnitXExtension] is unresolved
+            | */
+            |fun usage() {}
+        """.trimMargin(),
+            configuration
+        ) {
+            documentablesMergingStage = { module ->
+                // a property of the `companion object` - a regular member of `Vector.Companion`
+                val zeroObject = DRI(
+                    "example", "Vector.Companion",
+                    Callable("ZeroObject", null, emptyList(), isProperty = true)
+                )
+                // a property of the `companion { }` block - lives in `Vector`'s static scope (isCompanion)
+                val zeroBlock = DRI(
+                    "example", "Vector",
+                    Callable("ZeroBlock", null, emptyList(), isProperty = true, isCompanion = true)
+                )
+                // a top-level extension on `Vector.Companion`
+                val unitXObjectExtension = DRI(
+                    "example", null,
+                    Callable(
+                        "UnitXObjectExtension",
+                        receiver = TypeConstructor("example.Vector.Companion", emptyList()),
+                        params = emptyList(),
+                        isProperty = true
+                    )
+                )
+                // a companion extension on `Vector` - lives in `Vector`'s static scope (isCompanion)
+                val unitXExtension = DRI(
+                    "example", null,
+                    Callable(
+                        "UnitXExtension",
+                        receiver = TypeConstructor("example.Vector", emptyList()),
+                        params = emptyList(),
+                        isProperty = true,
+                        isCompanion = true
+                    )
+                )
+
+                assertEquals(
+                    listOf(
+                        "Vector.ZeroObject" to zeroObject,
+                        "Vector.Companion.ZeroObject" to zeroObject,
+                        "Vector.ZeroBlock" to zeroBlock,
+                        // [Vector.Companion.ZeroBlock] is intentionally unresolved:
+                        // a companion-block member is not a member of the `Companion` object
+                        "Vector.UnitXObjectExtension" to unitXObjectExtension,
+                        "Vector.UnitXExtension" to unitXExtension,
+                        "Vector.Companion.UnitXObjectExtension" to unitXObjectExtension,
+                        // [Vector.Companion.UnitXExtension] is intentionally unresolved:
+                        // a companion extension extends `Vector`, not `Vector.Companion`
+                    ),
+                    module.getAllLinkDRIFrom("usage")
+                )
+            }
         }
     }
 
