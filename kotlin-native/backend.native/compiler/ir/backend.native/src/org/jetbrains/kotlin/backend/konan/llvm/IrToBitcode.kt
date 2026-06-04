@@ -694,18 +694,6 @@ internal class CodeGeneratorVisitor(
         codegen.getVirtualFunctionTrampoline(irFunction)
     }
 
-    private fun shouldEmitFinalFunctionTrampolineAlias(declaration: IrSimpleFunction) =
-            // The alias only matters for caches consumed by a later recompile.
-            context.config.produce.isCache // In a monolithic build no caller cache can reference a stale trampoline symbol.
-                    && declaration.parent is IrClass
-                    && !declaration.isOverridable // No trampoline would be generated.
-                    && declaration.isReal
-                    && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD
-                    && !declaration.isExternal
-                    && declaration.shouldGenerateBody()
-                    && declaration.originalConstructor == null
-                    && codegen.linkageOf(declaration) == LLVMLinkage.LLVMExternalLinkage
-
     override fun visitConstructor(declaration: IrConstructor) {
         // All constructors are lowered by this point, but for some cases original constructors are left as is; just skip them here.
         return
@@ -739,10 +727,8 @@ internal class CodeGeneratorVisitor(
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         context.log{"visitFunction                  : ${ir2string(declaration)}"}
 
-        if (declaration.isOverridable && declaration.origin !is DECLARATION_ORIGIN_BRIDGE_METHOD)
+        if (declaration.needsVirtualTrampoline)
             buildVirtualFunctionTrampoline(declaration)
-        else if (shouldEmitFinalFunctionTrampolineAlias(declaration))
-            codegen.emitFinalFunctionTrampolineAlias(declaration)
 
         handleStaticInitializer(declaration)
 

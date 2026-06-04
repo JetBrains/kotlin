@@ -435,13 +435,14 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     || (declaration.isAccessor && declaration.isFromCInteropLibrary())
                     || declaration.isCFunctionOrGlobalAccessor()) return
 
-            val proto = LlvmFunctionProto(declaration, declaration.computeSymbolName(), this, LLVMLinkage.LLVMExternalLinkage)
+            val symbolName = declaration.computeSymbolName(context, forImplementation = true)
+            val proto = LlvmFunctionProto(declaration, symbolName, this, LLVMLinkage.LLVMExternalLinkage)
             llvm.externalFunction(proto)
         } else {
-            if (!declaration.shouldGenerateBody()) {
+            if (!declaration.shouldGenerateBody())
                 return
-            }
-            val symbolName = declaration.computeSymbolName(context) {
+
+            val symbolName = declaration.computeSymbolName(context, forImplementation = true) {
                 runUnless(context.config.producePerFileCache) {
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 }
@@ -459,7 +460,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
             val proto = LlvmFunctionProto(declaration, symbolName, this, linkageOf(declaration))
             context.log {
-                "Creating llvm function ${symbolName} for ${declaration.render()}"
+                "Creating llvm function $symbolName for ${declaration.render()}"
             }
             proto.createLlvmFunction(context, llvm.module)
         }

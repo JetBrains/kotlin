@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.objcinterop.isExternalObjCClass
 import org.jetbrains.kotlin.ir.objcinterop.isKotlinObjCClass
 import org.jetbrains.kotlin.ir.util.findAnnotation
@@ -143,11 +144,19 @@ fun IrClass.computeTypeInfoSymbolName() = with(KonanBinaryInterface) { typeInfoS
 
 fun IrClass.computePrivateTypeInfoSymbolName(containerName: String) = with(KonanBinaryInterface) { privateTypeInfoSymbolName(containerName) }.replaceSpecialSymbols()
 
-/*
+/**
  * Delegates to different naming strategies depending on whether the function is exported or not.
+ *
+ * When [forImplementation] is true, returns the symbol name under which the function's own body is emitted: for overridable methods
+ * a virtual trampoline takes over the public symbol name, so the body moves aside to `<name>-impl`. Callers reach the body either
+ * through the vtable/itable (via the trampoline) or directly for super calls and devirtualized calls.
  */
-internal fun IrFunction.computeSymbolName(context: Context, internalSymbolNameBuilder: () -> String? = { -> null }) = with(KonanBinaryInterface) {
-    if (isExported(this@computeSymbolName))
+internal fun IrSimpleFunction.computeSymbolName(
+        context: Context,
+        forImplementation: Boolean,
+        internalSymbolNameBuilder: () -> String? = { -> null },
+): String = with(KonanBinaryInterface) {
+    val symbolName = if (isExported(this@computeSymbolName))
         computeSymbolName()
     else {
         internalSymbolNameBuilder() ?: run {
@@ -156,6 +165,10 @@ internal fun IrFunction.computeSymbolName(context: Context, internalSymbolNameBu
             computePrivateSymbolName(containerName)
         }
     }
+    if (forImplementation && needsVirtualTrampoline)
+        "$symbolName-impl"
+    else
+        symbolName
 }
 
 private fun String.replaceSpecialSymbols() =
