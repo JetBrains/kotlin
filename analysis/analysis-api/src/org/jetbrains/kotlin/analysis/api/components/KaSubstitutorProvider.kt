@@ -29,7 +29,6 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * @see KaSubstitutor
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor
 
     /**
@@ -54,7 +53,6 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * - `createInheritanceTypeSubstitutor(A, C)` returns `KaSubstitutor { X -> T, Y -> Int } and then KaSubstitutor { T -> String }`
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor?
 
     /**
@@ -99,12 +97,11 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
      */
     @KaIdeApi
-    @KaK1Unsupported
     @OptIn(KaExperimentalApi::class)
     public fun createUnificationSubstitutor(
         candidateType: KaType,
         targetType: KaType,
-        constructionPolicy: KaUnificationSubstitutorPolicy
+        constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor?
 
     /**
@@ -153,11 +150,10 @@ public interface KaSubstitutorProvider : KaSessionComponent {
      * @see KaUnificationSubstitutorPolicy.EXISTENTIAL
      */
     @KaIdeApi
-    @KaK1Unsupported
     @OptIn(KaExperimentalApi::class)
     public fun createUnificationSubstitutor(
         candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
-        constructionPolicy: KaUnificationSubstitutorPolicy
+        constructionPolicy: KaUnificationSubstitutorPolicy,
     ): KaSubstitutor?
 }
 
@@ -311,7 +307,6 @@ public class KaSubstitutorBuilder
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor {
@@ -345,7 +340,6 @@ public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSu
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
@@ -400,14 +394,13 @@ public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass:
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaK1Unsupported
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
 public fun createUnificationSubstitutor(
     candidateType: KaType,
     targetType: KaType,
-    constructionPolicy: KaUnificationSubstitutorPolicy
+    constructionPolicy: KaUnificationSubstitutorPolicy,
 ): KaSubstitutor? {
     return with(session) {
         createUnificationSubstitutor(
@@ -465,13 +458,12 @@ public fun createUnificationSubstitutor(
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaIdeApi
-@KaK1Unsupported
 @OptIn(KaExperimentalApi::class)
 @KaContextParameterApi
 context(session: KaSession)
 public fun createUnificationSubstitutor(
     candidateTypesToTargetTypes: List<Pair<KaType, KaType>>,
-    constructionPolicy: KaUnificationSubstitutorPolicy
+    constructionPolicy: KaUnificationSubstitutorPolicy,
 ): KaSubstitutor? {
     return with(session) {
         createUnificationSubstitutor(

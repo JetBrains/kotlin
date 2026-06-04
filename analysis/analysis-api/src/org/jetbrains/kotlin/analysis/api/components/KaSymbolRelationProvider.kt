@@ -5,7 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
-import org.jetbrains.kotlin.analysis.api.*
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.platform.TargetPlatform
@@ -84,7 +87,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see samConstructor
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
 
     /**
@@ -130,7 +132,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * @see functionalInterface
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
 
     /**
@@ -263,7 +264,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
-    @KaK1Unsupported
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
     /**
@@ -271,7 +271,6 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * a member.
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
 
     /**
@@ -441,7 +440,6 @@ public val KaClassLikeSymbol.samConstructor: KaSamConstructorSymbol?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaClassLikeSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol?
@@ -499,7 +497,6 @@ public val KaSamConstructorSymbol.constructedClass: KaClassLikeSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaSamConstructorSymbol.functionalInterfaceFunction: KaNamedFunctionSymbol
@@ -666,7 +663,6 @@ public fun KaClassSymbol.isDirectSubClassOf(superClass: KaClassSymbol): Boolean 
  * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
@@ -678,7 +674,6 @@ public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus? {

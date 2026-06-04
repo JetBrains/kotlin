@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
@@ -160,7 +159,6 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
      * ```
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KtExpression.isStableForSmartCasting: Boolean
 }
 
@@ -326,7 +324,6 @@ public val KtExpression.isUsedAsResultOfLambda: Boolean
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KtExpression.isStableForSmartCasting: Boolean

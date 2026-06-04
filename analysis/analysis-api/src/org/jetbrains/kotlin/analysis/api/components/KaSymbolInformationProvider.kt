@@ -101,7 +101,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * See the [KEEP](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0412-unused-return-value-checker.md) for details.
      */
     @KaExperimentalApi
-    @KaK1Unsupported
     public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
 
     /**
@@ -111,7 +110,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
      * This API is only intended to be used by the TypeScript export utility.
      */
     @KaNonPublicApi
-    @KaK1Unsupported
     public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?
 }
 
@@ -120,7 +118,6 @@ public interface KaSymbolInformationProvider : KaSessionComponent {
  * @see org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider.returnValueStatus
  */
 @KaExperimentalApi
-@KaK1Unsupported
 public sealed class KaReturnValueStatus(public val name: String) {
     override fun toString(): String = name
 
@@ -274,7 +271,6 @@ public val KaSymbol.importableFqName: FqName?
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaExperimentalApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
@@ -288,7 +284,6 @@ public val KaNamedFunctionSymbol.returnValueStatus: KaReturnValueStatus
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaDeclarationSymbol.containingFileAnnotations: KaAnnotationList?

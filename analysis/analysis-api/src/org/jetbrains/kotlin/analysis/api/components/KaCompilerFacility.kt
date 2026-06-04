@@ -64,7 +64,6 @@ public val CODE_FRAGMENT_METHOD_NAME: CompilerConfigurationKey<String> = Compile
  *
  * @see KaCompilerFacilityModuleActualizer
  */
-@KaK1Unsupported
 @KaExperimentalApi
 public val MODULE_ACTUALIZER: CompilerConfigurationKey<KaCompilerFacilityModuleActualizer> =
     CompilerConfigurationKey("custom module actualizer")
@@ -216,7 +215,6 @@ public class KaDebuggerExtension(public val stack: Sequence<PsiElement?>)
  * (e.g., Android and JVM); in that case, the facility chooses the first matching one. [KaCompilerFacilityModuleActualizer] is a way to
  * override the default behavior by offering a closer match – e.g., a module with an Android target.
  */
-@KaK1Unsupported
 @KaExperimentalApi
 @KaSpi
 public fun interface KaCompilerFacilityModuleActualizer {

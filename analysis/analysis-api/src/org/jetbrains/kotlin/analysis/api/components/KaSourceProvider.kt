@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
-import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -21,7 +20,6 @@ public interface KaSourceProvider : KaSessionComponent {
      * a klib, or when the source file name is not available.
      */
     @KaNonPublicApi
-    @KaK1Unsupported
     public val KaDeclarationSymbol.klibSourceFileName: String?
 }
 
@@ -31,7 +29,6 @@ public interface KaSourceProvider : KaSessionComponent {
  */
 // Auto-generated bridge. DO NOT EDIT MANUALLY!
 @KaNonPublicApi
-@KaK1Unsupported
 @KaContextParameterApi
 context(session: KaSession)
 public val KaDeclarationSymbol.klibSourceFileName: String?

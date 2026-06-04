@@ -967,43 +967,6 @@ After adding or modifying APIs:
 For Java files in the PSI module, apply the same documentation principles using JavaDoc syntax.
 Use `@param`, `@return`, and `@see` tags as the JavaDoc equivalents of KDoc's parameter documentation.
 
-#### Mark K1-Specific Limitations
-
-If your API isn't implemented for K1, make it clear:
-
-```kotlin
-/**
- * A list of [KaContextParameterSymbol]s directly declared in the callable symbol.
- *
- * As context parameters are not supported in the K1 Kotlin compiler,
- * in the K1 API implementation the resulting list is always empty.
- */
-@KaK1Unsupported
-val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>
-```
-
-Also, if the behavior differs between K1 and K2, describe those differences:
-
-```kotlin
-/**
- * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
- * The file might be either a Kotlin source file, or a [KtCodeFragment].
- * 
- * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
- * `compile()` call into a `try`/`catch` block when necessary.
- * 
- * ### K1 Implementation Limitations
- * 
- * The K1 implementation of [compile] does not support [KtCodeFragment]s.
- * The only existing use-case for code fragment compilation is code evaluation in the JVM debugger, and in the K1 Kotlin plugin for
- * IntelliJ IDEA compilation is implemented on the IDE side.
- */
-fun compile(file: KtFile, configuration: CompilerConfiguration, target: KaCompilerTarget): KaCompilationResult
-```
-
-Always refer to the K1 compiler and the K1 implementation simply as "K1".
-Avoid adjectives such as "legacy", "classic", "old" or similar.
-
 ## Naming Conventions
 
 ### Use Common Prefixes for Top-Level Class-Like Declarations
