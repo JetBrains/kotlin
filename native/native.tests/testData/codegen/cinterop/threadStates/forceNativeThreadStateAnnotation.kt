@@ -17,7 +17,15 @@ language = C
 
 _Bool Kotlin_Debugging_isThreadStateNative(void);
 
-int kt77616_blockingAnswer(void) {
+int kt77616_functionWithoutAnnotation(void) {
+    if (Kotlin_Debugging_isThreadStateNative()) {
+        printf("Incorrect thread state. Expected runnable thread state.");
+        abort();
+    }
+    return 43;
+}
+
+int kt77616_functionWithAnnotation(void) {
     if (!Kotlin_Debugging_isThreadStateNative()) {
         printf("Incorrect thread state. Expected native thread state.");
         abort();
@@ -35,13 +43,18 @@ import kotlin.native.SymbolName
 import kotlin.native.runtime.Debugging
 import kotlin.test.*
 
-@SymbolName("kt77616_blockingAnswer")
+@SymbolName("kt77616_functionWithoutAnnotation")
+private external fun functionWithoutAnnotation(): Int
+
+@SymbolName("kt77616_functionWithAnnotation")
 @ForceNativeThreadState
-private external fun blockingAnswer(): Int
+private external fun functionWithAnnotation(): Int
 
 fun box(): String {
     assertRunnableThreadState()
-    assertEquals(42, blockingAnswer())
+    assertEquals(43, functionWithoutAnnotation())
+    assertRunnableThreadState()
+    assertEquals(42, functionWithAnnotation())
     assertRunnableThreadState()
     return "OK"
 }

@@ -17,17 +17,16 @@ language = C
 
 _Bool Kotlin_Debugging_isThreadStateNative(void);
 
-static void assertNativeThreadState(void) {
+void kt77616_runCallback(void (*callback)(void)) {
     if (!Kotlin_Debugging_isThreadStateNative()) {
         printf("Incorrect thread state. Expected native thread state.");
         abort();
     }
-}
 
-void kt77616_runCallback(void (*callback)(void)) {
-    assertNativeThreadState();
     callback();
-    assertNativeThreadState();
+
+    printf("Shouldn't be reachable. Expected an exception.");
+    abort();
 }
 
 // MODULE: main(cinterop)
