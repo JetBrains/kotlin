@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.*
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.util.profile
 import org.jetbrains.kotlin.utils.Printer
 
 // TODO: eliminate Native specifics.
+@K1Deprecation
 class KlibResolvedModuleDescriptorsFactoryImpl(
     override val moduleDescriptorFactory: KlibMetadataModuleDescriptorFactory
 ) : KlibResolvedModuleDescriptorsFactory {
@@ -175,6 +177,7 @@ class KlibResolvedModuleDescriptorsFactoryImpl(
 /**
  * Package fragment which creates descriptors for forward declarations on demand.
  */
+@K1Deprecation
 class ForwardDeclarationsPackageFragmentDescriptor(
     storageManager: StorageManager,
     module: ModuleDescriptor,
@@ -249,5 +252,6 @@ class ForwardDeclarationsPackageFragmentDescriptor(
     override fun getMemberScope(): MemberScope = memberScope
 }
 
+@K1Deprecation
 val ModuleDescriptor.isForwardDeclarationModule: Boolean
     get() = name == FORWARD_DECLARATIONS_MODULE_NAME

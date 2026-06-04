@@ -1,10 +1,12 @@
 package org.jetbrains.kotlin.library.metadata.resolver
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.SearchPathResolver
 import org.jetbrains.kotlin.library.UnresolvedLibrary
 
+@K1Deprecation
 interface KotlinLibraryResolver<L : KotlinLibrary> {
 
     val searchPathResolver: SearchPathResolver<L>
@@ -54,6 +56,7 @@ interface KotlinLibraryResolver<L : KotlinLibrary> {
     fun List<KotlinLibrary>.resolveDependencies(): KotlinLibraryResolveResult
 }
 
+@K1Deprecation
 interface KotlinLibraryResolveResult {
 
     fun filterRoots(predicate: (KotlinResolvedLibrary) -> Boolean): KotlinLibraryResolveResult

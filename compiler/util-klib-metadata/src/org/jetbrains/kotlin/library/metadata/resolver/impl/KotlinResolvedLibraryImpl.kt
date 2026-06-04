@@ -1,8 +1,10 @@
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinResolvedLibrary
 
+@K1Deprecation
 class KotlinResolvedLibraryImpl(override val library: KotlinLibrary) : KotlinResolvedLibrary {
     override val resolvedDependencies: List<KotlinResolvedLibrary>
         field = mutableListOf<KotlinResolvedLibrary>()

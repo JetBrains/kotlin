@@ -54,6 +54,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.optIn.addAll(
         listOf(

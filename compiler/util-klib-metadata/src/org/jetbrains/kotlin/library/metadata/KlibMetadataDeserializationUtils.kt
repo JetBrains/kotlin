@@ -5,22 +5,27 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.metadata.ProtoBuf
 
+@K1Deprecation
 fun parsePackageFragment(packageMetadata: ByteArray): ProtoBuf.PackageFragment =
     ProtoBuf.PackageFragment.parseFrom(packageMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
 
+@K1Deprecation
 fun parseModuleHeader(libraryMetadata: ByteArray): KlibMetadataProtoBuf.Header =
     KlibMetadataProtoBuf.Header.parseFrom(libraryMetadata, KlibMetadataSerializerProtocol.extensionRegistry)
 
 @Deprecated("Restored to keep ABI compatibility with kotlinx-benchmark Gradle plugin (KT-71414)", level = DeprecationLevel.HIDDEN)
+@K1Deprecation
 interface PackageAccessHandler
 
 /**
  * A special interceptor that allows customizing the way how metadata proto objects are loaded.
  * The single real usage is in IntelliJ IDEA.
  */
+@K1Deprecation
 interface CustomMetadataProtoLoader {
     fun loadModuleHeader(library: KotlinLibrary): KlibMetadataProtoBuf.Header
     fun loadPackageFragment(library: KotlinLibrary, packageFqName: String, partName: String): ProtoBuf.PackageFragment

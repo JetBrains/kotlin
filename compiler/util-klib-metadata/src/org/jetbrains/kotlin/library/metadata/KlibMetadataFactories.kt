@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.library.metadata
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.deserialization.AdditionalClassPartsProvider
 import org.jetbrains.kotlin.descriptors.deserialization.ClassDescriptorFactory
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.storage.StorageManager
 /**
  * The default Kotlin/Native factories.
  */
+@K1Deprecation
 class KlibMetadataFactories(
     createBuiltIns: (StorageManager) -> KotlinBuiltIns,
     val flexibleTypeDeserializer: FlexibleTypeDeserializer,

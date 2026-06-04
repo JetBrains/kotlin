@@ -14,6 +14,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 kotlin {
     compilerOptions {
         explicitApi()

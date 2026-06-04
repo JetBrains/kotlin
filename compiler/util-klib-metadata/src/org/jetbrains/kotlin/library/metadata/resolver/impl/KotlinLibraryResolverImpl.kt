@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.library.metadata.resolver.impl
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.metadata.resolver.KotlinLibraryResolveResult
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
     level = DeprecationLevel.ERROR
 )
 @JvmName("libraryResolver")
+@K1Deprecation
 fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolverLegacy(resolveManifestDependenciesLenient: Boolean = false) =
     KotlinLibraryResolverImpl(
         this,
@@ -39,6 +41,7 @@ fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolverLegacy(resolveManif
     )
 
 @JvmName("libraryResolverNew")
+@K1Deprecation
 fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDependenciesLenient: Boolean = false) =
     KotlinLibraryResolverImpl(
         this,
@@ -51,6 +54,7 @@ fun <L : KotlinLibrary> SearchPathResolver<L>.libraryResolver(resolveManifestDep
  * @property resolveManifestDependenciesLenient Whether to resolve manifest dependencies leniently.
  * @property legacyExternalToolResolveMode Whether to use legacy external tool resolution mode. See KT-82882.
  */
+@K1Deprecation
 class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     override val searchPathResolver: SearchPathResolver<L>,
     val resolveManifestDependenciesLenient: Boolean,
@@ -185,6 +189,7 @@ class KotlinLibraryResolverImpl<L : KotlinLibrary> internal constructor(
     }
 }
 
+@K1Deprecation
 class KotlinLibraryResolverResultImpl(
     private val roots: List<KotlinResolvedLibrary>,
 ) : KotlinLibraryResolveResult {
