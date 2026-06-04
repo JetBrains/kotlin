@@ -801,7 +801,9 @@ class BodyGenerator(
 
         // Some intrinsics are a special case because we want to remove them completely, including their arguments.
         if (backendContext.configuration.get(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS) != true
-            || !backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION)) {
+                || (!backendContext.configuration.getBoolean(WasmConfigurationKeys.WASM_DISABLE_OOBE_HANDLER_INSERTION)
+                    // We don't support trap-based range checking on WASI yet.
+                        && backendContext.isWasmJsTarget)) {
             if (call.symbol == wasmSymbols.rangeCheck) {
                 body.buildGetUnit()
                 return
