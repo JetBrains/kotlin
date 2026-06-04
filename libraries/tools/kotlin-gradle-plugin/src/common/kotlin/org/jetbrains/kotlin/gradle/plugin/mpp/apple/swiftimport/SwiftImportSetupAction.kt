@@ -349,9 +349,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             fingerprintTask.syntheticPackageFingerprint.set(fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() })
             fingerprintTask.filesToTrackFromLocalPackages.set(computeLocalPackageDependencyInputFiles.flatMap { it.filesToTrackFromLocalPackages })
             fingerprintTask.xcodebuildSdk.set(targetSdk)
-            fingerprintTask.architectures.add(target.konanTarget.appleArchitecture)
         }
 
+        fingerprintXcode.configure {
+            it.architectures.add(target.konanTarget.appleArchitecture)
+
+        }
 
         val xcodebuildDumpTaskName = lowerCamelCaseName(
             DumpXcodeBuildArgs.TASK_NAME,
@@ -365,9 +368,12 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
             syntheticImportProjectGenerationTaskForCinteropsAndLdDump = syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
             targetSdk = targetSdk,
             targetPlatform = targetPlatform,
-            architecture = target.konanTarget.appleArchitecture,
             isMacOSHost = isMacOSHost,
         )
+
+        xcodebuildDumpTask.configure {
+            it.architectures.add(target.konanTarget.appleArchitecture)
+        }
 
         defFilesAndLdDumpGenerationTask.configure { task ->
             task.dependsOn(xcodebuildDumpTask)
@@ -921,7 +927,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
     hasDirectOrTransitiveSwiftPMDependencies: Provider<Boolean>,
     targetSdk: String,
     targetPlatform: String,
-    architecture: AppleArchitecture,
     isMacOSHost: Boolean,
 ): TaskProvider<DumpXcodeBuildArgs> {
     return project.locateOrRegisterTask<DumpXcodeBuildArgs>(
@@ -936,7 +941,6 @@ private fun Project.registerDumpXcodebuildArgsTask(
         )
         dumpTask.xcodebuildPlatform.set(targetPlatform)
         dumpTask.xcodebuildSdk.set(targetSdk)
-        dumpTask.architectures.add(architecture)
         dumpTask.hasSwiftPMDependencies.set(hasDirectOrTransitiveSwiftPMDependencies)
         dumpTask.swiftPMDependenciesCheckout.set(fetchSyntheticImportProjectPackages.map { it.swiftPMDependenciesCheckout.get() })
         dumpTask.syntheticImportProjectRoot.set(syntheticImportProjectGenerationTaskForCinteropsAndLdDump.map { it.syntheticImportProjectRoot.get() })
@@ -1000,7 +1004,6 @@ private fun Project.provideSyntheticPackageDir() : Provider<Directory> =
         provider {
             rootProject.projectDir.resolve(SHARED_SYNTHETIC_PACKAGE_DIR)
         }
-
     )
 
 internal const val SHARED_CHECKOUT_DIR = "build/kotlin/swiftPMCheckouts"
@@ -1009,8 +1012,8 @@ private fun Project.provideCheckoutDir() : Provider<Directory> =
         provider {
             rootProject.projectDir.resolve(SHARED_CHECKOUT_DIR)
         }
-
     )
+
 private fun Project.registerXcodeIntegrationTasks(
     syntheticImportProjectGenerationTaskForLinkageForCli: TaskProvider<GenerateSyntheticLinkageImportProject>,
     projectPathProvider: Provider<String>,
