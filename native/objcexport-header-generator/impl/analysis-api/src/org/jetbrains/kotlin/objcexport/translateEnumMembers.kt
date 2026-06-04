@@ -85,17 +85,23 @@ internal fun ObjCExportContext.getNSEnumEntryName(symbol: KaEnumEntrySymbol, for
  * See K1 implementation as [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getEnumEntryName]
  */
 internal fun ObjCExportContext.getEnumEntryName(symbol: KaEnumEntrySymbol, forSwift: Boolean): String {
-
-    val name = getObjCPropertyName(symbol).run {
+    val name = getObjCPropertyName(symbol) {
+        it.split('_').mapIndexed { index, s ->
+            // This is the transformation block that'd run if the @ObjCName annotation was not present.
+            // If present, we'd use the user provided name as-is.
+            //
+            // FOO_BAR_BAZ -> fooBarBaz:
+            val lower = s.lowercase()
+            if (index == 0) lower else lower.replaceFirstChar(Char::uppercaseChar)
+        }.joinToString("").toIdentifier()
+    }.run {
         when {
+            // In case no @ObjCName annotation was present, both swiftName and objCName point to the resultant
+            // string from the transformation run above.
             forSwift -> this.swiftName
             else -> this.objCName
         }
-    }.split('_').mapIndexed { index, s ->
-        // FOO_BAR_BAZ -> fooBarBaz:
-        val lower = s.lowercase()
-        if (index == 0) lower else lower.replaceFirstChar(Char::uppercaseChar)
-    }.joinToString("").toIdentifier()
+    }
 
     return if (name in objCSpecialNames) name.handleSpecialNames("the")
     else if (name.isReservedPropertyName) name + "_"
