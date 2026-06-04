@@ -64,5 +64,9 @@ val FirRegularClassSymbol.isFullValueClass: Boolean
 val FirRegularClass.isFullValueClass: Boolean
     get() = valueClassRepresentation is FullValueClassRepresentation
 
+@SymbolInternals
+val FirRegularClass.isBasicValueClass: Boolean
+    get() = valueClassRepresentation is BasicValueClassRepresentation
+
 val FirRegularClassSymbol.isBasicValueClass: Boolean
     get() = valueClassRepresentation is BasicValueClassRepresentation
