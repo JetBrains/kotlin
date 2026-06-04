@@ -22,9 +22,9 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibArtifactHandler
 import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
-import org.jetbrains.kotlin.test.backend.handlers.NoIrCompilationErrorsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.*
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
@@ -120,16 +120,16 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
         }
         facadeStep(::Fir2IrCliNativeFacade)
         irHandlersStep {
+            commonIrHandlersForCodegenTest()
             useHandlers(
                 ::IrDiagnosticsHandler,
-                ::NoIrCompilationErrorsHandler,
             )
         }
         facadeStep(::NativePreSerializationLoweringCliFacade)
         loweredIrHandlersStep{
+            commonIrHandlersForCodegenTest()
             useHandlers(
                 ::IrDiagnosticsHandler,
-                ::NoIrCompilationErrorsHandler,
             )
         }
         facadeStep(::KlibSerializerNativeCliFacade)

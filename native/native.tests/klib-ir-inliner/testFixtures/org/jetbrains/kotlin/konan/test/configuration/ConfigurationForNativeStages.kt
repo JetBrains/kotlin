@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonCodegenConfiguration
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -97,7 +98,9 @@ fun TestConfigurationBuilder.setupStepsForNativeFirstStageUpToSerialization(
     }
 
     facadeStep(::Fir2IrCliNativeFacade)
-    irHandlersStep()
+    irHandlersStep {
+        commonIrHandlersForCodegenTest()
+    }
 
     facadeStep(::NativePreSerializationLoweringCliFacade)
     loweredIrHandlersStep()

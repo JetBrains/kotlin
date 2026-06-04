@@ -8,14 +8,9 @@ package org.jetbrains.kotlin.test.runners
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
-import org.jetbrains.kotlin.test.backend.handlers.NoFirCompilationErrorsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.firHandlersStep
-import org.jetbrains.kotlin.test.configuration.baseFirDiagnosticTestConfiguration
-import org.jetbrains.kotlin.test.configuration.configurationForTestWithLanguageFeatureDisabled
-import org.jetbrains.kotlin.test.configuration.configurationForTestWithLatestLanguageVersion
-import org.jetbrains.kotlin.test.configuration.configureDiagnosticTest
-import org.jetbrains.kotlin.test.configuration.configureIrActualizerDiagnosticsTest
+import org.jetbrains.kotlin.test.configuration.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -74,7 +69,7 @@ open class AbstractFirLightTreeWithActualizerDiagnosticsWithLatestLanguageVersio
         baseFirDiagnosticTestConfiguration()
 
         firHandlersStep {
-            useHandlers(::NoFirCompilationErrorsHandler)
+            commonFirHandlersForCodegenTest()
         }
 
         facadeStep(::Fir2IrResultsConverter)

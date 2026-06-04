@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
@@ -78,6 +79,7 @@ open class AbstractFirScriptAndReplCodegenTest(
                 ::IrTextDumpHandler,
                 ::IrPrettyKotlinDumpHandler,
             )
+            commonIrHandlersForCodegenTest()
         }
         facadeStep(::JvmIrBackendFacade)
         jvmArtifactsHandlersStep {
