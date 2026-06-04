@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.multiplatform
 
 import com.intellij.openapi.util.Key
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.UserDataProperty
 
@@ -13,5 +14,7 @@ import org.jetbrains.kotlin.psi.UserDataProperty
  * Returns true if this file is a part of the common module in a multi-platform project.
  * This setting only makes sense in the compiler, not in the IDE where sources from common modules are analyzed as common
  */
+@K1Deprecation
 var KtFile.isCommonSource: Boolean? by UserDataProperty(Key.create("IS_COMMON_SOURCE"))
+@K1Deprecation
 var KtFile.hmppModuleName: String? by UserDataProperty(Key.create("HMPP_MODULE_NAME"))

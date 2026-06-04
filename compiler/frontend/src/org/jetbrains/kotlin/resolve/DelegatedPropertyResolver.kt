@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.Lists
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -62,6 +63,7 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 //TODO: check for 'operator' modifier!
+@K1Deprecation
 class DelegatedPropertyResolver(
     private val builtIns: KotlinBuiltIns,
     private val fakeCallResolver: FakeCallResolver,

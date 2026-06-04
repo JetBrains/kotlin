@@ -32,6 +32,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 publish()
 
 runtimeJar()

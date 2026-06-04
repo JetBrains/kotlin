@@ -20,6 +20,7 @@ import com.google.common.collect.HashMultimap
 import com.google.common.collect.ImmutableListMultimap
 import com.google.common.collect.ListMultimap
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -51,14 +52,17 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.flatMapToNullable
 import org.jetbrains.kotlin.utils.ifEmpty
 
+@K1Deprecation
 open class IndexedImports<I : KtImportInfo>(val imports: Array<I>) {
     open fun importsForName(name: Name): Iterable<I> = imports.asIterable()
 }
 
+@K1Deprecation
 inline fun <reified I : KtImportInfo> makeAllUnderImportsIndexed(imports: Collection<I>) : IndexedImports<I> =
     IndexedImports(imports.filter { it.isAllUnder }.toTypedArray())
 
 
+@K1Deprecation
 class ExplicitImportsIndexed<I : KtImportInfo>(
     imports: Array<I>,
     storageManager: StorageManager
@@ -78,17 +82,20 @@ class ExplicitImportsIndexed<I : KtImportInfo>(
     override fun importsForName(name: Name) = nameToDirectives().get(name)
 }
 
+@K1Deprecation
 inline fun <reified I : KtImportInfo> makeExplicitImportsIndexed(
     imports: Collection<I>,
     storageManager: StorageManager
 ) : IndexedImports<I> =
     ExplicitImportsIndexed(imports.filter { !it.isAllUnder }.toTypedArray(), storageManager)
 
+@K1Deprecation
 interface ImportForceResolver {
     fun forceResolveNonDefaultImports()
     fun forceResolveImport(importDirective: KtImportDirective)
 }
 
+@K1Deprecation
 class ImportResolutionComponents(
     val storageManager: StorageManager,
     val qualifiedExpressionResolver: QualifiedExpressionResolver,
@@ -99,6 +106,7 @@ class ImportResolutionComponents(
     val optimizingOptions: OptimizingOptions,
 )
 
+@K1Deprecation
 open class LazyImportResolver<I : KtImportInfo>(
     internal val components: ImportResolutionComponents,
     val indexedImports: IndexedImports<I>,
@@ -156,6 +164,7 @@ open class LazyImportResolver<I : KtImportInfo>(
     }
 }
 
+@K1Deprecation
 class LazyImportResolverForKtImportDirective(
     components: ImportResolutionComponents,
     indexedImports: IndexedImports<KtImportDirective>,
@@ -232,6 +241,7 @@ class LazyImportResolverForKtImportDirective(
     }
 }
 
+@K1Deprecation
 class LazyImportScope(
     override val parent: ImportingScope?,
     private val importResolver: LazyImportResolver<*>,

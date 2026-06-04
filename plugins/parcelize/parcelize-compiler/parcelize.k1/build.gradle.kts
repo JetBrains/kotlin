@@ -24,6 +24,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToK1Deprecation()
+
 runtimeJar()
 javadocJar()
 sourcesJar()

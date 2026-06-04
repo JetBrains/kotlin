@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.CallsEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.ContractProviderKey
 import org.jetbrains.kotlin.contracts.description.EventOccurrencesRange
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.resolve.scopes.LexicalScope
 import org.jetbrains.kotlin.resolve.source.KotlinSourceElement
 import org.jetbrains.kotlin.types.expressions.CaptureKind
 
+@K1Deprecation
 class CapturingInClosureChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val variableResolvedCall = (resolvedCall as? VariableAsFunctionResolvedCall)?.variableCall ?: resolvedCall
@@ -182,6 +184,7 @@ class CapturingInClosureChecker : CallChecker {
     }
 }
 
+@K1Deprecation
 fun findDestructuredVariable(variable: VariableDescriptor, variableParent: DeclarationDescriptor): ValueParameterDescriptor? =
     if (variable is LocalVariableDescriptor && variableParent is AnonymousFunctionDescriptor) {
         variableParent.valueParameters.find {

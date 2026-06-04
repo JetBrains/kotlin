@@ -22,11 +22,13 @@ import com.intellij.psi.PsiFile
 import com.intellij.psi.util.CachedValueProvider
 import com.intellij.util.CachedValueImpl
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.diagnostics.DiagnosticSink
 import org.jetbrains.kotlin.psi.KtAnnotated
 import org.jetbrains.kotlin.psi.KtStubbedPsiUtil
 
+@K1Deprecation
 class MutableDiagnosticsWithSuppression(
     private val suppressCache: KotlinSuppressCache,
     private val delegateDiagnostics: Diagnostics,

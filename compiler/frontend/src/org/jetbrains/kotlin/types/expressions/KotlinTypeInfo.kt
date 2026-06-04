@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.KotlinType
 
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.KotlinType
  * At the end current data flow info is x != null && y != null, but jump data flow info is x != null only.
  * Both break and continue are counted as possible jump outside of a loop, but return is not.
  */
+@K1Deprecation
 class KotlinTypeInfo @JvmOverloads constructor(
     val type: KotlinType?,
     val dataFlowInfo: DataFlowInfo,

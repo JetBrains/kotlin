@@ -28,4 +28,6 @@ sourceSets {
     }
 }
 
+optInToK1Deprecation()
+
 optInToUnsafeDuringIrConstructionAPI()

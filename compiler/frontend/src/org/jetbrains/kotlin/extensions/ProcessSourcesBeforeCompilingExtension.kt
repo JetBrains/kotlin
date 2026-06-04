@@ -5,9 +5,11 @@
 
 package org.jetbrains.kotlin.extensions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.psi.KtFile
 
+@K1Deprecation
 interface ProcessSourcesBeforeCompilingExtension {
 
     companion object : ProjectExtensionDescriptor<ProcessSourcesBeforeCompilingExtension>(

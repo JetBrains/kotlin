@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.PlatformToKotlinClassMapper
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 import org.jetbrains.kotlin.types.typeUtil.*
 import kotlin.math.min
 
+@K1Deprecation
 class TypeResolver(
     private val annotationResolver: AnnotationResolver,
     private val qualifiedExpressionResolver: QualifiedExpressionResolver,

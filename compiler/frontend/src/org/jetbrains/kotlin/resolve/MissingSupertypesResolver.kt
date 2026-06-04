@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.classId
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@K1Deprecation
 class MissingSupertypesResolver(
     storageManager: StorageManager,
     private val moduleDescriptor: ModuleDescriptor

@@ -17,8 +17,10 @@
 package org.jetbrains.kotlin.load.kotlin
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.serialization.deserialization.KotlinMetadataFinder
 
+@K1Deprecation
 interface MetadataFinderFactory {
     fun create(scope: GlobalSearchScope): KotlinMetadataFinder
 }

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.createFunctionType
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -49,6 +50,7 @@ import org.jetbrains.kotlin.types.expressions.ExpressionTypingServices
 import org.jetbrains.kotlin.types.expressions.typeInfoFactory.createTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.*
 
+@K1Deprecation
 class ResolvedAtomCompleter(
     private val resultSubstitutor: NewTypeSubstitutor,
     private val topLevelCallContext: BasicCallResolutionContext,
@@ -657,6 +659,7 @@ class ResolvedAtomCompleter(
     }
 }
 
+@K1Deprecation
 class FunctionLiteralTypes(
     val returnType: ProcessedType,
     val parameterTypes: List<ProcessedType>,

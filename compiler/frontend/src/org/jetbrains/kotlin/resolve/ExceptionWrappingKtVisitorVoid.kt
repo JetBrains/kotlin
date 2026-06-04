@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtVisitorVoid
 import org.jetbrains.kotlin.util.KotlinFrontEndException
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
+@K1Deprecation
 class ExceptionWrappingKtVisitorVoid(private val delegate: KtVisitorVoid) : KtVisitorVoid() {
     override fun visitElement(element: PsiElement) {
         element.accept(delegate)

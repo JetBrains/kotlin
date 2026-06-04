@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.util
 
 import com.google.common.collect.Lists
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
@@ -54,12 +55,14 @@ import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.util.buildNotFixedVariablesToPossibleResultType
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 enum class ResolveArgumentsMode {
     RESOLVE_FUNCTION_ARGUMENTS,
     SHAPE_FUNCTION_ARGUMENTS
 }
 
 
+@K1Deprecation
 fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
     return getParameterArgumentsOfCallableType(type).any { typeProjection ->
@@ -68,11 +71,13 @@ fun hasUnknownFunctionParameter(type: KotlinType): Boolean {
     }
 }
 
+@K1Deprecation
 fun hasUnknownReturnType(type: KotlinType): Boolean {
     assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
     return ErrorUtils.containsErrorType(getReturnTypeForCallable(type))
 }
 
+@K1Deprecation
 fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinType {
     assert(ReflectionTypes.isCallableType(type) || type.isSuspendFunctionType) { "type $type is not a function or property" }
     val newArguments = Lists.newArrayList<TypeProjection>()
@@ -81,6 +86,7 @@ fun replaceReturnTypeForCallable(type: KotlinType, given: KotlinType): KotlinTyp
     return replaceTypeArguments(type, newArguments)
 }
 
+@K1Deprecation
 fun replaceReturnTypeByUnknown(type: KotlinType) = replaceReturnTypeForCallable(type, DONT_CARE)
 
 private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjection>) =
@@ -89,6 +95,7 @@ private fun replaceTypeArguments(type: KotlinType, newArguments: List<TypeProjec
 private fun getParameterArgumentsOfCallableType(type: KotlinType) =
     type.arguments.dropLast(1)
 
+@K1Deprecation
 fun getReturnTypeForCallable(type: KotlinType) =
     type.arguments.last().type
 
@@ -98,6 +105,7 @@ private fun CallableDescriptor.hasReturnTypeDependentOnUninferredParams(constrai
     return nestedTypeVariables.any { constraintSystem.getTypeBounds(it).value == null }
 }
 
+@K1Deprecation
 fun CallableDescriptor.hasInferredReturnType(constraintSystem: ConstraintSystem): Boolean {
     if (hasReturnTypeDependentOnUninferredParams(constraintSystem)) return false
 
@@ -116,6 +124,7 @@ private fun filterOutTypeParameters(upperBounds: List<KotlinType>, candidateDesc
     return result
 }
 
+@K1Deprecation
 fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescriptor, descriptor: CallableDescriptor): KotlinType {
     var receiverType = receiverParameterDescriptor.type
     for (typeParameter in descriptor.typeParameters) {
@@ -145,6 +154,7 @@ fun getErasedReceiverType(receiverParameterDescriptor: ReceiverParameterDescript
     )
 }
 
+@K1Deprecation
 fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
     if (descriptor.kind == CallableMemberDescriptor.Kind.SYNTHESIZED) {
         return true
@@ -155,6 +165,7 @@ fun isOrOverridesSynthesized(descriptor: CallableMemberDescriptor): Boolean {
     return false
 }
 
+@K1Deprecation
 fun isConventionCall(call: Call): Boolean {
     if (call is CallTransformer.CallForImplicitInvoke) return true
     val callElement = call.callElement
@@ -163,15 +174,18 @@ fun isConventionCall(call: Call): Boolean {
     return calleeExpression.isConventionOperator()
 }
 
+@K1Deprecation
 fun isInfixCall(call: Call): Boolean {
     val operationRefExpression = call.calleeExpression as? KtOperationReferenceExpression ?: return false
     val binaryExpression = operationRefExpression.parent as? KtBinaryExpression ?: return false
     return binaryExpression.operationReference === operationRefExpression && operationRefExpression.operationSignTokenType == null
 }
 
+@K1Deprecation
 fun isSuperOrDelegatingConstructorCall(call: Call): Boolean =
     call.calleeExpression.let { it is KtConstructorCalleeExpression || it is KtConstructorDelegationReferenceExpression }
 
+@K1Deprecation
 fun isInvokeCallOnVariable(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE) return false
     val dispatchReceiver = call.dispatchReceiver
@@ -180,15 +194,18 @@ fun isInvokeCallOnVariable(call: Call): Boolean {
     return expression is KtSimpleNameExpression
 }
 
+@K1Deprecation
 fun isInvokeCallOnExpressionWithBothReceivers(call: Call): Boolean {
     if (call.callType !== Call.CallType.INVOKE || isInvokeCallOnVariable(call)) return false
     return call.explicitReceiver != null && call.dispatchReceiver != null
 }
 
+@K1Deprecation
 fun getSuperCallExpression(call: Call): KtSuperExpression? {
     return (call.explicitReceiver as? ExpressionReceiver)?.expression as? KtSuperExpression
 }
 
+@K1Deprecation
 fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
     resolvedArgument: ResolvedValueArgument,
@@ -202,6 +219,7 @@ fun getEffectiveExpectedType(
         getExpectedType(parameterDescriptor)
 }
 
+@K1Deprecation
 fun getEffectiveExpectedType(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
@@ -210,6 +228,7 @@ fun getEffectiveExpectedType(
     return getEffectiveExpectedTypeForSingleArgument(parameterDescriptor, argument, context.languageVersionSettings, context.trace)
 }
 
+@K1Deprecation
 fun getEffectiveExpectedTypeForSingleArgument(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
@@ -267,6 +286,7 @@ private fun arrayAssignmentToVarargInNamedFormInFunction(
     return argument.isNamed() && parameterDescriptor.isVararg
 }
 
+@K1Deprecation
 fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean {
     val argumentExpression = argument.getArgumentExpression() ?: return false
     if (argumentExpression is KtCollectionLiteralExpression) return true
@@ -275,6 +295,7 @@ fun isArrayOrArrayLiteral(argument: ValueArgument, trace: BindingTrace): Boolean
     return KotlinBuiltIns.isArrayOrPrimitiveArray(type) || KotlinBuiltIns.isUnsignedArrayType(type)
 }
 
+@K1Deprecation
 fun createResolutionCandidatesForConstructors(
     lexicalScope: LexicalScope,
     call: Call,
@@ -374,6 +395,7 @@ internal fun PSIKotlinCall.replaceArguments(
     externalArgument, startingDataFlowInfo, resultDataFlowInfo, dataFlowInfoForArguments, isForImplicitInvoke
 )
 
+@K1Deprecation
 fun checkForConstructorCallOnFunctionalType(
     typeReference: KtTypeReference?,
     context: BasicCallResolutionContext

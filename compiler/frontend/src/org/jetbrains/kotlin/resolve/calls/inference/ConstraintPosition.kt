@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.constraintPosition
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind.*
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 enum class ConstraintPositionKind {
     RECEIVER_POSITION,
     EXPECTED_TYPE_POSITION,
@@ -40,8 +42,10 @@ enum class ConstraintPositionKind {
     }
 }
 
+@K1Deprecation
 fun valueParameterPosition(index: Int) = ConstraintPositionKind.VALUE_PARAMETER_POSITION.position(index)
 
+@K1Deprecation
 interface ConstraintPosition {
     val kind: ConstraintPositionKind
 
@@ -58,6 +62,7 @@ private data class ConstraintPositionWithIndex(override val kind: ConstraintPosi
     override fun toString() = "$kind($index)"
 }
 
+@K1Deprecation
 class CompoundConstraintPosition(vararg positions: ConstraintPosition) : ConstraintPosition {
 
     override val kind: ConstraintPositionKind
@@ -71,10 +76,12 @@ class CompoundConstraintPosition(vararg positions: ConstraintPosition) : Constra
     override fun toString() = "$kind(${positions.joinToString()})"
 }
 
+@K1Deprecation
 fun ConstraintPosition.derivedFrom(kind: ConstraintPositionKind): Boolean {
     return if (this !is CompoundConstraintPosition) this.kind == kind else positions.any { it.kind == kind }
 }
 
+@K1Deprecation
 class ValidityConstraintForConstituentType(
     val typeArgument: KotlinType,
     val typeParameter: TypeParameterDescriptor,
@@ -83,6 +90,7 @@ class ValidityConstraintForConstituentType(
     override val kind: ConstraintPositionKind get() = TYPE_BOUND_POSITION
 }
 
+@K1Deprecation
 fun ConstraintPosition.getValidityConstraintForConstituentType(): ValidityConstraintForConstituentType? =
     when (this) {
         is ValidityConstraintForConstituentType ->

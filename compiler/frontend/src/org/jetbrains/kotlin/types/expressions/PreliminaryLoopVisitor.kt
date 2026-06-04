@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.impl.LocalVariableDescriptor
 import org.jetbrains.kotlin.psi.KtLoopExpression
@@ -30,6 +31,7 @@ import java.util.*
  * The purpose of this class is to find all variable assignments
  * **before** loop analysis
  */
+@K1Deprecation
 class PreliminaryLoopVisitor private constructor() : AssignedVariablesSearcher() {
 
     fun clearDataFlowInfoForAssignedLocalVariables(

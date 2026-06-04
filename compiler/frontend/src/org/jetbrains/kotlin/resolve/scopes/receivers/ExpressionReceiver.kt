@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.scopes.receivers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 interface ExpressionReceiver : ReceiverValue {
     val expression: KtExpression
 

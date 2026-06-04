@@ -30,6 +30,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 dependencies {
     // junit
     testImplementation(libs.junit4)

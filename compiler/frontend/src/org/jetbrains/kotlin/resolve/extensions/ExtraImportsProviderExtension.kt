@@ -6,11 +6,13 @@
 package org.jetbrains.kotlin.resolve.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImportInfo
 
+@K1Deprecation
 interface ExtraImportsProviderExtension {
     companion object : ProjectExtensionDescriptor<ExtraImportsProviderExtension>(
         "org.jetbrains.kotlin.extraImportsProviderExtension", ExtraImportsProviderExtension::class.java

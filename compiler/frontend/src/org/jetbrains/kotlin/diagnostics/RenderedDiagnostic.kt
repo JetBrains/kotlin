@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.rendering.DiagnosticRenderer
 
+@K1Deprecation
 class RenderedDiagnostic<D : Diagnostic>(
     val diagnostic: D,
     val renderer: DiagnosticRenderer<D>

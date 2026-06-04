@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.calls.util
 
 import com.intellij.psi.StubBasedPsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
 
 /**
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.psi.KtNamedDeclaration
  *
  * This property is true only for second value parameter in the example above
  */
+@K1Deprecation
 val KtNamedDeclaration.isSingleUnderscore: Boolean
     get() {
         // We don't want to call 'getNameIdentifier' on stubs to prevent text building

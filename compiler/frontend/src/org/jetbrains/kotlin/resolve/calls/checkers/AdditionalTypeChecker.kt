@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ReceiverParameterDescriptor
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.resolve.calls.context.CallResolutionContext
@@ -24,6 +25,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 import org.jetbrains.kotlin.types.KotlinType
 
 @JvmDefaultWithCompatibility
+@K1Deprecation
 interface AdditionalTypeChecker {
     fun checkType(
         expression: KtExpression,

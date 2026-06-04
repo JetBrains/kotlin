@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.analyzer.common
 
 import com.intellij.psi.search.GlobalSearchScope
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -50,6 +51,7 @@ import org.jetbrains.kotlin.serialization.deserialization.MetadataPackageFragmen
 import org.jetbrains.kotlin.serialization.deserialization.MetadataPartProvider
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class CommonAnalysisParameters(
     val metadataPartProviderFactory: (ModuleContent<*>) -> MetadataPartProvider,
     val klibMetadataPackageFragmentProviderFactory: KlibMetadataPackageFragmentProviderFactory? = null,
@@ -58,6 +60,7 @@ class CommonAnalysisParameters(
 /**
  * A facade that is used to analyze common (platform-independent) modules in multi-platform projects.
  */
+@K1Deprecation
 class CommonResolverForModuleFactory(
     private val platformParameters: CommonAnalysisParameters,
     private val targetEnvironment: TargetEnvironment,
@@ -217,6 +220,7 @@ class CommonResolverForModuleFactory(
     }
 }
 
+@K1Deprecation
 interface CommonDependenciesContainer {
     val moduleInfos: List<ModuleInfo>
 
@@ -232,12 +236,14 @@ interface CommonDependenciesContainer {
     val refinesModuleInfos: List<ModuleInfo>
 }
 
+@K1Deprecation
 fun interface KlibMetadataPackageFragmentProviderFactory {
     fun createPackageFragmentProvider(
         context: PackageFragmentProviderCreationContext
     ): PackageFragmentProvider?
 }
 
+@K1Deprecation
 class PackageFragmentProviderCreationContext(
     val moduleInfo: ModuleInfo,
     val storageManager: StorageManager,
@@ -291,6 +297,7 @@ private fun createContainerToResolveCommonCode(
         useInstance(InlineConstTracker.DoNothing)
     }
 
+@K1Deprecation
 fun StorageComponentContainer.configureCommonSpecificComponents() {
     useImpl<MetadataPackageFragmentProvider>()
 }

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -38,6 +39,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 
+@K1Deprecation
 abstract class LazyAnnotationsContext(
     val annotationResolver: AnnotationResolver,
     val storageManager: StorageManager,
@@ -46,6 +48,7 @@ abstract class LazyAnnotationsContext(
     abstract val scope: LexicalScope
 }
 
+@K1Deprecation
 class LazyAnnotationsContextImpl(
     annotationResolver: AnnotationResolver,
     storageManager: StorageManager,
@@ -53,6 +56,7 @@ class LazyAnnotationsContextImpl(
     override val scope: LexicalScope
 ) : LazyAnnotationsContext(annotationResolver, storageManager, trace)
 
+@K1Deprecation
 class LazyAnnotations(
     val c: LazyAnnotationsContext,
     val annotationEntries: List<KtAnnotationEntry>
@@ -73,6 +77,7 @@ class LazyAnnotations(
     }
 }
 
+@K1Deprecation
 class LazyAnnotationDescriptor(
     val c: LazyAnnotationsContext,
     val annotationEntry: KtAnnotationEntry
@@ -155,5 +160,6 @@ class LazyAnnotationDescriptor(
     }
 }
 
+@K1Deprecation
 fun AnnotationDescriptor.getSourceForArgument(name: Name): SourceElement =
     (this as? LazyAnnotationDescriptor)?.getSourceForArgument(name) ?: SourceElement.NO_SOURCE

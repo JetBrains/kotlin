@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.diagnostics
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.UnboundDiagnostic
 import org.jetbrains.kotlin.diagnostics.GenericDiagnostics
 import java.util.ArrayList
 
+@K1Deprecation
 open class SimpleGenericDiagnostics<T : UnboundDiagnostic>(diagnostics: Collection<T>) : GenericDiagnostics<T> {
     //copy to prevent external change
     private val diagnostics = ArrayList(diagnostics)

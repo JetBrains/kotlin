@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.util.vavr.ImmutableMap
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.util.vavr.ImmutableSet
  * This interface is intended to provide and edit information about value nullabilities and possible types.
  * Data flow info is immutable so functions never change it.
  */
+@K1Deprecation
 interface DataFlowInfo {
 
     val completeNullabilityInfo: ImmutableMap<DataFlowValue, Nullability>
@@ -99,6 +101,7 @@ interface DataFlowInfo {
     }
 }
 
+@K1Deprecation
 object DataFlowInfoFactory {
     @JvmField
     val EMPTY: DataFlowInfo = DataFlowInfoImpl()

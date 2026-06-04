@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.ImmutableSet
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.UnsignedTypes
@@ -53,6 +54,7 @@ internal class DeclarationsCheckerBuilder(
     )
 }
 
+@K1Deprecation
 class DeclarationsChecker(
     private val descriptorResolver: DescriptorResolver,
     modifiersChecker: ModifiersChecker,
@@ -1154,6 +1156,7 @@ private fun PropertyDescriptor.getEffectiveModality(): Modality =
         false -> modality
     }
 
+@K1Deprecation
 fun PropertyDescriptor.getEffectiveModality(languageVersionSettings: LanguageVersionSettings): Modality =
     when (languageVersionSettings.supportsFeature(LanguageFeature.TakeIntoAccountEffectivelyFinalInMustBeInitializedCheck)) {
         true -> getEffectiveModality()

@@ -33,6 +33,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToK1Deprecation()
+
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
 }

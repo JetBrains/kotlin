@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.typeUtil.*
 import javax.inject.Inject
 
+@K1Deprecation
 class TypeTemplate(
     val typeVariable: TypeVariable,
     val builderInferenceData: BuilderInferenceData,
@@ -68,6 +70,7 @@ class TypeTemplate(
     override fun refine(kotlinTypeRefiner: KotlinTypeRefiner) = this
 }
 
+@K1Deprecation
 class BuilderInferenceData {
     private val csBuilder = ConstraintSystemBuilderImpl()
     private val typeTemplates = HashMap<TypeVariable, TypeTemplate>()
@@ -129,6 +132,7 @@ class BuilderInferenceData {
     }
 }
 
+@K1Deprecation
 class BuilderInferenceSupport(
     val argumentTypeResolver: ArgumentTypeResolver,
     val expressionTypingServices: ExpressionTypingServices
@@ -298,6 +302,7 @@ class BuilderInferenceSupport(
 
 private fun KotlinType.containsTypeTemplate() = contains { it is TypeTemplate || it is StubTypeForBuilderInference }
 
+@K1Deprecation
 fun isApplicableCallForBuilderInference(descriptor: CallableDescriptor, languageVersionSettings: LanguageVersionSettings): Boolean {
     if (languageVersionSettings.supportsFeature(LanguageFeature.UnrestrictedBuilderInference)) return true
 
@@ -324,6 +329,7 @@ private fun isGoodCallForOldBuilderInference(resultingDescriptor: CallableDescri
     return true
 }
 
+@K1Deprecation
 fun isBuilderInferenceCall(
     parameterDescriptor: ValueParameterDescriptor,
     argument: ValueArgument,
@@ -342,6 +348,7 @@ fun isBuilderInferenceCall(
             parameterDescriptor.type.let { it.isBuiltinFunctionalType && it.getReceiverTypeFromFunctionType() != null }
 }
 
+@K1Deprecation
 fun OverloadResolutionResultsImpl<*>.isResultWithBuilderInference() = getBuilderInferenceData() != null
 
 private fun OverloadResolutionResultsImpl<*>.getBuilderInferenceData(): BuilderInferenceData? {

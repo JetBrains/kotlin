@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.ESExpressionVisitor
 import org.jetbrains.kotlin.contracts.model.structure.AbstractESValue
 import org.jetbrains.kotlin.contracts.model.structure.ESReceiverValue
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
  *
  * Actually that interfaces must be sealed.
  */
+@K1Deprecation
 interface ESDataFlowValue {
     val dataFlowValue: DataFlowValue
 
@@ -46,6 +48,7 @@ interface ESDataFlowValue {
 /**
  * [ESVariableWithDataFlowValue] is [ESVariable] with data flow information.
  */
+@K1Deprecation
 class ESVariableWithDataFlowValue(
     descriptor: ValueDescriptor,
     override val dataFlowValue: DataFlowValue
@@ -61,6 +64,7 @@ class ESVariableWithDataFlowValue(
 /**
  * [ESReceiverWithDataFlowValue] is [ESReceiverValue] with data flow information.
  */
+@K1Deprecation
 class ESReceiverWithDataFlowValue(
     receiverValue: ReceiverValue,
     override val dataFlowValue: DataFlowValue
@@ -76,6 +80,7 @@ class ESReceiverWithDataFlowValue(
 /**
  * [ESLambda] represents lambda functions in Effect System
  */
+@K1Deprecation
 class ESLambda(val lambda: KtLambdaExpression) : AbstractESValue(null) {
     override fun <T> accept(visitor: ESExpressionVisitor<T>): T {
         return visitor.visitLambda(this)

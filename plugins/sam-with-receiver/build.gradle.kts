@@ -36,6 +36,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 publish()
 
 runtimeJar()

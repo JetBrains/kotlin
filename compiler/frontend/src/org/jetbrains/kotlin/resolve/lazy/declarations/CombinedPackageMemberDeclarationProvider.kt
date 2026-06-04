@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtDestructuringDeclarationEntry
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.scopes.DescriptorKindFilter
 
+@K1Deprecation
 class CombinedPackageMemberDeclarationProvider(
     val providers: Collection<PackageMemberDeclarationProvider>
 ) : PackageMemberDeclarationProvider {

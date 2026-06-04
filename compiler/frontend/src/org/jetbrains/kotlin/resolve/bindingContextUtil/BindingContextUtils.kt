@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve.bindingContextUtil
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.types.expressions.typeInfoFactory.noTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
+@K1Deprecation
 fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): FunctionDescriptor? {
     val targetLabel = getTargetLabel()
     if (targetLabel != null) return context[LABEL_TARGET, targetLabel]?.let { context[FUNCTION, it] }
@@ -54,22 +56,28 @@ fun KtReturnExpression.getTargetFunctionDescriptor(context: BindingContext): Fun
         .firstOrNull()
 }
 
+@K1Deprecation
 fun KtReturnExpression.getTargetFunction(context: BindingContext): KtCallableDeclaration? {
     return getTargetFunctionDescriptor(context)?.let { DescriptorToSourceUtils.descriptorToDeclaration(it) as? KtCallableDeclaration }
 }
 
+@K1Deprecation
 fun KtElement.isUsedAsExpression(context: BindingContext): Boolean =
     context[USED_AS_EXPRESSION, this] ?: false
 
+@K1Deprecation
 fun KtElement.recordUsedAsExpression(trace: BindingTrace, value: Boolean) {
     if (isUsedAsExpression(trace.bindingContext)) return
     trace.record(USED_AS_EXPRESSION, this, value)
 }
 
+@K1Deprecation
 fun KtExpression.isUsedAsResultOfLambda(context: BindingContext): Boolean = context[USED_AS_RESULT_OF_LAMBDA, this]!!
+@K1Deprecation
 fun KtExpression.isUsedAsStatement(context: BindingContext): Boolean = !isUsedAsExpression(context)
 
 
+@K1Deprecation
 fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expression: KtExpression?) {
     if (expression == null) return
 
@@ -82,12 +90,14 @@ fun <C : ResolutionContext<C>> ResolutionContext<C>.recordDataFlowInfo(expressio
     }
 }
 
+@K1Deprecation
 fun BindingTrace.recordScope(scope: LexicalScope, element: KtElement?) {
     if (element != null) {
         record(LEXICAL_SCOPE, element, scope.takeSnapshot() as LexicalScope)
     }
 }
 
+@K1Deprecation
 fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)?.let {
@@ -100,6 +110,7 @@ fun BindingContext.getDataFlowInfoAfter(position: PsiElement): DataFlowInfo {
     return DataFlowInfo.EMPTY
 }
 
+@K1Deprecation
 fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
     for (element in position.parentsWithSelf) {
         (element as? KtExpression)
@@ -109,14 +120,17 @@ fun BindingContext.getDataFlowInfoBefore(position: PsiElement): DataFlowInfo {
     return DataFlowInfo.EMPTY
 }
 
+@K1Deprecation
 fun KtExpression.getReferenceTargets(context: BindingContext): Collection<DeclarationDescriptor> {
     val targetDescriptor = if (this is KtReferenceExpression) context[REFERENCE_TARGET, this] else null
     return targetDescriptor?.let { listOf(it) } ?: context[AMBIGUOUS_REFERENCE_TARGET, this].orEmpty()
 }
 
+@K1Deprecation
 fun KtTypeReference.getAbbreviatedTypeOrType(context: BindingContext) =
     context[ABBREVIATED_TYPE, this] ?: context[TYPE, this]
 
+@K1Deprecation
 fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType? {
     return when (val parent = parent) {
         is KtTypeReference -> parent.getAbbreviatedTypeOrType(context)
@@ -128,6 +142,7 @@ fun KtTypeElement.getAbbreviatedTypeOrType(context: BindingContext): KotlinType?
     }
 }
 
+@K1Deprecation
 fun <T : PsiElement> KtElement.getParentOfTypeCodeFragmentAware(vararg parentClasses: Class<out T>): T? {
     PsiTreeUtil.getParentOfType(this, *parentClasses)?.let { return it }
 
@@ -142,6 +157,7 @@ fun <T : PsiElement> KtElement.getParentOfTypeCodeFragmentAware(vararg parentCla
     return null
 }
 
+@K1Deprecation
 fun getEnclosingDescriptor(context: BindingContext, element: KtElement): DeclarationDescriptor {
     val declaration =
         element.getParentOfTypeCodeFragmentAware(KtNamedDeclaration::class.java)
@@ -156,6 +172,7 @@ fun getEnclosingDescriptor(context: BindingContext, element: KtElement): Declara
     }
 }
 
+@K1Deprecation
 fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement, skipInlineFunctionLiterals: Boolean): FunctionDescriptor? {
     var current = element
     while (true) {
@@ -180,6 +197,7 @@ fun getEnclosingFunctionDescriptor(context: BindingContext, element: KtElement, 
     }
 }
 
+@K1Deprecation
 fun isInlineableFunctionLiteral(expression: KtExpression, context: BindingContext): Boolean {
     if (expression !is KtLambdaExpression && !(expression is KtNamedFunction && expression.name == null)) {
         return false

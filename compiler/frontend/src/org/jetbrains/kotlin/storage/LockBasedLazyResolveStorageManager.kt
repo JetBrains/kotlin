@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.storage
 
 import com.intellij.openapi.project.Project
 import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Diagnostic
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.BindingTrace
@@ -28,6 +29,7 @@ import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class LockBasedLazyResolveStorageManager(private val storageManager: StorageManager) : StorageManager by storageManager,
     LazyResolveStorageManager {
     override fun <K : Any, V : Any> createSoftlyRetainedMemoizedFunction(compute: Function1<K, V>) =

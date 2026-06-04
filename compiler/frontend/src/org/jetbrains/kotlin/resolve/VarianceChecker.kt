@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.LanguageVersionSettingsImpl
@@ -40,8 +41,10 @@ import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.Variance.*
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
+@K1Deprecation
 class ManualVariance(val descriptor: TypeParameterDescriptor, val variance: Variance)
 
+@K1Deprecation
 class VarianceChecker(trace: BindingTrace, languageVersionSettings: LanguageVersionSettings) {
     private val core = VarianceCheckerCore(trace.bindingContext, trace, languageVersionSettings = languageVersionSettings)
 
@@ -50,12 +53,14 @@ class VarianceChecker(trace: BindingTrace, languageVersionSettings: LanguageVers
     }
 }
 
+@K1Deprecation
 class VarianceConflictDiagnosticData(
     val containingType: KotlinType,
     val typeParameter: TypeParameterDescriptor,
     val occurrencePosition: Variance
 )
 
+@K1Deprecation
 class VarianceCheckerCore(
     val context: BindingContext,
     private val diagnosticSink: DiagnosticSink,

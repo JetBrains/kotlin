@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.analyzer
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import java.io.File
 
+@K1Deprecation
 open class AnalysisResult protected constructor(
     val bindingContext: BindingContext,
     val moduleDescriptor: ModuleDescriptor,

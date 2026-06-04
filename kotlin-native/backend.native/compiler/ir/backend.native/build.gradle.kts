@@ -68,5 +68,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 sourcesJar()
 javadocJar()

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitReceiver
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 data class ImplicitSmartCasts private constructor(val receiverTypes: Map<ImplicitReceiver, KotlinType>) {
     operator fun plus(other: ImplicitSmartCasts) = ImplicitSmartCasts(receiverTypes + other.receiverTypes)
 

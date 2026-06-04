@@ -114,6 +114,8 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 runtimeJar()
 sourcesJar()
 javadocJar()

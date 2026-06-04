@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.tower
 
 import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isPrimitiveTypeOrNullablePrimitiveType
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns.isUnderKotlinPackage
 import org.jetbrains.kotlin.builtins.createFunctionType
@@ -54,6 +55,7 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
+@K1Deprecation
 data class LambdaContextInfo(
     var typeInfo: KotlinTypeInfo? = null,
     var dataFlowInfoAfter: DataFlowInfo? = null,
@@ -61,6 +63,7 @@ data class LambdaContextInfo(
     var trace: BindingTrace? = null
 )
 
+@K1Deprecation
 class KotlinResolutionCallbacksImpl(
     val trace: BindingTrace,
     private val expressionTypingServices: ExpressionTypingServices,

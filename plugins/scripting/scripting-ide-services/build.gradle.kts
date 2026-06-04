@@ -34,6 +34,8 @@ sourceSets {
     "test" { }
 }
 
+optInToK1Deprecation()
+
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.addAll(
         listOf(

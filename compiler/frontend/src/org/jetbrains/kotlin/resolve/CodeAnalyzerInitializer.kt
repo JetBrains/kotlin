@@ -17,7 +17,9 @@
 package org.jetbrains.kotlin.resolve
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 interface CodeAnalyzerInitializer {
     fun createTrace(): BindingTrace
 
@@ -27,6 +29,7 @@ interface CodeAnalyzerInitializer {
     }
 }
 
+@K1Deprecation
 class DummyCodeAnalyzerInitializer(val project: Project) : CodeAnalyzerInitializer {
     override fun createTrace(): BindingTrace = BindingTraceContext(/* allowSliceRewrite = */ true, project)
 }

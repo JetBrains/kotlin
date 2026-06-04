@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve.inline
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
 import org.jetbrains.kotlin.resolve.BindingContext
 
+@K1Deprecation
 interface ReasonableInlineRule {
     fun isInlineReasonable(descriptor: CallableMemberDescriptor, declaration: KtCallableDeclaration, context: BindingContext): Boolean
 }

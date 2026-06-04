@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.diagnostics
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.isFunctionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -42,6 +43,7 @@ import org.jetbrains.kotlin.types.typeUtil.isAnyOrNullableAny
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.types.typeUtil.isNullableNothing
 
+@K1Deprecation
 fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
     expression: KtElement,
     expectedType: KotlinType,
@@ -111,12 +113,14 @@ fun ResolutionContext<*>.reportTypeMismatchDueToTypeProjection(
     return true
 }
 
+@K1Deprecation
 fun BindingTrace.reportDiagnosticOnce(diagnostic: Diagnostic) {
     if (bindingContext.diagnostics.noSuppression().forElement(diagnostic.psiElement).any { it.factory == diagnostic.factory }) return
 
     report(diagnostic)
 }
 
+@K1Deprecation
 fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
     diagnosticToReport: Diagnostic,
     vararg diagnosticFactories: DiagnosticFactory<*>,
@@ -131,6 +135,7 @@ fun BindingTrace.reportDiagnosticOnceWrtDiagnosticFactoryList(
     report(diagnosticToReport)
 }
 
+@K1Deprecation
 class TypeMismatchDueToTypeProjectionsData(
     val expectedType: KotlinType,
     val expressionType: KotlinType,
@@ -138,6 +143,7 @@ class TypeMismatchDueToTypeProjectionsData(
     val callableDescriptor: CallableDescriptor
 )
 
+@K1Deprecation
 fun ResolutionContext<*>.reportTypeMismatchDueToScalaLikeNamedFunctionSyntax(
     expression: KtElement,
     expectedType: KotlinType,
@@ -157,18 +163,21 @@ private fun isScalaLikeEqualsBlock(expression: KtElement): Boolean =
     expression is KtLambdaExpression &&
             expression.parent.let { it is KtNamedFunction && it.equalsToken != null }
 
+@K1Deprecation
 inline fun reportOnDeclaration(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
     DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
         trace.report(what(psiElement))
     }
 }
 
+@K1Deprecation
 inline fun reportOnDeclarationOrFail(trace: BindingTrace, descriptor: DeclarationDescriptor, what: (PsiElement) -> Diagnostic) {
     DescriptorToSourceUtils.descriptorToDeclaration(descriptor)?.let { psiElement ->
         trace.report(what(psiElement))
     } ?: throw AssertionError("No declaration for $descriptor")
 }
 
+@K1Deprecation
 inline fun <reified T : KtDeclaration> reportOnDeclarationAs(
     trace: BindingTrace,
     descriptor: DeclarationDescriptor,

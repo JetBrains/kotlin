@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.psi.KtCallableReferenceExpression
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
  * Deprecate callable references in a form of (SomeClass)::name when SomeClass has a companion
  * and `(SomeClass)` is being used just like a value reference to the companion
  */
+@K1Deprecation
 object CompanionInParenthesesLHSCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val callableReference = resolvedCall.call.callElement.parent as? KtCallableReferenceExpression ?: return
@@ -41,6 +43,7 @@ object CompanionInParenthesesLHSCallChecker : CallChecker {
  * Because they have wrong function type shape at K1
  * (see relevant testData)
  */
+@K1Deprecation
 object CompanionIncorrectlyUnboundedWhenUsedAsLHSCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val callableReference = resolvedCall.call.callElement.parent as? KtCallableReferenceExpression ?: return

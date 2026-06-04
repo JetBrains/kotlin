@@ -16,6 +16,8 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class SmartCastResult(val resultType: KotlinType, val isCorrect: Boolean)

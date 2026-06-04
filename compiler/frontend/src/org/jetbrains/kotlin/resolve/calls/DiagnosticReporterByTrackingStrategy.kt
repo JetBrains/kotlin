@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.builtins.functions.FunctionInvokeDescriptor
 import org.jetbrains.kotlin.builtins.isExtensionFunctionType
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+@K1Deprecation
 class DiagnosticReporterByTrackingStrategy(
     val constantExpressionEvaluator: ConstantExpressionEvaluator,
     val context: BasicCallResolutionContext,
@@ -936,5 +938,7 @@ class DiagnosticReporterByTrackingStrategy(
 
 }
 
+@K1Deprecation
 val NewConstraintMismatch.upperKotlinType get() = upperType as KotlinType
+@K1Deprecation
 val NewConstraintMismatch.lowerKotlinType get() = lowerType as KotlinType

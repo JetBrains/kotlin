@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtNamedFunction
 
+@K1Deprecation
 interface BodyResolveCache {
     fun resolveFunctionBody(function: KtNamedFunction): BindingContext
 

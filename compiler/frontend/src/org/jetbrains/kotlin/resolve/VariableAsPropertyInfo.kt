@@ -16,10 +16,12 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtProperty
 import org.jetbrains.kotlin.psi.KtPropertyAccessor
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 class VariableAsPropertyInfo(
     val propertyGetter: KtPropertyAccessor?,
     val propertySetter: KtPropertyAccessor?,

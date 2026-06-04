@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.types.expressions.unqualifiedSuper
 
 import com.intellij.util.SmartList
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeChecker
 import org.jetbrains.kotlin.types.typeUtil.isAny
 
 
+@K1Deprecation
 fun resolveUnqualifiedSuperFromExpressionContext(
     superExpression: KtSuperExpression,
     supertypes: Collection<KotlinType>,
@@ -71,6 +73,7 @@ private val ARITY_OF_METHODS_OF_ANY = hashMapOf("hashCode" to 0, "equals" to 1, 
 private fun isCallingMethodOfAny(callExpression: KtCallExpression, calleeName: Name): Boolean =
     ARITY_OF_METHODS_OF_ANY.getOrElse(calleeName.asString()) { -1 } == callExpression.valueArguments.size
 
+@K1Deprecation
 fun isPossiblyAmbiguousUnqualifiedSuper(superExpression: KtSuperExpression, supertypes: Collection<KotlinType>): Boolean =
     supertypes.size > 1 ||
             (supertypes.size == 1 && supertypes.single().isInterface() && isCallingMethodOfAnyWithSuper(superExpression))

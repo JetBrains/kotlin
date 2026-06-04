@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 import org.jetbrains.kotlin.types.typeUtil.contains
 import org.jetbrains.kotlin.types.typeUtil.shouldBeUpdated
 
+@K1Deprecation
 class BuilderInferenceSession(
     psiCallResolver: PSICallResolver,
     postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -646,6 +648,7 @@ class BuilderInferenceSession(
     }
 }
 
+@K1Deprecation
 class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubstitutor) : NewTypeSubstitutor {
     override fun substituteNotNullTypeWithConstructor(constructor: TypeConstructor): UnwrappedType? {
         val rightSubstitution = right.substituteNotNullTypeWithConstructor(constructor)
@@ -655,4 +658,5 @@ class ComposedSubstitutor(val left: NewTypeSubstitutor, val right: NewTypeSubsti
     override val isEmpty: Boolean get() = left.isEmpty && right.isEmpty
 }
 
+@K1Deprecation
 class BuilderInferenceExpectedTypeConstraintPosition(callElement: KtExpression) : ExpectedTypeConstraintPosition<KtExpression>(callElement)

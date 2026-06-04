@@ -19,6 +19,7 @@ package org.jetbrains.kotlin.context
 import com.intellij.openapi.progress.ProcessCanceledException
 import com.intellij.openapi.progress.ProgressManager
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ModuleCapability
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -30,19 +31,23 @@ import org.jetbrains.kotlin.storage.ExceptionTracker
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 interface GlobalContext {
     val storageManager: StorageManager
     val exceptionTracker: ExceptionTracker
 }
 
+@K1Deprecation
 interface ProjectContext : GlobalContext {
     val project: Project
 }
 
+@K1Deprecation
 interface ModuleContext : ProjectContext {
     val module: ModuleDescriptor
 }
 
+@K1Deprecation
 interface MutableModuleContext : ModuleContext {
     override val module: ModuleDescriptorImpl
 
@@ -59,11 +64,13 @@ interface MutableModuleContext : ModuleContext {
     }
 }
 
+@K1Deprecation
 open class SimpleGlobalContext(
     override val storageManager: StorageManager,
     override val exceptionTracker: ExceptionTracker
 ) : GlobalContext
 
+@K1Deprecation
 open class GlobalContextImpl(
     storageManager: LockBasedStorageManager,
     exceptionTracker: ExceptionTracker
@@ -71,21 +78,25 @@ open class GlobalContextImpl(
     override val storageManager: LockBasedStorageManager = super.storageManager as LockBasedStorageManager
 }
 
+@K1Deprecation
 class ProjectContextImpl(
     override val project: Project,
     private val globalContext: GlobalContext
 ) : ProjectContext, GlobalContext by globalContext
 
+@K1Deprecation
 class ModuleContextImpl(
     override val module: ModuleDescriptor,
     projectContext: ProjectContext
 ) : ModuleContext, ProjectContext by projectContext
 
+@K1Deprecation
 class MutableModuleContextImpl(
     override val module: ModuleDescriptorImpl,
     projectContext: ProjectContext
 ) : MutableModuleContext, ProjectContext by projectContext
 
+@K1Deprecation
 fun GlobalContext(debugName: String): GlobalContextImpl {
     val tracker = ExceptionTracker()
     return GlobalContextImpl(LockBasedStorageManager.createWithExceptionHandling(debugName, tracker, {
@@ -93,13 +104,18 @@ fun GlobalContext(debugName: String): GlobalContextImpl {
     }, { throw ProcessCanceledException(it) }), tracker)
 }
 
+@K1Deprecation
 fun ProjectContext(project: Project, debugName: String): ProjectContext = ProjectContextImpl(project, GlobalContext(debugName))
+@K1Deprecation
 fun ModuleContext(module: ModuleDescriptor, project: Project, debugName: String): ModuleContext =
     ModuleContextImpl(module, ProjectContext(project, debugName))
 
+@K1Deprecation
 fun GlobalContext.withProject(project: Project): ProjectContext = ProjectContextImpl(project, this)
+@K1Deprecation
 fun ProjectContext.withModule(module: ModuleDescriptor): ModuleContext = ModuleContextImpl(module, this)
 
+@K1Deprecation
 fun ContextForNewModule(
     projectContext: ProjectContext,
     moduleName: Name,

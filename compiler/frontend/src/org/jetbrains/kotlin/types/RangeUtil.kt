@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.ClassId
@@ -13,12 +14,18 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
+@K1Deprecation
 const val CHAR_RANGE_FQN = "kotlin.ranges.CharRange"
+@K1Deprecation
 const val INT_RANGE_FQN = "kotlin.ranges.IntRange"
+@K1Deprecation
 const val LONG_RANGE_FQN = "kotlin.ranges.LongRange"
 
+@K1Deprecation
 const val CHAR_PROGRESSION_FQN = "kotlin.ranges.CharProgression"
+@K1Deprecation
 const val INT_PROGRESSION_FQN = "kotlin.ranges.IntProgression"
+@K1Deprecation
 const val LONG_PROGRESSION_FQN = "kotlin.ranges.LongProgression"
 
 private const val CLOSED_FLOAT_RANGE_FQN = "kotlin.ranges.ClosedFloatRange"
@@ -44,6 +51,7 @@ private val ALL_PROGRESSION_AND_RANGES = listOf(
     ULONG_RANGE_FQN, ULONG_PROGRESSION_FQN
 )
 
+@K1Deprecation
 fun getRangeOrProgressionElementType(rangeType: KotlinType, progressionsAndRanges: List<String> = ALL_PROGRESSION_AND_RANGES): KotlinType? {
     val rangeClassDescriptor = rangeType.constructor.declarationDescriptor as? ClassDescriptor ?: return null
     val builtIns = rangeClassDescriptor.builtIns

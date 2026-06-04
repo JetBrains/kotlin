@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.coroutines.hasSuspendFunctionType
@@ -32,20 +33,25 @@ import org.jetbrains.kotlin.resolve.scopes.utils.parentsWithSelf
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.supertypes
 
+@K1Deprecation
 val COROUTINE_CONTEXT_FQ_NAME =
     StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
 
+@K1Deprecation
 fun FqName.isBuiltInCoroutineContext(): Boolean =
     this == StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("coroutineContext"))
 
+@K1Deprecation
 fun FunctionDescriptor.isBuiltInCoroutineContext() =
     (this as? PropertyGetterDescriptor)?.correspondingProperty?.fqNameSafe?.isBuiltInCoroutineContext() == true
 
+@K1Deprecation
 fun PropertyDescriptor.isBuiltInCoroutineContext() =
     fqNameSafe.isBuiltInCoroutineContext()
 
 private val ALLOWED_SCOPE_KINDS = setOf(LexicalScopeKind.FUNCTION_INNER_SCOPE, LexicalScopeKind.FUNCTION_HEADER_FOR_DESTRUCTURING)
 
+@K1Deprecation
 fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescriptor? {
     val scope = context.scope.parentsWithSelf.firstOrNull {
         it is LexicalScope && it.kind in ALLOWED_SCOPE_KINDS && (it.ownerDescriptor as? FunctionDescriptor)?.isSuspend == true
@@ -53,6 +59,7 @@ fun findEnclosingSuspendFunction(context: CallCheckerContext): FunctionDescripto
     return scope?.ownerDescriptor as FunctionDescriptor?
 }
 
+@K1Deprecation
 object CoroutineSuspendCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor
@@ -114,6 +121,7 @@ object CoroutineSuspendCallChecker : CallChecker {
 private fun HierarchicalScope.isScopeForDefaultParameterValuesOf(enclosingSuspendFunction: FunctionDescriptor) =
     this is LexicalScope && this.kind == LexicalScopeKind.DEFAULT_VALUE && this.ownerDescriptor == enclosingSuspendFunction
 
+@K1Deprecation
 object BuilderFunctionsCallChecker : CallChecker {
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
         val descriptor = resolvedCall.candidateDescriptor as? FunctionDescriptor ?: return
@@ -123,6 +131,7 @@ object BuilderFunctionsCallChecker : CallChecker {
     }
 }
 
+@K1Deprecation
 fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, diagnosticHolder: DiagnosticSink, reportOn: PsiElement) {
     if (languageVersionSettings.supportsFeature(LanguageFeature.ReleaseCoroutines)) {
         if (languageVersionSettings.apiVersion < ApiVersion.KOTLIN_1_3) {
@@ -132,12 +141,14 @@ fun checkCoroutinesFeature(languageVersionSettings: LanguageVersionSettings, dia
     }
 }
 
+@K1Deprecation
 fun KotlinType.isRestrictsSuspensionReceiver() = (listOf(this) + this.supertypes()).any {
     it.constructor.declarationDescriptor?.annotations?.hasAnnotation(
         StandardNames.COROUTINES_PACKAGE_FQ_NAME.child(Name.identifier("RestrictsSuspension"))
     ) == true
 }
 
+@K1Deprecation
 fun FunctionDescriptor.isRestrictedSuspendFunction(): Boolean =
     extensionReceiverParameter?.type?.isRestrictsSuspensionReceiver() == true
 

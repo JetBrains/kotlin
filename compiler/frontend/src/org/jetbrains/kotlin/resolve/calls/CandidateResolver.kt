@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.calls
 
 import com.google.common.collect.Lists
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.descriptors.*
@@ -44,6 +45,7 @@ import org.jetbrains.kotlin.types.typeUtil.containsTypeProjectionsInTopLevelArgu
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import kotlin.math.min
 
+@K1Deprecation
 class CandidateResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val genericCandidateResolver: GenericCandidateResolver,

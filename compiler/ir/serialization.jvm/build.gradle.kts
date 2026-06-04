@@ -22,3 +22,5 @@ sourceSets {
     }
     "test" {}
 }
+
+optInToK1Deprecation()

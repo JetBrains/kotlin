@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.*
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.resolve.calls.results.OverloadResolutionResults
 import org.jetbrains.kotlin.resolve.calls.tasks.TracingStrategy
 import org.jetbrains.kotlin.types.TypeConstructor
 
+@K1Deprecation
 abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     private val psiCallResolver: PSICallResolver,
     private val postponedArgumentsAnalyzer: PostponedArgumentsAnalyzer,
@@ -197,23 +199,27 @@ abstract class StubTypesBasedInferenceSession<D : CallableDescriptor>(
     }
 }
 
+@K1Deprecation
 data class ResolutionResultCallInfo<D : CallableDescriptor>(
     val resolutionResult: CallResolutionResult,
     val overloadResolutionResults: OverloadResolutionResults<D>
 )
 
+@K1Deprecation
 abstract class CallInfo(
     open val callResolutionResult: SingleCallResolutionResult,
     val context: BasicCallResolutionContext,
     val tracingStrategy: TracingStrategy
 )
 
+@K1Deprecation
 class PSIPartialCallInfo(
     override val callResolutionResult: PartialCallResolutionResult,
     context: BasicCallResolutionContext,
     tracingStrategy: TracingStrategy
 ) : CallInfo(callResolutionResult, context, tracingStrategy), PartialCallInfo
 
+@K1Deprecation
 class PSICompletedCallInfo(
     override val callResolutionResult: CompletedCallResolutionResult,
     context: BasicCallResolutionContext,
@@ -221,6 +227,7 @@ class PSICompletedCallInfo(
     tracingStrategy: TracingStrategy
 ) : CallInfo(callResolutionResult, context, tracingStrategy), CompletedCallInfo
 
+@K1Deprecation
 class PSIErrorCallInfo<D : CallableDescriptor>(
     override val callResolutionResult: CallResolutionResult,
     val result: OverloadResolutionResults<D>

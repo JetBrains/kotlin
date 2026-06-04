@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfoFactory
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowValue
 import org.jetbrains.kotlin.resolve.calls.smartcasts.IdentifierInfo
 
+@K1Deprecation
 fun MutableContextInfo.toDataFlowInfo(languageVersionSettings: LanguageVersionSettings, builtIns: KotlinBuiltIns): DataFlowInfo {
     var resultingDataFlowInfo = DataFlowInfoFactory.EMPTY
 

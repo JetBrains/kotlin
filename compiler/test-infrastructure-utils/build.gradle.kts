@@ -19,6 +19,8 @@ dependencies {
     testFixturesImplementation(intellijCore())
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(kotlin("test"))
+    // This line is needed for optInToK1Deprecation only
+    testImplementation(project(":core:util.runtime"))
 }
 
 sourceSets {
@@ -26,6 +28,8 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
+
+optInToK1Deprecation()
 
 testsJar()
 

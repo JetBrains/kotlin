@@ -11,6 +11,7 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import com.intellij.psi.util.PsiTreeUtil
 import com.intellij.util.containers.Stack
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.checkers.diagnostics.*
 import org.jetbrains.kotlin.checkers.diagnostics.factories.DebugInfoDiagnosticFactory
@@ -46,6 +47,7 @@ import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 import java.util.*
 import java.util.regex.Pattern
 
+@K1Deprecation
 data class DiagnosticsRenderingConfiguration(
     val platform: String?,
     val withNewInference: Boolean,
@@ -53,6 +55,7 @@ data class DiagnosticsRenderingConfiguration(
     val skipDebugInfoDiagnostics: Boolean = false,
 )
 
+@K1Deprecation
 object CheckerTestUtil {
     const val NEW_INFERENCE_PREFIX = "NI"
     const val OLD_INFERENCE_PREFIX = "OI"
@@ -716,6 +719,7 @@ object CheckerTestUtil {
     }
 }
 
+@K1Deprecation
 enum class TypeOfCall(val nameToRender: String) {
     VARIABLE_THROUGH_INVOKE("variable&invoke"),
     PROPERTY_GETTER("variable"),

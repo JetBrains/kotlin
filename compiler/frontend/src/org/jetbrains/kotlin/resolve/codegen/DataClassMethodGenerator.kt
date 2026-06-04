@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.codegen
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.FunctionDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
 import org.jetbrains.kotlin.psi.KtClassOrObject
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.BindingContext
  * TODO: data class with zero components gets no toString/equals/hashCode methods. This is inconsistent and should be
  * changed here with the platform backends adopted.
  */
+@K1Deprecation
 abstract class DataClassMethodGenerator(
     declaration: KtClassOrObject,
     bindingContext: BindingContext

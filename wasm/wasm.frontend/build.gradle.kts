@@ -15,4 +15,6 @@ sourceSets {
     "test" {}
 }
 
+optInToK1Deprecation()
+
 generatedConfigurationKeys("WasmConfigurationKeys")

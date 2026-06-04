@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.smartcasts
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.cfg.getDeclarationDescriptorIncludingConstructors
 import org.jetbrains.kotlin.cfg.getElementParentDeclaration
 import org.jetbrains.kotlin.config.LanguageFeature.*
@@ -127,6 +128,7 @@ internal fun VariableDescriptor.variableKind(
 }
 
 
+@K1Deprecation
 fun hasNoWritersInClosures(
     variableContainingDeclaration: DeclarationDescriptor,
     writers: Set<AssignedVariablesSearcher.Writer>,

@@ -6,14 +6,17 @@
 package org.jetbrains.kotlin.resolve
 
 import com.google.common.collect.Sets
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingContext.PACKAGE_TO_FILES
 import org.jetbrains.kotlin.util.slicedMap.WritableSlice
 
+@K1Deprecation
 interface FilePreprocessorExtension {
     fun preprocessFile(file: KtFile)
 }
 
+@K1Deprecation
 class FilePreprocessor(
     private val trace: BindingTrace,
     private val extensions: Iterable<FilePreprocessorExtension>
@@ -33,6 +36,7 @@ class FilePreprocessor(
     }
 }
 
+@K1Deprecation
 fun <K, T> BindingTrace.addElementToSlice(
     slice: WritableSlice<K, MutableCollection<T>>, key: K, element: T
 ) {

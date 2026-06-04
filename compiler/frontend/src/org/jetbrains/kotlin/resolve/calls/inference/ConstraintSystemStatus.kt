@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPositionKind
 
+@K1Deprecation
 interface ConstraintSystemStatus {
     /**
      * Returns `true` if constraint system has a solution (has no contradiction and has enough information to infer each registered type variable).

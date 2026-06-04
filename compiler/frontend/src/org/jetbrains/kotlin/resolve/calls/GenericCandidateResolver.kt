@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -49,8 +50,10 @@ import org.jetbrains.kotlin.types.expressions.ControlStructureTypingUtils.Resolv
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
 
+@K1Deprecation
 val SPECIAL_FUNCTION_NAMES = ResolveConstruct.entries.map { it.specialFunctionName }.toSet()
 
+@K1Deprecation
 class GenericCandidateResolver(
     private val argumentTypeResolver: ArgumentTypeResolver,
     private val builderInferenceSupport: BuilderInferenceSupport,
@@ -506,6 +509,7 @@ class GenericCandidateResolver(
     }
 }
 
+@K1Deprecation
 fun getResolutionResultsCachedData(expression: KtExpression?, context: ResolutionContext<*>): ResolutionResultsCache.CachedData? {
     if (!ExpressionTypingUtils.dependsOnExpectedType(expression)) return null
     val argumentCall = expression?.getCall(context.trace.bindingContext) ?: return null
@@ -513,6 +517,7 @@ fun getResolutionResultsCachedData(expression: KtExpression?, context: Resolutio
     return context.resolutionResultsCache[argumentCall]
 }
 
+@K1Deprecation
 fun makeConstantSubstitutor(typeParameterDescriptors: Collection<TypeParameterDescriptor>, type: KotlinType): TypeSubstitutor {
     val constructors = typeParameterDescriptors.map { it.typeConstructor }.toSet()
     val projection = TypeProjectionImpl(type)

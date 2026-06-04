@@ -27,6 +27,8 @@ sourceSets {
     "test" { none() }
 }
 
+optInToK1Deprecation()
+
 optInToExperimentalCompilerApi()
 
 runtimeJar()

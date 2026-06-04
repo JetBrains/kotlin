@@ -16,6 +16,9 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 enum class TopDownAnalysisMode(val isLocalDeclarations: Boolean) {
     LocalDeclarations(true),
     TopLevelDeclarations(false)

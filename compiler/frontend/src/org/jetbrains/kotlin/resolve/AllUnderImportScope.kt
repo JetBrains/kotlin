@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.util.collectionUtils.forEachScope
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 class AllUnderImportScope private constructor(
     descriptor: DeclarationDescriptor,
     excludedImportNames: Collection<FqName>,

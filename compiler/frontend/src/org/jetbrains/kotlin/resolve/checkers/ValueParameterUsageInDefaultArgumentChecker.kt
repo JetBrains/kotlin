@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageFeature.ProhibitIllegalValueParameterUsageInDefaultArguments
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
@@ -16,6 +17,7 @@ import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.resolve.calls.tower.NewVariableAsFunctionResolvedCallImpl
 import org.jetbrains.kotlin.resolve.calls.util.getResolvedCall
 
+@K1Deprecation
 object ValueParameterUsageInDefaultArgumentChecker : DeclarationChecker {
     override fun check(declaration: KtDeclaration, descriptor: DeclarationDescriptor, context: DeclarationCheckerContext) {
         if (declaration !is KtFunction || descriptor !is FunctionDescriptor) return

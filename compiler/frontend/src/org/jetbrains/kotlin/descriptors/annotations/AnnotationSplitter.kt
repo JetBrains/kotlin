@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.descriptors.annotations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationUseSiteTarget.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.AnnotationChecker
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.storage.getValue
              other -> [T].
  */
 
+@K1Deprecation
 class AnnotationSplitter(
     private val storageManager: StorageManager,
     allAnnotations: Annotations,

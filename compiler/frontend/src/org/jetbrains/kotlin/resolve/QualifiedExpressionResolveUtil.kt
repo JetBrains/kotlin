@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.resolve.calls.util.FakeCallableDescriptorForTypeAliasObject
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.hasCompanionObject
 import org.jetbrains.kotlin.resolve.scopes.receivers.*
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingContext
 
+@K1Deprecation
 fun resolveQualifierAsReceiverInExpression(
     qualifier: Qualifier, selector: DeclarationDescriptor?, context: ExpressionTypingContext
 ): DeclarationDescriptor {
@@ -37,6 +39,7 @@ fun resolveQualifierAsReceiverInExpression(
     return referenceTarget
 }
 
+@K1Deprecation
 fun resolveQualifierAsStandaloneExpression(
     qualifier: Qualifier, context: ExpressionTypingContext
 ): DeclarationDescriptor {

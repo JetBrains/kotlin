@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.resolve.checkers
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.diagnostics.Errors
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallExpression
@@ -22,6 +23,7 @@ import org.jetbrains.kotlin.types.isFlexible
 import org.jetbrains.kotlin.types.isNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
+@K1Deprecation
 object NullableExtensionOperatorWithSafeCallChecker : CallChecker {
     private val RELEVANT_OPERATORS = mutableSetOf<Name>().apply {
         addAll(OperatorNameConventions.ASSIGNMENT_OPERATIONS)

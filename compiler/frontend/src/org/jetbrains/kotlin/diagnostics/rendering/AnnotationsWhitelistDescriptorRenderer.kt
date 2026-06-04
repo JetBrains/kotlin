@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.diagnostics.rendering
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.platform.PlatformSpecificDiagnosticComponents
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 
+@K1Deprecation
 data class DeclarationWithDiagnosticComponents(
     val declaration: DeclarationDescriptor,
     val diagnosticComponents: PlatformSpecificDiagnosticComponents
@@ -17,6 +19,7 @@ data class DeclarationWithDiagnosticComponents(
         sequenceOf(declaration, diagnosticComponents).iterator()
 }
 
+@K1Deprecation
 class AnnotationsWhitelistDescriptorRenderer(
     private val baseRenderer: DescriptorRenderer,
     private val toParameterRenderer: DescriptorRenderer.() -> DiagnosticParameterRenderer<DeclarationDescriptor>
@@ -31,6 +34,7 @@ class AnnotationsWhitelistDescriptorRenderer(
     }
 }
 
+@K1Deprecation
 fun DescriptorRenderer.withAnnotationsWhitelist(
     toParameterRenderer: DescriptorRenderer.() -> DiagnosticParameterRenderer<DeclarationDescriptor> = DescriptorRenderer::asRenderer
 ) = AnnotationsWhitelistDescriptorRenderer(this, toParameterRenderer)

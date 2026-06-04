@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.cfg.containingDeclarationForPseudocode
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.resolve.calls.util.isOrOverridesSynthesized
 import org.jetbrains.kotlin.resolve.descriptorUtil.isTypeRefinementEnabled
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
 
+@K1Deprecation
 fun KtElement.containingNonLocalDeclaration(): KtDeclaration? {
     var container = this.containingDeclarationForPseudocode
     while (container != null && KtPsiUtil.isLocal(container)) {
@@ -26,18 +28,21 @@ fun KtElement.containingNonLocalDeclaration(): KtDeclaration? {
     return container
 }
 
+@K1Deprecation
 val KtDeclaration.isOrdinaryClass
     get() = this is KtClass &&
             !this.hasModifier(KtTokens.INLINE_KEYWORD) &&
             !this.isAnnotation() &&
             !this.isInterface()
 
+@K1Deprecation
 val KtDeclaration.isAnnotated get() = this.annotationEntries.isNotEmpty()
 
 /**
  * Given a fake override, returns an overridden non-abstract function from an interface which is the actual implementation of this function
  * that should be called when the given fake override is called.
  */
+@K1Deprecation
 fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): CallableMemberDescriptor? {
     val overridden = OverridingUtil.getOverriddenDeclarations(descriptor)
     val filtered = OverridingUtil.filterOutOverridden(overridden)
@@ -55,6 +60,7 @@ fun findImplementationFromInterface(descriptor: CallableMemberDescriptor): Calla
  * override of any trait implementation or such method was already generated into the superclass or is a method from Any.
  */
 @JvmOverloads
+@K1Deprecation
 fun findInterfaceImplementation(descriptor: CallableMemberDescriptor, returnImplNotDelegate: Boolean = false): CallableMemberDescriptor? {
     if (descriptor.kind.isReal) return null
     if (isOrOverridesSynthesized(descriptor)) return null
@@ -91,6 +97,7 @@ private fun firstSuperMethodFromKotlin(
 }
 
 
+@K1Deprecation
 fun getNonPrivateTraitMembersForDelegation(
     descriptor: ClassDescriptor,
     returnImplNotDelegate: Boolean = false,
@@ -103,6 +110,7 @@ fun getNonPrivateTraitMembersForDelegation(
     return result
 }
 
+@K1Deprecation
 fun getNonPrivateTraitMembersForDelegation(
     descriptor: CallableMemberDescriptor,
     returnImplNotDelegate: Boolean = false,

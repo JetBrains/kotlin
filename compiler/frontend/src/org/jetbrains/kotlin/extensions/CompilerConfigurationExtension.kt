@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.CompilerConfiguration
 
+@K1Deprecation
 interface CompilerConfigurationExtension {
 
     companion object : ProjectExtensionDescriptor<CompilerConfigurationExtension>(

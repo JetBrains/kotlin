@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind
 import org.jetbrains.kotlin.resolve.calls.inference.TypeBounds.BoundKind.*
 import org.jetbrains.kotlin.resolve.calls.inference.constraintPosition.ConstraintPosition
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 interface TypeBounds {
     val typeVariable: TypeVariable
 
@@ -73,6 +75,7 @@ interface TypeBounds {
     }
 }
 
+@K1Deprecation
 fun BoundKind.reverse() = when (this) {
     LOWER_BOUND -> UPPER_BOUND
     UPPER_BOUND -> LOWER_BOUND

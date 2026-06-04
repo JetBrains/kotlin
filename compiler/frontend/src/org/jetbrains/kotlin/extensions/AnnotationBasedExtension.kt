@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.extensions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.psi.KtModifierListOwner
 import org.jetbrains.kotlin.resolve.descriptorUtil.annotationClass
 import org.jetbrains.kotlin.types.TypeUtils
 
+@K1Deprecation
 interface AnnotationBasedExtension {
 
     fun getAnnotationFqNames(modifierListOwner: KtModifierListOwner?): List<String>

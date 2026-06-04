@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
 import org.jetbrains.kotlin.psi.KtParameter
 import org.jetbrains.kotlin.psi.KtPureClassOrObject
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 
+@K1Deprecation
 interface ClassMemberDeclarationProvider : DeclarationProvider {
     val ownerInfo: KtClassLikeInfo? // is null for synthetic classes/object that don't present in the source code
 

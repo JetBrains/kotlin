@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.resolve
 
 import com.intellij.psi.PsiElement
 import com.intellij.util.containers.MultiMap
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.*
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.resolve.scopes.MemberScope
 import java.util.*
 
 @DefaultImplementation(impl = ConflictingOverloadsDispatcher.Default::class)
+@K1Deprecation
 interface ConflictingOverloadsDispatcher {
     fun getDiagnostic(
         languageVersionSettings: LanguageVersionSettings,
@@ -56,6 +58,7 @@ interface ConflictingOverloadsDispatcher {
     }
 }
 
+@K1Deprecation
 class OverloadResolver(
     private val trace: BindingTrace,
     private val overloadFilter: OverloadFilter,

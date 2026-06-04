@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.types.expressions.typeInfoFactory
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.context.ResolutionContext
 import org.jetbrains.kotlin.resolve.calls.smartcasts.DataFlowInfo
 import org.jetbrains.kotlin.types.KotlinType
@@ -25,15 +26,21 @@ import org.jetbrains.kotlin.types.expressions.KotlinTypeInfo
  * Functions in this file are intended to create type info instances in different circumstances
  */
 
+@K1Deprecation
 fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo): KotlinTypeInfo = KotlinTypeInfo(type, dataFlowInfo)
 
+@K1Deprecation
 fun createTypeInfo(type: KotlinType?, dataFlowInfo: DataFlowInfo, jumpPossible: Boolean, jumpFlowInfo: DataFlowInfo): KotlinTypeInfo =
     KotlinTypeInfo(type, dataFlowInfo, jumpPossible, jumpFlowInfo)
 
+@K1Deprecation
 fun createTypeInfo(type: KotlinType?): KotlinTypeInfo = createTypeInfo(type, DataFlowInfo.EMPTY)
 
+@K1Deprecation
 fun createTypeInfo(type: KotlinType?, context: ResolutionContext<*>): KotlinTypeInfo = createTypeInfo(type, context.dataFlowInfo)
 
+@K1Deprecation
 fun noTypeInfo(dataFlowInfo: DataFlowInfo): KotlinTypeInfo = createTypeInfo(null, dataFlowInfo)
 
+@K1Deprecation
 fun noTypeInfo(context: ResolutionContext<*>): KotlinTypeInfo = noTypeInfo(context.dataFlowInfo)

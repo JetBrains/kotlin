@@ -16,12 +16,14 @@
 
 package org.jetbrains.kotlin.resolve.lazy
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.lazy.descriptors.LazyPackageDescriptor
 
+@K1Deprecation
 interface TopLevelDescriptorProvider {
     fun getPackageFragment(fqName: FqName): LazyPackageDescriptor?
 
@@ -32,6 +34,7 @@ interface TopLevelDescriptorProvider {
     fun assertValid()
 }
 
+@K1Deprecation
 object NoTopLevelDescriptorProvider : TopLevelDescriptorProvider {
     private fun shouldNotBeCalled(): Nothing = throw UnsupportedOperationException("Should not be called")
 

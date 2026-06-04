@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isFunctionOrKFunctionTypeWithAnySuspendability
 import org.jetbrains.kotlin.config.LanguageFeature.*
@@ -36,6 +37,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.expressions.ExpressionTypingUtils
 import org.jetbrains.kotlin.types.isError
 
+@K1Deprecation
 class AnnotationChecker(
     private val additionalCheckers: Iterable<AdditionalAnnotationChecker>,
     private val languageVersionSettings: LanguageVersionSettings,
@@ -429,6 +431,7 @@ private typealias TargetLists = AnnotationTargetLists
 
 private typealias TargetList = AnnotationTargetList
 
+@K1Deprecation
 interface AdditionalAnnotationChecker {
     fun checkEntries(
         entries: List<KtAnnotationEntry>,

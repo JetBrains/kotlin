@@ -30,6 +30,8 @@ sourceSets {
     "test" {}
 }
 
+optInToK1Deprecation()
+
 tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xconsistent-data-class-copy-visibility")
 }

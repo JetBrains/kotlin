@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.types.expressions
 
 import com.google.common.collect.Lists
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
@@ -386,6 +387,7 @@ internal class FunctionsTypingVisitor(facade: ExpressionTypingInternals) : Expre
     }
 }
 
+@K1Deprecation
 fun SimpleFunctionDescriptor.createFunctionType(
     builtIns: KotlinBuiltIns,
     suspendFunction: Boolean = false,

@@ -17,6 +17,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 runtimeJar()
 sourcesJar()
 javadocJar()

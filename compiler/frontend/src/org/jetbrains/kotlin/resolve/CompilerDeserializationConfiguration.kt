@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 import org.jetbrains.kotlin.util.toMetadataVersion
 
+@K1Deprecation
 class CommonCompilerDeserializationConfiguration(
     val languageVersionSettings: LanguageVersionSettings,
 ) : DeserializationConfiguration {

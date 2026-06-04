@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.checkers
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyAccessorDescriptor
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.resolve.needsMfvcFlattening
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 object MultiFieldValueClassAnnotationsChecker : DeclarationChecker {
     private fun report(context: DeclarationCheckerContext, name: String, type: KotlinType, annotationEntry: KtAnnotationEntry) {
         if (!type.needsMfvcFlattening()) return

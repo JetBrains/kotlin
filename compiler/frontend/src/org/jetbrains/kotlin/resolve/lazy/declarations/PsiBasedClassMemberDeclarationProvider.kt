@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.resolve.lazy.declarations
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.lazy.data.KtClassLikeInfo
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class PsiBasedClassMemberDeclarationProvider(
     storageManager: StorageManager,
     override val ownerInfo: KtClassLikeInfo

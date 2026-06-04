@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.resolve.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.container.ComponentProvider
 import org.jetbrains.kotlin.context.ProjectContext
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.extensions.ProjectExtensionDescriptor
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.resolve.BindingTrace
 
+@K1Deprecation
 interface AnalysisHandlerExtension {
     companion object : ProjectExtensionDescriptor<AnalysisHandlerExtension>(
         "org.jetbrains.kotlin.analyzeCompleteHandlerExtension",

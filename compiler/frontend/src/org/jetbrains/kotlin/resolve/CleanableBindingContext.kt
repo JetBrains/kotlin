@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
+
+@K1Deprecation
 interface CleanableBindingContext : BindingContext {
     /**
      * Removes all recorded data except diagnostics.

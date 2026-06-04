@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SupertypeLoopChecker
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.types.KotlinType
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.TypeConstructor
 import org.jetbrains.kotlin.utils.DFS
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 class SupertypeLoopCheckerImpl : SupertypeLoopChecker {
     override fun findLoopsInSupertypesAndDisconnect(
         currentTypeConstructor: TypeConstructor,
