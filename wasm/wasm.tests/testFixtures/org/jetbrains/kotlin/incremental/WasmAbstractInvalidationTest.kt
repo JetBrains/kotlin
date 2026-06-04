@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageTestCase
 import org.jetbrains.kotlin.wasm.test.WasmCompilerInvocationTestConfiguration
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 @Suppress("OPT_IN_USAGE")
@@ -149,7 +150,7 @@ abstract class WasmAbstractInvalidationTest(
 
     override val modelTarget: ModelTarget = ModelTarget.WASM
 
-    override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
+    override val outputDirPath = System.getProperty("kotlin.wasm.test.root.out.dir") ?: testInfraError("'kotlin.wasm.test.root.out.dir' is not set")
 
     override val stdlibKLib: String =
         File(WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)).canonicalPath
@@ -272,7 +273,7 @@ abstract class WasmAbstractInvalidationTest(
                 val testInfo = projStep.order.map { setupTestStep(projStep, it) }
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
-                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                    testInfraError("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
                 val testRunnerContent = """

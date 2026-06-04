@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 
 open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<FirOutputArtifact>(testServices, FrontendKinds.FIR) {
 
@@ -62,7 +63,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
         val testModule = testServices.moduleStructure.modules.first()
         val targetPlatform = testModule.targetPlatform(testServices)
 
-        require(targetPlatform.isJvm())
+        checkTestInfrastructure(targetPlatform.isJvm()) { "Target platform $targetPlatform must be JVM" }
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
 
@@ -140,7 +141,7 @@ open class FirReplFrontendFacade(testServices: TestServices) : FrontendFacade<Fi
     private fun analyzeImpl(module: TestModule, moduleData: FirModuleData): FirOutputPartForDependsOnModule {
         val firParser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
-        require(firParser == FirParser.Psi)
+        checkTestInfrastructure(firParser == FirParser.Psi) { "FirParser must be Psi" }
 
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
         val compilerConfiguration = compilerConfigurationProvider.getCompilerConfiguration(module)

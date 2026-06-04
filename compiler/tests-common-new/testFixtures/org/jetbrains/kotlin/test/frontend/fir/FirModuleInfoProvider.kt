@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestService
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.transitiveFriendDependencies
+import org.jetbrains.kotlin.test.testInfraError
 
 class FirModuleInfoProvider(private val testServices: TestServices) : TestService {
     private val firModuleDataByModule: MutableMap<TestModule, FirModuleData> = mutableMapOf()
@@ -24,7 +25,7 @@ class FirModuleInfoProvider(private val testServices: TestServices) : TestServic
     }
 
     fun getCorrespondingModuleData(module: TestModule): FirModuleData {
-        return firModuleDataByModule[module] ?: error("module data for module $module is not registered")
+        return firModuleDataByModule[module] ?: testInfraError("module data for module $module is not registered")
     }
 
     fun getRegularDependentSourceModules(module: TestModule): List<FirModuleData> {

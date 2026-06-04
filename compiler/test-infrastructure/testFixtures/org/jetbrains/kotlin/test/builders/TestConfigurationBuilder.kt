@@ -263,9 +263,9 @@ class NonGroupingStageTestConfigurationBuilder :
         val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
             ?: when (skipMissingStep) {
                 true -> return
-                false -> error("Step \"$name\" not found")
+                false -> testInfraError("Step \"$name\" not found")
             }
-        require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
+        checkTestInfrastructure(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
 
@@ -403,9 +403,9 @@ class GroupingStageTestConfigurationBuilder :
         val step = namedStepOfType<InputArtifact, InputArtifactKind>(name)
             ?: when (skipMissingStep) {
                 true -> return
-                false -> error("Step \"$name\" not found")
+                false -> testInfraError("Step \"$name\" not found")
             }
-        require(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
+        checkTestInfrastructure(step.artifactKind == artifactKind) { "Step kind: ${step.artifactKind}, passed kind is $artifactKind" }
         step.apply(init)
     }
 

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.utils.inferencelogs
 
 import kotlin.math.abs
+import org.jetbrains.kotlin.test.testInfraError
 
 /**
  * [hue] - in degrees, [saturation] - [0, 1], [lightness] - [0, 1].
@@ -22,7 +23,7 @@ private fun hslToRgb(hue: Double, saturation: Double, lightness: Double): Triple
         180 <= hue && hue < 240 -> Triple(0.0, x, c)
         240 <= hue && hue < 300 -> Triple(x, 0.0, c)
         300 <= hue && hue < 360 -> Triple(c, 0.0, x)
-        else -> error("Incorrect hue value in: ($hue, $saturation, $lightness)")
+        else -> testInfraError("Incorrect hue value in: ($hue, $saturation, $lightness)")
     }
 
     return ((nonNormalized + Triple(m, m, m)) * 255.0).toInts()

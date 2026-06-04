@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.js.test.utils.JsIrIncrementalDataProvider
 import org.jetbrains.kotlin.js.test.utils.jsIrIncrementalDataProvider
 import org.jetbrains.kotlin.test.backend.ir.IrBackendFacade
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives.SKIP_GENERATING_KLIB
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.ArtifactKinds
@@ -67,11 +68,11 @@ sealed class FirKlibSerializerCliWebFacade(
         module: TestModule,
         inputArtifact: IrBackendInput,
     ): Pair<BinaryArtifacts.KLib, WebSerializedKlibPipelineArtifact> {
-        require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
+        checkTestInfrastructure(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
             "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedOutputArtifact as input, but got ${inputArtifact::class.simpleName}"
         }
         val cliArtifact = inputArtifact.cliArtifact
-        require(cliArtifact is WebFir2IrPipelineArtifact) {
+        checkTestInfrastructure(cliArtifact is WebFir2IrPipelineArtifact) {
             "FirKlibSerializerCliWebFacade expects WebFir2IrPipelineArtifact as input, but got ${cliArtifact::class.simpleName}"
         }
         val input = cliArtifact.withNewDiagnosticCollector(DiagnosticsCollectorImpl())

@@ -75,7 +75,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
         ) : NonGroupingStep<InputArtifact, Nothing>(), TestStep.HandlersStep<InputArtifact> {
             init {
                 for (handler in handlers) {
-                    require(handler.artifactKind == inputArtifactKind) {
+                    checkTestInfrastructure(handler.artifactKind == inputArtifactKind) {
                         "Artifact kind mismatch. Artifact kind of each handler must match input artifact kind ($inputArtifactKind). " +
                                 "In handler $handler artifact kind is ${handler.artifactKind}"
                     }
@@ -148,7 +148,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
         ) : GroupingStageStep<InputArtifact, Nothing>(), TestStep.HandlersStep<InputArtifact> {
             init {
                 for (handler in handlers) {
-                    require(handler.artifactKind == inputArtifactKind) {
+                    checkTestInfrastructure(handler.artifactKind == inputArtifactKind) {
                         "Artifact kind mismatch. Artifact kind of each handler must match input artifact kind ($inputArtifactKind). " +
                                 "In handler $handler artifact kind is ${handler.artifactKind}"
                     }

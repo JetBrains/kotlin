@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.model.Frontend2BackendConverter
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 
 abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtifact>(
     testServices: TestServices,
@@ -36,7 +37,7 @@ abstract class Fir2IrCliFacade<Phase, InputPipelineArtifact, OutputPipelineArtif
         module: TestModule,
         inputArtifact: FirOutputArtifact,
     ): IrBackendInput? {
-        require(inputArtifact is FirCliBasedOutputArtifact<*>) {
+        checkTestInfrastructure(inputArtifact is FirCliBasedOutputArtifact<*>) {
             "${this::class} expects FirCliBasedOutputArtifact as input, but ${inputArtifact::class} was found"
         }
         @Suppress("UNCHECKED_CAST")

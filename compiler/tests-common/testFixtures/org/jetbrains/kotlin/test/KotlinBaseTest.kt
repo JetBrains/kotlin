@@ -135,7 +135,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
                 val targetString = directives["JVM_TARGET"]
                 if (targetString != null) {
                     val jvmTarget = JvmTarget.fromString(targetString)
-                        ?: error("Unknown target: $targetString")
+                        ?: testInfraError("Unknown target: $targetString")
                     configuration.put(JVMConfigurationKeys.JVM_TARGET, jvmTarget)
                 }
 
@@ -164,7 +164,7 @@ abstract class KotlinBaseTest<F : KotlinBaseTest.TestFile> : KtUsefulTestCase(),
                 val lambdasString = directives["LAMBDAS"]
                 if (lambdasString != null) {
                     val lambdas = JvmClosureGenerationScheme.fromString(lambdasString)
-                        ?: error("Unknown lambdas mode: $lambdasString")
+                        ?: testInfraError("Unknown lambdas mode: $lambdasString")
                     configuration.put(JVMConfigurationKeys.LAMBDAS, lambdas)
                 }
             }

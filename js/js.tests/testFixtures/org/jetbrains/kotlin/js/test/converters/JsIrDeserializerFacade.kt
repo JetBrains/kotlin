@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.testInfraError
 
 class JsIrDeserializerFacade(
     testServices: TestServices,
@@ -35,7 +36,7 @@ class JsIrDeserializerFacade(
             val modulesStructure = output.cliArtifact.moduleStructure
             val mainModule = modulesStructure.mainModule as MainModule.Klib
             val klibs = modulesStructure.klibs
-            val mainModuleLib = klibs.included ?: error("No module with ${mainModule.libPath} found")
+            val mainModuleLib = klibs.included ?: testInfraError("No module with ${mainModule.libPath} found")
 
             // Some test downstream handlers like JsSourceMapPathRewriter expect a module descriptor to be present.
             testServices.moduleDescriptorProvider.replaceModuleDescriptorForModule(

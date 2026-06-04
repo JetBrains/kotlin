@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.test.klib.CustomKlibCompilerArtifacts.Companion.read
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
-import kotlin.test.fail
 
 
 /**
@@ -30,7 +30,7 @@ interface CustomNativeCompilerSettings {
 
 val CustomNativeCompilerSettings.defaultLanguageVersion: LanguageVersion
     get() = LanguageVersion.fromFullVersionString(version)
-        ?: fail("Cannot deduce the default LV from the compiler version: $version")
+        ?: testInfraError("Cannot deduce the default LV from the compiler version: $version")
 
 class CustomNativeCompilerSettingsImpl(lazyArtifacts: () -> CustomKlibCompilerArtifacts): CustomNativeCompilerSettings {
     private val artifacts: CustomKlibCompilerArtifacts by lazy(lazyArtifacts)

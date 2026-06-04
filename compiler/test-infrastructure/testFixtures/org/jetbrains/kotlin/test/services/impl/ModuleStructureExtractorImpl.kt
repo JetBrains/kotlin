@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.services.impl
 
 import org.jetbrains.kotlin.platform.CommonPlatforms
 import org.jetbrains.kotlin.test.Assertions
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.LanguageVersionSettingsBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -275,7 +276,7 @@ class ModuleStructureExtractorImpl(
                 addAll(dependenciesNames intersect dependsOnNames)
                 addAll(friendsNames intersect dependsOnNames)
             }
-            require(intersection.isEmpty()) {
+            checkTestInfrastructure(intersection.isEmpty()) {
                 val m = if (intersection.size == 1) "module" else "modules"
                 val names = if (intersection.size == 1) "`${intersection.first()}`" else intersection.joinToArrayString()
                 """Module `$name` depends on $m $names with different kinds simultaneously"""
@@ -436,7 +437,7 @@ class ModuleStructureExtractorImpl(
                         module,
                         testModuleStructure
                     ).also { additionalFiles ->
-                        require(additionalFiles.all { it.isAdditional }) {
+                        checkTestInfrastructure(additionalFiles.all { it.isAdditional }) {
                             "Files produced by ${additionalSourceProvider::class.qualifiedName} should have flag `isAdditional = true`"
                         }
                     }

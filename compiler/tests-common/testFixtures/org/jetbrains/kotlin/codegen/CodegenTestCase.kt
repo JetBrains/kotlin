@@ -75,7 +75,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         testJdkKind: TestJdkKind,
         vararg javaSourceRoots: File
     ) {
-        check(myEnvironment == null) { "must not set up myEnvironment twice" }
+        checkTestInfrastructure(myEnvironment == null) { "must not set up myEnvironment twice" }
 
         val configuration = createConfiguration(
             configurationKind,
@@ -149,13 +149,13 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
 
     protected fun generateAndCreateClassLoader(reportProblems: Boolean): GeneratedClassLoader {
         if (initializedClassLoader != null) {
-            fail("Double initialization of class loader in same test")
+            testInfraError("Double initialization of class loader in same test")
         }
 
         initializedClassLoader = createClassLoader()
 
         if (!CodegenTestUtil.verifyAllFilesWithAsm(generateClassesInFile(reportProblems), reportProblems)) {
-            fail("Verification failed: see exceptions above")
+            testInfraError("Verification failed: see exceptions above")
         }
 
         return initializedClassLoader!!
@@ -221,7 +221,7 @@ abstract class CodegenTestCase : KotlinBaseTest<KotlinBaseTest.TestFile>() {
         try {
             return generateAndCreateClassLoader(true).loadClass(name)
         } catch (_: ClassNotFoundException) {
-            error("No class file was generated for: $name")
+            testInfraError("No class file was generated for: $name")
         }
     }
 

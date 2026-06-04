@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.util.JUnit4Assertions
 import org.jetbrains.kotlin.test.utils.TestDisposable
 import org.junit.ComparisonFailure
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 
 abstract class JsAbstractInvalidationTest(
@@ -53,13 +54,13 @@ abstract class JsAbstractInvalidationTest(
 
     override val modelTarget: ModelTarget = ModelTarget.JS
 
-    override val outputDirPath = System.getProperty("kotlin.js.test.root.out.dir") ?: error("'kotlin.js.test.root.out.dir' is not set")
+    override val outputDirPath = System.getProperty("kotlin.js.test.root.out.dir") ?: testInfraError("'kotlin.js.test.root.out.dir' is not set")
 
     override val stdlibKLib: String =
-        File(System.getProperty("kotlin.js.stdlib.klib.path") ?: error("Please set stdlib path")).canonicalPath
+        File(System.getProperty("kotlin.js.stdlib.klib.path") ?: testInfraError("Please set stdlib path")).canonicalPath
 
     override val kotlinTestKLib: String =
-        File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: error("Please set kotlin.test path")).canonicalPath
+        File(System.getProperty("kotlin.js.kotlin.test.klib.path") ?: testInfraError("Please set kotlin.test path")).canonicalPath
 
     open val libraryNamesToExcludeFromStats
         get() = setOf(STDLIB_MODULE_NAME, KOTLIN_TEST_MODULE_NAME)
@@ -128,7 +129,7 @@ abstract class JsAbstractInvalidationTest(
 
                 val mainModuleInfo = testInfo.last()
                 testInfo.find { it != mainModuleInfo && it.friends.isNotEmpty() }?.let {
-                    error("module ${it.moduleName} has friends, but only main module may have the friends")
+                    testInfraError("module ${it.moduleName} has friends, but only main module may have the friends")
                 }
 
                 val moduleName = projStep.order.last()

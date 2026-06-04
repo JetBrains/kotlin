@@ -20,7 +20,7 @@ class DynamicWithMaxThresholdParallelExecutionConfigurationStrategy : ParallelEx
         fun computeParallelism(configurationParameters: ConfigurationParameters, vararg propertiesToCheck: String): Int {
             val threshold = propertiesToCheck.firstNotNullOfOrNull {
                 configurationParameters[it].orElse(null)?.toIntOrNull()?.also {
-                    require(it > 0) { "Threads threshold must be positive, but was $it" }
+                    checkTestInfrastructure(it > 0) { "Threads threshold must be positive, but was $it" }
                 }
             } ?: DEFAULT_VALUE
             val cpuCores = Runtime.getRuntime().availableProcessors()

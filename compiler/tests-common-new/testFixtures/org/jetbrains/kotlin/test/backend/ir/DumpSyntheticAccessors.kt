@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 /**
@@ -84,7 +85,7 @@ object DumpSyntheticAccessors {
                         val accessorTargetSymbol: IrConstructorSymbol = accessor.getSingleExpression<IrConstructorCall>().symbol
                         accessorTargetSymbol
                     }
-                    else -> error("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
+                    else -> testInfraError("Unexpected type of expression in accessor ${accessor.id()}, ${expression.render()}")
                 }
             }
         }

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
+import org.jetbrains.kotlin.test.testInfraError
 import kotlin.io.path.Path
 
 class AnalysisApiBasedDtsGeneratorFacade(
@@ -50,7 +51,7 @@ class AnalysisApiBasedDtsGeneratorFacade(
             TsCompilationStrategy.EACH_FILE -> JsEnvironmentConfigurator
                 .getTranslationModesForTest(testServices, module)
                 .filter { !it.production }
-            TsCompilationStrategy.NONE -> error("${this::class} does not support TsCompilationStrategy.NONE")
+            TsCompilationStrategy.NONE -> testInfraError("${this::class} does not support TsCompilationStrategy.NONE")
         }
 
         val result = translationModes.associateWith { mode ->

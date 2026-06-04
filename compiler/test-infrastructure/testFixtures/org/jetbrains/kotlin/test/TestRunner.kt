@@ -71,7 +71,7 @@ sealed class TestRunner<Step : TestStep<*, *>, Configuration : TestConfiguration
             val thereWereCriticalExceptionsOnPreviousSteps = failuresInterceptor.allFailedExceptions.any { it.failureDisablesNextSteps }
             when (val result = runStep.run(step, inputArtifact, thereWereCriticalExceptionsOnPreviousSteps)) {
                 is TestStep.StepResult.Artifact<*> -> {
-                    require(step is TestStep.FacadeStep<*, *>)
+                    checkTestInfrastructure(step is TestStep.FacadeStep<*, *>) { "Step must be FacadeStep" }
                     onArtifactResult(result.outputArtifact)
                     inputArtifact = result.outputArtifact
                 }
@@ -272,7 +272,7 @@ class NonGroupingTestRunner(
             },
             onArtifactResult = { artifactsProvider.registerArtifact(module, it) },
             onHandlersResult = { step ->
-                require(step is TestStep.NonGroupingStep.HandlersStep<*>)
+                checkTestInfrastructure(step is TestStep.NonGroupingStep.HandlersStep<*>) { "Step must be HandlersStep" }
                 allRanHandlers += step.handlers
             }
         )

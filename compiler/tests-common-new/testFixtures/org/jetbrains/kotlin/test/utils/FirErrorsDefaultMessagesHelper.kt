@@ -8,13 +8,12 @@ package org.jetbrains.kotlin.test.utils
 import org.jetbrains.kotlin.backend.common.actualizer.IrActualizationErrors
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.diagnostics.*
-import org.jetbrains.kotlin.diagnostics.rendering.BaseSourcelessDiagnosticRendererFactory
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.js.FirJsErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibErrors
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
-import org.junit.Assert
+import org.jetbrains.kotlin.test.checkTestInfrastructure
 import kotlin.reflect.KProperty
 import kotlin.reflect.full.memberProperties
 
@@ -24,12 +23,10 @@ fun verifyDiagnostics(vararg diagnosticContainers: KtDiagnosticsContainer) {
     for (container in diagnosticContainers) {
         container.getRendererFactory().MAP.verifyMessages(container, errors, existingDiagnosticFactories)
     }
-    if (errors.isNotEmpty()) {
-        Assert.fail(
-            errors.joinToString(
-                "\n\n",
-                postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"
-            )
+    checkTestInfrastructure(errors.isEmpty()) {
+        errors.joinToString(
+            "\n\n",
+            postfix = "\n\nSee https://youtrack.jetbrains.com/articles/KT-A-610 for the style guide.\n\n"
         )
     }
 }

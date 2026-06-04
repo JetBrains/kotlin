@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assumptions
 import java.io.ByteArrayOutputStream
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import java.io.PrintStream
 import java.nio.charset.Charset
@@ -119,7 +120,7 @@ abstract class AbstractInvalidationTest(
     }
 
     private val File.filesInDir
-        get() = listFiles() ?: error("cannot retrieve the file list for $absolutePath directory")
+        get() = listFiles() ?: testInfraError("cannot retrieve the file list for $absolutePath directory")
 
     protected abstract fun createProjectStepsExecutor(
         projectInfo: ProjectInfo,
@@ -202,9 +203,9 @@ abstract class AbstractInvalidationTest(
                 val switchLanguageFeature = when {
                     it.startsWith("+") -> this::enable
                     it.startsWith("-") -> this::disable
-                    else -> error("Language feature should start with + or -")
+                    else -> testInfraError("Language feature should start with + or -")
                 }
-                val feature = LanguageFeature.fromString(it.substring(1)) ?: error("Unknown language feature $it")
+                val feature = LanguageFeature.fromString(it.substring(1)) ?: testInfraError("Unknown language feature $it")
                 switchLanguageFeature(feature)
             }
             build()
@@ -255,7 +256,7 @@ abstract class AbstractInvalidationTest(
             val projStepId = projStep.id
             val moduleTestDir = File(testDir, module)
             val moduleSourceDir = File(sourceDir, module)
-            val moduleInfo = moduleInfos[module] ?: error("No module info found for $module")
+            val moduleInfo = moduleInfos[module] ?: testInfraError("No module info found for $module")
             val moduleStep = moduleInfo.steps.getValue(projStepId)
             for (modification in moduleStep.modifications) {
                 modification.execute(moduleTestDir, moduleSourceDir) {}
@@ -287,7 +288,7 @@ abstract class AbstractInvalidationTest(
             }
 
             val dtsFile = moduleStep.expectedDTS.ifNotEmpty {
-                moduleTestDir.resolve(singleOrNull() ?: error("$module module may generate only one d.ts at step $projStepId"))
+                moduleTestDir.resolve(singleOrNull() ?: testInfraError("$module module may generate only one d.ts at step $projStepId"))
             }
             return TestStepInfo(
                 module.safeModuleName,
@@ -404,7 +405,7 @@ abstract class AbstractInvalidationTest(
         val psiManager = PsiManager.getInstance(project)
         val fileSystem = VirtualFileManager.getInstance().getFileSystem(StandardFileSystems.FILE_PROTOCOL) as KotlinLocalFileSystem
 
-        val vFile = fileSystem.findFileByIoFile(file) ?: error("File not found: $file")
+        val vFile = fileSystem.findFileByIoFile(file) ?: testInfraError("File not found: $file")
 
         return SingleRootFileViewProvider(psiManager, vFile).allFiles.find {
             it is KtFile && it.virtualFile.canonicalPath == vFile.canonicalPath
@@ -424,7 +425,7 @@ abstract class AbstractInvalidationTest(
     ) {
         val outputStream = ByteArrayOutputStream()
         val messageCollector = PrintingMessageCollector(PrintStream(outputStream), MessageRenderer.PLAIN_FULL_PATHS, true)
-        val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: error("Expected a target platform"))
+        val performanceManager = createPerformanceManagerFor(configuration.targetPlatform ?: testInfraError("Expected a target platform"))
         val phaseConfig = createPhaseConfig(stepId, buildDir)
 
         @OptIn(MessageCollectorAccess::class) // write access

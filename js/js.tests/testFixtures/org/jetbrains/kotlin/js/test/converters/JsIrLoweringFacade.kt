@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.test.backend.ir.DeserializedFromKlibBackendInput
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.directives.JsEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.frontend.fir.processErrorFromCliPhase
+import org.jetbrains.kotlin.test.checkTestInfrastructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.compilerConfigurationProvider
@@ -51,8 +53,8 @@ class JsIrLoweringFacade(
     }
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.Js? {
-        require(JsEnvironmentConfigurator.isMainModule(module, testServices))
-        require(inputArtifact is DeserializedFromKlibBackendInput<*>) {
+        checkTestInfrastructure(JsEnvironmentConfigurator.isMainModule(module, testServices)) { "JsIrLoweringFacade expects main module" }
+        checkTestInfrastructure(inputArtifact is DeserializedFromKlibBackendInput<*>) {
             "JsIrLoweringFacade expects IrBackendInput.DeserializedFromKlibBackendInput as input"
         }
 
@@ -98,7 +100,7 @@ class JsIrLoweringFacade(
         moduleDependencies.all.forEach { it.resolveTestPaths() }
 
         val cliInputArtifact = inputArtifact.cliArtifact as? WebLoadedIrPipelineArtifact
-            ?: error("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
+            ?: testInfraError("JsIrLoweringFacade expects WebLoadedIrPipelineArtifact")
         val loweredIr = JsIrLoweringPipelinePhase.executePhase(cliInputArtifact)
             ?: return processErrorFromCliPhase(inputArtifact.cliArtifact.configuration, testServices)
 
@@ -176,7 +178,7 @@ class JsIrLoweringFacade(
 
         val outputDtsFile = outputFile.withReplacedExtensionOrNull(".js", ".d.ts")
             ?: outputFile.withReplacedExtensionOrNull(".mjs", ".d.mts")
-            ?: error("Output file $outputFile has unexpected extension")
+            ?: testInfraError("Output file $outputFile has unexpected extension")
 
         forEachModule { artifactConfiguration, depModuleId ->
             val builtDtsFilePath = artifactConfiguration.outputDtsFile()
@@ -209,7 +211,7 @@ fun String.augmentWithModuleName(moduleName: String): String {
         endsWith(REGULAR_EXTENSION) -> REGULAR_EXTENSION
         endsWith(".d.ts") -> ".d.ts"
         endsWith(".d.mts") -> ".d.mts"
-        else -> error("Unexpected file '$this' extension")
+        else -> testInfraError("Unexpected file '$this' extension")
     }
 
     return if (suffix == ESM_EXTENSION) {

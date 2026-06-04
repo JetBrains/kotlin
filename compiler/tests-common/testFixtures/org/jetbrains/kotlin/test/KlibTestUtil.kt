@@ -63,7 +63,7 @@ object KlibTestUtil {
         klibFile: File,
         additionalArguments: List<String> = emptyList(),
     ) {
-        require(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
+        checkTestInfrastructure(!Name.guessByFirstCharacter(libraryName).isSpecial) { "Invalid library name: $libraryName" }
 
         val configuration = KotlinTestUtils.newConfiguration()
         @OptIn(MessageCollectorAccess::class) // write access
@@ -109,7 +109,7 @@ object KlibTestUtil {
 
             val analysisResult = analyzer.analysisResult
 
-            check(!analyzer.hasErrors()) {
+            checkTestInfrastructure(!analyzer.hasErrors()) {
                 "Compilation finished with errors. See the previous messages."
             }
 
@@ -122,7 +122,7 @@ object KlibTestUtil {
     }
 
     fun serializeCommonModuleToKlib(module: ModuleDescriptor, libraryName: String, klibFile: File) {
-        require(klibFile.extension == KLIB_FILE_EXTENSION) { "KLIB file must have $KLIB_FILE_EXTENSION extension" }
+        checkTestInfrastructure(klibFile.extension == KLIB_FILE_EXTENSION) { "KLIB file must have $KLIB_FILE_EXTENSION extension" }
 
         val serializer = KlibMetadataMonolithicSerializer(
             languageVersionSettings = LanguageVersionSettingsImpl.DEFAULT,
@@ -247,7 +247,7 @@ private class CommonDependenciesContainerImpl(dependencies: Collection<ModuleDes
 
     override fun moduleDescriptorForModuleInfo(moduleInfo: ModuleInfo): ModuleDescriptor {
         return moduleDescriptorByModuleInfo[moduleInfo]
-            ?: error("Unknown module info $moduleInfo")
+            ?: testInfraError("Unknown module info $moduleInfo")
     }
 
     override fun registerDependencyForAllModules(moduleInfo: ModuleInfo, descriptorForModule: ModuleDescriptorImpl) = Unit

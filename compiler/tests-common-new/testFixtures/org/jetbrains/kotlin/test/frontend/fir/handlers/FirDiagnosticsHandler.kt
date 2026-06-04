@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.psi.KtQualifiedExpression
 import org.jetbrains.kotlin.resolve.AnalyzingUtils
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.METADATA_ONLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.SEPARATE_KMP_COMPILATION
@@ -633,7 +634,7 @@ fun KtDiagnostic.toMetaInfos(
                 targetPlatform.isJs() -> "JS"
                 targetPlatform.isNative() -> "NATIVE"
                 targetPlatform.isCommon() -> "COMMON"
-                else -> error("Should not be here")
+                else -> testInfraError("Unsupported targetPlatform $targetPlatform")
             }
         }
         if (SEPARATE_KMP_COMPILATION in module.directives && kmpCompilationMode == KmpCompilationMode.PLATFORM) {

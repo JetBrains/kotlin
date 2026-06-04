@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
+import org.jetbrains.kotlin.test.testInfraError
 
 abstract class FirCliFacade<Phase, OutputPipelineArtifact>(
     testServices: TestServices,
@@ -104,5 +105,5 @@ fun processErrorFromCliPhase(configuration: CompilerConfiguration, testServices:
             return null
         }
     }
-    error("CLI phase returned null and there are no errors in the message collector ")
+    testInfraError("CLI phase returned null and there are no errors in the message collector ")
 }
