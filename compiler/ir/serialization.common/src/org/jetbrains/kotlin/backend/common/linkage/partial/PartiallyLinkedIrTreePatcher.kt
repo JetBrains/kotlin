@@ -1077,7 +1077,7 @@ internal class PartiallyLinkedIrTreePatcher(
     private fun IrType.explore(): ClassifierPartialLinkageStatus.Unusable? = classifierExplorer.exploreType(this)
 
     private fun IrType.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
-        explore()?.let { PartiallyLinkedMarkerType(anyClass, it) }
+        explore()?.let { PartiallyLinkedMarkerType(this@toPartiallyLinkedMarkerTypeOrNull.classOrNull ?: anyClass, it) }
 
     private fun List<IrType>.toPartiallyLinkedMarkerTypeOrNull(): PartiallyLinkedMarkerType? =
         firstNotNullOfOrNull { it.toPartiallyLinkedMarkerTypeOrNull() }
