@@ -324,9 +324,11 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             // e.g., signature clashes.
             return
         } else if (irFunction.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
-            // Do not generate bridge methods for exposed methods, since we already generate bridges for
-            // their mangled counterparts. Generating both bridges will lead to declaration clash.
-            return
+            val bridgeTargetFunctions = irClass.functions.mapNotNull { it.asBridgeTargetOrNull()?.function }.toSet()
+
+            if (irClass.hasNonExposedBridgeTargetCounterpart(irFunction, bridgeTargetFunctions)) {
+                return
+            }
         }
 
         // For concrete fake overrides, some bridges may be inherited from the super-classes. Specifically, bridges for all
@@ -371,6 +373,22 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
             .filter { it.signature !in blacklist }
             .forEach { irClass.addBridge(it, bridgeTarget) }
     }
+
+    // Do not generate bridge methods for exposed methods, since we already generate bridges for
+    // their mangled counterparts. Generating both bridges will lead to declaration clash.
+    //
+    // However, if the exposed methods have separate signature to bridges, we need to generate bridges.
+    // For example, when the bridge is using Any?, but the exposed method uses String.
+    private fun IrClass.hasNonExposedBridgeTargetCounterpart(
+        irFunction: IrSimpleFunction,
+        bridgeTargetFunctions: Set<IrSimpleFunction>,
+    ): Boolean =
+        functions.any {
+            it !== irFunction &&
+                    it in bridgeTargetFunctions &&
+                    it.attributeOwnerId == irFunction.attributeOwnerId &&
+                    !it.hasAnnotation(JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
+        }
 
     private fun IrSimpleFunction.isClashingWithPotentialBridge(name: Name, signature: Method): Boolean =
         (!this.isFakeOverride || this.modality == Modality.FINAL) && this.name == name && this.jvmMethod == signature
