@@ -9,13 +9,7 @@ import com.intellij.psi.*
 import com.intellij.psi.util.MethodSignature
 import org.jetbrains.kotlin.analysis.utils.printer.PrettyPrinter
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
-import org.jetbrains.kotlin.asJava.elements.KtLightNullabilityAnnotation
-import org.jetbrains.kotlin.asJava.elements.KtLightPsiLiteral
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.kotlin.NON_EXISTENT_CLASS_NAME
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.constants.KClassValue
 import org.jetbrains.kotlin.utils.addToStdlib.ifNotEmpty
 
 fun PsiClass.renderClass() = PsiClassRenderer.renderClass(this)
@@ -174,7 +168,8 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiVariable.renderVar(): String {
-        var result = this.renderModifiers(type) + type.renderType() + " " + name
+        type // TODO(KT-86757): drop this computation
+        var result = this.renderModifiers() + type.renderType() + " " + name
         if (this is PsiParameter && this.isVarArgs) {
             result += " /* vararg */"
         }
@@ -193,7 +188,7 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiRecordComponent.renderRecordComponent(): String =
-        renderModifiers(type) + type.renderType() + " " + name
+        renderModifiers() + type.renderType() + " " + name
 
     private fun Array<PsiTypeParameter>.renderTypeParams() =
         if (isEmpty()) ""
@@ -208,35 +203,20 @@ class PsiClassRenderer private constructor(
             it.renderModifiers() + it.name!! + bounds
         } + "> "
 
-    private fun KtLightPsiLiteral.renderKtLightPsiLiteral(): String {
-        val value = value
-        if (value is Pair<*, *>) {
-            val classId = value.first as? ClassId
-            val name = value.second as? Name
-            if (classId != null && name != null)
-                return "${classId.asSingleFqName()}.${name.asString()}"
-        }
-        if (value is KClassValue.Value.NormalClass && value.arrayDimensions == 0) {
-            return "${value.classId.asSingleFqName()}.class"
-        }
-        return text
-    }
-
     private fun PsiAnnotationMemberValue.renderAnnotationMemberValue(): String = when (this) {
         is PsiArrayInitializerMemberValue -> "{${initializers.joinToString { it.renderAnnotationMemberValue() }}}"
         is PsiAnnotation -> renderAnnotation()
-        is KtLightPsiLiteral -> renderKtLightPsiLiteral()
         is PsiClassObjectAccessExpression -> operand.type.canonicalText + ".class"
         else -> text
     }
 
     private fun PsiMethod.renderMethod() =
-        renderModifiers(returnType) +
+        renderModifiers() +
                 (if (isVarArgs) "/* vararg */ " else "") +
                 typeParameters.renderTypeParams() +
                 (returnType?.renderType() ?: "") + " " +
                 name +
-                "(" + parameterList.parameters.joinToString { it.renderModifiers(it.type) + it.type.renderType() } + ")" +
+                "(" + parameterList.parameters.joinToString { it.renderModifiers() + it.type.renderType() } + ")" +
                 (this as? PsiAnnotationMethod)?.defaultValue?.let { " default " + it.renderAnnotationMemberValue() }.orEmpty() +
                 throwsList.referencedTypes.let { thrownTypes ->
                     if (thrownTypes.isEmpty()) ""
@@ -329,16 +309,12 @@ class PsiClassRenderer private constructor(
     }
 
 
-    private fun PsiModifierListOwner.renderModifiers(typeIfApplicable: PsiType? = null): String {
+    private fun PsiModifierListOwner.renderModifiers(): String {
         val annotationsBuffer = mutableListOf<String>()
         var nullableIsRendered = false
         var notNullIsRendered = false
 
         for (annotation in annotations) {
-            if (annotation is KtLightNullabilityAnnotation<*> && skipRenderingNullability(typeIfApplicable)) {
-                continue
-            }
-
             if (annotation.qualifiedName == "org.jetbrains.annotations.Nullable") {
                 if (nullableIsRendered) continue
                 nullableIsRendered = true
@@ -367,17 +343,4 @@ class PsiClassRenderer private constructor(
         }
         return resultBuffer.toString()
     }
-
-    private val NON_EXISTENT_QUALIFIED_CLASS_NAME = NON_EXISTENT_CLASS_NAME.replace("/", ".")
-
-    private fun isPrimitiveOrNonExisting(typeIfApplicable: PsiType?): Boolean {
-        if (typeIfApplicable is PsiPrimitiveType) return true
-        if (typeIfApplicable?.getCanonicalText(false) == NON_EXISTENT_QUALIFIED_CLASS_NAME) return true
-
-        return typeIfApplicable is PsiPrimitiveType
-    }
-
-    private fun PsiModifierListOwner.skipRenderingNullability(typeIfApplicable: PsiType?) =
-        isPrimitiveOrNonExisting(typeIfApplicable)// || isPrivateOrParameterInPrivateMethod()
-
 }
