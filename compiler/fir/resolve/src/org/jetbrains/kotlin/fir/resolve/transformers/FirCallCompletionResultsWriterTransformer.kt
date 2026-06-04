@@ -57,7 +57,6 @@ import org.jetbrains.kotlin.fir.visitors.TransformData
 import org.jetbrains.kotlin.fir.visitors.transformSingle
 import org.jetbrains.kotlin.resolve.calls.NewCommonSuperTypeCalculator
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionMode
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintSystemError
 import org.jetbrains.kotlin.resolve.calls.inference.model.InferredEmptyIntersection
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -419,8 +418,13 @@ class FirCallCompletionResultsWriterTransformer(
 
         data?.argumentReplacements?.get(collectionLiteral)?.let { replacement ->
             handleArgumentReplacementInCfg(collectionLiteral, replacement)
-            return if (mode == Mode.TopLevelSyntheticCallInPclaCompletion) replacement
-            else replacement.transform(this, data)
+            return if (mode == Mode.TopLevelSyntheticCallInPclaCompletion) {
+                replacement.apply {
+                    // we need to replace already fixed type variables here
+                    // otherwise, we may try to incorporate constraints with fixed variables later
+                    replaceConeTypeOrNull(finallySubstituteOrSelf(resultType))
+                }
+            } else replacement.transform(this, data)
         }
 
         return collectionLiteral
