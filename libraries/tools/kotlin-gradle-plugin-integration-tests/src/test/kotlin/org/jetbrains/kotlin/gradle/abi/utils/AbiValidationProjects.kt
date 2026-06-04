@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.abi.utils
 
+import com.android.build.api.dsl.androidLibrary
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
 
@@ -35,6 +36,39 @@ internal fun KGPBaseTest.androidProject(
         addKgpToBuildScriptCompilationClasspath()
     }
 
+    project.configuration()
+}
+
+/**
+ * Creates a test project with an Android KMP library.
+ */
+internal fun KGPBaseTest.androidKmpLibraryProject(
+    gradleVersion: GradleVersion,
+    agpVersion: String,
+    jdkVersion: JdkVersions.ProvidedJdk,
+    buildCache: Boolean = false,
+    configuration: TestProject.() -> Unit
+) {
+    val buildOptions = defaultBuildOptions.copy(buildCacheEnabled = buildCache, androidVersion = agpVersion)
+    val project = project(
+        "base-kotlin-multiplatform-library",
+        gradleVersion,
+        buildOptions = buildOptions,
+        buildJdk = jdkVersion.location
+    ) {
+        addKgpToBuildScriptCompilationClasspath()
+
+        plugins {
+            id("com.android.kotlin.multiplatform.library")
+        }
+    }
+
+    project.buildScriptInjection {
+        kotlinMultiplatform.androidLibrary {
+            compileSdk = 31
+            namespace = "abi.validation.android.kmp.library"
+        }
+    }
     project.configuration()
 }
 

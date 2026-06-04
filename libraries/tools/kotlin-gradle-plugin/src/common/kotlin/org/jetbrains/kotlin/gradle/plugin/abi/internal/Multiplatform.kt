@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.targets.jvm.KotlinJvmTarget
 import java.io.File
 
 /**
@@ -47,8 +48,12 @@ private fun Project.processJvmKindTargets(
     abiValidationTaskSet: AbiValidationTaskSet,
 ) {
     // if there is only one JVM target then we will follow the shortcut
-    val singleJvmTarget = targets.singleOrNull { target -> target.platformType == KotlinPlatformType.jvm }
-    if (singleJvmTarget != null && targets.none { target -> target.platformType == KotlinPlatformType.androidJvm }) {
+    val singleJvmTarget = targets.singleOrNull { target -> target.platformType == KotlinPlatformType.jvm && target is KotlinJvmTarget }
+    val hasAnyAndroidTarget =
+        // Target from AGP or Android multiplatform library (JVM platform type + instance of KotlinMultiplatformAndroidLibraryTarget)
+        targets.any { target -> target.platformType == KotlinPlatformType.androidJvm || (target.platformType == KotlinPlatformType.jvm && target !is KotlinJvmTarget) }
+
+    if (singleJvmTarget != null && !hasAnyAndroidTarget) {
         addJvmInputs(
             binariesSource,
             abiValidationTaskSet,
@@ -89,6 +94,25 @@ private fun Project.processJvmKindTargets(
                 false,
                 target.compilations,
                 ANDROID_RELEASE_BUILD_TYPE
+            )
+        }
+
+    // android multiplatform library
+    targets
+        .asSequence()
+        .filter { it.platformType == KotlinPlatformType.jvm && it !is KotlinJvmTarget }
+        .forEach { target ->
+            if (binariesSource == BinariesSource.MAVEN_PUBLICATIONS) {
+                reportDiagnostic(KotlinToolingDiagnostics.AbiValidationAndroidPublicationNotSupported())
+            }
+
+            addJvmInputs(
+                binariesSource,
+                abiValidationTaskSet,
+                target.targetName,
+                false,
+                target.compilations,
+                KotlinCompilation.MAIN_COMPILATION_NAME
             )
         }
 }
