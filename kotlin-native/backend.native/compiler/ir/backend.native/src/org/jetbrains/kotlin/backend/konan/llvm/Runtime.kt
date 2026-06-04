@@ -55,6 +55,8 @@ internal class Runtime(
 
     val initNodeType = getStructType("InitNode")
 
+    val tlsDescriptorType = getStructType("TLSDescriptor")
+
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 
     val dataLayout = LLVMGetDataLayout(llvmModule)!!.toKString()

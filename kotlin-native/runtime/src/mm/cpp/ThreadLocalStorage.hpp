@@ -19,7 +19,7 @@ namespace mm {
 
 class ThreadLocalStorage : Pinned {
 public:
-    using Key = void*;
+    using Key = const void*;
 
     class Iterator {
     public:

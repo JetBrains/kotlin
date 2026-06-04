@@ -234,14 +234,20 @@ void SetCurrentFrame(ObjHeader** start) RUNTIME_NOTHROW;
 FrameOverlay* getCurrentFrame() RUNTIME_NOTHROW;
 void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 
+// Describes a TLS storage.
+// The descriptor's address serves as the TLS key, and `size` is the number of entries.
+struct TLSDescriptor {
+    int size;
+};
+
 // Add TLS object storage, called by the generated code.
-void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
+void AddTLSRecord(MemoryState* memory, const TLSDescriptor* descriptor) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
 void CommitTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
 // Clear TLS object storage.
 void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
-ObjHeader** LookupTLS(void** key, int index) RUNTIME_NOTHROW;
+ObjHeader** LookupTLS(const TLSDescriptor* descriptor, int index) RUNTIME_NOTHROW;
 
 void Kotlin_native_internal_GC_collect(ObjHeader*);
 void Kotlin_native_internal_GC_setTuneThreshold(ObjHeader*, bool value);

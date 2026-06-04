@@ -22,6 +22,7 @@ extern "C" {
 #endif
 
 touchType(InitNode);
+touchType(TLSDescriptor);
 
 touchType(TypeInfo)
 touchType(ExtendedTypeInfo)

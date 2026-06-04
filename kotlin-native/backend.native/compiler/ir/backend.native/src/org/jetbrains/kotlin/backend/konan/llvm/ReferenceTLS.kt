@@ -20,7 +20,7 @@ internal class ReferenceTLS(private val llvm: CodegenLlvmHelpers) {
         /**
          * The TLS is built and finalized, it is not empty. Entries can be used but not added.
          */
-        data class Built(val count: Int, val key: LLVMValueRef) : State()
+        data class Built(val count: Int, val descriptor: LLVMValueRef) : State()
 
         /**
          * The TLS is built and finalized, it is empty. New entries can't be added.
@@ -50,18 +50,21 @@ internal class ReferenceTLS(private val llvm: CodegenLlvmHelpers) {
             return
         }
 
-        val global = LLVMAddGlobal(llvm.module, llvm.pointerType, "__KonanTlsKey")!!
+        val global = LLVMAddGlobal(llvm.module, llvm.runtime.tlsDescriptorType, "__KonanTlsKey")!!
         LLVMSetLinkage(global, LLVMLinkage.LLVMInternalLinkage)
-        LLVMSetInitializer(global, llvm.kNull)
+        LLVMSetInitializer(
+                global,
+                Struct(llvm.runtime.tlsDescriptorType, llvm.constInt32(state.count)).llvm,
+        )
 
-        this.state = State.Built(state.count, key = global)
+        this.state = State.Built(state.count, descriptor = global)
     }
 
     context(gen: FunctionGenerationContext)
     fun generateGetAddress(index: Int): LLVMValueRef {
         val state = this.state.expect<State.Built>()
         require(index < state.count) { "TLS index out of bounds: $index" }
-        return gen.call(gen.llvm.lookupTLS, listOf(state.key, gen.llvm.int32(index)))
+        return gen.call(gen.llvm.lookupTLS, listOf(state.descriptor, gen.llvm.int32(index)))
     }
 
     context(gen: FunctionGenerationContext)
@@ -71,7 +74,7 @@ internal class ReferenceTLS(private val llvm: CodegenLlvmHelpers) {
         val state = this.state.expect<State.Built>()
         check(state.count > 0) { "Unexpected TLS count: ${state.count}" }
         val memory = gen.param(1)
-        gen.call(gen.llvm.addTLSRecord, listOf(memory, state.key, gen.llvm.int32(state.count)))
+        gen.call(gen.llvm.addTLSRecord, listOf(memory, state.descriptor))
     }
 }
 

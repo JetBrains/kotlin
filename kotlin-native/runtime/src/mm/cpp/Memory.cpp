@@ -196,10 +196,10 @@ extern "C" PERFORMANCE_INLINE RUNTIME_NOTHROW void CheckCurrentFrame(ObjHeader**
     return threadData->shadowStack().checkCurrentFrame(reinterpret_cast<FrameOverlay*>(frame));
 }
 
-extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, void** key, int size) {
+extern "C" RUNTIME_NOTHROW void AddTLSRecord(MemoryState* memory, const TLSDescriptor* descriptor) {
     auto* threadData = memory->GetThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    threadData->tls().AddRecord(key, size);
+    threadData->tls().AddRecord(descriptor, descriptor->size);
 }
 
 extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
@@ -214,10 +214,10 @@ extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
     threadData->tls().Clear();
 }
 
-extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(void** key, int index) {
+extern "C" RUNTIME_NOTHROW ObjHeader** LookupTLS(const TLSDescriptor* descriptor, int index) {
     auto* threadData = mm::ThreadRegistry::Instance().CurrentThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);
-    return threadData->tls().Lookup(key, index);
+    return threadData->tls().Lookup(descriptor, index);
 }
 
 extern "C" void Kotlin_native_internal_GC_collect(ObjHeader*) {
