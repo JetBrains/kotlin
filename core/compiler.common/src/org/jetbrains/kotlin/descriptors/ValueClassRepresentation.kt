@@ -12,6 +12,23 @@ import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 
+/**
+ * Represents how a value class is lowered/unboxed by the compiler.
+ *
+ * There are three possible representations:
+ * - [InlineClassRepresentation] — a single-field value class declared with `inline` keyword or `@JvmInline` annotation and `value` keyword
+ *   ([KEEP-0104](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0104-inline-classes.md))
+ *   It is always unboxed by the compiler on all backends.
+ * - [JvmInlineMultiFieldValueClassRepresentation] — a multi-field `@JvmInline value class`
+ *   ([KEEP-0340](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0340-multi-field-value-classes.md)).
+ *   It is unboxed (flattened into multiple fields) by the compiler on JVM. Not available on other backends.
+ * - [FullValueClassRepresentation] — a value class without `@JvmInline` annotation
+ *   ([KEEP-0454](https://github.com/Kotlin/KEEP/blob/main/proposals/KEEP-0454-better-immutability-value-classes-MFVC.md)).
+ *   It is not unboxed on JVM, but on other backends a single-field full value class is treated the same as an inline class and thus is unboxed.
+ *   It can have multiple underlying fields.
+ *
+ * [InlineClassRepresentation] and [JvmInlineMultiFieldValueClassRepresentation] are grouped under [BasicValueClassRepresentation].
+ */
 sealed class ValueClassRepresentation<Type : RigidTypeMarker> {
     abstract val underlyingPropertyNamesToTypes: List<Pair<Name, Type>>?
     abstract fun containsPropertyWithName(name: Name): Boolean
