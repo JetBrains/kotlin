@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.testing.newTempFile
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
+import java.nio.file.Files
 import java.nio.file.Path
 import kotlin.test.*
 
@@ -28,9 +29,9 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
     @Test
     fun `empty jar - contains no metadataBinary and no cinteropMetadataBinaries`() {
         val primaryArtifactContent = newTempDirectory().toFile()
-        val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
-        assertTrue(primaryArtifactFile.isFile, "Expected primaryArtifactFile.isFile")
+        val primaryArtifactFile = newTempFile("metadata.jar")
+        zipTo(primaryArtifactFile.toFile(), primaryArtifactContent)
+        assertTrue(Files.isRegularFile(primaryArtifactFile), "Expected primaryArtifactFile.isFile")
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -68,9 +69,9 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
         stubFile.parentFile.mkdirs()
         stubFile.writeText("stub!")
 
-        val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
-        assertTrue(primaryArtifactFile.isFile, "Expected primaryArtifactFile.isFile")
+        val primaryArtifactFile = newTempFile("metadata.jar")
+        zipTo(primaryArtifactFile.toFile(), primaryArtifactContent)
+        assertTrue(Files.isRegularFile(primaryArtifactFile), "Expected primaryArtifactFile.isFile")
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -88,28 +89,28 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
                 fail("Expected exactly one SourceSet in ${artifactContent.sourceSets.map { it.sourceSetName }}")
 
             val sourceSet = artifactContent.getSourceSet(testSourceSetName)
-            val metadataOutputDirectory = newTempDirectory().toFile()
+            val metadataOutputDirectory = newTempDirectory()
             val metadataFile = metadataOutputDirectory.resolve("testSourceSet.klib")
 
             val metadataBinary = sourceSet.metadataBinary ?: fail("Missing metadataBinary for ${sourceSet.sourceSetName}")
             assertTrue(metadataBinary.copyTo(metadataFile), "Expected 'copyTo' to perform copy action")
-            assertTrue(metadataFile.isFile)
+            assertTrue(Files.isRegularFile(metadataFile))
 
             val unzippedMetadataFile = metadataOutputDirectory.resolve("unzipped")
-            unzipTo(unzippedMetadataFile, metadataFile)
+            unzipTo(unzippedMetadataFile.toFile(), metadataFile.toFile())
 
-            val actualUnzippedFiles = unzippedMetadataFile.walkTopDown().filter { it.isFile }.toSet()
+            val actualUnzippedFiles = unzippedMetadataFile.toFile().walkTopDown().filter { it.isFile }.map { it.toPath() }.toSet()
             assertEquals(setOf(unzippedMetadataFile.resolve(KLIB_MANIFEST_PATH)), actualUnzippedFiles)
-            assertEquals("stub!", unzippedMetadataFile.resolve(KLIB_MANIFEST_PATH).readText())
+            assertEquals("stub!", unzippedMetadataFile.resolve(KLIB_MANIFEST_PATH).toFile().readText())
         }
     }
 
     @Test
     fun `empty jar - returns no cinteropMetadataBinaries`() {
         val primaryArtifactContent = newTempDirectory().toFile()
-        val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
-        assertTrue(primaryArtifactFile.isFile, "Expected primaryArtifactFile.isFile")
+        val primaryArtifactFile = newTempFile("metadata.jar")
+        zipTo(primaryArtifactFile.toFile(), primaryArtifactContent)
+        assertTrue(Files.isRegularFile(primaryArtifactFile), "Expected primaryArtifactFile.isFile")
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -151,8 +152,8 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
             .writeText("Resource file with klib content")
 
         /* Create metadata jar */
-        val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
+        val primaryArtifactFile = newTempFile("metadata.jar")
+        zipTo(primaryArtifactFile.toFile(), primaryArtifactContent)
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -169,19 +170,19 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
         )
 
         metadataArtifact.read { artifactContent ->
-            val metadataOutputDirectory = newTempDirectory().toFile()
+            val metadataOutputDirectory = newTempDirectory()
 
             /* Extract and assert sourceSetA */
             artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
                 val sourceSetAMetadataFile = metadataOutputDirectory.resolve("sourceSetA.klib")
                 assertNotNull(sourceSetA.metadataBinary).copyTo(sourceSetAMetadataFile)
-                assertTrue(sourceSetAMetadataFile.isFile, "Expected sourceSetAMetadataFile.isFile")
+                assertTrue(Files.isRegularFile(sourceSetAMetadataFile), "Expected sourceSetAMetadataFile.isFile")
                 assertEquals(
-                    SourceSetMetadataLayout.KLIB.archiveExtension, sourceSetAMetadataFile.extension,
+                    SourceSetMetadataLayout.KLIB.archiveExtension, sourceSetAMetadataFile.fileName.toString().substringAfterLast('.'),
                     "Expected correct archiveExtension for extracted sourceSetA"
                 )
                 assertZipContentEquals(
-                    primaryArtifactContent.resolve("sourceSetA"), sourceSetAMetadataFile,
+                    primaryArtifactContent.resolve("sourceSetA"), sourceSetAMetadataFile.toFile(),
                     "Expected correct content of extracted 'sourceSetA'"
                 )
             }
@@ -190,13 +191,13 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
             artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
                 val sourceSetBMetadataFile = metadataOutputDirectory.resolve("sourceSetB.jar")
                 assertNotNull(sourceSetB.metadataBinary).copyTo(sourceSetBMetadataFile)
-                assertTrue(sourceSetBMetadataFile.isFile, "Expected sourceSetBMetadataFile.isFile")
+                assertTrue(Files.isRegularFile(sourceSetBMetadataFile), "Expected sourceSetBMetadataFile.isFile")
                 assertEquals(
-                    SourceSetMetadataLayout.METADATA.archiveExtension, sourceSetBMetadataFile.extension,
+                    SourceSetMetadataLayout.METADATA.archiveExtension, sourceSetBMetadataFile.fileName.toString().substringAfterLast('.'),
                     "Expected correct archiveExtension for extracted sourceSetB"
                 )
                 assertZipContentEquals(
-                    primaryArtifactContent.resolve("sourceSetB"), sourceSetBMetadataFile,
+                    primaryArtifactContent.resolve("sourceSetB"), sourceSetBMetadataFile.toFile(),
                     "Expected correct content of extracted 'sourceSetA'"
                 )
             }
@@ -228,8 +229,8 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
             .writeText("stub3 content")
 
         /* Create metadata jar */
-        val primaryArtifactFile = newTempFile("metadata.jar").toFile()
-        zipTo(primaryArtifactFile, primaryArtifactContent)
+        val primaryArtifactFile = newTempFile("metadata.jar")
+        zipTo(primaryArtifactFile.toFile(), primaryArtifactContent)
 
         val metadataArtifact = CompositeMetadataArtifactImpl(
             moduleDependencyIdentifier = ModuleDependencyIdentifier("test-group", "test-module"),
@@ -247,7 +248,7 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
         metadataArtifact.read { artifactContent ->
             /* Assertions on sourceSetA */
             artifactContent.getSourceSet("sourceSetA").also { sourceSetA ->
-                val sourceSetAOutputDirectory = newTempDirectory().toFile()
+                val sourceSetAOutputDirectory = newTempDirectory()
                 val sourceSetAInteropMetadataFiles = sourceSetA.cinteropMetadataBinaries.map { cinteropLibrary ->
                     sourceSetAOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
                         cinteropLibrary.copyTo(file)
@@ -257,20 +258,20 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
                 /* Assertions on interopA0 */
                 run {
-                    val interopA0MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.name == "interopA0.klib" }
+                    val interopA0MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.fileName.toString() == "interopA0.klib" }
                         ?: fail("Failed to find 'interopA0.klib'")
                     assertZipContentEquals(
-                        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0"), interopA0MetadataFile,
+                        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA0"), interopA0MetadataFile.toFile(),
                         "Expected correct content for extracted 'interopA0'"
                     )
                 }
 
                 /* Assertions on interopA1 */
                 run {
-                    val interopA1MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.name == "interopA1.klib" }
+                    val interopA1MetadataFile = sourceSetAInteropMetadataFiles.firstOrNull { it.fileName.toString() == "interopA1.klib" }
                         ?: fail("Failed to find 'interopA1.klib")
                     assertZipContentEquals(
-                        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA1"), interopA1MetadataFile,
+                        primaryArtifactContent.resolve("sourceSetA-cinterop/interopA1"), interopA1MetadataFile.toFile(),
                         "Expected correct content for extracted 'interopA1'"
                     )
                 }
@@ -278,17 +279,17 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
 
             /* Assertions on sourceSetB */
             artifactContent.getSourceSet("sourceSetB").also { sourceSetB ->
-                val sourceSetBOutputDirectory = newTempDirectory().toFile()
+                val sourceSetBOutputDirectory = newTempDirectory()
                 val sourceSetBInteropMetadataFiles = sourceSetB.cinteropMetadataBinaries.map { cinteropLibrary ->
                     sourceSetBOutputDirectory.resolve("${cinteropLibrary.cinteropLibraryName}.klib").also { file ->
                         cinteropLibrary.copyTo(file)
                     }
                 }
                 assertEquals(1, sourceSetBInteropMetadataFiles.size, "Expected only one cinterop in sourceSetB")
-                val interopB0MetadataFile = sourceSetBInteropMetadataFiles.firstOrNull { it.name == "interopB0.klib" }
+                val interopB0MetadataFile = sourceSetBInteropMetadataFiles.firstOrNull { it.fileName.toString() == "interopB0.klib" }
                     ?: fail("Failed to find 'interopB0.klib'")
                 assertZipContentEquals(
-                    primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0"), interopB0MetadataFile,
+                    primaryArtifactContent.resolve("nested/sourceSetB/interops/interopB0"), interopB0MetadataFile.toFile(),
                     "Expected correct content for extracted 'interopB0'"
                 )
             }
