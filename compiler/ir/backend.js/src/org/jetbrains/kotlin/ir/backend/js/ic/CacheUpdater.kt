@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.wasmCompilation
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.memoryOptimizedFilter
@@ -123,7 +122,7 @@ class CacheUpdater(
 
     private val dirtyFileStats = KotlinSourceFileMutableMap<EnumSet<DirtyFileState>>()
 
-    private val mainLibraryFile = KotlinLibraryFile(File(compilerConfiguration.includes!!).canonicalPath)
+    private val mainLibraryFile = KotlinLibraryFile(File(compilerConfiguration.includes.single()).canonicalPath)
 
     private val icHasher = ICHasher(checkForClassStructuralChanges)
 

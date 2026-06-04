@@ -44,7 +44,7 @@ fun loadWebKlibs(
     return LoadedKlibs(
         all = result.librariesStdlibFirst,
         friends = result.loadFriendLibraries(configuration.friendLibraries),
-        included = result.loadFriendLibraries(listOfNotNull(configuration.includes)).firstOrNull()
+        included = result.loadFriendLibraries(configuration.includes).firstOrNull()
     ).also { klibs ->
         if (!configuration.skipLibrarySpecialCompatibilityChecks) {
             val isWasm = platformChecker is KlibPlatformChecker.Wasm

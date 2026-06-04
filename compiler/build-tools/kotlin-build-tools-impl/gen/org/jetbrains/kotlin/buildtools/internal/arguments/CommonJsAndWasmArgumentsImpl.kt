@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgum
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_FRIEND_MODULES_DISABLED
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_GENERATE_DTS
-import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_INCLUDE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE_PRINT_REACHABILITY_INFO
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonJsAndWasmArgumentsImpl.Companion.X_IR_DCE_RUNTIME_DIAGNOSTIC
@@ -146,7 +145,6 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
     if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
     if (X_IR_DCE_PRINT_REACHABILITY_INFO in this) { arguments.irDcePrintReachabilityInfo = get(X_IR_DCE_PRINT_REACHABILITY_INFO)}
     if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)?.stringValue}
@@ -178,7 +176,6 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     try { this[X_FRIEND_MODULES] = arguments.friendModules?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled } catch (_: NoSuchMethodError) {  }
     try { this[X_GENERATE_DTS] = arguments.generateDts } catch (_: NoSuchMethodError) {  }
-    try { this[X_INCLUDE] = arguments.includes?.let { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE] = arguments.irDce } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo } catch (_: NoSuchMethodError) {  }
     try { this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic?.let { JsIrDiagnosticMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::irDceRuntimeDiagnostic, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xir-dce-runtime-diagnostic value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
@@ -210,7 +207,6 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
     if (X_FRIEND_MODULES in this) { arguments.friendModules = get(X_FRIEND_MODULES)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (X_FRIEND_MODULES_DISABLED in this) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED)}
     if (X_GENERATE_DTS in this) { arguments.generateDts = get(X_GENERATE_DTS)}
-    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE)?.absolutePathStringOrThrow()}
     if (X_IR_DCE in this) { arguments.irDce = get(X_IR_DCE)}
     if (X_IR_DCE_RUNTIME_DIAGNOSTIC in this) { arguments.irDceRuntimeDiagnostic = get(X_IR_DCE_RUNTIME_DIAGNOSTIC)?.stringValue}
     if (X_IR_MODULE_NAME in this) { arguments.irModuleName = get(X_IR_MODULE_NAME)}
@@ -257,9 +253,6 @@ internal abstract class CommonJsAndWasmArgumentsImpl(
 
     public val X_GENERATE_DTS: CommonJsAndWasmArgument<Boolean> =
         CommonJsAndWasmArgument("X_GENERATE_DTS")
-
-    public val X_INCLUDE: CommonJsAndWasmArgument<java.nio.`file`.Path?> =
-        CommonJsAndWasmArgument("X_INCLUDE")
 
     public val X_IR_DCE: CommonJsAndWasmArgument<Boolean> = CommonJsAndWasmArgument("X_IR_DCE")
 

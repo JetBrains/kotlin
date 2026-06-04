@@ -23,7 +23,7 @@ abstract class WebCliPipeline<T : CommonJsAndWasmCompilerArguments>(
 
     override fun createCompoundPhase(arguments: T): CompilerPhase<PipelineContext, ArgumentsPipelineArtifact<T>, *> {
         return when {
-            arguments.includes != null -> createCodeGenerationPhase()
+            arguments.includes.isNotEmpty() -> createCodeGenerationPhase()
             else -> createKlibSerializationPhase()
         }
     }

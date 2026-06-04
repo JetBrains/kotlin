@@ -191,4 +191,17 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         )
         restrictedToCompilerPhase = KotlinCompilerPhase.KLIB_COMPILATION
     }
+
+    compilerArgument {
+        name = "Xinclude"
+        compilerName = "includes"
+        description = "A path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<path>".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v1_4_0,
+        )
+        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
+    }
 }

@@ -35,21 +35,6 @@ val actualCommonJsAndWasmArguments by compilerArgumentsLevel(CompilerArgumentsLe
         restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
     }
 
-    @OptIn(ExperimentalArgumentApi::class)
-    compilerArgument {
-        name = "Xinclude"
-        compilerName = "includes"
-        description = "Path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
-        valueType = StringType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
-        argumentType = PathType.defaultNull
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_4_0,
-        )
-        restrictedToCompilerPhase = KotlinCompilerPhase.BACKEND_COMPILATION
-    }
-
     compilerArgument {
         name = "ir-output-dir"
         compilerName = "outputDir"

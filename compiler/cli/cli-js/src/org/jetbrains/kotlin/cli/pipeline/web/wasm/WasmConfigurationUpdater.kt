@@ -44,7 +44,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<KotlinWasmCompilerArgumen
         fillConfiguration(configuration, arguments)
 
         // setup phase config for the second compilation stage (Wasm codegen)
-        if (arguments.includes != null) {
+        if (arguments.includes.isNotEmpty()) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
                 if (arguments.listPhases) it.list(wasmLowerings)
             }

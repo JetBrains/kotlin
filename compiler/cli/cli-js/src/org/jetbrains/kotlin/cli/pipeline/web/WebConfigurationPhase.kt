@@ -143,11 +143,11 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
         configuration.icCacheDirectory = arguments.cacheDirectory
 
         // setup phase config for the first compilation stage (KLIB compilation)
-        if (arguments.includes == null) {
+        if (arguments.includes.isEmpty()) {
             configuration.phaseConfig = createPhaseConfig(arguments)
         }
 
-        if (arguments.includes == null && arguments.irProduceJs) {
+        if (arguments.includes.isEmpty() && arguments.irProduceJs) {
             configuration.report(
                 WEB_ARGUMENT_ERROR,
                 "It is not possible to produce a KLIB ('${K2JSCompilerArguments::includes.cliArgument}' is not passed) "
@@ -251,7 +251,7 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
     ) {
         configuration.setupCommonKlibArguments(arguments, canBeMetadataKlibCompilation = false, rootDisposable = rootDisposable)
 
-        val libraries: List<String> = configureLibraries(arguments.libraries) + listOfNotNull(arguments.includes)
+        val libraries: List<String> = configureLibraries(arguments.libraries) + arguments.includes.toList()
         val friendLibraries: List<String> = configureLibraries(arguments.friendModules)
 
         configuration.checkForUnexpectedKlibLibraries(
@@ -263,10 +263,9 @@ abstract class CommonWebConfigurationUpdater<T : CommonJsAndWasmCompilerArgument
 
         configuration.libraries += libraries
         configuration.friendLibraries += friendLibraries
-        arguments.includes?.let {
-            configuration.includes = it
-            configuration.prohibitExportKlibToOlderAbiVersionAtSecondStage()
-        }
+        configuration.includes = arguments.includes.toList()
+        configuration.prohibitExportKlibToOlderAbiVersionAtSecondStage()
+
         val commonSourcesArray = arguments.commonSources
         val commonSources = commonSourcesArray.toSet()
         val hmppCliModuleStructure = configuration.hmppModuleStructure

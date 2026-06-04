@@ -3,6 +3,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.arguments
 
+import kotlin.Array
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.DeprecatedCompilerArgument
@@ -84,5 +85,15 @@ public interface CommonKlibBasedArgumentsLinkingArguments : CommonKlibBasedArgum
     public val X_PARTIAL_LINKAGE_LOGLEVEL:
         CommonKlibBasedArgumentsLinkingArgument<PartialLinkageLogLevel?> =
         CommonKlibBasedArgumentsLinkingArgument("X_PARTIAL_LINKAGE_LOGLEVEL", KotlinReleaseVersion(2, 0, 20))
+
+    /**
+     * A path to an intermediate library that should be processed in the same manner as source files.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_INCLUDE: CommonKlibBasedArgumentsLinkingArgument<Array<String>?> =
+        CommonKlibBasedArgumentsLinkingArgument("X_INCLUDE", KotlinReleaseVersion(1, 4, 0))
   }
 }

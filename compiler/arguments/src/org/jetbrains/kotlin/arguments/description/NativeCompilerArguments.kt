@@ -698,18 +698,6 @@ The default value is 1.""".asReleaseDependent()
     }
 
     compilerArgument {
-        name = "Xinclude"
-        compilerName = "includes"
-        description = "A path to an intermediate library that should be processed in the same manner as source files.".asReleaseDependent()
-        valueType = StringArrayType.defaultNull
-        valueDescription = "<path>".asReleaseDependent()
-
-        lifecycle(
-            introducedVersion = KotlinReleaseVersion.v1_5_20,
-        )
-    }
-
-    compilerArgument {
         name = "Xshort-module-name"
         description = "A short name used to denote this library in the IDE and in a generated Objective-C header.".asReleaseDependent()
         valueType = StringType.defaultNull

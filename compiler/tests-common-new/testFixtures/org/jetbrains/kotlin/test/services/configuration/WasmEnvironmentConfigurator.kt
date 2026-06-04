@@ -159,7 +159,7 @@ open class WasmSecondStageEnvironmentConfigurator(
         val mainPath = File(mainModule.libPath).canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
-        configuration.includes = mainPath
+        configuration.includes = listOf(mainPath)
 
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.put(

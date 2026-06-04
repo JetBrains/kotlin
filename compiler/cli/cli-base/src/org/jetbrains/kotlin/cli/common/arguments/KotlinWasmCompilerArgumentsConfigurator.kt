@@ -41,6 +41,6 @@ class KotlinWasmCompilerArgumentsConfigurator : CommonKlibBasedCompilerArguments
     override fun isSecondStage(arguments: CommonCompilerArguments): Boolean = with(arguments) {
         require(this is KotlinWasmCompilerArguments)
 
-        return includes != null
+        return includes.isNotEmpty()
     }
 }

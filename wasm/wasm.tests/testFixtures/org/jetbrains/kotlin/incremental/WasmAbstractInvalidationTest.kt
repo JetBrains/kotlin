@@ -332,7 +332,7 @@ abstract class WasmAbstractInvalidationTest(
             if (configuration.wasmCompilationMode() == WasmCompilationMode.SINGLE_MODULE) {
                 val allLibraries = configuration.libraries
                 allLibraries.forEach { currentLib ->
-                    configuration.includes = currentLib
+                    configuration.includes = listOf(currentLib)
                     configuration.libraries = allLibraries.filter { it != currentLib } + currentLib
                     val currentCacheDir = cacheDir.resolve(currentLib.hashCode().toString())
                     compileAndVerify(

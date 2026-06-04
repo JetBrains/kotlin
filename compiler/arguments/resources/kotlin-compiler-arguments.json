@@ -10196,6 +10196,50 @@
                         "name": "commonKlibBasedArguments",
                         "arguments": [
                             {
+                                "name": "Xinclude",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "A path to an intermediate library that should be processed in the same manner as source files.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "affectsCompilationOutcome": true,
+                                "restrictedToCompilerPhase": "BACKEND_COMPILATION",
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": "<path>",
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "1.4.0",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                },
+                                "argumentType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
+                                    "defaultValue": {
+                                        "current": null,
+                                        "valueInVersions": []
+                                    },
+                                    "isNullable": {
+                                        "current": true,
+                                        "valueInVersions": []
+                                    }
+                                }
+                            },
+                            {
                                 "name": "Xklib-abi-version",
                                 "shortName": null,
                                 "deprecatedName": null,
@@ -10874,50 +10918,6 @@
                                             },
                                             "defaultValue": {
                                                 "current": false,
-                                                "valueInVersions": []
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "name": "Xinclude",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "Path to an intermediate library that should be processed in the same manner as source files.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "affectsCompilationOutcome": true,
-                                        "restrictedToCompilerPhase": "BACKEND_COMPILATION",
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
-                                            "isNullable": {
-                                                "current": true,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": null,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": "<path>",
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.4.0",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.PathType",
-                                            "isNullable": {
-                                                "current": true,
-                                                "valueInVersions": []
-                                            },
-                                            "defaultValue": {
-                                                "current": null,
                                                 "valueInVersions": []
                                             }
                                         }
@@ -15963,50 +15963,6 @@
                                             },
                                             "defaultValue": {
                                                 "current": null,
-                                                "valueInVersions": []
-                                            }
-                                        }
-                                    },
-                                    {
-                                        "name": "Xinclude",
-                                        "shortName": null,
-                                        "deprecatedName": null,
-                                        "description": {
-                                            "current": "A path to an intermediate library that should be processed in the same manner as source files.",
-                                            "valueInVersions": []
-                                        },
-                                        "delimiter": null,
-                                        "affectsCompilationOutcome": true,
-                                        "restrictedToCompilerPhase": null,
-                                        "valueType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                                            "defaultValue": {
-                                                "current": null,
-                                                "valueInVersions": []
-                                            },
-                                            "isNullable": {
-                                                "current": true,
-                                                "valueInVersions": []
-                                            }
-                                        },
-                                        "valueDescription": {
-                                            "current": "<path>",
-                                            "valueInVersions": []
-                                        },
-                                        "releaseVersionsMetadata": {
-                                            "introducedVersion": "1.5.20",
-                                            "stabilizedVersion": null,
-                                            "deprecatedVersion": null,
-                                            "removedVersion": null
-                                        },
-                                        "argumentType": {
-                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                                            "defaultValue": {
-                                                "current": null,
-                                                "valueInVersions": []
-                                            },
-                                            "isNullable": {
-                                                "current": true,
                                                 "valueInVersions": []
                                             }
                                         }

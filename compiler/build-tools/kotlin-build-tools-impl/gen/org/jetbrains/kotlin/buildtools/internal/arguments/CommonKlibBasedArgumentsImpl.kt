@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
 import java.lang.IllegalStateException
 import kotlin.Any
+import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.OptIn
@@ -24,6 +25,7 @@ import kotlin.collections.mutableSetOf
 import kotlin.collections.toTypedArray
 import kotlin.io.path.Path
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_INCLUDE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS
@@ -124,6 +126,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
+    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE) ?: emptyArray()}
     if (X_KLIB_ABI_VERSION in this) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)}
     if (X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in this) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)?.stringValue}
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
@@ -140,6 +143,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments) {
     super.applyCompilerArguments(arguments)
+    try { this[X_INCLUDE] = arguments.includes } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy?.let { DuplicatedUniqueNameStrategy.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::duplicatedUniqueNameStrategy, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xklib-duplicated-unique-name-strategy value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {  }
@@ -156,6 +160,7 @@ internal abstract class CommonKlibBasedArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
+    if (X_INCLUDE in this) { arguments.includes = get(X_INCLUDE) ?: emptyArray()}
     if (X_KLIB_ABI_VERSION in this) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)}
     if (X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY in this) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)?.stringValue}
     if (X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS in this) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)}
@@ -178,6 +183,9 @@ internal abstract class CommonKlibBasedArgumentsImpl(
 
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
+
+    public val X_INCLUDE: CommonKlibBasedArgument<Array<String>?> =
+        CommonKlibBasedArgument("X_INCLUDE")
 
     public val X_KLIB_ABI_VERSION: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("X_KLIB_ABI_VERSION")

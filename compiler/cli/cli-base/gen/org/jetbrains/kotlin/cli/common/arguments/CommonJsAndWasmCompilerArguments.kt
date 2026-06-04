@@ -62,17 +62,6 @@ sealed class CommonJsAndWasmCompilerArguments : CommonKlibBasedCompilerArguments
         }
 
     @Argument(
-        value = "-Xinclude",
-        valueDescription = "<path>",
-        description = "Path to an intermediate library that should be processed in the same manner as source files.",
-    )
-    var includes: String? = null
-        set(value) {
-            checkFrozen()
-            field = if (value.isNullOrEmpty()) null else value
-        }
-
-    @Argument(
         value = "-Xir-dce",
         description = "Perform experimental dead code elimination.",
     )

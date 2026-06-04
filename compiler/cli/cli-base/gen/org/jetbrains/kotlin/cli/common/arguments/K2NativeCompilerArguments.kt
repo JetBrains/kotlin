@@ -341,17 +341,6 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
-        value = "-Xinclude",
-        valueDescription = "<path>",
-        description = "A path to an intermediate library that should be processed in the same manner as source files.",
-    )
-    var includes: Array<String> = emptyArray()
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xir-property-lazy-initialization",
         valueDescription = "{disable|enable}",
         description = "Initialize top level properties lazily per file.",

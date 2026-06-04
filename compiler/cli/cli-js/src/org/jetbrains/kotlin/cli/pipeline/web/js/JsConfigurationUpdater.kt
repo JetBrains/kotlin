@@ -47,7 +47,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
         checkWasmArgumentsUsage(arguments, configuration)
 
         // setup phase config for the second compilation stage (JS codegen)
-        if (arguments.includes != null) {
+        if (arguments.includes.isNotEmpty()) {
             configuration.phaseConfig = createPhaseConfig(arguments).also {
                 if (arguments.listPhases) it.list(jsLowerings)
             }
@@ -95,7 +95,7 @@ object JsConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() {
                 // Stop the pipeline, return ExitCode.OK
                 throw SuccessfulPipelineExecutionException()
             }
-            if (arguments.includes.isNullOrEmpty()) {
+            if (arguments.includes.isEmpty()) {
                 configuration.report(WEB_ARGUMENT_ERROR, "Specify at least one source file or directory", location = null)
             }
         }

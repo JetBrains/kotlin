@@ -158,7 +158,7 @@ object JSConfigurationKeys {
 
     // List of KLibs for this linking phase.
     @JvmField
-    val INCLUDES = CompilerConfigurationKey.create<String>("INCLUDES")
+    val INCLUDES = CompilerConfigurationKey.create<List<String>>("INCLUDES")
 
     // Need to produce KLib file or not.
     @JvmField
@@ -368,9 +368,9 @@ var CompilerConfiguration.useEs6Classes: Boolean
     get() = getBoolean(JSConfigurationKeys.USE_ES6_CLASSES)
     set(value) { put(JSConfigurationKeys.USE_ES6_CLASSES, value) }
 
-var CompilerConfiguration.includes: String?
-    get() = get(JSConfigurationKeys.INCLUDES)
-    set(value) { put(JSConfigurationKeys.INCLUDES, requireNotNull(value) { "nullable values are not allowed" }) }
+var CompilerConfiguration.includes: List<String>
+    get() = getList(JSConfigurationKeys.INCLUDES)
+    set(value) { put(JSConfigurationKeys.INCLUDES, value) }
 
 var CompilerConfiguration.produceKlibFile: Boolean
     get() = getBoolean(JSConfigurationKeys.PRODUCE_KLIB_FILE)

@@ -99,7 +99,7 @@ open class JsSecondStageEnvironmentConfigurator(testServices: TestServices) : Js
         val mainPath = File(mainModule.libPath).canonicalPath
         configuration.libraries = runtimeKlibs + klibDependencies + klibFriendDependencies + mainPath
         configuration.friendLibraries = klibFriendDependencies
-        configuration.includes = mainPath
+        configuration.includes = listOf(mainPath)
 
         val sourceDirs = module.files.mapNotNull { it.originalFile.parent }.distinct()
         configuration.sourceMapSourceRoots = sourceDirs

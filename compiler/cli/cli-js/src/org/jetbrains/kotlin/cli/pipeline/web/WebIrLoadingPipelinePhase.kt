@@ -40,10 +40,10 @@ abstract class WebIrLoadingPipelinePhase(
 
     override fun executePhase(input: ConfigurationPipelineArtifact): WebLoadedIrPipelineArtifact {
         val configuration = input.configuration
-        val includes = configuration.includes!!
-        val includesPath = File(includes).canonicalPath
-        val mainLibPath = configuration.libraries.find { File(it).canonicalPath == includesPath }
-            ?: error("No library with name $includes ($includesPath) found")
+        val includes = configuration.includes
+        val includesPaths = includes.map { File(it).canonicalPath }
+        val mainLibPath = configuration.libraries.find { File(it).canonicalPath in includesPaths }
+            ?: error("No library with name $includes found")
         val kLib = Klib(mainLibPath)
         val klibs = loadWebKlibs(configuration, configuration.platformChecker)
         val module = ModulesStructure(

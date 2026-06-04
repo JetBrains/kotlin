@@ -10,6 +10,17 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 abstract class CommonKlibBasedCompilerArguments : CommonCompilerArguments() {
     @Argument(
+        value = "-Xinclude",
+        valueDescription = "<path>",
+        description = "A path to an intermediate library that should be processed in the same manner as source files.",
+    )
+    var includes: Array<String> = emptyArray()
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xklib-abi-version",
         valueDescription = "<version>",
         description = """Specify the custom ABI version to be written in KLIB. This option is intended only for tests.

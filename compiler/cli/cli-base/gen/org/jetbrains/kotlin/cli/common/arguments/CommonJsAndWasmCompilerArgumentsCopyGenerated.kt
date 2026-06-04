@@ -15,7 +15,7 @@ fun copyCommonJsAndWasmCompilerArguments(from: CommonJsAndWasmCompilerArguments,
     to.friendModules = from.friendModules
     to.friendModulesDisabled = from.friendModulesDisabled
     to.generateDts = from.generateDts
-    to.includes = from.includes
+    to.includes = from.includes.copyOf()
     to.irDce = from.irDce
     to.irDcePrintReachabilityInfo = from.irDcePrintReachabilityInfo
     to.irDceRuntimeDiagnostic = from.irDceRuntimeDiagnostic

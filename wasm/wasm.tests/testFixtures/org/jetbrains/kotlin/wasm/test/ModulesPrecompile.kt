@@ -82,7 +82,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
 
     val input = ConfigurationPipelineArtifact(configuration) {}
 
-    fun compileWasmModule(includes: String, libraries: List<String>, outputName: String, outputDir: File) {
+    fun compileWasmModule(includes: List<String>, libraries: List<String>, outputName: String, outputDir: File) {
         with(configuration) {
             this.outputDir = outputDir
             this.outputName = outputName
@@ -102,7 +102,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     }
 
     compileWasmModule(
-        includes = stdlibPath,
+        includes = listOf(stdlibPath),
         libraries = listOf(stdlibPath),
         outputName = precompiledStdlibOutputName,
         outputDir = setup.stdlibOutputDir,
@@ -113,7 +113,7 @@ internal fun precompileWasmModules(setup: PrecompileSetup) {
     configuration.wasmDependencyResolutionMap = rawResolutionMap
 
     compileWasmModule(
-        includes = kotlinTestPath,
+        includes = listOf(kotlinTestPath),
         libraries = listOf(stdlibPath, kotlinTestPath),
         outputName = precompiledKotlinTestOutputName,
         outputDir = setup.kotlinTestOutputDir

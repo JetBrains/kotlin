@@ -82,16 +82,6 @@ public interface CommonJsAndWasmCompilerLinkingArguments : CommonJsAndWasmArgume
         CommonJsAndWasmCompilerLinkingArgument("SOURCE_MAP", KotlinReleaseVersion(1, 0, 0))
 
     /**
-     * Path to an intermediate library that should be processed in the same manner as source files.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_INCLUDE: CommonJsAndWasmCompilerLinkingArgument<Path?> =
-        CommonJsAndWasmCompilerLinkingArgument("X_INCLUDE", KotlinReleaseVersion(1, 4, 0))
-
-    /**
      * Path to the cache directory.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

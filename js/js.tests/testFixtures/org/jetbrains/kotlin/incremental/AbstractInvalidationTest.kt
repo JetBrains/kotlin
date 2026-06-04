@@ -212,7 +212,7 @@ abstract class AbstractInvalidationTest(
 
         copy.libraries = allLibraries
         copy.friendLibraries = friendLibraries
-        includedLibrary?.let { copy.includes = includedLibrary }
+        includedLibrary?.let { copy.includes = listOf(it) }
 
         zipAccessor.reset()
         copy.put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
