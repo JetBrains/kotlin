@@ -986,7 +986,7 @@ private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
     }
 }
 
-const val SHARED_XCODE_DUMP_DIR = "build/kotlin/swiftPMXcodeDumps"
+internal const val SHARED_XCODE_DUMP_DIR = "build/kotlin/swiftPMXcodeDumps"
 private fun Project.provideXcodeDumpsDir(): Provider<Directory> =
     layout.dir(
         provider {
@@ -994,7 +994,7 @@ private fun Project.provideXcodeDumpsDir(): Provider<Directory> =
         }
     )
 
-const val SHARED_SYNTHETIC_PACKAGE_DIR = "build/kotlin/swiftSyntheticPackages"
+internal const val SHARED_SYNTHETIC_PACKAGE_DIR = "build/kotlin/swiftSyntheticPackages"
 private fun Project.provideSyntheticPackageDir() : Provider<Directory> =
     layout.dir(
         provider {
@@ -1003,7 +1003,7 @@ private fun Project.provideSyntheticPackageDir() : Provider<Directory> =
 
     )
 
-const val SHARED_CHECKOUT_DIR = "build/kotlin/swiftPMCheckouts"
+internal const val SHARED_CHECKOUT_DIR = "build/kotlin/swiftPMCheckouts"
 private fun Project.provideCheckoutDir() : Provider<Directory> =
     layout.dir(
         provider {

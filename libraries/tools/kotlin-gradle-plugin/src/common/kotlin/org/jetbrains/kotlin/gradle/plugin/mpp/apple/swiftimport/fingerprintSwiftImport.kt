@@ -285,7 +285,7 @@ internal fun fingerprintSwiftPMImportMetadata(
     return sha256(payload)
 }
 
-const val SWIFT_IMPORT_HASH_ALGORITHM = "SHA-256"
+internal const val SWIFT_IMPORT_HASH_ALGORITHM = "SHA-256"
 
 
 private fun sha256(value: String): String =

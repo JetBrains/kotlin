@@ -344,19 +344,19 @@ private data class XcodeDumpBucketMapKey(
 
 
 
-open class CoordinationBucket(
+internal open class CoordinationBucket(
     val completion: CountDownLatch = CountDownLatch(1),
     var failure: Throwable? = null,
     var completed: Boolean = false,
 )
 
-class XcodeDumpBucket(
+internal class XcodeDumpBucket(
     val ownerDumpDir: File,
     val ownerDerivedDataDir: File,
     completion: CountDownLatch = CountDownLatch(1),
 ) : CoordinationBucket(completion)
 
-class SwiftResolveBucket(
+internal class SwiftResolveBucket(
     val ownerPackageResolvedFile: File,
     val ownerWorkspaceStateFile: File,
     val ownerSwiftPMDependenciesCheckout: File,
@@ -364,7 +364,7 @@ class SwiftResolveBucket(
     completion: CountDownLatch = CountDownLatch(1),
 ) : CoordinationBucket(completion)
 
-class GeneratePackageBucket(
+internal class GeneratePackageBucket(
     val ownerSyntheticPackageRoot: File,
     completion: CountDownLatch = CountDownLatch(1),
 ) : CoordinationBucket(completion)
@@ -376,7 +376,7 @@ class GeneratePackageBucket(
  * [Existing] means another task or a previous invocation already owns reusable outputs, so the caller waits and
  * writes its local location marker to those shared outputs.
  */
-sealed class CoordinationClaim<out T : CoordinationBucket> {
+internal sealed class CoordinationClaim<out T : CoordinationBucket> {
     abstract val bucket: T
 
     data class Owner<T : CoordinationBucket>(
