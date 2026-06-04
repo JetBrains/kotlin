@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.getValueParameterTypesFromCallableReflectionType
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.MemberDescriptor
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.resolve.calls.components.hasDefaultValue
 import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.UnwrappedType
 
+@K1Deprecation
 fun <T> FlatSignature.Companion.createFromReflectionType(
     origin: T,
     descriptor: CallableDescriptor,
@@ -52,6 +54,7 @@ fun <T> FlatSignature.Companion.createFromReflectionType(
 
 
 @JvmName("createWithConvertedTypes")
+@K1Deprecation
 fun <T> FlatSignature.Companion.create(
     origin: T,
     descriptor: CallableDescriptor,
@@ -74,6 +77,7 @@ fun <T> FlatSignature.Companion.create(
     )
 }
 
+@K1Deprecation
 fun <T> FlatSignature.Companion.create(
     origin: T,
     descriptor: CallableDescriptor,
@@ -96,6 +100,7 @@ fun <T> FlatSignature.Companion.create(
     )
 }
 
+@K1Deprecation
 fun <D : CallableDescriptor> FlatSignature.Companion.createFromCallableDescriptor(descriptor: D): FlatSignature<D> =
     FlatSignature(
         descriptor,
@@ -111,6 +116,7 @@ fun <D : CallableDescriptor> FlatSignature.Companion.createFromCallableDescripto
         isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
     )
 
+@K1Deprecation
 fun <D : CallableDescriptor> FlatSignature.Companion.createForPossiblyShadowedExtension(descriptor: D): FlatSignature<D> =
     FlatSignature(
         descriptor,
@@ -124,4 +130,5 @@ fun <D : CallableDescriptor> FlatSignature.Companion.createForPossiblyShadowedEx
         isSyntheticMember = descriptor is SyntheticMemberDescriptor<*>
     )
 
+@K1Deprecation
 val ValueParameterDescriptor.argumentValueType get() = varargElementType ?: type

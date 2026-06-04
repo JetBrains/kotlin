@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 
 @OptIn(K1Deprecation::class)
+@K1Deprecation
 fun resolveKtPrimitive(
     csBuilder: ConstraintSystemBuilder,
     argument: KotlinCallArgument,
@@ -212,6 +213,7 @@ private fun extractLambdaInfoFromFunctionalType(
     )
 }
 
+@K1Deprecation
 fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     diagnosticsHolder: KotlinDiagnosticsHolder,
@@ -234,6 +236,7 @@ fun LambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
     return resolvedLambdaAtom
 }
 
+@K1Deprecation
 fun ResolvedLambdaAtom.transformToResolvedLambda(
     csBuilder: ConstraintSystemBuilder,
     diagnosticsHolder: KotlinDiagnosticsHolder,

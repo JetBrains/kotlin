@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.expressions.ConstantReference
 import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
 
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.contracts.description.expressions.VariableReference
  *  - if [effect] wasn't observed, we *can't* reason that [condition] is false
  *  - if [condition] is true, we *can't* reason that [effect] will be observed.
  */
+@K1Deprecation
 class ConditionalEffectDeclaration(val effect: EffectDeclaration, val condition: BooleanExpression) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitConditionalEffectDeclaration(this, data)
@@ -42,6 +44,7 @@ class ConditionalEffectDeclaration(val effect: EffectDeclaration, val condition:
 /**
  * Effect which specifies that subroutine returns some particular value
  */
+@K1Deprecation
 class ReturnsEffectDeclaration(val value: ConstantReference) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsEffectDeclaration(this, data)
@@ -53,6 +56,7 @@ class ReturnsEffectDeclaration(val value: ConstantReference) : EffectDeclaration
  * Effect which specifies, that during execution of subroutine, callable [variableReference] will be invoked
  * [kind] amount of times, and will never be invoked after subroutine call is finished.
  */
+@K1Deprecation
 class CallsEffectDeclaration(val variableReference: VariableReference, val kind: EventOccurrencesRange) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitCallsEffectDeclaration(this, data)
@@ -62,6 +66,7 @@ class CallsEffectDeclaration(val variableReference: VariableReference, val kind:
 /**
  * Effect which specifies that subroutine returns the result of calling the specified lambda parameter [variableReference].
  */
+@K1Deprecation
 class ReturnsResultOfEffectDeclaration(val variableReference: VariableReference) : EffectDeclaration {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitReturnsResultOfEffectDeclaration(this, data)

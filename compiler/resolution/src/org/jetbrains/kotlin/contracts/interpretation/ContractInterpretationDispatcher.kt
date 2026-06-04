@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.interpretation
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ConditionalEffectDeclaration
 import org.jetbrains.kotlin.contracts.description.ContractDescription
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.contracts.model.structure.ESVariable
 /**
  * This class manages conversion of [ContractDescription] to [Functor]
  */
+@K1Deprecation
 class ContractInterpretationDispatcher {
     private val constantsInterpreter = ConstantValuesInterpreter()
     private val conditionInterpreter = ConditionInterpreter(this)

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.isBuiltinExtensionFunctionalType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import java.util.*
 
+@K1Deprecation
 abstract class AbstractInvokeTowerProcessor<C : Candidate>(
     protected val factoryProviderForInvoke: CandidateFactoryProviderForInvoke<C>,
     protected val variableProcessor: ScopeTowerProcessor<C>
@@ -96,6 +98,7 @@ abstract class AbstractInvokeTowerProcessor<C : Candidate>(
 }
 
 // todo KT-9522 Allow invoke convention for synthetic property
+@K1Deprecation
 class InvokeTowerProcessor<C : Candidate>(
     val scopeTower: ImplicitScopeTower,
     val name: Name,
@@ -137,6 +140,7 @@ class InvokeTowerProcessor<C : Candidate>(
     }
 }
 
+@K1Deprecation
 class InvokeExtensionTowerProcessor<C : Candidate>(
     val scopeTower: ImplicitScopeTower,
     val name: Name,
@@ -218,6 +222,7 @@ private fun ImplicitScopeTower.getExtensionInvokeCandidateDescriptor(
 }
 
 // case 1.(foo())() or (foo())()
+@K1Deprecation
 fun <C : Candidate> createCallTowerProcessorForExplicitInvoke(
     scopeTower: ImplicitScopeTower,
     functionContext: CandidateFactory<C>,

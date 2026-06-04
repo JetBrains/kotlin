@@ -6,10 +6,12 @@
 package org.jetbrains.kotlin.extensions
 
 import com.intellij.openapi.project.Project
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.types.DefaultTypeAttributeTranslator
 import org.jetbrains.kotlin.types.TypeAttributeTranslator
 import org.jetbrains.kotlin.types.extensions.TypeAttributeTranslators
 
+@K1Deprecation
 interface TypeAttributeTranslatorExtension : TypeAttributeTranslator {
     companion object : ProjectExtensionDescriptor<TypeAttributeTranslatorExtension>(
         "org.jetbrains.kotlin.extensions.typeAttributeTranslatorExtension",

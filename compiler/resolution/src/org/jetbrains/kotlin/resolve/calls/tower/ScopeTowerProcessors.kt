@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.QualifierReceiver
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastInfo
 
 
+@K1Deprecation
 class KnownResultProcessor<out C>(
     val result: Collection<C>
 ) : ScopeTowerProcessor<C> {
@@ -35,6 +37,7 @@ class KnownResultProcessor<out C>(
 }
 
 // use this if processors priority is important
+@K1Deprecation
 class PrioritizedCompositeScopeTowerProcessor<out C>(
     vararg val processors: ScopeTowerProcessor<C>
 ) : ScopeTowerProcessor<C> {
@@ -46,6 +49,7 @@ class PrioritizedCompositeScopeTowerProcessor<out C>(
 
 }
 
+@K1Deprecation
 class VariableAndObjectScopeTowerProcessor<out C : Candidate>(
     private val variableProcessor: ScopeTowerProcessor<C>,
     private val objectProcessor: ScopeTowerProcessor<C>
@@ -93,6 +97,7 @@ class VariableAndObjectScopeTowerProcessor<out C : Candidate>(
 }
 
 // use this if all processors has same priority
+@K1Deprecation
 class SamePriorityCompositeScopeTowerProcessor<out C>(
     private vararg val processors: SimpleScopeTowerProcessor<C>
 ) : SimpleScopeTowerProcessor<C> {
@@ -103,6 +108,7 @@ class SamePriorityCompositeScopeTowerProcessor<out C>(
 
 }
 
+@K1Deprecation
 interface SimpleScopeTowerProcessor<out C> : ScopeTowerProcessor<C> {
     fun simpleProcess(data: TowerData): Collection<C>
 
@@ -275,6 +281,7 @@ private fun <C : Candidate> createSimpleProcessor(
     return withoutClassValueProcessor
 }
 
+@K1Deprecation
 fun <C : Candidate> createCallableReferenceProcessor(
     scopeTower: ImplicitScopeTower,
     name: Name, context: CandidateFactory<C>,
@@ -285,11 +292,13 @@ fun <C : Candidate> createCallableReferenceProcessor(
     return SamePriorityCompositeScopeTowerProcessor(variable, function)
 }
 
+@K1Deprecation
 fun <C : Candidate> createVariableProcessor(
     scopeTower: ImplicitScopeTower, name: Name,
     context: CandidateFactory<C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
 ) = createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getVariables(name, it) }
 
+@K1Deprecation
 fun <C : Candidate> createVariableAndObjectProcessor(
     scopeTower: ImplicitScopeTower, name: Name,
     context: CandidateFactory<C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
@@ -298,12 +307,14 @@ fun <C : Candidate> createVariableAndObjectProcessor(
     createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getObjects(name, it) }
 )
 
+@K1Deprecation
 fun <C : Candidate> createSimpleFunctionProcessor(
     scopeTower: ImplicitScopeTower, name: Name,
     context: CandidateFactory<C>, explicitReceiver: DetailedReceiver?, classValueReceiver: Boolean = true
 ) = createSimpleProcessor(scopeTower, context, explicitReceiver, classValueReceiver) { getFunctions(name, it) }
 
 
+@K1Deprecation
 fun <C : Candidate> createFunctionProcessor(
     scopeTower: ImplicitScopeTower,
     name: Name,
@@ -327,6 +338,7 @@ fun <C : Candidate> createFunctionProcessor(
 }
 
 
+@K1Deprecation
 fun <C : Candidate> createProcessorWithReceiverValueOrEmpty(
     explicitReceiver: DetailedReceiver?,
     create: (ReceiverValueWithSmartCastInfo?) -> ScopeTowerProcessor<C>

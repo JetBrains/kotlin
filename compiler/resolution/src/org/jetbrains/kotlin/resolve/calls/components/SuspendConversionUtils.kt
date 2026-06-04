@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.*
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.model.*
 import org.jetbrains.kotlin.types.UnwrappedType
 
+@K1Deprecation
 object SuspendTypeConversions : ParameterTypeConversion {
     override fun conversionDefinitelyNotNeeded(
         candidate: ResolutionCandidate,

@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 sealed class K1ExpectActualCollectionArgumentsCompatibilityCheckStrategy {
     abstract fun <T> areCompatible(
         expectArg: Collection<T>,

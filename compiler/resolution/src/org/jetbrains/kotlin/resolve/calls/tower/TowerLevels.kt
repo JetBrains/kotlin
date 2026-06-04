@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.incremental.components.LookupLocation
 import org.jetbrains.kotlin.name.Name
@@ -537,6 +538,7 @@ private fun ResolutionScope.getContributedObjectVariablesIncludeDeprecated(
     return listOf(DescriptorWithDeprecation(objectDescriptor, isOwnerDeprecated))
 }
 
+@K1Deprecation
 fun getFakeDescriptorForObject(classifier: ClassifierDescriptor?): FakeCallableDescriptorForObject? =
     when (classifier) {
         is TypeAliasDescriptor ->

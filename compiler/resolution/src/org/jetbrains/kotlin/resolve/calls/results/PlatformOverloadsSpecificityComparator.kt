@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.resolve.calls.results
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.container.DefaultImplementation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 
 @DefaultImplementation(impl = PlatformOverloadsSpecificityComparator.None::class)
+@K1Deprecation
 interface PlatformOverloadsSpecificityComparator {
     fun isMoreSpecificShape(specific: CallableDescriptor, general: CallableDescriptor): Boolean
 

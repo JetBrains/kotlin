@@ -16,19 +16,23 @@
 
 package org.jetbrains.kotlin.contracts.description.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionVisitor
 
+@K1Deprecation
 class LogicalOr(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitLogicalOr(this, data)
 }
 
+@K1Deprecation
 class LogicalAnd(val left: BooleanExpression, val right: BooleanExpression) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitLogicalAnd(this, data)
 }
 
+@K1Deprecation
 class LogicalNot(val arg: BooleanExpression) : BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitLogicalNot(this, data)

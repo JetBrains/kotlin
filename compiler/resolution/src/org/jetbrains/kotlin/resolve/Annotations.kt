@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.resolve
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.name.FqName
 
+@K1Deprecation
 val SINCE_KOTLIN_FQ_NAME = FqName("kotlin.SinceKotlin")

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.types.KotlinType
 
 /**
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
  *
  * Also, it's abstracted away from PSI
  */
+@K1Deprecation
 class MutableContextInfo private constructor(
     val firedEffects: MutableList<ESEffect>,
     val subtypes: MutableMap<ESValue, MutableSet<KotlinType>>,

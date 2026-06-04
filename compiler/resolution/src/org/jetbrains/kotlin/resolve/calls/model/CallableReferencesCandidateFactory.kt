@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.types.expressions.CoercionStrategy
 import org.jetbrains.kotlin.types.typeUtil.isUnit
 import org.jetbrains.kotlin.utils.SmartList
 
+@K1Deprecation
 class CallableReferencesCandidateFactory(
     val kotlinCall: CallableReferenceResolutionAtom,
     val callComponents: KotlinCallComponents,

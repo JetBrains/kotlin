@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.ESConstant
 import org.jetbrains.kotlin.contracts.model.structure.ESOr
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.contracts.model.structure.isReturns
 import org.jetbrains.kotlin.contracts.model.structure.isWildcard
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
 
+@K1Deprecation
 abstract class AbstractBinaryFunctor : AbstractFunctor() {
     override fun doInvocation(arguments: List<Computation>, typeSubstitution: ESTypeSubstitution, reducer: Reducer): List<ESEffect> {
         assert(arguments.size == 2) { "Wrong size of arguments list for Binary functor: expected 2, got ${arguments.size}" }

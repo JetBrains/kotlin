@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValueWithSmartCastI
 import org.jetbrains.kotlin.types.UnwrappedType
 
 
+@K1Deprecation
 class KotlinCallResolver(
     private val towerResolver: TowerResolver,
     private val kotlinCallCompleter: KotlinCallCompleter,

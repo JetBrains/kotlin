@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components.candidate
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.model.KotlinCallComponents
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.types.TypeSubstitutor
  * baseSystem contains all information from arguments, i.e. it is union of all system of arguments
  * Also by convention we suppose that baseSystem has no contradiction
  */
+@K1Deprecation
 open class SimpleResolutionCandidate(
     override val callComponents: KotlinCallComponents,
     override val resolutionCallbacks: KotlinResolutionCallbacks,

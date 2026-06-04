@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.util
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
@@ -40,6 +41,7 @@ private val remove: Name = Name.identifier("remove")
 // kotlin-stdlib-jdkN in dependencies, to allow smooth migration from the former to the latter. The ambiguity here would be incorrect
 // because there's really no ambiguity in the bytecode since all declarations in -jdk7/8 have been moved to another JVM package.
 // We locate declarations in kotlin-stdlib-jre{7,8} by FQ name and @SinceKotlin annotation value, which should be 1.1.
+@K1Deprecation
 fun CallableDescriptor.isLowPriorityFromStdlibJre7Or8(): Boolean {
     val containingPackage = containingDeclaration as? PackageFragmentDescriptor ?: return false
     val packageFqName = containingPackage.fqName

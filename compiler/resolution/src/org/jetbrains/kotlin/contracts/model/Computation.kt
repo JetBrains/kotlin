@@ -16,11 +16,13 @@
 
 package org.jetbrains.kotlin.contracts.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.structure.ESType
 
 /**
  * Generic abstraction of static information about some part of program.
  */
+@K1Deprecation
 interface Computation {
     /**
      * Return-type of corresponding part of program.

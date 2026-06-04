@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.*
 import org.jetbrains.kotlin.resolve.scopes.receivers.ReceiverValue
 
 
+@K1Deprecation
 object DescriptorVisibilityUtils {
     @JvmStatic
     fun findInvisibleMember(

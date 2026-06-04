@@ -16,8 +16,10 @@
 
 package org.jetbrains.kotlin.contracts.description
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.expressions.*
 
+@K1Deprecation
 interface ContractDescriptionVisitor<out R, in D> {
     fun visitContractDescriptionElement(contractDescriptionElement: ContractDescriptionElement, data: D): R {
         throw IllegalStateException("Top of hierarchy reached, no overloads were found for element: $contractDescriptionElement")

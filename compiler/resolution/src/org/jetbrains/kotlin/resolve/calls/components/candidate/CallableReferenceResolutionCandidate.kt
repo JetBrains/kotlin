@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components.candidate
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CallableReceiver
 import org.jetbrains.kotlin.resolve.calls.components.CallableReferenceAdaptation
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.UnwrappedType
  *
  * For class B with companion object B::companionM dispatchReceiver = BoundValueReference
  */
+@K1Deprecation
 class CallableReferenceResolutionCandidate(
     val candidate: CallableDescriptor,
     val dispatchReceiver: CallableReceiver?,

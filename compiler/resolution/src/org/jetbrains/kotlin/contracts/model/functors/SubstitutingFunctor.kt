@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.contracts.model.functors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.model.*
 import org.jetbrains.kotlin.contracts.model.structure.*
 import org.jetbrains.kotlin.contracts.model.visitors.Reducer
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.descriptors.ValueDescriptor
 import org.jetbrains.kotlin.resolve.scopes.receivers.ImplicitClassReceiver
 import org.jetbrains.kotlin.utils.addIfNotNull
 
+@K1Deprecation
 class SubstitutingFunctor(
     private val basicEffects: List<ESEffect>,
     private val ownerFunction: FunctionDescriptor

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.tower
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 
@@ -25,15 +26,19 @@ private val INAPPLICABLE_STATUSES = setOf(
     CandidateApplicability.INAPPLICABLE_WRONG_RECEIVER
 )
 
+@K1Deprecation
 val CallableDescriptor.isSynthesized: Boolean
     get() = (this is CallableMemberDescriptor && kind == CallableMemberDescriptor.Kind.SYNTHESIZED)
 
+@K1Deprecation
 val CandidateWithBoundDispatchReceiver.requiresExtensionReceiver: Boolean
     get() = descriptor.extensionReceiverParameter != null
 
+@K1Deprecation
 val CandidateApplicability.isInapplicable: Boolean
     get() = this in INAPPLICABLE_STATUSES
 
+@K1Deprecation
 fun <C : Candidate> C.forceResolution(): C {
     resultingApplicability
     return this

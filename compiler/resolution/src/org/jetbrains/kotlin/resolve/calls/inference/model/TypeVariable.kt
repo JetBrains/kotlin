@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -30,6 +31,7 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.types.model.TypeVariableTypeConstructorMarker
 
 
+@K1Deprecation
 class TypeVariableTypeConstructor(
     private val builtIns: KotlinBuiltIns,
     val debugName: String,
@@ -51,6 +53,7 @@ class TypeVariableTypeConstructor(
     var isContainedInInvariantOrContravariantPositions: Boolean = false
 }
 
+@K1Deprecation
 sealed class NewTypeVariable(
     builtIns: KotlinBuiltIns,
     name: String,
@@ -66,6 +69,7 @@ sealed class NewTypeVariable(
     override fun toString() = freshTypeConstructor.toString()
 }
 
+@K1Deprecation
 fun TypeConstructor.typeForTypeVariable(): SimpleType {
     require(this is TypeVariableTypeConstructor)
     return KotlinTypeFactory.simpleTypeWithNonTrivialMemberScope(
@@ -74,12 +78,14 @@ fun TypeConstructor.typeForTypeVariable(): SimpleType {
     )
 }
 
+@K1Deprecation
 class TypeVariableFromCallableDescriptor(
     val originalTypeParameter: TypeParameterDescriptor
 ) : NewTypeVariable(originalTypeParameter.builtIns, SpecialNames.safeIdentifier(originalTypeParameter.name).identifier, originalTypeParameter) {
     override fun hasOnlyInputTypesAnnotation(): Boolean = originalTypeParameter.hasOnlyInputTypesAnnotation()
 }
 
+@K1Deprecation
 class TypeVariableForLambdaReturnType(
     builtIns: KotlinBuiltIns,
     name: String
@@ -87,6 +93,7 @@ class TypeVariableForLambdaReturnType(
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
 }
 
+@K1Deprecation
 class TypeVariableForLambdaParameterType(
     val atom: PostponableKotlinCallArgument,
     val index: Int,
@@ -96,6 +103,7 @@ class TypeVariableForLambdaParameterType(
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
 }
 
+@K1Deprecation
 class TypeVariableForCallableReferenceReturnType(
     builtIns: KotlinBuiltIns,
     name: String
@@ -103,6 +111,7 @@ class TypeVariableForCallableReferenceReturnType(
     override fun hasOnlyInputTypesAnnotation(): Boolean = false
 }
 
+@K1Deprecation
 class TypeVariableForCallableReferenceParameterType(
     builtIns: KotlinBuiltIns,
     name: String

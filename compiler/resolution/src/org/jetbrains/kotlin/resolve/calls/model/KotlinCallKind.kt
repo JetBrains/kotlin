@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.ArgumentsToCandidateParameterDescriptor
 import org.jetbrains.kotlin.resolve.calls.components.CheckArgumentsInParenthesis
 import org.jetbrains.kotlin.resolve.calls.components.CheckCallableReference
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.resolve.calls.components.NoArguments
 import org.jetbrains.kotlin.resolve.calls.components.NoTypeArguments
 import org.jetbrains.kotlin.resolve.calls.components.PostponedVariablesInitializerResolutionPart
 
+@K1Deprecation
 enum class KotlinCallKind(vararg resolutionPart: ResolutionPart) {
     VARIABLE(
         CheckVisibility,

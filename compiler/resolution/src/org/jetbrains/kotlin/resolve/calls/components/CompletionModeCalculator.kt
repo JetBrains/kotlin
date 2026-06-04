@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.components
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.resolve.calls.components.candidate.ResolutionCandidate
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemCompletionContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.KotlinConstraintSystemCompleter
@@ -21,6 +22,7 @@ import java.util.*
 
 typealias CsCompleterContext = ConstraintSystemCompletionContext
 
+@K1Deprecation
 class CompletionModeCalculator {
     companion object {
         fun computeCompletionMode(

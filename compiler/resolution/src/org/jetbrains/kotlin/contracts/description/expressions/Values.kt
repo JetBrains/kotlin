@@ -16,17 +16,20 @@
 
 package org.jetbrains.kotlin.contracts.description.expressions
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.contracts.description.BooleanExpression
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionElement
 import org.jetbrains.kotlin.contracts.description.ContractDescriptionVisitor
 import org.jetbrains.kotlin.descriptors.ParameterDescriptor
 
 
+@K1Deprecation
 interface ContractDescriptionValue : ContractDescriptionElement {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitValue(this, data)
 }
 
+@K1Deprecation
 open class ConstantReference(val name: String) : ContractDescriptionValue {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitConstantDescriptor(this, data)
@@ -38,6 +41,7 @@ open class ConstantReference(val name: String) : ContractDescriptionValue {
     }
 }
 
+@K1Deprecation
 class BooleanConstantReference(name: String) : ConstantReference(name), BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanConstantDescriptor(this, data)
@@ -48,11 +52,13 @@ class BooleanConstantReference(name: String) : ConstantReference(name), BooleanE
     }
 }
 
+@K1Deprecation
 open class VariableReference(val descriptor: ParameterDescriptor) : ContractDescriptionValue {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D) =
         contractDescriptionVisitor.visitVariableReference(this, data)
 }
 
+@K1Deprecation
 class BooleanVariableReference(descriptor: ParameterDescriptor) : VariableReference(descriptor), BooleanExpression {
     override fun <R, D> accept(contractDescriptionVisitor: ContractDescriptionVisitor<R, D>, data: D): R =
         contractDescriptionVisitor.visitBooleanVariableReference(this, data)

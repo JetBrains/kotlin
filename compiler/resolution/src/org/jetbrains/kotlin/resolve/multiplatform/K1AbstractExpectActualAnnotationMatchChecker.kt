@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.multiplatform
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.mpp.*
 import org.jetbrains.kotlin.name.ClassId
@@ -13,6 +14,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.checkers.OptInNames
 import org.jetbrains.kotlin.resolve.multiplatform.ExpectActualAnnotationsIncompatibilityType as IncompatibilityType
 
+@K1Deprecation
 object K1AbstractExpectActualAnnotationMatchChecker {
     private val SKIPPED_CLASS_IDS = setOf(
         StandardClassIds.Annotations.Deprecated,

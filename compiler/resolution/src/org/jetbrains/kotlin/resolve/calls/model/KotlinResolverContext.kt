@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.ReflectionTypes
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.types.checker.KotlinTypeRefiner
 import org.jetbrains.kotlin.types.checker.NewKotlinTypeChecker
 
 
+@K1Deprecation
 class KotlinCallComponents(
     val statelessCallbacks: KotlinResolutionStatelessCallbacks,
     val argumentsToParametersMapper: ArgumentsToParametersMapper,
@@ -47,6 +49,7 @@ class KotlinCallComponents(
     val callableReferenceArgumentResolver: CallableReferenceArgumentResolver
 )
 
+@K1Deprecation
 class GivenCandidate(
     val descriptor: FunctionDescriptor,
     val dispatchReceiver: ReceiverValueWithSmartCastInfo?,

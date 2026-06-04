@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.resolve.calls.model
 
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 sealed class ResolvedCallArgument {
     abstract val arguments: List<KotlinCallArgument>
 
