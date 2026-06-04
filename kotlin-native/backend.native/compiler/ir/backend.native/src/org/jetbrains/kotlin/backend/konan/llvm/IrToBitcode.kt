@@ -251,10 +251,10 @@ internal class CodeGeneratorVisitor(
                 this@CodeGeneratorVisitor.evaluateExpression(value, resultSlot)
 
         override fun getObjectFieldPointer(thisRef: LLVMValueRef, field: IrField): LLVMValueRef =
-                this@CodeGeneratorVisitor.fieldPtrOfClass(thisRef, field)
+                this@CodeGeneratorVisitor.functionGenerationContext.fieldPtrOfClass(thisRef, field)
 
         override fun getStaticFieldPointer(field: IrField) =
-                this@CodeGeneratorVisitor.staticFieldPtr(field, functionGenerationContext)
+                this@CodeGeneratorVisitor.functionGenerationContext.staticFieldPtr(field)
     }
 
     private val intrinsicGenerator = IntrinsicGenerator(intrinsicGeneratorEnvironment)
@@ -1655,37 +1655,16 @@ internal class CodeGeneratorVisitor(
 
     private fun evaluateGetField(value: IrGetField, resultSlot: LLVMValueRef?): LLVMValueRef {
         context.log { "evaluateGetField               : ${ir2string(value)}" }
-        val alignment : Int
-        val order = when {
-            value.symbol.owner.hasAnnotation(KonanFqNames.volatile) ->
-                LLVMAtomicOrdering.LLVMAtomicOrderingSequentiallyConsistent
-            else -> null
+        val field = value.symbol.owner
+        if (!field.isStatic) {
+            return functionGenerationContext.loadIrField(
+                    field, evaluateExpression(value.receiver!!), resultSlot)
         }
-        val fieldAddress: LLVMValueRef
-
-        when {
-            !value.symbol.owner.isStatic -> {
-                fieldAddress = fieldPtrOfClass(evaluateExpression(value.receiver!!), value.symbol.owner)
-                alignment = generationState.llvmDeclarations.forField(value.symbol.owner).alignment
-            }
-            value.symbol.owner.correspondingPropertySymbol?.owner?.isConst == true -> {
-                // TODO: probably can be removed, as they are inlined.
-                return evaluateConst(value.symbol.owner.initializer?.expression as IrConst).llvm
-            }
-            else -> {
-                fieldAddress = staticFieldPtr(value.symbol.owner, functionGenerationContext)
-                alignment = generationState.llvmDeclarations.forStaticField(value.symbol.owner).alignment
-            }
+        if (field.correspondingPropertySymbol?.owner?.isConst == true) {
+            // TODO: probably can be removed, as they are inlined.
+            return evaluateConst(field.initializer?.expression as IrConst).llvm
         }
-        return functionGenerationContext.loadSlot(
-                value.type.toLLVMType(llvm),
-                value.type.binaryTypeIsReference(),
-                fieldAddress,
-                !value.symbol.owner.isFinal,
-                resultSlot,
-                memoryOrder = order,
-                alignment = alignment
-        )
+        return functionGenerationContext.loadIrField(field, thisPtr = null, resultSlot)
     }
 
     //-------------------------------------------------------------------------//
@@ -1707,10 +1686,9 @@ internal class CodeGeneratorVisitor(
     }
 
     private fun evaluateSetField(value: IrSetField): LLVMValueRef {
-        context.log{"evaluateSetField               : ${ir2string(value)}"}
+        context.log { "evaluateSetField               : ${ir2string(value)}" }
         val field = value.symbol.owner
-        if (value.origin == IrStatementOrigin.INITIALIZE_FIELD
-                && isZeroConstValue(value.value)) {
+        if (value.origin == IrStatementOrigin.INITIALIZE_FIELD && isZeroConstValue(value.value)) {
             var receiver = value.receiver
             while (receiver is IrTypeOperatorCall && receiver.operator == IrTypeOperator.IMPLICIT_CAST)
                 receiver = receiver.argument
@@ -1723,46 +1701,25 @@ internal class CodeGeneratorVisitor(
 
         val thisPtr = value.receiver?.let { evaluateExpression(it) }
         val valueToAssign = evaluateExpression(value.value)
-        val address: LLVMValueRef
-        val alignment: Int
         if (thisPtr != null) {
             require(!field.isStatic) { "Unexpected receiver for a static field: ${value.render()}" }
             require(thisPtr.type == llvm.pointerType) {
                 LLVMPrintTypeToString(thisPtr.type)?.toKString().toString()
             }
-            address = fieldPtrOfClass(thisPtr, field)
-            alignment = generationState.llvmDeclarations.forField(field).alignment
         } else {
             require(field.isStatic) { "A receiver expected for a non-static field: ${value.render()}" }
-            address = staticFieldPtr(field, functionGenerationContext)
-            alignment = generationState.llvmDeclarations.forStaticField(field).alignment
         }
-        if (value.origin == StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD && field.type.binaryTypeIsReference()) {
-            call(llvm.registerGlobalFunction, listOf(address))
-        }
-        functionGenerationContext.storeAny(
-                valueToAssign, address, field.type.binaryTypeIsReference(), false,
-                isVolatile = field.hasAnnotation(KonanFqNames.volatile),
-                alignment = alignment,
+
+        functionGenerationContext.storeIrField(
+                field,
+                thisPtr,
+                valueToAssign,
+                isGlobalInit = value.origin == StaticInitializersOrigins.INITIALIZE_GLOBAL_FIELD
         )
 
-        assert (value.type.isUnit())
+        assert(value.type.isUnit())
         return codegen.theUnitInstanceRef.llvm
     }
-
-    //-------------------------------------------------------------------------//
-    private fun fieldPtrOfClass(thisPtr: LLVMValueRef, value: IrField): LLVMValueRef {
-        val fieldInfo = generationState.llvmDeclarations.forField(value)
-        val classBodyType = fieldInfo.classBodyType
-        val fieldPtr = LLVMBuildStructGEP2(functionGenerationContext.builder, classBodyType, thisPtr, fieldInfo.index, "")
-        return fieldPtr!!
-    }
-
-    private fun staticFieldPtr(value: IrField, context: FunctionGenerationContext) =
-            generationState.llvmDeclarations
-                    .forStaticField(value.symbol.owner)
-                    .storageAddressAccess
-                    .getAddress(context)
 
     //-------------------------------------------------------------------------//
     private fun evaluateStringConst(value: String) =
