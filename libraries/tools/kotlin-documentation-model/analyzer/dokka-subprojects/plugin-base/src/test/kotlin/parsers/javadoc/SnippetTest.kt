@@ -793,7 +793,8 @@ class SnippetTest : BaseAbstractTest() {
                                         callable = Callable(
                                             name = "out",
                                             params = emptyList(),
-                                            isProperty = true
+                                            isProperty = true,
+                                            isCompanion = true
                                         )
                                     ),
                                     children = listOf(Text("System.out"))
@@ -806,7 +807,8 @@ class SnippetTest : BaseAbstractTest() {
                                         callable = Callable(
                                             name = "out",
                                             params = emptyList(),
-                                            isProperty = true
+                                            isProperty = true,
+                                            isCompanion = true
                                         )
                                     ),
                                     children = listOf(Text("System.out"))
@@ -858,7 +860,8 @@ class SnippetTest : BaseAbstractTest() {
                                         callable = Callable(
                                             name = "out",
                                             params = emptyList(),
-                                            isProperty = true
+                                            isProperty = true,
+                                            isCompanion = true
                                         )
                                     ),
                                     children = listOf(Text("System.out"))
