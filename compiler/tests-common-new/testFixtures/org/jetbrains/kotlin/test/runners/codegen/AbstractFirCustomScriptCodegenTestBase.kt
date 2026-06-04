@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.test.builders.irHandlersStep
 import org.jetbrains.kotlin.test.builders.jvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonBackendHandlersForCodegenTest
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.KOTLIN_SCRIPT_DEFINITION
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
@@ -79,6 +80,7 @@ abstract class AbstractFirCustomScriptCodegenTestBase(
                 ::IrTextDumpHandler,
                 ::IrPrettyKotlinDumpHandler,
             )
+            commonIrHandlersForCodegenTest()
         }
 
         facadeStep(::JvmIrBackendFacade)

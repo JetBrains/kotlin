@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.firHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
@@ -51,6 +53,12 @@ fun TestConfigurationBuilder.configureCodegenFirHandlerSteps() {
     useFailureSuppressors(
         ::FirMetaInfoDiffSuppressor
     )
+}
+
+fun TestConfigurationBuilder.configureCodegenIrHandlerSteps() {
+    configureIrHandlersStep {
+        commonIrHandlersForCodegenTest()
+    }
 }
 
 abstract class AbstractFirWasmTest(
@@ -114,6 +122,7 @@ open class AbstractFirWasmJsCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 
@@ -168,6 +177,7 @@ open class AbstractFirWasmJsCodegenBoxInlineTest : AbstractFirWasmJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 
@@ -178,6 +188,7 @@ open class AbstractFirWasmJsCodegenInteropTest : AbstractFirWasmJsTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 
@@ -301,6 +312,7 @@ open class AbstractFirWasmWasiCodegenBoxTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureCodegenFirHandlerSteps()
+        builder.configureCodegenIrHandlerSteps()
     }
 }
 

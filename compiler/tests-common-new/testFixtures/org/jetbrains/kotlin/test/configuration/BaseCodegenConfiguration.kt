@@ -70,8 +70,8 @@ fun TestConfigurationBuilder.setupJvmPipelineStepsWithoutCompilationErrorHandler
  */
 fun TestConfigurationBuilder.setupJvmPipelineSteps(parser: FirParser) {
     setupJvmPipelineStepsWithoutCompilationErrorHandlers(parser)
-    configureFirHandlersStep { useHandlers(::NoFirCompilationErrorsHandler) }
-    configureIrHandlersStep { useHandlers(::NoIrCompilationErrorsHandler) }
+    configureFirHandlersStep { commonFirHandlersForCodegenTest() }
+    configureIrHandlersStep { commonIrHandlersForCodegenTest() }
     configureJvmArtifactsHandlersStep { useHandlers(::NoJvmSpecificCompilationErrorsHandler) }
 }
 

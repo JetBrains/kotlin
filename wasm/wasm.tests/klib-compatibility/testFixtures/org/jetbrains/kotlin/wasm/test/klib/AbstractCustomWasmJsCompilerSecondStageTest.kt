@@ -14,8 +14,10 @@ import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.wasmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.configuration.commonIrHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
@@ -96,6 +98,11 @@ open class AbstractCustomWasmJsCompilerSecondStageTest(val testDataRoot: String 
         configureFirHandlersStep {
             commonFirHandlersForCodegenTest()
         }
+
+        configureIrHandlersStep {
+            commonIrHandlersForCodegenTest()
+        }
+
         commonConfigurationForWasmSecondStageTest(
             testDataRoot,
             testGroupOutputDirPrefix = this@AbstractCustomWasmJsCompilerSecondStageTest::class.java.simpleName +
