@@ -5,13 +5,13 @@
 
 package org.jetbrains.kotlin.config
 
-class CrossFeatureChecksResultsCollector {
+internal class CrossFeatureChecksResultsCollector {
     class FailedCheck(val message: String)
 
     val failedChecks: List<FailedCheck>
         field = mutableListOf()
 
-    internal fun addFailedCheck(message: String) {
+    fun addFailedCheck(message: String) {
         failedChecks += FailedCheck(message)
     }
 }

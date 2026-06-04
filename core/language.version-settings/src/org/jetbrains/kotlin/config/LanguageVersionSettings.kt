@@ -717,7 +717,7 @@ enum class LanguageFeature(
     val actuallyEnabledInProgressiveMode: Boolean get() = enabledInProgressiveMode && sinceVersion != null
 
     context(context: CrossFeatureChecksResultsCollector)
-    open fun crossFeatureChecks() {
+    internal open fun crossFeatureChecks() {
     }
 
     companion object {
