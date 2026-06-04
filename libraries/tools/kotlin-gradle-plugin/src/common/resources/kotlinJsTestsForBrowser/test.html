@@ -8,19 +8,56 @@
 <body>
 <div id="mocha"></div>
 <script src="https://cdn.jsdelivr.net/npm/mocha@10/mocha.js"></script>
-<script src="mocha-kotlin-reporter.bundle.js"></script>
+<script>
+    function JsonCollector(runner) {
+        window.__testResults = { suites: [] };
+        var stack = [window.__testResults];
+
+        runner.on('suite', function(suite) {
+            if (suite.root) return;
+            suite._startDate = Date.now();
+            var node = { name: suite.title, duration: 0, tests: [], suites: [] };
+            stack[stack.length - 1].suites.push(node);
+            stack.push(node);
+        });
+        runner.on('suite end', function(suite) {
+            if (suite.root) return;
+            var node = stack.pop();
+            node.duration = Date.now() - suite._startDate;
+        });
+        runner.on('pass', function(test) {
+            stack[stack.length - 1].tests.push({
+                name: test.title, status: 'passed',
+                duration: test.duration != null ? test.duration : 0
+            });
+        });
+        runner.on('fail', function(test, err) {
+            var entry = {
+                name: test.title, status: 'failed',
+                duration: test.duration != null ? test.duration : 0,
+                errorMessage: err.message || '', errorStack: err.stack || ''
+            };
+            if (err.actual !== undefined && err.expected !== undefined) {
+                entry.actual = String(err.actual);
+                entry.expected = String(err.expected);
+            }
+            stack[stack.length - 1].tests.push(entry);
+        });
+        runner.on('pending', function(test) {
+            stack[stack.length - 1].tests.push({ name: test.title, status: 'pending', duration: 0 });
+        });
+        runner.on('end', function() { window.__testResultsReady = true; });
+    }
+</script>
 <script>
     mocha.setup({
         ui: 'bdd',
-        reporter: Teamcity,
+        reporter: JsonCollector,
     });
 </script>
 <script src="tests.bundle.js"></script>
 <script>
-    mocha.run((failures) => {
-        console.log('MOCHA_RUN_FINISHED', { failures });
-        console.log('THE END')
-    });
+    mocha.run();
 </script>
 </body>
 </html>
