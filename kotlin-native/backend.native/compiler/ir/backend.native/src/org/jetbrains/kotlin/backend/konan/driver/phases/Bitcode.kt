@@ -44,6 +44,7 @@ internal data class WriteBitcodeFileInput(
  */
 internal val WriteBitcodeFilePhase = createSimpleNamedCompilerPhase<NativeBackendPhaseContext, WriteBitcodeFileInput>(
         "WriteBitcodeFile",
+        postactions = getDefaultLlvmModuleActions(),
 ) { context, (llvmModule, outputFile) ->
     // Insert `_main` after pipeline, so we won't worry about optimizations corrupting entry point.
     insertAliasToEntryPoint(context, llvmModule)
