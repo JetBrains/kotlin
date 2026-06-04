@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.test.services.jvm.compiledClassesManager
 import org.jetbrains.kotlin.test.services.jvm.jvmBoxMainClassProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBoxTestsSourceProvider.Companion.fileContainsBoxMethod
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -123,7 +124,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
         }
         // Test-infrastructure invariant violation (not a failure of the code under test): throw a
         // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        val method = clazz.getBoxMethodOrNull() ?: throw TestInfrastructureException("box method not found")
+        val method = clazz.getBoxMethodOrNull() ?: testInfraError("box method not found")
         return clazz to method
     }
 
@@ -202,14 +203,14 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
             TestJdkKind.FULL_JDK_21 -> KtTestUtil.getJdk21Home()
             // Test-infrastructure invariant violation (not a failure of the code under test): throw a
             // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-            else -> throw TestInfrastructureException("Unsupported JDK kind: $jdkKind")
+            else -> testInfraError("Unsupported JDK kind: $jdkKind")
         }
 
         val javaExe = File(jdkHome, "bin/java.exe").takeIf(File::exists)
             ?: File(jdkHome, "bin/java").takeIf(File::exists)
             // Test-infrastructure/environment invariant violation (not a failure of the code under test): throw a
             // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-            ?: throw TestInfrastructureException("Can't find 'java' executable in $jdkHome")
+            ?: testInfraError("Can't find 'java' executable in $jdkHome")
 
         val classPath = extractClassPath(module, classLoader, classFileFactory)
 
@@ -218,7 +219,7 @@ open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(t
                 it.name == MainFunctionForBlackBoxTestsSourceProvider.BOX_MAIN_FILE_NAME && it.isAdditional
                 // Test-infrastructure invariant violation (not a failure of the code under test): throw a
                 // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-            } ?: throw TestInfrastructureException("No file with main function was generated. Please check TODO source provider")
+            } ?: testInfraError("No file with main function was generated. Please check TODO source provider")
 
             val mainFqName = listOfNotNull(
                 MainFunctionForBlackBoxTestsSourceProvider.detectPackage(mainFile),

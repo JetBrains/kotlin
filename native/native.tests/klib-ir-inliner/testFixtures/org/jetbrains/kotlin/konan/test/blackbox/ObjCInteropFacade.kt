@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.ModuleStructureExtractor.Companion.CIN
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.klibEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.testInfraError
 import kotlin.collections.flatMap
 import kotlin.io.extension
 
@@ -65,7 +66,7 @@ class ObjCInteropFacade(
         // Test-infrastructure invariant violation (not a failure of the code under test): throw a
         // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
         val defFile = defFiles.singleOrNull()
-            ?: throw TestInfrastructureException("Only one .def file is allowed: ${defFiles.map { it.name }}")
+            ?: testInfraError("Only one .def file is allowed: ${defFiles.map { it.name }}")
         val defRealFileFolder = defFile.parentFile
         val cSourceFiles = sourceFiles.filter {
             it.name.substringAfterLast(".") in CINTEROP_SOURCE_EXTENSIONS
@@ -83,7 +84,7 @@ class ObjCInteropFacade(
                     "cpp", "mm" -> ClangMode.CXX
                     // Test-infrastructure invariant violation (not a failure of the code under test): throw a
                     // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-                    else -> throw TestInfrastructureException("unexpected file extension: $it")
+                    else -> testInfraError("unexpected file extension: $it")
                 },
                 sourceFiles = listOf(it),
                 outputFile = expectedArtifact.klibFile.resolveSibling("${it.nameWithoutExtension}.a"),

@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.services.testInfo
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
@@ -266,7 +267,7 @@ internal fun TestModule.fileCheckStage(): String? {
     return directives[FILECHECK_STAGE].singleOrNull()
     // Test-infrastructure invariant violation (not a failure of the code under test): throw a
     // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        ?: throw TestInfrastructureException(
+        ?: testInfraError(
             "Exactly one argument for FILECHECK directive is needed: LLVM stage name to dump bitcode after, in files: $files"
         )
 }

@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.test.services.BatchingPackageInserter
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import java.io.File
 import kotlin.test.assertIs
 
@@ -40,13 +41,12 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     private var artifact: BinaryArtifacts.Native? = null
     override fun processModule(module: TestModule, info: BinaryArtifacts.Native) {
         if (NativeEnvironmentConfigurator.isMainModule(module, testServices.moduleStructure)) {
-            if (artifact != null)
-            // Test-infrastructure invariant violation (not a failure of the code under test): throw a
-            // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-                throw TestInfrastructureException(
-                    "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
-                            "Only one module may have no incoming dependencies"
-                )
+            checkTestInfrastructure(artifact == null) {
+                // Test-infrastructure invariant violation (not a failure of the code under test): throw a
+                // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
+                "Internal error: more than one executable for the testcase: ${artifact!!.executable.name} and ${info.executable.name}\n" +
+                        "Only one module may have no incoming dependencies"
+            }
             artifact = info
         }
     }
@@ -54,7 +54,7 @@ class NativeBoxRunner(testServices: TestServices) : NativeBinaryArtifactHandler(
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         // Test-infrastructure invariant violation (not a failure of the code under test): throw a
         // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        val executable = artifact?.executable ?: throw TestInfrastructureException("One main module is expected to be in the test.")
+        val executable = artifact?.executable ?: testInfraError("One main module is expected to be in the test.")
         val testRun = createTestRun(
             executable,
             testServices,
@@ -190,7 +190,7 @@ private fun getTestRunParameters(
         }
         // Test-infrastructure invariant violation (not a failure of the code under test): throw a
         // TestInfrastructureException so it is never masked by failure suppressors (e.g. an IGNORE_BACKEND directive).
-        else -> throw TestInfrastructureException("Not yet supported test kind: $testKind")
+        else -> testInfraError("Not yet supported test kind: $testKind")
     }
 }
 
@@ -235,9 +235,9 @@ class PrettyResultsHandler(
         }
         val phaseInputs = testServices.groupingStageInputs
 
-        if (failedResults.isNotEmpty() && failedTests.isEmpty()) {
-            throw TestInfrastructureException("There should be at least one failed test, but none detected:\n"
-                        + failedResults.joinToString("\n") + "\n\n" + output)
+        checkTestInfrastructure(failedResults.isEmpty() || failedTests.isNotEmpty()) {
+            "There should be at least one failed test, but none detected:\n" +
+                    failedResults.joinToString("\n") + "\n\n" + output
         }
         if (phaseInputs.size == 1) {
             // This is a test-infrastructure invariant violation, not a failure of the code under test. Throw a
@@ -258,7 +258,7 @@ class PrettyResultsHandler(
                 val testInfo = it.testInfo
                 val correspondingTestName = BatchingPackageInserter.computePackage(testInfo)
                 correspondingTestName == failedTest
-            } ?: throw TestInfrastructureException("Can't find corresponding input for $failedTest")
+            } ?: testInfraError("Can't find corresponding input for $failedTest")
             correspondingInput.catchingExecutor.executeWithCatching(exceptionWrapper) {
                 super.processNonExpectedFailure(failedResults)
             }

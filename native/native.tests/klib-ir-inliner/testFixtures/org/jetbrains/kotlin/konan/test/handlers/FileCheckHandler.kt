@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.testInfraError
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toUpperCaseAsciiOnly
 import java.io.File
 
@@ -51,7 +52,7 @@ class FileCheckHandler(testServices: TestServices) : GroupingStageHandler<Binary
         }
         val module = originalModuleStructures.single().modules.first()
         val fileCheckStage = module.fileCheckStage()
-            ?: throw TestInfrastructureException("FILECHECK_STAGE directive is missing in module ${module.name}")
+            ?: testInfraError("FILECHECK_STAGE directive is missing in module ${module.name}")
         val testDataFile = module.files.first().originalFile
         val fileCheckDump = artifact.executable.fileCheckDump(fileCheckStage)
 

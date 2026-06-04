@@ -27,6 +27,8 @@ class TestInfrastructureException(message: String, cause: Throwable? = null) : R
  */
 inline fun checkTestInfrastructure(value: Boolean, lazyMessage: () -> String) {
     if (!value) {
-        throw TestInfrastructureException(lazyMessage())
+        testInfraError(lazyMessage())
     }
 }
+
+fun testInfraError(message: String): Nothing = throw TestInfrastructureException(message)
