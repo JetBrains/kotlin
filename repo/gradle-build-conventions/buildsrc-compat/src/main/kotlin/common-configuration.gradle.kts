@@ -1,3 +1,4 @@
+import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.internal.file.collections.DefaultConfigurableFileCollection
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
@@ -26,12 +27,54 @@ project.configureJavaCompile()
 project.configureKotlinCompilationOptions()
 project.configureArtifacts()
 project.configureTests()
+project.checkNoApiDependenciesOnK1Modules()
 
 // There are problems with common build dir:
 //  - some tests (in particular js and binary-compatibility-validator depend on the fixed (default) location
 //  - idea seems unable to exclude common buildDir from indexing
 // therefore it is disabled by default
 // buildDir = File(commonBuildDir, project.name)
+
+/**
+ * Validates that the project does not expose K1 frontend modules
+ * (see `fe10CompilerModules` in `gradle/compilerModules.gradle.kts`) through the `api`
+ * configuration. K1 frontend modules must only be depended on via `implementation`,
+ * so that the legacy frontend never leaks onto consumers' compile classpaths.
+ */
+fun Project.checkNoApiDependenciesOnK1Modules() {
+    // The IDE-plugin dependency bundles under `:prepare:ide-plugin-dependencies` intentionally
+    // re-export compiler modules (including the K1 frontend) via `api`, so that the IntelliJ
+    // Kotlin plugin gets them on its classpath. They are the sanctioned re-exporters and are
+    // exempt from this invariant.
+    if (path.startsWith(":prepare:ide-plugin-dependencies")) return
+
+    afterEvaluate {
+        val apiConfiguration = configurations.findByName("api") ?: return@afterEvaluate
+
+        @Suppress("UNCHECKED_CAST")
+        val fe10CompilerModules = rootProject.extra["fe10CompilerModules"] as Array<String>
+
+        @Suppress("UNCHECKED_CAST")
+        val descriptorModules = rootProject.extra["descriptorsCompilerModules"] as Array<String>
+
+        val k1Modules = (fe10CompilerModules + descriptorModules).toSet()
+
+        val violations = apiConfiguration.dependencies
+            .filterIsInstance<ProjectDependency>()
+            .map { it.path }
+            .filter { it in k1Modules }
+            .sorted()
+
+        if (violations.isNotEmpty()) {
+            throw GradleException(
+                "Project '$path' declares `api` dependencies on K1 frontend modules: " +
+                        violations.joinToString(prefix = "[", postfix = "]") + ". " +
+                        "K1 frontend modules must only be depended on with the `implementation` " +
+                        "configuration (see `fe10CompilerModules` in gradle/compilerModules.gradle.kts)."
+            )
+        }
+    }
+}
 
 fun Project.addEmbeddedConfigurations() {
     configurations.maybeCreate("embedded").apply {
