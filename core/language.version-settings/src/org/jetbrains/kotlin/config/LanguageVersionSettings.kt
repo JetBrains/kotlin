@@ -455,6 +455,8 @@ enum class LanguageFeature(
     AllowCallingJavaOpenSealedClassConstructor(sinceVersion = KOTLIN_2_3, "KT-78879"),
     ImprovedExhaustivenessChecksIn23(sinceVersion = KOTLIN_2_3, "KT-80602"),
 
+    AnnotationsInMetadata(KOTLIN_2_4, "KT-75736"),
+
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
     // I'd consider removing it after 2.5 (KT-81144 for removal tracking)
     // Also remove org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.BodyResolveContext.isInsideAssignmentRhs with this one
@@ -462,7 +464,6 @@ enum class LanguageFeature(
 
     // 2.4
 
-    AnnotationsInMetadata(KOTLIN_2_4, "KT-75736"),
     ForbidExposingLessVisibleTypesInInline(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-283"),
     ForbidCaptureInlinableLambdasInJsCode(KOTLIN_2_4, enabledInProgressiveMode = true, "KT-69297"),
     ForbidInitializationBeforeDeclarationInAnonymous(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-290"),
@@ -626,7 +627,7 @@ enum class LanguageFeature(
     AllowAnyAsAnActualTypeForExpectInterface(sinceVersion = null, issue = "KT-79308"),
 
     CompanionBlocksAndExtensions(sinceVersion = null, issue = "KT-11968", forcesPreReleaseBinaries = true, forcesPreReleaseBinariesBefore = KOTLIN_2_5, enabledInLatestLVTests = true),
-    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = null, enabledInProgressiveMode = true, issue = "KT-84956") {
+    ProhibitCallableReferencesToStaticsWithTypeArgumentsOrNullMarkInLhs(sinceVersion = LanguageVersion.KOTLIN_2_6, enabledInProgressiveMode = true, issue = "KT-84956") {
         context(context: CrossFeatureChecksResultsCollector)
         override fun crossFeatureChecks() {
             checkEnabledLaterThan(CompanionBlocksAndExtensions, sinceVersionMustBeSet = true)
