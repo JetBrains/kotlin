@@ -20,7 +20,9 @@ import java.io.Closeable
 import java.lang.IllegalStateException
 import java.lang.reflect.Type
 import java.util.*
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 enum class ComponentState {
     Null,
     Initializing,
@@ -30,6 +32,7 @@ enum class ComponentState {
     Disposed
 }
 
+@K1Deprecation
 abstract class SingletonDescriptor(val container: ComponentContainer) : ComponentDescriptor, Closeable {
     private var instance: Any? = null
     protected var state: ComponentState = ComponentState.Null
@@ -116,6 +119,7 @@ abstract class SingletonDescriptor(val container: ComponentContainer) : Componen
         get() = true
 }
 
+@K1Deprecation
 open class SingletonTypeComponentDescriptor(container: ComponentContainer, val klass: Class<*>) : SingletonDescriptor(container) {
     override fun createInstance(context: ValueResolveContext): Any = createInstanceOf(klass, context)
     override fun getRegistrations(): Iterable<Type> = klass.getInfo().registrations
@@ -176,12 +180,14 @@ internal class ClashResolutionDescriptor<E : PlatformSpecificExtension<E>>(
     }
 }
 
+@K1Deprecation
 class ImplicitSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
     override fun toString(): String {
         return "Implicit: ${klass.simpleName}"
     }
 }
 
+@K1Deprecation
 class DefaultSingletonTypeComponentDescriptor(container: ComponentContainer, klass: Class<*>) : SingletonTypeComponentDescriptor(container, klass) {
     override fun toString(): String {
         return "Default: ${klass.simpleName}"

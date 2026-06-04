@@ -17,6 +17,7 @@
 package org.jetbrains.kotlin.container
 
 import com.intellij.util.containers.ContainerUtil
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.utils.genericParameterTypesWithEnclosingThis
 import java.lang.reflect.*
 import java.util.*
@@ -38,10 +39,12 @@ private object ClassTraversalCache {
     }
 }
 
+@K1Deprecation
 fun Class<*>.getInfo(): ClassInfo {
     return ClassTraversalCache.getClassInfo(this)
 }
 
+@K1Deprecation
 data class ClassInfo(
         val constructorInfo: ConstructorInfo?,
         val setterInfos: List<SetterInfo>,
@@ -49,11 +52,13 @@ data class ClassInfo(
         val defaultImplementation: Class<*>?
 )
 
+@K1Deprecation
 data class ConstructorInfo(
         val constructor: Constructor<*>,
         val parameters: List<Type>
 )
 
+@K1Deprecation
 data class SetterInfo(
         val method: Method,
         val parameters: List<Type>

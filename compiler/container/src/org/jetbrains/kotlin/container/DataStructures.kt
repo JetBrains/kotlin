@@ -18,7 +18,9 @@ package org.jetbrains.kotlin.container
 
 import java.util.ArrayList
 import java.util.HashSet
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 fun <T> topologicalSort(items: Iterable<T>, reverseOrder: Boolean = false, dependencies: (T) -> Iterable<T>): List<T> {
     val itemsInProgress = HashSet<T>()
     val completedItems = HashSet<T>()
@@ -48,4 +50,5 @@ fun <T> topologicalSort(items: Iterable<T>, reverseOrder: Boolean = false, depen
     return result.apply { if (!reverseOrder) reverse() }
 }
 
+@K1Deprecation
 class CycleInTopoSortException : Exception()

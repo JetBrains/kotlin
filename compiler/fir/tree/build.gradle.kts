@@ -23,6 +23,8 @@ sourceSets {
     "main" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 generatedSourcesTask(
     taskName = "generateTree",
     generatorProject = ":compiler:fir:tree:tree-generator",

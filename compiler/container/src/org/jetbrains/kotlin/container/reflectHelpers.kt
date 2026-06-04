@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.container
 
 import java.lang.reflect.InvocationTargetException
+import org.jetbrains.kotlin.K1Deprecation
 
+@K1Deprecation
 inline fun <T> runWithUnwrappingInvocationException(block: () -> T) =
     try {
         block()

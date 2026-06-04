@@ -25,6 +25,8 @@ sourceSets {
     "test" { projectDefault() }
 }
 
+optInToK1Deprecation()
+
 testsJar {}
 
 projectTests {
