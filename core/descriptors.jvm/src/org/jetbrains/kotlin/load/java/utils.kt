@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
@@ -26,6 +27,7 @@ import org.jetbrains.kotlin.load.java.structure.JavaWildcardType
 import org.jetbrains.kotlin.resolve.deprecation.DescriptorBasedDeprecationInfo
 import org.jetbrains.kotlin.resolve.deprecation.DeprecationLevelValue
 
+@K1Deprecation
 class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescriptor) : DescriptorBasedDeprecationInfo() {
     override val deprecationLevel: DeprecationLevelValue
         get() = DeprecationLevelValue.ERROR
@@ -35,13 +37,16 @@ class DeprecationCausedByFunctionNInfo(override val target: DeclarationDescripto
 
 internal fun Visibility.toDescriptorVisibility(): DescriptorVisibility = JavaDescriptorVisibilities.toDescriptorVisibility(this)
 
+@K1Deprecation
 fun isJspecifyEnabledInStrictMode(javaTypeEnhancementState: JavaTypeEnhancementState) =
     javaTypeEnhancementState.getReportLevelForAnnotation(JSPECIFY_ANNOTATIONS_PACKAGE) == ReportLevel.STRICT
 
+@K1Deprecation
 fun hasErasedValueParameters(memberDescriptor: CallableMemberDescriptor) =
     memberDescriptor is FunctionDescriptor && memberDescriptor.getUserData(JavaMethodDescriptor.HAS_ERASED_VALUE_PARAMETERS) == true
 
 // For now it's supported only for RxJava3 annotations, see KT-53041
+@K1Deprecation
 fun extractNullabilityAnnotationOnBoundedWildcard(c: LazyJavaResolverContext, wildcardType: JavaWildcardType): AnnotationDescriptor? {
     require(wildcardType.bound != null) { "Nullability annotations on unbounded wildcards aren't supported" }
     return LazyJavaAnnotations(c, wildcardType).find { annotation -> RXJAVA3_ANNOTATIONS.any { annotation.fqName == it } }

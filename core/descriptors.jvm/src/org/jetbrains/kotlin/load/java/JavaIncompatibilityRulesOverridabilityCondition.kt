@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.sameAsBuiltinMethodWithErasedValueParameters
@@ -34,6 +35,7 @@ import org.jetbrains.kotlin.types.typeUtil.makeNullable
 /**
  * This class contains Java-related overridability conditions that may force incompatibility
  */
+@K1Deprecation
 class JavaIncompatibilityRulesOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(
         superDescriptor: CallableDescriptor,

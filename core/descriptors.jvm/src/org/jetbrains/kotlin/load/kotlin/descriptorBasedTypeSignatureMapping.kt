@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.transformSuspendFunctionToRuntimeFunctionType
@@ -19,6 +20,7 @@ import org.jetbrains.kotlin.types.typeUtil.replaceArgumentsWithStarProjections
 import org.jetbrains.kotlin.types.typeUtil.representativeUpperBound
 import org.jetbrains.kotlin.utils.DO_NOTHING_3
 
+@K1Deprecation
 interface TypeMappingConfiguration<out T : Any> {
     fun commonSupertype(types: Collection<@JvmSuppressWildcards KotlinType>): KotlinType
     fun getPredefinedTypeForClass(classDescriptor: ClassDescriptor): T?
@@ -30,6 +32,7 @@ interface TypeMappingConfiguration<out T : Any> {
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
 }
 
+@K1Deprecation
 fun <T : Any> mapType(
     kotlinType: KotlinType,
     factory: JvmTypeFactory<T>,
@@ -166,12 +169,14 @@ fun <T : Any> mapType(
     }
 }
 
+@K1Deprecation
 fun hasVoidReturnType(descriptor: CallableDescriptor): Boolean {
     if (descriptor is ConstructorDescriptor) return true
     return KotlinBuiltIns.isUnit(descriptor.returnType!!) && !TypeUtils.isNullableType(descriptor.returnType!!)
             && descriptor !is PropertyGetterDescriptor
 }
 
+@K1Deprecation
 fun computeInternalName(
     klass: ClassDescriptor,
     typeMappingConfiguration: TypeMappingConfiguration<*> = TypeMappingConfigurationImpl

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS
 import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES
@@ -47,6 +48,7 @@ import org.jetbrains.kotlin.utils.SmartSet
 
 // This class is worth splitting into two implementations of AdditionalClassPartsProvider and PlatformDependentDeclarationFilter
 // But currently, they shares a piece of code and probably it's better to postpone it
+@K1Deprecation
 class JvmBuiltInsCustomizer(
     private val moduleDescriptor: ModuleDescriptor,
     storageManager: StorageManager,

@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
@@ -41,6 +42,7 @@ import org.jetbrains.kotlin.utils.sure
 
 private val JAVA_LANG_CLASS_FQ_NAME: FqName = FqName("java.lang.Class")
 
+@K1Deprecation
 class JavaTypeResolver(
     private val c: LazyJavaResolverContext,
     private val typeParameterResolver: TypeParameterResolver

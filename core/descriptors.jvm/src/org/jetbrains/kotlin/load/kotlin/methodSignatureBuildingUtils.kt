@@ -16,7 +16,9 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 
+@K1Deprecation
 fun SignatureBuildingComponents.signature(classDescriptor: ClassDescriptor, jvmDescriptor: String): String =
     signature(classDescriptor.internalName, jvmDescriptor)

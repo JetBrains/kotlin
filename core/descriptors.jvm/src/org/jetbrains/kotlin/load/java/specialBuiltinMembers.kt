@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.load.java.BuiltinMethodsWithSpecialGenericSignature.getSpecialSignatureInfo
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.firstOverridden
 import org.jetbrains.kotlin.resolve.descriptorUtil.propertyIfAccessor
 import org.jetbrains.kotlin.types.checker.TypeCheckingProcedure
 
+@K1Deprecation
 object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
     private val CallableMemberDescriptor.hasErasedValueParametersInJava: Boolean
         get() = computeJvmSignature() in ERASED_VALUE_PARAMETERS_SIGNATURES
@@ -65,6 +67,7 @@ object BuiltinMethodsWithSpecialGenericSignature : SpecialGenericSignatures() {
     }
 }
 
+@K1Deprecation
 object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
     fun getJvmName(functionDescriptor: SimpleFunctionDescriptor): Name? {
         return SIGNATURE_TO_JVM_REPRESENTATION_NAME[functionDescriptor.computeJvmSignature() ?: return null]
@@ -81,6 +84,7 @@ object BuiltinMethodsWithDifferentJvmName : SpecialGenericSignatures() {
 }
 
 @Suppress("UNCHECKED_CAST")
+@K1Deprecation
 fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName(): T? {
     if (name !in SpecialGenericSignatures.ORIGINAL_SHORT_NAMES
         && propertyIfAccessor.name !in BuiltinSpecialProperties.SPECIAL_SHORT_NAMES
@@ -97,9 +101,11 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinWithDifferentJvmName():
     }
 }
 
+@K1Deprecation
 fun CallableMemberDescriptor.doesOverrideBuiltinWithDifferentJvmName(): Boolean = getOverriddenBuiltinWithDifferentJvmName() != null
 
 @Suppress("UNCHECKED_CAST")
+@K1Deprecation
 fun <T : CallableMemberDescriptor> T.getOverriddenSpecialBuiltin(): T? {
     getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
 
@@ -116,6 +122,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenSpecialBuiltin(): T? {
 // Implementation differs by getting 'original' for collection methods with erased value parameters
 // Also it ignores Collection<String>.containsAll overrides because they have the same JVM descriptor
 @Suppress("UNCHECKED_CAST")
+@K1Deprecation
 fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor(): T? {
     getOverriddenBuiltinWithDifferentJvmName()?.let { return it }
 
@@ -126,6 +133,7 @@ fun <T : CallableMemberDescriptor> T.getOverriddenBuiltinReflectingJvmDescriptor
     }?.original as T?
 }
 
+@K1Deprecation
 fun getJvmMethodNameIfSpecial(callableMemberDescriptor: CallableMemberDescriptor): String? {
     val overriddenBuiltin = getOverriddenBuiltinThatAffectsJvmName(callableMemberDescriptor)?.propertyIfAccessor
         ?: return null
@@ -142,6 +150,7 @@ private fun getOverriddenBuiltinThatAffectsJvmName(
     if (KotlinBuiltIns.isBuiltIn(callableMemberDescriptor)) callableMemberDescriptor.getOverriddenBuiltinWithDifferentJvmName()
     else null
 
+@K1Deprecation
 fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
     specialCallableDescriptor: CallableDescriptor
 ): Boolean {
@@ -167,10 +176,12 @@ fun ClassDescriptor.hasRealKotlinSuperClassWithOverrideOf(
     return false
 }
 
+@K1Deprecation
 val CallableMemberDescriptor.isFromJava: Boolean
     get() {
         val descriptor = propertyIfAccessor
         return descriptor.containingDeclaration is JavaClassDescriptor
     }
 
+@K1Deprecation
 fun CallableMemberDescriptor.isFromJavaOrBuiltins() = isFromJava || KotlinBuiltIns.isBuiltIn(this)

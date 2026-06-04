@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor.Kind.DECLARATION
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.resolve.scopes.GivenFunctionsMemberScope
 import org.jetbrains.kotlin.storage.StorageManager
 
+@K1Deprecation
 class CloneableClassScope(
     storageManager: StorageManager,
     containingClass: ClassDescriptor

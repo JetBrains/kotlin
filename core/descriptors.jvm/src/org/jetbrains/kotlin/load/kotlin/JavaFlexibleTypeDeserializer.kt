@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.load.java.lazy.types.RawTypeImpl
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -25,6 +26,7 @@ import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 
+@K1Deprecation
 object JavaFlexibleTypeDeserializer : FlexibleTypeDeserializer {
     override fun create(proto: ProtoBuf.Type, flexibleId: String, lowerBound: SimpleType, upperBound: SimpleType): KotlinType {
         if (flexibleId != JvmProtoBufUtil.PLATFORM_TYPE_ID) {

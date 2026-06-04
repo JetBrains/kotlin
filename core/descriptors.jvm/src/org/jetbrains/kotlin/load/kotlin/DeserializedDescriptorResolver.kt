@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PackageFragmentDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.serialization.deserialization.descriptors.Deserializ
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.PreReleaseInfo
 import javax.inject.Inject
 
+@K1Deprecation
 class DeserializedDescriptorResolver {
     lateinit var components: DeserializationComponents
 

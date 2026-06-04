@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.load.java.lazy.types
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.ErasureTypeAttributes
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.TypeUsage
 
+@K1Deprecation
 data class JavaTypeAttributes(
     override val howThisTypeIsUsed: TypeUsage,
     val flexibility: JavaTypeFlexibility = JavaTypeFlexibility.INFLEXIBLE,
@@ -44,6 +46,7 @@ data class JavaTypeAttributes(
     }
 }
 
+@K1Deprecation
 fun TypeUsage.toAttributes(
     isForAnnotationParameter: Boolean = false,
     isRaw: Boolean = false,

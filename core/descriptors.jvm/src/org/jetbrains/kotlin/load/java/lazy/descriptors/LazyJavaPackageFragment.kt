@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -33,6 +34,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.storage.getValue
 
+@K1Deprecation
 class LazyJavaPackageFragment(
     outerContext: LazyJavaResolverContext,
     private val jPackage: JavaPackage,

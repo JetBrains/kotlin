@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.impl.AbstractLazyTypeParameterDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.KotlinTypeFactory
 import org.jetbrains.kotlin.types.Variance
 
+@K1Deprecation
 class LazyJavaTypeParameterDescriptor(
     private val c: LazyJavaResolverContext,
     val javaTypeParameter: JavaTypeParameter,

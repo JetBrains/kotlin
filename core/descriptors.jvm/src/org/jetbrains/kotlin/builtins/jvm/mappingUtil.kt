@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.builtins.jvm
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.types.TypeConstructorSubstitution
 import org.jetbrains.kotlin.types.typeUtil.asTypeProjection
 
+@K1Deprecation
 fun createMappedTypeParametersSubstitution(from: ClassDescriptor, to: ClassDescriptor): TypeConstructorSubstitution {
     assert(from.declaredTypeParameters.size == to.declaredTypeParameters.size) {
         "$from and $to should have same number of type parameters, " +

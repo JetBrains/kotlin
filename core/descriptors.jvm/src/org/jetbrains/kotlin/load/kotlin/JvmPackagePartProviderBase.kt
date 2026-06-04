@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
 import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.serialization.deserialization.ClassData
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
 
+@K1Deprecation
 abstract class JvmPackagePartProviderBase<MappingsKey> : PackageAndMetadataPartProvider {
 
     protected data class ModuleMappingInfo<MappingsKey>(val key: MappingsKey, val mapping: ModuleMapping, val name: String)

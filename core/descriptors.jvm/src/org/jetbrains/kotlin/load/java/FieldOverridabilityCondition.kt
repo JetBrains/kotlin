@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.PropertyDescriptor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.load.java.lazy.descriptors.isJavaField
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition
 import org.jetbrains.kotlin.resolve.ExternalOverridabilityCondition.Result
 
+@K1Deprecation
 class FieldOverridabilityCondition : ExternalOverridabilityCondition {
     override fun isOverridable(
         superDescriptor: CallableDescriptor,

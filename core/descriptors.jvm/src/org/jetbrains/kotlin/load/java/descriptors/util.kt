@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.CallableDescriptor
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ValueParameterDescriptor
@@ -28,6 +29,7 @@ import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DescriptorWithContainerSource
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 fun copyValueParameters(
     newValueParameterTypes: Collection<KotlinType>,
     oldValueParameters: Collection<ValueParameterDescriptor>,
@@ -54,11 +56,13 @@ fun copyValueParameters(
     }
 }
 
+@K1Deprecation
 fun ClassDescriptor.getParentJavaStaticClassScope(): LazyJavaStaticClassScope? {
     val superClassDescriptor = getSuperClassNotAny() ?: return null
 
     return superClassDescriptor.staticScope as? LazyJavaStaticClassScope ?: superClassDescriptor.getParentJavaStaticClassScope()
 }
 
+@K1Deprecation
 fun DescriptorWithContainerSource.getImplClassNameForDeserialized(): JvmClassName? =
     (containerSource as? JvmPackagePartSource)?.className

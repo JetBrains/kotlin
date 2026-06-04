@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.StandardNames.CONTINUATION_INTERFACE_FQ_NAME
 import org.jetbrains.kotlin.descriptors.*
@@ -60,6 +61,7 @@ import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.ifEmpty
 import java.util.*
 
+@K1Deprecation
 class LazyJavaClassMemberScope(
     c: LazyJavaResolverContext,
     override val ownerDescriptor: ClassDescriptor,

@@ -16,9 +16,11 @@
 
 package org.jetbrains.kotlin.load.java
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 
+@K1Deprecation
 interface JavaClassesTracker {
     fun reportClass(classDescriptor: JavaClassDescriptor)
 

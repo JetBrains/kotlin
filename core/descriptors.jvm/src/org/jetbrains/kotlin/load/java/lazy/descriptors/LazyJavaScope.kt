@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.load.java.lazy.descriptors
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
@@ -52,6 +53,7 @@ import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addIfNotNull
 import java.util.*
 
+@K1Deprecation
 abstract class LazyJavaScope(
     protected val c: LazyJavaResolverContext,
     protected val mainScope: LazyJavaScope? = null

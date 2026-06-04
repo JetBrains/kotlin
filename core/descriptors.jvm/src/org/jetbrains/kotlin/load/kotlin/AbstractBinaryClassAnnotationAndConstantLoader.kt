@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.load.kotlin
 
+import org.jetbrains.kotlin.K1Deprecation
 import org.jetbrains.kotlin.SpecialJvmAnnotations
 import org.jetbrains.kotlin.builtins.UnsignedTypes
 import org.jetbrains.kotlin.descriptors.SourceElement
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.serialization.deserialization.ProtoContainer
 import org.jetbrains.kotlin.storage.StorageManager
 import org.jetbrains.kotlin.types.KotlinType
 
+@K1Deprecation
 abstract class AbstractBinaryClassAnnotationAndConstantLoader<A : Any, C : Any>(
     storageManager: StorageManager,
     kotlinClassFinder: KotlinClassFinder
