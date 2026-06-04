@@ -22,7 +22,7 @@ javaDiffUtils = "4.12"
 
 ## Analysis
 kotlin-compiler = "2.4.0-dev-5318"
-kotlin-compiler-k2 = "2.4.20-dev-3843"
+kotlin-compiler-k2 = "2.4.20-dev-5364"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
@@ -110,6 +110,9 @@ kotlin-compiler = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref
 
 ###### K2 analysis ######
 kotlin-compiler-k2 = { module = "org.jetbrains.kotlin:kotlin-compiler", version.ref = "kotlin-compiler-k2" }
+# Since 2.4.20-dev-5364 the `org.jetbrains.kotlin.analysis.decompiler.*` classes (e.g. ClsKotlinBinaryClassCache,
+# required by StandaloneProjectFactory) were moved out of `kotlin-compiler` into this artifact.
+kotlin-compiler-k2-common = { module = "org.jetbrains.kotlin:kotlin-compiler-common-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-api = { module = "org.jetbrains.kotlin:analysis-api-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-impl = { module = "org.jetbrains.kotlin:analysis-api-impl-base-for-ide", version.ref = "kotlin-compiler-k2" }
 kotlin-analysis-api-fir = { module = "org.jetbrains.kotlin:analysis-api-k2-for-ide", version.ref = "kotlin-compiler-k2" }
