@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
-import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.backend.konan.objcexport.ObjCProperty
 import org.jetbrains.kotlin.backend.konan.objcexport.isInstance
 import org.jetbrains.kotlin.backend.konan.objcexport.swiftNameAttribute
@@ -57,4 +56,4 @@ internal val String.asSetterSelector: String
     get() = "set" + replaceFirstChar(Char::uppercase) + ":"
 
 internal val KaPropertySymbol.hasReservedName: Boolean
-    get() = name.asString().isReservedPropertyName || name.asString() in objCMacroDefinitions
+    get() = name.asString().isReservedPropertyName

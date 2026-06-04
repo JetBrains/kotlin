@@ -1,12 +1,13 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.backend.konan.cKeywords
+import org.jetbrains.kotlin.backend.konan.objCMacroDefinitions
 import org.jetbrains.kotlin.backend.konan.reservedObjCClassOrObjectNames
 
 /**
  * K1: See implementations of [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.Mapping.reserved]
  */
-private val reservedPropertyNames = cKeywords + setOf("description") // https://youtrack.jetbrains.com/issue/KT-38641
+private val reservedPropertyNames = cKeywords + setOf("description") + objCMacroDefinitions // https://youtrack.jetbrains.com/issue/KT-38641
 
 internal val String.isReservedPropertyName: Boolean
     get() = this in reservedPropertyNames
