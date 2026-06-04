@@ -328,6 +328,7 @@ class KotlinEnumsTest : BaseAbstractTest() {
     }
 
     @Test
+    @OnlySymbols("companion block")
     fun `enum should have functions on page`() {
         val configuration = dokkaConfiguration {
             sourceSets {
@@ -361,7 +362,39 @@ class KotlinEnumsTest : BaseAbstractTest() {
                 }
 
                 root.contentPage<ClasslikePageNode>("TestEnum") {
-                    assertHasFunctions("toBeImplemented", "valueOf", "values")
+                    assertHasFunctions("toBeImplemented")
+                    assertHasCompanionFunctions("valueOf", "values")
+                }
+            }
+        }
+    }
+
+    @Test
+    @OnlySymbols("companion block")
+    fun `enum should have entries property`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/")
+                    classpath = listOf(commonStdlibPath!!, jvmStdlibPath!!)
+                }
+            }
+        }
+
+        testInline(
+            """
+            |/src/main/kotlin/basic/TestEnum.kt
+            |package testpackage
+            |
+            |enum class TestEnum {
+            |    FOO, BAR;
+            |}
+        """.trimMargin(),
+            configuration
+        ) {
+            pagesTransformationStage = { root ->
+                root.contentPage<ClasslikePageNode>("TestEnum") {
+                    assertHasCompanionProperty("entries")
                 }
             }
         }

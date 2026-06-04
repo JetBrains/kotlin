@@ -16,6 +16,7 @@ import org.jetbrains.dokka.pages.MemberPageNode
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertTrue
 
 class DRITest : BaseAbstractTest() {
     private val defaultConfiguration = dokkaConfiguration {
@@ -549,5 +550,17 @@ class DRITest : BaseAbstractTest() {
                 )
             }
         }
+    }
+
+    @Test
+    fun `Callable signature distinguishes static from instance for same-name callables`() {
+        val instance = Callable("foo", receiver = null, params = emptyList(), isCompanion = false)
+        val static = Callable("foo", receiver = null, params = emptyList(), isCompanion = true)
+
+        assertTrue(instance.signature() != static.signature(), "static and instance signatures must differ")
+        assertTrue(static.signature().endsWith("/companion"))
+
+        // an existing instance member DRI's signature must remain unchanged
+        assertEquals("#", instance.signature())
     }
 }
