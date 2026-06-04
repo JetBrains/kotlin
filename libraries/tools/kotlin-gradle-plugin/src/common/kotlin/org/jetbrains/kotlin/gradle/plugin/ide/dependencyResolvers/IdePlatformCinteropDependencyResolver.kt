@@ -44,6 +44,7 @@ internal class IdePlatformCinteropDependencyResolver(
 
         /* Copy only if really necessary */
         if (!Files.exists(outputPath)) {
+            outputPath.parent?.let { Files.createDirectories(it) }
             Files.copy(file, outputPath)
         }
 

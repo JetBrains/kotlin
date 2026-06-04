@@ -181,7 +181,11 @@ open class RewriteSourceMapFilterReader(
     }
 
     private fun Path.relativeToOrNull(base: Path): Path? =
-        if (startsWith(base)) base.relativize(this) else null
+        try {
+            base.relativize(this)
+        } catch (_: IllegalArgumentException) {
+            null
+        }
 
 
     override fun read(): Int {

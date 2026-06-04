@@ -94,7 +94,7 @@ class NativeDistributionCommonizerLockTest {
     private class IsolatedLock private constructor(private val classLoader: ClassLoader, val instance: Any) {
         constructor(classLoader: ClassLoader, folder: File) : this(
             classLoader,
-            classLoader.loadClass(NativeDistributionCommonizerLock::class.java.name).declaredConstructors.first().newInstance(folder)
+            classLoader.loadClass(NativeDistributionCommonizerLock::class.java.name).declaredConstructors.first().newInstance(folder.toPath())
         )
 
         fun withLock(action: () -> Unit) {
