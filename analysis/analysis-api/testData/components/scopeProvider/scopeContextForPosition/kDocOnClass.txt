@@ -12,6 +12,8 @@ implicit values:
       type: test/MyClass<TypeParam>
     ownerSymbol = KaNamedClassSymbol:
       test/MyClass
+    label = null
+
 
 scopes:
   TypeScope, index = 0

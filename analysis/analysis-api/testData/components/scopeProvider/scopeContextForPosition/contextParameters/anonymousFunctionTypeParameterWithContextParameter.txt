@@ -8,6 +8,8 @@ implicit values:
       type: C
     ownerSymbol = KaNamedFunctionSymbol:
       /foo(<extension receiver>: C, param: kotlin.Int, param2: kotlin.String): kotlin.Unit
+    label = null
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 3

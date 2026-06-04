@@ -69,6 +69,12 @@ public class FirIdeNormalAnalysisSourceLikeModuleScopeContextForPositionTestGene
   }
 
   @Test
+  @TestMetadata("classShadowing.kt")
+  public void testClassShadowing() {
+    run("classShadowing.kt");
+  }
+
+  @Test
   @TestMetadata("classifiersCompanionObject.kt")
   public void testClassifiersCompanionObject() {
     run("classifiersCompanionObject.kt");
@@ -117,6 +123,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleScopeContextForPositionTestGene
   }
 
   @Test
+  @TestMetadata("explicitLabel.kt")
+  public void testExplicitLabel() {
+    run("explicitLabel.kt");
+  }
+
+  @Test
+  @TestMetadata("explicitLabelNested.kt")
+  public void testExplicitLabelNested() {
+    run("explicitLabelNested.kt");
+  }
+
+  @Test
   @TestMetadata("forLoopVariable.kt")
   public void testForLoopVariable() {
     run("forLoopVariable.kt");
@@ -141,9 +159,21 @@ public class FirIdeNormalAnalysisSourceLikeModuleScopeContextForPositionTestGene
   }
 
   @Test
+  @TestMetadata("labelShadowing.kt")
+  public void testLabelShadowing() {
+    run("labelShadowing.kt");
+  }
+
+  @Test
   @TestMetadata("localTypeScope.kt")
   public void testLocalTypeScope() {
     run("localTypeScope.kt");
+  }
+
+  @Test
+  @TestMetadata("nonLocalClass.kt")
+  public void testNonLocalClass() {
+    run("nonLocalClass.kt");
   }
 
   @Test

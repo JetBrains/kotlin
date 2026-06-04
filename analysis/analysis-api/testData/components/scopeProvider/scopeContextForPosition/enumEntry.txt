@@ -8,6 +8,8 @@ implicit values:
       type: <anonymous>
     ownerSymbol = KaAnonymousObjectSymbol:
       <anonymous>
+    label = null
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 5
@@ -17,6 +19,8 @@ implicit values:
       type: kotlin/Enum.Companion
     ownerSymbol = KaNamedClassSymbol:
       kotlin/Enum.Companion
+    label = null
+
 
 scopes:
   LocalScope, index = 0

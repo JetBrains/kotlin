@@ -5,6 +5,8 @@ implicit values:
     type = Scope1
     ownerSymbol = KaLocalVariableSymbol:
       val df: DataFrame<<local>.DataFrameType>
+    label = null
+
 
 scopes:
   TypeScope, index = 0
@@ -65,4 +67,3 @@ scopes:
     constructors: 0
 
   DefaultStarImportingScope, index = 8
-

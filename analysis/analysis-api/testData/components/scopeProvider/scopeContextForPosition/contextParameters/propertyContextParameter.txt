@@ -8,6 +8,8 @@ implicit values:
       type: B
     ownerSymbol = KaKotlinPropertySymbol:
       val foo: kotlin.Boolean
+    label = null
+
 
   KaScopeImplicitArgumentValue:
     scopeIndexInTower = 1

@@ -8,6 +8,8 @@ implicit values:
       type: <local>/Scope1
     ownerSymbol = KaLocalVariableSymbol:
       val df: DataFrame<<local>.DataFrameType>
+    label = null
+
 
 scopes:
   TypeScope, index = 0

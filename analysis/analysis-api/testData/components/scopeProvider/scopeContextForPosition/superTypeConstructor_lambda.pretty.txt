@@ -5,6 +5,8 @@ implicit values:
     type = test.Receiver
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+    label = null
+
 
 scopes:
   LocalScope, index = 0

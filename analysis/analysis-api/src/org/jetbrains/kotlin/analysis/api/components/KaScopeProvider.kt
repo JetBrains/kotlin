@@ -275,6 +275,11 @@ public interface KaScopeContext : KaLifetimeOwner {
      * The implicit receivers available at the context position.
      *
      * The list is sorted according to the order of scopes in the scope tower (from innermost to outermost).
+     *
+     * It is possible to use `this@` + [KaImplicitReceiver.label] to refer to the corresponding implicit receiver.
+     *
+     * `this` (without any explicit label) can be used to explicitly refer to the (currently) implicit receiver
+     * with the lowest index in the scope tower (= innermost scope).
      */
     @OptIn(KaExperimentalApi::class)
     public val implicitReceivers: List<KaImplicitReceiver>
@@ -350,6 +355,17 @@ public interface KaImplicitReceiver : KaScopeImplicitReceiverValue {
     override val type: KaType
     override val ownerSymbol: KaSymbol
     override val scopeIndexInTower: Int
+
+    /**
+     * A label for the implicit receiver, if any.
+     *
+     * If not null, `this@$label` can be used to refer to the implicit receiver.
+     *
+     * Will be null if shadowed by another receiver with the same label at a lower index
+     * in the scope tower.
+     */
+    @KaExperimentalApi
+    public val label: String?
 }
 
 public sealed interface KaScopeKind {

@@ -8,6 +8,8 @@ implicit values:
       type: <local>/Y
     ownerSymbol = KaNamedClassSymbol:
       Y
+    label = null
+
 
 scopes:
   LocalScope, index = 0

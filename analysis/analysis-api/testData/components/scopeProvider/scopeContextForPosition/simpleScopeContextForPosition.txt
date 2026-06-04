@@ -8,6 +8,8 @@ implicit values:
       type: A
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+    label = null
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 4
@@ -17,6 +19,8 @@ implicit values:
       type: B
     ownerSymbol = KaAnonymousFunctionSymbol:
       <anonymous function>(): kotlin.Unit
+    label = null
+
 
   KaImplicitReceiver:
     scopeIndexInTower = 11
@@ -26,6 +30,8 @@ implicit values:
       type: C
     ownerSymbol = KaNamedClassSymbol:
       /C
+    label = null
+
 
 scopes:
   LocalScope, index = 0

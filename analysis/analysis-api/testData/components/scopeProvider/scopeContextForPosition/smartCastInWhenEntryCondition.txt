@@ -8,6 +8,8 @@ implicit values:
       type: A
     ownerSymbol = KaNamedFunctionSymbol:
       /test(<extension receiver>: kotlin.Any): kotlin.Int
+    label = null
+
 
 scopes:
   LocalScope, index = 0

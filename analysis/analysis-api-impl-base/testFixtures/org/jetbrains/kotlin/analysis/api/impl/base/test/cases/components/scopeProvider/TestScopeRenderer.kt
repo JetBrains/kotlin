@@ -51,6 +51,11 @@ internal object TestScopeRenderer {
 
                                 is KaScopeImplicitReceiverValue -> {
                                     appendSymbol(KaScopeImplicitReceiverValue::ownerSymbol.name, printer, implicitValue.ownerSymbol)
+
+                                    if (implicitValue is KaImplicitReceiver) {
+                                        appendLine()
+                                        appendLine("${KaImplicitReceiver::label.name} = ${implicitValue.label}")
+                                    }
                                 }
                             }
                         }

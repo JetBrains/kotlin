@@ -8,6 +8,8 @@ implicit values:
       type: test/Receiver
     ownerSymbol = KaNamedFunctionSymbol:
       test/function(<extension receiver>: test.Receiver, param1: test.Param1, param2: test.Param2): TypeParam
+    label = null
+
 
 scopes:
   TypeScope, index = 0
