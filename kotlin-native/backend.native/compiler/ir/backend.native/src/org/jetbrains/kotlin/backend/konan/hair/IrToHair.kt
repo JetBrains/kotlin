@@ -37,12 +37,10 @@ import org.jetbrains.kotlin.ir.symbols.IrReturnableBlockSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.getClass
 import org.jetbrains.kotlin.ir.types.isChar
-import org.jetbrains.kotlin.ir.types.isDoubleOrFloatWithoutNullability
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.isOverridable
 import org.jetbrains.kotlin.ir.util.isReal
-import org.jetbrains.kotlin.ir.util.render
 
 
 internal fun IrSimpleFunction.shouldGenerateBody(): Boolean = modality != Modality.ABSTRACT && !isExternal
@@ -83,12 +81,10 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                 } catch (e: HairNotImplementedYet) {
                     context.configuration.messageCollector.report(CompilerMessageSeverity.WARNING, "Failed to generate HaIR for ${container.computeFullName()}: $e")
                 } catch (e: Throwable) {
-                    println("# Failed with $e")
                     context.configuration.messageCollector.report(CompilerMessageSeverity.WARNING, "Failed to generate HaIR for ${container.computeFullName()}: $e\n${e.stackTraceToString()}")
                 }
             } else {
-                // TODO non-simple functions ?
-                println("## Non-simple ${container.render()}")
+                // TODO non-simple functions
             }
         }
     }
@@ -96,30 +92,15 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
     fun generateHair(f: IrSimpleFunction): FunctionCompilation {
         val hairFun = HairFunctionImpl(f)
         val funCompilation = FunctionCompilation(moduleCompilation, hairFun)
-        context.log {"# Generating hair for ${f.computeFullName()}, compilation = $funCompilation" }
-        println("# Generating hair for ${f.computeFullName()}")
-
-        // TODO parse directly into SSA ignoing Vars?
-        val vars = mutableMapOf<IrValueSymbol, IrValueSymbol>()
-        fun getVar(sym: IrValueSymbol) = sym
+        context.log { "# Generating hair for ${f.computeFullName()}, compilation = $funCompilation" }
 
         with (funCompilation.session) {
             buildInitialIR {
-                fun Const(type: HairType, value: Number) = when (type) {
-                    HairType.INT -> ConstI(value as Int)
-                    HairType.LONG -> ConstL(value as Long)
-                    HairType.FLOAT -> ConstF(value as Float)
-                    HairType.DOUBLE -> ConstD(value as Double)
-                    else -> error("Should not reach here $type")
-                }
-
                 // FIXME
                 val unitConst by lazy { UnitValue() }
 
                 for ([idx, param] in f.parameters.withIndex()) {
-                    val v = getVar(param.symbol)
-                    val node = Param(idx)
-                    AssignVar(v)(node)
+                    AssignVar(param.symbol)(Param(idx))
                 }
                 f.body?.accept(object : IrVisitor<Node, Unit>() {
                     override fun visitElement(element: IrElement, data: Unit): Node {
@@ -144,16 +125,16 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
 
                     override fun visitSetValue(expression: IrSetValue, data: Unit): Node {
                         val value = expression.value.accept(this, Unit)
-                        AssignVar(getVar(expression.symbol))(value)
+                        AssignVar(expression.symbol)(value)
                         return value // FIXME correct?
                     }
 
                     override fun visitGetValue(expression: IrGetValue, data: Unit): Node {
-                        return ReadVar(getVar(expression.symbol))
+                        return ReadVar(expression.symbol)
                     }
 
                     override fun visitVariable(declaration: IrVariable, data: Unit): Node {
-                        val variable = getVar(declaration.symbol)
+                        val variable = declaration.symbol
                         if (declaration.initializer != null) {
                             val value = declaration.initializer!!.accept(this, Unit)
                             AssignVar(variable)(value)
@@ -166,7 +147,7 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                             IrConstKind.Boolean -> if (expression.value as Boolean) True() else False()
                             IrConstKind.Byte -> ConstI((expression.value as Byte).toInt())
                             IrConstKind.Short -> ConstI((expression.value as Short).toInt())
-                            IrConstKind.Char -> ConstI((expression.value as Byte).toInt())
+                            IrConstKind.Char -> ConstI((expression.value as Char).code)
                             IrConstKind.Int -> ConstI(expression.value as Int)
                             IrConstKind.Long -> ConstL(expression.value as Long)
                             IrConstKind.Float -> ConstF(expression.value as Float)
@@ -241,49 +222,29 @@ internal class HairGenerator(val context: Context, val module: IrModuleFragment)
                         val functionSymbol = call.symbol
                         val function = functionSymbol.owner
                         val argType = function.parameters[0].type.asHairType()
+                        // Table mapping each comparison operator family to its signed and unsigned CmpOp.
+                        // Floating-point comparisons also use S_xxx at the Hair level; HairToBitcode
+                        // selects fcmp vs icmp based on the operand HairType, not the CmpOp.
+                        val comparisonOpsByFamily = listOf(
+                                ib.greaterFunByOperandType        to (CmpOp.S_GT to CmpOp.U_GT),
+                                ib.greaterOrEqualFunByOperandType to (CmpOp.S_GE to CmpOp.U_GE),
+                                ib.lessFunByOperandType           to (CmpOp.S_LT to CmpOp.U_LT),
+                                ib.lessOrEqualFunByOperandType    to (CmpOp.S_LE to CmpOp.U_LE),
+                        )
                         return when (functionSymbol) {
-                            ib.eqeqeqSymbol -> {
-                                Cmp(argType, CmpOp.EQ)(args[0]!!, args[1]!!)
-                            }
+                            ib.eqeqeqSymbol -> Cmp(argType, CmpOp.EQ)(args[0]!!, args[1]!!)
                             ib.booleanNotSymbol -> Cmp(argType, CmpOp.NE)(args[0]!!, True())
                             else -> {
-                                val isFloatingPoint = call.arguments[0]!!.type.isDoubleOrFloatWithoutNullability() // FIXME is this correct?
                                 val shouldUseUnsignedComparison = functionSymbol.owner.parameters[0].type.isChar()
-                                val op = when {
-                                    functionSymbol.isComparisonFunction(ib.greaterFunByOperandType) -> {
-                                        when {
-                                            isFloatingPoint -> CmpOp.S_GT
-                                            shouldUseUnsignedComparison -> CmpOp.U_GT
-                                            else -> CmpOp.S_GT
+                                val ops = comparisonOpsByFamily
+                                        .firstOrNull { functionSymbol.isComparisonFunction(it.first) }
+                                        ?.second
+                                        ?: when (functionSymbol) {
+                                            context.irBuiltIns.illegalArgumentExceptionSymbol ->
+                                                TODO("context.symbols.throwIllegalArgumentExceptionWithMessage")
+                                            else -> TODO(functionSymbol.owner.name.toString())
                                         }
-                                    }
-                                    functionSymbol.isComparisonFunction(ib.greaterOrEqualFunByOperandType) -> {
-                                        when {
-                                            isFloatingPoint -> CmpOp.S_GE
-                                            shouldUseUnsignedComparison -> CmpOp.U_GE
-                                            else -> CmpOp.S_GE
-                                        }
-                                    }
-                                    functionSymbol.isComparisonFunction(ib.lessFunByOperandType) -> {
-                                        when {
-                                            isFloatingPoint -> CmpOp.S_LT
-                                            shouldUseUnsignedComparison -> CmpOp.U_LT
-                                            else -> CmpOp.S_LT
-                                        }
-                                    }
-                                    functionSymbol.isComparisonFunction(ib.lessOrEqualFunByOperandType) -> {
-                                        when {
-                                            isFloatingPoint -> CmpOp.S_LE
-                                            shouldUseUnsignedComparison -> CmpOp.U_LE
-                                            else -> CmpOp.S_LE
-                                        }
-                                    }
-                                    functionSymbol == context.irBuiltIns.illegalArgumentExceptionSymbol -> {
-                                        TODO("context.symbols.throwIllegalArgumentExceptionWithMessage")
-                                    }
-                                    else -> TODO(functionSymbol.owner.name.toString())
-                                }
-                                Cmp(argType, op)(args[0]!!, args[1]!!)
+                                Cmp(argType, if (shouldUseUnsignedComparison) ops.second else ops.first)(args[0]!!, args[1]!!)
                             }
                         }
                     }
