@@ -121,6 +121,7 @@ val irCompilerModules = arrayOf(
  * Modules of JVM backend
  */
 val jvmCompilerModules = arrayOf(
+    ":compiler:backend.common.jvm",
     ":compiler:backend",
     ":compiler:backend.jvm",
     ":compiler:backend.jvm.lower",
