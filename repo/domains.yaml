@@ -78,7 +78,9 @@ Maven:
 # The IntelliJ domain has no owned files in this repository.
 # It is used to declare which domains will affect IntelliJ and to infer when to run tests against kt-master
 IntelliJ:
-  include: [ ]
+  include:
+    - "prepare/analysis-api-*/**"
+    - "prepare/ide-plugin-dependencies/**"
   fullyAffectedBy:
     - Compiler
     - AnalysisApi

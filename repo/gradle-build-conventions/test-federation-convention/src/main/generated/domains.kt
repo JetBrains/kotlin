@@ -93,7 +93,7 @@ internal object MavenDomainInfo : DomainInfo {
 
 internal object IntelliJDomainInfo : DomainInfo {
     override val domain = Domain.IntelliJ
-    override val include: List<String> = listOf()
+    override val include: List<String> = listOf("prepare/analysis-api-*/**", "prepare/ide-plugin-dependencies/**")
     override val exclude: List<String> = listOf()
     override val fullyAffectedBy: List<DomainInfo> by lazy { listOf(CompilerDomainInfo, AnalysisApiDomainInfo, CoreLibsDomainInfo) }
 }

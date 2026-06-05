@@ -177,6 +177,10 @@ Maven:
  - libraries/tools/kotlin-maven-serialization
  - libraries/tools/maven-archetypes
 
+IntelliJ:
+ - prepare/analysis-api-test-framework
+ - prepare/ide-plugin-dependencies
+
 BuildInfrastructure:
  - .idea
  - .space
@@ -262,7 +266,16 @@ Unknown:
  - libraries/tools/script-runtime
  - libraries/tools/stats-analyser
  - license
- - prepare
+ - prepare/build.version
+ - prepare/compiler
+ - prepare/compiler-client-embeddable
+ - prepare/compiler-embeddable
+ - prepare/compiler-native-image
+ - prepare/jklib-compiler
+ - prepare/kotlin-compiler-internal-test-framework
+ - prepare/kotlin-daemon-embeddable
+ - prepare/kotlin-jps-plugin
+ - prepare/parcelize-compiler-gradle
  - resources
  - spec-docs
  - test-instrumenter
