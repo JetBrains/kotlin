@@ -42,7 +42,6 @@ public class DefaultErrorMessages {
 
     private static final List<String> RENDERER_PLATFORM_EXTENSIONS = CollectionsKt.listOf(
             "org.jetbrains.kotlin.resolve.jvm.diagnostics.DefaultErrorMessagesJvm",
-            "org.jetbrains.kotlin.js.resolve.diagnostics.DefaultErrorMessagesJs",
             "org.jetbrains.kotlin.resolve.konan.diagnostics.DefaultErrorMessagesNative"
     );
 
