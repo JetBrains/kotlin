@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.configureJdkHomeFromSystemProperty
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerId
@@ -40,6 +41,7 @@ import java.net.URLClassLoader
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import java.util.logging.Logger
 import kotlin.concurrent.read
 import kotlin.concurrent.write
 
@@ -50,6 +52,8 @@ abstract class KotlinJvmReplServiceBase(
     templateClassName: String,
     protected val messageCollector: MessageCollector
 ) : ReplCompileAction, ReplCheckAction, CreateReplStageStateAction {
+
+    private val log by lazy { Logger.getLogger("replService") }
 
     protected val configuration = CompilerConfiguration.create().apply {
         @OptIn(MessageCollectorAccess::class) // write access
@@ -188,6 +192,9 @@ inline fun getValidId(counter: AtomicInteger, check: (Int) -> Boolean): Int {
 
 fun CompilerConfiguration.configureScripting(compilerId: CompilerId) {
     val error = try {
+        val componentRegistrars = loadRegistrars<ComponentRegistrar>(compilerId)
+        addAll(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, componentRegistrars)
+
         val compilerPluginRegistrars = loadRegistrars<CompilerPluginRegistrar>(compilerId)
         addAll(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, compilerPluginRegistrars)
 
