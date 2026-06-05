@@ -3,14 +3,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:serialization"))
+    api(kotlinStdlib())
+    api(project(":js:js.config"))
+    api(project(":core:deserialization.common"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:deserialization"))
-    api(project(":js:js.ast"))
-    api(project(":js:js.config"))
-    compileOnly(intellijCore())
+    implementation(project(":core:metadata"))
 }
 
 sourceSets {
