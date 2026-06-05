@@ -35,4 +35,4 @@ fun withContext() {
 context(c: <!NATIVE_SPECIFIC_ATOMIC, OPT_IN_USAGE_ERROR!>AtomicLongArray<!>)
 val some: Int get() = 0
 
-fun list(l: List<AtomicInt>) {}
+fun list(l: <!NATIVE_SPECIFIC_ATOMIC!>List<AtomicInt><!>) {}
