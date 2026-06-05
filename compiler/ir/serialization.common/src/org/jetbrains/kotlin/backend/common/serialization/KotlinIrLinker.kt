@@ -277,17 +277,6 @@ abstract class KotlinIrLinker(
         }
     }
 
-    override fun resolveBySignatureInModule(signature: IdSignature, kind: IrDeserializer.TopLevelSymbolKind, moduleName: Name): IrSymbol {
-        val moduleDeserializer =
-            deserializersForModules.entries.find { it.key == moduleName.asString() }?.value
-                ?: error("No module for name '$moduleName' found")
-        assert(signature == signature.topLevelSignature()) { "Signature '$signature' has to be top level" }
-        if (signature !in moduleDeserializer) error("No signature $signature in module $moduleName")
-        return moduleDeserializer.deserializeIrSymbolOrFail(signature, topLevelKindToSymbolKind(kind)).also {
-            deserializeAllReachableTopLevels()
-        }
-    }
-
     fun deserializeIrModuleHeader(
         moduleDescriptor: ModuleDescriptor,
         kotlinLibrary: KotlinLibrary?,
