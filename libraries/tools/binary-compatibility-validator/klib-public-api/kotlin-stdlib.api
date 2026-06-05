@@ -12643,6 +12643,9 @@ final fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlinx.cinterop/CPointer<out kotl
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnFallback(kotlin.coroutines/SuspendFunction1<#A, #B>, #A, kotlin.coroutines/Continuation<#B>): kotlin/Any? // kotlin.coroutines.intrinsics/startCoroutineUninterceptedOrReturnFallback|startCoroutineUninterceptedOrReturnFallback(kotlin.coroutines.SuspendFunction1<0:0,0:1>;0:0;kotlin.coroutines.Continuation<0:1>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.test/assertContains(kotlin.collections/Map<#A, #B>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.collections.Map<0:0,0:1>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.test/assertContains(kotlin.collections/Map<#A, #B>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.collections.Map<0:0,0:1>;0:0;kotlin.String?){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 
 // Targets: [native]
@@ -12706,10 +12709,19 @@ final fun <#A: kotlin/Any?> kotlin.native.internal/getContinuation(): kotlin.cor
 final fun <#A: kotlin/Any?> kotlin.native.ref/createCleaner(#A, kotlin/Function1<#A, kotlin/Unit>): kotlin.native.ref/Cleaner // kotlin.native.ref/createCleaner|createCleaner(0:0;kotlin.Function1<0:0,kotlin.Unit>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin.collections/Iterable<#A>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.collections.Iterable<0:0>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin.collections/Iterable<#A>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.collections.Iterable<0:0>;0:0;kotlin.String?){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin.sequences/Sequence<#A>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.sequences.Sequence<0:0>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin.sequences/Sequence<#A>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.sequences.Sequence<0:0>;0:0;kotlin.String?){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
+final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin/Array<#A>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.Array<0:0>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.test/assertContains(kotlin/Array<#A>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.Array<0:0>;0:0;kotlin.String?){0§<kotlin.Any?>}[0]
@@ -12769,7 +12781,13 @@ final fun <#A: kotlin/Boolean> (kotlinx.cinterop/NativePlacement).kotlinx.cinter
 final fun <#A: kotlin/Byte> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/ByteVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.Byte>}[0]
 
 // Targets: [native]
+final fun <#A: kotlin/Comparable<#A>> kotlin.test/assertContains(kotlin.ranges/ClosedRange<#A>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.ClosedRange<0:0>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Comparable<0:0>>}[0]
+
+// Targets: [native]
 final fun <#A: kotlin/Comparable<#A>> kotlin.test/assertContains(kotlin.ranges/ClosedRange<#A>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.ClosedRange<0:0>;0:0;kotlin.String?){0§<kotlin.Comparable<0:0>>}[0]
+
+// Targets: [native]
+final fun <#A: kotlin/Comparable<#A>> kotlin.test/assertContains(kotlin.ranges/OpenEndRange<#A>, #A, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.OpenEndRange<0:0>;0:0;kotlin.Function0<kotlin.String>){0§<kotlin.Comparable<0:0>>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Comparable<#A>> kotlin.test/assertContains(kotlin.ranges/OpenEndRange<#A>, #A, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.OpenEndRange<0:0>;0:0;kotlin.String?){0§<kotlin.Comparable<0:0>>}[0]
@@ -13150,43 +13168,85 @@ final fun kotlin.system/getTimeMillis(): kotlin/Long // kotlin.system/getTimeMil
 final fun kotlin.system/getTimeNanos(): kotlin/Long // kotlin.system/getTimeNanos|getTimeNanos(){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin.ranges/CharRange, kotlin/Char, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.CharRange;kotlin.Char;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin.ranges/CharRange, kotlin/Char, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.CharRange;kotlin.Char;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin.ranges/IntRange, kotlin/Int, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.IntRange;kotlin.Int;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin.ranges/IntRange, kotlin/Int, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.IntRange;kotlin.Int;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin.ranges/LongRange, kotlin/Long, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.LongRange;kotlin.Long;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin.ranges/LongRange, kotlin/Long, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.LongRange;kotlin.Long;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin.ranges/UIntRange, kotlin/UInt, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.UIntRange;kotlin.UInt;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin.ranges/UIntRange, kotlin/UInt, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.UIntRange;kotlin.UInt;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin.ranges/ULongRange, kotlin/ULong, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ranges.ULongRange;kotlin.ULong;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin.ranges/ULongRange, kotlin/ULong, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ranges.ULongRange;kotlin.ULong;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/BooleanArray, kotlin/Boolean, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.BooleanArray;kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/BooleanArray, kotlin/Boolean, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.BooleanArray;kotlin.Boolean;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/ByteArray, kotlin/Byte, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ByteArray;kotlin.Byte;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/ByteArray, kotlin/Byte, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ByteArray;kotlin.Byte;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/CharArray, kotlin/Char, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.CharArray;kotlin.Char;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/CharArray, kotlin/Char, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.CharArray;kotlin.Char;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin.text/Regex, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.text.Regex;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin.text/Regex, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.text.Regex;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin/Char, kotlin/Boolean = ..., kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.Char;kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin/Char, kotlin/Boolean = ..., kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.Char;kotlin.Boolean;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin/CharSequence, kotlin/Boolean = ..., kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.CharSequence;kotlin.Boolean;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/CharSequence, kotlin/CharSequence, kotlin/Boolean = ..., kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.CharSequence;kotlin.CharSequence;kotlin.Boolean;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/IntArray, kotlin/Int, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.IntArray;kotlin.Int;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/IntArray, kotlin/Int, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.IntArray;kotlin.Int;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/LongArray, kotlin/Long, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.LongArray;kotlin.Long;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/LongArray, kotlin/Long, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.LongArray;kotlin.Long;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/ShortArray, kotlin/Short, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ShortArray;kotlin.Short;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/ShortArray, kotlin/Short, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ShortArray;kotlin.Short;kotlin.String?){}[0]
@@ -13195,10 +13255,19 @@ final fun kotlin.test/assertContains(kotlin/ShortArray, kotlin/Short, kotlin/Str
 final fun kotlin.test/assertContains(kotlin/UByteArray, kotlin/UByte, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.UByteArray;kotlin.UByte;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/UIntArray, kotlin/UInt, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.UIntArray;kotlin.UInt;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/UIntArray, kotlin/UInt, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.UIntArray;kotlin.UInt;kotlin.String?){}[0]
 
 // Targets: [native]
+final fun kotlin.test/assertContains(kotlin/ULongArray, kotlin/ULong, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.ULongArray;kotlin.ULong;kotlin.Function0<kotlin.String>){}[0]
+
+// Targets: [native]
 final fun kotlin.test/assertContains(kotlin/ULongArray, kotlin/ULong, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.ULongArray;kotlin.ULong;kotlin.String?){}[0]
+
+// Targets: [native]
+final fun kotlin.test/assertContains(kotlin/UShortArray, kotlin/UShort, kotlin/Function0<kotlin/String>) // kotlin.test/assertContains|assertContains(kotlin.UShortArray;kotlin.UShort;kotlin.Function0<kotlin.String>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/assertContains(kotlin/UShortArray, kotlin/UShort, kotlin/String? = ...) // kotlin.test/assertContains|assertContains(kotlin.UShortArray;kotlin.UShort;kotlin.String?){}[0]
