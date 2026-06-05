@@ -31,7 +31,9 @@ public class ClsWrapperStubPsiFactory extends StubPsiFactory {
 
     @Override
     public PsiAnnotation createAnnotation(PsiAnnotationStub stub) {
-        return delegate.createAnnotation(stub);
+        // Wrap the stub so that annotation arguments which are not representable in Java (e.g., an enum entry
+        // with an invalid Java identifier as the name) do not break the decompiled light class.
+        return delegate.createAnnotation(new SafeClsAnnotationStub(stub));
     }
 
     @Override
