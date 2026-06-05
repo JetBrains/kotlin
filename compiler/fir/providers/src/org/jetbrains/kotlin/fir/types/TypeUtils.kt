@@ -655,18 +655,11 @@ internal fun ConeKotlinType.captureFromExpressionInternal(): ConeKotlinType? {
                 return null
             }
 
-            c.intersectTypes(components)
-                .let {
-                    if (it is ConeIntersectionType) {
-                        val capturedUpperBoundForApproximation =
-                            (capturedUpperBoundArguments?.let(upperBoundForApproximation::withArguments)
-                                ?: upperBoundForApproximation)
-                        capturedUpperBoundForApproximation?.let(it::withUpperBound) ?: it
-                    } else {
-                        it
-                    }
-                }
-                .withNullability(typeToReplace.canBeNull(c.session), c)
+            ConeTypeIntersector.intersectTypes(
+                c,
+                components,
+                capturedUpperBoundArguments?.let(upperBoundForApproximation::withArguments) ?: upperBoundForApproximation
+            ).withNullability(typeToReplace.canBeNull(c.session), c)
         } else {
             val capturedArguments = findCorrespondingCapturedArgumentsForType(typeToReplace)
                 ?: return null

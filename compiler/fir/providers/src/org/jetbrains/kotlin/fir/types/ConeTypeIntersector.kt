@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 object ConeTypeIntersector {
     fun intersectTypes(
         context: ConeTypeContext,
-        types: Collection<ConeKotlinType>
+        types: Collection<ConeKotlinType>,
+        upperBoundForApproximation: ConeKotlinType? = null,
     ): ConeKotlinType {
         when (types.size) {
             0 -> error("Expected some types")
@@ -33,8 +34,8 @@ object ConeTypeIntersector {
         // Note: we aren't sure how to intersect raw & dynamic types properly (see KT-55762)
         if (inputTypes.any { it is ConeFlexibleType } && inputTypes.none { it.isRaw() || it is ConeDynamicType }) {
             // (A..B) & C = (A & C)..(B & C)
-            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() })
-            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() })
+            val lowerBound = intersectTypes(context, inputTypes.map { it.lowerBoundIfFlexible() }, upperBoundForApproximation)
+            val upperBound = intersectTypes(context, inputTypes.map { it.upperBoundIfFlexible() }, upperBoundForApproximation)
             // Special case - if C is `Nothing?`, then the result is `Nothing!`; but if it is non-null,
             // then this code is unreachable, so it's more useful to do resolution/diagnostics
             // under the assumption that it is purely nullable.
@@ -68,7 +69,7 @@ object ConeTypeIntersector {
         assert(resultList.isNotEmpty()) { "no types left after removing equal types: ${inputTypes.joinToString()}" }
 
         @OptIn(DelicateIntersectionConstructor::class)
-        return resultList.singleOrNull() ?: ConeIntersectionType(resultList, null)
+        return resultList.singleOrNull() ?: ConeIntersectionType(resultList, upperBoundForApproximation)
     }
 
     private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(
