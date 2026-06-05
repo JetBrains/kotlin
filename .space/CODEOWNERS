@@ -431,6 +431,7 @@
 /native/commonizer/ "Kotlin Frontend"
 /native/commonizer-api/ "Kotlin Frontend"
 /native/commonizer-embeddable/ "Kotlin Frontend"
+/libraries/commonizer-support-library/ "Kotlin Frontend"
 /native/native.tests/ "Kotlin Native" "Kotlin Common Backend"
 /native/native.tests/cli-tests/ "Kotlin Native"
 /native/native.tests/driver/ "Kotlin Native"
