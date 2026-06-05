@@ -8,18 +8,18 @@ plugins {
     id("project-tests-convention")
 }
 
-val embeddableTestRuntime by configurations.creating {
+val embeddableTestRuntime = configurations.create("embeddableTestRuntime") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
     }
 }
 
-val testJsr223Runtime by configurations.creating {
+val testJsr223Runtime = configurations.create("testJsr223Runtime") {
     extendsFrom(configurations["testRuntimeClasspath"])
 }
 
-val testCompilationClasspath by configurations.creating
+val testCompilationClasspath = configurations.create("testCompilationClasspath")
 
 dependencies {
     testImplementation(platform(libs.junit.bom))

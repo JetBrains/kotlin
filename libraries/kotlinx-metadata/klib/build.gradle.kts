@@ -19,7 +19,7 @@ sourceSets {
 
 optInToK1Deprecation()
 
-val embedded by configurations
+val embedded = configurations.getByName("embedded")
 embedded.isTransitive = false
 configurations.getByName("compileOnly").extendsFrom(embedded)
 configurations.getByName("testApi").extendsFrom(embedded)

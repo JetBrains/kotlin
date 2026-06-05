@@ -3,14 +3,14 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-val thirdPartyAnnotationsClasspath: org.gradle.api.artifacts.Configuration by configurations.creating {
+val thirdPartyAnnotationsClasspath = configurations.create("thirdPartyAnnotationsClasspath") {
     isCanBeDeclared = true
     isCanBeResolved = false
     isCanBeConsumed = false
     isTransitive = false
 }
 
-val thirdPartyAnnotationsClasspathResolver: org.gradle.api.artifacts.Configuration by configurations.creating {
+val thirdPartyAnnotationsClasspathResolver = configurations.create("thirdPartyAnnotationsClasspathResolver") {
     isCanBeDeclared = false
     isCanBeResolved = true
     isCanBeConsumed = false

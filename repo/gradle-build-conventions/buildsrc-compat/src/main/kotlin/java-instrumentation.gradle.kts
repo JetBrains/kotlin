@@ -16,7 +16,7 @@ logger.info("Setting java.awt.headless=true, old value was $headlessOldValue")
  */
 fun Project.configureJavaInstrumentation() {
     plugins.withId("org.gradle.java") {
-        val javaInstrumentator by configurations.creating
+        val javaInstrumentator = configurations.create("javaInstrumentator")
         dependencies {
             javaInstrumentator("com.jetbrains.intellij.java:java-compiler-ant-tasks:${project.kotlinBuildProperties.versionsProperty("intellijSdk").get()}")
         }

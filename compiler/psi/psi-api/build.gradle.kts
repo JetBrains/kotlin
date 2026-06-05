@@ -62,7 +62,7 @@ projectTests {
     testCodebaseTask()
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/psi-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }

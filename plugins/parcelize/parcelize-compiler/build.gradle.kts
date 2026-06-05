@@ -41,7 +41,7 @@ abstract class AarToJarTransform : TransformAction<TransformParameters.None> {
     }
 }
 
-val robolectricClasspath by configurations.creating {
+val robolectricClasspath = configurations.create("robolectricClasspath") {
     attributes {
         attribute(Attribute.of("artifactType", String::class.java), "jar")
     }
@@ -49,11 +49,11 @@ val robolectricClasspath by configurations.creating {
         checkAndOverrideBouncyCastleVersion(project)
     }
 }
-val robolectricDependency by configurations.creating
+val robolectricDependency = configurations.create("robolectricDependency")
 
-val parcelizeRuntimeForTests by configurations.creating
-val layoutLib by configurations.creating
-val layoutLibApi by configurations.creating
+val parcelizeRuntimeForTests = configurations.create("parcelizeRuntimeForTests")
+val layoutLib = configurations.create("layoutLib")
+val layoutLibApi = configurations.create("layoutLibApi")
 
 dependencies {
     registerTransform(AarToJarTransform::class.java) {
@@ -116,7 +116,7 @@ testsJar()
 
 val projectDir = layout.projectDirectory
 val robolectricDependencyDir = layout.buildDirectory.dir("robolectricDependencies")
-val prepareRobolectricDependencies by tasks.registering(Copy::class) {
+val prepareRobolectricDependencies = tasks.register("prepareRobolectricDependencies", Copy::class) {
     from(robolectricDependency)
     into(robolectricDependencyDir)
 }

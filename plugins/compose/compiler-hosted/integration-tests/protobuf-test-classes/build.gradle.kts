@@ -18,7 +18,7 @@ protobuf {
 
     generateProtoTasks.all().configureEach {
         builtins {
-            val java by getting {
+            val java = getByName("java") {
                 option("lite")
             }
         }

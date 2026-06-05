@@ -17,7 +17,7 @@ val localPackagesToRelocate =
         "kotlinx.coroutines"
     )
 
-val proguardLibraryJars by configurations.creating {
+val proguardLibraryJars = configurations.create("proguardLibraryJars") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))

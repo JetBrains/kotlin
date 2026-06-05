@@ -156,7 +156,7 @@ tasks.register<Delete>("cleanTestKitCache") {
     delete(layout.buildDirectory.dir("kgpTestInfra"))
 }
 
-val cleanUserHomeKonanDir by tasks.registering(Delete::class) {
+val cleanUserHomeKonanDir = tasks.register("cleanUserHomeKonanDir", Delete::class) {
     description = "Only runs on CI. " +
             "Deletes ~/.konan dir before tests, to ensure that no test inadvertently creates this directory during execution."
 

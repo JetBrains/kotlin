@@ -8,7 +8,7 @@ plugins {
     kotlin("jvm")
 }
 
-val testArtifacts by configurations.creating
+val testArtifacts = configurations.create("testArtifacts")
 
 dependencies {
     api(libs.kotlinx.bcv)
@@ -40,7 +40,7 @@ sourceSets {
     }
 }
 
-val test by tasks.existing(Test::class) {
+val test = tasks.named("test", Test::class) {
     useJUnitPlatform()
     dependsOn(testArtifacts)
     dependsOn(":kotlin-stdlib:assemble")

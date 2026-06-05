@@ -16,7 +16,7 @@ description = "Runner for Swift Export (for embedding purpose)"
 
 publish()
 
-val validateSwiftExportEmbeddable by tasks.registering
+val validateSwiftExportEmbeddable = tasks.register("validateSwiftExportEmbeddable")
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }

@@ -32,7 +32,7 @@ So it is easier to compile with JDK 25.
 It is possible, though, to set `jvmTarget` to 22 and use the result when running on JDK 22+.
 But this can't be tested on the CI on JDK 22, so it is more reliable to use JDK 25 consistently everywhere.
 */
-val jdk25: SourceSet by sourceSets.creating {
+val jdk25: SourceSet = sourceSets.create("jdk25") {
     java.srcDir("srcJdk25")
 }
 

@@ -24,12 +24,12 @@ val wabtOS = when {
     else -> error("Unsupported OS: $gradleOs")
 }
 
-val wabt by configurations.creating {
+val wabt = configurations.create("wabt") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }
 
-val testSuite by configurations.creating {
+val testSuite = configurations.create("testSuite") {
     isCanBeResolved = true
     isCanBeConsumed = false
 }

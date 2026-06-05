@@ -32,14 +32,14 @@ kotlin {
         }
 
         compilations["main"].cinterops {
-            val ffmpeg by creating {
+            val ffmpeg = create("ffmpeg") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/ffmpeg")
                     KonanTarget.MINGW_X64 -> includeDirs(mingwPath.resolve("include"))
                 }
             }
-            val sdl by creating {
+            val sdl = create("sdl") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs("/opt/local/include/SDL2", "/usr/local/include/SDL2")
                     KonanTarget.LINUX_X64 -> includeDirs("/usr/include", "/usr/include/x86_64-linux-gnu", "/usr/include/SDL2")

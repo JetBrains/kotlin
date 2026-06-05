@@ -70,8 +70,8 @@ kotlin {
                     }
                 }
             }
-            val main by getting
-            val test by getting
+            val main = getByName("main")
+            val test = getByName("test")
 
             main.compileTaskProvider.configure {
                 compilerOptions.addReturnValueCheckerInfo()
@@ -176,31 +176,31 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 api(kotlinStdlib())
             }
         }
-        val annotationsCommonMain by creating {
+        val annotationsCommonMain = create("annotationsCommonMain") {
             dependsOn(commonMain)
             kotlin.srcDir("annotations-common/src/main/kotlin")
         }
-        val assertionsCommonMain by creating {
+        val assertionsCommonMain = create("assertionsCommonMain") {
             dependsOn(commonMain)
             kotlin.srcDir("common/src/main/kotlin")
         }
-        val commonTest by getting {
+        val commonTest = getByName("commonTest") {
             kotlin.srcDir("annotations-common/src/test/kotlin")
             kotlin.srcDir("common/src/test/kotlin")
         }
-        val jvmMain by getting {
+        val jvmMain = getByName("jvmMain") {
             dependsOn(assertionsCommonMain)
             kotlin.srcDir("jvm/src/main/kotlin")
         }
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             kotlin.srcDir("jvm/src/test/kotlin")
         }
-        val jvmJUnit by getting {
+        val jvmJUnit = getByName("jvmJUnit") {
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("junit/src/main/kotlin")
             resources.srcDir("junit/src/main/resources")
@@ -208,11 +208,11 @@ kotlin {
                 api("junit:junit:4.13.2")
             }
         }
-        val jvmJUnitTest by getting {
+        val jvmJUnitTest = getByName("jvmJUnitTest") {
             dependsOn(commonTest)
             kotlin.srcDir("junit/src/test/kotlin")
         }
-        val jvmJUnit5 by getting {
+        val jvmJUnit5 = getByName("jvmJUnit5") {
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("junit5/src/main/kotlin")
             resources.srcDir("junit5/src/main/resources")
@@ -220,7 +220,7 @@ kotlin {
                 compileOnly("org.junit.jupiter:junit-jupiter-api:5.0.0")
             }
         }
-        val jvmJUnit5Test by getting {
+        val jvmJUnit5Test = getByName("jvmJUnit5Test") {
             dependsOn(commonTest)
             kotlin.srcDir("junit5/src/test/kotlin")
             dependencies {
@@ -228,7 +228,7 @@ kotlin {
                 runtimeOnly(libs.junit.platform.launcher)
             }
         }
-        val jvmTestNG by getting {
+        val jvmTestNG = getByName("jvmTestNG") {
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("testng/src/main/kotlin")
             resources.srcDir("testng/src/main/resources")
@@ -236,34 +236,34 @@ kotlin {
                 api("org.testng:testng:7.0.0")
             }
         }
-        val jvmTestNGTest by getting {
+        val jvmTestNGTest = getByName("jvmTestNGTest") {
             dependsOn(commonTest)
             kotlin.srcDir("testng/src/test/kotlin")
             dependencies {
                 implementation("org.testng:testng:7.5.1")
             }
         }
-        val jsMain by getting {
+        val jsMain = getByName("jsMain") {
             dependsOn(assertionsCommonMain)
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("js/src/main/kotlin")
         }
-        val jsTest by getting {
+        val jsTest = getByName("jsTest") {
             kotlin.srcDir("js/src/test/kotlin")
         }
-        val wasmCommonMain by creating {
+        val wasmCommonMain = create("wasmCommonMain") {
             dependsOn(assertionsCommonMain)
             dependsOn(annotationsCommonMain)
             kotlin.srcDir("wasm/src/main/kotlin")
         }
-        val wasmJsMain by getting {
+        val wasmJsMain = getByName("wasmJsMain") {
             dependsOn(wasmCommonMain)
             kotlin.srcDir("wasm/js/src/main/kotlin")
         }
-        val wasmJsTest by getting {
+        val wasmJsTest = getByName("wasmJsTest") {
             kotlin.srcDir("wasm/js/src/test/kotlin")
         }
-        val wasmWasiMain by getting {
+        val wasmWasiMain = getByName("wasmWasiMain") {
             dependsOn(wasmCommonMain)
             kotlin.srcDir("wasm/wasi/src/main/kotlin")
         }
@@ -271,15 +271,15 @@ kotlin {
 }
 
 tasks {
-    val allMetadataJar by existing(Jar::class) {
+    val allMetadataJar = named("allMetadataJar", Jar::class) {
         archiveClassifier = "all"
     }
-    val jvmJar by existing(Jar::class) {
+    val jvmJar = named("jvmJar", Jar::class) {
         archiveAppendix = null
         from(project.sourceSets["jvmJava9"].output)
         manifestAttributes(manifest, "Test", multiRelease = true)
     }
-    val jvmSourcesJar by existing(Jar::class) {
+    val jvmSourcesJar = named("jvmSourcesJar", Jar::class) {
         archiveAppendix = null
         kotlin.sourceSets["annotationsCommonMain"].let { sourceSet ->
             into(sourceSet.name) {
@@ -306,19 +306,19 @@ tasks {
             }
         }
     }
-    val jsJar by existing(Jar::class) {
+    val jsJar = named("jsJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
     }
-    val wasmJsJar by existing(Jar::class) {
+    val wasmJsJar = named("wasmJsJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
     }
-    val wasmWasiJar by existing(Jar::class) {
+    val wasmWasiJar = named("wasmWasiJar", Jar::class) {
         manifestAttributes(manifest, "Test")
         manifest.attributes("Implementation-Title" to "${archiveBaseName.get()}-${archiveAppendix.get()}")
     }
-    val assemble by existing {
+    val assemble = named("assemble") {
         dependsOn(jvmJarTasks)
     }
 
@@ -342,11 +342,11 @@ tasks {
             }
         }
     }
-    val allTests by existing {
+    val allTests = named("allTests") {
         dependsOn(jvmTestTasks)
     }
 
-    val generateProjectStructureMetadata by existing(GenerateProjectStructureMetadata::class) {
+    val generateProjectStructureMetadata = named("generateProjectStructureMetadata", GenerateProjectStructureMetadata::class) {
         val outputTestFile = file("kotlin-project-structure-metadata.beforePatch.json")
         val patchedFile = file("kotlin-project-structure-metadata.json")
 
@@ -374,7 +374,7 @@ tasks {
 }
 
 configurations {
-    val metadataApiElements by getting
+    val metadataApiElements = getByName("metadataApiElements")
     metadataApiElements.outgoing.capability(kotlinTestCapability)
 
     for (framework in jvmTestFrameworks) {
@@ -457,9 +457,9 @@ configurations {
         legacyConfigurationDeps(project)
     }
 
-    val jvmMainApi by getting
-    val metadataCompilationApi by configurations.getting
-    val nativeApiElements by creating
+    val jvmMainApi = getByName("jvmMainApi")
+    val metadataCompilationApi = getByName("metadataCompilationApi")
+    val nativeApiElements = create("nativeApiElements")
     for (artifactName in listOf("kotlin-test-common", "kotlin-test-annotations-common")) {
         dependencies {
             constraints {

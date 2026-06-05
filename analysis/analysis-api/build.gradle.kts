@@ -73,12 +73,12 @@ projectTests {
     testCodebaseTask()
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/analysis-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }
 
-val checkForeignClassUsageUnstable by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsageUnstable = tasks.register("checkForeignClassUsageUnstable", CheckForeignClassUsageTask::class) {
     outputFile = file("api-unstable/analysis-api.foreign")
     nonPublicMarkers.addAll(unstableNonPublicMarkers)
 }

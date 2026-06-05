@@ -16,7 +16,7 @@ plugins {
     id("test-inputs-check-v2")
 }
 
-val testCppRuntime by configurations.creating {
+val testCppRuntime = configurations.create("testCppRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {

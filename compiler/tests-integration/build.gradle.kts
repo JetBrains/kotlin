@@ -14,7 +14,7 @@ plugins {
 
 val otherCompilerModules = CompilerModules.compilerModules.filter { it != path }
 
-val antLauncherJar by configurations.creating
+val antLauncherJar = configurations.create("antLauncherJar")
 
 dependencies {
 

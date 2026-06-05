@@ -7,7 +7,7 @@ description = "Shaded Maven dependencies resolver"
 
 val jarBaseName = the<BasePluginExtension>().archivesName
 
-val embedded by configurations
+val embedded = configurations.getByName("embedded")
 
 embedded.apply {
     exclude("org.slf4j", "slf4j-api")
@@ -20,7 +20,7 @@ plugins {
     kotlin("jvm")
 }
 
-val proguardLibraryJars by configurations.creating {
+val proguardLibraryJars = configurations.create("proguardLibraryJars") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
         attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named(LibraryElements.JAR))

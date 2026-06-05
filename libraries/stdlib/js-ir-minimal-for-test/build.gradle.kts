@@ -182,16 +182,16 @@ val jsMainSources = tasks.register<Sync>("jsMainSources") {
 
 kotlin {
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             kotlin.srcDir(files(commonMainSources.map { it.destinationDir }))
             kotlin.srcDir(files(commonMainCollectionSources.map { it.destinationDir }))
             kotlin.srcDir("common-src")
         }
-        val commonNonJvmMain by creating {
+        val commonNonJvmMain = create("commonNonJvmMain") {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
-        val commonJsAndWasmJs by creating {
+        val commonJsAndWasmJs = create("commonJsAndWasmJs") {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
         }

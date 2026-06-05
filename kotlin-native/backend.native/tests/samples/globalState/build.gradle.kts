@@ -21,7 +21,7 @@ kotlin {
             }
         }
         compilations["main"].cinterops {
-            val global by creating
+            val global = create("global")
         }
     }
 }

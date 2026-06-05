@@ -26,7 +26,7 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
 
-val testJsRuntime: Configuration by configurations.creating {
+val testJsRuntime: Configuration = configurations.create("testJsRuntime") {
     attributes {
         attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))

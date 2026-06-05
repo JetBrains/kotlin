@@ -5,13 +5,13 @@
 
 private val CUSTOM_FORMATTERS_ATTRIBUTE = objects.named<Usage>("devtools-custom-previews")
 
-val wasmCustomFormatters by configurations.creating {
+val wasmCustomFormatters = configurations.create("wasmCustomFormatters") {
     isCanBeResolved = false
     isCanBeConsumed = false
     isCanBeDeclared = true
 }
 
-val wasmCustomFormattersProvider by configurations.creating {
+val wasmCustomFormattersProvider = configurations.create("wasmCustomFormattersProvider") {
     isCanBeResolved = false
     isCanBeConsumed = true
     isCanBeDeclared = false
@@ -20,7 +20,7 @@ val wasmCustomFormattersProvider by configurations.creating {
     }
 }
 
-val wasmCustomFormattersResolver by configurations.creating {
+val wasmCustomFormattersResolver = configurations.create("wasmCustomFormattersResolver") {
     isCanBeResolved = true
     isCanBeConsumed = false
     isCanBeDeclared = false

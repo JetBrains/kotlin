@@ -54,7 +54,7 @@ val unpackBreakpad = tasks.register<Sync>("unpackBreakpad") {
     into(breakpadLocationNoDependency)
 }
 
-val breakpadSources by configurations.creating {
+val breakpadSources = configurations.create("breakpadSources") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -664,7 +664,7 @@ bitcode {
     }
 }
 
-val objcExportApi by configurations.creating {
+val objcExportApi = configurations.create("objcExportApi") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {
@@ -679,7 +679,7 @@ artifacts {
     add(objcExportApi.name, layout.projectDirectory.dir("src/objcExport/cpp"))
 }
 
-val runtimeBitcode by configurations.creating {
+val runtimeBitcode = configurations.create("runtimeBitcode") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -706,13 +706,13 @@ targetList.forEach { target ->
     }
 }
 
-val hostRuntime by tasks.registering {
+val hostRuntime = tasks.register("hostRuntime") {
     description = "Build all main runtime modules for host"
     group = CompileToBitcodeExtension.BUILD_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
-val hostRuntimeTests by tasks.registering {
+val hostRuntimeTests = tasks.register("hostRuntimeTests") {
     description = "Runs all runtime tests for host"
     group = CompileToBitcodeExtension.VERIFICATION_TASK_GROUP
     dependsOn("${PlatformInfo.hostName}RuntimeTests")
@@ -722,7 +722,7 @@ tasks.named("assemble") {
     dependsOn(targetList.map { "${it}Runtime" })
 }
 
-val hostAssemble by tasks.registering {
+val hostAssemble = tasks.register("hostAssemble") {
     dependsOn("${PlatformInfo.hostName}Runtime")
 }
 
@@ -737,7 +737,7 @@ tasks.named("clean", Delete::class) {
 
 val nativeBootstrapDistribution = registerNativeBootstrapDistribution()
 
-val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
+val stdlibBuildTask = tasks.register("stdlibBuildTask", KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
@@ -781,7 +781,7 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-Xwarning-level=REDUNDANT_CLI_ARG:disabled",
     ))
 
-    val common by sourceSets.creating {
+    val common = sourceSets.create("common") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/kotlin"))
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common/src/generated"))
         srcDir(project(":kotlin-stdlib").projectDir.resolve("unsigned/src"))
@@ -790,26 +790,26 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
         srcDir(project(":kotlin-test").projectDir.resolve("common/src/main/kotlin"))
     }
 
-    val commonNonJvm by sourceSets.creating {
+    val commonNonJvm = sourceSets.create("commonNonJvm") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("common-non-jvm/src"))
     }
 
-    val nativeWasm by sourceSets.creating {
+    val nativeWasm = sourceSets.create("nativeWasm") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/src/"))
     }
 
-    val nativeWasmWasi by sourceSets.creating {
+    val nativeWasmWasi = sourceSets.create("nativeWasmWasi") {
         srcDir(project(":kotlin-stdlib").projectDir.resolve("native-wasm/wasi/"))
     }
 
-    val nativeMain by sourceSets.creating {
+    val nativeMain = sourceSets.create("nativeMain") {
         srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/main/kotlin"))
         srcDir(project(":kotlin-native:Interop:Runtime").projectDir.resolve("src/native/kotlin"))
         srcDir(project.file("src/main/kotlin"))
     }
 }
 
-val nativeStdlib by tasks.registering(Sync::class) {
+val nativeStdlib = tasks.register("nativeStdlib", Sync::class) {
     from(stdlibBuildTask)
     into(project.layout.buildDirectory.dir("nativeStdlib"))
 }

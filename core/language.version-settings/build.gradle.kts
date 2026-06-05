@@ -42,6 +42,6 @@ projectTests {
     testTask(javaLauncher = JdkMajorVersion.JDK_1_8)
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/language-version-settings-api.foreign")
 }

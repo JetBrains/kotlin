@@ -25,7 +25,7 @@ val modules = listOf(
 )
 
 
-val extractLibs by tasks.registering(Task::class)
+val extractLibs = tasks.register("extractLibs", Task::class)
 
 
 modules.forEach { module ->

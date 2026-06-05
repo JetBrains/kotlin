@@ -14,7 +14,7 @@ plugins {
     id("test-inputs-check-v2")
 }
 
-val llvmDevBinaryDataUsage by configurations.creating {
+val llvmDevBinaryDataUsage = configurations.create("llvmDevBinaryDataUsage") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }

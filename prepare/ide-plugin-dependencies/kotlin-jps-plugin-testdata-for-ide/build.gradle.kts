@@ -9,7 +9,7 @@ idePluginPublishingLatch {
 
     publish()
 
-    val jar: Jar by tasks
+    val jar = tasks.getByName<Jar>("jar")
 
     jar.apply {
         listOf("jps/jps-plugin/testData").forEach {

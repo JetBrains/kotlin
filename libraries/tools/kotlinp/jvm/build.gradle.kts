@@ -12,7 +12,7 @@ plugins {
     id("java-test-fixtures")
 }
 
-val shadows by configurations.creating
+val shadows = configurations.create("shadows")
 
 dependencies {
     compileOnly(project(":kotlin-metadata"))

@@ -21,7 +21,7 @@ kotlin {
 
     hostTarget.apply {
         compilations["main"].cinterops {
-            val libcurl by creating {
+            val libcurl = create("libcurl") {
                 when (konanTarget) {
                     KonanTarget.MACOS_X64 -> includeDirs.headerFilterOnly("/opt/local/include", "/usr/local/include")
                     KonanTarget.LINUX_X64 -> includeDirs.headerFilterOnly("/usr/include", "/usr/include/x86_64-linux-gnu")

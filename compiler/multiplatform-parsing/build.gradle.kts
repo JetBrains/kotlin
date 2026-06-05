@@ -23,7 +23,7 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
+        val commonMain = getByName("commonMain") {
             dependencies {
                 api(kotlinStdlib())
                 implementation(libs.org.jetbrains.syntax.api)
@@ -33,7 +33,7 @@ kotlin {
                 srcDir("common/src")
             }
         }
-        val jvmTest by getting {
+        val jvmTest = getByName("jvmTest") {
             dependencies {
                 implementation(project(":compiler:psi:psi-api"))
                 implementation(intellijCore())

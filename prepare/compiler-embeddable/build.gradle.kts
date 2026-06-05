@@ -10,8 +10,8 @@ plugins {
     id("project-tests-convention")
 }
 
-val testCompilationClasspath by configurations.creating
-val testCompilerClasspath by configurations.creating {
+val testCompilationClasspath = configurations.create("testCompilationClasspath")
+val testCompilerClasspath = configurations.create("testCompilerClasspath") {
     isCanBeConsumed = false
     extendsFrom(configurations["runtimeElements"])
     attributes {

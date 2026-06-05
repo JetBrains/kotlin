@@ -9,7 +9,7 @@ plugins {
     id("project-tests-convention")
 }
 
-val kotlinxSerializationGradlePluginClasspath by configurations.creating
+val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
 
 dependencies {
     testImplementation(project(":kotlin-main-kts"))

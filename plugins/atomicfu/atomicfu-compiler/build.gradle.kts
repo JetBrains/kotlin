@@ -19,24 +19,24 @@ plugins {
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
-val antLauncherJar by configurations.creating
-val testJsRuntime by configurations.creating {
+val antLauncherJar = configurations.create("antLauncherJar")
+val testJsRuntime = configurations.create("testJsRuntime") {
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
     }
 }
 
-val atomicfuJsClasspath by configurations.creating {
+val atomicfuJsClasspath = configurations.create("atomicfuJsClasspath") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
-val atomicfuJvmClasspath by configurations.creating
+val atomicfuJvmClasspath = configurations.create("atomicfuJvmClasspath")
 
-val atomicfuNativeKlib by configurations.creating {
+val atomicfuNativeKlib = configurations.create("atomicfuNativeKlib") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -46,7 +46,7 @@ val atomicfuNativeKlib by configurations.creating {
     }
 }
 
-val atomicfuJsIrRuntimeForTests by configurations.creating {
+val atomicfuJsIrRuntimeForTests = configurations.create("atomicfuJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -54,7 +54,7 @@ val atomicfuJsIrRuntimeForTests by configurations.creating {
     }
 }
 
-val atomicfuCompilerPluginForTests by configurations.creating
+val atomicfuCompilerPluginForTests = configurations.create("atomicfuCompilerPluginForTests")
 
 dependencies {
     compileOnly(intellijCore())

@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm")
 }
 
-val jflexPath by configurations.creating
+val jflexPath = configurations.create("jflexPath")
 
 dependencies {
     api(project(":compiler:util"))

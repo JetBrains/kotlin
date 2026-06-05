@@ -13,19 +13,21 @@ plugins {
     id("test-inputs-check-v2")
 }
 
-val junit5Classpath by configurations.creating
+val junit5Classpath = configurations.create("junit5Classpath")
 
-val powerAssertRuntimeClasspath by configurations.dependencyScope("powerAssertRuntimeClasspath")
-val powerAssertJvmRuntimeClasspath by configurations.resolvable("powerAssertJvmRuntimeClasspath") {
+val powerAssertRuntimeClasspath = configurations.dependencyScope("powerAssertRuntimeClasspath").get()
+
+val powerAssertJvmRuntimeClasspath = configurations.resolvable("powerAssertJvmRuntimeClasspath") {
     extendsFrom(powerAssertRuntimeClasspath)
-}
-val powerAssertJsRuntimeClasspath by configurations.resolvable("powerAssertJsRuntimeClasspath") {
+}.get()
+
+val powerAssertJsRuntimeClasspath = configurations.resolvable("powerAssertJsRuntimeClasspath") {
     extendsFrom(powerAssertRuntimeClasspath)
     attributes {
         attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
     }
-}
+}.get()
 
 dependencies {
     embedded(project(":kotlin-power-assert-compiler-plugin.common")) { isTransitive = false }

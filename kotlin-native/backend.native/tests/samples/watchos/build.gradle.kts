@@ -58,7 +58,7 @@ kotlin {
     }
 
     // Configure dependencies.
-    val appleMain by sourceSets.creating {
+    val appleMain = sourceSets.create("appleMain") {
         dependsOn(sourceSets["commonMain"])
     }
 

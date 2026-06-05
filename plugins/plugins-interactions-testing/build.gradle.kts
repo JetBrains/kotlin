@@ -8,9 +8,9 @@ plugins {
     id("test-inputs-check-v2")
 }
 
-val beforePluginClasspath: Configuration by configurations.creating
-val middlePluginClasspath: Configuration by configurations.creating
-val afterPluginClasspath: Configuration by configurations.creating
+val beforePluginClasspath: Configuration = configurations.create("beforePluginClasspath")
+val middlePluginClasspath: Configuration = configurations.create("middlePluginClasspath")
+val afterPluginClasspath: Configuration = configurations.create("afterPluginClasspath")
 
 dependencies {
     testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))

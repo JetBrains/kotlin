@@ -89,7 +89,7 @@ fun Project.manifestAttributes(
     )
 
     if (component != null) {
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion = rootProject.extra["kotlinLanguageVersion"] as String
         manifest.attributes(
             "Kotlin-Runtime-Component" to component,
             "Kotlin-Version" to kotlinLanguageVersion

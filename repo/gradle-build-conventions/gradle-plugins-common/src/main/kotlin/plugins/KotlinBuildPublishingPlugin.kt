@@ -51,8 +51,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         kotlinLibraryComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
 
         pluginManager.withPlugin("java-base") {
-            val runtimeElements by configurations
-            val apiElements by configurations
+            val runtimeElements = configurations.getByName("runtimeElements")
+            val apiElements = configurations.getByName("apiElements")
 
             publishedRuntime.extendsFrom(runtimeElements)
             publishedCompile.extendsFrom(apiElements)

@@ -8,7 +8,7 @@ plugins {
 idePluginPublishingLatch {
     publish()
 
-    val jar: Jar by tasks
+    val jar = tasks.getByName<Jar>("jar")
 
     jar.apply {
         archiveExtension.set("klib")

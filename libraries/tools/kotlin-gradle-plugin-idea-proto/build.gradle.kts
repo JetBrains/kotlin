@@ -20,7 +20,7 @@ kotlin {
     }
 }
 
-val embedded by configurations.getting {
+val embedded = configurations.getByName("embedded") {
     isTransitive = false
     configurations.getByName("compileOnly").extendsFrom(this)
     configurations.getByName("testImplementation").extendsFrom(this)
@@ -155,7 +155,7 @@ run {
 
 /* Setup backwards compatibility tests */
 run {
-    val compatibilityTestClasspath by configurations.creating {
+    val compatibilityTestClasspath = configurations.create("compatibilityTestClasspath") {
         isCanBeResolved = true
         isCanBeConsumed = false
         attributes.attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))

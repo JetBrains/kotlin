@@ -33,14 +33,14 @@ kotlin {
             }
         }
         compilations["main"].cinterops {
-            val tensorflow by creating {
+            val tensorflow = create("tensorflow") {
                 includeDirs(tensorflowHome.resolve("include"))
             }
         }
     }
 }
 
-val downloadTensorflow by tasks.creating(Exec::class) {
+val downloadTensorflow = tasks.create("downloadTensorflow", Exec::class) {
     workingDir = projectDir
     commandLine("./downloadTensorflow.sh")
 }

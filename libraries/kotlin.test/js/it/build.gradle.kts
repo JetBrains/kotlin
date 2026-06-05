@@ -34,13 +34,13 @@ kotlin {
     }
 
     sourceSets {
-        val jsMain by getting {
+        val jsMain = getByName("jsMain") {
             kotlin.srcDir("src/main/kotlin")
             dependencies {
                 implementation(project(":kotlin-stdlib"))
             }
         }
-        val jsTest by getting {
+        val jsTest = getByName("jsTest") {
             kotlin.srcDir("src/test/kotlin")
             dependencies {
                 implementation(project(":kotlin-test"))

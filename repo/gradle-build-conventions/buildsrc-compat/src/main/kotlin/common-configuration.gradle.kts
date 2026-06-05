@@ -110,7 +110,8 @@ val kotlinApiVersionForProjectsDependingOnStableStdlib: Provider<String> = proje
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
         val kotlinLanguageVersion: Provider<String> = project.providers.gradleProperty("kotlinLanguageVersion")
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
+        val renderDiagnosticNames = project.kotlinBuildProperties.renderDiagnosticNames.get()
+        extra.set("renderDiagnosticNames", renderDiagnosticNames)
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {

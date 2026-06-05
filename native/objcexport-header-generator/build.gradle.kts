@@ -50,8 +50,8 @@ kotlin {
 
 /* Configure tests */
 
-val k1TestRuntimeClasspath by configurations.creating
-val analysisApiRuntimeClasspath by configurations.creating
+val k1TestRuntimeClasspath = configurations.create("k1TestRuntimeClasspath")
+val analysisApiRuntimeClasspath = configurations.create("analysisApiRuntimeClasspath")
 
 dependencies {
     k1TestRuntimeClasspath(project(":native:objcexport-header-generator-k1"))

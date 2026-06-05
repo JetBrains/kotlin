@@ -46,7 +46,7 @@ private val stableNonPublicMarkers = listOf(
     "org.jetbrains.kotlin.psi.KtImplementationDetail",
 )
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/psi-utils-api.foreign")
     nonPublicMarkers.addAll(stableNonPublicMarkers)
 }
