@@ -221,6 +221,9 @@ class PrettyResultsHandler(
     val exceptionWrapper: (Throwable) -> WrappedException.FromGroupingHandler,
 ) : ResultHandler(runResult, checks, testRun, loggedParameters) {
     companion object {
+        // failedResults reasons for failed test contain test name in the format:
+        //   in isolated mode: `__launcher__Kt.runTest`
+        //   in grouped mode: `<long_test_name>.__launcher__Kt.runTest`
         @Suppress("RegExpRepeatedSpace")
         val failedRegexWithoutTCLogger = """\[  FAILED  ] (.*)__launcher__Kt.runTest""".toRegex()
         val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
@@ -268,12 +271,12 @@ class PrettyResultsHandler(
     private fun findFailedTestsWithoutTCLogger(output: String): List<String> {
         return failedRegexWithoutTCLogger.findAll(output)
             .map { it.groupValues }.distinct()
-            .map { it[1] }.toList()
+            .map { it[1].removeSuffix(".") }.toList()
     }
 
     private fun findFailedTestsWithTCLogger(output: String): List<String> {
         return failedRegexWithTCLogger.findAll(output)
             .map { it.groupValues }.distinct()
-            .map { it[1] }.toList()
+            .map { it[1].removeSuffix(".") }.toList()
     }
 }
