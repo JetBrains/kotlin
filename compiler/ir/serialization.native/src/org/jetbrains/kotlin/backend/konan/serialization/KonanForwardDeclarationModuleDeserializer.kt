@@ -55,11 +55,14 @@ internal class KonanForwardDeclarationModuleDeserializer(
 
     override fun contains(idSig: IdSignature): Boolean = idSig.isForwardDeclarationSignature()
 
+    override fun getDefinedPackageNames(): Set<FqName> =
+        NativeForwardDeclarationKind.entries.map { it.packageFqName }.toSet()
+
     private fun resolveDescriptor(idSig: IdSignature): ClassDescriptor? =
-            with(idSig as IdSignature.CommonSignature) {
-                val classId = ClassId(packageFqName(), FqName(declarationFqName), false)
-                moduleDescriptor.findClassAcrossModuleDependencies(classId)
-            }
+        with(idSig as IdSignature.CommonSignature) {
+            val classId = ClassId(packageFqName(), FqName(declarationFqName), false)
+            moduleDescriptor.findClassAcrossModuleDependencies(classId)
+        }
 
     private fun buildForwardDeclarationStub(descriptor: ClassDescriptor): IrClass {
         return stubGenerator.generateClassStub(descriptor).also {

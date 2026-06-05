@@ -27,7 +27,9 @@ import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
+import org.jetbrains.kotlin.utils.putToMultiMap
 
 abstract class KotlinIrLinker(
     private val currentModule: ModuleDescriptor?,
@@ -58,6 +60,8 @@ abstract class KotlinIrLinker(
     val modulesWithReachableTopLevels = linkedSetOf<IrModuleDeserializer>()
 
     protected val deserializersForModules = linkedMapOf<String, IrModuleDeserializer>()
+    private val moduleDeserializersByPackageName = mutableMapOf<FqName, MutableList<IrModuleDeserializer>>()
+    private val moduleDeserializersWithUnknownPackageNames = mutableListOf<IrModuleDeserializer>()
 
     abstract val fakeOverrideBuilder: IrLinkerFakeOverrideProvider
 
@@ -73,7 +77,7 @@ abstract class KotlinIrLinker(
     fun deserializeOrReturnUnboundIrSymbolIfPartialLinkageEnabled(
         idSignature: IdSignature,
         symbolKind: BinarySymbolData.SymbolKind,
-        moduleDeserializer: IrModuleDeserializer
+        moduleDeserializer: IrModuleDeserializer,
     ): IrSymbol {
         val topLevelSignature: IdSignature = idSignature.topLevelSignature()
 
@@ -83,9 +87,8 @@ abstract class KotlinIrLinker(
         val actualModuleDeserializer: IrModuleDeserializer? = if (topLevelSignature in moduleDeserializer) {
             moduleDeserializer
         } else {
-            moduleDeserializer.moduleDescriptor.allDependencyModules
-                .mapNotNull { deserializersForModules[it.name.asString()] }
-                .firstOrNull { topLevelSignature in it }
+            val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
+            candidateModules.firstOrNull { topLevelSignature in it }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
@@ -110,13 +113,21 @@ abstract class KotlinIrLinker(
     }
 
     private fun resolveModuleDeserializer(irFile: IrFile): IrModuleDeserializer? {
-        return deserializersForModules.values.firstOrNull { moduleDeserializer ->
+        val candidateModules = getModulesDefiningPackage(irFile.packageFqName)
+        return candidateModules.firstOrNull { moduleDeserializer ->
             moduleDeserializer.fileDeserializers().any { it.file == irFile }
         }
     }
 
     private fun resolveModuleDeserializer(idSignature: IdSignature): IrModuleDeserializer? {
-        return deserializersForModules.values.firstOrNull() { idSignature in it }
+        val candidateModules = getModulesDefiningPackage(idSignature.packageFqName())
+        return candidateModules.firstOrNull { idSignature in it }
+    }
+
+    private fun getModulesDefiningPackage(packageFqName: FqName): List<IrModuleDeserializer> {
+        val indexedModules = moduleDeserializersByPackageName[packageFqName].orEmpty()
+        return if (moduleDeserializersWithUnknownPackageNames.isEmpty()) indexedModules
+        else indexedModules + moduleDeserializersWithUnknownPackageNames
     }
 
     protected abstract fun createModuleDeserializer(
@@ -203,8 +214,7 @@ abstract class KotlinIrLinker(
                     ?: NoDeserializerForModule(it.name, null).raiseIssue(messageCollector)
             }
             val currentModuleDeserializer = createCurrentModuleDeserializer(moduleFragment, currentModuleDependencies)
-            deserializersForModules[moduleFragment.name.asString()] =
-                maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
+            registerModuleDeserializer(moduleFragment.name.asString(), moduleFragment.descriptor, currentModuleDeserializer)
         }
     }
 
@@ -253,16 +263,16 @@ abstract class KotlinIrLinker(
             "${moduleDescriptor.name.asString()} != $moduleName"
         }
 
-        val moduleFragment = deserializersForModules.getOrPut(moduleName) {
-            maybeWrapWithBuiltInAndInit(
+        val moduleDeserializer = deserializersForModules[moduleName] ?: registerModuleDeserializer(
+            moduleName = moduleName,
+            moduleDescriptor = moduleDescriptor,
+            moduleDeserializer = createModuleDeserializer(
                 moduleDescriptor = moduleDescriptor,
-                moduleDeserializer = createModuleDeserializer(
-                    moduleDescriptor = moduleDescriptor,
-                    klib = kotlinLibrary,
-                    strategyResolver = deserializationStrategy
-                )
+                klib = kotlinLibrary,
+                strategyResolver = deserializationStrategy
             )
-        }.moduleFragment
+        )
+        val moduleFragment = moduleDeserializer.moduleFragment
 
         moduleFragment.kotlinLibrary = kotlinLibrary
         moduleDependencyTracker.addModuleForTracking(module = moduleFragment)
@@ -271,9 +281,29 @@ abstract class KotlinIrLinker(
         return moduleFragment
     }
 
-    protected fun maybeWrapWithBuiltInAndInit(
+    private fun registerModuleDeserializer(
+        moduleName: String,
         moduleDescriptor: ModuleDescriptor,
         moduleDeserializer: IrModuleDeserializer
+    ): IrModuleDeserializer {
+        val deserializer = maybeWrapWithBuiltIn(moduleDescriptor, moduleDeserializer)
+        deserializersForModules[moduleName] = deserializer
+
+        val definedPackageNames = deserializer.getDefinedPackageNames()
+        if (definedPackageNames == null) {
+            moduleDeserializersWithUnknownPackageNames += deserializer
+        } else {
+            for (packageName in definedPackageNames) {
+                moduleDeserializersByPackageName.putToMultiMap(packageName, deserializer)
+            }
+        }
+
+        return deserializer
+    }
+
+    private fun maybeWrapWithBuiltIn(
+        moduleDescriptor: ModuleDescriptor,
+        moduleDeserializer: IrModuleDeserializer,
     ): IrModuleDeserializer =
         if (isBuiltInModule(moduleDescriptor)) IrModuleDeserializerWithBuiltIns(builtIns, moduleDeserializer) else moduleDeserializer
 

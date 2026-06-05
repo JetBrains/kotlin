@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -135,6 +136,8 @@ class JvmIrLinker(
 
         // TODO: implement proper check whether `idSig` belongs to this module
         override fun contains(idSig: IdSignature): Boolean = true
+
+        override fun getDefinedPackageNames(): Set<FqName>? = null
 
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor, manglerDesc,
