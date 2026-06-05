@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
-// TODO (KT-60899): implement this checker for JS, similarly to K1's JsReflectionAPICallChecker.
 abstract class AbstractFirReflectionApiCallChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext)
     protected abstract fun isWholeReflectionApiAvailable(): Boolean
