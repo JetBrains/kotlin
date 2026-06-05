@@ -1283,7 +1283,7 @@ private fun IrElement.toConstantValue(): ConstantValue<*> {
 }
 
 private fun IrAnnotation.toAnnotationDescriptor(): AnnotationDescriptor {
-    val annotationClass = symbol.owner.parentAsClass
+    val annotationClass = classSymbol.owner
 
     @OptIn(ObsoleteDescriptorBasedAPI::class)
     if (annotationClass.symbol.descriptor == ErrorUtils.errorClass || type is IrErrorType) {
@@ -1298,7 +1298,7 @@ private fun IrAnnotation.toAnnotationDescriptor(): AnnotationDescriptor {
     }
     return AnnotationDescriptorImpl(
         annotationClass.defaultType.toIrBasedKotlinType(),
-        symbol.owner.parameters.memoryOptimizedMap { it.name to arguments[it.indexInParameters] }
+        annotationClass.primaryConstructor!!.parameters.memoryOptimizedMap { it.name to arguments[it.indexInParameters] }
             .filter { it.second != null }
             .associate { it.first to it.second!!.toConstantValue() },
         source

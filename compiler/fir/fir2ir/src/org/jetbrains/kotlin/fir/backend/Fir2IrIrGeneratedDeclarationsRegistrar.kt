@@ -763,7 +763,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     private fun IrAnnotation.toFirAnnotation(): FirAnnotation {
-        val annotationClassId = this.symbol.owner.constructedClass.classId!!
+        val annotationClassId = this.classSymbol.owner.classId!!
         return buildAnnotation {
             annotationTypeRef = annotationClassId
                 .toLookupTag()
@@ -772,7 +772,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
             argumentMapping = buildAnnotationArgumentMapping {
                 for ([i, argument] in this@toFirAnnotation.arguments.withIndex()) {
                     if (argument == null) continue
-                    val argName = this@toFirAnnotation.symbol.owner.parameters[i].name
+                    val argName = this@toFirAnnotation.classSymbol.owner.primaryConstructor!!.parameters[i].name
                     this.mapping[argName] = argument.toFirExpression()
                 }
             }

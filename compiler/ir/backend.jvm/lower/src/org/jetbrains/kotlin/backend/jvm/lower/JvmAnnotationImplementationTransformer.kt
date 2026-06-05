@@ -54,11 +54,11 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         implClass.constructors.single()
 
     override fun visitAnnotation(expression: IrAnnotation): IrExpression {
-        val constructedClass = expression.type.classOrNull
-        if (constructedClass?.owner?.isAnnotationClass == true && inInlineFunctionScope) {
+        val constructedClass = expression.classSymbol
+        if (constructedClass.owner.isAnnotationClass && inInlineFunctionScope) {
             publicAnnotationImplementationClasses += constructedClass
         }
-        return super.visitAnnotation(expression)
+        return super.visitConstructorCall(expression)
     }
 
     // There's no specialized Array.equals for unsigned arrays (as this is a Java function), so we force compiler not to box

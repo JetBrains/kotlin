@@ -151,7 +151,7 @@ val IrClass.isAssociatedObjectAnnotatedAnnotation: Boolean
     get() = isAnnotationClass && annotations.any { it.isAnnotationWithEqualFqName(associatedObjectKeyAnnotationFqName) }
 
 fun IrAnnotation.associatedObject(): IrClass? {
-    if (!symbol.owner.constructedClass.isAssociatedObjectAnnotatedAnnotation) return null
+    if (!classSymbol.owner.isAssociatedObjectAnnotatedAnnotation) return null
     val klass = ((arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
     return if (klass.isObject) klass else null
 }

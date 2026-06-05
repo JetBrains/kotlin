@@ -191,7 +191,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotationArguments(annotation: IrAnnotation, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.symbol.owner.parameters) {
+        for (param in annotation.classSymbol.owner.primaryConstructor?.parameters ?: annotation.symbol.owner.parameters) {
             val value = annotation.arguments[param]
             if (value != null)
                 genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
@@ -224,18 +224,12 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
         when (value) {
             is IrConst -> annotationVisitor.visit(name, value.value)
             is IrAnnotation -> {
-                val callee = value.symbol.owner
-                when {
-                    callee.parentAsClass.isAnnotationClass -> {
-                        val annotationClassType = callee.returnType
-                        val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
-                        val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
-                        annotationClassType.classOrNull?.owner?.let(classCodegen::addInnerClassInfo)
-                        genAnnotationArguments(value, visitor)
-                        visitor.visitEnd()
-                    }
-                    else -> error("Not supported as annotation! ${ir2string(value)}")
-                }
+                val annotationClassType = value.classSymbol.owner.defaultType
+                val internalAnnName = typeMapper.mapType(annotationClassType).descriptor
+                val visitor = annotationVisitor.visitAnnotation(name, internalAnnName)
+                value.classSymbol.owner.let(classCodegen::addInnerClassInfo)
+                genAnnotationArguments(value, visitor)
+                visitor.visitEnd()
             }
             is IrGetEnumValue -> {
                 val enumEntry = value.symbol.owner
@@ -317,7 +311,7 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
                     false
             }
 
-        val IrAnnotation.annotationClass: IrClass get() = symbol.owner.parentAsClass
+        val IrAnnotation.annotationClass: IrClass get() = classSymbol.owner
     }
 
     internal fun generateTypeAnnotations(type: IrType, position: TypeAnnotationPosition) {
