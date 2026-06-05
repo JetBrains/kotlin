@@ -422,7 +422,7 @@ interface IrBuilderWithPluginContext {
     }
 
     fun copyAnnotationsFrom(annotations: List<IrAnnotation>): List<IrExpression> =
-        annotations.filter { it.symbol.owner.parentAsClass.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
+        annotations.filter { it.classSymbol.owner.isSerialInfoAnnotation }.map { it.deepCopyWithoutPatchingParents() }
 
     fun kSerializerType(serializableType: IrType): IrSimpleType {
         val kSerializerClass = compilerContext.kSerializerClass

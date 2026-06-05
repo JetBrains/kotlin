@@ -222,7 +222,7 @@ class Fir2IrImplicitCastInserter(c: Fir2IrComponents, private val conversionScop
                  * If symbol is unbound then this annotation can not be neither @EnhancedNullability or @FlexibleNullability
                  */
                 @OptIn(UnsafeDuringIrConstructionAPI::class)
-                val classId = constructorSymbol.owner.parentAsClass.classId
+                val classId = annotationCall.classSymbol.owner.classId
                 classId == StandardClassIds.Annotations.EnhancedNullability ||
                         classId == StandardClassIds.Annotations.FlexibleNullability
             }.makeNotNull()

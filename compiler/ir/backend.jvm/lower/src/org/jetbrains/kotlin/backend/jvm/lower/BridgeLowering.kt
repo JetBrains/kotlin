@@ -604,7 +604,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         userIgnoredAnnotationsFilter = when {
             userIgnoredAnnotations.isEmpty() -> { _ -> true }
             userIgnoredAnnotations.contains("*") -> { _ -> false }
-            else -> { it -> !userIgnoredAnnotations.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+            else -> { it -> !userIgnoredAnnotations.contains(it.classSymbol.owner.kotlinFqName.toString()) }
         }
 
         val kotlinIgnoredMethodAnnotations = setOf(
@@ -619,7 +619,7 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
         val ignoredMethodAnnotationNames = userIgnoredAnnotations + kotlinIgnoredMethodAnnotations.map { it.toString() }
         ignoredMethodAnnotationsFilter = when {
             userIgnoredAnnotations.contains("*") -> { _ -> false }
-            else -> { it -> !ignoredMethodAnnotationNames.contains(it.symbol.owner.parent.kotlinFqName.toString()) }
+            else -> { it -> !ignoredMethodAnnotationNames.contains(it.classSymbol.owner.kotlinFqName.toString()) }
         }
     }
 
@@ -638,10 +638,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     )
 
     fun IrAnnotation.isKotlinSpecialTypeAnnotation() =
-        symbol.owner.parent.kotlinFqName in kotlinSpecialTypeAnnotations
+        classSymbol.owner.kotlinFqName in kotlinSpecialTypeAnnotations
 
     fun IrAnnotation.isThrowsAnnotation() =
-        symbol.owner.parent.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
+        classSymbol.owner.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
 
     // Copies annotations from the bridge target to the bridge function
     // Similarly to JVM, the following annotations are copied:

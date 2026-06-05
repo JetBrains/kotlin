@@ -1484,7 +1484,7 @@ class IrSourcePrinterVisitor(
 
     private fun StringBuilder.renderAsAnnotation(irAnnotation: IrAnnotation) {
         val annotationClassName = try {
-            irAnnotation.symbol.owner.parentAsClass.name.asString()
+            irAnnotation.classSymbol.owner.name.asString()
         } catch (e: Exception) {
             "<unbound>"
         }
