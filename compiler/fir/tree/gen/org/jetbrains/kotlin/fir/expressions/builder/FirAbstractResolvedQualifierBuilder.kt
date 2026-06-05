@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 @FirBuilderDsl
@@ -31,7 +30,6 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract val annotations: MutableList<FirAnnotation>
     abstract var packageFqName: FqName
     abstract var relativeClassFqName: FqName?
-    abstract var classId: ClassId?
     abstract var symbol: FirClassLikeSymbol<*>?
     abstract var explicitParent: FirResolvedQualifier?
     abstract var isNullableLhsForCallableReference: Boolean

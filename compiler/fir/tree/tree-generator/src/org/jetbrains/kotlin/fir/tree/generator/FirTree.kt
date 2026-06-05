@@ -1339,7 +1339,6 @@ object FirTree : AbstractFirTreeBuilder() {
 
         +field("packageFqName", fqNameType)
         +field("relativeClassFqName", fqNameType, nullable = true)
-        +field("classId", classIdType, nullable = true)
         +referencedSymbol("symbol", classLikeSymbolType, nullable = true)
         +field("explicitParent", resolvedQualifier, nullable = true)
         +field("isNullableLhsForCallableReference", boolean, withReplace = true)
