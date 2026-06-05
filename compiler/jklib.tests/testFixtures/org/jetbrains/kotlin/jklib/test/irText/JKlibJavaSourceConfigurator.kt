@@ -8,24 +8,31 @@ package org.jetbrains.kotlin.jklib.test.irText
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.jvm.config.jvmClasspathRoots
+import org.jetbrains.kotlin.codegen.forTestCompile.JavaForeignAnnotationType
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.test.MockLibraryUtil
 import org.jetbrains.kotlin.test.TestJdkKind
+import org.jetbrains.kotlin.test.directives.ForeignAnnotationsDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.javaFiles
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import java.io.File
+import org.jetbrains.kotlin.test.util.CompiledLibraryCache
 
 class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+    companion object {
+        private val libraryCache = CompiledLibraryCache()
+    }
+
     override val directiveContainers: List<DirectivesContainer>
-        get() = listOf(JvmEnvironmentConfigurationDirectives)
+        get() = listOf(JvmEnvironmentConfigurationDirectives, ForeignAnnotationsDirectives)
 
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
@@ -42,20 +49,29 @@ class JKlibJavaSourceConfigurator(testServices: TestServices) : EnvironmentConfi
             }
         }
 
-        val withReflect = JvmEnvironmentConfigurationDirectives.WITH_REFLECT in module.directives
-
-        if (withReflect) {
-            testServices.assertions.fail { "WITH_REFLECT is not supported in JKlib tests" }
-        }
-
         configuration.configureJdkClasspathRoots()
 
-        val javaFiles = module.files.filter { it.name.endsWith(".java") }
+        val javaFiles = module.javaFiles
         if (javaFiles.isEmpty()) return
 
         javaFiles.forEach { testServices.sourceFileProvider.getOrCreateRealFileForSourceFile(it) }
 
         val javaDir = testServices.sourceFileProvider.getJavaSourceDirectoryForModule(module)
+
+        val annotationsJar = if (ForeignAnnotationsDirectives.ENABLE_FOREIGN_ANNOTATIONS in module.directives) {
+            libraryCache.getOrCompile("java8-annotations") {
+                MockLibraryUtil.compileJavaFilesLibraryToJar(
+                    JavaForeignAnnotationType.Java8Annotations.path,
+                    "java8-annotations",
+                    assertions = testServices.assertions,
+                    extraOptions = listOf("-Xlint:-options")
+                )
+            }
+        } else {
+            KtTestUtil.getAnnotationsJar()
+        }
+        configuration.addJvmClasspathRoot(annotationsJar)
+
         val jvmClasspathRoots = configuration.jvmClasspathRoots.map { it.absolutePath }
 
         try {
