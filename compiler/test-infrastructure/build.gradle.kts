@@ -21,6 +21,8 @@ dependencies {
     testFixturesApi(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
+    testFixturesImplementation(project(":js:js.config"))
+
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }
 
