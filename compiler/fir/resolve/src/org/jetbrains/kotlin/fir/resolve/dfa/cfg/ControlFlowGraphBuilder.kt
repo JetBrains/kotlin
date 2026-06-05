@@ -1467,6 +1467,12 @@ class ControlFlowGraphBuilder private constructor(
         return LambdaExitLayer(node, lambdaExitNodes)
     }
 
+    fun exitAnnotationCall(): CFGNode<*> {
+        val node = currentGraph.exitNode
+        unifyDataFlowFromPostponedLambdas(node, callCompleted = true)
+        return node
+    }
+
     @CfgInternals
     fun updateCollectionLiteralNodes(
         collectionLiteral: FirCollectionLiteral,
@@ -1556,14 +1562,7 @@ class ControlFlowGraphBuilder private constructor(
         }
     }
 
-    fun exitFakeExpression(alsoExitCall: Boolean = false) {
-        if (alsoExitCall) {
-            // In case of annotation call in collection literals resolve of annotations,
-            // we did enter/exitCallArguments, but there was no enter/exitFunctionCall.
-            // This is a violation: we missed `unifyDataFlowFromPostponedLambdas`.
-            // TODO (KT-86555): clean up. One of the possible solutions is explicit call to `exitFunctionCall` from transformer.
-            postponedLambdaExits.pop()
-        }
+    fun exitFakeExpression() {
         lastNodes.pop()
         graphs.pop().also { assert(it.kind == ControlFlowGraph.Kind.FakeCall) }
     }

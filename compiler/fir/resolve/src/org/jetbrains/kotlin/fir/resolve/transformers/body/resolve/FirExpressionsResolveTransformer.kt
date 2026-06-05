@@ -1843,7 +1843,6 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         transformCallArguments(annotationCall, ResolutionMode.ContextDependent)
         dataFlowAnalyzer.exitCallArguments() // annotationCall
         val result = callResolver.resolveAnnotationCall(annotationCall)
-        dataFlowAnalyzer.exitAnnotation(alsoExitCall = true)
 
         callCompleter.completeCall(result, ContextIndependent)
         result.transformSingle(arrayOfCallTransformer, session)
@@ -1851,6 +1850,8 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             annotationCall.replaceArgumentMapping(it.toAnnotationArgumentMapping())
             evaluateAndReplaceArgumentMapping(annotationCall)
         }
+        dataFlowAnalyzer.exitAnnotationCall()
+        dataFlowAnalyzer.exitAnnotation()
         annotationCall
     }
 
