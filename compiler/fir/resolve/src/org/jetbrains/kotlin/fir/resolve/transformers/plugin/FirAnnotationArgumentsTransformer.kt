@@ -125,7 +125,7 @@ private class FirExpressionTransformerForAnnotationArguments(
             val originalResolvedQualifier = originalAccess.explicitReceiver?.unwrapSmartcastExpression()
             if (originalResolvedQualifier is FirResolvedQualifier) {
                 val fqName = originalResolvedQualifier.classId
-                    ?.let { if (originalResolvedQualifier.isFullyQualified) it.asSingleFqName() else it.relativeClassName }
+                    ?.let { if (originalResolvedQualifier.explicitParent != null) it.asSingleFqName() else it.relativeClassName }
                     ?: originalResolvedQualifier.packageFqName
                 explicitReceiver = generatePropertyAccessExpression(fqName, originalResolvedQualifier.source)
             }

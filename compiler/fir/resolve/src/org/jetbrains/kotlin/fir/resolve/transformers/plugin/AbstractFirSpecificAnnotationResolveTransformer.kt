@@ -230,7 +230,12 @@ abstract class AbstractFirSpecificAnnotationResolveTransformer(
                     relativeClassFqName = symbol.classId.relativeClassName
                     coneTypeOrNull = session.builtinTypes.unitType.coneType
                     this.symbol = symbol
-                    isFullyQualified = segments.isNotEmpty()
+                    if (segments.isNotEmpty()) {
+                        explicitParent = buildResolvedQualifier {
+                            packageFqName = symbol.classId.packageFqName
+                            resolvedToCompanionObject = false
+                        }
+                    }
                     resolvedToCompanionObject = false
                 }
 

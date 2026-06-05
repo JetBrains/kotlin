@@ -36,7 +36,6 @@ interface FirAbstractResolvedQualifierBuilder {
     abstract var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?
     abstract var resolvedToCompanionObject: Boolean
     abstract var canBeValue: Boolean
-    abstract var isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: MutableList<ConeDiagnostic>
     abstract var resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val typeArguments: MutableList<FirTypeProjection>
