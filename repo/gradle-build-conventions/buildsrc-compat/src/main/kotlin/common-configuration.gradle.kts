@@ -111,7 +111,8 @@ fun Project.configureKotlinCompilationOptions() {
                 !project.path.startsWith(":libraries:tools:analysis-api-based-klib-reader") &&
                 !project.path.startsWith(":native:external-projects-test-utils") &&
                 !project.path.startsWith(":plugins:plugin-sandbox:plugin-annotations") &&
-                !project.path.startsWith(":kotlin-power-assert-runtime")
+                !project.path.startsWith(":kotlin-power-assert-runtime") &&
+                !project.path.startsWith(":commonizer-support-library")
             ) {
                 doFirst {
                     if (!useAbsolutePathsInKlib && this !is KotlinJvmCompile && this !is KotlinCompileCommon) {

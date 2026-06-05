@@ -202,6 +202,7 @@ include(
     ":native:kotlin-klib-commonizer",
     ":native:kotlin-klib-commonizer-api",
     ":native:kotlin-klib-commonizer-embeddable",
+    ":commonizer-support-library",
     ":native:executors",
     ":native:base",
     ":native:native.config",
@@ -800,6 +801,7 @@ project(":native:frontend.native").projectDir = File("$rootDir/native/frontend")
 project(":native:kotlin-klib-commonizer").projectDir = File("$rootDir/native/commonizer")
 project(":native:kotlin-klib-commonizer-api").projectDir = File("$rootDir/native/commonizer-api")
 project(":native:kotlin-klib-commonizer-embeddable").projectDir = File("$rootDir/native/commonizer-embeddable")
+project(":commonizer-support-library").projectDir = File("$rootDir/libraries/commonizer-support-library")
 project(":native:objcexport-header-generator-k1").projectDir = File("$rootDir/native/objcexport-header-generator/impl/k1")
 project(":native:objcexport-header-generator-analysis-api").projectDir =
     File("$rootDir/native/objcexport-header-generator/impl/analysis-api")
