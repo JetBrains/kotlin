@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.ir.backend.js.loadWebKlibs
-import org.jetbrains.kotlin.js.resolve.JsPlatformAnalyzerServices
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
@@ -104,7 +103,7 @@ class KlibJsLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoad
     override val targetPlatform: TargetPlatform
         get() = JsPlatforms.defaultJsPlatform
     override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = JsPlatformAnalyzerServices
+        get() = shouldNotBeCalled()
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 

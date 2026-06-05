@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -244,10 +244,8 @@ class JsExternalChecker(
     }
 
     private fun isDirectlyExternal(declaration: KtDeclaration, descriptor: DeclarationDescriptor): Boolean {
-        if (declaration is KtProperty && descriptor is PropertyAccessorDescriptor) return false
-
-        return declaration.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
-                AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE)
+        return !(declaration is KtProperty && descriptor is PropertyAccessorDescriptor) && (declaration.hasModifier(KtTokens.EXTERNAL_KEYWORD) ||
+                AnnotationsUtils.hasAnnotation(descriptor, PredefinedAnnotation.NATIVE))
     }
 
     private fun isPrivateMemberOfExternalClass(descriptor: DeclarationDescriptor): Boolean {
