@@ -18,6 +18,7 @@ import org.jetbrains.dokka.pages.MemberPageNode
 import utils.OnlyDescriptors
 import utils.OnlySymbols
 import utils.text
+import java.io.File
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -1784,6 +1785,56 @@ class LinkTest : BaseAbstractTest() {
         }
     }
 
+    // copy-pasted org.jetbrains.dokka.analysis.test.api.util.getResourceAbsolutePath
+    private fun getResourceAbsolutePath(resourcePath: String): String {
+        val resource = object {}.javaClass.classLoader.getResource(resourcePath)?.file
+            ?: throw IllegalArgumentException("Resource not found: $resourcePath")
+
+        return File(resource).absolutePath
+    }
+
+    @Test
+    fun `should resolve fq KDoc links from unpacked klib`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/commonMain/kotlin")
+                    analysisPlatform = "native"
+                    name = "example"
+                    classpath = listOf(
+                        getResourceAbsolutePath("klibs/example"),
+                    )
+                }
+
+            }
+        }
+        testInline(
+            """
+                |/src/commonMain/kotlin/main.kt
+                |package example
+                |import com.example.A
+                |/**
+                | * Links [com.example.A] and [A]
+                |*/
+                |fun f() = 0
+            """,
+            configuration = configuration
+        ) {
+            documentablesMergingStage = { module ->
+                val dri = DRI("com.example", "A")
+                val allLinks = module.getAllLinkDRIFrom("f")
+                assertEquals(
+                    listOf(
+                        "com.example.A" to dri,
+                        "A" to dri,
+                    ),
+                    allLinks
+                )
+            }
+
+        }
+    }
+
     @Test
     fun `should resolve KDoc links from classpath`() {
         val coroutines = ClassLoader.getSystemResource("kotlinx/coroutines/MainCoroutineDispatcher.class")
@@ -1918,7 +1969,6 @@ class LinkTest : BaseAbstractTest() {
             }
         }
     }
-
 
     private fun DModule.getLinkDRIFrom(name: String): DRI? {
         val doc = this.dfs { it.name == name }?.documentation?.values?.single()
