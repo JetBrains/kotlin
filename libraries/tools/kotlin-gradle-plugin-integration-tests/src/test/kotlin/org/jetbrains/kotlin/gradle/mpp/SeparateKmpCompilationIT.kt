@@ -44,7 +44,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
         doTestFragmentDependenciesArg(gradleVersion, additionalProjectConfiguration = {
             applyMultiplatform {
                 sourceSets {
-                    val jvmAndJs by it.creating {
+                    val jvmAndJs = it.create("jvmAndJs").apply {
                         dependsOn(it.commonMain.get())
                     }
                     it.jvmMain {

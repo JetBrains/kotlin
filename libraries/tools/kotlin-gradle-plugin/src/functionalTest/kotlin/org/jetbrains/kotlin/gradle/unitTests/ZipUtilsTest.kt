@@ -8,10 +8,10 @@
 package org.jetbrains.kotlin.gradle.unitTests
 
 import com.intellij.util.io.Compressor
-import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
 import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.testing.newTempFile
+import org.jetbrains.kotlin.gradle.util.unzipTo
 import org.jetbrains.kotlin.gradle.utils.copyZipFilePartially
 import org.jetbrains.kotlin.gradle.utils.listDescendants
 import org.jetbrains.kotlin.util.assertThrows
