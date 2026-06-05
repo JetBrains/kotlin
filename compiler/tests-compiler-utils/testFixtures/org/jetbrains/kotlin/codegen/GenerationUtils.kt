@@ -1,18 +1,16 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.codegen
 
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiElementFinder
 import com.intellij.psi.search.GlobalSearchScope
 import com.intellij.psi.search.ProjectScope
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure
 import org.jetbrains.kotlin.analyzer.AnalysisResult
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.jvm.JvmIrCodegenFactory
 import org.jetbrains.kotlin.cli.common.output.writeAllTo
@@ -83,8 +81,6 @@ object GenerationUtils {
         classBuilderFactory: ClassBuilderFactory,
         packagePartProvider: (GlobalSearchScope) -> PackagePartProvider
     ): GenerationState {
-        PsiElementFinder.EP.getPoint(project).unregisterExtension(JavaElementFinder::class.java)
-
         if (runAnalysisHandlerExtensions(project, configuration) == false) {
             throw CompilationErrorException()
         }

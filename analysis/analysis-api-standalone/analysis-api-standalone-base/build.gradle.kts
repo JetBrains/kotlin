@@ -6,7 +6,6 @@ dependencies {
     implementation(intellijCore())
     implementation(kotlinStdlib())
     implementation(project(":compiler:psi:psi-api"))
-    implementation(project(":analysis:analysis-api-impl-base"))
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":analysis:decompiled:decompiler-native"))
@@ -14,6 +13,7 @@ dependencies {
     api(project(":compiler:cli-base"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-impl-base"))
+    api(project(":analysis:light-classes-base"))
     api(project(":analysis:analysis-api-platform-interface"))
 }
 

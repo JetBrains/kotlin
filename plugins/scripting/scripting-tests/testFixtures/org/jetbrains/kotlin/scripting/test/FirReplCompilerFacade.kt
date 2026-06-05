@@ -1,13 +1,10 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.scripting.test
 
-import com.intellij.psi.PsiElementFinder
-import org.jetbrains.kotlin.asJava.finder.JavaElementFinder
-import org.jetbrains.kotlin.cli.jvm.compiler.unregisterFinders
 import org.jetbrains.kotlin.codeMetaInfo.model.CodeMetaInfo
 import org.jetbrains.kotlin.codeMetaInfo.renderConfigurations.AbstractCodeMetaInfoRenderConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -71,8 +68,6 @@ class FirReplCompilerFacade(
         val compilerConfigurationProvider = testServices.compilerConfigurationProvider
 
         val project = compilerConfigurationProvider.getProject(module)
-
-        PsiElementFinder.EP.getPoint(project).unregisterFinders<JavaElementFinder>()
 
         val parser = module.directives.singleValue(FirDiagnosticsDirectives.FIR_PARSER)
 
