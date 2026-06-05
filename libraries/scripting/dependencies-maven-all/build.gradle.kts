@@ -7,7 +7,7 @@ description = "Shaded Maven dependencies resolver"
 
 val jarBaseName = the<BasePluginExtension>().archivesName
 
-val embedded = configurations.getByName("embedded")
+val embedded = configurations.embedded.get()
 
 embedded.apply {
     exclude("org.slf4j", "slf4j-api")

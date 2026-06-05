@@ -37,10 +37,10 @@ val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 val proguardDeps = configurations.create("proguardDeps")
 val proguardAdditionalInJars = configurations.create("proguardAdditionalInJars")
 
-val embedded = configurations.getByName("embedded")
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
 
-configurations.getByName("compileOnly").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
 
 dependencies {
     api(kotlinStdlib())
@@ -77,7 +77,7 @@ dependencies {
 
 if (kotlinBuildProperties.includeJava9) {
     val java9PatchModule = configurations.register("java9PatchModule") {
-        extendsFrom(configurations.getByName("compileOnly"))
+        extendsFrom(configurations.compileOnly.get())
         exclude(group = "org.jetbrains.kotlin", module = "kotlin-stdlib")
         isCanBeResolved = true
     }
