@@ -7,10 +7,12 @@
 
 package org.jetbrains.kotlin.scripting.compiler.plugin
 
+import com.intellij.mock.MockProject
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ReplFactoryExtension
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
+import org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar
 import org.jetbrains.kotlin.compiler.plugin.registerExtension
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -52,6 +54,16 @@ private fun <T : Any> ExtensionPointDescriptor<T>.registerExtensionIfRequired(
         } catch (_: IllegalArgumentException) {
             // ignore
         }
+    }
+}
+
+class ScriptingCompilerConfigurationComponentRegistrar : ComponentRegistrar {
+    // Actually this plugin don't support K2, but it automatically registered in some cases,
+    //   so for now this flag is just a stub
+    override val supportsK2: Boolean
+        get() = true
+
+    override fun registerProjectComponents(project: MockProject, configuration: CompilerConfiguration) {
     }
 }
 
