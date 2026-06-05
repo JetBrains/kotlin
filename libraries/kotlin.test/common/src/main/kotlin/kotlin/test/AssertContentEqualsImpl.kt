@@ -14,7 +14,17 @@ internal fun <T> assertIterableContentEquals(
     actual: T?,
     iterator: T.() -> Iterator<*>
 ) {
-    if (checkReferenceAndNullEquality(typeName, message, expected, actual, Any?::toString)) return
+    assertIterableContentEquals(typeName, { message }, expected, actual, iterator)
+}
+
+internal fun <T> assertIterableContentEquals(
+    typeName: String,
+    lazyMessage: () -> String?,
+    expected: T?,
+    actual: T?,
+    iterator: T.() -> Iterator<*>
+) {
+    if (checkReferenceAndNullEquality(typeName, lazyMessage, expected, actual, Any?::toString)) return
 
     var index = 0
     val expectedIt = expected.iterator()
@@ -25,7 +35,7 @@ internal fun <T> assertIterableContentEquals(
         val actualElement = actualIt.next()
 
         if (expectedElement != actualElement) {
-            fail(messagePrefix(message) + elementsDifferMessage(typeName, index, expectedElement, actualElement))
+            fail(messagePrefix(lazyMessage()) + elementsDifferMessage(typeName, index, expectedElement, actualElement))
         }
 
         index++
@@ -34,13 +44,13 @@ internal fun <T> assertIterableContentEquals(
     if (expectedIt.hasNext()) {
         check(!actualIt.hasNext())
 
-        fail(messagePrefix(message) + "$typeName lengths differ. Expected length is bigger than $index, actual length is $index.")
+        fail(messagePrefix(lazyMessage()) + "$typeName lengths differ. Expected length is bigger than $index, actual length is $index.")
     }
 
     if (actualIt.hasNext()) {
         check(!expectedIt.hasNext())
 
-        fail(messagePrefix(message) + "$typeName lengths differ. Expected length is $index, actual length is bigger than $index.")
+        fail(messagePrefix(lazyMessage()) + "$typeName lengths differ. Expected length is $index, actual length is bigger than $index.")
     }
 }
 
@@ -52,12 +62,22 @@ internal fun <T> assertArrayContentEquals(
     get: T.(Int) -> Any?,
     contentToString: T?.() -> String,
     contentEquals: T?.(T?) -> Boolean
+) = assertArrayContentEquals({ message }, expected, actual, size, get, contentToString, contentEquals)
+
+internal fun <T> assertArrayContentEquals(
+    lazyMessage: () -> String?,
+    expected: T?,
+    actual: T?,
+    size: (T) -> Int,
+    get: T.(Int) -> Any?,
+    contentToString: T?.() -> String,
+    contentEquals: T?.(T?) -> Boolean
 ) {
     if (expected.contentEquals(actual)) return
 
     val typeName = "Array"
 
-    if (checkReferenceAndNullEquality(typeName, message, expected, actual, contentToString)) return
+    if (checkReferenceAndNullEquality(typeName, lazyMessage, expected, actual, contentToString)) return
 
     val expectedSize = size(expected)
     val actualSize = size(actual)
@@ -66,7 +86,7 @@ internal fun <T> assertArrayContentEquals(
         val sizesDifferMessage = "$typeName sizes differ. Expected size is $expectedSize, actual size is $actualSize."
         val toString = "Expected <${expected.contentToString()}>, actual <${actual.contentToString()}>."
 
-        fail(messagePrefix(message) + sizesDifferMessage + "\n" + toString)
+        fail(messagePrefix(lazyMessage()) + sizesDifferMessage + "\n" + toString)
     }
 
     for (index in 0 until expectedSize) {
@@ -77,7 +97,7 @@ internal fun <T> assertArrayContentEquals(
             val elementsDifferMessage = elementsDifferMessage(typeName, index, expectedElement, actualElement)
             val toString = "Expected <${expected.contentToString()}>, actual <${actual.contentToString()}>."
 
-            fail(messagePrefix(message) + elementsDifferMessage + "\n" + toString)
+            fail(messagePrefix(lazyMessage()) + elementsDifferMessage + "\n" + toString)
         }
     }
 }
@@ -85,6 +105,14 @@ internal fun <T> assertArrayContentEquals(
 private fun <T> checkReferenceAndNullEquality(
     typeName: String,
     message: String?,
+    expected: T?,
+    actual: T?,
+    contentToString: T?.() -> String
+): Boolean = checkReferenceAndNullEquality(typeName, { message }, expected, actual, contentToString)
+
+private fun <T> checkReferenceAndNullEquality(
+    typeName: String,
+    lazyMessage: () -> String?,
     expected: T?,
     actual: T?,
     contentToString: T?.() -> String
@@ -97,10 +125,10 @@ private fun <T> checkReferenceAndNullEquality(
         return true
     }
     if (expected == null) {
-        fail(messagePrefix(message) + "Expected <null> $typeName, actual <${actual.contentToString()}>.")
+        fail(messagePrefix(lazyMessage()) + "Expected <null> $typeName, actual <${actual.contentToString()}>.")
     }
     if (actual == null) {
-        fail(messagePrefix(message) + "Expected non-null $typeName <${expected.contentToString()}>, actual <null>.")
+        fail(messagePrefix(lazyMessage()) + "Expected non-null $typeName <${expected.contentToString()}>, actual <null>.")
     }
 
     return false
