@@ -156,16 +156,16 @@ class SwiftExportIT : KGPBaseTest() {
 
             // Check up-to-dateness
             build(
-                ":shared:embedAndSignAppleFrameworkForXcode",
+                ":embedSwiftExportForXcode",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir)
             ) {
-                assertTasksUpToDate(":shared:iosArm64DebugSwiftExport")
-                assertTasksUpToDate(":shared:iosArm64MainKlibrary")
-                assertTasksUpToDate(":shared:compileSwiftExportMainKotlinIosArm64")
-                assertTasksUpToDate(":shared:linkSwiftExportBinaryDebugStaticIosArm64")
-                assertTasksUpToDate(":shared:iosArm64DebugGenerateSPMPackage")
-                assertTasksUpToDate(":shared:iosArm64DebugBuildSPMPackage")
-                assertTasksUpToDate(":shared:mergeIosDebugEmbedSwiftExportLibraries")
+                assertTasksUpToDate(":iosArm64DebugSwiftExport")
+                assertTasksUpToDate(":iosArm64MainKlibrary")
+                assertTasksUpToDate(":compileSwiftExportMainKotlinIosArm64")
+                assertTasksUpToDate(":linkSwiftExportBinaryDebugStaticIosArm64")
+                assertTasksUpToDate(":iosArm64DebugGenerateSPMPackage")
+                assertTasksUpToDate(":iosArm64DebugBuildSPMPackage")
+                assertTasksUpToDate(":mergeIosDebugSwiftExportLibraries")
             }
         }
     }
@@ -813,38 +813,82 @@ class SwiftExportIT : KGPBaseTest() {
 
     @DisplayName("creates a valid .xcframework with Swift Export")
     @GradleTest
+    @OptIn(ExperimentalSwiftExportDsl::class)
     fun testSwiftExportXCFrameworkTask(
         gradleVersion: GradleVersion,
     ) {
-        nativeProject(
-            "simpleSwiftExport",
-            gradleVersion,
-        ) {
-            projectPath.enableSwiftExport()
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosSimulatorArm64()
+                    iosArm64()
+                    with(swiftExport) {
+                        moduleName.set("Shared")
+                        flattenPackage.set("com.github.jetbrains.swiftexport")
+                    }
+                    sourceSets.commonMain.get().compileSource(
+                        """
+                        package com.github.jetbrains.swiftexport
 
-            val frameworkPath = "shared/build/SwiftExportFramework/Debug/Shared.xcframework"
+                        fun bar(): Int = 123
+                        fun foo(): Int = 321
+                        """.trimIndent()
+                    )
+                }
+            }
 
-            build(
-                ":shared:assembleDebugSwiftExportFramework",
-                buildOptions = defaultBuildOptions.copy(
-                    configurationCache = true,
-                )
-            ) {
+            val frameworkPath = "build/SwiftExportFramework/Debug/Shared.xcframework"
+
+            build(":assembleDebugSwiftExportFramework") {
                 assertDirectoryInProjectExists(frameworkPath)
             }
 
-            projectPath
-                .resolve(frameworkPath)
-                .copyToRecursively(projectPath.resolve("FrameworkConsumer/Shared.xcframework"), followLinks = false)
+            // Set up a minimal Swift Package consumer that links the produced xcframework
+            val consumerDir = projectPath.resolve("FrameworkConsumer").also {
+                it.resolve("Sources/FrameworkConsumer").createDirectories()
+            }
 
-            projectPath
-                .resolve("shared/build")
-                .deleteRecursively()
+            consumerDir.resolve("Package.swift").writeText(
+                """
+                // swift-tools-version: 5.10
+                import PackageDescription
 
-            val consumerPackage = projectPath.resolve("FrameworkConsumer")
+                let package = Package(
+                    name: "FrameworkConsumer",
+                    products: [
+                        .library(name: "FrameworkConsumer", targets: ["FrameworkConsumer"]),
+                    ],
+                    targets: [
+                        .target(name: "FrameworkConsumer", dependencies: ["Shared"]),
+                        .binaryTarget(name: "Shared", path: "Shared.xcframework")
+                    ]
+                )
+                """.trimIndent()
+            )
+
+            consumerDir.resolve("Sources/FrameworkConsumer/FrameworkConsumer.swift").writeText(
+                """
+                import Shared
+
+                class Consumer {
+                    func consume() {
+                        _ = com.github.jetbrains.swiftexport.foo()
+                        _ = com.github.jetbrains.swiftexport.bar()
+                    }
+                }
+                """.trimIndent()
+            )
+
+            projectPath.resolve(frameworkPath)
+                .copyToRecursively(consumerDir.resolve("Shared.xcframework"), followLinks = false)
+
+            projectPath.resolve("build").deleteRecursively()
 
             xcodebuild(
-                workingDir = consumerPackage,
+                workingDir = consumerDir,
                 scheme = "FrameworkConsumer",
                 configuration = "Debug",
                 sdk = "iphonesimulator",

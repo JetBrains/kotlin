@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.swiftExport
 
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.registerSwiftExportFrameworkTask
@@ -13,7 +12,6 @@ import org.jetbrains.kotlin.gradle.targets.KotlinTargetSideEffect
 
 internal val SetupSwiftExportFrameworkTaskSideEffect = KotlinTargetSideEffect<KotlinNativeTarget> { target ->
     if (!target.konanTarget.family.isAppleFamily) return@KotlinTargetSideEffect
-    if (!target.project.kotlinPropertiesProvider.swiftExportEnabled) return@KotlinTargetSideEffect
     target.binaries.withType(Framework::class.java).all { framework ->
         target.project.registerSwiftExportFrameworkTask(framework)
     }

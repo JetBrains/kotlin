@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportConst
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.SwiftExportExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedModule
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.CopySwiftExportIntermediatesForConsumer
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.MergeStaticLibrariesTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportTask
 import org.jetbrains.kotlin.gradle.swiftexport.ExperimentalSwiftExportDsl
@@ -126,7 +125,7 @@ class SwiftExportUnitTests {
         val generateSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugGenerateSPMPackage")
         val buildSPMPackageTask = project.tasks.getByName("iosSimulatorArm64DebugBuildSPMPackage")
         val linkSwiftExportBinaryTask = project.tasks.getByName("linkSwiftExportBinaryDebugStaticIosSimulatorArm64")
-        val mergeLibrariesTask = project.tasks.getByName("mergeIosSimulatorDebugEmbedSwiftExportLibraries")
+        val mergeLibrariesTask = project.tasks.getByName("mergeIosSimulatorDebugSwiftExportLibraries")
         val copySwiftExportTask = project.tasks.getByName("copyDebugSPMIntermediates")
         val embedSwiftExportTask = project.tasks.getByName("embedSwiftExportForXcode")
 

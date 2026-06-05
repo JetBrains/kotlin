@@ -10,47 +10,39 @@ import org.gradle.api.Task
 import org.gradle.api.plugins.BasePlugin
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.AppleTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.appleTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.BuildSPMSwiftExportPackage
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.GenerateSPMPackageFromSwiftExport
-import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.tasks.SwiftExportXCFrameworkTask
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 
-internal fun Project.registerSwiftExportFrameworkPipelineTask(
+/**
+ * Registers the merge-modules and assemble-xcframework tasks for Swift Export xcframework publishing.
+ * Called from [registerSwiftExportFrameworkTask] after the common pipeline tasks are set up.
+ */
+internal fun Project.registerSwiftExportXCFrameworkPipeline(
     swiftApiModuleName: Provider<String>,
-    taskNamePrefix: String,
-    target: KotlinNativeTarget,
-    buildType: NativeBuildType,
+    configuration: String,
+    appleTarget: AppleTarget,
+    packageGenerationTask: TaskProvider<GenerateSPMPackageFromSwiftExport>,
+    packageBuildTask: TaskProvider<BuildSPMSwiftExportPackage>,
+    mergeLibrariesTask: TaskProvider<MergeStaticLibrariesTask>,
 ): TaskProvider<out Task> {
-    return setupCommonSwiftExportPipeline(
+    val mergeModulesTask = registerMergeSwiftModulesTask(
+        appleTarget = appleTarget,
+        configuration = configuration,
+        packageBuildTask = packageBuildTask,
+    )
+
+    return registerProduceSwiftExportFrameworkTask(
+        configuration = configuration,
         swiftApiModuleName = swiftApiModuleName,
-        taskNamePrefix = taskNamePrefix,
-        target = target,
-        buildType = buildType,
-        pipelineType = SwiftExportPipelineType.FRAMEWORK
-    ) { configuration, packageBuild, packageGenerationTask, mergeLibrariesTask ->
-
-        val mergeModulesTask = registerMergeSwiftModulesTask(
-            appleTarget = target.konanTarget.appleTarget,
-            configuration = configuration,
-            packageBuildTask = packageBuild
-        )
-
-        registerProduceSwiftExportFrameworkTask(
-            configuration = configuration,
-            swiftApiModuleName = swiftApiModuleName,
-            packageGenerationTask = packageGenerationTask,
-            mergeLibrariesTask = mergeLibrariesTask,
-            mergeModulesTask = mergeModulesTask,
-        )
-    }
+        packageGenerationTask = packageGenerationTask,
+        mergeLibrariesTask = mergeLibrariesTask,
+        mergeModulesTask = mergeModulesTask,
+    )
 }
 
 private fun Project.registerMergeSwiftModulesTask(
@@ -66,9 +58,8 @@ private fun Project.registerMergeSwiftModulesTask(
     )
 
     val mergeTask = locateOrRegisterTask<MergeSwiftModulesTask>(mergeTaskName) { task ->
-        task.description = "Merges multiple ${configuration.capitalize()} Swift Export modules into one"
+        task.description = "Merges multiple ${configuration.capitalizeAsciiOnly()} Swift Export modules into one"
 
-        // Output
         task.modules.set(
             layout.buildDirectory.dir("MergedModules/${appleTarget.targetName}/$configuration")
         )
@@ -98,13 +89,10 @@ private fun Project.registerProduceSwiftExportFrameworkTask(
 
     val frameworkTask = locateOrRegisterTask<SwiftExportXCFrameworkTask>(frameworkTaskName) { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Creates Swift Export $configuration Apple Framework"
+        task.description = "Creates Swift Export ${configuration.capitalizeAsciiOnly()} Apple XCFramework"
 
-        // Input
         task.binaryName.set(swiftApiModuleName)
         task.includes.set(packageGenerationTask.map { it.includesPath.get() })
-
-        // Output
         task.frameworkRoot.set(layout.buildDirectory.dir("SwiftExportFramework/$configuration"))
     }
 
