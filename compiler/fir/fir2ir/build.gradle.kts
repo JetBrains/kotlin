@@ -108,6 +108,7 @@ projectTests {
     withAnnotations()
     withThirdPartyAnnotations()
     withThirdPartyJsr305()
+    withThirdPartyJava8Annotations()
 }
 
 testsJarToBeUsedAlongWithFixtures()
