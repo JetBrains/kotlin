@@ -73,7 +73,7 @@ plugins {
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
     id("gradle-plugins-documentation") apply false
-    id("com.autonomousapps.dependency-analysis") version "3.6.1"
+    id("com.autonomousapps.dependency-analysis") version "3.14.1"
     id("project-tests-convention") apply false
     id("test-federation-convention") apply false
     id("test-data-manager-root")
@@ -210,9 +210,7 @@ allprojects {
         pluginManager.apply("common-configuration")
         pluginManager.apply("test-federation-convention")
     }
-    if (!project.path.startsWith(":compiler:build-tools")) {
-        pluginManager.apply("com.autonomousapps.dependency-analysis")
-    }
+    pluginManager.apply("com.autonomousapps.dependency-analysis")
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         afterEvaluate {
             configurations.all {

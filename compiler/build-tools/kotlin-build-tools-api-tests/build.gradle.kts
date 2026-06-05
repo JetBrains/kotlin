@@ -224,6 +224,10 @@ testing {
         var configuredIdeaSourceSets = false
         for (implVersion in compatibilityTestsVersions) {
             register<JvmTestSuite>("testCompatibility${implVersion}") {
+                run { // workaround for Dependency Analysis Plugin failing because `testCompatibility2.1.20CompileClasspath` is not found
+                    configurations.maybeCreate("testCompatibility${implVersion}CompileClasspath")
+                    configurations.maybeCreate("testCompatibility${implVersion}RuntimeClasspath")
+                }
                 if (!kotlinBuildProperties.isInIdeaSync.get() || !configuredIdeaSourceSets) {
                     sources.configureCompatibilitySourceDirectories("testCompatibility")
                 }
