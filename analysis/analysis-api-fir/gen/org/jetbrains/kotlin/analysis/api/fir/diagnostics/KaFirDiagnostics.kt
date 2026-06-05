@@ -4307,6 +4307,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface ArrayEqualityOperatorCanBeReplacedWithContentEquals : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = ArrayEqualityOperatorCanBeReplacedWithContentEquals::class
+        val operator: String
+        val replacementPrefix: String
     }
 
     interface EmptyRange : KaFirDiagnostic<PsiElement> {

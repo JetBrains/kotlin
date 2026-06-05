@@ -400,6 +400,8 @@ private fun KaDiagnosticConverterBuilder.addConversions2() {
     }
     add(FirErrors.ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS) { firDiagnostic ->
         ArrayEqualityOperatorCanBeReplacedWithContentEqualsImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

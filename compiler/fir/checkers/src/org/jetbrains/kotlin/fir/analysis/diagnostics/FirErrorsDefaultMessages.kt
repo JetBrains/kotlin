@@ -3878,7 +3878,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CAN_BE_VAL_LATEINIT, "This 'lateinit var' property is not written to more than once, it can be declared as nullable 'val'.")
         map.put(CAN_BE_VAL_DELAYED_INITIALIZATION, "This 'var' property is not written to more than once, it can be declared as 'val'.")
         map.put(REDUNDANT_CALL_OF_CONVERSION_METHOD, "Redundant call of conversion method.")
-        map.put(ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS, "'==' on arrays compares only references. Replace '==' with 'contentEquals' to compare the arrays' contents or use `===` to remove the warning.")
+        map.put(
+            ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS,
+            "''{0}'' on arrays compares only references. Replace ''{0}'' with ''{1}contentEquals'' to compare the arrays'' contents or use ''{0}='' to remove the warning.",
+            STRING,
+            STRING,
+        )
         map.put(EMPTY_RANGE, "Range is empty.")
         map.put(REDUNDANT_SETTER_PARAMETER_TYPE, "Redundant setter parameter type.")
         map.put(UNUSED_VARIABLE, "Variable is unused.")

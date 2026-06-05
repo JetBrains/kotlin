@@ -37,7 +37,11 @@ object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(M
         val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
 
         if (leftClassId == rightClassId) {
-            reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS)
+            reporter.reportOn(
+                expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS,
+                expression.operation.operator,
+                if (expression.operation == FirOperation.NOT_EQ) "!" else "",
+            )
         }
     }
 }

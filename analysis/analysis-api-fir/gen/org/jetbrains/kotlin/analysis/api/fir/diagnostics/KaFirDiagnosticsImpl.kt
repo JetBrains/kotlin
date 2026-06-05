@@ -5162,6 +5162,8 @@ internal class RedundantCallOfConversionMethodImpl(
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.RedundantCallOfConversionMethod
 
 internal class ArrayEqualityOperatorCanBeReplacedWithContentEqualsImpl(
+    override val operator: String,
+    override val replacementPrefix: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ArrayEqualityOperatorCanBeReplacedWithContentEquals
