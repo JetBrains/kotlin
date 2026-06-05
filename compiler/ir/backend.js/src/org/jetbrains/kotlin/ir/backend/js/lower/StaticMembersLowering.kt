@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.backend.js.lower
 
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsCommonBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.isExported
@@ -41,6 +42,10 @@ class StaticMembersLowering(val context: JsCommonBackendContext) : DeclarationTr
             }
 
             if (isStatic) {
+                if (declaration is IrSimpleFunction) {
+                    declaration.modality = Modality.FINAL
+                }
+
                 // JsExport might be inherited from parent declaration which would be broken if we move it out of its parent.
                 // Marking declaration as exported explicitly.
                 if (context is JsIrBackendContext && declaration.isExported(context)) {

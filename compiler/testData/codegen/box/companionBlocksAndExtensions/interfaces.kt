@@ -1,5 +1,5 @@
 // LANGUAGE: +CompanionBlocksAndExtensions
-// IGNORE_BACKEND: WASM, WASM_JS, WASM_WASI, NATIVE
+// IGNORE_BACKEND: NATIVE
 
 interface MyInterface {
     companion {

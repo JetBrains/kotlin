@@ -20,4 +20,7 @@ import org.jetbrains.kotlin.ir.backend.js.lower.PrimaryConstructorLowering
 internal class WasmInitializersLowering(context: WasmBackendContext) : InitializersLowering(context)
 
 @PhasePrerequisites(WasmInitializersLowering::class)
-internal class WasmInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(context)
+internal class WasmInitializersCleanupLowering(context: CommonBackendContext) : InitializersCleanupLowering(
+    context,
+    shouldEraseFieldInitializer = { it.correspondingPropertySymbol?.owner?.isConst != true && !it.isStatic }
+)
