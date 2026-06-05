@@ -828,7 +828,11 @@ class BodyGenerator(
 
         val function: IrFunction = callFunction.realOverrideTarget
         val isSuperCall = call is IrCall && call.superQualifierSymbol != null
-        if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
+        // We check for whether there is a dispatch receiver or not becuase it seems like companion
+        // block functions which get here are still marked as OPEN, despite being static and not
+        // having dispatch receivers. It might be better to fix this at a higher level, for example
+        // at the FIR to IR level, which would allow us to remove this check.
+        if (function is IrSimpleFunction && function.isOverridable && !isSuperCall && call.dispatchReceiver != null) {
             val originalClass = callFunction.parentAsClass
             val realOverrideTargetClass = function.parentAsClass
             val klass = when {
