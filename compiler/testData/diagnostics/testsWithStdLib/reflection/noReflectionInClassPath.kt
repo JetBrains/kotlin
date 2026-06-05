@@ -92,6 +92,16 @@ fun ktype(t: KType, t2: KType) {
     KTypeProjection(KVariance.IN, t)
 }
 
+class Box<T>(val item: T)
+
+fun <T : KClass<*>> foo(t: T, x: CharSequence, box: Box<out KClass<*>>) {
+    t.members
+    if (x is KClass<*>) {
+        x.members
+    }
+    box.item.members
+}
+
 /* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, classReference, equalityExpression,
 functionDeclaration, integerLiteral, nullableType, primaryConstructor, propertyDeclaration, starProjection,
 stringLiteral, typeAliasDeclaration, typeAliasDeclarationWithTypeParameter, typeConstraint, typeParameter */
