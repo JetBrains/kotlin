@@ -79,6 +79,16 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
     @get:Input
     val failOnNonIdempotentChanges: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
 
+    @get:Optional
+    @get:Input
+    abstract val xcframeworkPath: Property<File>
+
+    // This should only be tweaked for XCFrameworks; all other integrations have implicit dependency on SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+    @get:Input
+    val packageIdentifier: Property<String> = project.objects.property(String::class.java).convention(
+        SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+    )
+
     // This affects diagnostics because the UI in Xcode is different from KMP plugin
     @get:Input
     val buildingFromXcode: Property<Boolean> = project.objects.property(Boolean::class.java).convention(true)
@@ -118,6 +128,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
 
         failOnNonIdempotentChangesIfNeeded {
             val packageRoot = syntheticImportProjectRoot.get().asFile.normalizedAbsoluteFile()
+            val binaryTarget = if (xcframeworkPath.isPresent) BinaryTarget(
+                name = xcframeworkPath.get().nameWithoutExtension,
+                relativePath = xcframeworkPath.get().toRelativeString(packageRoot)
+            ) else null
             when (syntheticProductType.get()) {
                 SyntheticProductType.DYNAMIC -> {
                     generatePackageManifest(
@@ -127,9 +141,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
                         transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
                         transitiveSyntheticPackagesPath = "..",
+                        binaryTarget = null,
                     )
                     generatePackageManifest(
-                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        identifier = packageIdentifier.get(),
                         packageRoot = packageRoot,
                         syntheticProductType = SyntheticProductType.INFERRED,
                         // Leave only version constraints - SwiftPM doesn't pick it up from subproject dependency when product is not consumed explicitly from the package
@@ -142,16 +157,18 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                         }.toSet(),
                         transitiveSyntheticPackages = setOf(SwiftPMDependencyIdentifier(SYNTHETIC_IMPORT_DYLIB, false)),
                         transitiveSyntheticPackagesPath = SUBPACKAGES,
+                        binaryTarget = binaryTarget,
                     )
                 }
                 SyntheticProductType.INFERRED, null -> {
                     generatePackageManifest(
-                        identifier = SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+                        identifier = packageIdentifier.get(),
                         packageRoot = packageRoot,
                         syntheticProductType = SyntheticProductType.INFERRED,
                         directlyImportedSwiftPMDependencies = directlyImportedDependencies.get(),
                         transitiveSyntheticPackages = dependencyIdentifierToImportedSwiftPMDependencies.get().metadataByDependencyIdentifier.keys,
                         transitiveSyntheticPackagesPath = SUBPACKAGES,
+                        binaryTarget = binaryTarget,
                     )
                 }
             }
@@ -168,6 +185,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                     directlyImportedSwiftPMDependencies = swiftPMDependencies.dependencies,
                     transitiveSyntheticPackages = setOf(),
                     transitiveSyntheticPackagesPath = "..",
+                    binaryTarget = null,
                 )
             }
         }
@@ -202,6 +220,10 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         }
     }
 
+    internal data class BinaryTarget(
+        val name: String,
+        val relativePath: String,
+    )
     private fun generatePackageManifest(
         identifier: String,
         packageRoot: File,
@@ -209,6 +231,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         directlyImportedSwiftPMDependencies: Set<SwiftPMDependency>,
         transitiveSyntheticPackages: Set<SwiftPMDependencyIdentifier>,
         transitiveSyntheticPackagesPath: String,
+        binaryTarget: BinaryTarget?,
     ) {
         val repoDependencies = (directlyImportedSwiftPMDependencies.map { importedPackage ->
             buildString {
@@ -263,6 +286,14 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         } + transitiveSyntheticPackages.map {
             ".product(name: \"${it.identifier}\", package: \"${it.identifier}\")"
         })
+
+        val binaryTargets = if (binaryTarget != null) {
+            listOf(".binaryTarget(name: \"${binaryTarget.name}\", path: \"${binaryTarget.relativePath}\")")
+        } else emptyList()
+
+        val binaryTargetDependencies = if (binaryTarget != null) {
+            listOf(".target(name: \"${binaryTarget.name}\")")
+        } else emptyList()
 
         val platforms = konanTargets.get().map { it.family }.toSet().map {
             when (it) {
@@ -319,7 +350,8 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
                 productType = productType,
                 platforms = platforms,
                 repoDependencies = repoDependencies,
-                targetDependencies = targetDependencies,
+                targetDependencies = targetDependencies + binaryTargetDependencies,
+                binaryTargets = binaryTargets
             )
         )
 

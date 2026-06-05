@@ -16,10 +16,23 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginPublicDsl
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ImmediateDiagnosticReporting
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticRenderingOptions
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollector
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCollectorProvider
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticImmediately
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.toolingDiagnosticsContext
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.NativeBuildType
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.hasDirectOrTransitiveSwiftPMDependencies
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.locateOrRegisterSwiftPMDependenciesExtension
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.registerPackageGeneration
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.syntheticImportProjectProductTypeFromFrameworkTypes
+import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.existsCompat
 import org.jetbrains.kotlin.gradle.utils.getFile
@@ -133,15 +146,62 @@ private fun Project.registerAssembleXCFrameworkTask(
     xcFrameworkName: String,
     buildType: NativeBuildType,
 ): TaskProvider<XCFrameworkTask> {
+    val xcframeworkVariant = lowerCamelCaseName(xcFrameworkName, buildType.getName())
     val taskName = lowerCamelCaseName(
         "assemble",
-        xcFrameworkName,
-        buildType.getName(),
+        xcframeworkVariant,
         "XCFramework"
     )
-    return registerTask(taskName) { task ->
+
+    val xcframeworkTask = registerTask<XCFrameworkTask>(taskName) { task ->
         task.baseName = provider { xcFrameworkName }
         task.buildType = buildType
+    }
+
+    emitSwiftPMDependenciesWithXCFrameworkIfNeeded(
+        xcframeworkTask = xcframeworkTask,
+        xcframeworkVariant = xcframeworkVariant,
+        xcframeworkName = xcFrameworkName,
+    )
+
+    return xcframeworkTask
+}
+
+private fun Project.emitSwiftPMDependenciesWithXCFrameworkIfNeeded(
+    xcframeworkTask: TaskProvider<XCFrameworkTask>,
+    xcframeworkVariant: String,
+    xcframeworkName: String,
+) {
+    if (kotlinPropertiesProvider.disableSwiftPMImport) return
+    val hasDirectOrTransitiveSwiftPMDependencies = hasDirectOrTransitiveSwiftPMDependencies()
+    val xcframeworkPackageGeneration = registerPackageGeneration(
+        suffix = lowerCamelCaseName("forXCFramework", xcframeworkVariant),
+        swiftPMImportExtension = locateOrRegisterSwiftPMDependenciesExtension(),
+        syntheticImportProjectRoot = xcframeworkTask.map { it.outputXCFrameworkFile.parentFile },
+        syntheticImportProjectProductType = syntheticImportProjectProductTypeFromFrameworkTypes(),
+        // FIXME: KT-86745 This assumes that XCFramework is created from all frameworks, which are all created from main compilations
+        transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider(),
+    )
+    xcframeworkPackageGeneration.configure {
+        it.xcframeworkPath.set(provider { xcframeworkTask.map { it.outputXCFrameworkFile }.get() })
+        it.packageIdentifier.set(xcframeworkName + "Package")
+        it.onlyIf("Has SwiftPM dependencies") {
+            hasDirectOrTransitiveSwiftPMDependencies.get()
+        }
+    }
+    xcframeworkTask.dependsOn(xcframeworkPackageGeneration)
+    val renderingOptions = ToolingDiagnosticRenderingOptions.forProject(this)
+    xcframeworkTask.configure {
+        it.doLast {
+            if (hasDirectOrTransitiveSwiftPMDependencies.get()) {
+                @OptIn(ImmediateDiagnosticReporting::class)
+                reportDiagnosticImmediately(
+                    it.logger,
+                    renderingOptions,
+                    KotlinToolingDiagnostics.XCFrameworkWithSwiftPMDependencies()
+                )
+            }
+        }
     }
 }
 

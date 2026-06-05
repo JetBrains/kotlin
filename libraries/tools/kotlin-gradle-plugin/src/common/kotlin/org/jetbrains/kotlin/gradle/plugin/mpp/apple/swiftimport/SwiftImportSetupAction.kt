@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.registerTask
 import org.jetbrains.kotlin.gradle.utils.addConfigurationMetrics
 import org.jetbrains.kotlin.gradle.utils.getAttributeSafely
+import org.jetbrains.kotlin.gradle.utils.getFile
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
@@ -67,22 +68,7 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
 
     inheritSwiftPMDependenciesFromAppleCompilationDependencies()
 
-    val syntheticImportProjectProductType = provider {
-        val hasDynamicFrameworks = kotlinExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->
-            target.binaries.filterIsInstance<Framework>().any {
-                !it.isStatic
-            }
-        }
-
-        /**
-         * FIXME: KT-83873 This linkage configuration is not correct in general
-         */
-        if (hasDynamicFrameworks) {
-            SyntheticProductType.DYNAMIC
-        } else {
-            SyntheticProductType.INFERRED
-        }
-    }
+    val syntheticImportProjectProductType = syntheticImportProjectProductTypeFromFrameworkTypes()
 
     val transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider()
     val transitiveLocalSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider.map {
@@ -176,12 +162,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         SyncPackageResolvedTask.SYNC_SYNTHETIC_PACKAGE_RESOLVED_TO_PERSISTED_TASK_NAME
     )
 
-    val syntheticImportTasks = listOf(
-        syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
-        syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
-        syntheticImportProjectGenerationTaskForLinkageForCli,
-    )
-
     project.afterEvaluate {
         val persistedPackageResolved = providePersistedPackageResolved()
 
@@ -247,9 +227,15 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
     }
 
+    val syntheticImportTasks = listOf(
+        syntheticImportProjectGenerationTaskForCinteropsAndLdDump,
+        syntheticImportProjectGenerationTaskForEmbedAndSignLinkage,
+        syntheticImportProjectGenerationTaskForLinkageForCli,
+    )
+
     syntheticImportTasks.forEach {
         it.configure {
-            it.onlyIf {
+            it.onlyIf("Has SwiftPM dependencies") {
                 hasDirectOrTransitiveSwiftPMDependencies.get()
             }
         }
@@ -262,10 +248,8 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
     kotlinExtension.targets.matching { it.supportsSwiftPMImport() }.all { target ->
         target as KotlinNativeTarget
 
-        syntheticImportTasks.forEach {
-            it.configure {
-                it.konanTargets.add(target.konanTarget)
-            }
+        tasks.withType(GenerateSyntheticLinkageImportProject::class.java).configureEach {
+            it.konanTargets.add(target.konanTarget)
         }
 
         locateOrRegisterSwiftPMDependenciesMetadataTaskForLockFilesAndConsumableConfiguration(
@@ -389,6 +373,25 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
         }
     }
 }
+
+internal fun Project.syntheticImportProjectProductTypeFromFrameworkTypes() = provider {
+    val hasDynamicFrameworks = multiplatformExtension.targets.filterIsInstance<KotlinNativeTarget>().any { target ->
+        // FIXME: KT-85471 Deriving product type this way is not correct in case of frameworks with different linkage types
+        target.binaries.filterIsInstance<Framework>().any {
+            !it.isStatic
+        }
+    }
+
+    /**
+     * FIXME: KT-83873 This linkage configuration is not correct in general
+     */
+    if (hasDynamicFrameworks) {
+        SyntheticProductType.DYNAMIC
+    } else {
+        SyntheticProductType.INFERRED
+    }
+}
+
 
 private fun Project.getIdentifierLockFilesMetadataProvider(): Provider<List<SwiftPMImportMetadataForLockFiles>> {
     if (!HostManager.hostIsMac) return provider { emptyList() }
@@ -759,38 +762,50 @@ internal fun Project.hasDirectOrTransitiveSwiftPMDependencies(): Provider<Boolea
     }
 }
 
-private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
+internal fun Project.registerPackageGeneration(
+    suffix: String,
     swiftPMImportExtension: SwiftPMImportExtension,
-    projectPathProvider: Provider<String>,
+    syntheticImportProjectRoot: Provider<File>,
     syntheticImportProjectProductType: Provider<SyntheticProductType>,
     transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
 ): TaskProvider<GenerateSyntheticLinkageImportProject> {
     return registerTask<GenerateSyntheticLinkageImportProject>(
         lowerCamelCaseName(
             GenerateSyntheticLinkageImportProject.TASK_NAME,
-            "forLinkageForCli",
+            suffix,
         ),
     ) {
         it.dependencyIdentifierToImportedSwiftPMDependencies.set(transitiveSwiftPMDependenciesProvider)
         it.configureWithExtension(swiftPMImportExtension)
         it.syntheticImportProjectRoot.set(
-            projectPathProvider
-                .flatMap { xcodeprojPath ->
-                    project.layout.dir(
-                        project.provider {
-                            File(xcodeprojPath).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
-                        }
-                    )
-                }
-                .orElse(
-                    // Fallback so Gradle can configure the task graph without XCODEPROJ_PATH.
-                    // The integrate* tasks will surface an actionable error from their @TaskAction.
-                    project.layout.buildDirectory.dir("tmp/swiftImport-unconfigured/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME")
-                )
+            project.layout.dir(syntheticImportProjectRoot)
         )
         it.syntheticProductType.set(syntheticImportProjectProductType)
     }
 }
+
+private fun Project.registerXcodeIntegrationLinkagePackageGeneration(
+    swiftPMImportExtension: SwiftPMImportExtension,
+    projectPathProvider: Provider<String>,
+    syntheticImportProjectProductType: Provider<SyntheticProductType>,
+    transitiveSwiftPMDependenciesProvider: Provider<TransitiveSwiftPMDependencies>,
+): TaskProvider<GenerateSyntheticLinkageImportProject> = registerPackageGeneration(
+    suffix = "forLinkageForCli",
+    swiftPMImportExtension = swiftPMImportExtension,
+    syntheticImportProjectRoot = projectPathProvider
+        .flatMap { xcodeprojPath ->
+            project.provider {
+                File(xcodeprojPath).parentFile.resolve(SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
+            }
+        }
+        .orElse(
+            // Fallback so Gradle can configure the task graph without XCODEPROJ_PATH.
+            // The integrate* tasks will surface an actionable error from their @TaskAction.
+            project.layout.buildDirectory.dir("tmp/swiftImport-unconfigured/$SYNTHETIC_IMPORT_TARGET_MAGIC_NAME").getFile()
+        ),
+    syntheticImportProjectProductType = syntheticImportProjectProductType,
+    transitiveSwiftPMDependenciesProvider = transitiveSwiftPMDependenciesProvider,
+)
 
 private fun Project.registerXcodeIntegrationTasks(
     syntheticImportProjectGenerationTaskForLinkageForCli: TaskProvider<GenerateSyntheticLinkageImportProject>,
