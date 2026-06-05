@@ -1,5 +1,6 @@
 // FUNCTION: org.junit.jupiter.api.Assertions.assertTrue
 // WITH_JUNIT5
+// DUMP_KT_IR
 
 import org.junit.jupiter.api.Assertions.assertTrue
 
