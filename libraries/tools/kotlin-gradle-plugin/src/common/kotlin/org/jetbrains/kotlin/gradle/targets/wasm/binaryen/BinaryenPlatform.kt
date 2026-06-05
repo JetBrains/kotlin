@@ -30,9 +30,11 @@ internal data class BinaryenPlatform(
         const val X86 = "x86_86"
 
         internal fun parseBinaryenPlatform(name: String, arch: String, uname: Provider<String>): BinaryenPlatform {
+            val osName = parseOsName(name.lowercase())
             return BinaryenPlatform(
-                parseOsName(name.lowercase()),
+                osName,
                 parseOsArch(
+                    osName,
                     arch.lowercase(),
                     uname
                 )
@@ -49,9 +51,15 @@ internal data class BinaryenPlatform(
             }
         }
 
-        private fun parseOsArch(arch: String, uname: Provider<String>): String {
+        private fun parseOsArch(osName: String, arch: String, uname: Provider<String>): String {
             return when {
-                arch == "arm" || arch.startsWith("aarch") -> uname.get()
+                arch == "arm" || arch.startsWith("aarch") -> {
+                    if (osName == WIN) {
+                        arch
+                    } else {
+                        uname.get()
+                    }
+                }
                 arch.contains("64") -> X64
                 else -> X86
             }
