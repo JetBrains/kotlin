@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.cli.pipeline.*
 import org.jetbrains.kotlin.cli.report
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.inline.diagnostics.IrInlinerErrors
-import org.jetbrains.kotlin.js.config.fakeOverrideValidator
 import org.jetbrains.kotlin.konan.config.*
 import org.jetbrains.kotlin.konan.file.File
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
