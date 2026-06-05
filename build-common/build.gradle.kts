@@ -35,6 +35,7 @@ dependencies {
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(protobufFull())
     testFixturesCompileOnly(project(":compiler:cli-base"))
+    testFixturesCompileOnly(project(":js:js.parser"))
     testFixturesImplementation(libs.junit.jupiter.api)
     testFixturesImplementation(libs.junit.jupiter.params)
     testFixturesImplementation(libs.junit4)

@@ -62,6 +62,7 @@ dependencies {
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCore())
     testFixturesApi(project(":compiler:backend.js"))
+    testFixturesApi(project(":js:js.parser"))
     testFixturesApi(project(":js:js.translator"))
     testFixturesApi(project(":js:typescript-export-standalone"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
