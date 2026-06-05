@@ -127,17 +127,7 @@ abstract class KotlinJsIrSubTarget(
                 KotlinJsBinaryMode.DEVELOPMENT
             ).single()
 
-            val inputFileProperty = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
-                testJs.dependsOn(binary.linkSyncTask)
-                binary.mainFileSyncPath
-            } else {
-                testJs.dependsOn(binary.linkTask)
-                binary.mainFile
-            }
-
-            testJs.inputFileProperty.set(
-                inputFileProperty
-            )
+            configureTestInputFile(testJs, binary)
 
             configureTestDependencies(testJs, binary)
 
@@ -173,6 +163,20 @@ abstract class KotlinJsIrSubTarget(
 
     abstract fun configureDefaultTestFramework(test: KotlinJsTest)
     abstract fun configureTestDependencies(test: KotlinJsTest, binary: JsIrBinary)
+
+    internal open fun configureTestInputFile(test: KotlinJsTest, binary: JsIrBinary) {
+        val inputFile = if (target.wasmTargetType != KotlinWasmTargetType.WASI) {
+            test.dependsOn(binary.linkSyncTask)
+            binary.mainFileSyncPath
+        } else {
+            test.dependsOn(binary.linkTask)
+            binary.mainFile
+        }
+
+        test.inputFileProperty.set(
+            inputFile
+        )
+    }
 
     private fun configureMainCompilation() {
         target.compilations.all { compilation ->

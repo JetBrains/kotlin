@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -452,41 +451,53 @@ abstract class AbstractKotlinWasmGradlePluginIT : KGPBaseTest() {
     @GradleTest
     fun wasiTarget(gradleVersion: GradleVersion) {
         project("new-mpp-wasm-wasi-test", gradleVersion) {
-            build(":wasmWasiTest") {
-                assertTasksExecuted(":kotlinWasmNodeJsSetup")
-                assertTasksExecuted(":compileKotlinWasmWasi")
-                assertTasksExecuted(":wasmWasiNodeTest")
-            }
+            wasmWasiTest("Node", "NodeJs")
+        }
+    }
 
-            build(":wasmWasiTest") {
-                assertTasksUpToDate(":kotlinWasmNodeJsSetup", ":compileKotlinWasmWasi", ":wasmWasiNodeTest")
-            }
+    @DisplayName("Check wasi target with wasmtime")
+    @GradleTest
+    fun wasiWasmtimeTarget(gradleVersion: GradleVersion) {
+        project("wasm-wasmtime-test", gradleVersion) {
+            wasmWasiTest("Wasmtime")
+        }
+    }
 
-            projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
-                it.replace(
-                    "fun test2() = assertEquals(foo(), 2)",
-                    """
+    private fun TestProject.wasmWasiTest(engine: String, engineSetup: String = engine) {
+        build(":wasmWasiTest") {
+            assertTasksExecuted(":kotlinWasm${engineSetup}Setup")
+            assertTasksExecuted(":compileKotlinWasmWasi")
+            assertTasksExecuted(":wasmWasi${engine}Test")
+        }
+
+        build(":wasmWasiTest") {
+            assertTasksUpToDate(":kotlinWasm${engineSetup}Setup", ":compileKotlinWasmWasi", ":wasmWasi${engine}Test")
+        }
+
+        projectPath.resolve("src/wasmWasiTest/kotlin/Test.kt").modify {
+            it.replace(
+                "fun test2() = assertEquals(foo(), 2)",
+                """
                     |fun test2() = assertEquals(foo(), 2)
                     |
                     |@Test
                     |fun test3() = assertEquals(foo(), 3)
                     |""".trimMargin()
-                )
-            }
+            )
+        }
 
-            buildAndFail(":wasmWasiTest") {
-                assertTasksUpToDate(":compileKotlinWasmWasi")
-                assertTasksFailed(":wasmWasiNodeTest")
-            }
+        buildAndFail(":wasmWasiTest") {
+            assertTasksUpToDate(":compileKotlinWasmWasi")
+            assertTasksFailed(":wasmWasi${engine}Test")
+        }
 
-            build(":wasmWasiNodeProductionRun") {
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
-                assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
+        build(":wasmWasi${engine}ProductionRun") {
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasi")
+            assertTasksExecuted(":compileProductionExecutableKotlinWasmWasiOptimize")
 
-                assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
+            assertTasksAreNotInTaskGraph(":kotlinWasmToolingSetup")
 
-                assertNoBuildWarnings()
-            }
+            assertNoBuildWarnings()
         }
     }
 

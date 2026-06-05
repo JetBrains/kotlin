@@ -260,6 +260,29 @@ internal constructor(
     }
     //endregion
 
+    //region wasmtime
+    @OptIn(ExperimentalWasmDsl::class)
+    private val wasmtimeLazyDelegate = lazy {
+        check(wasmTargetType == KotlinWasmTargetType.WASI) {
+            "Wasmtime execution environment is supported only for the Kotlin/Wasm WASI target."
+        }
+
+        addSubTarget(KotlinWasmtimeSubtarget::class.java) {
+            configureSubTarget()
+            subTargetConfigurators.add(LibraryConfigurator(this))
+            subTargetConfigurators.add(WasmtimeEnvironmentConfigurator(this))
+        }
+    }
+
+    @ExperimentalWasmDsl
+    private val wasmtime: KotlinWasmtimeDsl by wasmtimeLazyDelegate
+
+    @ExperimentalWasmDsl
+    override fun wasmtime(body: KotlinWasmtimeDsl.() -> Unit) {
+        body(wasmtime)
+    }
+    //endregion
+
     private fun KotlinJsIrSubTarget.configureSubTarget() {
         configure()
     }
