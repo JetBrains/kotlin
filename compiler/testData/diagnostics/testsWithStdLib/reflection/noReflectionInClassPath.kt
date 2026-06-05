@@ -95,11 +95,11 @@ fun ktype(t: KType, t2: KType) {
 class Box<T>(val item: T)
 
 fun <T : KClass<*>> foo(t: T, x: CharSequence, box: Box<out KClass<*>>) {
-    t.members
+    t.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
     if (x is KClass<*>) {
-        x.members
+        x.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
     }
-    box.item.members
+    box.item.<!NO_REFLECTION_IN_CLASS_PATH!>members<!>
 }
 
 /* GENERATED_FIR_TAGS: callableReference, capturedType, classDeclaration, classReference, equalityExpression,
