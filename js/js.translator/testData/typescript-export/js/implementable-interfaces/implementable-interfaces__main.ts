@@ -28,6 +28,11 @@ import KotlinChildNoRuntimeImpl = JS_TESTS.foo.KotlinChildNoRuntimeImpl;
 import NoRuntimeFunIface = JS_TESTS.foo.NoRuntimeFunIface;
 import callNoRuntimeFunInterface = JS_TESTS.foo.callNoRuntimeFunInterface;
 import makeNoRuntimeFunInterfaceWithSam = JS_TESTS.foo.makeNoRuntimeFunInterfaceWithSam;
+import Listener = JS_TESTS.foo.Listener;
+import beginWork = JS_TESTS.foo.beginWork;
+import ShouldBeNotImplementableWithIgnoredProperty = JS_TESTS.foo.ShouldBeNotImplementableWithIgnoredProperty;
+import ShouldBeNotImplementableWithIgnoredFun = JS_TESTS.foo.ShouldBeNotImplementableWithIgnoredFun;
+import ShouldBeNotImplementableWithIgnoredSuspend = JS_TESTS.foo.ShouldBeNotImplementableWithIgnoredSuspend;
 
 class TsFooImpl implements IFoo<string> {
     readonly [IFoo.Symbol] = true
@@ -140,6 +145,11 @@ class TsNoRuntimeImpl implements NoRuntimeIface {
 class TsChildNoRuntimeImpl implements ChildOfNoRuntime {
     constructor(public readonly a: string) {}
     child(): string { return `child-${this.a}` }
+}
+
+class TsListener implements Listener {
+    constructor(public readonly id: string) {}
+    onStart(): string { return "started" }
 }
 
 async function testFoo(foo: IFoo<string>, languageImplemented: string): Promise<string> {
@@ -334,6 +344,22 @@ async function box(): Promise<string> {
 
     const ktChildNR: ChildOfNoRuntime = new KotlinChildNoRuntimeImpl("Z")
     if (ktChildNR.child() !== "child-Z") return "Fail: KotlinChildNoRuntimeImpl.child() is wrong: " + ktChildNR.child()
+
+    const tsListener: Listener = new TsListener("ts")
+    const beginWorkResult = beginWork(tsListener)
+    if (beginWorkResult !== "ts:started") return "Fail: beginWork with TypeScript Listener returns unexpected result: " + beginWorkResult
+
+    // @ts-expect-error "@JsExport.Ignore property should keep the interface not implementable from TypeScript"
+    const notImplementableWithIgnoredProperty: ShouldBeNotImplementableWithIgnoredProperty = { leaf: () => "leaf" }
+    void notImplementableWithIgnoredProperty
+
+    // @ts-expect-error "@JsExport.Ignore function should keep the interface not implementable from TypeScript"
+    const notImplementableWithIgnoredFun: ShouldBeNotImplementableWithIgnoredFun = { leaf: () => "leaf" }
+    void notImplementableWithIgnoredFun
+
+    // @ts-expect-error "@JsExport.Ignore suspend function should keep the interface not implementable from TypeScript"
+    const notImplementableWithIgnoredSuspend: ShouldBeNotImplementableWithIgnoredSuspend = { leaf: () => "leaf" }
+    void notImplementableWithIgnoredSuspend
 
     return "OK"
 }

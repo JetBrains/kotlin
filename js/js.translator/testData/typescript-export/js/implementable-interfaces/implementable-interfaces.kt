@@ -189,6 +189,17 @@ interface ChildOfNoRuntime : NoRuntimeIface {
     fun child(): String
 }
 
+@JsExport
+@JsNoRuntime
+interface Listener {
+    val id: String
+    fun onStart(): String
+}
+
+@JsExport
+fun beginWork(listener: Listener): String =
+    "${listener.id}:${listener.onStart()}"
+
 // Implementation of @JsNoRuntime interfaces should be possible and must not introduce any brand properties
 @JsExport
 class KotlinNoRuntimeImpl(override val a: String) : NoRuntimeIface
@@ -243,9 +254,27 @@ interface NoRuntimeLeaf : MidNormal {
 
 @JsExport
 @JsNoRuntime
-interface ShouldBeNotImplementable {
+interface ShouldBeNotImplementableWithIgnoredProperty {
     fun leaf(): String
 
     @JsExport.Ignore
     val ignored: Boolean
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementableWithIgnoredFun {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    fun ignoredFun(): String
+}
+
+@JsExport
+@JsNoRuntime
+interface ShouldBeNotImplementableWithIgnoredSuspend {
+    fun leaf(): String
+
+    @JsExport.Ignore
+    suspend fun ignoredSuspend(): String
 }

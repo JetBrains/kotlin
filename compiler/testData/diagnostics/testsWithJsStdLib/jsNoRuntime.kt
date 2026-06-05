@@ -20,6 +20,7 @@ interface WithRuntime : I
 <!JS_NO_RUNTIME_WRONG_TARGET!>@JsNoRuntime<!> class C
 <!JS_NO_RUNTIME_WRONG_TARGET!>@JsNoRuntime<!> object O
 <!JS_NO_RUNTIME_WRONG_TARGET!>@JsNoRuntime<!> enum class E { A }
+<!JS_NO_RUNTIME_WRONG_TARGET!>@JsNoRuntime<!> annotation class A
 
 fun isChecks(a: Any) {
     if (<!JS_NO_RUNTIME_FORBIDDEN_IS_CHECK!>a is I<!>) {}

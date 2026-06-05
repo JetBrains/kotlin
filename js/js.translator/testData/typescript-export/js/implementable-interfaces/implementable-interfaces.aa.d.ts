@@ -22,6 +22,7 @@ declare namespace JS_TESTS {
         function callingAnotherWithDefaultImplementation(foo: foo.IFoo<any>): string;
         function callGenericWithDefaultImplementation(foo: foo.IFoo<any>, x: Nullable<any>): string;
         function callingDelegatingToSuperDefaultImplementation(foo: foo.IFoo<any>): string;
+        function beginWork(listener: foo.Listener): string;
         interface FunIFace {
             apply(x: string): string;
             readonly [foo.FunIFace.Symbol]: true;
@@ -132,6 +133,10 @@ declare namespace JS_TESTS {
         interface ChildOfNoRuntime extends foo.NoRuntimeIface {
             child(): string;
         }
+        interface Listener {
+            onStart(): string;
+            readonly id: string;
+        }
         class KotlinNoRuntimeImpl implements foo.NoRuntimeIface {
             constructor(a: string);
             get a(): string;
@@ -191,10 +196,22 @@ declare namespace JS_TESTS {
         interface NoRuntimeLeaf extends foo.MidNormal {
             leaf(): string;
         }
-        interface ShouldBeNotImplementable {
+        interface ShouldBeNotImplementableWithIgnoredProperty {
             leaf(): string;
             readonly __doNotUseOrImplementIt: {
-                readonly "foo.ShouldBeNotImplementable": unique symbol;
+                readonly "foo.ShouldBeNotImplementableWithIgnoredProperty": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredFun {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredFun": unique symbol;
+            };
+        }
+        interface ShouldBeNotImplementableWithIgnoredSuspend {
+            leaf(): string;
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.ShouldBeNotImplementableWithIgnoredSuspend": unique symbol;
             };
         }
     }
