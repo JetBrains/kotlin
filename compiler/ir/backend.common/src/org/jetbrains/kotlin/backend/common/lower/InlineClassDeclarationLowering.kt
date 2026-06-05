@@ -9,9 +9,12 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.DeclarationTransformer
 import org.jetbrains.kotlin.backend.common.ir.isPure
+import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.builders.*
+import org.jetbrains.kotlin.ir.builders.declarations.addFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.irAttribute
@@ -94,8 +97,32 @@ open class InlineClassDeclarationLowering(private val context: CommonBackendCont
                     (body as IrBlockBody).deepCopyWithSymbols(initFunction).statements.forEach { statement ->
                         +statement.transformStatement(object : IrElementTransformerVoid() {
                             override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
-                                delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
-                                return builder.irBlock {}  // Removing delegating constructor call
+                                val delegatingCtorClass = expression.symbol.owner.parentAsClass
+                                expression.transformChildrenVoid(this)
+                                return if (irConstructor.constructedClass.isFullValueClass && delegatingCtorClass.isFullValueClass) {
+                                    val backendContext = this@InlineClassDeclarationLowering.context
+                                    // Delegate to Any.<init> in the original constructor
+                                    delegatingCtorCall = backendContext
+                                        .createIrBuilder(irConstructor.symbol, expression.startOffset, expression.endOffset)
+                                        .irDelegatingConstructorCall(backendContext.irBuiltIns.anyClass.owner.constructors.single())
+                                    // Call the extracted side-effects function to run parent init blocks
+                                    val sideEffectsFunction = getOrCreateInitSideEffectsFunction(
+                                        backendContext, expression.symbol.owner
+                                    )
+                                    with(builder) {
+                                        irBlock {
+                                            +irCall(sideEffectsFunction).apply {
+                                                arguments[0] = unboxedInlineClassValue()
+                                                for (i in expression.arguments.indices) {
+                                                    arguments[i + 1] = expression.arguments[i]
+                                                }
+                                            }
+                                        }
+                                    }
+                                } else {
+                                    delegatingCtorCall = expression.deepCopyWithSymbols(irConstructor)
+                                    builder.irBlock {}  // Removing delegating constructor call
+                                }
                             }
 
                             override fun visitSetField(expression: IrSetField): IrExpression {
@@ -366,3 +393,108 @@ private fun CommonBackendContext.createStaticBodilessMethod(function: IrFunction
     )
 
 private var IrFunction.staticMethod: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+/**
+ * For an abstract/sealed full value class constructor, stores the extracted static function
+ * that contains only the init block side effects (no instance creation).
+ */
+private var IrConstructor.initSideEffectsFunction: IrSimpleFunction? by irAttribute(copyByDefault = false)
+
+/**
+ * Gets or creates a static function that contains the init block side effects
+ * of the given abstract/sealed full value class constructor.
+ *
+ * The created function:
+ * - Takes the same parameters as the constructor
+ * - Returns Unit
+ * - Contains the init block side effects from the constructor body
+ * - If the constructor delegates to another abstract/sealed value class constructor,
+ *   calls that constructor's side-effects function recursively
+ */
+fun getOrCreateInitSideEffectsFunction(
+    context: CommonBackendContext,
+    constructor: IrConstructor,
+): IrSimpleFunction {
+    constructor.initSideEffectsFunction?.let { return it }
+
+    val irClass = constructor.parentAsClass
+    require(irClass.isFullValueClass && (irClass.modality == Modality.ABSTRACT || irClass.modality == Modality.SEALED)) {
+        "initSideEffectsFunction is only for abstract/sealed full value classes: ${irClass.render()}"
+    }
+
+    val parentContainer = irClass.parent as IrDeclarationContainer
+    val sideEffectsFunction = context.irFactory.addFunction(parentContainer) {
+        startOffset = constructor.startOffset
+        endOffset = constructor.endOffset
+        name = Name.special("<${irClass.name.asString()}__init-side-effects>")
+        visibility = DescriptorVisibilities.PRIVATE
+        returnType = context.irBuiltIns.unitType
+        origin = IrDeclarationOrigin.DEFINED
+    }.apply {
+        // First parameter is `this` receiver from the class (for init blocks that reference `this`).
+        val thisParam = irClass.thisReceiver!!.copyTo(
+            this, defaultValue = null, name = Name.identifier("\$this"),
+            kind = IrParameterKind.Regular, type = irClass.defaultType
+        )
+        parameters = listOf(thisParam) + constructor.parameters.map { it.copyTo(this, defaultValue = null) }
+    }
+
+    val thisParam = sideEffectsFunction.parameters.first()
+
+    // Map constructor parameters to side-effects function parameters (skipping the first `$this` param)
+    val parameterMapping = sideEffectsFunction.parameters.drop(1).associateBy { param ->
+        constructor.parameters[param.indexInParameters - 1].symbol
+    }
+
+    sideEffectsFunction.body = constructor.body?.let { body ->
+        context.irFactory.createBlockBody(UNDEFINED_OFFSET, UNDEFINED_OFFSET) {
+            statements += context.createIrBuilder(sideEffectsFunction.symbol).irBlockBody(sideEffectsFunction) {
+                (body as IrBlockBody).deepCopyWithSymbols(sideEffectsFunction).statements.forEach { statement ->
+                    +statement.transformStatement(object : IrElementTransformerVoid() {
+                        override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
+                            expression.transformChildrenVoid(this)
+                            val delegatingCtorClass = expression.symbol.owner.parentAsClass
+                            if (delegatingCtorClass.isFullValueClass) {
+                                // Recursively call parent's side-effects function
+                                val parentSideEffects = getOrCreateInitSideEffectsFunction(context, expression.symbol.owner)
+                                return irCall(parentSideEffects).apply {
+                                    arguments[0] = irGet(thisParam)
+                                    for (i in expression.arguments.indices) {
+                                        arguments[i + 1] = expression.arguments[i]
+                                    }
+                                }
+                            }
+                            // Delegating to Any.<init> — just remove
+                            return irBlock {}
+                        }
+
+                        override fun visitGetValue(expression: IrGetValue): IrExpression {
+                            expression.transformChildrenVoid(this)
+                            if (expression.symbol == irClass.thisReceiver?.symbol) {
+                                return irGet(thisParam)
+                            }
+                            parameterMapping[expression.symbol]?.let { return irGet(it) }
+                            return expression
+                        }
+
+                        override fun visitSetValue(expression: IrSetValue): IrExpression {
+                            expression.transformChildrenVoid(this)
+                            parameterMapping[expression.symbol]?.let { return irSet(it.symbol, expression.value) }
+                            return expression
+                        }
+
+                        override fun visitDeclaration(declaration: IrDeclarationBase): IrStatement {
+                            declaration.transformChildrenVoid(this)
+                            if (declaration.parent == constructor)
+                                declaration.parent = sideEffectsFunction
+                            return declaration
+                        }
+                    })
+                }
+            }.statements
+        }
+    }
+
+    constructor.initSideEffectsFunction = sideEffectsFunction
+    return sideEffectsFunction
+}

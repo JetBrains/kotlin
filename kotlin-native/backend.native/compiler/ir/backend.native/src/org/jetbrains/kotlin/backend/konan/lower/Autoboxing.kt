@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstantPrimitiveImpl
 import org.jetbrains.kotlin.ir.irAttribute
@@ -575,6 +576,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall): IrExpression {
                         expression.transformChildrenVoid()
 
+                        val delegatingCtorClass = expression.symbol.owner.parentAsClass
+                        val useInitSideEffects = irClass.isFullValueClass && delegatingCtorClass.isFullValueClass &&
+                                (delegatingCtorClass.modality == Modality.ABSTRACT || delegatingCtorClass.modality == Modality.SEALED)
                         return irBlock(expression) {
                             thisVar = if (irConstructor.isPrimary) {
                                 // Note: block is empty in this case.
@@ -582,6 +586,9 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
                             } else {
                                 val value = lowerConstructorCallToValue(expression, expression.symbol.owner)
                                 irTemporary(value)
+                            }
+                            if (useInitSideEffects) {
+                                emitInitSideEffectsCall(expression, irClass, thisVar)
                             }
                         }
                     }
@@ -618,6 +625,26 @@ private class InlineClassTransformer(private val context: Context) : IrBuildingT
             // return Unit will be added anyway by ReturnsInsertionLowering.
             if (!irConstructor.isPrimary)
                 +irReturn(genReturnValue())
+        }
+    }
+
+    private fun IrBlockBodyBuilder.emitInitSideEffectsCall(
+        expression: IrDelegatingConstructorCall,
+        irClass: IrClass,
+        thisVar: IrValueDeclaration,
+    ) {
+        val sideEffectsFunction = getOrCreateInitSideEffectsFunction(
+            this@InlineClassTransformer.context, expression.symbol.owner
+        )
+        +irCall(sideEffectsFunction).apply {
+            // Box the unboxed value: in Native, abstract value class types are represented as
+            // pointers while concrete value classes are unboxed primitives/structs.
+            arguments[0] = irCall(this@InlineClassTransformer.context.getBoxFunction(irClass)).also {
+                it.arguments[0] = irGet(thisVar)
+            }
+            for (i in expression.arguments.indices) {
+                arguments[i + 1] = expression.arguments[i]
+            }
         }
     }
 

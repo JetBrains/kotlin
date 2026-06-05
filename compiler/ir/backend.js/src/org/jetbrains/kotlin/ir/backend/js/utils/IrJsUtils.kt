@@ -78,7 +78,7 @@ fun IrDeclarationWithName.getFqNameWithJsNameWhenAvailable(shouldIncludePackage:
 fun IrConstructor.hasStrictSignature(context: JsIrBackendContext): Boolean {
     val primitives = with(context.irBuiltIns) { primitiveTypesToPrimitiveArrays.values + stringClass }
     return with(parentAsClass) {
-        isExternal || isExpect || isAnnotationClass || context.inlineClassesUtils.isClassInlineLike(this) || symbol in primitives
+        isExternal || isExpect || isAnnotationClass || context.inlineClassesUtils.isClassInlineLike(this) && superClass == null || symbol in primitives
     }
 }
 
