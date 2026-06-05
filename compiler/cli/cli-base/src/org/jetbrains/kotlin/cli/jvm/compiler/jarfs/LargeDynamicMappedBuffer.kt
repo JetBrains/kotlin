@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
 import com.google.common.primitives.Longs.min
+import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.MappedByteBuffer
 
@@ -88,6 +89,28 @@ internal class LargeDynamicMappedBuffer(
                 return bytes
             } finally {
                 buffer.position(baseOffset)
+            }
+        }
+
+        /**
+         * Returns a [ByteBuffer] view over `[offset, offset + length)` of the mapped data **without copying**.
+         *
+         * The returned buffer shares the underlying (direct, memory-mapped) storage, so it must only be used
+         * while this [Mapping] is alive, i.e. before the owning [LargeDynamicMappedBuffer] is remapped or unmapped.
+         * This is a sort of manual implementation of ByteBuffer.slice(int, int) for JDK 16 and below.
+         */
+        fun slicedBuffer(offset: Int, length: Int): ByteBuffer {
+            // TODO: Use ByteBuffer.slice(int, int) once this module is switched to JDK 17 (KT-86802)
+            val savedPosition = buffer.position()
+            val savedLimit = buffer.limit()
+            return try {
+                buffer.position(baseOffset + offset)
+                buffer.limit(baseOffset + offset + length)
+                buffer.slice()
+            } finally {
+                // Restore the limit before the position to preserve the position <= limit invariant.
+                buffer.limit(savedLimit)
+                buffer.position(savedPosition)
             }
         }
 

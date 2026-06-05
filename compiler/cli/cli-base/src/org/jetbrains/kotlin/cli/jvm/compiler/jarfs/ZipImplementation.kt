@@ -5,8 +5,8 @@
 
 package org.jetbrains.kotlin.cli.jvm.compiler.jarfs
 
+import java.nio.ByteBuffer
 import java.util.zip.Inflater
-
 
 class ZipEntryDescription(
     val relativePath: CharSequence,
@@ -43,10 +43,15 @@ internal fun LargeDynamicMappedBuffer.contentsToByteArray(
         when (zipEntryDescription.compressionKind) {
             ZipEntryDescription.CompressionKind.DEFLATE -> {
                 val inflater = Inflater(true)
-                // Note that starting from JDK 16 it is possible to call MappedByteBuffer.slice to get a "sub-buffer" and also
-                // use it directly with inflater.setInput, which would avoid copying of the data
-                // TODO: consider implementing (maybe JDK-specific) optimization that avoids unnecessary copying (see KT-69758)
-                inflater.setInput(getBytes(startPos, zipEntryDescription.compressedSize.toInt()))
+                val compressedSize = zipEntryDescription.compressedSize.toInt()
+                val setInput = setInflaterInputFromBuffer
+                if (setInput != null) {
+                    // JDK 11+: feed a slice of the mapped buffer directly, avoiding the allocation and the get() copy
+                    setInput(inflater, slicedBuffer(startPos, compressedSize))
+                } else {
+                    // JDK 8-10 fallback: copy the compressed bytes into a heap array first
+                    inflater.setInput(getBytes(startPos, compressedSize))
+                }
 
                 val result = ByteArray(zipEntryDescription.uncompressedSize.toInt())
 
@@ -154,7 +159,22 @@ private fun LargeDynamicMappedBuffer.parseCentralDirectoryRecordsNumberAndOffset
         else Pair(entriesNumber.toLong(), offsetOfCentralDirectory.toUInt().toLong())
     }
 
-
+/**
+ * `Inflater.setInput(ByteBuffer)` exists since JDK 11. When it is available, we can feed the inflater a slice of the
+ * memory-mapped buffer directly, avoiding both the allocation and the `ByteBuffer.get(...)` copy of the compressed data
+ * (the latter pins a heap array via `Unsafe.copyMemory`/GCLocker since JDK 17, see KT-69758).
+ *
+ * On older JDKs (8-10) the method is absent, this stays `null`, and we fall back to the copying path.
+ * TODO: Get rid of this property once this module is switched to JDK 11+ (KT-86803)
+ */
+private val setInflaterInputFromBuffer: ((Inflater, ByteBuffer) -> Unit)? =
+    try {
+        val method = Inflater::class.java.getMethod("setInput", ByteBuffer::class.java)
+        val setter: (Inflater, ByteBuffer) -> Unit = { inflater, buffer -> method.invoke(inflater, buffer) }
+        setter
+    } catch (e: Throwable) {
+        null
+    }
 private fun LargeDynamicMappedBuffer.Mapping.parseZip64CentralDirectoryRecordsNumberAndOffset(): Pair<Long, Long> {
     var endOfCentralDirectoryOffset = endOffset() - END_OF_CENTRAL_DIR_ZIP64_SIZE
     while (endOfCentralDirectoryOffset >= 0) {
