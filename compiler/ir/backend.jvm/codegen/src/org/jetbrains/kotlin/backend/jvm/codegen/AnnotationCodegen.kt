@@ -191,14 +191,11 @@ abstract class AnnotationCodegen(private val classCodegen: ClassCodegen) {
 
     private fun genAnnotationArguments(annotation: IrAnnotation, annotationVisitor: AnnotationVisitor) {
         val annotationClass = annotation.annotationClass
-        for (param in annotation.classSymbol.owner.primaryConstructor?.parameters ?: annotation.symbol.owner.parameters) {
-            val value = annotation.arguments[param]
-            if (value != null)
-                genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, param.name), value, annotationVisitor)
-            else if (param.defaultValue != null)
+        for ([name, value] in annotation.argumentMapping) {
+            if (value == null) {
                 continue // Default value will be supplied by JVM at runtime.
-            else if (context.state.classBuilderMode.generateBodies) //skip error for KAPT
-                error("No value for annotation parameter ${param.render()}")
+            }
+            genCompileTimeValue(getAnnotationArgumentJvmName(annotationClass, name), value, annotationVisitor)
         }
     }
 
@@ -356,7 +353,7 @@ private fun isBareTypeParameterWithNullableUpperBound(type: IrType): Boolean {
 
 internal fun IrClass.applicableJavaTargetSet(): Set<String>? {
     val valueArgument = getAnnotation(JvmAnnotationNames.TARGET_ANNOTATION)
-        ?.getValueArgument(StandardClassIds.Annotations.ParameterNames.value) as? IrVararg
+        ?.argumentMapping[StandardClassIds.Annotations.ParameterNames.value] as? IrVararg
         ?: return null
     return valueArgument.elements.filterIsInstance<IrGetEnumValue>().map { it.symbol.owner.name.asString() }.toSet()
 }

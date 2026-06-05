@@ -1298,9 +1298,10 @@ private fun IrAnnotation.toAnnotationDescriptor(): AnnotationDescriptor {
     }
     return AnnotationDescriptorImpl(
         annotationClass.defaultType.toIrBasedKotlinType(),
-        annotationClass.primaryConstructor!!.parameters.memoryOptimizedMap { it.name to arguments[it.indexInParameters] }
-            .filter { it.second != null }
-            .associate { it.first to it.second!!.toConstantValue() },
+        argumentMapping
+            .filter { it.value != null }
+            .map { it.key to it.value!!.toConstantValue() }
+            .toMap(),
         source
     )
 }

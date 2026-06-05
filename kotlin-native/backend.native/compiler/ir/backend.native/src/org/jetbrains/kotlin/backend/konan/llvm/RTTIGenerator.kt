@@ -148,7 +148,7 @@ internal class RTTIGenerator(
     private fun exportTypeInfoIfRequired(irClass: IrClass, typeInfoGlobal: LLVMValueRef?) {
         val annotation = irClass.annotations.findAnnotation(RuntimeNames.exportTypeInfoAnnotation)
         if (annotation != null) {
-            val name = annotation.getAnnotationStringValue()!!
+            val name = annotation.getConstArgument<String>("name")!!
             // TODO: use LLVMAddAlias.
             val global = addGlobal(name, llvm.pointerType, isExported = true)
             LLVMSetInitializer(global, typeInfoGlobal)
@@ -584,7 +584,7 @@ internal class RTTIGenerator(
         val packageFragment = irClass.getPackageFragment()
         val reflectionPackageName = if (packageFragment is IrFile) {
             // This annotation is used by test infrastructure.
-            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getAnnotationStringValue()
+            packageFragment.annotations.findAnnotation(KonanFqNames.reflectionPackageName)?.getConstArgument<String>("name")
         } else {
             null
         }

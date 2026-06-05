@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -2449,7 +2450,7 @@ internal class CodeGeneratorVisitor(
         assert(irClass.isExternalObjCClass())
 
         val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
-        val protocolGetterName = annotation.getAnnotationValueOrNull<String>("protocolGetter") ?: return null
+        val protocolGetterName = annotation.getConstArgument<String>("protocolGetter") ?: return null
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
                 LlvmFunctionSignature(LlvmRetType(llvm.pointerType, isObjectType = false)),
@@ -2567,7 +2568,7 @@ internal class CodeGeneratorVisitor(
         check(!function.isTypedIntrinsic)
 
         val foreignExceptionModeFromAnnotation = function.annotations.findAnnotation(RuntimeNames.filterExceptions)?.let {
-            ForeignExceptionMode.byValue(it.getAnnotationValueOrNull<String>("mode"))
+            ForeignExceptionMode.byValue(it.getConstArgument("mode"))
         }
 
         val needsNativeThreadState: Boolean

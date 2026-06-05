@@ -6,18 +6,17 @@
 package org.jetbrains.kotlin.backend.wasm.utils
 
 import org.jetbrains.kotlin.backend.wasm.jsBuiltinsModulePrefix
-import org.jetbrains.kotlin.ir.backend.js.utils.getSingleConstBooleanArgument
-import org.jetbrains.kotlin.ir.backend.js.utils.getSingleConstStringArgument
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.wasm.ir.JsBuiltinDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
@@ -39,14 +38,14 @@ fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(excludedFromCodegenFqName)
 
 fun IrAnnotationContainer.getWasmCoroutineMode(): Boolean? =
-    getAnnotation(wasmCoroutineModeFqName)?.getSingleConstBooleanArgument()
+    getAnnotation(wasmCoroutineModeFqName)?.getConstArgument("isStackSwitchingMode")
 
 fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(wasmImportFqName)
         ?: return null
 
-    val moduleName = (annotation.arguments[0] as IrConst).value as String
-    val declarationName = (annotation.arguments[1] as? IrConst)?.value as? String
+    val moduleName = annotation.getConstArgument<String>("module")!!
+    val declarationName = annotation.getConstArgument<String>("name")
     return WasmImportDescriptor(
         moduleName,
         WasmSymbol(declarationName ?: this.name.asString())
@@ -57,9 +56,9 @@ fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
     val annotation = getAnnotation(jsBuiltinFqName)
         ?: return null
 
-    val moduleName = (annotation.arguments[0] as IrConst).value as String
-    val declarationName = (annotation.arguments[1] as? IrConst)?.value as? String
-    val polyfillImpl = (annotation.arguments[2] as? IrConst)?.value as String
+    val moduleName = annotation.getConstArgument<String>("module")!!
+    val declarationName = annotation.getConstArgument<String>("name")
+    val polyfillImpl = annotation.getConstArgument<String>("polyfill")!!
     return JsBuiltinDescriptor(
         "$jsBuiltinsModulePrefix$moduleName",
         declarationName ?: this.name.asString(),
@@ -68,7 +67,7 @@ fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
 }
 
 fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
-    getAnnotation(wasmOpFqName)?.getSingleConstStringArgument()
+    getAnnotation(wasmOpFqName)?.getConstArgument("name")
 
 fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
     hasAnnotation(wasmNoOpCastFqName)
@@ -86,14 +85,14 @@ class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean, val isMutable: 
 fun IrAnnotationContainer.getWasmArrayAnnotation(): WasmArrayInfo? =
     getAnnotation(wasmArrayOfFqName)?.let {
         WasmArrayInfo(
-            (it.arguments[0] as IrClassReference).symbol.owner as IrClass,
-            (it.arguments[1] as IrConst).value as Boolean,
-            (it.arguments[2] as? IrConst)?.value as? Boolean ?: true,
+            (it.argumentMapping[Name.identifier("type")] as IrClassReference).symbol.owner as IrClass,
+            it.getConstArgument<Boolean>("isNullable")!!,
+            it.getConstArgument<Boolean>("isMutable") ?: true,
         )
     }
 
 fun IrAnnotationContainer.getJsFunAnnotation(): String? =
-    getAnnotation(jsFunFqName)?.getSingleConstStringArgument()
+    getAnnotation(jsFunFqName)?.getConstArgument("code")
 
 fun IrAnnotationContainer.getJsPrimitiveType(): String? =
-    getAnnotation(jsPrimitiveFqName)?.getSingleConstStringArgument()
+    getAnnotation(jsPrimitiveFqName)?.getConstArgument("type")

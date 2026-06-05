@@ -16,6 +16,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.lower
 
+import com.intellij.lang.jvm.JvmPackage
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.classNameOverride
@@ -180,10 +181,10 @@ fun getFileClassInfoFromIrFile(file: IrFile, fileName: String): JvmFileClassInfo
 
 private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotations? {
     val jvmNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_NAME_SHORT)
-    val jvmName = jvmNameAnnotation?.let(::getLiteralStringFromAnnotation)?.takeIf(Name::isValidIdentifier)
+    val jvmName = jvmNameAnnotation?.getConstArgument<String>(JvmName::name.name)?.takeIf(Name::isValidIdentifier)
 
     val jvmPackageNameAnnotation = findAnnotationEntryOnFileNoResolve(file, JVM_PACKAGE_NAME_SHORT)
-    val jvmPackageName = jvmPackageNameAnnotation?.let(::getLiteralStringFromAnnotation)?.let(::FqName)
+    val jvmPackageName = jvmPackageNameAnnotation?.getConstArgument<String>("name")?.let(::FqName)
 
     if (jvmName == null && jvmPackageName == null) return null
 
@@ -196,14 +197,5 @@ private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String):
     file.annotations.firstOrNull {
         it.classId.shortClassName.asString() == shortName
     }
-
-private fun getLiteralStringFromAnnotation(annotationCall: IrAnnotation): String? {
-    return annotationCall.arguments.getOrNull(0)?.let {
-        when {
-            it is IrConst && it.kind == IrConstKind.String -> it.value as String
-            else -> null // TODO: getArgumentExpression().safeAs<KtStringTemplateExpression>()
-        }
-    }
-}
 
 internal class ParsedJvmFileClassAnnotations(val jvmName: String?, val jvmPackageName: FqName?, val isMultifileClass: Boolean)

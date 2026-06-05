@@ -482,7 +482,7 @@ internal class ClassLayoutBuilder(val irClass: IrClass, val context: Context) {
             val annotationClass = it.classSymbol.owner
 
             if (annotationClass.hasAnnotation(RuntimeNames.associatedObjectKey)) {
-                val argument = it.arguments[0]
+                val argument = it.argumentMapping.values.singleOrNull()
 
                 val irClassReference = argument as? IrClassReference
                         ?: error(irFile, argument, "unexpected annotation argument")

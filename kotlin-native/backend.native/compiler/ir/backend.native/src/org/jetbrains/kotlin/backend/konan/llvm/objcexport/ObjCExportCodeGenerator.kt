@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.konan.target.LinkerOutputKind
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.DFS
+import kotlin.jvm.Throws
 
 internal fun TypeBridge.makeNothing(llvm: CodegenLlvmHelpers) = when (this) {
     is ReferenceBridge, is BlockPointerBridge -> llvm.kNull
@@ -1011,7 +1012,7 @@ private fun ObjCExportCodeGenerator.effectiveThrowsClasses(method: IrFunction, s
                 emptyList()
             }
 
-    val throwsVararg = throwsAnnotation.arguments[0]
+    val throwsVararg = throwsAnnotation.argumentMapping[Name.identifier(Throws::exceptionClasses.name)]
             ?: return emptyList()
 
     if (throwsVararg !is IrVararg) error(method.fileOrNull, throwsVararg, "unexpected vararg")

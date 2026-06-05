@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
-import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
@@ -68,7 +68,7 @@ class MetadataExtensionEmitter(val context: IrPluginContext) : IrVisitorVoid() {
     }
 
     private fun emitMetadata(irClass: IrDeclaration, annotation: IrAnnotation) {
-        val value = (annotation.arguments[0] as IrConst).value as Int
+        val value = annotation.getConstArgument<Int>("value")!!
 
         context.metadataDeclarationRegistrar.addCustomMetadataExtension(
             irClass,

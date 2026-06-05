@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.konan.BinaryType
 import org.jetbrains.kotlin.backend.konan.KonanBackendContext
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.computeBinaryType
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
@@ -21,6 +20,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -53,7 +53,7 @@ internal class FunctionsWithoutBoundCheckGenerator(val context: KonanBackendCont
                 val setWithoutBEAnnotations = (delegatingToFunction ?: baseFunction).annotations.map { annotation ->
                     annotation.deepCopyWithSymbols().also { copy ->
                         if (copy.isAnnotationWithEqualFqName(KonanFqNames.gcUnsafeCall)) {
-                            val value = "${annotation.getAnnotationStringValue("callee")}_without_BoundCheck"
+                            val value = "${annotation.getConstArgument<String>("callee")!!}_without_BoundCheck"
                             copy.arguments[0] = IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, value)
                         }
                     }

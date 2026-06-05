@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.backend.konan.llvm
 
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.util.findAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.name.FqName
 
@@ -18,7 +18,7 @@ private val retainForTargetAnnotationName = FqName("kotlin.native.RetainForTarge
 internal fun IrFunction.retainAnnotation(target: KonanTarget): Boolean {
     if (this.annotations.findAnnotation(retainAnnotationName) != null) return true
     val forTarget = this.annotations.findAnnotation(retainForTargetAnnotationName)
-    if (forTarget != null && forTarget.getAnnotationStringValue() == target.name) return true
+    if (forTarget != null && forTarget.getConstArgument<String>("target") == target.name) return true
     if (this.annotations.findAnnotation(RuntimeNames.exportedBridge) != null) return true
     if (this.annotations.findAnnotation(RuntimeNames.bindReverseBridgeToMethod) != null) return true
     return false

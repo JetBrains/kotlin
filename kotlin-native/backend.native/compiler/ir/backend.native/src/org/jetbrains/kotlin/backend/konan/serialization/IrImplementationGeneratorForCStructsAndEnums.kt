@@ -165,7 +165,7 @@ internal class IrImplementationGeneratorForCStructsAndEnums(
             // [kotlinx.cinterop.internal.ConstantValue.*] annotations that holds internal constant value of the
             // corresponding entry.
             val value = cEnumEntryValueTypes.firstNotNullOfOrNull {
-                enumEntry.getAnnotation(cEnumEntryValueAnnotationName.child(Name.identifier(it)))?.getValueArgument(Name.identifier("value"))
+                enumEntry.getAnnotation(cEnumEntryValueAnnotationName.child(Name.identifier(it)))?.argumentMapping[Name.identifier("value")]
             } ?: error("Enum entry ${enumEntry.fqNameWhenAvailable} has no appropriate @$cEnumEntryValueAnnotationName annotation!")
 
             enumEntry.initializerExpression = IrFactoryImpl.createExpressionBody(

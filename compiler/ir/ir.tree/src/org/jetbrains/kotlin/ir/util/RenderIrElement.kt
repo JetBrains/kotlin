@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions.ReferenceRenderingStrategy
 import org.jetbrains.kotlin.ir.util.IdSignature.CommonSignature
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.IMPLICIT_SET_PARAMETER
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
@@ -993,7 +994,7 @@ internal fun List<IrAnnotation>.filterOutSourceRetentions(options: DumpIrTreeOpt
             it.symbol.isBound &&
                     (it.symbol.owner.returnType.classifierOrNull?.owner as? IrClass)?.annotations?.any { it: IrAnnotation ->
                         it.symbol.owner.returnType.classFqName?.asString() == Retention::class.java.name &&
-                                (it.arguments.first() as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
+                                (it.argumentMapping[Name.identifier(Retention::value.name)] as? IrGetEnumValue)?.symbol?.owner?.name?.asString() == AnnotationRetention.SOURCE.name
                     } == true
         }
     }

@@ -398,10 +398,10 @@ open class IrFileSerializer(
     // Serializes all annotations, even having SOURCE retention, since they might be needed in backends, like @Volatile
     private fun serializeAnnotations(annotations: List<IrAnnotation>, parent: IrElement?) =
         annotations.map {
-            for (param in it.arguments) {
-                if (param != null) {
-                    require(param.isValidConstantAnnotationArgument()) {
-                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${param.render()}"
+            for (argument in it.argumentMapping.values) {
+                if (argument != null) {
+                    require(argument.isValidConstantAnnotationArgument()) {
+                        "This is a compiler bug, please report it to https://kotl.in/issue : parameter value of an annotation constructor must be a const:\nCALL: ${it.render()}\nPARAM: ${argument.render()}"
                     }
                 }
             }

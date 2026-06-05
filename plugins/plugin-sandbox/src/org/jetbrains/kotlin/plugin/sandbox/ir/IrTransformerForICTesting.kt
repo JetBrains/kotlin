@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.name.CallableId
@@ -43,8 +44,7 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
     }
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-        val annotationArgument = declaration.getAnnotation(ANNOTATION_FQ_NAME)?.arguments?.firstOrNull() ?: return
-        val argumentString = (annotationArgument as? IrConst)?.value as? String ?: return
+        val argumentString = declaration.getAnnotation(ANNOTATION_FQ_NAME)?.getConstArgument<String>("functionName") ?: return
         val callableId = run {
             val packageFqName = FqName.fromSegments(argumentString.substringBeforeLast('.').split("."))
             val functionName = Name.identifier(argumentString.substringAfterLast('.'))

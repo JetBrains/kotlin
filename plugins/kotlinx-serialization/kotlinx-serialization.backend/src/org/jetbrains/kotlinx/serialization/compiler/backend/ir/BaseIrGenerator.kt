@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
@@ -77,25 +78,25 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
     }
 
 
-    private fun getClassListFromFileAnnotation(annotationFqName: FqName): List<IrClassSymbol> {
+    private fun getClassListFromFileAnnotation(annotationFqName: FqName, annotationParamName: String): List<IrClassSymbol> {
         val annotation = currentClass.fileParent.annotations.findAnnotation(annotationFqName) ?: return emptyList()
-        val vararg = annotation.arguments[0] as? IrVararg ?: return emptyList()
+        val vararg = annotation.argumentMapping[Name.identifier(annotationParamName)] as? IrVararg ?: return emptyList()
         return vararg.elements
             .mapNotNull { (it as? IrClassReference)?.symbol as? IrClassSymbol }
     }
 
     val contextualKClassListInCurrentFile: Set<IrClassSymbol> by lazy {
         getClassListFromFileAnnotation(
-            SerializationAnnotations.contextualFqName,
+            SerializationAnnotations.contextualFqName, "serializableClass"
         ).plus(
             getClassListFromFileAnnotation(
-                SerializationAnnotations.contextualOnFileFqName,
+                SerializationAnnotations.contextualOnFileFqName, "forClasses"
             )
         ).toSet()
     }
 
     val additionalSerializersInScopeOfCurrentFile: Map<Pair<IrClassSymbol, Boolean>, IrClassSymbol> by lazy {
-        getClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName)
+        getClassListFromFileAnnotation(SerializationAnnotations.additionalSerializersFqName, "serializerClasses")
             .associateBy(
                 { serializerSymbol ->
                     val kotlinType = getAllSubstitutedSupertypes(serializerSymbol.owner).find(IrType::isKSerializer)?.arguments?.firstOrNull()?.typeOrNull

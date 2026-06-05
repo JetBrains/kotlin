@@ -1493,7 +1493,7 @@ class IrSourcePrinterVisitor(
         }
         append(annotationClassName)
 
-        if (irAnnotation.arguments.isEmpty()) return
+        if (irAnnotation.argumentMapping.isEmpty()) return
 
         val valueParameterNames = irAnnotation.getValueParameterNamesForDebug()
         var first = true

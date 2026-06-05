@@ -770,9 +770,8 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
                 .constructClassType()
                 .toFirResolvedTypeRef()
             argumentMapping = buildAnnotationArgumentMapping {
-                for ([i, argument] in this@toFirAnnotation.arguments.withIndex()) {
+                for ([argName, argument] in this@toFirAnnotation.argumentMapping) {
                     if (argument == null) continue
-                    val argName = this@toFirAnnotation.classSymbol.owner.primaryConstructor!!.parameters[i].name
                     this.mapping[argName] = argument.toFirExpression()
                 }
             }

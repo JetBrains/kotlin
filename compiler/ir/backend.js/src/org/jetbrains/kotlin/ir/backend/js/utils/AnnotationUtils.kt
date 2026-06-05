@@ -9,8 +9,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrClassReference
-import org.jetbrains.kotlin.ir.expressions.IrConst
-import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.FqName
@@ -35,32 +33,26 @@ object JsAnnotations {
     val JsPolyfillFqn = FqName("kotlin.js.JsPolyfill")
 }
 
-fun IrAnnotation.getSingleConstStringArgument() =
-    (arguments[0] as IrConst).value as String
-
-fun IrAnnotation.getSingleConstBooleanArgument() =
-    (arguments[0] as IrConst).value as Boolean
-
 fun IrAnnotationContainer.getJsModule(): String? =
-    getAnnotation(JsAnnotations.jsModuleFqn)?.getSingleConstStringArgument()
+    getAnnotation(JsAnnotations.jsModuleFqn)?.getConstArgument("import")
 
 fun IrAnnotationContainer.isJsNonModule(): Boolean =
     hasAnnotation(JsAnnotations.jsNonModuleFqn)
 
 fun IrAnnotationContainer.getJsQualifier(): String? =
-    getAnnotation(JsAnnotations.jsQualifierFqn)?.getSingleConstStringArgument()
+    getAnnotation(JsAnnotations.jsQualifierFqn)?.getConstArgument("value")
 
 fun IrFile.getJsFileName(): String? =
-    getAnnotation(JsAnnotations.jsFileNameFqn)?.getSingleConstStringArgument()
+    getAnnotation(JsAnnotations.jsFileNameFqn)?.getConstArgument("name")
 
 fun IrAnnotationContainer.getJsName(): String? =
-    getAnnotation(JsAnnotations.jsNameFqn)?.getSingleConstStringArgument()
+    getAnnotation(JsAnnotations.jsNameFqn)?.getConstArgument("name")
 
 fun IrAnnotationContainer.getJsSymbol(): String? =
-    getAnnotation(JsAnnotations.jsSymbolFqn)?.getSingleConstStringArgument()
+    getAnnotation(JsAnnotations.jsSymbolFqn)?.getConstArgument("name")
 
 fun IrAnnotationContainer.getDeprecated(): String? =
-    getAnnotation(StandardNames.FqNames.deprecated)?.getSingleConstStringArgument()
+    getAnnotation(StandardNames.FqNames.deprecated)?.getConstArgument("message")
 
 fun IrAnnotationContainer.hasJsPolyfill(): Boolean =
     hasAnnotation(JsAnnotations.JsPolyfillFqn)
@@ -78,7 +70,7 @@ fun IrAnnotationContainer.isJsNoRuntime(): Boolean =
     hasAnnotation(JsStandardClassIds.Annotations.JsNoRuntime)
 
 fun IrAnnotationContainer.couldBeConvertedToExplicitExport(): Boolean? =
-    getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getSingleConstBooleanArgument()
+    getAnnotation(JsAnnotations.jsImplicitExportFqn)?.getConstArgument("couldBeConvertedToExplicitExport")
 
 fun IrAnnotationContainer.isJsExportDefault(): Boolean =
     annotations.any {
@@ -152,6 +144,7 @@ val IrClass.isAssociatedObjectAnnotatedAnnotation: Boolean
 
 fun IrAnnotation.associatedObject(): IrClass? {
     if (!classSymbol.owner.isAssociatedObjectAnnotatedAnnotation) return null
-    val klass = ((arguments[0] as? IrClassReference)?.symbol as? IrClassSymbol)?.owner ?: return null
+    val classReference = argumentMapping.values.single() as? IrClassReference
+    val klass = (classReference?.symbol as? IrClassSymbol)?.owner ?: return null
     return if (klass.isObject) klass else null
 }
