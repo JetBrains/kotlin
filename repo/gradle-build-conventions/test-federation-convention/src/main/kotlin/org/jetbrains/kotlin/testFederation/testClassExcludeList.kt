@@ -35,8 +35,8 @@ class TestClassScanningContext(
 
 internal fun TestClassScanningContext.isTestClassExcluded(file: File, currentBatch: Int, totalBatches: Int): Boolean {
     if (file.extension != "class") return false
-    val className = file.invariantSeparatorsPath.removeSuffix(file.extension)
-    val classNode = findClassNode(className) ?: return false
+    val className = file.invariantSeparatorsPath.removeSuffix(".${file.extension}")
+    val classNode = findClassNode(className) ?: error("Failed to resolve class '$className'")
 
     /* No need to add something to the exclude list if it does not contain any tests */
     if (containsTests(classNode)) {

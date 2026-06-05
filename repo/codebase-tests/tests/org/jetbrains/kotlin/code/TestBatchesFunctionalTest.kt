@@ -315,6 +315,7 @@ class TestBatchesFunctionalTest {
         return GradleRunner.create()
             .withProjectDir(Path("").toAbsolutePath().toFile())
             .withEnvironment(System.getenv() + environment)
+            .forwardOutput()
             .withTestKitDir(File(System.getProperty("gradle.user.home") ?: error("Missing 'gradle.user.home'")))
     }
 
