@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2026 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -120,7 +120,8 @@ private val DIAGNOSTIC_FACTORY_TO_RENDERER by lazy {
 
         put(ErrorsJs.JS_EXTERNAL_ARGUMENT,
             "Expected argument with external type, but type {0} is non-external",
-            Renderers.RENDER_TYPE)
+            RENDER_TYPE
+        )
 
         this
     }
