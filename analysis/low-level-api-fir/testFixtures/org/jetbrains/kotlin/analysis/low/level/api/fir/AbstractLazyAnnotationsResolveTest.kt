@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotation
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationList
 import org.jetbrains.kotlin.analysis.api.symbols.KaDebugRenderer
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.LLSourceLikeTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -24,10 +25,7 @@ import org.jetbrains.kotlin.fir.renderer.FirErrorExpressionExtendedRenderer
 import org.jetbrains.kotlin.fir.renderer.FirRenderer
 import org.jetbrains.kotlin.fir.renderer.FirResolvePhaseRenderer
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.psi.KtAnnotated
-import org.jetbrains.kotlin.psi.KtDeclaration
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtProperty
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.StringDirective
@@ -57,9 +55,13 @@ abstract class AbstractLazyAnnotationsResolveTest : AbstractFirLazyDeclarationRe
             analyzeForTest(mainFile) {
                 val symbol = when (psiElement) {
                     null if firElement is FirBackingField -> {
-                        val ktProperty = firElement.psi as KtProperty
-                        val propertySymbol = ktProperty.symbol as KaPropertySymbol
-                        propertySymbol.backingFieldSymbol!!
+                        val variableSymbol = when (val psi = firElement.psi) {
+                            is KtProperty -> psi.symbol as KaPropertySymbol
+                            is KtParameter -> (psi.symbol as KaValueParameterSymbol).generatedPrimaryConstructorProperty!!
+                            else -> error("Unexpected psi element: $psi")
+                        }
+
+                        variableSymbol.backingFieldSymbol!!
                     }
                     is KtFile -> psiElement.symbol
                     is KtDeclaration -> psiElement.symbol
