@@ -4,8 +4,8 @@ import java.util.zip.ZipFile
 
 val isTeamcityBuild = project.hasProperty("teamcity") || System.getenv("TEAMCITY_VERSION") != null
 
-val distDir: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
+val distDir = rootProject.extra["distDir"] as String
+val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 
 val checkMavenArtifacts = tasks.register("checkMavenArtifacts") {
     val repoDir = rootProject.layout.buildDirectory.dir("repo")

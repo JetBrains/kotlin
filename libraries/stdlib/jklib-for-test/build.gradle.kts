@@ -9,12 +9,12 @@ project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
 
 val stdlibProjectDir = file("$rootDir/libraries/stdlib")
 
-val jklibCompilerClasspath by configurations.creating {
+val jklibCompilerClasspath = configurations.create("jklibCompilerClasspath") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
 
-val substrateStdlibCompilerDependencies by configurations.creating {
+val substrateStdlibCompilerDependencies = configurations.create("substrateStdlibCompilerDependencies") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }
@@ -37,7 +37,7 @@ dependencies {
 
 val outputKlib = layout.buildDirectory.file("libs/kotlin-stdlib-jvm-ir.klib")
 
-val copyMinimalSources by tasks.registering(Sync::class) {
+val copyMinimalSources = tasks.register("copyMinimalSources", Sync::class) {
     dependsOn(":prepare:build.version:writeStdlibVersion")
     into(layout.buildDirectory.dir("src/genesis-minimal"))
 
@@ -199,7 +199,7 @@ fun JavaExec.configureJklibCompilation(
 
 
 
-val compileStdlib by tasks.registering(JavaExec::class) {
+val compileStdlib = tasks.register("compileStdlib", JavaExec::class) {
     val javaToolchains = project.extensions.getByType(JavaToolchainService::class.java)
     javaLauncher.set(javaToolchains.launcherFor {
         languageVersion.set(JavaLanguageVersion.of(8))
@@ -209,15 +209,15 @@ val compileStdlib by tasks.registering(JavaExec::class) {
     args("-nowarn")
 }
 
-val compileMinimalStdlib by tasks.registering {
+val compileMinimalStdlib = tasks.register("compileMinimalStdlib") {
     dependsOn(compileStdlib)
 }
 
-val distJKlib by configurations.creating {
+val distJKlib = configurations.create("distJKlib") {
     isCanBeConsumed = true
     isCanBeResolved = false
 }
-val distMinimalJKlib by configurations.creating {
+val distMinimalJKlib = configurations.create("distMinimalJKlib") {
     isCanBeConsumed = true
     isCanBeResolved = false
     extendsFrom(distJKlib)

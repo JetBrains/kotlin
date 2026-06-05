@@ -3,8 +3,8 @@ plugins {
     application
 }
 
-val runtimeOnly by configurations
-val compileOnly by configurations
+val runtimeOnly = configurations.getByName("runtimeOnly")
+val compileOnly = configurations.getByName("compileOnly")
 runtimeOnly.extendsFrom(compileOnly)
 
 dependencies {

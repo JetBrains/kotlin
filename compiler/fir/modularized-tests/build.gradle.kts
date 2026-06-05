@@ -13,7 +13,7 @@ repositories {
     mavenLocal()
 }
 
-val composeCompilerPlugin by configurations.creating
+val composeCompilerPlugin = configurations.create("composeCompilerPlugin")
 
 dependencies {
     testFixturesImplementation(intellijCore())

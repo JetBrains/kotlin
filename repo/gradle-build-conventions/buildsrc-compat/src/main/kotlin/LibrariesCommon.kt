@@ -15,7 +15,6 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.kotlin.dsl.*
 import org.gradle.process.CommandLineArgumentProvider
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 @JvmOverloads
@@ -90,7 +89,7 @@ fun Project.manifestAttributes(
     )
 
     if (component != null) {
-        val kotlinLanguageVersion: String by rootProject.extra
+        val kotlinLanguageVersion = rootProject.extra["kotlinLanguageVersion"] as String
         manifest.attributes(
             "Kotlin-Runtime-Component" to component,
             "Kotlin-Version" to kotlinLanguageVersion

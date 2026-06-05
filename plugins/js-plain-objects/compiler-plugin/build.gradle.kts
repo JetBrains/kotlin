@@ -12,7 +12,7 @@ plugins {
     id("test-inputs-check")
 }
 
-val jsoIrRuntimeForTests by configurations.creating {
+val jsoIrRuntimeForTests = configurations.create("jsoIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)

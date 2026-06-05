@@ -6,7 +6,7 @@ plugins {
     kotlin("multiplatform")
 }
 
-val benchmarksAnalyzerExecutable by configurations.creating {
+val benchmarksAnalyzerExecutable = configurations.create("benchmarksAnalyzerExecutable") {
     isCanBeConsumed = true
     isCanBeResolved = false
     attributes {

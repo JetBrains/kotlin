@@ -12,7 +12,7 @@ plugins {
     `java-base`
 }
 
-val runtimeElements by configurations.creating {
+val runtimeElements = configurations.create("runtimeElements") {
     isCanBeResolved = false
     isCanBeConsumed = true
     attributes {
@@ -20,7 +20,7 @@ val runtimeElements by configurations.creating {
     }
 }
 
-val toolsJarStubs by tasks.registering {
+val toolsJarStubs = tasks.register("toolsJarStubs") {
     val toolsJarFile = toolsJar().singleFile
     inputs.file(toolsJarFile)
 

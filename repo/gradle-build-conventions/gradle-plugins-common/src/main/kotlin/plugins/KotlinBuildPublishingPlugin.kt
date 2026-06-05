@@ -51,8 +51,8 @@ class KotlinBuildPublishingPlugin @Inject constructor(
         kotlinLibraryComponent.addVariantsFromConfiguration(publishedRuntime) { mapToMavenScope("runtime") }
 
         pluginManager.withPlugin("java-base") {
-            val runtimeElements by configurations
-            val apiElements by configurations
+            val runtimeElements = configurations.getByName("runtimeElements")
+            val apiElements = configurations.getByName("apiElements")
 
             publishedRuntime.extendsFrom(runtimeElements)
             publishedCompile.extendsFrom(apiElements)
@@ -166,16 +166,16 @@ fun Project.configureDefaultPublishing(
                     ?: project.findProperty("kotlin.build.deploy-path")?.toString()?.takeIf { it.isNotBlank() }
                         ?.let { "${project.rootProject.layout.projectDirectory.dir(it).asFile.toURI()}" }
 
-                val repoUrl: String by extra(
+                val repoUrl: String =
                     (deployRepoUrl ?: "${project.rootProject.layout.buildDirectory.dir("repo").get().asFile.toURI()}")
-                )
+                extra.set("repoUrl", repoUrl)
 
-                val username: String? by extra(
+                val username: String? =
                     project.findProperty("kotlin.build.deploy-username")?.toString() ?: project.findProperty("kotlin.${repo}.user")?.toString()
-                )
-                val password: String? by extra(
+                extra.set("username", username)
+                val password: String? =
                     project.findProperty("kotlin.build.deploy-password")?.toString() ?: project.findProperty("kotlin.${repo}.password")?.toString()
-                )
+                extra.set("password", password)
 
                 setUrl(repoUrl)
                 if (url.scheme != "file" && username != null && password != null) {

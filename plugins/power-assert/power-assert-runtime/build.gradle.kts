@@ -15,7 +15,7 @@ plugins {
 
 description = "Kotlin Power-Assert Runtime"
 
-val emptyJavadocJar by tasks.registering(Jar::class) {
+val emptyJavadocJar = tasks.register("emptyJavadocJar", Jar::class) {
     archiveClassifier = "javadoc"
 }
 

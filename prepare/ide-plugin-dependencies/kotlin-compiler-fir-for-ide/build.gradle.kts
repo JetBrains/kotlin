@@ -2,7 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
-val firCompilerModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+    val firCompilerModules = rootProject.extra["firCompilerModules"] as Array<String>
 
 val excludedFirModules = listOf(
     ":compiler:fir:raw-fir:light-tree2fir",

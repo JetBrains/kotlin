@@ -13,7 +13,7 @@ plugins {
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
-val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
+val sandboxAnnotationsNativeRuntimeForTests = configurations.create("sandboxAnnotationsNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -23,7 +23,7 @@ val sandboxAnnotationsNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val sandboxPluginForTests by configurations.creating
+val sandboxPluginForTests = configurations.create("sandboxPluginForTests")
 
 dependencies {
     compileOnly(project(":compiler:fir:cones"))

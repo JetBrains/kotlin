@@ -21,8 +21,9 @@ fun Project.generator(
     sourceSet: SourceSet,
     inputKind: GeneratorInputKind = SourceSetJar,
     configure: JavaExec.() -> Unit = {}
-): PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> = PropertyDelegateProvider { _, property ->
-    generator(property.name, fqName, sourceSet, inputKind, configure)
+): PropertyDelegateProvider<Any?, kotlin.properties.ReadOnlyProperty<Any?, TaskProvider<JavaExec>>> = PropertyDelegateProvider { _, property ->
+    val provider = generator(property.name, fqName, sourceSet, inputKind, configure)
+    kotlin.properties.ReadOnlyProperty { _, _ -> provider }
 }
 
 fun Project.generator(

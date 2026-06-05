@@ -24,6 +24,6 @@ sourceSets {
     "test" { none() }
 }
 
-val checkForeignClassUsage by tasks.registering(CheckForeignClassUsageTask::class) {
+val checkForeignClassUsage = tasks.register("checkForeignClassUsage", CheckForeignClassUsageTask::class) {
     outputFile = file("api/language-targets-api.foreign")
 }

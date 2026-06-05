@@ -2,8 +2,10 @@ plugins {
     kotlin("jvm")
 }
 
-val commonCompilerModules: Array<String> by rootProject.extra
-val analysisApiModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+    val commonCompilerModules = rootProject.extra["commonCompilerModules"] as Array<String>
+@Suppress("UNCHECKED_CAST")
+    val analysisApiModules = rootProject.extra["analysisApiModules"] as Array<String>
 
 val excludedAnalysisApiModules = listOf(
     ":analysis:decompiled",

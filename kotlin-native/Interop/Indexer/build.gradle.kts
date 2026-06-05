@@ -12,7 +12,7 @@ plugins {
     id("native-dependencies")
 }
 
-val testCppRuntime by configurations.creating {
+val testCppRuntime = configurations.create("testCppRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {

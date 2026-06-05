@@ -26,7 +26,7 @@ kotlin {
         mingwMain {
             kotlin.srcDir("src/main/kotlin-native/mingw")
         }
-        val posixMain by creating {
+        val posixMain = create("posixMain") {
             dependsOn(nativeMain.get())
             kotlin.srcDir("src/main/kotlin-native/posix")
         }

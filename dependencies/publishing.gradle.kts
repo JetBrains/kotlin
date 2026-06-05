@@ -6,7 +6,7 @@ buildscript {
 
 apply(plugin = "maven-publish")
 
-val archives by configurations
+val archives = configurations.getByName("archives")
 
 configure<PublishingExtension> {
     publications {

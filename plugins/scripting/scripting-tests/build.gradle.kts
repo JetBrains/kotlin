@@ -5,7 +5,7 @@ plugins {
     id("project-tests-convention")
 }
 
-val scriptingTestDefinition by configurations.creating
+val scriptingTestDefinition = configurations.create("scriptingTestDefinition")
 
 dependencies {
     testFixturesApi(project(":kotlin-scripting-jvm"))

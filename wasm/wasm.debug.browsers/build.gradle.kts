@@ -25,19 +25,19 @@ dependencies {
     implicitDependencies("org.nodejs:node:$nodejsVersion:darwin-arm64@tar.gz")
 }
 
-val cleanBuild by tasks.registering(Delete::class) {
+val cleanBuild = tasks.register("cleanBuild", Delete::class) {
     group = "build"
 
     delete = setOf("build")
 }
 
-val cleanNpm by tasks.registering(Delete::class) {
+val cleanNpm = tasks.register("cleanNpm", Delete::class) {
     group = "build"
 
     delete = setOf("node_modules")
 }
 
-val npmBuild by tasks.registering(NpxTask::class) {
+val npmBuild = tasks.register("npmBuild", NpxTask::class) {
     group = "build"
 
     dependsOn(tasks.npmInstall)

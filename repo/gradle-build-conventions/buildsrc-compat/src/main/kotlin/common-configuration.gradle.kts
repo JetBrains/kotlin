@@ -16,7 +16,7 @@ plugins {
 }
 
 // Common Group and version
-val kotlinVersion: String by rootProject.extra
+val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 group = "org.jetbrains.kotlin"
 version = kotlinVersion
 
@@ -56,13 +56,15 @@ fun Project.configureJavaCompile() {
     }
 }
 
-val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
-val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+val projectsUsedInIntelliJKotlinPlugin = rootProject.extra["projectsUsedInIntelliJKotlinPlugin"] as Array<String>
+val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin = rootProject.extra["kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin"] as String
 
 fun Project.configureKotlinCompilationOptions() {
     plugins.withType<KotlinBasePluginWrapper> {
-        val kotlinLanguageVersion: String by rootProject.extra
-        val renderDiagnosticNames by extra(project.kotlinBuildProperties.renderDiagnosticNames.get())
+        val kotlinLanguageVersion = rootProject.extra["kotlinLanguageVersion"] as String
+        val renderDiagnosticNames = project.kotlinBuildProperties.renderDiagnosticNames.get()
+        extra.set("renderDiagnosticNames", renderDiagnosticNames)
 
         tasks.withType<KotlinCompilationTask<*>>().configureEach {
             compilerOptions {
@@ -123,7 +125,8 @@ fun Project.configureKotlinCompilationOptions() {
             }
         }
 
-        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib: List<String> by rootProject.extra
+        @Suppress("UNCHECKED_CAST")
+        val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib = rootProject.extra["projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib"] as List<String>
 
         tasks.withType<KotlinJvmCompile>().configureEach {
             compilerOptions {
@@ -395,7 +398,8 @@ fun Project.configureTests() {
     }
     // Aggregate task for build related checks
     tasks.register("checkBuild")
-    val mppProjects: List<String> by rootProject.extra
+    @Suppress("UNCHECKED_CAST")
+    val mppProjects = rootProject.extra["mppProjects"] as List<String>
     if (path !in mppProjects) {
         configureTestRetriesForTestTasks()
     }

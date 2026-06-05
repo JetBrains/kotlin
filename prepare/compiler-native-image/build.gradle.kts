@@ -13,7 +13,7 @@ plugins {
     id("test-inputs-check")
 }
 
-val nativeImageClasspath by configurations.creating {
+val nativeImageClasspath = configurations.create("nativeImageClasspath") {
     isCanBeConsumed = false
     isCanBeResolved = true
 }

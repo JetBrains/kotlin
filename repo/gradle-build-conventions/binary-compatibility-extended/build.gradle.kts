@@ -25,7 +25,7 @@ dependencies {
     compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }
 
-val generateBcvProperties by tasks.registering {
+val generateBcvProperties = tasks.register("generateBcvProperties") {
     val generatedSrcDir = layout.buildDirectory.dir("src/generated/kotlin")
     outputs.dir(generatedSrcDir).withPropertyName("generatedSrcDir")
     outputs.cacheIf { true }

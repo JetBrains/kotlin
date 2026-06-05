@@ -1,8 +1,8 @@
 @file:Suppress("UnstableApiUsage")
 
 
-val distDir: String by extra
-val ideaSandboxDir: File by extra
+val distDir: String get() = extra["distDir"] as String
+val ideaSandboxDir: File get() = extra["ideaSandboxDir"] as File
 val ideaSdkPath: String
     get() = rootProject.ideaHomePathForTests().get().asFile.absolutePath
 

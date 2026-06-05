@@ -3,11 +3,11 @@
 import java.io.File
 
 val buildVersionFilePath = layout.buildDirectory.file("build.txt")
-val buildVersion by configurations.creating
-val buildNumber: String by rootProject.extra
-val kotlinVersion: String by rootProject.extra
+val buildVersion = configurations.create("buildVersion")
+val buildNumber = rootProject.extra["buildNumber"] as String
+val kotlinVersion = rootProject.extra["kotlinVersion"] as String
 
-val writeBuildNumber by tasks.registering {
+val writeBuildNumber = tasks.register("writeBuildNumber") {
     val versionFile = buildVersionFilePath
     val buildNumber = buildNumber
     inputs.property("version", buildNumber)
@@ -26,7 +26,7 @@ artifacts.add(buildVersion.name, buildVersionFilePath) {
 
 
 
-val writeStdlibVersion by tasks.registering {
+val writeStdlibVersion = tasks.register("writeStdlibVersion") {
     val kotlinVersionLocal = kotlinVersion
     val versionFile = rootDir.resolve("libraries/stdlib/src/kotlin/util/KotlinVersion.kt")
     inputs.property("version", kotlinVersionLocal)
@@ -55,8 +55,8 @@ val writeStdlibVersion by tasks.registering {
     }
 }
 
-val writePluginVersion by tasks.registering // Remove this task after removing usages in the TeamCity build
+val writePluginVersion = tasks.register("writePluginVersion") // Remove this task after removing usages in the TeamCity build
 
-val writeVersions by tasks.registering {
+val writeVersions = tasks.register("writeVersions") {
     dependsOn(writeBuildNumber, writeStdlibVersion)
 }

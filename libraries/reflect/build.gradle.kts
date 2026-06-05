@@ -34,10 +34,10 @@ publish()
 val core = "$rootDir/core"
 val relocatedCoreSrc = "${layout.buildDirectory.get().asFile}/core-relocated"
 
-val proguardDeps by configurations.creating
-val proguardAdditionalInJars by configurations.creating
+val proguardDeps = configurations.create("proguardDeps")
+val proguardAdditionalInJars = configurations.create("proguardAdditionalInJars")
 
-val embedded by configurations
+val embedded = configurations.getByName("embedded")
 embedded.isTransitive = false
 
 configurations.getByName("compileOnly").extendsFrom(embedded)
@@ -182,7 +182,7 @@ val reflectShadowJar by task<ShadowJar> {
     }
 }
 
-val stripMetadata by tasks.registering {
+val stripMetadata = tasks.register("stripMetadata") {
     dependsOn(reflectShadowJar)
     val inputJar = provider { reflectShadowJar.get().outputs.files.singleFile }
     val outputJar = fileFrom(base.libsDirectory.asFile.get(), "${base.archivesName.get()}-$version-stripped.jar")

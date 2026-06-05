@@ -5,7 +5,7 @@ plugins {
     `lifecycle-base`
 }
 
-val benchmarksAnalyzer by configurations.creating {
+val benchmarksAnalyzer = configurations.create("benchmarksAnalyzer") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -19,12 +19,12 @@ dependencies {
 }
 
 // CI also calls this task to check that the benchmarks analyzer builds in Performance Tests
-val buildAnalyzer by tasks.registering(Sync::class) {
+val buildAnalyzer = tasks.register("buildAnalyzer", Sync::class) {
     from(benchmarksAnalyzer)
     into(layout.buildDirectory)
 }
 
-val nativeReports by configurations.creating {
+val nativeReports = configurations.create("nativeReports") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {
@@ -38,7 +38,7 @@ dependencies {
     }
 }
 
-val konanRun by tasks.registering(MergeNativeReportsTask::class) {
+val konanRun = tasks.register("konanRun", MergeNativeReportsTask::class) {
     outputReport = layout.buildDirectory.file(nativeJson)
     inputReports.from(nativeReports)
 }

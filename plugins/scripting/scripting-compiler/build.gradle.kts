@@ -8,12 +8,12 @@ plugins {
     id("test-inputs-check")
 }
 
-val kotlinxSerializationGradlePluginClasspath by configurations.creating
-val kotlinDataFrameGradlePluginClasspath by configurations.creating
-val kotlinxCoroutinesCoreGradlePluginClasspath by configurations.creating
-val kotlinAllOpenPluginJar by configurations.creating
-val kotlinScriptingCommonJar by configurations.creating
-val powerAssertCompilerPluginJar by configurations.creating
+val kotlinxSerializationGradlePluginClasspath = configurations.create("kotlinxSerializationGradlePluginClasspath")
+val kotlinDataFrameGradlePluginClasspath = configurations.create("kotlinDataFrameGradlePluginClasspath")
+val kotlinxCoroutinesCoreGradlePluginClasspath = configurations.create("kotlinxCoroutinesCoreGradlePluginClasspath")
+val kotlinAllOpenPluginJar = configurations.create("kotlinAllOpenPluginJar")
+val kotlinScriptingCommonJar = configurations.create("kotlinScriptingCommonJar")
+val powerAssertCompilerPluginJar = configurations.create("powerAssertCompilerPluginJar")
 
 dependencies {
     compileOnly(project(":compiler:frontend"))

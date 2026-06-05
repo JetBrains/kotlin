@@ -3,7 +3,7 @@ plugins {
     kotlin("jvm")
 }
 
-val antlrTool by configurations.creating
+val antlrTool = configurations.create("antlrTool")
 
 dependencies {
     antlrTool(libs.antlr)
@@ -19,7 +19,7 @@ sourceSets {
     "test" {}
 }
 
-val generateJsParser by tasks.registering(JavaExec::class) {
+val generateJsParser = tasks.register("generateJsParser", JavaExec::class) {
     val outputPackage = "org.jetbrains.kotlin.js.parser.antlr.generated"
     val outputDir = layout.projectDirectory.dir("src/${outputPackage.replace('.', '/')}").asFile
     val grammarDir = layout.projectDirectory.dir("src/main/antlr").asFile

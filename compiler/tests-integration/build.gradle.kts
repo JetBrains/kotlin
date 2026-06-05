@@ -9,10 +9,11 @@ plugins {
     //id("test-inputs-check")
 }
 
-val compilerModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+val compilerModules = rootProject.extra["compilerModules"] as Array<String>
 val otherCompilerModules = compilerModules.filter { it != path }
 
-val antLauncherJar by configurations.creating
+val antLauncherJar = configurations.create("antLauncherJar")
 
 dependencies {
     testImplementation(intellijCore())

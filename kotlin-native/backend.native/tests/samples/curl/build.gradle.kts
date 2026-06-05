@@ -33,7 +33,7 @@ kotlin {
     }
 
     sourceSets {
-        val curlMain by getting {
+        val curlMain = getByName("curlMain") {
             dependencies {
                 implementation(project(":libcurl"))
             }

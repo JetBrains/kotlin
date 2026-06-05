@@ -7,7 +7,8 @@ plugins {
     id("project-tests-convention")
 }
 
-val compilerModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+val compilerModules = rootProject.extra["compilerModules"] as Array<String>
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))

@@ -87,7 +87,7 @@ fun Project.generatedSourcesTask(
     argsProvider: JavaExec.(generationRoot: Directory) -> List<String> = { listOf(it.toString()) },
     dependOnTaskOutput: Boolean = true
 ): TaskProvider<JavaExec> {
-    val generatorClasspath: Configuration by configurations.creating
+    val generatorClasspath: Configuration = configurations.create("generatorClasspath")
 
     dependencies {
         generatorClasspath(project(generatorProject))

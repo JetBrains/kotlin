@@ -17,14 +17,14 @@ plugins {
     id("test-inputs-check")
 }
 
-val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
+val jsonJsIrRuntimeForTests = configurations.create("jsonJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
 
-val coreJsIrRuntimeForTests: Configuration by configurations.creating {
+val coreJsIrRuntimeForTests = configurations.create("coreJsIrRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
@@ -34,7 +34,7 @@ val coreJsIrRuntimeForTests: Configuration by configurations.creating {
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
 val nativeTargetName = HostManager.host.name
 
-val coreNativeRuntimeForTests by configurations.creating {
+val coreNativeRuntimeForTests = configurations.create("coreNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -44,7 +44,7 @@ val coreNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val jsonNativeRuntimeForTests by configurations.creating {
+val jsonNativeRuntimeForTests = configurations.create("jsonNativeRuntimeForTests") {
     attributes {
         attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
         // WARNING: Native target is host-dependent. Re-running the same build on another host OS may give a different result.
@@ -54,7 +54,7 @@ val jsonNativeRuntimeForTests by configurations.creating {
     }
 }
 
-val serializationPluginForTests by configurations.creating
+val serializationPluginForTests = configurations.create("serializationPluginForTests")
 
 fun DependencyHandlerScope.implicitKotlinApiDependency(notation: String) {
     implicitDependencies(notation) {
@@ -147,7 +147,7 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-val distCompat by configurations.creating {
+val distCompat = configurations.create("distCompat") {
     isCanBeResolved = false
     isCanBeConsumed = true
 }

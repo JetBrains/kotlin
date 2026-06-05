@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-val irCompilerModulesForIDE: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+    val irCompilerModulesForIDE = rootProject.extra["irCompilerModulesForIDE"] as Array<String>
 
 publishJarsForIde(irCompilerModulesForIDE.asList())

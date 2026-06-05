@@ -15,7 +15,7 @@ application {
     mainClass.set("org.jetbrains.kotlin.native.interop.gen.jvm.MainKt")
 }
 
-val testCppRuntime by configurations.creating {
+val testCppRuntime = configurations.create("testCppRuntime") {
     isCanBeConsumed = false
     isCanBeResolved = true
     attributes {

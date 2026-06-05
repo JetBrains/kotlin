@@ -2,7 +2,8 @@ plugins {
     kotlin("jvm")
 }
 
-val cliCompilerModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+    val cliCompilerModules = rootProject.extra["cliCompilerModules"] as Array<String>
 
 val excludedCliCompilerModules = listOf(
     // These modules are included into kotlin-compiler-common-for-ide

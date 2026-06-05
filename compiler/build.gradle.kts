@@ -6,7 +6,8 @@ plugins {
     id("test-inputs-check")
 }
 
-val compilerModules: Array<String> by rootProject.extra
+@Suppress("UNCHECKED_CAST")
+val compilerModules = rootProject.extra["compilerModules"] as Array<String>
 val otherCompilerModules = compilerModules.filter { it != path }
 
 dependencies {
