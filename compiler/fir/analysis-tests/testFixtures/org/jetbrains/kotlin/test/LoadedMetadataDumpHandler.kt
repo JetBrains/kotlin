@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantE
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import org.jetbrains.kotlin.wasm.resolve.WasmPlatformAnalyzerServices
 import java.io.File
 
 class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.Jvm>(
@@ -140,7 +139,7 @@ class KlibWasmJsLoadedMetadataDumpHandler(testServices: TestServices) : Abstract
     override val targetPlatform: TargetPlatform
         get() = WasmPlatforms.wasmJs
     override val platformAnalyzerServices: PlatformDependentAnalyzerServices
-        get() = WasmPlatformAnalyzerServices
+        get() = shouldNotBeCalled()
     override val dependencyKind: DependencyKind
         get() = DependencyKind.Binary
 
