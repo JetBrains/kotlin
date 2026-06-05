@@ -949,6 +949,21 @@ fun ConeKotlinType.fullyExpandedClassId(session: FirSession): ClassId? {
     return fullyExpandedType(session).classId
 }
 
+context(_: SessionHolder)
+fun ConeKotlinType.forEachClassId(f: (ClassId) -> Unit) {
+    when (this) {
+        is ConeFlexibleType -> lowerBound.forEachClassId(f)
+        is ConeDefinitelyNotNullType -> original.forEachClassId(f)
+        is ConeCapturedType -> constructor.supertypes?.forEach { it.forEachClassId(f) }
+        is ConeIntersectionType -> intersectedTypes.forEach { it.forEachClassId(f) }
+        is ConeTypeParameterType -> lookupTag.symbol.resolvedBounds.forEach { it.coneType.forEachClassId(f) }
+        is ConeLookupTagBasedType -> fullyExpandedType().classId?.let(f)
+        is ConeStubTypeForTypeVariableInSubtyping,
+        is ConeTypeVariableType,
+        is ConeIntegerLiteralType -> {}
+    }
+}
+
 @OptIn(ExperimentalContracts::class)
 fun ConeKotlinType.hasDiagnosticKind(kind: DiagnosticKind): Boolean {
     contract { returns(true) implies (this@hasDiagnosticKind is ConeErrorType) }

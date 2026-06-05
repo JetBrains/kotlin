@@ -70,3 +70,15 @@ FILE: test.kt
     public final fun flexible(a: R|kotlin/Array<kotlin/String>|, b: R|kotlin/Array<kotlin/String>|): R|kotlin/Unit| {
         ==(R|<local>/a|, Q|J|.R|/J.makeFlexible*s|<R|kotlin/Array<kotlin/String>!|>(R|<local>/b|))
     }
+    public final class Box<T> : R|kotlin/Any| {
+        public constructor<T>(item: R|T|): R|Box<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val item: R|T| = R|<local>/item|
+            public get(): R|T|
+
+    }
+    public final fun captured(box: R|Box<out kotlin/IntArray>|, box2: R|Box<out kotlin/IntArray>|): R|kotlin/Unit| {
+        ==(R|<local>/box|.R|SubstitutionOverride</Box.item: R|CapturedType(out kotlin/IntArray)|>|, R|<local>/box2|.R|SubstitutionOverride</Box.item: R|CapturedType(out kotlin/IntArray)|>|)
+    }
