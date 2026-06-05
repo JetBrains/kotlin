@@ -21,12 +21,13 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 class KonanPartialModuleDeserializer(
     kotlinIrLinker: KotlinIrLinker,
     moduleDescriptor: ModuleDescriptor,
-    override val klib: KotlinLibrary,
+    klib: KotlinLibrary,
     strategyResolver: (String) -> DeserializationStrategy,
     private val cacheDeserializationStrategy: CacheDeserializationStrategy,
 ) : BasicIrModuleDeserializer(
     linker = kotlinIrLinker,
     moduleDescriptor = moduleDescriptor,
+    klib = klib,
     strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
     libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {
