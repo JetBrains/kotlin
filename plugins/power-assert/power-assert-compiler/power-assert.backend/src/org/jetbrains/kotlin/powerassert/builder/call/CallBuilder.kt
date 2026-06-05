@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.util.deepCopyWithSymbols
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
-interface CallBuilder {
+sealed interface CallBuilder {
     val targetFunction: IrFunction
 
     fun buildCall(
