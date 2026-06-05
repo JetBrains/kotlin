@@ -587,8 +587,6 @@ internal class CodegenLlvmHelpers(private val generationState: NativeGenerationS
             ).toTypedArray()
     )
 
-    val referenceTLS = ReferenceTLS(this)
-
     private val personalityFunctionName = when (target) {
         KonanTarget.MINGW_X64 -> "__gxx_personality_seh0"
         else -> "__gxx_personality_v0"

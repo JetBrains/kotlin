@@ -29,7 +29,7 @@ import kotlin.math.min
 internal fun createLlvmDeclarations(generationState: NativeGenerationState, irModule: IrModuleFragment): LlvmDeclarations {
     val generator = DeclarationsGeneratorVisitor(generationState)
     irModule.acceptChildrenVoid(generator)
-    generationState.llvm.referenceTLS.build()
+    generator.referenceTLS.build()
     return LlvmDeclarations(generator.uniques)
 }
 
@@ -139,6 +139,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     : IrVisitorVoid(), ContextUtils {
 
     val uniques = mutableMapOf<UniqueKind, UniqueLlvmDeclarations>()
+    val referenceTLS = ReferenceTLS(llvm)
 
     class Namer(val prefix: String) {
         private val names = mutableMapOf<IrDeclaration, Name>()
@@ -415,7 +416,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
             val alignmnet = declaration.requiredAlignment(llvm)
             val storage = if (declaration.storageKind == FieldStorageKind.THREAD_LOCAL) {
                 if (declaration.type.binaryTypeIsReference()) {
-                    llvm.referenceTLS.add(alignmnet)
+                    referenceTLS.add(alignmnet)
                 } else {
                     addKotlinNonObjectThreadLocal(name, declaration.type.toLLVMType(llvm), alignmnet)
                 }
