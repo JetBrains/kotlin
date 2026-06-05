@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.backend.common.serialization.*
 import org.jetbrains.kotlin.backend.common.serialization.encodings.BinarySymbolData
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.descriptors.*
+import org.jetbrains.kotlin.descriptors.impl.ModuleDescriptorImpl
+import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
@@ -26,6 +28,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
@@ -113,6 +116,8 @@ class JKlibIrLinker(
 
         override fun contains(idSig: IdSignature): Boolean = resolveDescriptor(idSig) != null
 
+        override fun getDefinedPackageNames(): Set<FqName>? = null
+
         private val descriptorFinder = DescriptorByIdSignatureFinderImpl(
             moduleDescriptor,
             descriptorMangler,
@@ -181,6 +186,24 @@ class JKlibIrLinker(
 
         override fun contains(idSig: IdSignature): Boolean =
             super.contains(idSig) || descriptorByIdSignatureFinder.findDescriptorBySignature(idSig) != null
+
+        override fun getDefinedPackageNames(): Set<FqName> = getPackagesFqNames(moduleDescriptor)
+
+        private fun getPackagesFqNames(module: ModuleDescriptor): Set<FqName> {
+            val result = mutableSetOf<FqName>()
+            val packageFragmentProvider = (module as ModuleDescriptorImpl).packageFragmentProviderForModuleContentWithoutDependencies
+
+            fun getSubPackages(fqName: FqName) {
+                if (!packageFragmentProvider.isEmpty(fqName))
+                    result += fqName
+                val subPackages = packageFragmentProvider.getSubPackagesOf(fqName) { true }
+                subPackages.forEach { getSubPackages(it) }
+            }
+
+            getSubPackages(FqName.ROOT)
+            return result
+        }
+
 
         override fun tryDeserializeIrSymbol(
             idSig: IdSignature,

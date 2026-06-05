@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.components.KlibIrComponent
 import org.jetbrains.kotlin.library.components.irOrFail
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.protobuf.CodedInputStream
 import org.jetbrains.kotlin.protobuf.ExtensionRegistryLite
 
@@ -44,6 +45,9 @@ abstract class BasicIrModuleDeserializer(
 
     protected val fileDeserializationStates: List<FileDeserializationState>
 
+    private val _definedPackageNames = mutableSetOf<FqName>()
+    override fun getDefinedPackageNames(): Set<FqName>? = _definedPackageNames
+
     protected val moduleReversedFileIndex = hashMapOf<IdSignature, FileDeserializationState>()
 
     protected val ir: KlibIrComponent get() = klib.irOrFail
@@ -63,6 +67,7 @@ abstract class BasicIrModuleDeserializer(
                 val fileReader = IrLibraryFileFromBytes(IrKlibBytesSource(ir, i))
                 val file = fileReader.createFile(moduleFragment, fileProto, linker.fileEntryDeserializer)
 
+                _definedPackageNames += file.packageFqName
                 this += deserializeIrFile(fileProto, file, fileReader, i, this@BasicIrModuleDeserializer, allowErrorNodes)
 
                 if (!strategyResolver(file.fileEntry.name).onDemand)
@@ -71,7 +76,7 @@ abstract class BasicIrModuleDeserializer(
         }
     }
 
-    override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature) : IrSimpleFunctionSymbol =
+    override fun referenceSimpleFunctionByLocalSignature(file: IrFile, idSignature: IdSignature): IrSimpleFunctionSymbol =
         fileToDeserializerMap[file]?.symbolDeserializer?.referenceSimpleFunctionByLocalSignature(idSignature)
             ?: error("No deserializer for file $file in module ${moduleDescriptor.name}")
 
