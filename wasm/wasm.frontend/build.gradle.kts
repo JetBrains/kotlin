@@ -4,14 +4,10 @@ plugins {
 }
 
 dependencies {
-    api(project(":compiler:util"))
-    implementation(project(":compiler:container"))
-    implementation(project(":compiler:frontend"))
-    implementation(project(":compiler:resolution"))
-    implementation(project(":core:descriptors"))
-    implementation(project(":js:js.frontend"))
+    api(project(":compiler:config"))
     api(project(":wasm:wasm.config"))
-    compileOnly(intellijCore())
+    implementation(project(":compiler:frontend.common"))
+    implementation(project(":core:names"))
 }
 
 sourceSets {

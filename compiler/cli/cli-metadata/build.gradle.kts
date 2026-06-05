@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-serialization"))
     implementation(project(":kotlin-util-io"))
     implementation(project(":kotlin-build-common"))
+    implementation(project(":js:js.config"))
     implementation(project(":native:native.config"))
     implementation(project(":analysis:light-classes-base"))
     implementation(project(":js:js.config"))
