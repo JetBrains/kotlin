@@ -25,7 +25,6 @@ import org.jetbrains.kotlin.fir.resolve.FirResolvedSymbolOrigin
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 @FirBuilderDsl
@@ -70,13 +69,6 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
         )
     }
 
-
-    @Deprecated("Modification of 'classId' has no impact for FirErrorResolvedQualifierBuilder", level = DeprecationLevel.HIDDEN)
-    override var classId: ClassId?
-        get() = throw IllegalStateException()
-        set(_) {
-            throw IllegalStateException()
-        }
 }
 
 @OptIn(ExperimentalContracts::class)

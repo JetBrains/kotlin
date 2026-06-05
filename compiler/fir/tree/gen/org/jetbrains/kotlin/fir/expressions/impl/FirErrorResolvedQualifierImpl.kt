@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 @OptIn(FirIdeOnly::class, UnresolvedExpressionTypeAccess::class)
@@ -48,10 +47,6 @@ internal class FirErrorResolvedQualifierImpl(
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
-    override val classId: ClassId?
-        get() = relativeClassFqName?.let {
-    ClassId(packageFqName, it, isLocal = false)
-}
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
         annotations.forEach { it.accept(visitor, data) }

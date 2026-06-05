@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.renderer
 
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.classId
 
 open class FirResolvedQualifierRenderer {
 

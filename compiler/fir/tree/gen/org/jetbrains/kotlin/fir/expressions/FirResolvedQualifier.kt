@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeProjection
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
 /**
@@ -44,7 +43,6 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
     abstract override val annotations: List<FirAnnotation>
     abstract val packageFqName: FqName
     abstract val relativeClassFqName: FqName?
-    abstract val classId: ClassId?
     abstract val symbol: FirClassLikeSymbol<*>?
     abstract val explicitParent: FirResolvedQualifier?
     abstract val isNullableLhsForCallableReference: Boolean
