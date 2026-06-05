@@ -19,6 +19,14 @@ class C(val x: Int) {
 }
 
 @JsExport
+interface InterfaceWithCompanionWithStaticFun {
+    companion object {
+        @JsStatic
+        fun bar() = "OK"
+    }
+}
+
+@JsExport
 fun box(): String = "OK"
 
 @JsExport

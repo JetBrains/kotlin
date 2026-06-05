@@ -13,6 +13,14 @@ declare namespace JS_TESTS {
         namespace ExternalInterfaceWithCompanion {
             const x: string;
         }
+        interface ExternalInterfaceWithSelfTypedCompanion {
+        }
+        namespace ExternalInterfaceWithSelfTypedCompanion {
+            const left: foo.ExternalInterfaceWithSelfTypedCompanion;
+            const right: foo.ExternalInterfaceWithSelfTypedCompanion;
+        }
+        interface ExternalInterfaceWithIgnoredNonStaticCompanion {
+        }
     }
     namespace foo {
         interface TestInterface {
@@ -78,6 +86,25 @@ declare namespace JS_TESTS {
         }
         namespace KT83930 {
             const hello: string;
+            abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace Companion {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        private constructor();
+                    }
+                }
+            }
+        }
+        interface InterfaceWithJsStaticVar {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.InterfaceWithJsStaticVar": unique symbol;
+            };
+        }
+        namespace InterfaceWithJsStaticVar {
+            let mutable: string;
             abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
                 private constructor();
             }

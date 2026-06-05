@@ -76,6 +76,13 @@ external interface ExternalInterfaceWithCompanion {
     }
 }
 
+@JsExport
+sealed external interface SealedExternalInterfaceWithCompanion {
+    companion <!WRONG_EXPORTED_DECLARATION("external companion object")!>object<!> {
+        val left: SealedExternalInterfaceWithCompanion
+    }
+}
+
 <!MULTIPLE_JS_EXPORT_DEFAULT_IN_ONE_FILE!>@JsExport.Default
 external interface DefaultExternalInterface<!>
 

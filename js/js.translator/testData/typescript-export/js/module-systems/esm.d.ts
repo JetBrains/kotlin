@@ -141,6 +141,27 @@ export declare namespace AnInterfaceWithCompanion {
         }
     }
 }
+export declare interface InterfaceWithNamedCompanion {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.InterfaceWithNamedCompanion": unique symbol;
+    };
+}
+export declare namespace InterfaceWithNamedCompanion {
+    const staticValue: string;
+    abstract class Name extends KtSingleton<Name.$metadata$.constructor>() {
+        private constructor();
+    }
+    namespace Name {
+        /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+        namespace $metadata$ {
+            abstract class constructor {
+                get someValue(): string;
+                get constValue(): string;
+                private constructor();
+            }
+        }
+    }
+}
 export declare interface InterfaceWithCompanionWithStaticFun {
     readonly __doNotUseOrImplementIt: {
         readonly "foo.InterfaceWithCompanionWithStaticFun": unique symbol;

@@ -3,6 +3,7 @@ import ChildTestInterfaceImpl = JS_TESTS.foo.ChildTestInterfaceImpl;
 import processInterface = JS_TESTS.foo.processInterface;
 import processOptionalInterface = JS_TESTS.foo.processOptionalInterface;
 import WithTheCompanion = JS_TESTS.foo.WithTheCompanion;
+import InterfaceWithJsStaticVar = JS_TESTS.foo.InterfaceWithJsStaticVar;
 import InterfaceWithNamedCompanion = JS_TESTS.foo.InterfaceWithNamedCompanion;
 import ImplementorOfInterfaceWithDefaultArguments = JS_TESTS.foo.ImplementorOfInterfaceWithDefaultArguments;
 import SomeSealedInterface = JS_TESTS.foo.SomeSealedInterface
@@ -30,6 +31,9 @@ async function box(): Promise<string> {
 
     assert(WithTheCompanion.companionStaticFunction() == "STATIC FUNCTION")
     assert(WithTheCompanion.Companion.companionFunction() == "FUNCTION")
+    assert(InterfaceWithJsStaticVar.mutable == "INITIAL")
+    InterfaceWithJsStaticVar.mutable = "UPDATED"
+    assert(InterfaceWithJsStaticVar.mutable == "UPDATED")
     assert(InterfaceWithNamedCompanion.companionStaticFunction() == "STATIC FUNCTION")
     assert(InterfaceWithNamedCompanion.Named.companionFunction() == "FUNCTION")
 

@@ -64,15 +64,18 @@ interface AnInterfaceWithCompanion {
     }
 }
 
-// Should be uncommented when KT-82128 is done
-//@JsExport
-//interface InterfaceWithNamedCompanion {
-//    companion object Name {
-//        private val privateValue = "OK"
-//        val someValue = privateValue
-//        const val constValue = "OK"
-//    }
-//}
+// KT-82128
+@JsExport
+interface InterfaceWithNamedCompanion {
+    companion object Name {
+        private val privateValue = "OK"
+        val someValue = privateValue
+        const val constValue = "OK"
+
+        @JsStatic
+        val staticValue = "OK"
+    }
+}
 
 @JsExport
 interface InterfaceWithCompanionWithStaticFun {

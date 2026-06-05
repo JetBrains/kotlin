@@ -63,6 +63,14 @@ interface KT83930 {
 }
 
 @JsExport
+interface InterfaceWithJsStaticVar {
+    companion object {
+        @JsStatic
+        var mutable: String = "INITIAL"
+    }
+}
+
+@JsExport
 fun processOptionalInterface(a: OptionalFieldsInterface): String {
     return "${a.required}${a.notRequired ?: "unknown"}"
 }
@@ -158,5 +166,23 @@ sealed external interface ExternalInterfaceWithCompanion {
     @JsExport.Ignore
     companion object {
         @JsStatic val x: String
+    }
+}
+
+// KT-85038
+@JsExport
+sealed external interface ExternalInterfaceWithSelfTypedCompanion {
+    @JsExport.Ignore
+    companion object {
+        @JsStatic val left: ExternalInterfaceWithSelfTypedCompanion
+        @JsStatic val right: ExternalInterfaceWithSelfTypedCompanion
+    }
+}
+
+@JsExport
+external interface ExternalInterfaceWithIgnoredNonStaticCompanion {
+    @JsExport.Ignore
+    companion object {
+        fun hidden(): String
     }
 }

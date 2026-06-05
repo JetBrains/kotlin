@@ -82,6 +82,25 @@ declare namespace JS_TESTS {
                 }
             }
         }
+        interface InterfaceWithJsStaticVar {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.InterfaceWithJsStaticVar": unique symbol;
+            };
+        }
+        namespace InterfaceWithJsStaticVar {
+            let mutable: string;
+            abstract class Companion extends KtSingleton<Companion.$metadata$.constructor>() {
+                private constructor();
+            }
+            namespace Companion {
+                /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+                namespace $metadata$ {
+                    abstract class constructor {
+                        private constructor();
+                    }
+                }
+            }
+        }
         interface InterfaceWithCompanion {
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.InterfaceWithCompanion": unique symbol;
@@ -208,6 +227,14 @@ declare namespace JS_TESTS {
         }
         namespace ExternalInterfaceWithCompanion {
             const x: string;
+        }
+        interface ExternalInterfaceWithSelfTypedCompanion {
+        }
+        namespace ExternalInterfaceWithSelfTypedCompanion {
+            const left: foo.ExternalInterfaceWithSelfTypedCompanion;
+            const right: foo.ExternalInterfaceWithSelfTypedCompanion;
+        }
+        interface ExternalInterfaceWithIgnoredNonStaticCompanion {
         }
     }
 }
