@@ -32,11 +32,10 @@ class IrLazilyBoundAnnotationImpl(
     override var origin: IrStatementOrigin?,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
-    annotationClassSymbol: IrClassSymbol,
+    override val classSymbol: IrClassSymbol,
     argumentMapping: Map<Name, IrExpression>,
     private val linker: IrProvider,
 ) : IrAnnotation() {
-    override var classSymbol: IrClassSymbol = annotationClassSymbol
     override var argumentMapping: Map<Name, IrExpression>? = argumentMapping
 
     override var attributeOwnerId: IrElement = this

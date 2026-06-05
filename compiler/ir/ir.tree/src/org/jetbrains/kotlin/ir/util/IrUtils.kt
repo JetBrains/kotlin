@@ -277,6 +277,12 @@ val IrSymbol.fqNameWhenAvailable: FqName?
     get() = if (isBound) (owner as IrDeclarationWithName?)?.fqNameWhenAvailable
     else (signature as? IdSignature.CommonSignature)?.let { FqName("${it.packageFqName}.${it.declarationFqName}") }
 
+val IrClassSymbol.classIdWhenAvailable: ClassId?
+    get() = if (isBound) owner.classId
+    else (signature as? IdSignature.CommonSignature)?.let {
+        ClassId(FqName(it.packageFqName), FqName(it.declarationFqName), isLocal = false)
+    }
+
 val IrDeclarationWithName.fqNameWhenAvailable: FqName?
     get() {
         val sb = StringBuilder()

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrAnnotation
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
+import org.jetbrains.kotlin.ir.expressions.IrLazilyBoundAnnotationImpl
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -130,15 +131,13 @@ fun <S : IrSymbol> IrOverridableDeclaration<S>.overrides(other: IrOverridableDec
 }
 
 @OptIn(DeprecatedCompilerApi::class)
-fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean =
-    if (symbol.isBound) {
-        classSymbol.owner.hasEqualFqName(fqName)
-    } else {
-        symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
-    }
+fun IrAnnotation.isAnnotationWithEqualFqName(fqName: FqName): Boolean = when {
+    this is IrLazilyBoundAnnotationImpl -> classSymbol.hasEqualFqName(fqName)
+    symbol.isBound -> classSymbol.owner.hasEqualFqName(fqName)
+    else -> symbol.hasEqualFqName(fqName.child(SpecialNames.INIT))
+}
 
-val IrAnnotation.classId: ClassId
-    get() = classSymbol.owner.classIdOrFail
+val IrAnnotation.classId: ClassId get() = classSymbol.classIdWhenAvailable!!
 
 val IrClass.packageFqName: FqName?
     get() = symbol.signature?.packageFqName() ?: parent.getPackageFragment()?.packageFqName
