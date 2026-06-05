@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirIdeOnly
 import org.jetbrains.kotlin.fir.MutableOrEmptyList
 import org.jetbrains.kotlin.fir.builder.toMutableOrEmpty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
@@ -37,8 +36,8 @@ internal class FirResolvedQualifierImpl(
     @property:UnresolvedExpressionTypeAccess
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
-    override var packageFqName: FqName,
-    override var relativeClassFqName: FqName?,
+    override val packageFqName: FqName,
+    override val relativeClassFqName: FqName?,
     override val symbol: FirClassLikeSymbol<*>?,
     override var explicitParent: FirResolvedQualifier?,
     override var isNullableLhsForCallableReference: Boolean,
