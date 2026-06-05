@@ -40,7 +40,6 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType? = null
     override var resolvedToCompanionObject: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
     override var canBeValue: Boolean = false
-    override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin? = null
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
@@ -59,7 +58,6 @@ class FirResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, FirAnno
             resolvedLhsTypeForCallableReferenceOrNull,
             resolvedToCompanionObject,
             canBeValue,
-            isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
             resolvedSymbolOrigin,
             typeArguments.toMutableOrEmpty(),

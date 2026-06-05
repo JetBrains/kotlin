@@ -41,7 +41,6 @@ internal class FirErrorResolvedQualifierImpl(
     override var resolvedLhsTypeForCallableReferenceOrNull: ConeKotlinType?,
     override var resolvedToCompanionObject: Boolean,
     override var canBeValue: Boolean,
-    override val isFullyQualified: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
     override var resolvedSymbolOrigin: FirResolvedSymbolOrigin?,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,

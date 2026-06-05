@@ -52,7 +52,6 @@ abstract class FirResolvedQualifier : FirExpression(), FirQualifierWithContextSe
      * If true, the qualifier is resolved to an object or companion object and can be used as an expression.
      */
     abstract val canBeValue: Boolean
-    abstract val isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract val typeArguments: List<FirTypeProjection>

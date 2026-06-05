@@ -53,7 +53,6 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
      * If true, the qualifier is resolved to an object or companion object and can be used as an expression.
      */
     abstract override val canBeValue: Boolean
-    abstract override val isFullyQualified: Boolean
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
     abstract override val resolvedSymbolOrigin: FirResolvedSymbolOrigin?
     abstract override val typeArguments: List<FirTypeProjection>

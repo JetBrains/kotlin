@@ -1365,7 +1365,6 @@ object FirTree : AbstractFirTreeBuilder() {
         +field("canBeValue", boolean, withReplace = true) {
             kDoc = "If true, the qualifier is resolved to an object or companion object and can be used as an expression."
         }
-        +field("isFullyQualified", boolean)
         +listField("nonFatalDiagnostics", coneDiagnosticType, useMutableOrEmpty = true, withReplace = true)
         +field("resolvedSymbolOrigin", resolvedSymbolOrigin, nullable = true, withReplace = true)
         +typeArguments {
