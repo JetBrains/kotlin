@@ -63,9 +63,6 @@ tasks.named<ShadowJar>(EMBEDDABLE_COMPILER_TASK_NAME) {
     transform(DontIncludeResourceTransformer::class.java) {
         resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"
     }
-    transform(DontIncludeResourceTransformer::class.java) {
-        resource = "META-INF/services/org.jetbrains.kotlin.compiler.plugin.ComponentRegistrar"
-    }
 }
 
 sourcesJar()
