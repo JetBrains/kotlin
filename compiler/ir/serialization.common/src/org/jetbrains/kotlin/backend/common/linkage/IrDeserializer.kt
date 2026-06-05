@@ -21,7 +21,6 @@ interface IrDeserializer : IrProvider {
     }
 
     fun init(moduleFragment: IrModuleFragment?)
-    fun resolveBySignatureInModule(signature: IdSignature, kind: TopLevelSymbolKind, moduleName: Name): IrSymbol
 
     /**
      * Retrieves the symbol associated with the given signature and kind.
