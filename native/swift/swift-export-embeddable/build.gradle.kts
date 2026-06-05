@@ -66,7 +66,7 @@ dependencies {
     )
     val validateAllDependenciesWereInheritedCorrectly = inheritAndValidateExternalDependencies(
         sourceConfiguration = projectsToInheritDependenciesFrom,
-        targetConfiguration = configurations.getByName("runtimeOnly"),
+        targetConfiguration = configurations.runtimeOnly.get(),
         dependenciesToInherit = dependenciesToInherit,
     )
     validateSwiftExportEmbeddable.configure { dependsOn(validateAllDependenciesWereInheritedCorrectly) }

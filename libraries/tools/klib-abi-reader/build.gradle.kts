@@ -19,7 +19,7 @@ val proguardLibraryJars = configurations.create("proguardLibraryJars") {
     }
 }
 
-val embedded = configurations.getByName("embedded")
+val embedded = configurations.embedded.get()
 
 val relocatedJarContents = configurations.create("relocatedJarContents") {
     extendsFrom(embedded)

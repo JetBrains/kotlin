@@ -5,7 +5,6 @@
 
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 buildscript {
     @Suppress("DEPRECATION")
@@ -39,9 +38,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-val compileKotlin = tasks.getByName<KotlinCompile>("compileKotlin")
-
-compileKotlin.apply {
+tasks.compileKotlin {
     compilerOptions {
         optIn.add("kotlin.ExperimentalStdlibApi")
         freeCompilerArgs.addAll(

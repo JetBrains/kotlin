@@ -12,8 +12,7 @@ project.updateJvmTarget("1.8")
 
 val allTestsRuntime = configurations.create("allTestsRuntime")
 
-val testApi = configurations.getByName("testApi")
-testApi.extendsFrom(allTestsRuntime)
+configurations.testApi.get().extendsFrom(allTestsRuntime)
 
 val embeddableTestRuntime = configurations.create("embeddableTestRuntime") {
     extendsFrom(allTestsRuntime)

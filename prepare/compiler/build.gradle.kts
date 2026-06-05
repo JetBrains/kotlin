@@ -34,7 +34,7 @@ val compilerVersion = configurations.create("compilerVersion")
 
 val builtinsMetadata = configurations.create("builtinsMetadata")
 
-val api = configurations.getByName("api")
+val api = configurations.api.get()
 val proguardLibraries = configurations.create("proguardLibraries") {
     extendsFrom(api)
 }

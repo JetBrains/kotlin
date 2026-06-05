@@ -20,10 +20,10 @@ kotlin {
     }
 }
 
-val embedded = configurations.getByName("embedded") {
+val embedded = configurations.embedded.get().apply {
     isTransitive = false
-    configurations.getByName("compileOnly").extendsFrom(this)
-    configurations.getByName("testImplementation").extendsFrom(this)
+    configurations.compileOnly.get().extendsFrom(this)
+    configurations.testImplementation.get().extendsFrom(this)
 }
 
 dependencies {

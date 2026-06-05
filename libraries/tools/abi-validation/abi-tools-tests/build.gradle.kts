@@ -27,14 +27,14 @@ val testEmbeddableSourceSet = sourceSets.create("testEmbeddable") {
 
 // Inherit runtime configuration from the conventional `test` to get common runtime-only deps
 // we copy dependencies from the `test` source set because some of them can be added in common configurations
-configurations.getByName("sharedTestsRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("sharedTestsImplementation").extendsFrom(configurations.getByName("testImplementation"))
+configurations.getByName("sharedTestsRuntimeOnly").extendsFrom(configurations.testRuntimeOnly.get())
+configurations.getByName("sharedTestsImplementation").extendsFrom(configurations.testImplementation.get())
 
-configurations.getByName("testOriginalRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("testOriginalImplementation").extendsFrom(configurations.getByName("testImplementation"))
+configurations.getByName("testOriginalRuntimeOnly").extendsFrom(configurations.testRuntimeOnly.get())
+configurations.getByName("testOriginalImplementation").extendsFrom(configurations.testImplementation.get())
 
-configurations.getByName("testEmbeddableRuntimeOnly").extendsFrom(configurations.getByName("testRuntimeOnly"))
-configurations.getByName("testEmbeddableImplementation").extendsFrom(configurations.getByName("testImplementation"))
+configurations.getByName("testEmbeddableRuntimeOnly").extendsFrom(configurations.testRuntimeOnly.get())
+configurations.getByName("testEmbeddableImplementation").extendsFrom(configurations.testImplementation.get())
 
 
 dependencies {

@@ -626,7 +626,7 @@ val functionalTestSourceSet = sourceSets.create("functionalTest") {
     }
 }
 
-sourceSets.getByName("testFixtures") {
+sourceSets.testFixtures {
     /*
      * testFixtures source set is closer to regular dependencies,
      * so that it already has access to main and its transitive API dependencies.

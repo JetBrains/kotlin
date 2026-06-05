@@ -6,9 +6,7 @@ plugins {
     application
 }
 
-val runtimeOnly = configurations.getByName("runtimeOnly")
-val compileOnly = configurations.getByName("compileOnly")
-runtimeOnly.extendsFrom(compileOnly)
+configurations.runtimeOnly.get().extendsFrom(configurations.compileOnly.get())
 
 dependencies {
     implementation(project(":generators"))

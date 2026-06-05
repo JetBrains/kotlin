@@ -19,10 +19,10 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-val embedded = configurations.getByName("embedded")
+val embedded = configurations.embedded.get()
 embedded.isTransitive = false
-configurations.getByName("compileOnly").extendsFrom(embedded)
-configurations.getByName("testApi").extendsFrom(embedded)
+configurations.compileOnly.get().extendsFrom(embedded)
+configurations.testApi.get().extendsFrom(embedded)
 
 dependencies {
     // Should come before dependency on proguarded compiler because StringUtil methods are deleted from it
