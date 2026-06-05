@@ -448,8 +448,6 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
         }
 
         impl(resolvedQualifier) {
-            isMutable("packageFqName", "relativeClassFqName", "isNullableLhsForCallableReference")
-            additionalImports(regularClass)
         }
 
         impl(resolvedReifiedParameterReference)
