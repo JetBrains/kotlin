@@ -35,6 +35,12 @@ private fun checkStartAndEnd(
     }
 }
 
+// KT-86705
+
+val nullable: String? = ""
+val message1 = "$<!REDUNDANT_SINGLE_EXPRESSION_STRING_TEMPLATE!>nullable<!>"
+
+
 /* GENERATED_FIR_TAGS: additiveExpression, classDeclaration, comparisonExpression, data, disjunctionExpression,
 equalityExpression, functionDeclaration, ifExpression, integerLiteral, javaFunction, nullableType, primaryConstructor,
 propertyDeclaration, smartcast, stringLiteral, typeAliasDeclaration */

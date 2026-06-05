@@ -56,3 +56,7 @@ FILE: RedundantSingleExpressionStringTemplateChecker.kt
         }
 
     }
+    public final val nullable: R|kotlin/String?| = String()
+        public get(): R|kotlin/String?|
+    public final val message1: R|kotlin/String| = <strcat>(R|/nullable|)
+        public get(): R|kotlin/String|
