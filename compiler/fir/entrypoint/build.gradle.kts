@@ -36,6 +36,7 @@ dependencies {
     implementation(project(":core:deserialization"))
     implementation(project(":js:js.config"))
     implementation(project(":js:js.frontend"))
+    implementation(project(":js:js.frontend.common"))
     implementation(project(":kotlin-util-klib-metadata"))
 
     compileOnly(intellijCore())

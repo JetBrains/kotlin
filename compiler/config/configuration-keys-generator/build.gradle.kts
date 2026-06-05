@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:cli-base"))
     implementation(project(":core:language.targets.jvm"))
-    implementation(project(":js:js.frontend"))
+    implementation(project(":js:js.config"))
     implementation(project(":wasm:wasm.config"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":native:kotlin-native-utils"))

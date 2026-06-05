@@ -18,7 +18,11 @@ dependencies {
     implementation(project(":js:js.frontend"))
     implementation(project(":js:js.parser"))
     api(project(":js:js.sourcemap"))
+
+    implementation(project(":core:compiler.common.js"))
+    implementation(project(":js:js.config"))
     implementation(project(":js:js.translator"))
+    implementation(project(":js:js.parser"))
     implementation(project(":kotlin-util-klib-metadata"))
 
     // TODO(KT-79631): Remove these dependencies when we rewrite TS export to Analysis API
