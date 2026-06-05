@@ -276,7 +276,7 @@ class UklibFromKGPFragmentsTests {
                 linuxArm64()
                 linuxX64()
 
-                val customLinuxMain by sourceSets.creating
+                val customLinuxMain = sourceSets.create("customLinuxMain")
                 sourceSets.linuxArm64Main.get().dependsOn(customLinuxMain)
                 sourceSets.linuxX64Main.get().dependsOn(customLinuxMain)
             }

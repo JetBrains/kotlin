@@ -7,12 +7,13 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
-import org.gradle.kotlin.dsl.support.unzipTo
-import org.gradle.kotlin.dsl.support.zipTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.testing.WithTemporaryFolder
 import org.jetbrains.kotlin.gradle.testing.newTempDirectory
 import org.jetbrains.kotlin.gradle.testing.newTempFile
+import org.jetbrains.kotlin.gradle.util.unzipTo
+import org.jetbrains.kotlin.gradle.util.zipTo
+
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
@@ -29,6 +30,7 @@ class CompositeMetadataArtifactTest: WithTemporaryFolder {
     fun `empty jar - contains no metadataBinary and no cinteropMetadataBinaries`() {
         val primaryArtifactContent = newTempDirectory().toFile()
         val primaryArtifactFile = newTempFile("metadata.jar").toFile()
+
         zipTo(primaryArtifactFile, primaryArtifactContent)
         assertTrue(primaryArtifactFile.isFile, "Expected primaryArtifactFile.isFile")
 

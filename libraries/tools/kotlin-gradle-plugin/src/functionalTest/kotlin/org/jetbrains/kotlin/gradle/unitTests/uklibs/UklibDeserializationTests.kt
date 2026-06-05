@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.gradle.unitTests.uklibs
 
-import org.gradle.kotlin.dsl.support.unzipTo
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.IncompatibleUklibVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.UklibFragment
@@ -15,6 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.serialization.serializeToZi
 import org.jetbrains.kotlin.gradle.testing.PrettyPrint
 import org.jetbrains.kotlin.gradle.testing.prettyPrinted
 import org.jetbrains.kotlin.gradle.util.assertIsInstance
+import org.jetbrains.kotlin.gradle.util.unzipTo
 import org.jetbrains.kotlin.incremental.createDirectory
 import org.junit.jupiter.api.io.TempDir
 import kotlin.test.Test
