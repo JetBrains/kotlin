@@ -52,11 +52,14 @@ If a commit is known to affect another domain, the commit command `^affects:` ca
 ### Domains fully affecting other Domains
 
 Some domains might form a 'Domain/Subdomain' relationship, which can be expressed using 'fullyAffectedBy'.
-A domain that is fully affected by another domain will always be marked as 'affected' by a set of changes if any of the dependencies are
+A domain 'fullyAffectedBy' another domain will be marked as 'affected' by a set of changes if any of it's direct dependencies are
 marked affected. In the example above:
 
 A change which marks the 'larger Compiler domain' as affected will also mark the 'Native' domain as affected, while
 a change isolated within the 'Native' domain will not affect the 'Compiler' domain.
+
+Note: 'fullyAffectedBy' is **not** transitive. All dependencies have to be listed explicitly. 
+This allows for some modules acting as 'API' boundaries.
 
 ### Verifying the declaration: [domain.dump.txt](./domain.dump.txt)
 
