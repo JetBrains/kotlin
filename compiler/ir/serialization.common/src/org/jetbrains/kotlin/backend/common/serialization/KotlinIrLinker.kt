@@ -116,7 +116,7 @@ abstract class KotlinIrLinker(
             moduleDeserializer
         } else {
             val candidateModules = getModulesDefiningPackage(topLevelSignature.packageFqName())
-            candidateModules.firstOrNull { topLevelSignature in it }
+            candidateModules.firstOrNull { it != moduleDeserializer && topLevelSignature in it }
         }
 
         // Note: It might happen that the top-level symbol still exists in KLIB, but nested symbol has been removed.
