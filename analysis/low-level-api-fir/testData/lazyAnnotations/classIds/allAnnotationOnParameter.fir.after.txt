@@ -1,1 +1,1 @@
-public? final? [ResolvedTo(RAW_FIR)] backing field field: Int
+@R|Field|[Types]() @R|PropertyAndField|[Types]() @R|ParameterPropertyAndField|[Types]() @R|Everything|[Types]() public? final? [ResolvedTo(TYPES)] backing field field: R|kotlin/Int|

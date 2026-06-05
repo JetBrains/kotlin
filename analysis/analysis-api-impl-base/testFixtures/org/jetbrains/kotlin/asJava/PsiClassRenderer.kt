@@ -168,7 +168,6 @@ class PsiClassRenderer private constructor(
     }
 
     private fun PsiVariable.renderVar(): String {
-        type // TODO(KT-86757): drop this computation
         var result = this.renderModifiers() + type.renderType() + " " + name
         if (this is PsiParameter && this.isVarArgs) {
             result += " /* vararg */"

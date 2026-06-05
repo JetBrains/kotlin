@@ -90,8 +90,8 @@ internal class KaFirBackingFieldSymbol private constructor(
  * The compiler preserves annotations on backing fields for properties coming from libraries, so for them the FIR tree needs to be
  * checked directly. However, the FIR tree for compiled declarations is already resolved, so a direct check is virtually free.
  */
-private fun KaFirKotlinPropertySymbol<*>.mayHaveBackingFieldAnnotation(): Boolean {
-    val annotationEntries = backingPsi?.annotationEntries ?: return false
+internal fun KaFirKotlinPropertySymbol<*>.mayHaveBackingFieldAnnotation(): Boolean {
+    val annotationEntries = backingPsi?.annotationEntries ?: return true
     return annotationEntries.any {
         when (it.useSiteTarget?.getAnnotationUseSiteTarget()) {
             null, AnnotationUseSiteTarget.FIELD, AnnotationUseSiteTarget.PROPERTY_DELEGATE_FIELD, AnnotationUseSiteTarget.ALL -> true
