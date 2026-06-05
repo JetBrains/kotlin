@@ -15,21 +15,15 @@ fun RepositoryHandler.mavenCentralCacheRedirector(): MavenArtifactRepository =
     maven { it.setUrl("https://cache-redirector.jetbrains.com/maven-central") }
 
 /**
- * Resolves Kotlin build artifacts from the appropriate repository for the current environment.
+ * Resolves Kotlin build artifacts from `build/repo` via a standard `maven { url }` repository.
  *
- * When `-DkotlinBuildRepo` is set (dev machines), resolves from `build/repo` via a standard
- * `maven { url }` repository. When `maven.repo.local` is set instead (CI), falls back to
- * `mavenLocal()` pointing at that external path.
+ * The path is forwarded by the `functionalTest` task as `-DkotlinBuildRepo`. Both dev machines
+ * and CI use this same repository, so resolution behaviour is identical in both environments.
  */
 fun RepositoryHandler.kotlinBuildDeps(): MavenArtifactRepository {
     val buildRepo = System.getProperty("kotlinBuildRepo")
-    return if (buildRepo != null) {
-        // Dev: build/repo — standard remote Maven layout, resolved via the remote Maven resolver.
-        maven { it.setUrl(java.io.File(buildRepo).toURI()) }
-    } else {
-        // CI: maven.repo.local is set externally; resolve via Maven Local.
-        mavenLocal()
-    }
+        ?: error("kotlinBuildRepo is not set; functionalTest task must provide it")
+    return maven { it.url = java.io.File(buildRepo).toURI() }
 }
 
 fun Project.configureRepositoriesForTests() {

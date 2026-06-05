@@ -684,14 +684,6 @@ val acceptLicensesTask = with(androidSdkProvisioner) {
     registerAcceptLicensesTask()
 }
 
-// On dev machines (no external maven.repo.local): publish to <root>/build/repo via
-// publishAllPublicationsToMavenRepository and pass the path to the test JVM as -DkotlinBuildRepo.
-// kotlinBuildDeps() then registers a maven { url = build/repo } repository — no ~/.m2 involved.
-//
-// On CI (maven.repo.local set externally): use :install to populate that path and forward it
-// to the test JVM as -Dmaven.repo.local. kotlinBuildDeps() falls back to mavenLocal().
-val externalMavenRepoLocal: String? = providers.systemProperty("maven.repo.local").orNull
-
 tasks.withType<Test>().configureEach {
     if (!name.startsWith("functional")) return@configureEach
 
@@ -700,15 +692,12 @@ tasks.withType<Test>().configureEach {
     testClassesDirs = functionalTestSourceSet.output.classesDirs
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
-    if (externalMavenRepoLocal == null) {
-        // Dev: publish to build/repo and tell the test JVM where to find it.
-        dependsOnKotlinGradlePluginPublishToBuildRepo()
-        systemProperty("kotlinBuildRepo", rootProject.layout.buildDirectory.dir("repo").get().asFile.absolutePath)
-    } else {
-        // CI: use :install tasks to write into the pre-set maven.repo.local and forward it.
-        dependsOnKotlinGradlePluginInstall()
-        systemProperty("maven.repo.local", externalMavenRepoLocal)
-    }
+
+    // Publish Kotlin build artifacts to <root>/build/repo and tell the test JVM where to find
+    // them. Both dev and CI use the same path — no maven.repo.local involved.
+    dependsOnKotlinGradlePluginPublishToBuildRepo()
+    systemProperty("kotlinBuildRepo", rootProject.layout.buildDirectory.dir("repo").get().asFile.absolutePath)
+
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
         dependsOn(acceptLicensesTask)
