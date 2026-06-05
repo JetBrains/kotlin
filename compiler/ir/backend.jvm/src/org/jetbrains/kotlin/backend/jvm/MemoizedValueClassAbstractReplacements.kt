@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.JVM_NAME_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.storage.LockBasedStorageManager
 import org.jetbrains.kotlin.utils.addToStdlib.getOrSetIfNull
@@ -147,8 +148,9 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
     if (hasAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)) {
         val jvmExposeBoxedAnnotation = findAnnotation(JVM_EXPOSE_BOXED_ANNOTATION_FQ_NAME)
         // If name is not provided, copy the name from @JvmName annotation, if the latter is present
-        if (jvmExposeBoxedAnnotation?.arguments[0] == null) {
-            val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+        @OptIn(ExperimentalStdlibApi::class)
+        if (jvmExposeBoxedAnnotation?.argumentMapping[Name.identifier(JvmExposeBoxed::jvmName.name)] == null) {
+            val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier(JvmName::name.name)]
             if (jvmName != null) {
                 jvmExposeBoxedAnnotation?.arguments[0] = jvmName.deepCopyWithSymbols()
             }
@@ -163,7 +165,7 @@ fun List<IrAnnotation>.withJvmExposeBoxedAnnotation(declaration: IrDeclaration, 
         constructor
     ).apply {
         // Copy the name from @JvmName if it is present
-        val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.arguments[0]
+        val jvmName = declaration.getAnnotation(JVM_NAME_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier(JvmName::name.name)]
         arguments[0] = jvmName?.deepCopyWithSymbols()
             ?: IrConstImpl.string(UNDEFINED_OFFSET, UNDEFINED_OFFSET, context.irBuiltIns.stringType, "")
     }

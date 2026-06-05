@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.name
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.util.getAnnotation
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.name.FqName
 
 object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
@@ -28,9 +29,7 @@ object JsKlibFileClashChecker : JsKlibModuleChecker<IrModuleFragment> {
         for (file in module.files) {
             val jsFileNameAnnotation = file.getAnnotation(jsFileNameFqn)
             val jsFileNameAnnotationValue = jsFileNameAnnotation
-                ?.arguments
-                ?.singleOrNull()
-                ?.let { (it as? IrConst)?.value as? String }
+                ?.getConstArgument<String>("name")
 
             val finalArtifactValuableParameters = FinalArtifactValuableParameters(
                 file.packageFqName.asString(),

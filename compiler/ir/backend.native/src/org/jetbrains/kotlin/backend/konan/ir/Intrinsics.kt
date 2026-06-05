@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.konan.RuntimeNames
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.util.findAnnotation
-import org.jetbrains.kotlin.ir.util.getAnnotationStringValue
+import org.jetbrains.kotlin.ir.util.getConstArgument
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 
 fun tryGetIntrinsicType(callSite: IrFunctionAccessExpression): IntrinsicType? =
@@ -24,7 +24,7 @@ fun getIntrinsicType(callSite: IrFunctionAccessExpression) = getIntrinsicType(ca
 
 private fun getIntrinsicType(function: IrFunction): IntrinsicType {
     val annotation = function.annotations.findAnnotation(RuntimeNames.typedIntrinsicAnnotation)!!
-    val value = annotation.getAnnotationStringValue()!!
+    val value = annotation.getConstArgument<String>("kind")!!
     return IntrinsicType.valueOf(value)
 }
 

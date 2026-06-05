@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_SYNTHETIC_ANNOTATION_FQ
 import org.jetbrains.kotlin.name.JvmStandardClassIds.STRICTFP_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.JvmStandardClassIds.SYNCHRONIZED_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.annotations.JVM_THROWS_ANNOTATION_FQ_NAME
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
@@ -262,14 +263,14 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
                 ?.findAnnotation(StandardNames.FqNames.deprecatedSinceKotlin)
         if (deprecatedSinceKotlin != null) {
             val hiddenSinceArgument =
-                deprecatedSinceKotlin.getValueArgument(StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince)
+                deprecatedSinceKotlin.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedSinceKotlinHiddenSince]
                     ?: return false
             val hiddenSince = ((hiddenSinceArgument as? IrConst)?.value as? String)?.let(ApiVersion.Companion::parse)
             if (hiddenSince != null) {
                 return context.config.languageVersionSettings.apiVersion >= hiddenSince
             }
         }
-        val level = deprecated.getValueArgument(StandardClassIds.Annotations.ParameterNames.deprecatedLevel)
+        val level = deprecated.argumentMapping[StandardClassIds.Annotations.ParameterNames.deprecatedLevel]
         return level is IrGetEnumValue && level.symbol.owner.name.asString() == DeprecationLevel.HIDDEN.name
     }
 
@@ -279,7 +280,7 @@ class FunctionCodegen(private val irFunction: IrFunction, private val classCodeg
         ) return null
 
         // @Throws(vararg exceptionClasses: KClass<out Throwable>)
-        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.arguments[0] ?: return null
+        val exceptionClasses = function.getAnnotation(JVM_THROWS_ANNOTATION_FQ_NAME)?.argumentMapping[Name.identifier("exceptionClasses")] ?: return null
         return (exceptionClasses as IrVararg).elements.map { exceptionClass ->
             classCodegen.typeMapper.mapType((exceptionClass as IrClassReference).classType).internalName
         }

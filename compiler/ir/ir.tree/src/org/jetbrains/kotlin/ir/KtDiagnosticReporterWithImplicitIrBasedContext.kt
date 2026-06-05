@@ -181,7 +181,7 @@ internal class IrBasedSuppressCache : AbstractKotlinSuppressCache<IrElement>() {
                         }
                     }
 
-                    for (arg in it.arguments) {
+                    for (arg in it.argumentMapping.values) {
                         when (arg) {
                             is IrConst -> addIfStringConst(arg)
                             is IrConstantArray -> arg.elements.filterIsInstance<IrConstantPrimitive>().forEach {
