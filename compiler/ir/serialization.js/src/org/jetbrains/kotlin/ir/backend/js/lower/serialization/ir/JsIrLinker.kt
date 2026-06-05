@@ -21,8 +21,6 @@ import org.jetbrains.kotlin.ir.util.KotlinMangler
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.components.KlibIrComponent
-import org.jetbrains.kotlin.library.components.irOrFail
 import org.jetbrains.kotlin.library.isJsStdlib
 import org.jetbrains.kotlin.library.isWasmStdlib
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
@@ -76,26 +74,22 @@ class JsIrLinker(
     override fun createModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
         klib: KotlinLibrary?,
-        strategyResolver: (String) -> DeserializationStrategy
+        strategyResolver: (String) -> DeserializationStrategy,
     ): IrModuleDeserializer {
         require(klib != null) { "Expecting kotlin library" }
         val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
-        return JsModuleDeserializer(moduleDescriptor, klib.irOrFail, strategyResolver, libraryAbiVersion)
+        return JsModuleDeserializer(moduleDescriptor, klib, strategyResolver, libraryAbiVersion)
     }
 
     private val deserializedFilesInKlibOrder = mutableMapOf<IrModuleFragment, List<IrFile>>()
 
     private inner class JsModuleDeserializer(
         moduleDescriptor: ModuleDescriptor,
-        override val ir: KlibIrComponent,
+        klib: KotlinLibrary,
         strategyResolver: (String) -> DeserializationStrategy,
         libraryAbiVersion: KotlinAbiVersion,
-    ) : BasicIrModuleDeserializer(this, moduleDescriptor, strategyResolver, libraryAbiVersion) {
-
-        override val klib get() = error("'klib' is not available for ${this::class.java}")
-
-        override fun init(delegate: IrModuleDeserializer) {
-            super.init(delegate)
+    ) : BasicIrModuleDeserializer(this, moduleDescriptor, klib, strategyResolver, libraryAbiVersion) {
+        init {
             deserializedFilesInKlibOrder[moduleFragment] = fileDeserializationStates.memoryOptimizedMap { it.file }
         }
     }

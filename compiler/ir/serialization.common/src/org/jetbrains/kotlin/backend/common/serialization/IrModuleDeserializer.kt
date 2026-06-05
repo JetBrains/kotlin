@@ -109,11 +109,7 @@ abstract class IrModuleDeserializer(
 
     abstract val klib: KotlinLibrary
 
-    open fun init() = init(this)
-
     open fun postProcess() {}
-
-    open fun init(delegate: IrModuleDeserializer) {}
 
     /**
      * Schedule deserialization of the top-level declaration with the given signature in the given file.
@@ -254,10 +250,6 @@ class IrModuleDeserializerWithBuiltIns(
         if (signature != null && checkIsFunctionInterface(signature))
             computeFunctionClass(signature)
         else delegate.declareIrSymbol(symbol)
-    }
-
-    override fun init() {
-        delegate.init(this)
     }
 
     override val klib: KotlinLibrary

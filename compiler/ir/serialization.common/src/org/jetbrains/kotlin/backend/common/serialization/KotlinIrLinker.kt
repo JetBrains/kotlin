@@ -239,7 +239,6 @@ abstract class KotlinIrLinker(
             deserializersForModules[moduleFragment.name.asString()] =
                 maybeWrapWithBuiltInAndInit(moduleFragment.descriptor, currentModuleDeserializer)
         }
-        deserializersForModules.values.forEach { it.init() }
     }
 
     fun clear() {
