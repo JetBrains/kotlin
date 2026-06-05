@@ -229,6 +229,44 @@ class PrettyResultsHandler(
         val failedRegexWithTCLogger = """-\s+(.*)__launcher__Kt.runTest""".toRegex()
     }
 
+    override fun handle() {
+        super.handle()
+        // Sanity check: make sure that every expected testcase was actually executed by the test executable.
+        // Without this check a missing testcase (e.g. silently dropped from the batch) would go unnoticed
+        // as long as the executable reports no failures.
+        verifyAllTestCasesWereExecuted()
+    }
+
+    private fun verifyAllTestCasesWereExecuted() {
+        // The test report is only available when the output is parsed by the TC test output filter.
+        // For other filters there is no reliable way to enumerate the executed testcases, so skip the check.
+        val testReport = runResult.processOutput.stdOut.testReport ?: return
+        val executedTests = testReport.passedTests + testReport.failedTests + testReport.ignoredTests
+        val phaseInputs = testServices.groupingStageInputs
+
+        if (phaseInputs.size == 1) {
+            // A single (isolated) testcase is not moved into a dedicated package, so it can't be matched by package name.
+            // Just verify that exactly one testcase was executed.
+            check(executedTests.size == 1) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+                "Expected exactly one executed testcase in the batch mode, but ${executedTests.size} were executed: $executedTests"
+            }
+            return
+        }
+
+        // Each grouped testcase is moved into a dedicated package computed by `BatchingPackageInserter.computePackage`,
+        // and its launcher `runTest` function ends up in that very package. Therefore an expected testcase is considered
+        // executed if there is an executed test whose package name matches the computed package.
+        val executedPackages = executedTests.mapTo(mutableSetOf()) { it.packageName.toString() }
+        val notExecutedTestCases = phaseInputs.filter { input ->
+            BatchingPackageInserter.computePackage(input.testInfo) !in executedPackages
+        }
+        check(notExecutedTestCases.isEmpty()) { // TODO: replace with checkTestInfrastructure, so it won't be masked by IGNORE_* directives
+            "Not all expected testcases were executed. " +
+                    "Expected ${phaseInputs.size} testcase(s), but only ${phaseInputs.size - notExecutedTestCases.size} of them were actually executed. " +
+                    "The following testcase(s) were not executed: ${notExecutedTestCases.map { it.testInfo }}"
+        }
+    }
+
     override fun processNonExpectedFailure(failedResults: List<TestRunCheck.Result.Failed>) {
         val output = getLoggedRun().toString()
         val failedTests = if (testRun.runParameters.contains(TestRunParameter.WithTCTestLogger)) {
