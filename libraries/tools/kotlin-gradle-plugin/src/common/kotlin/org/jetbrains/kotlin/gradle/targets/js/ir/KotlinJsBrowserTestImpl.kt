@@ -13,6 +13,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.TaskProvider
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackBundleForKotlinJsTests
@@ -100,22 +101,20 @@ internal abstract class KotlinJsBrowserTestImpl
         body.execute(runner)
     }
 
-    override val bundleDirectory: DirectoryProperty = objects
-        .directoryProperty()
-        .convention(bundleTask.flatMap { it.outputBundleDir })
-
-    override val headless: Property<Boolean> = objects.property<Boolean>()
-        .convention(true)
-
-    override val timeout: Property<Duration> = objects.property<Duration>()
-        .convention(Duration.ofSeconds(2))
-
-    override val launchArgs: ListProperty<String> = objects.listProperty()
+    override val browserDefaults: BrowserTestRunnerConfigDsl = objects
+        .newInstance(BrowserTestRunnerConfigDsl::class.java)
+        .apply {
+            bundleDirectory.convention(bundleTask.flatMap { it.outputBundleDir })
+            headless.convention(true)
+            timeout.convention(Duration.ofSeconds(2))
+        }
 
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
-        browserLevelDsl.bundleDirectory.convention(bundleDirectory)
-        browserLevelDsl.headless.convention(headless)
-        browserLevelDsl.timeout.convention(timeout)
-        browserLevelDsl.launchArgs.convention(launchArgs)
+        with(browserDefaults) {
+            browserLevelDsl.bundleDirectory.convention(bundleDirectory)
+            browserLevelDsl.headless.convention(headless)
+            browserLevelDsl.timeout.convention(timeout)
+            browserLevelDsl.launchArgs.convention(launchArgs)
+        }
     }
 }
