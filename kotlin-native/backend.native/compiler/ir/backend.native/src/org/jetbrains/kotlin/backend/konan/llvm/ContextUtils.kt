@@ -247,9 +247,7 @@ internal class ScopeInitializersGenerationState {
     var globalEagerInitFunction: LlvmCallable? = null
     var threadLocalEagerInitFunction: LlvmCallable? = null
     fun isEmpty() = globalEagerInitFunction == null &&
-            threadLocalEagerInitFunction == null &&
-            globalInitState == null &&
-            threadLocalInitState == null
+            threadLocalEagerInitFunction == null
 }
 
 internal class InitializersGenerationState {
