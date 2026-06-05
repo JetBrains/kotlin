@@ -190,6 +190,10 @@ fun main(args: Array<String>) {
                 model("getOrBuildFir", pattern = TestGeneratorUtil.KT)
             }
 
+            testClass<AbstractSourceLikeNonLocalDeclarationResolutionTest> {
+                model("nonLocalDeclarationResolution", pattern = TestGeneratorUtil.KT_OR_KTS)
+            }
+
             testClass<AbstractInterruptingSourceLikeGetOrBuildFirTest> {
                 model("getOrBuildFirWithInterruption", pattern = TestGeneratorUtil.KT_OR_KTS)
             }

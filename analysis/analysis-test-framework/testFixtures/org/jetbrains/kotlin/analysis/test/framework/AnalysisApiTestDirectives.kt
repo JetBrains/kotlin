@@ -21,6 +21,18 @@ object AnalysisApiTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_STANDALONE by directive("Standalone implementation test should not be run")
 
     /**
+     * Forces the [main file][org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.findMainFileAndModule]
+     * into a stub-based state: its AST is unloaded and the file is served from its stub. Additionally, the test fails on any
+     * attempt to load the AST of the main file during the test execution.
+     *
+     * This makes it possible to reproduce problems that only manifest for stub-based files (files without a loaded AST), such as
+     * code paths that unexpectedly require AST loading.
+     *
+     * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.withAstLoadingAssertion
+     */
+    val STUB_BASED by directive("Run the test against a stub-based main file and fail on AST loading of the main file")
+
+    /**
      * @see org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest.findMainFile
      */
     val MAIN_FILE_NAME by stringDirective(

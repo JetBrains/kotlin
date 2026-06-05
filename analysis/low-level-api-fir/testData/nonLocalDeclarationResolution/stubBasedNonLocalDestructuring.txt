@@ -1,0 +1,15 @@
+KtClass 'A' (top-level):
+  public final? [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
+      public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|A| {
+          LAZY_super<R|kotlin/Any|>
+      }
+
+      public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+  }
+
+KtDestructuringDeclaration in 'A':
+  public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION
+
+KtDestructuringDeclaration (top-level):
+  public final [ResolvedTo(RAW_FIR)] val <error property>: <ERROR TYPE REF: Destructuring declarations are only allowed for local variables/values> = LAZY_EXPRESSION

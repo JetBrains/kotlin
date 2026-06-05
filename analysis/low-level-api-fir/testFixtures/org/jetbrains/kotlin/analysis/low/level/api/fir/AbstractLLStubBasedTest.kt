@@ -5,9 +5,6 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
-import com.intellij.openapi.util.Disposer
-import com.intellij.psi.AbstractFileViewProvider
-import com.intellij.psi.impl.PsiManagerEx
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractLLStubBasedTest.Companion.computeAstLoadingAware
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
@@ -47,14 +44,7 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         if (Directives.IGNORE_TREE_ACCESS in testServices.moduleStructure.allDirectives) return
 
-        val viewProvider = mainFile.viewProvider as AbstractFileViewProvider
-        val myPhysicalField = AbstractFileViewProvider::class.java.getDeclaredField("myPhysical").apply { isAccessible = true }
-
-        // A hack to enable AST loading assertion and allow stub requests
-        myPhysicalField.set(viewProvider, true)
-
-        mainFile.setTreeElementPointer(null)
-        testServices.assertions.assertNotNull(mainFile.stub) { "Stub should be present for unloaded file" }
+        setUpStubBasedMainFile(mainFile, testServices)
 
         val output = withAstLoadingAssertion(mainFile) {
             withResolutionFacade(mainFile) { facade ->
@@ -73,17 +63,6 @@ abstract class AbstractLLStubBasedTest<StubBasedOutput> : AbstractAnalysisApiBas
             context(facade) {
                 doAstBasedValidation(output, mainFile, mainModule, testServices)
             }
-        }
-    }
-
-    protected fun <T> withAstLoadingAssertion(file: KtFile, action: () -> T): T {
-        val virtualFile = file.virtualFile
-        val disposable = Disposer.newDisposable("AST loading assertion")
-        (file.manager as PsiManagerEx).setAssertOnFileLoadingFilter({ it == virtualFile }, disposable)
-        return try {
-            action()
-        } finally {
-            Disposer.dispose(disposable)
         }
     }
 
