@@ -18,7 +18,10 @@ import org.junit.jupiter.api.DisplayName
 open class BasicTestIncrementalCompilationIT : KmpIncrementalITBase() {
 
     override val defaultBuildOptions: BuildOptions
-        get() = super.defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
+        get() = super.defaultBuildOptions.copy(
+            logLevel = LogLevel.DEBUG,
+            nativeOptions = super.defaultBuildOptions.nativeOptions.copy(incremental = false),
+        )
 
     override val mainCompileTasks: Set<String>
         get() = setOf(
