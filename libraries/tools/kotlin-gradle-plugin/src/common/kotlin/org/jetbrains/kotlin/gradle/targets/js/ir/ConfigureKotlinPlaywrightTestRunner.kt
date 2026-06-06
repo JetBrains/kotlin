@@ -66,9 +66,7 @@ private fun KotlinPlaywrightJsTestFramework.BrowserRunnerInput.populateFrom(
     runner: KotlinBrowserTestRunnerDsl,
 ) {
     name.convention(runner.name)
-    bundleDirectory.convention(runner.bundleDirectory)
-    // TODO: KT-86715 Add ability to load test.html via dev-server, so we need to allow configuring it
-    baseUrl.convention(runner.bundleDirectory.map { it.file("test.html").asFile.toURI() })
+    testsLocation.convention(runner.testsLocation)
     timeout.convention(runner.timeout)
     headless.convention(runner.headless)
     launchArgs.convention(runner.launchArgs)

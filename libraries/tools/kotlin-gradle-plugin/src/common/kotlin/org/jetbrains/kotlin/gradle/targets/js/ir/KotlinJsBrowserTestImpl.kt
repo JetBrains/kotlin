@@ -6,17 +6,21 @@
 package org.jetbrains.kotlin.gradle.targets.js.ir
 
 import org.gradle.api.Action
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.Directory
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.targets.js.dsl.BrowserTestRunnerConfigDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinBrowserTestRunnerDsl
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBrowserTestDsl
+import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsTestsLocation
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackBundleForKotlinJsTests
+import org.jetbrains.kotlin.gradle.targets.js.testing.FileBasedKotlinJsTestDevServer
 import org.jetbrains.kotlin.gradle.targets.js.testing.locateOrRegisterBrowserTestBundleTask
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
@@ -29,7 +33,7 @@ internal abstract class KotlinBrowserTestRunner(
 ): KotlinBrowserTestRunnerDsl {
     override fun getName(): String = name
 
-    override val bundleDirectory: DirectoryProperty = objects.directoryProperty()
+    override val testsLocation: Property<KotlinJsTestsLocation> = objects.property()
     override val headless: Property<Boolean> = objects.property()
     override val timeout: Property<Duration> = objects.property()
     override val launchArgs: ListProperty<String> = objects.listProperty()
@@ -56,7 +60,11 @@ internal abstract class KotlinJsBrowserTestImpl
     private val objects: ObjectFactory,
     providers: ProviderFactory,
 ) : KotlinJsBrowserTestDsl {
+    // TODO: rename to defaultBundleTask
     override val bundleTask: TaskProvider<out WebpackBundleForKotlinJsTests> = testCompilation.locateOrRegisterBrowserTestBundleTask()
+
+    override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> =
+        bundleTask.map { KotlinDefaultJsTestLocation(it.outputBundleDir) }
 
     override val allBrowserRunners: Provider<Map<String, KotlinBrowserTestRunnerDsl>> = providers.provider {
         chromiumRunners + firefoxRunners + webkitRunners
@@ -104,17 +112,28 @@ internal abstract class KotlinJsBrowserTestImpl
     override val browserDefaults: BrowserTestRunnerConfigDsl = objects
         .newInstance(BrowserTestRunnerConfigDsl::class.java)
         .apply {
-            bundleDirectory.convention(bundleTask.flatMap { it.outputBundleDir })
+            testsLocation.convention(defaultTestsLocation)
             headless.convention(true)
             timeout.convention(Duration.ofSeconds(2))
         }
 
     private fun connectTopLevelConfigDslWithBrowserTestDsl(browserLevelDsl: KotlinBrowserTestRunnerDsl) {
         with(browserDefaults) {
-            browserLevelDsl.bundleDirectory.convention(bundleDirectory)
+            browserLevelDsl.testsLocation.convention(testsLocation)
             browserLevelDsl.headless.convention(headless)
             browserLevelDsl.timeout.convention(timeout)
             browserLevelDsl.launchArgs.convention(launchArgs)
         }
     }
+}
+
+internal class KotlinDefaultJsTestLocation(
+    @get:InputDirectory
+    override val bundleLocation: Provider<Directory>
+) : KotlinJsTestsLocation {
+
+    @get:Internal
+    override val devServer: Provider<FileBasedKotlinJsTestDevServer> = bundleLocation
+        .map { it.file("test.html") }
+        .map { FileBasedKotlinJsTestDevServer(it.asFile.toPath()) }
 }
