@@ -6,14 +6,21 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
+import org.jetbrains.kotlin.builtins.jvm.JvmBuiltInsSignatures
 import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ConstructorDescriptor
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
+import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
 import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
+import org.jetbrains.kotlin.load.kotlin.internalName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.scopes.MemberScope
+import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import kotlin.jvm.internal.CallableReference.NO_RECEIVER
 import kotlin.metadata.ClassKind
@@ -28,6 +35,7 @@ import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.areEqualKTypes
+import java.lang.Deprecated as JavaLangDeprecated
 
 private const val ENUM_ENTRIES_PROPERTY_NAME = "entries"
 
@@ -76,6 +84,7 @@ internal fun KClassImpl<*>.computeDeclaredMembersByName(name: String): Collectio
                 add(createUnboundFunction(createEnumValueOfKmFunction(kClass), kClass))
             }
         }
+        data.value.additionalFunctions.filterTo(this) { it.name == name }
         getDescriptorBasedMembers(memberScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
         getDescriptorBasedMembers(staticScope, DECLARED, name).filterTo(this) { it is KProperty<*> }
     } else {
@@ -133,6 +142,7 @@ internal fun KClassImpl<*>.computeDeclaredMemberNames(): Set<String> =
             add(StandardNames.ENUM_VALUES.asString())
             add(StandardNames.ENUM_VALUE_OF.asString())
         }
+        data.value.additionalFunctions.mapTo(this, ReflectKCallable<*>::name)
         memberScope.getVariableNames().mapTo(this, Name::asString)
         staticScope.getVariableNames().mapTo(this, Name::asString)
     } else buildSet {
@@ -245,3 +255,80 @@ private fun KProperty1<*, *>.findSetterOverride(
         valueParameters.size == 1 && function.returnType == StandardKTypes.UNIT_RETURN_TYPE &&
                 areEqualKTypes(valueParameters.single().type, returnType)
     }
+
+// Additional functions are the Java methods of a built-in class's Java analogue that should be visible on the Kotlin class but are not
+// declared in its metadata. This is the reflection counterpart of `JvmBuiltInsCustomizer.getAdditionalFunctions`.
+internal fun KClassImpl<*>.getAdditionalFunctions(): List<ReflectKFunction> {
+    if (!isMappedBuiltin || this == Any::class) return emptyList()
+    val kmClass = kmClass ?: return emptyList()
+
+    val javaAnalogue = jClass.wrapperByPrimitive ?: jClass
+
+    // Property accessors must not be loaded as functions; the compiler filters them out because they override the corresponding
+    // property accessors declared in this class. Unlike functions (handled below), reflection keeps properties and functions separate,
+    // so they are not deduplicated against each other automatically.
+    val getterLikeNames = HashSet<String>()   // matched against 0-arg methods, e.g. Enum.name()/ordinal() and Throwable.getMessage()
+    val setterLikeNames = HashSet<String>()   // matched against 1-arg methods
+    for (property in kmClass.properties) {
+        getterLikeNames += property.name
+        getterLikeNames += JvmAbi.getterName(property.name)
+        setterLikeNames += JvmAbi.setterName(property.name)
+    }
+
+    // JVM signatures of functions declared in this class's metadata, used to avoid replacing a Kotlin function (which has proper
+    // Kotlin types) with a Java method (which has flexible types), e.g. `Enum.clone`.
+    val declaredJvmSignatures = kmClass.functions.mapTo(HashSet()) {
+        it.mapSignature(kmClass).toString()
+    }
+
+    return javaAnalogue.declaredMethods.mapNotNull { method ->
+        if (Modifier.isStatic(method.modifiers) || method.isSynthetic) return@mapNotNull null
+        if (!Modifier.isPublic(method.modifiers) && !Modifier.isProtected(method.modifiers)) return@mapNotNull null
+        if (method.isAnnotationPresent(JavaLangDeprecated::class.java)) return@mapNotNull null
+
+        val parameterCount = method.parameterTypes.size
+        if (parameterCount == 0 && method.name in getterLikeNames) return@mapNotNull null
+        if (parameterCount == 1 && method.name in setterLikeNames) return@mapNotNull null
+
+        // Skip a Java method if it corresponds to a function already present in the Kotlin class: either declared in its metadata, or
+        // inherited from a supertype (e.g. `equals`/`hashCode`/`toString` from `kotlin.Any`, or `compareTo` from `Comparable`).
+        // Otherwise the Java-based function, which has flexible types (`equals(Any!)` instead of `equals(Any?)`), would replace the
+        // Kotlin one. This mirrors the `kotlinVersions` check in `JvmBuiltInsCustomizer.getAdditionalFunctions`.
+        if (method.jvmSignature in declaredJvmSignatures) return@mapNotNull null
+
+        when (method.getJdkMethodStatus(javaAnalogue)) {
+            JdkMemberStatus.DROP -> return@mapNotNull null
+            // Hidden-for-resolution members are still listed by reflection, except in final classes where the compiler drops them.
+            JdkMemberStatus.HIDDEN -> if (isFinal) return@mapNotNull null
+            JdkMemberStatus.VISIBLE, JdkMemberStatus.DEPRECATED_LIST_METHODS, JdkMemberStatus.NOT_CONSIDERED -> {}
+        }
+
+        val function = JavaKNamedFunction(this, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
+        if (function.overridden.isNotEmpty()) return@mapNotNull null
+
+        function
+    }
+}
+
+private enum class JdkMemberStatus { HIDDEN, VISIBLE, DEPRECATED_LIST_METHODS, NOT_CONSIDERED, DROP }
+
+// Mirrors `JvmBuiltInsCustomizer.getJdkMethodStatus`: walk the analogue's supertypes (which are themselves Java analogues) and match the
+// method signature against the JDK member lists; the first match wins.
+private fun Method.getJdkMethodStatus(startClass: Class<*>): JdkMemberStatus {
+    val jvmDescriptor = jvmSignature
+    val visited = HashSet<Class<*>>()
+    val queue = ArrayDeque<Class<*>>().apply { add(startClass) }
+    while (queue.isNotEmpty()) {
+        val clazz = queue.removeFirst()
+        if (!visited.add(clazz)) continue
+        when (SignatureBuildingComponents.signature(clazz.classId.internalName, jvmDescriptor)) {
+            in JvmBuiltInsSignatures.HIDDEN_METHOD_SIGNATURES -> return JdkMemberStatus.HIDDEN
+            in JvmBuiltInsSignatures.VISIBLE_METHOD_SIGNATURES -> return JdkMemberStatus.VISIBLE
+            in JvmBuiltInsSignatures.DEPRECATED_LIST_METHODS -> return JdkMemberStatus.DEPRECATED_LIST_METHODS
+            in JvmBuiltInsSignatures.DROP_LIST_METHOD_SIGNATURES -> return JdkMemberStatus.DROP
+        }
+        clazz.superclass?.let(queue::add)
+        queue.addAll(clazz.interfaces)
+    }
+    return JdkMemberStatus.NOT_CONSIDERED
+}

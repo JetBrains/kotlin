@@ -441,6 +441,7 @@ internal class KClassImpl<T : Any>(
         // TODO: KT-85727 Reflection: support collections and their subclasses in the new implementation
         val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
             Iterable::class.java.isAssignableFrom(jClass) ||
+                    Iterator::class.java.isAssignableFrom(jClass) ||
                     Map::class.java.isAssignableFrom(jClass) ||
                     CharSequence::class.java.isAssignableFrom(jClass) ||
                     Number::class.java.isAssignableFrom(jClass)
@@ -456,6 +457,8 @@ internal class KClassImpl<T : Any>(
 
         private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
                 by ReflectProperties.lazySoft { ConcurrentHashMap() }
+
+        val additionalFunctions: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::getAdditionalFunctions)
 
         fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
             declaredMembersByName.getOrPut(name) { computeDeclaredMembersByName(name) }
