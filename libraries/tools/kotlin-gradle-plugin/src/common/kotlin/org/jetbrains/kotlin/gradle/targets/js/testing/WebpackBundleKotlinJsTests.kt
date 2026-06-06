@@ -15,15 +15,13 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.OutputFile
-import org.gradle.api.tasks.PathSensitive
-import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.process.ExecOperations
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
 import org.jetbrains.kotlin.gradle.targets.js.dsl.KotlinJsBinaryMode
-import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackBundleForKotlinJsTests
+import org.jetbrains.kotlin.gradle.targets.js.dsl.BundleKotlinJsTestsTask
 import org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.Companion.webpackRulesContainer
 import org.jetbrains.kotlin.gradle.targets.js.internal.jsQuoted
 import org.jetbrains.kotlin.gradle.targets.js.ir.KotlinJsIrCompilation
@@ -46,7 +44,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.readText
 
 @CacheableTask
-internal abstract class WebpackBundleForKotlinJsTestsImpl
+internal abstract class WebpackBundleKotlinJsTests
 @Inject
 constructor(
     @Internal
@@ -54,7 +52,7 @@ constructor(
     final override val compilation: KotlinJsIrCompilation,
     private val objects: ObjectFactory,
     private val execOps: ExecOperations,
-) : DefaultTask(), WebpackBundleForKotlinJsTests {
+) : DefaultTask(), BundleKotlinJsTestsTask {
 
     private val npmProject = compilation.npmProject
     private val npmProjectDir: Provider<Directory> = npmProject.dir
@@ -163,9 +161,9 @@ constructor(
     }
 }
 
-internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(): TaskProvider<WebpackBundleForKotlinJsTestsImpl> {
+internal fun KotlinJsIrCompilation.locateOrRegisterBrowserTestBundleTask(): TaskProvider<WebpackBundleKotlinJsTests> {
     val project = this.project
-    return project.locateOrRegisterTask<WebpackBundleForKotlinJsTestsImpl>(
+    return project.locateOrRegisterTask<WebpackBundleKotlinJsTests>(
         name = "prepareWebpackBundleForKotlinJsTests",
         args = listOf(this),
         invokeWhenRegistered = {}
