@@ -5,8 +5,12 @@
 
 package kotlin.reflect.jvm.internal
 
+import org.jetbrains.kotlin.descriptors.runtime.structure.classId
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.METHOD_RETURN_TYPE
 import org.jetbrains.kotlin.load.java.AnnotationQualifierApplicabilityType.VALUE_PARAMETER
+import org.jetbrains.kotlin.load.java.typeEnhancement.PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE
+import org.jetbrains.kotlin.load.kotlin.SignatureBuildingComponents
+import org.jetbrains.kotlin.load.kotlin.internalName
 import java.lang.reflect.Method
 import java.lang.reflect.Modifier
 import java.lang.reflect.Type
@@ -46,25 +50,45 @@ internal class JavaKNamedFunction(
     private val enhancedSignature: EnhancedSignature? by lazy(PUBLICATION) {
         if (Modifier.isStatic(jMethod.modifiers)) return@lazy null
 
-        // Callables in Kotlin classes (even fake overrides of Java methods) are never enhanced.
-        if ((container as KClassImpl<*>).kmClass != null) return@lazy null
+        // Predefined enhancement of well-known JDK methods (e.g. `Iterator.forEachRemaining`, whose `Consumer<in T>` parameter must not be
+        // flexible). It's applied only in the "errors" mode; the "warnings-only" entries don't change the type. See
+        // `SignatureEnhancement.enhanceSignature` in the compiler.
+        val predefinedEnhancementInfo =
+            PREDEFINED_FUNCTION_ENHANCEMENT_INFO_BY_SIGNATURE[
+                SignatureBuildingComponents.signature(jMethod.declaringClass.classId.internalName, jMethod.jvmSignature)
+            ]?.takeIf { it.errorsSinceLanguageVersion == null }
 
-        val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
-        val overridden = computeOverriddenFunctions(container, signature)
-        if (overriddenStorage.isFakeOverride && overridden.size == 1) return@lazy null
+        // Callables in Kotlin classes (even fake overrides of Java methods) are not enhanced from supertypes/JSR-305 annotations. The only
+        // enhancement that still applies to them is the predefined enhancement of additional built-in members (see `getAdditionalFunctions`).
+        val isKotlinContainer = (container as KClassImpl<*>).kmClass != null
+        if (isKotlinContainer && predefinedEnhancementInfo == null) return@lazy null
+
+        val overridden = if (isKotlinContainer) emptyList() else {
+            val signature = toEquatableCallableSignature(EqualityMode.KotlinSignature)
+            computeOverriddenFunctions(container, signature).also {
+                if (overriddenStorage.isFakeOverride && it.size == 1) return@lazy null
+            }
+        }
 
         val enhancedReturnType = with(ReflectSignatureParts(METHOD_RETURN_TYPE)) {
-            val qualifiers = originalReturnType.computeIndexedQualifiers(overridden.map { it.returnType as AbstractKType }, null)
+            val qualifiers = originalReturnType.computeIndexedQualifiers(
+                overridden.map { it.returnType as AbstractKType }, predefinedEnhancementInfo?.returnTypeInfo,
+            )
             originalReturnType.enhance(qualifiers)
         }
 
+        var valueParameterIndex = 0
         val enhancedParameters = originalParameters.map { p ->
-            with(ReflectSignatureParts(VALUE_PARAMETER, containerIsVarargParameter = p.isVararg)) {
-                // Dispatch receiver parameter (InstanceParameter) type cannot be enhanced.
-                if (p !is JavaKParameter) return@map p
+            // Dispatch receiver parameter (InstanceParameter) type cannot be enhanced.
+            if (p !is JavaKParameter) return@map p
 
+            // `parametersInfo` is indexed by value parameter, while `p.index` also counts the instance parameter.
+            val predefinedParameterInfo = predefinedEnhancementInfo?.parametersInfo?.getOrNull(valueParameterIndex++)
+            with(ReflectSignatureParts(VALUE_PARAMETER, containerIsVarargParameter = p.isVararg)) {
                 val type = p.type as AbstractKType
-                val qualifiers = type.computeIndexedQualifiers(overridden.map { it.parameters[p.index].type as AbstractKType }, null)
+                val qualifiers = type.computeIndexedQualifiers(
+                    overridden.map { it.parameters[p.index].type as AbstractKType }, predefinedParameterInfo,
+                )
                 JavaKParameter(p.callable, p.name, type.enhance(qualifiers), p.index, p.kind, p.isVararg)
             }
         }

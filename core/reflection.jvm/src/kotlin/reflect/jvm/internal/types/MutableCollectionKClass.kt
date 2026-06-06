@@ -27,6 +27,8 @@ import kotlin.reflect.jvm.internal.*
  */
 internal interface MutableCollectionKClass<T : Any> : KClass<T>, TypeConstructorMarker, KTypeParameterOwnerImpl {
     val readonlyClass: KClass<T>
+
+    val mutableKmClass: KmClass?
 }
 
 internal class MutableCollectionKClassImpl<T : Any>(
@@ -39,7 +41,7 @@ internal class MutableCollectionKClassImpl<T : Any>(
     override val simpleName: String
         get() = mutableClassId.shortClassName.asString()
 
-    private val mutableKmClass: KmClass by lazy(PUBLICATION) {
+    override val mutableKmClass: KmClass by lazy(PUBLICATION) {
         readBuiltinClassMetadata(mutableClassId)
             ?: throw KotlinReflectionInternalError("Builtin class metadata not found for $mutableClassId.")
     }
@@ -71,6 +73,9 @@ internal class DescriptorMutableCollectionKClass<T : Any>(
 
     override val simpleName: String
         get() = mutableClassDescriptor.name.asString()
+
+    override val mutableKmClass: KmClass?
+        get() = null
 
     override val typeParameters: List<KTypeParameter> by lazy(PUBLICATION) {
         mutableClassDescriptor.declaredTypeParameters.map { descriptor -> KTypeParameterImpl(this, descriptor) }

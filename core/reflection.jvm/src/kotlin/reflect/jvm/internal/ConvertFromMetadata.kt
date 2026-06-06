@@ -364,7 +364,7 @@ internal fun createUnboundConstructor(constructor: KmConstructor, container: KDe
     return KotlinKConstructor(container, signature, CallableReference.NO_RECEIVER, constructor)
 }
 
-private fun KmFunction.mapSignature(container: KDeclarationContainerImpl, kmClass: KmClass?): JvmMethodSignature =
+internal fun KmFunction.mapSignature(container: KDeclarationContainerImpl, kmClass: KmClass?): JvmMethodSignature =
     mapSignature(
         name, typeParameters + kmClass?.typeParameters.orEmpty(), contextParameters, receiverParameterType, valueParameters, returnType,
         container,

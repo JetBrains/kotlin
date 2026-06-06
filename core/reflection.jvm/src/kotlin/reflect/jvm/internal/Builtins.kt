@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.descriptors.runtime.components.ReflectKotlinClassFin
 import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.resolve.DescriptorUtils.isExtension
 import java.lang.ref.SoftReference
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.metadata.*

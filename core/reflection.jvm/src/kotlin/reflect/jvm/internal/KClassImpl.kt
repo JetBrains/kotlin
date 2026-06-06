@@ -431,6 +431,8 @@ internal class KClassImpl<T : Any>(
         private val fakeOverrideMembersByName: ConcurrentHashMap<String, MembersJavaSignatureMap>
                 by ReflectProperties.lazySoft { ConcurrentHashMap() }
 
+        val additionalFunctions: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft(::getAdditionalFunctions)
+
         fun getDeclaredMembersByName(name: String): Collection<ReflectKCallable<*>> =
             declaredMembersByName.getOrPut(name) { computeDeclaredMembersByName(name) }
 
