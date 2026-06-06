@@ -350,7 +350,7 @@ internal fun createUnboundFunction(function: KmFunction, container: KDeclaration
     // this might also help in cases when metadata was corrupted or generated incorrectly for some reason and lacks the signature.
     // (*) Actually, when builtins metadata is read by kotlin-metadata-jvm, JVM signatures are computed and stored by
     // `JvmMetadataExtensions.readFunctionExtensions` in case they can be easily computed (see `JvmProtoBufUtil.getJvmMethodSignature`).
-    val signature = function.signature ?: function.mapSignature(container)
+    val signature = function.signature ?: function.mapSignature((container as? KClassImpl<*>)?.kmClass)
     return KotlinKNamedFunction(container, signature.toString(), CallableReference.NO_RECEIVER, function, KCallableOverriddenStorage.EMPTY)
 }
 

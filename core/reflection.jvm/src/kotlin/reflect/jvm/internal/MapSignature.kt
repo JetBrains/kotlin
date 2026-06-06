@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.metadata.jvm.deserialization.ClassMapperLite
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
-import kotlin.LazyThreadSafetyMode.NONE
 import kotlin.metadata.*
 import kotlin.metadata.jvm.JvmMethodSignature
 import kotlin.metadata.jvm.signature
-import kotlin.reflect.KDeclarationContainer
 
-internal fun KmFunction.mapSignature(container: KDeclarationContainerImpl): JvmMethodSignature =
+internal fun KmFunction.mapSignature(container: KmClass?): JvmMethodSignature =
     mapSignature(name, typeParameters, contextParameters, receiverParameterType, valueParameters, returnType, container)
 
 /**
@@ -31,19 +29,11 @@ private fun mapSignature(
     receiverParameterType: KmType?,
     valueParameters: List<KmValueParameter>,
     returnType: KmType,
-    container: KDeclarationContainerImpl,
+    container: KmClass?,
 ): JvmMethodSignature {
-    val allTypeParameters: Lazy<Map<Int, KmTypeParameter>> = lazy(NONE) {
-        val result = typeParameters.associateByTo(mutableMapOf()) { it.id }
-        var declaration: KDeclarationContainer? = container
-        while (declaration is KClassImpl<*>) {
-            val kmClass = declaration.kmClass ?: break
-            kmClass.typeParameters.associateByTo(result) { it.id }
-            declaration = declaration.java.enclosingClass?.kotlin
-        }
-        result
-    }
-    val c = ReflectTypeMappingContext(allTypeParameters) { "`$name` in $container" }
+    val allTypeParameters = typeParameters.associateByTo(mutableMapOf()) { it.id }
+    container?.typeParameters?.associateByTo(allTypeParameters) { it.id }
+    val c = ReflectTypeMappingContext(allTypeParameters) { "`$name` in ${container?.name}" }
     val desc = buildString {
         append("(")
         contextParameters.forEach { mapType(it.type, c) }
@@ -56,7 +46,7 @@ private fun mapSignature(
 }
 
 private class ReflectTypeMappingContext(
-    val typeParameters: Lazy<Map<Int, KmTypeParameter>>,
+    val typeParameters: Map<Int, KmTypeParameter>,
     val memberNameForDebug: () -> String,
 )
 
@@ -77,7 +67,7 @@ private fun StringBuilder.mapType(type: KmType, c: ReflectTypeMappingContext, wr
             mapClass(classifier.name, wrapPrimitives || type.isNullable)
         }
         is KmClassifier.TypeParameter -> {
-            val typeParameter = c.typeParameters.value[classifier.id] ?: throw KotlinReflectionInternalError(
+            val typeParameter = c.typeParameters[classifier.id] ?: throw KotlinReflectionInternalError(
                 "Unknown type parameter ${classifier.id} when computing signature for ${c.memberNameForDebug()}"
             )
             // Note that in the general case, using first upper bound is incorrect, and representative upper bound should be used instead
