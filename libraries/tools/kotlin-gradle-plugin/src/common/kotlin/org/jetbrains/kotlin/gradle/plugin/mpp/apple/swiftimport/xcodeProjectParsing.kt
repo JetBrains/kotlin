@@ -189,7 +189,7 @@ internal class XCSwiftPackageProductDependency(
     val isa: String = "XCSwiftPackageProductDependency",
     val productName: String?,
     @SerialName("package")
-    val packageReference: String?,
+    var packageReference: String?,
 ) : PbxObject()
 
 @Serializable

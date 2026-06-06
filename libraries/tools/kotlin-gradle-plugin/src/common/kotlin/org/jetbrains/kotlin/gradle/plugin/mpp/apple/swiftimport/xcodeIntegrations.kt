@@ -184,6 +184,11 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
 
         val pbxprojPath = projectPath.resolve("project.pbxproj")
         val project = deserializeXcodeProject(pbxprojPath, execOps)
+        if (repairBrokenLinkage(project)) {
+            saveJsonBackIntoPbxproj(execOps, xcodeprojTemporaries.getFile(), project, pbxprojPath.path)
+            logger.quiet("Repaired existing broken linkage")
+            return
+        }
         if (linkageProductsReferencedInPBXObjects(project).isNotEmpty()) {
             logger.quiet("Product already referenced, nothing to do")
             return
@@ -374,13 +379,37 @@ internal fun gradleTaskPath(
     }
 }
 
+private val XCSwiftPackageProductDependency.isForSyntheticTarget: Boolean
+    get() = productName == GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+
+private val XCLocalSwiftPackageReference.isForSyntheticTarget: Boolean
+    get() = relativePath == GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME
+
 internal fun linkageProductsReferencedInPBXObjects(project: XcodeProject): Set<String> {
-    // FIXME: KT-83876 Check if the product is correctly integrated into the build phase
     return project.objects.entries.mapNotNull { (id, pbxObject) ->
-        if ((pbxObject as? XCSwiftPackageProductDependency)?.productName == GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME) {
-            id
-        } else {
-            null
-        }
+        val productDep = pbxObject as? XCSwiftPackageProductDependency ?: return@mapNotNull null
+        if (productDep.isForSyntheticTarget && productDep.packageReference != null) id else null
     }.toSet()
+}
+
+/**
+ * Repair a pbxproj left in the broken state by a prior buggy run: an
+ * XCSwiftPackageProductDependency carries the synthetic productName but is
+ * missing the `package` linkage back to its XCLocalSwiftPackageReference.
+ * Adds the missing field in place so the integration recovers on re-run
+ * without manual edits. Returns true iff a repair was applied.
+ */
+internal fun repairBrokenLinkage(project: XcodeProject): Boolean {
+    val localPackageRefId = project.objects.entries.firstOrNull { (_, obj) ->
+        (obj as? XCLocalSwiftPackageReference)?.isForSyntheticTarget == true
+    }?.key ?: return false
+
+    var repaired = false
+    project.objects.values.forEach { obj ->
+        if (obj is XCSwiftPackageProductDependency && obj.isForSyntheticTarget && obj.packageReference == null) {
+            obj.packageReference = localPackageRefId
+            repaired = true
+        }
+    }
+    return repaired
 }
