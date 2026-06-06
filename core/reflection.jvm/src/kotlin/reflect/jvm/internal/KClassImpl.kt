@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.descriptors.runtime.structure.safeClassLoader
 import org.jetbrains.kotlin.descriptors.runtime.structure.wrapperByPrimitive
 import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.load.java.JvmAbi
-import org.jetbrains.kotlin.load.java.getPropertyNamesCandidatesByAccessorName
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.deserialization.getExtensionOrNull
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
@@ -61,13 +60,9 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.metadata.jvm.moduleName
 import kotlin.reflect.*
-import kotlin.reflect.full.isSubtypeOf
-import kotlin.reflect.full.memberProperties
-import kotlin.reflect.full.valueParameters
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.DECLARED
 import kotlin.reflect.jvm.internal.KClassImpl.MemberBelonginess.INHERITED
 import kotlin.reflect.jvm.internal.types.DescriptorKType
-import kotlin.reflect.jvm.internal.types.areEqualKTypes
 import org.jetbrains.kotlin.descriptors.ClassKind as DescriptorClassKind
 import org.jetbrains.kotlin.descriptors.Modality as DescriptorModality
 
@@ -724,74 +719,6 @@ internal class KClassImpl<T : Any>(
                 // Don't declare any functions in this class descriptor, only inherit equals/hashCode/toString from Any.
                 override fun computeDeclaredFunctions(): List<FunctionDescriptor> = emptyList()
             }, emptySet(), null)
-        }
-
-    private fun isVisibleAsFunctionInCurrentClass(function: JavaKNamedFunction): Boolean {
-        if (getPropertyNamesCandidatesByAccessorName(Name.identifier(function.name)).any { propertyName ->
-                getPropertiesFromSupertypes(propertyName.asString()).any { property ->
-                    doesClassOverrideProperty(property) { accessorName ->
-                        if (function.name == accessorName)
-                            listOf(function)
-                        else {
-                            // K1 code also searched in supertypes (see searchMethodsInSupertypesWithoutBuiltinMagic), but it seems useful
-                            // only for mapped builtins and their subtypes, so will be handled separately in KT-85727.
-                            getDeclaredNonStaticMethodsFromJavaClass().filter { it.name == accessorName }
-                        }
-                    } && (property is KMutableProperty<*> || !JvmAbi.isSetterName(function.name))
-                }
-            }) return false
-
-        return true
-    }
-
-    private fun getDeclaredNonStaticMethodsFromJavaClass(): List<JavaKNamedFunction> {
-        require(kmClass == null) { "Should be called only for Java classes: $this" }
-        if (jClass.isAnnotation) return emptyList()
-        return jClass.declaredMethods.mapNotNull { method ->
-            if (Modifier.isStatic(method.modifiers) || method.isSynthetic) null
-            else JavaKNamedFunction(this@KClassImpl, method, NO_RECEIVER, KCallableOverriddenStorage.EMPTY)
-        }
-    }
-
-    private fun getPropertiesFromSupertypes(name: String): List<KProperty1<*, *>> =
-        supertypes.flatMap { supertype -> (supertype.classifier as? KClass<*>)?.memberProperties?.filter { it.name == name }.orEmpty() }
-
-    private fun doesClassOverrideProperty(
-        property: KProperty1<*, *>,
-        functions: (String) -> Collection<ReflectKFunction>,
-    ): Boolean {
-        require(!this.java.isKotlin) { "Only Java classes are possible here: $property" }
-
-        // Java fields cannot be overridden.
-        if (property is JavaKProperty<*>) return false
-
-        val getter = property.findGetterOverride(functions)
-        val setter = property.findSetterOverride(functions)
-
-        if (getter == null) return false
-        if (property !is KMutableProperty<*>) return true
-
-        return setter != null && setter.modality == getter.modality
-    }
-
-    private fun KProperty1<*, *>.findGetterOverride(functions: (String) -> Collection<ReflectKFunction>): ReflectKFunction? =
-        findGetterByName(JvmAbi.getterName(name), functions)
-
-    private fun KProperty1<*, *>.findGetterByName(
-        getterName: String,
-        functions: (String) -> Collection<ReflectKFunction>,
-    ): ReflectKFunction? =
-        functions(getterName).firstOrNull { function ->
-            function.valueParameters.isEmpty() && function.returnType.isSubtypeOf(returnType)
-        }
-
-    private fun KProperty1<*, *>.findSetterOverride(
-        functions: (String) -> Collection<ReflectKFunction>,
-    ): ReflectKFunction? =
-        functions(JvmAbi.setterName(name)).firstOrNull { function ->
-            val valueParameters = function.valueParameters
-            valueParameters.size == 1 && function.returnType == StandardKTypes.UNIT_RETURN_TYPE &&
-                    areEqualKTypes(valueParameters.single().type, returnType)
         }
 
     companion object {
