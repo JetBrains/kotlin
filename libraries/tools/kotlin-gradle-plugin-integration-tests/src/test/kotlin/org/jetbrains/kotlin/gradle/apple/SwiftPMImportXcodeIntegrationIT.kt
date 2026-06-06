@@ -76,6 +76,11 @@ class SwiftPMImportXcodeIntegrationIT : KGPBaseTest() {
                     "productName = $SYNTHETIC_IMPORT_TARGET_MAGIC_NAME;",
                     message = "Swift package dependency should reference the synthetic product name"
                 )
+                assertContains(
+                    pbxFileContent,
+                    Regex("""\bpackage = [A-F0-9]+;"""),
+                    message = "Swift package dependency should declare a 'package = <UUID>;' linkage"
+                )
 
                 assertEquals(
                     SwiftPackageLibraryType.AUTOMATIC,

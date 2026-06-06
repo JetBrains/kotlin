@@ -222,7 +222,10 @@ internal abstract class IntegrateLinkagePackageIntoXcodeProject : DefaultTask() 
 
         project.objects[buildFileDependencyReference] = PbxBuildFile(productRef = productDependencyReference)
         project.objects[localPackageReference] = XCLocalSwiftPackageReference(relativePath = GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
-        project.objects[productDependencyReference] = XCSwiftPackageProductDependency(productName = GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME)
+        project.objects[productDependencyReference] = XCSwiftPackageProductDependency(
+            productName = GenerateSyntheticLinkageImportProject.SYNTHETIC_IMPORT_TARGET_MAGIC_NAME,
+            packageReference = localPackageReference,
+        )
 
         saveJsonBackIntoPbxproj(
             execOps,
