@@ -26,6 +26,7 @@ object KonanFqNames {
     val cudaPackageName = FqName("kotlin.native.cuda")
     val cudaCompile = FqName("kotlin.native.cuda.CudaCompile")
     val cudaShared = FqName("kotlin.native.cuda.Shared")
+    val cudaLaunchKernel = FqName("kotlin.native.cuda.CudaLaunchKernel")
     val nativePtr = internalPackageName.child(Name.identifier(NATIVE_PTR_NAME)).toUnsafe()
     val nonNullNativePtr = internalPackageName.child(Name.identifier(NON_NULL_NATIVE_PTR_NAME)).toUnsafe()
     val Vector128 = FqName("kotlinx.cinterop.Vector128")

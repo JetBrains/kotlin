@@ -175,6 +175,10 @@ private object CallableIds {
     fun inBoxCache(type: BoxCache) = "in${type.name.lowercase().replaceFirstChar(Char::uppercaseChar)}BoxCache".internalCallableId
     fun getCached(type: BoxCache) = "getCached${type.name.lowercase().replaceFirstChar(Char::uppercaseChar)}Box".internalCallableId
 
+    // CUDA host-side functions
+    private val String.cudaCallableId get() = CallableId(KonanFqNames.cudaPackageName, Name.identifier(this))
+    val launchKernel = "launchKernel".cudaCallableId
+
     // Interop functions
     private val String.interopCallableId get() = CallableId(InteropFqNames.packageName, Name.identifier(this))
     val nativePointedGetRawPointer = InteropFqNames.nativePointedGetRawPointerFunName.interopCallableId
@@ -482,6 +486,8 @@ class BackendNativeSymbols(
     val theUnitInstance by CallableIds.theUnitInstance.functionSymbol()
 
     val unreachable by CallableIds.unreachable.functionSymbol()
+
+    val launchKernel by CallableIds.launchKernel.functionSymbol()
 
     val ieee754Equals by CallableIds.ieee754Equals.functionSymbols()
 

@@ -440,6 +440,12 @@ private val cudaSubsetValidationPhase = createFileLoweringPhase(
         prerequisite = setOf(inlineAllFunctionsPhase)
 )
 
+private val cudaLaunchKernelPhase = createFileLoweringPhase(
+        lowering = ::CudaLaunchKernelLowering,
+        name = "CudaLaunchKernel",
+        prerequisite = setOf(inlineAllFunctionsPhase),
+)
+
 internal val specialObjCValidationPhase = createFileLoweringPhase(
         lowering = ::SpecialObjCValidationLowering,
         name = "SpecialObjCValidation",
@@ -671,6 +677,7 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         interopPhase,
         specialInteropIntrinsicsPhase,
         cudaSubsetValidationPhase,
+        cudaLaunchKernelPhase,
         initTestsPhase,
         dumpTestsPhase.takeIf { this.configuration.getNotNull(NativeConfigurationKeys.GENERATE_TEST_RUNNER) != TestRunnerKind.NONE },
         removeExpectDeclarationsPhase,

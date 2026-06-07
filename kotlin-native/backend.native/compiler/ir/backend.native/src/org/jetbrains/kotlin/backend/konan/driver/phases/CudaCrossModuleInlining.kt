@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.KonanFqNames
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.RuntimeNames
+import org.jetbrains.kotlin.backend.konan.buildCudaKernelExportName
 import org.jetbrains.kotlin.backend.konan.isInlined
 import org.jetbrains.kotlin.backend.konan.ir.buildSimpleAnnotation
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnbox
@@ -145,16 +146,11 @@ internal val AssignCudaKernelExportNamesPhase = createSimpleNamedCompilerPhase<N
             .filter { (_, fn) -> fn.parent is IrFile && fn.visibility.isPublicAPI }
             .filter { (_, fn) -> !fn.hasAnnotation(RuntimeNames.exportForCppRuntime) }
             .forEach { (file, fn) ->
-                val exportName = buildExportName(file.packageFqName.asString(), fn.name.asString())
+                val exportName = buildCudaKernelExportName(file.packageFqName.asString(), fn.name.asString())
                 fn.annotations = fn.annotations + buildSimpleAnnotation(
                         context.irBuiltIns, fn.startOffset, fn.endOffset, exportForCppRuntime, exportName,
                 )
             }
-}
-
-private fun buildExportName(packageFqName: String, functionName: String): String {
-    val packagePart = packageFqName.replace('.', '_')
-    return if (packagePart.isEmpty()) functionName else "${packagePart}__${functionName}"
 }
 
 private fun collectCrossModuleCallees(fn: IrSimpleFunction): Set<IrFunction> {
