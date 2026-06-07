@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.irEmpty
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.isFullValueClass
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.ir.util.superClass
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.memoryOptimizedFilterNot
 
@@ -191,7 +191,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
 
         if (hasSuperClass && declaration.isInner) {
             declaration.markAsNeedsBoxParameter()
-        } else if (hasSuperClass && declaration.isOriginallyLocal && declaration.containsCapturedValues()) {
+        } else if (
+            hasSuperClass && (declaration.isOriginallyLocal || declaration.isFullValueClass) && declaration.containsCapturedValues()
+        ) {
             declaration.markAsNeedsBoxParameter()
         }
 
