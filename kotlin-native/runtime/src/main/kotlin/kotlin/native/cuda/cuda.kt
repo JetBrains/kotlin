@@ -190,10 +190,14 @@ public external fun cuMemcpyHtoD(dstDevice: CUdeviceptr, srcHost: COpaquePointer
 
 /**
  * Typed overload — accepts a [CPointer] returned by the typed [cuMemAlloc] in place of the raw
- * [CUdeviceptr], and throws [IllegalStateException] on driver error so callers don't have to
- * wrap every memcpy in an explicit result check.
+ * [CUdeviceptr], expresses the transfer size as an element [count] of type `T` (with
+ * `count * sizeOf<T>()` bytes computed internally, matching the typed [cuMemAlloc]'s shape),
+ * and throws [IllegalStateException] on driver error so callers don't have to wrap every
+ * memcpy in an explicit result check. Both pointers carry the same `T`, so the host and
+ * device element types can't accidentally drift apart.
  */
-public fun cuMemcpyHtoD(dstDevice: CPointer<*>, srcHost: COpaquePointer, byteCount: ULong) {
+public inline fun <reified T : CVariable> cuMemcpyHtoD(dstDevice: CPointer<T>, srcHost: CPointer<T>, count: Int) {
+    val byteCount = sizeOf<T>().toULong() * count.toULong()
     val rc = cuMemcpyHtoD(dstDevice.toLong().toULong(), srcHost, byteCount)
     if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemcpyHtoD: code $rc")
 }
@@ -203,10 +207,14 @@ public external fun cuMemcpyDtoH(dstHost: COpaquePointer, srcDevice: CUdeviceptr
 
 /**
  * Typed overload — accepts a [CPointer] returned by the typed [cuMemAlloc] in place of the raw
- * [CUdeviceptr], and throws [IllegalStateException] on driver error so callers don't have to
- * wrap every memcpy in an explicit result check.
+ * [CUdeviceptr], expresses the transfer size as an element [count] of type `T` (with
+ * `count * sizeOf<T>()` bytes computed internally, matching the typed [cuMemAlloc]'s shape),
+ * and throws [IllegalStateException] on driver error so callers don't have to wrap every
+ * memcpy in an explicit result check. Both pointers carry the same `T`, so the host and
+ * device element types can't accidentally drift apart.
  */
-public fun cuMemcpyDtoH(dstHost: COpaquePointer, srcDevice: CPointer<*>, byteCount: ULong) {
+public inline fun <reified T : CVariable> cuMemcpyDtoH(dstHost: CPointer<T>, srcDevice: CPointer<T>, count: Int) {
+    val byteCount = sizeOf<T>().toULong() * count.toULong()
     val rc = cuMemcpyDtoH(dstHost, srcDevice.toLong().toULong(), byteCount)
     if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemcpyDtoH: code $rc")
 }
