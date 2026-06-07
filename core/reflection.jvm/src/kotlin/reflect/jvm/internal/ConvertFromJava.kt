@@ -38,7 +38,6 @@ import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.jvm.internal.types.FlexibleKType
 import kotlin.reflect.jvm.internal.types.SimpleKType
 import kotlin.reflect.jvm.internal.types.allTypeParameters
-import kotlin.reflect.jvm.internal.types.getMutableCollectionKClass
 import kotlin.reflect.jvm.javaConstructor
 import kotlin.reflect.jvm.javaMethod
 import kotlin.reflect.jvm.jvmErasure

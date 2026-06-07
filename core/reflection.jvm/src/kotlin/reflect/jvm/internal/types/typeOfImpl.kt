@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.types.typeUtil.builtIns
 import kotlin.reflect.KClass
 import kotlin.reflect.KType
 import kotlin.reflect.jvm.internal.KotlinReflectionInternalError
+import kotlin.reflect.jvm.internal.getMutableCollectionKClass
 import kotlin.reflect.jvm.internal.useK1Implementation
 
 internal fun createPlatformKType(
