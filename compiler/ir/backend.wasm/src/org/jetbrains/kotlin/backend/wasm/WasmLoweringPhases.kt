@@ -201,6 +201,7 @@ val wasmLowerings: List<NamedCompilerPhase<WasmBackendContext, IrModuleFragment,
 
     ::JsSuspendFunctionsLowering,
     ::WasmInitializersLowering,
+    ::FullValueClassFieldInitBeforeSuperCallLowering,
     ::WasmInitializersCleanupLowering,
 
     ::AddContinuationToNonLocalSuspendFunctionsLowering,

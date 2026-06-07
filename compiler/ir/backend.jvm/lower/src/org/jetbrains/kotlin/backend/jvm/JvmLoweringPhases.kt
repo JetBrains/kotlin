@@ -113,6 +113,7 @@ private val jvmFilePhases = createFilePhases(
     ::StaticInitializersLowering,
     ::UniqueLoopLabelsLowering,
     ::JvmInitializersLowering,
+    ::FullValueClassFieldInitBeforeSuperCallLowering,
     ::JvmInitializersCleanupLowering,
     ::FunctionNVarargBridgeLowering,
     ::JvmStaticInCompanionLowering,
