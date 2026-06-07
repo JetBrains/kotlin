@@ -34,7 +34,7 @@ object FirDirectSupertypesChecker : FirClassChecker(MppCheckerKind.Common) {
             val supertypeSymbol = expandedSupertype.abbreviatedTypeOrSelf.toSymbol() ?: continue
             if (supertypeSymbol is FirRegularClassSymbol) {
                 if (symbol !in supertypeSymbol.directInheritors) {
-                    reporter.reportOn(superTypeRef.source, FirErrors.MISSING_INHERITOR_FOR, supertypeSymbol)
+                    reporter.reportOn(superTypeRef.source, FirErrors.MISSING_INHERITOR, supertypeSymbol, symbol)
                 }
             }
         }

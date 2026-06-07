@@ -1142,7 +1142,8 @@ object FirErrors : KtDiagnosticsContainer() {
     val COMPANION_EXTENSION_NULLABLE_RECEIVER: KtDiagnosticFactory0 = KtDiagnosticFactory0("COMPANION_EXTENSION_NULLABLE_RECEIVER", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     // Direct Class Inheritors
-    val MISSING_INHERITOR_FOR: KtDiagnosticFactory1<FirClassLikeSymbol<*>> = KtDiagnosticFactory1("MISSING_INHERITOR_FOR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val MISSING_INHERITOR: KtDiagnosticFactory2<FirRegularClassSymbol, FirClassLikeSymbol<*>> = KtDiagnosticFactory2("MISSING_INHERITOR", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
+    val MISSING_OVERRIDE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("MISSING_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirErrorsDefaultMessages
 }

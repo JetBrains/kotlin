@@ -3936,6 +3936,14 @@ private fun KaDiagnosticConverterBuilder.addConversions88() {
             token,
         )
     }
+    add(FirErrors.MISSING_INHERITOR) { firDiagnostic ->
+        MissingInheritorImpl(
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
+            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
 }
 
 private fun KaDiagnosticConverterBuilder.addConversions89() {
@@ -7219,6 +7227,14 @@ private fun KaDiagnosticConverterBuilder.addConversions162() {
             token,
         )
     }
+    add(FirErrors.MISSING_OVERRIDE) { firDiagnostic ->
+        MissingOverrideImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.b),
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJsErrors.IMPLEMENTING_FUNCTION_INTERFACE) { firDiagnostic ->
         ImplementingFunctionInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -8395,13 +8411,6 @@ private fun KaDiagnosticConverterBuilder.addConversions191() {
             firDiagnostic.c.map { firValueParameterSymbol ->
                 firSymbolBuilder.buildSymbol(firValueParameterSymbol)
             },
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.MISSING_INHERITOR_FOR) { firDiagnostic ->
-        MissingInheritorForImpl(
-            firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

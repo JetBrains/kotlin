@@ -9,6 +9,10 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.utils.SmartSet
 
+/**
+ * Direct Class Inheritors
+ */
+
 private object DirectClassInheritorsKey : FirDeclarationDataKey()
 
 private var FirRegularClass.directInheritorsAttr: Lazy<SmartSet<FirClassSymbol<*>>>? by FirDeclarationDataRegistry.data(DirectClassInheritorsKey)
