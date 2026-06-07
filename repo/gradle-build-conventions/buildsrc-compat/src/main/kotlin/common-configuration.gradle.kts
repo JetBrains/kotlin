@@ -387,11 +387,20 @@ fun Project.configureTests() {
             .map { it.toBoolean() }
             .orElse(false)
         inputs.property("kotlin.build.disable.verification.tasks", disableVerificationTasks)
+
+        val testInventoryFile = project.layout.buildDirectory.file("test-inventory/$name/test-inventory.csv")
+        val testInventoryListener = TestInventoryListener(testInventoryFile)
+        addTestListener(testInventoryListener)
+        outputs.file(testInventoryFile)
+
         doFirst {
             if (disableVerificationTasks.get()) {
                 logger.warn("Task $path is disabled because `kotlin.build.disable.verification.tasks` is true")
                 throw StopExecutionException("Verification tasks are disabled.")
             }
+
+            testInventoryFile.get().asFile.delete()
+            testInventoryFile.get().asFile.parentFile.mkdirs()
         }
     }
     // Aggregate task for build related checks
@@ -425,5 +434,28 @@ afterEvaluate {
         doFirst {
             friendPaths.setFrom(realFriendPaths)
         }
+    }
+}
+
+class TestInventoryListener(val inventoryFile: Provider<RegularFile>) : TestListener {
+    override fun afterTest(testDescriptor: TestDescriptor, result: TestResult) {
+        val parents = mutableListOf<String>()
+        var parentDescriptor = testDescriptor.parent
+        while (parentDescriptor != null) {
+            val name = parentDescriptor.name
+            if (!name.startsWith("Gradle Test Executor") && !name.startsWith("Gradle Test Run")) {
+                parents.add(name)
+            }
+            parentDescriptor = parentDescriptor.parent
+        }
+        val status = when (result.resultType) {
+            TestResult.ResultType.FAILURE -> "Failure"
+            TestResult.ResultType.SUCCESS -> "OK"
+            TestResult.ResultType.SKIPPED -> "Ignored"
+        }
+        val duration = result.endTime - result.startTime
+        val methodName = testDescriptor.name.substringBefore("(")
+        val test = "${parents.reversed().joinToString(": ")}.$methodName,$status,$duration"
+        inventoryFile.get().asFile.appendText("$test\n")
     }
 }
