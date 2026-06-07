@@ -232,9 +232,6 @@ Investigate:
 - `KtConstructorDelegationReferenceExpression` → needed to add `FirReference` as a handled case
 - `KtReturnExpression` → `FirReturnExpression` wasn't handled, added a new branch + helper
 
-Similarly, read the FE10 resolver:
-- **File:** `analysis/analysis-api-fe10/src/org/jetbrains/kotlin/analysis/api/descriptors/components/KaFe10Resolver.kt`
-
 Check if the `BindingContext`-based resolution handles the PSI type. Examples of needed changes:
 - `KtCallableReferenceExpression` → redirects to `psi.callableReference`
 - `KtWhenConditionInRange` → redirects to `psi.operationReference`

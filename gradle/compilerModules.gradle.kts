@@ -188,7 +188,6 @@ val cliCompilerModules = arrayOf(
 
 val analysisApiModules = arrayOf(
     ":analysis:analysis-api",
-    ":analysis:analysis-api-fe10",
     ":analysis:analysis-api-fir",
     ":analysis:analysis-api-impl-base",
     ":analysis:analysis-api-platform-interface",
