@@ -166,7 +166,6 @@ include(
     ":compiler:backend.jvm.entrypoint",
     ":compiler:backend",
     ":compiler:plugin-api",
-    ":compiler:light-classes",
     ":compiler:javac-wrapper",
     ":compiler:cli:cli-arguments-generator",
     ":compiler:cli-base",

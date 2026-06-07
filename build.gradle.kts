@@ -170,7 +170,6 @@ val projectsWithOptInToUnsafeCastFunctionsFromAddToStdLib by extra {
         ":analysis:symbol-light-classes",
         ":compiler",
         ":compiler:backend.js",
-        ":compiler:light-classes",
         ":jps:jps-common",
         ":js:js.tests",
         ":kotlin-build-common",

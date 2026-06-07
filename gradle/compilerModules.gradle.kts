@@ -85,7 +85,6 @@ val fe10CompilerModules = arrayOf(
     ":core:descriptors.runtime",
     ":core:descriptors",
     ":core:descriptors.jvm",
-    ":compiler:light-classes",
     ":compiler:resolution",
     ":compiler:serialization",
     ":compiler:frontend",

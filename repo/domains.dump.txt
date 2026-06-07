@@ -31,7 +31,6 @@ Compiler:
  - compiler/ir
  - compiler/javac-wrapper
  - compiler/jklib.tests
- - compiler/light-classes
  - compiler/multiplatform-parsing
  - compiler/plugin-api
  - compiler/preloader

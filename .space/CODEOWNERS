@@ -152,7 +152,6 @@
 /compiler/ir/ir.validation/ "Kotlin Common Backend"
 /compiler/javac-wrapper/ "Kotlin Frontend"
 /compiler/jklib.tests/ "JKlib"
-/compiler/light-classes/ "Kotlin Analysis API"
 /compiler/plugin-api/ "Kotlin Frontend"
 /compiler/preloader/ "Kotlin Frontend"
 /compiler/psi/ "Kotlin Analysis API"
