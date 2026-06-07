@@ -222,7 +222,6 @@
 /compiler/testFixtures/ "Kotlin Compiler"
 /compiler/tests-against-klib/ "Kotlin JVM"
 /compiler/tests-common/ "Kotlin Compiler"
-/compiler/tests-common/testFixtures/org/jetbrains/kotlin/asJava/ "Kotlin Analysis API"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/klib/ "Kotlin Common Backend"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/directives/WasmEnvironmentConfigurationDirectives.kt "Kotlin Wasm"
