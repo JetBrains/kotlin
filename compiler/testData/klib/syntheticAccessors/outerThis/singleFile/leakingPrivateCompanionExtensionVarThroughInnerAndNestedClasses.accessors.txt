@@ -1,0 +1,34 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateCompanionExtensionVarThroughInnerAndNestedClasses.kt */
+
+private var o: String
+    /* TARGET declaration */ private companion fun Outer.<get-o>(): String
+    /* TARGET declaration */ private companion fun Outer.<set-o>(<set-?>: String)
+private var k: String
+    /* TARGET declaration */ private companion fun Outer.<get-k>(): String
+    /* TARGET declaration */ private companion fun Outer.<set-k>(<set-?>: String)
+public class Outer
+    public inner class Inner
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?> = value)
+    public class Nested
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?> = value)
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<get-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt()
+    /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt()
+/* ACCESSOR declaration */ internal fun access$<get-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(): String
+    /* TARGET use-site */ <get-o>()
+/* ACCESSOR declaration */ internal fun access$<set-o>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?>: String)
+    /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ internal fun access$<get-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(): String
+    /* TARGET use-site */ <get-k>()
+/* ACCESSOR declaration */ internal fun access$<set-k>$tLeakingPrivateCompanionExtensionVarThroughInnerAndNestedClassesKt(<set-?>: String)
+    /* TARGET use-site */ <set-k>(<set-?> = <set-?>)

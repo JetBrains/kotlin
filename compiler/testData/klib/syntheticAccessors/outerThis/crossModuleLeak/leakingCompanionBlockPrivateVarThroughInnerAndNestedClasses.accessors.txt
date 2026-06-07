@@ -1,0 +1,40 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+public class Outer
+    private /* static */ var o: String
+        /* TARGET declaration */ private /* static */ fun <get-o>(): String
+        /* TARGET declaration */ private /* static */ fun <set-o>(<set-?>: String)
+    private /* static */ var k: String
+        /* TARGET declaration */ private /* static */ fun <get-k>(): String
+        /* TARGET declaration */ private /* static */ fun <set-k>(<set-?>: String)
+    public inner class Inner
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-o>()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-o>(<set-?> = value)
+    public class Nested
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-k>()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-k>(<set-?> = value)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>(): String
+        /* TARGET use-site */ <get-o>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-o>(<set-?>: String)
+        /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-k>(): String
+        /* TARGET use-site */ <get-k>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<set-k>(<set-?>: String)
+        /* TARGET use-site */ <set-k>(<set-?> = <set-?>)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-o>(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-k>(<set-?> = value)
+    /* ACCESSOR use-site */ access$<get-o>()
+    /* ACCESSOR use-site */ access$<get-k>()

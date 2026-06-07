@@ -1,0 +1,26 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+private val o: String
+    /* TARGET declaration */ private companion fun Outer.<get-o>(): String
+private val k: String
+    /* TARGET declaration */ private companion fun Outer.<get-k>(): String
+public class Outer
+    public inner class Inner
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$<get-o>$tOuterKt()
+    public class Nested
+        internal inline fun internalInlineMethod(): String
+            /* ACCESSOR use-site */ access$<get-k>$tOuterKt()
+/* ACCESSOR declaration */ internal fun access$<get-o>$tOuterKt(): String
+    /* TARGET use-site */ <get-o>()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tOuterKt(): String
+    /* TARGET use-site */ <get-k>()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o>$tOuterKt()
+    /* ACCESSOR use-site */ access$<get-k>$tOuterKt()

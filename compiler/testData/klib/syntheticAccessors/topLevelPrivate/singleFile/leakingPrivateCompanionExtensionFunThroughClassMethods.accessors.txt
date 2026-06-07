@@ -1,0 +1,18 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunThroughClassMethods.kt */
+
+public class A
+    internal inline /* static */ fun internalInlineStaticMethod(): String
+        /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()
+    internal inline fun internalInlineMethod(): String
+        /* ACCESSOR use-site */ access$k$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()
+/* TARGET declaration */ private companion fun A.o(): String
+/* TARGET declaration */ private companion fun A.k(): String
+public fun box(): String
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()
+    /* ACCESSOR use-site */ access$k$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt()
+/* ACCESSOR declaration */ internal fun access$o$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$k$tLeakingPrivateCompanionExtensionFunThroughClassMethodsKt(): String
+    /* TARGET use-site */ k()

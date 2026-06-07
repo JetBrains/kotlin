@@ -1,0 +1,28 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFun.kt */
+
+private val k: String
+    /* TARGET declaration */ private companion fun A.<get-k>(): String
+private var empty: String
+    /* TARGET declaration */ private companion fun A.<get-empty>(): String
+    /* TARGET declaration */ private companion fun A.<set-empty>(<set-?>: String)
+/* TARGET declaration */ private companion fun A.o(): String
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$<set-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(<set-?> = "")
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+    /* ACCESSOR use-site */ access$<get-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+    /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(<set-?> = "")
+    /* ACCESSOR use-site */ access$o$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+    /* ACCESSOR use-site */ access$<get-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+    /* ACCESSOR use-site */ access$<get-k>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt()
+/* ACCESSOR declaration */ internal fun access$o$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(): String
+    /* TARGET use-site */ <get-k>()
+/* ACCESSOR declaration */ internal fun access$<get-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(): String
+    /* TARGET use-site */ <get-empty>()
+/* ACCESSOR declaration */ internal fun access$<set-empty>$tLeakingPrivateCompanionExtensionFunAndPropertiesThroughTopLevelFunKt(<set-?>: String)
+    /* TARGET use-site */ <set-empty>(<set-?> = <set-?>)

@@ -1,0 +1,17 @@
+// LANGUAGE: +CompanionBlocksAndExtensions
+// FILE: A.kt
+class A {
+    companion {
+        internal inline fun internalInlineStaticMethod() = o
+    }
+
+    internal inline fun internalInlineMethod() = k
+}
+
+private companion val A.o = "O"
+private companion val A.k = "K"
+
+// FILE: main.kt
+fun box(): String {
+    return A.internalInlineStaticMethod() + A().internalInlineMethod()
+}

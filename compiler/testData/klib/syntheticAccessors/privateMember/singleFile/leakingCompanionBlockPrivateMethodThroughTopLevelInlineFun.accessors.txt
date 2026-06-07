@@ -1,0 +1,12 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=leakingCompanionBlockPrivateMethodThroughTopLevelInlineFun.kt */
+
+public class A
+    /* TARGET declaration */ private /* static */ fun privateMethod(): String
+    /* ACCESSOR declaration */ internal /* static */ fun access$privateMethod(): String
+        /* TARGET use-site */ privateMethod()
+internal inline fun internalInlineMethod(): String
+    /* ACCESSOR use-site */ access$privateMethod()
+public fun box(): String
+    /* ACCESSOR use-site */ access$privateMethod()

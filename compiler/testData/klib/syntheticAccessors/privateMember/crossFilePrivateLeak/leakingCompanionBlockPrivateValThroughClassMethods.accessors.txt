@@ -1,0 +1,24 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+public class A
+    private /* static */ val o: String
+        /* TARGET declaration */ private /* static */ fun <get-o>(): String
+    private /* static */ val k: String
+        /* TARGET declaration */ private /* static */ fun <get-k>(): String
+    internal inline /* static */ fun internalInlineStaticMethod(): String
+        /* ACCESSOR use-site */ access$<get-o>()
+    internal inline fun internalInlineMethod(): String
+        /* ACCESSOR use-site */ access$<get-k>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-o>(): String
+        /* TARGET use-site */ <get-o>()
+    /* ACCESSOR declaration */ internal /* static */ fun access$<get-k>(): String
+        /* TARGET use-site */ <get-k>()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o>()
+    /* ACCESSOR use-site */ access$<get-k>()

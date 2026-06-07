@@ -1,0 +1,34 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=A.kt */
+
+private val k: String
+    /* TARGET declaration */ private companion fun A.<get-k>(): String
+private var empty: String
+    /* TARGET declaration */ private companion fun A.<get-empty>(): String
+    /* TARGET declaration */ private companion fun A.<set-empty>(<set-?>: String)
+/* TARGET declaration */ private companion fun A.o(): String
+internal inline fun internalInlineFun(): String
+    /* ACCESSOR use-site */ access$<set-empty>$tAKt(<set-?> = "")
+    /* ACCESSOR use-site */ access$o$tAKt()
+    /* ACCESSOR use-site */ access$<get-empty>$tAKt()
+    /* ACCESSOR use-site */ access$<get-k>$tAKt()
+/* ACCESSOR declaration */ internal fun access$o$tAKt(): String
+    /* TARGET use-site */ o()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tAKt(): String
+    /* TARGET use-site */ <get-k>()
+/* ACCESSOR declaration */ internal fun access$<get-empty>$tAKt(): String
+    /* TARGET use-site */ <get-empty>()
+/* ACCESSOR declaration */ internal fun access$<set-empty>$tAKt(<set-?>: String)
+    /* TARGET use-site */ <set-empty>(<set-?> = <set-?>)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-empty>$tAKt(<set-?> = "")
+    /* ACCESSOR use-site */ access$o$tAKt()
+    /* ACCESSOR use-site */ access$<get-empty>$tAKt()
+    /* ACCESSOR use-site */ access$<get-k>$tAKt()

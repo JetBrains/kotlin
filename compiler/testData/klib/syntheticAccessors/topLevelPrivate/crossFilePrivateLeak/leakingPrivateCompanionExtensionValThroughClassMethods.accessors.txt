@@ -1,0 +1,24 @@
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=A.kt */
+
+private val o: String
+    /* TARGET declaration */ private companion fun A.<get-o>(): String
+private val k: String
+    /* TARGET declaration */ private companion fun A.<get-k>(): String
+public class A
+    internal inline /* static */ fun internalInlineStaticMethod(): String
+        /* ACCESSOR use-site */ access$<get-o>$tAKt()
+    internal inline fun internalInlineMethod(): String
+        /* ACCESSOR use-site */ access$<get-k>$tAKt()
+/* ACCESSOR declaration */ internal fun access$<get-o>$tAKt(): String
+    /* TARGET use-site */ <get-o>()
+/* ACCESSOR declaration */ internal fun access$<get-k>$tAKt(): String
+    /* TARGET use-site */ <get-k>()
+
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<get-o>$tAKt()
+    /* ACCESSOR use-site */ access$<get-k>$tAKt()

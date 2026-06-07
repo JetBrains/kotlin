@@ -1,0 +1,40 @@
+/* MODULE name=<lib> */
+
+/* FILE package=<root> fileName=Outer.kt */
+
+private var o: String
+    /* TARGET declaration */ private companion fun Outer.<get-o>(): String
+    /* TARGET declaration */ private companion fun Outer.<set-o>(<set-?>: String)
+private var k: String
+    /* TARGET declaration */ private companion fun Outer.<get-k>(): String
+    /* TARGET declaration */ private companion fun Outer.<set-k>(<set-?>: String)
+public class Outer
+    public inner class Inner
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-o>$tOuterKt()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-o>$tOuterKt(<set-?> = value)
+    public class Nested
+        internal inline fun internalInlineGetter(): String
+            /* ACCESSOR use-site */ access$<get-k>$tOuterKt()
+        internal inline fun internalInlineSetter(value: String)
+            /* ACCESSOR use-site */ access$<set-k>$tOuterKt(<set-?> = value)
+/* ACCESSOR declaration */ internal fun access$<get-o>$tOuterKt(): String
+    /* TARGET use-site */ <get-o>()
+/* ACCESSOR declaration */ internal fun access$<set-o>$tOuterKt(<set-?>: String)
+    /* TARGET use-site */ <set-o>(<set-?> = <set-?>)
+/* ACCESSOR declaration */ internal fun access$<get-k>$tOuterKt(): String
+    /* TARGET use-site */ <get-k>()
+/* ACCESSOR declaration */ internal fun access$<set-k>$tOuterKt(<set-?>: String)
+    /* TARGET use-site */ <set-k>(<set-?> = <set-?>)
+
+
+/* MODULE name=<main> */
+
+/* FILE package=<root> fileName=main.kt */
+
+public fun box(): String
+    /* ACCESSOR use-site */ access$<set-o>$tOuterKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<set-k>$tOuterKt(<set-?> = value)
+    /* ACCESSOR use-site */ access$<get-o>$tOuterKt()
+    /* ACCESSOR use-site */ access$<get-k>$tOuterKt()
