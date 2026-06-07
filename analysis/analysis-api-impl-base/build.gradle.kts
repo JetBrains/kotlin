@@ -11,7 +11,6 @@ dependencies {
     api(project(":compiler:psi:psi-api"))
     api(project(":analysis:analysis-api"))
     api(project(":analysis:analysis-api-platform-interface"))
-    api(project(":analysis:kt-references"))
     api(project(":compiler:resolution.common.jvm"))
     implementation(project(":analysis:decompiled:decompiler-to-psi"))
     implementation(project(":compiler:backend"))

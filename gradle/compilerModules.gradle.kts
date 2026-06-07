@@ -195,7 +195,6 @@ val analysisApiModules = arrayOf(
     ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
     ":analysis:analysis-api-standalone",
     ":analysis:analysis-test-framework",
-    ":analysis:kt-references",
     ":analysis:light-classes-base",
     ":analysis:low-level-api-fir",
     ":analysis:stubs",
@@ -209,7 +208,6 @@ val analysisApiModules = arrayOf(
     ":analysis:decompiled:decompiler-native",
     ":analysis:decompiled:decompiler-to-psi",
     ":analysis:decompiled:light-classes-for-decompiled",
-    ":analysis:kt-references",
 ).also { extra["analysisApiModules"] = it }
 
 extra["compilerModules"] =

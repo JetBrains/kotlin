@@ -9,7 +9,6 @@ tasks.register("analysisAllTests") {
         ":analysis:decompiled:decompiler-native:check",
         ":analysis:decompiled:decompiler-to-file-stubs:check",
         ":analysis:decompiled:decompiler-to-psi:check",
-        ":analysis:kt-references:check",
         ":analysis:low-level-api-fir:check",
         ":analysis:low-level-api-fir:tests-jdk11:check",
         ":analysis:low-level-api-fir:low-level-api-fir-compiler-tests:check",

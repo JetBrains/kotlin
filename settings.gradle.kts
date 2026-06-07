@@ -670,7 +670,6 @@ include(
     ":analysis:analysis-internal-utils",
     ":analysis:analysis-test-framework",
     ":analysis:test-data-manager",
-    ":analysis:kt-references",
     ":analysis:stubs",
     ":analysis:symbol-light-classes",
     ":analysis:light-classes-base",

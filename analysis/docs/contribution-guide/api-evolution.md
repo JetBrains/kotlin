@@ -38,7 +38,6 @@ The Analysis API consists of several interconnected components, each serving a s
         - Kotlin IntelliJ IDEA plugin ([source](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin/base/analysis-api-platform))
         - Analysis API Standalone ([source](../../analysis-api-standalone))
     - PSI Implementation, including stubs ([source](../../../compiler/psi/psi-impl))
-    - PSI Reference Implementations ([source](../../kt-references))
 
 - **Light Classes** ([source](../../symbol-light-classes))
     - A Java view for Kotlin declarations designed mainly for Java interoperability

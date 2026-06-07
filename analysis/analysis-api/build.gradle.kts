@@ -23,7 +23,6 @@ dependencies {
     compileOnly(project(":core:compiler.common.jvm"))
     compileOnly(project(":core:compiler.common.js"))
     implementation(project(":analysis:analysis-internal-utils"))
-    implementation(project(":analysis:kt-references"))
 
     api(intellijCore())
     api(libs.intellij.asm)

@@ -36,7 +36,6 @@ dependencies {
     embedded(project(":analysis:analysis-api-standalone:analysis-api-standalone-base")) { isTransitive = false }
     embedded(project(lowLevelApiFir)) { isTransitive = false }
     embedded(project(":analysis:symbol-light-classes")) { isTransitive = false }
-    embedded(project(":analysis:kt-references")) { isTransitive = false }
     embedded(project(":analysis:analysis-internal-utils")) { isTransitive = false }
     embedded(project(":analysis:decompiled:decompiler-native")) { isTransitive = false }
     embedded(project(":analysis:decompiled:decompiler-to-psi")) { isTransitive = false }
