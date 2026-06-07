@@ -246,7 +246,8 @@ internal external fun getKotlinCudaPtx(): COpaquePointer
  * Three-component grid or block dimension for [launchKernel]. `y` and `z` default to 1
  * for the common 1D-launch case.
  */
-public data class Dim3(val x: Int, val y: Int = 1, val z: Int = 1)
+@Suppress("ClassName")
+public data class dim3(val x: Int, val y: Int = 1, val z: Int = 1)
 
 /**
  * Captures the launch configuration for a `__global__` kernel — grid/block dimensions, shared
@@ -265,8 +266,8 @@ public data class Dim3(val x: Int, val y: Int = 1, val z: Int = 1)
  * the `IrCall` the lowering needs to dispatch on.
  */
 public class CudaLaunchpad(
-        public val gridSize: Dim3,
-        public val blockSize: Dim3,
+        public val gridSize: dim3,
+        public val blockSize: dim3,
         public val sharedMemSize: Int = 0,
         public val stream: CUstream? = null,
 ) {
@@ -345,8 +346,8 @@ public class CudaLaunchpad(
  */
 internal fun launchKernel(
         name: String,
-        grid: Dim3,
-        block: Dim3,
+        grid: dim3,
+        block: dim3,
         sharedMemBytes: Int = 0,
         stream: CUstream? = null,
         vararg args: Any?,
