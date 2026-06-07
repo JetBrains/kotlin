@@ -166,21 +166,23 @@ public external fun cuLaunchKernel(
 public external fun cuMemAlloc(dptr: CPointer<ULongVar>, bytesize: ULong): Int
 
 /**
- * Allocates [byteCount] bytes of device memory and returns a typed `CPointer<T>` view of the
- * device address. Overload of the raw [cuMemAlloc] driver external; prefer this form when the
- * resulting pointer will be passed to [CudaLaunchpad.launch], so the call site doesn't need a
- * ULong→CPointer bitcast per kernel arg. The returned pointer is a Kotlin type-system bridge:
- * at the driver-API call ABI level it carries the same 8-byte device address as the raw
- * [cuMemAlloc]'s [CUdeviceptr], and the `cuMemFree` / `cuMemcpyHtoD` / `cuMemcpyDtoH`
+ * Allocates room for [count] elements of type `T` on the device (so `count * sizeOf<T>()` bytes)
+ * and returns a typed `CPointer<T>` view of the device address. Overload of the raw [cuMemAlloc]
+ * driver external; prefer this form when the resulting pointer will be passed to
+ * [CudaLaunchpad.launch], so the call site doesn't need a ULong→CPointer bitcast per kernel arg
+ * and the byte arithmetic doesn't need to be repeated by hand. The returned pointer is a Kotlin
+ * type-system bridge: at the driver-API call ABI level it carries the same 8-byte device address
+ * as the raw [cuMemAlloc]'s [CUdeviceptr], and the `cuMemFree` / `cuMemcpyHtoD` / `cuMemcpyDtoH`
  * overloads below accept it directly.
  *
  * Throws [IllegalStateException] on driver error.
  */
-public fun <T : CPointed> cuMemAlloc(byteCount: ULong): CPointer<T> = memScoped {
+public inline fun <reified T : CVariable> cuMemAlloc(count: Int): CPointer<T> = memScoped {
+    val byteCount = sizeOf<T>().toULong() * count.toULong()
     val dptr = alloc<ULongVar>()
     val rc = cuMemAlloc(dptr.ptr, byteCount)
     if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemAlloc: code $rc")
-    dptr.value.toLong().toCPointer()!!
+    dptr.value.toLong().toCPointer<T>()!!
 }
 
 @GCUnsafeCall("cuMemcpyHtoD_v2")
