@@ -4833,9 +4833,16 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CompanionExtensionNullableReceiver::class
     }
 
-    interface MissingInheritorFor : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = MissingInheritorFor::class
+    interface MissingInheritor : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingInheritor::class
+        val supertype: KaClassLikeSymbol
         val subtype: KaClassLikeSymbol
+    }
+
+    interface MissingOverride : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingOverride::class
+        val overridden: KaCallableSymbol
+        val overriding: KaCallableSymbol
     }
 
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {

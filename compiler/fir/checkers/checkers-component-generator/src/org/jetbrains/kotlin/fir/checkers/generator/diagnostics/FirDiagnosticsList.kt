@@ -2451,8 +2451,14 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
     val DIRECT_CLASS_INHERITORS by object : DiagnosticGroup("Direct Class Inheritors") {
 
-        val MISSING_INHERITOR_FOR by error<PsiElement> {
+        val MISSING_INHERITOR by error<PsiElement> {
+            parameter<FirRegularClassSymbol>("supertype")
             parameter<FirClassLikeSymbol<*>>("subtype")
+        }
+
+        val MISSING_OVERRIDE by error<PsiElement> {
+            parameter<FirCallableSymbol<*>>("overridden")
+            parameter<FirCallableSymbol<*>>("overriding")
         }
     }
 }

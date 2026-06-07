@@ -548,7 +548,8 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_IN_INFERRED_TYPE_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_INHERITOR_FOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_INHERITOR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_STDLIB_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_VAL_ON_ANNOTATION_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MIXING_FUNCTIONAL_KINDS_IN_SUPERTYPES
@@ -4034,8 +4035,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Companion extension receiver type cannot be nullable.",
         )
         map.put(
-            MISSING_INHERITOR_FOR,
-            "This class is not registered a direct inheritor for the supertype ''{0}''.",
+            MISSING_INHERITOR,
+            "The class ''{0}'' is not registered as a direct inheritor of ''{1}'' supertype.",
+            SYMBOL,
+            SYMBOL,
+        )
+        map.put(
+            MISSING_OVERRIDE,
+            "The callable ''{0}'' is not registered as a direct override of ''{1}'' callable.",
+            SYMBOL,
             SYMBOL,
         )
     }

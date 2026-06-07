@@ -8,12 +8,15 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
+import org.jetbrains.kotlin.fir.resolve.transformers.DirectCallableOverridesResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.DirectClassInheritorsResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculatorForFullBodyResolve
@@ -43,6 +46,11 @@ open class FirBodyResolveTransformer(
             DirectClassInheritorsResolver(session)
         }
 
+    private val directCallableOverridesResolver: DirectCallableOverridesResolver? =
+        runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
+            DirectCallableOverridesResolver(session, scopeSession)
+        }
+
     override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
         super.transformRegularClass(regularClass, data).apply { directClassInheritorsResolver?.resolveRegularClass(this) }
 
@@ -51,4 +59,10 @@ open class FirBodyResolveTransformer(
 
     override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
         super.transformAnonymousObject(anonymousObject, data).apply { directClassInheritorsResolver?.resolveAnonymousObject(this) }
+
+    override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
+        super.transformNamedFunction(namedFunction, data).apply { directCallableOverridesResolver?.resolveNamedFunction(this) }
+
+    override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
+        super.transformProperty(property, data).apply { directCallableOverridesResolver?.resolveProperty(this) }
 }
