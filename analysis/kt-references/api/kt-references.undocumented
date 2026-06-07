@@ -1,2 +1,0 @@
-org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.Companion.getService(Project)
-org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.shouldUseExperimentalStrategy()

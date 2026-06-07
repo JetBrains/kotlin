@@ -1882,6 +1882,8 @@ org.jetbrains.kotlin.psi.utils.OperatorTokens.operationName(KtToken)
 org.jetbrains.kotlin.psi.utils.OperatorTokens.operationName(KtToken, Boolean, Boolean)
 org.jetbrains.kotlin.psi.utils.OperatorTokens.operationToken(Name)
 org.jetbrains.kotlin.psi.utils.hasFloatNumericLiteralSuffix(String)
+org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.Companion.getService(Project)
+org.jetbrains.kotlin.references.utils.KotlinKDocResolutionStrategyProviderService.shouldUseExperimentalStrategy()
 org.jetbrains.kotlin.resolve.StatementFilter
 org.jetbrains.kotlin.resolve.StatementFilter.Companion.NONE
 org.jetbrains.kotlin.resolve.StatementFilter.filter
