@@ -258,7 +258,7 @@ private val TypeVariable<*>.kotlinContainer: KTypeParameterOwnerImpl
 // when the KTypeParameter instances are already created, but not yet stored in `KClass.typeParameters`.
 private fun TypeVariable<*>.findKTypeParameterInContainer(knownTypeParameters: Map<TypeVariable<*>, KTypeParameter>): KTypeParameter =
     knownTypeParameters[this]
-        ?: kotlinContainer.typeParameters.singleOrNull { it.name == name }
+        ?: kotlinContainer.typeParameters.getOrNull(genericDeclaration.typeParameters.indexOf(this))
         ?: throw KotlinReflectionInternalError("Type parameter $name is not found in $kotlinContainer")
 
 internal fun Array<out TypeVariable<*>>.toKTypeParameters(container: KTypeParameterOwnerImpl): List<KTypeParameter> {
