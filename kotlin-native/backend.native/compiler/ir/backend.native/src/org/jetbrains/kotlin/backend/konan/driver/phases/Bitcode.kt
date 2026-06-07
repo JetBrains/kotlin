@@ -165,29 +165,47 @@ internal val SanitizeDeviceSymbolsPhase = createSimpleNamedCompilerPhase<NativeG
 }
 
 /**
- * Strip dead LLVM IR from a `Runtime.Kind.CudaDevice` module before NVPTX emission.
+ * Optimize and strip dead LLVM IR from a `Runtime.Kind.CudaDevice` module before NVPTX
+ * emission.
  *
- * K/N's `IrToBitcode` emits orphan `unreachable:` basic blocks (one per cast/null-check
- * folded by an earlier lowering — the dead arm holds a value-class unbox call followed
- * by `unreachable`). The NVPTX backend's per-function CFG cleanup drops those blocks
- * from the kernel bodies, so the PTX text never *calls* the unbox stubs. But it does
- * not consistently strip the now-uncalled external declarations from the module's
- * symbol table — sensitive to module shape, two-kernel modules retain them while
- * single-kernel modules don't — and the asm printer prints them as `.extern .func` at
- * the top of the PTX, which clutters the output and (at JIT time) forces the driver to
- * resolve symbols that don't matter.
+ * K/N's host LLVM optimization pipeline (`runBitcodePostProcessing`) is intentionally
+ * skipped for device fragments because it's wired against the host triple and (via
+ * `LTOOptimizationPipeline`) prepends a bare `internalize` that wipes the kernels along
+ * with everything else. Without that pipeline a lot of obviously-redundant IR survives all
+ * the way through NVPTX ISel:
  *
- * `simplifycfg` removes the orphan blocks ourselves so the unbox calls are gone before
- * NVPTX sees the module; `strip-dead-prototypes` + `globaldce` then drop the no-longer-
- * referenced declarations. This restores the cleanup that subprocess `llc` performed
- * implicitly before we moved to in-process `LLVMTargetMachineEmitToFile`.
+ *  - K/N's IR-to-LLVM emits `select cond, ptr, null` patterns from the null-normalization
+ *    around `NativePtr` / `NativePointed` boxing — NVPTX lowers them as a branch-and-set,
+ *    so every device-pointer load/store ends up wrapped in five extra PTX instructions.
+ *  - Orphan `unreachable:` blocks (dead arms of throw→unreachable rewrites) keep references
+ *    to unbox stubs that NVPTX prints as `.extern .func` at the top of the PTX.
+ *
+ * Running LLVM's `default<O2>` covers the per-module cleanup we actually want (InstCombine
+ * folds `select cond, x, null` to `x`, SimplifyCFG drops the orphan blocks, the other
+ * passes are no-ops on a clean device module). `lto<O2>` adds the whole-module IPO
+ * cleanups (IPSCCP, eliminate-available-externally, GlobalsAA-driven simplification)
+ * without the `internalize` that `LTOOptimizationPipeline` wedges in on the host path —
+ * here we hand LLVM the bare pipeline string so the wrapper is bypassed entirely.
+ * `strip-dead-prototypes` + `globaldce` then drop any remaining unreferenced declarations.
+ *
+ * Note: `globaldce` doesn't drop functions that still have external linkage (e.g. a
+ * `const val` getter whose value is fully inlined into the kernels). Removing those would
+ * need an explicit `internalize` with a preserve-list of kernel symbols — left out here
+ * because distinguishing kernels from genuine device-private helpers (which today also
+ * have external linkage at this point in the pipeline) is delicate, and accidentally
+ * internalizing a kernel would have `globaldce` remove it and produce empty PTX.
  */
 internal val StripDeadDeviceIrPhase = createSimpleNamedCompilerPhase<NativeGenerationState, LLVMModuleRef>(
         name = "StripDeadDeviceIr",
 ) { _, module ->
     val options = LLVMCreatePassBuilderOptions()!!
     try {
-        val err = LLVMRunPasses(module, "function(simplifycfg),strip-dead-prototypes,globaldce", null, options)
+        val err = LLVMRunPasses(
+                module,
+                "default<O2>,lto<O2>,strip-dead-prototypes,globaldce",
+                null,
+                options,
+        )
         if (err != null) {
             val message = LLVMGetErrorMessage(err)?.toKString().orEmpty()
             LLVMConsumeError(err)
