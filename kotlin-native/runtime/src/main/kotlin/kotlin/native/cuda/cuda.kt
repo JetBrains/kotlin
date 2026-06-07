@@ -166,42 +166,61 @@ public external fun cuLaunchKernel(
 public external fun cuMemAlloc(dptr: CPointer<ULongVar>, bytesize: ULong): Int
 
 /**
- * Pairs the raw [CUdeviceptr] (the 8-byte device address returned by the driver — what
- * [cuMemcpyHtoD] / [cuMemcpyDtoH] / [cuMemFree] take) with a `CPointer<T>` view of the same
- * address (what a `@CudaCompile` kernel's typed parameter slot expects). The two are the same
- * 8 bytes — `cuLaunchKernel` only ever sees the call-ABI payload, so [pointer] is a Kotlin
- * type-system bridge, not a runtime conversion. Use [handle] for driver-API calls, [pointer]
- * when passing this buffer to [CudaLaunchpad.launch].
- */
-public class DeviceBuffer<T : CPointed> internal constructor(
-        public val handle: CUdeviceptr,
-        public val pointer: CPointer<T>,
-)
-
-/**
- * Allocates [byteCount] bytes of device memory and returns a [DeviceBuffer] that carries both
- * the raw [CUdeviceptr] (for memcpy/free) and a typed `CPointer<T>` (for kernel-arg use). Use
- * this instead of the raw [cuMemAlloc] when the resulting buffer will be passed to
- * [CudaLaunchpad.launch], so the call site doesn't need a ULong→CPointer bitcast per kernel arg.
+ * Allocates [byteCount] bytes of device memory and returns a typed `CPointer<T>` view of the
+ * device address. Overload of the raw [cuMemAlloc] driver external; prefer this form when the
+ * resulting pointer will be passed to [CudaLaunchpad.launch], so the call site doesn't need a
+ * ULong→CPointer bitcast per kernel arg. The returned pointer is a Kotlin type-system bridge:
+ * at the driver-API call ABI level it carries the same 8-byte device address as the raw
+ * [cuMemAlloc]'s [CUdeviceptr], and the `cuMemFree` / `cuMemcpyHtoD` / `cuMemcpyDtoH`
+ * overloads below accept it directly.
  *
  * Throws [IllegalStateException] on driver error.
  */
-public fun <T : CPointed> cuMemAllocTyped(byteCount: ULong): DeviceBuffer<T> = memScoped {
+public fun <T : CPointed> cuMemAlloc(byteCount: ULong): CPointer<T> = memScoped {
     val dptr = alloc<ULongVar>()
     val rc = cuMemAlloc(dptr.ptr, byteCount)
-    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemAllocTyped: code $rc")
-    val handle: CUdeviceptr = dptr.value
-    DeviceBuffer(handle, handle.toLong().toCPointer()!!)
+    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemAlloc: code $rc")
+    dptr.value.toLong().toCPointer()!!
 }
 
 @GCUnsafeCall("cuMemcpyHtoD_v2")
 public external fun cuMemcpyHtoD(dstDevice: CUdeviceptr, srcHost: COpaquePointer, byteCount: ULong): Int
 
+/**
+ * Typed overload — accepts a [CPointer] returned by the typed [cuMemAlloc] in place of the raw
+ * [CUdeviceptr], and throws [IllegalStateException] on driver error so callers don't have to
+ * wrap every memcpy in an explicit result check.
+ */
+public fun cuMemcpyHtoD(dstDevice: CPointer<*>, srcHost: COpaquePointer, byteCount: ULong) {
+    val rc = cuMemcpyHtoD(dstDevice.toLong().toULong(), srcHost, byteCount)
+    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemcpyHtoD: code $rc")
+}
+
 @GCUnsafeCall("cuMemcpyDtoH_v2")
 public external fun cuMemcpyDtoH(dstHost: COpaquePointer, srcDevice: CUdeviceptr, byteCount: ULong): Int
 
+/**
+ * Typed overload — accepts a [CPointer] returned by the typed [cuMemAlloc] in place of the raw
+ * [CUdeviceptr], and throws [IllegalStateException] on driver error so callers don't have to
+ * wrap every memcpy in an explicit result check.
+ */
+public fun cuMemcpyDtoH(dstHost: COpaquePointer, srcDevice: CPointer<*>, byteCount: ULong) {
+    val rc = cuMemcpyDtoH(dstHost, srcDevice.toLong().toULong(), byteCount)
+    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemcpyDtoH: code $rc")
+}
+
 @GCUnsafeCall("cuMemFree_v2")
 public external fun cuMemFree(dptr: CUdeviceptr): Int
+
+/**
+ * Typed overload — accepts a [CPointer] returned by the typed [cuMemAlloc] in place of the raw
+ * [CUdeviceptr], and throws [IllegalStateException] on driver error so callers don't have to
+ * wrap every free in an explicit result check.
+ */
+public fun cuMemFree(dptr: CPointer<*>) {
+    val rc = cuMemFree(dptr.toLong().toULong())
+    if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemFree: code $rc")
+}
 
 /**
  * Accessor for the embedded PTX text. The Gradle plugin (Task #7) generates a `.c` file
