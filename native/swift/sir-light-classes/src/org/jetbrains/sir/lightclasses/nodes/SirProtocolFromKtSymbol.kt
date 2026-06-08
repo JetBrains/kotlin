@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.*
+import org.jetbrains.kotlin.sir.providers.source.KotlinImplementationMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -103,6 +104,20 @@ internal open class SirProtocolFromKtSymbol(
     }
 
     /**
+     * Per-interface "implementation marker" `__P` used to constrain the witness extension
+     * ([SirBridgedProtocolImplementationFromKtSymbol]) that delegates protocol requirements to the
+     * Kotlin counterpart. Only the wrappers we generate for Kotlin classes that conform to this
+     * interface (and [KotlinRuntimeSupportModule.kotlinExistential]) declare conformance to it, so a
+     * user's Swift subclass that conforms to this interface without its Kotlin supertype implementing
+     * it does NOT inherit the (erroneous) delegating default. Unlike [existentialMarker], it is NOT
+     * `@objc` and is NOT refined by the public protocol.
+     */
+    internal val implementationMarker: SirProtocol by lazy {
+        SirImplementationMarkerProtocolFromKtSymbol(this)
+            .also { it.parent = this.parent }
+    }
+
+    /**
      * Per-interface extension conforming [KotlinRuntimeSupportModule.kotlinExistentialPenBox] to this
      * protocol's [existentialMarker]. This is what lets `_KotlinExistential<Wrapped>` inherit
      * @objc marker conformances through its non-generic PenBox ancestor, sidestepping Swift's
@@ -162,6 +177,37 @@ internal class SirMarkerProtocolFromKtSymbol(
 }
 
 /**
+ * "Implementation marker" protocol declaration `__[target]`, used to constrain the witness extension
+ * ([SirBridgedProtocolImplementationFromKtSymbol]) that satisfies [target]'s requirements by delegating
+ * to the Kotlin counterpart. Only the wrappers we generate for Kotlin classes that conform to [target]
+ * on the Kotlin side declare conformance to it, so it is never inherited by a user's Swift subclass that
+ * conforms to [target] without its Kotlin supertype implementing it.
+ *
+ * Differs from the existential marker [SirMarkerProtocolFromKtSymbol] (`_[target]`): it is NOT `@objc`
+ * (it is only a Swift generic constraint, never resolved by the ObjC runtime — which is also why the
+ * generic `_KotlinExistential<Wrapped>` can conform to it directly, without the PenBox indirection), it
+ * refines [KotlinRuntimeSupportModule.kotlinBridgeable] so witness bodies can call `__externalRCRef()`,
+ * and it is NOT refined by the public protocol [target].
+ */
+internal class SirImplementationMarkerProtocolFromKtSymbol(
+    val target: SirProtocolFromKtSymbol
+) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol> {
+    override val ktSymbol: KaNamedClassSymbol get() = target.ktSymbol
+    override val sirSession: SirSession get() = target.sirSession
+
+    override lateinit var parent: SirDeclarationParent
+    override val origin: KotlinSource get() = KotlinImplementationMarkerProtocol(ktSymbol)
+    override val visibility: SirVisibility = SirVisibility.PUBLIC
+    override val documentation: String? = null
+    override val attributes: List<SirAttribute> get() = emptyList()
+    override val name: String get() = "__${target.name}"
+    override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
+    override val superClass: SirNominalType? get() = null
+    override val protocols: List<SirProtocol> get() = listOf(KotlinRuntimeSupportModule.kotlinBridgeable)
+    override val bridges: List<SirBridge> = emptyList()
+}
+
+/**
  * A supporting extension declaration providing bridges for interface/protocol requirements for classes exported from kotlin.
  * Exporting a Kotlin class to Swift can result in overridden members from an inherited interface not aligning correctly with their
  * counterparts in the exported Swift protocol due to differences in Swift’s subtyping rules compared to Kotlin.
@@ -173,8 +219,9 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
     val targetProtocol: SirProtocol,
+    private val implementationMarker: SirProtocol,
 ) : SirExtension(), SirFromKtSymbol<KaNamedClassSymbol> {
-    constructor(protocol: SirProtocolFromKtSymbol) : this(protocol.ktSymbol, protocol.sirSession, protocol)
+    constructor(protocol: SirProtocolFromKtSymbol) : this(protocol.ktSymbol, protocol.sirSession, protocol, protocol.implementationMarker)
 
     override val origin: SirOrigin = KotlinSource(ktSymbol)
 
@@ -195,7 +242,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val constraints: List<SirTypeConstraint> by lazy {
         listOf(
-            SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
+            SirTypeConstraint.Conformance(SirNominalType(implementationMarker))
         )
     }
 
@@ -341,7 +388,15 @@ internal open class SirExistentialProtocolImplementationFromKtSymbol(
     override val extendedType: SirType
         get() = SirNominalType(KotlinRuntimeSupportModule.kotlinExistential)
 
-    override open val protocols: List<SirProtocol> get() = listOf(targetProtocol)
+    // `_KotlinExistential` must also conform to the implementation marker so it keeps receiving the
+    // delegating witnesses once the witness extension is constrained to `__P` instead of `_KotlinBridgeable`.
+    // This holds UNCONDITIONALLY — including for unavailable interfaces: the public-protocol conformance
+    // here may be `@available(*, unavailable)`, but it still has to be satisfiable at compile time, and an
+    // unavailable interface can carry requirements (e.g. `DeprecatedInterface.foo()`). `__P` is always
+    // available (it carries no `@available`), so `_KotlinExistential: __P` is always safe — and it is the
+    // sole witness source, exactly as `_KotlinBridgeable` was before the witness constraint was retargeted.
+    override open val protocols: List<SirProtocol>
+        get() = listOf(targetProtocol, targetProtocol.implementationMarker)
 
     override val constraints: List<SirTypeConstraint> by lazy {
         listOf(
@@ -461,7 +516,7 @@ internal class SirAuxiliaryProtocolDeclarationsFromKtSymbol(
             .extractDeclarations()
             .filterIsInstance<SirScopeDefiningDeclaration>()
             .filter { it.visibility == SirVisibility.PUBLIC }
-            .filter { it.origin !is KotlinMarkerProtocol }
+            .filter { it.origin !is KotlinMarkerProtocol && it.origin !is KotlinImplementationMarkerProtocol }
             .map { declaration ->
                 buildTypealias {
                     origin = SirOrigin.Trampoline(declaration)
