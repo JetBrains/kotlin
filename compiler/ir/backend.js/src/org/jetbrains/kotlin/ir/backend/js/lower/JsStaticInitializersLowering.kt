@@ -61,20 +61,6 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         })
     }
 
-    private fun IrStatement.isConst(): Boolean = when (this) {
-        is IrConst, is IrConstantValue -> true
-        is IrBlock -> {
-            if (statements.isEmpty())
-                true
-            else {
-                // This might happen after the local declarations lowering where local declarations are replaced with an empty composite.
-                statements.take(statements.size - 1).all { it is IrComposite && it.statements.isEmpty() }
-                        && statements.last().isConst()
-            }
-        }
-        else -> false
-    }
-
     private fun processDeclarationContainer(container: IrClass) {
         if (container.isExpect || container.isEffectivelyExternal()) return
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
