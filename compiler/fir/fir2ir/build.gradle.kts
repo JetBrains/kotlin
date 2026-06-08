@@ -14,6 +14,7 @@ dependencies {
     compileOnly(project(":compiler:fir:providers"))
     compileOnly(project(":compiler:fir:semantics"))
     compileOnly(project(":compiler:fir:tree"))
+    compileOnly(project(":compiler:ir.semantics"))
     compileOnly(project(":compiler:ir.tree"))
     compileOnly(project(":compiler:ir.backend.common"))
     compileOnly(project(":compiler:ir.serialization.common"))

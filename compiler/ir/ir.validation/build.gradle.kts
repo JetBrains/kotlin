@@ -12,6 +12,7 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":core:compiler.common"))
     api(project(":kotlin-stdlib"))
+    api(project(":compiler:ir.semantics"))
     api(project(":compiler:ir.tree"))
     implementation(project(":core:descriptors"))
     implementation(project(":core:util.runtime"))

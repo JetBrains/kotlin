@@ -6,6 +6,7 @@ plugins {
 
 dependencies {
     api(project(":compiler:util"))
+    api(project(":compiler:ir.semantics"))
     api(project(":compiler:ir.tree"))
     api(project(":compiler:ir.interpreter"))
     api(project(":compiler:ir.serialization.common"))
@@ -27,4 +28,3 @@ sourceSets {
     "test" { projectDefault() }
     "testFixtures" { projectDefault() }
 }
-
