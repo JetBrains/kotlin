@@ -21,6 +21,7 @@ import org.junit.jupiter.api.condition.OS
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.absolutePathString
 import kotlin.io.path.appendText
 import kotlin.io.path.createDirectories
 import kotlin.io.path.readText
@@ -793,6 +794,53 @@ class SwiftExportIT : KGPBaseTest() {
                 assertTasksExecuted(":compileSwiftExportMainKotlinIosArm64")
                 assertTasksExecuted(":linkSwiftExportBinaryDebugStaticIosArm64")
                 assertTasksExecuted(":copyDebugSPMIntermediates")
+            }
+        }
+    }
+
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, EnvironmentalVariablesOverride::class)
+    @DisplayName("KT-84852: embedSwiftExportForXcode fails when linkage package is not integrated")
+    @GradleTest
+    fun testEmbedSwiftExportForXcodeFailsWhenLinkagePackageNotIntegrated(
+        gradleVersion: GradleVersion,
+        @TempDir testBuildDir: Path,
+    ) {
+        project("emptyxcode", gradleVersion) {
+            val localSwiftPackageRelativePath = "../localSwiftPackage"
+            val localPackageDir = projectPath.resolve(localSwiftPackageRelativePath)
+            val targetName = "LocalSwiftPackage"
+            createLocalSwiftPackage(localPackageDir, packageName = targetName)
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            settingsBuildScriptInjection {
+                settings.rootProject.name = "shared"
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+
+                    with(swiftImport) {
+                        localSwiftPackage(
+                            directory = project.layout.projectDirectory.dir(localSwiftPackageRelativePath),
+                            products = listOf(targetName),
+                        )
+                    }
+                }
+            }
+
+            val envVars = swiftExportEmbedAndSignEnvVariables(testBuildDir)
+            val combinedEnvVars = EnvironmentalVariables(
+                envVars.environmentalVariables + ("PROJECT_FILE_PATH" to projectPath.resolve("iosApp/iosApp.xcodeproj").absolutePathString())
+            )
+
+            buildAndFail(
+                ":embedSwiftExportForXcode",
+                environmentVariables = combinedEnvVars,
+            ) {
+                assertOutputContains("You have SwiftPM dependencies with embedSwiftExport integration")
+                assertOutputContains("integrateLinkagePackage")
             }
         }
     }
