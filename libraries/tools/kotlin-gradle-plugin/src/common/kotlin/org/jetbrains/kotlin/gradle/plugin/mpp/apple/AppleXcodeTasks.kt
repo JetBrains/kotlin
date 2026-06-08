@@ -504,9 +504,15 @@ private fun Project.checkSyntheticImportProjectIsCorrectlyIntegrated(
     val envProjectPath = project.providers.environmentVariable(PROJECT_FILE_PATH_ENV)
     val projectPath = callingProjectPathProvider()
 
-    return locateOrRegisterTask<DefaultTask>("checkSyntheticImportProjectIsCorrectlyIntegrated") { task ->
+    return locateOrRegisterTask<DefaultTask>(
+        lowerCamelCaseName(
+            "checkSyntheticImportProjectIsCorrectlyIntegrated",
+            "for",
+            integrationName
+        )
+    ) { task ->
         task.group = BasePlugin.BUILD_GROUP
-        task.description = "Check linkage project for embedAndSign is integrated correctly into the project"
+        task.description = "Check that the synthetic linkage project is correctly integrated into the Xcode project"
         val execOps = project.serviceOf<ExecOperations>()
         val gradleProjectPath = project.path
         val rootProjectDir = rootProject.projectDir
