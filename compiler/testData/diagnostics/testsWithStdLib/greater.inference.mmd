@@ -518,64 +518,54 @@ flowchart TD
     class constraint90 nowrapClass;
     constraint87 ---> constraint90
     constraint85 --> constraint90
-    constraint91["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
+    constraint91["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/Nothing|</tt></pre></i>"]
     class constraint91 nowrapClass;
-    constraint87 ----> constraint91
-    constraint82 ----> constraint91
-    constraint92["<tt>TypeVariable(S) &lt;: Comparable&lt;String>?</tt>"]
+    newVariable81 ~~~~~~ constraint91
+    constraint92["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
     class constraint92 nowrapClass;
-    constraint87 ----> constraint92
-    constraint84 ---> constraint92
-    constraint93["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>TypeParameter R|kotlin/Nothing|</tt></pre></i>"]
+    constraint91 --> constraint92
+    constraint83 -----> constraint92
+    constraint93["<tt>TypeVariable(T) &lt;: Comparable&lt;Nothing></tt>"]
     class constraint93 nowrapClass;
-    newVariable81 ~~~~~~ constraint93
-    constraint94["<tt>Nothing &lt;: TypeVariable(T)</tt>"]
+    constraint92 --> constraint93
+    constraint82 ------> constraint93
+    constraint94["<tt>TypeVariable(S) &lt;: Comparable&lt;Nothing>?</tt>"]
     class constraint94 nowrapClass;
-    constraint93 --> constraint94
-    constraint83 -----> constraint94
-    constraint95["<tt>TypeVariable(T) &lt;: Comparable&lt;Nothing></tt>"]
-    class constraint95 nowrapClass;
-    constraint93 --> constraint95
-    constraint85 ----> constraint95
-    constraint96["<tt>TypeVariable(S) &lt;: Comparable&lt;Nothing>?</tt>"]
-    class constraint96 nowrapClass;
-    constraint93 --> constraint96
-    constraint86 ---> constraint96
+    constraint92 --> constraint94
+    constraint84 -----> constraint94
 
-    constraint88 ~~~~~~ stage97
-    constraint89 ~~~~~ stage97
-    constraint90 ~~~~~ stage97
-    constraint91 ~~~~ stage97
-    constraint92 ~~~~ stage97
-    constraint94 ~~~ stage97
-    constraint95 ~~~ stage97
+    constraint86 ~~~~~~ stage95
+    constraint88 ~~~~~~~ stage95
+    constraint89 ~~~~~~ stage95
+    constraint90 ~~~~~~ stage95
+    constraint93 ~~~ stage95
+    constraint94 ~~~ stage95
+
+    stage95["Resolution Stages > CheckExtensionReceiver"]
+    class stage95 nowrapClass;
+    class stage95 stageStyle;
+    constraint96["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    class constraint96 nowrapClass;
+    stage95 ~~~ constraint96
+
     constraint96 ~~~ stage97
 
-    stage97["Resolution Stages > CheckExtensionReceiver"]
+    stage97["Resolution Stages > CheckArguments"]
     class stage97 nowrapClass;
     class stage97 stageStyle;
-    constraint98["<tt>Expression&lt;Long> &lt;: Expression&lt;in TypeVariable(S)></tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Receiver R|&lt;local>/countExpr|</tt></pre></i>"]
+    constraint98["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
     class constraint98 nowrapClass;
     stage97 ~~~ constraint98
 
     constraint98 ~~~ stage99
 
-    stage99["Resolution Stages > CheckArguments"]
+    stage99["Call Completion"]
     class stage99 nowrapClass;
     class stage99 stageStyle;
-    constraint100["<tt>String &lt;: TypeVariable(T)</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Argument String(0)</tt></pre></i>"]
-    class constraint100 nowrapClass;
-    stage99 ~~~ constraint100
 
-    constraint100 ~~~ stage101
+    stage99 ~~~ variableReadiness100
 
-    stage101["Call Completion"]
-    class stage101 nowrapClass;
-    class stage101 stageStyle;
-
-    stage101 ~~~ variableReadiness102
-
-    variableReadiness102["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness100["Choose <tt>TypeVariable(S)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -590,15 +580,15 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	false HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness102 nowrapClass;
-    class variableReadiness102 readinessStyle;
-    constraint104["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
-    class constraint104 nowrapClass;
-    variableReadiness102 ~~~ constraint104
+    class variableReadiness100 nowrapClass;
+    class variableReadiness100 readinessStyle;
+    constraint102["<tt>TypeVariable(S) == Nothing</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable S</tt></pre></i>"]
+    class constraint102 nowrapClass;
+    variableReadiness100 ~~~ constraint102
 
-    constraint104 ~~~ variableReadiness103
+    constraint102 ~~~ variableReadiness101
 
-    variableReadiness103["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
+    variableReadiness101["Choose <tt>TypeVariable(T)</tt> with <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Readiness(
 	 true ALLOWED
 	 true HAS_PROPER_CONSTRAINTS
 	 true HAS_NO_OUTER_TYPE_VARIABLE_DEPENDENCY
@@ -613,11 +603,16 @@ flowchart TD
 	 true HAS_PROPER_EQUALITY_CONSTRAINT
 	 true HAS_PROPER_NON_NOTHING_NON_UPPER_CONSTRAINT
 )</tt></pre>"]
-    class variableReadiness103 nowrapClass;
-    class variableReadiness103 readinessStyle;
-    constraint105["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
-    class constraint105 nowrapClass;
-    variableReadiness103 ~~~ constraint105
+    class variableReadiness101 nowrapClass;
+    class variableReadiness101 readinessStyle;
+    constraint103["<tt>TypeVariable(T) == String</tt><br><br><i><div style="display: inline-block;vertical-align: middle;">from</div> <pre style="display: inline-block;vertical-align: middle;text-align: left;margin: 0;"><tt>Fix variable T</tt></pre></i>"]
+    class constraint103 nowrapClass;
+    variableReadiness101 ~~~ constraint103
+    constraint104["<tt>TypeVariable(T) &lt;: Comparable&lt;String></tt>"]
+    class constraint104 nowrapClass;
+    variableReadiness101 ~~~ constraint104
+    constraint87 --> constraint104
+    constraint82 --> constraint104
 
     linkStyle 6 stroke:#990000
     linkStyle 13 stroke:#009999
@@ -709,27 +704,23 @@ flowchart TD
     linkStyle 132 stroke:#7a0099
     linkStyle 133 stroke:#005999
     linkStyle 134 stroke:#993f00
-    linkStyle 135 stroke:#005999
-    linkStyle 136 stroke:#7a0099
-    linkStyle 137 stroke:#005999
-    linkStyle 138 stroke:#0c9900
+    linkStyle 136 stroke:#0c9900
+    linkStyle 137 stroke:#1e9900
+    linkStyle 138 stroke:#8c0099
+    linkStyle 139 stroke:#7a0099
     linkStyle 140 stroke:#8c0099
-    linkStyle 141 stroke:#1e9900
-    linkStyle 142 stroke:#8c0099
-    linkStyle 143 stroke:#993f00
-    linkStyle 144 stroke:#8c0099
-    linkStyle 145 stroke:#995200
-    linkStyle 146 stroke:#004699
-    linkStyle 147 stroke:#009905
-    linkStyle 148 stroke:#990093
-    linkStyle 149 stroke:#996400
-    linkStyle 150 stroke:#003499
-    linkStyle 151 stroke:#009917
-    linkStyle 152 stroke:#990081
-    linkStyle 153 stroke:#997600
-    linkStyle 155 stroke:#002299
-    linkStyle 157 stroke:#00992a
-    linkStyle 160 stroke:#99006e
+    linkStyle 141 stroke:#995200
+    linkStyle 142 stroke:#004699
+    linkStyle 143 stroke:#009905
+    linkStyle 144 stroke:#990093
+    linkStyle 145 stroke:#996400
+    linkStyle 146 stroke:#003499
+    linkStyle 147 stroke:#009917
+    linkStyle 149 stroke:#990081
+    linkStyle 151 stroke:#997600
+    linkStyle 154 stroke:#002299
+    linkStyle 157 stroke:#005999
+    linkStyle 158 stroke:#7a0099
     style constraint6 stroke:#990000;
     style constraint12 stroke:#009999;
     style constraint13 stroke:#4c9900;
@@ -776,17 +767,15 @@ flowchart TD
     style constraint82 stroke:#7a0099;
     style constraint85 stroke:#993f00;
     style constraint87 stroke:#005999;
-    style constraint84 stroke:#0c9900;
-    style constraint93 stroke:#8c0099;
-    style constraint86 stroke:#995200;
-    style constraint88 stroke:#004699;
-    style constraint89 stroke:#009905;
-    style constraint90 stroke:#990093;
-    style constraint91 stroke:#996400;
-    style constraint92 stroke:#003499;
+    style constraint91 stroke:#0c9900;
+    style constraint92 stroke:#8c0099;
+    style constraint84 stroke:#995200;
+    style constraint86 stroke:#004699;
+    style constraint88 stroke:#009905;
+    style constraint89 stroke:#990093;
+    style constraint90 stroke:#996400;
+    style constraint93 stroke:#003499;
     style constraint94 stroke:#009917;
-    style constraint95 stroke:#990081;
-    style constraint96 stroke:#997600;
-    style constraint98 stroke:#002299;
-    style constraint100 stroke:#00992a;
-    style constraint104 stroke:#99006e;
+    style constraint96 stroke:#990081;
+    style constraint98 stroke:#997600;
+    style constraint102 stroke:#002299;

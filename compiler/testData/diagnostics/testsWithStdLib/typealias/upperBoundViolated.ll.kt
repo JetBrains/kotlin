@@ -1,7 +1,6 @@
 // LL_FIR_DIVERGENCE
 // `OTHER_ERROR_WITH_REASON` isn't reported by LL runners.
 // LL_FIR_DIVERGENCE
-// LATEST_LV_DIFFERENCE
 // RUN_PIPELINE_TILL: FRONTEND
 class NumColl<T : Collection<Number>>
 typealias NumList<T2> = NumColl<List<T2>>

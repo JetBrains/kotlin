@@ -1,3 +1,6 @@
+compiler/testData/cli/jvm/diagnosticTests/recordAsSingleFileRoot.kt:2:24: error: cannot access 'java.lang.Record' which is a supertype of 'Record'. Check your module classpath for missing or conflicting dependencies.
+fun create(): Record = Record("OK")
+                       ^^^^^^
 compiler/testData/cli/jvm/diagnosticTests/recordAsSingleFileRoot.kt:5:14: error: unresolved reference 'Unresolved'.
 fun error(): Unresolved? = null
              ^^^^^^^^^^

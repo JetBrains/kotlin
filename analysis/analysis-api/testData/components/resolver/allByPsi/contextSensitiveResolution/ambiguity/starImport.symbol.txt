@@ -581,7 +581,7 @@ KtDotQualifiedExpression(429,439): 'bar.Sealed'
   null
 
 KtNameReferenceExpression(429,432): 'bar'
-  isImplicitReferenceToCompanion: true
+  isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [
@@ -623,7 +623,7 @@ KtDotQualifiedExpression(460,470): 'bar.Sealed'
   null
 
 KtNameReferenceExpression(460,463): 'bar'
-  isImplicitReferenceToCompanion: true
+  isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
   KaSymbolResolutionSuccess:
     symbols = [

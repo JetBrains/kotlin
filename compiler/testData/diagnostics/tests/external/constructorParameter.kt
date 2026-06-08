@@ -1,9 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-83713
-// LATEST_LV_DIFFERENCE
 // FIR_DUMP
 
-class NotExternal(<!DEPRECATED_MODIFIER_FOR_TARGET!>external<!> val paramProp: String, <!WRONG_MODIFIER_TARGET!>external<!> param: String) {
+class NotExternal(<!WRONG_MODIFIER_TARGET!>external<!> val paramProp: String, <!WRONG_MODIFIER_TARGET!>external<!> param: String) {
     <!WRONG_MODIFIER_TARGET!>external<!> val prop: String
 
     external fun foo()

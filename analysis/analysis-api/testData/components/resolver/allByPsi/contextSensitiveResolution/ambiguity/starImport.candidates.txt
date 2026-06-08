@@ -391,23 +391,7 @@ KtDotQualifiedExpression(352,362): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(352,355): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(356,362): 'Sealed'
   KaInapplicableCallCandidate:
@@ -557,23 +541,7 @@ KtDotQualifiedExpression(429,439): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(429,432): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(433,439): 'Sealed'
   KaInapplicableCallCandidate:
@@ -665,23 +633,7 @@ KtDotQualifiedExpression(460,470): 'bar.Sealed'
     isInBestCandidates = false
 
 KtNameReferenceExpression(460,463): 'bar'
-  KaInapplicableCallCandidate:
-    candidate = KaSimpleFunctionCall:
-      contextArgumentMapping = {}
-      contextArguments = []
-      dispatchReceiver = null
-      extensionReceiver = null
-      signature = KaFunctionSignature:
-        receiverType = null
-        returnType = bar.Sealed
-        symbol = <constructor>(): bar.Sealed
-        valueParameters = []
-        contextParameters = []
-        callableId = null
-      typeArgumentsMapping = {}
-      valueArgumentMapping = {}
-    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
-    isInBestCandidates = false
+  NO_CANDIDATES
 
 KtNameReferenceExpression(464,470): 'Sealed'
   KaInapplicableCallCandidate:

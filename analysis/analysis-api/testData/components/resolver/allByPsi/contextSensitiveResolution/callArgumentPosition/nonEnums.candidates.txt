@@ -788,7 +788,7 @@ KtCallExpression(398,430): 'expectMyClass(FOR_TYPE_MISMATCH)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(398,411): 'expectMyClass'
@@ -823,7 +823,7 @@ KtNameReferenceExpression(398,411): 'expectMyClass'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(411,430): '(FOR_TYPE_MISMATCH)'
@@ -930,7 +930,7 @@ KtValueArgument(449,470): 'id(FOR_TYPE_MISMATCH)'
   NO_CANDIDATES
 
 KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -963,10 +963,11 @@ KtCallExpression(449,470): 'id(FOR_TYPE_MISMATCH)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(449,451): 'id'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -999,6 +1000,7 @@ KtNameReferenceExpression(449,451): 'id'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'String', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(451,470): '(FOR_TYPE_MISMATCH)'
@@ -1324,7 +1326,7 @@ KtCallExpression(528,558): 'expectMyClass(ForTypeMismatch)'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(528,541): 'expectMyClass'
@@ -1359,7 +1361,7 @@ KtNameReferenceExpression(528,541): 'expectMyClass'
           contextParameters = []
           callableId = null)
       }
-    diagnostic = ERROR<INAPPLICABLE_CANDIDATE: Inapplicable candidate(s): fun expectMyClass(x: MyClass): Unit>
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(541,558): '(ForTypeMismatch)'
@@ -1464,7 +1466,7 @@ KtValueArgument(577,596): 'id(ForTypeMismatch)'
   NO_CANDIDATES
 
 KtCallExpression(577,596): 'id(ForTypeMismatch)'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1497,10 +1499,11 @@ KtCallExpression(577,596): 'id(ForTypeMismatch)'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtNameReferenceExpression(577,579): 'id'
-  KaApplicableCallCandidate:
+  KaInapplicableCallCandidate:
     candidate = KaSimpleFunctionCall:
       contextArgumentMapping = {}
       contextArguments = []
@@ -1533,6 +1536,7 @@ KtNameReferenceExpression(577,579): 'id'
           contextParameters = []
           callableId = null)
       }
+    diagnostic = ERROR<ARGUMENT_TYPE_MISMATCH: Argument type mismatch: actual type is 'MyClass.ForTypeMismatch', but 'MyClass' was expected.>
     isInBestCandidates = true
 
 KtValueArgumentList(579,596): '(ForTypeMismatch)'

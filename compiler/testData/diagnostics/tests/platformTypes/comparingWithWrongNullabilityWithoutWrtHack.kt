@@ -1,11 +1,10 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FULL_JDK
-// LATEST_LV_DIFFERENCE
 
 import java.util.Comparator;
 
 fun foo() {
-    Comparator.comparing<String?, <!UPPER_BOUND_VIOLATED!>Boolean?<!>> <!ARGUMENT_TYPE_MISMATCH!>{
+    <!TYPE_MISMATCH!>Comparator.comparing<String?, <!UPPER_BOUND_VIOLATED!>Boolean?<!>> {
         it != ""
     }<!>
 }

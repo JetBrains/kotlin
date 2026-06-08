@@ -2,7 +2,6 @@
 // ALLOW_KOTLIN_PACKAGE
 // DIAGNOSTICS: -UNUSED_PARAMETER -UNUSED_VARIABLE -UNUSED_EXPRESSION
 // ISSUE: KT-11265
-// LATEST_LV_DIFFERENCE
 
 // FILE: OverloadResolutionByLambdaReturnType.kt
 
@@ -58,7 +57,7 @@ fun foo(f: () -> A): Int = 1
 fun foo(f: () -> B): String = ""
 
 fun test_6(c: C) {
-    val x = foo { c }
+    val x = <!OVERLOAD_RESOLUTION_AMBIGUITY!>foo<!> { c }
     takeString(x)
 }
 
