@@ -34,3 +34,6 @@ val currentKotlinJsStdlibKlibLocation
 
 val currentKotlinWasmStdlibKlibLocation
     get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.wasmStdlibClasspath"))
+
+val currentKotlinMetadataStdlibKlibLocation
+    get() = Paths.get(System.getProperty("kotlin.build-tools-api.test.metadataStdlibClasspath"))

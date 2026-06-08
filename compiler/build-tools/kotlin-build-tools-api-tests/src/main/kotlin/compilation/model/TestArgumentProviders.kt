@@ -56,7 +56,8 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
                         "${executionStrategyConfiguration.name}[JVM]"
                     ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                         baseTest.jvmProject(executionStrategyConfiguration.payload, testAction)
-                    }, if (executionStrategyConfiguration.payload.first.supportsJs()) {
+                    },
+                    if (executionStrategyConfiguration.payload.first.supportsJs()) {
                         named(
                             "${executionStrategyConfiguration.name}[JS]"
                         ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
@@ -69,7 +70,15 @@ class BtaV2StrategyAndPlatformAgnosticCompilationTestArgumentProvider : Argument
                         ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                             baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
                         }
-                    } else null)
+                    } else null,
+                    if (executionStrategyConfiguration.payload.first.supportsMetadata()) {
+                        named(
+                            "${executionStrategyConfiguration.name}[Metadata]"
+                        ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                            baseTest.metadataProject(executionStrategyConfiguration.payload, testAction)
+                        }
+                    } else null,
+                )
             }
         }
     }
@@ -120,6 +129,13 @@ class DefaultStrategyAndPlatformAgnosticProjectTestArgumentProvider : ArgumentsP
                                 "${executionStrategyConfiguration.name}[Wasm]"
                             ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
                                 baseTest.wasmProject(executionStrategyConfiguration.payload, testAction)
+                            }
+                        } else null,
+                        if (executionStrategyConfiguration.payload.first.supportsMetadata()) {
+                            named(
+                                "${executionStrategyConfiguration.name}[Metadata]"
+                            ) { baseTest: BaseCompilationTest, testAction: ProjectAction ->
+                                baseTest.metadataProject(executionStrategyConfiguration.payload, testAction)
                             }
                         } else null,
                     )
@@ -207,3 +223,4 @@ typealias ScenarioAction = Scenario<out BaseCompilationOperation.Builder, out Ba
 
 fun KotlinToolchains.supportsJs() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
 fun KotlinToolchains.supportsWasm() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)
+fun KotlinToolchains.supportsMetadata() = KotlinToolingVersion(getCompilerVersion()) >= KotlinToolingVersion(2, 4, 20, null)

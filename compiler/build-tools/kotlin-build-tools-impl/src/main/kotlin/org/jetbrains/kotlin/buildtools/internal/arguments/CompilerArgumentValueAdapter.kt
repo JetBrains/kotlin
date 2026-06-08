@@ -10,6 +10,10 @@ import org.jetbrains.kotlin.buildtools.api.arguments.*
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonJsAndWasmArguments.CommonJsAndWasmArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.CommonKlibBasedArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.MetadataArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
 import java.io.File
@@ -73,6 +77,12 @@ internal interface WasmArgumentValueAdapter : CommonJsAndWasmArgumentValueAdapte
     fun <T, V> mapTo(value: V, key: WasmCompilerKlibArguments.WasmCompilerKlibArgument<V>): T
     fun <V, T> mapFrom(value: T, key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): V
     fun <T, V> mapTo(value: V, key: WasmCompilerLinkingArguments.WasmCompilerLinkingArgument<V>): T
+}
+
+@OptIn(ExperimentalCompilerArgument::class)
+internal interface MetadataArgumentValueAdapter : CommonCompilerArgumentValueAdapter {
+    fun <V, T> mapFrom(value: T, key: MetadataArgument<V>): V
+    fun <T, V> mapTo(value: V, key: MetadataArgument<V>): T
 }
 
 internal interface JvmCompilerArgumentValueAdapter : CommonCompilerArgumentValueAdapter {

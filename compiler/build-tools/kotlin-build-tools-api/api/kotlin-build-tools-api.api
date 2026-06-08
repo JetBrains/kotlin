@@ -982,6 +982,32 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 	public final fun getId ()Ljava/lang/String;
 }
 
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
+	public static final field CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Companion;
+	public static final field MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public static final field X_FRIEND_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public static final field X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public static final field X_REFINES_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public static final field X_TARGET_PLATFORM Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;)Ljava/lang/Object;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Builder : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;)Ljava/lang/Object;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument {
+	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;)V
+	public final fun getAvailableSinceVersion ()Lorg/jetbrains/kotlin/buildtools/api/KotlinReleaseVersion;
+	public final fun getId ()Ljava/lang/String;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation {
 	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/buildtools/api/arguments/NullabilityAnnotation$Mode;)V
 	public fun equals (Ljava/lang/Object;)Z
@@ -1833,6 +1859,45 @@ public final class org/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompila
 	public static final fun snapshotBasedIcConfiguration (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
 	public static synthetic fun snapshotBasedIcConfiguration$default (Lorg/jetbrains/kotlin/buildtools/api/jvm/operations/JvmCompilationOperation$Builder;Ljava/nio/file/Path;Lorg/jetbrains/kotlin/buildtools/api/SourcesChanges;Ljava/util/List;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/jvm/JvmSnapshotBasedIncrementalCompilationConfiguration;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation, org/jetbrains/kotlin/buildtools/api/CancellableBuildOperation {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Companion;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun toBuilder ()Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Builder;
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Builder : org/jetbrains/kotlin/buildtools/api/BaseCompilationOperation$Builder {
+	public abstract fun build ()Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation;
+	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Option;)Ljava/lang/Object;
+	public abstract fun getCompilerArguments ()Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Builder;
+	public abstract fun getDestination ()Ljava/nio/file/Path;
+	public abstract fun getSources ()Ljava/util/List;
+	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Option;Ljava/lang/Object;)V
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Companion {
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Option : org/jetbrains/kotlin/buildtools/api/internal/BaseOption {
+}
+
+public abstract interface class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain : org/jetbrains/kotlin/buildtools/api/KotlinToolchains$Toolchain {
+	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain$Companion;
+	public static fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain;
+	public abstract fun metadataKlibCompilationOperationBuilder (Ljava/util/List;Ljava/nio/file/Path;)Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation$Builder;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain$Companion {
+	public final fun from (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchains;)Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain;
+}
+
+public final class org/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataToolchainKt {
+	public static final fun metadataKlibCompilationOperation (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;)Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation;
+	public static synthetic fun metadataKlibCompilationOperation$default (Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataPlatformToolchain;Ljava/util/List;Ljava/nio/file/Path;Lkotlin/jvm/functions/Function1;ILjava/lang/Object;)Lorg/jetbrains/kotlin/buildtools/api/metadata/KotlinMetadataKlibCompilationOperation;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector {
