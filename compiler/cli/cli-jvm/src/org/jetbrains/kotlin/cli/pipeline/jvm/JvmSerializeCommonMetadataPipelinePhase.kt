@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataFrontendPipelineArtifa
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibFileWriterPhase
 import org.jetbrains.kotlin.cli.pipeline.metadata.MetadataKlibInMemorySerializerPhase
 import org.jetbrains.kotlin.config.commonFragmentsOutputDir
+import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.pipeline.AllModulesFrontendOutput
 
 object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipelineArtifact, JvmFrontendPipelineArtifact>(
@@ -30,12 +31,17 @@ object JvmSerializeCommonMetadataPipelinePhase : PipelinePhase<JvmFrontendPipeli
         val commonFragmentOutputs = input.frontendOutput.outputs.dropLast(1)
         if (commonFragmentOutputs.isEmpty()) return
 
-        val inputForPhase = MetadataFrontendPipelineArtifact(
-            AllModulesFrontendOutput(commonFragmentOutputs),
-            configuration = configuration,
-            sourceFiles = input.sourceFiles,
-        )
-        val metadataInMemory = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
-        MetadataKlibFileWriterPhase.writeToDisc(metadataInMemory, outputDir)
+        for (output in commonFragmentOutputs) {
+            val inputForPhase = MetadataFrontendPipelineArtifact(
+                AllModulesFrontendOutput(listOf(output)),
+                configuration = configuration,
+                sourceFiles = input.sourceFiles,
+            )
+            val metadataInMemory = MetadataKlibInMemorySerializerPhase.executePhase(inputForPhase)
+            MetadataKlibFileWriterPhase.writeToDisc(
+                metadataInMemory,
+                outputDir.resolve(output.session.moduleData.name.asStringStripSpecialMarkers())
+            )
+        }
     }
 }
