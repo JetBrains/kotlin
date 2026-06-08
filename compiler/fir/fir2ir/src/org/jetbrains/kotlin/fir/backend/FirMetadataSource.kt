@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isConst
 import org.jetbrains.kotlin.fir.localClassJvmType
 import org.jetbrains.kotlin.fir.psi
+import org.jetbrains.kotlin.ir.MetadataSourceWithKtSourceElement
 import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.ir.declarations.MetadataSource
@@ -20,7 +21,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 
-sealed class FirMetadataSource : MetadataSource, DeclarationSymbolOwner {
+sealed class FirMetadataSource : MetadataSourceWithKtSourceElement, DeclarationSymbolOwner {
     abstract val fir: FirDeclaration
     override val source: KtSourceElement?
         get() = fir.source
