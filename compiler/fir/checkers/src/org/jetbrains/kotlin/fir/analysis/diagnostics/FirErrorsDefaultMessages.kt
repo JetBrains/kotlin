@@ -4036,13 +4036,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(
             MISSING_INHERITOR,
-            "The class ''{0}'' is not registered as a direct inheritor of ''{1}'' supertype.",
+            "The class ''{1}'' is not registered as a direct inheritor of ''{0}'' supertype.",
             SYMBOL,
             SYMBOL,
         )
         map.put(
             MISSING_OVERRIDE,
-            "The callable ''{0}'' is not registered as a direct override of ''{1}'' callable.",
+            "The callable ''{1}'' is not registered as a direct override of ''{0}'' callable.",
             SYMBOL,
             SYMBOL,
         )
