@@ -1,9 +1,9 @@
 KT element: KtPrefixExpression
-FIR element: null
-FIR source kind: null
+FIR element: FirFunctionCallImpl
+FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-null
+Int(2).R|kotlin/Int.unaryPlus|().R|kotlin/Int.unaryMinus|().R|kotlin/Int.unaryMinus|()
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] unaryOnComplexIntLiteral3.kt

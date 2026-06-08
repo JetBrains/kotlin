@@ -1,5 +1,5 @@
 expression: -(l2@ +(@Anno(33) (-(-(+2)))))
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED
+constant: -2
+constantValueKind: IntValue
+constantValueSource: PREFIX_EXPRESSION
+constantValueSourceText: -(l2@ +(@Anno(33) (-(-(+2)))))

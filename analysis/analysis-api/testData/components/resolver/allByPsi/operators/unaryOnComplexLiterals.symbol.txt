@@ -160,12 +160,18 @@ KtConstantExpression(41,43): '1L'
   null
 
 KtPrefixExpression(54,84): '-(l2@ +(@Anno(44) (-(-(+2)))))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(54,55): '-'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(55,84): '(l2@ +(@Anno(44) (-(-(+2)))))'
   null
@@ -182,12 +188,18 @@ KtLabelReferenceExpression(56,59): 'l2@'
   null
 
 KtPrefixExpression(60,83): '+(@Anno(44) (-(-(+2))))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(60,61): '+'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(61,83): '(@Anno(44) (-(-(+2))))'
   null
@@ -225,34 +237,52 @@ KtParenthesizedExpression(72,82): '(-(-(+2)))'
   null
 
 KtPrefixExpression(73,81): '-(-(+2))'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(73,74): '-'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(74,81): '(-(+2))'
   null
 
 KtPrefixExpression(75,80): '-(+2)'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(75,76): '-'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtParenthesizedExpression(76,80): '(+2)'
   null
 
 KtPrefixExpression(77,79): '+2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(77,78): '+'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(78,79): '2'
   null

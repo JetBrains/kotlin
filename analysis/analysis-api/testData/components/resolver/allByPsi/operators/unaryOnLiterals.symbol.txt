@@ -17,23 +17,35 @@ KtBlockExpression(18,51): '{'
   null
 
 KtPrefixExpression(24,26): '+1'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(24,25): '+'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryPlus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(25,26): '1'
   null
 
 KtPrefixExpression(31,33): '-2'
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtOperationReferenceExpression(31,32): '-'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      kotlin/Int.unaryMinus(<dispatch receiver>: kotlin.Int): kotlin.Int
+    ]
 
 KtConstantExpression(32,33): '2'
   null

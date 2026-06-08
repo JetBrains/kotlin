@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir
 
+import com.intellij.psi.util.findParentOfType
 import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.AnalysisApiServiceRegistrar
 import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractGetOrBuildFirTest.Directives.SKIP_CONTAINMENT_CHECK
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFir
@@ -25,7 +26,6 @@ import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -138,10 +138,14 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
     }
 
     /**
-     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder.visitLiteralExpression]
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder.visitLiteralExpression] and
+     * [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.fakeCallForIntLiteralWithUnaryExpression]
      */
     private fun FirElement.isSyntheticUnaryOperator(): Boolean {
-        return this is FirLiteralExpression && this.psi?.parent is KtPrefixExpression
+        return this is FirLiteralExpression && this.psi?.findParentOfType<KtPrefixExpression>(strict = true) != null ||
+                this is FirFunctionCall &&
+                calleeReference.name.let { it == OperatorNameConventions.UNARY_PLUS || it == OperatorNameConventions.UNARY_MINUS } &&
+                explicitReceiver?.isSyntheticUnaryOperator() == true
     }
 
     /**
