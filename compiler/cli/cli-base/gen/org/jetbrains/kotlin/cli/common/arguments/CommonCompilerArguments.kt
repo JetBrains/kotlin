@@ -509,8 +509,7 @@ Use the 'warning' level to issue warnings instead of errors.""",
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
-The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""",
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
         delimiter = Argument.Delimiters.none,
     )
     var fragmentDependencies: Array<String> = emptyArray()
@@ -524,8 +523,7 @@ The argument should be used only if the new compilation scheme is enabled with -
         valueDescription = "<fragment name>:<path>",
         description = """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
-The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""",
+The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation""",
         delimiter = Argument.Delimiters.none,
     )
     var fragmentFriendDependencies: Array<String> = emptyArray()

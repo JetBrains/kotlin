@@ -3900,8 +3900,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Declare common klib dependencies for the specific fragment.\nThis argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n",
-                            "valueInVersions": []
+                            "current": "Declare common klib dependencies for the specific fragment.\nThis argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.20",
+                                    "maxReleaseVersion": "2.4.0",
+                                    "value": "Declare common klib dependencies for the specific fragment.\nThis argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n"
+                                }
+                            ]
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
@@ -3944,8 +3950,14 @@
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
-                            "current": "Declare common klib friend dependencies for the specific fragment.\nThis argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n",
-                            "valueInVersions": []
+                            "current": "Declare common klib friend dependencies for the specific fragment.\nThis argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation",
+                            "valueInVersions": [
+                                {
+                                    "minReleaseVersion": "2.2.20",
+                                    "maxReleaseVersion": "2.4.0",
+                                    "value": "Declare common klib friend dependencies for the specific fragment.\nThis argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.\nThe argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation\n"
+                                }
+                            ]
                         },
                         "delimiter": "None",
                         "affectsCompilationOutcome": true,
