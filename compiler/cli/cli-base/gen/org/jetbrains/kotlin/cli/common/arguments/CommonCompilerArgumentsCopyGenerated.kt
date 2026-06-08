@@ -62,6 +62,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.fullValueClasses = from.fullValueClasses
     to.headerMode = from.headerMode
     to.headerModeType = from.headerModeType
+    to.homePackageResolution = from.homePackageResolution
     to.incrementalCompilation = from.incrementalCompilation
     to.intrinsicConstEvaluation = from.intrinsicConstEvaluation
     to.kotlinHome = from.kotlinHome

@@ -663,6 +663,17 @@ with bodies.""",
         }
 
     @Argument(
+        value = "-Xhome-package-resolution",
+        description = "Enables `HomePackageResolution` language feature.`",
+    )
+    @Enables(LanguageFeature.HomePackageResolution)
+    var homePackageResolution: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xintrinsic-const-evaluation",
         description = "Enables `IntrinsicConstEvaluation` language feature.`",
     )
