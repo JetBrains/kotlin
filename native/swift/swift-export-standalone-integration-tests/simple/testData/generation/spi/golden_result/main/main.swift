@@ -8,7 +8,7 @@ public typealias MyAliasAlias = lib.InternalLibAlias
 @_spi(InternalLibApi)
 public typealias MyInterfaceAlias = any lib.InternalLibInterface
 @_spi(InternalLibApi)
-public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib._InternalLibInterface {
+public final class MyImplementation: KotlinRuntime.KotlinBase, lib.InternalLibInterface, lib._InternalLibInterface, lib.__InternalLibInterface {
     @_spi(InternalLibApi)
     public var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -53,7 +53,7 @@ public final class MyOptInClass: KotlinRuntime.KotlinBase {
     }
 }
 @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
-public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne {
+public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOne, lib.__InterfaceOne {
     @_spi(InterfaceOptInOne) @_spi(OpenClassOptIn)
     public override init() {
         let __kt = __root___MySubClass_init_allocate()
@@ -68,7 +68,7 @@ public final class MySubClass: lib.OpenClass, lib.InterfaceOne, lib._InterfaceOn
     }
 }
 @_spi(InterfaceOptInTwo)
-public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo {
+public final class MySubInterface: KotlinRuntime.KotlinBase, lib.InterfaceTwo, lib._InterfaceTwo, lib.__InterfaceTwo {
     @_spi(InterfaceOptInTwo)
     public init() {
         let __kt = __root___MySubInterface_init_allocate()

@@ -29,19 +29,19 @@ public final class _ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict: 
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-extension ExportedKotlinPackages.conflictingTypealiases.Bar where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.conflictingTypealiases.Bar where Self : ExportedKotlinPackages.conflictingTypealiases.__Bar {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Bar {
     typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Bar_Conflict
 }
-extension ExportedKotlinPackages.conflictingTypealiases.Foo where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.conflictingTypealiases.Foo where Self : ExportedKotlinPackages.conflictingTypealiases.__Foo {
 }
 extension ExportedKotlinPackages.conflictingTypealiases.Foo {
     typealias Conflict = edge_cases._ExportedKotlinPackages_conflictingTypealiases_Foo_Conflict
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Foo where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Foo {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Foo, ExportedKotlinPackages.conflictingTypealiases.__Foo where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Foo {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.conflictingTypealiases.Bar, ExportedKotlinPackages.conflictingTypealiases.__Bar where Wrapped : ExportedKotlinPackages.conflictingTypealiases._Bar {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.conflictingTypealiases._Foo {
 }
@@ -57,5 +57,9 @@ extension ExportedKotlinPackages.conflictingTypealiases {
     }
     @objc(_Foo)
     public protocol _Foo {
+    }
+    public protocol __Bar: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol __Foo: KotlinRuntimeSupport._KotlinBridgeable {
     }
 }

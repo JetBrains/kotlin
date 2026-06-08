@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : ExportedKotlinPackages.kotlin.ranges.__ClosedRange {
     public var endInclusive: any ExportedKotlinPackages.kotlin.Comparable {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_ranges_ClosedRange_endInclusive_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
@@ -31,7 +31,7 @@ extension ExportedKotlinPackages.kotlin.ranges.ClosedRange where Self : KotlinRu
 }
 extension ExportedKotlinPackages.kotlin.ranges.ClosedRange {
 }
-extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(
         this: Self,
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -64,9 +64,9 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSup
 }
 extension ExportedKotlinPackages.kotlin.Comparable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.ranges.ClosedRange where Wrapped : ExportedKotlinPackages.kotlin.ranges._ClosedRange {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.ranges.ClosedRange, ExportedKotlinPackages.kotlin.ranges.__ClosedRange where Wrapped : ExportedKotlinPackages.kotlin.ranges._ClosedRange {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable, ExportedKotlinPackages.kotlin.__Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.ranges._ClosedRange {
 }
@@ -80,6 +80,8 @@ extension ExportedKotlinPackages.kotlin {
     }
     @objc(_Comparable)
     public protocol _Comparable {
+    }
+    public protocol __Comparable: KotlinRuntimeSupport._KotlinBridgeable {
     }
 }
 extension ExportedKotlinPackages.kotlin.ranges {
@@ -97,6 +99,8 @@ extension ExportedKotlinPackages.kotlin.ranges {
     }
     @objc(_ClosedRange)
     public protocol _ClosedRange {
+    }
+    public protocol __ClosedRange: KotlinRuntimeSupport._KotlinBridgeable {
     }
 }
 @_cdecl("kotlin_Comparable_compareTo__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable_____reverse_swift")

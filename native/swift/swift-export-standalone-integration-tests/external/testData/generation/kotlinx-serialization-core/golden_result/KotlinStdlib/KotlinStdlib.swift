@@ -9,6 +9,8 @@ extension ExportedKotlinPackages.kotlin {
     @objc(_Annotation)
     public protocol _Annotation {
     }
+    public protocol __Annotation: KotlinRuntimeSupport._KotlinBridgeable {
+    }
     public protocol CharSequence: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._CharSequence {
         var length: Swift.Int32 {
             get
@@ -23,6 +25,8 @@ extension ExportedKotlinPackages.kotlin {
     }
     @objc(_CharSequence)
     public protocol _CharSequence {
+    }
+    public protocol __CharSequence: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
@@ -4455,7 +4459,7 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence {
+    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.__CharSequence {
         public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.String.Companion {
                 get {
@@ -6688,12 +6692,16 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_Iterable)
     public protocol _Iterable {
     }
+    public protocol __Iterable: KotlinRuntimeSupport._KotlinBridgeable {
+    }
     public protocol Iterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections._Iterator {
         func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func hasNext() -> Swift.Bool
     }
     @objc(_Iterator)
     public protocol _Iterator {
+    }
+    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
     }
     open class IntIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Int32 {
@@ -7222,22 +7230,22 @@ extension ExportedKotlinPackages.kotlin.time {
         }
     }
 }
-extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.Annotation where Self : ExportedKotlinPackages.kotlin.__Annotation {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Annotation {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation, ExportedKotlinPackages.kotlin.__Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
 extension ExportedKotlinPackages.kotlin.Annotation {
 }
-extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : ExportedKotlinPackages.kotlin.collections.__Iterable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable, ExportedKotlinPackages.kotlin.collections.__Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterable {
 }
@@ -7702,7 +7710,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
 }
-extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlinPackages.kotlin.__CharSequence {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -7729,11 +7737,11 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._CharSequence {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
 }
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
@@ -7743,7 +7751,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }

@@ -56,16 +56,36 @@ public protocol _SealedFoeble_SealedBarable: KotlinRuntime.KotlinBase, main.Seal
 @objc(_SiblingProtocol)
 public protocol _SiblingProtocol {
 }
+public protocol __Barable: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Bazzable: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __ContainerProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+}
 @objc(__ContainerProtocol_NestedProtocol)
 public protocol __ContainerProtocol_NestedProtocol {
 }
 @objc(__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol)
 public protocol __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
+public protocol __Foeble: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __SealedBazzable: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __SealedFoeble: KotlinRuntimeSupport._KotlinBridgeable {
+}
 @objc(__SealedFoeble_SealedBarable)
 public protocol __SealedFoeble_SealedBarable: main._SealedFoeble {
 }
-public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, main.Foeble, main._Foeble, main.Bazzable, main._Bazzable {
+public protocol __SiblingProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol ___ContainerProtocol_NestedProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol ___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol ___SealedFoeble_SealedBarable: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, main.__Barable, main.Foeble, main._Foeble, main.__Foeble, main.Bazzable, main._Bazzable, main.__Bazzable {
     public var baz: main.Bar {
         get {
             return main.Bar.__createClassWrapper(externalRCRef: Bar_baz_get(self.__externalRCRef()))
@@ -88,7 +108,7 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, m
         return main.Bar.__createClassWrapper(externalRCRef: Bar_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()))
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main._Foeble {
+public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main._Foeble, main.__Foeble {
     public var baz: any main.Foeble {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foo_baz_get(self.__externalRCRef())) as! any main.Foeble
@@ -127,7 +147,7 @@ public final class MyObject: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, main._SealedBazzable {
+public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, main._SealedBazzable, main.__SealedBazzable {
     public static var shared: main.SomeBazzable {
         get {
             return main.SomeBazzable.__createClassWrapper(externalRCRef: __root___SomeBazzable_get())
@@ -195,7 +215,7 @@ public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._SealedFoeble_SealedBarable, main.__SealedFoeble_SealedBarable {
+public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._SealedFoeble_SealedBarable, main.__SealedFoeble_SealedBarable, main.___SealedFoeble_SealedBarable {
     public static var shared: main._SealedFoeble_SomeBarable {
         get {
             return main._SealedFoeble_SomeBarable.__createClassWrapper(externalRCRef: SealedFoeble_SomeBarable_get())
@@ -211,7 +231,7 @@ public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._Se
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.SealedFoeble, main._SealedFoeble {
+public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.SealedFoeble, main._SealedFoeble, main.__SealedFoeble {
     public static var shared: main._SealedFoeble_SomeFoeble {
         get {
             return main._SealedFoeble_SomeFoeble.__createClassWrapper(externalRCRef: SealedFoeble_SomeFoeble_get())
@@ -338,7 +358,7 @@ public func nullable(
 ) -> (any main.Foeble)? {
     return { switch __root___nullable__TypesOfArguments__Swift_Optional_anyU20main_Foeble___(value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any main.Foeble; } }()
 }
-extension main.Barable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Barable where Self : main.__Barable {
     public var baz: any main.Foeble {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Barable_baz_get(self.__externalRCRef())) as! any main.Foeble
@@ -352,27 +372,27 @@ extension main.Barable where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.Barable {
 }
-extension ExportedKotlinPackages.repeating_conformances.Barable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.repeating_conformances.Barable where Self : ExportedKotlinPackages.repeating_conformances.__Barable {
 }
 extension ExportedKotlinPackages.repeating_conformances.Barable {
 }
-extension main.Bazzable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Bazzable where Self : main.__Bazzable {
 }
 extension main.Bazzable {
 }
-extension main.ContainerProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.ContainerProtocol where Self : main.__ContainerProtocol {
 }
 extension main.ContainerProtocol {
     typealias NestedClass = main._ContainerProtocol_NestedClass
     typealias NestedProtocol = main._ContainerProtocol_NestedProtocol
 }
-extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Self : ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol {
 }
 extension ExportedKotlinPackages.packagewithprotocols.ContainerProtocol {
     typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
     typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
 }
-extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Foeble where Self : main.__Foeble {
     public var baz: any main.Foeble {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foeble_baz_get(self.__externalRCRef())) as! any main.Foeble
@@ -386,68 +406,68 @@ extension main.Foeble where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.Foeble {
 }
-extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.repeating_conformances.Foeble where Self : ExportedKotlinPackages.repeating_conformances.__Foeble {
 }
 extension ExportedKotlinPackages.repeating_conformances.Foeble {
 }
-extension main.SealedBazzable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SealedBazzable where Self : main.__SealedBazzable {
 }
 extension main.SealedBazzable {
 }
-extension main.SealedFoeble where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SealedFoeble where Self : main.__SealedFoeble {
 }
 extension main.SealedFoeble {
     typealias SealedBarable = main._SealedFoeble_SealedBarable
     typealias SomeBarable = main._SealedFoeble_SomeBarable
     typealias SomeFoeble = main._SealedFoeble_SomeFoeble
 }
-extension main.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SiblingProtocol where Self : main.__SiblingProtocol {
 }
 extension main.SiblingProtocol {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
-extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Self : ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol {
 }
 extension ExportedKotlinPackages.packagewithprotocols.SiblingProtocol {
     typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
 }
-extension main._ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main._ContainerProtocol_NestedProtocol where Self : main.___ContainerProtocol_NestedProtocol {
 }
 extension main._ContainerProtocol_NestedProtocol {
     typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
 }
-extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Self : main.___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
 extension main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.ContainerProtocol where Wrapped : main._ContainerProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: main.ContainerProtocol, main.__ContainerProtocol where Wrapped : main._ContainerProtocol {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.SiblingProtocol where Wrapped : main._SiblingProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: main.SiblingProtocol, main.__SiblingProtocol where Wrapped : main._SiblingProtocol {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Foeble where Wrapped : main._Foeble {
+extension KotlinRuntimeSupport._KotlinExistential: main.Foeble, main.__Foeble where Wrapped : main._Foeble {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Barable where Wrapped : main._Barable {
+extension KotlinRuntimeSupport._KotlinExistential: main.Barable, main.__Barable where Wrapped : main._Barable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Bazzable where Wrapped : main._Bazzable {
+extension KotlinRuntimeSupport._KotlinExistential: main.Bazzable, main.__Bazzable where Wrapped : main._Bazzable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.SealedFoeble where Wrapped : main._SealedFoeble {
+extension KotlinRuntimeSupport._KotlinExistential: main.SealedFoeble, main.__SealedFoeble where Wrapped : main._SealedFoeble {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.SealedBazzable where Wrapped : main._SealedBazzable {
+extension KotlinRuntimeSupport._KotlinExistential: main.SealedBazzable, main.__SealedBazzable where Wrapped : main._SealedBazzable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.packagewithprotocols.SiblingProtocol, ExportedKotlinPackages.packagewithprotocols.__SiblingProtocol where Wrapped : ExportedKotlinPackages.packagewithprotocols._SiblingProtocol {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Foeble where Wrapped : ExportedKotlinPackages.repeating_conformances._Foeble {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble where Wrapped : ExportedKotlinPackages.repeating_conformances._Foeble {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Barable where Wrapped : ExportedKotlinPackages.repeating_conformances._Barable {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances.__Barable where Wrapped : ExportedKotlinPackages.repeating_conformances._Barable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main._ContainerProtocol_NestedProtocol where Wrapped : main.__ContainerProtocol_NestedProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: main._ContainerProtocol_NestedProtocol, main.___ContainerProtocol_NestedProtocol where Wrapped : main.__ContainerProtocol_NestedProtocol {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main._SealedFoeble_SealedBarable where Wrapped : main.__SealedFoeble_SealedBarable {
+extension KotlinRuntimeSupport._KotlinExistential: main._SealedFoeble_SealedBarable, main.___SealedFoeble_SealedBarable where Wrapped : main.__SealedFoeble_SealedBarable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Wrapped : main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
+extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol, main.___ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol where Wrapped : main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._ContainerProtocol {
 }
@@ -477,7 +497,7 @@ extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__SealedFoeble_Sea
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
-extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main._SealedFoeble_SealedBarable where Self : main.___SealedFoeble_SealedBarable {
 }
 extension main._SealedFoeble_SealedBarable {
 }
@@ -535,7 +555,11 @@ extension ExportedKotlinPackages.packagewithprotocols {
     @objc(_SiblingProtocol)
     public protocol _SiblingProtocol {
     }
-    public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+    public protocol __ContainerProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol __SiblingProtocol: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol {
         public override init() {
             let __kt = packagewithprotocols_INHERITANCE_COUPLE_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -561,7 +585,7 @@ extension ExportedKotlinPackages.packagewithprotocols {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
+    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, ExportedKotlinPackages.packagewithprotocols.__ContainerProtocol {
         public static var shared: ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE {
             get {
                 return ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get())
@@ -608,6 +632,10 @@ extension ExportedKotlinPackages.repeating_conformances {
     }
     @objc(_Foeble)
     public protocol _Foeble {
+    }
+    public protocol __Barable: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public protocol __Foeble: KotlinRuntimeSupport._KotlinBridgeable {
     }
     open class Child1: ExportedKotlinPackages.repeating_conformances.Parent1 {
         public override init() {
@@ -700,7 +728,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class GrandChild3: ExportedKotlinPackages.repeating_conformances.Child3 {
+    open class GrandChild3: ExportedKotlinPackages.repeating_conformances.Child3, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public override init() {
             let __kt = repeating_conformances_GrandChild3_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -713,7 +741,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class GrandChild4: ExportedKotlinPackages.repeating_conformances.Child4, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable {
+    open class GrandChild4: ExportedKotlinPackages.repeating_conformances.Child4, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, ExportedKotlinPackages.repeating_conformances.__Barable {
         public override init() {
             let __kt = repeating_conformances_GrandChild4_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -726,7 +754,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class GrandChild5: ExportedKotlinPackages.repeating_conformances.Child5, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble {
+    open class GrandChild5: ExportedKotlinPackages.repeating_conformances.Child5, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, ExportedKotlinPackages.repeating_conformances.__Barable, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public override init() {
             let __kt = repeating_conformances_GrandChild5_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -739,7 +767,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble {
+    open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
             let __kt = repeating_conformances_Parent1_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -752,7 +780,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble {
+    open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
             let __kt = repeating_conformances_Parent2_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -765,7 +793,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable {
+    open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, ExportedKotlinPackages.repeating_conformances.__Barable {
         public init() {
             let __kt = repeating_conformances_Parent3_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -778,7 +806,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
         }
     }
-    open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble {
+    open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, ExportedKotlinPackages.repeating_conformances.__Foeble {
         public init() {
             let __kt = repeating_conformances_Parent4_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);

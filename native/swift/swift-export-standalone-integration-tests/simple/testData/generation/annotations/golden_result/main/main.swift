@@ -59,6 +59,18 @@ public protocol _SubDeprecatedInterface: main._DeprecatedInterface {
 @objc(_SwiftInterfaceC)
 public protocol _SwiftInterfaceC {
 }
+public protocol __DeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __InterfaceWithDeprecatedMembers: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __NonDeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __SomeInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __SubDeprecatedInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __SwiftInterfaceC: KotlinRuntimeSupport._KotlinBridgeable {
+}
 @_spi(Barnnotation) @_spi(Foonnotation)
 public final class Bar: main.Foo {
     @_spi(Barnnotation) @_spi(Foonnotation)
@@ -74,7 +86,7 @@ public final class Bar: main.Foo {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers {
+public final class ClassWithDeprecatedMembersFromInterface: KotlinRuntime.KotlinBase, main.InterfaceWithDeprecatedMembers, main._InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers {
     public init() {
         let __kt = __root___ClassWithDeprecatedMembersFromInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -234,7 +246,7 @@ public final class OptInConstructor: KotlinRuntime.KotlinBase {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options);
     }
 }
-public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main._DeprecatedInterface {
+public final class PublicClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main._DeprecatedInterface, main.__DeprecatedInterface {
     public init() {
         let __kt = __root___PublicClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -270,7 +282,7 @@ open class PublicClassImplHiddenInterface: KotlinRuntime.KotlinBase {
     }
 }
 @available(*, unavailable, message: "Obsoleted")
-public final class PublicDeprecatedClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface, main._DeprecatedInterface {
+public final class PublicDeprecatedClassImplDeprecatedInterface: KotlinRuntime.KotlinBase, main.DeprecatedInterface, main._DeprecatedInterface, main.__DeprecatedInterface {
     public init() {
         let __kt = __root___PublicDeprecatedClassImplDeprecatedInterface_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -1235,7 +1247,7 @@ public func unrenamed() -> Swift.Never {
     return { __root___unrenamed(); fatalError() }()
 }
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
-extension main.DeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.DeprecatedInterface where Self : main.__DeprecatedInterface {
     public func foo() -> Swift.Void {
         return { DeprecatedInterface_foo(self.__externalRCRef()); return () }()
     }
@@ -1243,7 +1255,7 @@ extension main.DeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBrid
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
 extension main.DeprecatedInterface {
 }
-extension main.InterfaceWithDeprecatedMembers where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.InterfaceWithDeprecatedMembers where Self : main.__InterfaceWithDeprecatedMembers {
     @available(*, deprecated, message: "Deprecated")
     public func deprecatedWarningFunction() -> Swift.Void {
         return { InterfaceWithDeprecatedMembers_deprecatedWarningFunction(self.__externalRCRef()); return () }()
@@ -1254,14 +1266,14 @@ extension main.InterfaceWithDeprecatedMembers where Self : KotlinRuntimeSupport.
 }
 extension main.InterfaceWithDeprecatedMembers {
 }
-extension main.NonDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.NonDeprecatedInterface where Self : main.__NonDeprecatedInterface {
     public func bar() -> Swift.Void {
         return { NonDeprecatedInterface_bar(self.__externalRCRef()); return () }()
     }
 }
 extension main.NonDeprecatedInterface {
 }
-extension main.SomeInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SomeInterface where Self : main.__SomeInterface {
     public var barC: Swift.String {
         get {
             return SomeInterface_barC_get(self.__externalRCRef())
@@ -1277,7 +1289,7 @@ extension main.SomeInterface where Self : KotlinRuntimeSupport._KotlinBridgeable
 extension main.SomeInterface {
 }
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
-extension main.SubDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SubDeprecatedInterface where Self : main.__SubDeprecatedInterface {
     public func baz() -> Swift.Void {
         return { SubDeprecatedInterface_baz(self.__externalRCRef()); return () }()
     }
@@ -1285,7 +1297,7 @@ extension main.SubDeprecatedInterface where Self : KotlinRuntimeSupport._KotlinB
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
 extension main.SubDeprecatedInterface {
 }
-extension main.SwiftInterfaceC where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.SwiftInterfaceC where Self : main.__SwiftInterfaceC {
     public func kotlinFunE(
         _ kotlinParamE: Swift.String
     ) -> Swift.Void {
@@ -1299,19 +1311,19 @@ extension main.SwiftInterfaceC where Self : KotlinRuntimeSupport._KotlinBridgeab
 }
 extension main.SwiftInterfaceC {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithDeprecatedMembers where Wrapped : main._InterfaceWithDeprecatedMembers {
+extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithDeprecatedMembers, main.__InterfaceWithDeprecatedMembers where Wrapped : main._InterfaceWithDeprecatedMembers {
 }
 @available(*, unavailable, message: "Unavailable type(s): main.DeprecatedInterface")
-extension KotlinRuntimeSupport._KotlinExistential: main.DeprecatedInterface where Wrapped : main._DeprecatedInterface {
+extension KotlinRuntimeSupport._KotlinExistential: main.DeprecatedInterface, main.__DeprecatedInterface where Wrapped : main._DeprecatedInterface {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface where Wrapped : main._NonDeprecatedInterface {
+extension KotlinRuntimeSupport._KotlinExistential: main.NonDeprecatedInterface, main.__NonDeprecatedInterface where Wrapped : main._NonDeprecatedInterface {
 }
 @available(*, unavailable, message: "Unavailable type(s): main.SubDeprecatedInterface")
-extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
+extension KotlinRuntimeSupport._KotlinExistential: main.SubDeprecatedInterface, main.__SubDeprecatedInterface where Wrapped : main._SubDeprecatedInterface {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.SomeInterface where Wrapped : main._SomeInterface {
+extension KotlinRuntimeSupport._KotlinExistential: main.SomeInterface, main.__SomeInterface where Wrapped : main._SomeInterface {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
+extension KotlinRuntimeSupport._KotlinExistential: main.SwiftInterfaceC, main.__SwiftInterfaceC where Wrapped : main._SwiftInterfaceC {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._InterfaceWithDeprecatedMembers {
 }

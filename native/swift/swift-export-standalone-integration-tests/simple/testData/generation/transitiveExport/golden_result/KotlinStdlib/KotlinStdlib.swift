@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
@@ -13,7 +13,7 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin.collections._Iterator {
 }
@@ -24,6 +24,8 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
     @objc(_Iterator)
     public protocol _Iterator {
+    }
+    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
     }
     open class ByteIterator: KotlinRuntime.KotlinBase {
         package init() {

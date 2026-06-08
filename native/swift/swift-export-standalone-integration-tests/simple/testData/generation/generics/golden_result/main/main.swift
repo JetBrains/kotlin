@@ -49,6 +49,18 @@ public protocol _Processor {
 @objc(_Producer)
 public protocol _Producer {
 }
+public protocol __A: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __B: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Consumer: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __ConsumerProducer: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Processor: KotlinRuntimeSupport._KotlinBridgeable {
+}
+public protocol __Producer: KotlinRuntimeSupport._KotlinBridgeable {
+}
 public final class AnyConsumer: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___AnyConsumer_init_allocate()
@@ -361,7 +373,7 @@ public func takeBoxUpperBoundClosure(
         return { return originalBlock().__externalRCRef() }
     }()); return () }()
 }
-extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.A where Self : main.__A {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
             return { switch A_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
@@ -370,7 +382,7 @@ extension main.A where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.A {
 }
-extension main.B where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.B where Self : main.__B {
     public var foo: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
             return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
@@ -379,7 +391,7 @@ extension main.B where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.B {
 }
-extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Consumer where Self : main.__Consumer {
     public func consume(
         item: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
@@ -388,11 +400,11 @@ extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.Consumer {
 }
-extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.ConsumerProducer where Self : main.__ConsumerProducer {
 }
 extension main.ConsumerProducer {
 }
-extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Processor where Self : main.__Processor {
     public func process(
         input: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
@@ -401,24 +413,24 @@ extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.Processor {
 }
-extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Producer where Self : main.__Producer {
     public func produce() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createBridgeable(externalRCRef: res); } }()
     }
 }
 extension main.Producer {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Producer where Wrapped : main._Producer {
+extension KotlinRuntimeSupport._KotlinExistential: main.Producer, main.__Producer where Wrapped : main._Producer {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Consumer where Wrapped : main._Consumer {
+extension KotlinRuntimeSupport._KotlinExistential: main.Consumer, main.__Consumer where Wrapped : main._Consumer {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Processor where Wrapped : main._Processor {
+extension KotlinRuntimeSupport._KotlinExistential: main.Processor, main.__Processor where Wrapped : main._Processor {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.ConsumerProducer where Wrapped : main._ConsumerProducer {
+extension KotlinRuntimeSupport._KotlinExistential: main.ConsumerProducer, main.__ConsumerProducer where Wrapped : main._ConsumerProducer {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.A where Wrapped : main._A {
+extension KotlinRuntimeSupport._KotlinExistential: main.A, main.__A where Wrapped : main._A {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.B where Wrapped : main._B {
+extension KotlinRuntimeSupport._KotlinExistential: main.B, main.__B where Wrapped : main._B {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Producer {
 }
