@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.configuration
 
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.ExplicitApiMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirective
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.WITH_REFLECT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_DANGEROUS_LANGUAGE_VERSION_TESTING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.API_VERSION
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_API_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EXPLICIT_RETURN_TYPES_MODE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.HEADER_MODE
@@ -307,6 +309,13 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths() {
     forTestsMatching("compiler/testData/diagnostics/tests/nestedTypeAliases/*") {
         defaultDirectives {
             LANGUAGE + "+NestedTypeAliases"
+        }
+    }
+
+    forTestsMatching("compiler/testData/diagnostics/tests/strictEquals/enabled/*") {
+        defaultDirectives {
+            LANGUAGE + "+StrictEquals"
+            API_VERSION with ApiVersion.KOTLIN_2_5
         }
     }
 
