@@ -42,7 +42,7 @@ class DirectCallableOverridesResolver(
         containingClassScope.processFunctionsByName(namedFunction.name) {}
         containingClassScope.processDirectlyOverriddenFunctions(functionSymbol) { overriddenSymbol ->
             if (functionSymbol == overriddenSymbol) ProcessorAction.NONE
-            else if (overriddenSymbol is FirIntersectionCallableSymbol) {
+            if (overriddenSymbol is FirIntersectionCallableSymbol) {
                 overriddenSymbol.intersections.forEach { it.fir.addDirectOverrides(functionSymbol) }
             } else {
                 (overriddenSymbol.originalForSubstitutionOverride ?: overriddenSymbol).fir.addDirectOverrides(functionSymbol)
@@ -59,7 +59,7 @@ class DirectCallableOverridesResolver(
         containingClassScope.processPropertiesByName(property.name) {}
         containingClassScope.processDirectlyOverriddenProperties(propertySymbol) { overriddenSymbol ->
             if (propertySymbol == overriddenSymbol) ProcessorAction.NONE
-            else if (overriddenSymbol is FirIntersectionCallableSymbol) {
+            if (overriddenSymbol is FirIntersectionCallableSymbol) {
                 overriddenSymbol.intersections.forEach { it.fir.addDirectOverrides(propertySymbol) }
             } else {
                 (overriddenSymbol.originalForSubstitutionOverride ?: overriddenSymbol).fir.addDirectOverrides(propertySymbol)

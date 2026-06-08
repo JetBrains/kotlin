@@ -14,6 +14,8 @@ import org.jetbrains.kotlin.fir.resolve.calls.stages.ResolutionStageRunner
 import org.jetbrains.kotlin.fir.resolve.dfa.FirDataFlowAnalyzer
 import org.jetbrains.kotlin.fir.resolve.inference.FirCallCompleter
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.transformers.DirectCallableOverridesResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.DirectClassInheritorsResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.FirSyntheticCallGenerator
 import org.jetbrains.kotlin.fir.resolve.transformers.IntegerLiteralAndOperatorApproximationTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.ReturnTypeCalculator
@@ -51,6 +53,10 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val inlineFunction: FirFunction?
     abstract val context: BodyResolveContext
     abstract val resolutionContext: ResolutionContext
+
+    abstract val directClassInheritorsResolver: DirectClassInheritorsResolver?
+
+    abstract val directCallableOverridesResolver: DirectCallableOverridesResolver?
 }
 
 // --------------------------------------- Utils ---------------------------------------

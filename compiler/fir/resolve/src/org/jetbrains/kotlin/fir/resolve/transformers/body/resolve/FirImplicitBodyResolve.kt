@@ -104,14 +104,31 @@ fun <F : FirClassLikeDeclaration> F.runContractAndBodiesResolutionForLocalClass(
     return components.context.forLocalClasses(returnTypeCalculator, targetedClasses) {
         runContractResolveForLocalClass(components.session, components.scopeSession, components.context)
 
-        val transformer = FirImplicitAwareBodyResolveTransformer(
+        val transformer = object : FirImplicitAwareBodyResolveTransformer(
             components.session, components.scopeSession,
             implicitBodyResolveComputationSession,
             FirResolvePhase.BODY_RESOLVE,
             implicitTypeOnly = false,
             returnTypeCalculator,
             outerBodyResolveContext = components.context,
-        )
+        ) {
+            override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
+                super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver?.resolveRegularClass(this) }
+
+            override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
+                super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver?.resolveTypeAlias(this) }
+
+            override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
+                super.transformAnonymousObject(anonymousObject, data)
+                    .apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
+
+            override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
+                super.transformNamedFunction(namedFunction, data)
+                    .apply { components.directCallableOverridesResolver?.resolveNamedFunction(this) }
+
+            override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
+                super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this) }
+        }
         this.transform(transformer, resolutionMode)
     }
 }
