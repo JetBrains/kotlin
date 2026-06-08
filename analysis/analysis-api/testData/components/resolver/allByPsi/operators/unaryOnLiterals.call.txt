@@ -1,0 +1,162 @@
+KtFile: 'unaryOnLiterals.kt'
+  null
+
+KtPackageDirective(0,0): ''
+  null
+
+KtImportList(0,0): ''
+  null
+
+KtNamedFunction(0,51): 'fun simpleValid() {'
+  null
+
+KtParameterList(15,17): '()'
+  null
+
+KtBlockExpression(18,51): '{'
+  null
+
+KtPrefixExpression(24,26): '+1'
+  null
+
+KtOperationReferenceExpression(24,25): '+'
+  null
+
+KtConstantExpression(25,26): '1'
+  null
+
+KtPrefixExpression(31,33): '-2'
+  null
+
+KtOperationReferenceExpression(31,32): '-'
+  null
+
+KtConstantExpression(32,33): '2'
+  null
+
+KtPrefixExpression(38,41): '+3L'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 3L
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryPlus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(38,39): '+'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 3L
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryPlus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryPlus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(39,41): '3L'
+  null
+
+KtPrefixExpression(46,49): '-4L'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 4L
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtOperationReferenceExpression(46,47): '-'
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = 4L
+        isSafeNavigation = false
+        type = kotlin.Long
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Long
+        symbol = kotlin/Long.unaryMinus(<dispatch receiver>: kotlin.Long): kotlin.Long
+        valueParameters = []
+        contextParameters = []
+        callableId = kotlin/Long.unaryMinus
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+
+KtConstantExpression(47,49): '4L'
+  null
+
+KtNamedFunction(53,87): 'fun invlid() {'
+  null
+
+KtParameterList(63,65): '()'
+  null
+
+KtBlockExpression(66,87): '{'
+  null
+
+KtPrefixExpression(72,76): '+"5"'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
+
+KtOperationReferenceExpression(72,73): '+'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryPlus' for operator '+' on receiver of type 'String'.>
+
+KtStringTemplateExpression(73,76): '"5"'
+  null
+
+KtLiteralStringTemplateEntry(74,75): '5'
+  null
+
+KtPrefixExpression(81,85): '-"6"'
+  KaCallResolutionError:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
+
+KtOperationReferenceExpression(81,82): '-'
+  KaErrorCallInfo:
+    candidateCalls = []
+    diagnostic = ERROR<UNRESOLVED_REFERENCE: Unresolved reference 'unaryMinus' for operator '-' on receiver of type 'String'.>
+
+KtStringTemplateExpression(82,85): '"6"'
+  null
+
+KtLiteralStringTemplateEntry(83,84): '6'
+  null

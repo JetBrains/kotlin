@@ -1278,6 +1278,18 @@ public class FirIdeNormalAnalysisSourceLikeModuleResolveCallByFileTestGenerated 
     }
 
     @Test
+    @TestMetadata("unaryOnComplexLiterals.kt")
+    public void testUnaryOnComplexLiterals() {
+      run("unaryOnComplexLiterals.kt");
+    }
+
+    @Test
+    @TestMetadata("unaryOnLiterals.kt")
+    public void testUnaryOnLiterals() {
+      run("unaryOnLiterals.kt");
+    }
+
+    @Test
     @TestMetadata("unaryOnObject.kt")
     public void testUnaryOnObject() {
       run("unaryOnObject.kt");

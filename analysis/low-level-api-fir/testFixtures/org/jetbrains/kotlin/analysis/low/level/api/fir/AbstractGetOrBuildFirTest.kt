@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.declarations.FirImport
 import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
+import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
+import org.jetbrains.kotlin.fir.expressions.FirOperation
 import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtOperationReferenceExpression
+import org.jetbrains.kotlin.psi.KtPrefixExpression
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestModule
@@ -131,17 +134,28 @@ abstract class AbstractGetOrBuildFirTest : AbstractAnalysisApiBasedTest() {
 
     // PSI-to-FIR mapper creates some synthetic FIR expression outside the FIR tree.
     private fun shouldPerformContainmentCheck(firElement: FirElement): Boolean {
-        return !firElement.isSyntheticStringPlus() && !firElement.isSyntheticBuiltInSuspendCall()
+        return !firElement.isSyntheticStringPlus() && !firElement.isSyntheticBuiltInSuspendCall() && !firElement.isSyntheticUnaryOperator()
     }
 
-    // Check `KtToFirMapping.checkStringLiteralFolderExpression`.
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.FirElementsRecorder.visitLiteralExpression]
+     */
+    private fun FirElement.isSyntheticUnaryOperator(): Boolean {
+        return this is FirLiteralExpression && this.psi?.parent is KtPrefixExpression
+    }
+
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.checkStringLiteralFolderExpression]
+     */
     private fun FirElement.isSyntheticStringPlus(): Boolean {
         return this is FirResolvedNamedReference
                 && this.name == OperatorNameConventions.PLUS
                 && this.psi is KtOperationReferenceExpression
     }
 
-    // Check `KtToFirMapping.fakeCallToBuiltInSuspendOrNull`.
+    /**
+     * Check [org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.KtToFirMapping.fakeCallToBuiltInSuspendOrNull]
+     */
     private fun FirElement.isSyntheticBuiltInSuspendCall(): Boolean {
         return this is FirFunctionCall
                 && calleeReference.name == StandardClassIds.Callables.suspend.callableName

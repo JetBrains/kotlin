@@ -165,6 +165,24 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   }
 
   @Test
+  @TestMetadata("implicitCastToByte.kt")
+  public void testImplicitCastToByte() {
+    run("implicitCastToByte.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitCastToByte2.kt")
+  public void testImplicitCastToByte2() {
+    run("implicitCastToByte2.kt");
+  }
+
+  @Test
+  @TestMetadata("implicitCastToByte3.kt")
+  public void testImplicitCastToByte3() {
+    run("implicitCastToByte3.kt");
+  }
+
+  @Test
   @TestMetadata("integerLiteral_minusOne_entire.kt")
   public void testIntegerLiteral_minusOne_entire() {
     run("integerLiteral_minusOne_entire.kt");
@@ -474,6 +492,54 @@ public class FirStandaloneNormalAnalysisSourceModuleCompileTimeConstantEvaluator
   @TestMetadata("uIntToUShort.kt")
   public void testUIntToUShort() {
     run("uIntToUShort.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexIntLiteral.kt")
+  public void testUnaryOnComplexIntLiteral() {
+    run("unaryOnComplexIntLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexIntLiteral2.kt")
+  public void testUnaryOnComplexIntLiteral2() {
+    run("unaryOnComplexIntLiteral2.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexIntLiteral3.kt")
+  public void testUnaryOnComplexIntLiteral3() {
+    run("unaryOnComplexIntLiteral3.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexIntLiteral4.kt")
+  public void testUnaryOnComplexIntLiteral4() {
+    run("unaryOnComplexIntLiteral4.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexLongLiteral.kt")
+  public void testUnaryOnComplexLongLiteral() {
+    run("unaryOnComplexLongLiteral.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexLongLiteral2.kt")
+  public void testUnaryOnComplexLongLiteral2() {
+    run("unaryOnComplexLongLiteral2.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexLongLiteral3.kt")
+  public void testUnaryOnComplexLongLiteral3() {
+    run("unaryOnComplexLongLiteral3.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryOnComplexLongLiteral4.kt")
+  public void testUnaryOnComplexLongLiteral4() {
+    run("unaryOnComplexLongLiteral4.kt");
   }
 
   @Test
