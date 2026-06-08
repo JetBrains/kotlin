@@ -158,6 +158,7 @@ include(
     ":compiler:ir.interpreter",
     ":compiler:ir.inline",
     ":compiler:ir.validation",
+    ":compiler:ir.semantics",
     ":compiler:backend.js",
     ":compiler:backend.wasm",
     ":compiler:backend.jvm",
@@ -779,6 +780,7 @@ project(":compiler:ir.backend.native").projectDir = File("$rootDir/compiler/ir/b
 project(":compiler:ir.actualization").projectDir = File("$rootDir/compiler/ir/ir.actualization")
 project(":compiler:ir.inline").projectDir = File("$rootDir/compiler/ir/ir.inline")
 project(":compiler:ir.validation").projectDir = File("$rootDir/compiler/ir/ir.validation")
+project(":compiler:ir.semantics").projectDir = File("$rootDir/compiler/ir/ir.semantics")
 project(":compiler:backend.js").projectDir = File("$rootDir/compiler/ir/backend.js")
 project(":compiler:backend.wasm").projectDir = File("$rootDir/compiler/ir/backend.wasm")
 project(":compiler:backend.jvm").projectDir = File("$rootDir/compiler/ir/backend.jvm")
