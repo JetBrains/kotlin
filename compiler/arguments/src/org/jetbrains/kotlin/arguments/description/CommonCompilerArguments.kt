@@ -998,10 +998,21 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         name = "Xfragment-dependency"
         compilerName = "fragmentDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib dependencies for the specific fragment.
+
+
+
+        description =ReleaseDependent(
+            current = """
+                Declare common klib dependencies for the specific fragment.
+                This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib dependencies for the specific fragment.
 This argument is required for any HMPP module except the platform leaf module: it takes dependencies from -cp/-libraries.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
+
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
@@ -1014,10 +1025,17 @@ The argument should be used only if the new compilation scheme is enabled with -
         name = "Xfragment-friend-dependency"
         compilerName = "fragmentFriendDependencies"
         valueDescription = "<fragment name>:<path>".asReleaseDependent()
-        description = """Declare common klib friend dependencies for the specific fragment.
+        description = ReleaseDependent(
+            current = """
+                Declare common klib friend dependencies for the specific fragment.
+                This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
+                The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
+            """.trimIndent(),
+            (KotlinReleaseVersion.v2_2_20.. KotlinReleaseVersion.v2_4_0) to """Declare common klib friend dependencies for the specific fragment.
 This argument can be specified for any HMPP module except the platform leaf module: it takes dependencies from the platform specific friend module arguments.
 The argument should be used only if the new compilation scheme is enabled with -Xseparate-kmp-compilation
-""".asReleaseDependent()
+"""
+        )
         valueType = StringArrayType.defaultNull
         delimiter = KotlinCompilerArgument.Delimiter.None
 
