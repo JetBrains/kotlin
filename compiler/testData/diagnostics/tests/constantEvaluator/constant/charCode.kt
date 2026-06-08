@@ -1,10 +1,11 @@
-// RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: +IntrinsicConstEvaluation
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE_FEATURE_TOGGLED: IntrinsicConstEvaluation
+// LANGUAGE_FEATURE_TOGGLED_IDENTICAL
 // WITH_STDLIB
 
-const val charLiteralCode = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>'c'.code<!>
+const val charLiteralCode = 'c'.code
 
 const val charConst = 'c'
-const val charConstCode = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>charConst.code<!>
+const val charConstCode = charConst.code
 
 /* GENERATED_FIR_TAGS: const, propertyDeclaration */
