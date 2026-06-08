@@ -693,10 +693,16 @@ tasks.withType<Test>().configureEach {
     classpath = functionalTestSourceSet.runtimeClasspath
     workingDir = projectDir
 
-    // Publish Kotlin build artifacts to <root>/build/repo and tell the test JVM where to find
-    // them. Both dev and CI use the same path — no maven.repo.local involved.
+    // Publish Kotlin build artifacts to <root>/build/repo and pass its path to the test JVM.
+    // Content is tracked via classpath normalization (jar/metadata hashes, no absolute paths).
+    // Both dev and CI use the same path — no maven.repo.local involved.
     dependsOnKotlinGradlePluginPublishToBuildRepo()
-    systemProperty("kotlinBuildRepo", rootProject.layout.buildDirectory.dir("repo").get().asFile.absolutePath)
+    val buildRepoDir = rootProject.layout.buildDirectory.dir("repo")
+    addClasspathDirectoryProperty(
+        directory = buildRepoDir,
+        classpath = project.fileTree(buildRepoDir) { exclude("**/*.md5", "**/*.sha1") },
+        property = "kotlinBuildRepo",
+    )
 
     androidSdkProvisioner {
         provideToThisTaskAsSystemProperty(ProvisioningType.SDK)
