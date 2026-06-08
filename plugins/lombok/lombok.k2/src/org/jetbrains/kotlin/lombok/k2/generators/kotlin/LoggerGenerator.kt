@@ -120,17 +120,15 @@ class LoggerGenerator(session: FirSession) : FirDeclarationGenerationExtension(s
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return buildSet {
-            if (classSymbol.origin.isLogger()) {
-                add(SpecialNames.INIT) // Generated companion needs a constructor
+            if (classSymbol.needsConstructorIfGeneratedCompanion<LoggerGeneratorKey>()) {
+                add(SpecialNames.INIT)
             }
             addIfNotNull(logPropertiesCache.getValue(classSymbol, context)?.name)
         }
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val origin = (context.owner.origin as? FirDeclarationOrigin.Plugin)?.key as? LoggerGeneratorKey ?: return emptyList()
-        val constructor = createDefaultPrivateConstructor(context.owner, origin)
-        return listOf(constructor.symbol)
+        return listOfNotNull(createConstructorIfGeneratedCompanion<LoggerGeneratorKey>(context.owner))
     }
 
     override fun generateProperties(callableId: CallableId, context: MemberGenerationContext?): List<FirPropertySymbol> {

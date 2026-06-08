@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.k2.generators.kotlin
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.StandardTypes

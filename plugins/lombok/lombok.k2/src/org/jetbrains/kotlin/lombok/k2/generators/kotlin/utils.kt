@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.lombok.k2.generators.kotlin
 import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCall
 import org.jetbrains.kotlin.fir.extensions.FirExtension
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.plugin.createCompanionObject
+import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.processAllClassifiers
@@ -53,6 +55,22 @@ fun FirCallableSymbol<*>.tryBuildingJvmStaticAnnotationCall(session: FirSession)
     }
 }
 
+/**
+ * Initializes a companion object for the given class symbol if certain conditions are met.
+ *
+ * This method verifies if a companion object or other object is already present in the given class.
+ * If no companion object exists and the conditions are satisfied, a new companion object is created
+ * and returned. It ignores local classes and anonymous objects.
+ *
+ * @param owner The class symbol for which the companion object might be initialized.
+ * @param context The context for nested class generation, providing additional information
+ *                for the generation process.
+ * @param extractKey A lambda function to extract the generated declaration key, which determines
+ *                   whether a companion object should be created.
+ *                   The key is used further to detect if a default constructor should be generated for a provided owner ([needsConstructorIfGeneratedCompanion]).
+ *                   If so, the key is used for the constructor being generated ([createConstructorIfGeneratedCompanion])
+ * @return The symbol of the created companion object with the extracted key, or `null` if no companion object is created.
+ */
 fun FirExtension.initializeCompanionObjectIfNeeded(
     owner: FirClassSymbol<*>,
     context: NestedClassGenerationContext,
@@ -79,4 +97,18 @@ fun FirExtension.initializeCompanionObjectIfNeeded(
     val key = extractKey() ?: return null
 
     return createCompanionObject(owner, key).symbol
+}
+
+inline fun <reified T : GeneratedDeclarationKey> FirClassSymbol<*>.needsConstructorIfGeneratedCompanion(): Boolean {
+    return extractKeyIfGeneratedCompanion<T>() != null
+}
+
+inline fun <reified T : GeneratedDeclarationKey> FirExtension.createConstructorIfGeneratedCompanion(owner: FirClassSymbol<*>): FirConstructorSymbol? {
+    return owner.extractKeyIfGeneratedCompanion<T>()?.let {
+        createDefaultPrivateConstructor(owner, it).symbol
+    }
+}
+
+inline fun <reified T : GeneratedDeclarationKey> FirClassSymbol<*>.extractKeyIfGeneratedCompanion(): T? {
+    return (origin as? FirDeclarationOrigin.Plugin?)?.key as? T
 }

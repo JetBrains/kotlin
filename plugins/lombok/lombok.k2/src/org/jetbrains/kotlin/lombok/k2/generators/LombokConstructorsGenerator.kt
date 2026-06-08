@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.lombok.k2.generators
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationGenerationExtension
 import org.jetbrains.kotlin.fir.extensions.FirDeclarationPredicateRegistrar
 import org.jetbrains.kotlin.fir.extensions.MemberGenerationContext
 import org.jetbrains.kotlin.fir.extensions.NestedClassGenerationContext
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
-import org.jetbrains.kotlin.fir.plugin.createDefaultPrivateConstructor
 import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.createConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.initializeCompanionObjectIfNeeded
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.needsConstructorIfGeneratedCompanion
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
@@ -26,8 +25,6 @@ import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 object ConstructorGeneratorKey : LombokDeclarationKey()
-
-val FirDeclarationOrigin.isConstructor get() = this is FirDeclarationOrigin.Plugin && this.key is ConstructorGeneratorKey
 
 class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGenerationExtension(session) {
     companion object {
@@ -82,9 +79,10 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
 
     override fun getCallableNamesForClass(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext): Set<Name> {
         return buildSet {
-            if (classSymbol.origin.isConstructor) {
-                add(SpecialNames.INIT) // Generated companion needs a constructor
+            if (classSymbol.needsConstructorIfGeneratedCompanion<ConstructorGeneratorKey>()) {
+                add(SpecialNames.INIT)
             }
+
             cache.getValue(classSymbol, context)?.forEach {
                 when (it) {
                     is FirConstructorSymbol -> add(SpecialNames.INIT)
@@ -100,13 +98,13 @@ class LombokConstructorsGenerator(session: FirSession) : FirDeclarationGeneratio
     }
 
     override fun generateConstructors(context: MemberGenerationContext): List<FirConstructorSymbol> {
-        val origin = (context.owner.origin as? FirDeclarationOrigin.Plugin)?.key as? ConstructorGeneratorKey
-        if (origin != null) {
-            return listOf(createDefaultPrivateConstructor(context.owner, origin).symbol)
+        return buildList {
+            val owner = context.owner
+            createConstructorIfGeneratedCompanion<ConstructorGeneratorKey>(context.owner)?.let {
+                add(it)
+            }
+            addAll(cache.getValue(owner, context)?.filterIsInstance<FirConstructorSymbol>().orEmpty())
         }
-
-        val owner = context.owner
-        return cache.getValue(owner, context)?.filterIsInstance<FirConstructorSymbol>().orEmpty()
     }
 
     private fun createConstructors(classSymbol: FirClassSymbol<*>, context: MemberGenerationContext?): Collection<FirFunctionSymbol<*>>? {
