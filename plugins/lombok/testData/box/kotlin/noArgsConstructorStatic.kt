@@ -12,6 +12,9 @@ class ConstructorExampleStaticWithCompanion(val any: Any) {
     }
 }
 
+@NoArgsConstructor(staticName = "make")
+class ConstructorExampleStaticWithGenerics<T>(val param: T)
+
 fun box(): String {
     val zeroObject = ConstructorExampleStatic.make()
     assertEquals(false, zeroObject.boolean)
@@ -21,6 +24,9 @@ fun box(): String {
 
     val zeroObject2 = ConstructorExampleStaticWithCompanion.make()
     assertEquals(null, zeroObject2.any)
+
+    val zeroObjectWithGenerics = ConstructorExampleStaticWithGenerics.make()
+    assertEquals(null, zeroObjectWithGenerics.param)
 
     return "OK"
 }

@@ -60,6 +60,30 @@ FILE: noArgsConstructorStatic.kt
         }
 
     }
+    @R|lombok/NoArgsConstructor|(staticName = String(make) [evaluated = String(make)]) public final class ConstructorExampleStaticWithGenerics<T> : R|kotlin/Any| {
+        public constructor<T>(param: R|T|): R|ConstructorExampleStaticWithGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final val param: R|T| = R|<local>/param|
+            public get(): R|T|
+
+        public constructor<T>(): R|ConstructorExampleStaticWithGenerics<T>| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final companion object Companion : R|kotlin/Any| {
+            @R|kotlin/jvm/JvmStatic|() public final fun make(): R|ConstructorExampleStaticWithGenerics<T>| {
+                ^make R|/ConstructorExampleStaticWithGenerics|()
+            }
+
+            private constructor(): R|ConstructorExampleStaticWithGenerics.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
     public final fun box(): R|kotlin/String| {
         lval zeroObject: R|ConstructorExampleStatic| = Q|ConstructorExampleStatic|.R|/ConstructorExampleStatic.make|()
         R|/assertEquals|<R|kotlin/Boolean|>(Boolean(false), R|<local>/zeroObject|.R|/ConstructorExampleStatic.boolean|)
@@ -68,5 +92,7 @@ FILE: noArgsConstructorStatic.kt
         R|/assertEquals|<R|kotlin/String?|>(Null(null), R|<local>/zeroObject|.R|/ConstructorExampleStatic.str|)
         lval zeroObject2: R|ConstructorExampleStaticWithCompanion| = Q|ConstructorExampleStaticWithCompanion|.R|/ConstructorExampleStaticWithCompanion.make|()
         R|/assertEquals|<R|kotlin/Any?|>(Null(null), R|<local>/zeroObject2|.R|/ConstructorExampleStaticWithCompanion.any|)
+        lval zeroObjectWithGenerics: R|ConstructorExampleStaticWithGenerics<T>| = Q|ConstructorExampleStaticWithGenerics|.R|/ConstructorExampleStaticWithGenerics.make|()
+        R|/assertEquals|<R|T?|>(Null(null), R|<local>/zeroObjectWithGenerics|.R|/ConstructorExampleStaticWithGenerics.param|)
         ^box String(OK)
     }
