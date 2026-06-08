@@ -763,7 +763,7 @@ class Fir2IrIrGeneratedDeclarationsRegistrar(private val components: Fir2IrCompo
     }
 
     private fun IrAnnotation.toFirAnnotation(): FirAnnotation {
-        val annotationClassId = this.classSymbol.owner.classId!!
+        val annotationClassId = this.classId
         return buildAnnotation {
             annotationTypeRef = annotationClassId
                 .toLookupTag()
