@@ -98,6 +98,7 @@ class BrokenLazyConfigurationIT : KGPBaseTest() {
             build(
                 "build",
                 buildOptions = defaultBuildOptions.disableIsolatedProjectsBecauseOfJsAndWasmKT75899()
+                    .copy(nativeOptions = defaultBuildOptions.nativeOptions.copy(incremental = false))
             ) {
                 assertDirectoryInProjectDoesNotExist("build")
 
