@@ -182,9 +182,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
 
             // Here current is the lowest ancestor that has different corresponding text
             return when (current) {
-                // Constants with unary operation (i.e., +1 or -1) are saved as a leaf element of FIR tree
-                is KtPrefixExpression,
-                    // There is no separate element for annotation construction call
+                // There is no separate element for annotation construction call
                 is KtAnnotationEntry,
                     // We replace a source for selector with the whole expression
                 is KtSafeQualifiedExpression,

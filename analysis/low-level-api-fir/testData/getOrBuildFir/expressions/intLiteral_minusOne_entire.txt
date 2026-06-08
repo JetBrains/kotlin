@@ -1,9 +1,9 @@
 KT element: KtPrefixExpression
-FIR element: FirLiteralExpressionImpl
-FIR source kind: KtRealSourceElementKind
+FIR element: null
+FIR source kind: null
 
 FIR element rendered:
-Int(-1)
+null
 
 FIR FILE:
 FILE: [ResolvedTo(IMPORTS)] intLiteral_minusOne_entire.kt

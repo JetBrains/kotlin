@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.findDescendantOfType
+import org.jetbrains.kotlin.psi.psiUtil.unwrapParenthesesLabelsAndAnnotations
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
@@ -119,15 +120,37 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
     }
 
     override fun visitLiteralExpression(literalExpression: FirLiteralExpression, data: MutableMap<KtElement, FirElement>) {
-        cacheElement(literalExpression, data)
         literalExpression.annotations.forEach {
             it.accept(this, data)
         }
-        // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirLiteralExpression(-n) with converted constant value.
-        // If one queries FIR for KtConstExpression, we still return FirLiteralExpression(-n) even though its source is KtPrefixExpression.
-        // Here, we cache FirLiteralExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
-        if (literalExpression.isConverted) {
-            literalExpression.kind.reverseConverted(literalExpression)?.let { cacheElement(it, data) }
+
+        when (val psi = literalExpression.anchorPsi as? KtElement) {
+            null -> {}
+            is KtPrefixExpression -> {
+                val constantLiteralExpression = psi.constantExpression ?: return
+                val sourceElement = constantLiteralExpression.toKtPsiSourceElement()
+                val adjustedFirLiteral = when (psi.operationToken) {
+                    KtTokens.MINUS -> {
+                        // KtPrefixExpression(-, KtConstExpression(n)) is represented as FirLiteralExpression(-n) with converted constant value.
+                        // If one queries FIR for KtConstExpression, we still return FirLiteralExpression(-n) even though its source is KtPrefixExpression.
+                        // Here, we cache FirLiteralExpression(n) for KtConstExpression(n) to make everything natural and intuitive!
+                        literalExpression.kind.reverseConverted(
+                            original = literalExpression,
+                            sourceElement = sourceElement,
+                        )
+                    }
+
+                    // Even `+` has to be converted to drop redundant noise from the constant expression.
+                    // E.g., +(@Anno() (1))
+                    KtTokens.PLUS -> literalExpression.copy(newValue = literalExpression.value, newSource = sourceElement)
+                    else -> literalExpression
+                } ?: return
+
+                // Cache only on the constant expression, not on `KtPrefixExpression`
+                cache(constantLiteralExpression, adjustedFirLiteral, data)
+            }
+
+            else -> cache(psi, literalExpression, data)
         }
     }
 
@@ -161,19 +184,29 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
         cache(psi, element, cache)
     }
 
-    private val FirLiteralExpression.isConverted: Boolean
+    /**
+     * Just [findDescendantOfType] cannot be used since [KtConstantExpression] could be somewhere inside an annotation argument
+     */
+    private val KtPrefixExpression.constantExpression: KtConstantExpression?
         get() {
-            val firSourcePsi = this.source?.psi ?: return false
-            return firSourcePsi is KtPrefixExpression && firSourcePsi.operationToken == KtTokens.MINUS
+            var current: PsiElement? = this
+            do {
+                val new = when (current) {
+                    is KtPrefixExpression -> current.baseExpression
+                    else -> current.unwrapParenthesesLabelsAndAnnotations()
+                }
+
+                if (current == new) {
+                    break
+                }
+
+                current = new
+            } while (true)
+
+            return current as? KtConstantExpression
         }
 
-    private val FirLiteralExpression.ktConstantExpression: KtConstantExpression?
-        get() {
-            val firSourcePsi = this.source?.psi
-            return firSourcePsi?.findDescendantOfType()
-        }
-
-    private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression): FirLiteralExpression? {
+    private fun ConstantValueKind.reverseConverted(original: FirLiteralExpression, sourceElement: KtSourceElement?): FirLiteralExpression? {
         val value = original.value as? Number ?: return null
         val convertedValue: Any = when (this) {
             ConstantValueKind.Byte -> value.toByte().unaryMinus()
@@ -184,14 +217,20 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             ConstantValueKind.Short -> value.toShort().unaryMinus()
             else -> null
         } ?: return null
-        return buildLiteralExpression(
-            original.ktConstantExpression?.toKtPsiSourceElement(),
-            this,
-            convertedValue,
-            setType = false
-        ).also {
-            it.replaceConeTypeOrNull(original.resolvedType)
-        }
+
+        return original.copy(newValue = convertedValue, newSource = sourceElement)
+    }
+
+    private fun FirLiteralExpression.copy(
+        newValue: Any?,
+        newSource: KtSourceElement?,
+    ): FirLiteralExpression = buildLiteralExpression(
+        newSource,
+        kind,
+        newValue,
+        setType = false
+    ).also {
+        it.replaceConeTypeOrNull(resolvedType)
     }
 
     private fun recordTypeQualifiers(resolvedTypeRef: FirResolvedTypeRef, data: MutableMap<KtElement, FirElement>) {
@@ -262,7 +301,6 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
 
                 return source.psi
             }
-
 
         private fun KtSourceElement.isSourceForInvertedInOperator(fir: FirElement) =
             kind == KtFakeSourceElementKind.DesugaredInvertedContains
