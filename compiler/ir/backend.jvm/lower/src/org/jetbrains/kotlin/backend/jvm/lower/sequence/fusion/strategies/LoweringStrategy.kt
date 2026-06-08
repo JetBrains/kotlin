@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irWhile
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrValueDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.IrBlock
@@ -25,11 +26,14 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
+import org.jetbrains.kotlin.ir.expressions.IrSetValue
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrWhileLoop
 import org.jetbrains.kotlin.ir.expressions.impl.IrTypeOperatorCallImpl
+import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.types.makeNotNull
+import org.jetbrains.kotlin.ir.util.patchDeclarationParents
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
@@ -60,28 +64,34 @@ internal fun IrElement.markAsSynthetic() {
     })
 }
 
-private class BreakContinueUpdater(
+class VariableSubstitutionTransformer(
+    private val oldSymbol: IrValueSymbol,
+    private val newSymbol: IrValueSymbol,
     val newLoop: IrLoop,
-    val oldLoop: IrLoop
+    val oldLoop: IrLoop?,
 ) : IrElementTransformerVoidWithContext() {
-    override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
-        if (jump.loop == oldLoop)
-            jump.loop = newLoop
-        return super.visitBreakContinue(jump)
-    }
-}
 
-private class LoopBodyTransformer(
-    val builder: IrBuilderWithScope,
-    val oldVariable: IrValueDeclaration,
-    val newVariable: IrVariable,
-) : IrElementTransformerVoidWithContext() {
-    override fun visitGetValue(expression: IrGetValue): IrExpression {
-        if (expression.symbol == oldVariable.symbol) {
-            check(expression.type == newVariable.type)
-            return builder.irGet(newVariable)
+    override fun visitGetValue(expression: IrGetValue): IrGetValue {
+        val copied = super.visitGetValue(expression) as IrGetValue
+        if (expression.symbol == oldSymbol) {
+            copied.symbol = newSymbol
         }
-        return super.visitGetValue(expression)
+        return copied
+    }
+
+    override fun visitSetValue(expression: IrSetValue): IrSetValue {
+        val copied = super.visitSetValue(expression) as IrSetValue
+        if (expression.symbol == oldSymbol) {
+            copied.symbol = newSymbol
+        }
+        return copied
+    }
+
+    override fun visitBreakContinue(jump: IrBreakContinue): IrExpression {
+        val copied = super.visitBreakContinue(jump) as IrBreakContinue
+        if (copied.loop == oldLoop)
+            copied.loop = newLoop
+        return copied
     }
 }
 
@@ -102,7 +112,7 @@ internal sealed class LoweringStrategy {
 
     abstract fun prepareLoopBody(
         loopBody: IrBlock,
-        builder: IrBuilderWithScope,
+        builderWithParent: IrBuilderWithParent,
         oldLoopVariable: IrVariable,
         oldLoop: IrLoop?,
     ): Pair<(IrVariable) -> IrContainerExpression, IrLoop>
@@ -181,12 +191,23 @@ internal sealed class LoweringStrategy {
         builder: IrBuilderWithScope,
         oldLoopVariable: IrValueDeclaration,
         body: IrContainerExpression,
-        newLoop: IrLoop,
         oldLoop: IrLoop?,
-    ): (IrVariable) -> IrContainerExpression = { newInnerLoopVariable ->
-        body.transformChildrenVoid(LoopBodyTransformer(builder, oldLoopVariable, newInnerLoopVariable))
-        if (oldLoop != null) body.transformChildrenVoid(BreakContinueUpdater(newLoop, oldLoop))
-        body
+        parent: IrDeclarationParent,
+    ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
+        val newLoop = builder.createSequenceWhile().apply {
+            this.label = oldLoop?.label ?: "sequence_while_loop"
+        }
+        return { newInnerLoopVariable: IrVariable ->
+            body.transformChildrenVoid(
+                VariableSubstitutionTransformer(
+                    oldLoopVariable.symbol,
+                    newInnerLoopVariable.symbol,
+                    newLoop,
+                    oldLoop,
+                )
+            )
+            body.patchDeclarationParents(parent)
+        } to newLoop
     }
 
     protected fun addTakeVariableDeclarations(

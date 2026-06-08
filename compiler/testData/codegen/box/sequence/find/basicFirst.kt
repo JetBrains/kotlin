@@ -5,7 +5,7 @@
 // 0 first
 fun box(): String {
     val seq = sequenceOf(4, 2, 3, 4, 5).filter { it < 4 }
-    val x = seq.first()
+    val x: Int = seq.first()
     if (x != 2) return "failed expected 2, but got $x"
 
     val y = generateSequence(1) { it + 1 }.map { it * 2 }.firstOrNull { it > 4 }
@@ -19,7 +19,10 @@ fun box(): String {
     try {
         seq4.first()
     } catch (e: NoSuchElementException) {
-        return sequenceOf(1, 2, 3, 4).firstNotNullOf { if (it == 3) "OK" else null }
+        val result = sequenceOf(1, 2, 3, 4).firstNotNullOf { if (it == 3) "OK" else null }
+        val nul = sequenceOf(1, 2, 3, 4).firstNotNullOfOrNull { if (it == 7) "OK" else null }
+        if (nul != null) return "failed: FirstNotNullOfOrNull return non-null value $nul"
+        return result
     }
     return "failed: no exception thrown"
 }

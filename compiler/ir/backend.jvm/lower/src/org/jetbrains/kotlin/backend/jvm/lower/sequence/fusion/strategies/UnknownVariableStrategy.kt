@@ -120,12 +120,17 @@ internal class UnknownVariableStrategy(val newIteratorTarget: IrExpression) : Lo
 
     override fun prepareLoopBody(
         loopBody: IrBlock,
-        builder: IrBuilderWithScope,
+        builderWithParent: IrBuilderWithParent,
         oldLoopVariable: IrVariable,
         oldLoop: IrLoop?
     ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
-        val newLoop = builder.createSequenceWhile()
-        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
+        return updateLoopVariableInBody(
+            builderWithParent.first,
+            oldLoopVariable,
+            loopBody,
+            oldLoop,
+            builderWithParent.second
+        )
     }
 
     private fun lowerBody(

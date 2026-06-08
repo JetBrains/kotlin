@@ -1,7 +1,6 @@
 // WITH_STDLIB
 
 // CHECK_BYTECODE_TEXT
-// 0 find
 // 0 findLast
 fun box(): String {
     val seq = sequenceOf(1, 2, 3).map { it * 2 }

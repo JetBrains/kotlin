@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.IrBuilderWithParen
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceData
 import org.jetbrains.kotlin.backend.jvm.lower.sequence.fusion.SequenceSource
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.IrBuilderWithScope
 import org.jetbrains.kotlin.ir.builders.irBlock
 import org.jetbrains.kotlin.ir.builders.irBranch
 import org.jetbrains.kotlin.ir.builders.irCall
@@ -112,12 +111,17 @@ internal class SequenceOfStrategy(val source: SequenceSource.SequenceOf) : Lower
 
     override fun prepareLoopBody(
         loopBody: IrBlock,
-        builder: IrBuilderWithScope,
+        builderWithParent: IrBuilderWithParent,
         oldLoopVariable: IrVariable,
         oldLoop: IrLoop?
     ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
-        val newLoop = builder.createSequenceWhile()
-        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
+        return updateLoopVariableInBody(
+            builderWithParent.first,
+            oldLoopVariable,
+            loopBody,
+            oldLoop,
+            builderWithParent.second
+        )
     }
 
 

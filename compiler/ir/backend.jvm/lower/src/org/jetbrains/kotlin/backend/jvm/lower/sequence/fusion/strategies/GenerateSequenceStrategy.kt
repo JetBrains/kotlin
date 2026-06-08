@@ -95,13 +95,18 @@ internal class GenerateSequenceStrategy(val source: SequenceSource.GenerateSeque
 
     override fun prepareLoopBody(
         loopBody: IrBlock,
-        builder: IrBuilderWithScope,
+        builderWithParent: IrBuilderWithParent,
         oldLoopVariable: IrVariable,
         oldLoop: IrLoop?
     ): Pair<(IrVariable) -> IrContainerExpression, IrLoop> {
         loopBody.statements.remove(oldLoopVariable)
-        val newLoop = builder.createSequenceWhile()
-        return updateLoopVariableInBody(builder, oldLoopVariable, loopBody, newLoop, oldLoop) to newLoop
+        return updateLoopVariableInBody(
+            builderWithParent.first,
+            oldLoopVariable,
+            loopBody,
+            oldLoop,
+            builderWithParent.second
+        )
     }
 
     private fun createIteratorReplacement(

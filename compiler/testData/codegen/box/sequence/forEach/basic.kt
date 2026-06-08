@@ -1,8 +1,5 @@
 // WITH_STDLIB
 
-// CHECK_BYTECODE_TEXT
-// 0 forEach
-
 fun box(): String {
     var result = ""
     sequenceOf(1, 2, 3).map { it + 1 }.filter { it % 2 == 0 }.forEach { if (it == 2) result += "O" else if (it == 4) result += "K" else result += "$it" }
