@@ -1,4 +1,4 @@
 // WITH_STDLIB
 // LANGUAGE: +IntrinsicConstEvaluation
 
-val p = <expr>0u.toUShort()</expr>
+const val CHAR_A = <expr>Char(65)</expr>

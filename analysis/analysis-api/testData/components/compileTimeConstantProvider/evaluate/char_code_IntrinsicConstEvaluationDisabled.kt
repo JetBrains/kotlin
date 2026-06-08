@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: -IntrinsicConstEvaluation
 
 fun box() {
     <expr>'c'.code</expr>

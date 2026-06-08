@@ -1,5 +1,5 @@
 expression: 1.equals(1)
-constant: NOT_EVALUATED
-constantValueKind: NOT_EVALUATED
-constantValueSource: NOT_EVALUATED
-constantValueSourceText: NOT_EVALUATED
+constant: true
+constantValueKind: BooleanValue
+constantValueSource: DOT_QUALIFIED_EXPRESSION
+constantValueSourceText: 1.equals(1)

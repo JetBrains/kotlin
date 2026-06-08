@@ -1,5 +1,5 @@
 // WITH_STDLIB
-// LANGUAGE: +IntrinsicConstEvaluation
+// LANGUAGE: -IntrinsicConstEvaluation
 
 const val c = 'c'
 

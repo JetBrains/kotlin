@@ -1,0 +1,5 @@
+expression: 1.equals(1)
+constant: NOT_EVALUATED
+constantValueKind: NOT_EVALUATED
+constantValueSource: NOT_EVALUATED
+constantValueSourceText: NOT_EVALUATED

@@ -51,6 +51,18 @@ public class FirIdeDependentAnalysisSourceLikeModuleAnalysisApiAnnotationsOnDecl
   }
 
   @Test
+  @TestMetadata("compileTimeFunctionArgument.kt")
+  public void testCompileTimeFunctionArgument() {
+    run("compileTimeFunctionArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("compileTimeFunctionArgument_IntrinsicConstEvaluationDisabled.kt")
+  public void testCompileTimeFunctionArgument_IntrinsicConstEvaluationDisabled() {
+    run("compileTimeFunctionArgument_IntrinsicConstEvaluationDisabled.kt");
+  }
+
+  @Test
   @TestMetadata("deprecated.kt")
   public void testDeprecated() {
     run("deprecated.kt");
