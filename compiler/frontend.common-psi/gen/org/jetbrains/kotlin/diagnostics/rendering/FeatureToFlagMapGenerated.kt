@@ -40,6 +40,7 @@ val featureToEnablingFlagMap: Map<LanguageFeature, String> = mapOf(
     LanguageFeature.FullValueClasses to "-Xfull-value-classes",
     LanguageFeature.FunctionReferenceWithDefaultValueAsOtherType to "-Xnew-inference",
     LanguageFeature.HoldsInContracts to "-Xallow-holdsin-contract",
+    LanguageFeature.HomePackageResolution to "-Xhome-package-resolution",
     LanguageFeature.InferThrowableTypeParameterToUpperBound to "-Xeager-lambda-analysis",
     LanguageFeature.InlineClasses to "-Xinline-classes",
     LanguageFeature.IntrinsicConstEvaluation to "-Xintrinsic-const-evaluation",

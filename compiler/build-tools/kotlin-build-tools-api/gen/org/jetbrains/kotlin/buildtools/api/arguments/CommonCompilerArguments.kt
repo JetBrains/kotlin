@@ -524,6 +524,16 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_HEADER_MODE_TYPE", KotlinReleaseVersion(2, 4, 0))
 
     /**
+     * Enables `HomePackageResolution` language feature.`
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_HOME_PACKAGE_RESOLUTION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_HOME_PACKAGE_RESOLUTION", KotlinReleaseVersion(2, 5, 0))
+
+    /**
      * Ignore all compilation exceptions while optimizing some constant expressions.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

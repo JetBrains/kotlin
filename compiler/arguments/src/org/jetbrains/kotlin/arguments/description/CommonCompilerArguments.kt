@@ -1412,4 +1412,19 @@ Warning: this flag is not intended for production use. If you want to configure 
             introducedVersion = KotlinReleaseVersion.v2_5_0
         )
     }
+
+    compilerArgument {
+        name = "Xhome-package-resolution"
+        description = """
+            Enables `HomePackageResolution` language feature.`
+        """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+        additionalAnnotations(
+            Enables(LanguageFeature.HomePackageResolution),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_5_0
+        )
+    }
 }

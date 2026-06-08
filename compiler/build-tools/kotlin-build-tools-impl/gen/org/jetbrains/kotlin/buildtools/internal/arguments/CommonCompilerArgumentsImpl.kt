@@ -89,6 +89,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_FULL_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HEADER_MODE_TYPE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_HOME_PACKAGE_RESOLUTION
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_INTELLIJ_PLUGIN_ROOT
@@ -267,6 +268,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_FULL_VALUE_CLASSES in this) { arguments.fullValueClasses = get(X_FULL_VALUE_CLASSES)}
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
+    if (X_HOME_PACKAGE_RESOLUTION in this) { arguments.homePackageResolution = get(X_HOME_PACKAGE_RESOLUTION)}
     try { if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.setUsingReflection("ignoreConstOptimizationErrors", get(X_IGNORE_CONST_OPTIMIZATION_ERRORS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_INLINE_CLASSES in this) { arguments.setUsingReflection("inlineClasses", get(X_INLINE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.setUsingReflection("intellijPluginRoot", get(X_INTELLIJ_PLUGIN_ROOT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -386,6 +388,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     try { this[X_FULL_VALUE_CLASSES] = arguments.fullValueClasses } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE] = arguments.headerMode } catch (_: NoSuchMethodError) {  }
     try { this[X_HEADER_MODE_TYPE] = arguments.headerModeType.let { HeaderMode.entries.firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") } catch (_: NoSuchMethodError) {  }
+    try { this[X_HOME_PACKAGE_RESOLUTION] = arguments.homePackageResolution } catch (_: NoSuchMethodError) {  }
     try { this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.getUsingReflection<Boolean>("ignoreConstOptimizationErrors") } catch (_: NoSuchMethodError) {  }
     try { this[X_INLINE_CLASSES] = arguments.getUsingReflection<Boolean>("inlineClasses") } catch (_: NoSuchMethodError) {  }
     try { this[X_INTELLIJ_PLUGIN_ROOT] = arguments.getUsingReflection<String?>("intellijPluginRoot") } catch (_: NoSuchMethodError) {  }
@@ -500,6 +503,7 @@ internal abstract class CommonCompilerArgumentsImpl(
     if (X_FULL_VALUE_CLASSES in this) { arguments.fullValueClasses = get(X_FULL_VALUE_CLASSES)}
     if (X_HEADER_MODE in this) { arguments.headerMode = get(X_HEADER_MODE)}
     if (X_HEADER_MODE_TYPE in this) { arguments.headerModeType = get(X_HEADER_MODE_TYPE).stringValue}
+    if (X_HOME_PACKAGE_RESOLUTION in this) { arguments.homePackageResolution = get(X_HOME_PACKAGE_RESOLUTION)}
     try { if (X_IGNORE_CONST_OPTIMIZATION_ERRORS in this) { arguments.setUsingReflection("ignoreConstOptimizationErrors", get(X_IGNORE_CONST_OPTIMIZATION_ERRORS))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_IGNORE_CONST_OPTIMIZATION_ERRORS. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_INLINE_CLASSES in this) { arguments.setUsingReflection("inlineClasses", get(X_INLINE_CLASSES))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INLINE_CLASSES. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
     try { if (X_INTELLIJ_PLUGIN_ROOT in this) { arguments.setUsingReflection("intellijPluginRoot", get(X_INTELLIJ_PLUGIN_ROOT))} } catch (e: NoSuchMethodError) { throw IllegalStateException("""Compiler parameter not recognized: X_INTELLIJ_PLUGIN_ROOT. Current compiler version is: $KC_VERSION, but the argument was removed in 2.5.0""").initCause(e) }
@@ -736,6 +740,9 @@ internal abstract class CommonCompilerArgumentsImpl(
 
     public val X_HEADER_MODE_TYPE: CommonCompilerArgument<HeaderMode> =
         CommonCompilerArgument("X_HEADER_MODE_TYPE")
+
+    public val X_HOME_PACKAGE_RESOLUTION: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_HOME_PACKAGE_RESOLUTION")
 
     public val X_IGNORE_CONST_OPTIMIZATION_ERRORS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_IGNORE_CONST_OPTIMIZATION_ERRORS")

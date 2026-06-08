@@ -707,6 +707,7 @@ enum class LanguageFeature(
     ReportEscapingCapturedVariable(sinceVersion = null, testOnly = true, issue = "KT-15514", enabledInLatestLVTests = true),
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, issue = "KT-84393", enabledInLatestLVTests = false),
     JvmInlineScopesNumbers(sinceVersion = null, issue = "KT-79401", enabledInLatestLVTests = false),
+    HomePackageResolution(sinceVersion = null, issue = NO_ISSUE_SPECIFIED, enabledInLatestLVTests = false),
     ;
 
     constructor(
