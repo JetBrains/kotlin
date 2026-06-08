@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.backend.common.lower.irBlockBody
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.PRIVATE
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
 import org.jetbrains.kotlin.ir.backend.js.lower.JsStaticInitializersLowering.Companion.STATIC_FIELD_INITIALIZER
 import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.staticInitializer
-import org.jetbrains.kotlin.ir.backend.js.utils.isInstantiableEnum
 import org.jetbrains.kotlin.ir.builders.*
 import org.jetbrains.kotlin.ir.builders.declarations.buildField
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
@@ -33,6 +31,51 @@ import org.jetbrains.kotlin.name.Name
 
 /**
  * Moves initializers of static members of the class coming from companion blocks into a static initializer function.
+ *
+ * Before:
+ * ```kotlin
+ * class Foo {
+ *   companion {
+ *     val first = initFirst()
+ *   }
+ *   companion object {
+ *     val second = initSecond()
+ *   }
+ *   companion {
+ *     val third = initThird()
+ *   }
+ * }
+ * ```
+ *
+ * After:
+ * ```kotlin
+ * class Foo {
+ *   constructor() {
+ *     Foo$static_init()
+ *   }
+ *   companion {
+ *     val Foo$static_init_called = false
+ *     Foo$static_init() {
+ *       if (Foo$static_init_called) return
+ *       first = initFirst()
+ *       second = initSecond()
+ *       third = initThird()
+ *     }
+ *   }
+ *   companion {
+ *     val first: FirstType
+ *   }
+ *   companion object {
+ *     val second: SecondType
+ *     init {
+ *       Foo$static_init()
+ *     }
+ *   }
+ *   companion {
+ *     val third: ThirdType
+ *   }
+ * }
+ * ```
  */
 @PhasePrerequisites(
     ObjectDeclarationLowering::class,
@@ -50,8 +93,8 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
 
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
+            override fun visitFile(declaration: IrFile) {
+                declaration.acceptChildrenVoid(this)
             }
 
             override fun visitClass(declaration: IrClass) {
@@ -62,7 +105,7 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
     }
 
     private fun processDeclarationContainer(container: IrClass) {
-        if (container.isExpect || container.isEffectivelyExternal()) return
+        if (container.isEffectivelyExternal()) return
         val builder = context.irBuiltIns.createIrBuilder(container.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET)
         val staticDeclarationsByFields = buildMap {
             for (declaration in container.declarations) {
@@ -74,41 +117,41 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
         }
 
         val initializers = buildList {
-            if (container.isInstantiableEnum) {
-                // Enum cases initializers always go first.
-                // Call _initEntries in static_init instead of get_instance, to initialize entries when static members got accessed.
-                container.initEntryInstancesFun?.let { initEntries ->
-                    add(builder.irCall(initEntries.symbol))
-                }
+            // Enum cases initializers always go first.
+            // Call _initEntries in static_init instead of get_instance, to initialize entries when static members got accessed.
+            container.initEntryInstancesFun?.let { initEntries ->
+                add(builder.irCall(initEntries.symbol))
             }
 
             for (declaration in container.declarations) {
-                when (declaration) {
-                    in staticDeclarationsByFields -> {
-                        staticDeclarationsByFields[declaration]?.let { [field, initializer] ->
-                            add(
-                                builder.irSetField(
-                                    receiver = null,
-                                    field = field,
-                                    value = initializer,
-                                    origin = STATIC_FIELD_INITIALIZER
-                                )
+                val field = declaration as? IrField ?: (declaration as? IrProperty)?.backingField
+                if (field != null && field.isStatic) {
+                    field.initializer?.expression?.let {
+                        add(
+                            builder.irSetField(
+                                receiver = null,
+                                field = field,
+                                value = it,
+                                origin = STATIC_FIELD_INITIALIZER
                             )
-                            field.initializer = null
-                        }
+                        )
+                        field.initializer = null
                     }
-                    is IrClass if declaration.isCompanion && staticDeclarationsByFields.isNotEmpty() -> {
-                        // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
-                        // body should be moved to the static_init body to preserve the correct order of initialization.
-                        // _getInstance then calls static_init instead.
-                        declaration.objectGetInstanceFunction?.let {
-                            val body = it.body as? IrBlockBody ?: return@let
-                            val returnIndex = body.statements.indexOfFirst { statement -> statement is IrReturn }
-                            val statements = body.statements.take(returnIndex)
-                            addAll(statements)
-                            repeat(returnIndex) {
-                                body.statements.removeFirst()
-                            }
+                    continue
+                }
+
+                if (declaration is IrClass && declaration.isCompanion && staticDeclarationsByFields.isNotEmpty()) {
+                    // Special handling of companion objects - if the static_init function is introduced, the Companion_getInstance
+                    // body should be moved to the static_init body to preserve the correct order of initialization.
+                    // _getInstance then calls static_init instead.
+                    declaration.objectGetInstanceFunction?.let { getInstance ->
+                        val body = getInstance.body as? IrBlockBody ?: return@let
+                        body.statements.let { statements ->
+                            // Relying on the fact that _getInstance always ends with IrReturn
+                            addAll(statements.dropLast(1))
+                            val irReturn = statements.last()
+                            statements.clear()
+                            statements.add(irReturn)
                         }
                     }
                 }
@@ -124,39 +167,31 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
             initCalledVar = staticInitCalledField,
             initializers = initializers
         )
-        container.staticInitializer = staticInitFunction
-        container.declarations.add(0, staticInitFunction)
-        container.declarations.add(0, staticInitCalledField)
 
-        fun IrFunction.addStaticInitCall() {
-            val body = body as? IrBlockBody ?: return
-            staticInitFunction.let { body.statements.add(0, builder.irCall(it.symbol)) }
-        }
-
-        for (function in container.simpleFunctions()) {
-            if (function.dispatchReceiverParameter != null) continue // already initialized when instance was created
-            if (function.origin == STATIC_CLASS_INITIALIZER) continue // don't initialize recursively
-            function.addStaticInitCall()
-        }
-
-        for (constructor in container.constructors) {
-            constructor.addStaticInitCall()
-        }
-
-        if (container.isInstantiableEnum) {
-            container.initEntryInstancesFun?.let { initEntries ->
-                // Replace the call to a _initEntries function to a static_init call. This ensures touching enum entries will trigger
-                // static initializers too.
-                container.parent.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
-                    override fun visitCall(expression: IrCall): IrExpression {
-                        val enclosingFunction = currentFunction?.irElement as? IrSimpleFunction ?: return super.visitCall(expression)
-                        if (expression.symbol == initEntries.symbol && enclosingFunction != staticInitFunction)
-                            return builder.irCall(staticInitFunction.symbol)
-                        return super.visitCall(expression)
-                    }
-                })
+        for (declaration in container.declarations.asSequence().filterIsInstance<IrFunction>()) {
+            if (declaration is IrSimpleFunction || declaration is IrConstructor) {
+                if (declaration.dispatchReceiverParameter != null) continue // already initialized when instance was created
+                val body = declaration.body as? IrBlockBody ?: continue
+                staticInitFunction.let { body.statements.add(0, builder.irCall(it.symbol)) }
             }
         }
+
+        container.initEntryInstancesFun?.let { initEntries ->
+            // Replace the call to a _initEntries function to a static_init call. This ensures touching enum entries will trigger
+            // static initializers too.
+            container.parent.transformChildrenVoid(object : IrElementTransformerVoidWithContext() {
+                override fun visitCall(expression: IrCall): IrExpression {
+                    val enclosingFunction = currentFunction?.irElement as? IrSimpleFunction ?: return super.visitCall(expression)
+                    if (expression.symbol == initEntries.symbol && enclosingFunction != staticInitFunction)
+                        return builder.irCall(staticInitFunction.symbol)
+                    return super.visitCall(expression)
+                }
+            })
+        }
+
+        // Adding static_init declaration after adding its usages to make sure we don't insert usages inside static_init itself
+        container.staticInitializer = staticInitFunction
+        container.declarations.addAll(0, listOf(staticInitCalledField, staticInitFunction))
     }
 
     private fun createStaticInitCalledField(irClass: IrClass): IrField = context.irFactory.buildField {
@@ -195,40 +230,43 @@ internal class JsStaticInitializersLowering(private val context: JsIrBackendCont
                     +irIfThen(irGetField(null, initCalledVar), irReturnUnit())
                     +irSetField(null, initCalledVar, irBoolean(true))
                 }.statements
-                statements += initializers.map { it.setDeclarationsParent(initFunction) }
+                for (initializer in initializers) {
+                    initializer.setDeclarationsParent(initFunction)
+                }
+                statements += initializers
             }
         }
     }
 }
 
 /**
- * Inserts parents static initializer calls into the child static initializers body
+ * Inserts parents static initializer calls into the child static initializers body.
  */
 @PhasePrerequisites(JsStaticInitializersLowering::class)
 internal class JsStaticInitializersInheritanceLowering(val context: JsIrBackendContext) : FileLoweringPass {
     override fun lower(irFile: IrFile) {
         irFile.acceptVoid(object : IrVisitorVoid() {
-            override fun visitElement(element: IrElement) {
-                element.acceptChildrenVoid(this)
+            override fun visitFile(declaration: IrFile) {
+                declaration.acceptChildrenVoid(this)
             }
 
-            override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                val parentClass = declaration.parentClassOrNull ?: return
-                if (parentClass.staticInitializer != declaration) return
-                val body = declaration.body as? IrBlockBody ?: return
-                val parentInitializerCalls =
-                    context.createIrBuilder(declaration.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).let { builder ->
-                        parentClass.parentStaticInitializers.map { builder.irCall(it) }
+            override fun visitClass(declaration: IrClass) {
+                for (function in declaration.functions) {
+                    if (declaration.staticInitializer != function) continue
+
+                    val body = function.body as? IrBlockBody ?: return
+                    val parentInitializerCalls =
+                        context.createIrBuilder(function.symbol, SYNTHETIC_OFFSET, SYNTHETIC_OFFSET).let { builder ->
+                            declaration.parentStaticInitializers.map { builder.irCall(it) }
+                        }
+
+                    // Prepend the first initializer of this class with call to parent ones
+                    // If static_init exists, it always contains at least 1 static field initializer
+                    val initStartIndex = body.statements.indexOfFirst {
+                        it is IrSetField && it.origin == STATIC_FIELD_INITIALIZER
                     }
 
-                // Prepend the first initializer of this class with call to parent ones
-                val initStartIndex = body.statements.indexOfFirst {
-                    it is IrSetField && it.origin == STATIC_FIELD_INITIALIZER
-                }
-
-                when (initStartIndex) {
-                    -1 -> body.statements += parentInitializerCalls
-                    else -> body.statements.addAll(initStartIndex, parentInitializerCalls)
+                    body.statements.addAll(initStartIndex, parentInitializerCalls)
                 }
 
                 declaration.acceptChildrenVoid(this)
