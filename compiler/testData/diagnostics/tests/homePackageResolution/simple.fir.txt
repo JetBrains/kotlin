@@ -1,0 +1,43 @@
+FILE: a.kt
+    package first
+
+    public open class A : R|kotlin/Any| {
+        public constructor(): R|first/A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final fun R|first/A|.foo(): R|kotlin/Unit| {
+    }
+    public final fun R|first/A|.bar(): R|kotlin/Unit| {
+    }
+    public final fun baz(a: R|first/A|): R|kotlin/Unit| {
+    }
+FILE: b.kt
+    package second
+
+    public final class B : R|first/A| {
+        public constructor(): R|second/B| {
+            super<R|first/A|>()
+        }
+
+    }
+    public final fun R|second/B|.foo(): R|kotlin/Unit| {
+    }
+    public final fun baz(b: R|second/B|): R|kotlin/Unit| {
+    }
+    public final fun checkB(b: R|second/B|): R|kotlin/Unit| {
+        R|<local>/b|.R|second/foo|()
+        R|<local>/b|.R|first/bar|()
+    }
+FILE: c.kt
+    package other
+
+    public final fun checkC(a: R|first/A|, b: R|second/B|): R|kotlin/Unit| {
+        R|<local>/a|.R|first/foo|()
+        R|<local>/a|.R|first/bar|()
+        <Unresolved name: baz>#(R|<local>/a|)
+        R|<local>/b|.R|second/foo|()
+        R|<local>/b|.R|first/bar|()
+        <Unresolved name: baz>#(R|<local>/b|)
+    }
