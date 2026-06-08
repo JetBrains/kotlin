@@ -4331,7 +4331,6 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTes
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
 	public final fun getRuntimeClasspath ()Lorg/gradle/api/file/FileCollection;
 	public final fun getTestFramework ()Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;
-	public final fun getTestFrameworkInputs ()Ljava/lang/Object;
 	public final fun getTestFrameworkSettings ()Ljava/lang/String;
 	public final fun onTestFrameworkSet (Lorg/gradle/api/Action;)V
 	public fun setCompilation (Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;)V
