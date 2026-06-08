@@ -5,13 +5,12 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.testing.playwright
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
-import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.kotlin.dsl.mapProperty
-import org.jetbrains.kotlin.gradle.utils.AnyJsonSerializer
 import org.jetbrains.kotlin.gradle.utils.listProperty
 import org.jetbrains.kotlin.gradle.utils.property
 import org.jetbrains.kotlin.gradle.utils.withBuilder
@@ -40,9 +39,6 @@ internal abstract class KotlinBrowserRunnerConfig
     @get:Input
     val testsFinishedMarker: Property<String> = objects.property<String>().convention("KOTLIN_TEST_FINISHED")
 
-    @get:Input
-    val extra: MapProperty<String, Any> = objects.mapProperty()
-
     fun buildUrlWithConfigState(base: URI, extraKotlinTestCliArguments: List<String>? = null): URI {
         val json = toKotlinTestRunnerConfigJsonString(extraKotlinTestCliArguments)
         return base.withBuilder { addQueryParam("kotlinTestConfig", json) }
@@ -51,24 +47,30 @@ internal abstract class KotlinBrowserRunnerConfig
     fun toKotlinTestRunnerConfigJsonString(
         extraKotlinTestCliArguments: List<String>? = null
     ): String {
-        val reporterOptions = mapOf(
-            "flowId" to flowId.get(),
+        val config = KotlinTestRunnerConfig(
+            reporterOptions = ReporterOptions(flowId = flowId.get()),
+            mochaSetupOptions = MochaSetupOptions(timeout = timeout.get().toMillis().toString()),
+            kotlinTestCliArguments = kotlinTestCliArguments.get() + extraKotlinTestCliArguments.orEmpty(),
+            testsFinishedMarker = testsFinishedMarker.get(),
         )
-
-        val mochaSetupOptions = mapOf(
-            "timeout" to timeout.get().toMillis().toString(),
-        )
-
-        val kotlinTestCliArguments: List<String> = kotlinTestCliArguments.get()
-        val testsFinishedMarker: String = testsFinishedMarker.get()
-
-        val rootData = mutableMapOf(
-            "reporterOptions" to reporterOptions,
-            "mochaSetupOptions" to mochaSetupOptions,
-            "kotlinTestCliArguments" to kotlinTestCliArguments + extraKotlinTestCliArguments.orEmpty(),
-            "testsFinishedMarker" to testsFinishedMarker,
-        )
-
-        return AnyJsonSerializer.toJsonString(rootData)
+        return Json.encodeToString(KotlinTestRunnerConfig.serializer(), config)
     }
+
+    @Serializable
+    internal data class KotlinTestRunnerConfig(
+        val reporterOptions: ReporterOptions,
+        val mochaSetupOptions: MochaSetupOptions,
+        val kotlinTestCliArguments: List<String>,
+        val testsFinishedMarker: String,
+    )
+
+    @Serializable
+    internal data class ReporterOptions(
+        val flowId: String,
+    )
+
+    @Serializable
+    internal data class MochaSetupOptions(
+        val timeout: String,
+    )
 }
