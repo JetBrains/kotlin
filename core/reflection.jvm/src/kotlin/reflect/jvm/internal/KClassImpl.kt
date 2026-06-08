@@ -61,7 +61,6 @@ import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.localDelegatedProperties
 import kotlin.metadata.jvm.moduleName
 import kotlin.reflect.*
-import kotlin.reflect.full.isSubclassOf
 import kotlin.reflect.full.isSubtypeOf
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.full.valueParameters
@@ -420,14 +419,18 @@ internal class KClassImpl<T : Any>(
         }
 
         private fun useK1ImplementationForFakeOverrides(): Boolean =
-            !newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass()
+            !newFakeOverridesImplementation || useK1Implementation || isComplicatedBuiltinSubclass
 
         // TODO: KT-85727 Reflection: support collections and their subclasses in the new implementation
-        fun isComplicatedBuiltinSubclass(): Boolean =
-            isSubclassOf(Iterable::class) || isSubclassOf(Map::class) || isSubclassOf(CharSequence::class) || isSubclassOf(Number::class)
+        val isComplicatedBuiltinSubclass: Boolean by lazy(PUBLICATION) {
+            Iterable::class.java.isAssignableFrom(jClass) ||
+                    Map::class.java.isAssignableFrom(jClass) ||
+                    CharSequence::class.java.isAssignableFrom(jClass) ||
+                    Number::class.java.isAssignableFrom(jClass)
+        }
 
         val declaredNonStaticMembers: Collection<ReflectKCallable<*>> by ReflectProperties.lazySoft {
-            if (useK1Implementation || isComplicatedBuiltinSubclass() || kmClass != null) {
+            if (useK1Implementation || isComplicatedBuiltinSubclass || kmClass != null) {
                 getMembers(memberScope, DECLARED)
             } else buildList {
                 getDeclaredNonStaticMethodsFromJavaClass().filterTo(this) { isVisibleAsFunctionInCurrentClass(it) }
