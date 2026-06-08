@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.backend.konan
 import org.jetbrains.kotlin.analyzer.CompilationErrorException
 import org.jetbrains.kotlin.backend.common.serialization.FingerprintHash
 import org.jetbrains.kotlin.backend.common.serialization.SerializedIrFileFingerprint
+import org.jetbrains.kotlin.backend.konan.util.compilerFingerprint
 import org.jetbrains.kotlin.backend.konan.util.reportCompilationErrorAndThrow
 import org.jetbrains.kotlin.cli.reportLog
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
@@ -122,8 +123,25 @@ class CacheBuilder(
 
         if (!icEnabled) return
 
+        // The incremental dirty-file check later on only compares the IR content hash of each source file. So switching to
+        // a different compiler without running `clean` would silently reuse the bitcode produced by the previous compiler,
+        // leading to linkage/runtime errors. Each cache records the producing compiler's fingerprint, so force a full rebuild
+        // of any cached library whose fingerprint does not match the current compiler. (Distribution/auto caches live inside
+        // the compiler distribution directory so they are naturally rebuilt with each compiler version.)
+        val currentCompilerFingerprint = config.distribution.compilerFingerprint
+        val staleCompilerCacheLibraries = icedLibraries.filter { library ->
+            // All files of a per-file cache are produced by the same compiler, so any file's metadata
+            // identifies the fingerprint of the whole cache.
+            val cache = caches[library] as? CachedLibraries.Cache.PerFile ?: return@filter false
+            val anyCachedFile = File(cache.path).listFiles.firstOrNull()?.name ?: return@filter false
+            (cache.getMetadata(anyCachedFile).compilerFingerprint != currentCompilerFingerprint).also { stale ->
+                if (stale) configuration.reportLog(
+                        "Incremental cache for ${library.location} was produced by a different compiler version; rebuilding it")
+            }
+        }
+
         // Every library dependable on one of the changed external libraries needs its cache to be fully rebuilt.
-        val needFullRebuild = findAllDependable(externalLibrariesToCache)
+        val needFullRebuild = findAllDependable(externalLibrariesToCache) + staleCompilerCacheLibraries
 
         val libraryFilesWithFqNames = mutableMapOf<KotlinLibrary, List<FileWithFqName>>()
 
