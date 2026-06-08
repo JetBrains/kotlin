@@ -32,7 +32,7 @@ class IrAnnotationImpl internal constructor(
     override var origin: IrStatementOrigin?,
     override var source: SourceElement,
     override var constructorTypeArgumentsCount: Int,
-    override var argumentMapping: Map<Name, IrExpression>?,
+    override val argumentMapping: Map<Name, IrExpression>?,
     @property:DeprecatedCompilerApi(deprecatedSince = org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20)
     override var symbol: IrConstructorSymbol,
 ) : IrAnnotation() {

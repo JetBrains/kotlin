@@ -748,7 +748,7 @@ object IrTree : AbstractTreeBuilder() {
         parent(type<AnnotationMarker>())
 
         +referencedSymbol("classSymbol", classSymbol, mutable = false)
-        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression), nullable = true)
+        +field("argumentMapping", StandardTypes.map.withArgs(type<Name>(), expression), nullable = true, mutable = false)
         +referencedSymbol("symbol", type = constructorSymbol) {
             optInAnnotation = deprecatedCompilerApi.withArgument("deprecatedSince", "org.jetbrains.kotlin.CompilerVersionOfApiDeprecation._2_4_20")
         }
