@@ -35,6 +35,12 @@ class WithIgnoredCompanion {
         suspend fun staticSuspend(): String = "STATIC SUSPEND"
 
         suspend fun companionSuspend(): String = "SUSPEND"
+
+        // KT-85990
+        @JsStatic
+        suspend fun staticSuspendWithDefault(value: String = "DEFAULT STATIC SUSPEND"): String = value
+
+        suspend fun companionSuspendWithDefault(value: String = "DEFAULT COMPANION SUSPEND"): String = value
     }
 }
 
@@ -62,6 +68,12 @@ class WithoutIgnoredCompanion {
         suspend fun staticSuspend(): String = "STATIC SUSPEND"
 
         suspend fun companionSuspend(): String = "SUSPEND"
+
+        // KT-85990
+        @JsStatic
+        suspend fun staticSuspendWithDefault(value: String = "DEFAULT STATIC SUSPEND"): String = value
+
+        suspend fun companionSuspendWithDefault(value: String = "DEFAULT COMPANION SUSPEND"): String = value
     }
 }
 
@@ -88,4 +100,10 @@ object ObjectWithJsStatic {
     suspend fun staticSuspend(): String = "STATIC SUSPEND"
 
     suspend fun companionSuspend(): String = "SUSPEND"
+
+    // KT-85990
+    @JsStatic
+    suspend fun staticSuspendWithDefault(value: String = "DEFAULT STATIC SUSPEND"): String = value
+
+    suspend fun companionSuspendWithDefault(value: String = "DEFAULT COMPANION SUSPEND"): String = value
 }

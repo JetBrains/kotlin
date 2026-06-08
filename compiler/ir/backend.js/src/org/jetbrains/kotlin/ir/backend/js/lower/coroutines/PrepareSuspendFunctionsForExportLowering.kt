@@ -210,7 +210,10 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
             declaration.isTopLevel || declaration.isStatic || isExportedJsStaticWithIgnoredCompanion -> runIf(
                 isExportedJsStaticWithIgnoredCompanion || declaration.isExported(context)
             ) {
-                listOf(generatePromisifiedWrapper(declaration), declaration)
+                val promisifiedWrapperFunction = generatePromisifiedWrapper(declaration)
+                    .also { declaration.promisifiedWrapperFunction = it }
+
+                listOf(promisifiedWrapperFunction, declaration)
             }
             else -> {
                 val originallyExportedSuspendMemberFunction = declaration.originallyExportedMember ?: return null
