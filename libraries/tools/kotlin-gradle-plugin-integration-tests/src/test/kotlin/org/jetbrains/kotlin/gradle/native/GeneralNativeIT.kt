@@ -1108,10 +1108,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @TestMetadata("native-root-project-name-with-space")
     fun testProjectNameWithSpaces(gradleVersion: GradleVersion) {
         nativeProject("native-root-project-name-with-space", gradleVersion, configureSubProjects = true) {
-            val buildOptionsWithoutNativeIC = buildOptions.copy(
-                nativeOptions = buildOptions.nativeOptions.copy(incremental = false)
-            )
-            build("assemble", buildOptions = buildOptionsWithoutNativeIC) {
+            build("assemble") {
                 assertOutputDoesNotContain("Could not find \"Contains\" in")
             }
         }
