@@ -27,10 +27,17 @@ class JsDtsHandler(testServices: TestServices, private val expectedDtsSuffix: St
         val mainModule = JsEnvironmentConfigurator.getMainModule(testServices)
 
         val translationModes = when (globalDirectives[JsEnvironmentConfigurationDirectives.TS_COMPILATION_STRATEGY].lastOrNull()) {
-            TsCompilationStrategy.MERGED -> listOf(TranslationMode.FULL_DEV)
+            TsCompilationStrategy.MERGED -> listOf(
+                when {
+                    JsEnvironmentConfigurationDirectives.SPLIT_PER_MODULE in globalDirectives -> TranslationMode.PER_MODULE_DEV
+                    else -> TranslationMode.FULL_DEV
+                }
+            )
+
             TsCompilationStrategy.EACH_FILE -> JsEnvironmentConfigurator
                 .getTranslationModesForTest(testServices, mainModule)
                 .filter { !it.production }
+
             TsCompilationStrategy.NONE, null -> return
         }
 
