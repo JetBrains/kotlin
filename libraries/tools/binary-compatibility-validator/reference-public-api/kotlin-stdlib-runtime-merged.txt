@@ -224,6 +224,10 @@ public final class kotlin/RequiresOptIn$Level : java/lang/Enum {
 	public static fun values ()[Lkotlin/RequiresOptIn$Level;
 }
 
+public abstract interface annotation class kotlin/RestrictedTo : java/lang/annotation/Annotation {
+	public abstract fun bound ()Ljava/lang/Class;
+}
+
 public final class kotlin/Result : java/io/Serializable {
 	public static final field Companion Lkotlin/Result$Companion;
 	public static final synthetic fun box-impl (Ljava/lang/Object;)Lkotlin/Result;

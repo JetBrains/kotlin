@@ -3593,6 +3593,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] kotlin.kotlin_builtins
         }
 
     }
+    @R|kotlin/annotation/Target|[Types]() @R|kotlin/annotation/Retention|[Types]() @R|kotlin/SinceKotlin|[Types]() public final [ResolvedTo(BODY_RESOLVE)] annotation class RestrictedTo : R|kotlin/Annotation|, R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=RestrictedTo] constructor([ResolvedTo(BODY_RESOLVE)] bound: R|kotlin/reflect/KClass<*>|): R|kotlin/RestrictedTo| {
+            super<R|kotlin/Any|>()
+        }
+
+        public final [ResolvedTo(BODY_RESOLVE)] val bound: R|kotlin/reflect/KClass<*>|
+            public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=RestrictedTo] get(): R|kotlin/reflect/KClass<*>|
+
+    }
     public final [ResolvedTo(BODY_RESOLVE)] class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>| {
         private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Short] constructor(): R|kotlin/Short| {
             super<R|kotlin/Number|>()

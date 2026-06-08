@@ -328,6 +328,13 @@ open annotation class kotlin/RequiresOptIn : kotlin/Annotation { // kotlin/Requi
     }
 }
 
+open annotation class kotlin/RestrictedTo : kotlin/Annotation { // kotlin/RestrictedTo|null[0]
+    constructor <init>(kotlin.reflect/KClass<*>) // kotlin/RestrictedTo.<init>|<init>(kotlin.reflect.KClass<*>){}[0]
+
+    final val bound // kotlin/RestrictedTo.bound|{}bound[0]
+        final fun <get-bound>(): kotlin.reflect/KClass<*> // kotlin/RestrictedTo.bound.<get-bound>|<get-bound>(){}[0]
+}
+
 open annotation class kotlin/SinceKotlin : kotlin/Annotation { // kotlin/SinceKotlin|null[0]
     constructor <init>(kotlin/String) // kotlin/SinceKotlin.<init>|<init>(kotlin.String){}[0]
 

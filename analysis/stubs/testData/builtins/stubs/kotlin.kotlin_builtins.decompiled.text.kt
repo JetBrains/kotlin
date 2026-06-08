@@ -987,6 +987,10 @@ public abstract class Number public constructor() {
     }
 }
 
+@kotlin.annotation.Target @kotlin.annotation.Retention @kotlin.SinceKotlin public final annotation class RestrictedTo public constructor(bound: kotlin.reflect.KClass<*>) : kotlin.Annotation {
+    public final val bound: kotlin.reflect.KClass<*> /* compiled code */
+}
+
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public companion object {
         public const val MIN_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */

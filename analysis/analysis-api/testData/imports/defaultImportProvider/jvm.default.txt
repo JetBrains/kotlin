@@ -43,6 +43,7 @@ HIGH:
   import kotlin.PublishedApi
   import kotlin.ReplaceWith
   import kotlin.RequiresOptIn
+  import kotlin.RestrictedTo
   import kotlin.Short
   import kotlin.ShortArray
   import kotlin.SinceKotlin
