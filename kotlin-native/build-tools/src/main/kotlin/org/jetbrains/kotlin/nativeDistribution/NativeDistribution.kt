@@ -13,6 +13,7 @@ import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.jetbrains.kotlin.PlatformInfo
+import org.jetbrains.kotlin.cacheFlavor
 import org.jetbrains.kotlin.konan.util.ArchiveType.TAR_GZ
 import org.jetbrains.kotlin.konan.util.ArchiveType.ZIP
 import org.jetbrains.kotlin.kotlinNativeDist
@@ -58,8 +59,8 @@ class NativeDistribution(val root: Directory) {
     /**
      * Root directory for compiler acaches for the specific [target].
      */
-    fun cachesRoot(target: String): Directory =
-            cachesRoot.dir("${target}-gSTATIC-system")
+    fun cachesRoot(target: String, withOptimizations: Boolean): Directory =
+            cachesRoot.dir(cacheFlavor(target, withOptimizations))
 
     /**
      * Directory with distribution sources.
@@ -145,8 +146,8 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of library [name] for a specific [target].
      */
-    fun cache(name: String, target: String, perFile: Boolean): Directory =
-            cachesRoot(target).dir(cacheDirectoryName(name, perFile))
+    fun cache(name: String, target: String, perFile: Boolean, withOptimizations: Boolean): Directory =
+            cachesRoot(target, withOptimizations).dir(cacheDirectoryName(name, perFile))
 
     /**
      * Archive with stdlib sources.
@@ -163,7 +164,7 @@ class NativeDistribution(val root: Directory) {
     /**
      * Static compiler cache of standard library for a specific [target].
      */
-    fun stdlibCache(target: String): Directory = cache("stdlib", target, perFile = true)
+    fun stdlibCache(target: String, withOptimizations: Boolean): Directory = cache("stdlib", target, perFile = true, withOptimizations)
 
     /**
      * Fingerprint of the contents of [compilerJars] and [nativeLibs].
@@ -183,6 +184,7 @@ class NativeDistribution(val root: Directory) {
     fun runtimeFingerprint(target: String) = root.file("konan/targets/$target/runtime.fingerprint")
 
     companion object {
+        @JvmStatic
         fun cacheDirectoryName(name: String, perFile: Boolean) =
                 "${name}-${if (perFile) "per-file-cache" else "cache"}"
     }

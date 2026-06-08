@@ -290,13 +290,15 @@ constructor(
         val threads: Int,
         val gradleUserHomeDir: File,
         val gradleBuildDir: File,
+        val enabledWithOptimizations: Boolean,
     )
 
     private val cacheSettings = CacheSettings(
         project.isKonanIncrementalCompilationEnabled(),
         project.getKonanParallelThreads(),
         project.gradle.gradleUserHomeDir,
-        project.layout.buildDirectory.get().asFile
+        project.layout.buildDirectory.get().asFile,
+        project.areNativeOptCacheEnabled(),
     )
 
     override fun createCompilerArguments(context: CreateCompilerArgumentsContext) = context.create<K2NativeCompilerArguments> {
@@ -519,12 +521,12 @@ constructor(
             val additionalOptions = mutableListOf<String>().apply {
                 addAll(externalDependenciesBuildCompilerArgs.get())
                 if (konanCacheKind.get() != NativeCacheKind.NONE
-                    && !optimized
+                    && (!optimized || cacheSettings.enabledWithOptimizations)
                     && konanPropertiesService.get().cacheWorksFor(konanTarget)
                 ) {
                     add("-Xauto-cache-from=${cacheSettings.gradleUserHomeDir}")
                     add("-Xbackend-threads=${cacheSettings.threads}")
-                    if (cacheSettings.icEnabled) {
+                    if (cacheSettings.icEnabled && !optimized) {
                         val icCacheDir = cacheSettings.gradleBuildDir
                             .resolve("kotlin-native-ic-cache")
                             .resolve(binaryName.get())

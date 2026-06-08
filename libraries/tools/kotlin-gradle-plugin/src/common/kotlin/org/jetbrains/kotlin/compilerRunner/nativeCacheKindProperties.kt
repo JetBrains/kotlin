@@ -15,3 +15,7 @@ internal fun Project.isKonanIncrementalCompilationEnabled(): Boolean {
 internal fun Project.getKonanParallelThreads(): Int {
     return PropertiesProvider(this).nativeParallelThreads ?: 4
 }
+
+internal fun Project.areNativeOptCacheEnabled(): Boolean {
+    return PropertiesProvider(this).enableNativeOptCache
+}

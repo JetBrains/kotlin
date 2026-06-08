@@ -362,7 +362,6 @@ object NativeTestSupport {
         return if (defaultCache == CacheMode.Alias.NO)
             CacheMode.WithoutCache
         else CacheMode.WithStaticCache(
-            optimizationMode,
             useStaticCacheForUserLibraries,
             makePerFileCaches,
             useHeaders,

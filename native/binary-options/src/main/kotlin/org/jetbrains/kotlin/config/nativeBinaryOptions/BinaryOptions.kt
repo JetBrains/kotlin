@@ -133,6 +133,8 @@ object BinaryOptions : BinaryOptionRegistry() {
      * This option exists as a workaround, if new passes introduce regressions.
      */
     val runLLVMPassesInCompiler by booleanOption()
+
+    val optCache by booleanOption()
 }
 
 open class BinaryOption<T : Any>(

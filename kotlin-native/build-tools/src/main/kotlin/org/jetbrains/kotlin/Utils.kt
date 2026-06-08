@@ -55,3 +55,15 @@ internal val gson = GsonBuilder().excludeFieldsWithoutExposeAnnotation().create(
 
 internal val FileCollection.isNotEmpty: Boolean
     get() = !isEmpty
+
+
+fun cacheFlavor(target: String, withOptimizations: Boolean) = buildString {
+    append(target)
+    if (withOptimizations) {
+        append("-opt")
+    } else {
+        append("-g")
+    }
+    append("STATIC")
+    append("-system")
+}

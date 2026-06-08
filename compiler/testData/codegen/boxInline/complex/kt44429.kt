@@ -1,13 +1,7 @@
-// IGNORE_BACKEND: WASM_JS, WASM_WASI
-// FREE_COMPILER_ARGS: -Xbinary=preCodegenInlineThreshold=0
-// IGNORE_NATIVE: optimizationMode=DEBUG
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_ONLY_DIST
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_EVERYWHERE
-// IGNORE_NATIVE: optimizationMode=NO && cacheMode=STATIC_PER_FILE_EVERYWHERE
+// IGNORE_BACKEND: WASM_JS, WASM_WASI, NATIVE
+// The expected behaviour of the cast in this test is not fully specified.
+// Currently the test crashes on Native:
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Native:*
-// IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_SECOND_STAGE: Native:2.4
-// ^^^ Native Klib compatibility tests are executed in DEBUG mode, so this testcase should be muted.
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt
 package test

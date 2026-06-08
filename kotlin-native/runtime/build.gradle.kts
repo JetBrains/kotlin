@@ -4,6 +4,7 @@
  */
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.bitcode.CompileToBitcodeExtension
+import org.jetbrains.kotlin.cacheFlavor
 import org.jetbrains.kotlin.cpp.CppUsage
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCompileTask
@@ -820,21 +821,26 @@ val nativeStdlib by tasks.registering(Sync::class) {
 val cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 
 cacheableTargetNames.forEach { targetName ->
-    tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-        val dist = nativeDistribution
+    for (withOptimizations in listOf(false, true)) {
+        val optSuffix = if (withOptimizations) "Opt" else ""
+        tasks.register("${targetName}StdlibCache${optSuffix}", KonanCacheTask::class.java) {
+            val dist = nativeDistribution
 
-        // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
-        this.compilerDistributionRoot.set(dist.map { it.root })
-        dependsOn(":kotlin-native:distCompiler")
-        dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
-        inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
+            // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
+            this.compilerDistributionRoot.set(dist.map { it.root })
+            dependsOn(":kotlin-native:distCompiler")
+            dependsOn(":kotlin-native:${targetName}CrossDistRuntime")
+            inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
 
-        this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
-        this.target.set(targetName)
-        this.makePerFileCache.set(true)
-        // This path is used in `:kotlin-native:${targetName}StdlibCache`
-        this.cacheDirectory.set(layout.buildDirectory.dir("cache/$targetName/$targetName-gSTATIC-system"))
-        this.cacheName.set(KOTLIN_NATIVE_STDLIB_NAME)
+            this.klib.fileProvider(nativeStdlib.map { it.destinationDir })
+            this.target.set(targetName)
+            this.withOptimizations.set(withOptimizations)
+            this.makePerFileCache.set(!withOptimizations)
+            // This path is used in `:kotlin-native:${targetName}StdlibCache`
+            val cacheFlavor = cacheFlavor(targetName, withOptimizations)
+            this.cacheDirectory.set(layout.buildDirectory.dir("cache/$targetName/$cacheFlavor"))
+            this.cacheName.set(KOTLIN_NATIVE_STDLIB_NAME)
+        }
     }
 }
 

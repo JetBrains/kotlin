@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.nativeDistribution.InvalidateStaleCaches
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionKind
 import org.jetbrains.kotlin.nativeDistribution.LLVMDistributionSourceKt
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionKt
+import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
@@ -228,6 +229,7 @@ tasks.register("distRuntime") {
 tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
+        dependsOn("${hostName}StdlibCacheOpt")
     }
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
@@ -323,6 +325,7 @@ tasks.register("crossDistPlatformLibs") {
 
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
+    dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCacheOpt" })
     // Make sure any tasks depending on this one see cleaned-up distribution.
     mustRunAfter("distInvalidateStaleCaches")
 }
@@ -365,16 +368,21 @@ targetList.each { target ->
     }
 
     if (target in cacheableTargetNames) {
-        tasks.register("${target}StdlibCache", Sync) {
-            dependsOn "distStdlib"
-            dependsOn ":kotlin-native:runtime:${target}StdlibCache"
-            // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
-            mustRunAfter("distInvalidateStaleCaches")
+        [false, true].each { optimizationsEnabled ->
+            def optSuffix = optimizationsEnabled ? "Opt" : ""
+            tasks.register("${target}StdlibCache${optSuffix}", Sync) {
+                dependsOn "distStdlib"
+                dependsOn ":kotlin-native:runtime:${target}StdlibCache${optSuffix}"
+                // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+                mustRunAfter("distInvalidateStaleCaches")
 
-            into(nativeDistribution.map { it.stdlibCache(target) })
+                into(nativeDistribution.map { it.stdlibCache(target, optimizationsEnabled) })
 
-            from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$target-gSTATIC-system/stdlib-per-file-cache")) {
-                include('**')
+                def cacheFlavor = UtilsKt.cacheFlavor(target, optimizationsEnabled)
+                def cacheName = NativeDistribution.cacheDirectoryName("stdlib", !optimizationsEnabled)
+                from(project(":kotlin-native:runtime").layout.buildDirectory.dir("cache/$target/$cacheFlavor/$cacheName")) {
+                    include('**')
+                }
             }
         }
     }
@@ -383,6 +391,7 @@ targetList.each { target ->
         dependsOn "${target}CrossDistRuntime", "distCompiler"
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
+            dependsOn "${target}StdlibCacheOpt"
         }
         // Make sure any tasks depending on this one see cleaned-up distribution.
         mustRunAfter("distInvalidateStaleCaches")

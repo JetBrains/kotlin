@@ -476,6 +476,9 @@ class NativeSecondStageCompilationConfig(
         } ?: true
     }
 
+    val optCache: Boolean
+        get() = configuration.get(BinaryOptions.optCache) ?: false
+
     internal val runtimeLinkageStrategy: RuntimeLinkageStrategy by lazy {
         // Intentionally optimize in debug mode only. See `RuntimeLinkageStrategy`.
         val defaultStrategy = if (debug) RuntimeLinkageStrategy.Optimize else RuntimeLinkageStrategy.Raw
@@ -607,7 +610,7 @@ class NativeSecondStageCompilationConfig(
     internal val incrementalCacheDirectory = incrementalCacheRootDirectory?.child(userCacheFlavorString)
 
     internal val ignoreCacheReason = when {
-        optimizationsEnabled -> "for optimized compilation"
+        optimizationsEnabled && !optCache -> "with global optimizations"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }

@@ -29,7 +29,11 @@ fun KonanTarget.defFiles() = familyDefFiles(family).map { DefFile(it, this) }
 fun defFileToLibName(target: String, name: String) = "$target-$name"
 
 private fun interopTaskName(libName: String, targetName: String) = "compileKonan${libName.capitalized}${targetName.capitalized}"
-private fun cacheTaskName(target: String, name: String) = "${defFileToLibName(target, name)}Cache"
+private fun cacheTaskName(target: String, name: String, withOptimizations: Boolean): String = buildString {
+    append(defFileToLibName(target, name))
+    append("Cache")
+    if (withOptimizations) append("Opt")
+}
 
 private abstract class CompilePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
 private abstract class CachePlatformLibsSemaphore : BuildService<BuildServiceParameters.None>
@@ -139,30 +143,33 @@ enabledTargets(platformManager).forEach { target ->
         installTasks.add(klibInstallTask)
 
         if (target.name in cacheableTargetNames) {
-            val cacheTask = tasks.register(cacheTaskName(targetName, df.name), KonanCacheTask::class.java) {
-                val dist = nativeDistribution
+            for (withOptimizations in listOf(false, true)) {
+                val cacheTask = tasks.register(cacheTaskName(targetName, df.name, withOptimizations), KonanCacheTask::class.java) {
+                    val dist = nativeDistribution
 
-                // Requires Native distribution with stdlib klib and its cache for `targetName`.
-                this.compilerDistributionRoot.set(dist.map { it.root })
-                dependsOn(":kotlin-native:${targetName}CrossDist")
-                // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
-                mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
-                inputs.dir(dist.map { it.stdlibCache(targetName) }) // manually depend on the contents of stdlib cache
+                    // Requires Native distribution with stdlib klib and its cache for `targetName`.
+                    this.compilerDistributionRoot.set(dist.map { it.root })
+                    dependsOn(":kotlin-native:${targetName}CrossDist")
+                    // Make sure the cache clean-up has happened, so this task can safely write into the shared cache folder
+                    mustRunAfter(":kotlin-native:distInvalidateStaleCaches")
+                    inputs.dir(dist.map { it.stdlibCache(targetName, withOptimizations) }) // manually depend on the contents of stdlib cache
 
-                // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
-                df.config.depends.forEach { dep ->
-                    inputs.dir(tasks.named<KonanCacheTask>(cacheTaskName(targetName, dep)).map { it.outputDirectory })
-                    inputs.dir(tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir })
+                    // Also, all the depended upon platform libs must have installed their klibs and caches into the native distribution above.
+                    df.config.depends.forEach { dep ->
+                        inputs.dir(tasks.named<KonanCacheTask>(cacheTaskName(targetName, dep, withOptimizations)).map { it.outputDirectory })
+                        inputs.dir(tasks.named<Sync>(defFileToLibName(targetName, dep)).map { it.destinationDir })
+                    }
+
+                    this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
+                    this.target.set(targetName)
+                    this.withOptimizations.set(withOptimizations)
+                    this.cacheDirectory.set(dist.map { it.cachesRoot(targetName, withOptimizations) })
+                    this.cacheName.set(artifactName)
+
+                    usesService(cachePlatformLibsSemaphore)
                 }
-
-                this.klib.fileProvider(libTask.map { it.outputs.files.singleFile })
-                this.target.set(targetName)
-                this.cacheDirectory.set(dist.map { it.cachesRoot(targetName) })
-                this.cacheName.set(artifactName)
-
-                usesService(cachePlatformLibsSemaphore)
+                cacheTasks.add(cacheTask)
             }
-            cacheTasks.add(cacheTask)
         }
     }
 

@@ -248,6 +248,7 @@ abstract class AbstractNativeIncrementalCompilationTest : AbstractNativeSimpleTe
             testRunSettings.get<KotlinNativeTargets>().testTarget,
             "STATIC",
             testRunSettings.get<OptimizationMode>() == OptimizationMode.DEBUG,
+            testRunSettings.get<OptimizationMode>() == OptimizationMode.OPT,
             checkStateAtExternalCalls = testRunSettings.get<ThreadStateChecker>() == ThreadStateChecker.ENABLED,
         )
 

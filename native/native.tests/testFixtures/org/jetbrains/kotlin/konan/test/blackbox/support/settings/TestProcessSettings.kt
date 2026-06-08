@@ -232,19 +232,11 @@ sealed class CacheMode {
     }
 
     class WithStaticCache(
-        optimizationMode: OptimizationMode,
         override val useStaticCacheForUserLibraries: Boolean,
         override val makePerFileCaches: Boolean,
         override val useHeaders: Boolean,
         override val alias: Alias,
     ) : CacheMode() {
-        init {
-            assertFalse (optimizationMode == OptimizationMode.OPT) {
-                "Static caches are incompatible with `-P${ClassLevelProperty.OPTIMIZATION_MODE.propertyName}=${OptimizationMode.OPT.name}`.\n" +
-                "To test in ${OptimizationMode.OPT.name} mode, either don't specify `-P${ClassLevelProperty.CACHE_MODE.propertyName}`, or set it to ${Alias.NO.name}."
-            }
-        }
-
         override val useStaticCacheForDistributionLibraries: Boolean = true
 
         companion object {
@@ -273,8 +265,17 @@ sealed class CacheMode {
             testTarget: KonanTarget,
             cacheKind: String,
             debuggable: Boolean,
+            optimized: Boolean,
             checkStateAtExternalCalls: Boolean,
-        ) = "$testTarget${if (debuggable) "-g" else ""}${cacheKind}${if (checkStateAtExternalCalls) "-check_state_at_external_calls" else ""}-user-pl"
+        ) = buildString {
+            append(testTarget)
+            if (debuggable) append("-g")
+            if (optimized) append("-opt")
+            append(cacheKind)
+            if (checkStateAtExternalCalls) append("-check_state_at_external_calls")
+            append("-user")
+            append("-pl")
+        }
     }
 }
 

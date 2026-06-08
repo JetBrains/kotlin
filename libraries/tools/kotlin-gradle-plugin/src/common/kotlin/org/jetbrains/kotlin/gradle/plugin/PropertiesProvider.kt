@@ -385,6 +385,9 @@ internal class PropertiesProvider private constructor(private val project: Proje
     val nativeParallelThreads: Int?
         get() = this.property(PropertyNames.KOTLIN_NATIVE_PARALLEL_THREADS).orNull?.toInt()
 
+    val enableNativeOptCache: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_NATIVE_OPT_CACHE) ?: false
+
     val errorJsGenerateExternals: Boolean?
         get() = booleanProperty("kotlin.js.generate.externals")
 
@@ -757,6 +760,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_NATIVE_DEPENDENCY_PROPAGATION = property("kotlin.native.enableDependencyPropagation")
         val KOTLIN_NATIVE_PARALLEL_THREADS = property("kotlin.native.parallelThreads")
         val KOTLIN_NATIVE_INCREMENTAL_COMPILATION = property("kotlin.incremental.native")
+        val KOTLIN_NATIVE_OPT_CACHE = property("kotlin.native.optCache")
         val KOTLIN_MPP_ENABLE_OPTIMISTIC_NUMBER_COMMONIZATION = property("kotlin.mpp.enableOptimisticNumberCommonization")
         val KOTLIN_MPP_ENABLE_PLATFORM_INTEGER_COMMONIZATION = property("kotlin.mpp.enablePlatformIntegerCommonization")
         val KOTLIN_JS_KARMA_BROWSERS = property("kotlin.js.browser.karma.browsers")
