@@ -188,6 +188,43 @@ class NativeIncrementalCompilationIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-86798: stale IC cache from a different compiler version is invalidated")
+    @GradleTest
+    fun staleCacheInvalidatedOnCompilerFingerprintMismatch(gradleVersion: GradleVersion) {
+        nativeProject("native-incremental-multifile", gradleVersion) {
+            val mainKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/main.kt")
+            val fooKtCache = getFileCache("native-incremental-multifile", "src/hostMain/kotlin/foo.kt")
+            build("linkDebugExecutableHost") {
+                assertDirectoryExists(mainKtCache)
+                assertDirectoryExists(fooKtCache)
+            }
+
+            // Simulate switching to a different Kotlin/Native version without running `clean`:
+            // rewrite the recorded compilerFingerprint in every cached file's metadata to a bogus value.
+            val bogusFingerprint = "stale-compiler-fingerprint-4242"
+            val icCacheRoot = projectPath.resolve("build").resolve("kotlin-native-ic-cache").toFile()
+            val tamperedMetadataFiles = icCacheRoot.walkTopDown().filter { it.name == "metadata.properties" }.toList()
+            assert(tamperedMetadataFiles.isNotEmpty()) { "No cache metadata.properties found under $icCacheRoot" }
+            tamperedMetadataFiles.forEach { metadata ->
+                val patched = metadata.readText().lines().joinToString("\n") { line ->
+                    if (line.startsWith("compilerFingerprint=")) "compilerFingerprint=$bogusFingerprint" else line
+                }
+                metadata.writeText(patched)
+            }
+
+            // A real version switch makes the compile task non-up-to-date, so the compiler re-runs
+            // and re-reads the IC cache. Reproduce that by touching a source file.
+            kotlinSourcesDir("hostMain").resolve("main.kt").appendText("\n// force recompile\n")
+
+            build("linkDebugExecutableHost") {
+                // foo.kt is otherwise unchanged, so its content hash still matches. Before the fix its
+                // cache is reused as-is and the bogus fingerprint survives; after the fix the mismatch is
+                // detected, the stale cache is dropped and rebuilt with the real compiler fingerprint.
+                assertFileDoesNotContain(fooKtCache.resolve("metadata.properties"), bogusFingerprint)
+            }
+        }
+    }
+
     @DisplayName("Check dependencies on project level")
     @GradleTest
     fun inProjectDependencies(gradleVersion: GradleVersion) {
