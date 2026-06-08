@@ -58,6 +58,10 @@ constructor(
     private val npmProjectDir: Provider<Directory> = npmProject.dir
 
     init {
+        // this prevents installation of unnecessary npm packages when no tests enabled
+        // enable back as soon as any test runner defined
+        enabled = false
+
         onlyIf { // SKIP when not set. 
             @Suppress("UNNECESSARY_SAFE_CALL")
             testsEntryFile.asFile.orNull?.exists() == true
@@ -81,6 +85,7 @@ constructor(
     @get:Internal
     override val requiredNpmDependencies: Set<RequiredKotlinJsDependency>
         get() {
+            if (!enabled) return emptySet()
             val versions = versions.get()
             return setOf(
                 versions.webpack,

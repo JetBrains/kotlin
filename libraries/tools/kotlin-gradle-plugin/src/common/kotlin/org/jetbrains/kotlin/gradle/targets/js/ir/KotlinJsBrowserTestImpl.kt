@@ -64,6 +64,12 @@ internal abstract class KotlinJsBrowserTestImpl
     override val defaultBundleTask: TaskProvider<WebpackBundleKotlinJsTests> = testCompilation
         .locateOrRegisterBrowserTestBundleTask()
 
+    private fun enableBundleTask() {
+        defaultBundleTask.configure {
+            it.enabled = true
+        }
+    }
+
     override val defaultTestsLocation: Provider<KotlinDefaultJsTestLocation> =
         defaultBundleTask.map { KotlinDefaultJsTestLocation(it.outputBundleDir) }
 
@@ -82,6 +88,7 @@ internal abstract class KotlinJsBrowserTestImpl
             }
         }
         body.execute(runner)
+        enableBundleTask()
     }
 
     val firefoxRunners = mutableMapOf<String, KotlinFirefoxTestRunner>()
@@ -95,6 +102,7 @@ internal abstract class KotlinJsBrowserTestImpl
             }
         }
         body.execute(runner)
+        enableBundleTask()
     }
 
     val webkitRunners = mutableMapOf<String, KotlinWebkitTestRunner>()
@@ -108,6 +116,7 @@ internal abstract class KotlinJsBrowserTestImpl
             }
         }
         body.execute(runner)
+        enableBundleTask()
     }
 
     override val browserDefaults: BrowserTestRunnerConfigDsl = objects
