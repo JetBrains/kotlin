@@ -694,7 +694,7 @@ Caused by: java.lang.AssertionError: assert
     fun testCommonFragmentsMetadataDestination() {
         val metadataDir = compileSimpleCommonPlatformProject()
 
-        val library = KlibLoader { libraryPaths(metadataDir.absolutePath) }.load().librariesStdlibFirst.single()
+        val library = KlibLoader { libraryPaths(metadataDir.resolve("common").absolutePath) }.load().librariesStdlibFirst.single()
         val klibMetadata = library.metadata
         val module = KlibModuleMetadata.readStrict(object : KlibModuleMetadata.MetadataLibraryProvider {
             override val moduleHeaderData: ByteArray = klibMetadata.moduleHeaderData
@@ -745,7 +745,7 @@ Caused by: java.lang.AssertionError: assert
             K2JVMCompilerArguments::fragments.cliArgument("common,platform"),
             K2JVMCompilerArguments::fragmentSources.cliArgument("common:${newCommonKt.absolutePath}"),
             K2JVMCompilerArguments::fragmentRefines.cliArgument("platform:common"),
-            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.absolutePath}"),
+            K2JVMCompilerArguments::fragmentIncrementalClasspath.cliArgument("common:${metadataDir.resolve("common").absolutePath}"),
 
             expectedExitCode = 1,
             expectedStderr = $$"""
