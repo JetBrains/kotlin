@@ -189,7 +189,6 @@ val jsLowerings: List<NamedCompilerPhase<JsIrBackendContext, IrModuleFragment, I
     ::DelegateToSyntheticPrimaryConstructor,
     ::AnnotationConstructorLowering,
     ::JsInitializersLowering,
-    ::FullValueClassFieldInitBeforeSuperCallLowering,
     ::JsInitializersCleanupLowering,
     ::createKotlinNothingValueExceptionPhase,
     ::CollectClassDefaultConstructorsLowering,

@@ -217,12 +217,6 @@ private val initializersPhase = createFileLoweringPhase(
         prerequisite = setOf(enumConstructorsPhase)
 )
 
-private val fullValueClassFieldInitBeforeSuperCallPhase = createFileLoweringPhase(
-        ::FullValueClassFieldInitBeforeSuperCallLowering,
-        name = "FullValueClassFieldInitBeforeSuperCall",
-        prerequisite = setOf(initializersPhase)
-)
-
 private val inventNamesForInteropBridgesPhase = createFileLoweringPhase(
         lowering = ::InteropBridgesNameInventor,
         name = "InventNameForInteropBridges",
@@ -649,7 +643,6 @@ internal fun NativeSecondStageCompilationConfig.getLoweringsAfterInlining(): Low
         rangeContainsLoweringPhase,
         enumConstructorsPhase,
         initializersPhase,
-        fullValueClassFieldInitBeforeSuperCallPhase,
         inventNamesForInteropBridgesPhase,
         inventNamesForLocalClasses,
         inventNamesForLocalFunctions,
