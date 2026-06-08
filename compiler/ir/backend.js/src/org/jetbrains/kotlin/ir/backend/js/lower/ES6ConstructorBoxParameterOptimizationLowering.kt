@@ -191,9 +191,9 @@ class ES6CollectConstructorsWhichNeedBoxParameters(private val context: JsIrBack
 
         if (hasSuperClass && declaration.isInner) {
             declaration.markAsNeedsBoxParameter()
-        } else if (hasSuperClass && declaration.isOriginallyLocal && declaration.containsCapturedValues()) {
-            declaration.markAsNeedsBoxParameter()
-        } else if (hasSuperClass && declaration.isFullValueClass && declaration.containsCapturedValues()) {
+        } else if (
+            hasSuperClass && (declaration.isOriginallyLocal || declaration.isFullValueClass) && declaration.containsCapturedValues()
+        ) {
             declaration.markAsNeedsBoxParameter()
         }
 
