@@ -232,6 +232,43 @@ public fun cuMemFree(dptr: CPointer<*>) {
     if (rc != 0) throw IllegalStateException("CUDA Driver API error in cuMemFree: code $rc")
 }
 
+// =========================================================================
+// Host → device array upload shortcuts
+// =========================================================================
+// Each overload allocates a device buffer sized to `data.size` elements of the matching
+// primitive variable type via the typed [cuMemAlloc], pins the source array, copies its
+// contents in via [cuMemcpyHtoD], and returns the typed device pointer. The caller is
+// responsible for freeing the result via [cuMemFree] once the kernel is done with it.
+// Throws [IllegalStateException] on driver error (via the underlying overloads).
+//
+// Why one overload per primitive: Kotlin's `XxxArray` primitive arrays are not generic
+// and don't share a common supertype that exposes `.size` + a pinnable element layout
+// (`Pinned<XxxArray>.addressOf(0)` returns a different `CPointer<XxxVar>` per array kind).
+
+public fun cuUpload(data: FloatArray): CPointer<FloatVar> {
+    val devPtr = cuMemAlloc<FloatVar>(data.size)
+    data.usePinned { cuMemcpyHtoD(devPtr, it.addressOf(0), data.size) }
+    return devPtr
+}
+
+public fun cuUpload(data: IntArray): CPointer<IntVar> {
+    val devPtr = cuMemAlloc<IntVar>(data.size)
+    data.usePinned { cuMemcpyHtoD(devPtr, it.addressOf(0), data.size) }
+    return devPtr
+}
+
+public fun cuUpload(data: DoubleArray): CPointer<DoubleVar> {
+    val devPtr = cuMemAlloc<DoubleVar>(data.size)
+    data.usePinned { cuMemcpyHtoD(devPtr, it.addressOf(0), data.size) }
+    return devPtr
+}
+
+public fun cuUpload(data: LongArray): CPointer<LongVar> {
+    val devPtr = cuMemAlloc<LongVar>(data.size)
+    data.usePinned { cuMemcpyHtoD(devPtr, it.addressOf(0), data.size) }
+    return devPtr
+}
+
 /**
  * Accessor for the embedded PTX text. The Gradle plugin (Task #7) generates a `.c` file
  * containing `static const char kKotlinCudaPtx[] = "<ptx text>"` plus a thin
