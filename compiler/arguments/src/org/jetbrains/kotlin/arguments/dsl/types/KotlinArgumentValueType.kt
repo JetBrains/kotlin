@@ -166,6 +166,18 @@ sealed class EnumType<T : WithStringRepresentation>(
 }
 
 /**
+ * A value which accepts a list of enums.
+ */
+@Serializable
+sealed class EnumListType<T : WithStringRepresentation> : KotlinArgumentValueType<List<T>> {
+    override val isNullable: ReleaseDependent<Boolean> = ReleaseDependent(false)
+    override fun stringRepresentation(value: List<T>?): String {
+        if (value == null) return "null"
+        return value.joinToString(separator = ", ", prefix = "arrayOf(", postfix = ")") { it.stringRepresentation.valueOrNullStringLiteral }
+    }
+}
+
+/**
  * A value which accepts [Path] type.
  */
 @ExperimentalArgumentApi
@@ -384,6 +396,7 @@ class JsEcmaVersionType : EnumType<JsEcmaVersion>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<JsEcmaVersion?> = ReleaseDependent(null)
 }
 
+
 /**
  * A value which accepts [JsModuleKind] type.
  */
@@ -436,6 +449,15 @@ class SourceMapNamesPolicyType : EnumType<SourceMapNamesPolicy>(ReleaseDependent
 @Serializable
 class WasmTargetType : EnumType<WasmTarget>(ReleaseDependent(true)) {
     override val defaultValue: ReleaseDependent<WasmTarget?> = ReleaseDependent(null)
+}
+
+/**
+ * A value which accepts [JsEcmaVersion] type.
+ */
+@ExperimentalArgumentApi
+@Serializable
+class MetadataTargetPlatformType : EnumListType<MetadataTargetPlatform>() {
+    override val defaultValue: ReleaseDependent<List<MetadataTargetPlatform>?> = ReleaseDependent(emptyList())
 }
 
 private val String?.valueOrNullStringLiteral: String

@@ -1343,6 +1343,17 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMo
 	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/LambdasMode;
 }
 
+public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform : java/lang/Enum {
+	public static final field JS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public static final field JVM Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public static final field NATIVE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public static final field WASM_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public static final field WASM_WASI Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public final fun getStringValue ()Ljava/lang/String;
+	public static fun valueOf (Ljava/lang/String;)Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+	public static fun values ()[Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/MetadataTargetPlatform;
+}
+
 public final class org/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode : java/lang/Enum {
 	public static final field COMPLETE Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;
 	public static final field NAME_MISMATCH Lorg/jetbrains/kotlin/buildtools/api/arguments/enums/NameBasedDestructuringMode;

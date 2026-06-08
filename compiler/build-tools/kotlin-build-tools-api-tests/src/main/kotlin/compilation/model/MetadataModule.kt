@@ -35,7 +35,6 @@ class MetadataModule(
     moduleCompilationConfigAction,
 ) {
 
-
     /**
      * It won't be a problem to cache [dependencyFiles] and [compileClasspath] currently,
      * but we might add tests where dependencies change between compilations
