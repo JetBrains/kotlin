@@ -46,7 +46,7 @@ class CodegenTestsOnAndroidRunner private constructor(private val pathManager: P
             val gradleRunner = GradleRunner(pathManager)
             cleanAndBuildProject(gradleRunner)
 
-            emulator.startServer()
+            emulator.startAdbServer()
 
             val emulatorJob = launch { emulator.runEmulator() }
             val logcatJob = launch { emulator.printLog() }
