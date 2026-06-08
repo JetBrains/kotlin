@@ -232,8 +232,7 @@ internal fun IrElement.toConstantValueOrNull(): ConstantValue<*>? {
     return when (this) {
         is IrConst -> this.toConstantValue()
         is IrAnnotation -> {
-            if (!this.type.isAnnotation() && this.type !is IrErrorType) return null
-            val classId = this.classSymbol.owner.classId ?: return null
+            val classId = this.classId
             val rawArguments = this.getAllArgumentsWithIr()
             val argumentMapping = rawArguments
                 .filter { it.second != null }

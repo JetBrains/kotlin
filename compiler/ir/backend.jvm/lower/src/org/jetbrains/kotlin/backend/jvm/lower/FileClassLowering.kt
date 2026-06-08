@@ -194,7 +194,7 @@ private fun parseJvmNameOnFileNoResolve(file: IrFile): ParsedJvmFileClassAnnotat
 
 private fun findAnnotationEntryOnFileNoResolve(file: IrFile, shortName: String): IrAnnotation? =
     file.annotations.firstOrNull {
-        it.type.classFqName?.shortName()?.asString() == shortName
+        it.classId.shortClassName.asString() == shortName
     }
 
 private fun getLiteralStringFromAnnotation(annotationCall: IrAnnotation): String? {

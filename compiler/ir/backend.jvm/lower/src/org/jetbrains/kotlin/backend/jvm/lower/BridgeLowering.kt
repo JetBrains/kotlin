@@ -638,10 +638,10 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
     )
 
     fun IrAnnotation.isKotlinSpecialTypeAnnotation() =
-        classSymbol.owner.kotlinFqName in kotlinSpecialTypeAnnotations
+        classId.asSingleFqName() in kotlinSpecialTypeAnnotations
 
     fun IrAnnotation.isThrowsAnnotation() =
-        classSymbol.owner.kotlinFqName == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
+        classId.asSingleFqName() == JvmStandardClassIds.THROWS_ANNOTATION_FQ_NAME
 
     // Copies annotations from the bridge target to the bridge function
     // Similarly to JVM, the following annotations are copied:

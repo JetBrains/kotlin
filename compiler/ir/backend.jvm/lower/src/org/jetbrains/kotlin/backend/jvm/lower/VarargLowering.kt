@@ -35,9 +35,7 @@ internal class VarargLowering(val context: JvmBackendContext) : FileLoweringPass
 
     // Ignore annotations
     override fun visitAnnotation(expression: IrAnnotation): IrExpression {
-        if (expression.classSymbol.owner.isAnnotationClass)
-            return expression
-        return visitAnnotation(expression)
+        return expression
     }
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {

@@ -13,7 +13,6 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrVarargImpl
 import org.jetbrains.kotlin.ir.interpreter.isPrimitiveArray
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.ir.util.primaryConstructor
 import org.jetbrains.kotlin.ir.util.toIrConst
 
@@ -75,7 +74,7 @@ internal abstract class IrConstAnnotationTransformer(private val context: IrCons
             this is IrErrorExpression -> null
             this is IrGetClass && argument.type is IrErrorType -> null
             this is IrGetEnumValue || this is IrClassReference -> this
-            this is IrAnnotation && this.type.isAnnotation() -> {
+            this is IrAnnotation -> {
                 transformAnnotation(this)
                 this
             }

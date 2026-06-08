@@ -54,9 +54,8 @@ class JvmAnnotationImplementationTransformer(private val jvmContext: JvmBackendC
         implClass.constructors.single()
 
     override fun visitAnnotation(expression: IrAnnotation): IrExpression {
-        val constructedClass = expression.classSymbol
-        if (constructedClass.owner.isAnnotationClass && inInlineFunctionScope) {
-            publicAnnotationImplementationClasses += constructedClass
+        if (inInlineFunctionScope) {
+            publicAnnotationImplementationClasses += expression.classSymbol
         }
         return super.visitConstructorCall(expression)
     }

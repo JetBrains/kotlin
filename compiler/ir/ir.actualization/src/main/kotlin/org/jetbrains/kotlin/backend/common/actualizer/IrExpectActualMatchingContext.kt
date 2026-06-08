@@ -590,20 +590,20 @@ internal abstract class IrExpectActualMatchingContext(
         override val annotationSymbol: IrAnnotation = irElement
 
         override val classId: ClassId?
-            get() = getAnnotationClass()?.classId
+            get() = getAnnotationClass().classId
 
         override val isRetentionSource: Boolean
-            get() = getAnnotationClass()?.getAnnotationRetention() == KotlinRetention.SOURCE
+            get() = getAnnotationClass().getAnnotationRetention() == KotlinRetention.SOURCE
 
         override val isOptIn: Boolean
-            get() = getAnnotationClass()?.hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME) ?: false
+            get() = getAnnotationClass().hasAnnotation(OptInNames.REQUIRES_OPT_IN_FQ_NAME)
 
         override val isOptionalExpectation: Boolean
-            get() = getAnnotationClass()?.hasAnnotation(StandardClassIds.Annotations.OptionalExpectation) ?: false
+            get() = getAnnotationClass().hasAnnotation(StandardClassIds.Annotations.OptionalExpectation)
 
-        private fun getAnnotationClass(): IrClass? {
-            val annotationClass = irElement.type.getClass() ?: return null
-            return expectToActualClassMap[annotationClass.classId]?.owner ?: annotationClass
+        private fun getAnnotationClass(): IrClass {
+            val annotationClass = irElement.classSymbol.owner
+            return expectToActualClassMap[irElement.classId]?.owner ?: annotationClass
         }
     }
 
