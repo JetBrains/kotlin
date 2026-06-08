@@ -10,18 +10,20 @@ public protocol _ExportedKotlinPackages_namespace_I1_I2: KotlinRuntime.KotlinBas
 @objc(__ExportedKotlinPackages_namespace_I1_I2)
 public protocol __ExportedKotlinPackages_namespace_I1_I2: ExportedKotlinPackages.namespace._I1 {
 }
-extension ExportedKotlinPackages.namespace.I1 where Self : KotlinRuntimeSupport._KotlinBridgeable {
+public protocol ___ExportedKotlinPackages_namespace_I1_I2: KotlinRuntimeSupport._KotlinBridgeable {
+}
+extension ExportedKotlinPackages.namespace.I1 where Self : ExportedKotlinPackages.namespace.__I1 {
 }
 extension ExportedKotlinPackages.namespace.I1 {
     typealias I2 = flow_overrides._ExportedKotlinPackages_namespace_I1_I2
 }
-extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Self : flow_overrides.___ExportedKotlinPackages_namespace_I1_I2 {
 }
 extension flow_overrides._ExportedKotlinPackages_namespace_I1_I2 {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.namespace.I1 where Wrapped : ExportedKotlinPackages.namespace._I1 {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.namespace.I1, ExportedKotlinPackages.namespace.__I1 where Wrapped : ExportedKotlinPackages.namespace._I1 {
 }
-extension KotlinRuntimeSupport._KotlinExistential: flow_overrides._ExportedKotlinPackages_namespace_I1_I2 where Wrapped : flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
+extension KotlinRuntimeSupport._KotlinExistential: flow_overrides._ExportedKotlinPackages_namespace_I1_I2, flow_overrides.___ExportedKotlinPackages_namespace_I1_I2 where Wrapped : flow_overrides.__ExportedKotlinPackages_namespace_I1_I2 {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.namespace._I1 {
 }
@@ -32,6 +34,8 @@ extension ExportedKotlinPackages.namespace {
     }
     @objc(_I1)
     public protocol _I1 {
+    }
+    public protocol __I1: KotlinRuntimeSupport._KotlinBridgeable {
     }
     open class Bar: ExportedKotlinPackages.namespace.Foo {
         @_nonoverride

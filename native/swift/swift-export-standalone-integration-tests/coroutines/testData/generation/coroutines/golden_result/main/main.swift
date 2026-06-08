@@ -12,6 +12,8 @@ public protocol FunctionalInterfaceWithSuspendFunction: KotlinRuntime.KotlinBase
 @objc(_FunctionalInterfaceWithSuspendFunction)
 public protocol _FunctionalInterfaceWithSuspendFunction {
 }
+public protocol __FunctionalInterfaceWithSuspendFunction: KotlinRuntimeSupport._KotlinBridgeable {
+}
 public final class Foo: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___Foo_init_allocate()
@@ -302,7 +304,7 @@ public func returnsListOfSuspendNullables() async throws -> [(() async throws ->
         }(), cancellation.__externalRCRef())
     }
 }
-extension main.FunctionalInterfaceWithSuspendFunction where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.FunctionalInterfaceWithSuspendFunction where Self : main.__FunctionalInterfaceWithSuspendFunction {
     public func emit() async throws -> Swift.Void {
         try await withKotlinContinuation { continuation, exception, cancellation in
             let _: Bool = FunctionalInterfaceWithSuspendFunction_emit(self.__externalRCRef(), {
@@ -317,7 +319,7 @@ extension main.FunctionalInterfaceWithSuspendFunction where Self : KotlinRuntime
 }
 extension main.FunctionalInterfaceWithSuspendFunction {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.FunctionalInterfaceWithSuspendFunction where Wrapped : main._FunctionalInterfaceWithSuspendFunction {
+extension KotlinRuntimeSupport._KotlinExistential: main.FunctionalInterfaceWithSuspendFunction, main.__FunctionalInterfaceWithSuspendFunction where Wrapped : main._FunctionalInterfaceWithSuspendFunction {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._FunctionalInterfaceWithSuspendFunction {
 }

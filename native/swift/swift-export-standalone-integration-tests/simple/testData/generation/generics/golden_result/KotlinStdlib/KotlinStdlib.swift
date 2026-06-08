@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.Comparable where Self : ExportedKotlinPackages.kotlin.__Comparable {
     public static func <(
         this: Self,
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
@@ -36,7 +36,7 @@ extension ExportedKotlinPackages.kotlin.Comparable where Self : KotlinRuntimeSup
 }
 extension ExportedKotlinPackages.kotlin.Comparable {
 }
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : ExportedKotlinPackages.kotlin.collections.__Iterator {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
@@ -46,9 +46,9 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Comparable, ExportedKotlinPackages.kotlin.__Comparable where Wrapped : ExportedKotlinPackages.kotlin._Comparable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator, ExportedKotlinPackages.kotlin.collections.__Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._Comparable {
 }
@@ -62,6 +62,8 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_Iterator)
     public protocol _Iterator {
     }
+    public protocol __Iterator: KotlinRuntimeSupport._KotlinBridgeable {
+    }
 }
 extension ExportedKotlinPackages.kotlin {
     public protocol Comparable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin._Comparable {
@@ -71,6 +73,8 @@ extension ExportedKotlinPackages.kotlin {
     }
     @objc(_Comparable)
     public protocol _Comparable {
+    }
+    public protocol __Comparable: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {

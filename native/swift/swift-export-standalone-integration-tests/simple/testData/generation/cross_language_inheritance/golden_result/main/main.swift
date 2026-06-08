@@ -11,6 +11,8 @@ public protocol Greeter: KotlinRuntime.KotlinBase, main._Greeter {
 @objc(_Greeter)
 public protocol _Greeter {
 }
+public protocol __Greeter: KotlinRuntimeSupport._KotlinBridgeable {
+}
 open class AbstractBase: KotlinRuntime.KotlinBase {
     package init() {
         fatalError()
@@ -52,7 +54,7 @@ open class Base: KotlinRuntime.KotlinBase {
         return Base_notOpen(self.__externalRCRef())
     }
 }
-open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main._Greeter {
+open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main._Greeter, main.__Greeter {
     public init() {
         let __kt = __root___GreeterBase_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);
@@ -73,7 +75,7 @@ open class GreeterBase: KotlinRuntime.KotlinBase, main.Greeter, main._Greeter {
         return GreeterBase_salutation(self.__externalRCRef())
     }
 }
-extension main.Greeter where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.Greeter where Self : main.__Greeter {
     public func greet(
         name: Swift.String
     ) -> Swift.String {
@@ -85,7 +87,7 @@ extension main.Greeter where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension main.Greeter {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.Greeter where Wrapped : main._Greeter {
+extension KotlinRuntimeSupport._KotlinExistential: main.Greeter, main.__Greeter where Wrapped : main._Greeter {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._Greeter {
 }

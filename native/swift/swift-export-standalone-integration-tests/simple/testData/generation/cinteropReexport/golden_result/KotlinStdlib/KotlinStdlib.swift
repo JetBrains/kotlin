@@ -3,11 +3,11 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlinx.cinterop.ObjCObject where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlinx.cinterop.ObjCObject where Self : ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject {
 }
 extension ExportedKotlinPackages.kotlinx.cinterop.ObjCObject {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.cinterop.ObjCObject where Wrapped : ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject where Wrapped : ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
 }
@@ -17,7 +17,9 @@ extension ExportedKotlinPackages.kotlinx.cinterop {
     @objc(_ObjCObject)
     public protocol _ObjCObject {
     }
-    open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject {
+    public protocol __ObjCObject: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    open class ObjCObjectBase: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.cinterop.ObjCObject, ExportedKotlinPackages.kotlinx.cinterop._ObjCObject, ExportedKotlinPackages.kotlinx.cinterop.__ObjCObject {
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions

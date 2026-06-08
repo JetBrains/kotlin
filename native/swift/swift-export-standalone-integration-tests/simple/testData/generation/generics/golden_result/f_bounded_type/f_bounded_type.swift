@@ -10,6 +10,8 @@ public protocol MyComparable: KotlinRuntime.KotlinBase, f_bounded_type._MyCompar
 @objc(_MyComparable)
 public protocol _MyComparable {
 }
+public protocol __MyComparable: KotlinRuntimeSupport._KotlinBridgeable {
+}
 public final class ConcreteSelfReferencing: f_bounded_type.SelfReferencing {
     public override init() {
         let __kt = __root___ConcreteSelfReferencing_init_allocate()
@@ -39,7 +41,7 @@ open class SelfReferencing: KotlinRuntime.KotlinBase {
         return SelfReferencing_compareTo__TypesOfArguments__f_bounded_type_SelfReferencing__(self.__externalRCRef(), other.__externalRCRef())
     }
 }
-extension f_bounded_type.MyComparable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension f_bounded_type.MyComparable where Self : f_bounded_type.__MyComparable {
     public func compareTo(
         other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Int32 {
@@ -48,7 +50,7 @@ extension f_bounded_type.MyComparable where Self : KotlinRuntimeSupport._KotlinB
 }
 extension f_bounded_type.MyComparable {
 }
-extension KotlinRuntimeSupport._KotlinExistential: f_bounded_type.MyComparable where Wrapped : f_bounded_type._MyComparable {
+extension KotlinRuntimeSupport._KotlinExistential: f_bounded_type.MyComparable, f_bounded_type.__MyComparable where Wrapped : f_bounded_type._MyComparable {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: f_bounded_type._MyComparable {
 }

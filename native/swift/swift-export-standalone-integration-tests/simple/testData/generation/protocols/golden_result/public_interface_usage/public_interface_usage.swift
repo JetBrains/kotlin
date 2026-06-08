@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import public_interface
 
-public final class DemoCrossModuleInterfaceUsage: KotlinRuntime.KotlinBase, public_interface.DemoCrossModuleInterface, public_interface._DemoCrossModuleInterface {
+public final class DemoCrossModuleInterfaceUsage: KotlinRuntime.KotlinBase, public_interface.DemoCrossModuleInterface, public_interface._DemoCrossModuleInterface, public_interface.__DemoCrossModuleInterface {
     public init() {
         let __kt = __root___DemoCrossModuleInterfaceUsage_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge);

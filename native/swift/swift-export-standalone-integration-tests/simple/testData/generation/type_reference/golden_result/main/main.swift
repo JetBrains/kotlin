@@ -8,6 +8,8 @@ public protocol INTERFACE: KotlinRuntime.KotlinBase, main._INTERFACE {
 @objc(_INTERFACE)
 public protocol _INTERFACE {
 }
+public protocol __INTERFACE: KotlinRuntimeSupport._KotlinBridgeable {
+}
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
         fatalError()
@@ -480,11 +482,11 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return { __root___extensionVarOnNullableRef_set__TypesOfArgumentsE__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v); return () }()
 }
-extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension main.INTERFACE where Self : main.__INTERFACE {
 }
 extension main.INTERFACE {
 }
-extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE where Wrapped : main._INTERFACE {
+extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE, main.__INTERFACE where Wrapped : main._INTERFACE {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: main._INTERFACE {
 }

@@ -31,6 +31,15 @@ public protocol _InterfaceTwo {
 @objc(_InternalLibInterface)
 public protocol _InternalLibInterface {
 }
+@_spi(InterfaceOptInOne)
+public protocol __InterfaceOne: KotlinRuntimeSupport._KotlinBridgeable {
+}
+@_spi(InterfaceOptInTwo)
+public protocol __InterfaceTwo: KotlinRuntimeSupport._KotlinBridgeable {
+}
+@_spi(InternalLibApi)
+public protocol __InternalLibInterface: KotlinRuntimeSupport._KotlinBridgeable {
+}
 @_spi(ExperimentalLibApi)
 public final class ExperimentalLibClass: KotlinRuntime.KotlinBase {
     @_spi(ExperimentalLibApi)
@@ -200,15 +209,15 @@ public func normalLibFunction() -> Swift.Void {
 public func returnAlias() -> lib.InternalLibAlias {
     return __root___returnAlias()
 }
-extension lib.InterfaceOne where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension lib.InterfaceOne where Self : lib.__InterfaceOne {
 }
 extension lib.InterfaceOne {
 }
-extension lib.InterfaceTwo where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension lib.InterfaceTwo where Self : lib.__InterfaceTwo {
 }
 extension lib.InterfaceTwo {
 }
-extension lib.InternalLibInterface where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension lib.InternalLibInterface where Self : lib.__InternalLibInterface {
     @_spi(InternalLibApi)
     public var foo: Swift.String {
         @_spi(InternalLibApi)
@@ -228,13 +237,13 @@ extension lib.InternalLibInterface where Self : KotlinRuntimeSupport._KotlinBrid
 extension lib.InternalLibInterface {
 }
 @_spi(InternalLibApi)
-extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface where Wrapped : lib._InternalLibInterface {
+extension KotlinRuntimeSupport._KotlinExistential: lib.InternalLibInterface, lib.__InternalLibInterface where Wrapped : lib._InternalLibInterface {
 }
 @_spi(InterfaceOptInOne)
-extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceOne where Wrapped : lib._InterfaceOne {
+extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceOne, lib.__InterfaceOne where Wrapped : lib._InterfaceOne {
 }
 @_spi(InterfaceOptInTwo)
-extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceTwo where Wrapped : lib._InterfaceTwo {
+extension KotlinRuntimeSupport._KotlinExistential: lib.InterfaceTwo, lib.__InterfaceTwo where Wrapped : lib._InterfaceTwo {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: lib._InternalLibInterface {
 }

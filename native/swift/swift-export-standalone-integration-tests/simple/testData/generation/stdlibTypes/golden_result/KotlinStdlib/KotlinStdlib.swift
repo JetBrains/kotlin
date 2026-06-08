@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.text.Appendable where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.text.Appendable where Self : ExportedKotlinPackages.kotlin.text.__Appendable {
     public func append(
         value: Swift.Unicode.UTF16.CodeUnit
     ) -> any ExportedKotlinPackages.kotlin.text.Appendable {
@@ -24,7 +24,7 @@ extension ExportedKotlinPackages.kotlin.text.Appendable where Self : KotlinRunti
 }
 extension ExportedKotlinPackages.kotlin.text.Appendable {
 }
-extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : ExportedKotlinPackages.kotlin.__CharSequence {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -51,9 +51,9 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
 }
 extension ExportedKotlinPackages.kotlin.CharSequence {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin.__CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.text.Appendable where Wrapped : ExportedKotlinPackages.kotlin.text._Appendable {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text.__Appendable where Wrapped : ExportedKotlinPackages.kotlin.text._Appendable {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: ExportedKotlinPackages.kotlin._CharSequence {
 }
@@ -110,6 +110,8 @@ extension ExportedKotlinPackages.kotlin {
     }
     @objc(_CharSequence)
     public protocol _CharSequence {
+    }
+    public protocol __CharSequence: KotlinRuntimeSupport._KotlinBridgeable {
     }
     public final class ByteArray: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
@@ -225,7 +227,9 @@ extension ExportedKotlinPackages.kotlin.text {
     @objc(_Appendable)
     public protocol _Appendable {
     }
-    public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable {
+    public protocol __Appendable: KotlinRuntimeSupport._KotlinBridgeable {
+    }
+    public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.__CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, ExportedKotlinPackages.kotlin.text.__Appendable {
         public var length: Swift.Int32 {
             get {
                 return kotlin_text_StringBuilder_length_get(self.__externalRCRef())

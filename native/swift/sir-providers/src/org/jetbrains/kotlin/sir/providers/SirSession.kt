@@ -252,17 +252,21 @@ public sealed interface SirTranslationResult {
         public val declaration: SirProtocol,
         public val bridgedImplementation: SirExtension?,
         public val markerDeclaration: SirProtocol,
+        public val implementationMarkerDeclaration: SirProtocol,
         public val penBoxMarkerConformance: SirExtension,
         public val existentialExtension: SirExtension,
         public val auxExtension: SirExtension,
         public val samConverter: SirDeclaration?,
     ) : SirTranslationResult {
         override val primaryDeclaration: SirDeclaration get() = declaration
+        // `declaration` MUST stay first: callers use `allDeclarations.firstIsInstanceOrNull<SirProtocol>()`
+        // to recover the public protocol. The markers are appended after it.
         override val allDeclarations: List<SirDeclaration> =
             listOfNotNull(
                 declaration,
                 bridgedImplementation,
                 markerDeclaration,
+                implementationMarkerDeclaration,
                 penBoxMarkerConformance,
                 existentialExtension,
                 auxExtension,

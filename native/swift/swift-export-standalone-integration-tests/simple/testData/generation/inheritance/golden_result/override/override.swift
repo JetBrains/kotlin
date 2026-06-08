@@ -8,6 +8,8 @@ public protocol P: KotlinRuntime.KotlinBase, override._P {
 @objc(_P)
 public protocol _P {
 }
+public protocol __P: KotlinRuntimeSupport._KotlinBridgeable {
+}
 open class Base: KotlinRuntime.KotlinBase {
     public init() {
         let __kt = __root___Base_init_allocate()
@@ -44,14 +46,14 @@ open class Sub: override.Base {
         return { Sub_g__TypesOfArguments__anyU20override_P__(self.__externalRCRef(), x.__externalRCRef()); return () }()
     }
 }
-extension override.P where Self : KotlinRuntimeSupport._KotlinBridgeable {
+extension override.P where Self : override.__P {
     public func f() -> Swift.Void {
         return { P_f(self.__externalRCRef()); return () }()
     }
 }
 extension override.P {
 }
-extension KotlinRuntimeSupport._KotlinExistential: override.P where Wrapped : override._P {
+extension KotlinRuntimeSupport._KotlinExistential: override.P, override.__P where Wrapped : override._P {
 }
 extension KotlinRuntimeSupport._KotlinExistentialPenBox: override._P {
 }
