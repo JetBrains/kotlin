@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SwiftPMDependenc
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.SyncPackageResolvedTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftimport.transitiveSwiftPMDependenciesProvider
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.gradle.utils.`is`
 import org.jetbrains.kotlin.gradle.utils.lowerCamelCaseName
 import org.jetbrains.kotlin.konan.target.HostManager
 import kotlin.test.Test
@@ -845,8 +846,8 @@ class SwiftPMImportUnitTests {
         assertIs<GenerateSyntheticLinkageImportProject>(syntheticPackageGenerationTask)
 
         assertFalse(
-            syntheticPackageGenerationTask.fingerprintCoordinationEnabled.get(),
-            message = "Fingerprint coordination should be disabled for synthetic package generation when noSynchronization is set"
+            syntheticPackageGenerationTask.syntheticPackageFingerprint.isPresent,
+            message = "Synthetic package fingerprint should not be set for synthetic package generation when noSynchronization is set"
         )
 
         val fetchSyntheticPackageTask = project.tasks.findByName(
@@ -856,8 +857,8 @@ class SwiftPMImportUnitTests {
         assertIs<FetchSyntheticImportProjectPackages>(fetchSyntheticPackageTask)
 
         assertFalse(
-            fetchSyntheticPackageTask.fingerprintCoordinationEnabled.get(),
-            message = "Fingerprint coordination should be disabled for fetch task when noSynchronization is set"
+            fetchSyntheticPackageTask.syntheticPackageFingerprint.isPresent,
+            message = "Synthetic package fingerprint should not be set for fetch task when noSynchronization is set"
         )
 
         val dumpXcodebuildTask = project.tasks.findByName(
@@ -870,8 +871,13 @@ class SwiftPMImportUnitTests {
         assertIs<DumpXcodeBuildArgs>(dumpXcodebuildTask)
 
         assertFalse(
-            dumpXcodebuildTask.fingerprintCoordinationEnabled.get(),
-            message = "Fingerprint coordination should be disabled for dump task when noSynchronization is set"
+            dumpXcodebuildTask.syntheticPackageFingerprint.isPresent,
+            message = "Synthetic package fingerprint should not be set for dump task when noSynchronization is set"
+        )
+
+        assertFalse(
+            dumpXcodebuildTask.xcodebuildFingerprint.isPresent,
+            message = "Xcodebuild fingerprint should not be set for dump task when noSynchronization is set"
         )
     }
 

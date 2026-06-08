@@ -105,59 +105,75 @@ internal abstract class DumpXcodeBuildArgs : DefaultTask() {
         layout.buildDirectory.dir(XcodebuildDefFileUtils.clangDumpRelativeDir(sdk)).get()
     }
 
-    @get:Internal
-    val fingerprintCoordinationEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
-
 
     @TaskAction
     fun dumpXcodeBuildArgs() {
-        if (hasSwiftPMDependencies.get()) {
-            if (!fingerprintCoordinationEnabled.get() || !syntheticPackageFingerprint.isPresent || !xcodebuildFingerprint.isPresent) {
-                submitXcodebuildArgsDumpWorkAction(
-                    dumpDir = syntheticDumpDir.get().asFile,
-                    derivedDataDir = syntheticImportDd.get().asFile,
-                    syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
-                    swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
-                )
-                return
+        if (!hasSwiftPMDependencies.get()) return
+
+        val coordinationService = fingerprintCoordinationService.get()
+
+        val fetchBucket = syntheticPackageFingerprint.orNull?.asFile
+            ?.readText()
+            ?.trim()
+            ?.let { syntheticPackageHash ->
+                coordinationService.findSwiftResolveBucket(syntheticPackageHash)
+                    ?: error("SwiftPM resolve bucket is missing for package hash $syntheticPackageHash")
             }
 
-            val syntheticPackageHash = syntheticPackageFingerprint.get().asFile.readText().trim()
-            val xcodebuildExecutionHash = xcodebuildFingerprint.get().asFile.readText().trim()
+        if (fetchBucket != null) {
+            coordinationService.awaitSwiftResolved(fetchBucket)
+        }
 
-            val fetchBucket = fingerprintCoordinationService.get()
-                .findSwiftResolveBucket(syntheticPackageHash)
-                ?: error("SwiftPM resolve bucket is missing for package hash $syntheticPackageHash")
-
-            fingerprintCoordinationService.get().awaitSwiftResolved(fetchBucket)
-            // The service decides whether this task owns the expensive xcodebuild execution or can reuse an existing
-            // bucket from another task in this invocation or from a validated root-build bucket left by an earlier run.
-            val claim = fingerprintCoordinationService.get().claimOrJoinXcodeDump(
-                xcodebuildExecutionHash = xcodebuildExecutionHash,
-                xcodebuildSdk = xcodebuildSdk.get(),
+        val xcodebuildFingerprintFile = xcodebuildFingerprint.orNull?.asFile
+        if (xcodebuildFingerprintFile == null) {
+            submitXcodebuildArgsDumpWorkAction(
+                dumpDir = syntheticDumpDir.get().asFile,
+                derivedDataDir = syntheticImportDd.get().asFile,
+                syntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
+                swiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
             )
+            return
+        }
 
-            when (claim) {
-                is CoordinationClaim.Owner -> runOwnerXcodeDump(
+        val xcodebuildExecutionHash = xcodebuildFingerprintFile.readText().trim()
+
+        val claim = coordinationService.claimOrJoinXcodeDump(
+            xcodebuildExecutionHash = xcodebuildExecutionHash,
+            xcodebuildSdk = xcodebuildSdk.get(),
+        )
+
+        when (claim) {
+            is CoordinationClaim.Owner -> {
+                requireNotNull(fetchBucket) {
+                    "SwiftPM resolve bucket is required when owning xcodebuild args dump"
+                }
+
+                runOwnerXcodeDump(
                     bucket = claim.bucket,
+                    dumpDir = claim.bucket.ownerDumpDir,
+                    derivedDataDir = claim.bucket.ownerDerivedDataDir,
                     syntheticImportProjectRoot = fetchBucket.ownerSyntheticImportProjectRoot,
                     swiftPMDependenciesCheckout = fetchBucket.ownerSwiftPMDependenciesCheckout,
                 )
-                is CoordinationClaim.Existing -> fingerprintCoordinationService.get().awaitXcodeDump(claim.bucket)
             }
 
+            is CoordinationClaim.Existing -> {
+                coordinationService.awaitXcodeDump(claim.bucket)
+            }
         }
     }
 
     private fun runOwnerXcodeDump(
         bucket: XcodeDumpBucket,
+        dumpDir: File,
+        derivedDataDir: File,
         syntheticImportProjectRoot: File,
         swiftPMDependenciesCheckout: File,
     ) {
         try {
             submitXcodebuildArgsDumpWorkAction(
-                dumpDir = bucket.ownerDumpDir,
-                derivedDataDir = bucket.ownerDerivedDataDir,
+                dumpDir = dumpDir,
+                derivedDataDir = derivedDataDir,
                 syntheticImportProjectRoot = syntheticImportProjectRoot,
                 swiftPMDependenciesCheckout = swiftPMDependenciesCheckout,
             )

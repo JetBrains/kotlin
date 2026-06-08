@@ -74,9 +74,6 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
     @get:PathSensitive(PathSensitivity.NONE)
     abstract val xcodebuildFingerprint: RegularFileProperty
 
-    @get:Internal
-    val fingerprintCoordinationEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
-
     @get:Inject
     protected abstract val workerExecutor: WorkerExecutor
 
@@ -93,36 +90,34 @@ internal abstract class ConvertSyntheticSwiftPMImportProjectIntoDefFile : Defaul
 
     @TaskAction
     fun generateDefFiles() {
-        if (hasSwiftPMDependencies.get()) {
-            if (!fingerprintCoordinationEnabled.get() || !xcodebuildFingerprint.isPresent) {
-                writeDefAndLinkerOutputs(
-                    architectures.get(),
-                    cinteropNamespace,
-                    defFiles.getFile(),
-                    ldDump.getFile(),
-                    syntheticDumpDir.get().asFile,
-                )
-            } else {
-                writeDefAndLinkerOutputs(
-                    architectures.get(),
-                    cinteropNamespace,
-                    defFiles.getFile(),
-                    ldDump.getFile(),
-                    resolveDumpedXcodeBuildArgsDir()
+        val architectures = architectures.get()
+        val defFiles = defFiles.getFile()
+        val ldDump = ldDump.getFile()
 
-                )
-            }
-
-        } else {
+        if (!hasSwiftPMDependencies.get()) {
             writeEmptyDefAndLinkerOutputs(
-                architectures.get(),
+                architectures,
                 cinteropNamespace,
-                defFiles.getFile(),
-                ldDump.getFile(),
+                defFiles,
+                ldDump,
             )
+            return
         }
-    }
 
+        val dumpedXcodeBuildArgsDir = if (xcodebuildFingerprint.isPresent) {
+            resolveDumpedXcodeBuildArgsDir()
+        } else {
+            syntheticDumpDir.get().asFile
+        }
+
+        writeDefAndLinkerOutputs(
+            architectures,
+            cinteropNamespace,
+            defFiles,
+            ldDump,
+            dumpedXcodeBuildArgsDir,
+        )
+    }
 
     private fun writeEmptyDefAndLinkerOutputs(
         architectures: Set<AppleArchitecture>,

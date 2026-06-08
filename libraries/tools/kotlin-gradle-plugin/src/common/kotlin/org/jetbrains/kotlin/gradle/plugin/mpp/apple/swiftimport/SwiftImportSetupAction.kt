@@ -385,7 +385,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                     xcodebuildDumpTask.configure {
                         it.usesService(fingerprintCoordinationService)
                         it.fingerprintCoordinationService.set(fingerprintCoordinationService)
-                        it.fingerprintCoordinationEnabled.set(true)
                         it.syntheticPackageFingerprint.set(
                             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
                         )
@@ -397,7 +396,6 @@ internal val SwiftImportSetupAction = KotlinProjectSetupAction {
                         it.xcodebuildFingerprint.set(
                             xcodebuildDumpTask.map { it.xcodebuildFingerprint.get() }
                         )
-                        it.fingerprintCoordinationEnabled.set(true)
                         it.xcodeDumpsDir.set(provideXcodeDumpsDir())
 
                     }
@@ -640,7 +638,6 @@ private fun Project.enableFingerprintCoordination(
         it.useOnlyTransitiveImportedDependencies()
         it.usesService(fingerprintCoordinationService)
         it.coordinationService.set(fingerprintCoordinationService)
-        it.fingerprintCoordinationEnabled.set(true)
         it.syntheticPackageFingerprint.set(
             fingerprintSyntheticPackageTask.map { it.syntheticPackageFingerprint.get() }
         )
@@ -653,7 +650,6 @@ private fun Project.enableFingerprintCoordination(
         )
         it.usesService(fingerprintCoordinationService)
         it.coordinationService.set(fingerprintCoordinationService)
-        it.fingerprintCoordinationEnabled.set(true)
     }
 }
 
@@ -686,7 +682,6 @@ private fun Project.locateOrRegisterUmbrellaFetchTask(
         it.onlyIf { aggregatedTransitiveDependencies.get().metadataByDependencyIdentifier.values.any { it.dependencies.isNotEmpty() } }
         it.swiftPMDependenciesCheckout.set(checkOutDir)
         it.gitIgnoreCheckoutDir.set(true)
-        it.fingerprintCoordinationEnabled.set(false)
     }
 
     return actualFetchClaimer

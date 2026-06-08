@@ -341,9 +341,6 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
         project.layout.buildDirectory.dir("kotlin/swiftImport")
     )
 
-    @get:Internal
-    val fingerprintCoordinationEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
-
     @get:InputFile
     @get:Optional
     @get:PathSensitive(PathSensitivity.NONE)
@@ -422,7 +419,7 @@ internal abstract class GenerateSyntheticLinkageImportProject : DefaultTask(), U
             )
         }
 
-        if (!fingerprintCoordinationEnabled.get() || !syntheticPackageFingerprint.isPresent) {
+        if (!syntheticPackageFingerprint.isPresent) {
             submitPackageGenerationWorkAction(
                 syntheticImportProjectRoot.get().asFile
             )

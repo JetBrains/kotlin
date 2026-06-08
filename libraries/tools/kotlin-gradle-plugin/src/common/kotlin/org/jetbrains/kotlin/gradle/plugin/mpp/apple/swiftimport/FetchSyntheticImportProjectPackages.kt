@@ -87,9 +87,6 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     abstract val syntheticPackageFingerprint: RegularFileProperty
 
     @get:Internal
-    val fingerprintCoordinationEnabled: Property<Boolean> = project.objects.property(Boolean::class.java).convention(false)
-
-    @get:Internal
     abstract val coordinationService: Property<SwiftImportFingerprintedCoordinationService>
 
     @get:Inject
@@ -101,7 +98,7 @@ internal abstract class FetchSyntheticImportProjectPackages : DefaultTask() {
     @TaskAction
     fun generateSwiftPMSyntheticImportProjectAndFetchPackages() {
 
-        if (!fingerprintCoordinationEnabled.get() || !syntheticPackageFingerprint.isPresent) {
+        if (!syntheticPackageFingerprint.isPresent) {
             submitSwiftResolveWorkAction(
                 ownerSyntheticImportProjectRoot = syntheticImportProjectRoot.get().asFile,
                 ownerSwiftPMDependenciesCheckout = swiftPMDependenciesCheckout.get().asFile,
