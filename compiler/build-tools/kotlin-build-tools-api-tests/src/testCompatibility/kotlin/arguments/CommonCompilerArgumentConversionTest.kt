@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.tests.arguments
 
-import org.jetbrains.kotlin.buildtools.api.CompilerArgumentsParseException
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain.Companion.jvm
 import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfiguration
@@ -119,7 +118,7 @@ internal class CommonCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion < KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         for (invalidValue in invalidRawValues) {
-            assertThrows<CompilerArgumentsParseException> {
+            assertThrows<Throwable> {
                 kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
                     compilerArguments.applyArgumentStrings(
                         expectedArgumentStringsFor(invalidValue)

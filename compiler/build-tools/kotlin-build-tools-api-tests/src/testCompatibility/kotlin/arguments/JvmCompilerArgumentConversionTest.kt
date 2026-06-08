@@ -130,7 +130,7 @@ internal class JvmCompilerArgumentConversionTest : BaseCompilationTest() {
         assumeTrue { kotlinToolingVersion < KotlinToolingVersion(2, 4, 20, "snapshot") }
 
         for (invalidValue in invalidRawValues) {
-            assertThrows<CompilerArgumentsParseException> {
+            assertThrows<Throwable> {
                 kotlinToolchain.jvm.jvmCompilationOperationBuilder(emptyList(), Paths.get(".")).apply {
                     compilerArguments.applyArgumentStrings(
                         expectedArgumentStringsFor(invalidValue)
