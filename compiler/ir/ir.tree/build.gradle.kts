@@ -9,9 +9,8 @@ plugins {
 dependencies {
     api(project(":core:descriptors"))
     api(project(":core:deserialization"))
-    api(project(":compiler:frontend.common"))
+    api(project(":core:language.version-settings"))
     implementation(project(":compiler:util"))
-    implementation(project(":compiler:config"))
 
     if (kotlinBuildProperties.isInIdeaSync.get()) {
         compileOnly(project("tree-generator")) // Provided, so that IDEA can recognize references to this module in KDoc.
