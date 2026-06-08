@@ -130,6 +130,7 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
     // Implicit receivers injected by org.jetbrains.kotlinx.dataframe.plugin.extensions.ReturnTypeBasedReceiverInjector
     // don't "exist": they are used for resolve, but there's no value on the stack.
     // We need to find all calls that use them as arguments and generate valid code
+    // region injected receivers lowering
     override fun visitCall(expression: IrCall): IrExpression {
         val origin = expression.symbol.owner.origin
         if (expression.origin == IrStatementOrigin.GET_PROPERTY && origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey == DataFramePlugin) {
@@ -168,6 +169,30 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val scopeReference = classFqName?.shortName()?.asString()?.startsWith("Scope") ?: false
         return fromPlugin || scopeReference
     }
+
+    override fun visitErrorCallExpression(expression: IrErrorCallExpression): IrExpression {
+        if (expression.type.isScope()) {
+            return expression.replaceWithConstructorCall()
+        }
+        return super.visitErrorCallExpression(expression)
+    }
+
+    override fun visitTypeOperator(expression: IrTypeOperatorCall): IrExpression {
+        if (expression.type.isScope() &&
+            expression.operator == IrTypeOperator.IMPLICIT_CAST &&
+            expression.argument is IrGetValue
+        ) {
+            return expression.replaceWithConstructorCall()
+        }
+        return super.visitTypeOperator(expression)
+    }
+
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
+    private fun IrExpression.replaceWithConstructorCall(): IrConstructorCallImpl {
+        val constructor = type.getClass()!!.constructors.toList().single()
+        return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0)
+    }
+    // endregion
 }
 
 @OptIn(UnsafeDuringIrConstructionAPI::class)
