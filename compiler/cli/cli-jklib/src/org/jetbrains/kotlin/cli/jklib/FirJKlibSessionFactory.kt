@@ -147,7 +147,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
         predefinedJavaComponents: FirSharableJavaComponents?,
         needRegisterJavaElementFinder: Boolean,
         packagePartProvider: PackagePartProvider,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
     ): FirSession {
         val context = Context(predefinedJavaComponents, projectEnvironment, packagePartProvider)
@@ -156,7 +156,7 @@ object FirJKlibSessionFactory : FirAbstractSessionFactory<FirJKlibSessionFactory
             context = context,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule = isForLeafHmppModule,
+            kmpModuleKind = kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 val javaSymbolProvider =
@@ -306,7 +306,7 @@ internal fun <F> prepareJKlibSessions(
                 predefinedJavaComponents = predefinedJavaComponents,
             )
         },
-        createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
+        createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
             FirJKlibSessionFactory.createSourceSession(
                 moduleData = moduleData,
                 javaSourcesScope = projectEnvironment.getSearchScopeForProjectJavaSources(),
@@ -318,7 +318,7 @@ internal fun <F> prepareJKlibSessions(
                 needRegisterJavaElementFinder = true,
                 packagePartProvider = packagePartProviderForLibraries,
                 init = sessionConfigurator,
-                isForLeafHmppModule = isForLeafHmppModule,
+                kmpModuleKind = kmpModuleKind,
             )
         },
         createMetadataSessionFactoryContextForHmppCommonLibrarySession = {

@@ -384,7 +384,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     context,
                 )
             },
-            createSourceSession = { moduleData, isForLeafHmppModule, sessionConfigurator ->
+            createSourceSession = { moduleData, kmpModuleKind, sessionConfigurator ->
                 FirJvmSessionFactory.createSourceSession(
                     moduleData,
                     javaSourcesScope,
@@ -407,7 +407,7 @@ object JvmFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifact, J
                     configuration,
                     context,
                     needRegisterJavaElementFinder = true,
-                    isForLeafHmppModule = isForLeafHmppModule,
+                    kmpModuleKind = kmpModuleKind,
                     sessionConfigurator,
                 )
             }
