@@ -1,5 +1,7 @@
 // WITH_STDLIB
 // IGNORE_KLIB_RUNTIME_ERRORS_WITH_CUSTOM_FIRST_STAGE: Wasm-JS:2.0
+// WASM_IGNORE_FOR: mode=single-module
+// WASM_IGNORE_FOR: mode=multi-module
 // ISSUE: KT-70461
 // LANGUAGE: +FullValueClasses
 
