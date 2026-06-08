@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.resolve.calls.inference.components
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.Context
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableFixationFinder.VariableForFixation
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.isFlexible
+import org.jetbrains.kotlin.types.model.isNothingConstructor
+import org.jetbrains.kotlin.types.model.typeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.components.VariableReadinessCalculator.TypeVariableFixationReadinessQuality as Q
 
 class VariableReadinessCalculator(
@@ -49,6 +52,19 @@ class VariableReadinessCalculator(
         // It does however include `T = Nothing(?)` and `T <: Nothing(?)`
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS,
         HAS_PROPER_NON_TRIVIAL_CONSTRAINTS_OTHER_THAN_INCORPORATED_FROM_DECLARED_UPPER_BOUND,
+
+        // If a variable is based on a reified type parameter.
+        // Generally, we shouldn't care much if a type variable is based on a reified type parameter, but it tends to be the most
+        // common case for a materialize-like functions, having a shape like `fun <reified T> materialize(): T`.
+        //
+        // And for the usages like `val x: Base = run { materialize() ?: derived }`, it might be very important to infer `T` into `Base`.
+        // That's why we prefer to fix such variables as soon as they have any proper (likely UPPER) constraints.
+        //
+        // One might notice that such a behavior might be reasonable for non-reified's as well, but it's more of the issue for KT-81083.
+        // So, basically this readiness is only necessary to preserve backwards compatibility (see KT-86728).
+        // Relevant test data: `reifiedFirst.kt` and `earlierReifiedFix.kt`
+        // TODO: Consider getting rid of it (KT-81083)
+        REIFIED,
 
         // Starts fixation of variables with a LOWER flexible constraint even if
         // they have LOWER constraints referring to some others: this makes fixing
@@ -140,6 +156,7 @@ class VariableReadinessCalculator(
             .any { it.kind.isLower() && it.isProperArgumentConstraint() && it.type.isFlexible() }
 
         (val hasProperNonIltConstraint) = computeIltConstraintsRelatedFlags()
+        readiness[Q.REIFIED] = isReified()
         readiness[Q.HAS_PROPER_NON_ILT_CONSTRAINT] = hasProperNonIltConstraint
 
         readiness[Q.HAS_NO_EXPLICIT_LOWER_NOTHING_CONSTRAINT] = hasNoExplicitLowerNothingConstraint()

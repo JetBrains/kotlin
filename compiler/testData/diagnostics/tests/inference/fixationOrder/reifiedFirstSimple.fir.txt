@@ -17,8 +17,8 @@ FILE: main.kt
     public final fun main(): R|kotlin/Unit| {
         lval x1: R|Base| = R|/decode|<R|Base|>() ?: R|/d|
         lval x2: R|Base| = R|/decodeNonReified|<R|Base|>() ?: R|/d|
-        lval x3: R|Base| = R|/myRun|<R|Derived|>(<L> = myRun@fun <anonymous>(): R|Derived| <inline=NoInline>  {
-            ^ R|/decode|<R|Derived|>() ?: R|/d|
+        lval x3: R|Base| = R|/myRun|<R|Base|>(<L> = myRun@fun <anonymous>(): R|Base| <inline=NoInline>  {
+            ^ R|/decode|<R|Base|>() ?: R|/d|
         }
         )
         lval x4: R|Base| = R|/myRun|<R|Derived|>(<L> = myRun@fun <anonymous>(): R|Derived| <inline=NoInline>  {
