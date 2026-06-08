@@ -232,6 +232,9 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
   internal var headerModeType: HeaderMode =
       defaultArguments.headerModeType.let { HeaderMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, defaultArguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") }
 
+  @SerialName("X_HOME_PACKAGE_RESOLUTION")
+  internal var homePackageResolution: Boolean = defaultArguments.homePackageResolution
+
   @SerialName("X_INTRINSIC_CONST_EVALUATION")
   internal var intrinsicConstEvaluation: Boolean = defaultArguments.intrinsicConstEvaluation
 
@@ -453,6 +456,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     "X_FULL_VALUE_CLASSES" -> fullValueClasses
     "X_HEADER_MODE" -> headerMode
     "X_HEADER_MODE_TYPE" -> headerModeType
+    "X_HOME_PACKAGE_RESOLUTION" -> homePackageResolution
     "X_INTRINSIC_CONST_EVALUATION" -> intrinsicConstEvaluation
     "X_LIST_PHASES" -> listPhases
     "X_LOCAL_TYPE_ALIASES" -> localTypeAliases
@@ -565,6 +569,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
       "X_FULL_VALUE_CLASSES" -> fullValueClasses = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_HEADER_MODE" -> headerMode = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_HEADER_MODE_TYPE" -> headerModeType = CommonCompilerArgumentValueAdapter.toImpl(value)
+      "X_HOME_PACKAGE_RESOLUTION" -> homePackageResolution = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_INTRINSIC_CONST_EVALUATION" -> intrinsicConstEvaluation = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_LIST_PHASES" -> listPhases = CommonCompilerArgumentValueAdapter.toImpl(value)
       "X_LOCAL_TYPE_ALIASES" -> localTypeAliases = CommonCompilerArgumentValueAdapter.toImpl(value)
@@ -700,6 +705,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     arguments.fullValueClasses = fullValueClasses
     arguments.headerMode = headerMode
     arguments.headerModeType = headerModeType.stringValue
+    arguments.homePackageResolution = homePackageResolution
     arguments.intrinsicConstEvaluation = intrinsicConstEvaluation
     arguments.listPhases = listPhases
     arguments.localTypeAliases = localTypeAliases
@@ -805,6 +811,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     fullValueClasses = arguments.fullValueClasses
     headerMode = arguments.headerMode
     try { headerModeType = arguments.headerModeType.let { HeaderMode.values().firstOrNull { entry -> entry.stringValue.equals(it, true) }?.also { entry -> checkCaseMatches(_restrictedArgViolations, arguments::headerModeType, entry.stringValue, it) } ?: throw CompilerArgumentsParseException("Unknown -Xheader-mode-type value: $it") } } catch (ex: CompilerArgumentsParseException) { _argumentValidationErrors.add(ex.message ?: "Error parsing compiler arguments") }
+    homePackageResolution = arguments.homePackageResolution
     intrinsicConstEvaluation = arguments.intrinsicConstEvaluation
     listPhases = arguments.listPhases
     localTypeAliases = arguments.localTypeAliases
@@ -905,6 +912,7 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
     arguments.fullValueClasses = fullValueClasses
     arguments.headerMode = headerMode
     arguments.headerModeType = headerModeType.stringValue
+    arguments.homePackageResolution = homePackageResolution
     arguments.intrinsicConstEvaluation = intrinsicConstEvaluation
     arguments.localTypeAliases = localTypeAliases
     arguments.metadataKlib = metadataKlib
@@ -953,6 +961,6 @@ internal abstract class CommonCompilerArgumentsImpl() : CommonToolArgumentsImpl(
 
   public companion object {
     private val knownOptionIds: List<String> =
-        listOf("P","XX_LANGUAGE","XX_DEBUG_LEVEL_COMPILER_CHECKS","XX_DUMP_MODEL","XX_EXPLICIT_RETURN_TYPES","XX_LENIENT_MODE","X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS","X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS","X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS","X_ALLOW_HOLDSIN_CONTRACT","X_ALLOW_KOTLIN_PACKAGE","X_ALLOW_REIFIED_TYPE_IN_CATCH","X_ALLOW_RETURNS_RESULT_OF","X_ANNOTATION_DEFAULT_TARGET","X_ANNOTATION_TARGET_ALL","X_CALLABLE_REFERENCES_TO_CONTEXTUAL","X_CHECK_PHASE_CONDITIONS","X_COLLECTION_LITERALS","X_COMMON_SOURCES","X_COMPANION_BLOCKS","X_COMPANION_BLOCKS_AND_EXTENSIONS","X_COMPILER_PLUGIN","X_COMPILER_PLUGIN_ORDER","X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY","X_CONTEXT_PARAMETERS","X_CONTEXT_SENSITIVE_RESOLUTION","X_DATA_FLOW_BASED_EXHAUSTIVENESS","X_DETAILED_PERF","X_DISABLE_DEFAULT_SCRIPTING_PLUGIN","X_DISABLE_IR_CHECKERS","X_DISABLE_PHASES","X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT","X_DONT_SORT_SOURCE_FILES","X_DONT_WARN_ON_ERROR_SUPPRESSION","X_DUMP_DIRECTORY","X_DUMP_FQNAME","X_DUMP_PERF","X_EAGER_LAMBDA_ANALYSIS","X_ENABLE_ADDITIONAL_IR_CHECKERS","X_ENABLE_INCREMENTAL_COMPILATION","X_ESCAPING_FUNCTIONS","X_EXPECT_ACTUAL_CLASSES","X_EXPLICIT_API","X_EXPLICIT_BACKING_FIELDS","X_EXPLICIT_CONTEXT_ARGUMENTS","X_FIR_AGGRESSIVE_PRUNING","X_FRAGMENT_DEPENDENCY","X_FRAGMENT_FRIEND_DEPENDENCY","X_FRAGMENT_REFINES","X_FRAGMENT_SOURCES","X_FRAGMENTS","X_FULL_VALUE_CLASSES","X_HEADER_MODE","X_HEADER_MODE_TYPE","X_INTRINSIC_CONST_EVALUATION","X_LIST_PHASES","X_LOCAL_TYPE_ALIASES","X_METADATA_KLIB","X_METADATA_VERSION","X_MULTI_DOLLAR_INTERPOLATION","X_MULTI_PLATFORM","X_NAME_BASED_DESTRUCTURING","X_NESTED_TYPE_ALIASES","X_NO_INLINE","X_NON_LOCAL_BREAK_CONTINUE","X_PHASES_TO_DUMP","X_PHASES_TO_DUMP_AFTER","X_PHASES_TO_DUMP_BEFORE","X_PHASES_TO_VALIDATE","X_PHASES_TO_VALIDATE_AFTER","X_PHASES_TO_VALIDATE_BEFORE","X_PLUGIN","X_PRINT_CONFIGURATION","X_PROFILE_PHASES","X_RENDER_INTERNAL_DIAGNOSTIC_NAMES","X_REPORT_ALL_WARNINGS","X_REPORT_OUTPUT_FILES","X_REPORT_PERF","X_RETURN_VALUE_CHECKER","X_RICH_ERRORS","X_SEPARATE_KMP_COMPILATION","X_SKIP_METADATA_VERSION_CHECK","X_SKIP_PRERELEASE_CHECK","X_STDLIB_COMPILATION","X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES","X_SUPPRESS_VERSION_WARNINGS","X_USE_FIR_IC","X_USE_FIR_LT","X_VERBOSE_PHASES","X_VERIFY_IR","X_WHEN_GUARDS","API_VERSION","KOTLIN_HOME","LANGUAGE_VERSION","OPT_IN","PROGRESSIVE","SCRIPT","COMPILER_PLUGINS","X_WARNING_LEVEL",)
+        listOf("P","XX_LANGUAGE","XX_DEBUG_LEVEL_COMPILER_CHECKS","XX_DUMP_MODEL","XX_EXPLICIT_RETURN_TYPES","XX_LENIENT_MODE","X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS","X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS","X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS","X_ALLOW_HOLDSIN_CONTRACT","X_ALLOW_KOTLIN_PACKAGE","X_ALLOW_REIFIED_TYPE_IN_CATCH","X_ALLOW_RETURNS_RESULT_OF","X_ANNOTATION_DEFAULT_TARGET","X_ANNOTATION_TARGET_ALL","X_CALLABLE_REFERENCES_TO_CONTEXTUAL","X_CHECK_PHASE_CONDITIONS","X_COLLECTION_LITERALS","X_COMMON_SOURCES","X_COMPANION_BLOCKS","X_COMPANION_BLOCKS_AND_EXTENSIONS","X_COMPILER_PLUGIN","X_COMPILER_PLUGIN_ORDER","X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY","X_CONTEXT_PARAMETERS","X_CONTEXT_SENSITIVE_RESOLUTION","X_DATA_FLOW_BASED_EXHAUSTIVENESS","X_DETAILED_PERF","X_DISABLE_DEFAULT_SCRIPTING_PLUGIN","X_DISABLE_IR_CHECKERS","X_DISABLE_PHASES","X_DO_NOT_NORMALIZE_NAN_VALUES_IN_CONST_CONTEXT","X_DONT_SORT_SOURCE_FILES","X_DONT_WARN_ON_ERROR_SUPPRESSION","X_DUMP_DIRECTORY","X_DUMP_FQNAME","X_DUMP_PERF","X_EAGER_LAMBDA_ANALYSIS","X_ENABLE_ADDITIONAL_IR_CHECKERS","X_ENABLE_INCREMENTAL_COMPILATION","X_ESCAPING_FUNCTIONS","X_EXPECT_ACTUAL_CLASSES","X_EXPLICIT_API","X_EXPLICIT_BACKING_FIELDS","X_EXPLICIT_CONTEXT_ARGUMENTS","X_FIR_AGGRESSIVE_PRUNING","X_FRAGMENT_DEPENDENCY","X_FRAGMENT_FRIEND_DEPENDENCY","X_FRAGMENT_REFINES","X_FRAGMENT_SOURCES","X_FRAGMENTS","X_FULL_VALUE_CLASSES","X_HEADER_MODE","X_HEADER_MODE_TYPE","X_HOME_PACKAGE_RESOLUTION","X_INTRINSIC_CONST_EVALUATION","X_LIST_PHASES","X_LOCAL_TYPE_ALIASES","X_METADATA_KLIB","X_METADATA_VERSION","X_MULTI_DOLLAR_INTERPOLATION","X_MULTI_PLATFORM","X_NAME_BASED_DESTRUCTURING","X_NESTED_TYPE_ALIASES","X_NO_INLINE","X_NON_LOCAL_BREAK_CONTINUE","X_PHASES_TO_DUMP","X_PHASES_TO_DUMP_AFTER","X_PHASES_TO_DUMP_BEFORE","X_PHASES_TO_VALIDATE","X_PHASES_TO_VALIDATE_AFTER","X_PHASES_TO_VALIDATE_BEFORE","X_PLUGIN","X_PRINT_CONFIGURATION","X_PROFILE_PHASES","X_RENDER_INTERNAL_DIAGNOSTIC_NAMES","X_REPORT_ALL_WARNINGS","X_REPORT_OUTPUT_FILES","X_REPORT_PERF","X_RETURN_VALUE_CHECKER","X_RICH_ERRORS","X_SEPARATE_KMP_COMPILATION","X_SKIP_METADATA_VERSION_CHECK","X_SKIP_PRERELEASE_CHECK","X_STDLIB_COMPILATION","X_STRICT_EQUALITY_FOR_STRUCTURAL_CLASSES","X_SUPPRESS_VERSION_WARNINGS","X_USE_FIR_IC","X_USE_FIR_LT","X_VERBOSE_PHASES","X_VERIFY_IR","X_WHEN_GUARDS","API_VERSION","KOTLIN_HOME","LANGUAGE_VERSION","OPT_IN","PROGRESSIVE","SCRIPT","COMPILER_PLUGINS","X_WARNING_LEVEL",)
   }
 }

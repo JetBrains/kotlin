@@ -100,6 +100,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.FullValueClasses, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.homePackageResolution) {
+        put(LanguageFeature.HomePackageResolution, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.intrinsicConstEvaluation) {
         put(LanguageFeature.IntrinsicConstEvaluation, LanguageFeature.State.ENABLED)
     }

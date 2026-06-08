@@ -49,6 +49,8 @@ sealed class TowerGroupKind(val index: Byte) : Comparable<TowerGroupKind> {
 
     data object QualifierValue : TowerGroupKind(9)
 
+    data object HomePackage : TowerGroupKind(10)
+
     data object Last : TowerGroupKind(0b1111)
 
     override fun compareTo(other: TowerGroupKind): Int {
@@ -175,6 +177,8 @@ private constructor(
         val QualifierOrClassifier: TowerGroup = kindOf(TowerGroupKind.QualifierOrClassifier)
 
         val QualifierValue: TowerGroup = kindOf(TowerGroupKind.QualifierValue)
+
+        val HomePackage: TowerGroup = kindOf(TowerGroupKind.HomePackage)
 
         val Member: TowerGroup = kindOf(TowerGroupKind.Member)
 
