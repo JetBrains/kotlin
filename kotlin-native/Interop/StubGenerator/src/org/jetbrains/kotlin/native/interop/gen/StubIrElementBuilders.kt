@@ -674,6 +674,12 @@ internal class FunctionStubBuilder(
             // twin was introduced. Explicit `CValuesRef`/`CPointer` arguments still pick the primary
             // unambiguously.
             primaryStub.annotations += AnnotationStub.LowPriorityInOverloadResolution
+            // Mark the new `CValuesRef`-accepting overload as experimental unconditionally - even in
+            // platform libraries, which are built with `-Xdisable-experimental-annotation`. Otherwise users
+            // of platform libs would silently start hitting the new overload (e.g. when passing a
+            // `CValuesRef`) without any opt-in signal. The global `addExperimentalAnnotations` pass
+            // dedupes, so user-built cinterop libs won't get a duplicate annotation.
+            primaryStub.annotations += AnnotationStub.ExperimentalForeignApi
         }
         overloads += primaryStub
         return overloads

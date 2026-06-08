@@ -380,8 +380,12 @@ class StubIrBuilder(private val context: StubIrContext) {
 
     private fun StubContainer.addExperimentalAnnotations() {
         fun MutableList<AnnotationStub>.addExperimentalIfNecessary() {
-            if (!configuration.disableExperimentalAnnotation)
-                this.add(AnnotationStub.ExperimentalForeignApi)
+            if (configuration.disableExperimentalAnnotation) return
+            // A stub builder may have already attached `@ExperimentalForeignApi` explicitly
+            // (e.g. on the `CValuesRef` twin of a `const char*` function, which must stay
+            // opt-in even when this global pass is disabled for platform libs).
+            if (AnnotationStub.ExperimentalForeignApi in this) return
+            add(AnnotationStub.ExperimentalForeignApi)
         }
 
         this.accept(object : StubIrVisitor<Unit, Unit> {

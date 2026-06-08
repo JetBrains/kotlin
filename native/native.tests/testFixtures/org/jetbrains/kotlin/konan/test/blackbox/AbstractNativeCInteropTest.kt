@@ -75,6 +75,12 @@ abstract class AbstractNativeCInteropStringConvertTest : AbstractNativeCInteropT
 
     override val defFileName: String
         get() = "dependency.def"
+
+    override val ignoreExperimentalForeignApi: Boolean
+        // We annotate these overloads with ExperimentalForeignApi even with
+        // `-Xdisable-experimental-annotation` for now, hence we test the annotation
+        // is added
+        get() = false
 }
 
 @Tag("cinterop")
