@@ -1,5 +1,6 @@
 package org.jetbrains.kotlin.lombok.k2.generators
 
+import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.Visibility
@@ -102,3 +103,5 @@ fun FirClassSymbol<*>.createJavaMethod(
 class ConeLombokValueParameter(val name: Name, val typeRef: FirTypeRef)
 
 val FirBasedSymbol<*>.hasJavaOrigin get() = origin is FirDeclarationOrigin.Java
+
+abstract class LombokDeclarationKey : GeneratedDeclarationKey()

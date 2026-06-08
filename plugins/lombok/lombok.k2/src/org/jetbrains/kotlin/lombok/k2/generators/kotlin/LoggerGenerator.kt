@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.lombok.k2.generators.kotlin
 
-import org.jetbrains.kotlin.GeneratedDeclarationKey
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.FirCache
@@ -42,13 +41,14 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
+import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : GeneratedDeclarationKey()
+class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
 
 /**
  * Checks if the declaration origin is a logger annotation.

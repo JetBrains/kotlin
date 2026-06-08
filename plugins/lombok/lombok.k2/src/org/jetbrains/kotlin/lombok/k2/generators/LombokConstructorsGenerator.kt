@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
-object ConstructorGeneratorKey : GeneratedDeclarationKey()
+object ConstructorGeneratorKey : LombokDeclarationKey()
 
 val FirDeclarationOrigin.isConstructor get() = this is FirDeclarationOrigin.Plugin && this.key is ConstructorGeneratorKey
 
