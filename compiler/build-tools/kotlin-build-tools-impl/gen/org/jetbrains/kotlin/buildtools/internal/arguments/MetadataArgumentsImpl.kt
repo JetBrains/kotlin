@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments
 
+import java.io.File
 import java.lang.IllegalStateException
 import kotlin.Any
-import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.OptIn
@@ -19,8 +19,13 @@ import kotlin.collections.MutableSet
 import kotlin.collections.Set
 import kotlin.collections.emptyList
 import kotlin.collections.emptySet
+import kotlin.collections.joinToString
+import kotlin.collections.map
 import kotlin.collections.mutableMapOf
 import kotlin.collections.mutableSetOf
+import kotlin.collections.toTypedArray
+import kotlin.io.path.Path
+import kotlin.text.split
 import org.jetbrains.kotlin.buildtools.`internal`.DeepCopyable
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.MetadataArgumentsImpl.Companion.CLASSPATH
@@ -92,12 +97,12 @@ internal class MetadataArgumentsImpl(
     if (unknownArgs.isNotEmpty()) {
       throw IllegalStateException("Unknown arguments: ${unknownArgs.joinToString()}")
     }
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS) ?: emptyArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_LEGACY_METADATA_JAR_K2 in this) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2)}
-    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS) ?: emptyArray()}
+    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_TARGET_PLATFORM in this) { arguments.targetPlatform = get(X_TARGET_PLATFORM).map { it.stringValue }.toTypedArray()}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     arguments.internalArguments = parseCommandLineArguments<K2MetadataCompilerArguments>(internalArguments.toList()).internalArguments
@@ -108,12 +113,12 @@ internal class MetadataArgumentsImpl(
   @Suppress("DEPRECATION")
   protected fun applyCompilerArguments(arguments: K2MetadataCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    try { this[X_FRIEND_PATHS] = arguments.friendPaths } catch (_: NoSuchMethodError) {  }
+    try { this[X_FRIEND_PATHS] = arguments.friendPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT] = arguments.klibZipFileAccessorCacheLimit.let { it.toInt() } } catch (_: NoSuchMethodError) {  }
     try { this[X_LEGACY_METADATA_JAR_K2] = arguments.legacyMetadataJar } catch (_: NoSuchMethodError) {  }
-    try { this[X_REFINES_PATHS] = arguments.refinesPaths } catch (_: NoSuchMethodError) {  }
+    try { this[X_REFINES_PATHS] = arguments.refinesPaths.mapOrEmpty { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[X_TARGET_PLATFORM] = arguments.targetPlatform.map { MetadataTargetPlatform.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw CompilerArgumentsParseException("Unknown -Xtarget-platform value: $it") } } catch (_: NoSuchMethodError) {  }
-    try { this[CLASSPATH] = arguments.classpath } catch (_: NoSuchMethodError) {  }
+    try { this[CLASSPATH] = arguments.classpath?.split(File.pathSeparator)?.map { Path(it) } } catch (_: NoSuchMethodError) {  }
     try { this[D] = arguments.destination } catch (_: NoSuchMethodError) {  }
     try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {  }
     internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
@@ -122,12 +127,12 @@ internal class MetadataArgumentsImpl(
   @Suppress("DEPRECATION")
   public fun toCompilerArgumentsAffectingOutcome(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
     super.toCompilerArgumentsAffectingOutcome(arguments)
-    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS) ?: emptyArray()}
+    if (X_FRIEND_PATHS in this) { arguments.friendPaths = get(X_FRIEND_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT in this) { arguments.klibZipFileAccessorCacheLimit = get(X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT).toString()}
     if (X_LEGACY_METADATA_JAR_K2 in this) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2)}
-    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS) ?: emptyArray()}
+    if (X_REFINES_PATHS in this) { arguments.refinesPaths = get(X_REFINES_PATHS).map { it.absolutePathStringOrThrow() }.toTypedArray()}
     if (X_TARGET_PLATFORM in this) { arguments.targetPlatform = get(X_TARGET_PLATFORM).map { it.stringValue }.toTypedArray()}
-    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)}
+    if (CLASSPATH in this) { arguments.classpath = get(CLASSPATH)?.map { it.absolutePathStringOrThrow() }?.joinToString(File.pathSeparator)}
     if (D in this) { arguments.destination = get(D)}
     if (MODULE_NAME in this) { arguments.moduleName = get(MODULE_NAME)}
     return arguments
@@ -171,7 +176,8 @@ internal class MetadataArgumentsImpl(
   public companion object {
     private val knownArguments: MutableSet<String> = mutableSetOf()
 
-    public val X_FRIEND_PATHS: MetadataArgument<Array<String>?> = MetadataArgument("X_FRIEND_PATHS")
+    public val X_FRIEND_PATHS: MetadataArgument<List<java.nio.`file`.Path>> =
+        MetadataArgument("X_FRIEND_PATHS")
 
     public val X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT: MetadataArgument<Int> =
         MetadataArgument("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
@@ -179,13 +185,14 @@ internal class MetadataArgumentsImpl(
     public val X_LEGACY_METADATA_JAR_K2: MetadataArgument<Boolean> =
         MetadataArgument("X_LEGACY_METADATA_JAR_K2")
 
-    public val X_REFINES_PATHS: MetadataArgument<Array<String>?> =
+    public val X_REFINES_PATHS: MetadataArgument<List<java.nio.`file`.Path>> =
         MetadataArgument("X_REFINES_PATHS")
 
     public val X_TARGET_PLATFORM: MetadataArgument<List<MetadataTargetPlatform>> =
         MetadataArgument("X_TARGET_PLATFORM")
 
-    public val CLASSPATH: MetadataArgument<String?> = MetadataArgument("CLASSPATH")
+    public val CLASSPATH: MetadataArgument<List<java.nio.`file`.Path>?> =
+        MetadataArgument("CLASSPATH")
 
     public val D: MetadataArgument<String?> = MetadataArgument("D")
 

@@ -60,8 +60,7 @@ class MetadataModule(
         ) {
             moduleCompilationConfigAction(this) // apply module-wide configuration
             compilationConfigAction(this) // apply any overrides for this compilation only
-            this.compilerArguments[MetadataArguments.CLASSPATH] =
-                compileClasspath.joinToString(File.pathSeparator) { it.absolutePathString() }
+            this.compilerArguments[MetadataArguments.CLASSPATH] = compileClasspath
             when (compilerArguments[MetadataArguments.MODULE_NAME]) {
                 null -> compilerArguments[MetadataArguments.MODULE_NAME] = moduleName
                 EXPLICIT_NULL_MODULE_NAME_MARKER -> compilerArguments[MetadataArguments.MODULE_NAME] = null
