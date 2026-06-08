@@ -15,8 +15,9 @@ import net.bytebuddy.matcher.ElementMatchers.named
 import net.bytebuddy.matcher.ElementMatchers.none
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileExistsAdvice
 import org.jetbrains.kotlin.testFramework.inputchecking.InputCheckingFileReadAdvice
-import java.lang.instrument.Instrumentation
+import org.jetbrains.kotlin.testFramework.inputchecking.UndeclaredInputsGuard
 import java.lang.instrument.ClassFileTransformer
+import java.lang.instrument.Instrumentation
 
 object TestInstrumentationAgent {
     @JvmStatic
@@ -60,6 +61,8 @@ object TestInstrumentationAgent {
      * but the illegal modifications are caught earlier (by ByteBuddy, not JVM).
      */
     private fun instrumentEmittingCustomJfrEvents(instrumentation: Instrumentation) {
+        UndeclaredInputsGuard.initialize()
+
         AgentBuilder.Default()
             .ignore(none())
             .with(InitializationStrategy.NoOp.INSTANCE)

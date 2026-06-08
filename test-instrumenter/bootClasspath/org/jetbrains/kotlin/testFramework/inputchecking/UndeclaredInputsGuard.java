@@ -14,31 +14,49 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toSet;
 
 public class UndeclaredInputsGuard {
 
-    private static final Set<String> declaredInputs;
+    private static final AtomicBoolean initialized = new AtomicBoolean(false);
+    private static Set<String> declaredInputs;
     private static final Set<String> undeclaredInputs = ConcurrentHashMap.newKeySet();
     private static final String rootDir = System.getProperty("test.instrumenter.root.dir");
     private static final String buildDir = System.getProperty("test.instrumenter.build.dir");
 
-    static {
-        Path declaredInputsFilePath = Paths.get(System.getProperty("test.instrumenter.declared.inputs.file"));
+    /**
+     * This method must be called before {@link UndeclaredInputsGuard#checkPath(String)}
+     */
+    public static void initialize() {
+        if (initialized.compareAndSet(false, true)) {
+            Path declaredInputsFilePath = Paths.get(System.getProperty("test.instrumenter.declared.inputs.file"));
 
-        try (BufferedReader reader = Files.newBufferedReader(declaredInputsFilePath)) {
-            declaredInputs = reader.lines()
-                    .filter(line -> !line.isEmpty())
-                    .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
-        }
-        catch (IOException e) {
-            throw new RuntimeException("Unable to read file: " + declaredInputsFilePath, e);
+            try (BufferedReader reader = Files.newBufferedReader(declaredInputsFilePath)) {
+                declaredInputs = reader.lines()
+                        .filter(line -> !line.isEmpty())
+                        .collect(collectingAndThen(toSet(), Collections::unmodifiableSet));
+            }
+            catch (IOException e) {
+                throw new RuntimeException("Unable to read file: " + declaredInputsFilePath, e);
+            }
+        } else {
+            throw new RuntimeException("UndeclaredInputsGuard is already initialized!");
         }
     }
 
     public static void checkPath(String path) {
+        if (!initialized.get()) {
+            throw new RuntimeException(
+                    "UndeclaredInputsGuard is not initialized! Please call initialize() before any " +
+                    "file reading instrumentation is installed. This explicit step is required to prevent " +
+                    "class circularity error that may have happen if we performed initialization in the " +
+                    "static block (UndeclaredInputsGuard is called by the file reading instrumentation, " +
+                    "but it also reads a file during its initialization)."
+            );
+        }
         // Short circuit and deduplication
         if (path == null || declaredInputs == null || undeclaredInputs.contains(path)) {
             return;
