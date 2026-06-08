@@ -9,6 +9,10 @@ public abstract interface A : kotlin/Any {
   // nested class: D
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // A$B.class
 // ------------------------------------------
@@ -17,12 +21,20 @@ public abstract interface A.B : kotlin/Any {
   // nested class: C
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // A$B$C.class
 // ------------------------------------------
 public abstract interface A.B.C : kotlin/Any {
 
   // module name: test-module
+
+  // has method bodies in interface
+
+  // is compiled in compatibility mode
 }
 // A$D.class
 // ------------------------------------------
