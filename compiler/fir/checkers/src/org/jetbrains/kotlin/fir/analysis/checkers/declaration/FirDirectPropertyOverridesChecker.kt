@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -16,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.directOverrides
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.scopes.ScopeFunctionRequiresPrewarm
 
 object FirDirectPropertyOverridesChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -24,7 +22,6 @@ object FirDirectPropertyOverridesChecker : FirPropertyChecker(MppCheckerKind.Com
     @OptIn(ScopeFunctionRequiresPrewarm::class)
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
-        if (LanguageFeature.DirectClassInheritors.isDisabled()) return
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (!declaration.isOverride) return
         val symbol = declaration.symbol

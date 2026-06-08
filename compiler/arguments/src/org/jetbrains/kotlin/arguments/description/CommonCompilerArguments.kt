@@ -886,7 +886,6 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         )
     }
 
-
     compilerArgument {
         name = "Xdirect-java-actualization"
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()

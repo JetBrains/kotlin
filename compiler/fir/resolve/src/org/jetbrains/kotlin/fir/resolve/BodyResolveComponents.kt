@@ -54,9 +54,9 @@ abstract class BodyResolveComponents : SessionAndScopeSessionHolder {
     abstract val context: BodyResolveContext
     abstract val resolutionContext: ResolutionContext
 
-    abstract val directClassInheritorsResolver: DirectClassInheritorsResolver?
+    abstract val directClassInheritorsResolver: DirectClassInheritorsResolver
 
-    abstract val directCallableOverridesResolver: DirectCallableOverridesResolver?
+    abstract val directCallableOverridesResolver: DirectCallableOverridesResolver
 }
 
 // --------------------------------------- Utils ---------------------------------------

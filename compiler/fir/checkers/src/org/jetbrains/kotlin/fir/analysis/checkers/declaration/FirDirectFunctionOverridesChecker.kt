@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
@@ -16,13 +15,11 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.directOverrides
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
-import org.jetbrains.kotlin.fir.isDisabled
 
 object FirDirectFunctionOverridesChecker : FirNamedFunctionChecker(MppCheckerKind.Common) {
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirNamedFunction) {
-        if (LanguageFeature.DirectClassInheritors.isDisabled()) return
         if (declaration.source?.kind is KtFakeSourceElementKind) return
         if (!declaration.isOverride) return
         val symbol = declaration.symbol

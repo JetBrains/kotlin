@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.contracts.FirContractDescription
@@ -14,7 +13,6 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirLazyBlock
 import org.jetbrains.kotlin.fir.expressions.FirLazyExpression
 import org.jetbrains.kotlin.fir.expressions.FirStatement
-import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.FirCallResolver
 import org.jetbrains.kotlin.fir.resolve.calls.ResolutionContext
@@ -32,7 +30,6 @@ import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitTypeRefImplWithoutSource
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.util.PrivateForInline
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.getValue
 
@@ -172,16 +169,12 @@ abstract class FirAbstractBodyResolveTransformer(phase: FirResolvePhase) : FirAb
         override val resolutionContext: ResolutionContext
             get() = transformer.resolutionContext
 
-        override val directClassInheritorsResolver: DirectClassInheritorsResolver? by lazy(LazyThreadSafetyMode.NONE) {
-            runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
-                DirectClassInheritorsResolver(session)
-            }
+        override val directClassInheritorsResolver: DirectClassInheritorsResolver by lazy(LazyThreadSafetyMode.NONE) {
+            DirectClassInheritorsResolver(session)
         }
 
-        override val directCallableOverridesResolver: DirectCallableOverridesResolver? by lazy(LazyThreadSafetyMode.NONE) {
-            runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
-                DirectCallableOverridesResolver(session, scopeSession)
-            }
+        override val directCallableOverridesResolver: DirectCallableOverridesResolver by lazy(LazyThreadSafetyMode.NONE) {
+            DirectCallableOverridesResolver(session, scopeSession)
         }
     }
 }

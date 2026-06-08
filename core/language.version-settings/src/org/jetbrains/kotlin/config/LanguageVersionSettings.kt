@@ -681,8 +681,6 @@ enum class LanguageFeature(
     TreatProvideDelegateAsConventionName(sinceVersion = null, "KT-83538"),
     ExportKDocDocumentationToKlib(sinceVersion = null, "KT-83921"),
     FullValueClasses(sinceVersion = null, "KT-84904"),
-
-    DirectClassInheritors(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ;
 
     constructor(

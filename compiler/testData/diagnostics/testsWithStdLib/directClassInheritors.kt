@@ -2,7 +2,7 @@
 // FIR_IDENTICAL
 // WITH_STDLIB
 // WITH_COROUTINES
-// LANGUAGE: +DirectClassInheritors, +MultiPlatformProjects
+// LANGUAGE: +MultiPlatformProjects
 
 // MODULE: lib
 // FILE: Lib.kt
