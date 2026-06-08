@@ -479,6 +479,12 @@ class RenderIrElementVisitor(
                 "${expression.renderOffsets(options)} " +
                 "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
 
+    @OptIn(DeprecatedCompilerApi::class)
+    override fun visitAnnotation(expression: IrAnnotation, data: Nothing?): String =
+        "CONSTRUCTOR_CALL" +
+                "${expression.renderOffsets(options)} " +
+                "'${expression.symbol.renderReference()}' type=${expression.type.render()} origin=${expression.origin}"
+
     override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall, data: Nothing?): String =
         "DELEGATING_CONSTRUCTOR_CALL${expression.renderOffsets(options)} '${expression.symbol.renderReference()}'"
 

@@ -653,30 +653,33 @@ class IrSourcePrinterVisitor(
         println(")")
     }
 
+    override fun visitAnnotation(expression: IrAnnotation) {
+        val name = expression.classSymbol.owner.name
+        print("@")
+        print(name)
+
+        val printArgumentList = expression.arguments.any { it != null }
+        if (printArgumentList) {
+            expression.printArgumentList(
+                forceParameterNames = true,
+                forceSingleLine = true
+            )
+        }
+    }
+
     override fun visitConstructorCall(expression: IrConstructorCall) {
         val constructedClass = expression.symbol.owner.constructedClass
         val name = constructedClass.name
-        val isAnnotation = constructedClass.isAnnotationClass
-        if (isAnnotation) {
-            print("@")
-        }
         expression.dispatchReceiver?.let {
             it.print()
             print(".")
         }
         print(name)
 
-        val printArgumentList = if (isAnnotation) {
-            expression.arguments.any { it != null }
-        } else {
-            true
-        }
-        if (printArgumentList) {
-            expression.printArgumentList(
-                forceParameterNames = isAnnotation,
-                forceSingleLine = isAnnotation
-            )
-        }
+        expression.printArgumentList(
+            forceParameterNames = false,
+            forceSingleLine = false
+        )
     }
 
     override fun visitStringConcatenation(expression: IrStringConcatenation) {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.ir.util
 
 import com.intellij.openapi.util.text.StringUtil
+import org.jetbrains.kotlin.DeprecatedCompilerApi
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
@@ -1146,6 +1147,17 @@ private class KotlinLikeDumper(val p: Printer, val options: KotlinLikeDumpOption
     }
 
     override fun visitConstructorCall(expression: IrConstructorCall, data: IrDeclaration?) = wrap(expression, data) {
+        expression.printMemberAccessExpressionWithNoIndent(
+            expression.symbol.safeParentClassName,
+            expression.symbol.safeParameters,
+            superQualifierSymbol = null,
+            omitAllBracketsIfNoArguments = expression.symbol.safeParentClassOrNull?.isAnnotationClass == true,
+            data = data,
+        )
+    }
+
+    @OptIn(DeprecatedCompilerApi::class)
+    override fun visitAnnotation(expression: IrAnnotation, data: IrDeclaration?) = wrap(expression, data) {
         expression.printMemberAccessExpressionWithNoIndent(
             expression.symbol.safeParentClassName,
             expression.symbol.safeParameters,
