@@ -147,7 +147,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
         return commandLine
     }
 
-    suspend fun startServer() {
+    suspend fun startAdbServer() {
         val commandLine = createAdbCommand()
         commandLine.addParameter("start-server")
         println("Start adb server...")
@@ -179,6 +179,7 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                 val bootCheckCommand = createAdbCommand()
                 bootCheckCommand.addParameters("shell", "getprop", "sys.boot_completed")
 
+                var retries = 0
                 while (true) {
                     val result = runProcessCancellable(
                         bootCheckCommand,
@@ -186,6 +187,19 @@ class Emulator(private val pathManager: PathManager, private val platform: Strin
                         checkExitCode = false,
                     )
                     if (result.exitCode == 0 && result.stdout.trim() == "1") break
+                    if (result.exitCode == -1) {
+                        retries++
+                        println("adb shell timed out $retries times...")
+                        if (retries >= 3) {
+                            println("adb shell timed out $retries times consecutively, restarting adb server...")
+                            retries = 0
+                            stopAdbServer()
+                            startAdbServer()
+                            runProcessCancellable(waitCommand)
+                        }
+                    } else {
+                        retries = 0
+                    }
                     delay(10.seconds)
                 }
 
