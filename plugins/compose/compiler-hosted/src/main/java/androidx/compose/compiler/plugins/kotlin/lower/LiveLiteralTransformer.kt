@@ -522,17 +522,12 @@ open class LiveLiteralTransformer(
         return aTry
     }
 
+    override fun visitAnnotation(expression: IrAnnotation): IrExpression {
+        return expression
+    }
+
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression): IrExpression {
         val owner = expression.symbol.owner
-
-        // annotations are represented as constructor calls in IR, but the parameters need to be
-        // compile-time values only, so we can't transform them at all.
-        if (
-            (expression is IrConstructorCall || expression is IrDelegatingConstructorCall) &&
-                owner.parentAsClass.isAnnotationClass
-        ) {
-            return expression
-        }
         val name = owner.name.asJvmFriendlyString()
 
         return enter("call-$name") {
