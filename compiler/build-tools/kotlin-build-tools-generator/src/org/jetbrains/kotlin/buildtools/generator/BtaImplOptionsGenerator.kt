@@ -16,6 +16,8 @@ import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.*
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.contract
 import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
@@ -283,6 +285,9 @@ internal class BtaImplOptionsGenerator(
                             val classifier = type.classifier as KClass<*>
                             classifier.toBtaEnumClassName()
                         }
+                        classifier == List::class && (type.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
+                            listTypeNameOf((type.arguments.first().type?.classifier as KClass<*>).toBtaEnumClassName())
+                        }
                         else -> {
                             type.asTypeName()
                         }
@@ -453,6 +458,9 @@ internal class BtaImplOptionsGenerator(
             type.isGeneratedEnum -> {
                 add(maybeGetNullabilitySign(argument) + ".stringValue")
             }
+            type.isGeneratedEnumList() -> {
+                add(maybeGetNullabilitySign(argument) + ".map { it.stringValue }.toTypedArray()")
+            }
             argument.valueType.origin is IntType -> {
                 add(maybeGetNullabilitySign(argument) + ".toString()")
             }
@@ -562,6 +570,14 @@ internal class BtaImplOptionsGenerator(
                         MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException"),
                     )
                 }
+            }
+            type.isGeneratedEnumList() -> {
+                val enumType = type.typeArguments[0]
+                add(
+                    $$".map { %T.entries.firstOrNull { entry -> entry.stringValue == it } ?: throw %M(\"Unknown -$${argument.name} value: $it\") }",
+                    enumType.copy(nullable = false),
+                    MemberName("org.jetbrains.kotlin.buildtools.api", "CompilerArgumentsParseException")
+                )
             }
             argument.valueType.origin is IntType -> {
                 add(maybeGetNullabilitySign(argument))
@@ -871,6 +887,14 @@ internal class BtaImplOptionsGenerator(
             addStatement("return arguments")
         }
     }
+}
+
+private fun TypeName.isGeneratedEnumList(): Boolean {
+    @OptIn(ExperimentalContracts::class)
+    contract {
+        returns(true) implies (this@isGeneratedEnumList is ParameterizedTypeName)
+    }
+    return this is ParameterizedTypeName && this.rawType == List::class.asTypeName() && this.typeArguments[0].isGeneratedEnum
 }
 
 internal fun FunSpec.Builder.addSafeSetStatement(

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.arguments.description
 
+import org.jetbrains.kotlin.arguments.dsl.base.ExperimentalArgumentApi
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.base.asReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.base.compilerArgumentsLevel
@@ -12,6 +13,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
+import org.jetbrains.kotlin.arguments.dsl.types.MetadataTargetPlatformType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -87,10 +89,12 @@ val actualMetadataArguments by compilerArgumentsLevel(CompilerArgumentsLevelName
         )
     }
 
+    @OptIn(ExperimentalArgumentApi::class)
     compilerArgument {
         name = "Xtarget-platform"
         description = "Target platform for metadata generation. Possible values: JVM, JS, WasmJs, WasmWasi, Native".asReleaseDependent()
         valueType = StringArrayType.defaultNull
+        argumentType = MetadataTargetPlatformType()
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_3_20,

@@ -18750,13 +18750,13 @@
                                     "removedVersion": null
                                 },
                                 "argumentType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.StringArrayType",
-                                    "defaultValue": {
-                                        "current": null,
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.MetadataTargetPlatformType",
+                                    "isNullable": {
+                                        "current": false,
                                         "valueInVersions": []
                                     },
-                                    "isNullable": {
-                                        "current": true,
+                                    "defaultValue": {
+                                        "current": [],
                                         "valueInVersions": []
                                     }
                                 }

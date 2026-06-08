@@ -144,6 +144,9 @@ internal class BtaApiOptionsGenerator(
                         type.java.isEnum -> {
                             generatedEnumType(type)
                         }
+                        type == List::class && (argumentType.arguments.first().type?.classifier as? KClass<*>)?.java?.isEnum == true -> {
+                            listTypeNameOf(generatedEnumType(argumentType.arguments.first().type?.classifier as KClass<*>))
+                        }
                         else -> {
                             argumentType.asTypeName()
                         }

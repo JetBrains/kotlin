@@ -447,6 +447,7 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
         is StringListType -> "Array<String>"
         is SearchPathType -> "String?"
         is PathListType -> "Array<String>"
+        is EnumListType<*> -> "Array<String>"
         else -> when (type.isNullable.current) {
             true -> "String?"
             false -> "String"
@@ -535,6 +536,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         return when (@Suppress("UNCHECKED_CAST") val valueType = argumentType as KotlinArgumentValueType<Any>) {
+            is EnumListType<*> -> "emptyArray()"
             is StringArrayType -> "emptyArray()"
             is StringListType if valueType.defaultValue.current.isNullOrEmpty() -> "emptyArray()"
             is StringListType -> "arrayOf(${valueType.stringRepresentation(valueType.defaultValue.current)})"
