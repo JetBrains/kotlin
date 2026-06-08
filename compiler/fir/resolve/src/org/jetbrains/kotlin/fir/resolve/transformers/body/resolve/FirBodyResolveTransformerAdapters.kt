@@ -5,16 +5,26 @@
 
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousObject
 import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
+import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.transformers.AdapterForResolveProcessor
+import org.jetbrains.kotlin.fir.resolve.transformers.DirectCallableOverridesResolver
+import org.jetbrains.kotlin.fir.resolve.transformers.DirectClassInheritorsResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.FirTransformerBasedResolveProcessor
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.withFileAnalysisExceptionWrapping
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @OptIn(AdapterForResolveProcessor::class)
 class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) : FirTransformerBasedResolveProcessor(
@@ -25,12 +35,37 @@ class FirBodyResolveProcessor(session: FirSession, scopeSession: ScopeSession) :
 
 @AdapterForResolveProcessor
 class FirBodyResolveTransformerAdapter(session: FirSession, scopeSession: ScopeSession) : FirTransformer<Any?>() {
-    private val transformer = FirBodyResolveTransformer(
+    private val transformer = object : FirBodyResolveTransformer(
         session,
         phase = FirResolvePhase.BODY_RESOLVE,
         implicitTypeOnly = false,
         scopeSession = scopeSession
-    )
+    ) {
+        private val directClassInheritorsResolver: DirectClassInheritorsResolver? =
+            runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
+                DirectClassInheritorsResolver(session)
+            }
+
+        private val directCallableOverridesResolver: DirectCallableOverridesResolver? =
+            runIf(LanguageFeature.DirectClassInheritors.isEnabled()) {
+                DirectCallableOverridesResolver(session, scopeSession)
+            }
+
+        override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
+            super.transformRegularClass(regularClass, data).apply { directClassInheritorsResolver?.resolveRegularClass(this) }
+
+        override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
+            super.transformTypeAlias(typeAlias, data).apply { directClassInheritorsResolver?.resolveTypeAlias(this) }
+
+        override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
+            super.transformAnonymousObject(anonymousObject, data).apply { directClassInheritorsResolver?.resolveAnonymousObject(this) }
+
+        override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
+            super.transformNamedFunction(namedFunction, data).apply { directCallableOverridesResolver?.resolveNamedFunction(this) }
+
+        override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
+            super.transformProperty(property, data).apply { directCallableOverridesResolver?.resolveProperty(this) }
+    }
 
     override fun <E : FirElement> transformElement(element: E, data: Any?): E {
         return element
