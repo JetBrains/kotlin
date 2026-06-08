@@ -163,7 +163,7 @@ class SwiftExportUnitTests {
         // serves as an onlyIf guard, suppressing execution when no deps are configured.
 
         val regenerateTask = project.tasks.findByName("generateSyntheticLinkageSwiftPMImportProjectForEmbedAndSignLinkage")
-        val checkTask = project.tasks.findByName("checkSyntheticImportProjectIsCorrectlyIntegrated")
+        val checkTask = project.tasks.findByName("checkSyntheticImportProjectIsCorrectlyIntegratedForEmbedSwiftExport")
 
         assertNotNull(regenerateTask, "regenerate linkage task should be registered")
         assertNotNull(checkTask, "checkSyntheticImportProjectIsCorrectlyIntegrated task should be registered")
