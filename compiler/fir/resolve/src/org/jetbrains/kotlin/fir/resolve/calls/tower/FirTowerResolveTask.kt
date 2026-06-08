@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.FirTowerDataContext
 import org.jetbrains.kotlin.fir.declarations.fullyExpandedClass
@@ -19,13 +20,23 @@ import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.BodyResolveComponents
+import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.*
+import org.jetbrains.kotlin.fir.resolve.toClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toImplicitResolvedQualifierReceiver
+import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
+import org.jetbrains.kotlin.fir.scopes.FirCompositeScope
 import org.jetbrains.kotlin.fir.scopes.FirScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirAbstractImportingScope
 import org.jetbrains.kotlin.fir.scopes.impl.FirPackageMemberScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.hasResolvedType
+import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tasks.ExplicitReceiverKind
 import org.jetbrains.kotlin.resolve.descriptorUtil.HIDES_MEMBERS_NAME_LIST
@@ -393,6 +404,53 @@ internal open class FirTowerResolveTask(
                 )
             }
         )
+
+        // try home package resolution
+        if (receiver.hasResolvedType) {
+            val receivers = receiver.resolvedType.allSuperTypes()
+            val scope = FirExtensionsScope(receivers, receivers.map { FirPackageMemberScope(it.classId.packageFqName, session) }, session)
+            processScopeForExplicitReceiver(
+                scope,
+                explicitReceiverValue,
+                info,
+                TowerGroup.HomePackage,
+                companionExtensionPolicy = CompanionExtensionPolicy.NoCompanionExtensions,
+            )
+        }
+    }
+
+    fun ConeKotlinType.allSuperTypes(to: MutableSet<FirClassSymbol<*>> = mutableSetOf()): Set<FirClassSymbol<*>> {
+        val regularClass = this.toClassSymbol() ?: return to
+        to += regularClass
+        regularClass.resolvedSuperTypes.forEach { it.allSuperTypes(to) }
+        return to
+    }
+
+    class FirExtensionsScope(
+        private val receivers: Set<FirClassSymbol<*>>,
+        private val underlying: FirScope,
+        private val session: FirSession,
+    ) : FirScope() {
+        constructor(receivers: Set<FirClassSymbol<*>>, underlyingScopes: List<FirScope>, session: FirSession) :
+                this(receivers, FirCompositeScope(underlyingScopes), session)
+
+        @DelicateScopeAPI
+        override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirScope? =
+            FirExtensionsScope(receivers, underlying.withReplacedSessionOrNull(newSession, newScopeSession) ?: return null, newSession)
+
+        override fun mayContainName(name: Name): Boolean = underlying.mayContainName(name)
+
+        override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) =
+            underlying.processFunctionsByName(name) { function ->
+                val receiver = function.resolvedReceiverType?.toClassSymbol(session)
+                if (receiver != null && receiver in receivers) processor(function)
+            }
+
+        override fun processPropertiesByName(name: Name, processor: (FirVariableSymbol<*>) -> Unit) =
+            underlying.processPropertiesByName(name) { property ->
+                val receiver = property.resolvedReceiverType?.toClassSymbol(session)
+                if (receiver != null && receiver in receivers) processor(property)
+            }
     }
 
     suspend fun runResolverForNoReceiver(
