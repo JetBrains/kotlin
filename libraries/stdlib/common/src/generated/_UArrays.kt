@@ -6155,6 +6155,7 @@ public inline fun <K> UIntArray.allEqualBy(selector: (UInt) -> K): Boolean {
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
         val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
         val equal = firstKey?.equals(key) ?: (key == null)
         if (!equal) return false
     }
@@ -6184,6 +6185,7 @@ public inline fun <K> ULongArray.allEqualBy(selector: (ULong) -> K): Boolean {
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
         val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
         val equal = firstKey?.equals(key) ?: (key == null)
         if (!equal) return false
     }
@@ -6213,6 +6215,7 @@ public inline fun <K> UByteArray.allEqualBy(selector: (UByte) -> K): Boolean {
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
         val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
         val equal = firstKey?.equals(key) ?: (key == null)
         if (!equal) return false
     }
@@ -6242,6 +6245,7 @@ public inline fun <K> UShortArray.allEqualBy(selector: (UShort) -> K): Boolean {
     val firstKey = selector(this[0])
     for (i in 1..lastIndex) {
         val key = selector(this[i])
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
         val equal = firstKey?.equals(key) ?: (key == null)
         if (!equal) return false
     }

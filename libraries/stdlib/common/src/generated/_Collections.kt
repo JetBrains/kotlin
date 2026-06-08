@@ -1992,6 +1992,7 @@ public inline fun <T, K> Iterable<T>.allEqualBy(selector: (T) -> K): Boolean {
     val firstKey = selector(first)
     do {
         val key = selector(iterator.next())
+        // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
         val equal = firstKey?.equals(key) ?: (key == null)
         if (!equal) return false
     } while (iterator.hasNext())
