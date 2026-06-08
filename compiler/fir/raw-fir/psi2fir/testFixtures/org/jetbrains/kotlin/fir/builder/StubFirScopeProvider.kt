@@ -23,6 +23,13 @@ object StubFirScopeProvider : FirScopeProvider() {
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope = error("Stub")
 
+    override fun getDeclaredUseSiteMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+    ): FirTypeScope = error("Stub")
+
     override fun getTypealiasConstructorScope(
         typeAlias: FirTypeAlias,
         useSiteSession: FirSession,

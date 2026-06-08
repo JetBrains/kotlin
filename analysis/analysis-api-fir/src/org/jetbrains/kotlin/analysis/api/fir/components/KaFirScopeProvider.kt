@@ -161,7 +161,7 @@ internal class KaFirScopeProvider(
         val scopeSession = getScopeSession()
 
         // Create use site scope to handle signature enhancement properly
-        fun getBaseUseSiteScope() = JavaScopeProvider.getUseSiteMemberScope(
+        fun getDeclaredUseSiteScope() = JavaScopeProvider.getDeclaredUseSiteMemberScope(
             firJavaClass,
             useSiteSession,
             scopeSession,
@@ -172,15 +172,15 @@ internal class KaFirScopeProvider(
 
         val firScope = when (kind) {
             // `FirExcludingNonInnerClassesScope` is a workaround for non-static member scopes containing static classes (see KT-61900).
-            DeclaredMemberScopeKind.NON_STATIC -> FirExcludingNonInnerClassesScope(getBaseUseSiteScope())
+            DeclaredMemberScopeKind.NON_STATIC -> getDeclaredUseSiteScope()
 
             DeclaredMemberScopeKind.STATIC -> getStaticScope() ?: return null
 
             // Java enhancement scopes as provided by `JavaScopeProvider` are either use-site or static scopes, so we need to compose them
-            // to get the combined scope. A base declared member scope with Java enhancement doesn't exist, unfortunately.
+            // to get the combined scope.
             DeclaredMemberScopeKind.COMBINED -> {
                 // The static scope contains inner classes, so we need to exclude them from the non-static scope to avoid duplicates.
-                val nonStaticScope = FirNoClassifiersScope(getBaseUseSiteScope())
+                val nonStaticScope = FirNoClassifiersScope(getDeclaredUseSiteScope())
                 getStaticScope()
                     ?.let { staticScope -> FirNameAwareCompositeScope(listOf(nonStaticScope, staticScope)) }
                     ?: nonStaticScope

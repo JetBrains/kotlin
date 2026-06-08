@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
+private val DECLARED_MEMBERS: ScopeSessionKey<Pair<FirSession, FirClassSymbol<*>>, FirTypeScope> = scopeSessionKey()
+
 class FirKotlinScopeProvider(
     val declaredMemberScopeDecorator: (
         klass: FirClass,
@@ -47,49 +49,88 @@ class FirKotlinScopeProvider(
         }
 
         return scopeSession.getOrBuild(useSiteSession to klass.symbol, USE_SITE) {
-            // Optimization for enum entries that don't declare any members: just use the supertype scope.
-            // Otherwise, we'll get quadratic memory consumption as every enum entry contains every enum entry's name in its callable name
-            // cache.
-            if (klass.classKind == ClassKind.ENUM_ENTRY && klass.declarations.singleOrNull() is FirPrimaryConstructor) {
-                klass.superConeTypes.singleOrNull()?.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase)
-                    ?.let { return@getOrBuild FirTrivialEnumEntryScope(klass, it) }
-            }
-
-            val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
-            val possiblyDelegatedDeclaredMemberScope = declaredMemberScopeDecorator(
-                klass,
-                declaredScope,
-                useSiteSession,
-                scopeSession,
-                memberRequiredPhase
-            ).let {
-                val delegateFields = klass.delegateFields
-                if (delegateFields.isEmpty())
-                    it
-                else
-                    FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
-            }
-            val declaredMemberScopeWithPossiblySynthesizedMembers =
-                // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
-                if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue) && klass.origin != FirDeclarationOrigin.Library) {
-                    // See also KT-58926 (we apply delegation first, and data/value classes after it)
-                    FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
-                } else {
-                    possiblyDelegatedDeclaredMemberScope
-                }
-
-            val scopes = lookupSuperTypes(
-                klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true
-            ).mapNotNull { useSiteSuperType ->
-                useSiteSuperType.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase = memberRequiredPhase)
-            }
-            FirClassUseSiteMemberScope(
-                klass,
-                useSiteSession,
-                scopes,
-                declaredMemberScopeWithPossiblySynthesizedMembers,
-            )
+            computeClassMemberScope(klass, useSiteSession, scopeSession, memberRequiredPhase, includeSuperTypeMembers = true)
         }
+    }
+
+    override fun getDeclaredUseSiteMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?
+    ): FirTypeScope {
+        memberRequiredPhase?.let {
+            /**
+             * Currently, this makes all callables in supertypes also resolved to [memberRequiredPhase],
+             * even though they aren't available in the returned [FirTypeScope].
+             */
+            klass.lazyResolveToPhaseWithCallableMembers(it)
+        }
+
+        return scopeSession.getOrBuild(useSiteSession to klass.symbol, DECLARED_MEMBERS) {
+            computeClassMemberScope(klass, useSiteSession, scopeSession, memberRequiredPhase, includeSuperTypeMembers = false)
+        }
+    }
+
+    private fun computeClassMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+        includeSuperTypeMembers: Boolean,
+    ): FirTypeScope {
+        memberRequiredPhase?.let {
+            klass.lazyResolveToPhaseWithCallableMembers(it)
+        }
+
+        // Optimization for enum entries that don't declare any members: just use the supertype scope.
+        // Otherwise, we'll get quadratic memory consumption as every enum entry contains every enum entry's name in its callable name
+        // cache.
+        if (klass.classKind == ClassKind.ENUM_ENTRY && klass.declarations.singleOrNull() is FirPrimaryConstructor) {
+            if (!includeSuperTypeMembers) {
+                return FirTypeScope.Empty
+            }
+
+            klass.superConeTypes.singleOrNull()?.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase)
+                ?.let { return FirTrivialEnumEntryScope(klass, it) }
+        }
+
+        val declaredScope = useSiteSession.declaredMemberScope(klass, memberRequiredPhase)
+        val possiblyDelegatedDeclaredMemberScope = declaredMemberScopeDecorator(
+            klass,
+            declaredScope,
+            useSiteSession,
+            scopeSession,
+            memberRequiredPhase
+        ).let {
+            val delegateFields = klass.delegateFields
+            if (delegateFields.isEmpty())
+                it
+            else
+                FirDelegatedMemberScope(useSiteSession, scopeSession, klass, it, delegateFields)
+        }
+        val declaredMemberScopeWithPossiblySynthesizedMembers =
+            // Related: https://youtrack.jetbrains.com/issue/KT-20427#focus=Comments-27-8652759.0-0
+            if (klass is FirRegularClass && !klass.isExpect && (klass.isData || klass.isInlineOrValue) && klass.origin != FirDeclarationOrigin.Library) {
+                // See also KT-58926 (we apply delegation first, and data/value classes after it)
+                FirClassAnySynthesizedMemberScope(useSiteSession, possiblyDelegatedDeclaredMemberScope, klass, scopeSession)
+            } else {
+                possiblyDelegatedDeclaredMemberScope
+            }
+
+        val supertypeScopes: List<FirTypeScope> = if (includeSuperTypeMembers) {
+            lookupSuperTypes(klass, lookupInterfaces = true, deep = false, useSiteSession = useSiteSession, substituteTypes = true)
+                .mapNotNull { it.scopeForSupertype(useSiteSession, scopeSession, klass, memberRequiredPhase = memberRequiredPhase) }
+        } else {
+            emptyList()
+        }
+
+        return FirClassUseSiteMemberScope(
+            klass,
+            useSiteSession,
+            supertypeScopes,
+            declaredMemberScopeWithPossiblySynthesizedMembers,
+        )
     }
 
     @OptIn(FirImplementationDetail::class)

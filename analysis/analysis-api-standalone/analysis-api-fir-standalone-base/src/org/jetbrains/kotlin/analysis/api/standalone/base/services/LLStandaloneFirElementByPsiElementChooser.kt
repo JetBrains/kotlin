@@ -307,6 +307,13 @@ class LLStandaloneFirElementByPsiElementChooser : LLFirElementByPsiElementChoose
             memberRequiredPhase: FirResolvePhase?,
         ): FirTypeScope = shouldNotBeCalled()
 
+        override fun getDeclaredUseSiteMemberScope(
+            klass: FirClass,
+            useSiteSession: FirSession,
+            scopeSession: ScopeSession,
+            memberRequiredPhase: FirResolvePhase?,
+        ): FirTypeScope = shouldNotBeCalled()
+
         override fun getTypealiasConstructorScope(
             typeAlias: FirTypeAlias,
             useSiteSession: FirSession,

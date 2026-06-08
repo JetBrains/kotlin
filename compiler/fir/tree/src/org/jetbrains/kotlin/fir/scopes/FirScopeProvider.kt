@@ -19,6 +19,13 @@ abstract class FirScopeProvider {
         memberRequiredPhase: FirResolvePhase?,
     ): FirTypeScope
 
+    abstract fun getDeclaredUseSiteMemberScope(
+        klass: FirClass,
+        useSiteSession: FirSession,
+        scopeSession: ScopeSession,
+        memberRequiredPhase: FirResolvePhase?,
+    ): FirTypeScope
+
     abstract fun getTypealiasConstructorScope(
         typeAlias: FirTypeAlias,
         useSiteSession: FirSession,
