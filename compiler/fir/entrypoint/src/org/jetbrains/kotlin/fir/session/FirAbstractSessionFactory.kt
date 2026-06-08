@@ -24,6 +24,28 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
+ * Describes the role of a source module for which a session is created, used to choose
+ * the proper layout of dependency symbol providers (see [FirAbstractSessionFactory]).
+ */
+enum class KmpModuleKind {
+    SingleModule, // used for modules without KMP (pure jvm compilation, for example)
+    NonLeafRegularModule, // non-leaf module in KMP compilation when hmpp is disabled
+    LeafRegularModule, // leaf module in KMP compilation when hmpp is disabled
+    NonLeafHmppModule, // non-leaf module in KMP compilation when hmpp is enabled
+    LeafHmppModule; // leaf module in KMP compilation when hmpp is enabled
+
+    companion object {
+        fun leafModule(isHmppEnabled: Boolean): KmpModuleKind {
+            return if (isHmppEnabled) LeafHmppModule else LeafRegularModule
+        }
+
+        fun nonLeafModule(isHmppEnabled: Boolean): KmpModuleKind {
+            return if (isHmppEnabled) NonLeafHmppModule else NonLeafRegularModule
+        }
+    }
+}
+
+/**
  * This is the base class for factories, which create various sessions for compilation.
  * Some details are different between platforms, but the main session structure is the same
  * for all platforms and looks like the following:
@@ -225,7 +247,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         context: CONTEXT,
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit,
         createProviders: (
             FirSession, FirKotlinScopeProvider, FirSymbolProvider,
@@ -273,7 +295,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 this,
                 moduleData,
                 languageVersionSettings,
-                isForLeafHmppModule,
+                kmpModuleKind,
             )
             val generatedSymbolsProvider = FirSwitchableExtensionDeclarationsSymbolProvider.createIfNeeded(this)
 
@@ -289,7 +311,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                 // metadata klibs for specific source sets contain declarations only from exactly this source set
                 // so to see declarations from previous source sets (e.g. common, if we are in jvmAndJs module) we need to
                 // propagate binary dependencies from our source dependsOn modules
-                if (!isForLeafHmppModule) {
+                if (kmpModuleKind != KmpModuleKind.LeafHmppModule) {
                     moduleData.dependsOnDependencies.flatMapTo(this) { it.session.structuredProviders.dependencyProviders }
                 }
                 addIfNotNull(additionalOptionalAnnotationsProvider)
@@ -350,7 +372,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
         session: FirSession,
         moduleData: FirModuleData,
         languageVersionSettings: LanguageVersionSettings,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
     ): StructuredProviders {
         // dependsOnDependencies can actualize declarations from their dependencies. Because actual declarations can be more specific
         // (e.g. have additional supertypes), the modules must be ordered from most specific (i.e. actual) to most generic (i.e. expect)
@@ -405,7 +427,7 @@ abstract class FirAbstractSessionFactory<CONTEXT> {
                  * module, so for common modules we create fallback provider **only** for the root common module and
                  * for the platform module (as it has its own stdlib in dependencies)
                  */
-                if (binaryProvidersFromCommonModules.any { it is FirFallbackBuiltinSymbolProvider } && !isForLeafHmppModule) {
+                if (binaryProvidersFromCommonModules.any { it is FirFallbackBuiltinSymbolProvider } && kmpModuleKind != KmpModuleKind.LeafHmppModule) {
                     binaryProvidersFromPlatformModule.removeAll { it is FirFallbackBuiltinSymbolProvider }
                 }
 

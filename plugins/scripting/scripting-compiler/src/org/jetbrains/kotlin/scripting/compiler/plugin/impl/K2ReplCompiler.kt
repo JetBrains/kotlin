@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 import org.jetbrains.kotlin.fir.pipeline.*
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.modules.TargetId
 import org.jetbrains.kotlin.name.Name
@@ -351,7 +352,7 @@ private fun compileImpl(
         // TODO: from script config
         context = state.sessionFactoryContext,
         needRegisterJavaElementFinder = true,
-        isForLeafHmppModule = false,
+        kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     )
     val rawFir = allSourceFiles.partition { it is KtFileScriptSource }.let { [ktSources, otherSources] ->

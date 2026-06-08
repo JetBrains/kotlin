@@ -157,7 +157,7 @@ abstract class AbstractFirMetadataSessionFactory(
         extensionRegistrars: List<FirExtensionRegistrar>,
         configuration: CompilerConfiguration,
         context: Context,
-        isForLeafHmppModule: Boolean,
+        kmpModuleKind: KmpModuleKind,
         init: FirSessionConfigurator.() -> Unit = {}
     ): FirSession {
         return createSourceSession(
@@ -165,7 +165,7 @@ abstract class AbstractFirMetadataSessionFactory(
             context,
             extensionRegistrars,
             configuration,
-            isForLeafHmppModule,
+            kmpModuleKind,
             init,
             createProviders = { session, kotlinScopeProvider, symbolProvider, generatedSymbolsProvider ->
                 var symbolProviderForBinariesFromIncrementalCompilation: MetadataSymbolProvider? = null

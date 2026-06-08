@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.FirProviderImpl
 import org.jetbrains.kotlin.fir.scopes.kotlinScopeProvider
 import org.jetbrains.kotlin.fir.session.FirJvmSessionFactory.createSourceSession
+import org.jetbrains.kotlin.fir.session.KmpModuleKind
 import org.jetbrains.kotlin.fir.session.environment.AbstractProjectFileSearchScope
 import org.jetbrains.kotlin.fir.session.sourcesToPathsMapper
 import org.jetbrains.kotlin.modules.TargetId
@@ -223,7 +224,7 @@ class ScriptJvmK2CompilerImpl(
             compilerConfiguration,
             context = state.sessionFactoryContext,
             needRegisterJavaElementFinder = true,
-            isForLeafHmppModule = false,
+            kmpModuleKind = KmpModuleKind.SingleModule,
             init = {},
         )
 
@@ -340,7 +341,7 @@ private fun K2ScriptingCompilerEnvironmentInternal.getOrCreateSessionForAnnotati
         compilerContext.environment.configuration,
         context = sessionFactoryContext,
         needRegisterJavaElementFinder = true,
-        isForLeafHmppModule = false,
+        kmpModuleKind = KmpModuleKind.SingleModule,
         init = {},
     ).apply {
         register(
