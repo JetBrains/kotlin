@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.getContainingClassLookupTag
 import org.jetbrains.kotlin.fir.isDisabled
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolvedToCompanionObjectWasRecentlyFixed
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 
@@ -35,12 +36,13 @@ object FirOptInUsageQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
         val symbol = expression.symbol ?: return
         val companionObjectSymbol = expression.resolvedCompanionSymbol()
         with(FirOptInUsageBaseChecker) {
-            val [hardExperimentalities, softExperimentalities] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
-            reportNotAcceptedExperimentalities(hardExperimentalities, expression)
+            val [regular, potentiallyUnderDeprecation] = symbol.loadExperimentalitiesForQualifier(companionObjectSymbol)
+            reportNotAcceptedExperimentalities(regular, expression)
             reportNotAcceptedExperimentalities(
-                softExperimentalities,
+                potentiallyUnderDeprecation,
                 expression,
-                reportErrorsAsDeprecationWarnings = LanguageFeature.ReportOptInUsageOnCompanionObjectAccesses.isDisabled(),
+                reportErrorsAsDeprecationWarnings = LanguageFeature.ReportOptInUsageOnCompanionObjectAccesses.isDisabled() ||
+                        LanguageFeature.ReportDeprecatedCompanionInDelegation.isDisabled() && ConeResolvedToCompanionObjectWasRecentlyFixed in expression.nonFatalDiagnostics,
             )
         }
     }

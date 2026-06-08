@@ -833,11 +833,14 @@ class FirCallCompletionResultsWriterTransformer(
         val initialType = calleeReference.candidate.substitutor.substituteOrSelf(callableReferenceAccess.resolvedType)
         val finalType = finallySubstituteOrSelf(initialType)
 
-        subCandidate.ifLhsResolvedToType { lhs, kind ->
-            if (lhs.shouldBeConsideredType(kind)) {
-                (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)
-                    ?.replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+        (callableReferenceAccess.explicitReceiver?.unwrapSmartcastExpression() as? FirResolvedQualifier)?.apply {
+            subCandidate.ifLhsResolvedToType { lhs, kind ->
+                if (lhs.shouldBeConsideredType(kind)) {
+                    replaceResolvedLhsTypeForCallableReferenceOrNull(lhs.type)
+                }
             }
+
+            unsetResolvedToCompanionIf(subCandidate.isSuccessful && !subCandidate.isFromCompanionObjectTypeScope)
         }
 
         callableReferenceAccess.replaceConeTypeOrNull(finalType)

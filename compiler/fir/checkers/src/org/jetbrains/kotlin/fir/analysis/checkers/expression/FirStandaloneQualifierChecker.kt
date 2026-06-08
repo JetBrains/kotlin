@@ -49,7 +49,6 @@ object FirStandaloneQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
 
     context(context: CheckerContext)
     private val FirResolvedQualifier.isNotResolvedToObject: Boolean
-        // TODO: it'd be nice to use `resolvedToCompanionObject` here, but see KT-84299
         get() = resolvedType.isUnit && symbol?.fullyExpandedClass()?.classKind != ClassKind.OBJECT
 
     context(context: CheckerContext)
