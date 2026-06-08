@@ -92,7 +92,7 @@ interface KotlinJsBrowserTestDsl {
      *
      * Use this task to post-process bundle output when needed.
      */
-    val bundleTask: TaskProvider<out BundleKotlinJsTestsTask>
+    val defaultBundleTask: TaskProvider<out BundleKotlinJsTestsTask>
 
     /**
      * Default location of bundled and ready to execute JS tests produced from Kotlin JS test compilation.
