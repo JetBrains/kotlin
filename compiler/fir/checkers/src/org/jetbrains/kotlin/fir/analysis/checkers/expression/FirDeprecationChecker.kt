@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.isDisabled
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeCallToDeprecatedOverrideOfHidden
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeResolvedToCompanionObjectWasRecentlyFixed
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.scopes.impl.typeAliasConstructorInfo
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -309,7 +310,13 @@ object FirDeprecatedQualifierChecker : FirResolvedQualifierChecker(MppCheckerKin
             // for the typealias symbol (in FirDeprecationChecker).
             // Below we check "the last transition".
             val companionSymbol = symbol.fullyExpandedClass()?.resolvedCompanionObjectSymbol ?: return
-            FirDeprecationChecker.reportApiStatusIfNeeded(expression.source, companionSymbol)
+            FirDeprecationChecker.reportApiStatusIfNeeded(
+                expression.source,
+                companionSymbol,
+                migrationLF = LanguageFeature.ReportDeprecatedCompanionInDelegation.takeIf {
+                    ConeResolvedToCompanionObjectWasRecentlyFixed in expression.nonFatalDiagnostics
+                }
+            )
         }
     }
 }
