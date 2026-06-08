@@ -544,6 +544,18 @@ public class OutOfContentRootGetOrBuildFirTestGenerated extends AbstractOutOfCon
     }
 
     @Test
+    @TestMetadata("assignOnObject.kt")
+    public void testAssignOnObject() {
+      run("assignOnObject.kt");
+    }
+
+    @Test
+    @TestMetadata("assignOnObject_lhs.kt")
+    public void testAssignOnObject_lhs() {
+      run("assignOnObject_lhs.kt");
+    }
+
+    @Test
     @TestMetadata("callArgument.kt")
     public void testCallArgument() {
       run("callArgument.kt");

@@ -1196,6 +1196,12 @@ public class SourceLikeResolveCandidatesByFileFirTreeConsistencyTestGenerated ex
     }
 
     @Test
+    @TestMetadata("assignOnObject.kt")
+    public void testAssignOnObject() {
+      run("assignOnObject.kt");
+    }
+
+    @Test
     @TestMetadata("augmentedAssignment.kt")
     public void testAugmentedAssignment() {
       run("augmentedAssignment.kt");

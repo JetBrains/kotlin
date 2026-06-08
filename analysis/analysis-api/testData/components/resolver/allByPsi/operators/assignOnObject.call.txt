@@ -1,0 +1,233 @@
+KtFile: 'assignOnObject.kt'
+  null
+
+KtPackageDirective(0,11): 'package one'
+  null
+
+KtNameReferenceExpression(8,11): 'one'
+  null
+
+KtImportList(11,11): ''
+  null
+
+KtObjectDeclaration(13,123): 'object ClientTransaction {'
+  null
+
+KtClassBody(38,123): '{'
+  null
+
+KtNamedFunction(44,78): 'operator fun plusAssign(a: Int) {}'
+  null
+
+KtDeclarationModifierList(44,52): 'operator'
+  null
+
+KtParameterList(67,75): '(a: Int)'
+  null
+
+KtParameter(68,74): 'a: Int'
+  null
+
+KtTypeReference(71,74): 'Int'
+  null
+
+KtUserType(71,74): 'Int'
+  null
+
+KtNameReferenceExpression(71,74): 'Int'
+  null
+
+KtBlockExpression(76,78): '{}'
+  null
+
+KtNamedFunction(83,121): 'operator fun minusAssign(b: String) {}'
+  null
+
+KtDeclarationModifierList(83,91): 'operator'
+  null
+
+KtParameterList(107,118): '(b: String)'
+  null
+
+KtParameter(108,117): 'b: String'
+  null
+
+KtTypeReference(111,117): 'String'
+  null
+
+KtUserType(111,117): 'String'
+  null
+
+KtNameReferenceExpression(111,117): 'String'
+  null
+
+KtBlockExpression(119,121): '{}'
+  null
+
+KtNamedFunction(125,198): 'fun main() {'
+  null
+
+KtParameterList(133,135): '()'
+  null
+
+KtBlockExpression(136,198): '{'
+  null
+
+KtBinaryExpression(142,165): 'ClientTransaction += 10'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.plusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(142,159): 'ClientTransaction'
+  null
+
+KtOperationReferenceExpression(160,162): '+='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.plusAssign(<dispatch receiver>: one.ClientTransaction, a: kotlin.Int): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = a
+            receiverType = null
+            returnType = kotlin.Int
+            symbol = a: kotlin.Int
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.plusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        10 -> (KaVariableSignature:
+          name = a
+          receiverType = null
+          returnType = kotlin.Int
+          symbol = a: kotlin.Int
+          contextParameters = []
+          callableId = null)
+      }
+
+KtConstantExpression(163,165): '10'
+  null
+
+KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
+  KaCallResolutionSuccess:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.minusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtNameReferenceExpression(170,187): 'ClientTransaction'
+  null
+
+KtOperationReferenceExpression(188,190): '-='
+  KaSuccessCallInfo:
+    call = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = KaExplicitReceiverValue:
+        expression = ClientTransaction
+        isSafeNavigation = false
+        type = one.ClientTransaction
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = kotlin.Unit
+        symbol = one/ClientTransaction.minusAssign(<dispatch receiver>: one.ClientTransaction, b: kotlin.String): kotlin.Unit
+        valueParameters = [
+          KaVariableSignature:
+            name = b
+            receiverType = null
+            returnType = kotlin.String
+            symbol = b: kotlin.String
+            contextParameters = []
+            callableId = null
+        ]
+        contextParameters = []
+        callableId = one/ClientTransaction.minusAssign
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {
+        "foo" -> (KaVariableSignature:
+          name = b
+          receiverType = null
+          returnType = kotlin.String
+          symbol = b: kotlin.String
+          contextParameters = []
+          callableId = null)
+      }
+
+KtStringTemplateExpression(191,196): '"foo"'
+  null
+
+KtLiteralStringTemplateEntry(192,195): 'foo'
+  null
