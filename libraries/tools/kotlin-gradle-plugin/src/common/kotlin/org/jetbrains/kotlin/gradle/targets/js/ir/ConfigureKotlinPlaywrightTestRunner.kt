@@ -59,7 +59,7 @@ internal val ConfigureKotlinPlaywrightTestRunner = KotlinTargetSideEffect { targ
             // TODO: KT-86707 Report warning if test framework was set with something else.
             testTask.testFramework = KotlinPlaywrightJsTestFramework(
                 compilation = testCompilation,
-                frameworkGradleInputObject = inputs,
+                frameworkTaskInputs = inputs,
                 objects = objects,
             )
         }
