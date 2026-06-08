@@ -109,7 +109,10 @@ KtBinaryExpression(142,165): 'ClientTransaction += 10'
 KtNameReferenceExpression(142,159): 'ClientTransaction'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction
+    ]
 
 KtOperationReferenceExpression(160,162): '+='
   isImplicitReferenceToCompanion: false
@@ -131,7 +134,10 @@ KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
 KtNameReferenceExpression(170,187): 'ClientTransaction'
   isImplicitReferenceToCompanion: false
   usesContextSensitiveResolution: false
-  null
+  KaSymbolResolutionSuccess:
+    symbols = [
+      one/ClientTransaction
+    ]
 
 KtOperationReferenceExpression(188,190): '-='
   isImplicitReferenceToCompanion: false

@@ -111,7 +111,23 @@ KtBinaryExpression(142,165): 'ClientTransaction += 10'
     isInBestCandidates = true
 
 KtNameReferenceExpression(142,159): 'ClientTransaction'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.ClientTransaction
+        symbol = <constructor>(): one.ClientTransaction
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtOperationReferenceExpression(160,162): '+='
   KaApplicableCallCandidateInfo:
@@ -191,7 +207,23 @@ KtBinaryExpression(170,196): 'ClientTransaction -= "foo"'
     isInBestCandidates = true
 
 KtNameReferenceExpression(170,187): 'ClientTransaction'
-  NO_CANDIDATES
+  KaInapplicableCallCandidate:
+    candidate = KaSimpleFunctionCall:
+      contextArgumentMapping = {}
+      contextArguments = []
+      dispatchReceiver = null
+      extensionReceiver = null
+      signature = KaFunctionSignature:
+        receiverType = null
+        returnType = one.ClientTransaction
+        symbol = <constructor>(): one.ClientTransaction
+        valueParameters = []
+        contextParameters = []
+        callableId = null
+      typeArgumentsMapping = {}
+      valueArgumentMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
 
 KtOperationReferenceExpression(188,190): '-='
   KaApplicableCallCandidateInfo:

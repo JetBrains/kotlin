@@ -328,10 +328,26 @@ internal open class FirElementsRecorder : FirVisitor<Unit, MutableMap<KtElement,
             }
         }
 
-        // After desugaring, we also have FirBlock with the same source element.
-        // We need to filter it out to map this source element to set/plusAssign call, so we check `is FirFunctionCall`
+        /**
+         * After desugaring, we also have FirBlock with the same source element.
+         * We need to filter it out to map this source element to set/plusAssign call, so we check `is FirFunctionCall`.
+         *
+         * **Note:** even real source elements might be marked as fake ones.
+
+         * ```kotlin
+         * object ClientTransaction {
+         *     operator fun plusAssign(a: Int) {}
+         * }
+         *
+         * fun main() {
+         *     ClientTransaction += 10
+         * }
+         * ```
+         *
+         * Here `ClientTransaction` is marked as `DesugaredAugmentedAssign` even though it is a real source element ([FirResolvedQualifier]).
+         */
         private fun KtSourceElement.isSourceForArrayAugmentedAssign(fir: FirElement): Boolean {
-            return kind is KtFakeSourceElementKind.DesugaredAugmentedAssign && (fir is FirFunctionCall || fir is FirThisReceiverExpression)
+            return kind is KtFakeSourceElementKind.DesugaredAugmentedAssign && (fir is FirFunctionCall || fir is FirThisReceiverExpression || fir is FirResolvedQualifier)
         }
 
         // `FirSmartCastExpression` forward the source from the original expression,
