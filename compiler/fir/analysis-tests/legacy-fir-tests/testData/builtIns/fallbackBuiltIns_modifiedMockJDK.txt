@@ -1487,6 +1487,20 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
 
 }
 
+@R|kotlin/annotation/Target|(allowedTargets = <collectionLiteralCall>(kotlin/annotation/AnnotationTarget.VALUE_PARAMETER)) @R|kotlin/annotation/Retention|(value = kotlin/annotation/AnnotationRetention.BINARY) @R|kotlin/SinceKotlin|(version = String(2.5)) public final annotation class RestrictedTo : R|kotlin/Annotation| {
+    public final val bound: R|kotlin/reflect/KClass<*>|
+        public get(): R|kotlin/reflect/KClass<*>|
+
+    public open operator fun equals(other: R|kotlin/Any?|): R|kotlin/Boolean|
+
+    public open fun hashCode(): R|kotlin/Int|
+
+    public open fun toString(): R|kotlin/String|
+
+    public constructor(bound: R|kotlin/reflect/KClass<*>|): R|kotlin/RestrictedTo|
+
+}
+
 public final class Short : R|kotlin/Number|, R|kotlin/Comparable<kotlin/Short>|, R|java/io/Serializable| {
     @R|kotlin/internal/IntrinsicConstEvaluation|() public final operator fun compareTo(other: R|kotlin/Byte|): R|kotlin/Int|
 
