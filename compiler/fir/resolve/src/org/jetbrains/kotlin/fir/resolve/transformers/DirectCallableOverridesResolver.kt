@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.resolve.transformers
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
 import org.jetbrains.kotlin.fir.containingClassLookupTag
-import org.jetbrains.kotlin.fir.declarations.FirCallableDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirNamedFunction
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
@@ -22,22 +21,26 @@ import org.jetbrains.kotlin.fir.scopes.ProcessorAction
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenFunctions
 import org.jetbrains.kotlin.fir.scopes.processDirectlyOverriddenProperties
 import org.jetbrains.kotlin.fir.scopes.unsubstitutedScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirIntersectionCallableSymbol
+import org.jetbrains.kotlin.fir.unwrapFakeOverrides
 
 class DirectCallableOverridesResolver(
     override val session: FirSession,
     override val scopeSession: ScopeSession
 ) : SessionAndScopeSessionHolder {
 
-    private fun FirCallableDeclaration.containingClassScope(): FirTypeScope? {
+    private fun FirCallableSymbol<*>.containingClassScope(): FirTypeScope? {
         val containingClass = containingClassLookupTag()?.toClassSymbol() ?: return null
+        // Do not force type calculation! It is possible that the implicit type body resolution calculates the return type ref
+        // of overridden callables as FirImplicitTypeRefImplWithoutSource
         return containingClass.unsubstitutedScope(withForcedTypeCalculator = true, memberRequiredPhase = FirResolvePhase.STATUS)
     }
 
     fun resolveNamedFunction(namedFunction: FirNamedFunction) {
         if (!namedFunction.isOverride) return
-        val containingClassScope = namedFunction.containingClassScope() ?: return
-        val functionSymbol = namedFunction.symbol
+        val functionSymbol = namedFunction.symbol.unwrapFakeOverrides()
+        val containingClassScope = functionSymbol.containingClassScope() ?: return
         // Prewarm the use-site scope
         containingClassScope.processFunctionsByName(namedFunction.name) {}
         containingClassScope.processDirectlyOverriddenFunctions(functionSymbol) { overriddenSymbol ->
@@ -53,8 +56,8 @@ class DirectCallableOverridesResolver(
 
     fun resolveProperty(property: FirProperty) {
         if (!property.isOverride) return
-        val containingClassScope = property.containingClassScope() ?: return
-        val propertySymbol = property.symbol
+        val propertySymbol = property.symbol.unwrapFakeOverrides()
+        val containingClassScope = propertySymbol.containingClassScope() ?: return
         // Prewarm the use-site scope
         containingClassScope.processPropertiesByName(property.name) {}
         containingClassScope.processDirectlyOverriddenProperties(propertySymbol) { overriddenSymbol ->
