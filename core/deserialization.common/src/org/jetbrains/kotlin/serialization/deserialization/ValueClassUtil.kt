@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.serialization.deserialization
 
 import org.jetbrains.kotlin.descriptors.FullValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.InlineClassRepresentation
-import org.jetbrains.kotlin.descriptors.JvmInlineMultiFieldValueClassRepresentation
 import org.jetbrains.kotlin.descriptors.ValueClassRepresentation
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -15,7 +14,6 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.types.model.RigidTypeMarker
 
 fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
-    tryLoadJvmInlineMultiFieldValueClass: Boolean,
     tryLoadFullValueClass: Boolean,
     nameResolver: NameResolver,
     typeTable: TypeTable,
@@ -46,15 +44,6 @@ fun <T : RigidTypeMarker> ProtoBuf.Class.loadValueClassRepresentation(
             ?: typeOfPublicProperty(propertyName)
             ?: error("cannot determine underlying type for value class ${nameResolver.getName(fqName)} with property $propertyName")
         return InlineClassRepresentation(propertyName, propertyType)
-    }
-
-    // Value classes without inline_class_underlying_property_name are treated as multi-field value classes, but only on JVM and if the
-    // metadata version is large enough (1.5.1+), because we must be able to load inline classes compiled with earlier versions correctly.
-    if (tryLoadJvmInlineMultiFieldValueClass && Flags.IS_VALUE_CLASS.get(flags)) {
-        val primaryConstructor = constructorList.singleOrNull { !Flags.IS_SECONDARY.get(it.flags) } ?: return null
-        return JvmInlineMultiFieldValueClassRepresentation(primaryConstructor.valueParameterList.map {
-            nameResolver.getName(it.name) to typeDeserializer(it.type(typeTable))
-        })
     }
 
     return null

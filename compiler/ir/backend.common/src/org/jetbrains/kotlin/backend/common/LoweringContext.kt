@@ -23,8 +23,6 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.reportLog
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFactory
-import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 
 /**
  * A context that is used to pass data to both first (before IR serialization) and second (after IR deserialization) stage compiler
@@ -39,12 +37,5 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
 
     override fun log(message: String) {
         configuration.reportLog(message)
-    }
-
-    fun remapMultiFieldValueClassStructure(
-        oldFunction: IrFunction,
-        newFunction: IrFunction,
-        parametersMappingOrNull: Map<IrValueParameter, IrValueParameter>?,
-    ) {
     }
 }

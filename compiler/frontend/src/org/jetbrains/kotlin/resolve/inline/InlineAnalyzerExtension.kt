@@ -182,7 +182,6 @@ class InlineAnalyzerExtension(
         ) return
 
         if (reasonableInlineRules.any { it.isInlineReasonable(functionDescriptor, function, trace.bindingContext) }) return
-        if (functionDescriptor.returnType?.needsMfvcFlattening() == true) return
 
         val reportOn = function.modifierList?.getModifier(KtTokens.INLINE_KEYWORD) ?: function
         trace.report(Errors.NOTHING_TO_INLINE.on(reportOn))

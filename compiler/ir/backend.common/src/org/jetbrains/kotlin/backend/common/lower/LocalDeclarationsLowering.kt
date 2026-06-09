@@ -867,9 +867,6 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-            val parametersMapping = (oldDeclaration.parameters zip transformedParameters).toMap()
-            context.remapMultiFieldValueClassStructure(oldDeclaration, newDeclaration, parametersMapping)
-
             val generatedNames = mutableSetOf<String>()
             val parametersForCapturedValues = capturedValues.map { capturedValue ->
                 val p = capturedValue.owner
@@ -903,7 +900,6 @@ open class LocalDeclarationsLowering(
         }
 
         private fun IrFunction.recordTransformedValueParameters(localContext: LocalContextWithClosureAsParameters) {
-
             parameters.forEach {
                 val capturedValue = newParameterToCaptured[it]
                 if (capturedValue != null) {
@@ -917,7 +913,6 @@ open class LocalDeclarationsLowering(
                     oldParameterToNew.putAbsentOrSame(oldParameter, it)
                 }
             }
-
         }
 
         private fun createTransformedConstructorDeclaration(constructorContext: LocalClassConstructorContext) {

@@ -43,18 +43,16 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
             if (!isFullValueClassSupportEnabled) {
                 // only report if value keyword exists, this ignores the deprecated inline class syntax
                 val keyword = declaration.getModifier(KtTokens.VALUE_KEYWORD)!!.source
-                val primaryConstructorParameterCount = declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.size
-                val jvmInlineMultiFieldValueClassesEnabled = LanguageFeature.JvmInlineMultiFieldValueClasses.isEnabled()
-                when {
+                when (declaration.primaryConstructorIfAny(context.session)?.valueParameterSymbols?.size) {
                     // should not advise switching to Full Value Classes, that would NOT help
-                    primaryConstructorParameterCount == null || primaryConstructorParameterCount == 0 -> {
+                    null, 0 -> {
                         reporter.reportOn(keyword, FirJvmErrors.VALUE_CLASS_WITHOUT_JVM_INLINE_ANNOTATION)
                     }
 
                     // should advise switching to Full Value Classes, that would help
-                    // However, if the parameter number exceeds 1 and jvmInlineMultiFieldValueClassesEnabled is off,
+                    // However, if the parameter number exceeds 1,
                     // [FirValueClassDeclarationChecker] will report the diagnostic in multi-platform way itself.
-                    primaryConstructorParameterCount == 1 || jvmInlineMultiFieldValueClassesEnabled -> {
+                    1 -> {
                         reporter.reportOn(
                             keyword,
                             FirErrors.UNSUPPORTED_FEATURE,
@@ -64,7 +62,7 @@ object FirJvmInlineApplicabilityChecker : FirRegularClassChecker(MppCheckerKind.
 
                     // The complexity appears because in this left case there are both reasons to advise switching to full value classes:
                     // - Missing @JvmInline
-                    // - Multiple parameters, having no [LanguageFeature.JvmInlineMultiFieldValueClasses]
+                    // - Multiple parameters
                 }
             }
         }

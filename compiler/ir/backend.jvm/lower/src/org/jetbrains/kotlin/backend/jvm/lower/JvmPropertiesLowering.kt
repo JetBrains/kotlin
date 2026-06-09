@@ -223,7 +223,7 @@ internal class JvmPropertiesLowering(
                     val getter = property.getter
                     if (getter != null) {
                         val needsMangling =
-                            getter.nonDispatchParameters.any { it.type.getRequiresMangling(includeInline = true, includeMFVC = false) } ||
+                            getter.nonDispatchParameters.any { it.type.getRequiresMangling() } ||
                                     (config.functionsWithInlineClassReturnTypesMangled && getter.hasMangledReturnType)
                         val mangled = if (needsMangling) inlineClassReplacements.getReplacementFunction(getter) else null
                         defaultMethodSignatureMapper.mapFunctionName(mangled ?: getter)

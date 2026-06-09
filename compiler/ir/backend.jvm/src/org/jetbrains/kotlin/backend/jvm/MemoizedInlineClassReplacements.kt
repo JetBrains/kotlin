@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import org.jetbrains.kotlin.backend.jvm.ir.*
+import org.jetbrains.kotlin.backend.jvm.ir.isStaticInlineClassReplacement
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapper
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -49,8 +50,7 @@ class MemoizedInlineClassReplacements(
                 // Don't mangle anonymous or synthetic functions, except for generated SAM wrapper methods
                 (it.isLocal && it is IrSimpleFunction && it.overriddenSymbols.isEmpty()) ||
                         (it.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR && it.visibility == DescriptorVisibilities.LOCAL) ||
-                        it.isStaticValueClassReplacement ||
-                        it.origin == JvmLoweredDeclarationOrigin.MULTI_FIELD_VALUE_CLASS_GENERATED_IMPL_METHOD ||
+                        it.isStaticInlineClassReplacement ||
                         it.origin.isSynthetic && it.origin != IrDeclarationOrigin.SYNTHETIC_GENERATED_SAM_IMPLEMENTATION ->
                     null
 
@@ -94,13 +94,10 @@ class MemoizedInlineClassReplacements(
         }
 
     private val IrSimpleFunction.needsReplacement: Boolean
-        get() {
-            if (!(shouldBeExposedByAnnotationOrFlag(context) ||
-                        hasMangledParameters(includeMFVC = false) ||
-                        mangleReturnTypes && hasMangledReturnType)
-            ) return false
-            if (isFromJava()) return mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
-            return true
+        get() = when {
+            !(shouldBeExposedByAnnotationOrFlag(context) || hasMangledParameters() || mangleReturnTypes && hasMangledReturnType) -> false
+            isFromJava() -> mangleCallsToJavaMethodsWithValueClasses && !overridesOnlyMethodsFromJava()
+            else -> true
         }
 
     /**
@@ -148,7 +145,7 @@ class MemoizedInlineClassReplacements(
         return specializedEqualsCache.computeIfAbsent(irClass) {
             irFactory.buildFun {
                 name = InlineClassDescriptorResolver.SPECIALIZED_EQUALS_NAME
-                // TODO: Revisit this once we allow user defined equals methods in inline/multi-field value classes.
+                // TODO: Revisit this once we allow user defined equals methods in inline classes.
                 origin = JvmLoweredDeclarationOrigin.INLINE_CLASS_GENERATED_IMPL_METHOD
                 returnType = irBuiltIns.booleanType
             }.apply {
@@ -184,7 +181,6 @@ class MemoizedInlineClassReplacements(
                     it.defaultValue = parameter.defaultValue?.patchDeclarationParents(this)
                 }
             }
-            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
     override fun createStaticReplacement(function: IrFunction): IrSimpleFunction =
@@ -226,8 +222,6 @@ class MemoizedInlineClassReplacements(
                     }
                 }
             }
-
-            context.remapMultiFieldValueClassStructure(function, this, parametersMappingOrNull = null)
         }
 
     private fun buildReplacement(
@@ -270,7 +264,7 @@ class MemoizedInlineClassReplacements(
             else ->
                 replacementOrigin
         }
-        name = InlineClassAbi.mangledNameFor(context, function, mangleReturnTypes, useOldManglingScheme)
+        name = InlineClassAbi.mangledNameFor(function, mangleReturnTypes, useOldManglingScheme)
     }
 
     // When we expose regular class constructors, we add another constructor with BoxingMarker parameter

@@ -35,7 +35,7 @@ fun requiresFunctionNameManglingForParameterTypes(descriptor: CallableMemberDesc
 fun requiresFunctionNameManglingForReturnType(descriptor: CallableMemberDescriptor): Boolean {
     if (descriptor.containingDeclaration !is ClassDescriptor) return false
     val returnType = descriptor.returnType ?: return false
-    return returnType.isInlineClassType() || returnType.isTypeParameterWithUpperBoundThatRequiresMangling(includeMfvc = false)
+    return returnType.isInlineClassType() || returnType.isTypeParameterWithUpperBoundThatRequiresMangling()
 }
 
 @K1Deprecation
@@ -44,15 +44,15 @@ fun DeclarationDescriptor.isValueClassThatRequiresMangling(): Boolean =
 
 @K1Deprecation
 fun KotlinType.isValueClassThatRequiresMangling() =
-    constructor.declarationDescriptor?.let { it.isInlineClass() && it.isValueClassThatRequiresMangling() || needsMfvcFlattening() } == true
+    constructor.declarationDescriptor?.let { it.isInlineClass() && it.isValueClassThatRequiresMangling() } == true
 
 private fun KotlinType.requiresFunctionNameManglingInParameterTypes() =
-    isValueClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling(includeMfvc = true)
+    isValueClassThatRequiresMangling() || isTypeParameterWithUpperBoundThatRequiresMangling()
 
 private fun isDontMangleClass(classDescriptor: ClassDescriptor) =
     classDescriptor.fqNameSafe == StandardNames.RESULT_FQ_NAME
 
-private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(includeMfvc: Boolean): Boolean {
+private fun KotlinType.isTypeParameterWithUpperBoundThatRequiresMangling(): Boolean {
     val descriptor = constructor.declarationDescriptor as? TypeParameterDescriptor ?: return false
-    return (includeMfvc || !descriptor.isMultiFieldValueClass()) && descriptor.representativeUpperBound.requiresFunctionNameManglingInParameterTypes()
+    return descriptor.representativeUpperBound.requiresFunctionNameManglingInParameterTypes()
 }

@@ -52,7 +52,6 @@ interface IrDeclarationOrigin {
         val REPL_FROM_OTHER_SNIPPET by IrDeclarationOriginImpl.Regular
         val GENERATED_DATA_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
-        val GENERATED_MULTI_FIELD_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val GENERATED_FULL_VALUE_CLASS_MEMBER by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION by IrDeclarationOriginImpl.Regular
         val LOCAL_FUNCTION_FOR_LAMBDA by IrDeclarationOriginImpl.Regular

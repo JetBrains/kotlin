@@ -219,7 +219,6 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             isFakeOverride = false,
             copyMetadata = false,
             typeParametersFromContext = extractTypeParameters(irFunction.parentAsClass),
-            remapMultiFieldValueClassStructure = context::remapMultiFieldValueClassStructure
         )
         static.body = irFunction.moveBodyTo(static)
         // Fixup dispatch parameter to outer class
@@ -338,7 +337,6 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                     }.apply {
                         copyAnnotationsFrom(view)
                         copyFunctionSignatureFrom(view)
-                        context.remapMultiFieldValueClassStructure(view, this, parametersMappingOrNull = null)
                         copyAttributes(view)
                         generateErrorForInlineBody()
                         originalOfSuspendForInline = view
@@ -445,11 +443,6 @@ private fun IrSimpleFunction.createSuspendFunctionStub(context: JvmBackendContex
         function.parameters = function.parameters.take(index) +
                 continuationParameter +
                 function.parameters.drop(index)
-
-        context.remapMultiFieldValueClassStructure(
-            this, function,
-            parametersMappingOrNull = parameters.zip(function.parameters.filter { it != continuationParameter }).toMap()
-        )
 
         function.overriddenSymbols += overriddenSymbols.map { it.owner.suspendFunctionViewOrStub(context).symbol }
     }

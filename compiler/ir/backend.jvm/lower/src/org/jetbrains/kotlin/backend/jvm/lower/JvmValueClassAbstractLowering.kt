@@ -232,10 +232,6 @@ internal abstract class JvmValueClassAbstractLowering(
 
     protected abstract fun addBindingsFor(original: IrFunction, replacement: IrFunction)
 
-    protected enum class SpecificMangle { Inline, MultiField }
-
-    protected abstract val specificMangle: SpecificMangle
-
     private fun createBridgeFunction(
         function: IrSimpleFunction,
         replacement: IrSimpleFunction,
@@ -245,7 +241,6 @@ internal abstract class JvmValueClassAbstractLowering(
             replacement,
             when {
                 function.isValueClassTypedEquals -> InlineClassAbi.mangledNameFor(
-                    context,
                     function,
                     mangleReturnTypes = false,
                     useOldMangleRules = false
@@ -283,11 +278,9 @@ internal abstract class JvmValueClassAbstractLowering(
 
     private fun IrSimpleFunction.signatureRequiresMangling(): Boolean {
         if (shouldBeExposedByAnnotationOrFlag(context)) return false
-        val includeInline = specificMangle == SpecificMangle.Inline
-        val includeMFVC = specificMangle == SpecificMangle.MultiField
-        return nonDispatchParameters.any { it.type.getRequiresMangling(includeInline, includeMFVC) } ||
+        return nonDispatchParameters.any { it.type.getRequiresMangling() } ||
                 context.config.functionsWithInlineClassReturnTypesMangled &&
-                returnType.getRequiresMangling(includeInline, includeMFVC = false)
+                returnType.getRequiresMangling()
     }
 
 

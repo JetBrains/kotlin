@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.common.phaser.PhasePrerequisites
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
-import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.functions.BuiltInFunctionArity
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -100,10 +99,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
                 val overridesInvoke = function.overriddenSymbols.any { symbol ->
                     symbol.owner.name.asString() == "invoke"
                 }
-                overridesInvoke && function.nonDispatchParameters.size == superType.arguments.sumOf {
-                    if (it.typeOrNull?.needsMfvcFlattening() != true) 1
-                    else context.multiFieldValueClassReplacements.getRootMfvcNode(it.typeOrNull!!.erasedUpperBound).leavesCount
-                } - if (function.isSuspend) 0 else 1
+                overridesInvoke && function.nonDispatchParameters.size == superType.arguments.size - if (function.isSuspend) 0 else 1
             }
             invokeFunction.overriddenSymbols = emptyList()
             declaration.addBridge(invokeFunction, functionNInvokeFun.owner)

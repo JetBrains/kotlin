@@ -112,8 +112,6 @@ internal class JvmInlineClassLowering(context: JvmBackendContext) : JvmValueClas
 
     override fun IrClass.isSpecificLoweringLogicApplicable(): Boolean = isSingleFieldValueClass
 
-    override val specificMangle: SpecificMangle
-        get() = SpecificMangle.Inline
     override fun visitClassNewDeclarationsWhenParallel(declaration: IrDeclaration) = Unit
 
     override fun visitClassNew(declaration: IrClass): IrClass {
