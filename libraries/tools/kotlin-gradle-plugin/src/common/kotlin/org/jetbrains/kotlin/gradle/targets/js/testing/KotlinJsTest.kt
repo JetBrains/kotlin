@@ -64,7 +64,7 @@ internal constructor(
     @get:Optional
     @Suppress("unused")
     internal val testFrameworkInputs: Any?
-        get() = testFramework?.frameworkGradleInputObject
+        get() = testFramework?.frameworkTaskInputs
 
     @PathSensitive(PathSensitivity.ABSOLUTE)
     @InputFile

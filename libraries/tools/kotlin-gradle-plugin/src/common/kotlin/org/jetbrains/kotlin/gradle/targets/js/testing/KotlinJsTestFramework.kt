@@ -27,7 +27,7 @@ interface KotlinJsTestFramework : RequiresNpmDependencies {
     ): TestExecutionSpec
 
     /** Will be assigned to task property with @[org.gradle.api.tasks.Nested] annotation. So it must comply with its requirements */
-    val frameworkGradleInputObject: Any?
+    val frameworkTaskInputs: Any?
         get() = null
 
     /**  */

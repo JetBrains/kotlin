@@ -13,7 +13,6 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
-import org.gradle.api.tasks.Optional
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClient
 import org.jetbrains.kotlin.gradle.internal.testing.TCServiceMessagesClientSettings
 import org.jetbrains.kotlin.gradle.targets.js.RequiredKotlinJsDependency
@@ -36,7 +35,7 @@ import kotlin.time.toKotlinDuration
  */
 internal class KotlinPlaywrightJsTestFramework(
     @Transient override val compilation: KotlinJsIrCompilation,
-    override val frameworkGradleInputObject: Inputs,
+    override val frameworkTaskInputs: Inputs,
     private val objects: ObjectFactory,
 ) : KotlinJsTestFramework {
 
@@ -109,13 +108,13 @@ internal class KotlinPlaywrightJsTestFramework(
         ).toList()
 
         val pwRunners = buildList {
-            frameworkGradleInputObject.chromiumRunners.get().forEach {
+            frameworkTaskInputs.chromiumRunners.get().forEach {
                 add(it.createPwRunnerSpec(PwBrowserKind.CHROMIUM, cliArgs))
             }
-            frameworkGradleInputObject.firefoxRunners.get().forEach {
+            frameworkTaskInputs.firefoxRunners.get().forEach {
                 add(it.createPwRunnerSpec(PwBrowserKind.FIREFOX, cliArgs))
             }
-            frameworkGradleInputObject.webkitRunners.get().forEach {
+            frameworkTaskInputs.webkitRunners.get().forEach {
                 add(it.createPwRunnerSpec(PwBrowserKind.WEBKIT, cliArgs))
             }
         }
