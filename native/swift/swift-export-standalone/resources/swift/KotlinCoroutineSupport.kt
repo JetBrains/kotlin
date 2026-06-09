@@ -17,7 +17,7 @@ fun Job.alsoCancel(another: Job) {
     // hence onCancelling=true
     this.invokeOnCompletion(onCancelling = true) {
         if (it is CancellationException) {
-            another.cancel()
+            another.cancel(it)
         }
     }
 }
@@ -54,7 +54,7 @@ class SwiftJob private constructor(
             }
         }
         if (cancellationCallback(false)) {
-            backingJob.cancel()
+            cancelExternally()
         }
     }
 
@@ -73,7 +73,7 @@ public fun <T> swiftCoroutine(
         try {
             continuation(block())
         } catch (error: CancellationException) {
-            cancellation.cancel()
+            cancellation.cancel(error)
             exception(null)
             throw error
         } catch (error: Throwable) {
