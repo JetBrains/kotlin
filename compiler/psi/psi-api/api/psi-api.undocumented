@@ -1834,6 +1834,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.isVar
 org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
+org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.JS_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
 org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName.fqName
 org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub

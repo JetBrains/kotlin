@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.metadata.java.JavaClassProtoBuf
-import org.jetbrains.kotlin.metadata.js.JsProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.serialization.Interner
 import org.jetbrains.kotlin.name.ClassId
@@ -63,11 +62,6 @@ open class ProtoCompareGenerated(
             }
         }
 
-        if (old.hasExtension(JsProtoBuf.packageFqName) != new.hasExtension(JsProtoBuf.packageFqName)) return false
-        if (old.hasExtension(JsProtoBuf.packageFqName)) {
-            if (old.getExtension(JsProtoBuf.packageFqName) != new.getExtension(JsProtoBuf.packageFqName)) return false
-        }
-
         if (old.hasExtension(BuiltInsProtoBuf.packageFqName) != new.hasExtension(BuiltInsProtoBuf.packageFqName)) return false
         if (old.hasExtension(BuiltInsProtoBuf.packageFqName)) {
             if (old.getExtension(BuiltInsProtoBuf.packageFqName) != new.getExtension(BuiltInsProtoBuf.packageFqName)) return false
@@ -87,7 +81,6 @@ open class ProtoCompareGenerated(
         VERSION_REQUIREMENT_TABLE,
         JVM_EXT_PACKAGE_MODULE_NAME,
         JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST,
-        JS_EXT_PACKAGE_FQ_NAME,
         BUILT_INS_EXT_PACKAGE_FQ_NAME,
         KLIB_EXT_PACKAGE_FQ_NAME
     }
@@ -118,11 +111,6 @@ open class ProtoCompareGenerated(
             for(i in 0..old.getExtensionCount(JvmProtoBuf.packageLocalVariable) - 1) {
                 if (!checkEquals(old.getExtension(JvmProtoBuf.packageLocalVariable, i), new.getExtension(JvmProtoBuf.packageLocalVariable, i))) result.add(ProtoBufPackageKind.JVM_EXT_PACKAGE_LOCAL_VARIABLE_LIST)
             }
-        }
-
-        if (old.hasExtension(JsProtoBuf.packageFqName) != new.hasExtension(JsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME)
-        if (old.hasExtension(JsProtoBuf.packageFqName)) {
-            if (old.getExtension(JsProtoBuf.packageFqName) != new.getExtension(JsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.JS_EXT_PACKAGE_FQ_NAME)
         }
 
         if (old.hasExtension(BuiltInsProtoBuf.packageFqName) != new.hasExtension(BuiltInsProtoBuf.packageFqName)) result.add(ProtoBufPackageKind.BUILT_INS_EXT_PACKAGE_FQ_NAME)
@@ -225,20 +213,6 @@ open class ProtoCompareGenerated(
             if (old.getExtension(JvmProtoBuf.jvmClassFlags) != new.getExtension(JvmProtoBuf.jvmClassFlags)) return false
         }
 
-        if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.classAnnotation, i), new.getExtension(JsProtoBuf.classAnnotation, i))) return false
-            }
-        }
-
-        if (old.hasExtension(JsProtoBuf.classContainingFileId) != new.hasExtension(JsProtoBuf.classContainingFileId)) return false
-        if (old.hasExtension(JsProtoBuf.classContainingFileId)) {
-            if (old.getExtension(JsProtoBuf.classContainingFileId) != new.getExtension(JsProtoBuf.classContainingFileId)) return false
-        }
-
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateClass) != new.hasExtension(JavaClassProtoBuf.isPackagePrivateClass)) return false
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateClass)) {
             if (old.getExtension(JavaClassProtoBuf.isPackagePrivateClass) != new.getExtension(JavaClassProtoBuf.isPackagePrivateClass)) return false
@@ -291,8 +265,6 @@ open class ProtoCompareGenerated(
         JVM_EXT_CLASS_LOCAL_VARIABLE_LIST,
         JVM_EXT_ANONYMOUS_OBJECT_ORIGIN_NAME,
         JVM_EXT_JVM_CLASS_FLAGS,
-        JS_EXT_CLASS_ANNOTATION_LIST,
-        JS_EXT_CLASS_CONTAINING_FILE_ID,
         JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS,
         BUILT_INS_EXT_CLASS_ANNOTATION_LIST,
         KLIB_EXT_CLASS_ANNOTATION_LIST
@@ -387,20 +359,6 @@ open class ProtoCompareGenerated(
             if (old.getExtension(JvmProtoBuf.jvmClassFlags) != new.getExtension(JvmProtoBuf.jvmClassFlags)) result.add(ProtoBufClassKind.JVM_EXT_JVM_CLASS_FLAGS)
         }
 
-        if (old.getExtensionCount(JsProtoBuf.classAnnotation) != new.getExtensionCount(JsProtoBuf.classAnnotation)) {
-            result.add(ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST)
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.classAnnotation, i), new.getExtension(JsProtoBuf.classAnnotation, i))) result.add(ProtoBufClassKind.JS_EXT_CLASS_ANNOTATION_LIST)
-            }
-        }
-
-        if (old.hasExtension(JsProtoBuf.classContainingFileId) != new.hasExtension(JsProtoBuf.classContainingFileId)) result.add(ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID)
-        if (old.hasExtension(JsProtoBuf.classContainingFileId)) {
-            if (old.getExtension(JsProtoBuf.classContainingFileId) != new.getExtension(JsProtoBuf.classContainingFileId)) result.add(ProtoBufClassKind.JS_EXT_CLASS_CONTAINING_FILE_ID)
-        }
-
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateClass) != new.hasExtension(JavaClassProtoBuf.isPackagePrivateClass)) result.add(ProtoBufClassKind.JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS)
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateClass)) {
             if (old.getExtension(JavaClassProtoBuf.isPackagePrivateClass) != new.getExtension(JavaClassProtoBuf.isPackagePrivateClass)) result.add(ProtoBufClassKind.JAVA_EXT_IS_PACKAGE_PRIVATE_CLASS)
@@ -491,20 +449,6 @@ open class ProtoCompareGenerated(
         if (old.hasExtension(JvmProtoBuf.lambdaClassOriginName) != new.hasExtension(JvmProtoBuf.lambdaClassOriginName)) return false
         if (old.hasExtension(JvmProtoBuf.lambdaClassOriginName)) {
             if (!checkStringEquals(old.getExtension(JvmProtoBuf.lambdaClassOriginName), new.getExtension(JvmProtoBuf.lambdaClassOriginName))) return false
-        }
-
-        if (old.getExtensionCount(JsProtoBuf.functionAnnotation) != new.getExtensionCount(JsProtoBuf.functionAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.functionAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.functionAnnotation, i), new.getExtension(JsProtoBuf.functionAnnotation, i))) return false
-            }
-        }
-
-        if (old.hasExtension(JsProtoBuf.functionContainingFileId) != new.hasExtension(JsProtoBuf.functionContainingFileId)) return false
-        if (old.hasExtension(JsProtoBuf.functionContainingFileId)) {
-            if (old.getExtension(JsProtoBuf.functionContainingFileId) != new.getExtension(JsProtoBuf.functionContainingFileId)) return false
         }
 
         if (old.hasExtension(JavaClassProtoBuf.isStaticMethod) != new.hasExtension(JavaClassProtoBuf.isStaticMethod)) return false
@@ -637,43 +581,6 @@ open class ProtoCompareGenerated(
         if (old.hasExtension(JvmProtoBuf.flags) != new.hasExtension(JvmProtoBuf.flags)) return false
         if (old.hasExtension(JvmProtoBuf.flags)) {
             if (old.getExtension(JvmProtoBuf.flags) != new.getExtension(JvmProtoBuf.flags)) return false
-        }
-
-        if (old.getExtensionCount(JsProtoBuf.propertyAnnotation) != new.getExtensionCount(JsProtoBuf.propertyAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.propertyAnnotation, i), new.getExtension(JsProtoBuf.propertyAnnotation, i))) return false
-            }
-        }
-
-        if (old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertyGetterAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.propertyGetterAnnotation, i), new.getExtension(JsProtoBuf.propertyGetterAnnotation, i))) return false
-            }
-        }
-
-        if (old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) != new.getExtensionCount(JsProtoBuf.propertySetterAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.propertySetterAnnotation, i), new.getExtension(JsProtoBuf.propertySetterAnnotation, i))) return false
-            }
-        }
-
-        if (old.hasExtension(JsProtoBuf.compileTimeValue) != new.hasExtension(JsProtoBuf.compileTimeValue)) return false
-        if (old.hasExtension(JsProtoBuf.compileTimeValue)) {
-            if (!checkEquals(old.getExtension(JsProtoBuf.compileTimeValue), new.getExtension(JsProtoBuf.compileTimeValue))) return false
-        }
-
-        if (old.hasExtension(JsProtoBuf.propertyContainingFileId) != new.hasExtension(JsProtoBuf.propertyContainingFileId)) return false
-        if (old.hasExtension(JsProtoBuf.propertyContainingFileId)) {
-            if (old.getExtension(JsProtoBuf.propertyContainingFileId) != new.getExtension(JsProtoBuf.propertyContainingFileId)) return false
         }
 
         if (old.hasExtension(JavaClassProtoBuf.isStaticField) != new.hasExtension(JavaClassProtoBuf.isStaticField)) return false
@@ -846,15 +753,6 @@ open class ProtoCompareGenerated(
 
         if (!checkEqualsTypeParameterAnnotation(old, new)) return false
 
-        if (old.getExtensionCount(JsProtoBuf.typeParameterAnnotation) != new.getExtensionCount(JsProtoBuf.typeParameterAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.typeParameterAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.typeParameterAnnotation, i), new.getExtension(JsProtoBuf.typeParameterAnnotation, i))) return false
-            }
-        }
-
         if (old.getExtensionCount(BuiltInsProtoBuf.typeParameterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.typeParameterAnnotation)) {
             return false
         }
@@ -951,15 +849,6 @@ open class ProtoCompareGenerated(
             if (old.getExtension(JvmProtoBuf.isRaw) != new.getExtension(JvmProtoBuf.isRaw)) return false
         }
 
-        if (old.getExtensionCount(JsProtoBuf.typeAnnotation) != new.getExtensionCount(JsProtoBuf.typeAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.typeAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.typeAnnotation, i), new.getExtension(JsProtoBuf.typeAnnotation, i))) return false
-            }
-        }
-
         if (old.getExtensionCount(BuiltInsProtoBuf.typeAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.typeAnnotation)) {
             return false
         }
@@ -1000,15 +889,6 @@ open class ProtoCompareGenerated(
             if (!checkEquals(old.getExtension(JvmProtoBuf.constructorSignature), new.getExtension(JvmProtoBuf.constructorSignature))) return false
         }
 
-        if (old.getExtensionCount(JsProtoBuf.constructorAnnotation) != new.getExtensionCount(JsProtoBuf.constructorAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.constructorAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.constructorAnnotation, i), new.getExtension(JsProtoBuf.constructorAnnotation, i))) return false
-            }
-        }
-
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateConstructor) != new.hasExtension(JavaClassProtoBuf.isPackagePrivateConstructor)) return false
         if (old.hasExtension(JavaClassProtoBuf.isPackagePrivateConstructor)) {
             if (old.getExtension(JavaClassProtoBuf.isPackagePrivateConstructor) != new.getExtension(JavaClassProtoBuf.isPackagePrivateConstructor)) return false
@@ -1042,15 +922,6 @@ open class ProtoCompareGenerated(
         }
 
         if (!checkEqualsEnumEntryAnnotation(old, new)) return false
-
-        if (old.getExtensionCount(JsProtoBuf.enumEntryAnnotation) != new.getExtensionCount(JsProtoBuf.enumEntryAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.enumEntryAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.enumEntryAnnotation, i), new.getExtension(JsProtoBuf.enumEntryAnnotation, i))) return false
-            }
-        }
 
         if (old.getExtensionCount(BuiltInsProtoBuf.enumEntryAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.enumEntryAnnotation)) {
             return false
@@ -1127,15 +998,6 @@ open class ProtoCompareGenerated(
         if (old.hasAnnotationParameterDefaultValue() != new.hasAnnotationParameterDefaultValue()) return false
         if (old.hasAnnotationParameterDefaultValue()) {
             if (!checkEquals(old.annotationParameterDefaultValue, new.annotationParameterDefaultValue)) return false
-        }
-
-        if (old.getExtensionCount(JsProtoBuf.parameterAnnotation) != new.getExtensionCount(JsProtoBuf.parameterAnnotation)) {
-            return false
-        }
-        else {
-            for(i in 0..old.getExtensionCount(JsProtoBuf.parameterAnnotation) - 1) {
-                if (!checkEquals(old.getExtension(JsProtoBuf.parameterAnnotation, i), new.getExtension(JsProtoBuf.parameterAnnotation, i))) return false
-            }
         }
 
         if (old.getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) != new.getExtensionCount(BuiltInsProtoBuf.parameterAnnotation)) {
@@ -2069,10 +1931,6 @@ fun ProtoBuf.Package.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) 
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.packageLocalVariable, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    if (hasExtension(JsProtoBuf.packageFqName)) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.packageFqName)
-    }
-
     if (hasExtension(BuiltInsProtoBuf.packageFqName)) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.packageFqName)
     }
@@ -2189,14 +2047,6 @@ fun ProtoBuf.Class.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) ->
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.jvmClassFlags)
     }
 
-    for(i in 0..getExtensionCount(JsProtoBuf.classAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.classAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasExtension(JsProtoBuf.classContainingFileId)) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.classContainingFileId)
-    }
-
     if (hasExtension(JavaClassProtoBuf.isPackagePrivateClass)) {
         hashCode = 31 * hashCode + getExtension(JavaClassProtoBuf.isPackagePrivateClass).hashCode()
     }
@@ -2287,14 +2137,6 @@ fun ProtoBuf.Function.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasExtension(JvmProtoBuf.lambdaClassOriginName)) {
         hashCode = 31 * hashCode + stringIndexes(getExtension(JvmProtoBuf.lambdaClassOriginName))
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.functionAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.functionAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasExtension(JsProtoBuf.functionContainingFileId)) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.functionContainingFileId)
     }
 
     if (hasExtension(JavaClassProtoBuf.isStaticMethod)) {
@@ -2423,26 +2265,6 @@ fun ProtoBuf.Property.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int)
 
     if (hasExtension(JvmProtoBuf.flags)) {
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.flags)
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.propertyAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.propertyGetterAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyGetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.propertySetterAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertySetterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasExtension(JsProtoBuf.compileTimeValue)) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.compileTimeValue).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    if (hasExtension(JsProtoBuf.propertyContainingFileId)) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.propertyContainingFileId)
     }
 
     if (hasExtension(JavaClassProtoBuf.isStaticField)) {
@@ -2581,10 +2403,6 @@ fun ProtoBuf.TypeParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: 
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    for(i in 0..getExtensionCount(JsProtoBuf.typeParameterAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.typeParameterAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.typeParameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -2663,10 +2481,6 @@ fun ProtoBuf.Type.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int) -> 
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.isRaw).hashCode()
     }
 
-    for(i in 0..getExtensionCount(JsProtoBuf.typeAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.typeAnnotation) - 1) {
         hashCode = 31 * hashCode + getExtension(BuiltInsProtoBuf.typeAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
@@ -2705,10 +2519,6 @@ fun ProtoBuf.Constructor.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (I
         hashCode = 31 * hashCode + getExtension(JvmProtoBuf.constructorSignature).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
-    for(i in 0..getExtensionCount(JsProtoBuf.constructorAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.constructorAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
     if (hasExtension(JavaClassProtoBuf.isPackagePrivateConstructor)) {
         hashCode = 31 * hashCode + getExtension(JavaClassProtoBuf.isPackagePrivateConstructor).hashCode()
     }
@@ -2733,10 +2543,6 @@ fun ProtoBuf.EnumEntry.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes: (Int
 
     for(i in 0..annotationCount - 1) {
         hashCode = 31 * hashCode + getAnnotation(i).hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.enumEntryAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.enumEntryAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.enumEntryAnnotation) - 1) {
@@ -2807,10 +2613,6 @@ fun ProtoBuf.ValueParameter.hashCode(stringIndexes: (Int) -> Int, fqNameIndexes:
 
     if (hasAnnotationParameterDefaultValue()) {
         hashCode = 31 * hashCode + annotationParameterDefaultValue.hashCode(stringIndexes, fqNameIndexes, typeById)
-    }
-
-    for(i in 0..getExtensionCount(JsProtoBuf.parameterAnnotation) - 1) {
-        hashCode = 31 * hashCode + getExtension(JsProtoBuf.parameterAnnotation, i).hashCode(stringIndexes, fqNameIndexes, typeById)
     }
 
     for(i in 0..getExtensionCount(BuiltInsProtoBuf.parameterAnnotation) - 1) {

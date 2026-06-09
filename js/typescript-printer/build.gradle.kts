@@ -3,7 +3,6 @@ plugins {
 }
 
 dependencies {
-    api(project(":js:js.serializer"))
     api(project(":js:typescript-export-model"))
 
     implementation(project(":core:util.runtime"))

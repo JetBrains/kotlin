@@ -22,7 +22,6 @@ dependencies {
     compileOnly(project(":compiler:util"))
     compileOnly(project(":compiler:cli-base"))
     compileOnly(project(":compiler:frontend.java"))
-    compileOnly(project(":js:js.serializer"))
     compileOnly(project(":js:js.config"))
     compileOnly(project(":kotlin-util-klib-metadata"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

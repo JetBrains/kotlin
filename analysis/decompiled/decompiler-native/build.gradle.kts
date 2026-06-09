@@ -16,8 +16,6 @@ dependencies {
     api(project(":analysis:decompiled:decompiler-to-stubs"))
     implementation(project(":kotlin-util-klib-metadata"))
 
-    implementation(project(":js:js.serializer"))
-
     compileOnly(intellijCore())
 
     testFixturesApi(platform(libs.junit.bom))
