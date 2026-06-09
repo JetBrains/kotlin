@@ -37,12 +37,25 @@ internal open class TCServiceMessagesClient(
 ) : ServiceMessageParserCallback {
     var afterMessage = false
 
-    inline fun <T> root(actions: () -> T): T {
+    inline fun <T> root(actions: RootNode.() -> T): T {
         val tsStart = System.currentTimeMillis()
         val root = RootNode()
         open(tsStart, root)
-        val result = actions()
+        val result = root.actions()
         ensureNodesClosed(root)
+        return result
+    }
+
+    fun <T> GroupNode.suite(id: String, actions: () -> T): T {
+        val tsStart = System.currentTimeMillis()
+        val group = SuiteNode(this,id)
+        open(tsStart, group)
+        val result = try {
+            actions()
+        } finally {
+            val tsEnd = System.currentTimeMillis()
+            close(tsEnd, id)
+        }
         return result
     }
 
