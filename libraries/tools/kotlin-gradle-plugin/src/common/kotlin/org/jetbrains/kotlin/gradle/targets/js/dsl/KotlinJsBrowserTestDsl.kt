@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.gradle.targets.js.dsl
 
 import org.gradle.api.Action
 import org.gradle.api.Named
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.Directory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
@@ -25,31 +25,12 @@ interface BrowserTestRunnerConfigDsl {
     /**
      * Input location pointing to a prepared JS bundle with tests and HTML page that can be opened in a browser.
      *
-     * Normally configured from output of [KotlinJsBrowserTestDsl.bundleTask] ([WebpackBundleForKotlinJsTests.outputBundleDir])
+     * Normally configured to use [KotlinJsBrowserTestDsl.defaultTestsLocation]
      *
-     * Change it to a custom bundle location to run tests from there.
+     * Change it to a custom location to run tests from there.
      * The bundle location must be compatible with underlying browser test runners.
-     *
-     * Example of configuring a custom bundle location for a chromium test runner.
-     * ```kotlin
-     * // Step 1. take original task
-     * val bundleTask = kotlin.js().browser.test.bundleTask
-     *
-     * // Step 2. create new task from output of the original bundling task
-     * val postProcessingTask = tasks.register<Copy>("postProcessingForChromium") {
-     *     from(bundleTask.outputBundleDir)
-     *     into(layout.buildDirectory.dir("post-processed-bundle"))
-     *
-     *     doLast { doSomethingWithTheBundle() }
-     * }
-     *
-     * // Step 3. configure test runner bundler directory from new task output
-     * kotlin.js().browser.test.chromium().bundleDirectory(postProcessingTask.flatMap { it.destinationDirectory })
-     * ```
-     *
-     * TODO: KT-86715 Add ability to load test.html via dev-server, so we need to allow configuring
      */
-    val bundleDirectory: DirectoryProperty
+    val testsLocation: Property<KotlinJsTestsLocation>
 
     /**
      * Configure global timeout for how long tests allow to run.
@@ -72,6 +53,25 @@ interface BrowserTestRunnerConfigDsl {
     val launchArgs: ListProperty<String>
 }
 
+/**
+ * Provides access to a prepared bundle of Kotlin JS tests.
+ *
+ * To maintain Gradle tasks' up-to-date correctness,
+ * implementations of [KotlinJsTestsLocation] must support [org.gradle.api.tasks.Nested] annotation.
+ */
+@ExperimentalJsTestDsl
+interface KotlinJsTestsLocation {
+    /**
+     * Access prepared JS tests via dev web server.
+     */
+    val devServer: Provider<out KotlinJsTestDevServerService>
+
+    /**
+     * Location of a prepared JS tests bundle on local filesystem.
+     */
+    val bundleLocation: Provider<Directory>
+}
+
 @ExperimentalJsTestDsl
 interface KotlinBrowserTestRunnerDsl : BrowserTestRunnerConfigDsl, Named
 
@@ -90,10 +90,14 @@ interface KotlinJsBrowserTestDsl {
      * Default bundle task that produces js bundle with the HTML file to run Kotlin tests in a browser.
      *
      * Use this task to post-process bundle output when needed.
-     * The output of this task is set to [BrowserTestRunnerConfigDsl.bundleDirectory].
-     * You may need to set a new bundleDirectory if you had applied any post-processing to the bundle.
      */
     val bundleTask: TaskProvider<out WebpackBundleForKotlinJsTests>
+
+    /**
+     * Default location of bundled and ready to execute JS tests produced from Kotlin JS test compilation.
+     * The output of this task is set to [BrowserTestRunnerConfigDsl.testsLocation].
+     */
+    val defaultTestsLocation: Provider<out KotlinJsTestsLocation>
 
     /** Chromium-specific browser test runner config */
     interface ChromiumTestRunnerDsl : KotlinBrowserTestRunnerDsl
