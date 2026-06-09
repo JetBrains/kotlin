@@ -4353,7 +4353,7 @@ public abstract interface class org/jetbrains/kotlin/gradle/targets/js/testing/K
 	public abstract fun createTestExecuter ()Lorg/gradle/api/internal/tasks/testing/TestExecuter;
 	public abstract fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/gradle/api/internal/tasks/testing/TestExecutionSpec;
 	public abstract fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	public abstract fun getFrameworkGradleInputObject ()Ljava/lang/Object;
+	public abstract fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public abstract fun getSettingsState ()Ljava/lang/String;
 	public abstract fun getWorkingDir ()Lorg/gradle/api/provider/Provider;
 }
@@ -4363,7 +4363,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFr
 
 public final class org/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework$DefaultImpls {
 	public static fun createTestExecuter (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Lorg/gradle/api/internal/tasks/testing/TestExecuter;
-	public static fun getFrameworkGradleInputObject (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/Object;
+	public static fun getFrameworkTaskInputs (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/Object;
 	public static fun getPath (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTestFramework;)Ljava/lang/String;
 }
 
@@ -4444,7 +4444,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/karma/KotlinKa
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public final fun getDebugPath ()Lorg/gradle/api/provider/Property;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	public fun getFrameworkGradleInputObject ()Ljava/lang/Object;
+	public fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public fun getPath ()Ljava/lang/String;
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
 	public fun getSettingsState ()Ljava/lang/String;
@@ -4481,7 +4481,7 @@ public final class org/jetbrains/kotlin/gradle/targets/js/testing/mocha/KotlinMo
 	public fun createTestExecutionSpec (Lorg/jetbrains/kotlin/gradle/targets/js/testing/KotlinJsTest;Lorg/jetbrains/kotlin/gradle/utils/processes/ProcessLaunchOptions;Ljava/util/List;Z)Lorg/jetbrains/kotlin/gradle/internal/testing/TCServiceMessagesTestExecutionSpec;
 	public fun getCompilation ()Lorg/jetbrains/kotlin/gradle/targets/js/ir/KotlinJsIrCompilation;
 	public fun getExecutable ()Lorg/gradle/api/provider/Provider;
-	public fun getFrameworkGradleInputObject ()Ljava/lang/Object;
+	public fun getFrameworkTaskInputs ()Ljava/lang/Object;
 	public fun getPath ()Ljava/lang/String;
 	public fun getRequiredNpmDependencies ()Ljava/util/Set;
 	public fun getSettingsState ()Ljava/lang/String;
