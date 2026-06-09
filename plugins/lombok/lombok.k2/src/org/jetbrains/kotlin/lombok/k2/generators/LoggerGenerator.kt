@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.lombok.k2.generators.kotlin
+package org.jetbrains.kotlin.lombok.k2.generators
 
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.isObject
@@ -48,8 +48,11 @@ import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.LombokDeclarationKey
-import org.jetbrains.kotlin.lombok.k2.generators.hasJavaOrigin
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.createConstructorIfGeneratedCompanion
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.initializeCompanionObjectIfNeeded
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.needsConstructorIfGeneratedCompanion
+import org.jetbrains.kotlin.lombok.k2.generators.kotlin.tryBuildingJvmStaticAnnotationCall
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -60,7 +63,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 class LoggerGeneratorKey(val logAnnotation: FirAnnotation) : LombokDeclarationKey()
 
 /**
- * Checks whether the current [FirDeclarationOrigin] instance is of type [FirDeclarationOrigin.Plugin]
+ * Checks whether the current [FirDeclarationOrigin] instance is of type [Plugin]
  * and verifies if `logAnnotation` of its key matches the provided [logAnnotation].
  */
 fun FirDeclarationOrigin.isLogger(logAnnotation: FirAnnotation): Boolean {
