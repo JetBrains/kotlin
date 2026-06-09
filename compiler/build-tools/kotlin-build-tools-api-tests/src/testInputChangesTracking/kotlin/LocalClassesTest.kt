@@ -9,11 +9,14 @@ import org.jetbrains.kotlin.buildtools.tests.CompilerExecutionStrategyConfigurat
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertNoWarnings
+import org.jetbrains.kotlin.buildtools.tests.compilation.assertions.assertOutputFileContains
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.BtaV2StrategyAgnosticCompilationTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.DefaultStrategyAndPlatformAgnosticScenarioTest
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.LogLevel
 import org.jetbrains.kotlin.buildtools.tests.compilation.model.ScenarioCreator
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JsScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.JvmScenarioDsl
+import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.WasmScenarioDsl
 import org.jetbrains.kotlin.buildtools.tests.compilation.scenario.jvmScenario
 import org.jetbrains.kotlin.buildtools.tests.compilation.util.compile
 import org.jetbrains.kotlin.test.TestMetadata
@@ -63,7 +66,12 @@ class LocalClassesTest : BaseCompilationTest() {
             module.replaceFileWithVersion("main.kt", "remove-value")
 
             module.compile {
-                assertCompiledSources("f1.kt", "main.kt", "f2.kt")
+                val expectedSources = when (this@scenario) {
+                    is JvmScenarioDsl -> setOf("f1.kt", "main.kt", "f2.kt")
+                    is JsScenarioDsl, is WasmScenarioDsl -> setOf("f1.kt", "main.kt")
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
+                assertCompiledSources(expectedSources)
             }
 
             module.replaceFileWithVersion("f2.kt", "add-empty-line")
@@ -76,7 +84,25 @@ class LocalClassesTest : BaseCompilationTest() {
             module.replaceFileWithVersion("main.kt", "original")
 
             module.compile {
-                assertCompiledSources("f1.kt", "main.kt", "f2.kt")
+                val expectedSources = when (this@scenario) {
+                    is JvmScenarioDsl -> setOf("f1.kt", "main.kt", "f2.kt")
+                    is JsScenarioDsl, is WasmScenarioDsl -> setOf("f1.kt", "main.kt")
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
+                assertCompiledSources(expectedSources)
+            }
+            module.link {
+                val fileName = when (this@scenario) {
+                    is JsScenarioDsl -> "ic-scenarios_kt-61023.js"
+                    is WasmScenarioDsl -> "ic-scenarios_kt-61023.wasm"
+                    else -> error("Unsupported scenario type: ${this@scenario}")
+                }
+                // Actually, it should not contain this, but due to the bug it's there.
+                // After non-incremental compilation, it's not there.
+                assertOutputFileContains(
+                    fileName,
+                    "Abstract property accessor 'getValue.<get-getValue>' is not implemented in non-abstract anonymous object"
+                )
             }
         }
     }
