@@ -250,7 +250,6 @@ class FirJavaClass @FirImplementationDetail internal constructor(
 
 @FirBuilderDsl
 class FirJavaClassBuilder : FirRegularClassBuilder(), FirAnnotationContainerBuilder {
-    lateinit var visibility: Visibility
     var isFromSource: Boolean by Delegates.notNull()
     var javaPackage: JavaPackage? = null
     lateinit var javaTypeParameterStack: MutableJavaTypeParameterStack

@@ -498,7 +498,6 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
             symbol = builderSymbol
             this.name = name
             isFromSource = true
-            this.visibility = visibility
             classKind = ClassKind.CLASS
 
             val typeParametersMapping = builderDeclaration.initializeTypeParametersMapping(builderSymbol)
