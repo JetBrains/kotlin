@@ -22,10 +22,10 @@ import org.jetbrains.kotlin.lombok.k2.LombokFirDiagnostics
 import org.jetbrains.kotlin.lombok.k2.config.ConeLombokAnnotations.ToString.CallSuperMode
 import org.jetbrains.kotlin.lombok.k2.config.LombokConfigNames.DO_NOT_USE_GETTERS
 import org.jetbrains.kotlin.lombok.k2.config.lombokService
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.ToStringGenerator
+import org.jetbrains.kotlin.lombok.k2.generators.ToStringGenerator
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.findAnnotationOnPropertyOrField
 import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isRelevantForConflictsCheck
-import org.jetbrains.kotlin.lombok.k2.generators.kotlin.isToString
+import org.jetbrains.kotlin.lombok.k2.generators.isToString
 import org.jetbrains.kotlin.lombok.utils.LombokNames
 import org.jetbrains.kotlin.name.StandardClassIds
 
