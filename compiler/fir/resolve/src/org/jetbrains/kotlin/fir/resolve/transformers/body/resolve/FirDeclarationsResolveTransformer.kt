@@ -979,6 +979,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
         context.withContainingClass(anonymousObject) {
             if (anonymousObject !in context.targetedLocalClasses) {
+                println("Resolving local anonymous object ${anonymousObject.classId} (module ${anonymousObject.moduleData.name}) during ${transformer.transformerPhase}")
                 return anonymousObject.runAllPhasesForLocalClassLikeDeclarations(components, data)
             }
 

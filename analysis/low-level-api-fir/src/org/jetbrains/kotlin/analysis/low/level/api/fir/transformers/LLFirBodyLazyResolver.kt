@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.LLFirDecla
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirPhaseUpdater
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.*
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.evaluatedInitializer
@@ -46,8 +45,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.RealVariable
 import org.jetbrains.kotlin.fir.resolve.dfa.SnapshotFirMapper
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.*
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
-import org.jetbrains.kotlin.fir.resolve.transformers.DirectCallableOverridesResolver
-import org.jetbrains.kotlin.fir.resolve.transformers.DirectClassInheritorsResolver
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.*
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -58,7 +55,6 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.checkWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
@@ -572,16 +568,6 @@ private class FirPartialBodyExpressionResolveTransformer(
 private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstractBodyTargetResolver(target, FirResolvePhase.BODY_RESOLVE) {
     override val transformer = BodyTransformerDispatcher()
 
-    private val directClassInheritorsResolver =
-        runIf(resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.DirectClassInheritors)) {
-            DirectClassInheritorsResolver(resolveTargetSession)
-        }
-
-    private val directCallableOverridesResolver =
-        runIf(resolveTargetSession.languageVersionSettings.supportsFeature(LanguageFeature.DirectClassInheritors)) {
-            DirectCallableOverridesResolver(resolveTargetSession, resolveTargetScopeSession)
-        }
-
     inner class BodyTransformerDispatcher : FirAbstractBodyResolveTransformerDispatcher(
         resolveTargetSession,
         phase = resolverPhase,
@@ -615,19 +601,21 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
         }
 
         override fun transformRegularClass(regularClass: FirRegularClass, data: ResolutionMode): FirRegularClass =
-            super.transformRegularClass(regularClass, data).apply { directClassInheritorsResolver?.resolveRegularClass(this) }
+            super.transformRegularClass(regularClass, data).apply { components.directClassInheritorsResolver?.resolveRegularClass(this) }
 
         override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias =
-            super.transformTypeAlias(typeAlias, data).apply { directClassInheritorsResolver?.resolveTypeAlias(this) }
+            super.transformTypeAlias(typeAlias, data).apply { components.directClassInheritorsResolver?.resolveTypeAlias(this) }
 
         override fun transformAnonymousObject(anonymousObject: FirAnonymousObject, data: ResolutionMode): FirAnonymousObject =
-            super.transformAnonymousObject(anonymousObject, data).apply { directClassInheritorsResolver?.resolveAnonymousObject(this) }
+            super.transformAnonymousObject(anonymousObject, data)
+                .apply { components.directClassInheritorsResolver?.resolveAnonymousObject(this) }
 
         override fun transformNamedFunction(namedFunction: FirNamedFunction, data: ResolutionMode): FirNamedFunction =
-            super.transformNamedFunction(namedFunction, data).apply { directCallableOverridesResolver?.resolveNamedFunction(this) }
+            super.transformNamedFunction(namedFunction, data)
+                .apply { components.directCallableOverridesResolver?.resolveNamedFunction(this, true) }
 
         override fun transformProperty(property: FirProperty, data: ResolutionMode): FirProperty =
-            super.transformProperty(property, data).apply { directCallableOverridesResolver?.resolveProperty(this) }
+            super.transformProperty(property, data).apply { components.directCallableOverridesResolver?.resolveProperty(this, true) }
     }
 
     /**
@@ -721,7 +709,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
         target.replaceControlFlowGraphReference(FirControlFlowGraphReferenceImpl(controlFlowGraph))
-        directClassInheritorsResolver?.resolveRegularClass(target)
+        transformer.components.directClassInheritorsResolver?.resolveRegularClass(target)
     }
 
     private inline fun <T : FirElementWithResolveState> resolveMembersForControlFlowGraph(
@@ -860,7 +848,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             is FirField -> resolve(target, BodyStateKeepers.FIELD)
             is FirVariable -> resolve(target, BodyStateKeepers.VARIABLE)
             is FirAnonymousInitializer -> resolve(target, BodyStateKeepers.ANONYMOUS_INITIALIZER)
-            is FirTypeAlias -> directClassInheritorsResolver?.resolveTypeAlias(target)
+            is FirTypeAlias -> transformer.components.directClassInheritorsResolver?.resolveTypeAlias(target)
             is FirDanglingModifierList,
             is FirReplSnippet
                 -> {
