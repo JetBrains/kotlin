@@ -189,6 +189,156 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    private fun MemberBuilder.allEqualSampleRef(methodName: String): String = "samples.generated.allequal." + when (f) {
+        ArraysOfObjects -> "AllEqualArraySamples.$methodName"
+        ArraysOfPrimitives, ArraysOfUnsigned -> "AllEqual${primitive!!.name}ArraySamples.$methodName"
+        else -> "AllEqual${f}Samples.$methodName"
+    }
+
+    private fun MemberBuilder.appendAllEqualFloatingPointNote() {
+        if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true) {
+            doc {
+                doc + """
+                `NaN` is considered equal to `NaN`, and `-0.0` is considered not equal to `0.0`,
+                consistent with [${primitive!!.name}.equals].
+                """
+            }
+        }
+        if (f == Iterables || f == Sequences || f == ArraysOfObjects) {
+            doc {
+                doc + """
+                For elements of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+                and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+                """
+            }
+        }
+    }
+
+    // `allEqualBy` compares selector results of type `K`, independent of the receiver's element type,
+    // so the note applies uniformly to every overload.
+    private fun MemberBuilder.appendAllEqualByFloatingPointNote() {
+        doc {
+            doc + """
+            For selector values of floating-point types (`Double`, `Float`), `NaN` is considered equal to `NaN`,
+            and `-0.0` is considered not equal to `0.0`, consistent with [Double.equals] and [Float.equals].
+            """
+        }
+    }
+
+    val f_allEqual = fn("allEqual()") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        returns("Boolean")
+        doc {
+            val equalityPhrase = if (f == ArraysOfPrimitives && primitive?.isFloatingPoint() == true)
+                "equality semantics consistent with [${primitive!!.name}.equals]"
+            else
+                "structural equality (`==`)"
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} are equal to each other.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The ${f.element.pluralize()} are compared sequentially using $equalityPhrase,
+            and all ${f.element.pluralize()} are considered equal if the first ${f.element} equals
+            every subsequent ${f.element}.
+            """
+        }
+        appendAllEqualFloatingPointNote()
+        sample(allEqualSampleRef("allEqual"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            while (iterator.hasNext()) {
+                if (first != iterator.next()) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfObjects) {
+            """
+            if (size < 2) return true
+            val first = this[0]
+            for (i in 1..lastIndex) {
+                if (first != this[i]) return false
+            }
+            return true
+            """
+        }
+        body(ArraysOfPrimitives, ArraysOfUnsigned) {
+            val condition = if (primitive?.isFloatingPoint() == true)
+                "first.compareTo(this[i]) != 0"
+            else
+                "first != this[i]"
+            """
+            if (size < 2) return true
+            val first = this[0]
+            for (i in 1..lastIndex) {
+                if ($condition) return false
+            }
+            return true
+            """
+        }
+    }
+
+    val f_allEqualBy = fn("allEqualBy(selector: (T) -> K)") {
+        includeDefault()
+        include(ArraysOfUnsigned)
+    } builder {
+        since("2.4")
+        annotation("@ExperimentalStdlibApi")
+        inline()
+        returns("Boolean")
+        typeParam("K")
+        doc {
+            """
+            Returns `true` if all ${f.element.pluralize()} in the ${f.collection} yield the same value
+            produced by the given [selector] function.
+
+            Returns `true` for an empty ${f.collection}.
+
+            The [selector] values are compared sequentially using structural equality (`==`),
+            and all ${f.element.pluralize()} are considered equal by the [selector] value if the [selector]
+            value of the first ${f.element} equals the [selector] value of every subsequent ${f.element}.
+            """
+        }
+        appendAllEqualByFloatingPointNote()
+        sample(allEqualSampleRef("allEqualBy"))
+        body {
+            """
+            val iterator = iterator()
+            if (!iterator.hasNext()) return true
+            val first = iterator.next()
+            if (!iterator.hasNext()) return true
+            val firstKey = selector(first)
+            do {
+                val key = selector(iterator.next())
+                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                val equal = firstKey?.equals(key) ?: (key == null)
+                if (!equal) return false
+            } while (iterator.hasNext())
+            return true
+            """
+        }
+        body(ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
+            """
+            if (size < 2) return true
+            val firstKey = selector(this[0])
+            for (i in 1..lastIndex) {
+                val key = selector(this[i])
+                // Workaround for KT-86678 (revert in KT-86680): `==` on boxed Double/Float is wrong for NaN on Native.
+                val equal = firstKey?.equals(key) ?: (key == null)
+                if (!equal) return false
+            }
+            return true
+            """
+        }
+    }
 
     val f_count_predicate = fn("count(predicate: (T) -> Boolean)") {
         includeDefault()
