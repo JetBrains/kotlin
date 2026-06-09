@@ -55,6 +55,10 @@ internal class KotlinWebkitTestRunner(
     objects: ObjectFactory
 ) : KotlinBrowserTestRunner(name, objects), KotlinJsBrowserTestDsl.WebkitTestRunnerDsl
 
+internal fun ObjectFactory.createKotlinJsBrowserTestImpl(
+    testCompilation: KotlinJsIrCompilation
+) = newInstance(KotlinJsBrowserTestImpl::class.java, testCompilation)
+
 internal abstract class KotlinJsBrowserTestImpl
 @Inject constructor(
     testCompilation: KotlinJsIrCompilation,
