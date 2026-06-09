@@ -1,4 +1,3 @@
-// IGNORE_BACKEND: WASM
 // FILE: bar.kt
 package bar
 

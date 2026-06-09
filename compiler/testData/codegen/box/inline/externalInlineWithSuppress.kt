@@ -1,7 +1,7 @@
-// TARGET_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND: JVM, JVM_IR, WASM_WASI, NATIVE
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FILE: main.kt
 @file:Suppress(
-    "NESTED_CLASS_IN_EXTERNAL_INTERFACE",
     "WRONG_BODY_OF_EXTERNAL_DECLARATION",
     "INLINE_EXTERNAL_DECLARATION",
     "NON_ABSTRACT_MEMBER_OF_EXTERNAL_INTERFACE",
@@ -10,7 +10,6 @@
 package foo
 
 
-@JsName("null")
 external interface Foo {
     companion object {
         inline fun test(): String = "OK"

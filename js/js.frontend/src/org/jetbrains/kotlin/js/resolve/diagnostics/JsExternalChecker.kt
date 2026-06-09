@@ -30,10 +30,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.typeUtil.isUnsignedNumberType
 
-class JsExternalChecker(
-    private val allowCompanionInInterface: Boolean,
-    private val allowUnsignedTypes: Boolean
-) : DeclarationChecker {
+class JsExternalChecker(private val allowUnsignedTypes: Boolean) : DeclarationChecker {
     companion object {
         val DEFINED_EXTERNALLY_PROPERTY_NAME = JsStandardClassIds.Callables.JsDefinedExternally.asSingleFqName().toUnsafe()
     }
@@ -80,11 +77,11 @@ class JsExternalChecker(
 
         val containingDeclarationsIsInterface = descriptor.containingDeclaration.let { it is ClassDescriptor && it.kind == ClassKind.INTERFACE }
 
-        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE && (!allowCompanionInInterface || !descriptor.isCompanionObject) && containingDeclarationsIsInterface) {
+        if (descriptor is ClassDescriptor && descriptor.kind != ClassKind.INTERFACE && !descriptor.isCompanionObject && containingDeclarationsIsInterface) {
             trace.report(ErrorsJs.NESTED_CLASS_IN_EXTERNAL_INTERFACE.on(declaration))
         }
 
-        if (allowCompanionInInterface && descriptor.isCompanionObject() && containingDeclarationsIsInterface && descriptor.name != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
+        if (descriptor.isCompanionObject() && containingDeclarationsIsInterface && descriptor.name != DEFAULT_NAME_FOR_COMPANION_OBJECT) {
             trace.report(ErrorsJs.NAMED_COMPANION_IN_EXTERNAL_INTERFACE.on(declaration))
         }
 

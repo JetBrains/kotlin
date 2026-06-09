@@ -8,5 +8,5 @@ external interface I {
 
     enum class <!NESTED_CLASS_IN_EXTERNAL_INTERFACE, WRONG_EXTERNAL_DECLARATION!>E<!>
 
-    companion <!NESTED_CLASS_IN_EXTERNAL_INTERFACE!>object<!>
+    companion object
 }
